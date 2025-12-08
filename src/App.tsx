@@ -45,6 +45,9 @@ const AdminPWADashboard = lazy(() => import("@/pages/AdminPWADashboard"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const AdminAuditPage = lazy(() => import("@/pages/AdminAuditPage"));
 const AdminSwipeAnalyticsPage = lazy(() => import("@/pages/AdminSwipeAnalyticsPage"));
+const AdminBlogManagementPage = lazy(() => import("@/pages/AdminBlogManagementPage"));
+const AdminBlogEditorPage = lazy(() => import("@/pages/AdminBlogEditorPage"));
+const AdminBlogTopicsPage = lazy(() => import("@/pages/AdminBlogTopicsPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
@@ -80,6 +83,10 @@ const WithSeo = {
   AdminUsers: () => (<><Seo title="Gebruikersbeheer — FitFi Admin" description="Beheer alle gebruikers en hun toegang." path="/admin/users" noindex /><AdminUsersPage /></>),
   AdminAudit: () => (<><Seo title="Audit Log — FitFi Admin" description="Bekijk alle gebruikersactiviteit en systeemgebeurtenissen." path="/admin/audit" noindex /><AdminAuditPage /></>),
   AdminSwipeAnalytics: () => (<><Seo title="Swipe Analytics — FitFi Admin" description="Bekijk swipe patterns en photo performance analytics." path="/admin/analytics" noindex /><AdminSwipeAnalyticsPage /></>),
+  AdminBlog: () => (<><Seo title="Blog Beheer — FitFi Admin" description="Beheer blog posts en AI-gegenereerde content." path="/admin/blog" noindex /><AdminBlogManagementPage /></>),
+  AdminBlogNew: () => (<><Seo title="Nieuwe Post — FitFi Admin" description="Maak een nieuwe blog post." path="/admin/blog/new" noindex /><AdminBlogEditorPage /></>),
+  AdminBlogEdit: () => (<><Seo title="Bewerk Post — FitFi Admin" description="Bewerk blog post." path="/admin/blog/edit" noindex /><AdminBlogEditorPage /></>),
+  AdminBlogTopics: () => (<><Seo title="Blog Topics — FitFi Admin" description="Beheer blog topic ideeën." path="/admin/blog/topics" noindex /><AdminBlogTopicsPage /></>),
   AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
@@ -144,6 +151,10 @@ export default function App() {
                 <Route path="/admin/users" element={<RequireAuth><WithSeo.AdminUsers /></RequireAuth>} />
                 <Route path="/admin/audit" element={<RequireAuth><WithSeo.AdminAudit /></RequireAuth>} />
                 <Route path="/admin/analytics" element={<RequireAuth><WithSeo.AdminSwipeAnalytics /></RequireAuth>} />
+                <Route path="/admin/blog" element={<RequireAuth><WithSeo.AdminBlog /></RequireAuth>} />
+                <Route path="/admin/blog/new" element={<RequireAuth><WithSeo.AdminBlogNew /></RequireAuth>} />
+                <Route path="/admin/blog/edit/:id" element={<RequireAuth><WithSeo.AdminBlogEdit /></RequireAuth>} />
+                <Route path="/admin/blog/topics" element={<RequireAuth><WithSeo.AdminBlogTopics /></RequireAuth>} />
                 <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
 
                 {/* 404 */}

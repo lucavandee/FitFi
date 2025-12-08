@@ -113,6 +113,16 @@ const adminModules: AdminModule[] = [
     status: 'active'
   },
   {
+    id: 'blog',
+    title: 'Blog Beheer',
+    description: 'Beheer AI-gegenereerde en handmatige blog content',
+    icon: FileText,
+    route: '/admin/blog',
+    color: 'from-violet-500 to-fuchsia-500',
+    badge: 'AI',
+    status: 'active'
+  },
+  {
     id: 'zalando',
     title: 'Zalando Import',
     description: 'Import producten van Zalando',
