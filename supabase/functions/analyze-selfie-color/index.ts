@@ -19,6 +19,7 @@ interface ColorAnalysis {
 }
 
 Deno.serve(async (req: Request) => {
+  // CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
