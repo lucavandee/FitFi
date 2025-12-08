@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Download, X } from "lucide-react";
+import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Download, X, Grid3x3, Layers } from "lucide-react";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
@@ -18,6 +18,7 @@ import { OutfitZoomModal } from "@/components/results/OutfitZoomModal";
 import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/outfits/PremiumOutfitCard";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { canonicalUrl } from "@/utils/urls";
+import { SwipeableOutfitGallery } from "@/components/outfits/SwipeableOutfitGallery";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -201,6 +202,17 @@ export default function EnhancedResultsPage() {
     sortBy: "match",
     viewMode: "grid-2",
   });
+
+  // Gallery mode: swipe (mobile-friendly) or grid (desktop-friendly)
+  const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
+
+  // Auto-detect mobile and default to swipe on small screens
+  React.useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setGalleryMode('swipe');
+    }
+  }, []);
 
   function toggleFav(id: string) {
     setFavs((curr) => {
@@ -534,7 +546,7 @@ export default function EnhancedResultsPage() {
         <section className="py-12 sm:py-16 md:py-20 lg:py-32 relative">
           <div className="ff-container">
             <AnimatedSection>
-              <div className="text-center mb-20">
+              <div className="text-center mb-12 sm:mb-20">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-accent-100)] text-[var(--ff-color-accent-700)] rounded-full text-sm font-bold mb-6">
                   <ShoppingBag className="w-4 h-4" />
                   Jouw Outfits
@@ -542,9 +554,42 @@ export default function EnhancedResultsPage() {
                 <h2 className="text-4xl md:text-6xl font-bold mb-6">
                   Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                   {displayOutfits.length} zorgvuldig samengestelde outfits die perfect bij jouw stijl passen
                 </p>
+
+                {/* View Mode Toggle */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="inline-flex items-center gap-2 p-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl shadow-sm"
+                >
+                  <button
+                    onClick={() => setGalleryMode('swipe')}
+                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                      galleryMode === 'swipe'
+                        ? 'bg-[var(--ff-color-primary-700)] text-white shadow-md'
+                        : 'text-[var(--color-text)] hover:bg-[var(--color-bg)]'
+                    }`}
+                    aria-label="Swipe weergave"
+                  >
+                    <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="hidden xs:inline">Swipe</span>
+                  </button>
+                  <button
+                    onClick={() => setGalleryMode('grid')}
+                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                      galleryMode === 'grid'
+                        ? 'bg-[var(--ff-color-primary-700)] text-white shadow-md'
+                        : 'text-[var(--color-text)] hover:bg-[var(--color-bg)]'
+                    }`}
+                    aria-label="Grid weergave"
+                  >
+                    <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="hidden xs:inline">Grid</span>
+                  </button>
+                </motion.div>
               </div>
             </AnimatedSection>
 
@@ -557,6 +602,68 @@ export default function EnhancedResultsPage() {
                 />
                 <p className="text-gray-600 text-lg">Jouw perfecte outfits worden geladen...</p>
               </div>
+            ) : galleryMode === 'swipe' ? (
+              <SwipeableOutfitGallery
+                outfits={displayOutfits as any[]}
+                onLike={(outfit) => {
+                  const id = 'id' in outfit ? outfit.id : outfit.toString();
+                  toggleFav(String(id));
+                }}
+                onDislike={() => {
+                  // Optional: track dislikes
+                }}
+                renderCard={(outfit) => {
+                  const idx = displayOutfits.findIndex(o => o === outfit);
+                  const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
+                  const isFav = favs.includes(String(id));
+
+                  return (
+                    <div className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] overflow-hidden shadow-lg h-full">
+                      {/* Image Container */}
+                      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                        {outfit && 'image' in outfit && outfit.image ? (
+                          <img
+                            src={outfit.image}
+                            alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
+                            <div className="text-center p-8">
+                              <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
+                              <p className="text-sm text-gray-600 font-medium">Outfit {idx + 1}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Details Button Overlay */}
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedOutfit(outfit);
+                            }}
+                            className="w-full px-6 py-3 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.98] transition-all shadow-lg"
+                          >
+                            Bekijk details
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Info */}
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">
+                          {'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
+                        </h3>
+                        <p className="text-base text-gray-600">
+                          Perfect voor {archetypeName.toLowerCase()} stijl
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }}
+                className="max-w-7xl mx-auto"
+              />
             ) : (
               <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
                 {displayOutfits.map((outfit, idx) => {
