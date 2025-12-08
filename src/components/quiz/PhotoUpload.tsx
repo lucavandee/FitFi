@@ -111,12 +111,19 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       setUploading(false);
       setError(null);
 
-      // Optional: Trigger AI color analysis (skip if Netlify function not available)
+      // Optional: Trigger AI color analysis using Supabase Edge Function
       setAnalyzing(true);
       try {
-        const analysisResponse = await fetch("/.netlify/functions/analyze-color", {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        const analysisResponse = await fetch(`${supabaseUrl}/functions/v1/analyze-selfie-color`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${supabaseAnonKey}`,
+            "apikey": supabaseAnonKey
+          },
           body: JSON.stringify({
             photoUrl: publicUrl,
             userId: sessionId, // Always use sessionId for onboarding
