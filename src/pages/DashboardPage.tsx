@@ -242,31 +242,31 @@ export default function DashboardPage() {
       {/* Success Banner */}
       {showSuccessBanner && (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-b-2 border-green-200 dark:from-green-900/20 dark:to-emerald-900/20 dark:border-green-800">
-          <div className="ff-container py-4">
-            <div className="flex items-center justify-between max-w-4xl mx-auto fade-in-up">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center animate-bounce">
-                  <CheckCircle className="w-7 h-7 text-green-600 dark:text-green-300" />
+          <div className="ff-container py-3 sm:py-4">
+            <div className="flex items-center justify-between max-w-4xl mx-auto fade-in-up gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center animate-bounce">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-green-600 dark:text-green-300" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-green-900 dark:text-green-100 text-lg">Betaling succesvol!</h3>
-                  <p className="text-sm text-green-700 dark:text-green-300">Welkom bij FitFi Premium. Je hebt nu toegang tot alle premium features.</p>
+                  <h3 className="font-bold text-green-900 dark:text-green-100 text-base sm:text-lg">Betaling succesvol!</h3>
+                  <p className="text-xs sm:text-sm text-green-700 dark:text-green-300">Welkom bij FitFi Premium. Je hebt nu toegang tot alle premium features.</p>
                 </div>
               </div>
               <button
                 onClick={handleCloseBanner}
-                className="flex-shrink-0 p-2 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 transition-colors rounded-lg hover:bg-green-100 dark:hover:bg-green-900"
+                className="flex-shrink-0 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 transition-colors rounded-lg hover:bg-green-100 dark:hover:bg-green-900 active:scale-[0.95]"
                 aria-label="Sluit melding"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Premium Hero with Glassmorphism */}
-      <section className="relative overflow-hidden py-12 md:py-16">
+      {/* Premium Hero with Glassmorphism - Responsive padding */}
+      <section className="relative overflow-hidden py-8 sm:py-12 md:py-16">
         {/* Gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] via-[var(--color-bg)] to-[var(--ff-color-accent-50)] opacity-60"></div>
 
@@ -281,13 +281,13 @@ export default function DashboardPage() {
               {/* Left: Greeting & Info */}
               <div className="flex-1 fade-in-up">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 dark:bg-[var(--color-surface)]/80 backdrop-blur-xl rounded-full text-sm font-bold text-[var(--ff-color-primary-700)] mb-6 shadow-lg border border-[var(--color-border)] hover-lift">
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
-                  JOUW STYLE DASHBOARD
+                <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-white/80 dark:bg-[var(--color-surface)]/80 backdrop-blur-xl rounded-full text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] mb-4 sm:mb-6 shadow-lg border border-[var(--color-border)] hover-lift">
+                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+                  <span className="text-[10px] xs:text-xs sm:text-sm">JOUW STYLE DASHBOARD</span>
                 </div>
 
                 {/* Greeting */}
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-text)] mb-3 sm:mb-4 leading-tight px-4 sm:px-0">
                   {greeting},{" "}
                   <span className="relative inline-block">
                     <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
@@ -297,7 +297,7 @@ export default function DashboardPage() {
                 </h1>
 
                 {/* Subtitle */}
-                <p className="text-xl md:text-2xl text-[var(--color-muted)] mb-8 max-w-2xl leading-relaxed">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[var(--color-muted)] mb-6 sm:mb-8 max-w-2xl leading-relaxed px-4 sm:px-0">
                   {hasQuizData
                     ? `Je Style Report is klaar met ${outfitCount} outfits`
                     : "Start de quiz om je style report te krijgen"
@@ -305,22 +305,22 @@ export default function DashboardPage() {
                 </p>
 
                 {/* CTAs */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 px-4 sm:px-0">
                   {hasQuizData ? (
                     <>
                       <NavLink
                         to="/results"
-                        className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift focus-ring-premium"
+                        className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift focus-ring-premium active:scale-[0.98] w-full sm:w-auto"
                       >
-                        <Sparkles className="w-5 h-5" />
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                         Bekijk resultaten
-                        <ArrowRight className="w-5 h-5" />
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </NavLink>
                       <NavLink
                         to="/onboarding"
-                        className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-surface)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] transition-all shadow-md hover-lift border-2 border-[var(--color-border)]"
+                        className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-[var(--color-surface)] text-[var(--color-text)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-50)] transition-all shadow-md hover-lift border-2 border-[var(--color-border)] active:scale-[0.98] w-full sm:w-auto"
                       >
-                        <RefreshCw className="w-5 h-5" />
+                        <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
                         Opnieuw doen
                       </NavLink>
                     </>
@@ -328,15 +328,15 @@ export default function DashboardPage() {
                     <>
                       <NavLink
                         to="/onboarding"
-                        className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift focus-ring-premium"
+                        className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift focus-ring-premium active:scale-[0.98] w-full sm:w-auto"
                       >
-                        <Sparkles className="w-5 h-5" />
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                         Start stijlquiz
-                        <ArrowRight className="w-5 h-5" />
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </NavLink>
                       <NavLink
                         to="/hoe-het-werkt"
-                        className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-surface)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] transition-all shadow-md hover-lift border-2 border-[var(--color-border)]"
+                        className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-[var(--color-surface)] text-[var(--color-text)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-50)] transition-all shadow-md hover-lift border-2 border-[var(--color-border)] active:scale-[0.98] w-full sm:w-auto"
                       >
                         Hoe werkt het?
                       </NavLink>
@@ -345,8 +345,8 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Last Updated */}
-                <p className="text-sm text-[var(--color-muted)] mt-6 flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
+                <p className="text-xs sm:text-sm text-[var(--color-muted)] mt-4 sm:mt-6 flex items-center gap-2 px-4 sm:px-0">
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   Laatst bijgewerkt: {lastText}
                 </p>
               </div>
@@ -354,31 +354,31 @@ export default function DashboardPage() {
               {/* Right: Style Profile Card */}
               {hasQuizData && archetype && (
                 <div className="w-full lg:w-auto slide-in-right">
-                  <div className="bg-gradient-to-br from-white/90 to-white/70 dark:from-[var(--color-surface)]/90 dark:to-[var(--color-surface)]/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border-2 border-white/50 dark:border-[var(--color-border)] hover-lift max-w-md">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-lg">
-                        <Crown className="w-8 h-8 text-white" />
+                  <div className="bg-gradient-to-br from-white/90 to-white/70 dark:from-[var(--color-surface)]/90 dark:to-[var(--color-surface)]/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-white/50 dark:border-[var(--color-border)] hover-lift max-w-md">
+                    <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-lg">
+                        <Crown className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
                       </div>
                       <div>
-                        <p className="text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide">Je Stijlarchetype</p>
-                        <h3 className="text-2xl font-bold text-[var(--color-text)]">{archetype.name || "Onbekend"}</h3>
+                        <p className="text-xs sm:text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide">Je Stijlarchetype</p>
+                        <h3 className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">{archetype.name || "Onbekend"}</h3>
                       </div>
                     </div>
 
                     {archetype.description && typeof archetype.description === 'string' && (
-                      <p className="text-[var(--color-muted)] mb-6 leading-relaxed">
+                      <p className="text-sm sm:text-base text-[var(--color-muted)] mb-5 sm:mb-6 leading-relaxed">
                         {archetype.description.substring(0, 120)}...
                       </p>
                     )}
 
                     {hasColorPalette && (
-                      <div className="border-t-2 border-[var(--color-border)] pt-6 mt-6">
-                        <p className="text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide mb-3">Jouw Kleuren</p>
+                      <div className="border-t-2 border-[var(--color-border)] pt-5 sm:pt-6 mt-5 sm:mt-6">
+                        <p className="text-xs sm:text-sm text-[var(--color-muted)] font-medium uppercase tracking-wide mb-3">Jouw Kleuren</p>
                         <div className="flex gap-2 flex-wrap">
                           {colorPalette.map((c, i) => (
                             <div
                               key={i}
-                              className="w-10 h-10 rounded-lg shadow-md hover:scale-110 transition-transform"
+                              className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg shadow-md hover:scale-110 transition-transform"
                               style={{ backgroundColor: c }}
                               title={c}
                             />
@@ -389,9 +389,9 @@ export default function DashboardPage() {
 
                     <NavLink
                       to="/profile"
-                      className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-scale"
+                      className="mt-5 sm:mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-scale active:scale-[0.98]"
                     >
-                      <Settings className="w-4 h-4" />
+                      <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
                       Bekijk profiel
                     </NavLink>
                   </div>
@@ -406,21 +406,21 @@ export default function DashboardPage() {
 
       {/* Nova Ambient Intelligence - Only show if user has completed quiz */}
       {novaInsights.length > 0 && hasQuizData && (
-        <section className="py-8 bg-[var(--color-bg)]">
+        <section className="py-6 sm:py-8 bg-[var(--color-bg)]">
           <div className="ff-container">
-            <div className="mb-6 fade-in-up">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-100)] dark:bg-[var(--ff-color-primary-900)] rounded-full">
-                  <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-                  <span className="text-sm font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wide">Styling Tips</span>
+            <div className="mb-5 sm:mb-6 fade-in-up">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 bg-[var(--ff-color-primary-100)] dark:bg-[var(--ff-color-primary-900)] rounded-full">
+                  <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" />
+                  <span className="text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wide">Styling Tips</span>
                 </div>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)]">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[var(--color-text)]">
                 Persoonlijk advies
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
               {novaInsights.slice(0, 3).map((insight, idx) => (
                 <NovaInsightCard
                   key={idx}
@@ -440,7 +440,7 @@ export default function DashboardPage() {
 
       {/* Photo Analysis Widget - Only for users who completed quiz */}
       {hasQuizData && (
-        <section className="py-8 bg-[var(--color-bg)]">
+        <section className="py-6 sm:py-8 bg-[var(--color-bg)]">
           <div className="ff-container">
             <PhotoAnalysisWidget />
           </div>
@@ -448,17 +448,17 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards - Premium Design */}
-      <section className="py-12 bg-[var(--color-surface)]">
+      <section className="py-8 sm:py-12 bg-[var(--color-surface)]">
         <div className="ff-container">
           {/* Refine Style Widget - Only for users with quiz data */}
           {hasQuizData && (
-            <div className="mb-12 fade-in-up" data-tour="refine-style">
+            <div className="mb-8 sm:mb-12 fade-in-up" data-tour="refine-style">
               <RefineStyleWidget />
             </div>
           )}
 
           {/* Stats Grid - Simplified */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
             <AnimatedStatCard
               icon={<Shirt className="w-6 h-6" />}
               label="Outfits"
@@ -507,31 +507,31 @@ export default function DashboardPage() {
 
           {/* Gamification - Only show if user has quiz data */}
           {hasQuizData && userId && (
-            <div className="mb-12 fade-in-up" data-tour="gamification">
+            <div className="mb-8 sm:mb-12 fade-in-up" data-tour="gamification">
               <PremiumGamificationPanel userId={userId} />
             </div>
           )}
 
           {/* Subscription Management */}
-          <div className="mb-12 fade-in-up">
+          <div className="mb-8 sm:mb-12 fade-in-up">
             <SubscriptionManager />
           </div>
 
           {/* Saved Outfits Gallery - Enhanced */}
           {hasQuizData && userId && (
             <div className="fade-in-up">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-1 sm:mb-2">
                     Jouw <span className="text-gradient">Outfits</span>
                   </h2>
-                  <p className="text-[var(--color-muted)]">
+                  <p className="text-sm sm:text-base text-[var(--color-muted)]">
                     Looks op basis van jouw stijl
                   </p>
                 </div>
                 <NavLink
                   to="/results"
-                  className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift"
+                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm sm:text-base hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover-lift active:scale-[0.98] w-full sm:w-auto justify-center"
                 >
                   Bekijk alles
                   <ArrowRight className="w-4 h-4" />
@@ -544,7 +544,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Quick Actions - Enhanced Floating Buttons */}
-      <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 flex flex-col gap-2 sm:gap-3 z-50">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -553,11 +553,11 @@ export default function DashboardPage() {
         >
           <NavLink
             to="/onboarding"
-            className="w-14 h-14 rounded-full bg-[var(--ff-color-primary-700)] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all hover:shadow-[0_0_30px_rgba(var(--ff-color-primary-rgb),0.5)] relative"
+            className="w-12 h-12 sm:w-14 sm:h-14 min-w-[52px] min-h-[52px] rounded-full bg-[var(--ff-color-primary-700)] text-white flex items-center justify-center shadow-2xl hover:scale-110 active:scale-[0.95] transition-all hover:shadow-[0_0_30px_rgba(var(--ff-color-primary-rgb),0.5)] relative"
           >
-            <RefreshCw className="w-6 h-6" />
+            <RefreshCw className="w-5 h-5 sm:w-6 sm:h-6" />
           </NavLink>
-          <div className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          <div className="absolute right-14 sm:right-16 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block">
             Quiz opnieuw doen
           </div>
         </motion.div>
@@ -570,11 +570,11 @@ export default function DashboardPage() {
         >
           <NavLink
             to="/profile"
-            className="w-14 h-14 rounded-full bg-[var(--color-surface)] text-[var(--color-text)] flex items-center justify-center shadow-xl hover:scale-110 transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)]"
+            className="w-12 h-12 sm:w-14 sm:h-14 min-w-[52px] min-h-[52px] rounded-full bg-[var(--color-surface)] text-[var(--color-text)] flex items-center justify-center shadow-xl hover:scale-110 active:scale-[0.95] transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)]"
           >
-            <Settings className="w-6 h-6" />
+            <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
           </NavLink>
-          <div className="absolute right-16 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          <div className="absolute right-14 sm:right-16 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block">
             Profiel instellingen
           </div>
         </motion.div>

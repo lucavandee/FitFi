@@ -32,46 +32,46 @@ export default function HowItWorksPage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 lg:py-40">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40">
         <div className="ff-container relative">
-          <div className="max-w-5xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center px-4 sm:px-6">
 
             {/* Social Proof Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/95 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-8 shadow-lg">
-              <Users className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-              <span className="text-sm font-bold text-[var(--color-text)]">
-                2.500+ mensen vonden hun stijl in 5 minuten
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-white/95 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-6 sm:mb-8 shadow-lg">
+              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-600)]" />
+              <span className="text-xs sm:text-sm font-bold text-[var(--color-text)]">
+                <span className="hidden xs:inline">2.500+ mensen</span><span className="xs:hidden">2500+</span> vonden hun stijl<span className="hidden sm:inline"> in 5 minuten</span>
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-[var(--color-text)] mb-8 leading-[1.1] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-[var(--color-text)] mb-6 sm:mb-8 leading-[1.1] tracking-tight">
               Van <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">twijfel</span><br />
               naar <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">vertrouwen</span>
             </h1>
 
-            <p className="text-xl md:text-2xl lg:text-3xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[var(--color-muted)] mb-8 sm:mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed font-light">
               Geen eindeloos scrollen. Geen dure stylisten. Gewoon: 8 vragen, 5 minuten, outfits die passen.
             </p>
 
             {/* Quick Stats */}
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-700)]" />
                 </div>
-                <span className="text-base sm:text-lg font-semibold text-[var(--color-text)]">5 minuten</span>
+                <span className="text-sm sm:text-base md:text-lg font-semibold text-[var(--color-text)]">5 minuten</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-green-700" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-700" />
                 </div>
-                <span className="text-base sm:text-lg font-semibold text-[var(--color-text)]">Geen foto's nodig</span>
+                <span className="text-sm sm:text-base md:text-lg font-semibold text-[var(--color-text)]"><span className="hidden xs:inline">Geen foto's nodig</span><span className="xs:hidden">Geen foto's</span></span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[var(--ff-color-accent-100)] rounded-full flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-[var(--ff-color-accent-700)]" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--ff-color-accent-100)] rounded-full flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-accent-700)]" />
                 </div>
-                <span className="text-base sm:text-lg font-semibold text-[var(--color-text)]">Direct resultaat</span>
+                <span className="text-sm sm:text-base md:text-lg font-semibold text-[var(--color-text)]">Direct resultaat</span>
               </div>
             </div>
           </div>
@@ -79,21 +79,21 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Interactive Process */}
-      <section className="py-24 md:py-32 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white">
         <div className="ff-container">
           <div className="max-w-7xl mx-auto">
 
-            <div className="text-center mb-16 md:mb-20">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20 px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 tracking-tight">
                 Zo simpel werkt het
               </h2>
-              <p className="text-xl md:text-2xl text-[var(--color-muted)] font-light">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[var(--color-muted)] font-light">
                 3 stappen, 5 minuten, lifetime resultaat
               </p>
             </div>
 
             {/* Interactive Timeline */}
-            <div className="grid md:grid-cols-3 gap-8 lg:gap-10 mb-16">
+            <div className="grid md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 mb-12 sm:mb-16">
               {/* Step 1 */}
               <motion.div
                 onHoverStart={() => setActiveStep(1)}

@@ -236,10 +236,10 @@ export default function EnhancedResultsPage() {
 
       <Breadcrumbs />
 
-      {/* Premium Hero Section */}
+      {/* Premium Hero Section - Responsive padding */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative overflow-hidden py-24 md:py-32 lg:py-40"
+        className="relative overflow-hidden py-16 sm:py-24 md:py-32 lg:py-40"
       >
         {/* Animated Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)]">
@@ -276,9 +276,9 @@ export default function EnhancedResultsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-full text-sm font-bold mb-8 shadow-lg"
+              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-full text-xs sm:text-sm font-bold mb-6 sm:mb-8 shadow-lg"
             >
-              <Sparkles className="w-5 h-5" />
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
               Jouw Persoonlijke Style Report
             </motion.div>
 
@@ -288,7 +288,7 @@ export default function EnhancedResultsPage() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.1 }}
-                  className="text-5xl md:text-6xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-bold mb-6 sm:mb-8 leading-[1.1] tracking-tight px-4"
                 >
                   Je stijl,
                   <motion.span
@@ -305,7 +305,7 @@ export default function EnhancedResultsPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  className="text-xl md:text-2xl lg:text-3xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
+                  className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-600 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-light px-4"
                 >
                   We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} unieke outfits</strong> samengesteld die perfect
                   <br className="hidden md:block" /> bij jouw {archetypeName} stijl passen
@@ -315,47 +315,47 @@ export default function EnhancedResultsPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-4"
                 >
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
                     whileTap={{ scale: 0.95 }}
                     onClick={sharePage}
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-2xl font-semibold hover:bg-[var(--color-surface)] transition-all shadow-lg"
+                    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg"
                   >
-                    <Share2 className="w-5 h-5" />
-                    Deel je stijl
+                    <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Deel je stijl</span>
                   </motion.button>
 
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <NavLink
                       to="/onboarding"
-                      className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-[var(--color-border)] rounded-2xl font-semibold hover:bg-[var(--color-surface)] transition-all shadow-lg"
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto"
                     >
-                      <RefreshCw className="w-5 h-5" />
-                      Opnieuw doen
+                      <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span>Opnieuw doen</span>
                     </NavLink>
                   </motion.div>
                 </motion.div>
 
-                {/* Stats Bar */}
+                {/* Stats Bar - Responsive */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
-                  className="mt-16 grid grid-cols-3 gap-6 max-w-2xl mx-auto"
+                  className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto px-4"
                 >
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-[var(--ff-color-primary-600)] mb-2">{displayOutfits.length}</div>
-                    <div className="text-sm text-gray-600 font-medium">Outfits</div>
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{displayOutfits.length}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Outfits</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-[var(--ff-color-primary-600)] mb-2">100%</div>
-                    <div className="text-sm text-gray-600 font-medium">Op maat</div>
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">100%</div>
+                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Op maat</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-[var(--ff-color-primary-600)] mb-2">{favs.length}</div>
-                    <div className="text-sm text-gray-600 font-medium">Favorieten</div>
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{favs.length}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Favorieten</div>
                   </div>
                 </motion.div>
               </>
@@ -416,9 +416,9 @@ export default function EnhancedResultsPage() {
         />
       </motion.section>
 
-      {/* Style DNA Section */}
+      {/* Style DNA Section - Responsive padding */}
       {hasCompletedQuiz && color && (
-        <section className="py-20 md:py-32 bg-[var(--color-surface)]/30 relative">
+        <section className="py-12 sm:py-16 md:py-20 lg:py-32 bg-[var(--color-surface)]/30 relative">
           <div className="ff-container">
             <AnimatedSection>
               <div className="text-center mb-20">
@@ -437,7 +437,7 @@ export default function EnhancedResultsPage() {
             </AnimatedSection>
 
             <div className="max-w-6xl mx-auto">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8 sm:mb-12">
                 <AnimatedSection delay={0.1}>
                   <motion.div
                     whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
@@ -529,9 +529,9 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
-      {/* Outfit Gallery - Premium */}
+      {/* Outfit Gallery - Premium - Responsive padding */}
       {hasCompletedQuiz && (
-        <section className="py-20 md:py-32 relative">
+        <section className="py-12 sm:py-16 md:py-20 lg:py-32 relative">
           <div className="ff-container">
             <AnimatedSection>
               <div className="text-center mb-20">
@@ -558,7 +558,7 @@ export default function EnhancedResultsPage() {
                 <p className="text-gray-600 text-lg">Jouw perfecte outfits worden geladen...</p>
               </div>
             ) : (
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+              <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
                 {displayOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
@@ -586,20 +586,21 @@ export default function EnhancedResultsPage() {
                             </div>
                           )}
 
-                          {/* Overlay Actions */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                          {/* Overlay Actions - Always visible on mobile, hover on desktop */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between gap-2">
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => toggleFav(String(id))}
-                                className={`w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+                                className={`w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
                                   isFav
                                     ? 'bg-red-500 text-white'
                                     : 'bg-white/90 text-gray-700 hover:bg-white'
                                 }`}
+                                aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                               >
-                                {isFav ? <Heart className="w-5 h-5 fill-current" /> : <Heart className="w-5 h-5" />}
+                                {isFav ? <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-current" /> : <Heart className="w-4 h-4 sm:w-5 sm:h-5" />}
                               </motion.button>
 
                               <motion.button
@@ -609,9 +610,10 @@ export default function EnhancedResultsPage() {
                                   e.stopPropagation();
                                   setSelectedOutfit(outfit);
                                 }}
-                                className="px-6 py-3 bg-white text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white transition-all"
+                                className="px-4 sm:px-6 py-3 min-h-[44px] bg-white text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm sm:text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.95] transition-all flex-1 sm:flex-none"
                               >
-                                Bekijk details
+                                <span className="hidden xs:inline">Bekijk details</span>
+                                <span className="xs:hidden">Details</span>
                               </motion.button>
                             </div>
                           </div>

@@ -99,23 +99,23 @@ export default function PricingPage() {
       {/* Cancel Banner */}
       {showCancelBanner && (
         <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-200">
-          <div className="ff-container py-4">
-            <div className="flex items-center justify-between max-w-4xl mx-auto">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-amber-600" />
+          <div className="ff-container py-3 sm:py-4">
+            <div className="flex items-center justify-between max-w-4xl mx-auto gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-amber-900">Checkout geannuleerd</h3>
-                  <p className="text-sm text-amber-700">Geen zorgen, je kunt altijd later upgraden wanneer je klaar bent.</p>
+                  <h3 className="font-bold text-amber-900 text-sm sm:text-base">Checkout geannuleerd</h3>
+                  <p className="text-xs sm:text-sm text-amber-700">Geen zorgen, je kunt altijd later upgraden wanneer je klaar bent.</p>
                 </div>
               </div>
               <button
                 onClick={handleCloseCancelBanner}
-                className="flex-shrink-0 p-2 text-amber-600 hover:text-amber-800 transition-colors"
+                className="flex-shrink-0 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-amber-600 hover:text-amber-800 transition-colors rounded-lg hover:bg-amber-100 active:scale-[0.95]"
                 aria-label="Sluit melding"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
@@ -123,39 +123,39 @@ export default function PricingPage() {
       )}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-20 md:py-28">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 sm:py-16 md:py-20 lg:py-28">
         <div className="ff-container relative">
-          <div className="max-w-5xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center px-4 sm:px-6">
 
             {/* Social Proof */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-6 shadow-sm">
-              <Users className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-              <span className="text-sm font-medium text-[var(--color-text)]">
-                Meer dan 2.500+ gebruikers ontdekten hun stijl
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-4 sm:mb-6 shadow-sm">
+              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-600)]" />
+              <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">
+                <span className="hidden xs:inline">Meer dan </span>2.500+ gebruikers<span className="hidden xs:inline"> ontdekten hun stijl</span>
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-6 leading-tight">
-              Investeer in <span className="text-[var(--ff-color-primary-600)]">jezelf</span>,<br />
-              niet in foute aankopen
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-text)] mb-4 sm:mb-6 leading-tight">
+              Investeer in <span className="text-[var(--ff-color-primary-600)]">jezelf</span>,<br className="hidden sm:inline" />
+              <span className="sm:hidden"> </span>niet in foute aankopen
             </h1>
 
-            <p className="text-xl md:text-2xl text-[var(--color-muted)] mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[var(--color-muted)] mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed">
               Stop met twijfelen. Start met vertrouwen. Betaal alleen voor wat werkt.
             </p>
 
             {/* Trust Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
-              <div className="flex items-center gap-2 text-[var(--color-text)]">
-                <Check className="w-5 h-5 text-green-600" />
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[var(--color-text)]">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 <span>30 dagen geld terug</span>
               </div>
-              <div className="flex items-center gap-2 text-[var(--color-text)]">
-                <Check className="w-5 h-5 text-green-600" />
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[var(--color-text)]">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 <span>Maandelijks opzegbaar</span>
               </div>
-              <div className="flex items-center gap-2 text-[var(--color-text)]">
-                <Check className="w-5 h-5 text-green-600" />
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[var(--color-text)]">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 <span>Geen verborgen kosten</span>
               </div>
             </div>
@@ -164,51 +164,51 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing Cards */}
-      <section className="py-20 -mt-12">
+      <section className="py-12 sm:py-16 md:py-20 -mt-8 sm:-mt-12">
         <div className="ff-container">
           <div className="max-w-7xl mx-auto">
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
 
               {/* Free Plan - Smaller */}
-              <article className="lg:col-span-4 bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)] h-full">
-                <header className="mb-6">
-                  <div className="inline-block px-3 py-1 bg-[var(--color-bg)] rounded-full text-xs font-bold text-[var(--color-muted)] mb-4">
+              <article className="lg:col-span-4 bg-[var(--color-surface)] rounded-2xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)] h-full">
+                <header className="mb-5 sm:mb-6">
+                  <div className="inline-block px-2.5 sm:px-3 py-1 bg-[var(--color-bg)] rounded-full text-[10px] xs:text-xs font-bold text-[var(--color-muted)] mb-3 sm:mb-4">
                     VOOR BEGINNERS
                   </div>
-                  <h2 className="text-2xl font-bold mb-2">Gratis</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold mb-2">Gratis</h2>
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-5xl font-bold">€0</span>
+                    <span className="text-4xl sm:text-5xl font-bold">€0</span>
                   </div>
-                  <p className="text-[var(--color-muted)]">Voor altijd gratis</p>
+                  <p className="text-sm sm:text-base text-[var(--color-muted)]">Voor altijd gratis</p>
                 </header>
 
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Ontdek je stijlprofiel</span>
+                <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                  <li className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm">Ontdek je stijlprofiel</span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">3 gepersonaliseerde outfits</span>
+                  <li className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm">3 gepersonaliseerde outfits</span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Basis kleuradvies</span>
+                  <li className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm">Basis kleuradvies</span>
                   </li>
-                  <li className="flex items-start gap-3 opacity-50">
-                    <Minus className="w-5 h-5 text-[var(--color-muted)] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Geen AI-styling assistent</span>
+                  <li className="flex items-start gap-2.5 sm:gap-3 opacity-50">
+                    <Minus className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm">Geen AI-styling assistent</span>
                   </li>
-                  <li className="flex items-start gap-3 opacity-50">
-                    <Minus className="w-5 h-5 text-[var(--color-muted)] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Beperkte outfits</span>
+                  <li className="flex items-start gap-2.5 sm:gap-3 opacity-50">
+                    <Minus className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm">Beperkte outfits</span>
                   </li>
                 </ul>
 
                 <NavLink
                   to="/onboarding"
-                  className="block text-center px-6 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--color-surface)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+                  className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold text-base hover:bg-[var(--color-surface)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
                   data-event="cta_start_free_pricing"
                 >
                   Start gratis
