@@ -81,50 +81,50 @@ export function HeroV3() {
             Vind je stijl. <span className="font-bold">Gratis.</span>
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+          {/* CTAs - Mobile-first with 44px+ touch targets */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5">
             <button
               onClick={handleStartClick}
-              className="group inline-flex items-center justify-center gap-3 px-8 py-5 sm:px-10 sm:py-6 bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-2xl font-bold text-lg sm:text-xl shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
+              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-9 sm:py-5 lg:px-10 lg:py-6 min-h-[52px] sm:min-h-[56px] bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
             >
               Start nu
-              <ArrowRight className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </button>
 
             <button
               onClick={handleExampleClick}
-              className="group inline-flex items-center justify-center gap-3 px-8 py-5 sm:px-10 sm:py-6 bg-white/15 hover:bg-white/25 backdrop-blur-md border-2 border-white/40 hover:border-white/60 text-white rounded-2xl font-bold text-lg sm:text-xl transition-all duration-300 hover:scale-[1.03]"
+              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-9 sm:py-5 lg:px-10 lg:py-6 min-h-[52px] sm:min-h-[56px] bg-white/15 hover:bg-white/25 backdrop-blur-md border-2 border-white/40 hover:border-white/60 text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl transition-all duration-300 hover:scale-[1.03]"
             >
-              <Play className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Play className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
               Zie voorbeeld
             </button>
           </div>
 
           {/* Trust indicators */}
-          <div className="flex flex-wrap items-center gap-5 sm:gap-8 mt-8 sm:mt-10 text-white/90">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-6 mt-6 sm:mt-8 lg:mt-10 text-white/90 text-sm sm:text-base">
             {todayCount !== undefined && todayCount > 0 && (
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
-                <span className="font-semibold text-base sm:text-lg">
-                  <span className="text-green-400">{todayCount}</span> {todayCount === 1 ? 'persoon deed' : 'mensen deden'} vandaag de quiz
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0" />
+                <span className="font-semibold">
+                  <span className="text-green-400">{todayCount}</span> {todayCount === 1 ? 'persoon' : 'mensen'} vandaag
                 </span>
               </div>
             )}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
               <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="font-semibold text-base sm:text-lg">Gratis start</span>
+              <span className="font-semibold">Gratis start</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
               <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span className="font-semibold text-base sm:text-lg">~2 minuten</span>
+              <span className="font-semibold">~2 minuten</span>
             </div>
           </div>
 

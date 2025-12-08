@@ -40,7 +40,7 @@ const features = [
 
 export function FeatureBlocksV4() {
   return (
-    <section className="py-32 sm:py-40 lg:py-48 bg-[var(--color-bg)] relative overflow-hidden">
+    <section className="py-16 sm:py-24 lg:py-32 xl:py-40 bg-[var(--color-bg)] relative overflow-hidden">
       {/* Subtle background texture */}
       <div className="absolute inset-0 opacity-[0.015]" style={{
         backgroundImage: `radial-gradient(circle at 2px 2px, var(--color-text) 1px, transparent 0)`
@@ -51,15 +51,15 @@ export function FeatureBlocksV4() {
         {features.map((feature, index) => (
           <div
             key={index}
-            className={`grid lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center ${
-              index < features.length - 1 ? 'mb-32 sm:mb-40 lg:mb-48' : ''
+            className={`grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 xl:gap-24 items-center ${
+              index < features.length - 1 ? 'mb-20 sm:mb-28 lg:mb-36 xl:mb-44' : ''
             } ${feature.reversed ? 'lg:grid-flow-dense' : ''}`}
           >
             {/* Visual Element */}
             <div className={`relative ${feature.reversed ? 'lg:col-start-2' : ''}`}>
 
               {/* Main visual block */}
-              <div className="relative aspect-[4/3] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] hover:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.3)] transition-shadow duration-700 ease-out">
+              <div className="relative aspect-[4/3] rounded-2xl sm:rounded-[2rem] lg:rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] hover:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.3)] transition-shadow duration-700 ease-out mb-8 sm:mb-10 lg:mb-0">
                 {/* Use specific images for each feature */}
                 {index === 0 ? (
                   <SmartImage
@@ -91,20 +91,34 @@ export function FeatureBlocksV4() {
                   </>
                 )}
 
-                {/* Floating stats card */}
-                <div className="absolute -bottom-6 sm:-bottom-8 -right-6 sm:-right-8 bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2)] p-6 sm:p-8 border border-[var(--color-border)]/30 hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.25)] transition-shadow duration-500">
-                  <div className="flex gap-6 sm:gap-10">
+                {/* Floating stats card - Hidden on mobile, positioned below on tablet, floating on desktop */}
+                <div className="hidden sm:block absolute sm:-bottom-6 lg:-bottom-8 sm:-right-4 lg:-right-8 bg-white/95 backdrop-blur-xl rounded-2xl lg:rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2)] p-5 sm:p-6 lg:p-8 border border-[var(--color-border)]/30 hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.25)] transition-shadow duration-500">
+                  <div className="flex gap-4 sm:gap-6 lg:gap-10">
                     {feature.stats.map((stat, idx) => (
                       <div key={idx}>
-                        <div className="text-3xl sm:text-4xl font-bold text-[var(--ff-color-primary-700)] mb-1 sm:mb-2">
+                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--ff-color-primary-700)] mb-1 lg:mb-2">
                           {stat.value}
                         </div>
-                        <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium tracking-wide uppercase">
+                        <div className="text-xs lg:text-sm text-[var(--color-muted)] font-medium tracking-wide uppercase">
                           {stat.label}
                         </div>
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Mobile stats - Below image on mobile */}
+                <div className="sm:hidden flex gap-4 justify-center mt-4">
+                  {feature.stats.map((stat, idx) => (
+                    <div key={idx} className="text-center">
+                      <div className="text-2xl font-bold text-[var(--ff-color-primary-700)] mb-1">
+                        {stat.value}
+                      </div>
+                      <div className="text-xs text-[var(--color-muted)] font-medium uppercase">
+                        {stat.label}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -112,26 +126,26 @@ export function FeatureBlocksV4() {
             {/* Content */}
             <div className={feature.reversed ? 'lg:col-start-1 lg:row-start-1' : ''}>
               {/* Icon badge */}
-              <div className={`inline-flex w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br ${feature.iconBg} rounded-2xl sm:rounded-3xl items-center justify-center mb-6 sm:mb-8 shadow-lg hover:shadow-xl transition-shadow duration-500`}>
-                <feature.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2} />
+              <div className={`inline-flex w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br ${feature.iconBg} rounded-2xl lg:rounded-3xl items-center justify-center mb-5 sm:mb-6 lg:mb-8 shadow-lg hover:shadow-xl transition-shadow duration-500`}>
+                <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" strokeWidth={2} />
               </div>
 
               {/* Title */}
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--color-text)] mb-6 sm:mb-8 leading-[1.1] tracking-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] mb-4 sm:mb-6 lg:mb-8 leading-[1.1] tracking-tight">
                 {feature.title}
               </h2>
 
               {/* Description */}
-              <p className="text-lg sm:text-xl lg:text-2xl text-[var(--color-muted)] leading-[1.7] mb-8 sm:mb-10 font-light max-w-xl">
+              <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-[var(--color-muted)] leading-[1.6] sm:leading-[1.7] mb-6 sm:mb-8 lg:mb-10 font-light max-w-xl">
                 {feature.description}
               </p>
 
               {/* Feature bullets */}
-              <div className="space-y-4 sm:space-y-5">
+              <div className="space-y-3 sm:space-y-4 lg:space-y-5">
                 {feature.bullets.map((bullet, idx) => (
-                  <div key={idx} className="flex items-start gap-3 sm:gap-4 group">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[var(--ff-color-primary-200)] transition-colors duration-300">
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
+                  <div key={idx} className="flex items-start gap-3 lg:gap-4 group">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[var(--ff-color-primary-200)] transition-colors duration-300">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>

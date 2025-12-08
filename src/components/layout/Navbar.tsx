@@ -72,7 +72,7 @@ export default function Navbar() {
         {/* Brand */}
         <a
           href="/"
-          className="inline-flex items-center rounded-xl px-2 py-1 focus-visible:shadow-[var(--shadow-ring)]"
+          className="inline-flex items-center rounded-xl px-3 py-2 min-h-[44px] focus-visible:shadow-[var(--shadow-ring)]"
           aria-label="FitFi Home"
         >
           <span className="text-base font-semibold tracking-wide">FitFi</span>
@@ -86,33 +86,33 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* CTA's */}
+          {/* CTA's - 44px touch targets */}
           <div className="flex items-center gap-2">
             {!isAuthed ? (
               <>
-                <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary h-9" data-event="nav_login">
+                <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary min-h-[44px] px-4" data-event="nav_login">
                   Inloggen
                 </a>
-                <a href="/registreren" className="inline-flex ff-btn ff-btn-primary h-9" data-event="nav_start_gratis">
+                <a href="/registreren" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_start_gratis">
                   Begin gratis
                 </a>
               </>
             ) : (
               <>
-                <a href="/dashboard" className="inline-flex ff-btn ff-btn-primary h-9" data-event="nav_dashboard">
+                <a href="/dashboard" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_dashboard">
                   Dashboard
                 </a>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="inline-flex ff-btn ff-btn-secondary h-9"
+                  className="inline-flex ff-btn ff-btn-secondary min-h-[44px] px-4"
                   data-event="nav_logout"
                 >
                   Uitloggen
                 </button>
                 <div
                   aria-label="Account"
-                  className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)]"
+                  className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)]"
                 >
                   <span className="text-sm font-semibold">{userInitial}</span>
                 </div>
@@ -121,10 +121,10 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile toggle - 44px touch target */}
         <button
           type="button"
-          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)] ml-2"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)] ml-2"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -141,15 +141,15 @@ export default function Navbar() {
         className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]"
         aria-label="Mobiel menu"
       >
-        <div className="ff-container py-3">
-          <ul className="flex flex-col divide-y divide-[var(--color-border)]">
+        <div className="ff-container py-4">
+          <ul className="flex flex-col gap-1">
             {links.map((l) => (
               <li key={l.to}>
                 <NavLink
                   to={l.to}
                   className={({ isActive }) =>
                     [
-                      "block px-2 py-3 rounded-xl focus-visible:shadow-[var(--shadow-ring)] transition-colors",
+                      "block px-4 py-3 min-h-[44px] rounded-xl focus-visible:shadow-[var(--shadow-ring)] transition-colors font-medium",
                       isActive
                         ? "bg-[color-mix(in oklab,var(--color-primary) 14%,transparent)] border border-[var(--color-primary)]"
                         : "hover:bg-[color-mix(in oklab,var(--color-primary) 10%,transparent)] border border-transparent",
@@ -162,16 +162,16 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Auth CTA's mobiel */}
+          {/* Auth CTA's mobiel - 44px touch targets */}
           {!isAuthed ? (
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <a href="/inloggen" className="ff-btn ff-btn-secondary h-10 w-full">Log in</a>
-              <a href="/registreren" className="ff-btn ff-btn-primary h-10 w-full">Start gratis</a>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <a href="/inloggen" className="ff-btn ff-btn-secondary min-h-[44px] w-full">Log in</a>
+              <a href="/registreren" className="ff-btn ff-btn-primary min-h-[44px] w-full">Start gratis</a>
             </div>
           ) : (
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              <a href="/dashboard" className="ff-btn ff-btn-primary h-10 w-full col-span-2">Dashboard</a>
-              <button onClick={handleLogout} className="ff-btn ff-btn-secondary h-10 w-full">Uitloggen</button>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              <a href="/dashboard" className="ff-btn ff-btn-primary min-h-[44px] w-full col-span-2">Dashboard</a>
+              <button onClick={handleLogout} className="ff-btn ff-btn-secondary min-h-[44px] w-full">Uit</button>
             </div>
           )}
         </div>
@@ -186,7 +186,7 @@ function NavChip({ to, label }: { to: string; label: string }) {
       to={to}
       className={({ isActive }) =>
         [
-          "inline-flex items-center rounded-full px-3 py-1.5 text-sm",
+          "inline-flex items-center rounded-full px-4 py-2 text-sm min-h-[44px]",
           "focus-visible:outline-none focus-visible:shadow-[var(--shadow-ring)]",
           "transition-colors",
           isActive
