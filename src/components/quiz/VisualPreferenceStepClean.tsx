@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader as Loader2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 
 interface MoodPhoto {
