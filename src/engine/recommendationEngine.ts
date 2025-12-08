@@ -5,17 +5,19 @@ import { analyzeUserProfile, determineArchetypesFromAnswers } from './profile-ma
 import { filterProducts, getFilteringStats, type FilterCriteria } from './productFiltering';
 import { shuffleProductsByCategory } from './productShuffling';
 import { handleInsufficientProducts, getCategoryCounts, formatSuggestionMessage } from './insufficientProductsHandler';
+import { generatePhotoEnhancedOutfits, hasPhotoAnalysis } from './photoEnhancedRecommendationEngine';
 
 /**
  * Main recommendation engine that generates personalized outfit recommendations
- * 
+ * NOW WITH AUTOMATIC PHOTO ENHANCEMENT when available
+ *
  * @param user - User profile with style preferences
  * @param products - Available products to choose from
  * @param count - Number of outfits to generate
  * @param options - Additional options for recommendation
  * @returns Array of recommended outfits
  */
-export function generateRecommendations(
+export async function generateRecommendations(
   user: UserProfile,
   products: Product[],
   count: number = 3,
@@ -23,8 +25,9 @@ export function generateRecommendations(
     excludeIds?: string[];
     preferredOccasions?: string[];
     season?: string;
+    disablePhotoEnhancement?: boolean; // Option to disable photo enhancement
   }
-): Outfit[] {
+): Promise<Outfit[]> {
   // Validate inputs
   if (!user || !products || products.length === 0) {
     console.warn('[RecommendationEngine] Invalid inputs provided');
@@ -33,7 +36,7 @@ export function generateRecommendations(
 
   // Filter and sort products based on user preferences
   const relevantProducts = filterAndSortProducts(products, user);
-  
+
   if (relevantProducts.length < 4) {
     console.warn('[RecommendationEngine] Not enough relevant products for outfit generation');
     return [];
@@ -51,7 +54,46 @@ export function generateRecommendations(
     mixFactor = profileAnalysis.mixFactor;
   }
 
-  // Generate outfits using the outfit generation engine
+  // Check if photo enhancement is available and enabled
+  const usePhotoEnhancement = !options?.disablePhotoEnhancement && user.id;
+  let photoAvailable = false;
+
+  if (usePhotoEnhancement) {
+    try {
+      photoAvailable = await hasPhotoAnalysis(user.id);
+      if (photoAvailable) {
+        console.log('📷 [RecommendationEngine] Photo enhancement ENABLED - using color-intelligent matching');
+      }
+    } catch (error) {
+      console.warn('📷 [RecommendationEngine] Failed to check photo availability:', error);
+    }
+  }
+
+  // Generate outfits with photo enhancement if available
+  if (photoAvailable) {
+    return await generatePhotoEnhancedOutfits(
+      primaryArchetype,
+      relevantProducts,
+      count,
+      secondaryArchetype,
+      mixFactor,
+      {
+        userId: user.id,
+        excludeIds: options?.excludeIds,
+        preferredOccasions: options?.preferredOccasions,
+        maxAttempts: 10,
+        variationLevel: 'medium',
+        enforceCompletion: true,
+        minCompleteness: 80,
+        enableColorMatching: true,
+        filterClashes: false, // Keep disabled to maintain variety
+        minColorScore: 40
+      }
+    );
+  }
+
+  // Fall back to standard generation
+  console.log('📷 [RecommendationEngine] Photo enhancement DISABLED - using standard generation');
   const outfits = generateOutfits(
     primaryArchetype,
     relevantProducts,
@@ -69,7 +111,7 @@ export function generateRecommendations(
   );
 
   console.log(`[RecommendationEngine] Generated ${outfits.length} recommendations for ${user.name || 'user'}`);
-  
+
   return outfits;
 }
 

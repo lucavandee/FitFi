@@ -16,6 +16,12 @@ export interface Product {
   affiliateUrl?: string;
   matchScore?: number;
   season?: string[]; // Season property
+  colors?: string[]; // Product colors
+  color?: string; // Single color
+  // Photo enhancement fields
+  photoColorScore?: number;
+  photoEnhanced?: boolean;
+  undertoneMatch?: 'warm' | 'cool' | 'neutral';
 }
 
 /**
@@ -110,6 +116,8 @@ export interface OutfitGenerationOptions {
   variationLevel?: VariationLevel; // Level of variation between outfits
   enforceCompletion?: boolean; // Whether to strictly enforce outfit completion
   minCompleteness?: number; // Minimum completeness score (0-100)
+  photoAnalysisId?: string; // Enable photo-enhanced matching
+  usePhotoEnhancement?: boolean; // Toggle photo enhancement
 }
 
 /**
