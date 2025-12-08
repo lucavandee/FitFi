@@ -374,9 +374,13 @@ export default function OnboardingFlowPage() {
         }
 
         // Create result object with generated profile
+        // Convert archetype to Dutch format for database
+        const { archetypeToDutch } = await import('@/config/archetypeMapping');
+        const dutchArchetype = archetypeToDutch(archetype);
+
         const updatedResult = {
           color: colorProfile,
-          archetype: archetype
+          archetype: dutchArchetype
         };
 
         const savePromise = saveToSupabase(client, user, sessionId, updatedResult);

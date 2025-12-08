@@ -2,6 +2,7 @@ import { VisualPreferenceService, type MoodPhoto } from '../visualPreferences/vi
 import { ArchetypeDetector } from './archetypeDetector';
 import type { ColorProfile } from '@/lib/quiz/types';
 import type { ArchetypeKey } from '@/config/archetypes';
+import { archetypeToDutch } from '@/config/archetypeMapping';
 
 export interface QuizColorAnswers {
   colorPreference?: string;
@@ -85,9 +86,15 @@ export class StyleProfileGenerator {
       dataSource = 'swipes_only';
     }
 
+    // Convert English archetypes to Dutch for compatibility with recommendationEngine
+    const dutchArchetype = archetypeToDutch(archetypeResult.primary);
+    const dutchSecondary = archetypeToDutch(archetypeResult.secondary);
+
     console.log('[StyleProfileGenerator] ✅ Style profile generated:', {
       archetype: archetypeResult.primary,
+      dutchArchetype,
       secondaryArchetype: archetypeResult.secondary,
+      dutchSecondary,
       temperature: colorProfile.temperature,
       chroma: colorProfile.chroma,
       contrast: colorProfile.contrast,

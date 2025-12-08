@@ -6,6 +6,7 @@ import { filterProducts, getFilteringStats, type FilterCriteria } from './produc
 import { shuffleProductsByCategory } from './productShuffling';
 import { handleInsufficientProducts, getCategoryCounts, formatSuggestionMessage } from './insufficientProductsHandler';
 import { generatePhotoEnhancedOutfits, hasPhotoAnalysis } from './photoEnhancedRecommendationEngine';
+import { archetypeToDutch } from '@/config/archetypeMapping';
 
 /**
  * Main recommendation engine that generates personalized outfit recommendations
