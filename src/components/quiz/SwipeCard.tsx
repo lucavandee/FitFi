@@ -108,32 +108,57 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         )}
       </motion.div>
 
+      {/* Action Buttons - Always Visible with Pulse Hint */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
         className="flex gap-4 sm:gap-6 z-10 mt-6 sm:mt-8 flex-shrink-0"
       >
         <motion.button
           onClick={() => handleButtonClick('left')}
           whileHover={{ scale: 1.15, rotate: -5 }}
           whileTap={{ scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[var(--color-surface)] border-2 border-red-400 flex items-center justify-center shadow-lg active:shadow-xl"
+          animate={{
+            scale: [1, 1.05, 1],
+            boxShadow: [
+              '0 10px 15px -3px rgba(239, 68, 68, 0.2)',
+              '0 10px 20px -3px rgba(239, 68, 68, 0.4)',
+              '0 10px 15px -3px rgba(239, 68, 68, 0.2)'
+            ]
+          }}
+          transition={{
+            scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+            boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+          }}
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--color-surface)] border-3 border-red-400 flex items-center justify-center shadow-lg active:shadow-xl"
           aria-label="Niet mijn stijl"
+          title="Niet mijn stijl (of veeg naar links)"
         >
-          <X className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
+          <X className="w-7 h-7 sm:w-9 sm:h-9 text-red-500" strokeWidth={2.5} />
         </motion.button>
 
         <motion.button
           onClick={() => handleButtonClick('right')}
           whileHover={{ scale: 1.15, rotate: 5 }}
           whileTap={{ scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[var(--color-surface)] border-2 border-green-400 flex items-center justify-center shadow-lg active:shadow-xl"
+          animate={{
+            scale: [1, 1.05, 1],
+            boxShadow: [
+              '0 10px 15px -3px rgba(34, 197, 94, 0.2)',
+              '0 10px 20px -3px rgba(34, 197, 94, 0.4)',
+              '0 10px 15px -3px rgba(34, 197, 94, 0.2)'
+            ]
+          }}
+          transition={{
+            scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+            boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+            delay: 0.5
+          }}
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--color-surface)] border-3 border-green-400 flex items-center justify-center shadow-lg active:shadow-xl"
           aria-label="Dit spreekt me aan"
+          title="Dit spreekt me aan (of veeg naar rechts)"
         >
-          <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
+          <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-green-500" strokeWidth={2.5} />
         </motion.button>
       </motion.div>
     </div>

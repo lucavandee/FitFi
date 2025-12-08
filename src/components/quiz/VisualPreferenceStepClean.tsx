@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
-import { Sparkles, Loader as Loader2 } from 'lucide-react';
+import { Sparkles, Loader as Loader2, Heart, X } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 
 interface MoodPhoto {
@@ -138,7 +138,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   const progress = (swipeCount / moodPhotos.length) * 100;
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)]">
+    <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
       {/* Celebration Overlay - ALWAYS on top */}
       <AnimatePresence>
         {showCelebration && (
@@ -183,7 +183,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           Welke stijl spreekt je aan?
         </h2>
         <p className="text-sm text-[var(--color-muted)]">
-          Swipe door {moodPhotos.length} outfits
+          Gebruik de knoppen of swipe door {moodPhotos.length} outfits
         </p>
 
         {/* Progress */}
@@ -202,36 +202,47 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         </div>
       </div>
 
-      {/* Swipe Area */}
-      <div className="flex-1 flex items-center justify-center px-4 min-h-0">
-        <AnimatePresence mode="wait">
-          {currentPhoto && (
-            <SwipeCard
-              key={currentPhoto.id}
-              imageUrl={currentPhoto.image_url}
-              onSwipe={handleSwipe}
-              index={currentIndex}
-              total={moodPhotos.length}
-            />
-          )}
-        </AnimatePresence>
+      {/* Swipe Area - Fixed Height to Prevent Scroll Jump */}
+      <div className="flex-1 flex items-center justify-center px-4 min-h-0 relative">
+        <div className="w-full max-w-[400px] h-[600px] sm:h-[680px] flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            {currentPhoto && (
+              <SwipeCard
+                key={currentPhoto.id}
+                imageUrl={currentPhoto.image_url}
+                onSwipe={handleSwipe}
+                index={currentIndex}
+                total={moodPhotos.length}
+              />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Footer Legend */}
-      <div className="flex-shrink-0 px-4 pb-6 text-center">
-        <div className="flex items-center justify-center gap-4 text-xs text-[var(--color-muted)]">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full border-2 border-red-400 flex items-center justify-center">
-              <span className="text-xs">←</span>
+      {/* Footer Instructions - Clearer Guidance */}
+      <div className="flex-shrink-0 px-4 pb-6">
+        <div className="max-w-md mx-auto">
+          <p className="text-center text-sm font-medium text-[var(--color-text)] mb-3">
+            Klik op de knoppen of sleep de foto
+          </p>
+          <div className="flex items-center justify-center gap-6 text-xs text-[var(--color-muted)]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full border-2 border-red-400 flex items-center justify-center bg-[var(--color-surface)]">
+                <X className="w-4 h-4 text-red-500" />
+              </div>
+              <div className="text-left">
+                <div className="font-medium text-[var(--color-text)]">Niet mijn stijl</div>
+                <div className="text-xs">← Links</div>
+              </div>
             </div>
-            <span className="hidden sm:inline">Niet mijn stijl</span>
-            <span className="sm:hidden">Nee</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline">Spreekt me aan</span>
-            <span className="sm:hidden">Ja</span>
-            <div className="w-6 h-6 rounded-full border-2 border-green-400 flex items-center justify-center">
-              <span className="text-xs">→</span>
+            <div className="flex items-center gap-2">
+              <div className="text-right">
+                <div className="font-medium text-[var(--color-text)]">Spreekt me aan</div>
+                <div className="text-xs">Rechts →</div>
+              </div>
+              <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center bg-[var(--color-surface)]">
+                <Heart className="w-4 h-4 text-green-500" />
+              </div>
             </div>
           </div>
         </div>
