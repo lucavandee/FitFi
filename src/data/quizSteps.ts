@@ -241,5 +241,115 @@ export const quizSteps: QuizStep[] = [
     field: 'photoUrl',
     type: 'photo',
     required: false
+  },
+  {
+    id: 8,
+    title: 'Welke pasvorm prefereer je?',
+    description: 'Kies de pasvorm die het beste bij jouw stijl past',
+    field: 'fit',
+    type: 'radio',
+    required: true,
+    options: [
+      {
+        value: 'slim',
+        label: 'Slim fit',
+        description: 'Nauw aansluitend, tailored look'
+      },
+      {
+        value: 'regular',
+        label: 'Regular fit',
+        description: 'Comfortabel, klassieke pasvorm'
+      },
+      {
+        value: 'relaxed',
+        label: 'Relaxed fit',
+        description: 'Losse, comfortabele pasvorm'
+      },
+      {
+        value: 'oversized',
+        label: 'Oversized',
+        description: 'Ruim, streetwear stijl'
+      }
+    ]
+  },
+  {
+    id: 9,
+    title: 'Welke materialen spreken je aan?',
+    description: 'Selecteer alle materialen die je prettig vindt (meerdere keuzes mogelijk)',
+    field: 'materials',
+    type: 'checkbox',
+    required: false,
+    options: [
+      {
+        value: 'katoen',
+        label: 'Katoen',
+        description: 'Natuurlijk, ademend, comfortabel'
+      },
+      {
+        value: 'wol',
+        label: 'Wol',
+        description: 'Warm, luxe, duurzaam'
+      },
+      {
+        value: 'denim',
+        label: 'Denim',
+        description: 'Casual, robuust, tijdloos'
+      },
+      {
+        value: 'fleece',
+        label: 'Fleece',
+        description: 'Zacht, sportief, warm'
+      },
+      {
+        value: 'tech',
+        label: 'Tech fabrics',
+        description: 'Performance, waterafstotend, modern'
+      },
+      {
+        value: 'linnen',
+        label: 'Linnen',
+        description: 'Luchtig, zomers, natuurlijk'
+      }
+    ]
+  },
+  {
+    id: 10,
+    title: 'Wat zijn jouw stijldoelen?',
+    description: 'Selecteer alle doelen die belangrijk voor je zijn',
+    field: 'goals',
+    type: 'multiselect',
+    required: true,
+    options: [
+      {
+        value: 'timeless',
+        label: 'Tijdloze garderobe',
+        description: 'Klassieke stukken die jaren meegaan'
+      },
+      {
+        value: 'trendy',
+        label: 'On-trend blijven',
+        description: 'Laatste fashion trends volgen'
+      },
+      {
+        value: 'minimal',
+        label: 'Minimalistisch',
+        description: 'Minder is meer, clean aesthetic'
+      },
+      {
+        value: 'express',
+        label: 'Mezelf uitdrukken',
+        description: 'Unieke statement pieces, persoonlijke stijl'
+      },
+      {
+        value: 'professional',
+        label: 'Professioneel ogen',
+        description: 'Werk en carrière focus'
+      },
+      {
+        value: 'comfort',
+        label: 'Comfort prioriteit',
+        description: 'Prettig dragen boven alles'
+      }
+    ]
   }
 ];

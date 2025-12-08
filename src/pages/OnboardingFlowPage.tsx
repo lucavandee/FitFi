@@ -13,6 +13,7 @@ import { VisualPreferenceStepClean as VisualPreferenceStep } from "@/components/
 import { CalibrationStep } from "@/components/quiz/CalibrationStep";
 import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
+import { VisualPreferenceService } from "@/services/visualPreferences/visualPreferenceService";
 import { CircularProgressIndicator } from "@/components/quiz/CircularProgressIndicator";
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
@@ -393,10 +394,35 @@ export default function OnboardingFlowPage() {
 
         if (syncSuccess && answers.visualPreferencesCompleted && answers.calibrationCompleted) {
           try {
+            // STEP 1: Compute visual embedding from swipe data
+            console.log('[OnboardingFlow] Computing visual embedding from swipes...');
+            const embedding = await VisualPreferenceService.computeVisualEmbedding(userId, sessionId);
+            console.log('✅ [OnboardingFlow] Visual embedding computed:', embedding);
+
+            // STEP 2: Save embedding to style_profiles
+            if (embedding && Object.keys(embedding).length > 0) {
+              const { error: updateError } = await client
+                .from('style_profiles')
+                .update({
+                  visual_preference_embedding: embedding,
+                  visual_preference_completed_at: new Date().toISOString()
+                })
+                .eq(userId ? 'user_id' : 'session_id', userId || sessionId);
+
+              if (updateError) {
+                console.error('⚠️ [OnboardingFlow] Failed to save embedding:', updateError);
+              } else {
+                console.log('✅ [OnboardingFlow] Embedding saved to style_profiles');
+              }
+            } else {
+              console.warn('⚠️ [OnboardingFlow] Empty embedding computed, skipping save');
+            }
+
+            // STEP 3: Lock embedding for finalization
             await EmbeddingService.lockEmbedding(userId, sessionId);
             console.log('✅ [OnboardingFlow] Embedding locked successfully!');
           } catch (lockError) {
-            console.error('⚠️ [OnboardingFlow] Failed to lock embedding:', lockError);
+            console.error('⚠️ [OnboardingFlow] Failed to compute/save/lock embedding:', lockError);
           }
         }
       }

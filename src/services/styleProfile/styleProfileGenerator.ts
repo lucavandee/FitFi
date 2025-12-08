@@ -161,8 +161,8 @@ export class StyleProfileGenerator {
       return null;
     }
 
-    // Check for color preference answers
-    const colorPref = answers.colorPreference || answers.colors || answers.colorTemp;
+    // Check for color preference answers (support multiple field names for backwards compatibility)
+    const colorPref = answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
     const neutralPreference = answers.neutrals || answers.neutral || false;
 
     // Map quiz answers to temperature
@@ -172,16 +172,22 @@ export class StyleProfileGenerator {
     if (typeof colorPref === 'string') {
       const pref = colorPref.toLowerCase();
 
-      // Detect neutral preference
-      if (pref.includes('neutrale') || pref.includes('zwart') || pref.includes('wit') || pref.includes('grijs')) {
+      // Map baseColors values from quiz
+      if (pref === 'neutral' || pref.includes('neutrale') || pref.includes('zwart') || pref.includes('wit') || pref.includes('grijs')) {
         temperature = 'koel'; // Zwart/wit/grijs = cool tones
-        preferredColors.push('zwart', 'wit', 'grijs');
-      } else if (pref.includes('warm') || pref.includes('beige') || pref.includes('camel') || pref.includes('bruin')) {
+        preferredColors.push('zwart', 'wit', 'grijs', 'beige', 'navy');
+      } else if (pref === 'earth' || pref.includes('aardse') || pref.includes('warm') || pref.includes('beige') || pref.includes('camel') || pref.includes('bruin')) {
         temperature = 'warm';
-        preferredColors.push('beige', 'camel', 'bruin');
-      } else if (pref.includes('koel') || pref.includes('blauw') || pref.includes('navy')) {
+        preferredColors.push('bruin', 'camel', 'khaki', 'olijfgroen');
+      } else if (pref === 'jewel' || pref.includes('juweel') || pref.includes('koel') || pref.includes('blauw') || pref.includes('navy')) {
         temperature = 'koel';
-        preferredColors.push('navy', 'blauw', 'grijs');
+        preferredColors.push('smaragdgroen', 'saffierblauw', 'robijnrood');
+      } else if (pref === 'pastel' || pref.includes('pastel')) {
+        temperature = 'koel';
+        preferredColors.push('roze', 'lichtblauw', 'lavendel');
+      } else if (pref === 'bold' || pref.includes('fel')) {
+        temperature = 'warm';
+        preferredColors.push('rood', 'blauw', 'geel');
       }
     }
 

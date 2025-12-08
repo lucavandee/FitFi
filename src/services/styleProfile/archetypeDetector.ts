@@ -113,9 +113,10 @@ export class ArchetypeDetector {
     let score = 0;
     const reasons: string[] = [];
 
-    // Style keywords
-    if (inputs.style && Array.isArray(inputs.style)) {
-      const styleKeywords = inputs.style.map(s => s.toLowerCase());
+    // Style keywords (support both 'style' and 'stylePreferences')
+    const styleArray = inputs.stylePreferences || inputs.style;
+    if (styleArray && Array.isArray(styleArray)) {
+      const styleKeywords = styleArray.map(s => s.toLowerCase());
 
       // MINIMALIST detection
       if (descriptor.key === 'MINIMALIST') {
@@ -180,40 +181,67 @@ export class ArchetypeDetector {
     if (inputs.goals && Array.isArray(inputs.goals)) {
       const goals = inputs.goals.map(g => g.toLowerCase());
 
-      if (goals.some(g => g.includes('sport') || g.includes('actief'))) {
-        if (descriptor.key === 'ATHLETIC' || descriptor.key === 'STREETWEAR') {
-          score += 15;
-          reasons.push('Athletic/active goals');
+      // MINIMALIST: timeless, minimal goals
+      if (goals.some(g => g.includes('minimal') || g.includes('timeless') || g.includes('tijdloos'))) {
+        if (descriptor.key === 'MINIMALIST') {
+          score += 25;
+          reasons.push('Minimalist/timeless goals');
         }
       }
 
-      if (goals.some(g => g.includes('werk') || g.includes('office') || g.includes('professioneel'))) {
+      // CLASSIC: professional, timeless goals
+      if (goals.some(g => g.includes('professional') || g.includes('professioneel') || g.includes('werk') || g.includes('office'))) {
         if (descriptor.key === 'SMART_CASUAL' || descriptor.key === 'CLASSIC') {
-          score += 15;
+          score += 20;
           reasons.push('Professional/work goals');
         }
       }
 
-      if (goals.some(g => g.includes('minimal') || g.includes('timeless') || g.includes('tijdloos'))) {
-        if (descriptor.key === 'MINIMALIST') {
+      // STREETWEAR: express yourself, trendy
+      if (goals.some(g => g.includes('express') || g.includes('trendy') || g.includes('trend'))) {
+        if (descriptor.key === 'STREETWEAR' || descriptor.key === 'AVANT_GARDE') {
           score += 20;
-          reasons.push('Minimalist/timeless goals');
+          reasons.push('Self-expression/trendy goals');
+        }
+      }
+
+      // ATHLETIC: comfort, sport
+      if (goals.some(g => g.includes('comfort') || g.includes('sport') || g.includes('actief'))) {
+        if (descriptor.key === 'ATHLETIC' || descriptor.key === 'STREETWEAR') {
+          score += 15;
+          reasons.push('Comfort/athletic goals');
         }
       }
     }
 
-    // Materials
+    // Materials (can be array or string)
     if (inputs.materials) {
-      const mat = inputs.materials.toLowerCase();
+      const materials = Array.isArray(inputs.materials) ? inputs.materials : [inputs.materials];
+      const matLower = materials.map(m => m.toLowerCase());
 
-      if (mat.includes('tech') && descriptor.key === 'ATHLETIC') {
-        score += 10;
+      if (matLower.some(m => m.includes('tech')) && descriptor.key === 'ATHLETIC') {
+        score += 12;
         reasons.push('Tech material preference');
       }
 
-      if (mat.includes('fleece') && descriptor.key === 'STREETWEAR') {
-        score += 10;
+      if (matLower.some(m => m.includes('fleece')) && descriptor.key === 'STREETWEAR') {
+        score += 12;
         reasons.push('Fleece material preference');
+      }
+
+      if (matLower.some(m => m.includes('wol') || m.includes('wool')) && descriptor.key === 'CLASSIC') {
+        score += 10;
+        reasons.push('Wool material preference');
+      }
+
+      if (matLower.some(m => m.includes('denim')) && descriptor.key === 'STREETWEAR') {
+        score += 10;
+        reasons.push('Denim material preference');
+      }
+
+      if (matLower.some(m => m.includes('linnen') || m.includes('linen')) && descriptor.key === 'MINIMALIST') {
+        score += 10;
+        reasons.push('Linen material preference');
       }
     }
 
@@ -250,11 +278,13 @@ export class ArchetypeDetector {
     // Analyze style tags from liked photos
     const styleTags: string[] = [];
     photos.forEach(photo => {
-      if (photo.style_tags && Array.isArray(photo.style_tags)) {
-        styleTags.push(...photo.style_tags);
-      }
+      // Primary source: mood_tags (exists in database)
       if (photo.mood_tags && Array.isArray(photo.mood_tags)) {
         styleTags.push(...photo.mood_tags);
+      }
+      // Optional: style_tags if column is added in future
+      if ((photo as any).style_tags && Array.isArray((photo as any).style_tags)) {
+        styleTags.push(...(photo as any).style_tags);
       }
     });
 

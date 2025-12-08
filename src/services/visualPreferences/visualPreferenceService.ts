@@ -49,24 +49,44 @@ export class VisualPreferenceService {
     return client;
   }
 
-  static async getMoodPhotos(limit = 10): Promise<MoodPhoto[]> {
+  static async getMoodPhotos(
+    limit = 10,
+    gender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say'
+  ): Promise<MoodPhoto[]> {
     const client = this.getClient();
     if (!client) {
       return [];
     }
 
-    const { data, error } = await client
+    let query = client
       .from('mood_photos')
       .select('*')
-      .eq('active', true)
+      .eq('active', true);
+
+    // Apply gender filtering
+    if (gender === 'male') {
+      // Male users see male + unisex photos
+      query = query.in('gender', ['male', 'unisex']);
+    } else if (gender === 'female') {
+      // Female users see female + unisex photos
+      query = query.in('gender', ['female', 'unisex']);
+    } else {
+      // Non-binary or prefer-not-to-say: show only unisex photos
+      query = query.eq('gender', 'unisex');
+    }
+
+    query = query
       .order('display_order', { ascending: true })
       .limit(limit);
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Failed to fetch mood photos:', error);
       throw error;
     }
 
+    console.log(`✅ [VisualPreferenceService] Loaded ${data?.length || 0} mood photos for gender: ${gender || 'all'}`);
     return data || [];
   }
 

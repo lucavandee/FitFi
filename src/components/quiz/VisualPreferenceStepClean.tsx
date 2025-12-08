@@ -35,50 +35,20 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   const loadMoodPhotos = async () => {
     try {
-      const { getSupabase } = await import('@/lib/supabase');
-      const client = getSupabase();
+      // Use centralized service for consistent gender filtering
+      const { VisualPreferenceService } = await import('@/services/visualPreferences/visualPreferenceService');
 
-      if (!client) {
-        console.error('Supabase not available');
-        setLoading(false);
-        return;
+      const photos = await VisualPreferenceService.getMoodPhotos(15, userGender);
+
+      if (photos.length === 0) {
+        console.warn('⚠️ No mood photos found for gender:', userGender);
+        // Fallback: try loading unisex photos
+        const fallbackPhotos = await VisualPreferenceService.getMoodPhotos(15, 'prefer-not-to-say');
+        setMoodPhotos(fallbackPhotos);
+      } else {
+        setMoodPhotos(photos);
       }
 
-      const genderForQuery = userGender === 'male' ? 'male' : userGender === 'female' ? 'female' : null;
-
-      if (!genderForQuery) {
-        console.error('No valid gender provided');
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await client
-        .from('mood_photos')
-        .select('*')
-        .eq('active', true)
-        .eq('gender', genderForQuery)
-        .order('display_order', { ascending: true });
-
-      if (error) throw error;
-
-      let photos = data || [];
-
-      if (photos.length < 10) {
-        const { data: unisexData } = await client
-          .from('mood_photos')
-          .select('*')
-          .eq('active', true)
-          .eq('gender', 'unisex')
-          .order('display_order', { ascending: true })
-          .limit(10 - photos.length);
-
-        if (unisexData) {
-          photos = [...photos, ...unisexData];
-        }
-      }
-
-      console.log(`✅ Loaded ${photos.length} mood photos for ${genderForQuery}`);
-      setMoodPhotos(photos);
       setLoading(false);
     } catch (err) {
       console.error('Failed to load mood photos:', err);
