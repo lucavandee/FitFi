@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
 import { Heart, X } from 'lucide-react';
 
 interface SwipeCardProps {
@@ -13,6 +13,7 @@ interface SwipeCardProps {
 export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
   const [startTime] = useState(Date.now());
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
+  const [showTooltip, setShowTooltip] = useState(index === 0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -27,6 +28,9 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
     const velocity = info.velocity.x;
     const responseTime = Date.now() - startTime;
 
+    // Hide tooltip on first interaction
+    if (showTooltip) setShowTooltip(false);
+
     if (Math.abs(offset) > swipeThreshold || Math.abs(velocity) > 500) {
       const direction = offset > 0 ? 'right' : 'left';
       setExitDirection(direction);
@@ -40,6 +44,10 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
 
   const handleButtonClick = (direction: 'left' | 'right') => {
     const responseTime = Date.now() - startTime;
+
+    // Hide tooltip on first interaction
+    if (showTooltip) setShowTooltip(false);
+
     setExitDirection(direction);
     setTimeout(() => {
       onSwipe(direction, responseTime);
@@ -48,6 +56,34 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
+      {/* First-Time User Tooltip */}
+      <AnimatePresence>
+        {showTooltip && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: [1, 1.05, 1]
+            }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{
+              opacity: { duration: 0.3 },
+              scale: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' }
+            }}
+            className="absolute -top-20 left-1/2 -translate-x-1/2 z-50
+                       bg-[var(--ff-color-primary-700)] text-white
+                       px-5 py-3 rounded-2xl text-sm font-semibold
+                       shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+                       pointer-events-none whitespace-nowrap
+                       flex items-center gap-2"
+          >
+            <span className="text-xl">👇</span>
+            <span>Klik op de knoppen of sleep de foto</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         ref={cardRef}
         style={{ x, rotate, opacity, scale }}

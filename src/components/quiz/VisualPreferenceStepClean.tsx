@@ -33,6 +33,32 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     loadMoodPhotos();
   }, [userGender]);
 
+  // Keyboard Navigation for Desktop Users
+  useEffect(() => {
+    if (showCelebration || loading || moodPhotos.length === 0) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Prevent default to avoid page scroll
+      if (['ArrowLeft', 'ArrowRight', ' ', 'Enter'].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      const currentPhoto = moodPhotos[currentIndex];
+      if (!currentPhoto) return;
+
+      if (e.key === 'ArrowLeft') {
+        // Left arrow = dislike
+        handleSwipe('left', 0);
+      } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        // Right arrow, Space, or Enter = like (most common action)
+        handleSwipe('right', 0);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentIndex, moodPhotos, showCelebration, loading]);
+
   const loadMoodPhotos = async () => {
     try {
       // Use centralized service for consistent gender filtering
@@ -245,6 +271,11 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               </div>
             </div>
           </div>
+
+          {/* Keyboard Hint for Desktop Users */}
+          <p className="hidden sm:block text-center text-xs text-[var(--color-muted)] mt-3 opacity-60">
+            Of gebruik pijltjestoetsen / spatiebalk
+          </p>
         </div>
       </div>
     </div>
