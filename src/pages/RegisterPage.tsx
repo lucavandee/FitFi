@@ -130,46 +130,46 @@ const RegisterPage: React.FC = () => {
       />
 
       <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-semibold text-[var(--ff-color-primary-600)] mb-4 shadow-sm">
-            <Sparkles className="w-4 h-4" />
+        {/* Header - Responsive typography */}
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-xs sm:text-sm font-semibold text-[var(--ff-color-primary-600)] mb-4 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Gratis account
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-[var(--ff-color-text)] mb-3">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--ff-color-text)] mb-2 sm:mb-3">
             Start in 1 minuut
           </h1>
-          <p className="text-lg text-[var(--color-text)]/70">
+          <p className="text-base sm:text-lg text-[var(--color-text)]/70">
             Outfits die bij je passen
           </p>
         </div>
 
-        {/* Benefits Cards */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
-          <div className="bg-white rounded-xl border border-[var(--color-border)] p-4 text-center shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-2">
-              <Heart className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+        {/* Benefits Cards - Responsive sizing */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="bg-white rounded-lg sm:rounded-xl border border-[var(--color-border)] p-3 sm:p-4 text-center shadow-sm">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-2">
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-700)]" />
             </div>
-            <p className="text-xs font-semibold text-[var(--ff-color-text)]">Bewaar outfits</p>
+            <p className="text-[10px] sm:text-xs font-semibold text-[var(--ff-color-text)] leading-tight">Bewaar outfits</p>
           </div>
-          <div className="bg-white rounded-xl border border-[var(--color-border)] p-4 text-center shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-2">
-              <Zap className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+          <div className="bg-white rounded-lg sm:rounded-xl border border-[var(--color-border)] p-3 sm:p-4 text-center shadow-sm">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-2">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-700)]" />
             </div>
-            <p className="text-xs font-semibold text-[var(--ff-color-text)]">Verdien punten</p>
+            <p className="text-[10px] sm:text-xs font-semibold text-[var(--ff-color-text)] leading-tight">Verdien punten</p>
           </div>
-          <div className="bg-white rounded-xl border border-[var(--color-border)] p-4 text-center shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-2">
-              <TrendingUp className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+          <div className="bg-white rounded-lg sm:rounded-xl border border-[var(--color-border)] p-3 sm:p-4 text-center shadow-sm">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-2">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-700)]" />
             </div>
-            <p className="text-xs font-semibold text-[var(--ff-color-text)]">Beter advies</p>
+            <p className="text-[10px] sm:text-xs font-semibold text-[var(--ff-color-text)] leading-tight">Beter advies</p>
           </div>
         </div>
 
         {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden">
-          {/* Form */}
-          <form onSubmit={onSubmit} className="p-6 md:p-8 space-y-5">
+          {/* Form - Responsive padding */}
+          <form onSubmit={onSubmit} className="p-5 sm:p-6 md:p-8 space-y-5">
             {/* Error Alert */}
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -189,13 +189,13 @@ const RegisterPage: React.FC = () => {
               }}
             />
 
-            {/* Name Field */}
+            {/* Name Field - 48px+ height for mobile */}
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-[var(--ff-color-text)] mb-2">
                 Naam <span className="text-gray-400 font-normal">(optioneel)</span>
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <User className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
                 <input
                   id="name"
                   type="text"
@@ -203,19 +203,19 @@ const RegisterPage: React.FC = () => {
                   placeholder="Jouw naam"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 text-base rounded-xl border-2 border-gray-200 transition-all focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)] outline-none"
+                  className="w-full pl-10 sm:pl-11 pr-4 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 border-gray-200 transition-all focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)] outline-none"
                   disabled={loading}
                 />
               </div>
             </div>
 
-            {/* Email Field */}
+            {/* Email Field - 48px+ height for mobile */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-[var(--ff-color-text)] mb-2">
                 E-mailadres
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <Mail className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
                 <input
                   id="email"
                   type="email"
@@ -224,7 +224,7 @@ const RegisterPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => setTouched({ ...touched, email: true })}
-                  className={`w-full pl-11 pr-4 py-3 text-base rounded-xl border-2 transition-all ${
+                  className={`w-full pl-10 sm:pl-11 pr-4 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 transition-all ${
                     emailError
                       ? "border-red-500 focus:border-red-600 focus:ring-4 focus:ring-red-100"
                       : "border-gray-200 focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)]"
@@ -241,13 +241,13 @@ const RegisterPage: React.FC = () => {
               )}
             </div>
 
-            {/* Password Field */}
+            {/* Password Field - 48px+ height for mobile */}
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-[var(--ff-color-text)] mb-2">
                 Wachtwoord
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <Lock className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
                 <input
                   id="password"
                   type={showPw ? "text" : "password"}
@@ -256,7 +256,7 @@ const RegisterPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onBlur={() => setTouched({ ...touched, password: true })}
-                  className={`w-full pl-11 pr-12 py-3 text-base rounded-xl border-2 transition-all ${
+                  className={`w-full pl-10 sm:pl-11 pr-12 sm:pr-13 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 transition-all ${
                     pwError
                       ? "border-red-500 focus:border-red-600 focus:ring-4 focus:ring-red-100"
                       : "border-gray-200 focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)]"
@@ -267,10 +267,10 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 active:scale-[0.95] transition-all min-w-[36px] min-h-[36px] flex items-center justify-center"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
-                  {showPw ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
+                  {showPw ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />}
                 </button>
               </div>
 
@@ -303,43 +303,43 @@ const RegisterPage: React.FC = () => {
               )}
             </div>
 
-            {/* Terms Checkbox */}
-            <label className="flex items-start gap-3 cursor-pointer group">
+            {/* Terms Checkbox - 44px+ touch target */}
+            <label className="flex items-start gap-3 cursor-pointer group min-h-[44px]">
               <input
                 type="checkbox"
                 checked={accepted}
                 onChange={(e) => setAccepted(e.target.checked)}
-                className="w-5 h-5 mt-0.5 rounded border-2 border-gray-300 text-[var(--ff-color-primary-600)] focus:ring-[var(--ff-color-primary-600)] transition-all"
+                className="w-5 h-5 sm:w-5 sm:h-5 mt-0.5 rounded border-2 border-gray-300 text-[var(--ff-color-primary-600)] focus:ring-[var(--ff-color-primary-600)] transition-all cursor-pointer"
                 required
               />
-              <span className="text-sm text-gray-700 leading-relaxed">
+              <span className="text-sm sm:text-sm text-gray-700 leading-relaxed">
                 Ik ga akkoord met de{" "}
-                <NavLink to="/voorwaarden" className="text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline font-semibold">
+                <NavLink to="/voorwaarden" className="text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] active:scale-[0.98] underline font-semibold inline-block">
                   voorwaarden
                 </NavLink>{" "}
                 en{" "}
-                <NavLink to="/privacy" className="text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline font-semibold">
+                <NavLink to="/privacy" className="text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] active:scale-[0.98] underline font-semibold inline-block">
                   privacy
                 </NavLink>
                 .
               </span>
             </label>
 
-            {/* Submit Button */}
+            {/* Submit Button - 52px+ touch target */}
             <Button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white py-3.5 rounded-xl font-bold text-base shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg flex items-center justify-center gap-2"
+              className="w-full bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] text-white py-4 sm:py-3.5 min-h-[52px] rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg disabled:active:scale-100 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Account aanmaken...
+                  <Loader2 className="w-5 h-5 sm:w-5 sm:h-5 animate-spin" />
+                  <span className="text-base sm:text-lg">Account aanmaken...</span>
                 </>
               ) : (
                 <>
-                  Maak gratis account
-                  <ArrowRight className="w-5 h-5" />
+                  <span className="text-base sm:text-lg">Maak gratis account</span>
+                  <ArrowRight className="w-5 h-5 sm:w-5 sm:h-5" />
                 </>
               )}
             </Button>
@@ -354,14 +354,14 @@ const RegisterPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Login Link */}
+            {/* Login Link - 48px+ touch target */}
             <div className="text-center">
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
                 Al een account?
               </p>
               <NavLink
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)] font-semibold rounded-xl hover:bg-[var(--ff-color-primary-50)] transition-all"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-3 min-h-[48px] w-full sm:w-auto border-2 border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)] font-semibold text-base sm:text-base rounded-xl hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all"
               >
                 Log in
               </NavLink>
@@ -369,29 +369,29 @@ const RegisterPage: React.FC = () => {
           </form>
         </div>
 
-        {/* Trust Badges */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-green-600" />
+        {/* Trust Badges - Responsive sizing */}
+        <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Shield className="w-4 h-4 text-green-600 flex-shrink-0" />
             <span>GDPR-compliant</span>
           </div>
           <span className="text-gray-300">•</span>
-          <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-green-600" />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Lock className="w-4 h-4 text-green-600 flex-shrink-0" />
             <span>Veilige opslag</span>
           </div>
           <span className="text-gray-300">•</span>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
             <span>Geen spam</span>
           </div>
         </div>
 
-        {/* Help Link */}
-        <div className="mt-6 text-center">
+        {/* Help Link - 44px+ touch target */}
+        <div className="mt-6 sm:mt-8 text-center">
           <NavLink
             to="/contact"
-            className="text-sm text-gray-600 hover:text-gray-900 underline"
+            className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm sm:text-base text-gray-600 hover:text-gray-900 active:scale-[0.98] underline transition-all"
           >
             Vragen? Neem contact op
           </NavLink>

@@ -46,13 +46,14 @@ export function HeroV3() {
         <img
           src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
           alt="Stijlvol gekleed stel, vrouw met telefoon bekijkt outfit advies"
-          className="w-full h-full object-cover object-[center_30%] sm:object-[center_40%] md:object-center"
+          className="w-full h-full object-cover object-[center_35%] sm:object-[center_40%] md:object-center"
           loading="eager"
           fetchpriority="high"
+          style={{ objectFit: 'cover' }}
         />
 
         {/* Gradient overlay for text readability - stronger on mobile for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/70 via-black/50 to-black/30 sm:from-black/60 sm:via-black/40 sm:to-black/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/75 via-black/55 to-black/35 sm:from-black/60 sm:via-black/40 sm:to-black/20"></div>
       </div>
 
       {/* Content */}
