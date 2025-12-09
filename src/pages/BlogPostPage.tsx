@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import PostHeader from "@/components/blog/PostHeader";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
-import { blogPosts } from "@/data/blogPosts";
+import { getBlogPostBySlug, getPublishedBlogPosts, incrementViewCount, type BlogPost } from "@/services/blog/blogService";
 
 /**
  * Heel lichte, veilige markdown→HTML conversie voor onze eigen contentstrings.
@@ -49,7 +49,42 @@ function mdToHtml(input: string): string {
 
 export default function BlogPostPage() {
   const { slug = "" } = useParams<{ slug: string }>();
-  const post = blogPosts.find((p) => p.id === slug);
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadPost() {
+      try {
+        const fetchedPost = await getBlogPostBySlug(slug);
+        if (fetchedPost) {
+          setPost(fetchedPost);
+          // Increment view count
+          incrementViewCount(slug);
+
+          // Load related posts
+          const allPosts = await getPublishedBlogPosts(10, 0);
+          setRelatedPosts(allPosts.filter(p => p.slug !== slug).slice(0, 2));
+        }
+      } catch (error) {
+        console.error('Failed to load blog post:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[var(--ff-color-primary-600)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[var(--color-muted)]">Artikel laden...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!post) {
     return (
@@ -63,7 +98,7 @@ export default function BlogPostPage() {
     );
   }
 
-  const dt = new Date(post.date);
+  const dt = new Date(post.published_at || post.created_at);
   const pretty = dt.toLocaleDateString("nl-NL", { year: "numeric", month: "long", day: "numeric" });
 
   return (
@@ -73,7 +108,7 @@ export default function BlogPostPage() {
         <Breadcrumbs
           items={[
             { label: "Blog", path: "/blog" },
-            { label: post.title, path: `/blog/${post.id}` }
+            { label: post.title, path: `/blog/${post.slug}` }
           ]}
         />
         <section className="ff-container py-10 sm:py-12">
@@ -81,7 +116,7 @@ export default function BlogPostPage() {
             title={post.title}
             excerpt={post.excerpt}
             date={pretty}
-            readingTime="4–6 min"
+            readingTime={`${post.read_time_minutes} min`}
           />
         </section>
 
@@ -97,8 +132,8 @@ export default function BlogPostPage() {
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
             <h2 className="font-heading text-xl">Verder lezen</h2>
             <div className="mt-4 flex flex-wrap gap-3">
-              {blogPosts.filter(p => p.id !== post.id).slice(0, 2).map((p) => (
-                <Link key={p.id} to={`/blog/${p.id}`} className="ff-btn ff-btn-secondary">
+              {relatedPosts.map((p) => (
+                <Link key={p.id} to={`/blog/${p.slug}`} className="ff-btn ff-btn-secondary">
                   {p.title}
                 </Link>
               ))}

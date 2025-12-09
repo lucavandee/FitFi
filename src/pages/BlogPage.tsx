@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Filter, Calendar, User, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { blogPosts, categories, type BlogPost } from '@/data/blogPosts';
+import { getPublishedBlogPosts, type BlogPost } from '@/services/blog/blogService';
 
 const BlogPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +12,29 @@ const BlogPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch blog posts from database
+  useEffect(() => {
+    async function loadBlogPosts() {
+      try {
+        const posts = await getPublishedBlogPosts(100, 0);
+        setBlogPosts(posts);
+      } catch (error) {
+        console.error('Failed to load blog posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadBlogPosts();
+  }, []);
+
+  // Get unique categories from loaded posts
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(blogPosts.map(p => p.category)));
+    return ['all', ...cats];
+  }, [blogPosts]);
 
   // Filter en zoek logica
   const filteredPosts = useMemo(() => {
@@ -21,10 +44,21 @@ const BlogPage: React.FC = () => {
       const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, blogPosts]);
 
   const featuredPost = blogPosts.find(post => post.featured) || blogPosts[0];
   const regularPosts = filteredPosts.filter(post => !post.featured);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[var(--ff-color-primary-600)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[var(--color-muted)]">Blog laden...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleReadMore = (slug: string) => {
     navigate(`/blog/${slug}`);
