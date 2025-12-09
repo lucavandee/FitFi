@@ -563,6 +563,176 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Privacy & Data Section */}
+      <section className="py-16 sm:py-20 md:py-24 lg:py-28 bg-white">
+        <div className="ff-container">
+          <div className="max-w-5xl mx-auto">
+
+            {/* Header */}
+            <div className="text-center mb-10 sm:mb-12 md:mb-14 px-4 sm:px-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full mb-6 font-semibold text-sm">
+                <Shield className="w-4 h-4" />
+                Privacy & Data
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 tracking-tight">
+                Jouw data, jouw controle
+              </h2>
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[var(--color-muted)] font-light">
+                Transparantie over wat we opslaan, waarom, en hoe je controle behoudt
+              </p>
+            </div>
+
+            {/* Data Grid */}
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-10 md:mb-12">
+
+              {/* What we store */}
+              <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-6 lg:p-8">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-[var(--ff-color-primary-100)] rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Brain className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold mb-2">Wat we opslaan</h3>
+                    <ul className="space-y-2 text-[var(--color-muted)] text-sm sm:text-base">
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span>Je quizantwoorden (stijlvoorkeuren, gelegenheden)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span>Je likes/dislikes (welke outfits je mooi vindt)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span>Optioneel: kleuranalyse (uit je selfie)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span>Je opgeslagen outfits en favorieten</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* What we DON'T store */}
+              <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-6 lg:p-8">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-6 h-6 text-red-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold mb-2">Wat we NIET doen</h3>
+                    <ul className="space-y-2 text-[var(--color-muted)] text-sm sm:text-base">
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        <span><strong>Geen</strong> verkoop van je data aan derden</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        <span><strong>Geen</strong> gezichtsherkenning of biometrie</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        <span><strong>Geen</strong> tracking buiten FitFi</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        <span><strong>Geen</strong> permanente opslag van foto's</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Why we need it */}
+              <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-6 lg:p-8">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Target className="w-6 h-6 text-blue-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold mb-2">Waarvoor we het gebruiken</h3>
+                    <ul className="space-y-2 text-[var(--color-muted)] text-sm sm:text-base">
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <span>Je stijlprofiel samenstellen</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <span>Outfits matchen met je voorkeuren</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <span>Aanbevelingen verbeteren over tijd</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <span>Je dashboard personaliseren</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Your control */}
+              <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-6 lg:p-8">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-purple-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold mb-2">Jouw controle</h3>
+                    <ul className="space-y-2 text-[var(--color-muted)] text-sm sm:text-base">
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <span>Bekijk je data via je profiel</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <span>Download je data op elk moment</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <span>Verwijder je account (incl. alle data)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <span>We bewaren data zolang je account actief is</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Privacy Policy Link */}
+            <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border-2 border-[var(--ff-color-primary-200)] p-6 lg:p-8 text-center">
+              <p className="text-base sm:text-lg text-[var(--color-text)] mb-4">
+                Meer weten over hoe we je privacy beschermen?
+              </p>
+              <NavLink
+                to="/privacy"
+                className="inline-flex items-center gap-2 text-[var(--ff-color-primary-700)] font-bold hover:underline text-base sm:text-lg"
+              >
+                Lees onze volledige privacy policy
+                <ArrowRight className="w-5 h-5" />
+              </NavLink>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="relative py-24 md:py-32 bg-gradient-to-br from-[var(--color-bg)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] overflow-hidden">
 

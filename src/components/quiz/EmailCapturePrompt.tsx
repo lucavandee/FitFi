@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Save, X } from 'lucide-react';
+import { Mail, Save, X, Lock } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import toast from 'react-hot-toast';
 
@@ -136,12 +136,29 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
           </div>
         </form>
 
-        <p className="text-xs text-[var(--color-muted)] mt-4 flex items-start gap-2">
-          <span className="text-green-600">🔒</span>
-          <span>
-            We respecteren je privacy. Geen spam, alleen je persoonlijke style report.
-          </span>
-        </p>
+        {/* Enhanced Privacy Guarantees */}
+        <div className="mt-4 pt-4 border-t border-[var(--ff-color-primary-200)]">
+          <div className="flex items-start gap-2 mb-2">
+            <Lock className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+            <p className="text-xs font-semibold text-[var(--color-text)]">
+              Jouw email is veilig bij ons
+            </p>
+          </div>
+          <ul className="space-y-1 text-xs text-[var(--color-muted)]">
+            <li className="flex items-start gap-1.5">
+              <span className="text-green-600 mt-0.5">✓</span>
+              <span>Geen spam, alleen je Style Report</span>
+            </li>
+            <li className="flex items-start gap-1.5">
+              <span className="text-green-600 mt-0.5">✓</span>
+              <span>Wordt niet gedeeld met derden</span>
+            </li>
+            <li className="flex items-start gap-1.5">
+              <span className="text-green-600 mt-0.5">✓</span>
+              <span>Uitschrijven met 1 klik</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </motion.div>
   );

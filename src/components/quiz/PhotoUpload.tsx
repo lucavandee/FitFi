@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Camera, Upload, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Loader as Loader2 } from "lucide-react";
+import { Camera, Upload, CircleAlert as AlertCircle, CircleCheck as CheckCircle, Loader as Loader2, Lock, Shield } from "lucide-react";
 
 interface ColorAnalysis {
   undertone: "warm" | "cool" | "neutral";
@@ -194,6 +194,12 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
           Voor de beste kleurenanalyse: natuurlijk licht, geen filters, frontaal
           gezicht
         </p>
+
+        {/* Privacy Badge */}
+        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full text-xs font-medium text-green-800">
+          <Lock className="w-3.5 h-3.5" />
+          <span>100% privé • Geen gezichtsherkenning</span>
+        </div>
       </div>
 
       {value && (
@@ -277,10 +283,35 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
           : "Kies een foto"}
       </button>
 
-      <p className="mt-3 text-xs text-[var(--color-text)]/50 text-center">
-        Je foto wordt veilig opgeslagen en alleen gebruikt voor kleurenanalyse. Je
-        kunt deze later verwijderen.
-      </p>
+      {/* Enhanced Privacy Notice */}
+      <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+        <div className="flex items-start gap-3 mb-3">
+          <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-[var(--color-text)] mb-1">
+              Jouw privacy is heilig
+            </p>
+            <ul className="space-y-1 text-xs text-[var(--color-text)]/70">
+              <li className="flex items-start gap-1.5">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span>Blijft 100% privé, alleen voor kleuradvies</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span>Geen gezichtsherkenning of biometrische data</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span>Wordt niet gedeeld met derden, nooit</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span>Verwijder op elk moment via je profiel</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
