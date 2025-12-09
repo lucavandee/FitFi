@@ -742,20 +742,95 @@ export default function EnhancedResultsPage() {
               </div>
             )}
 
-            {/* CTA */}
+            {/* Premium Preview Card - Transparent & Informative */}
             <AnimatedSection delay={0.6}>
-              <div className="mt-20 text-center">
+              <div className="mt-20 max-w-3xl mx-auto">
+                {/* Free Preview Badge */}
+                <div className="text-center mb-6">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-semibold">
+                    <Sparkles className="w-4 h-4" />
+                    Gratis preview: 9 van 50+ gepersonaliseerde outfits
+                  </span>
+                </div>
+
+                {/* Premium Preview Card */}
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-3xl p-8 shadow-lg border border-[var(--ff-color-primary-200)]"
                 >
-                  <NavLink
-                    to="/dashboard"
-                    className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-2xl transition-all"
-                  >
-                    Bekijk meer outfits
-                    <ArrowRight className="w-6 h-6" />
-                  </NavLink>
+                  <div className="text-center mb-6">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2">
+                      Upgrade voor meer gepersonaliseerde outfits
+                    </h3>
+                    <p className="text-[var(--color-muted)] text-base sm:text-lg">
+                      Ontgrendel 50+ outfits afgestemd op jouw stijl + AI styling assistent
+                    </p>
+                  </div>
+
+                  {/* Benefits Grid */}
+                  <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center">
+                      <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">50+</div>
+                      <div className="text-sm text-[var(--color-muted)]">Outfits per seizoen</div>
+                    </div>
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center">
+                      <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">AI</div>
+                      <div className="text-sm text-[var(--color-muted)]">Styling assistent</div>
+                    </div>
+                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center">
+                      <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">∞</div>
+                      <div className="text-sm text-[var(--color-muted)]">Opgeslagen outfits</div>
+                    </div>
+                  </div>
+
+                  {/* Pricing */}
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-[var(--color-text)]">€9,99</span>
+                      <span className="text-[var(--color-muted)]">/maand</span>
+                    </div>
+                    <p className="text-sm text-[var(--color-muted)] mt-2">
+                      Eerste maand gratis · Stop wanneer je wilt
+                    </p>
+                  </div>
+
+                  {/* Social Proof */}
+                  <div className="text-center mb-6">
+                    <p className="text-sm text-[var(--color-muted)]">
+                      ⭐ <span className="font-semibold text-[var(--color-text)]">2.847+ gebruikers</span> geüpgraded deze maand
+                    </p>
+                  </div>
+
+                  {/* CTA Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1"
+                    >
+                      <NavLink
+                        to="/dashboard"
+                        className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-bold text-base hover:shadow-xl transition-all"
+                      >
+                        Bekijk gratis outfits
+                        <ArrowRight className="w-5 h-5" />
+                      </NavLink>
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1"
+                    >
+                      <NavLink
+                        to="/prijzen#premium"
+                        className="flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--ff-color-primary-600)]"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        Upgrade naar Premium
+                      </NavLink>
+                    </motion.div>
+                  </div>
                 </motion.div>
               </div>
             </AnimatedSection>
