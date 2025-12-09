@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
-import { Mail, MessageCircle, Users, Clock, Send, MapPin, Sparkles, CheckCircle } from "lucide-react";
+import { Mail, MessageCircle, Users, Clock, Send, MapPin, Sparkles, CheckCircle, X } from "lucide-react";
 
 type Topic = "algemeen" | "pers" | "partners" | "feedback" | "bug";
 const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
@@ -31,6 +31,8 @@ export default function ContactPage() {
   const [topic, setTopic] = React.useState<Topic>("algemeen");
   const [message, setMessage] = React.useState("");
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+  const [addressExpanded, setAddressExpanded] = React.useState(false);
+  const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const errors = {
     name: name.trim().length < 2 ? "Vul je naam in." : "",
@@ -50,7 +52,18 @@ export default function ContactPage() {
       `${message.trim()}\n\n—\nVan: ${name.trim()} <${email.trim()}>\n` +
       `Onderwerp: ${topic}\nPagina: https://www.fitfi.ai/contact`;
 
-    window.location.href = `${to}?subject=${encode(subject)}&body=${encode(body)}`;
+    // Show confirmation message
+    setShowConfirmation(true);
+
+    // Open mailto after brief delay
+    setTimeout(() => {
+      window.location.href = `${to}?subject=${encode(subject)}&body=${encode(body)}`;
+    }, 500);
+
+    // Hide confirmation after 5 seconds
+    setTimeout(() => {
+      setShowConfirmation(false);
+    }, 5000);
   }
 
   return (
@@ -248,14 +261,14 @@ export default function ContactPage() {
                     disabled={hasErrors && Object.keys(touched).length > 0}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] hover:from-[var(--ff-color-primary-600)] hover:to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-base shadow-xl hover:shadow-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 min-h-[56px] bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] hover:from-[var(--ff-color-primary-600)] hover:to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-base shadow-xl hover:shadow-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="h-5 w-5" />
                     Verstuur bericht
                   </motion.button>
                   <NavLink
                     to="/veelgestelde-vragen"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-2xl font-semibold text-base transition-all duration-200 hover-lift"
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 min-h-[56px] bg-white hover:bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-2xl font-semibold text-base transition-all duration-200 hover-lift"
                   >
                     Bekijk FAQ
                   </NavLink>
@@ -300,17 +313,45 @@ export default function ContactPage() {
                   </motion.a>
                 )}
 
-                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)]">
+                <motion.button
+                  onClick={() => setAddressExpanded(!addressExpanded)}
+                  className="w-full flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-white transition-all text-left"
+                  aria-expanded={addressExpanded}
+                >
                   <MapPin className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
-                  <div>
-                    <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Adres</div>
-                    <div className="text-[var(--color-text)]/70 text-sm leading-relaxed">
-                      Keizersgracht 520 H<br />
-                      1017 EK Amsterdam<br />
-                      Nederland
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Adres</div>
+                      <motion.span
+                        animate={{ rotate: addressExpanded ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-[var(--color-text)]/40 text-xl leading-none"
+                      >
+                        ▼
+                      </motion.span>
                     </div>
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        height: addressExpanded ? 'auto' : 0,
+                        opacity: addressExpanded ? 1 : 0
+                      }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="text-[var(--color-text)]/70 text-sm leading-relaxed pt-2">
+                        Keizersgracht 520 H<br />
+                        1017 EK Amsterdam<br />
+                        Nederland
+                      </div>
+                    </motion.div>
+                    {!addressExpanded && (
+                      <div className="text-[var(--color-text)]/50 text-xs mt-1">
+                        Klik voor details
+                      </div>
+                    )}
                   </div>
-                </div>
+                </motion.button>
 
                 <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)]">
                   <Clock className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
@@ -390,6 +431,40 @@ export default function ContactPage() {
 
         </div>
       </section>
+
+      {/* Confirmation Banner - Fixed bottom */}
+      <AnimatePresence>
+        {showConfirmation && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 max-w-md w-[calc(100%-2rem)]"
+          >
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl shadow-2xl border-2 border-green-400 p-5">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-1">Bedankt voor je bericht!</h3>
+                  <p className="text-sm text-white/90 leading-relaxed">
+                    Je mailapp opent zo. We reageren binnen 24 uur op werkdagen.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowConfirmation(false)}
+                  className="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors flex-shrink-0"
+                  aria-label="Sluiten"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
