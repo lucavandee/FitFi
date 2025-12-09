@@ -760,8 +760,8 @@ export default function OnboardingFlowPage() {
 
             {/* Slider */}
             {step.type === 'slider' && (
-              <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8">
-                <div className="text-center mb-8">
+              <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-5 sm:p-8">
+                <div className="text-center mb-6 sm:mb-8">
                   <div className="text-5xl font-bold text-[var(--ff-color-primary-600)] mb-2">
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
@@ -774,13 +774,22 @@ export default function OnboardingFlowPage() {
                   </div>
                   <div className="text-sm text-gray-600 mb-4">Per kledingstuk</div>
 
-                  {/* Numeric Input for Precise Value */}
-                  <div className="flex items-center justify-center gap-3 mt-6 mb-4">
-                    <label htmlFor="budget-input" className="text-sm font-medium text-[var(--color-text)]">
-                      Exact bedrag:
-                    </label>
+                  {/* Plus/Minus Controls for Mobile-Friendly Adjustment */}
+                  <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentVal = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50;
+                        const newVal = Math.max((step.min || 0), currentVal - (step.step || 5));
+                        handleAnswer(step.field, newVal);
+                      }}
+                      className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm"
+                      aria-label="Verlaag budget"
+                    >
+                      −
+                    </button>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">€</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none">€</span>
                       <input
                         id="budget-input"
                         type="number"
@@ -794,9 +803,22 @@ export default function OnboardingFlowPage() {
                             handleAnswer(step.field, val);
                           }
                         }}
-                        className="w-24 pl-6 pr-3 py-2 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-center font-semibold focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors"
+                        className="w-24 sm:w-28 pl-7 pr-3 py-2.5 sm:py-2 rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-center font-bold text-lg sm:text-base focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors"
+                        aria-label="Budget invoeren"
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentVal = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50;
+                        const newVal = Math.min((step.max || 100), currentVal + (step.step || 5));
+                        handleAnswer(step.field, newVal);
+                      }}
+                      className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-[var(--ff-color-primary-600)] border-2 border-[var(--ff-color-primary-600)] text-white font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-700)] active:scale-95 transition-all shadow-md"
+                      aria-label="Verhoog budget"
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
                 <input

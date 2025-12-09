@@ -40,7 +40,7 @@ export default function QuestionCard<T extends string>({
       <h2 id={`${name}-title`} className="text-base sm:text-lg font-semibold">{title}</h2>
       {help ? <p className="mt-1 text-sm text-[var(--color-text)]/70">{help}</p> : null}
 
-      <div className="mt-5 sm:mt-4 grid gap-3 sm:gap-2 sm:grid-cols-2">
+      <div className="mt-5 sm:mt-4 grid gap-3 sm:gap-3 sm:grid-cols-2">
         {choices.map((c) => (
           <button
             key={c.value}
@@ -48,14 +48,14 @@ export default function QuestionCard<T extends string>({
             aria-pressed={isActive(c.value)}
             onClick={() => toggle(c.value)}
             className={[
-              "text-left rounded-xl sm:rounded-[var(--radius-xl)] border px-4 py-3.5 min-h-[52px] sm:min-h-[48px] transition-all",
+              "text-left rounded-xl sm:rounded-[var(--radius-xl)] border px-4 py-3.5 min-h-[56px] sm:min-h-[52px] transition-all",
               isActive(c.value)
-                ? "border-[var(--color-primary)] bg-[color-mix(in oklab,var(--ff-color-primary-700) 8%,transparent)] shadow-sm"
-                : "border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-primary)] active:scale-[0.98]",
+                ? "border-[var(--ff-color-primary-600)] bg-[color-mix(in oklab,var(--ff-color-primary-700) 8%,transparent)] shadow-md"
+                : "border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--ff-color-primary-400)] hover:shadow-sm active:scale-[0.98]",
             ].join(" ")}
           >
-            <div className="text-sm sm:text-sm font-medium">{c.label}</div>
-            {c.help ? <div className="text-xs opacity-70 mt-0.5">{c.help}</div> : null}
+            <div className="text-sm sm:text-base font-medium">{c.label}</div>
+            {c.help ? <div className="text-xs sm:text-sm opacity-70 mt-1">{c.help}</div> : null}
           </button>
         ))}
       </div>

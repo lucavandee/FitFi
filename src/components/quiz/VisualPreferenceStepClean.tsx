@@ -140,10 +140,45 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[var(--ff-color-primary-700)] animate-spin mx-auto" />
-          <p className="mt-4 text-[var(--color-muted)]">Beelden laden...</p>
+      <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
+        {/* Skeleton Header */}
+        <div className="flex-shrink-0 px-4 pt-safe pt-4 sm:pt-6 pb-3 sm:pb-4">
+          <div className="w-40 h-8 bg-[var(--color-border)] rounded-full animate-pulse mb-3" />
+          <div className="w-64 h-7 bg-[var(--color-border)] rounded-lg animate-pulse mb-2" />
+          <div className="w-48 h-5 bg-[var(--color-border)] rounded-lg animate-pulse" />
+          <div className="mt-4 h-2 bg-[var(--color-bg)] rounded-full overflow-hidden border border-[var(--color-border)]">
+            <div className="h-full w-0 bg-[var(--ff-color-primary-600)] animate-pulse" />
+          </div>
+        </div>
+
+        {/* Skeleton Card */}
+        <div className="flex-1 flex items-center justify-center px-4 min-h-0 relative">
+          <div className="w-full max-w-[400px] flex flex-col items-center justify-center gap-6">
+            <div className="w-full max-w-[340px] sm:max-w-[360px] h-[420px] sm:h-[480px] rounded-[var(--radius-2xl)] bg-[var(--color-border)] animate-pulse" />
+
+            {/* Skeleton Buttons */}
+            <div className="flex gap-4 sm:gap-8">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-border)] animate-pulse" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-border)] animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        {/* Skeleton Footer */}
+        <div className="flex-shrink-0 px-4 pb-safe pb-4 sm:pb-6">
+          <div className="max-w-md mx-auto flex justify-center">
+            <div className="w-64 h-4 bg-[var(--color-border)] rounded-lg animate-pulse" />
+          </div>
+        </div>
+
+        {/* Loading Message Overlay */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-6 py-4 shadow-xl">
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-5 h-5 text-[var(--ff-color-primary-700)] animate-spin" />
+              <p className="text-sm font-medium text-[var(--color-text)]">Stijlbeelden laden...</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -199,32 +234,33 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-6 pb-4">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-3">
-          <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-          <span className="text-sm font-medium text-[var(--color-text)]">Visuele Voorkeuren</span>
+      <div className="flex-shrink-0 px-4 pt-safe pt-4 sm:pt-6 pb-3 sm:pb-4">
+        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-2 sm:mb-3">
+          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" />
+          <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">Visuele Voorkeuren</span>
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-2">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--color-text)] mb-1 sm:mb-2">
           Welke stijl spreekt je aan?
         </h2>
-        <p className="text-sm text-[var(--color-muted)]">
-          <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits — nog 30 seconden
+        <p className="text-xs sm:text-sm text-[var(--color-muted)]">
+          <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits
         </p>
 
         {/* Progress */}
-        <div className="mt-4">
-          <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+        <div className="mt-3 sm:mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
+            <span className="text-xs text-[var(--color-muted)]">{swipeCount} van {moodPhotos.length}</span>
+          </div>
+          <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden border border-[var(--color-border)]">
             <motion.div
-              className="h-full bg-[var(--ff-color-primary-700)]"
+              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
             />
           </div>
-          <p className="text-xs text-[var(--color-muted)] mt-2 text-center">
-            {swipeCount} van {moodPhotos.length}
-          </p>
         </div>
       </div>
 
@@ -245,37 +281,45 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         </div>
       </div>
 
-      {/* Footer Instructions - Clearer Guidance */}
-      <div className="flex-shrink-0 px-4 pb-6">
+      {/* Footer Instructions - Simplified for Mobile */}
+      <div className="flex-shrink-0 px-4 pb-safe pb-4 sm:pb-6">
         <div className="max-w-md mx-auto">
-          <p className="text-center text-sm font-medium text-[var(--color-text)] mb-3">
-            Klik op de knoppen of sleep de foto
-          </p>
-          <div className="flex items-center justify-center gap-6 text-xs text-[var(--color-muted)]">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full border-2 border-red-400 flex items-center justify-center bg-[var(--color-surface)]">
-                <X className="w-4 h-4 text-red-500" />
+          {/* Desktop: Full instructions */}
+          <div className="hidden sm:block">
+            <p className="text-center text-sm font-medium text-[var(--color-text)] mb-3">
+              Klik op de knoppen of sleep de foto
+            </p>
+            <div className="flex items-center justify-center gap-6 text-xs text-[var(--color-muted)]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full border-2 border-red-400 flex items-center justify-center bg-[var(--color-surface)]">
+                  <X className="w-4 h-4 text-red-500" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-[var(--color-text)]">Niet mijn stijl</div>
+                  <div className="text-xs">← Links</div>
+                </div>
               </div>
-              <div className="text-left">
-                <div className="font-medium text-[var(--color-text)]">Niet mijn stijl</div>
-                <div className="text-xs">← Links</div>
+              <div className="flex items-center gap-2">
+                <div className="text-right">
+                  <div className="font-medium text-[var(--color-text)]">Spreekt me aan</div>
+                  <div className="text-xs">Rechts →</div>
+                </div>
+                <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center bg-[var(--color-surface)]">
+                  <Heart className="w-4 h-4 text-green-500" />
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="text-right">
-                <div className="font-medium text-[var(--color-text)]">Spreekt me aan</div>
-                <div className="text-xs">Rechts →</div>
-              </div>
-              <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center bg-[var(--color-surface)]">
-                <Heart className="w-4 h-4 text-green-500" />
-              </div>
-            </div>
+            <p className="text-center text-xs text-[var(--color-muted)] mt-3 opacity-60">
+              Of gebruik pijltjestoetsen / spatiebalk
+            </p>
           </div>
 
-          {/* Keyboard Hint for Desktop Users */}
-          <p className="hidden sm:block text-center text-xs text-[var(--color-muted)] mt-3 opacity-60">
-            Of gebruik pijltjestoetsen / spatiebalk
-          </p>
+          {/* Mobile: Minimal instructions */}
+          <div className="sm:hidden text-center">
+            <p className="text-xs text-[var(--color-muted)]">
+              Tik op de knoppen of sleep naar links/rechts
+            </p>
+          </div>
         </div>
       </div>
     </div>
