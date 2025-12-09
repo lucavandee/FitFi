@@ -144,18 +144,18 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         )}
       </motion.div>
 
-      {/* Action Buttons - Always Visible with Pulse Hint */}
+      {/* Action Buttons - Always Visible, Larger on Desktop */}
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex gap-4 sm:gap-6 z-10 mt-6 sm:mt-8 flex-shrink-0"
+        className="flex gap-4 sm:gap-8 z-10 mt-6 sm:mt-8 flex-shrink-0"
       >
         <motion.button
           onClick={() => handleButtonClick('left')}
-          whileHover={{ scale: 1.15, rotate: -5 }}
+          whileHover={{ scale: 1.1, rotate: -3 }}
           whileTap={{ scale: 0.95 }}
           animate={{
-            scale: [1, 1.05, 1],
+            scale: [1, 1.04, 1],
             boxShadow: [
               '0 10px 15px -3px rgba(239, 68, 68, 0.2)',
               '0 10px 20px -3px rgba(239, 68, 68, 0.4)',
@@ -166,19 +166,19 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
             boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
           }}
-          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--color-surface)] border-3 border-red-400 flex items-center justify-center shadow-lg active:shadow-xl"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow"
           aria-label="Niet mijn stijl"
           title="Niet mijn stijl (of veeg naar links)"
         >
-          <X className="w-7 h-7 sm:w-9 sm:h-9 text-red-500" strokeWidth={2.5} />
+          <X className="w-8 h-8 sm:w-11 sm:h-11 text-red-500" strokeWidth={2.5} />
         </motion.button>
 
         <motion.button
           onClick={() => handleButtonClick('right')}
-          whileHover={{ scale: 1.15, rotate: 5 }}
+          whileHover={{ scale: 1.1, rotate: 3 }}
           whileTap={{ scale: 0.95 }}
           animate={{
-            scale: [1, 1.05, 1],
+            scale: [1, 1.04, 1],
             boxShadow: [
               '0 10px 15px -3px rgba(34, 197, 94, 0.2)',
               '0 10px 20px -3px rgba(34, 197, 94, 0.4)',
@@ -190,11 +190,11 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
             delay: 0.5
           }}
-          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--color-surface)] border-3 border-green-400 flex items-center justify-center shadow-lg active:shadow-xl"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow"
           aria-label="Dit spreekt me aan"
           title="Dit spreekt me aan (of veeg naar rechts)"
         >
-          <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-green-500" strokeWidth={2.5} />
+          <Heart className="w-8 h-8 sm:w-11 sm:h-11 text-green-500" strokeWidth={2.5} />
         </motion.button>
       </motion.div>
     </div>

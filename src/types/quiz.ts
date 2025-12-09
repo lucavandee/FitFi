@@ -33,6 +33,7 @@ export interface QuizStep {
   max?: number;
   step?: number;
   required: boolean;
+  helperText?: string;
   sizeFields?: Array<{
     name: string;
     label: string;

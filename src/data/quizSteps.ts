@@ -217,13 +217,14 @@ export const quizSteps: QuizStep[] = [
   {
     id: 6,
     title: 'Wat is jouw budget voor kledingstukken?',
-    description: 'Beweeg de slider naar je gemiddelde uitgave per item',
+    description: 'Gemiddelde uitgave per item — we tonen producten binnen jouw bereik',
     field: 'budgetRange',
     type: 'slider',
     required: true,
     min: 25,
     max: 500,
-    step: 25
+    step: 25,
+    helperText: '€25-75: Budget | €75-150: Middensegment | €150+: Premium'
   },
   {
     id: 7,
@@ -231,7 +232,8 @@ export const quizSteps: QuizStep[] = [
     description: 'Dit helpt ons om producten in jouw maat te vinden',
     field: 'sizes',
     type: 'sizes',
-    required: false
+    required: false,
+    helperText: 'Niet zeker? Kies wat je meestal draagt — je kunt dit later aanpassen'
     // sizeFields worden dynamisch gegenereerd op basis van gender
   },
   {

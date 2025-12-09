@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles, Clock } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
@@ -661,9 +661,17 @@ export default function OnboardingFlowPage() {
             direction="forward"
           >
             <div className="text-center mb-8 sm:mb-12">
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-[var(--ff-color-primary-50)] rounded-full text-xs sm:text-sm font-semibold text-[var(--ff-color-primary-600)] mb-4 sm:mb-6">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                Vraag {currentStep + 1}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-4 sm:mb-6">
+                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-[var(--ff-color-primary-50)] rounded-full text-xs sm:text-sm font-semibold text-[var(--ff-color-primary-600)]">
+                  <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  Vraag {currentStep + 1} van {steps.length}
+                </div>
+                {currentStep === 0 && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)]">
+                    <Clock className="w-3 h-3" />
+                    Minder dan 2 minuten
+                  </div>
+                )}
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-4">
                 {step.title}
@@ -800,6 +808,11 @@ export default function OnboardingFlowPage() {
                   <span>€{step.min || 0}</span>
                   <span>€{step.max || 100}+</span>
                 </div>
+                {step.helperText && (
+                  <p className="mt-4 text-sm text-center text-[var(--color-muted)] italic">
+                    {step.helperText}
+                  </p>
+                )}
               </div>
             )}
 
@@ -824,9 +837,15 @@ export default function OnboardingFlowPage() {
                     </select>
                   </div>
                 ))}
-                <p className="text-sm text-gray-600 italic">
-                  Je kunt deze stap overslaan als je wilt.
-                </p>
+                {step.helperText ? (
+                  <p className="text-sm text-[var(--color-muted)] italic">
+                    {step.helperText}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 italic">
+                    Je kunt deze stap overslaan als je wilt.
+                  </p>
+                )}
               </div>
             )}
 

@@ -209,7 +209,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           Welke stijl spreekt je aan?
         </h2>
         <p className="text-sm text-[var(--color-muted)]">
-          Gebruik de knoppen of swipe door {moodPhotos.length} outfits
+          <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits — nog 30 seconden
         </p>
 
         {/* Progress */}
