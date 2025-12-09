@@ -673,7 +673,7 @@ export default function OnboardingFlowPage() {
                   </div>
                 )}
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-4 max-w-4xl mx-auto leading-tight">
                 {step.title}
               </h1>
               {step.description && (
@@ -765,6 +765,13 @@ export default function OnboardingFlowPage() {
                   <div className="text-5xl font-bold text-[var(--ff-color-primary-600)] mb-2">
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
+                  <div className="text-sm font-medium text-[var(--color-text)] mb-1">
+                    {(answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 75
+                      ? 'Budget'
+                      : (answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 150
+                      ? 'Middensegment'
+                      : 'Premium'}
+                  </div>
                   <div className="text-sm text-gray-600 mb-4">Per kledingstuk</div>
 
                   {/* Numeric Input for Precise Value */}
@@ -804,15 +811,20 @@ export default function OnboardingFlowPage() {
                     background: `linear-gradient(to right, var(--ff-color-primary-600) 0%, var(--ff-color-primary-600) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) 100%)`
                   }}
                 />
-                <div className="flex justify-between mt-4 text-sm text-gray-600">
-                  <span>€{step.min || 0}</span>
-                  <span>€{step.max || 100}+</span>
+                <div className="flex justify-between mt-4 text-xs text-gray-500">
+                  <div className="text-left">
+                    <div className="font-medium text-[var(--color-text)]">€{step.min || 0}</div>
+                    <div>Budget</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-medium text-[var(--color-text)]">€75-150</div>
+                    <div>Middensegment</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium text-[var(--color-text)]">€{step.max || 100}+</div>
+                    <div>Premium</div>
+                  </div>
                 </div>
-                {step.helperText && (
-                  <p className="mt-4 text-sm text-center text-[var(--color-muted)] italic">
-                    {step.helperText}
-                  </p>
-                )}
               </div>
             )}
 
@@ -830,11 +842,14 @@ export default function OnboardingFlowPage() {
                         handleAnswer('sizes', { ...currentSizes, [field.name]: e.target.value });
                       }}
                     >
-                      <option value="">Selecteer maat</option>
+                      <option value="">Weet ik niet / Sla over</option>
                       {field.options.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
+                    {(field as any).helperText && (
+                      <p className="mt-2 text-xs text-[var(--color-muted)] italic">{(field as any).helperText}</p>
+                    )}
                   </div>
                 ))}
                 {step.helperText ? (

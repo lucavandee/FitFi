@@ -9,21 +9,24 @@ export const getSizeFieldsForGender = (gender?: string) => {
     {
       name: 'tops',
       label: isFemale ? 'Tops (T-shirts, blouses)' : 'Tops (T-shirts, shirts)',
-      options: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+      options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+      helperText: 'US conversie: XS=2-4, S=6-8, M=10-12, L=14-16, XL=18-20'
     },
     {
       name: 'bottoms',
       label: isFemale ? 'Broeken/Rokken' : 'Broeken (waist)',
       options: isFemale
         ? ['32', '34', '36', '38', '40', '42', '44', '46'] // Vrouwenmaten
-        : ['28', '30', '31', '32', '33', '34', '36', '38', '40'] // Mannenmaten (waist)
+        : ['28', '30', '31', '32', '33', '34', '36', '38', '40'], // Mannenmaten (waist)
+      helperText: isFemale ? 'US conversie: 32=2, 34=4, 36=6, 38=8, 40=10, 42=12' : 'Inch waist maat (US/EU standaard)'
     },
     {
       name: 'shoes',
       label: 'Schoenen (EU)',
       options: isFemale
         ? ['35', '36', '37', '38', '39', '40', '41', '42'] // Vrouwenmaten
-        : ['39', '40', '41', '42', '43', '44', '45', '46'] // Mannenmaten
+        : ['39', '40', '41', '42', '43', '44', '45', '46'], // Mannenmaten
+      helperText: isFemale ? 'US conversie: EU 36=US 6, 37=7, 38=7.5, 39=8, 40=8.5' : 'US conversie: EU 41=US 8, 42=8.5, 43=9.5, 44=10'
     }
   ];
 };
