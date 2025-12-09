@@ -79,23 +79,23 @@ export const quizSteps: QuizStep[] = [
       },
       {
         value: 'bohemian',
-        label: 'Bohemian',
-        description: 'Vrije, artistieke stijl met natuurlijke elementen'
+        label: 'Bohemien',
+        description: 'Vrije, artistieke stijl met natuurlijke elementen en lagen'
       },
       {
         value: 'streetwear',
-        label: 'Streetwear',
-        description: 'Urban, trendy, casual met attitude'
+        label: 'Urban/Streetwear',
+        description: 'Moderne, comfortabele stijl met sneakers en hoodies'
       },
       {
         value: 'romantic',
         label: 'Romantisch',
-        description: 'Zachte stoffen, feminine details, pasteltinten'
+        description: 'Zachte stoffen, vrouwelijke details, pasteltinten'
       },
       {
         value: 'edgy',
-        label: 'Edgy',
-        description: 'Stoer, rock-inspired, statement pieces'
+        label: 'Stoer (Edgy)',
+        description: 'Rock-geïnspireerd met leer, jeans en statement-stukken'
       }
     ]
   },
@@ -252,23 +252,23 @@ export const quizSteps: QuizStep[] = [
     options: [
       {
         value: 'slim',
-        label: 'Slim fit',
-        description: 'Nauw aansluitend, tailored look'
+        label: 'Nauwsluitend',
+        description: 'Tailored, strak op maat (slim fit)'
       },
       {
         value: 'regular',
-        label: 'Regular fit',
-        description: 'Comfortabel, klassieke pasvorm'
+        label: 'Normaal',
+        description: 'Comfortabel, klassieke pasvorm (regular fit)'
       },
       {
         value: 'relaxed',
-        label: 'Relaxed fit',
-        description: 'Losse, comfortabele pasvorm'
+        label: 'Losser',
+        description: 'Ruime, comfortabele pasvorm (relaxed fit)'
       },
       {
         value: 'oversized',
         label: 'Oversized',
-        description: 'Ruim, streetwear stijl'
+        description: 'Extra ruim, moderne stijl'
       }
     ]
   },

@@ -173,7 +173,7 @@ export default function HowItWorksPage() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-xs sm:text-sm lg:text-base font-medium">Smart algoritme</span>
+                    <span className="text-xs sm:text-sm lg:text-base font-medium">Slimme afstemming</span>
                   </div>
                   <div className="flex items-center gap-2.5 sm:gap-3 group">
                     <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
@@ -297,11 +297,11 @@ export default function HowItWorksPage() {
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">12.000+ producten</h3>
                 <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
-                  Onze AI scant realtime webshops. Elk item heeft 50+ eigenschappen: kleur, stijl, seizoen, gelegenheid, body type.
-                  Matchen gebeurt op milliseconden.
+                  We analyseren duizenden producten op kleur, stijl, seizoen en gelegenheid.
+                  Matchen gebeurt direct met jouw profiel.
                 </p>
                 <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm lg:text-base text-[var(--ff-color-primary-600)] font-semibold group-hover:gap-3 transition-all">
-                  <span>Database groeit elke week</span>
+                  <span>Productselectie groeit elke week</span>
                   <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                 </div>
               </div>
@@ -313,11 +313,11 @@ export default function HowItWorksPage() {
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">Leert van feedback</h3>
                 <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
-                  Premium gebruikers kunnen outfits liken/disliken. Elke reactie verbetert het algoritme.
-                  Hoe vaker je FitFi gebruikt, hoe nauwkeuriger de match.
+                  Premium-leden kunnen outfits liken en disliken. Elke reactie verfijnt je profiel.
+                  Hoe vaker je FitFi gebruikt, hoe beter de match.
                 </p>
                 <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm lg:text-base text-[var(--ff-color-primary-600)] font-semibold group-hover:gap-3 transition-all">
-                  <span>Machine learning die evolueert</span>
+                  <span>Jouw profiel verbetert automatisch</span>
                   <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                 </div>
               </div>

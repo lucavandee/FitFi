@@ -10,9 +10,7 @@ const FAQ_GENERAL: QA[] = [
     q: "Wat krijg ik precies als ik start?",
     a: (
       <>
-        Je beantwoordt 6 korte vragen en ontvangt direct meerdere outfits met uitleg
-        (waarom dit werkt voor jou) en shoplinks . Je hoeft geen account te
-        maken om te starten.
+        Je krijgt <strong>minimaal 5 complete outfits</strong> met uitleg waarom ze bij je passen. Elke outfit heeft directe shoplinks. Je hoeft geen account te maken om te starten.
       </>
     ),
   },
@@ -20,8 +18,7 @@ const FAQ_GENERAL: QA[] = [
     q: "Werkt FitFi op mobiel?",
     a: (
       <>
-        Ja. De ervaring is mobile-first ontworpen. De UI blijft rustig en snel op alle
-        schermformaten.
+        Ja, volledig. De app is mobile-first: even snel en overzichtelijk op je telefoon als op desktop.
       </>
     ),
   },
@@ -29,9 +26,7 @@ const FAQ_GENERAL: QA[] = [
     q: "Is dit stijladvies persoonlijk of generiek?",
     a: (
       <>
-        Persoonlijk. We vertalen je voorkeuren naar archetypen, kleuraccenten en
-        pasvormrichting. Je krijgt dus geen willekeurige boards, maar combinaties die
-        bij jou passen — inclusief korte redenatie.
+        Persoonlijk. Je antwoorden worden vertaald naar jouw unieke stijlprofiel (zoals "65% Minimalistisch, 25% Casual Chic"). Outfits worden hier op afgestemd.
       </>
     ),
   },
@@ -42,9 +37,7 @@ const FAQ_PRIVACY: QA[] = [
     q: "Hoe gaan jullie met mijn data om?",
     a: (
       <>
-        . We verwerken alleen wat strikt nodig is om je advies te tonen en
-        bewaren niets onnodigs. Geen doorverkoop van gegevens. Je kunt altijd contact
-        opnemen als je iets wilt laten verwijderen.
+        We bewaren alleen je quizantwoorden en outfitvoorkeuren. <strong>Geen doorverkoop, geen tracking.</strong> Je kunt je gegevens altijd laten verwijderen via contact@fitfi.ai.
       </>
     ),
   },
@@ -52,17 +45,15 @@ const FAQ_PRIVACY: QA[] = [
     q: "Moet ik foto's uploaden?",
     a: (
       <>
-        Nee. Je kunt starten zonder uploads. Later kun je optioneel meer delen voor
-        extra nuance; dat is geheel aan jou.
+        Nee, de quiz werkt zonder foto's. Premium-leden kunnen <em>later</em> optioneel foto's uploaden voor kleuranalyse. Volledig vrijwillig.
       </>
     ),
   },
   {
-    q: "Is de AI uitlegbaar?",
+    q: "Waarom passen deze outfits bij mij?",
     a: (
       <>
-        Ja. Bij outfits tonen we kort <em>waarom</em> keuzes kloppen (silhouet, kleur,
-        proportie). Geen black box.
+        Elke outfit toont een korte uitleg: waarom de kleuren kloppen, welke pasvorm past bij je voorkeur, en hoe de stijl aansluit bij je profiel. Je ziet altijd het <em>waarom</em>.
       </>
     ),
   },
@@ -73,8 +64,7 @@ const FAQ_PRICING: QA[] = [
     q: "Blijft er een gratis optie?",
     a: (
       <>
-        Ja. Met <strong>Starter</strong> kun je gratis kennismaken. Upgraden kan later
-        wanneer jij daar klaar voor bent.
+        Ja. Met <strong>Starter</strong> krijg je gratis toegang tot je eerste 5 outfits en stijlprofiel. Je kunt altijd gratis blijven.
       </>
     ),
   },
@@ -82,8 +72,7 @@ const FAQ_PRICING: QA[] = [
     q: "Kan ik maandelijks opzeggen of wisselen?",
     a: (
       <>
-        Ja. Je zit nergens aan vast. Je kunt maandelijks opzeggen of wisselen; we
-        verrekenen fair.
+        Ja. <strong>Geen lange contracten.</strong> Je kunt elk moment opzeggen of van plan wisselen. Maandelijks gefactureerd.
       </>
     ),
   },
@@ -91,8 +80,7 @@ const FAQ_PRICING: QA[] = [
     q: "Welke betaalmethodes ondersteunen jullie?",
     a: (
       <>
-        De gebruikelijke betaalmethoden via een betrouwbare payment provider. Afrekenen
-        gaat zoals je gewend bent.
+        iDEAL, creditcard en Apple Pay via Stripe. Veilig en vertrouwd.
       </>
     ),
   },
@@ -100,29 +88,26 @@ const FAQ_PRICING: QA[] = [
 
 const FAQ_PRODUCT: QA[] = [
   {
-    q: "Komen er updates of variaties?",
+    q: "Kan ik de quiz opnieuw doen?",
     a: (
       <>
-        Ja. We breiden looks en variaties uit (seizoenen, wishlist, alerts) met behoud
-        van rust en consistentie.
+        Ja, <strong>zo vaak als je wilt</strong>. Je krijgt dan nieuwe outfits op basis van je nieuwe antwoorden. Je oude profiel blijft bewaard.
       </>
     ),
   },
   {
-    q: "Kan ik items makkelijk terugvinden?",
+    q: "Kan ik outfits opslaan?",
     a: (
       <>
-        Ja. Bij elke look tonen we items met duidelijke context en shoplinks. Je ziet
-        <em>wat</em> het is en <em>waarom</em> het werkt.
+        Ja. Je kunt favoriete outfits opslaan in je dashboard. Shoplinks blijven beschikbaar, zodat je later kunt winkelen.
       </>
     ),
   },
   {
-    q: "Wat als ik ergens niet uitkom?",
+    q: "Wat als ik hulp nodig heb?",
     a: (
       <>
-        Laat het ons weten — we denken mee en verbeteren de uitleg waar nodig. Samen
-        houden we de ervaring premium én praktisch.
+        Mail ons op <strong>contact@fitfi.ai</strong>. We reageren binnen 24 uur en denken mee over je stijlvragen.
       </>
     ),
   },
