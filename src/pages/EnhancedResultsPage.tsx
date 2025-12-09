@@ -19,6 +19,9 @@ import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/o
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { canonicalUrl } from "@/utils/urls";
 import { SwipeableOutfitGallery } from "@/components/outfits/SwipeableOutfitGallery";
+import { useMonthlyUpgrades } from "@/hooks/useMonthlyUpgrades";
+import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
+import { ExitIntentModal } from "@/components/results/ExitIntentModal";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -53,6 +56,9 @@ export default function EnhancedResultsPage() {
     threshold: 50,
   });
 
+  const [showExitModal, setShowExitModal] = React.useState(false);
+  const { data: monthlyUpgradeCount, isLoading: upgradesLoading } = useMonthlyUpgrades();
+
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 300], [1, 0.95]);
@@ -68,6 +74,14 @@ export default function EnhancedResultsPage() {
   const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
 
   const hasCompletedQuiz = !!answers;
+
+  // Exit intent modal trigger
+  React.useEffect(() => {
+    if (showExitIntent && !user) {
+      setShowExitModal(true);
+      dismissExitIntent();
+    }
+  }, [showExitIntent, user, dismissExitIntent]);
 
   // CRITICAL: If no quiz data, redirect to onboarding
   React.useEffect(() => {
@@ -768,20 +782,24 @@ export default function EnhancedResultsPage() {
                     </p>
                   </div>
 
-                  {/* Benefits Grid */}
+                  {/* Benefits Grid - Personalized */}
                   <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center">
-                      <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">50+</div>
-                      <div className="text-sm text-[var(--color-muted)]">Outfits per seizoen</div>
-                    </div>
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center">
-                      <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">AI</div>
-                      <div className="text-sm text-[var(--color-muted)]">Styling assistent</div>
-                    </div>
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center">
-                      <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">∞</div>
-                      <div className="text-sm text-[var(--color-muted)]">Opgeslagen outfits</div>
-                    </div>
+                    {getBenefitsForArchetype(archetypeName).map((benefit, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center"
+                      >
+                        <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">
+                          {benefit.value}
+                        </div>
+                        <div className="text-sm text-[var(--color-muted)]">
+                          {benefit.label}
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
 
                   {/* Pricing */}
@@ -795,10 +813,12 @@ export default function EnhancedResultsPage() {
                     </p>
                   </div>
 
-                  {/* Social Proof */}
+                  {/* Social Proof - Dynamic */}
                   <div className="text-center mb-6">
                     <p className="text-sm text-[var(--color-muted)]">
-                      ⭐ <span className="font-semibold text-[var(--color-text)]">2.847+ gebruikers</span> geüpgraded deze maand
+                      ⭐ <span className="font-semibold text-[var(--color-text)]">
+                        {upgradesLoading ? "2.847+" : `${monthlyUpgradeCount?.toLocaleString("nl-NL") || "2.847"}+`} gebruikers
+                      </span> geüpgraded deze maand
                     </p>
                   </div>
 
@@ -991,6 +1011,9 @@ export default function EnhancedResultsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Exit Intent Discount Modal */}
+      <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
     </main>
   );
 }
