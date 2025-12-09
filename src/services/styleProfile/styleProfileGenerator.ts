@@ -168,9 +168,17 @@ export class StyleProfileGenerator {
       return null;
     }
 
-    // Check for color preference answers (support multiple field names for backwards compatibility)
-    const colorPref = answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
+    // ✅ Check for color preference answers (support multiple field names for backwards compatibility)
+    // CRITICAL: Quiz uses "baseColors", NOT "colorPreference"
+    const colorPref = answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp || answers.neutrals;
     const neutralPreference = answers.neutrals || answers.neutral || false;
+
+    console.log('[StyleProfileGenerator] analyzeQuizColors input:', {
+      hasBaseColors: !!answers.baseColors,
+      baseColors: answers.baseColors,
+      hasNeutrals: !!answers.neutrals,
+      colorPref
+    });
 
     // Map quiz answers to temperature
     let temperature = 'neutraal';
@@ -179,23 +187,30 @@ export class StyleProfileGenerator {
     if (typeof colorPref === 'string') {
       const pref = colorPref.toLowerCase();
 
-      // Map baseColors values from quiz
+      // ✅ Map baseColors values from quiz (EXACT quiz values)
       if (pref === 'neutral' || pref.includes('neutrale') || pref.includes('zwart') || pref.includes('wit') || pref.includes('grijs')) {
         temperature = 'koel'; // Zwart/wit/grijs = cool tones
         preferredColors.push('zwart', 'wit', 'grijs', 'beige', 'navy');
       } else if (pref === 'earth' || pref.includes('aardse') || pref.includes('warm') || pref.includes('beige') || pref.includes('camel') || pref.includes('bruin')) {
         temperature = 'warm';
         preferredColors.push('bruin', 'camel', 'khaki', 'olijfgroen');
-      } else if (pref === 'jewel' || pref.includes('juweel') || pref.includes('koel') || pref.includes('blauw') || pref.includes('navy')) {
+      } else if (pref === 'jewel' || pref.includes('juweel') || pref.includes('koel') || pref.includes('blauw') || pref.includes('navy') || pref.includes('saffierblauw') || pref.includes('smaragdgroen')) {
         temperature = 'koel';
         preferredColors.push('smaragdgroen', 'saffierblauw', 'robijnrood');
-      } else if (pref === 'pastel' || pref.includes('pastel')) {
+      } else if (pref === 'pastel' || pref.includes('pastel') || pref.includes('roze') || pref.includes('lavendel') || pref.includes('lichtblauw')) {
         temperature = 'koel';
         preferredColors.push('roze', 'lichtblauw', 'lavendel');
-      } else if (pref === 'bold' || pref.includes('fel')) {
+      } else if (pref === 'bold' || pref.includes('fel') || pref.includes('felrood') || pref.includes('elektrisch') || pref.includes('neon')) {
+        // ✅ BOLD colors = WARM + HIGH saturation
         temperature = 'warm';
-        preferredColors.push('rood', 'blauw', 'geel');
+        preferredColors.push('rood', 'elektrischblauw', 'neongeel', 'oranje');
       }
+
+      console.log('[StyleProfileGenerator] Color mapping:', {
+        input: pref,
+        temperature,
+        preferredColors
+      });
     }
 
     return {
@@ -416,12 +431,46 @@ export class StyleProfileGenerator {
     // Quiz only
     if (quizColors) {
       const temperature = quizColors.temperature;
-      const chroma = quizColors.isNeutral ? 'zacht' : 'gemiddeld';
-      const contrast = quizColors.isNeutral ? 'laag' : 'medium';
+
+      // ✅ IMPROVED: Determine chroma based on color selection
+      let chroma: string;
+      let contrast: string;
+
+      // Check if user selected bold/vibrant colors
+      const hasBoldColors = quizColors.preferredColors.some(c =>
+        c.includes('rood') || c.includes('blauw') || c.includes('geel') ||
+        c.includes('elektrisch') || c.includes('neon') || c.includes('oranje')
+      );
+
+      // Check if user selected high-contrast colors (zwart + wit)
+      const hasBlackWhite = quizColors.preferredColors.includes('zwart') && quizColors.preferredColors.includes('wit');
+
+      if (hasBoldColors) {
+        chroma = 'gedurfd'; // Bold colors = high chroma
+        contrast = 'hoog';
+      } else if (hasBlackWhite) {
+        chroma = 'gedurfd'; // Zwart/wit = high contrast
+        contrast = 'hoog';
+      } else if (quizColors.isNeutral) {
+        chroma = 'zacht';
+        contrast = 'laag';
+      } else {
+        chroma = 'gemiddeld';
+        contrast = 'medium';
+      }
+
+      console.log('[StyleProfileGenerator] Quiz-only profile:', {
+        temperature,
+        chroma,
+        contrast,
+        hasBoldColors,
+        hasBlackWhite,
+        preferredColors: quizColors.preferredColors
+      });
 
       return {
         temperature,
-        value: 'medium',
+        value: contrast === 'hoog' ? 'hoog' : contrast === 'laag' ? 'laag' : 'medium',
         contrast,
         chroma,
         season: this.determineSeason(temperature),

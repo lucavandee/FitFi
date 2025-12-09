@@ -133,6 +133,11 @@ export class ArchetypeDetector {
           score += 30;
           reasons.push('Streetwear/urban style preference');
         }
+        // ✅ Map "Edgy/Stoer" to Streetwear
+        if (styleKeywords.some(s => s.includes('edgy') || s.includes('stoer') || s.includes('rock'))) {
+          score += 25;
+          reasons.push('Edgy/Rock style → Streetwear');
+        }
       }
 
       // ATHLETIC detection
@@ -148,6 +153,34 @@ export class ArchetypeDetector {
         if (styleKeywords.some(s => s.includes('klassiek') || s.includes('classic') || s.includes('preppy'))) {
           score += 30;
           reasons.push('Classic style preference');
+        }
+        // ✅ Map "Romantic" to Classic
+        if (styleKeywords.some(s => s.includes('romantic') || s.includes('romantisch'))) {
+          score += 25;
+          reasons.push('Romantic style → Classic');
+        }
+      }
+
+      // AVANT_GARDE detection
+      if (descriptor.key === 'AVANT_GARDE') {
+        // ✅ Map "Bohemian" to Avant-Garde (artistic, layered)
+        if (styleKeywords.some(s => s.includes('bohemi') || s.includes('boho') || s.includes('artistic'))) {
+          score += 30;
+          reasons.push('Bohemian style → Avant-Garde');
+        }
+        // ✅ Also Edgy can be Avant-Garde
+        if (styleKeywords.some(s => s.includes('edgy') || s.includes('stoer'))) {
+          score += 20;
+          reasons.push('Edgy style (secondary) → Avant-Garde');
+        }
+      }
+
+      // SMART_CASUAL detection (fallback for mixed styles)
+      if (descriptor.key === 'SMART_CASUAL') {
+        // Bohemian can also be Smart Casual (relaxed but polished)
+        if (styleKeywords.some(s => s.includes('bohemi'))) {
+          score += 15;
+          reasons.push('Bohemian (secondary) → Smart Casual');
         }
       }
     }
