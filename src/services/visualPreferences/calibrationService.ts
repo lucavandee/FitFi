@@ -75,6 +75,14 @@ export class CalibrationService {
       .sort(([, a], [, b]) => b - a)
       .slice(0, 3);
 
+    // ✅ CHECK if database has enough products
+    const hasProducts = await this.hasMinimumProducts(quizData?.gender);
+
+    if (!hasProducts) {
+      console.warn('[CalibrationService] ⚠️ Insufficient products in database, using mock outfits');
+      return this.generateMockOutfits(topArchetypes, quizData);
+    }
+
     // ✅ GET SWIPE COLORS
     const swipeColors = await this.getSwipeColors(userId, sessionId);
     console.log('[CalibrationService] User swipe colors:', swipeColors);
@@ -100,7 +108,14 @@ export class CalibrationService {
         swipeColors
       );
 
-      outfits.push(outfit);
+      // ✅ FALLBACK: If outfit has no items, use mock
+      if (!outfit.items.top && !outfit.items.bottom && !outfit.items.shoes) {
+        console.warn(`[CalibrationService] ⚠️ Outfit ${index} has no items, using mock`);
+        const mockOutfits = this.generateMockOutfits([[mainArchetype, score]], quizData);
+        outfits.push(mockOutfits[0]);
+      } else {
+        outfits.push(outfit);
+      }
     }
 
     return outfits;
@@ -837,5 +852,147 @@ export class CalibrationService {
     return fuzzyGroups.some(group =>
       group.includes(c1) && group.includes(c2)
     );
+  }
+
+  /**
+   * Check if database has minimum required products
+   */
+  private static async hasMinimumProducts(gender?: string): Promise<boolean> {
+    const supabase = getSupabase();
+    if (!supabase) {
+      console.warn('[CalibrationService] Supabase unavailable, will use mock outfits');
+      return false;
+    }
+
+    try {
+      const { count, error } = await supabase
+        .from('products')
+        .select('*', { count: 'exact', head: true })
+        .or(`gender.eq.${gender || 'male'},gender.eq.unisex`);
+
+      if (error) {
+        console.error('[CalibrationService] Error checking products count:', error);
+        return false;
+      }
+
+      const hasEnough = (count || 0) >= 10;
+      console.log(`[CalibrationService] Product count check: ${count} products (minimum: 10, sufficient: ${hasEnough})`);
+
+      return hasEnough;
+    } catch (err) {
+      console.error('[CalibrationService] Failed to check products:', err);
+      return false;
+    }
+  }
+
+  /**
+   * Generate mock outfits when database is empty
+   */
+  private static generateMockOutfits(
+    topArchetypes: Array<[string, number]>,
+    quizData?: any
+  ): CalibrationOutfit[] {
+    const gender = quizData?.gender || 'male';
+
+    const mockTemplates = [
+      {
+        archetype: 'scandi_minimal',
+        title: 'Minimalist Essentials',
+        description: 'Strakke, minimalistische lijnen met neutrale tinten',
+        occasion: 'casual',
+        colors: ['#F5F5DC', '#808080', '#FFFFFF'],
+        items: {
+          top: { name: 'Essential Organic Cotton Tee', brand: 'Basic Line', price: 39, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { name: 'Straight Fit Chinos', brand: 'Basic Line', price: 69, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { name: 'Minimalist White Sneakers', brand: 'Basic Line', price: 99, image_url: '/images/fallbacks/footwear.jpg' }
+        }
+      },
+      {
+        archetype: 'italian_smart_casual',
+        title: 'Smart Casual Refined',
+        description: 'Gestructureerde smart casual met verfijnde details',
+        occasion: 'work',
+        colors: ['#2C3E50', '#ECF0F1', '#8B7355'],
+        items: {
+          top: { name: 'Structured Oxford Shirt', brand: 'Classic Brand', price: 79, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { name: 'Tailored Dress Pants', brand: 'Classic Brand', price: 99, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { name: 'Leather Loafers', brand: 'Classic Brand', price: 149, image_url: '/images/fallbacks/footwear.jpg' }
+        }
+      },
+      {
+        archetype: 'street_refined',
+        title: 'Urban Street Style',
+        description: 'Urban streetwear met premium touch',
+        occasion: 'casual',
+        colors: ['#1C1C1C', '#FFFFFF', '#808080'],
+        items: {
+          top: { name: 'Premium Oversized Hoodie', brand: 'Street Brand', price: 89, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { name: 'Tapered Joggers', brand: 'Street Brand', price: 79, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { name: 'Premium Hi-Top Sneakers', brand: 'Street Brand', price: 139, image_url: '/images/fallbacks/footwear.jpg' }
+        }
+      },
+      {
+        archetype: 'classic',
+        title: 'Timeless Classics',
+        description: 'Tijdloze klassiekers die altijd werken',
+        occasion: 'work',
+        colors: ['#000080', '#FFFFFF', '#8B7355'],
+        items: {
+          top: { name: 'Classic Oxford Shirt', brand: 'Heritage Brand', price: 69, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { name: 'Classic Chino Pants', brand: 'Heritage Brand', price: 79, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { name: 'Oxford Dress Shoes', brand: 'Heritage Brand', price: 159, image_url: '/images/fallbacks/footwear.jpg' }
+        }
+      },
+      {
+        archetype: 'bohemian',
+        title: 'Free Bohemian Spirit',
+        description: 'Vrije, gelaagde bohemian stijl',
+        occasion: 'casual',
+        colors: ['#D2691E', '#F4A460', '#8B4513'],
+        items: {
+          top: { name: 'Flowing Linen Tunic', brand: 'Boho Brand', price: 59, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { name: 'Wide-Leg Linen Pants', brand: 'Boho Brand', price: 69, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { name: 'Suede Desert Boots', brand: 'Boho Brand', price: 119, image_url: '/images/fallbacks/footwear.jpg' }
+        }
+      }
+    ];
+
+    // Map user's top archetypes to mock templates
+    const selectedOutfits: CalibrationOutfit[] = [];
+
+    for (let i = 0; i < Math.min(3, topArchetypes.length); i++) {
+      const [archetype, score] = topArchetypes[i];
+
+      // Find template for this archetype
+      let template = mockTemplates.find(t => t.archetype === archetype);
+
+      // Fallback to any template if not found
+      if (!template) {
+        template = mockTemplates[i % mockTemplates.length];
+      }
+
+      const archetypeWeights: ArchetypeWeights = {
+        [archetype]: score / 100,
+        ...(topArchetypes[i + 1] ? {
+          [topArchetypes[i + 1][0]]: topArchetypes[i + 1][1] / 100 * 0.4
+        } : {})
+      };
+
+      const colorHarmony = ColorHarmonyService.validateOutfitColors(template.colors);
+
+      selectedOutfits.push({
+        id: `mock-calibration-${i}`,
+        title: `Look ${i + 1}`,
+        items: template.items,
+        archetypes: archetypeWeights,
+        dominantColors: template.colors,
+        occasion: template.occasion,
+        colorHarmony,
+        explanation: `Deze look combineert ${template.description}. Perfect voor jouw voorkeur voor ${archetype.replace(/_/g, ' ')}.`
+      });
+    }
+
+    console.log(`[CalibrationService] ✅ Generated ${selectedOutfits.length} mock calibration outfits`);
+    return selectedOutfits;
   }
 }
