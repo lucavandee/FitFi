@@ -211,11 +211,29 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       // Short delay for UI feedback
       setTimeout(() => {
         onComplete();
-      }, 500);
+      }, 1500);
     } catch (err) {
       console.error('Failed to apply calibration:', err);
       setApplying(false);
     }
+  };
+
+  // Calculate feedback impact summary
+  const getFeedbackImpact = () => {
+    const spotOnCount = Object.values(feedback).filter(f => f === 'spot_on').length;
+    const notForMeCount = Object.values(feedback).filter(f => f === 'not_for_me').length;
+    const maybeCount = Object.values(feedback).filter(f => f === 'maybe').length;
+
+    if (spotOnCount === 3) {
+      return '✨ Perfect! We begrijpen je stijl nu volledig. Je aanbevelingen blijven binnen deze richtlijnen.';
+    }
+    if (notForMeCount >= 2) {
+      return '🔄 We zien dat deze outfits niet helemaal passen. Je aanbevelingen worden aangepast naar jouw voorkeuren.';
+    }
+    if (spotOnCount >= 2) {
+      return '👍 Goed zo! We verfijnen je profiel met deze feedback en tonen vergelijkbare outfits.';
+    }
+    return '📊 Je feedback helpt ons je stijl beter te begrijpen. We passen je aanbevelingen hierop aan.';
   };
 
   const allRated = outfits.length > 0 && outfits.every(o => feedback[o.id]);
@@ -306,6 +324,15 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           transition={{ delay: 0.3 }}
           className="text-center"
         >
+          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6 mb-6 shadow-[var(--shadow-soft)]">
+            <h3 className="font-semibold text-[var(--color-text)] mb-2">
+              Impact op je stijlprofiel
+            </h3>
+            <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+              {getFeedbackImpact()}
+            </p>
+          </div>
+
           <motion.button
             onClick={handleContinue}
             disabled={applying}
@@ -316,7 +343,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
             {applying ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Profiel aanpassen...
+                Style DNA wordt gegenereerd...
               </>
             ) : (
               <>

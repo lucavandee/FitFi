@@ -59,19 +59,19 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lg)] transition-shadow duration-300"
     >
       <div className="grid md:grid-cols-[1.2fr_1fr] gap-0">
-        <div className="relative aspect-[4/5] md:aspect-auto">
-          <div className="absolute inset-0 grid grid-cols-2 gap-2 p-6">
+        <div className="relative aspect-[4/5] md:aspect-auto bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)]">
+          <div className="absolute inset-0 grid grid-cols-2 gap-3 p-4 sm:p-6">
             {outfit.items.top && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
+                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-lg ring-1 ring-black/5"
               >
                 <SmartImage
                   src={outfit.items.top.image_url}
                   alt={outfit.items.top.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain p-2"
                 />
               </motion.div>
             )}
@@ -80,12 +80,12 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
+                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-lg ring-1 ring-black/5"
               >
                 <SmartImage
                   src={outfit.items.bottom.image_url}
                   alt={outfit.items.bottom.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain p-2"
                 />
               </motion.div>
             )}
@@ -94,12 +94,12 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="col-span-2 aspect-[2/1] bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-md"
+                className="col-span-2 aspect-[2/1] bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-lg ring-1 ring-black/5"
               >
                 <SmartImage
                   src={outfit.items.shoes.image_url}
                   alt={outfit.items.shoes.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain p-2"
                 />
               </motion.div>
             )}
