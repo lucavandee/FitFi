@@ -171,7 +171,7 @@ export default function PricingPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
 
               {/* Free Plan - Smaller */}
-              <article className="lg:col-span-4 bg-[var(--color-surface)] rounded-2xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)] h-full">
+              <article className="lg:col-span-4 bg-[var(--color-surface)] rounded-2xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-5 sm:p-7 shadow-[var(--shadow-soft)] h-full">
                 <header className="mb-5 sm:mb-6">
                   <div className="inline-block px-2.5 sm:px-3 py-1 bg-[var(--color-bg)] rounded-full text-[10px] xs:text-xs font-bold text-[var(--color-muted)] mb-3 sm:mb-4">
                     VOOR BEGINNERS
@@ -183,32 +183,42 @@ export default function PricingPage() {
                   <p className="text-sm sm:text-base text-[var(--color-muted)]">Voor altijd gratis</p>
                 </header>
 
-                <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                  <li className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">Ontdek je stijlprofiel</span>
+                <ul className="space-y-3 mb-6 sm:mb-8">
+                  <li className="flex items-start gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-primary-700)]" />
+                    </div>
+                    <span className="text-sm sm:text-base">Ontdek je stijlprofiel</span>
                   </li>
-                  <li className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">3 gepersonaliseerde outfits</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-primary-700)]" />
+                    </div>
+                    <span className="text-sm sm:text-base">3 gepersonaliseerde outfits</span>
                   </li>
-                  <li className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">Basis kleuradvies</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-primary-700)]" />
+                    </div>
+                    <span className="text-sm sm:text-base">Basis kleuradvies</span>
                   </li>
-                  <li className="flex items-start gap-2.5 sm:gap-3 opacity-50">
-                    <Minus className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">Geen AI-styling assistent</span>
+                  <li className="flex items-start gap-3 opacity-50">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[var(--color-border)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--color-muted)]" />
+                    </div>
+                    <span className="text-sm sm:text-base">Geen AI-styling assistent</span>
                   </li>
-                  <li className="flex items-start gap-2.5 sm:gap-3 opacity-50">
-                    <Minus className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">Beperkte outfits</span>
+                  <li className="flex items-start gap-3 opacity-50">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[var(--color-border)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--color-muted)]" />
+                    </div>
+                    <span className="text-sm sm:text-base">Beperkte outfits</span>
                   </li>
                 </ul>
 
                 <NavLink
                   to="/onboarding"
-                  className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold text-base hover:bg-[var(--color-surface)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
+                  className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
                   data-event="cta_start_free_pricing"
                 >
                   Start gratis
@@ -216,11 +226,11 @@ export default function PricingPage() {
               </article>
 
               {/* Premium Plan - HERO */}
-              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl sm:rounded-[var(--radius-2xl)] p-6 sm:p-8 md:p-10 lg:p-12 shadow-2xl text-white transform lg:scale-105">
+              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl sm:rounded-[var(--radius-2xl)] p-5 sm:p-7 md:p-9 lg:p-11 shadow-2xl text-white transform lg:scale-105 mt-2 sm:mt-3">
 
                 {/* Popular Badge */}
-                <div className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 rounded-full px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-bold bg-[var(--ff-color-accent-500)] text-white shadow-lg">
-                  🔥 MEEST GEKOZEN
+                <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 rounded-full px-5 sm:px-7 py-2 sm:py-2.5 text-sm sm:text-base font-bold bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-2xl border-2 border-white/20 backdrop-blur-sm">
+                  <span className="drop-shadow-sm">🔥 MEEST GEKOZEN</span>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
@@ -245,7 +255,7 @@ export default function PricingPage() {
                       <button
                         onClick={() => premiumProduct && handleCheckout(premiumProduct.id, 'Premium')}
                         disabled={isLoading || createCheckout.isPending || checkingAuth}
-                        className="w-full px-6 sm:px-8 py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base sm:text-lg hover:bg-white/95 transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98]"
+                        className="w-full px-6 sm:px-8 py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base sm:text-lg hover:bg-white/90 hover:shadow-2xl transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98]"
                         data-event="cta_start_premium_pricing"
                       >
                         {isLoading ? (
@@ -705,7 +715,7 @@ export default function PricingPage() {
             </p>
             <NavLink
               to="/onboarding"
-              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl sm:rounded-[var(--radius-xl)] font-bold hover:bg-white/95 transition-colors shadow-xl text-base sm:text-lg focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl sm:rounded-[var(--radius-xl)] font-bold hover:bg-white/90 hover:shadow-2xl transition-all shadow-xl text-base sm:text-lg focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
               data-event="cta_start_free_pricing_final"
             >
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
