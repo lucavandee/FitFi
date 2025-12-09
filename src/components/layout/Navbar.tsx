@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 
 /**
@@ -36,6 +36,34 @@ export default function Navbar() {
   const { user, logout } = useUser();
   const isAuthed = !!user;
   useLockBody(open);
+
+  const [savedOutfitsCount, setSavedOutfitsCount] = React.useState(0);
+
+  React.useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("ff_fav_outfits") || "[]");
+      setSavedOutfitsCount(saved.length);
+    } catch {
+      setSavedOutfitsCount(0);
+    }
+
+    const handleStorageChange = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem("ff_fav_outfits") || "[]");
+        setSavedOutfitsCount(saved.length);
+      } catch {
+        setSavedOutfitsCount(0);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    const interval = setInterval(handleStorageChange, 2000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   // Sluit menu bij routewissel of ESC
   React.useEffect(() => setOpen(false), [pathname]);
@@ -99,8 +127,18 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <a href="/dashboard" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_dashboard">
+                <a
+                  href="/dashboard"
+                  className="inline-flex items-center gap-2 ff-btn ff-btn-primary min-h-[44px] px-4 relative"
+                  data-event="nav_dashboard"
+                >
                   Dashboard
+                  {savedOutfitsCount > 0 && (
+                    <span className="flex items-center gap-1 px-2 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full">
+                      <Heart className="w-3 h-3 fill-white" />
+                      {savedOutfitsCount}
+                    </span>
+                  )}
                 </a>
                 <button
                   type="button"
@@ -170,7 +208,18 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="mt-4 grid grid-cols-3 gap-2">
-              <a href="/dashboard" className="ff-btn ff-btn-primary min-h-[44px] w-full col-span-2">Dashboard</a>
+              <a
+                href="/dashboard"
+                className="ff-btn ff-btn-primary min-h-[44px] w-full col-span-2 flex items-center justify-center gap-2"
+              >
+                Dashboard
+                {savedOutfitsCount > 0 && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full">
+                    <Heart className="w-3 h-3 fill-white" />
+                    {savedOutfitsCount}
+                  </span>
+                )}
+              </a>
               <button onClick={handleLogout} className="ff-btn ff-btn-secondary min-h-[44px] w-full">Uit</button>
             </div>
           )}

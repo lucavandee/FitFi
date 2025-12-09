@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Heart, Share2, Sparkles, ExternalLink, ShoppingBag } from "lucide-react";
 import { StyleDNAMatchBadge } from "../outfits/StyleDNAMatchBadge";
+import toast from "react-hot-toast";
+import { NavLink } from "react-router-dom";
 
 interface OutfitZoomModalProps {
   isOpen: boolean;
@@ -174,34 +176,80 @@ export function OutfitZoomModal({
                       </div>
                     )}
 
-                    {/* Products List */}
+                    {/* Products List - Shoppable */}
                     <div className="flex-1 overflow-y-auto mb-6">
-                      <h3 className="font-semibold text-[var(--color-text)] mb-3">
-                        Items in deze outfit
-                      </h3>
-                      <div className="space-y-3">
-                        {outfit.products.map((product, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors"
-                          >
-                            <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center">
-                              <span className="text-2xl">{i + 1}</span>
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-[var(--color-text)]">
-                                {product.name || product.category || "Product"}
-                              </h4>
-                              <p className="text-sm text-[var(--color-text-muted)]">
-                                {product.brand || "Fashion Brand"}
-                              </p>
-                            </div>
-                            <button className="p-2 text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-50)] rounded-lg transition-colors">
-                              <ExternalLink className="w-5 h-5" />
-                            </button>
-                          </div>
-                        ))}
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-semibold text-[var(--color-text)]">
+                          Items in deze outfit
+                        </h3>
+                        <span className="text-xs text-[var(--color-text-muted)] flex items-center gap-1">
+                          <ShoppingBag className="w-3 h-3" />
+                          Klik om te shoppen
+                        </span>
                       </div>
+                      <div className="space-y-3">
+                        {outfit.products.map((product, i) => {
+                          const shopUrl = product.affiliate_url || product.product_url || product.url;
+                          const hasShopUrl = !!shopUrl;
+
+                          return (
+                            <motion.div
+                              key={i}
+                              whileHover={hasShopUrl ? { scale: 1.02, x: 4 } : {}}
+                              className={`
+                                flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] transition-all
+                                ${hasShopUrl ? "hover:border-[var(--ff-color-primary-400)] hover:shadow-md cursor-pointer" : ""}
+                              `}
+                              onClick={() => {
+                                if (hasShopUrl) {
+                                  window.open(shopUrl, "_blank", "noopener,noreferrer");
+                                  toast.success("Product opent in nieuw tabblad", {
+                                    icon: "🛍️",
+                                    duration: 2000,
+                                  });
+                                }
+                              }}
+                            >
+                              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center flex-shrink-0">
+                                <span className="text-2xl font-bold">{i + 1}</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-medium text-[var(--color-text)] truncate">
+                                  {product.name || product.category || "Product"}
+                                </h4>
+                                <p className="text-sm text-[var(--color-text-muted)] truncate">
+                                  {product.brand || "Fashion Brand"}
+                                  {product.price && (
+                                    <span className="ml-2 font-semibold text-[var(--ff-color-primary-700)]">
+                                      €{typeof product.price === "number" ? product.price.toFixed(2) : product.price}
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+                              {hasShopUrl && (
+                                <motion.div
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--ff-color-primary-600)] text-white flex items-center justify-center hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                                >
+                                  <ShoppingBag className="w-5 h-5" />
+                                </motion.div>
+                              )}
+                              {!hasShopUrl && (
+                                <div className="flex-shrink-0 px-3 py-1.5 bg-gray-100 text-gray-500 text-xs rounded-lg">
+                                  Binnenkort
+                                </div>
+                              )}
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Helper Text */}
+                    <div className="text-xs text-[var(--color-text-muted)] text-center mb-3 flex items-center justify-center gap-2">
+                      <Heart className="w-3 h-3" />
+                      Opgeslagen outfits vind je terug in je Dashboard
                     </div>
 
                     {/* Action Buttons */}
@@ -209,7 +257,36 @@ export function OutfitZoomModal({
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={onSave}
+                        onClick={() => {
+                          onSave?.();
+                          if (!isSaved) {
+                            toast.success(
+                              (t) => (
+                                <div className="flex items-center gap-3">
+                                  <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
+                                  <div>
+                                    <p className="font-semibold">Outfit opgeslagen!</p>
+                                    <NavLink
+                                      to="/dashboard"
+                                      onClick={() => toast.dismiss(t.id)}
+                                      className="text-sm text-[var(--ff-color-primary-600)] hover:underline"
+                                    >
+                                      Bekijk in Dashboard →
+                                    </NavLink>
+                                  </div>
+                                </div>
+                              ),
+                              {
+                                duration: 5000,
+                                style: {
+                                  background: "var(--color-surface)",
+                                  color: "var(--color-text)",
+                                  border: "1px solid var(--color-border)",
+                                },
+                              }
+                            );
+                          }
+                        }}
                         className={`
                           flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all shadow-md
                           ${
@@ -220,7 +297,7 @@ export function OutfitZoomModal({
                         `}
                       >
                         <Heart className={`w-5 h-5 ${isSaved ? "fill-white" : ""}`} />
-                        {isSaved ? "Opgeslagen" : "Opslaan"}
+                        {isSaved ? "Opgeslagen" : "Bewaar outfit"}
                       </motion.button>
 
                       <motion.button
