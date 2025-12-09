@@ -24,10 +24,10 @@ export default function HowItWorksPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
-        <title>Hoe het werkt - AI Style Report in 3 stappen | FitFi</title>
+        <title>Hoe het werkt - Jouw stijlgids in 5 minuten | FitFi</title>
         <meta
           name="description"
-          content="Ontdek in 5 minuten je perfecte stijl. Quiz → AI analyse → Gepersonaliseerde outfits. Geen foto's, geen gedoe."
+          content="Jouw stijlgids in 5 minuten. Quiz → AI analyse → Outfits die je direct kunt shoppen. Simpel, snel, persoonlijk."
         />
       </Helmet>
 
@@ -40,17 +40,17 @@ export default function HowItWorksPage() {
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-white/95 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-6 sm:mb-8 shadow-lg">
               <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-600)]" />
               <span className="text-xs sm:text-sm font-bold text-[var(--color-text)]">
-                <span className="hidden xs:inline">2.500+ mensen</span><span className="xs:hidden">2500+</span> vonden hun stijl<span className="hidden sm:inline"> in 5 minuten</span>
+                <span className="hidden xs:inline">2.500+ mensen ontdekten hun stijl</span><span className="xs:hidden">2500+ gebruikers</span>
               </span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-[var(--color-text)] mb-6 sm:mb-8 leading-[1.1] tracking-tight">
-              Van <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">twijfel</span><br />
-              naar <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">vertrouwen</span>
+              Jouw <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">stijlgids</span><br />
+              in <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">5 minuten</span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[var(--color-muted)] mb-8 sm:mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-              Geen eindeloos scrollen. Geen dure stylisten. Gewoon: 8 vragen, 5 minuten, outfits die passen.
+              Ontdek outfits die bij je passen en shop ze direct. Geen eindeloos scrollen, geen dure stylisten.
             </p>
 
             {/* Quick Stats */}

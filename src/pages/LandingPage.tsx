@@ -11,15 +11,15 @@ export default function LandingPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-hidden">
       <Helmet>
-        <title>FitFi — Outfits voor jou | AI stijladvies</title>
+        <title>FitFi — Jouw stijlgids in 5 minuten</title>
         <meta
           name="description"
-          content="Vind je stijl. Style Report met outfits die bij je passen."
+          content="Ontdek outfits die bij je passen en shop ze direct. AI-gestuurd stijladvies in 5 minuten. Gratis style report."
         />
-        <meta property="og:title" content="FitFi — Outfits voor jou" />
+        <meta property="og:title" content="FitFi — Jouw stijlgids in 5 minuten" />
         <meta
           property="og:description"
-          content="Stijladvies op basis van je voorkeuren."
+          content="Ontdek outfits die bij je passen en shop ze direct. AI-gestuurd stijladvies in 5 minuten."
         />
         <meta property="og:image" content="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp" />
         <meta property="og:type" content="website" />
@@ -29,7 +29,7 @@ export default function LandingPage() {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "FitFi",
-            "description": "Stijladvies op basis van je voorkeuren",
+            "description": "Jouw stijlgids in 5 minuten. Ontdek outfits die bij je passen en shop ze direct.",
             "url": "https://fitfi.nl",
             "applicationCategory": "LifestyleApplication",
             "operatingSystem": "Web",

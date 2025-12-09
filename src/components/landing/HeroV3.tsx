@@ -63,23 +63,24 @@ export function HeroV3() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-2xl">
             <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
-            AI-powered stijladvies
+            AI stijladvies
           </div>
 
-          {/* H1 - Short & Punchy */}
+          {/* H1 - THE Hero Message */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-white leading-[1.05] sm:leading-[0.95] tracking-tight mb-6 sm:mb-8">
-            Outfits die{' '}
+            Jouw stijlgids{' '}
             <span className="relative inline-block">
               <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-accent-300)] via-white to-[var(--ff-color-primary-300)] bg-clip-text text-transparent">
-                werken
+                in 5 minuten
               </span>
               <span className="absolute -bottom-2 left-0 right-0 h-3 bg-[var(--ff-color-accent-400)] opacity-30 blur-sm"></span>
             </span>
           </h1>
 
-          {/* Subline - Short & Direct */}
+          {/* Subline - Clear Value Prop */}
           <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 leading-relaxed sm:leading-tight max-w-2xl mb-10 sm:mb-12 font-light">
-            Vind je stijl. <span className="font-bold">Gratis.</span>
+            Ontdek outfits die bij je passen en{' '}
+            <span className="font-bold">shop ze direct</span>
           </p>
 
           {/* CTAs - Mobile-first with 44px+ touch targets */}

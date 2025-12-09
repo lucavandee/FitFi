@@ -13,7 +13,7 @@ export const OCCASION_LABELS: Record<Occasion, { title: string; context: string 
   formal: { title: 'Formeel event', context: 'Gala, bruiloft, theater' },
   date: { title: 'Date', context: 'Restaurant, borrel of diner' },
   party: { title: 'Feest / uitgaan', context: 'Bar, club, avondje uit' },
-  sports: { title: 'Sport / actief', context: 'Gym, hardlopen, workout' },
+  sports: { title: 'Actieve look', context: 'Wandelen, sportswear, comfort' },
   travel: { title: 'Op reis', context: 'Vliegtuig, stadstrip, vakantie' }
 };
 
