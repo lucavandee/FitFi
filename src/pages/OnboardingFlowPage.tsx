@@ -664,7 +664,7 @@ export default function OnboardingFlowPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-4 sm:mb-6">
                 <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-[var(--ff-color-primary-50)] rounded-full text-xs sm:text-sm font-semibold text-[var(--ff-color-primary-600)]">
                   <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  Vraag {currentStep + 1} van {steps.length}
+                  Vraag {currentStep + 1} van {quizSteps.length}
                 </div>
                 {currentStep === 0 && (
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)]">
