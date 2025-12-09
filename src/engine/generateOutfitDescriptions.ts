@@ -8,13 +8,30 @@ export function titleFrom(archetype: string, keyItem: string | undefined, season
   return `${capitalize(arch)} × ${item} — ${seasonLabel}`;
 }
 
+const descriptionVariants = [
+  (arch: string) => `Modern ${arch} — perfecte balans tussen comfort en clean`,
+  (arch: string) => `Verfijnde ${arch} look die moeiteloos past bij jouw stijl`,
+  (arch: string) => `Draagbaar en tijdloos — ${arch} in zijn beste vorm`,
+  (arch: string) => `Deze ${arch} outfit geeft je direct een professionele uitstraling`,
+  (arch: string) => `Casual ${arch} met subtiele raffinement`,
+  (arch: string) => `Een ${arch} look waar je altijd op terugvalt`,
+];
+
 export function descriptionFrom(params: {
   products: { name?: string; brand?: string; category?: string }[];
   archetype: string;
   season?: Season;
   occasion?: string;
   secondary?: string;
+  index?: number;
 }): string {
+  // Generate varied descriptions based on index
+  if (params.index !== undefined && params.index < descriptionVariants.length) {
+    const archNormalized = params.archetype.replace('_', ' ').toLowerCase();
+    return descriptionVariants[params.index](archNormalized);
+  }
+
+  // Fallback to original dynamic description
   const list = params.products.map(p => p?.name || p?.category).filter(Boolean).slice(0, 3);
   const items = list.length ? list.join(', ') : 'bijpassende items';
   const season = params.season ? getDutchSeasonName(params.season) : 'het seizoen';

@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Download, X, Grid3x3, Layers } from "lucide-react";
+import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
@@ -670,7 +671,20 @@ export default function EnhancedResultsPage() {
                           {'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                         </h3>
                         <p className="text-base text-gray-600">
-                          Perfect voor {archetypeName.toLowerCase()} stijl
+                          {(() => {
+                            const descriptions = [
+                              `Modern ${archetypeName.toLowerCase()} — perfecte balans tussen comfort en clean`,
+                              `Verfijnde ${archetypeName.toLowerCase()} look die moeiteloos past bij jouw stijl`,
+                              `Draagbaar en tijdloos — ${archetypeName.toLowerCase()} in zijn beste vorm`,
+                              `Deze ${archetypeName.toLowerCase()} outfit geeft je direct een professionele uitstraling`,
+                              `Casual ${archetypeName.toLowerCase()} met subtiel raffinement`,
+                              `Een ${archetypeName.toLowerCase()} look waar je altijd op terugvalt`,
+                              `Relaxed ${archetypeName.toLowerCase()} met een verfijnde twist`,
+                              `Moeiteloos stijlvol — pure ${archetypeName.toLowerCase()}`,
+                              `Klassiek ${archetypeName.toLowerCase()} met hedendaagse details`,
+                            ];
+                            return descriptions[idx % descriptions.length];
+                          })()}
                         </p>
                       </div>
                     </div>
@@ -713,7 +727,34 @@ export default function EnhancedResultsPage() {
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                onClick={() => toggleFav(String(id))}
+                                onClick={() => {
+                                  toggleFav(String(id));
+                                  if (!isFav) {
+                                    toast.success('Outfit opgeslagen!', {
+                                      duration: 3000,
+                                      position: 'bottom-center',
+                                      icon: '💚',
+                                    });
+                                    // Show hint on first save
+                                    const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
+                                    if (!hasSeenHint) {
+                                      localStorage.setItem('ff_fav_hint_seen', 'true');
+                                      setTimeout(() => {
+                                        toast('Bewaarde outfits vind je terug in je Dashboard', {
+                                          duration: 5000,
+                                          position: 'bottom-center',
+                                          icon: '💡',
+                                        });
+                                      }, 1000);
+                                    }
+                                  } else {
+                                    toast('Outfit verwijderd uit favorieten', {
+                                      duration: 2000,
+                                      position: 'bottom-center',
+                                      icon: '🗑️',
+                                    });
+                                  }
+                                }}
                                 className={`w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
                                   isFav
                                     ? 'bg-red-500 text-white'
@@ -746,7 +787,20 @@ export default function EnhancedResultsPage() {
                             {'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                           </h3>
                           <p className="text-sm text-gray-600 line-clamp-2">
-                            Perfect voor {archetypeName.toLowerCase()} stijl
+                            {(() => {
+                              const descriptions = [
+                                `Modern ${archetypeName.toLowerCase()} — perfecte balans tussen comfort en clean`,
+                                `Verfijnde ${archetypeName.toLowerCase()} look die moeiteloos past bij jouw stijl`,
+                                `Draagbaar en tijdloos — ${archetypeName.toLowerCase()} in zijn beste vorm`,
+                                `Deze ${archetypeName.toLowerCase()} outfit geeft je direct een professionele uitstraling`,
+                                `Casual ${archetypeName.toLowerCase()} met subtiel raffinement`,
+                                `Een ${archetypeName.toLowerCase()} look waar je altijd op terugvalt`,
+                                `Relaxed ${archetypeName.toLowerCase()} met een verfijnde twist`,
+                                `Moeiteloos stijlvol — pure ${archetypeName.toLowerCase()}`,
+                                `Klassiek ${archetypeName.toLowerCase()} met hedendaagse details`,
+                              ];
+                              return descriptions[idx % descriptions.length];
+                            })()}
                           </p>
                         </div>
                       </motion.div>
