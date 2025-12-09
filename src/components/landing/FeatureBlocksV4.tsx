@@ -40,7 +40,7 @@ const features = [
 
 export function FeatureBlocksV4() {
   return (
-    <section className="py-16 sm:py-24 lg:py-32 xl:py-40 bg-[var(--color-bg)] relative overflow-hidden">
+    <section className="py-12 sm:py-20 lg:py-28 xl:py-36 bg-[var(--color-bg)] relative overflow-hidden">
       {/* Subtle background texture */}
       <div className="absolute inset-0 opacity-[0.015]" style={{
         backgroundImage: `radial-gradient(circle at 2px 2px, var(--color-text) 1px, transparent 0)`
@@ -52,7 +52,7 @@ export function FeatureBlocksV4() {
           <div
             key={index}
             className={`grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 xl:gap-24 items-center ${
-              index < features.length - 1 ? 'mb-20 sm:mb-28 lg:mb-36 xl:mb-44' : ''
+              index < features.length - 1 ? 'mb-16 sm:mb-24 lg:mb-32 xl:mb-40' : ''
             } ${feature.reversed ? 'lg:grid-flow-dense' : ''}`}
           >
             {/* Visual Element */}

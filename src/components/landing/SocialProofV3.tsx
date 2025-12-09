@@ -34,11 +34,11 @@ const testimonials: Testimonial[] = [
 
 export function SocialProofV3() {
   return (
-    <section className="py-16 sm:py-24 lg:py-32 bg-[var(--color-surface)]">
+    <section className="py-12 sm:py-20 lg:py-28 bg-[var(--color-surface)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+        <div className="text-center mb-10 sm:mb-14 lg:mb-18">
           <div className="flex items-center justify-center gap-1 mb-4 sm:mb-6">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-6 h-6 sm:w-7 sm:h-7 fill-[var(--ff-color-accent-500)] text-[var(--ff-color-accent-500)]" />

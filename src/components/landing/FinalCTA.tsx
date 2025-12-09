@@ -17,7 +17,7 @@ export function FinalCTA() {
   };
 
   return (
-    <section className="relative py-16 sm:py-24 lg:py-32 bg-gradient-to-br from-[var(--color-bg)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] overflow-hidden">
+    <section className="relative py-12 sm:py-20 lg:py-28 bg-gradient-to-br from-[var(--color-bg)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] overflow-hidden">
 
       {/* Decorative background elements */}
       <div className="absolute inset-0">
