@@ -8,7 +8,7 @@ function Progress({ value, className, label }: Props) {
   return (
     <div className={cn("w-full", className)}>
       {label ? <div className="mb-1 text-sm text-muted">{label}</div> : null}
-      <div className="h-2 rounded-sm bg-[#20263c] overflow-hidden">
+      <div className="h-2 rounded-sm bg-[var(--ff-ink-600)] overflow-hidden">
         <div
           className="h-full bg-primary transition-[width] duration-300"
           role="progressbar"

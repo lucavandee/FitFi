@@ -24,13 +24,14 @@ export default function PremiumButton({
   const variantClasses = {
     primary: "ff-cta",
     ghost: "ff-ghost",
-    danger: "bg-[#F43F5E] hover:bg-[#E11D48] text-white border border-[#F43F5E] rounded-xl"
+    danger: "bg-[var(--ff-color-danger-500)] hover:bg-[var(--ff-color-danger-600)] text-white border border-[var(--ff-color-danger-500)] rounded-xl"
   };
   
+  // WCAG AAA: minimum 44px touch targets
   const sizeClasses = {
-    sm: "px-3 py-2 text-sm",
-    md: "px-4 py-3 text-base",
-    lg: "px-6 py-4 text-lg"
+    sm: "px-4 py-2.5 min-h-[44px] text-sm",
+    md: "px-5 py-3 min-h-[48px] text-base",
+    lg: "px-6 py-4 min-h-[56px] text-lg"
   };
   
   return (

@@ -42,7 +42,8 @@ function classes(variant: Variant, size: Size, extra?: string) {
       : variant === "ghost"
       ? "ff-btn-ghost"
       : "ff-btn-quiet";
-  const s = size === "sm" ? "h-9 px-3" : size === "lg" ? "h-12 px-6" : "h-10 px-5";
+  // WCAG AAA: minimum 44px touch targets (h-11 = 44px)
+  const s = size === "sm" ? "h-11 px-4" : size === "lg" ? "h-14 px-6" : "h-12 px-5";
   return [base, v, s, extra].filter(Boolean).join(" ");
 }
 

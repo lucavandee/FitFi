@@ -18,6 +18,19 @@ export default {
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         danger: "var(--color-danger)",
+        // Map gray-* classes to FitFi neutral tokens
+        gray: {
+          50: "var(--ff-color-neutral-50)",
+          100: "var(--ff-color-neutral-100)",
+          200: "var(--ff-color-neutral-200)",
+          300: "var(--ff-color-neutral-300)",
+          400: "var(--ff-color-neutral-400)",
+          500: "var(--ff-color-neutral-500)",
+          600: "var(--ff-color-neutral-600)",
+          700: "var(--ff-color-neutral-700)",
+          800: "var(--ff-color-neutral-800)",
+          900: "var(--ff-color-neutral-900)",
+        },
       },
       fontFamily: {
         heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
