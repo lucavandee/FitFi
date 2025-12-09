@@ -79,7 +79,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Interactive Process */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white">
+      <section className="py-10 sm:py-14 md:py-18 lg:py-22 xl:py-28 bg-white">
         <div className="ff-container">
           <div className="max-w-7xl mx-auto">
 
@@ -108,8 +108,8 @@ export default function HowItWorksPage() {
                 </div>
 
                 <div className="mb-5 sm:mb-6 mt-2">
-                  <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                    <MessageCircle className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-white" strokeWidth={2} />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                    <MessageCircle className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" strokeWidth={2} />
                   </div>
                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 leading-tight">8 slimme vragen</h3>
                   <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -157,8 +157,8 @@ export default function HowItWorksPage() {
                 </div>
 
                 <div className="mb-5 sm:mb-6 mt-2">
-                  <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                    <Brain className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-white" strokeWidth={2} />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                    <Brain className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" strokeWidth={2} />
                   </div>
                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 leading-tight">AI doet het werk</h3>
                   <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -206,8 +206,8 @@ export default function HowItWorksPage() {
                 </div>
 
                 <div className="mb-5 sm:mb-6 mt-2">
-                  <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                    <Shirt className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-white" strokeWidth={2} />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                    <Shirt className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" strokeWidth={2} />
                   </div>
                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 leading-tight">Jouw outfits</h3>
                   <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -259,7 +259,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* What Makes It Work Section */}
-      <section className="py-24 md:py-32 bg-[var(--color-bg)]">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-28 bg-[var(--color-bg)]">
         <div className="ff-container">
           <div className="max-w-7xl mx-auto">
 
@@ -276,8 +276,8 @@ export default function HowItWorksPage() {
 
               {/* Trust Factor 1 */}
               <div className="group bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--color-border)] p-6 sm:p-8 lg:p-10 shadow-lg hover:shadow-2xl hover:border-[var(--ff-color-primary-300)] transition-all duration-500">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                  <Target className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" strokeWidth={2} />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                  <Target className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">8 stijlarchetypes</h3>
                 <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -292,8 +292,8 @@ export default function HowItWorksPage() {
 
               {/* Trust Factor 2 */}
               <div className="group bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--color-border)] p-6 sm:p-8 lg:p-10 shadow-lg hover:shadow-2xl hover:border-[var(--ff-color-primary-300)] transition-all duration-500">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                  <Zap className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" strokeWidth={2} />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                  <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">12.000+ producten</h3>
                 <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -308,8 +308,8 @@ export default function HowItWorksPage() {
 
               {/* Trust Factor 3 */}
               <div className="group bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--color-border)] p-6 sm:p-8 lg:p-10 shadow-lg hover:shadow-2xl hover:border-[var(--ff-color-primary-300)] transition-all duration-500">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                  <TrendingUp className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" strokeWidth={2} />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                  <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">Leert van feedback</h3>
                 <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -324,8 +324,8 @@ export default function HowItWorksPage() {
 
               {/* Trust Factor 4 */}
               <div className="group bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--color-border)] p-6 sm:p-8 lg:p-10 shadow-lg hover:shadow-2xl hover:border-[var(--ff-color-primary-300)] transition-all duration-500">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
-                  <Shield className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" strokeWidth={2} />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6">
+                  <Shield className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">Privacy by design</h3>
                 <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
@@ -343,7 +343,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Comparison Section */}
-      <section className="py-24 md:py-32 bg-white">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-28 bg-white">
         <div className="ff-container">
           <div className="max-w-6xl mx-auto">
 
@@ -356,10 +356,21 @@ export default function HowItWorksPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+            {/* Mobile: scroll hint */}
+            <div className="md:hidden text-center mb-4 text-sm text-[var(--color-muted)]">
+              <span className="inline-flex items-center gap-2">
+                Swipe om te vergelijken
+                <svg className="w-4 h-4 animate-bounce-horizontal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </div>
+
+            {/* Comparison grid - horizontal scroll on mobile */}
+            <div className="md:grid md:grid-cols-3 gap-6 lg:gap-8 overflow-x-auto md:overflow-visible pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none flex md:block gap-6">
 
               {/* Old Way 1 */}
-              <div className="bg-[var(--color-bg)] rounded-[2rem] border-2 border-[var(--color-border)] p-6 lg:p-8 shadow-lg">
+              <div className="bg-[var(--color-bg)] rounded-2xl md:rounded-[2rem] border-2 border-[var(--color-border)] p-5 sm:p-6 lg:p-8 shadow-lg min-w-[280px] sm:min-w-[320px] md:min-w-0 flex-shrink-0 snap-center">
                 <div className="text-center mb-6">
                   <h3 className="font-bold text-xl lg:text-2xl">Trial & Error</h3>
                 </div>
@@ -403,7 +414,7 @@ export default function HowItWorksPage() {
               </div>
 
               {/* Old Way 2 */}
-              <div className="bg-[var(--color-bg)] rounded-[2rem] border-2 border-[var(--color-border)] p-6 lg:p-8 shadow-lg">
+              <div className="bg-[var(--color-bg)] rounded-2xl md:rounded-[2rem] border-2 border-[var(--color-border)] p-5 sm:p-6 lg:p-8 shadow-lg min-w-[280px] sm:min-w-[320px] md:min-w-0 flex-shrink-0 snap-center">
                 <div className="text-center mb-6">
                   <h3 className="font-bold text-xl lg:text-2xl">Personal Stylist</h3>
                 </div>
@@ -447,7 +458,7 @@ export default function HowItWorksPage() {
               </div>
 
               {/* FitFi Way */}
-              <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-[2rem] border-2 border-[var(--ff-color-primary-400)] p-6 lg:p-8 text-white shadow-2xl transform md:scale-105">
+              <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl md:rounded-[2rem] border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-6 lg:p-8 text-white shadow-2xl transform md:scale-105 min-w-[280px] sm:min-w-[320px] md:min-w-0 flex-shrink-0 snap-center">
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-[var(--ff-color-accent-500)] text-white rounded-full text-xs font-bold shadow-lg">
                   BESTE KEUZE
                 </div>
@@ -498,7 +509,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 md:py-32 bg-[var(--color-bg)]">
+      <section className="py-16 sm:py-20 md:py-24 lg:py-28 bg-[var(--color-bg)]">
         <div className="ff-container">
           <div className="max-w-4xl mx-auto">
 
@@ -734,7 +745,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative py-24 md:py-32 bg-gradient-to-br from-[var(--color-bg)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] overflow-hidden">
+      <section className="relative py-16 sm:py-20 md:py-24 lg:py-28 bg-gradient-to-br from-[var(--color-bg)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] overflow-hidden">
 
         {/* Decorative background elements */}
         <div className="absolute inset-0">
