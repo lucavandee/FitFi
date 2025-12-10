@@ -249,7 +249,7 @@ export default function FAQPage() {
           {[
             {
               icon: ShieldCheck,
-              title: "",
+              title: "Privacybewust",
               body:
                 "We verwerken alleen wat nodig is en verkopen niets door. Transparant en zorgvuldig.",
             },

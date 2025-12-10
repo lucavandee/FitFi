@@ -60,6 +60,78 @@ const BlogPage: React.FC = () => {
     );
   }
 
+  // Empty state when no blog posts exist
+  if (!loading && blogPosts.length === 0) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)]">
+        <Helmet>
+          <title>Blog - FitFi.ai</title>
+          <meta name="description" content="De nieuwste trends, tips en inzichten over stijl en mode op de FitFi blog." />
+        </Helmet>
+
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
+          <div className="ff-container relative">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight"
+              >
+                Stijl & Mode
+                <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Inzichten</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
+              >
+                De nieuwste trends, stijltips en mode-inzichten van onze experts.
+              </motion.p>
+            </div>
+          </div>
+        </section>
+
+        {/* Empty State */}
+        <section className="ff-container py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mx-auto text-center"
+          >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center">
+              <Search className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-4">
+              Binnenkort beschikbaar
+            </h2>
+            <p className="text-lg text-[var(--color-muted)] leading-relaxed mb-8">
+              We zijn druk bezig met het schrijven van waardevolle stijltips en mode-inzichten voor je. Onze eerste artikelen komen binnenkort online.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                variant="primary"
+                onClick={() => navigate('/')}
+              >
+                Naar homepagina
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate('/results')}
+              >
+                Start gratis quiz
+              </Button>
+            </div>
+          </motion.div>
+        </section>
+      </div>
+    );
+  }
+
   const handleReadMore = (slug: string) => {
     navigate(`/blog/${slug}`);
   };

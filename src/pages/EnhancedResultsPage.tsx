@@ -520,8 +520,75 @@ export default function EnhancedResultsPage() {
                 </AnimatedSection>
               </div>
 
-              {/* Style Tips */}
+              {/* How We Determined Your Style */}
               <AnimatedSection delay={0.5}>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 md:p-10 shadow-xl mb-8"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-700)] flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-[var(--color-text)]">Hoe we jouw stijl hebben bepaald</h3>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mt-1">
+                        <span className="text-[var(--ff-color-primary-700)] font-bold">1</span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Je archetype: {archetypeName}</h4>
+                        <p className="text-gray-600 leading-relaxed">
+                          Op basis van je quizantwoorden hebben we je stijlprofiel geanalyseerd. We keken naar je voorkeuren voor pasvorm,
+                          gelegenheden en comfort-niveau. Deze combinatie bepaalt je basis archetype, dat de fundering vormt voor al je
+                          outfit-aanbevelingen.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--ff-color-accent-100)] flex items-center justify-center mt-1">
+                        <span className="text-[var(--ff-color-accent-700)] font-bold">2</span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Je kleurprofiel: {activeColorProfile.paletteName}</h4>
+                        <p className="text-gray-600 leading-relaxed">
+                          Door je swipes op moodboards te analyseren, hebben we je visuele voorkeuren in kaart gebracht. We detecteren
+                          welke kleurtonen, contrasten en kleurintensiteiten je aantrekkelijk vindt. Dit resulteert in een seizoenskleurenpalet
+                          ({activeColorProfile.season}) met {activeColorProfile.temperature} tonen en {activeColorProfile.contrast} contrast.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mt-1">
+                        <span className="text-[var(--ff-color-primary-700)] font-bold">3</span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Intelligente matching</h4>
+                        <p className="text-gray-600 leading-relaxed">
+                          We combineren je archetype met je kleurprofiel om outfits samen te stellen die zowel bij je stijl als bij je
+                          kleurvoorkeuren passen. Elk kledingstuk wordt gekozen op basis van kleurharmonie, archetype-compatibiliteit en
+                          gelegenheid. Zo krijg je outfits die echt bij jou passen, niet alleen qua stijl maar ook qua kleurtonen.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--ff-color-primary-200)]">
+                      <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+                        <strong className="text-[var(--color-text)]">Resultaat:</strong> Door quiz-data, visuele voorkeuren en kleuranalyse
+                        te combineren, krijg je aanbevelingen die verder gaan dan een simpel stijlarchetype. Elke outfit is afgestemd op jouw
+                        unieke combinatie van stijlvoorkeuren én kleurpalet.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatedSection>
+
+              {/* Style Tips */}
+              <AnimatedSection delay={0.6}>
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="bg-gradient-to-br from-[var(--color-surface)] to-[var(--ff-color-primary-25)] rounded-3xl border border-[var(--color-border)] p-10 shadow-xl"
@@ -672,18 +739,19 @@ export default function EnhancedResultsPage() {
                         </h3>
                         <p className="text-base text-gray-600">
                           {(() => {
-                            const descriptions = [
-                              `Modern ${archetypeName.toLowerCase()} — perfecte balans tussen comfort en clean`,
-                              `Verfijnde ${archetypeName.toLowerCase()} look die moeiteloos past bij jouw stijl`,
-                              `Draagbaar en tijdloos — ${archetypeName.toLowerCase()} in zijn beste vorm`,
-                              `Deze ${archetypeName.toLowerCase()} outfit geeft je direct een professionele uitstraling`,
-                              `Casual ${archetypeName.toLowerCase()} met subtiel raffinement`,
-                              `Een ${archetypeName.toLowerCase()} look waar je altijd op terugvalt`,
-                              `Relaxed ${archetypeName.toLowerCase()} met een verfijnde twist`,
-                              `Moeiteloos stijlvol — pure ${archetypeName.toLowerCase()}`,
-                              `Klassiek ${archetypeName.toLowerCase()} met hedendaagse details`,
+                            const archetypeLower = archetypeName.toLowerCase();
+                            // Vary descriptions by category for more diversity
+                            const templates = [
+                              [`Veelzijdige ${archetypeLower} look voor elke gelegenheid`, `Van kantoor naar borrel — ${archetypeLower} elegantie`, `Dag tot avond stijl met ${archetypeLower} flair`],
+                              [`Comfortabel én stijlvol — ${archetypeLower} in balans`, `Moeiteloos draagbaar met ${archetypeLower} statement`, `Ontspannen chic met ${archetypeLower} details`],
+                              [`Tijdloze ${archetypeLower} essentials die altijd werken`, `Klassieke ${archetypeLower} basis met moderne twist`, `Investeer in tijdloze ${archetypeLower} kwaliteit`],
+                              [`Statement ${archetypeLower} met zelfvertrouwen`, `Zelfverzekerde ${archetypeLower} look die opvalt`, `Krachtige ${archetypeLower} combinatie met impact`],
+                              [`Verfijnde ${archetypeLower} finishing touches`, `Stijlvolle details maken deze ${archetypeLower} look`, `Geraffineerde ${archetypeLower} voor de aandachtige dresser`],
+                              [`Seizoensklaar — ${archetypeLower} voor nu`, `Perfect voor het seizoen met ${archetypeLower} vibe`, `Weer-proof ${archetypeLower} stijl`],
                             ];
-                            return descriptions[idx % descriptions.length];
+                            const category = Math.floor(idx / 3) % templates.length;
+                            const variant = idx % templates[category].length;
+                            return templates[category][variant];
                           })()}
                         </p>
                       </div>
@@ -788,18 +856,18 @@ export default function EnhancedResultsPage() {
                           </h3>
                           <p className="text-sm text-gray-600 line-clamp-2">
                             {(() => {
-                              const descriptions = [
-                                `Modern ${archetypeName.toLowerCase()} — perfecte balans tussen comfort en clean`,
-                                `Verfijnde ${archetypeName.toLowerCase()} look die moeiteloos past bij jouw stijl`,
-                                `Draagbaar en tijdloos — ${archetypeName.toLowerCase()} in zijn beste vorm`,
-                                `Deze ${archetypeName.toLowerCase()} outfit geeft je direct een professionele uitstraling`,
-                                `Casual ${archetypeName.toLowerCase()} met subtiel raffinement`,
-                                `Een ${archetypeName.toLowerCase()} look waar je altijd op terugvalt`,
-                                `Relaxed ${archetypeName.toLowerCase()} met een verfijnde twist`,
-                                `Moeiteloos stijlvol — pure ${archetypeName.toLowerCase()}`,
-                                `Klassiek ${archetypeName.toLowerCase()} met hedendaagse details`,
+                              const archetypeLower = archetypeName.toLowerCase();
+                              const templates = [
+                                [`Veelzijdige ${archetypeLower} look voor elke gelegenheid`, `Van kantoor naar borrel — ${archetypeLower} elegantie`, `Dag tot avond stijl met ${archetypeLower} flair`],
+                                [`Comfortabel én stijlvol — ${archetypeLower} in balans`, `Moeiteloos draagbaar met ${archetypeLower} statement`, `Ontspannen chic met ${archetypeLower} details`],
+                                [`Tijdloze ${archetypeLower} essentials die altijd werken`, `Klassieke ${archetypeLower} basis met moderne twist`, `Investeer in tijdloze ${archetypeLower} kwaliteit`],
+                                [`Statement ${archetypeLower} met zelfvertrouwen`, `Zelfverzekerde ${archetypeLower} look die opvalt`, `Krachtige ${archetypeLower} combinatie met impact`],
+                                [`Verfijnde ${archetypeLower} finishing touches`, `Stijlvolle details maken deze ${archetypeLower} look`, `Geraffineerde ${archetypeLower} voor de aandachtige dresser`],
+                                [`Seizoensklaar — ${archetypeLower} voor nu`, `Perfect voor het seizoen met ${archetypeLower} vibe`, `Weer-proof ${archetypeLower} stijl`],
                               ];
-                              return descriptions[idx % descriptions.length];
+                              const category = Math.floor(idx / 3) % templates.length;
+                              const variant = idx % templates[category].length;
+                              return templates[category][variant];
                             })()}
                           </p>
                         </div>
@@ -1068,6 +1136,39 @@ export default function EnhancedResultsPage() {
 
       {/* Exit Intent Discount Modal */}
       <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
+
+      {/* Mobile Sticky CTA - Only show on scroll & mobile */}
+      {hasCompletedQuiz && !user && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{
+            y: scrollY.get() > 400 ? 0 : 100,
+            opacity: scrollY.get() > 400 ? 1 : 0
+          }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white shadow-2xl border-t-2 border-[var(--ff-color-primary-700)]"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        >
+          <div className="px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold opacity-90 mb-0.5">
+                  Ontgrendel 50+ outfits
+                </p>
+                <p className="text-lg font-bold leading-tight">
+                  €9,99<span className="text-xs font-normal opacity-80">/maand</span>
+                </p>
+              </div>
+              <NavLink
+                to="/prijzen#premium"
+                className="flex-shrink-0 px-5 py-3 bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-50)] transition-all shadow-lg active:scale-95 whitespace-nowrap"
+              >
+                Upgrade nu
+              </NavLink>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </main>
   );
 }

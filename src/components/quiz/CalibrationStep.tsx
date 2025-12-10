@@ -238,6 +238,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
 
   const allRated = outfits.length > 0 && outfits.every(o => feedback[o.id]);
   const feedbackCount = Object.keys(feedback).length;
+  const hasEnoughFeedback = feedbackCount >= Math.min(3, outfits.length) || outfits.length === 0;
 
   if (loading) {
     return (
@@ -246,6 +247,33 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           <div className="inline-block w-12 h-12 border-4 border-[var(--color-border)] border-t-[var(--ff-color-primary-700)] rounded-full animate-spin" />
           <p className="mt-4 text-[var(--color-muted)]">Outfits voorbereiden...</p>
         </div>
+      </div>
+    );
+  }
+
+  // If no outfits could be generated, allow skip
+  if (outfits.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-6">
+          <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+          <span className="text-sm font-medium text-[var(--color-text)]">
+            Outfit Calibratie
+          </span>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-4">
+          We zijn je profiel aan het voorbereiden
+        </h2>
+        <p className="text-[var(--color-muted)] mb-8">
+          Op dit moment kunnen we nog geen outfits genereren, maar we gaan direct verder met je stijlrapport op basis van je quiz- en swipe-antwoorden.
+        </p>
+        <button
+          onClick={onComplete}
+          className="ff-btn ff-btn-primary inline-flex items-center gap-2"
+        >
+          Ga verder
+          <ArrowRight className="w-5 h-5" />
+        </button>
       </div>
     );
   }
@@ -358,15 +386,26 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
         </motion.div>
       )}
 
-      {!allRated && feedbackCount > 0 && (
+      {!allRated && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center"
+          className="text-center mt-8"
         >
-          <p className="text-sm text-[var(--color-muted)]">
-            Nog {outfits.length - feedbackCount} {outfits.length - feedbackCount === 1 ? 'outfit' : 'outfits'} te beoordelen
-          </p>
+          {feedbackCount > 0 && (
+            <p className="text-sm text-[var(--color-muted)] mb-4">
+              Nog {outfits.length - feedbackCount} {outfits.length - feedbackCount === 1 ? 'outfit' : 'outfits'} te beoordelen
+            </p>
+          )}
+
+          {/* Skip button - always visible */}
+          <button
+            onClick={handleContinue}
+            disabled={applying}
+            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {feedbackCount === 0 ? 'Overslaan en doorgaan' : 'Doorgaan zonder alle outfits te beoordelen'}
+          </button>
         </motion.div>
       )}
     </div>

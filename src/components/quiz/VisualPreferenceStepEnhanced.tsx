@@ -146,15 +146,15 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
         query = query.eq('gender', genderForQuery);
       }
 
-      const { data, error } = await query
-        .order('display_order', { ascending: true })
-        .limit(10);
+      const { data, error} = await query
+        .order('display_order', { ascending: true})
+        .limit(15);
 
       if (error) throw error;
 
       let photos = data || [];
 
-      if (photos.length < 10 && genderForQuery) {
+      if (photos.length < 15 && genderForQuery) {
         console.log(`⚠️ Only ${photos.length} photos for ${genderForQuery}, adding unisex photos`);
         const { data: unisexData } = await client
           .from('mood_photos')
@@ -162,7 +162,7 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
           .eq('active', true)
           .eq('gender', 'unisex')
           .order('display_order', { ascending: true })
-          .limit(10 - photos.length);
+          .limit(15 - photos.length);
 
         if (unisexData) {
           photos = [...photos, ...unisexData];
@@ -256,14 +256,17 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
 
+    const requiredSwipes = Math.min(10, moodPhotos.length);
+
     logTelemetry('swipe', {
       direction,
       responseTimeMs,
       photoId: currentPhoto.id,
-      swipeCount: swipeCount + 1
+      swipeCount: swipeCount + 1,
+      requiredSwipes
     });
 
-    if (swipeCount >= 10) {
+    if (swipeCount >= requiredSwipes) {
       onComplete();
       return;
     }
@@ -290,7 +293,7 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
       }, 600);
     }
 
-    if (newSwipeCount >= 10) {
+    if (newSwipeCount >= requiredSwipes) {
       setTimeout(() => {
         onComplete();
       }, 500);
