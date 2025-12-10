@@ -35,7 +35,7 @@ const OCCASIONS: Array<{
   },
   {
     value: 'date',
-    label: 'Date',
+    label: 'Avondje uit',
     icon: <Heart className="w-4 h-4" />,
     description: 'Restaurant, borrel of diner'
   },

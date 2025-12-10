@@ -40,7 +40,7 @@ const features = [
 
 export function FeatureBlocksV4() {
   return (
-    <section className="py-12 sm:py-20 lg:py-28 xl:py-36 bg-[var(--color-bg)] relative overflow-hidden">
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
       {/* Subtle background texture */}
       <div className="absolute inset-0 opacity-[0.015]" style={{
         backgroundImage: `radial-gradient(circle at 2px 2px, var(--color-text) 1px, transparent 0)`

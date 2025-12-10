@@ -43,9 +43,10 @@ export function StickyCTA() {
 
   return (
     <div
-      className={`fixed bottom-3 sm:bottom-8 left-1/2 -translate-x-1/2 z-40 transition-all duration-500 px-3 sm:px-0 max-w-[calc(100vw-1.5rem)] sm:max-w-none ${
+      className={`fixed bottom-24 sm:bottom-8 left-1/2 -translate-x-1/2 z-[45] transition-all duration-500 px-3 sm:px-0 max-w-[calc(100vw-1.5rem)] sm:max-w-none ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
       }`}
+      style={{ pointerEvents: isVisible ? 'auto' : 'none' }}
     >
       <div className="bg-[var(--ff-color-primary-700)] text-white rounded-xl sm:rounded-2xl shadow-2xl px-3 sm:px-8 py-2.5 sm:py-5 flex items-center gap-2 sm:gap-6 hover:bg-[var(--ff-color-primary-600)] transition-colors group border-2 border-[var(--ff-color-primary-600)]">
 

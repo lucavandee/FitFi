@@ -91,31 +91,53 @@ const outfits: Outfit[] = [
 export function RealOutfitShowcase() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]">
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[var(--ff-color-primary-50)] border-2 border-[var(--ff-color-primary-200)] rounded-full text-[var(--ff-color-primary-700)] text-xs sm:text-sm font-bold mb-6 sm:mb-8 shadow-md">
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[var(--ff-color-primary-50)] border-2 border-[var(--ff-color-primary-200)] rounded-full text-[var(--ff-color-primary-700)] text-xs sm:text-sm font-bold mb-4 sm:mb-6 shadow-md">
             <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
             Complete looks, shopbaar
           </div>
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-text)] mb-4 sm:mb-6 lg:mb-8 leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] mb-3 sm:mb-4 lg:mb-6 leading-tight">
             Voor elk moment
           </h2>
-          <p className="text-base sm:text-xl lg:text-2xl text-[var(--color-muted)] max-w-3xl mx-auto font-light px-4">
+          <p className="text-sm sm:text-lg lg:text-xl text-[var(--color-muted)] max-w-3xl mx-auto font-light px-4">
             Echte outfits met items die je kunt kopen — geen abstracte moodboards
           </p>
         </div>
 
-        {/* Outfit Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+        {/* Mobile Swipe Indicator */}
+        <div className="md:hidden text-center mb-4 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2">
+          <span>Swipe voor meer</span>
+          <svg className="w-4 h-4 animate-bounce-horizontal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </div>
+
+        {/* Outfit Grid/Carousel */}
+        <div
+          className="md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-8
+                     flex md:block overflow-x-auto md:overflow-visible
+                     snap-x snap-mandatory md:snap-none
+                     -mx-4 px-4 md:mx-0 md:px-0
+                     gap-4 md:gap-6 lg:gap-8
+                     pb-4 md:pb-0 scrollbar-hide"
+          onScroll={(e) => {
+            const scrollLeft = e.currentTarget.scrollLeft;
+            const cardWidth = e.currentTarget.scrollWidth / outfits.length;
+            setActiveIndex(Math.round(scrollLeft / cardWidth));
+          }}
+        >
           {outfits.map((outfit) => (
             <div
               key={outfit.id}
-              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 active:scale-[0.98]"
+              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300 md:hover:-translate-y-2 active:scale-[0.98]
+                         min-w-[85vw] sm:min-w-[70vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center"
               onMouseEnter={() => setHoveredId(outfit.id)}
               onMouseLeave={() => setHoveredId(null)}
               onTouchStart={() => setHoveredId(outfit.id)}
@@ -188,8 +210,30 @@ export function RealOutfitShowcase() {
           ))}
         </div>
 
+        {/* Scroll Indicators (Mobile only) */}
+        <div className="md:hidden flex items-center justify-center gap-2 mt-6">
+          {outfits.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                const container = document.querySelector('.snap-x');
+                if (container) {
+                  const cardWidth = container.scrollWidth / outfits.length;
+                  container.scrollTo({ left: cardWidth * idx, behavior: 'smooth' });
+                }
+              }}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                idx === activeIndex
+                  ? 'w-8 bg-[var(--ff-color-primary-600)]'
+                  : 'w-2 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)]'
+              }`}
+              aria-label={`Ga naar outfit ${idx + 1}`}
+            />
+          ))}
+        </div>
+
         {/* Trust note */}
-        <div className="mt-10 sm:mt-14 lg:mt-16 text-center px-4">
+        <div className="mt-8 sm:mt-10 lg:mt-12 text-center px-4">
           <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed">
             <span className="font-semibold text-[var(--color-text)]">Let op:</span> Dit zijn voorbeelden.
             Jouw persoonlijke Style Report bevat outfits gebaseerd op <span className="font-semibold">jouw voorkeuren en kleuren</span>.

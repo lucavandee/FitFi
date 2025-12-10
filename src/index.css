@@ -12,4 +12,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* (optioneel) Kleine global fixes die geen content wijzigen kunnen hier later bij */
+/* Carousel utilities */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  @keyframes bounce-horizontal {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(4px);
+    }
+  }
+
+  .animate-bounce-horizontal {
+    animation: bounce-horizontal 1s ease-in-out infinite;
+  }
+}

@@ -37,7 +37,7 @@ const outfits: OutfitCard[] = [
   },
   {
     id: 'date',
-    title: 'Date',
+    title: 'Avondje uit',
     context: 'Restaurant, borrel of diner',
     icon: Moon,
     gradient: 'from-slate-800 via-slate-700 to-slate-900',

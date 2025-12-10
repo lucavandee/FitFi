@@ -24,7 +24,7 @@ const CATEGORIES = [
   { id: "sport", label: "Sport", icon: "🏃" },
   { id: "party", label: "Feest", icon: "🎉" },
   { id: "work", label: "Werk", icon: "💼" },
-  { id: "date", label: "Date", icon: "💕" },
+  { id: "date", label: "Avondje uit", icon: "💕" },
   { id: "travel", label: "Reizen", icon: "✈️" },
 ];
 
