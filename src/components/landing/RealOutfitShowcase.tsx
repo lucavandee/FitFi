@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Briefcase, Coffee, Moon, ShoppingBag } from 'lucide-react';
+import { OutfitModal } from './OutfitModal';
 
 interface OutfitItem {
   type: 'top' | 'bottom' | 'shoes' | 'accessory';
@@ -15,6 +16,8 @@ interface Outfit {
   items: OutfitItem[];
   gradient: string;
   border: string;
+  completeImage?: string;
+  productImages?: Array<{ name: string; image: string; category: string }>;
 }
 
 const outfits: Outfit[] = [
@@ -54,16 +57,40 @@ const outfits: Outfit[] = [
     gradient: 'from-slate-50 to-blue-50',
     border: 'border-slate-300',
     items: [
-      { type: 'top', color: 'bg-slate-800', label: 'Donkerblauwe trui' },
-      { type: 'bottom', color: 'bg-slate-900', label: 'Zwarte chino' },
-      { type: 'shoes', color: 'bg-slate-950', label: 'Chelsea boots' },
-      { type: 'accessory', color: 'bg-slate-700', label: 'Leren riem' }
+      { type: 'top', color: 'bg-slate-800', label: 'Zwart overhemd' },
+      { type: 'bottom', color: 'bg-slate-900', label: 'Donkerblauwe jeans' },
+      { type: 'shoes', color: 'bg-slate-950', label: 'Zwarte loafers' },
+      { type: 'accessory', color: 'bg-slate-700', label: 'Zilveren ketting' }
+    ],
+    completeImage: '/images/gemini_generated_image_nsvlp1nsvlp1nsvl.webp',
+    productImages: [
+      {
+        name: 'Zwart overhemd',
+        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy.webp',
+        category: 'Bovenstuk'
+      },
+      {
+        name: 'Donkerblauwe jeans',
+        image: '/images/gemini_generated_image_vzbawovzbawovzba.webp',
+        category: 'Onderstuk'
+      },
+      {
+        name: 'Zwarte loafers',
+        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa.webp',
+        category: 'Schoenen'
+      },
+      {
+        name: 'Zilveren ketting',
+        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3.webp',
+        category: 'Accessoire'
+      }
     ]
   }
 ];
 
 export function RealOutfitShowcase() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
 
   return (
     <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]">
@@ -147,7 +174,9 @@ export function RealOutfitShowcase() {
                 {/* Footer - Shop CTA */}
                 <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-white/50">
                   <button
-                    className={`w-full py-2.5 sm:py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-95 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-lg hover:shadow-xl ${
+                    onClick={() => outfit.completeImage && setSelectedOutfit(outfit)}
+                    disabled={!outfit.completeImage}
+                    className={`w-full py-2.5 sm:py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-95 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed ${
                       hoveredId === outfit.id ? 'scale-105' : ''
                     }`}
                   >
@@ -168,6 +197,17 @@ export function RealOutfitShowcase() {
         </div>
 
       </div>
+
+      {/* Outfit Modal */}
+      {selectedOutfit && selectedOutfit.completeImage && selectedOutfit.productImages && (
+        <OutfitModal
+          isOpen={!!selectedOutfit}
+          onClose={() => setSelectedOutfit(null)}
+          title={selectedOutfit.title}
+          completeImage={selectedOutfit.completeImage}
+          products={selectedOutfit.productImages}
+        />
+      )}
     </section>
   );
 }
