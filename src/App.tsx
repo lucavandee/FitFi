@@ -8,6 +8,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import Seo from "@/components/seo/Seo";
 import RequireAuth from "@/components/auth/RequireAuth";
+import { RequireQuiz } from "@/components/auth/RequireQuiz";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
 import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
 import AwinMasterTag from "@/components/affiliate/AwinMasterTag";
@@ -136,9 +137,9 @@ export default function App() {
                 <Route path="/register" element={<Navigate to="/registreren" replace />} />
 
                 {/* App (afgeschermd) */}
-                <Route path="/dashboard" element={<RequireAuth><WithSeo.Dashboard /></RequireAuth>} />
+                <Route path="/dashboard" element={<RequireAuth><RequireQuiz><WithSeo.Dashboard /></RequireQuiz></RequireAuth>} />
                 <Route path="/profile" element={<RequireAuth><WithSeo.Profile /></RequireAuth>} />
-                <Route path="/results" element={<RequireAuth><WithSeo.Results /></RequireAuth>} />
+                <Route path="/results" element={<RequireAuth><RequireQuiz><WithSeo.Results /></RequireQuiz></RequireAuth>} />
                 <Route path="/results/preview" element={<WithSeo.ResultsPreview />} />
 
                 {/* Admin */}

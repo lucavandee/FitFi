@@ -84,14 +84,6 @@ export default function EnhancedResultsPage() {
     }
   }, [showExitIntent, user, dismissExitIntent]);
 
-  // CRITICAL: If no quiz data, redirect to onboarding
-  React.useEffect(() => {
-    if (!hasCompletedQuiz) {
-      console.warn('[EnhancedResultsPage] No quiz data found, redirecting to onboarding');
-      window.location.href = '/onboarding';
-    }
-  }, [hasCompletedQuiz]);
-
   // Parse archetype safely - can be string or object
   const archetypeName = React.useMemo(() => {
     if (!archetypeRaw) return "Smart Casual";
