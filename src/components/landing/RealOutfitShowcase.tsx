@@ -6,6 +6,7 @@ interface OutfitItem {
   type: 'top' | 'bottom' | 'shoes' | 'accessory';
   color: string;
   label: string;
+  image?: string;
 }
 
 interface Outfit {
@@ -57,10 +58,10 @@ const outfits: Outfit[] = [
     gradient: 'from-slate-50 to-blue-50',
     border: 'border-slate-300',
     items: [
-      { type: 'top', color: 'bg-slate-800', label: 'Zwart overhemd' },
-      { type: 'bottom', color: 'bg-slate-900', label: 'Donkerblauwe jeans' },
-      { type: 'shoes', color: 'bg-slate-950', label: 'Zwarte loafers' },
-      { type: 'accessory', color: 'bg-slate-700', label: 'Zilveren ketting' }
+      { type: 'top', color: 'bg-slate-800', label: 'Zwart overhemd', image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy copy.webp' },
+      { type: 'bottom', color: 'bg-slate-900', label: 'Donkerblauwe jeans', image: '/images/gemini_generated_image_vzbawovzbawovzba copy copy.webp' },
+      { type: 'shoes', color: 'bg-slate-950', label: 'Zwarte loafers', image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa copy copy.webp' },
+      { type: 'accessory', color: 'bg-slate-700', label: 'Zilveren ketting', image: '/images/gemini_generated_image_xlj3okxlj3okxlj3 copy copy.webp' }
     ],
     completeImage: '/images/28115420-679f-4b0a-aac3-fca84c0a4fd2.webp',
     productImages: [
@@ -163,8 +164,19 @@ export function RealOutfitShowcase() {
                       key={idx}
                       className="flex items-center gap-2.5 sm:gap-3 lg:gap-4 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
                     >
-                      {/* Color swatch */}
-                      <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 ${item.color} rounded-lg sm:rounded-xl shadow-inner border-2 border-white flex-shrink-0`}></div>
+                      {/* Product image or color swatch */}
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl shadow-inner border-2 border-white flex-shrink-0 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.label}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className={`w-full h-full ${item.color}`}></div>
+                        )}
+                      </div>
 
                       {/* Item details */}
                       <div className="flex-1 min-w-0">
