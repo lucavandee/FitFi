@@ -242,6 +242,76 @@ class ProfileSyncService {
     localStorage.removeItem(LS_KEYS.RESULTS_TS);
     localStorage.removeItem(LS_KEYS.QUIZ_COMPLETED);
   }
+
+  /**
+   * Archive current profile and reset quiz for the authenticated user.
+   * Returns info about the archived profile and days since last quiz.
+   */
+  async archiveAndResetQuiz(resetReason?: string): Promise<{
+    success: boolean;
+    old_archetype?: string;
+    days_since_last_quiz?: number;
+    error?: string;
+  }> {
+    const client = supabase();
+    if (!client) {
+      return { success: false, error: 'Supabase client not available' };
+    }
+
+    try {
+      const { data, error } = await client.rpc('archive_and_reset_quiz', {
+        p_reset_reason: resetReason || null
+      });
+
+      if (error) {
+        console.error('[ProfileSync] Error archiving and resetting quiz:', error);
+        return { success: false, error: error.message };
+      }
+
+      if (!data.success) {
+        return { success: false, error: data.error || data.message };
+      }
+
+      // Clear local cache after successful reset
+      this.clearCache();
+
+      return {
+        success: true,
+        old_archetype: data.old_archetype,
+        days_since_last_quiz: data.days_since_last_quiz
+      };
+    } catch (error) {
+      console.error('[ProfileSync] Exception during archiveAndResetQuiz:', error);
+      return { success: false, error: String(error) };
+    }
+  }
+
+  /**
+   * Get user's style profile history.
+   * Returns current profile and array of archived profiles.
+   */
+  async getProfileHistory(): Promise<{
+    current_profile: any | null;
+    history: any[];
+    total_resets: number;
+  } | null> {
+    const client = supabase();
+    if (!client) return null;
+
+    try {
+      const { data, error } = await client.rpc('get_style_profile_history');
+
+      if (error) {
+        console.error('[ProfileSync] Error fetching profile history:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('[ProfileSync] Exception during getProfileHistory:', error);
+      return null;
+    }
+  }
 }
 
 export const profileSyncService = new ProfileSyncService();

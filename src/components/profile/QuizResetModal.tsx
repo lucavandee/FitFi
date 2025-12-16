@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { X, AlertTriangle, RefreshCw, CheckCircle } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
+import { X, AlertTriangle, RefreshCw, CheckCircle, Clock } from 'lucide-react';
+import { profileSyncService } from '@/services/data/profileSyncService';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 interface QuizResetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userId: string;
+  currentArchetype?: string;
 }
 
-export function QuizResetModal({ isOpen, onClose, userId }: QuizResetModalProps) {
+const RESET_REASONS = [
+  { value: 'stijl_veranderd', label: 'Mijn stijl is veranderd' },
+  { value: 'nieuwe_inspiratie', label: 'Ik heb nieuwe inspiratie opgedaan' },
+  { value: 'resultaten_niet_goed', label: 'Resultaten klopten niet helemaal' },
+  { value: 'nieuwsgierig', label: 'Gewoon nieuwsgierig naar nieuwe resultaten' },
+  { value: 'anders', label: 'Andere reden' }
+];
+
+export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetModalProps) {
   const [isResetting, setIsResetting] = useState(false);
   const [confirmText, setConfirmText] = useState('');
+  const [selectedReason, setSelectedReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
   const navigate = useNavigate();
 
   if (!isOpen) return null;
@@ -23,29 +33,40 @@ export function QuizResetModal({ isOpen, onClose, userId }: QuizResetModalProps)
       return;
     }
 
+    if (!selectedReason) {
+      toast.error('Selecteer een reden voor de reset (helpt ons om FitFi te verbeteren)');
+      return;
+    }
+
     setIsResetting(true);
 
     try {
-      const { data, error } = await supabase.rpc('reset_user_quiz_data', {
-        user_id_param: userId
-      });
+      const reason = selectedReason === 'anders' && customReason
+        ? customReason
+        : RESET_REASONS.find(r => r.value === selectedReason)?.label;
 
-      if (error) throw error;
+      const result = await profileSyncService.archiveAndResetQuiz(reason);
 
-      toast.success('Quiz data gereset! Je wordt doorgestuurd...', {
-        icon: <CheckCircle className="w-5 h-5 text-green-600" />
+      if (!result.success) {
+        throw new Error(result.error || 'Reset failed');
+      }
+
+      const message = result.days_since_last_quiz
+        ? `Quiz gereset! Je vorige profiel (${result.old_archetype || 'onbekend'}) na ${result.days_since_last_quiz} dagen is gearchiveerd.`
+        : 'Quiz gereset! Je wordt doorgestuurd...';
+
+      toast.success(message, {
+        icon: <CheckCircle className="w-5 h-5 text-green-600" />,
+        duration: 3000
       });
 
       setTimeout(() => {
-        localStorage.removeItem('quiz_answers');
-        localStorage.removeItem('quiz_color_profile');
-        localStorage.removeItem('quiz_archetype');
         navigate('/onboarding');
       }, 1500);
 
     } catch (error) {
-      console.error('Reset error:', error);
-      toast.error('Kon quiz niet resetten. Probeer het opnieuw.');
+      console.error('[QuizResetModal] Reset error:', error);
+      toast.error(error instanceof Error ? error.message : 'Kon quiz niet resetten. Probeer het opnieuw.');
       setIsResetting(false);
     }
   };
@@ -70,27 +91,67 @@ export function QuizResetModal({ isOpen, onClose, userId }: QuizResetModalProps)
           Quiz opnieuw doen?
         </h2>
 
-        <p className="text-[var(--color-muted)] text-center mb-6 leading-relaxed">
-          Dit verwijdert <strong>al je stijldata</strong>: je profiel, voorkeuren, swipes en opgeslagen outfits.
+        <p className="text-[var(--color-muted)] text-center mb-4 leading-relaxed">
+          Je huidige profiel wordt <strong>gearchiveerd</strong> (niet verwijderd) en je kunt de quiz opnieuw doen.
         </p>
+
+        {currentArchetype && (
+          <div className="bg-[var(--ff-color-primary-50)] dark:bg-[var(--ff-color-primary-900)] rounded-xl p-3 mb-4 text-center border border-[var(--ff-color-primary-200)]">
+            <p className="text-sm text-[var(--ff-color-primary-700)] dark:text-[var(--ff-color-primary-300)]">
+              Huidig archetype: <strong>{currentArchetype}</strong>
+            </p>
+          </div>
+        )}
 
         <div className="bg-[var(--color-bg)] rounded-xl p-4 mb-6 border border-[var(--color-border)]">
           <h3 className="font-semibold text-sm text-[var(--color-text)] mb-2">Wat blijft behouden:</h3>
           <ul className="space-y-1 text-sm text-[var(--color-muted)]">
             <li className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-600" />
-              Account en email
+              Je oude profiel (gearchiveerd voor vergelijking)
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-600" />
-              Subscription en tier
+              Account, email, subscription en tier
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-600" />
-              Gamification voortgang
+              Gamification voortgang en achievements
             </li>
           </ul>
         </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            Waarom wil je de quiz opnieuw doen? <span className="text-[var(--color-muted)]">(helpt ons)</span>
+          </label>
+          <select
+            value={selectedReason}
+            onChange={(e) => setSelectedReason(e.target.value)}
+            disabled={isResetting}
+            className="w-full px-4 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] focus:outline-none focus:border-[var(--ff-color-primary-500)] transition-colors disabled:opacity-50"
+          >
+            <option value="">-- Selecteer een reden --</option>
+            {RESET_REASONS.map(reason => (
+              <option key={reason.value} value={reason.value}>
+                {reason.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedReason === 'anders' && (
+          <div className="mb-4">
+            <input
+              type="text"
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              disabled={isResetting}
+              placeholder="Typ je reden hier..."
+              className="w-full px-4 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--ff-color-primary-500)] transition-colors disabled:opacity-50"
+            />
+          </div>
+        )}
 
         <div className="mb-6">
           <label className="block text-sm font-medium text-[var(--color-text)] mb-2">

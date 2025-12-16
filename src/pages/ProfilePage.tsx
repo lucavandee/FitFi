@@ -29,6 +29,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { Helmet } from 'react-helmet-async';
 import { QuizResetModal } from '@/components/profile/QuizResetModal';
 import { EmailPreferences } from '@/components/profile/EmailPreferences';
+import { StyleProfileComparison } from '@/components/profile/StyleProfileComparison';
 import { profileSyncService } from '@/services/data/profileSyncService';
 
 const ProfilePage: React.FC = () => {
@@ -126,6 +127,15 @@ const ProfilePage: React.FC = () => {
 
       if (error) return [];
       return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const { data: profileHistory, isLoading: historyLoading } = useQuery({
+    queryKey: ['profileHistory', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      return await profileSyncService.getProfileHistory();
     },
     enabled: !!user,
   });
@@ -359,65 +369,85 @@ const ProfilePage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
+              className="space-y-6"
             >
               {hasStyleProfile ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                  <PremiumCard title="Stijlarchetype" icon={<Target className="w-6 h-6" />}>
-                    <div className="text-center py-8">
-                      <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] dark:from-[var(--ff-color-primary-900)] dark:to-[var(--ff-color-accent-900)] flex items-center justify-center mb-4">
-                        <Sparkles className="w-12 h-12 text-[var(--ff-color-primary-600)]" />
-                      </div>
-                      <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2 capitalize">
-                        {archetype || 'Niet ingevuld'}
-                      </h3>
-                      <p className="text-[var(--color-muted)] mb-6">
-                        Jouw unieke stijlidentiteit
-                      </p>
-                      <Button as={Link} to="/results" variant="primary" fullWidth>
-                        Bekijk Matching Outfits
-                      </Button>
-                    </div>
-                  </PremiumCard>
-
-                  <PremiumCard title="Kleurpalet" icon={<Palette className="w-6 h-6" />}>
-                    {paletteName && (
-                      <div className="mb-4">
-                        <p className="text-sm text-[var(--color-muted)] mb-1">Seizoen</p>
-                        <p className="text-xl font-bold text-[var(--color-text)] capitalize">
-                          {paletteName}
-                        </p>
-                      </div>
-                    )}
-                    {primaryColors.length > 0 ? (
-                      <div>
-                        <p className="text-sm text-[var(--color-muted)] mb-3">Jouw Kleuren</p>
-                        <div className="grid grid-cols-6 gap-2 mb-6">
-                          {primaryColors.slice(0, 12).map((color: string, i: number) => (
-                            <motion.div
-                              key={i}
-                              whileHover={{ scale: 1.1 }}
-                              className="aspect-square rounded-lg border-2 border-[var(--color-border)] shadow-sm cursor-pointer"
-                              style={{ backgroundColor: color }}
-                              title={color}
-                            />
-                          ))}
+                <>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <PremiumCard title="Stijlarchetype" icon={<Target className="w-6 h-6" />}>
+                      <div className="text-center py-8">
+                        <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] dark:from-[var(--ff-color-primary-900)] dark:to-[var(--ff-color-accent-900)] flex items-center justify-center mb-4">
+                          <Sparkles className="w-12 h-12 text-[var(--ff-color-primary-600)]" />
                         </div>
-                        <button
-                          onClick={() => setShowResetModal(true)}
-                          className="w-full px-4 py-2.5 rounded-lg border-2 border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-bg)] transition-all"
-                        >
-                          <RefreshCw className="w-4 h-4 inline mr-2" />
-                          Opnieuw Bepalen
-                        </button>
+                        <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2 capitalize">
+                          {archetype || 'Niet ingevuld'}
+                        </h3>
+                        <p className="text-[var(--color-muted)] mb-6">
+                          Jouw unieke stijlidentiteit
+                        </p>
+                        <Button as={Link} to="/results" variant="primary" fullWidth>
+                          Bekijk Matching Outfits
+                        </Button>
                       </div>
-                    ) : (
-                      <div className="text-center py-8 text-[var(--color-muted)]">
-                        <Palette className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                        <p>Geen kleurgegevens beschikbaar</p>
-                      </div>
-                    )}
-                  </PremiumCard>
-                </div>
+                    </PremiumCard>
+
+                    <PremiumCard title="Kleurpalet" icon={<Palette className="w-6 h-6" />}>
+                      {paletteName && (
+                        <div className="mb-4">
+                          <p className="text-sm text-[var(--color-muted)] mb-1">Seizoen</p>
+                          <p className="text-xl font-bold text-[var(--color-text)] capitalize">
+                            {paletteName}
+                          </p>
+                        </div>
+                      )}
+                      {primaryColors.length > 0 ? (
+                        <div>
+                          <p className="text-sm text-[var(--color-muted)] mb-3">Jouw Kleuren</p>
+                          <div className="grid grid-cols-6 gap-2 mb-6">
+                            {primaryColors.slice(0, 12).map((color: string, i: number) => (
+                              <motion.div
+                                key={i}
+                                whileHover={{ scale: 1.1 }}
+                                className="aspect-square rounded-lg border-2 border-[var(--color-border)] shadow-sm cursor-pointer"
+                                style={{ backgroundColor: color }}
+                                title={color}
+                              />
+                            ))}
+                          </div>
+                          <button
+                            onClick={() => setShowResetModal(true)}
+                            className="w-full px-4 py-2.5 rounded-lg border-2 border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-bg)] transition-all"
+                          >
+                            <RefreshCw className="w-4 h-4 inline mr-2" />
+                            Quiz Opnieuw Doen
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-[var(--color-muted)]">
+                          <Palette className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                          <p>Geen kleurgegevens beschikbaar</p>
+                        </div>
+                      )}
+                    </PremiumCard>
+                  </div>
+
+                  {/* Style Evolution Section */}
+                  {profileHistory && (
+                    <PremiumCard title="Stijlevolutie" icon={<TrendingUp className="w-6 h-6" />}>
+                      {historyLoading ? (
+                        <div className="text-center py-12">
+                          <RefreshCw className="w-8 h-8 animate-spin text-[var(--color-muted)] mx-auto mb-4" />
+                          <p className="text-[var(--color-muted)]">Laden...</p>
+                        </div>
+                      ) : (
+                        <StyleProfileComparison
+                          currentProfile={profileHistory.current_profile}
+                          history={profileHistory.history || []}
+                        />
+                      )}
+                    </PremiumCard>
+                  )}
+                </>
               ) : (
                 <PremiumCard title="Start je Stijlreis" icon={<Sparkles className="w-6 h-6" />}>
                   <div className="text-center py-12">
@@ -488,7 +518,7 @@ const ProfilePage: React.FC = () => {
       <QuizResetModal
         isOpen={showResetModal}
         onClose={() => setShowResetModal(false)}
-        userId={user.id}
+        currentArchetype={archetype || undefined}
       />
     </div>
   );
