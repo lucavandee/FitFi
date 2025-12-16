@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SwipeCard } from './SwipeCard';
+import { TinderSwipeCard } from './TinderSwipeCard';
 import { NovaBubble } from './NovaBubble';
-import { StyleDNAVisualizer } from './StyleDNAVisualizer';
-import { LiveOutfitPreview } from './LiveOutfitPreview';
-import { SwipeFeedback } from './SwipeFeedback';
-import { Sparkles, Loader2, SkipForward, RotateCcw, PartyPopper } from 'lucide-react';
+import { Loader2, SkipForward, RotateCcw, PartyPopper } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import { loadAdaptivePhotos, generateAdaptationInsight } from '@/services/visualPreferences/adaptiveLoader';
@@ -31,13 +28,9 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   const [swipeCount, setSwipeCount] = useState(0);
   const [novaInsight, setNovaInsight] = useState<string | null>(null);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
-  const [styleDNA, setStyleDNA] = useState<Record<string, number>>({});
   const [swipeHistory, setSwipeHistory] = useState<Array<{ photo: MoodPhoto; direction: 'left' | 'right'; index: number }>>([]);
   const [showCelebration, setShowCelebration] = useState(false);
   const [hasAdapted, setHasAdapted] = useState(false);
-  const [previewOutfit, setPreviewOutfit] = useState<QuickOutfit | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const [lastSwipeDirection, setLastSwipeDirection] = useState<'left' | 'right' | null>(null);
   const { user } = useUser();
   const analyzerRef = useRef(new SwipeAnalyzer());
 
@@ -181,27 +174,6 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
     }
   };
 
-  const updateStyleDNA = (photo: MoodPhoto, direction: 'left' | 'right') => {
-    if (direction === 'right' && photo.archetype_weights) {
-      setStyleDNA(prev => {
-        const updated = { ...prev };
-        Object.entries(photo.archetype_weights).forEach(([style, weight]) => {
-          const numWeight = typeof weight === 'number' ? weight : 0;
-          updated[style] = (updated[style] || 0) + numWeight;
-        });
-
-        const total = Object.values(updated).reduce((sum, val) => sum + val, 0);
-        if (total > 0) {
-          Object.keys(updated).forEach(key => {
-            updated[key] = Math.round((updated[key] / total) * 100);
-          });
-        }
-
-        return updated;
-      });
-    }
-  };
-
   const handleUndo = () => {
     if (swipeHistory.length === 0) return;
 
@@ -210,24 +182,11 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
     setCurrentIndex(lastSwipe.index);
     setSwipeCount(prev => prev - 1);
 
-    if (lastSwipe.direction === 'right' && lastSwipe.photo.archetype_weights) {
-      setStyleDNA(prev => {
-        const updated = { ...prev };
-        Object.entries(lastSwipe.photo.archetype_weights).forEach(([style, weight]) => {
-          const numWeight = typeof weight === 'number' ? weight : 0;
-          updated[style] = Math.max(0, (updated[style] || 0) - numWeight);
-        });
-        return updated;
-      });
-    }
   };
 
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto) return;
-
-    setLastSwipeDirection(direction);
-    setTimeout(() => setLastSwipeDirection(null), 600);
 
     const newSwipeCount = swipeCount + 1;
     setSwipeCount(newSwipeCount);
@@ -237,8 +196,6 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       direction,
       index: currentIndex
     }]);
-
-    updateStyleDNA(currentPhoto, direction);
 
     const swipeRecord: StyleSwipe = {
       user_id: user?.id,
@@ -316,32 +273,6 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       }
     }
 
-    // LIVE OUTFIT PREVIEW: After swipe 5, generate and show preview
-    if (newSwipeCount === 5 && !showPreview) {
-      const pattern = analyzerRef.current.getPattern();
-      const outfit = generateQuickOutfit(pattern);
-
-      if (outfit) {
-        console.log('👗 Generating live outfit preview:', outfit);
-        setPreviewOutfit(outfit);
-        setShowPreview(true);
-
-        setTimeout(() => {
-          setNovaInsight('Kijk! Dit past bij jouw stijl. Blijf swipen voor meer precisie! ✨');
-        }, 1000);
-      }
-    }
-
-    // Update preview outfit as user keeps swiping
-    if (newSwipeCount > 5 && newSwipeCount < moodPhotos.length && showPreview) {
-      const pattern = analyzerRef.current.getPattern();
-      const updatedOutfit = generateQuickOutfit(pattern);
-
-      if (updatedOutfit) {
-        setPreviewOutfit(updatedOutfit);
-      }
-    }
-
     // Move to next photo
     if (currentIndex < moodPhotos.length - 1) {
       setTimeout(() => {
@@ -402,23 +333,18 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
   }
 
   const currentPhoto = moodPhotos[currentIndex];
-  const progress = ((swipeCount) / moodPhotos.length) * 100;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-lg mx-auto px-4 h-screen flex flex-col overflow-hidden"
-    >
+    <>
       <AnimatePresence>
         {novaInsight && (
-          <NovaBubble
-            message={novaInsight}
-            onDismiss={() => setNovaInsight(null)}
-            autoHideDuration={5000}
-          />
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 max-w-md w-full safe-top">
+            <NovaBubble
+              message={novaInsight}
+              onDismiss={() => setNovaInsight(null)}
+              autoHideDuration={4000}
+            />
+          </div>
         )}
       </AnimatePresence>
 
@@ -428,24 +354,24 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md"
           >
             <motion.div
               initial={{ y: 20 }}
               animate={{ y: 0 }}
-              className="text-center"
+              className="text-center px-4"
             >
               <motion.div
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 0.5, repeat: 3 }}
                 className="text-6xl mb-4"
               >
-                <PartyPopper className="w-20 h-20 text-[var(--ff-color-primary-700)] mx-auto" />
+                <PartyPopper className="w-20 h-20 text-green-400 mx-auto" />
               </motion.div>
-              <h3 className="text-2xl font-bold text-white mb-2">
+              <h3 className="text-3xl font-bold text-white mb-2">
                 Perfect! 🎉
               </h3>
-              <p className="text-white/80">
+              <p className="text-white/80 text-lg">
                 Je stijlprofiel is compleet!
               </p>
             </motion.div>
@@ -453,138 +379,17 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         )}
       </AnimatePresence>
 
-      <StyleDNAVisualizer
-        styleDNA={styleDNA}
-        swipeCount={swipeCount}
-        totalSwipes={moodPhotos.length}
-        isVisible={swipeCount > 0}
-      />
-
-      <LiveOutfitPreview
-        outfit={previewOutfit}
-        isVisible={showPreview}
-        swipeCount={swipeCount}
-      />
-
-      <SwipeFeedback
-        direction={lastSwipeDirection}
-        swipeCount={swipeCount}
-        onAnimationComplete={() => setLastSwipeDirection(null)}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="text-center mb-4 sm:mb-6 flex-shrink-0"
-      >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-4"
-        >
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          >
-            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-          </motion.div>
-          <span className="text-sm font-medium text-[var(--color-text)]">
-            Visuele Voorkeuren
-          </span>
-        </motion.div>
-
-        <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-2">
-          Welke stijl spreekt je aan?
-        </h2>
-        <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-md mx-auto">
-          Swipe door {moodPhotos.length} outfits. Dit helpt Nova om precies te begrijpen wat jouw perfecte stijl is.
-        </p>
-
-        <div className="mt-6 max-w-xs mx-auto">
-          <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-[var(--ff-color-primary-700)]"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-            />
-          </div>
-          <motion.p
-            key={swipeCount}
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-xs text-[var(--color-muted)] mt-2"
-          >
-            {swipeCount} van {moodPhotos.length}
-          </motion.p>
-        </div>
-      </motion.div>
-
-      <div className="relative flex-1 flex items-center justify-center min-h-0">
-        <AnimatePresence mode="wait">
-          {currentPhoto && (
-            <SwipeCard
-              key={currentPhoto.id}
-              imageUrl={currentPhoto.image_url}
-              onSwipe={handleSwipe}
-              index={currentIndex}
-              total={moodPhotos.length}
-            />
-          )}
-        </AnimatePresence>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="text-center mt-4 space-y-2 flex-shrink-0 pb-4"
-      >
-        <div className="flex items-center justify-center gap-6 text-sm text-[var(--color-muted)]">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full border-2 border-red-400 flex items-center justify-center">
-              <span className="text-xs">←</span>
-            </div>
-            <span>Niet mijn stijl</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span>Spreekt me aan</span>
-            <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center">
-              <span className="text-xs">→</span>
-            </div>
-          </div>
-        </div>
-        <p className="text-xs text-[var(--color-muted)]">
-          Of gebruik de knoppen onderaan
-        </p>
-
-        <div className="mt-4 flex items-center justify-center gap-4">
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            onClick={handleUndo}
-            disabled={swipeHistory.length === 0}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed border border-[var(--color-border)] rounded-lg"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Vorige</span>
-          </motion.button>
-
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            onClick={() => setShowSkipConfirm(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
-          >
-            <SkipForward className="w-4 h-4" />
-            <span>Overslaan</span>
-          </motion.button>
-        </div>
-      </motion.div>
+      <AnimatePresence mode="wait">
+        {currentPhoto && (
+          <TinderSwipeCard
+            key={currentPhoto.id}
+            imageUrl={currentPhoto.image_url}
+            onSwipe={handleSwipe}
+            index={currentIndex}
+            total={moodPhotos.length}
+          />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showSkipConfirm && (
@@ -592,7 +397,7 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setShowSkipConfirm(false)}
           >
             <motion.div
@@ -600,24 +405,24 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 max-w-md w-full shadow-[var(--shadow-soft)]"
+              className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-md w-full shadow-2xl"
             >
-              <h3 className="text-xl font-semibold text-[var(--color-text)] mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 Deze stap overslaan?
               </h3>
-              <p className="text-[var(--color-muted)] mb-6">
-                Je kunt je stijlvoorkeuren later altijd verfijnen via het dashboard. Dit helpt wel om je aanbevelingen te personaliseren.
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Je kunt je stijlvoorkeuren later altijd verfijnen via het dashboard.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowSkipConfirm(false)}
-                  className="flex-1 px-4 py-2.5 border border-[var(--color-border)] rounded-lg text-[var(--color-text)] hover:bg-[var(--overlay-hover)] transition-colors"
+                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
                 >
-                  Terug naar swipen
+                  Terug
                 </button>
                 <button
                   onClick={handleSkip}
-                  className="flex-1 px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                  className="flex-1 px-4 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors font-medium"
                 >
                   Overslaan
                 </button>
@@ -626,6 +431,32 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+
+      {/* Undo button - floating bottom left */}
+      <AnimatePresence>
+        {swipeHistory.length > 0 && !showSkipConfirm && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            onClick={handleUndo}
+            className="fixed bottom-24 left-4 z-40 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center hover:scale-110 transition-transform safe-bottom"
+          >
+            <RotateCcw className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Skip button - floating bottom right */}
+      <motion.button
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        onClick={() => setShowSkipConfirm(true)}
+        className="fixed bottom-24 right-4 z-40 px-4 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center gap-2 hover:scale-105 transition-transform safe-bottom"
+      >
+        <SkipForward className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Overslaan</span>
+      </motion.button>
+    </>
   );
 }
