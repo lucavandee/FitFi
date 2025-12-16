@@ -49,7 +49,7 @@ const outfits: Outfit[] = [
       { type: 'shoes', color: 'bg-stone-100', label: 'Witte sneakers', image: '/images/casual-dag-uit/046de5c0-c4a0-43c9-b1fc-fab3995f613a.webp' },
       { type: 'accessory', color: 'bg-stone-300', label: 'Canvas tas', image: '/images/casual-dag-uit/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp' }
     ],
-    completeImage: '/images/image copy copy copy copy copy.png',
+    completeImage: '/images/f4a277d2-5a24-42ba-a286-279cdf1aca74 copy copy.webp',
     productImages: [
       {
         name: 'Gestreepte trui',
