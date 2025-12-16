@@ -62,26 +62,26 @@ const outfits: Outfit[] = [
       { type: 'shoes', color: 'bg-slate-950', label: 'Zwarte loafers' },
       { type: 'accessory', color: 'bg-slate-700', label: 'Zilveren ketting' }
     ],
-    completeImage: '/images/gemini_generated_image_nsvlp1nsvlp1nsvl.webp',
+    completeImage: '/images/28115420-679f-4b0a-aac3-fca84c0a4fd2.webp',
     productImages: [
       {
         name: 'Zwart overhemd',
-        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy.webp',
+        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy.webp',
         category: 'Bovenstuk'
       },
       {
         name: 'Donkerblauwe jeans',
-        image: '/images/gemini_generated_image_vzbawovzbawovzba.webp',
+        image: '/images/gemini_generated_image_vzbawovzbawovzba copy.webp',
         category: 'Onderstuk'
       },
       {
         name: 'Zwarte loafers',
-        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa.webp',
+        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa copy.webp',
         category: 'Schoenen'
       },
       {
         name: 'Zilveren ketting',
-        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3.webp',
+        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3 copy.webp',
         category: 'Accessoire'
       }
     ]
