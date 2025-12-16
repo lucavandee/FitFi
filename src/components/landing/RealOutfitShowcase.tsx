@@ -44,31 +44,31 @@ const outfits: Outfit[] = [
     gradient: 'from-amber-50 to-orange-50',
     border: 'border-orange-300',
     items: [
-      { type: 'top', color: 'bg-amber-700', label: 'Cognac trui', image: '/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0 copy copy.webp' },
-      { type: 'bottom', color: 'bg-blue-800', label: 'Denim', image: '/images/0dccb686-5656-4b4b-872f-f132a6c17d98 copy copy.webp' },
-      { type: 'shoes', color: 'bg-amber-900', label: 'Bruine sneakers', image: '/images/046de5c0-c4a0-43c9-b1fc-fab3995f613a copy copy.webp' },
-      { type: 'accessory', color: 'bg-amber-600', label: 'Canvas tas', image: '/images/f4a277d2-5a24-42ba-a286-279cdf1aca74 copy copy.webp' }
+      { type: 'top', color: 'bg-slate-100', label: 'Gestreepte trui', image: '/images/casual-dag-uit/130aa0a3-d37a-49b4-ad48-ac400044d562.webp' },
+      { type: 'bottom', color: 'bg-blue-400', label: 'Lichte jeans', image: '/images/casual-dag-uit/0dccb686-5656-4b4b-872f-f132a6c17d98.webp' },
+      { type: 'shoes', color: 'bg-stone-100', label: 'Witte sneakers', image: '/images/casual-dag-uit/046de5c0-c4a0-43c9-b1fc-fab3995f613a.webp' },
+      { type: 'accessory', color: 'bg-stone-300', label: 'Canvas tas', image: '/images/casual-dag-uit/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp' }
     ],
     completeImage: '/images/image copy copy copy copy copy.png',
     productImages: [
       {
-        name: 'Cognac trui',
-        image: '/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0 copy copy.webp',
+        name: 'Gestreepte trui',
+        image: '/images/casual-dag-uit/130aa0a3-d37a-49b4-ad48-ac400044d562.webp',
         category: 'BOVENSTUK'
       },
       {
-        name: 'Denim',
-        image: '/images/0dccb686-5656-4b4b-872f-f132a6c17d98 copy copy.webp',
+        name: 'Lichte jeans',
+        image: '/images/casual-dag-uit/0dccb686-5656-4b4b-872f-f132a6c17d98.webp',
         category: 'ONDERSTUK'
       },
       {
-        name: 'Bruine sneakers',
-        image: '/images/046de5c0-c4a0-43c9-b1fc-fab3995f613a copy copy.webp',
+        name: 'Witte sneakers',
+        image: '/images/casual-dag-uit/046de5c0-c4a0-43c9-b1fc-fab3995f613a.webp',
         category: 'SCHOENEN'
       },
       {
         name: 'Canvas tas',
-        image: '/images/f4a277d2-5a24-42ba-a286-279cdf1aca74 copy copy.webp',
+        image: '/images/casual-dag-uit/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp',
         category: 'ACCESSOIRE'
       }
     ]
