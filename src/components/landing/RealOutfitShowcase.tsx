@@ -30,10 +30,33 @@ const outfits: Outfit[] = [
     gradient: 'from-slate-50 to-slate-100',
     border: 'border-slate-300',
     items: [
-      { type: 'top', color: 'bg-slate-800', label: 'Navy blazer' },
-      { type: 'top', color: 'bg-white', label: 'Wit overhemd' },
-      { type: 'bottom', color: 'bg-slate-700', label: 'Grijze pantalon' },
-      { type: 'shoes', color: 'bg-slate-900', label: 'Zwarte schoenen' }
+      { type: 'top', color: 'bg-slate-800', label: 'Navy blazer', image: '/images/avondje-uit/7bb820f7-1c79-45d6-ab9a-2f179aad8e47.webp' },
+      { type: 'top', color: 'bg-white', label: 'Wit overhemd', image: '/images/avondje-uit/47c38a6c-a3a2-4de7-a666-329ca7e3d231_(1).webp' },
+      { type: 'bottom', color: 'bg-slate-700', label: 'Grijze pantalon', image: '/images/avondje-uit/68c7f668-08b6-4183-a4ba-e63a89858eb2.webp' },
+      { type: 'shoes', color: 'bg-slate-900', label: 'Zwarte schoenen', image: '/images/avondje-uit/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1).webp' }
+    ],
+    completeImage: '/images/avondje-uit/dedac5c1-3dd7-417f-93ec-44b09121f537_(1).webp',
+    productImages: [
+      {
+        name: 'Navy blazer',
+        image: '/images/avondje-uit/7bb820f7-1c79-45d6-ab9a-2f179aad8e47.webp',
+        category: 'BOVENSTUK'
+      },
+      {
+        name: 'Wit overhemd',
+        image: '/images/avondje-uit/47c38a6c-a3a2-4de7-a666-329ca7e3d231_(1).webp',
+        category: 'BOVENSTUK'
+      },
+      {
+        name: 'Grijze pantalon',
+        image: '/images/avondje-uit/68c7f668-08b6-4183-a4ba-e63a89858eb2.webp',
+        category: 'ONDERSTUK'
+      },
+      {
+        name: 'Zwarte schoenen',
+        image: '/images/avondje-uit/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1).webp',
+        category: 'SCHOENEN'
+      }
     ]
   },
   {
