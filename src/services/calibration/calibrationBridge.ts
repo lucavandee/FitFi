@@ -1,5 +1,6 @@
 import { adaptiveOutfitGenerator, type AdaptiveOutfit } from './adaptiveOutfitGenerator';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
+import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { Product } from '@/types/product';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -19,6 +20,15 @@ export class CalibrationBridge {
       // Get swipe history
       const swipeHistory = await this.getSwipeHistory(sessionId || userId || '');
 
+      // Get visual embeddings from mood photos
+      const visualEmbedding = await VisualPreferenceService.getVisualEmbeddingFromProfile(
+        userId,
+        sessionId || undefined
+      );
+
+      // Determine current season
+      const season = this.getCurrentSeason();
+
       // Build generation context
       const context = {
         session_id: sessionId || userId || `session_${Date.now()}`,
@@ -30,8 +40,12 @@ export class CalibrationBridge {
           budget: this.mapBudgetRange(quizData?.budgetRange),
           occasions: quizData?.occasions || ['casual', 'everyday']
         },
-        swipe_history: this.calculateLearnedPreferences(swipeHistory)
+        swipe_history: this.calculateLearnedPreferences(swipeHistory),
+        visual_embedding: visualEmbedding && Object.keys(visualEmbedding).length > 0 ? visualEmbedding : undefined,
+        season
       };
+
+      console.log(`[CalibrationBridge] Context with visual embeddings: ${visualEmbedding ? 'YES' : 'NO'}, season: ${season}`);
 
       // Generate adaptive outfits
       const adaptiveOutfits = await adaptiveOutfitGenerator.generateAdaptiveOutfits(context, 3);
@@ -46,6 +60,18 @@ export class CalibrationBridge {
       console.error('[CalibrationBridge] Error generating adaptive outfits:', error);
       throw error;
     }
+  }
+
+  /**
+   * Determine current season based on date
+   */
+  private static getCurrentSeason(): 'spring' | 'summer' | 'autumn' | 'winter' {
+    const month = new Date().getMonth() + 1; // 1-12
+
+    if (month >= 3 && month <= 5) return 'spring';
+    if (month >= 6 && month <= 8) return 'summer';
+    if (month >= 9 && month <= 11) return 'autumn';
+    return 'winter';
   }
 
   /**

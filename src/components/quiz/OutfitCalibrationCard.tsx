@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Minus, RefreshCw, Heart } from 'lucide-react';
+import { Check, X, Minus, RefreshCw, Heart, Sparkles } from 'lucide-react';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import SmartImage from '@/components/ui/SmartImage';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
+import OutfitRemixerModal from '@/components/outfits/OutfitRemixerModal';
+import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
 import toast from 'react-hot-toast';
 
 interface OutfitCalibrationCardProps {
@@ -17,6 +19,7 @@ interface OutfitCalibrationCardProps {
 export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled, swappingCategory }: OutfitCalibrationCardProps) {
   const [startTime] = useState(Date.now());
   const [selectedFeedback, setSelectedFeedback] = useState<'spot_on' | 'not_for_me' | 'maybe' | null>(null);
+  const [showRemixer, setShowRemixer] = useState(false);
   const { saveOutfit, isSaving } = useSaveOutfit();
 
   const handleFeedback = (feedback: 'spot_on' | 'not_for_me' | 'maybe') => {
@@ -50,6 +53,42 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     .reduce((sum, item) => sum + (item?.price || 0), 0);
 
   const formattedTotal = Math.round(totalPrice);
+
+  // Convert to AdaptiveOutfit format for remixer
+  const adaptiveOutfit: AdaptiveOutfit = {
+    id: outfit.id,
+    products: Object.values(outfit.items).filter(Boolean).map(item => ({
+      id: item!.id,
+      name: item!.name,
+      brand: item!.brand || '',
+      price: item!.price,
+      image_url: item!.image_url,
+      category: item!.category,
+      colors: item!.colors || [],
+      affiliate_link: item!.affiliate_link || ''
+    })),
+    score: {
+      style_match: 0.85,
+      color_harmony: outfit.colorHarmony?.score ? outfit.colorHarmony.score / 100 : 0.80,
+      price_optimization: 0.80,
+      occasion_fit: 0.85,
+      novelty: 0.75,
+      overall: outfit.matchScore || 0.82
+    },
+    explanation: outfit.explanation || '',
+    price_breakdown: {
+      total: totalPrice,
+      tier: totalPrice <= 200 ? 'budget' : totalPrice <= 400 ? 'mid' : 'premium',
+      value_score: 0.85
+    },
+    visual_features: {
+      dominant_colors: outfit.dominantColors || [],
+      style_tags: Object.keys(outfit.archetypes || {}),
+      formality_score: outfit.occasion === 'work' ? 6 : 3,
+      pattern_complexity: 'moderate'
+    },
+    nova_insight: outfit.novaInsight
+  };
 
   return (
     <motion.div
@@ -286,9 +325,32 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               <X className="w-4 h-4" />
               Lijkt me niks
             </motion.button>
+
+            {/* Smart Remix Button */}
+            <motion.button
+              onClick={() => setShowRemixer(true)}
+              disabled={disabled}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] border border-[var(--ff-color-primary-200)] hover:from-[var(--ff-color-primary-100)] hover:to-[var(--ff-color-primary-200)] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Sparkles className="w-4 h-4" />
+              Smart Remix
+            </motion.button>
           </div>
         </div>
       </div>
+
+      {/* Remixer Modal */}
+      <OutfitRemixerModal
+        isOpen={showRemixer}
+        onClose={() => setShowRemixer(false)}
+        outfit={adaptiveOutfit}
+        onOutfitUpdated={(remixed) => {
+          console.log('Outfit remixed:', remixed);
+          // Optionally update the outfit display here
+        }}
+      />
     </motion.div>
   );
 }

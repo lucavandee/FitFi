@@ -51,6 +51,8 @@ interface GenerationContext {
     occasions: string[];
   };
   swipe_history?: SwipeHistory;
+  visual_embedding?: Record<string, number>; // From mood photos
+  season?: 'spring' | 'summer' | 'autumn' | 'winter';
 }
 
 export class AdaptiveOutfitGenerator {
@@ -232,11 +234,18 @@ export class AdaptiveOutfitGenerator {
     colors: string[],
     totalPrice: number
   ): OutfitScore {
-    // Style match (based on archetype)
-    const styleMatch = this.scoreStyleMatch(products, context.user_profile.archetype);
+    // Style match (based on archetype + visual embeddings)
+    const styleMatch = this.scoreStyleMatch(
+      products,
+      context.user_profile.archetype,
+      context.visual_embedding
+    );
 
-    // Color harmony
-    const colorHarmony = this.scoreColorHarmony(colors);
+    // Color harmony (boost with seasonal colors if season provided)
+    let colorHarmony = this.scoreColorHarmony(colors);
+    if (context.season) {
+      colorHarmony = this.applySeasonalBoost(colors, colorHarmony, context.season);
+    }
 
     // Price optimization
     const priceOptimization = this.scorePriceOptimization(
@@ -269,7 +278,11 @@ export class AdaptiveOutfitGenerator {
     };
   }
 
-  private scoreStyleMatch(products: Product[], archetype: string): number {
+  private scoreStyleMatch(
+    products: Product[],
+    archetype: string,
+    visualEmbedding?: Record<string, number>
+  ): number {
     // Advanced archetype matching with style tag analysis
     const archetypeStyleTags: Record<string, string[]> = {
       'Minimalist': ['clean', 'simple', 'monochrome', 'modern', 'sleek'],
@@ -299,7 +312,68 @@ export class AdaptiveOutfitGenerator {
       });
     });
 
-    return totalChecks > 0 ? Math.min(0.95, 0.60 + (matchCount / totalChecks) * 0.35) : 0.75;
+    let baseScore = totalChecks > 0 ? Math.min(0.95, 0.60 + (matchCount / totalChecks) * 0.35) : 0.75;
+
+    // Apply visual embedding boost if available
+    if (visualEmbedding && Object.keys(visualEmbedding).length > 0) {
+      const embeddingBoost = this.calculateVisualEmbeddingBoost(products, visualEmbedding);
+      baseScore = Math.min(1.0, baseScore * (1 + embeddingBoost * 0.15)); // Max 15% boost
+    }
+
+    return baseScore;
+  }
+
+  /**
+   * Calculate boost from visual embeddings (mood photos)
+   */
+  private calculateVisualEmbeddingBoost(
+    products: Product[],
+    visualEmbedding: Record<string, number>
+  ): number {
+    // Map products to embedding dimensions
+    let totalBoost = 0;
+    let boostCount = 0;
+
+    products.forEach(product => {
+      const productStyle = product.style?.toLowerCase() || '';
+      const productTags = product.tags?.map(t => t.toLowerCase()) || [];
+      const searchText = `${productStyle} ${productTags.join(' ')}`;
+
+      // Check each embedding dimension
+      for (const [dimension, score] of Object.entries(visualEmbedding)) {
+        if (score > 0.5 && searchText.includes(dimension.toLowerCase())) {
+          totalBoost += score;
+          boostCount++;
+        }
+      }
+    });
+
+    return boostCount > 0 ? totalBoost / boostCount : 0;
+  }
+
+  /**
+   * Apply seasonal color boost
+   */
+  private applySeasonalBoost(
+    colors: string[],
+    baseScore: number,
+    season: 'spring' | 'summer' | 'autumn' | 'winter'
+  ): number {
+    const seasonalColors: Record<string, string[]> = {
+      spring: ['pastel', 'pink', 'mint', 'yellow', 'lavender', 'peach', 'coral'],
+      summer: ['white', 'light blue', 'yellow', 'coral', 'turquoise', 'lime', 'bright'],
+      autumn: ['burgundy', 'brown', 'orange', 'olive', 'rust', 'camel', 'terracotta'],
+      winter: ['navy', 'black', 'grey', 'burgundy', 'forest', 'charcoal', 'plum']
+    };
+
+    const seasonColors = seasonalColors[season] || [];
+    const matchingColors = colors.filter(c =>
+      seasonColors.some(sc => c.toLowerCase().includes(sc))
+    );
+
+    // Boost score by up to 10% if colors match season
+    const seasonalBoost = (matchingColors.length / Math.max(colors.length, 1)) * 0.10;
+    return Math.min(1.0, baseScore + seasonalBoost);
   }
 
   private scoreColorHarmony(colors: string[]): number {
