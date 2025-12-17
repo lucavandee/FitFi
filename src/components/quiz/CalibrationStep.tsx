@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
-import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { CalibrationService } from '@/services/visualPreferences/calibrationService';
+import { CalibrationBridge } from '@/services/calibration/calibrationBridge';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 
@@ -15,12 +16,16 @@ interface CalibrationStepProps {
 const OUTFIT_CACHE_KEY = 'fitfi_calibration_outfits';
 const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
+// Feature flag for adaptive system
+const USE_ADAPTIVE_SYSTEM = true;
+
 export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) {
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [swappingState, setSwappingState] = useState<{ outfitId: string; category: 'top' | 'bottom' | 'shoes' } | null>(null);
+  const [isAdaptive, setIsAdaptive] = useState(false);
   const { user } = useUser();
   const loadedRef = useRef(false);
 
@@ -36,67 +41,82 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       const userId = user?.id;
       const sessionId = sessionStorage.getItem('fitfi_session_id');
 
-      // Check cache first
-      const cachedData = sessionStorage.getItem(OUTFIT_CACHE_KEY);
-      if (cachedData) {
-        try {
-          const { outfits: cachedOutfits, timestamp } = JSON.parse(cachedData);
-          const age = Date.now() - timestamp;
+      // Check cache first (only for non-adaptive mode)
+      if (!USE_ADAPTIVE_SYSTEM) {
+        const cachedData = sessionStorage.getItem(OUTFIT_CACHE_KEY);
+        if (cachedData) {
+          try {
+            const { outfits: cachedOutfits, timestamp } = JSON.parse(cachedData);
+            const age = Date.now() - timestamp;
 
-          if (age < CACHE_DURATION_MS && cachedOutfits.length === 3) {
-            console.log('✅ Using cached calibration outfits');
-            setOutfits(cachedOutfits);
-            setLoading(false);
-            return;
+            if (age < CACHE_DURATION_MS && cachedOutfits.length === 3) {
+              console.log('✅ Using cached calibration outfits');
+              setOutfits(cachedOutfits);
+              setLoading(false);
+              return;
+            }
+          } catch (parseErr) {
+            console.warn('Failed to parse cached outfits, regenerating...');
           }
-        } catch (parseErr) {
-          console.warn('Failed to parse cached outfits, regenerating...');
         }
       }
 
-      // Fetch visual preference embedding
-      const embedding = await VisualPreferenceService.getVisualEmbeddingFromProfile(
-        userId,
-        sessionId || undefined
-      );
-
       let generatedOutfits: CalibrationOutfit[];
 
-      if (!embedding || Object.keys(embedding).length === 0) {
-        console.warn('No visual preferences found, using defaults');
-        // Use default embedding
-        const defaultEmbedding = {
-          minimal: 70,
-          classic: 60,
-          casual: 50
-        };
-        generatedOutfits = await CalibrationService.generateCalibrationOutfits(
-          defaultEmbedding,
-          quizData,
+      if (USE_ADAPTIVE_SYSTEM) {
+        // Use new adaptive system
+        console.log('🚀 Using ADAPTIVE outfit generation system');
+        setIsAdaptive(true);
+
+        generatedOutfits = await CalibrationBridge.generateAdaptiveCalibrationOutfits(
           userId,
-          sessionId || undefined
+          sessionId || undefined,
+          quizData
         );
+
+        console.log(`✅ Generated ${generatedOutfits.length} adaptive outfits`);
       } else {
-        generatedOutfits = await CalibrationService.generateCalibrationOutfits(
-          embedding,
-          quizData,
+        // Use legacy system
+        const embedding = await VisualPreferenceService.getVisualEmbeddingFromProfile(
           userId,
           sessionId || undefined
         );
+
+        if (!embedding || Object.keys(embedding).length === 0) {
+          console.warn('No visual preferences found, using defaults');
+          const defaultEmbedding = {
+            minimal: 70,
+            classic: 60,
+            casual: 50
+          };
+          generatedOutfits = await CalibrationService.generateCalibrationOutfits(
+            defaultEmbedding,
+            quizData,
+            userId,
+            sessionId || undefined
+          );
+        } else {
+          generatedOutfits = await CalibrationService.generateCalibrationOutfits(
+            embedding,
+            quizData,
+            userId,
+            sessionId || undefined
+          );
+        }
+
+        // Cache for next time
+        try {
+          sessionStorage.setItem(OUTFIT_CACHE_KEY, JSON.stringify({
+            outfits: generatedOutfits,
+            timestamp: Date.now()
+          }));
+          console.log('✅ Cached calibration outfits');
+        } catch (cacheErr) {
+          console.warn('Failed to cache outfits:', cacheErr);
+        }
       }
 
       setOutfits(generatedOutfits);
-
-      // Cache for next time
-      try {
-        sessionStorage.setItem(OUTFIT_CACHE_KEY, JSON.stringify({
-          outfits: generatedOutfits,
-          timestamp: Date.now()
-        }));
-        console.log('✅ Cached calibration outfits');
-      } catch (cacheErr) {
-        console.warn('Failed to cache outfits:', cacheErr);
-      }
     } catch (err) {
       console.error('Failed to load calibration outfits:', err);
     } finally {
@@ -176,16 +196,29 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
       const userId = user?.id;
       const sessionId = sessionStorage.getItem('fitfi_session_id');
 
-      await CalibrationService.recordFeedback({
-        user_id: userId || undefined,
-        session_id: sessionId || undefined,
-        outfit_data: outfit.items,
-        feedback: feedbackType,
-        response_time_ms: responseTimeMs,
-        outfit_archetypes: outfit.archetypes,
-        dominant_colors: outfit.dominantColors,
-        occasion: outfit.occasion
-      });
+      if (USE_ADAPTIVE_SYSTEM) {
+        // Use adaptive feedback recording
+        await CalibrationBridge.recordAdaptiveFeedback(
+          outfitId,
+          userId,
+          sessionId || undefined,
+          feedbackType,
+          outfit
+        );
+        console.log(`✅ Recorded adaptive feedback: ${feedbackType}`);
+      } else {
+        // Use legacy feedback recording
+        await CalibrationService.recordFeedback({
+          user_id: userId || undefined,
+          session_id: sessionId || undefined,
+          outfit_data: outfit.items,
+          feedback: feedbackType,
+          response_time_ms: responseTimeMs,
+          outfit_archetypes: outfit.archetypes,
+          dominant_colors: outfit.dominantColors,
+          occasion: outfit.occasion
+        });
+      }
     } catch (err) {
       console.error('Failed to record feedback:', err);
     }
@@ -294,6 +327,20 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
         <p className="text-[var(--color-muted)] max-w-2xl mx-auto text-lg">
           Nova heeft 3 outfits voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
         </p>
+
+        {isAdaptive && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-100)] border border-[var(--ff-color-primary-200)]"
+          >
+            <TrendingUp size={16} className="text-[var(--ff-color-primary-700)]" />
+            <span className="text-sm font-semibold text-[var(--ff-color-primary-700)]">
+              Adaptive AI • Leert van je keuzes
+            </span>
+          </motion.div>
+        )}
 
         {/* Progress Bar */}
         <div className="mt-6 max-w-md mx-auto">
