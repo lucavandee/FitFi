@@ -35,7 +35,7 @@ const outfits: Outfit[] = [
       { type: 'bottom', color: 'bg-slate-700', label: 'Grijze pantalon', image: '/images/kantoor/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1) copy copy.webp' },
       { type: 'shoes', color: 'bg-slate-900', label: 'Zwarte schoenen', image: '/images/kantoor/dedac5c1-3dd7-417f-93ec-44b09121f537_(1) copy copy.webp' }
     ],
-    completeImage: '/images/kantoor/dedac5c1-3dd7-417f-93ec-44b09121f537_(1).webp',
+    completeImage: '/images/kantoor/47c38a6c-a3a2-4de7-a666-329ca7e3d231_(1) copy copy.webp',
     productImages: [
       {
         name: 'Navy blazer',
