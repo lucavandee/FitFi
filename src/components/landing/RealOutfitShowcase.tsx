@@ -30,31 +30,31 @@ const outfits: Outfit[] = [
     gradient: 'from-slate-50 to-slate-100',
     border: 'border-slate-300',
     items: [
-      { type: 'top', color: 'bg-slate-800', label: 'Navy blazer', image: '/images/kantoor/7bb820f7-1c79-45d6-ab9a-2f179aad8e47.webp' },
-      { type: 'top', color: 'bg-white', label: 'Wit overhemd', image: '/images/kantoor/47c38a6c-a3a2-4de7-a666-329ca7e3d231_(1).webp' },
-      { type: 'bottom', color: 'bg-slate-700', label: 'Grijze pantalon', image: '/images/kantoor/68c7f668-08b6-4183-a4ba-e63a89858eb2.webp' },
-      { type: 'shoes', color: 'bg-slate-900', label: 'Zwarte schoenen', image: '/images/kantoor/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1).webp' }
+      { type: 'top', color: 'bg-slate-800', label: 'Navy blazer', image: '/images/kantoor/68c7f668-08b6-4183-a4ba-e63a89858eb2 copy copy.webp' },
+      { type: 'top', color: 'bg-white', label: 'Wit overhemd', image: '/images/kantoor/7bb820f7-1c79-45d6-ab9a-2f179aad8e47 copy copy.webp' },
+      { type: 'bottom', color: 'bg-slate-700', label: 'Grijze pantalon', image: '/images/kantoor/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1) copy copy.webp' },
+      { type: 'shoes', color: 'bg-slate-900', label: 'Zwarte schoenen', image: '/images/kantoor/dedac5c1-3dd7-417f-93ec-44b09121f537_(1) copy copy.webp' }
     ],
     completeImage: '/images/kantoor/dedac5c1-3dd7-417f-93ec-44b09121f537_(1).webp',
     productImages: [
       {
         name: 'Navy blazer',
-        image: '/images/kantoor/7bb820f7-1c79-45d6-ab9a-2f179aad8e47.webp',
+        image: '/images/kantoor/68c7f668-08b6-4183-a4ba-e63a89858eb2 copy copy.webp',
         category: 'BOVENSTUK'
       },
       {
         name: 'Wit overhemd',
-        image: '/images/kantoor/47c38a6c-a3a2-4de7-a666-329ca7e3d231_(1).webp',
+        image: '/images/kantoor/7bb820f7-1c79-45d6-ab9a-2f179aad8e47 copy copy.webp',
         category: 'BOVENSTUK'
       },
       {
         name: 'Grijze pantalon',
-        image: '/images/kantoor/68c7f668-08b6-4183-a4ba-e63a89858eb2.webp',
+        image: '/images/kantoor/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1) copy copy.webp',
         category: 'ONDERSTUK'
       },
       {
         name: 'Zwarte schoenen',
-        image: '/images/kantoor/36e92469-6f72-4b27-bdc1-df1a89edf31b_(1).webp',
+        image: '/images/kantoor/dedac5c1-3dd7-417f-93ec-44b09121f537_(1) copy copy.webp',
         category: 'SCHOENEN'
       }
     ]
