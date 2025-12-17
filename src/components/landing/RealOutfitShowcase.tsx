@@ -113,23 +113,23 @@ const outfits: Outfit[] = [
     productImages: [
       {
         name: 'Zwart overhemd',
-        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy.webp',
-        category: 'Bovenstuk'
+        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy copy.webp',
+        category: 'BOVENSTUK'
       },
       {
         name: 'Donkerblauwe jeans',
-        image: '/images/gemini_generated_image_vzbawovzbawovzba copy.webp',
-        category: 'Onderstuk'
+        image: '/images/gemini_generated_image_vzbawovzbawovzba copy copy.webp',
+        category: 'ONDERSTUK'
       },
       {
         name: 'Zwarte loafers',
-        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa copy.webp',
-        category: 'Schoenen'
+        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa copy copy.webp',
+        category: 'SCHOENEN'
       },
       {
         name: 'Zilveren ketting',
-        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3 copy.webp',
-        category: 'Accessoire'
+        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3 copy copy.webp',
+        category: 'ACCESSOIRE'
       }
     ]
   }
