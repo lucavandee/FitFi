@@ -6,6 +6,7 @@
 @import "./styles/components/smart-fallback.css";
 @import "./styles/micro-interactions.css";
 @import "./styles/mobile-touch.css";
+@import "./styles/blog-reading.css";
 
 /* Tailwind layers — volgorde behouden */
 @tailwind base;
