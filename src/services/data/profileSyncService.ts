@@ -28,13 +28,23 @@ class ProfileSyncService {
   private syncInProgress = false;
 
   async getProfile(): Promise<StyleProfile | null> {
+    console.log('[ProfileSync] 🔍 Getting profile...');
+
     const client = supabase();
-    if (!client) return this.getLocalProfile();
+    if (!client) {
+      console.warn('[ProfileSync] No Supabase client, using local profile');
+      return this.getLocalProfile();
+    }
 
     try {
       const { data: { user } } = await client.auth.getUser();
+      console.log('[ProfileSync] Auth status:', {
+        hasUser: !!user,
+        userId: user?.id?.substring(0, 8)
+      });
 
       if (user) {
+        console.log('[ProfileSync] Fetching profile from database for user:', user.id.substring(0, 8));
         const { data, error } = await client
           .from('style_profiles')
           .select('*')
@@ -43,11 +53,21 @@ class ProfileSyncService {
           .maybeSingle();
 
         if (error) {
-          console.warn('[ProfileSync] Error fetching profile:', error);
-          return this.getLocalProfile();
+          console.error('[ProfileSync] ❌ Error fetching profile:', error);
+          const localProfile = this.getLocalProfile();
+          console.log('[ProfileSync] Falling back to local profile:', !!localProfile);
+          return localProfile;
         }
 
         if (data) {
+          console.log('[ProfileSync] ✅ Profile found in database:', {
+            id: data.id?.substring(0, 8),
+            archetype: data.archetype,
+            completedAt: data.completed_at,
+            hasQuizAnswers: !!data.quiz_answers
+          });
+
+          // Merge individual quiz answers if they exist
           const { data: quizAnswers } = await client
             .from('quiz_answers')
             .select('*')
@@ -59,16 +79,36 @@ class ProfileSyncService {
               answersMap[qa.question_id] = qa.answer;
             });
             data.quiz_answers = { ...data.quiz_answers, ...answersMap };
+            console.log('[ProfileSync] Merged individual quiz answers:', quizAnswers.length);
           }
 
+          // Cache to localStorage
+          console.log('[ProfileSync] Caching profile to localStorage...');
           this.cacheProfile(data);
+
+          // Verify cache was written
+          const cachedQuizAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+          const cachedArchetype = localStorage.getItem(LS_KEYS.ARCHETYPE);
+          const cachedCompleted = localStorage.getItem(LS_KEYS.QUIZ_COMPLETED);
+
+          console.log('[ProfileSync] Cache verification:', {
+            hasQuizAnswers: !!cachedQuizAnswers,
+            hasArchetype: !!cachedArchetype,
+            quizCompleted: cachedCompleted,
+            answersLength: cachedQuizAnswers?.length || 0
+          });
+
           localStorage.setItem(SYNC_STATUS_KEY, 'synced');
           localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
-          console.log('✅ [ProfileSync] Profile loaded from database');
+          console.log('✅ [ProfileSync] Profile loaded from database and cached successfully');
           return data;
+        } else {
+          console.warn('[ProfileSync] ⚠️ No profile found in database for user');
         }
       } else {
         const sessionId = localStorage.getItem('ff_session_id');
+        console.log('[ProfileSync] No user, checking session:', sessionId?.substring(0, 8));
+
         if (sessionId) {
           const { data, error } = await client
             .from('style_profiles')
@@ -78,10 +118,12 @@ class ProfileSyncService {
             .maybeSingle();
 
           if (error) {
+            console.error('[ProfileSync] ❌ Error fetching session profile:', error);
             return this.getLocalProfile();
           }
 
           if (data) {
+            console.log('[ProfileSync] ✅ Session profile found');
             this.cacheProfile(data);
             localStorage.setItem(SYNC_STATUS_KEY, 'synced');
             localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
@@ -90,15 +132,17 @@ class ProfileSyncService {
         }
       }
 
+      console.log('[ProfileSync] No profile in database, using local');
       return this.getLocalProfile();
     } catch (error) {
-      console.error('[ProfileSync] Exception during getProfile:', error);
+      console.error('[ProfileSync] ❌ Exception during getProfile:', error);
       return this.getLocalProfile();
     }
   }
 
   async syncLocalToRemote(): Promise<boolean> {
     if (this.syncInProgress) {
+      console.log('[ProfileSync] Sync already in progress, skipping');
       return false;
     }
 
@@ -106,6 +150,7 @@ class ProfileSyncService {
     if (syncStatus === 'synced') {
       const lastSync = localStorage.getItem(LAST_SYNC_KEY);
       if (lastSync && Date.now() - parseInt(lastSync) < CACHE_DURATION) {
+        console.log('[ProfileSync] Recently synced, skipping');
         return true;
       }
     }
@@ -115,12 +160,14 @@ class ProfileSyncService {
     try {
       const client = supabase();
       if (!client) {
+        console.warn('[ProfileSync] No Supabase client available');
         this.syncInProgress = false;
         return false;
       }
 
       const localProfile = this.getLocalProfile();
       if (!localProfile || !localProfile.quiz_answers) {
+        console.warn('[ProfileSync] No local profile to sync');
         this.syncInProgress = false;
         return false;
       }
@@ -131,6 +178,11 @@ class ProfileSyncService {
       if (!localStorage.getItem('ff_session_id')) {
         localStorage.setItem('ff_session_id', sessionId);
       }
+
+      console.log('[ProfileSync] 💾 Starting sync...', {
+        hasUser: !!user,
+        userId: user?.id?.substring(0, 8)
+      });
 
       const profileData = {
         user_id: user?.id || null,
@@ -145,22 +197,52 @@ class ProfileSyncService {
         budget_range: localProfile.budget_range,
         preferred_occasions: localProfile.preferred_occasions || [],
         completed_at: localProfile.completed_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
 
-      const { error } = await client
-        .from('style_profiles')
-        .insert(profileData);
+      // Check if profile exists
+      let existingProfile: any = null;
+      if (user?.id) {
+        const { data } = await client
+          .from('style_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .maybeSingle();
+        existingProfile = data;
+      }
+
+      let error: any = null;
+
+      if (existingProfile) {
+        console.log('[ProfileSync] 🔄 Updating existing profile');
+        const updateResult = await client
+          .from('style_profiles')
+          .update(profileData)
+          .eq('id', existingProfile.id);
+        error = updateResult.error;
+      } else {
+        console.log('[ProfileSync] ✨ Creating new profile');
+        const insertResult = await client
+          .from('style_profiles')
+          .insert(profileData);
+        error = insertResult.error;
+      }
 
       if (error) {
+        console.error('[ProfileSync] ❌ Sync failed:', error);
         localStorage.setItem(SYNC_STATUS_KEY, 'error');
         this.syncInProgress = false;
         return false;
       }
+
+      console.log('[ProfileSync] ✅ Sync successful');
       localStorage.setItem(SYNC_STATUS_KEY, 'synced');
       localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
       this.syncInProgress = false;
       return true;
     } catch (error) {
+      console.error('[ProfileSync] ❌ Sync exception:', error);
       localStorage.setItem(SYNC_STATUS_KEY, 'error');
       this.syncInProgress = false;
       return false;

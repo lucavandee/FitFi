@@ -220,26 +220,62 @@ export default function OnboardingFlowPage() {
     retryCount = 0
   ): Promise<boolean> => {
     try {
-      const { error } = await client
-        .from('style_profiles')
-        .insert({
-          user_id: user?.id || null,
-          session_id: !user ? sessionId : null,
-          gender: answers.gender,
-          archetype: result.archetype,
-          color_profile: result.color,
-          color_analysis: answers.colorAnalysis || null,
-          photo_url: answers.photoUrl || null,
-          quiz_answers: answers,
-          sizes: answers.sizes || null,
-          budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
-          preferred_occasions: answers.occasions || [],
-          completed_at: new Date().toISOString(),
-        });
+      console.log('[OnboardingFlow] 💾 Starting save to database...', {
+        hasUser: !!user,
+        userId: user?.id?.substring(0, 8),
+        sessionId: sessionId.substring(0, 8)
+      });
+
+      const profileData = {
+        user_id: user?.id || null,
+        session_id: !user ? sessionId : null,
+        gender: answers.gender,
+        archetype: result.archetype,
+        color_profile: result.color,
+        color_analysis: answers.colorAnalysis || null,
+        photo_url: answers.photoUrl || null,
+        quiz_answers: answers,
+        sizes: answers.sizes || null,
+        budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
+        preferred_occasions: answers.occasions || [],
+        completed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      // Check if profile exists first
+      let existingProfile: any = null;
+      if (user?.id) {
+        const { data } = await client
+          .from('style_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .maybeSingle();
+        existingProfile = data;
+      }
+
+      let error: any = null;
+
+      if (existingProfile) {
+        // Update existing profile
+        console.log('[OnboardingFlow] 🔄 Updating existing profile:', existingProfile.id.substring(0, 8));
+        const updateResult = await client
+          .from('style_profiles')
+          .update(profileData)
+          .eq('id', existingProfile.id);
+        error = updateResult.error;
+      } else {
+        // Insert new profile
+        console.log('[OnboardingFlow] ✨ Creating new profile');
+        const insertResult = await client
+          .from('style_profiles')
+          .insert(profileData);
+        error = insertResult.error;
+      }
 
       if (error) {
         if (retryCount < 2) {
-          console.warn(`⚠️ [OnboardingFlow] Save failed (attempt ${retryCount + 1}/3), retrying...`);
+          console.warn(`⚠️ [OnboardingFlow] Save failed (attempt ${retryCount + 1}/3), retrying...`, error);
           await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
           return saveToSupabase(client, user, sessionId, result, retryCount + 1);
         }
@@ -251,10 +287,31 @@ export default function OnboardingFlowPage() {
         await saveQuizAnswersIndividually(client, user.id);
       }
 
-      console.log('✅ [OnboardingFlow] Quiz saved to Supabase successfully!');
+      // Verify the save by fetching it back
+      const verifyQuery = user?.id
+        ? client.from('style_profiles').select('id, completed_at').eq('user_id', user.id)
+        : client.from('style_profiles').select('id, completed_at').eq('session_id', sessionId);
+
+      const { data: verifyData, error: verifyError } = await verifyQuery
+        .order('created_at', { ascending: false })
+        .maybeSingle();
+
+      if (verifyError || !verifyData) {
+        console.error('❌ [OnboardingFlow] Save verification failed:', verifyError);
+        return false;
+      }
+
+      console.log('✅ [OnboardingFlow] Quiz saved and verified successfully!', {
+        profileId: verifyData.id.substring(0, 8),
+        completedAt: verifyData.completed_at
+      });
       return true;
     } catch (error) {
       console.error('❌ [OnboardingFlow] Exception during save:', error);
+      if (retryCount < 2) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return saveToSupabase(client, user, sessionId, result, retryCount + 1);
+      }
       return false;
     }
   };

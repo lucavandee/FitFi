@@ -19,29 +19,68 @@ export function RequireQuiz({ children }: { children: React.ReactElement }) {
 
   React.useEffect(() => {
     async function checkQuizCompletion() {
+      console.log('[RequireQuiz] 🔍 Checking quiz completion...');
+
       // 1. Check localStorage first (snelste check)
       const quizCompleted = localStorage.getItem(LS_KEYS.QUIZ_COMPLETED);
       const quizAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+      const archetype = localStorage.getItem(LS_KEYS.ARCHETYPE);
 
-      if (quizCompleted === "1" && quizAnswers) {
+      console.log('[RequireQuiz] localStorage check:', {
+        quizCompleted,
+        hasQuizAnswers: !!quizAnswers,
+        hasArchetype: !!archetype,
+        answersLength: quizAnswers?.length || 0
+      });
+
+      if (quizCompleted === "1" && quizAnswers && archetype) {
         console.log('✅ [RequireQuiz] Quiz data found in localStorage');
         setStatus('has_quiz');
         return;
       }
 
       // 2. Try to load from Supabase (voor ingelogde users of session-based)
-      console.log('🔄 [RequireQuiz] No localStorage data, checking Supabase...');
+      console.log('🔄 [RequireQuiz] No complete localStorage data, checking Supabase...');
 
       try {
         const profile = await profileSyncService.getProfile();
 
+        console.log('[RequireQuiz] Profile fetch result:', {
+          hasProfile: !!profile,
+          hasQuizAnswers: !!profile?.quiz_answers,
+          hasCompletedAt: !!profile?.completed_at,
+          archetype: profile?.archetype
+        });
+
         if (profile && profile.quiz_answers && profile.completed_at) {
           console.log('✅ [RequireQuiz] Quiz data loaded from Supabase');
+
+          // Double check that localStorage was populated
+          const verifyQuizCompleted = localStorage.getItem(LS_KEYS.QUIZ_COMPLETED);
+          const verifyQuizAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+
+          console.log('[RequireQuiz] Verifying localStorage after fetch:', {
+            quizCompleted: verifyQuizCompleted,
+            hasQuizAnswers: !!verifyQuizAnswers
+          });
+
+          if (verifyQuizCompleted !== "1") {
+            console.warn('[RequireQuiz] ⚠️ Quiz data was fetched but localStorage not populated correctly');
+            // Force cache
+            localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
+          }
+
           setStatus('has_quiz');
           return;
+        } else {
+          console.warn('[RequireQuiz] ⚠️ Profile exists but incomplete:', {
+            hasProfile: !!profile,
+            hasQuizAnswers: !!profile?.quiz_answers,
+            hasCompletedAt: !!profile?.completed_at
+          });
         }
       } catch (error) {
-        console.error('[RequireQuiz] Error loading profile:', error);
+        console.error('[RequireQuiz] ❌ Error loading profile:', error);
       }
 
       // 3. No quiz data found anywhere
