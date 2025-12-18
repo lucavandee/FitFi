@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Filter, Calendar, User, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { getPublishedBlogPosts, type BlogPost } from '@/services/blog/blogService';
+import { getPublishedBlogPosts, transformBlogPostForUI, type UIBlogPost } from '@/services/blog/blogService';
 
 const BlogPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,17 +12,21 @@ const BlogPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [blogPosts, setBlogPosts] = useState<UIBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch blog posts from database
   useEffect(() => {
     async function loadBlogPosts() {
       try {
         const posts = await getPublishedBlogPosts(100, 0);
-        setBlogPosts(posts);
+        const transformedPosts = posts.map(transformBlogPostForUI);
+        setBlogPosts(transformedPosts);
+        setError(null);
       } catch (error) {
         console.error('Failed to load blog posts:', error);
+        setError('Kon blogposts niet laden. Probeer het later opnieuw.');
       } finally {
         setLoading(false);
       }
@@ -56,6 +60,65 @@ const BlogPage: React.FC = () => {
           <div className="w-12 h-12 border-4 border-[var(--ff-color-primary-600)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-[var(--color-muted)]">Blog laden...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)]">
+        <Helmet>
+          <title>Blog - FitFi.ai</title>
+          <meta name="description" content="De nieuwste trends, tips en inzichten over stijl en mode op de FitFi blog." />
+        </Helmet>
+
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
+          <div className="ff-container relative">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
+                Stijl & Mode
+                <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">Inzichten</span>
+              </h1>
+            </div>
+          </div>
+        </section>
+
+        {/* Error State */}
+        <section className="ff-container py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mx-auto text-center"
+          >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center">
+              <Search className="w-10 h-10 text-red-600" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-4">
+              Er ging iets mis
+            </h2>
+            <p className="text-lg text-[var(--color-muted)] leading-relaxed mb-8">
+              {error}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                variant="primary"
+                onClick={() => window.location.reload()}
+              >
+                Probeer opnieuw
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate('/')}
+              >
+                Naar homepagina
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </motion.div>
+        </section>
       </div>
     );
   }

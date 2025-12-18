@@ -117,11 +117,27 @@ export async function getAllBlogPosts(filters?: BlogPostFilters): Promise<BlogPo
   return data || [];
 }
 
+// Simplified interface matching what the RPC function returns
+export interface PublishedBlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  author_name: string;
+  published_at: string;
+  category: string;
+  tags: string[];
+  featured_image_url: string;
+  read_time_minutes: number;
+  view_count: number;
+  featured: boolean;
+}
+
 export async function getPublishedBlogPosts(
   pageSize: number = 10,
   pageOffset: number = 0,
   category?: string
-): Promise<BlogPost[]> {
+): Promise<PublishedBlogPost[]> {
   const { data, error } = await supabase.rpc('get_published_blog_posts', {
     page_size: pageSize,
     page_offset: pageOffset,
@@ -442,4 +458,61 @@ export function generateSlug(title: string): string {
 
 export function validateSlug(slug: string): boolean {
   return /^[a-z0-9-]+$/.test(slug);
+}
+
+/**
+ * Transform database BlogPost to UI-friendly format
+ */
+export interface UIBlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  tags: string[];
+  image: string;
+  date: string;
+  featured: boolean;
+  author: {
+    name: string;
+    avatar: string;
+    bio?: string;
+  };
+}
+
+export function transformBlogPostForUI(post: PublishedBlogPost | BlogPost): UIBlogPost {
+  return {
+    id: post.id,
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    content: 'content' in post ? post.content : '',
+    category: post.category,
+    tags: post.tags,
+    image: post.featured_image_url || '/images/fallbacks/default.jpg',
+    date: formatDateForUI(post.published_at || ('created_at' in post ? post.created_at : post.published_at)),
+    featured: post.featured,
+    author: {
+      name: post.author_name || 'FitFi Redactie',
+      avatar: generateAuthorAvatar(post.author_name),
+      bio: 'author_bio' in post ? post.author_bio : undefined
+    }
+  };
+}
+
+function formatDateForUI(dateString: string): string {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  return date.toLocaleDateString('nl-NL', options);
+}
+
+function generateAuthorAvatar(authorName?: string): string {
+  // Generate a consistent avatar URL based on author name
+  const name = authorName || 'FitFi';
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
 }
