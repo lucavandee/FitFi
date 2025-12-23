@@ -63,14 +63,14 @@ export function FeatureBlocksV4() {
                 {/* Use specific images for each feature */}
                 {index === 0 ? (
                   <SmartImage
-                    src="/images/f0d15c22-1ffb-46cd-9df4-904d03748413.webp"
-                    alt="Minimalistisch design met zachte kleuren en vinkjes"
+                    src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
+                    alt="Kleurenpalet met persoonlijke kleuren die flatteren"
                     className="w-full h-full object-cover"
                   />
                 ) : index === 1 ? (
                   <SmartImage
-                    src="/images/0b7da518-a822-4b0b-aa3c-2bb819a78d1e.webp"
-                    alt="FitFi app op iPhone met outfit voorbeelden"
+                    src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
+                    alt="FitFi app met persoonlijke outfit resultaten"
                     className="w-full h-full object-cover"
                   />
                 ) : (
