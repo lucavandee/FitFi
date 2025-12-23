@@ -41,11 +41,11 @@ export function HeroV3() {
   return (
     <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[var(--color-bg)]">
 
-      {/* Background - Premium couple, woman with phone */}
+      {/* Background - Premium outfit preview on phone */}
       <div className="absolute inset-0">
         <img
-          src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
-          alt="Stijlvol gekleed stel, vrouw met telefoon bekijkt outfit advies"
+          src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
+          alt="Smartphone met FitFi outfit aanbevelingen voor kantoor, casual en avondkleding"
           className="w-full h-full object-cover object-[center_35%] sm:object-[center_40%] md:object-center"
           loading="eager"
           fetchpriority="high"

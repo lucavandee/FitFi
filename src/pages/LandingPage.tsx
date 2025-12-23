@@ -21,7 +21,7 @@ export default function LandingPage() {
           property="og:description"
           content="Ontdek outfits die bij je passen en shop ze direct. AI-gestuurd stijladvies in 5 minuten."
         />
-        <meta property="og:image" content="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp" />
+        <meta property="og:image" content="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp" />
         <meta property="og:type" content="website" />
 
         <script type="application/ld+json">
