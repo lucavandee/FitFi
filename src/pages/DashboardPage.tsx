@@ -2,23 +2,7 @@ import React from "react";
 import { NavLink, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import {
-  Sparkles,
-  Heart,
-  Shirt,
-  ArrowRight,
-  RefreshCw,
-  Settings,
-  TrendingUp,
-  Award,
-  CheckCircle,
-  X,
-  Zap,
-  Crown,
-  Target,
-  Clock,
-  Trophy
-} from "lucide-react";
+import { Sparkles, Heart, Shirt, ArrowRight, RefreshCw, Settings, TrendingUp, Award, CircleCheck as CheckCircle, X, Zap, Crown, Target, Clock, Trophy } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
