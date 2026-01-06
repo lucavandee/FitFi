@@ -15,7 +15,7 @@ interface BentoGridProps {
  * - Responsive grid with smart breakpoints
  * - Consistent spacing (16px gap system)
  * - Auto-fit columns
- * - Staggered animations
+ * - Scroll-optimized (will-change, contain)
  *
  * @example
  * <BentoGrid>
@@ -34,6 +34,10 @@ export function BentoGrid({ children, className = '' }: BentoGridProps) {
         xl:grid-cols-4
         ${className}
       `}
+      style={{
+        willChange: 'transform',
+        contain: 'layout style paint',
+      }}
     >
       {children}
     </div>
@@ -46,6 +50,7 @@ interface BentoCardProps {
   className?: string;
   onClick?: () => void;
   delay?: number;
+  disableAnimation?: boolean;
 }
 
 /**
@@ -59,13 +64,19 @@ interface BentoCardProps {
  * - wide: full width
  * - tall: 2 rows
  * - hero: 2 cols × 2 rows
+ *
+ * PERFORMANCE:
+ * - Animations disabled on mobile by default
+ * - Uses transform for GPU acceleration
+ * - Contains: layout style paint
  */
 export function BentoCard({
   children,
   size = 'medium',
   className = '',
   onClick,
-  delay = 0
+  delay = 0,
+  disableAnimation = false
 }: BentoCardProps) {
   const sizeClasses = {
     small: 'col-span-1',
@@ -76,11 +87,12 @@ export function BentoCard({
     hero: 'sm:col-span-2 row-span-2'
   };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.3 }}
+  // Detect mobile for performance
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const shouldAnimate = !disableAnimation && !isMobile;
+
+  const cardContent = (
+    <div
       onClick={onClick}
       className={`
         bg-[var(--color-surface)]
@@ -89,15 +101,34 @@ export function BentoCard({
         border border-[var(--color-border)]
         shadow-sm
         hover:shadow-md
-        transition-all
+        transition-shadow duration-200
         ${sizeClasses[size]}
         ${onClick ? 'cursor-pointer hover:border-[var(--ff-color-primary-500)]' : ''}
         ${className}
       `}
+      style={{
+        contain: 'layout style paint',
+        willChange: onClick ? 'transform, box-shadow' : 'auto',
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
+
+  if (shouldAnimate) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay, duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        style={{ contain: 'layout' }}
+      >
+        {cardContent}
+      </motion.div>
+    );
+  }
+
+  return cardContent;
 }
 
 /**
@@ -113,6 +144,7 @@ interface BentoStatCardProps {
     isPositive: boolean;
   };
   delay?: number;
+  disableAnimation?: boolean;
 }
 
 export function BentoStatCard({
@@ -120,10 +152,11 @@ export function BentoStatCard({
   label,
   value,
   trend,
-  delay = 0
+  delay = 0,
+  disableAnimation = false
 }: BentoStatCardProps) {
   return (
-    <BentoCard size="small" delay={delay}>
+    <BentoCard size="small" delay={delay} disableAnimation={disableAnimation}>
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-[var(--color-muted)] mb-2">{label}</p>
@@ -156,6 +189,7 @@ interface BentoActionCardProps {
   };
   size?: 'medium' | 'large';
   delay?: number;
+  disableAnimation?: boolean;
 }
 
 export function BentoActionCard({
@@ -164,10 +198,11 @@ export function BentoActionCard({
   icon,
   action,
   size = 'medium',
-  delay = 0
+  delay = 0,
+  disableAnimation = false
 }: BentoActionCardProps) {
   return (
-    <BentoCard size={size} delay={delay}>
+    <BentoCard size={size} delay={delay} disableAnimation={disableAnimation}>
       <div className="flex flex-col h-full">
         <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)] mb-4">
           {icon}
@@ -203,6 +238,7 @@ interface BentoHeroCardProps {
     variant?: 'primary' | 'secondary';
   }>;
   delay?: number;
+  disableAnimation?: boolean;
 }
 
 export function BentoHeroCard({
@@ -210,10 +246,11 @@ export function BentoHeroCard({
   userName,
   subtitle,
   actions,
-  delay = 0
+  delay = 0,
+  disableAnimation = false
 }: BentoHeroCardProps) {
   return (
-    <BentoCard size="hero" delay={delay} className="relative overflow-hidden">
+    <BentoCard size="hero" delay={delay} className="relative overflow-hidden" disableAnimation={disableAnimation}>
       {/* Subtle gradient bg */}
       <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-transparent opacity-50" />
 
@@ -264,16 +301,18 @@ interface BentoListCardProps {
   }>;
   size?: 'medium' | 'large';
   delay?: number;
+  disableAnimation?: boolean;
 }
 
 export function BentoListCard({
   title,
   items,
   size = 'medium',
-  delay = 0
+  delay = 0,
+  disableAnimation = false
 }: BentoListCardProps) {
   return (
-    <BentoCard size={size} delay={delay}>
+    <BentoCard size={size} delay={delay} disableAnimation={disableAnimation}>
       <h3 className="text-lg font-bold text-[var(--color-text)] mb-4">
         {title}
       </h3>
@@ -313,6 +352,7 @@ interface BentoImageCardProps {
   onClick: () => void;
   size?: 'medium' | 'large';
   delay?: number;
+  disableAnimation?: boolean;
 }
 
 export function BentoImageCard({
@@ -321,16 +361,18 @@ export function BentoImageCard({
   imageUrl,
   onClick,
   size = 'medium',
-  delay = 0
+  delay = 0,
+  disableAnimation = false
 }: BentoImageCardProps) {
   return (
-    <BentoCard size={size} delay={delay} onClick={onClick} className="p-0 overflow-hidden">
+    <BentoCard size={size} delay={delay} onClick={onClick} className="p-0 overflow-hidden" disableAnimation={disableAnimation}>
       <div className="relative h-full min-h-[200px]">
         {/* Image */}
         <img
           src={imageUrl}
           alt={title}
           className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
         />
 
         {/* Overlay */}

@@ -10,7 +10,6 @@ import { generateAmbientInsights } from "@/services/nova/ambientInsights";
 import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@/services/nova/dismissedInsightsService";
 import {
   BentoGrid,
-  BentoHeroCard,
   BentoStatCard
 } from "@/components/dashboard/BentoGrid";
 import {
@@ -23,7 +22,6 @@ import {
   EmptyStateWidget
 } from "@/components/dashboard/CleanDashboardWidgets";
 import { EnhancedFAB } from "@/components/ui/EnhancedFAB";
-import { PullToRefresh } from "@/components/ui/PullToRefresh";
 import toast from "react-hot-toast";
 
 function readJson<T>(key: string): T | null {
@@ -41,16 +39,14 @@ function readJson<T>(key: string): T | null {
  *
  * Premium Bento Grid layout inspired by Linear, Notion, Arc
  *
- * Features:
- * - Consistent spacing (16px gap system)
- * - Card-based layout
- * - Clear visual hierarchy
- * - Generous breathing room
- * - Single accent color
- * - Pull-to-refresh
- * - Enhanced FAB
+ * Performance Optimizations:
+ * - No PullToRefresh wrapper (interfered with native scroll)
+ * - Animations disabled on mobile (<768px)
+ * - will-change + contain CSS on grid
+ * - Reduced container nesting
+ * - Loading="lazy" on images
  */
-export default function DashboardPageClean() {
+export default function DashboardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [userId, setUserId] = React.useState<string | undefined>();
@@ -144,14 +140,6 @@ export default function DashboardPageClean() {
     }
   }, [userId, queryClient]);
 
-  // Pull-to-refresh handler
-  const handleRefresh = async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['outfits'] }),
-      queryClient.invalidateQueries({ queryKey: ['dismissedInsights', userId] })
-    ]);
-  };
-
   // Quick actions
   const quickActions = [
     {
@@ -209,82 +197,80 @@ export default function DashboardPageClean() {
         </div>
       </div>
 
-      {/* Main Content with Pull-to-Refresh */}
-      <PullToRefresh onRefresh={handleRefresh}>
-        <div className="ff-container pb-24">
-          <div className="max-w-7xl mx-auto">
-            {!hasQuizData ? (
-              // Empty state
-              <BentoGrid>
-                <EmptyStateWidget />
-              </BentoGrid>
-            ) : (
-              // Bento Grid with widgets
-              <BentoGrid>
-                {/* Stats */}
-                <BentoStatCard
-                  icon={<Shirt className="w-5 h-5" />}
-                  label="Outfits"
-                  value={outfitsData?.length || 0}
-                  trend={{ value: 12, isPositive: true }}
-                  delay={0}
+      {/* Main Content - Simplified nesting for scroll performance */}
+      <div className="ff-container pb-24">
+        <div className="max-w-7xl mx-auto">
+          {!hasQuizData ? (
+            // Empty state
+            <BentoGrid>
+              <EmptyStateWidget />
+            </BentoGrid>
+          ) : (
+            // Bento Grid with widgets (animations disabled on mobile)
+            <BentoGrid>
+              {/* Stats - no animations for instant load */}
+              <BentoStatCard
+                icon={<Shirt className="w-5 h-5" />}
+                label="Outfits"
+                value={outfitsData?.length || 0}
+                trend={{ value: 12, isPositive: true }}
+                disableAnimation
+              />
+
+              <BentoStatCard
+                icon={<Heart className="w-5 h-5" />}
+                label="Favorieten"
+                value={favCount}
+                trend={{ value: 8, isPositive: true }}
+                disableAnimation
+              />
+
+              <BentoStatCard
+                icon={<Target className="w-5 h-5" />}
+                label="Profiel"
+                value="100%"
+                disableAnimation
+              />
+
+              {/* Style Profile */}
+              {archetype && (
+                <StyleProfileWidget
+                  archetype={archetype}
+                  colorPalette={colorPalette}
                 />
+              )}
 
-                <BentoStatCard
-                  icon={<Heart className="w-5 h-5" />}
-                  label="Favorieten"
-                  value={favCount}
-                  trend={{ value: 8, isPositive: true }}
-                  delay={0.05}
+              {/* Nova Insights */}
+              {novaInsights.length > 0 && (
+                <QuickInsightsWidget
+                  insights={novaInsights}
+                  onDismiss={handleDismissInsight}
                 />
+              )}
 
-                <BentoStatCard
-                  icon={<Target className="w-5 h-5" />}
-                  label="Profiel"
-                  value="100"
-                  delay={0.1}
-                />
+              {/* Photo Upload */}
+              <PhotoUploadWidget />
 
-                {/* Style Profile */}
-                {archetype && (
-                  <StyleProfileWidget
-                    archetype={archetype}
-                    colorPalette={colorPalette}
-                  />
-                )}
+              {/* Gamification */}
+              <GamificationWidget
+                level={gamificationData.level}
+                xp={gamificationData.xp}
+                xpToNextLevel={gamificationData.xpToNextLevel}
+                streak={gamificationData.streak}
+              />
 
-                {/* Nova Insights */}
-                {novaInsights.length > 0 && (
-                  <QuickInsightsWidget
-                    insights={novaInsights}
-                    onDismiss={handleDismissInsight}
-                  />
-                )}
+              {/* Recent Outfits */}
+              <RecentOutfitsWidget
+                outfitCount={outfitsData?.length || 0}
+                featuredImage={outfitsData?.[0]?.image}
+              />
 
-                {/* Photo Upload */}
-                <PhotoUploadWidget />
-
-                {/* Gamification */}
-                <GamificationWidget
-                  level={gamificationData.level}
-                  xp={gamificationData.xp}
-                  xpToNextLevel={gamificationData.xpToNextLevel}
-                  streak={gamificationData.streak}
-                />
-
-                {/* Recent Outfits */}
-                <RecentOutfitsWidget
-                  outfitCount={outfitsData?.length || 0}
-                  featuredImage={outfitsData?.[0]?.image}
-                />
-
-                {/* Quick Actions */}
-                <QuickActionsWidget actions={quickActions} />
-              </BentoGrid>
-            )}
-          </div>
+              {/* Quick Actions */}
+              <QuickActionsWidget actions={quickActions} />
+            </BentoGrid>
+          )}
         </div>
-      </PullToRefresh>
+      </div>
 
       {/* Enhanced FAB */}
       {hasQuizData && (
