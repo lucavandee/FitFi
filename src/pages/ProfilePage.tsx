@@ -10,7 +10,9 @@ import {
   ShoppingBag,
   RefreshCw,
   Sparkles,
-  Zap
+  Zap,
+  Palette,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import Button from '../components/ui/Button';
@@ -22,28 +24,21 @@ import { QuizResetModal } from '@/components/profile/QuizResetModal';
 import { EmailPreferences } from '@/components/profile/EmailPreferences';
 import { StyleProfileComparison } from '@/components/profile/StyleProfileComparison';
 import { profileSyncService } from '@/services/data/profileSyncService';
-import { BentoGrid } from '@/components/dashboard/BentoGrid';
 import {
-  ProfileHeaderWidget,
-  StyleSummaryWidget,
-  QuickStatsWidget,
-  ProfileQuickActions,
-  RecentActivityWidget,
-  SettingsWidget
-} from '@/components/profile/ProfileWidgets';
+  PremiumHeaderCard,
+  PremiumStatCard,
+  PremiumActionCard,
+  PremiumCard
+} from '@/components/dashboard/PremiumBentoComponents';
 
 /**
- * Clean Profile Page
+ * Premium Profile Page
  *
- * Premium Bento Grid layout matching Dashboard
- *
- * Performance Optimizations:
- * - No heavy gradient header (old version was 300px+)
- * - No AnimatePresence tabs (eliminated re-render overhead)
- * - Animations disabled on mobile
- * - Scroll optimizations (will-change, contain)
- * - Query stale-time optimization
- * - Simplified component tree
+ * Beautiful gradient cards + smooth scroll
+ * - Premium stat cards with gradients
+ * - Gradient header (no backdrop-blur)
+ * - Smart animations (desktop only)
+ * - Scroll-optimized
  */
 const ProfilePage: React.FC = () => {
   const { user, logout } = useUser();
@@ -66,7 +61,6 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
-  // Optimized queries with staleTime
   const { data: styleProfile } = useQuery({
     queryKey: ['styleProfile', user?.id],
     queryFn: async () => {
@@ -88,7 +82,7 @@ const ProfilePage: React.FC = () => {
       return data;
     },
     enabled: !!user,
-    staleTime: 300000, // 5 minutes
+    staleTime: 300000,
   });
 
   const { data: savedOutfitsCount } = useQuery({
@@ -106,7 +100,7 @@ const ProfilePage: React.FC = () => {
       return count || 0;
     },
     enabled: !!user,
-    staleTime: 60000, // 1 minute
+    staleTime: 60000,
   });
 
   const { data: gamificationStats } = useQuery({
@@ -125,7 +119,7 @@ const ProfilePage: React.FC = () => {
       return data;
     },
     enabled: !!user,
-    staleTime: 120000, // 2 minutes
+    staleTime: 120000,
   });
 
   const { data: recentActivity } = useQuery({
@@ -145,7 +139,7 @@ const ProfilePage: React.FC = () => {
       return data || [];
     },
     enabled: !!user,
-    staleTime: 60000, // 1 minute
+    staleTime: 60000,
   });
 
   if (!user) {
@@ -178,64 +172,6 @@ const ProfilePage: React.FC = () => {
   const xp = gamificationStats?.total_xp || 0;
   const nextLevelXP = level * 1000;
 
-  // Quick stats
-  const stats = [
-    {
-      icon: Target,
-      label: 'Stijlprofiel',
-      value: hasStyleProfile ? 'Compleet' : 'Leeg',
-      subValue: archetype || 'Start quiz',
-      onClick: hasStyleProfile ? undefined : () => navigate('/onboarding')
-    },
-    {
-      icon: Heart,
-      label: 'Opgeslagen',
-      value: savedOutfitsCount || 0,
-      subValue: 'Outfits',
-      onClick: () => navigate('/dashboard')
-    },
-    {
-      icon: Award,
-      label: 'Level',
-      value: level,
-      subValue: `${xp} XP`
-    },
-    {
-      icon: Zap,
-      label: 'Activiteit',
-      value: recentActivity?.length || 0,
-      subValue: 'Recente acties'
-    }
-  ];
-
-  // Quick actions
-  const actions = [
-    {
-      icon: Eye,
-      title: 'Bekijk Outfits',
-      description: 'Ontdek je gepersonaliseerde stijl',
-      to: '/results'
-    },
-    {
-      icon: ShoppingBag,
-      title: 'Dashboard',
-      description: 'Beheer je collectie',
-      to: '/dashboard'
-    },
-    {
-      icon: RefreshCw,
-      title: 'Quiz opnieuw',
-      description: 'Update je stijlprofiel',
-      to: '/onboarding'
-    },
-    {
-      icon: Sparkles,
-      title: 'Nova AI Chat',
-      description: 'Krijg styling advies',
-      to: '/dashboard' // Nova opens from dashboard
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
@@ -245,69 +181,192 @@ const ProfilePage: React.FC = () => {
 
       <Breadcrumbs />
 
-      {/* Compact Header */}
-      <div className="py-8 sm:py-12 bg-[var(--color-bg)]">
-        <div className="ff-container">
-          <div className="max-w-7xl mx-auto">
-            <p className="text-sm text-[var(--color-muted)] mb-2">
-              Profiel
-            </p>
-            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-text)]">
-              {user.name || user.email?.split('@')[0] || 'Account'}
-            </h1>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        {/* Premium Header Card */}
+        <PremiumHeaderCard
+          user={user}
+          level={level}
+          xp={xp}
+          nextLevelXP={nextLevelXP}
+          onLogout={logout}
+        />
+
+        {/* Stats Grid - Premium Gradient Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <PremiumStatCard
+            icon={<Target className="w-6 h-6" />}
+            label="Stijlprofiel"
+            value={hasStyleProfile ? 'Compleet' : 'Start'}
+            subValue={archetype || 'Nog niet ingevuld'}
+            variant={hasStyleProfile ? 'success' : 'neutral'}
+            onClick={hasStyleProfile ? undefined : () => navigate('/onboarding')}
+            delay={0}
+          />
+          <PremiumStatCard
+            icon={<Heart className="w-6 h-6" />}
+            label="Opgeslagen"
+            value={savedOutfitsCount || 0}
+            subValue="Outfits"
+            variant="pink"
+            onClick={() => navigate('/dashboard')}
+            delay={0.05}
+          />
+          <PremiumStatCard
+            icon={<Award className="w-6 h-6" />}
+            label="Level"
+            value={level}
+            subValue={`${xp} XP`}
+            variant="gold"
+            delay={0.1}
+          />
+          <PremiumStatCard
+            icon={<Zap className="w-6 h-6" />}
+            label="Activiteit"
+            value={recentActivity?.length || 0}
+            subValue="Recente acties"
+            variant="purple"
+            delay={0.15}
+          />
         </div>
-      </div>
 
-      {/* Main Content - Bento Grid */}
-      <div className="ff-container pb-24">
-        <div className="max-w-7xl mx-auto">
-          <BentoGrid>
-            {/* Profile Header */}
-            <ProfileHeaderWidget
-              user={user}
-              level={level}
-              xp={xp}
-              nextLevelXP={nextLevelXP}
-            />
-
-            {/* Quick Stats */}
-            <QuickStatsWidget stats={stats} />
-
-            {/* Style Summary */}
-            {hasStyleProfile && (
-              <StyleSummaryWidget
-                archetype={archetype}
-                paletteName={paletteName}
-                primaryColors={primaryColors}
+        {/* Main Content Grid */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Quick Actions */}
+          <PremiumCard title="Snelle Acties" icon={<Sparkles className="w-6 h-6" />} delay={0.2}>
+            <div className="space-y-3">
+              <PremiumActionCard
+                icon={<Eye className="w-5 h-5" />}
+                title="Bekijk Outfits"
+                description="Ontdek je gepersonaliseerde stijl"
+                to="/results"
+                gradient="from-blue-500 to-cyan-500"
               />
-            )}
+              <PremiumActionCard
+                icon={<ShoppingBag className="w-5 h-5" />}
+                title="Dashboard"
+                description="Beheer je collectie"
+                to="/dashboard"
+                gradient="from-purple-500 to-pink-500"
+              />
+              <PremiumActionCard
+                icon={<RefreshCw className="w-5 h-5" />}
+                title="Quiz Opnieuw"
+                description="Update je stijlprofiel"
+                onClick={() => setShowResetModal(true)}
+                gradient="from-emerald-500 to-teal-600"
+              />
+              <PremiumActionCard
+                icon={<Sparkles className="w-5 h-5" />}
+                title="Nova AI Chat"
+                description="Krijg styling advies"
+                to="/dashboard"
+                gradient="from-amber-500 to-orange-600"
+              />
+            </div>
+          </PremiumCard>
 
-            {/* Quick Actions */}
-            <ProfileQuickActions actions={actions} />
+          {/* Style Profile */}
+          {hasStyleProfile ? (
+            <PremiumCard title="Mijn Stijl" icon={<Palette className="w-6 h-6" />} delay={0.25}>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-[var(--color-muted)] mb-2">Archetype</p>
+                  <p className="text-2xl font-bold text-[var(--color-text)] mb-1">
+                    {archetype || 'Niet beschikbaar'}
+                  </p>
+                  {paletteName && (
+                    <p className="text-sm text-[var(--color-muted)]">{paletteName}</p>
+                  )}
+                </div>
 
-            {/* Recent Activity */}
-            {recentActivity && recentActivity.length > 0 && (
-              <RecentActivityWidget activities={recentActivity} />
-            )}
+                {primaryColors.length > 0 && (
+                  <div>
+                    <p className="text-sm text-[var(--color-muted)] mb-3">Jouw Kleuren</p>
+                    <div className="grid grid-cols-6 gap-2 mb-4">
+                      {primaryColors.slice(0, 12).map((color: string, i: number) => (
+                        <div
+                          key={i}
+                          className="aspect-square rounded-lg shadow-sm ring-1 ring-black/5 cursor-pointer hover:scale-110 transition-transform"
+                          style={{ backgroundColor: color }}
+                          title={color}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            {/* Email Preferences */}
-            <EmailPreferences />
+                <button
+                  onClick={() => setShowResetModal(true)}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-[var(--color-border)] text-sm font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--color-bg)] transition-all"
+                >
+                  <RefreshCw className="w-4 h-4 inline mr-2" />
+                  Quiz Opnieuw Doen
+                </button>
+              </div>
+            </PremiumCard>
+          ) : (
+            <PremiumCard title="Start je Stijlreis" icon={<Sparkles className="w-6 h-6" />} delay={0.25}>
+              <div className="text-center py-8">
+                <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center mb-4">
+                  <Palette className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
+                  Ontdek je unieke stijl
+                </h3>
+                <p className="text-[var(--color-muted)] mb-6">
+                  Neem onze stijlquiz en ontvang gepersonaliseerde outfit aanbevelingen.
+                </p>
+                <Button onClick={() => navigate('/onboarding')} variant="primary">
+                  <Sparkles className="w-4 h-4" />
+                  Start Stijlquiz
+                </Button>
+              </div>
+            </PremiumCard>
+          )}
 
-            {/* Settings */}
-            <SettingsWidget onLogout={logout} />
+          {/* Email Preferences */}
+          <EmailPreferences />
 
-            {/* Style Evolution (if history exists) */}
-            {hasStyleProfile && (
-              <StyleProfileComparison />
-            )}
-          </BentoGrid>
+          {/* Account Settings */}
+          <PremiumCard title="Account" icon={<SettingsIcon className="w-6 h-6" />} delay={0.35}>
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-[var(--color-bg)]">
+                <p className="text-sm text-[var(--color-muted)] mb-1">Email</p>
+                <p className="text-sm font-medium text-[var(--color-text)]">{user.email}</p>
+              </div>
+              {user.created_at && (
+                <div className="p-4 rounded-xl bg-[var(--color-bg)]">
+                  <p className="text-sm text-[var(--color-muted)] mb-1">Lid sinds</p>
+                  <p className="text-sm font-medium text-[var(--color-text)]">
+                    {new Date(user.created_at).toLocaleDateString('nl-NL', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+              )}
+            </div>
+          </PremiumCard>
+
+          {/* Style Evolution */}
+          {hasStyleProfile && (
+            <div className="md:col-span-2">
+              <PremiumCard title="Stijlevolutie" icon={<TrendingUp className="w-6 h-6" />} delay={0.4}>
+                <StyleProfileComparison />
+              </PremiumCard>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Quiz Reset Modal */}
       {showResetModal && (
-        <QuizResetModal onClose={() => setShowResetModal(false)} />
+        <QuizResetModal
+          isOpen={showResetModal}
+          onClose={() => setShowResetModal(false)}
+          currentArchetype={archetype || undefined}
+        />
       )}
     </div>
   );

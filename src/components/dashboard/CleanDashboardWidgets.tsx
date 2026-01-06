@@ -59,7 +59,7 @@ export function PhotoUploadWidget() {
   return (
     <BentoCard size="medium">
       <div className="flex flex-col items-center text-center py-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center mb-3">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center mb-3 shadow-lg">
           <Camera className="w-6 h-6 text-white" />
         </div>
         <h3 className="text-sm font-bold text-[var(--color-text)] mb-1">
@@ -70,7 +70,7 @@ export function PhotoUploadWidget() {
         </p>
         <NavLink
           to="/onboarding?step=photo"
-          className="w-full px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-xs font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+          className="w-full px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity shadow-md"
         >
           Upload foto
         </NavLink>

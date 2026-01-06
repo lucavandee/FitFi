@@ -8,10 +8,8 @@ import { useOutfits } from "@/hooks/useOutfits";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { generateAmbientInsights } from "@/services/nova/ambientInsights";
 import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@/services/nova/dismissedInsightsService";
-import {
-  BentoGrid,
-  BentoStatCard
-} from "@/components/dashboard/BentoGrid";
+import { BentoGrid } from "@/components/dashboard/BentoGrid";
+import { PremiumStatCard } from "@/components/dashboard/PremiumBentoComponents";
 import {
   QuickInsightsWidget,
   PhotoUploadWidget,
@@ -206,30 +204,36 @@ export default function DashboardPage() {
               <EmptyStateWidget />
             </BentoGrid>
           ) : (
-            // Bento Grid with widgets (animations disabled on mobile)
+            // Bento Grid with premium widgets
             <BentoGrid>
-              {/* Stats - no animations for instant load */}
-              <BentoStatCard
-                icon={<Shirt className="w-5 h-5" />}
+              {/* Stats - Premium gradient cards */}
+              <PremiumStatCard
+                icon={<Shirt className="w-6 h-6" />}
                 label="Outfits"
                 value={outfitsData?.length || 0}
-                trend={{ value: 12, isPositive: true }}
-                disableAnimation
+                subValue={`${outfitsData?.length || 0} looks`}
+                variant="accent"
+                onClick={() => navigate('/results')}
+                delay={0}
               />
 
-              <BentoStatCard
-                icon={<Heart className="w-5 h-5" />}
+              <PremiumStatCard
+                icon={<Heart className="w-6 h-6" />}
                 label="Favorieten"
                 value={favCount}
-                trend={{ value: 8, isPositive: true }}
-                disableAnimation
+                subValue="Opgeslagen"
+                variant="pink"
+                delay={0.05}
               />
 
-              <BentoStatCard
-                icon={<Target className="w-5 h-5" />}
+              <PremiumStatCard
+                icon={<Target className="w-6 h-6" />}
                 label="Profiel"
                 value="100%"
-                disableAnimation
+                subValue="Compleet"
+                variant="success"
+                onClick={() => navigate('/profile')}
+                delay={0.1}
               />
 
               {/* Style Profile */}
