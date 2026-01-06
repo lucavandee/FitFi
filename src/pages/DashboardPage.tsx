@@ -544,7 +544,10 @@ export default function DashboardPage() {
       </section>
 
       {/* Quick Actions - Enhanced Floating Buttons */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 flex flex-col gap-2 sm:gap-3 z-50">
+      <div
+        className="fixed right-4 sm:right-6 md:right-8 flex flex-col gap-2 sm:gap-3 z-50"
+        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
+      >
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

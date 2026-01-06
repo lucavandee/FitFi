@@ -37,8 +37,8 @@ export default function QuestionCard<T extends string>({
       ].join(" ")}
       aria-labelledby={`${name}-title`}
     >
-      <h2 id={`${name}-title`} className="text-base sm:text-lg font-semibold">{title}</h2>
-      {help ? <p className="mt-1 text-sm text-[var(--color-text)]/70">{help}</p> : null}
+      <h2 id={`${name}-title`} className="text-base sm:text-lg font-semibold break-words">{title}</h2>
+      {help ? <p className="mt-1 text-sm text-[var(--color-text)]/70 break-words">{help}</p> : null}
 
       <div className="mt-5 sm:mt-4 grid gap-3 sm:gap-3 sm:grid-cols-2">
         {choices.map((c) => (
@@ -54,8 +54,8 @@ export default function QuestionCard<T extends string>({
                 : "border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--ff-color-primary-400)] hover:shadow-sm active:scale-[0.98]",
             ].join(" ")}
           >
-            <div className="text-sm sm:text-base font-medium">{c.label}</div>
-            {c.help ? <div className="text-xs sm:text-sm opacity-70 mt-1">{c.help}</div> : null}
+            <div className="text-sm sm:text-base font-medium break-words">{c.label}</div>
+            {c.help ? <div className="text-xs sm:text-sm opacity-70 mt-1 break-words">{c.help}</div> : null}
           </button>
         ))}
       </div>

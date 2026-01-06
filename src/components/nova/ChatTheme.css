@@ -14,7 +14,9 @@
     width: 56px; height: 56px;
   }
 }
-.nv-fab:hover{ transform: scale(1.03); }
+@media (hover: hover) {
+  .nv-fab:hover{ transform: scale(1.03); }
+}
 .nv-fab-dot{ width: 10px; height: 10px; background: white; border-radius: 9999px; }
 
 .nv-overlay{
@@ -61,7 +63,9 @@
     padding: 6px 10px; font-size: 14px;
   }
 }
-.nv-btn-ghost:hover{ background: rgba(255,255,255,.06); }
+@media (hover: hover) {
+  .nv-btn-ghost:hover{ background: rgba(255,255,255,.06); }
+}
 
 .nv-panel-body{
   padding: 8px; gap: 8px; overflow: auto; display: flex; flex-direction: column;

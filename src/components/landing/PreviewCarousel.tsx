@@ -132,18 +132,18 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
           {/* Navigation */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 min-w-[56px] min-h-[56px] bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
             aria-label="Vorige preview"
           >
-            <ChevronLeft size={20} className="text-gray-600" />
+            <ChevronLeft size={24} className="text-gray-600" />
           </button>
-          
+
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 min-w-[56px] min-h-[56px] bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
             aria-label="Volgende preview"
           >
-            <ChevronRight size={20} className="text-gray-600" />
+            <ChevronRight size={24} className="text-gray-600" />
           </button>
           
           {/* Dots */}

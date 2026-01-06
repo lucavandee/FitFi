@@ -457,3 +457,34 @@ body {
     background-position: 0% 50%;
   }
 }
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable decorative animations completely */
+  .animate-float,
+  .animate-float-slow,
+  .animate-float-medium,
+  .animate-float-fast,
+  .animate-float-delayed,
+  .animate-pulse,
+  .animate-pulse-slow,
+  .animate-pulse-delayed {
+    animation: none !important;
+  }
+
+  /* Keep essential animations but remove transform effects */
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-scale-in {
+    animation: fadeIn 0.01ms ease-out forwards !important;
+  }
+}

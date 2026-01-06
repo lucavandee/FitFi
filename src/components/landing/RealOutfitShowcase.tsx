@@ -188,6 +188,7 @@ export function RealOutfitShowcase() {
               onMouseEnter={() => setHoveredId(outfit.id)}
               onMouseLeave={() => setHoveredId(null)}
               onTouchStart={() => setHoveredId(outfit.id)}
+              onTouchEnd={() => setHoveredId(null)}
             >
               {/* Card Background */}
               <div className={`bg-gradient-to-br ${outfit.gradient} border-2 ${outfit.border} p-5 sm:p-6 lg:p-8 aspect-[3/4] flex flex-col`}>
@@ -226,7 +227,7 @@ export function RealOutfitShowcase() {
 
                       {/* Item details */}
                       <div className="flex-1 min-w-0">
-                        <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-0.5 sm:mb-1">
+                        <div className="text-xs sm:text-sm uppercase tracking-wider text-[var(--color-muted)] font-bold mb-0.5 sm:mb-1">
                           {item.type === 'top' && 'Bovenstuk'}
                           {item.type === 'bottom' && 'Onderstuk'}
                           {item.type === 'shoes' && 'Schoenen'}
