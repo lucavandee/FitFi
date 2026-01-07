@@ -1,0 +1,231 @@
+/**
+ * Swipe Performance Optimizations
+ *
+ * GPU-accelerated animations, CSS containment, and rendering hints
+ * for smooth 60fps swipe experience on all devices.
+ */
+
+/* GPU Acceleration - Force GPU compositing for smooth animations */
+.swipe-card-container {
+  /* Create stacking context and GPU layer */
+  transform: translateZ(0);
+  will-change: transform;
+
+  /* Enable hardware acceleration */
+  backface-visibility: hidden;
+  perspective: 1000px;
+
+  /* CSS Containment - Isolate paint/layout for better performance */
+  contain: layout paint style;
+}
+
+/* Image optimization - Prevent layout shift and optimize rendering */
+.swipe-card-image {
+  /* GPU layer */
+  transform: translateZ(0);
+
+  /* Smooth image rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+
+  /* Prevent drag ghosting */
+  -webkit-user-drag: none;
+  user-select: none;
+
+  /* Force GPU compositing */
+  backface-visibility: hidden;
+}
+
+/* Drag animations - Optimized for 60fps */
+.swipe-card-draggable {
+  /* Only animate transform and opacity (GPU-accelerated) */
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  transition-duration: 300ms;
+
+  /* Hint browser about upcoming changes */
+  will-change: transform, opacity;
+
+  /* GPU layer */
+  transform: translateZ(0);
+}
+
+/* Reduce motion for accessibility and low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  .swipe-card-draggable {
+    transition-duration: 0ms;
+    will-change: auto;
+  }
+
+  .swipe-card-container {
+    will-change: auto;
+  }
+}
+
+/* Low-end device optimizations (based on media queries) */
+@media (max-width: 768px) and (hover: none) {
+  /* Mobile devices - reduce complexity */
+  .swipe-hover-hints {
+    display: none !important;
+  }
+
+  .swipe-card-container {
+    /* Simpler rendering on mobile */
+    contain: paint;
+  }
+}
+
+/* High refresh rate displays (120Hz+) */
+@media (min-resolution: 120dpi) {
+  .swipe-card-draggable {
+    /* Smoother animations on high-refresh displays */
+    transition-duration: 200ms;
+  }
+}
+
+/* Performance hints for complex overlays */
+.swipe-drag-indicator {
+  /* Isolate rendering */
+  contain: layout paint;
+
+  /* GPU layer */
+  transform: translateZ(0);
+
+  /* Optimize blend modes */
+  isolation: isolate;
+}
+
+/* Backdrop blur optimization */
+.swipe-blur-overlay {
+  /* Safari optimization */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  /* Fallback for unsupported browsers */
+  @supports not (backdrop-filter: blur(8px)) {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  /* GPU layer */
+  transform: translateZ(0);
+}
+
+/* Button interaction optimization */
+.swipe-button {
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+
+  /* Smooth scale transitions */
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Prevent touch delay on mobile */
+  touch-action: manipulation;
+}
+
+.swipe-button:active {
+  /* Instant feedback */
+  transform: scale(0.95) translateZ(0);
+}
+
+/* Prevent layout thrashing */
+.swipe-fixed-height {
+  /* Fixed dimensions prevent reflow */
+  height: 600px;
+
+  /* Contain layout changes */
+  contain: layout size;
+}
+
+@media (min-width: 640px) {
+  .swipe-fixed-height {
+    height: 680px;
+  }
+}
+
+/* Loading state optimization */
+.swipe-loading-skeleton {
+  /* Lightweight animation */
+  animation: pulse 1.5s ease-in-out infinite;
+
+  /* GPU layer */
+  transform: translateZ(0);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/**
+ * Performance Debugging (Development only)
+ * Uncomment to visualize GPU layers and repaint areas
+ */
+
+/*
+.swipe-card-container {
+  outline: 1px solid red;
+}
+
+.swipe-card-image {
+  outline: 1px solid blue;
+}
+
+.swipe-drag-indicator {
+  outline: 1px solid green;
+}
+*/
+
+/**
+ * Browser-specific optimizations
+ */
+
+/* Chrome/Edge - Scrollbar optimization */
+@supports (-webkit-appearance: none) {
+  .swipe-card-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Firefox - Better font rendering */
+@-moz-document url-prefix() {
+  .swipe-card-image {
+    image-rendering: -moz-crisp-edges;
+  }
+}
+
+/* Safari - Metal acceleration */
+@supports (-webkit-backdrop-filter: blur(1px)) {
+  .swipe-blur-overlay {
+    /* Safari uses Metal API for backdrop-filter */
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/**
+ * Critical Performance Rules:
+ *
+ * ✅ DO:
+ * - Use transform/opacity for animations
+ * - Apply will-change only to animating elements
+ * - Use contain: layout paint for isolated components
+ * - Preload images (next 2-3)
+ * - Use GPU-accelerated properties
+ *
+ * ❌ DON'T:
+ * - Animate width/height/top/left
+ * - Use will-change on static elements
+ * - Create unnecessary layers (too many translateZ(0))
+ * - Load all images at once
+ * - Use heavy box-shadows during animation
+ *
+ * 🎯 Target Performance:
+ * - 60fps animations (16.67ms per frame)
+ * - <100ms swipe response time
+ * - <300ms image load time
+ * - <50MB memory usage
+ */

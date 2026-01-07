@@ -126,14 +126,16 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         }
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 1.02, cursor: 'grabbing' }}
-        className="w-full max-w-[340px] sm:max-w-[360px] h-[420px] sm:h-[480px] cursor-grab active:cursor-grabbing flex-shrink-0"
+        className="swipe-card-container swipe-card-draggable w-full max-w-[340px] sm:max-w-[360px] h-[420px] sm:h-[480px] cursor-grab active:cursor-grabbing flex-shrink-0"
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
           <img
             src={imageUrl}
             alt="Style mood"
-            className="w-full h-full object-cover"
+            className="swipe-card-image w-full h-full object-cover"
             draggable={false}
+            loading="eager"
+            decoding="async"
           />
 
           {/* Stronger gradient for text contrast - WCAG AA compliance */}
@@ -167,7 +169,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
                   }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none"
+                  className="swipe-drag-indicator absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none"
                 >
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
                     <X className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={3} />
@@ -184,7 +186,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
                   }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none"
+                  className="swipe-drag-indicator absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none"
                 >
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
                     <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" strokeWidth={3} />
@@ -196,7 +198,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
 
           {/* Desktop Hover Hint - Subtle arrows on hover (non-mobile) */}
           {isHovering && !isDragging && (
-            <div className="hidden sm:block absolute inset-0 pointer-events-none">
+            <div className="swipe-hover-hints hidden sm:block absolute inset-0 pointer-events-none">
               {/* Left Arrow */}
               <motion.div
                 initial={{ opacity: 0, x: 10 }}
@@ -302,7 +304,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
               scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
               boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
             }}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-red-300"
+            className="swipe-button w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-red-300"
             aria-label="Niet mijn stijl - veeg of klik links"
           >
             <X className="w-8 h-8 sm:w-11 sm:h-11 text-red-500" strokeWidth={2.8} aria-hidden="true" />
@@ -347,7 +349,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
               boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
               delay: 0.5
             }}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-green-300"
+            className="swipe-button w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-green-300"
             aria-label="Dit spreekt me aan - veeg of klik rechts"
           >
             <Heart className="w-8 h-8 sm:w-11 sm:h-11 text-green-500" strokeWidth={2.8} fill="currentColor" aria-hidden="true" />

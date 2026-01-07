@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { SwipeCard } from './SwipeCard';
+import { ImagePreloader } from './ImagePreloader';
 import { Sparkles, Loader as Loader2, Heart, X } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 
@@ -198,8 +200,33 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   const currentPhoto = moodPhotos[currentIndex];
   const progress = (swipeCount / moodPhotos.length) * 100;
 
+  // Extract all image URLs for preloading
+  const imageUrls = moodPhotos.map(photo => photo.image_url);
+
+  // Extract storage domain for preconnect (performance optimization)
+  const storageDomain = imageUrls.length > 0
+    ? new URL(imageUrls[0]).origin
+    : '';
+
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
+      {/* Performance: DNS Preconnect for faster image loading */}
+      {storageDomain && (
+        <Helmet>
+          <link rel="preconnect" href={storageDomain} />
+          <link rel="dns-prefetch" href={storageDomain} />
+        </Helmet>
+      )}
+
+      {/* Image Preloader - Preload next 2 images for smooth transitions */}
+      {!loading && moodPhotos.length > 0 && (
+        <ImagePreloader
+          imageUrls={imageUrls}
+          currentIndex={currentIndex}
+          lookahead={2}
+        />
+      )}
+
       {/* Celebration Overlay - ALWAYS on top */}
       <AnimatePresence>
         {showCelebration && (
@@ -267,7 +294,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       {/* Swipe Area - Fixed Height to Prevent Scroll Jump */}
       <div className="flex-1 flex items-center justify-center px-4 min-h-0 relative">
         <div className="w-full max-w-[400px] h-[600px] sm:h-[680px] flex items-center justify-center">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {currentPhoto && (
               <SwipeCard
                 key={currentPhoto.id}
