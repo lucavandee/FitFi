@@ -14,6 +14,7 @@ import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
 import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileConfidenceBadge";
 import { StyleDNATooltip } from "@/components/results/StyleDNATooltip";
 import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
+import { ColorPaletteSection } from "@/components/results/ColorPaletteSection";
 import SmartImage from "@/components/ui/SmartImage";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
@@ -543,8 +544,15 @@ export default function EnhancedResultsPage() {
                 </div>
               </AnimatedSection>
 
-              {/* How We Determined Your Style */}
+              {/* Complete Color Palette - Named Swatches */}
               <AnimatedSection delay={0.6}>
+                <div className="mb-12">
+                  <ColorPaletteSection season={activeColorProfile.season} />
+                </div>
+              </AnimatedSection>
+
+              {/* How We Determined Your Style */}
+              <AnimatedSection delay={0.7}>
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="bg-white rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 md:p-10 shadow-xl mb-8"
