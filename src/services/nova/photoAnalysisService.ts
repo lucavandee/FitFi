@@ -255,10 +255,17 @@ export async function getUserPhotoAnalyses(
 }
 
 /**
- * Delete photo analysis
+ * Delete photo analysis (with ownership validation)
+ *
+ * @param id - The photo analysis ID to delete
+ * @param userId - The user ID who owns the analysis (for IDOR prevention)
  */
-export async function deletePhotoAnalysis(id: string): Promise<void> {
-  const { error } = await supabase().from("photo_analyses").delete().eq("id", id);
+export async function deletePhotoAnalysis(id: string, userId: string): Promise<void> {
+  const { error } = await supabase()
+    .from("photo_analyses")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId);  // SECURITY: Verify ownership to prevent IDOR
 
   if (error) {
     throw new Error(`Failed to delete analysis: ${error.message}`);

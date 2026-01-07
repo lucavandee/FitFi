@@ -32,8 +32,13 @@ export function usePhotoAnalysis() {
   };
 
   const deleteAnalysis = async (id: string) => {
+    if (!user) {
+      toast.error("Je moet ingelogd zijn om analyses te verwijderen");
+      return;
+    }
+
     try {
-      await deletePhotoAnalysis(id);
+      await deletePhotoAnalysis(id, user.id);  // SECURITY: Pass userId for IDOR prevention
       setAnalyses((prev) => prev.filter((a) => a.id !== id));
       toast.success("Analyse verwijderd");
     } catch (err) {
