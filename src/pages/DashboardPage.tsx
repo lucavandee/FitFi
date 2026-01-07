@@ -23,15 +23,14 @@ function readJson<T>(key: string): T | null {
 }
 
 /**
- * Premium Dashboard Page v2
+ * Premium Dashboard Page v3
  *
- * Redesigned naar Apple × Linear × Notion niveau:
- * - Bold hero section met motivational subtitle
- * - Large elevated stats cards met depth
- * - 2-column balanced desktop layout
- * - Featured outfit showcase met visuals
- * - Premium typography & spacing
- * - Subtle animations & layering
+ * World-class design naar Stripe × Apple × Linear:
+ * - Ultra-premium hero met gradient + depth
+ * - Bold elevated typography
+ * - Rich color palette uit tokens
+ * - Visual layering & shadows
+ * - Warm luxe materials
  */
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -139,36 +138,50 @@ export default function DashboardPage() {
 
   if (!hasQuizData) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <main className="min-h-screen bg-[var(--color-bg)]">
         <Helmet>
           <title>Dashboard - FitFi</title>
         </Helmet>
 
-        <div className="ff-container py-12">
-          <div className="max-w-xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Sparkles className="w-10 h-10 text-white" />
-              </div>
-              <h1 className="text-4xl font-bold text-[var(--color-text)] mb-3">
-                Start je stijlreis
-              </h1>
-              <p className="text-lg text-[var(--color-muted)] mb-8">
-                Ontdek jouw persoonlijke stijl met onze AI-powered quiz in 5 minuten
-              </p>
-              <button
-                onClick={() => navigate('/onboarding')}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-base font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover:shadow-xl"
+        {/* Premium empty state with gradient */}
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+          {/* Subtle gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-25)] via-[var(--color-bg)] to-[var(--ff-color-accent-50)]" />
+
+          {/* Decorative shapes */}
+          <div className="absolute top-20 right-20 w-64 h-64 bg-[var(--ff-color-primary-100)] rounded-full blur-3xl opacity-30" />
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--ff-color-accent-100)] rounded-full blur-3xl opacity-20" />
+
+          <div className="ff-container py-12 relative z-10">
+            <div className="max-w-2xl mx-auto text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
               >
-                <Sparkles className="w-5 h-5" />
-                Start stijlquiz
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </motion.div>
+                <div className="relative inline-flex mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-3xl blur-xl opacity-40" />
+                  <div className="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-2xl">
+                    <Sparkles className="w-12 h-12 text-white" strokeWidth={2.5} />
+                  </div>
+                </div>
+
+                <h1 className="text-6xl sm:text-7xl font-bold text-[var(--color-text)] mb-6 tracking-tight">
+                  Start je stijlreis
+                </h1>
+                <p className="text-xl text-[var(--color-muted)] mb-10 leading-relaxed max-w-lg mx-auto">
+                  Ontdek jouw persoonlijke stijl met onze AI-powered quiz in slechts 5 minuten
+                </p>
+                <button
+                  onClick={() => navigate('/onboarding')}
+                  className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] text-white rounded-2xl text-lg font-bold hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                >
+                  <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                  Start stijlquiz
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </motion.div>
+            </div>
           </div>
         </div>
       </main>
@@ -182,66 +195,90 @@ export default function DashboardPage() {
         <meta name="description" content="Jouw style dashboard met outfits, favorieten en styling tips." />
       </Helmet>
 
-      {/* Premium Hero Section */}
-      <div className="relative py-12 sm:py-16 bg-gradient-to-b from-[var(--ff-color-neutral-50)] to-[var(--color-bg)] border-b border-[var(--color-border)]">
-        <div className="ff-container">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <p className="text-sm font-medium text-[var(--color-muted)] mb-3">
-                {greeting}
-              </p>
-              <h1 className="text-5xl sm:text-6xl font-bold text-[var(--color-text)] mb-4">
-                {userName || "Dashboard"}
-              </h1>
-              <p className="text-lg text-[var(--color-muted)] max-w-2xl">
-                Jouw persoonlijke stijl dashboard. {outfitsData?.length || 0} outfits gecureerd voor jouw {archetype?.name || 'stijl'}.
-              </p>
-            </motion.div>
+      {/* Ultra-Premium Hero Section */}
+      <div className="relative overflow-hidden">
+        {/* Gradient Background Layers */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-25)] via-[var(--color-bg)] to-[var(--ff-color-accent-50)]" />
 
-            {/* Quick Stats Row */}
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-8">
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                onClick={() => navigate('/results')}
-                className="group relative p-6 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-lg hover:shadow-xl transition-all overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative">
-                  <Shirt className="w-8 h-8 mb-3 opacity-90" />
-                  <p className="text-4xl font-bold mb-1">{outfitsData?.length || 0}</p>
-                  <p className="text-sm font-medium opacity-90">Outfits</p>
-                </div>
-              </motion.button>
+        {/* Decorative Gradient Orbs */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--ff-color-primary-100)] to-transparent rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[var(--ff-color-accent-100)] to-transparent rounded-full blur-3xl opacity-20 translate-y-1/2 -translate-x-1/4" />
 
+        <div className="relative py-16 sm:py-24 border-b border-[var(--color-border)]">
+          <div className="ff-container">
+            <div className="max-w-7xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.15 }}
-                className="relative p-6 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-lg overflow-hidden"
+                transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
               >
-                <div className="relative">
-                  <Heart className="w-8 h-8 mb-3 opacity-90" />
-                  <p className="text-4xl font-bold mb-1">{favCount}</p>
-                  <p className="text-sm font-medium opacity-90">Favorieten</p>
+                {/* Greeting Label */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] shadow-sm mb-6">
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)]" />
+                  <span className="text-sm font-semibold text-[var(--color-muted)]">
+                    {greeting}
+                  </span>
                 </div>
-              </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative p-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg overflow-hidden"
-              >
-                <div className="relative">
-                  <Zap className="w-8 h-8 mb-3 opacity-90" />
-                  <p className="text-4xl font-bold mb-1">{gamificationData.level}</p>
-                  <p className="text-sm font-medium opacity-90">Niveau</p>
+                {/* Main Heading */}
+                <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-[var(--color-text)] mb-6 tracking-tight leading-none">
+                  {userName || "Dashboard"}
+                </h1>
+
+                {/* Subtitle with Rich Info */}
+                <p className="text-xl sm:text-2xl text-[var(--color-muted)] max-w-3xl leading-relaxed mb-12">
+                  Jouw persoonlijke stijl dashboard.{' '}
+                  <span className="font-semibold text-[var(--color-text)]">
+                    {outfitsData?.length || 0} outfits
+                  </span>
+                  {' '}gecureerd voor jouw{' '}
+                  <span className="font-semibold text-[var(--ff-color-primary-700)]">
+                    {archetype?.name || 'stijl'}
+                  </span>.
+                </p>
+
+                {/* Premium Stats Row */}
+                <div className="grid grid-cols-3 gap-4 sm:gap-6">
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.15 }}
+                    onClick={() => navigate('/results')}
+                    className="group relative p-8 rounded-3xl bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="relative">
+                      <Shirt className="w-10 h-10 mb-4 opacity-90" strokeWidth={2} />
+                      <p className="text-5xl font-bold mb-2">{outfitsData?.length || 0}</p>
+                      <p className="text-base font-semibold opacity-90">Outfits</p>
+                    </div>
+                  </motion.button>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="relative p-8 rounded-3xl bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-xl overflow-hidden"
+                  >
+                    <div className="relative">
+                      <Heart className="w-10 h-10 mb-4 opacity-90" strokeWidth={2} />
+                      <p className="text-5xl font-bold mb-2">{favCount}</p>
+                      <p className="text-base font-semibold opacity-90">Favorieten</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.25 }}
+                    className="relative p-8 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl overflow-hidden"
+                  >
+                    <div className="relative">
+                      <Zap className="w-10 h-10 mb-4 opacity-90" strokeWidth={2} />
+                      <p className="text-5xl font-bold mb-2">{gamificationData.level}</p>
+                      <p className="text-base font-semibold opacity-90">Niveau</p>
+                    </div>
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
@@ -250,48 +287,59 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content - 2 Column Layout */}
-      <div className="ff-container py-12">
+      <div className="ff-container py-16">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1fr,400px] gap-8">
+          <div className="grid lg:grid-cols-[1fr,420px] gap-8">
             {/* Left Column - Main Widgets */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Style Profile Card */}
               {archetype && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="p-8 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm hover:shadow-md transition-shadow"
+                  transition={{ duration: 0.6, delay: 0.35 }}
+                  className="p-10 rounded-3xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  <div className="flex items-start gap-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center flex-shrink-0 shadow-md">
-                      <Crown className="w-8 h-8 text-white" />
+                  <div className="flex items-start gap-8">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-2xl blur-xl opacity-30" />
+                      <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <Crown className="w-10 h-10 text-white" strokeWidth={2.5} />
+                      </div>
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] font-semibold mb-2">
+                      <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-bold mb-3 opacity-75">
                         Jouw Stijl
                       </p>
-                      <h2 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+                      <h2 className="text-4xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
                         {archetype.name}
                       </h2>
                       {archetype.description && (
-                        <p className="text-sm text-[var(--color-muted)] mb-4 leading-relaxed">
+                        <p className="text-base text-[var(--color-muted)] mb-6 leading-relaxed">
                           {archetype.description}
                         </p>
                       )}
 
                       {colorPalette.length > 0 && (
-                        <div className="mb-4">
-                          <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] font-semibold mb-3">
-                            Kleuren
+                        <div className="mb-6">
+                          <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-bold mb-4 opacity-75">
+                            Jouw Kleuren
                           </p>
-                          <div className="flex gap-2">
+                          <div className="flex gap-3">
                             {colorPalette.map((color, i) => (
-                              <div
+                              <motion.div
                                 key={i}
-                                className="w-12 h-12 rounded-xl shadow-sm border border-black/10"
-                                style={{ backgroundColor: color }}
-                              />
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
+                                className="relative group"
+                              >
+                                <div className="absolute inset-0 rounded-xl blur-md opacity-0 group-hover:opacity-50 transition-opacity" style={{ backgroundColor: color }} />
+                                <div
+                                  className="relative w-14 h-14 rounded-xl shadow-md border-2 border-white/50 group-hover:scale-110 transition-transform duration-200"
+                                  style={{ backgroundColor: color }}
+                                />
+                              </motion.div>
                             ))}
                           </div>
                         </div>
@@ -299,10 +347,10 @@ export default function DashboardPage() {
 
                       <button
                         onClick={() => navigate('/profile')}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-neutral-100)] hover:bg-[var(--ff-color-neutral-200)] text-[var(--color-text)] rounded-xl text-sm font-semibold transition-colors"
+                        className="group inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-neutral-100)] hover:bg-[var(--ff-color-neutral-200)] text-[var(--color-text)] rounded-xl text-sm font-bold transition-all duration-200"
                       >
                         Bekijk profiel
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
                   </div>
@@ -314,27 +362,27 @@ export default function DashboardPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.35 }}
-                  className="p-8 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] shadow-sm"
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="p-10 rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] shadow-lg"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+                  <div className="flex items-start gap-6">
+                    <div className="w-14 h-14 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 shadow-md">
+                      <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs uppercase tracking-wider text-[var(--ff-color-primary-700)] font-bold mb-2">
+                      <p className="text-xs uppercase tracking-widest text-[var(--ff-color-primary-700)] font-bold mb-3">
                         Nova Styling Tip
                       </p>
-                      <p className="text-base text-[var(--color-text)] leading-relaxed mb-4">
+                      <p className="text-lg text-[var(--color-text)] leading-relaxed mb-5 font-medium">
                         {novaInsights[0].insight}
                       </p>
                       {novaInsights[0].actionLink && (
                         <button
                           onClick={() => navigate(novaInsights[0].actionLink!)}
-                          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                          className="group inline-flex items-center gap-2 text-sm font-bold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors"
                         >
                           {novaInsights[0].action || 'Bekijk'}
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </button>
                       )}
                     </div>
@@ -346,33 +394,33 @@ export default function DashboardPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="grid sm:grid-cols-2 gap-4"
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="grid sm:grid-cols-2 gap-6"
               >
                 <button
                   onClick={() => navigate('/results')}
-                  className="group p-6 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-sm hover:shadow-md transition-all text-left"
+                  className="group p-8 rounded-3xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-lg hover:shadow-xl transition-all duration-300 text-left"
                 >
-                  <Sparkles className="w-8 h-8 text-[var(--ff-color-primary-700)] mb-4 group-hover:scale-110 transition-transform" />
-                  <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">
+                  <Sparkles className="w-10 h-10 text-[var(--ff-color-primary-700)] mb-5 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                  <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
                     Nieuwe outfits
                   </h3>
-                  <p className="text-sm text-[var(--color-muted)]">
+                  <p className="text-base text-[var(--color-muted)]">
                     Bekijk je matches
                   </p>
                 </button>
 
                 <button
                   onClick={() => navigate('/onboarding?step=photo')}
-                  className="group p-6 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all text-left overflow-hidden"
+                  className="group relative p-8 rounded-3xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 text-left overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="relative">
-                    <Camera className="w-8 h-8 mb-4 opacity-90 group-hover:scale-110 transition-transform" />
-                    <h3 className="text-lg font-bold mb-1">
+                    <Camera className="w-10 h-10 mb-5 opacity-90 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                    <h3 className="text-xl font-bold mb-2">
                       Upload foto
                     </h3>
-                    <p className="text-sm opacity-90">
+                    <p className="text-base opacity-90">
                       Krijg AI advies
                     </p>
                   </div>
@@ -380,26 +428,26 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => navigate('/profile')}
-                  className="group p-6 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-sm hover:shadow-md transition-all text-left"
+                  className="group p-8 rounded-3xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-lg hover:shadow-xl transition-all duration-300 text-left"
                 >
-                  <Settings className="w-8 h-8 text-[var(--color-muted)] mb-4 group-hover:scale-110 group-hover:text-[var(--ff-color-primary-700)] transition-all" />
-                  <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">
+                  <Settings className="w-10 h-10 text-[var(--color-muted)] mb-5 group-hover:scale-110 group-hover:text-[var(--ff-color-primary-700)] transition-all" strokeWidth={2} />
+                  <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
                     Instellingen
                   </h3>
-                  <p className="text-sm text-[var(--color-muted)]">
+                  <p className="text-base text-[var(--color-muted)]">
                     Pas profiel aan
                   </p>
                 </button>
 
                 <button
                   onClick={() => navigate('/dashboard?tab=stats')}
-                  className="group p-6 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-sm hover:shadow-md transition-all text-left"
+                  className="group p-8 rounded-3xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-lg hover:shadow-xl transition-all duration-300 text-left"
                 >
-                  <TrendingUp className="w-8 h-8 text-[var(--color-muted)] mb-4 group-hover:scale-110 group-hover:text-[var(--ff-color-primary-700)] transition-all" />
-                  <h3 className="text-lg font-bold text-[var(--color-text)] mb-1">
+                  <TrendingUp className="w-10 h-10 text-[var(--color-muted)] mb-5 group-hover:scale-110 group-hover:text-[var(--ff-color-primary-700)] transition-all" strokeWidth={2} />
+                  <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
                     Progress
                   </h3>
-                  <p className="text-sm text-[var(--color-muted)]">
+                  <p className="text-base text-[var(--color-muted)]">
                     Bekijk statistieken
                   </p>
                 </button>
@@ -407,57 +455,60 @@ export default function DashboardPage() {
             </div>
 
             {/* Right Column - Sidebar Widgets */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Level Progress Card */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.45 }}
-                className="p-6 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm"
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="p-8 rounded-3xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg"
               >
-                <div className="flex items-start justify-between mb-6">
+                <div className="flex items-start justify-between mb-8">
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] font-semibold mb-2">
+                    <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] font-bold mb-3 opacity-75">
                       Niveau
                     </p>
-                    <p className="text-5xl font-bold text-[var(--color-text)]">
+                    <p className="text-6xl font-bold text-[var(--color-text)] tracking-tight">
                       {gamificationData.level}
                     </p>
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-                    <Zap className="w-7 h-7 text-white" />
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl blur-lg opacity-30" />
+                    <div className="relative w-16 h-16 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl">
+                      <Zap className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    </div>
                   </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-[var(--color-muted)] font-medium">
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm text-[var(--color-muted)] font-semibold">
                       {gamificationData.xp} / {gamificationData.xpToNextLevel} XP
                     </span>
                     <span className="text-sm font-bold text-[var(--ff-color-primary-700)]">
                       {Math.round(progress)}%
                     </span>
                   </div>
-                  <div className="h-3 bg-[var(--ff-color-neutral-200)] rounded-full overflow-hidden">
+                  <div className="h-3 bg-[var(--ff-color-neutral-200)] rounded-full overflow-hidden shadow-inner">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-full"
+                      className="h-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-full shadow-lg"
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
-                      transition={{ duration: 1, ease: 'easeOut' }}
+                      transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
                     />
                   </div>
                 </div>
 
                 {/* Streak */}
                 {gamificationData.streak > 0 && (
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 border border-orange-200">
-                    <span className="text-2xl">🔥</span>
+                  <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 border-2 border-orange-200/50 shadow-sm">
+                    <span className="text-3xl">🔥</span>
                     <div>
-                      <p className="text-sm font-bold text-orange-900">
+                      <p className="text-base font-bold text-orange-900">
                         {gamificationData.streak} dagen streak
                       </p>
-                      <p className="text-xs text-orange-700">
+                      <p className="text-sm text-orange-700 font-medium">
                         Ga zo door!
                       </p>
                     </div>
@@ -470,8 +521,8 @@ export default function DashboardPage() {
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+                  transition={{ duration: 0.6, delay: 0.55 }}
+                  className="rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-300"
                 >
                   <div className="relative aspect-[3/4] bg-[var(--ff-color-neutral-100)]">
                     {outfitsData[0]?.image && (
@@ -482,18 +533,18 @@ export default function DashboardPage() {
                         loading="lazy"
                       />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <p className="text-sm text-white/80 mb-1 font-medium">Jouw Outfits</p>
-                      <p className="text-3xl font-bold text-white mb-4">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <p className="text-sm text-white/70 mb-2 font-semibold uppercase tracking-wider">Jouw Outfits</p>
+                      <p className="text-4xl font-bold text-white mb-6">
                         {outfitsData.length} looks
                       </p>
                       <button
                         onClick={() => navigate('/results')}
-                        className="w-full px-5 py-3 bg-white text-black rounded-xl text-sm font-bold hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
+                        className="w-full px-6 py-4 bg-white text-black rounded-2xl text-base font-bold hover:bg-white/90 transition-colors flex items-center justify-center gap-2 shadow-xl"
                       >
                         Bekijk alles
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
