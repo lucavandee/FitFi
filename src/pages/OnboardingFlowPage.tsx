@@ -16,7 +16,6 @@ import { EmbeddingService } from "@/services/visualPreferences/embeddingService"
 import { VisualPreferenceService } from "@/services/visualPreferences/visualPreferenceService";
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
-import { NovaInlineReaction } from "@/components/quiz/NovaInlineReaction";
 import { PhaseTransition } from "@/components/quiz/PhaseTransition";
 import toast from "react-hot-toast";
 
@@ -816,52 +815,52 @@ export default function OnboardingFlowPage() {
           </AnimatedQuestionTransition>
 
           {/* Answer Options - 52px+ touch targets */}
-          <div className="space-y-3 sm:space-y-4 mb-8 sm:mb-12">
+          <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
             {/* Checkbox (Multiple Select) - Mobile-first touch targets */}
             {(step.type === 'checkbox' || step.type === 'multiselect') && step.options && (
               <>
                 {/* Selection counter for stylePreferences */}
                 {step.field === 'stylePreferences' && (
-                  <div className="text-center mb-3 sm:mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-primary-50)] rounded-full text-xs sm:text-sm font-medium text-[var(--ff-color-primary-700)]">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[var(--ff-color-primary-600)] text-white text-xs font-bold">
+                  <div className="text-center mb-2 sm:mb-3">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--ff-color-primary-50)] rounded-full text-xs font-medium text-[var(--ff-color-primary-700)]">
+                      <span className="flex items-center justify-center w-4 h-4 rounded-full bg-[var(--ff-color-primary-600)] text-white text-xs font-bold">
                         {(answers[step.field as keyof QuizAnswers] as string[] || []).length}
                       </span>
                       {(answers[step.field as keyof QuizAnswers] as string[] || []).length === 0
-                        ? 'Geen stijlen geselecteerd'
+                        ? 'Geen stijlen'
                         : (answers[step.field as keyof QuizAnswers] as string[] || []).length === 1
-                          ? '1 stijl geselecteerd'
-                          : `${(answers[step.field as keyof QuizAnswers] as string[] || []).length} stijlen geselecteerd`
+                          ? '1 stijl'
+                          : `${(answers[step.field as keyof QuizAnswers] as string[] || []).length} stijlen`
                       }
                     </span>
                   </div>
                 )}
 
-                <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+                <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2">
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
                     <button
                       key={option.value}
                       onClick={() => handleMultiSelect(step.field, option.value)}
-                      className={`text-left p-4 sm:p-6 min-h-[52px] rounded-xl sm:rounded-[var(--radius-2xl)] border-2 transition-all active:scale-[0.98] ${
+                      className={`text-left p-3 sm:p-4 min-h-[52px] rounded-xl sm:rounded-[var(--radius-xl)] border-2 transition-all active:scale-[0.98] ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
                           : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
                       }`}
                     >
-                      <div className="flex items-start gap-3 sm:gap-4">
-                        <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-1 ${
+                      <div className="flex items-start gap-2.5 sm:gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                           isSelected
                             ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
                             : 'border-[var(--color-border)]'
                         }`}>
-                          {isSelected && <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />}
+                          {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                         </div>
                         <div className="flex-1">
-                          <div className="font-semibold text-sm sm:text-base mb-0.5 sm:mb-1">{option.label}</div>
+                          <div className="font-semibold text-sm sm:text-base mb-0.5">{option.label}</div>
                           {option.description && (
-                            <div className="text-xs sm:text-sm text-gray-600">{option.description}</div>
+                            <div className="text-xs sm:text-sm text-[var(--color-muted)]">{option.description}</div>
                           )}
                         </div>
                       </div>
@@ -874,31 +873,31 @@ export default function OnboardingFlowPage() {
 
             {/* Radio (Single Select) - Mobile-first touch targets */}
             {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div className="space-y-2.5 sm:space-y-3">
+              <div className="space-y-2">
                 {step.options.map((option) => {
                   const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
                   return (
                     <button
                       key={option.value}
                       onClick={() => handleAnswer(step.field, option.value)}
-                      className={`w-full text-left p-4 sm:p-6 min-h-[52px] rounded-xl sm:rounded-[var(--radius-2xl)] border-2 transition-all active:scale-[0.98] ${
+                      className={`w-full text-left p-3 sm:p-4 min-h-[52px] rounded-xl sm:rounded-[var(--radius-xl)] border-2 transition-all active:scale-[0.98] ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
                           : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
                       }`}
                     >
-                      <div className="flex items-start gap-3 sm:gap-4">
-                        <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-1 ${
+                      <div className="flex items-start gap-2.5 sm:gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                           isSelected
                             ? 'border-[var(--ff-color-primary-600)]'
                             : 'border-[var(--color-border)]'
                         }`}>
-                          {isSelected && <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[var(--ff-color-primary-600)]" />}
+                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-primary-600)]" />}
                         </div>
                         <div className="flex-1">
-                          <div className="font-semibold text-sm sm:text-base mb-0.5 sm:mb-1">{option.label}</div>
+                          <div className="font-semibold text-sm sm:text-base mb-0.5">{option.label}</div>
                           {option.description && (
-                            <div className="text-xs sm:text-sm text-gray-600">{option.description}</div>
+                            <div className="text-xs sm:text-sm text-[var(--color-muted)]">{option.description}</div>
                           )}
                         </div>
                       </div>
@@ -910,22 +909,22 @@ export default function OnboardingFlowPage() {
 
             {/* Slider */}
             {step.type === 'slider' && (
-              <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-5 sm:p-8">
-                <div className="text-center mb-6 sm:mb-8">
-                  <div className="text-5xl font-bold text-[var(--ff-color-primary-600)] mb-2">
+              <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-4 sm:p-5">
+                <div className="text-center mb-4 sm:mb-5">
+                  <div className="text-4xl sm:text-5xl font-bold text-[var(--ff-color-primary-600)] mb-1.5">
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
-                  <div className="text-sm font-medium text-[var(--color-text)] mb-1">
+                  <div className="text-sm font-medium text-[var(--color-text)] mb-0.5">
                     {(answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 75
                       ? 'Budget'
                       : (answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 150
                       ? 'Middensegment'
                       : 'Premium'}
                   </div>
-                  <div className="text-sm text-gray-600 mb-4">Per kledingstuk</div>
+                  <div className="text-xs sm:text-sm text-[var(--color-muted)] mb-3">Per kledingstuk</div>
 
                   {/* Plus/Minus Controls for Mobile-Friendly Adjustment */}
-                  <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 mb-4">
+                  <div className="flex items-center justify-center gap-3 sm:gap-4 mt-4 mb-3">
                     <button
                       type="button"
                       onClick={() => {
@@ -1048,16 +1047,6 @@ export default function OnboardingFlowPage() {
               />
             )}
           </div>
-
-          {/* Nova Inline Reaction */}
-          {showNovaReaction && lastAnsweredField && answers[lastAnsweredField as keyof QuizAnswers] && (
-            <NovaInlineReaction
-              field={lastAnsweredField}
-              value={answers[lastAnsweredField as keyof QuizAnswers]}
-              allAnswers={answers}
-              onComplete={() => setShowNovaReaction(false)}
-            />
-          )}
 
           {/* Navigation Buttons - 52px+ touch targets */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between">
