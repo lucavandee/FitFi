@@ -284,10 +284,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       {/* Footer Instructions - Simplified for Mobile */}
       <div className="flex-shrink-0 px-4 pb-safe pb-4 sm:pb-6">
         <div className="max-w-md mx-auto">
-          {/* Desktop: Full instructions */}
+          {/* Desktop: Full instructions with enhanced clarity */}
           <div className="hidden sm:block">
-            <p className="text-center text-sm font-medium text-[var(--color-text)] mb-3">
-              Klik op de knoppen of sleep de foto
+            <p className="text-center text-sm font-semibold text-[var(--color-text)] mb-3">
+              Klik, sleep of gebruik toetsenbord
             </p>
             <div className="flex items-center justify-center gap-6 text-xs text-[var(--color-muted)]">
               <div className="flex items-center gap-2">
@@ -296,13 +296,13 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 </div>
                 <div className="text-left">
                   <div className="font-medium text-[var(--color-text)]">Niet mijn stijl</div>
-                  <div className="text-xs">← Links</div>
+                  <div className="text-xs opacity-75">← of ←</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-right">
                   <div className="font-medium text-[var(--color-text)]">Spreekt me aan</div>
-                  <div className="text-xs">Rechts →</div>
+                  <div className="text-xs opacity-75">→ of Space</div>
                 </div>
                 <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center bg-[var(--color-surface)]">
                   <Heart className="w-4 h-4 text-green-500" />
@@ -310,7 +310,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               </div>
             </div>
             <p className="text-center text-xs text-[var(--color-muted)] mt-3 opacity-60">
-              Of gebruik pijltjestoetsen / spatiebalk
+              💡 Tip: Hover over de foto om hints te zien
             </p>
           </div>
 

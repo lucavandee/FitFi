@@ -14,6 +14,8 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
   const [startTime] = useState(Date.now());
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
   const [showTooltip, setShowTooltip] = useState(index === 0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -23,7 +25,20 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
 
   const swipeThreshold = 100;
 
+  // Track drag direction for visual feedback
+  const dragDirection = useTransform(x, (value) => {
+    if (value > 50) return 'right';
+    if (value < -50) return 'left';
+    return null;
+  });
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+    if (showTooltip) setShowTooltip(false);
+  };
+
   const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    setIsDragging(false);
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     const responseTime = Date.now() - startTime;
@@ -95,7 +110,10 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.8}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onHoverStart={() => setIsHovering(true)}
+        onHoverEnd={() => setIsHovering(false)}
         animate={
           exitDirection
             ? {
@@ -106,6 +124,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
               }
             : {}
         }
+        whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 1.02, cursor: 'grabbing' }}
         className="w-full max-w-[340px] sm:max-w-[360px] h-[420px] sm:h-[480px] cursor-grab active:cursor-grabbing flex-shrink-0"
       >
@@ -133,6 +152,98 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
               <span className="text-xs opacity-90">{index + 1} van {total}</span>
             </div>
           </div>
+
+          {/* Desktop Drag Indicators - Show ❌/✅ during drag */}
+          <AnimatePresence>
+            {isDragging && (
+              <>
+                {/* Left (Dislike) Indicator */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{
+                    opacity: parseFloat(x.get() as any) < -30 ? 1 : 0.3,
+                    x: 0,
+                    scale: parseFloat(x.get() as any) < -30 ? 1.1 : 1
+                  }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none"
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
+                    <X className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={3} />
+                  </div>
+                </motion.div>
+
+                {/* Right (Like) Indicator */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{
+                    opacity: parseFloat(x.get() as any) > 30 ? 1 : 0.3,
+                    x: 0,
+                    scale: parseFloat(x.get() as any) > 30 ? 1.1 : 1
+                  }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none"
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
+                    <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" strokeWidth={3} />
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Desktop Hover Hint - Subtle arrows on hover (non-mobile) */}
+          {isHovering && !isDragging && (
+            <div className="hidden sm:block absolute inset-0 pointer-events-none">
+              {/* Left Arrow */}
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 0.6, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.3 }}
+                className="absolute left-4 top-1/2 -translate-y-1/2"
+              >
+                <div className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                  <X className="w-5 h-5 text-white" strokeWidth={2} />
+                </div>
+              </motion.div>
+
+              {/* Right Arrow */}
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 0.6, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.3 }}
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+              >
+                <div className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-white fill-current" strokeWidth={2} />
+                </div>
+              </motion.div>
+
+              {/* "Sleep naar links/rechts" hint */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="absolute top-6 left-1/2 -translate-x-1/2"
+              >
+                <div
+                  className="px-4 py-2 rounded-full text-white text-xs font-medium whitespace-nowrap"
+                  style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(8px)',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)'
+                  }}
+                >
+                  ← Sleep naar links of rechts →
+                </div>
+              </motion.div>
+            </div>
+          )}
         </div>
 
         {/* Exit Direction Badges - Enhanced Contrast & Accessibility */}
@@ -169,56 +280,98 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex gap-4 sm:gap-8 z-10 mt-6 sm:mt-8 flex-shrink-0"
+        className="flex gap-4 sm:gap-8 z-10 mt-6 sm:mt-8 flex-shrink-0 relative"
         role="group"
         aria-label="Stijl voorkeur keuze"
       >
-        <motion.button
-          onClick={() => handleButtonClick('left')}
-          whileHover={{ scale: 1.1, rotate: -3 }}
-          whileTap={{ scale: 0.95 }}
-          animate={{
-            scale: [1, 1.04, 1],
-            boxShadow: [
-              '0 10px 15px -3px rgba(239, 68, 68, 0.2)',
-              '0 10px 20px -3px rgba(239, 68, 68, 0.4)',
-              '0 10px 15px -3px rgba(239, 68, 68, 0.2)'
-            ]
-          }}
-          transition={{
-            scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-            boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
-          }}
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-red-300"
-          aria-label="Niet mijn stijl - veeg of klik links"
-          title="Niet mijn stijl (veeg naar links of druk op pijltje-links)"
-        >
-          <X className="w-8 h-8 sm:w-11 sm:h-11 text-red-500" strokeWidth={2.8} aria-hidden="true" />
-        </motion.button>
+        {/* Left Button (Dislike) */}
+        <div className="relative group">
+          <motion.button
+            onClick={() => handleButtonClick('left')}
+            whileHover={{ scale: 1.1, rotate: -3 }}
+            whileTap={{ scale: 0.95 }}
+            animate={{
+              scale: [1, 1.04, 1],
+              boxShadow: [
+                '0 10px 15px -3px rgba(239, 68, 68, 0.2)',
+                '0 10px 20px -3px rgba(239, 68, 68, 0.4)',
+                '0 10px 15px -3px rgba(239, 68, 68, 0.2)'
+              ]
+            }}
+            transition={{
+              scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+              boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+            }}
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-red-300"
+            aria-label="Niet mijn stijl - veeg of klik links"
+          >
+            <X className="w-8 h-8 sm:w-11 sm:h-11 text-red-500" strokeWidth={2.8} aria-hidden="true" />
+          </motion.button>
 
-        <motion.button
-          onClick={() => handleButtonClick('right')}
-          whileHover={{ scale: 1.1, rotate: 3 }}
-          whileTap={{ scale: 0.95 }}
-          animate={{
-            scale: [1, 1.04, 1],
-            boxShadow: [
-              '0 10px 15px -3px rgba(34, 197, 94, 0.2)',
-              '0 10px 20px -3px rgba(34, 197, 94, 0.4)',
-              '0 10px 15px -3px rgba(34, 197, 94, 0.2)'
-            ]
-          }}
-          transition={{
-            scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-            boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-            delay: 0.5
-          }}
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-green-300"
-          aria-label="Dit spreekt me aan - veeg of klik rechts"
-          title="Dit spreekt me aan (veeg naar rechts, druk op pijltje-rechts of spatiebalk)"
-        >
-          <Heart className="w-8 h-8 sm:w-11 sm:h-11 text-green-500" strokeWidth={2.8} fill="currentColor" aria-hidden="true" />
-        </motion.button>
+          {/* Desktop Hover Tooltip */}
+          <div className="hidden sm:block absolute -top-14 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div
+              className="px-3 py-2 rounded-lg text-white text-xs font-medium whitespace-nowrap"
+              style={{
+                backgroundColor: 'rgba(239, 68, 68, 0.95)',
+                backdropFilter: 'blur(8px)',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              Niet mijn stijl
+              {/* Arrow pointing down */}
+              <div
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45"
+                style={{ backgroundColor: 'rgba(239, 68, 68, 0.95)' }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Button (Like) */}
+        <div className="relative group">
+          <motion.button
+            onClick={() => handleButtonClick('right')}
+            whileHover={{ scale: 1.1, rotate: 3 }}
+            whileTap={{ scale: 0.95 }}
+            animate={{
+              scale: [1, 1.04, 1],
+              boxShadow: [
+                '0 10px 15px -3px rgba(34, 197, 94, 0.2)',
+                '0 10px 20px -3px rgba(34, 197, 94, 0.4)',
+                '0 10px 15px -3px rgba(34, 197, 94, 0.2)'
+              ]
+            }}
+            transition={{
+              scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+              boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+              delay: 0.5
+            }}
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-green-300"
+            aria-label="Dit spreekt me aan - veeg of klik rechts"
+          >
+            <Heart className="w-8 h-8 sm:w-11 sm:h-11 text-green-500" strokeWidth={2.8} fill="currentColor" aria-hidden="true" />
+          </motion.button>
+
+          {/* Desktop Hover Tooltip */}
+          <div className="hidden sm:block absolute -top-14 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div
+              className="px-3 py-2 rounded-lg text-white text-xs font-medium whitespace-nowrap"
+              style={{
+                backgroundColor: 'rgba(34, 197, 94, 0.95)',
+                backdropFilter: 'blur(8px)',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              Dit spreekt me aan
+              {/* Arrow pointing down */}
+              <div
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45"
+                style={{ backgroundColor: 'rgba(34, 197, 94, 0.95)' }}
+              />
+            </div>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
