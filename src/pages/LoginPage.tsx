@@ -6,6 +6,7 @@ import { Eye, EyeOff, AlertCircle, CheckCircle2, Mail, Sparkles, Shield, Lock, A
 import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
+import { SecurityLogger } from "@/services/security/securityLogger";
 
 /** Email validation */
 function isEmail(v: string) {
@@ -82,6 +83,7 @@ export default function LoginPage() {
         const success = await login(email, password);
 
         if (success) {
+          // Log successful login
           setTimeout(async () => {
             try {
               const { getSupabase } = await import('@/lib/supabase');
@@ -92,6 +94,9 @@ export default function LoginPage() {
                 nav(fromPath || "/dashboard");
                 return;
               }
+
+              // Security logging: successful login
+              await SecurityLogger.logLoginSuccess(authUser.id);
 
               const { data: profile } = await client
                 .from('profiles')
@@ -110,9 +115,13 @@ export default function LoginPage() {
             }
           }, 200);
         } else {
+          // Security logging: failed login
+          await SecurityLogger.logLoginFailure(email, 'invalid_credentials');
           setError("Login mislukt. Controleer je e-mail en wachtwoord.");
         }
       } catch (err) {
+        // Security logging: login error
+        await SecurityLogger.logLoginFailure(email, 'system_error');
         setError("Er ging iets mis. Probeer het later opnieuw.");
       } finally {
         setLoading(false);

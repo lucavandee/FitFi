@@ -47,6 +47,32 @@ export async function openNovaStream(
 
   const tier = (import.meta.env.VITE_FITFI_TIER || "free").toString();
 
+  // Rate limit check (30 requests per minute for Nova)
+  try {
+    const { supabase } = await import('@/lib/supabaseClient');
+    const { data: rateLimitData, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+      p_identifier: uid,
+      p_identifier_type: uid === 'anon' ? 'ip' : 'user',
+      p_endpoint: '/functions/nova',
+      p_max_requests: 30,
+      p_window_minutes: 1,
+    });
+
+    if (!rateLimitError && rateLimitData && !rateLimitData.allowed) {
+      const resetAt = new Date(rateLimitData.reset_at);
+      const retryAfter = Math.ceil((resetAt.getTime() - Date.now()) / 1000);
+      handlers.onError?.({
+        type: 'error',
+        message: `Rate limit bereikt. Probeer het over ${retryAfter} seconden opnieuw.`,
+        detail: `Je hebt het maximum van 30 berichten per minuut bereikt. Reset om ${resetAt.toLocaleTimeString()}.`,
+      });
+      return () => ctrl.abort();
+    }
+  } catch (rateLimitCheckError) {
+    // Fail open: if rate limit check fails, allow the request
+    console.warn('Rate limit check failed, allowing request:', rateLimitCheckError);
+  }
+
   // Load quiz data from localStorage to send to Nova
   const headers: Record<string, string> = {
     "content-type": "application/json",

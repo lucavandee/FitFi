@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import { supabase } from '@/lib/supabase';
 import { BramsFruitProduct } from './types';
+import { SecurityLogger } from '@/services/security/securityLogger';
 
 export interface XLSXImportResult {
   success: boolean;
@@ -12,7 +13,41 @@ export interface XLSXImportResult {
 
 export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult> {
   try {
+    // SECURITY: Input validation to mitigate xlsx vulnerabilities (GHSA-4r6h-8v6p-xvw6, GHSA-5pgg-2g8v-p4x9)
+    // 1. Check file extension
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+      throw new Error('Only Excel files (.xlsx, .xls) are allowed');
+    }
+
+    // 2. Check file size (prevent ReDoS)
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_SIZE) {
+      throw new Error(`File too large (max 10MB). Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+    }
+
+    // 3. Check MIME type
+    const validMimes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'application/octet-stream' // Some browsers report this for .xlsx
+    ];
+    if (file.type && !validMimes.includes(file.type)) {
+      throw new Error(`Invalid file type: ${file.type}. Expected Excel file.`);
+    }
+
+    // Log security event
+    console.log('✅ Excel file validation passed:', {
+      filename: file.name,
+      size: `${(file.size / 1024).toFixed(2)}KB`,
+      type: file.type
+    });
+
     const arrayBuffer = await file.arrayBuffer();
+
+    // Freeze Object.prototype to prevent prototype pollution
+    Object.freeze(Object.prototype);
+
     const workbook = XLSX.read(arrayBuffer, {
       type: 'array',
       cellStyles: true,
@@ -154,6 +189,17 @@ export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult
       }
 
       console.log(`[Import] Batch ${batchIndex + 1} complete: ${batchResults.filter(r => r.success).length} success, ${batchResults.filter(r => !r.success).length} failed`);
+    }
+
+    // Security logging: Excel upload completed
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await SecurityLogger.logExcelUpload(user.id, file.name, file.size, imported);
+      }
+    } catch (logError) {
+      console.error('Failed to log Excel upload:', logError);
+      // Continue execution - don't block on logging failure
     }
 
     return {

@@ -14,6 +14,7 @@ import QuotaModal from './QuotaModal';
 import NovaLoginPrompt from '@/components/auth/NovaLoginPrompt';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 import { generateNovaExplanation } from '@/engine/explainOutfit';
+import { RateLimitIndicator } from './RateLimitIndicator';
 
 // Helper: verwijder JSON markers tijdens streaming
 function stripJSONMarkers(text: string): string {
@@ -689,6 +690,9 @@ const NovaChat: React.FC = () => {
 
       {/* Input form */}
       <div className="border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-white to-blue-50/50 dark:from-gray-800 dark:to-blue-900/10 backdrop-blur-xl p-4 sm:p-5 shadow-lg">
+        {/* Rate limit indicator */}
+        <RateLimitIndicator endpoint="NOVA_CHAT" className="mb-3" />
+
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1 relative group">
             <motion.div
