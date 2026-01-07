@@ -15,7 +15,10 @@ import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileCo
 import { StyleDNATooltip } from "@/components/results/StyleDNATooltip";
 import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
 import { ColorPaletteSection } from "@/components/results/ColorPaletteSection";
+import { StyleIdentityHero } from "@/components/results/StyleIdentityHero";
 import SmartImage from "@/components/ui/SmartImage";
+import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightExtractor";
+import type { ArchetypeKey } from "@/config/archetypes";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
 import { OutfitFilters, type FilterOptions } from "@/components/results/OutfitFilters";
@@ -97,6 +100,27 @@ export default function EnhancedResultsPage() {
     }
     return "Smart Casual";
   }, [archetypeRaw]);
+
+  // Convert archetype name to ArchetypeKey
+  const archetypeKey = React.useMemo((): ArchetypeKey => {
+    const nameToKey: Record<string, ArchetypeKey> = {
+      'minimalist': 'MINIMALIST',
+      'classic': 'CLASSIC',
+      'smart casual': 'SMART_CASUAL',
+      'streetwear': 'STREETWEAR',
+      'athletic': 'ATHLETIC',
+      'avant-garde': 'AVANT_GARDE',
+      'avant garde': 'AVANT_GARDE'
+    };
+
+    const normalized = archetypeName.toLowerCase();
+    return nameToKey[normalized] || 'SMART_CASUAL';
+  }, [archetypeName]);
+
+  // Get swipe insights (mock for now, later from DB)
+  const swipeInsights = React.useMemo(() => {
+    return getMockSwipeInsights();
+  }, []);
 
   // ✅ GENERATE STYLE PROFILE FROM QUIZ + SWIPES + PHOTO
   const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
@@ -444,6 +468,19 @@ export default function EnhancedResultsPage() {
           className="absolute bottom-1/4 left-10 w-32 h-32 border-4 border-[var(--ff-color-accent-300)] rounded-full opacity-20"
         />
       </motion.section>
+
+      {/* Style Identity Hero - Personal Style Statement */}
+      {hasCompletedQuiz && activeColorProfile && (
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]/30">
+          <div className="ff-container">
+            <StyleIdentityHero
+              primaryArchetype={archetypeKey}
+              colorProfile={activeColorProfile}
+              swipeInsights={swipeInsights}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Style DNA Section - Responsive padding */}
       {hasCompletedQuiz && color && (
