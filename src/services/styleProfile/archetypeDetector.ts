@@ -125,6 +125,11 @@ export class ArchetypeDetector {
           score += 30;
           reasons.push('Minimalist style preference');
         }
+        // ✅ Map "Androgynous" to Minimalist (neutral, oversized)
+        if (styleKeywords.some(s => s.includes('androgyn') || s.includes('androgynous'))) {
+          score += 25;
+          reasons.push('Androgynous style → Minimalist');
+        }
       }
 
       // STREETWEAR detection
@@ -159,6 +164,11 @@ export class ArchetypeDetector {
           score += 25;
           reasons.push('Romantic style → Classic');
         }
+        // ✅ Map "Rugged" to Classic (structured, timeless quality)
+        if (styleKeywords.some(s => s.includes('rugged') || s.includes('stoer'))) {
+          score += 20;
+          reasons.push('Rugged style → Classic (outdoor quality)');
+        }
       }
 
       // AVANT_GARDE detection
@@ -177,6 +187,11 @@ export class ArchetypeDetector {
 
       // SMART_CASUAL detection (fallback for mixed styles)
       if (descriptor.key === 'SMART_CASUAL') {
+        // Direct Smart Casual selection
+        if (styleKeywords.some(s => s.includes('smart') && s.includes('casual'))) {
+          score += 35;
+          reasons.push('Smart Casual style preference');
+        }
         // Bohemian can also be Smart Casual (relaxed but polished)
         if (styleKeywords.some(s => s.includes('bohemi'))) {
           score += 15;

@@ -1,7 +1,7 @@
 import { Product, UserProfile, Outfit, StylePreferences } from './types';
 import { filterAndSortProducts } from './filterAndSortProducts';
 import generateOutfits from './generateOutfits';
-import { analyzeUserProfile, determineArchetypesFromAnswers } from './profile-mapping';
+import { analyzeUserProfile, determineArchetypesFromAnswers, convertStyleArrayToPreferences } from './profile-mapping';
 import { filterProducts, getFilteringStats, type FilterCriteria } from './productFiltering';
 import { shuffleProductsByCategory } from './productShuffling';
 import { handleInsufficientProducts, getCategoryCounts, formatSuggestionMessage } from './insufficientProductsHandler';
@@ -49,10 +49,30 @@ export async function generateRecommendations(
   let mixFactor = 0.3;
 
   if (user.stylePreferences) {
-    const profileAnalysis = analyzeUserProfile(user.stylePreferences);
+    // Support both array format (from quiz) and object format (from profile)
+    let stylePrefs: StylePreferences;
+
+    if (Array.isArray(user.stylePreferences)) {
+      // Convert array to StylePreferences object
+      console.log('[RecommendationEngine] Converting style array to preferences:', user.stylePreferences);
+      stylePrefs = convertStyleArrayToPreferences(user.stylePreferences as unknown as string[]);
+      console.log('[RecommendationEngine] Converted preferences:', stylePrefs);
+    } else {
+      // Already a StylePreferences object
+      stylePrefs = user.stylePreferences;
+    }
+
+    const profileAnalysis = analyzeUserProfile(stylePrefs);
     primaryArchetype = profileAnalysis.dominantArchetype;
     secondaryArchetype = profileAnalysis.secondaryArchetype;
     mixFactor = profileAnalysis.mixFactor;
+
+    console.log('[RecommendationEngine] Archetype analysis:', {
+      primary: primaryArchetype,
+      secondary: secondaryArchetype,
+      mixFactor,
+      scores: profileAnalysis.archetypeScores
+    });
   }
 
   // Check if photo enhancement is available and enabled

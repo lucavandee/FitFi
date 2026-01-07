@@ -3,6 +3,79 @@ import { StylePreferences } from './types';
 import { DUTCH_ARCHETYPES, mapAnswersToArchetype } from '../config/profile-mapping.js';
 
 /**
+ * Converts array of style preferences (from quiz) to StylePreferences object
+ * Supports multiple style selections with equal weighting
+ *
+ * @param styleArray - Array of selected styles from quiz
+ * @returns StylePreferences object with scores
+ */
+export function convertStyleArrayToPreferences(styleArray: string[]): StylePreferences {
+  const preferences: StylePreferences = {
+    casual: 0,
+    formal: 0,
+    sporty: 0,
+    vintage: 0,
+    minimalist: 0
+  };
+
+  if (!styleArray || !Array.isArray(styleArray) || styleArray.length === 0) {
+    return preferences;
+  }
+
+  // Weight per selection (equal distribution)
+  const weight = 1.0 / styleArray.length;
+
+  // Map new style values to legacy preferences
+  const styleMapping: Record<string, Partial<StylePreferences>> = {
+    // Shared options
+    'minimalist': { minimalist: 1.0 },
+    'classic': { formal: 0.8, minimalist: 0.3 },
+    'streetwear': { casual: 0.7, sporty: 0.5 },
+
+    // Female options
+    'bohemian': { casual: 0.6, vintage: 0.5 },
+    'romantic': { formal: 0.5, casual: 0.3 },
+    'edgy': { casual: 0.7, sporty: 0.3 },
+
+    // Male options
+    'smart-casual': { casual: 0.6, formal: 0.6 },
+    'athletic': { sporty: 1.0 },
+    'rugged': { casual: 0.7, sporty: 0.3 },
+
+    // Non-binary options
+    'androgynous': { minimalist: 0.7, casual: 0.4 },
+
+    // Legacy options (backwards compatibility)
+    'casual': { casual: 1.0 },
+    'formal': { formal: 1.0 },
+    'sporty': { sporty: 1.0 },
+    'vintage': { vintage: 1.0 }
+  };
+
+  // Apply mappings
+  styleArray.forEach(style => {
+    const normalized = style.toLowerCase().trim();
+    const mapping = styleMapping[normalized];
+
+    if (mapping) {
+      Object.entries(mapping).forEach(([key, value]) => {
+        preferences[key as keyof StylePreferences] += value * weight;
+      });
+    }
+  });
+
+  // Normalize scores to 0-1 range
+  const maxScore = Math.max(...Object.values(preferences));
+  if (maxScore > 0) {
+    Object.keys(preferences).forEach(key => {
+      preferences[key as keyof StylePreferences] /= maxScore;
+    });
+  }
+
+  return preferences;
+}
+
+/**
  * Interface for archetype score result
  */
 interface ArchetypeScoreResult {

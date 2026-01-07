@@ -778,6 +778,14 @@ export default function OnboardingFlowPage() {
                   {step.description}
                 </p>
               )}
+
+              {/* Multi-select hint for stylePreferences */}
+              {step.field === 'stylePreferences' && step.type === 'checkbox' && (
+                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-[var(--ff-color-primary-600)]">
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="font-medium">Tip: Kies 2-3 stijlen die het beste bij je passen</span>
+                </div>
+              )}
             </div>
           </AnimatedQuestionTransition>
 
@@ -785,7 +793,25 @@ export default function OnboardingFlowPage() {
           <div className="space-y-3 sm:space-y-4 mb-8 sm:mb-12">
             {/* Checkbox (Multiple Select) - Mobile-first touch targets */}
             {(step.type === 'checkbox' || step.type === 'multiselect') && step.options && (
-              <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+              <>
+                {/* Selection counter for stylePreferences */}
+                {step.field === 'stylePreferences' && (
+                  <div className="text-center mb-3 sm:mb-4">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-primary-50)] rounded-full text-xs sm:text-sm font-medium text-[var(--ff-color-primary-700)]">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[var(--ff-color-primary-600)] text-white text-xs font-bold">
+                        {(answers[step.field as keyof QuizAnswers] as string[] || []).length}
+                      </span>
+                      {(answers[step.field as keyof QuizAnswers] as string[] || []).length === 0
+                        ? 'Geen stijlen geselecteerd'
+                        : (answers[step.field as keyof QuizAnswers] as string[] || []).length === 1
+                          ? '1 stijl geselecteerd'
+                          : `${(answers[step.field as keyof QuizAnswers] as string[] || []).length} stijlen geselecteerd`
+                      }
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
@@ -816,7 +842,8 @@ export default function OnboardingFlowPage() {
                     </button>
                   );
                 })}
-              </div>
+                </div>
+              </>
             )}
 
             {/* Radio (Single Select) - Mobile-first touch targets */}
