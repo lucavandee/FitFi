@@ -25,9 +25,9 @@ export default function PrivacyPage() {
           content={`
 # Privacyverklaring
 
-**Laatst bijgewerkt:** 13 oktober 2025
+**Laatst bijgewerkt:** 7 januari 2026
 
-FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren.  betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
+FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren. Privacy betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
 
 ## 1. Wie is verantwoordelijk?
 
@@ -53,9 +53,11 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 - Browser-type, apparaat-type, schermresolutie
 - Foutlogs (geanonimiseerd waar mogelijk)
 
-### Analytische gegevens
-- Paginaweergaven, klikken, sessieduur (geaggregeerd)
+### Analytische gegevens (opt-in vereist)
+- Paginaweergaven, klikken, sessieduur (via Google Analytics, **alleen met toestemming**)
 - A/B test varianten (zonder persoonlijke identificatie)
+- **IP-adressen geanonimiseerd** (laatste octet verwijderd)
+- **Data transfer naar VS** (Google LLC servers in Verenigde Staten)
 
 ### Betalingsgegevens
 - Bij premium-abonnementen: transactie-ID en abonnementsstatus
@@ -75,12 +77,21 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 
 We verkopen **nooit** data. We delen alleen met:
 
-- **Hosting/Database:** Supabase (EU-servers, AVG-compliant)
-- **Analytics:** Eigen implementatie (geanonimiseerd) of privacy-vriendelijke tools
+- **Hosting/Database:** Supabase (EU-servers Frankfurt, AVG-compliant)
+- **Analytics:** Google Analytics (VS, **alleen met jouw toestemming**, IP geanonimiseerd)
 - **Payments:** Stripe (PCI-DSS certified, alleen transactie-metadata)
 - **Support/Foutopsporing:** Sentry (foutlogs, geanonimiseerd)
 
-Alle partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG.
+**⚠️ Belangrijke opmerking over Google Analytics:**
+Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens verstuurd naar Google LLC servers in de Verenigde Staten. Dit valt onder Schrems II wetgeving. Wij hebben:
+- ✅ IP-anonymisatie ingeschakeld
+- ✅ Data Processing Amendment met Google afgesloten
+- ✅ Geen advertising features geactiveerd
+- ✅ Geen user-ID tracking
+
+**Je kunt deze cookies op elk moment uitschakelen in je [profielinstellingen](/profiel).**
+
+Alle andere partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG.
 
 ## 5. Hoe lang bewaren we gegevens?
 
@@ -119,19 +130,47 @@ We nemen passende technische en organisatorische maatregelen:
 
 ## 8. Cookies & tracking
 
-Zie onze [Cookiepagina](/cookies) voor details. Samenvatting:
+Zie onze [Cookiepagina](/cookies) voor volledige details. Samenvatting:
 
-- **Functioneel:** Sessie, taal (essentieel)
-- **Analytisch:** Geaggregeerd gebruik (opt-out mogelijk)
-- **Marketing:** Geen third-party tracking pixels
+- **Functioneel:** Sessie, taal, thema (essentieel, altijd aan)
+- **Analytisch:** Google Analytics (opt-in vereist, IP geanonimiseerd, data naar VS)
+- **Marketing:** Geen third-party tracking pixels of advertentienetwerken
+
+**Beheer je cookie-voorkeuren:**
+- Via je [Profiel → Privacy & Cookies](/profiel)
+- Via browser-instellingen
+- Cookie banner bij eerste bezoek
+
+**Consent intrekken:**
+Je kunt je toestemming op elk moment intrekken. Alle analytische cookies worden dan onmiddellijk verwijderd.
 
 ## 9. Kinderen
 
 FitFi is bedoeld voor 16+. We verzamelen niet bewust gegevens van jongeren onder 16 zonder ouderlijke toestemming.
 
-## 10. Internationale overdracht
+## 10. Internationale overdracht (Schrems II)
 
-Data blijft binnen de **EU** (Supabase EU-regio). Uitzondering: Stripe (VS) heeft EU-US Data Privacy Framework certificering.
+### EU Data Storage
+- **Supabase:** Alle gebruikersdata wordt opgeslagen in EU (Frankfurt, Duitsland)
+- **Database & Auth:** 100% EU-gehost, geen US transfer
+
+### US Data Transfer
+Alleen bij expliciete toestemming:
+
+| Service | Data Transfer | Rechtsgrond | Waarborgen |
+|---------|---------------|-------------|------------|
+| **Google Analytics** | VS (USA) | Toestemming (opt-in) | IP-anonymisatie, DPA, minimale data |
+| **Stripe** | VS & EU | Overeenkomst (noodzakelijk) | EU-US DPF, PCI-DSS, DPA |
+
+**Google Analytics (Schrems II compliance):**
+- ⚠️ Data wordt verstuurd naar Google LLC (VS)
+- ✅ **Opt-in vereist** (niet standaard actief)
+- ✅ **IP-anonymisatie** (laatste octet verwijderd)
+- ✅ **Data Processing Amendment** met Google
+- ✅ **Geen advertenties** of cross-site tracking
+- ✅ **Intrekbare toestemming** (verwijder cookies in profiel)
+
+**Alternatief:** Je kunt FitFi volledig gebruiken zonder analytische cookies. Alle functionaliteit blijft beschikbaar.
 
 ## 11. Wijzigingen
 

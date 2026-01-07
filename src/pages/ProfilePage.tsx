@@ -12,7 +12,8 @@ import {
   Sparkles,
   Zap,
   Palette,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Shield
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import Button from '../components/ui/Button';
@@ -23,6 +24,7 @@ import { Helmet } from 'react-helmet-async';
 import { QuizResetModal } from '@/components/profile/QuizResetModal';
 import { EmailPreferences } from '@/components/profile/EmailPreferences';
 import { StyleProfileComparison } from '@/components/profile/StyleProfileComparison';
+import { CookieSettings } from '@/components/profile/CookieSettings';
 import { profileSyncService } from '@/services/data/profileSyncService';
 import {
   PremiumHeaderCard,
@@ -326,6 +328,11 @@ const ProfilePage: React.FC = () => {
 
           {/* Email Preferences */}
           <EmailPreferences />
+
+          {/* Cookie & Privacy Settings */}
+          <PremiumCard title="Privacy & Cookies" icon={<Shield className="w-6 h-6" />} delay={0.3}>
+            <CookieSettings />
+          </PremiumCard>
 
           {/* Account Settings */}
           <PremiumCard title="Account" icon={<SettingsIcon className="w-6 h-6" />} delay={0.35}>
