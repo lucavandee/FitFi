@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles, Clock } from "lucide-react";
-import { quizSteps, getSizeFieldsForGender } from "@/data/quizSteps";
+import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
@@ -84,7 +84,32 @@ export default function OnboardingFlowPage() {
   }, [searchParams]);
 
   const totalSteps = quizSteps.length + 2;
-  const step = quizSteps[currentStep];
+
+  // Get current step with dynamic options injection
+  const getCurrentStep = () => {
+    const baseStep = quizSteps[currentStep];
+    if (!baseStep) return null;
+
+    // Inject dynamic style options based on selected gender
+    if (baseStep.field === 'stylePreferences') {
+      return {
+        ...baseStep,
+        options: getStyleOptionsForGender(answers.gender)
+      };
+    }
+
+    // Inject dynamic size fields based on selected gender
+    if (baseStep.field === 'sizes') {
+      return {
+        ...baseStep,
+        sizeFields: getSizeFieldsForGender(answers.gender)
+      };
+    }
+
+    return baseStep;
+  };
+
+  const step = getCurrentStep();
 
   const getProgress = () => {
     if (phase === 'questions') return ((currentStep + 1) / totalSteps) * 100;
@@ -120,6 +145,7 @@ export default function OnboardingFlowPage() {
   };
 
   const canProceed = () => {
+    if (!step) return false;
     const answer = answers[step.field as keyof QuizAnswers];
     if (!step.required) return true;
     if (step.type === 'checkbox' || step.type === 'multiselect') {
@@ -657,6 +683,20 @@ export default function OnboardingFlowPage() {
           />
         )}
       </>
+    );
+  }
+
+  // Null check: if step is not available, show loading
+  if (!step && phase === 'questions') {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center animate-pulse">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-[var(--color-text)]">Quiz wordt geladen...</p>
+        </div>
+      </div>
     );
   }
 

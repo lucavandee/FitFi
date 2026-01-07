@@ -1,5 +1,100 @@
 import { QuizStep } from '../types/quiz';
 
+// Dynamic style options based on gender
+export const getStyleOptionsForGender = (gender?: string) => {
+  const isFemale = gender === 'female';
+  const isMale = gender === 'male';
+
+  // Shared options (relevant for all genders)
+  const sharedOptions = [
+    {
+      value: 'minimalist',
+      label: 'Minimalistisch',
+      description: 'Clean lijnen, neutrale kleuren, eenvoud'
+    },
+    {
+      value: 'classic',
+      label: 'Klassiek',
+      description: isMale
+        ? 'Tijdloze elegantie, gedegen kwaliteit, verfijnde basis'
+        : 'Tijdloze elegantie, verfijnde stukken'
+    },
+    {
+      value: 'streetwear',
+      label: 'Urban/Streetwear',
+      description: isMale
+        ? 'Moderne streetstyle met sneakers, hoodies en statement pieces'
+        : 'Moderne, comfortabele stijl met sneakers en hoodies'
+    }
+  ];
+
+  // Female-specific options
+  const femaleOptions = [
+    {
+      value: 'bohemian',
+      label: 'Bohemien',
+      description: 'Vrije, artistieke stijl met natuurlijke elementen en lagen'
+    },
+    {
+      value: 'romantic',
+      label: 'Romantisch',
+      description: 'Zachte stoffen, vrouwelijke details, pasteltinten'
+    },
+    {
+      value: 'edgy',
+      label: 'Stoer (Edgy)',
+      description: 'Rock-geïnspireerd met leer, jeans en statement-stukken'
+    }
+  ];
+
+  // Male-specific options
+  const maleOptions = [
+    {
+      value: 'smart-casual',
+      label: 'Smart Casual',
+      description: 'Verzorgd en relaxed: chino\'s, polo\'s, loafers'
+    },
+    {
+      value: 'athletic',
+      label: 'Sportief/Athletic',
+      description: 'Sportieve esthetiek, functioneel, comfortabel'
+    },
+    {
+      value: 'rugged',
+      label: 'Stoer/Rugged',
+      description: 'Robuuste materialen, outdoor-geïnspireerd, mannelijk'
+    }
+  ];
+
+  // Gender-neutral fallback (non-binary, prefer-not-to-say)
+  const neutralOptions = [
+    {
+      value: 'bohemian',
+      label: 'Bohemien/Vrij',
+      description: 'Artistieke, vrije stijl met natuurlijke elementen'
+    },
+    {
+      value: 'edgy',
+      label: 'Stoer/Edgy',
+      description: 'Statement pieces, leer, rock-geïnspireerd'
+    },
+    {
+      value: 'androgynous',
+      label: 'Androgyn',
+      description: 'Gender-fluïde stijl, oversized fits, neutrale kleuren'
+    }
+  ];
+
+  if (isMale) {
+    return [...sharedOptions, ...maleOptions];
+  } else if (isFemale) {
+    return [...sharedOptions, ...femaleOptions];
+  } else {
+    // Non-binary or prefer-not-to-say: show all relevant options
+    return [...sharedOptions, ...neutralOptions];
+  }
+};
+
 // Dynamic size options based on gender
 export const getSizeFieldsForGender = (gender?: string) => {
   const isFemale = gender === 'female';
@@ -69,38 +164,10 @@ export const quizSteps: QuizStep[] = [
     field: 'stylePreferences',
     type: 'checkbox',
     required: true,
-    options: [
-      {
-        value: 'minimalist',
-        label: 'Minimalistisch',
-        description: 'Clean lijnen, neutrale kleuren, eenvoud'
-      },
-      {
-        value: 'classic',
-        label: 'Klassiek',
-        description: 'Tijdloze elegantie, verfijnde stukken'
-      },
-      {
-        value: 'bohemian',
-        label: 'Bohemien',
-        description: 'Vrije, artistieke stijl met natuurlijke elementen en lagen'
-      },
-      {
-        value: 'streetwear',
-        label: 'Urban/Streetwear',
-        description: 'Moderne, comfortabele stijl met sneakers en hoodies'
-      },
-      {
-        value: 'romantic',
-        label: 'Romantisch',
-        description: 'Zachte stoffen, vrouwelijke details, pasteltinten'
-      },
-      {
-        value: 'edgy',
-        label: 'Stoer (Edgy)',
-        description: 'Rock-geïnspireerd met leer, jeans en statement-stukken'
-      }
-    ]
+    // Note: options are dynamically generated based on gender via getStyleOptionsForGender()
+    // This ensures men see relevant options (Smart Casual, Athletic, Rugged)
+    // and women see their options (Bohemian, Romantic, Edgy)
+    options: []
   },
   {
     id: 3,
