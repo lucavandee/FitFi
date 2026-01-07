@@ -12,6 +12,8 @@ import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
 import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
 import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileConfidenceBadge";
+import { StyleDNATooltip } from "@/components/results/StyleDNATooltip";
+import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
 import SmartImage from "@/components/ui/SmartImage";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
@@ -494,7 +496,8 @@ export default function EnhancedResultsPage() {
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-500)] mb-6"></div>
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Seizoen</h3>
                     <p className="text-3xl font-bold capitalize mb-2">{activeColorProfile.season}</p>
-                    <p className="text-sm text-gray-600 capitalize">{activeColorProfile.temperature} tonen</p>
+                    <p className="text-sm text-gray-600 capitalize mb-4">{activeColorProfile.temperature} tonen</p>
+                    <StyleDNATooltip attribute="season" value={activeColorProfile.season} />
                   </motion.div>
                 </AnimatedSection>
 
@@ -508,7 +511,8 @@ export default function EnhancedResultsPage() {
                     </div>
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Contrast</h3>
                     <p className="text-3xl font-bold capitalize mb-2">{color.contrast}</p>
-                    <p className="text-sm text-gray-600">Lichtheid: {color.value}</p>
+                    <p className="text-sm text-gray-600 mb-4">Lichtheid: {color.value}</p>
+                    <StyleDNATooltip attribute="contrast" value={color.contrast} />
                   </motion.div>
                 </AnimatedSection>
 
@@ -522,13 +526,25 @@ export default function EnhancedResultsPage() {
                     </div>
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Chroma</h3>
                     <p className="text-3xl font-bold capitalize mb-2">{activeColorProfile.chroma}</p>
-                    <p className="text-sm text-gray-600">Kleurintensiteit</p>
+                    <p className="text-sm text-gray-600 mb-4">Kleurintensiteit</p>
+                    <StyleDNATooltip attribute="chroma" value={activeColorProfile.chroma} />
                   </motion.div>
                 </AnimatedSection>
               </div>
 
-              {/* How We Determined Your Style */}
+              {/* Shopping Guidance - Practical Cheat Sheet */}
               <AnimatedSection delay={0.5}>
+                <div className="mb-12">
+                  <ShoppingGuidance
+                    season={activeColorProfile.season}
+                    contrast={activeColorProfile.contrast}
+                    chroma={activeColorProfile.chroma}
+                  />
+                </div>
+              </AnimatedSection>
+
+              {/* How We Determined Your Style */}
+              <AnimatedSection delay={0.6}>
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="bg-white rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 md:p-10 shadow-xl mb-8"
