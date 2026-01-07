@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles, Clock, AlertCircle, X } from "lucide-react";
+import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, AlertCircle, X } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
@@ -14,7 +14,6 @@ import { CalibrationStep } from "@/components/quiz/CalibrationStep";
 import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import { VisualPreferenceService } from "@/services/visualPreferences/visualPreferenceService";
-import { CircularProgressIndicator } from "@/components/quiz/CircularProgressIndicator";
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import { NovaInlineReaction } from "@/components/quiz/NovaInlineReaction";
@@ -744,28 +743,31 @@ export default function OnboardingFlowPage() {
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
-      {/* Progress Bar with Milestones - Responsive */}
-      <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
-        <div className="ff-container py-3 sm:py-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs sm:text-sm font-medium">Stap {currentStep + 1} van {quizSteps.length}</span>
-            <span className="text-xs sm:text-sm text-gray-600">{Math.round(progress)}% compleet</span>
+      {/* Minimal Progress Bar - Single Source of Truth */}
+      <div className="sticky top-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-b border-[var(--color-border)] shadow-sm">
+        <div className="ff-container py-2.5 sm:py-3">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">
+              Vraag {currentStep + 1} van {quizSteps.length}
+            </span>
+            <span className="text-xs sm:text-sm font-medium text-[var(--ff-color-primary-600)]">
+              {Math.round(progress)}%
+            </span>
           </div>
 
           {/* Clean progress bar */}
-          <div className="relative h-2 sm:h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+          <div className="relative h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out rounded-full"
               style={{ width: `${progress}%` }}
             />
-
           </div>
 
         </div>
       </div>
 
-      {/* Question Content - Responsive padding */}
-      <div className="ff-container py-8 sm:py-12 md:py-20">
+      {/* Question Content - Compact, no-scroll layout */}
+      <div className="ff-container py-6 sm:py-8 md:py-10">
         <div className="max-w-3xl mx-auto">
 
           {/* Email Capture Prompt - Show at step 3 */}
@@ -779,45 +781,33 @@ export default function OnboardingFlowPage() {
             />
           )}
 
-          {/* Circular Progress Indicator - Premium */}
-          <div className="flex justify-center mb-12">
-            <CircularProgressIndicator
-              currentStep={currentStep + 1}
-              totalSteps={quizSteps.length}
-              stepLabels={quizSteps.map(s => s.title.split(' ').slice(0, 2).join(' '))}
-            />
-          </div>
-
-          {/* Question Header - Responsive typography */}
+          {/* Question Header - Clean & Compact */}
           <AnimatedQuestionTransition
             questionKey={currentStep}
             direction="forward"
           >
-            <div className="text-center mb-8 sm:mb-12">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-4 sm:mb-6">
-                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-[var(--ff-color-primary-50)] rounded-full text-xs sm:text-sm font-semibold text-[var(--ff-color-primary-600)]">
-                  <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  Vraag {currentStep + 1} van {quizSteps.length}
+            <div className="text-center mb-6 sm:mb-8">
+              {/* Time estimate only on first question */}
+              {currentStep === 0 && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
+                  <Clock className="w-3 h-3" />
+                  Minder dan 2 minuten
                 </div>
-                {currentStep === 0 && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)]">
-                    <Clock className="w-3 h-3" />
-                    Minder dan 2 minuten
-                  </div>
-                )}
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-4 max-w-4xl mx-auto leading-tight">
+              )}
+
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 px-4 max-w-4xl mx-auto leading-tight">
                 {step.title}
               </h1>
+
               {step.description && (
-                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+                <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-2xl mx-auto px-4">
                   {step.description}
                 </p>
               )}
 
               {/* Multi-select hint for stylePreferences */}
               {step.field === 'stylePreferences' && step.type === 'checkbox' && (
-                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-[var(--ff-color-primary-600)]">
+                <div className="mt-3 flex items-center justify-center gap-2 text-xs sm:text-sm text-[var(--ff-color-primary-600)]">
                   <CheckCircle className="w-4 h-4" />
                   <span className="font-medium">Tip: Kies 2-3 stijlen die het beste bij je passen</span>
                 </div>
