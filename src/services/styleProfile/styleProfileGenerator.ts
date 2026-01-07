@@ -19,12 +19,15 @@ export interface StyleProfileResult {
   archetype: ArchetypeKey;
   secondaryArchetype: ArchetypeKey | null;
   confidence: number;
-  dataSource: 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback';
+  dataSource: 'photo_analysis' | 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback';
 }
 
 export class StyleProfileGenerator {
   /**
-   * Generate complete style profile from quiz answers + visual swipes
+   * Generate complete style profile with THREE-TIER PRIORITY:
+   * 1. Photo Analysis (OBJECTIVE - highest accuracy)
+   * 2. Visual Swipes (SUBJECTIVE - medium accuracy)
+   * 3. Quiz Answers (SUBJECTIVE - lowest accuracy)
    */
   static async generateStyleProfile(
     quizAnswers: QuizColorAnswers,
@@ -37,12 +40,21 @@ export class StyleProfileGenerator {
       sessionId
     });
 
-    // 1. Get swipe data if available
+    // 🎯 PRIORITY 1: Try Photo Analysis FIRST (OBJECTIVE)
+    if (userId) {
+      const photoAnalysis = await this.getPhotoAnalysis(userId);
+      if (photoAnalysis && photoAnalysis.confidence > 0.7) {
+        console.log('[StyleProfileGenerator] ✅ Using PHOTO ANALYSIS (Priority 1, highest accuracy)');
+        return this.buildProfileFromPhotoAnalysis(photoAnalysis, quizAnswers);
+      }
+    }
+
+    // 🎯 PRIORITY 2: Get swipe data (SUBJECTIVE but more data points)
     const swipeData = userId || sessionId
       ? await this.getSwipeData(userId, sessionId)
       : null;
 
-    // 2. ✅ DETECT ARCHETYPE FROM QUIZ + SWIPES
+    // Detect archetype from quiz + swipes
     const archetypeResult = ArchetypeDetector.detect(
       quizAnswers,
       swipeData ? {
@@ -58,7 +70,7 @@ export class StyleProfileGenerator {
       confidence: archetypeResult.confidence
     });
 
-    // 3. Analyze colors from both sources
+    // Analyze colors from both sources
     const quizColors = this.analyzeQuizColors(quizAnswers);
     const swipeColors = swipeData ? this.analyzeSwipeColors(swipeData) : null;
 
@@ -67,16 +79,16 @@ export class StyleProfileGenerator {
       swipeColors
     });
 
-    // 4. Combine data with priority: swipes > quiz > fallback
+    // 🎯 PRIORITY 2/3: Combine quiz + swipes with fallback
     const colorProfile = this.combineColorData(quizColors, swipeColors);
 
-    // 5. Calculate confidence based on data sources
+    // Calculate confidence based on data sources
     const confidence = Math.max(
       this.calculateConfidence(quizColors, swipeColors),
       archetypeResult.confidence
     );
 
-    // 6. Determine data source
+    // Determine data source
     let dataSource: StyleProfileResult['dataSource'] = 'fallback';
     if (quizColors && swipeColors) {
       dataSource = 'quiz+swipes';
@@ -579,5 +591,190 @@ export class StyleProfileGenerator {
     }
 
     return Math.min(confidence, 1.0);
+  }
+
+  /**
+   * 🎯 PRIORITY 1: Get photo analysis from database (OBJECTIVE data)
+   */
+  private static async getPhotoAnalysis(userId: string): Promise<any | null> {
+    try {
+      const client = (await import('@/lib/supabase')).getSupabase();
+      if (!client) return null;
+
+      const { data, error } = await client
+        .from('style_profiles')
+        .select('color_analysis, photo_url')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.log('[StyleProfileGenerator] No photo analysis found:', error.message);
+        return null;
+      }
+
+      if (!data?.color_analysis) {
+        console.log('[StyleProfileGenerator] User has no color_analysis data');
+        return null;
+      }
+
+      console.log('[StyleProfileGenerator] Photo analysis found:', {
+        has_photo: !!data.photo_url,
+        undertone: data.color_analysis.undertone,
+        season: data.color_analysis.seasonal_type,
+        confidence: data.color_analysis.confidence
+      });
+
+      return data.color_analysis;
+    } catch (error) {
+      console.error('[StyleProfileGenerator] Error fetching photo analysis:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 🎯 PRIORITY 1: Build profile from photo analysis (HIGHEST ACCURACY)
+   */
+  private static buildProfileFromPhotoAnalysis(
+    analysis: any,
+    quizAnswers: QuizColorAnswers
+  ): StyleProfileResult {
+    // Map AI analysis to our color profile format
+    const temperature = analysis.undertone || 'neutraal'; // 'warm' | 'cool' | 'neutral'
+    const seasonRaw = analysis.seasonal_type || 'lente'; // 'spring' | 'summer' | 'autumn' | 'winter'
+
+    // Map English seasons to Dutch
+    const seasonMap: Record<string, string> = {
+      'spring': 'lente',
+      'summer': 'zomer',
+      'autumn': 'herfst',
+      'winter': 'winter'
+    };
+    const season = seasonMap[seasonRaw] || seasonRaw;
+
+    // Calculate contrast from skin + hair
+    const contrast = this.calculatePhotoContrast(
+      analysis.skin_tone,
+      analysis.hair_color
+    );
+
+    // Calculate chroma from seasonal type
+    const chroma = this.calculateChromaFromSeason(seasonRaw);
+
+    // Build palette name
+    const paletteName = `${season.charAt(0).toUpperCase() + season.slice(1)} (geanalyseerd via AI)`;
+
+    // Build notes from best colors
+    const notes: string[] = [
+      `Je ondertoon is ${temperature}.`,
+      `Je seizoen is ${season}.`,
+      `Contrast niveau: ${contrast}.`
+    ];
+
+    if (analysis.best_colors && Array.isArray(analysis.best_colors)) {
+      const topColors = analysis.best_colors.slice(0, 3).join(', ');
+      notes.push(`Kleuren die je flatteren: ${topColors}.`);
+    }
+
+    if (analysis.avoid_colors && Array.isArray(analysis.avoid_colors) && analysis.avoid_colors.length > 0) {
+      const avoidColors = analysis.avoid_colors.slice(0, 2).join(', ');
+      notes.push(`Vermijd: ${avoidColors}.`);
+    }
+
+    // Still detect archetype from quiz
+    const archetypeResult = ArchetypeDetector.detect(quizAnswers, null);
+
+    console.log('[StyleProfileGenerator] ✅ Profile from photo analysis:', {
+      temperature,
+      season,
+      contrast,
+      chroma,
+      paletteName,
+      confidence: analysis.confidence,
+      archetype: archetypeResult.primary
+    });
+
+    return {
+      colorProfile: {
+        temperature,
+        season,
+        contrast,
+        chroma,
+        value: contrast, // Same as contrast for compatibility
+        paletteName,
+        notes
+      },
+      archetype: archetypeResult.primary,
+      secondaryArchetype: archetypeResult.secondary,
+      confidence: analysis.confidence || 0.9, // AI analysis is highly confident
+      dataSource: 'photo_analysis'
+    };
+  }
+
+  /**
+   * Calculate contrast from skin tone + hair color (OBJECTIVE)
+   */
+  private static calculatePhotoContrast(
+    skinTone: string,
+    hairColor: string
+  ): string {
+    if (!skinTone || !hairColor) return 'medium';
+
+    const skin = skinTone.toLowerCase();
+    const hair = hairColor.toLowerCase();
+
+    // HIGH CONTRAST: Light skin + dark hair OR deep skin + light hair
+    if (
+      (['fair', 'light'].some(s => skin.includes(s)) &&
+       ['black', 'dark brown', 'dark'].some(h => hair.includes(h)))
+      ||
+      (['deep', 'tan', 'dark'].some(s => skin.includes(s)) &&
+       ['blonde', 'light', 'grey', 'white'].some(h => hair.includes(h)))
+    ) {
+      return 'hoog';
+    }
+
+    // LOW CONTRAST: Similar tones
+    if (
+      (['fair', 'light'].some(s => skin.includes(s)) &&
+       ['blonde', 'light brown', 'light'].some(h => hair.includes(h)))
+      ||
+      (['deep', 'tan'].some(s => skin.includes(s)) &&
+       ['brown', 'black', 'dark'].some(h => hair.includes(h)))
+    ) {
+      return 'laag';
+    }
+
+    // MEDIUM: Everything else
+    return 'medium';
+  }
+
+  /**
+   * Calculate chroma (saturation) from seasonal type (COLOR THEORY)
+   */
+  private static calculateChromaFromSeason(season: string): string {
+    const s = season.toLowerCase();
+
+    // SPRING: Bright, warm, high saturation
+    if (s.includes('spring') || s === 'lente') {
+      return 'gedurfd';
+    }
+
+    // SUMMER: Soft, cool, low saturation
+    if (s.includes('summer') || s === 'zomer') {
+      return 'zacht';
+    }
+
+    // AUTUMN: Muted, warm, medium saturation
+    if (s.includes('autumn') || s === 'herfst') {
+      return 'gemiddeld';
+    }
+
+    // WINTER: Bold, cool, high saturation
+    if (s.includes('winter') || s === 'winter') {
+      return 'gedurfd';
+    }
+
+    // Fallback
+    return 'gemiddeld';
   }
 }

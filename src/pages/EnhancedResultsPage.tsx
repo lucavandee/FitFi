@@ -11,6 +11,7 @@ import { useOutfits } from "@/hooks/useOutfits";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
 import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
+import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileConfidenceBadge";
 import SmartImage from "@/components/ui/SmartImage";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
@@ -94,8 +95,10 @@ export default function EnhancedResultsPage() {
     return "Smart Casual";
   }, [archetypeRaw]);
 
-  // ✅ GENERATE STYLE PROFILE FROM QUIZ + SWIPES
+  // ✅ GENERATE STYLE PROFILE FROM QUIZ + SWIPES + PHOTO
   const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
+  const [profileDataSource, setProfileDataSource] = React.useState<'photo_analysis' | 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback'>('fallback');
+  const [profileConfidence, setProfileConfidence] = React.useState<number>(0.5);
   const [profileLoading, setProfileLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -125,10 +128,14 @@ export default function EnhancedResultsPage() {
         console.log('[EnhancedResultsPage] ✅ Style profile generated:', result);
 
         setGeneratedProfile(result.colorProfile);
+        setProfileDataSource(result.dataSource);
+        setProfileConfidence(result.confidence);
 
         // Save to localStorage for future use
         try {
           localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.colorProfile));
+          localStorage.setItem('ff_profile_data_source', result.dataSource);
+          localStorage.setItem('ff_profile_confidence', result.confidence.toString());
         } catch (e) {
           console.warn('Could not save color profile to localStorage', e);
         }
@@ -449,9 +456,17 @@ export default function EnhancedResultsPage() {
                   Perfect afgestemd
                   <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                   Elk element is zorgvuldig geanalyseerd om jouw unieke stijl te bepalen
                 </p>
+
+                {/* Confidence Badge - Show data source transparency */}
+                <div className="max-w-3xl mx-auto">
+                  <StyleProfileConfidenceBadge
+                    dataSource={profileDataSource}
+                    confidence={profileConfidence}
+                  />
+                </div>
               </div>
             </AnimatedSection>
 
