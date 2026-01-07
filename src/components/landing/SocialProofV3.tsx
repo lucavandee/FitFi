@@ -123,8 +123,8 @@ export function SocialProofV3() {
                   ))}
                 </div>
 
-                {/* Quote */}
-                <p className="text-[var(--color-text)] leading-relaxed mb-6 sm:mb-8 text-base sm:text-lg lg:text-xl font-light">
+                {/* Quote - Enhanced mobile readability */}
+                <p className="text-[var(--color-text)] leading-[1.7] mb-6 sm:mb-8 text-lg sm:text-xl lg:text-2xl font-light px-1">
                   "{testimonial.quote}"
                 </p>
 

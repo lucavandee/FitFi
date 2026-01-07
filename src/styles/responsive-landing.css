@@ -1,0 +1,403 @@
+/* ============================================
+   RESPONSIVE LANDING PAGE STYLES
+   Optimalisatie voor mobile-first leesbaarheid
+   ============================================ */
+
+/* ----------------
+   BASE RESETS
+   ---------------- */
+
+* {
+  /* Prevent horizontal scroll */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+img,
+video,
+iframe,
+picture {
+  /* Responsive media - never overflow */
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ----------------
+   TYPOGRAPHY SCALE
+   Mobile-first met optimale leesbaarheid
+   ---------------- */
+
+/* Body text - MINIMUM 16px op mobile voor leesbaarheid */
+body {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Headings - Fluid scaling met clamp() */
+h1 {
+  font-size: clamp(2rem, 5vw + 1rem, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw + 0.5rem, 3.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.5rem);
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
+  line-height: 1.4;
+}
+
+/* Paragraph text - Responsive scale */
+p {
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
+  line-height: 1.7;
+  margin-bottom: 1em;
+}
+
+/* Small text - MINIMUM 14px */
+.text-sm,
+small {
+  font-size: clamp(0.875rem, 1vw + 0.5rem, 1rem);
+  line-height: 1.6;
+}
+
+/* ----------------
+   BULLETPOINTS
+   Extra focus op leesbaarheid
+   ---------------- */
+
+/* Feature bullets in FeatureBlocksV4 */
+.feature-bullet,
+[class*="bullet"] {
+  font-size: clamp(1rem, 1.8vw + 0.5rem, 1.25rem) !important;
+  line-height: 1.6 !important;
+  padding: 0.5rem 0;
+}
+
+/* List items */
+ul li,
+ol li {
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.125rem);
+  line-height: 1.7;
+  margin-bottom: 0.75em;
+}
+
+/* ----------------
+   SPACING & PADDING
+   Consistent, ruime spacing voor touchscreens
+   ---------------- */
+
+/* Container padding - Extra ruim op mobiel */
+.ff-container,
+[class*="container"],
+[class*="max-w-"] {
+  padding-left: clamp(1rem, 4vw, 2rem);
+  padding-right: clamp(1rem, 4vw, 2rem);
+}
+
+/* Section spacing - Consistent verticale ritme */
+section {
+  padding-top: clamp(2rem, 8vw, 6rem);
+  padding-bottom: clamp(2rem, 8vw, 6rem);
+}
+
+/* Cards & Panels - Ruime internal padding */
+[class*="card"],
+[class*="panel"],
+.bg-\[var\(--color-surface\)\] {
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* ----------------
+   BUTTONS & INTERACTIVES
+   WCAG 2.1 touch target minimum (44x44px)
+   ---------------- */
+
+button,
+a[role="button"],
+.btn,
+[class*="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.75rem 1.5rem;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.125rem);
+}
+
+/* Primary CTA - Extra prominent */
+button[class*="primary"],
+.btn-primary {
+  min-height: 52px;
+  padding: 1rem 2rem;
+  font-size: clamp(1.0625rem, 2vw + 0.5rem, 1.25rem);
+}
+
+/* ----------------
+   HERO SECTION
+   Specifieke optimalisaties voor hero
+   ---------------- */
+
+/* Hero headline - Max readability */
+.hero h1,
+section:first-of-type h1 {
+  font-size: clamp(2.25rem, 8vw + 1rem, 6rem);
+  line-height: 1.05;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+/* Hero subline */
+.hero p,
+section:first-of-type p:first-of-type {
+  font-size: clamp(1.125rem, 2.5vw + 0.5rem, 1.75rem);
+  line-height: 1.5;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Hero image container - Responsive aspect ratio */
+.hero img,
+section:first-of-type img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ----------------
+   GRID LAYOUTS
+   Responsive stacking met optimale gaps
+   ---------------- */
+
+/* Feature grids - Stack op mobile */
+[class*="grid"] {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* 2-column grids */
+[class*="grid-cols-2"],
+[class*="md:grid-cols-2"],
+[class*="lg:grid-cols-2"] {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  [class*="md:grid-cols-2"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  [class*="lg:grid-cols-2"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3-column grids */
+[class*="grid-cols-3"],
+[class*="md:grid-cols-3"],
+[class*="lg:grid-cols-3"] {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  [class*="md:grid-cols-3"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  [class*="lg:grid-cols-3"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ----------------
+   IMAGES & MEDIA
+   Optimale lazy loading & aspect ratios
+   ---------------- */
+
+/* Force aspect ratio containers */
+[class*="aspect-"] {
+  position: relative;
+  overflow: hidden;
+}
+
+[class*="aspect-"] img,
+[class*="aspect-"] video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Prevent image pixelation */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* ----------------
+   MOBILE OPTIMIZATIONS
+   Extra focus op touch & scroll
+   ---------------- */
+
+@media (max-width: 639px) {
+  /* Larger text on mobile */
+  body {
+    font-size: 17px; /* iOS optimal */
+  }
+
+  /* Extra padding op edges */
+  .ff-container,
+  section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Stack all flex rows */
+  .flex-row,
+  [class*="sm:flex-row"] {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Full-width buttons op mobile */
+  button,
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Hide decorative elements op mobile voor focus */
+  [class*="absolute"][class*="animate-float"],
+  [class*="decorative"] {
+    display: none;
+  }
+}
+
+/* ----------------
+   TABLET OPTIMIZATIONS
+   ---------------- */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Comfortable reading width */
+  p {
+    max-width: 65ch;
+  }
+
+  /* 2-column layout voor features */
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ----------------
+   DESKTOP OPTIMIZATIONS
+   ---------------- */
+
+@media (min-width: 1024px) {
+  /* Optimal line length */
+  p {
+    max-width: 70ch;
+  }
+
+  /* Re-enable decorative elements */
+  [class*="absolute"][class*="animate-float"],
+  [class*="decorative"] {
+    display: block;
+  }
+}
+
+/* ----------------
+   ACCESSIBILITY ENHANCEMENTS
+   ---------------- */
+
+/* Focus states - Enhanced visibility */
+*:focus,
+*:focus-visible {
+  outline: 3px solid var(--ff-color-primary-500);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Reduce motion for users with vestibular disorders */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px !important;
+  }
+
+  button,
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* ----------------
+   PRINT OPTIMIZATIONS
+   ---------------- */
+
+@media print {
+  /* Hide interactive elements */
+  button,
+  nav,
+  [class*="sticky"],
+  [class*="fixed"] {
+    display: none !important;
+  }
+
+  /* Optimize text for print */
+  * {
+    background: white !important;
+    color: black !important;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+}
+
+/* ----------------
+   DARK MODE SUPPORT
+   Inherited from tokens maar extra guards
+   ---------------- */
+
+@media (prefers-color-scheme: dark) {
+  /* Ensure text remains readable */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img {
+    opacity: 0.9;
+  }
+}

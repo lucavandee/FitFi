@@ -140,16 +140,17 @@ export function FeatureBlocksV4() {
                 {feature.description}
               </p>
 
-              {/* Feature bullets */}
-              <div className="space-y-3 sm:space-y-4 lg:space-y-5">
+              {/* Feature bullets - Enhanced readability */}
+              <div className="space-y-4 sm:space-y-5 lg:space-y-6">
                 {feature.bullets.map((bullet, idx) => (
-                  <div key={idx} className="flex items-start gap-3 lg:gap-4 group">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[var(--ff-color-primary-200)] transition-colors duration-300">
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
+                  <div key={idx} className="flex items-start gap-3 sm:gap-4 lg:gap-5 group">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-1 group-hover:bg-[var(--ff-color-primary-200)] transition-colors duration-300">
+                      <svg className="w-5 h-5 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-base sm:text-lg lg:text-xl text-[var(--color-text)] font-medium leading-relaxed">{bullet}</span>
+                    {/* Increased minimum size from text-base (1rem) to text-lg (1.125rem) */}
+                    <span className="text-lg sm:text-xl lg:text-2xl text-[var(--color-text)] font-medium leading-[1.7] py-1">{bullet}</span>
                   </div>
                 ))}
               </div>

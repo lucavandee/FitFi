@@ -9,7 +9,7 @@ import { StickyCTA } from "@/components/landing/StickyCTA";
 
 export default function LandingPage() {
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-hidden">
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-x-hidden w-full">
       <Helmet>
         <title>FitFi — Jouw stijlgids in 5 minuten</title>
         <meta

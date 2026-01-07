@@ -42,14 +42,19 @@ export function HeroV3() {
     <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[var(--color-bg)]">
 
       {/* Background - Premium couple, woman with phone */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         <img
           src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
           alt="Stijlvol gekleed stel, vrouw met telefoon bekijkt outfit advies"
           className="w-full h-full object-cover object-[center_35%] sm:object-[center_40%] md:object-center"
           loading="eager"
           fetchpriority="high"
-          style={{ objectFit: 'cover' }}
+          style={{
+            objectFit: 'cover',
+            maxWidth: 'none',
+            minWidth: '100%',
+            minHeight: '100%'
+          }}
         />
 
         {/* Gradient overlay for text readability - stronger on mobile for better contrast */}
@@ -102,31 +107,31 @@ export function HeroV3() {
             </button>
           </div>
 
-          {/* Trust indicators */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-6 mt-6 sm:mt-8 lg:mt-10 text-white/90 text-sm sm:text-base">
+          {/* Trust indicators - Enhanced mobile sizing */}
+          <div className="flex flex-wrap items-center gap-4 sm:gap-5 lg:gap-6 mt-6 sm:mt-8 lg:mt-10 text-white/90 text-base sm:text-lg">
             {todayCount !== undefined && todayCount > 0 && (
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0" />
-                <span className="font-semibold">
+              <div className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 flex-shrink-0" />
+                <span className="font-semibold leading-tight">
                   <span className="text-green-400">{todayCount}</span> {todayCount === 1 ? 'persoon' : 'mensen'} vandaag
                 </span>
               </div>
             )}
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2">
+              <div className="w-6 h-6 sm:w-7 sm:h-7 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="font-semibold">Gratis start</span>
+              <span className="font-semibold leading-tight">Gratis start</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2">
+              <div className="w-6 h-6 sm:w-7 sm:h-7 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span className="font-semibold">~2 minuten</span>
+              <span className="font-semibold leading-tight">~2 minuten</span>
             </div>
           </div>
 
