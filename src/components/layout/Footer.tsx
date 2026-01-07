@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Mail, Instagram, Linkedin, Twitter } from "lucide-react";
+import { Mail, Instagram, Linkedin, Twitter, Shield } from "lucide-react";
 
 const product = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
@@ -15,78 +15,115 @@ const resources = [
   { to: "/contact", label: "Contact" },
 ];
 
+const legal = [
+  { to: "/privacy", label: "Privacyverklaring" },
+  { to: "/terms", label: "Algemene Voorwaarden" },
+  { to: "/cookies", label: "Cookiebeleid" },
+  { to: "/disclosure", label: "Affiliate Disclosure" },
+];
+
 export default function Footer() {
   return (
     <footer className="mt-12 sm:mt-16 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="ff-container py-8 sm:py-10 lg:py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
-          <div className="space-y-3">
+          {/* Bedrijfsinfo */}
+          <div className="space-y-4">
             <div className="font-heading text-base sm:text-lg text-[var(--color-text)]">FitFi</div>
             <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-              Stijladvies op basis van je voorkeuren.
+              Persoonlijk stijladvies op basis van AI en jouw unieke voorkeuren.
             </p>
+            <div className="flex gap-2 pt-2">
+              <a href="mailto:hello@fitfi.ai" aria-label="Mail" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors">
+                <Mail size={18} />
+              </a>
+              <a href="https://instagram.com/fitfi.ai" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors">
+                <Instagram size={18} />
+              </a>
+              <a href="https://linkedin.com/company/fitfi-ai" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors">
+                <Linkedin size={18} />
+              </a>
+              <a href="https://twitter.com/fitfi_ai" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors">
+                <Twitter size={18} />
+              </a>
+            </div>
           </div>
 
+          {/* Product */}
           <div>
             <h3 className="text-sm font-medium text-[var(--color-text)] mb-4">Product</h3>
             <ul className="space-y-1">
               {product.map((p) => (
                 <li key={p.to}>
-                  <NavLink className="block py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors min-h-[44px] flex items-center" to={p.to}>{p.label}</NavLink>
+                  <NavLink className="block py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors min-h-[44px] flex items-center" to={p.to}>
+                    {p.label}
+                  </NavLink>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Resources */}
           <div>
             <h3 className="text-sm font-medium text-[var(--color-text)] mb-4">Resources</h3>
             <ul className="space-y-1">
               {resources.map((r) => (
                 <li key={r.to}>
-                  <NavLink className="block py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors min-h-[44px] flex items-center" to={r.to}>{r.label}</NavLink>
+                  <NavLink className="block py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors min-h-[44px] flex items-center" to={r.to}>
+                    {r.label}
+                  </NavLink>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium text-[var(--color-text)]">Nieuwsbrief</h3>
-            <form
-              className="flex flex-col sm:flex-row gap-2"
-              onSubmit={(e) => { e.preventDefault(); /* handoff */ }}
-              noValidate
-            >
-              <input
-                type="email"
-                inputMode="email"
-                placeholder="Jouw e-mail"
-                className="flex-1 rounded-lg border border-[var(--color-border)] px-3 sm:px-4 min-h-[44px] text-sm focus:outline-none focus:shadow-[var(--shadow-ring)]"
-                aria-label="E-mailadres"
-              />
-              <button
-                type="submit"
-                className="px-4 sm:px-5 min-h-[44px] inline-flex items-center justify-center rounded-lg text-white font-medium text-sm whitespace-nowrap"
-                style={{ background: "var(--ff-color-primary-700)" }}
-              >
-                Aanmelden
-              </button>
-            </form>
-
-            <div className="flex gap-2 pt-2">
-              <a href="mailto:hello@fitfi.ai" aria-label="Mail" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors"><Mail size={18} /></a>
-              <a href="https://instagram.com" aria-label="Instagram" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors"><Instagram size={18} /></a>
-              <a href="https://linkedin.com" aria-label="LinkedIn" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors"><Linkedin size={18} /></a>
-              <a href="https://twitter.com" aria-label="Twitter" className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-surface)] transition-colors"><Twitter size={18} /></a>
-            </div>
+          {/* Juridisch */}
+          <div>
+            <h3 className="text-sm font-medium text-[var(--color-text)] mb-4 flex items-center gap-2">
+              <Shield size={16} className="text-[var(--color-primary)]" />
+              Juridisch
+            </h3>
+            <ul className="space-y-1">
+              {legal.map((l) => (
+                <li key={l.to}>
+                  <NavLink className="block py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors min-h-[44px] flex items-center" to={l.to}>
+                    {l.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        <div className="mt-8 sm:mt-10 border-t border-[var(--color-border)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--color-muted)]">
-          <div>© {new Date().getFullYear()} FitFi — Alle rechten voorbehouden.</div>
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-            <NavLink to="/privacy" className="py-2 hover:text-[var(--color-text)] transition-colors">Privacy</NavLink>
-            <NavLink to="/terms" className="py-2 hover:text-[var(--color-text)] transition-colors">Voorwaarden</NavLink>
-            <NavLink to="/disclosure" className="py-2 hover:text-[var(--color-text)] transition-colors">Disclosure</NavLink>
+        {/* Bottom bar */}
+        <div className="mt-8 sm:mt-10 border-t border-[var(--color-border)] pt-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-[var(--color-muted)]">
+            {/* Copyright + Bedrijfsgegevens */}
+            <div className="text-center lg:text-left">
+              <div className="font-medium text-[var(--color-text)] mb-1">
+                © {new Date().getFullYear()} FitFi — Alle rechten voorbehouden
+              </div>
+              <div className="text-xs space-y-0.5">
+                <div>FitFi B.V. — KvK: [Invullen] — BTW: NL[Invullen]B01</div>
+                <div>Gevestigd in Amsterdam, Nederland</div>
+              </div>
+            </div>
+
+            {/* Juridische links (duplicaat voor snelle toegang) */}
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              <NavLink to="/privacy" className="py-2 hover:text-[var(--color-text)] transition-colors">
+                Privacy
+              </NavLink>
+              <NavLink to="/cookies" className="py-2 hover:text-[var(--color-text)] transition-colors">
+                Cookies
+              </NavLink>
+              <NavLink to="/terms" className="py-2 hover:text-[var(--color-text)] transition-colors">
+                Voorwaarden
+              </NavLink>
+              <NavLink to="/disclosure" className="py-2 hover:text-[var(--color-text)] transition-colors">
+                Disclosure
+              </NavLink>
+            </div>
           </div>
         </div>
       </div>
