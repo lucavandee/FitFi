@@ -21,6 +21,11 @@ import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightE
 import type { ArchetypeKey } from "@/config/archetypes";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
+import {
+  getStyleDNALabel,
+  formatStyleDNAValue,
+  getSeasonDescription
+} from "@/config/terminologyMapping";
 import { OutfitFilters, type FilterOptions } from "@/components/results/OutfitFilters";
 import { OutfitZoomModal } from "@/components/results/OutfitZoomModal";
 import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/outfits/PremiumOutfitCard";
@@ -490,14 +495,14 @@ export default function EnhancedResultsPage() {
               <div className="text-center mb-20">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-sm font-bold mb-6">
                   <Zap className="w-4 h-4" />
-                  Jouw Style DNA
+                  Jouw Style DNA Analyse
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                  Perfect afgestemd
+                  Kleuranalyse & Stijlprofiel
                   <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                  Elk element is zorgvuldig geanalyseerd om jouw unieke stijl te bepalen
+                  Op basis van contrast & ondertoon analyse en je seizoensgebonden kleurpalet
                 </p>
 
                 {/* Confidence Badge - Show data source transparency */}
@@ -520,9 +525,13 @@ export default function EnhancedResultsPage() {
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-700)] flex items-center justify-center mb-6">
                       <Award className="w-7 h-7 text-white" />
                     </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Archetype</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
+                      {getStyleDNALabel('archetype').label}
+                    </h3>
                     <p className="text-3xl font-bold text-[var(--ff-color-primary-600)] mb-2">{archetypeName}</p>
-                    <p className="text-sm text-gray-600">Jouw basis stijl</p>
+                    <p className="text-sm text-gray-600">
+                      {getStyleDNALabel('archetype').subtitle}
+                    </p>
                   </motion.div>
                 </AnimatedSection>
 
@@ -532,9 +541,19 @@ export default function EnhancedResultsPage() {
                     className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] p-8 shadow-lg transition-all"
                   >
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-500)] mb-6"></div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Seizoen</h3>
-                    <p className="text-3xl font-bold capitalize mb-2">{activeColorProfile.season}</p>
-                    <p className="text-sm text-gray-600 capitalize mb-4">{activeColorProfile.temperature} tonen</p>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
+                      {getStyleDNALabel('season').label}
+                    </h3>
+                    <p className="text-3xl font-bold capitalize mb-2">
+                      {formatStyleDNAValue('season', activeColorProfile.season)}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {getSeasonDescription(
+                        activeColorProfile.season,
+                        color.contrast,
+                        activeColorProfile.temperature
+                      )}
+                    </p>
                     <StyleDNATooltip attribute="season" value={activeColorProfile.season} />
                   </motion.div>
                 </AnimatedSection>
@@ -547,9 +566,15 @@ export default function EnhancedResultsPage() {
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-accent-400)] to-[var(--ff-color-accent-600)] flex items-center justify-center mb-6">
                       <TrendingUp className="w-7 h-7 text-white" />
                     </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Contrast</h3>
-                    <p className="text-3xl font-bold capitalize mb-2">{color.contrast}</p>
-                    <p className="text-sm text-gray-600 mb-4">Lichtheid: {color.value}</p>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
+                      {getStyleDNALabel('contrast').label}
+                    </h3>
+                    <p className="text-3xl font-bold mb-2">
+                      {formatStyleDNAValue('contrast', color.contrast)}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {formatStyleDNAValue('temperature', activeColorProfile.temperature)}
+                    </p>
                     <StyleDNATooltip attribute="contrast" value={color.contrast} />
                   </motion.div>
                 </AnimatedSection>
@@ -562,9 +587,15 @@ export default function EnhancedResultsPage() {
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-6">
                       <Sparkles className="w-7 h-7 text-white" />
                     </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Chroma</h3>
-                    <p className="text-3xl font-bold capitalize mb-2">{activeColorProfile.chroma}</p>
-                    <p className="text-sm text-gray-600 mb-4">Kleurintensiteit</p>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
+                      {getStyleDNALabel('chroma').label}
+                    </h3>
+                    <p className="text-3xl font-bold mb-2">
+                      {formatStyleDNAValue('chroma', activeColorProfile.chroma)}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {getStyleDNALabel('chroma').subtitle}
+                    </p>
                     <StyleDNATooltip attribute="chroma" value={activeColorProfile.chroma} />
                   </motion.div>
                 </AnimatedSection>
@@ -607,10 +638,10 @@ export default function EnhancedResultsPage() {
                         <span className="text-[var(--ff-color-primary-700)] font-bold">1</span>
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Je archetype: {archetypeName}</h4>
+                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Je stijltype: {archetypeName}</h4>
                         <p className="text-gray-600 leading-relaxed">
                           Op basis van je quizantwoorden hebben we je stijlprofiel geanalyseerd. We keken naar je voorkeuren voor pasvorm,
-                          gelegenheden en comfort-niveau. Deze combinatie bepaalt je basis archetype, dat de fundering vormt voor al je
+                          gelegenheden en comfort-niveau. Deze combinatie bepaalt je stijltype, dat de fundering vormt voor al je
                           outfit-aanbevelingen.
                         </p>
                       </div>
@@ -621,11 +652,11 @@ export default function EnhancedResultsPage() {
                         <span className="text-[var(--ff-color-accent-700)] font-bold">2</span>
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Je kleurprofiel: {activeColorProfile.paletteName}</h4>
+                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Contrast & ondertoon analyse: {activeColorProfile.paletteName}</h4>
                         <p className="text-gray-600 leading-relaxed">
-                          Door je swipes op moodboards te analyseren, hebben we je visuele voorkeuren in kaart gebracht. We detecteren
-                          welke kleurtonen, contrasten en kleurintensiteiten je aantrekkelijk vindt. Dit resulteert in een seizoenskleurenpalet
-                          ({activeColorProfile.season}) met {activeColorProfile.temperature} tonen en {activeColorProfile.contrast} contrast.
+                          Door je swipes op moodboards te analyseren, hebben we je visuele voorkeuren in kaart gebracht. Via onze
+                          contrast & ondertoon analyse detecteren we welke kleurtonen en intensiteiten je aantrekkelijk vindt. Dit resulteert
+                          in een seizoensgebonden kleurpalet ({getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}).
                         </p>
                       </div>
                     </div>
@@ -637,8 +668,8 @@ export default function EnhancedResultsPage() {
                       <div>
                         <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Intelligente matching</h4>
                         <p className="text-gray-600 leading-relaxed">
-                          We combineren je archetype met je kleurprofiel om outfits samen te stellen die zowel bij je stijl als bij je
-                          kleurvoorkeuren passen. Elk kledingstuk wordt gekozen op basis van kleurharmonie, archetype-compatibiliteit en
+                          We combineren je stijltype met je seizoensgebonden kleurpalet om outfits samen te stellen die zowel bij je stijl als bij je
+                          kleurvoorkeuren passen. Elk kledingstuk wordt gekozen op basis van kleurharmonie, stijlcompatibiliteit en
                           gelegenheid. Zo krijg je outfits die echt bij jou passen, niet alleen qua stijl maar ook qua kleurtonen.
                         </p>
                       </div>
@@ -646,9 +677,9 @@ export default function EnhancedResultsPage() {
 
                     <div className="mt-6 p-4 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--ff-color-primary-200)]">
                       <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-                        <strong className="text-[var(--color-text)]">Resultaat:</strong> Door quiz-data, visuele voorkeuren en kleuranalyse
-                        te combineren, krijg je aanbevelingen die verder gaan dan een simpel stijlarchetype. Elke outfit is afgestemd op jouw
-                        unieke combinatie van stijlvoorkeuren én kleurpalet.
+                        <strong className="text-[var(--color-text)]">Resultaat:</strong> Door quiz-data, visuele voorkeuren en contrast & ondertoon analyse
+                        te combineren, krijg je aanbevelingen die verder gaan dan een simpel stijltype. Elke outfit is afgestemd op jouw
+                        unieke combinatie van stijlvoorkeuren én seizoensgebonden kleurpalet.
                       </p>
                     </div>
                   </div>
