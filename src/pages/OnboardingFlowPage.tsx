@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles, Clock } from "lucide-react";
+import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Sparkles, Clock, AlertCircle, X } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
@@ -66,6 +66,8 @@ export default function OnboardingFlowPage() {
   // Phase transitions
   const [showTransition, setShowTransition] = useState(false);
   const [transitionTo, setTransitionTo] = useState<'swipes' | 'calibration' | 'reveal' | null>(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [attemptedNext, setAttemptedNext] = useState(false);
 
 
   useEffect(() => {
@@ -122,6 +124,7 @@ export default function OnboardingFlowPage() {
 
   const handleAnswer = (field: string, value: any) => {
     setAnswers(prev => ({ ...prev, [field]: value }));
+    setAttemptedNext(false); // Reset validation state when answer changes
 
     // Show Nova reaction for this answer
     setLastAnsweredField(field);
@@ -142,6 +145,7 @@ export default function OnboardingFlowPage() {
 
       return { ...prev, [field]: newValue };
     });
+    setAttemptedNext(false); // Reset validation state when answer changes
   };
 
   const canProceed = () => {
@@ -154,8 +158,32 @@ export default function OnboardingFlowPage() {
     return answer !== undefined && answer !== null && answer !== '';
   };
 
+  // Get validation error message for current step
+  const getValidationError = () => {
+    if (!step || !step.required) return null;
+    const answer = answers[step.field as keyof QuizAnswers];
+
+    if (step.type === 'checkbox' || step.type === 'multiselect') {
+      if (!Array.isArray(answer) || answer.length === 0) {
+        return 'Selecteer minimaal één optie om verder te gaan';
+      }
+    } else {
+      if (answer === undefined || answer === null || answer === '') {
+        return 'Dit veld is verplicht om verder te gaan';
+      }
+    }
+    return null;
+  };
+
   const handleNext = () => {
+    // Check if we can proceed
+    if (!canProceed()) {
+      setAttemptedNext(true);
+      return;
+    }
+
     setShowNovaReaction(false); // Hide reaction when moving forward
+    setAttemptedNext(false); // Reset validation state
 
     if (currentStep < quizSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
@@ -164,9 +192,8 @@ export default function OnboardingFlowPage() {
         setShowEmailCapture(true);
       }
     } else if (phase === 'questions') {
-      // Show transition to swipes
-      setTransitionTo('swipes');
-      setShowTransition(true);
+      // Last question in questions phase - show confirmation before proceeding
+      setShowConfirmationModal(true);
     } else if (phase === 'swipes') {
       // Show transition to calibration
       setTransitionTo('calibration');
@@ -176,6 +203,13 @@ export default function OnboardingFlowPage() {
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleConfirmProceed = () => {
+    setShowConfirmationModal(false);
+    // Show transition to swipes
+    setTransitionTo('swipes');
+    setShowTransition(true);
   };
 
   const handleTransitionComplete = () => {
@@ -202,6 +236,8 @@ export default function OnboardingFlowPage() {
   };
 
   const handleBack = () => {
+    setAttemptedNext(false); // Reset validation state when going back
+
     if (phase === 'swipes') {
       setPhase('questions');
       setCurrentStep(quizSteps.length - 1);
@@ -1065,9 +1101,21 @@ export default function OnboardingFlowPage() {
             </button>
           </div>
 
-          {/* Help Text */}
-          {step.required && (
-            <p className="text-center text-sm text-gray-600 mt-6">
+          {/* Validation Error - Only show if user attempted to proceed */}
+          {attemptedNext && getValidationError() && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm font-medium"
+            >
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span>{getValidationError()}</span>
+            </motion.div>
+          )}
+
+          {/* Help Text - Only show if no error */}
+          {step.required && !attemptedNext && (
+            <p className="text-center text-sm text-gray-600 mt-4">
               * Deze vraag is verplicht
             </p>
           )}
@@ -1075,6 +1123,65 @@ export default function OnboardingFlowPage() {
       </div>
 
     </main>
+
+      {/* Confirmation Modal - Before proceeding to visual preferences */}
+      {showConfirmationModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Bijna klaar!</h3>
+                  <p className="text-sm text-gray-600">Je antwoorden worden bewaard</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowConfirmationModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <p className="text-gray-700">
+                Je hebt alle vragen beantwoord! 🎉
+              </p>
+              <p className="text-gray-700">
+                Nu gaan we je <strong>visuele voorkeuren</strong> ontdekken door je foto's te laten zien. Dit helpt ons om nog betere outfits voor je samen te stellen.
+              </p>
+              <div className="bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--ff-color-primary-900)] font-medium">
+                  💡 Je kunt altijd terugkeren naar deze pagina om je antwoorden aan te passen
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowConfirmationModal(false)}
+                className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all"
+              >
+                Terug naar vragen
+              </button>
+              <button
+                onClick={handleConfirmProceed}
+                className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <span>Verder gaan</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Phase Transition for questions phase */}
       {showTransition && transitionTo && (
