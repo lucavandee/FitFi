@@ -56,7 +56,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {/* First-Time User Tooltip */}
+      {/* First-Time User Tooltip - WCAG AA Compliant */}
       <AnimatePresence>
         {showTooltip && (
           <motion.div
@@ -77,8 +77,13 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
                        shadow-[0_8px_30px_rgba(0,0,0,0.25)]
                        pointer-events-none whitespace-nowrap
                        flex items-center gap-2"
+            style={{
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+            }}
+            role="tooltip"
+            aria-label="Instructies voor swipe interactie"
           >
-            <span className="text-xl">👇</span>
+            <span className="text-xl" role="img" aria-label="Wijzende vinger">👇</span>
             <span>Klik op de knoppen of sleep de foto</span>
           </motion.div>
         )}
@@ -112,23 +117,36 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             draggable={false}
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+          {/* Stronger gradient for text contrast - WCAG AA compliance */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <div className="text-sm font-medium opacity-80">
-              {index + 1} van {total}
+          {/* Progress Indicator with Enhanced Contrast */}
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-sm font-semibold"
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backdropFilter: 'blur(8px)',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.5)'
+              }}
+            >
+              <span className="text-xs opacity-90">{index + 1} van {total}</span>
             </div>
           </div>
         </div>
 
+        {/* Exit Direction Badges - Enhanced Contrast & Accessibility */}
         {exitDirection === 'left' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="absolute top-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-xl"
+            className="absolute top-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-[0_8px_30px_rgba(0,0,0,0.4)] ring-4 ring-white/30"
+            style={{
+              backdropFilter: 'blur(8px)'
+            }}
           >
-            <X className="w-6 h-6" />
+            <X className="w-6 h-6" strokeWidth={3} />
           </motion.div>
         )}
 
@@ -137,18 +155,23 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             initial={{ opacity: 0, scale: 0.5, rotate: 180 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="absolute top-8 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-xl"
+            className="absolute top-8 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-[0_8px_30px_rgba(0,0,0,0.4)] ring-4 ring-white/30"
+            style={{
+              backdropFilter: 'blur(8px)'
+            }}
           >
-            <Heart className="w-6 h-6 fill-current" />
+            <Heart className="w-6 h-6 fill-current" strokeWidth={3} />
           </motion.div>
         )}
       </motion.div>
 
-      {/* Action Buttons - Always Visible, Larger on Desktop */}
+      {/* Action Buttons - Always Visible, Larger on Desktop, Accessible */}
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex gap-4 sm:gap-8 z-10 mt-6 sm:mt-8 flex-shrink-0"
+        role="group"
+        aria-label="Stijl voorkeur keuze"
       >
         <motion.button
           onClick={() => handleButtonClick('left')}
@@ -166,11 +189,11 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
             boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
           }}
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow"
-          aria-label="Niet mijn stijl"
-          title="Niet mijn stijl (of veeg naar links)"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-red-300"
+          aria-label="Niet mijn stijl - veeg of klik links"
+          title="Niet mijn stijl (veeg naar links of druk op pijltje-links)"
         >
-          <X className="w-8 h-8 sm:w-11 sm:h-11 text-red-500" strokeWidth={2.5} />
+          <X className="w-8 h-8 sm:w-11 sm:h-11 text-red-500" strokeWidth={2.8} aria-hidden="true" />
         </motion.button>
 
         <motion.button
@@ -190,11 +213,11 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
             boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
             delay: 0.5
           }}
-          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow"
-          aria-label="Dit spreekt me aan"
-          title="Dit spreekt me aan (of veeg naar rechts)"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-surface)] border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-shadow focus:outline-none focus:ring-4 focus:ring-green-300"
+          aria-label="Dit spreekt me aan - veeg of klik rechts"
+          title="Dit spreekt me aan (veeg naar rechts, druk op pijltje-rechts of spatiebalk)"
         >
-          <Heart className="w-8 h-8 sm:w-11 sm:h-11 text-green-500" strokeWidth={2.5} />
+          <Heart className="w-8 h-8 sm:w-11 sm:h-11 text-green-500" strokeWidth={2.8} fill="currentColor" aria-hidden="true" />
         </motion.button>
       </motion.div>
     </div>
