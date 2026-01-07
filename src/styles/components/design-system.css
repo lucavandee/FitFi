@@ -1,0 +1,597 @@
+/* ============================================
+   FITFI DESIGN SYSTEM
+   Visuele consistentie voor alle componenten
+   ============================================ */
+
+/* ----------------
+   TYPOGRAPHY SCALE
+   Uniform per hiërarchie-niveau
+   ---------------- */
+
+:root {
+  /* Display - Hero headlines */
+  --ff-text-display: clamp(2.25rem, 8vw + 1rem, 6rem);
+  --ff-text-display-line: 1.05;
+  --ff-text-display-weight: 700;
+  --ff-text-display-tracking: -0.02em;
+
+  /* H1 - Section headlines */
+  --ff-text-h1: clamp(1.75rem, 4vw + 0.5rem, 3.5rem);
+  --ff-text-h1-line: 1.2;
+  --ff-text-h1-weight: 700;
+  --ff-text-h1-tracking: -0.01em;
+
+  /* H2 - Subsection headlines */
+  --ff-text-h2: clamp(1.5rem, 3vw + 0.5rem, 2.5rem);
+  --ff-text-h2-line: 1.3;
+  --ff-text-h2-weight: 700;
+  --ff-text-h2-tracking: -0.005em;
+
+  /* H3 - Card/Component titles */
+  --ff-text-h3: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
+  --ff-text-h3-line: 1.4;
+  --ff-text-h3-weight: 700;
+  --ff-text-h3-tracking: 0;
+
+  /* Body Large - Lead paragraphs */
+  --ff-text-body-lg: clamp(1.125rem, 2vw + 0.5rem, 1.5rem);
+  --ff-text-body-lg-line: 1.6;
+  --ff-text-body-lg-weight: 300;
+
+  /* Body - Regular paragraphs */
+  --ff-text-body: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
+  --ff-text-body-line: 1.7;
+  --ff-text-body-weight: 400;
+
+  /* Body Small - Captions, labels */
+  --ff-text-body-sm: clamp(0.875rem, 1vw + 0.5rem, 1rem);
+  --ff-text-body-sm-line: 1.6;
+  --ff-text-body-sm-weight: 500;
+}
+
+/* Typography utility classes */
+.ff-display {
+  font-size: var(--ff-text-display);
+  line-height: var(--ff-text-display-line);
+  font-weight: var(--ff-text-display-weight);
+  letter-spacing: var(--ff-text-display-tracking);
+}
+
+.ff-h1 {
+  font-size: var(--ff-text-h1);
+  line-height: var(--ff-text-h1-line);
+  font-weight: var(--ff-text-h1-weight);
+  letter-spacing: var(--ff-text-h1-tracking);
+}
+
+.ff-h2 {
+  font-size: var(--ff-text-h2);
+  line-height: var(--ff-text-h2-line);
+  font-weight: var(--ff-text-h2-weight);
+  letter-spacing: var(--ff-text-h2-tracking);
+}
+
+.ff-h3 {
+  font-size: var(--ff-text-h3);
+  line-height: var(--ff-text-h3-line);
+  font-weight: var(--ff-text-h3-weight);
+  letter-spacing: var(--ff-text-h3-tracking);
+}
+
+.ff-body-lg {
+  font-size: var(--ff-text-body-lg);
+  line-height: var(--ff-text-body-lg-line);
+  font-weight: var(--ff-text-body-lg-weight);
+}
+
+.ff-body {
+  font-size: var(--ff-text-body);
+  line-height: var(--ff-text-body-line);
+  font-weight: var(--ff-text-body-weight);
+}
+
+.ff-body-sm {
+  font-size: var(--ff-text-body-sm);
+  line-height: var(--ff-text-body-sm-line);
+  font-weight: var(--ff-text-body-sm-weight);
+}
+
+/* ----------------
+   ICON SYSTEM
+   Consistent icoon-badges
+   ---------------- */
+
+:root {
+  /* Icon sizes */
+  --ff-icon-xs: clamp(2rem, 3vw, 2.5rem);      /* 32-40px */
+  --ff-icon-sm: clamp(2.5rem, 4vw, 3rem);      /* 40-48px */
+  --ff-icon-md: clamp(3rem, 5vw, 4rem);        /* 48-64px */
+  --ff-icon-lg: clamp(4rem, 6vw, 5rem);        /* 64-80px */
+
+  /* Icon badge styling */
+  --ff-icon-radius: 1rem;
+  --ff-icon-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon badge base */
+.ff-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ff-icon-radius);
+  box-shadow: var(--ff-icon-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ff-icon-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon sizes */
+.ff-icon-badge--xs {
+  width: var(--ff-icon-xs);
+  height: var(--ff-icon-xs);
+}
+
+.ff-icon-badge--sm {
+  width: var(--ff-icon-sm);
+  height: var(--ff-icon-sm);
+}
+
+.ff-icon-badge--md {
+  width: var(--ff-icon-md);
+  height: var(--ff-icon-md);
+}
+
+.ff-icon-badge--lg {
+  width: var(--ff-icon-lg);
+  height: var(--ff-icon-lg);
+}
+
+/* Icon within badge sizing */
+.ff-icon-badge--xs svg {
+  width: 50%;
+  height: 50%;
+}
+
+.ff-icon-badge--sm svg,
+.ff-icon-badge--md svg,
+.ff-icon-badge--lg svg {
+  width: 45%;
+  height: 45%;
+}
+
+/* ----------------
+   BUTTON SYSTEM
+   Uniform button stijlen
+   ---------------- */
+
+:root {
+  /* Button sizing */
+  --ff-btn-height-sm: 44px;
+  --ff-btn-height-md: 52px;
+  --ff-btn-height-lg: 56px;
+  --ff-btn-height-xl: 64px;
+
+  --ff-btn-padding-x-sm: 1.5rem;
+  --ff-btn-padding-x-md: 2rem;
+  --ff-btn-padding-x-lg: 2.5rem;
+
+  /* Button styling */
+  --ff-btn-radius: 0.75rem;
+  --ff-btn-radius-lg: 1rem;
+  --ff-btn-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  --ff-btn-shadow-hover: 0 15px 40px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Button base */
+.ff-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  border-radius: var(--ff-btn-radius);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  font-family: inherit;
+}
+
+/* Button sizes */
+.ff-btn--sm {
+  min-height: var(--ff-btn-height-sm);
+  padding: 0.75rem var(--ff-btn-padding-x-sm);
+  font-size: clamp(0.875rem, 1.5vw + 0.5rem, 1rem);
+}
+
+.ff-btn--md {
+  min-height: var(--ff-btn-height-md);
+  padding: 1rem var(--ff-btn-padding-x-md);
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.125rem);
+  border-radius: var(--ff-btn-radius-lg);
+}
+
+.ff-btn--lg {
+  min-height: var(--ff-btn-height-lg);
+  padding: 1rem var(--ff-btn-padding-x-lg);
+  font-size: clamp(1.0625rem, 2vw + 0.5rem, 1.25rem);
+  border-radius: var(--ff-btn-radius-lg);
+}
+
+.ff-btn--xl {
+  min-height: var(--ff-btn-height-xl);
+  padding: 1.25rem var(--ff-btn-padding-x-lg);
+  font-size: clamp(1.125rem, 2vw + 0.5rem, 1.375rem);
+  border-radius: var(--ff-btn-radius-lg);
+}
+
+/* Button variants */
+.ff-btn--primary {
+  background: var(--ff-color-primary-700);
+  color: white;
+  box-shadow: var(--ff-btn-shadow);
+}
+
+.ff-btn--primary:hover {
+  background: var(--ff-color-primary-600);
+  box-shadow: var(--ff-btn-shadow-hover);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.ff-btn--primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.ff-btn--secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 2px solid var(--color-border);
+}
+
+.ff-btn--secondary:hover {
+  border-color: var(--ff-color-primary-300);
+  background: var(--ff-color-primary-50);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.ff-btn--ghost {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.ff-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* ----------------
+   CARD SYSTEM
+   Uniforme card styling
+   ---------------- */
+
+:root {
+  /* Card styling */
+  --ff-card-bg: var(--color-surface);
+  --ff-card-border: var(--color-border);
+  --ff-card-radius: 1rem;
+  --ff-card-radius-lg: 1.5rem;
+  --ff-card-radius-xl: 2rem;
+  --ff-card-padding: clamp(1.5rem, 4vw, 2.5rem);
+  --ff-card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  --ff-card-shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* Card base */
+.ff-card {
+  background: var(--ff-card-bg);
+  border: 2px solid var(--ff-card-border);
+  border-radius: var(--ff-card-radius-lg);
+  padding: var(--ff-card-padding);
+  box-shadow: var(--ff-card-shadow);
+  transition: all 0.3s ease;
+}
+
+.ff-card:hover {
+  box-shadow: var(--ff-card-shadow-hover);
+  transform: translateY(-4px);
+  border-color: var(--ff-color-primary-200);
+}
+
+/* Card variants */
+.ff-card--sm {
+  border-radius: var(--ff-card-radius);
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.ff-card--lg {
+  border-radius: var(--ff-card-radius-xl);
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+
+/* ----------------
+   BADGE SYSTEM
+   Consistent badge stijlen
+   ---------------- */
+
+:root {
+  --ff-badge-radius: 9999px;
+  --ff-badge-padding: 0.5rem 1rem;
+  --ff-badge-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ff-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: var(--ff-badge-padding);
+  border-radius: var(--ff-badge-radius);
+  font-weight: 700;
+  font-size: clamp(0.75rem, 1vw + 0.5rem, 0.875rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--ff-badge-shadow);
+}
+
+.ff-badge--primary {
+  background: var(--ff-color-primary-50);
+  color: var(--ff-color-primary-700);
+  border: 2px solid var(--ff-color-primary-200);
+}
+
+.ff-badge--accent {
+  background: var(--ff-color-accent-50);
+  color: var(--ff-color-accent-700);
+  border: 2px solid var(--ff-color-accent-200);
+}
+
+.ff-badge--white {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ff-color-primary-700);
+  border: 2px solid transparent;
+  backdrop-filter: blur(10px);
+}
+
+/* ----------------
+   SPACING SYSTEM
+   Consistent spacing patterns
+   ---------------- */
+
+:root {
+  /* Section spacing */
+  --ff-section-py: clamp(3rem, 8vw, 6rem);
+  --ff-section-py-sm: clamp(2rem, 6vw, 4rem);
+  --ff-section-py-lg: clamp(4rem, 10vw, 8rem);
+
+  /* Component spacing */
+  --ff-gap-xs: clamp(0.5rem, 1vw, 0.75rem);
+  --ff-gap-sm: clamp(0.75rem, 2vw, 1rem);
+  --ff-gap-md: clamp(1rem, 3vw, 1.5rem);
+  --ff-gap-lg: clamp(1.5rem, 4vw, 2.5rem);
+  --ff-gap-xl: clamp(2rem, 6vw, 4rem);
+}
+
+/* Spacing utilities */
+.ff-section {
+  padding-top: var(--ff-section-py);
+  padding-bottom: var(--ff-section-py);
+}
+
+.ff-section--sm {
+  padding-top: var(--ff-section-py-sm);
+  padding-bottom: var(--ff-section-py-sm);
+}
+
+.ff-section--lg {
+  padding-top: var(--ff-section-py-lg);
+  padding-bottom: var(--ff-section-py-lg);
+}
+
+.ff-gap-xs { gap: var(--ff-gap-xs); }
+.ff-gap-sm { gap: var(--ff-gap-sm); }
+.ff-gap-md { gap: var(--ff-gap-md); }
+.ff-gap-lg { gap: var(--ff-gap-lg); }
+.ff-gap-xl { gap: var(--ff-gap-xl); }
+
+/* ----------------
+   BORDER RADIUS SYSTEM
+   Consistent rounding
+   ---------------- */
+
+:root {
+  --ff-radius-sm: 0.5rem;   /* 8px */
+  --ff-radius-md: 0.75rem;  /* 12px */
+  --ff-radius-lg: 1rem;     /* 16px */
+  --ff-radius-xl: 1.5rem;   /* 24px */
+  --ff-radius-2xl: 2rem;    /* 32px */
+  --ff-radius-3xl: 2.5rem;  /* 40px */
+  --ff-radius-full: 9999px;
+}
+
+.ff-rounded-sm { border-radius: var(--ff-radius-sm); }
+.ff-rounded-md { border-radius: var(--ff-radius-md); }
+.ff-rounded-lg { border-radius: var(--ff-radius-lg); }
+.ff-rounded-xl { border-radius: var(--ff-radius-xl); }
+.ff-rounded-2xl { border-radius: var(--ff-radius-2xl); }
+.ff-rounded-3xl { border-radius: var(--ff-radius-3xl); }
+.ff-rounded-full { border-radius: var(--ff-radius-full); }
+
+/* ----------------
+   SHADOW SYSTEM
+   Consistent depth
+   ---------------- */
+
+:root {
+  --ff-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --ff-shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  --ff-shadow-lg: 0 20px 40px -5px rgba(0, 0, 0, 0.15);
+  --ff-shadow-xl: 0 30px 60px -10px rgba(0, 0, 0, 0.2);
+  --ff-shadow-2xl: 0 40px 80px -15px rgba(0, 0, 0, 0.25);
+}
+
+.ff-shadow-sm { box-shadow: var(--ff-shadow-sm); }
+.ff-shadow-md { box-shadow: var(--ff-shadow-md); }
+.ff-shadow-lg { box-shadow: var(--ff-shadow-lg); }
+.ff-shadow-xl { box-shadow: var(--ff-shadow-xl); }
+.ff-shadow-2xl { box-shadow: var(--ff-shadow-2xl); }
+
+/* ----------------
+   GRADIENT SYSTEM
+   Predefined gradients voor consistentie
+   ---------------- */
+
+:root {
+  /* Brand gradients */
+  --ff-gradient-primary: linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-400));
+  --ff-gradient-accent: linear-gradient(135deg, var(--ff-color-accent-600), var(--ff-color-accent-400));
+  --ff-gradient-warm: linear-gradient(135deg, #ff6b6b, #feca57);
+  --ff-gradient-cool: linear-gradient(135deg, #4facfe, #00f2fe);
+
+  /* Feature gradients (voor iconen) */
+  --ff-gradient-pink-purple: linear-gradient(135deg, #ec4899, #9333ea);
+  --ff-gradient-yellow-orange: linear-gradient(135deg, #fbbf24, #f97316);
+  --ff-gradient-blue-cyan: linear-gradient(135deg, #3b82f6, #06b6d4);
+  --ff-gradient-green-teal: linear-gradient(135deg, #10b981, #14b8a6);
+}
+
+.ff-gradient-primary { background: var(--ff-gradient-primary); }
+.ff-gradient-accent { background: var(--ff-gradient-accent); }
+.ff-gradient-warm { background: var(--ff-gradient-warm); }
+.ff-gradient-cool { background: var(--ff-gradient-cool); }
+
+/* ----------------
+   ANIMATION SYSTEM
+   Consistent transitions
+   ---------------- */
+
+:root {
+  --ff-transition-fast: 150ms ease;
+  --ff-transition-base: 300ms ease;
+  --ff-transition-slow: 500ms ease;
+
+  --ff-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ff-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.ff-transition-fast { transition: all var(--ff-transition-fast); }
+.ff-transition-base { transition: all var(--ff-transition-base); }
+.ff-transition-slow { transition: all var(--ff-transition-slow); }
+
+/* Hover lift effect - Consistent voor cards/buttons */
+.ff-hover-lift {
+  transition: transform var(--ff-transition-base), box-shadow var(--ff-transition-base);
+}
+
+.ff-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Active press effect */
+.ff-active-press:active {
+  transform: scale(0.98);
+}
+
+/* ----------------
+   COMPONENT PATTERNS
+   Herbruikbare patronen
+   ---------------- */
+
+/* Section header pattern */
+.ff-section-header {
+  text-align: center;
+  margin-bottom: var(--ff-gap-xl);
+}
+
+.ff-section-header__badge {
+  margin-bottom: var(--ff-gap-md);
+}
+
+.ff-section-header__title {
+  margin-bottom: var(--ff-gap-md);
+}
+
+.ff-section-header__description {
+  color: var(--color-muted);
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Feature item pattern */
+.ff-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ff-gap-md);
+}
+
+.ff-feature-item__icon {
+  flex-shrink: 0;
+}
+
+.ff-feature-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Stat item pattern */
+.ff-stat {
+  text-align: center;
+}
+
+.ff-stat__value {
+  font-size: var(--ff-text-h1);
+  font-weight: 700;
+  color: var(--ff-color-primary-700);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.ff-stat__label {
+  font-size: var(--ff-text-body-sm);
+  color: var(--color-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ----------------
+   RESPONSIVE UTILITIES
+   Breakpoint-aware helpers
+   ---------------- */
+
+/* Hide on mobile */
+@media (max-width: 639px) {
+  .ff-hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide on tablet */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .ff-hide-tablet {
+    display: none !important;
+  }
+}
+
+/* Hide on desktop */
+@media (min-width: 1024px) {
+  .ff-hide-desktop {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+.ff-show-mobile {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .ff-show-mobile {
+    display: none;
+  }
+}

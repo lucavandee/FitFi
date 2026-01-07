@@ -4,6 +4,7 @@
 /* NIEUW: addon laadt de hero-band en mobile polish app-breed */
 @import "./styles/polish.addon.css";
 @import "./styles/components/smart-fallback.css";
+@import "./styles/components/design-system.css";
 @import "./styles/micro-interactions.css";
 @import "./styles/mobile-touch.css";
 @import "./styles/blog-reading.css";

@@ -71,24 +71,24 @@ const Features: React.FC = () => {
             return (
               <div
                 key={index}
-                className="group relative bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-2xl p-8 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10"
+                className="group relative bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 hover:-translate-y-2 transition-all duration-300 hover:shadow-xl hover:border-[var(--ff-color-primary-200)]"
               >
-                {/* Icon with gradient background */}
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} mb-6 shadow-lg`}>
-                  <Icon className="w-6 h-6 text-white" />
+                {/* Icon with gradient background - Consistent with design system */}
+                <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-r ${feature.gradient} mb-6 shadow-lg hover:shadow-xl transition-shadow duration-300`}>
+                  <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" strokeWidth={2} />
                 </div>
 
-                {/* Content */}
-                <h3 className="text-xl font-bold text-[var(--color-text)] mb-4 group-hover:text-emerald-600 transition-colors">
+                {/* Content - Typography consistent */}
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[var(--color-text)] mb-4 leading-tight">
                   {feature.title}
                 </h3>
-                
-                <p className="text-gray-600 leading-relaxed">
+
+                <p className="text-base sm:text-lg text-[var(--color-muted)] leading-[1.7]">
                   {feature.description}
                 </p>
 
                 {/* Hover effect overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl lg:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
             );
           })}
