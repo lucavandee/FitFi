@@ -43,22 +43,22 @@ export const quizSteps: QuizStep[] = [
       {
         value: 'male',
         label: 'Heren',
-        description: 'Mannelijke stijladvies'
+        description: 'Stijladvies voor mannen'
       },
       {
         value: 'female',
         label: 'Dames',
-        description: 'Vrouwelijke stijladvies'
+        description: 'Stijladvies voor vrouwen'
       },
       {
         value: 'non-binary',
         label: 'Non-binair',
-        description: 'Gender-neutrale stijladvies'
+        description: 'Gender-neutraal stijladvies'
       },
       {
         value: 'prefer-not-to-say',
         label: 'Zeg ik liever niet',
-        description: 'We gebruiken algemene stijladvies'
+        description: 'We gebruiken algemeen stijladvies'
       }
     ]
   },
