@@ -23,6 +23,7 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "prepare": "echo 'husky skipped (Bolt)'",
     "doctor": "node scripts/doctor.mjs",
+    "scan:secrets": "bash scripts/scan-secrets.sh",
     "predev": "npm run doctor",
     "prebuild": "npm run doctor",
     "start": "vite"
