@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { SwipeCard } from './SwipeCard';
 import { ImagePreloader } from './ImagePreloader';
+import { StyleAnalysisTransition } from './StyleAnalysisTransition';
 import { Sparkles, Loader as Loader2, Heart, X } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 
@@ -122,15 +123,9 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
     // Check if we're done
     if (isLastSwipe) {
-      console.log('🎉 ALL SWIPES COMPLETE! Starting celebration...');
+      console.log('🎉 ALL SWIPES COMPLETE! Starting analysis transition...');
       setShowCelebration(true);
-
-      setTimeout(() => {
-        console.log('✅ Celebration done, calling onComplete()');
-        setShowCelebration(false);
-        onComplete();
-      }, 2500);
-
+      // Note: StyleAnalysisTransition handles timing and onComplete call
       return;
     }
 
@@ -227,38 +222,14 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         />
       )}
 
-      {/* Celebration Overlay - ALWAYS on top */}
-      <AnimatePresence>
-        {showCelebration && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md"
-            style={{ pointerEvents: 'none' }}
-          >
-            <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className="text-center"
-            >
-              <motion.div
-                animate={{
-                  rotate: [0, 10, -10, 10, 0],
-                  scale: [1, 1.1, 1, 1.1, 1]
-                }}
-                transition={{ duration: 0.6, repeat: 2 }}
-                className="text-8xl mb-6"
-              >
-                🎉
-              </motion.div>
-              <h3 className="text-3xl font-bold text-white mb-3">Perfect!</h3>
-              <p className="text-xl text-white/90">Je stijlprofiel is compleet!</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Analysis Transition - After last swipe */}
+      <StyleAnalysisTransition
+        isVisible={showCelebration}
+        onComplete={() => {
+          setShowCelebration(false);
+          onComplete();
+        }}
+      />
 
       {/* Header */}
       <div className="flex-shrink-0 px-4 pt-safe pt-4 sm:pt-6 pb-3 sm:pb-4">
