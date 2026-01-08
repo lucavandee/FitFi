@@ -1,5 +1,6 @@
-import React from 'react';
-import { X, ExternalLink, ShoppingBag, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, ExternalLink, ShoppingBag, Info, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { ProductImage } from '@/components/ui/ProductImage';
 import Button from '@/components/ui/Button';
 import { track } from '@/utils/telemetry';
@@ -27,33 +28,56 @@ interface ProductDetailModalProps {
 
 export default function ProductDetailModal({ product, onClose }: ProductDetailModalProps) {
   const { user } = useUser();
+  const [isOpening, setIsOpening] = useState(false);
 
   const handleShopClick = async () => {
     const baseUrl = product.affiliateUrl || product.productUrl;
-    if (!baseUrl || baseUrl === '#') return;
 
-    track('product_click', {
-      product_id: product.id,
-      product_name: product.name,
-      retailer: product.retailer,
-      price: product.price,
-    });
+    if (!baseUrl || baseUrl === '#') {
+      toast.error('Shoplink niet beschikbaar', {
+        description: 'Deze retailer biedt momenteel geen online shoplink aan.',
+        icon: '🛍️',
+      });
+      return;
+    }
 
-    if (isAffiliateConsentGiven()) {
-      const clickRef = buildClickRef({ outfitId: product.id, slot: 1, userId: user?.id });
-      const affiliateUrl = buildAwinUrl(baseUrl, clickRef);
+    setIsOpening(true);
 
-      await logAffiliateClick({
-        clickRef,
-        outfitId: product.id,
-        productUrl: affiliateUrl,
-        userId: user?.id,
-        merchantName: product.retailer,
+    try {
+      track('product_click', {
+        product_id: product.id,
+        product_name: product.name,
+        retailer: product.retailer,
+        price: product.price,
       });
 
-      window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      window.open(baseUrl, '_blank', 'noopener,noreferrer');
+      if (isAffiliateConsentGiven()) {
+        const clickRef = buildClickRef({ outfitId: product.id, slot: 1, userId: user?.id });
+        const affiliateUrl = buildAwinUrl(baseUrl, clickRef);
+
+        await logAffiliateClick({
+          clickRef,
+          outfitId: product.id,
+          productUrl: affiliateUrl,
+          userId: user?.id,
+          merchantName: product.retailer,
+        });
+
+        window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        window.open(baseUrl, '_blank', 'noopener,noreferrer');
+      }
+
+      toast.success('Product opent in nieuw tabblad', {
+        icon: '🛍️',
+      });
+    } catch (error) {
+      console.error('Error opening shop link:', error);
+      toast.error('Kon shoplink niet openen', {
+        description: 'Probeer het opnieuw of gebruik de directe link.',
+      });
+    } finally {
+      setIsOpening(false);
     }
   };
 
@@ -133,17 +157,34 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                 {hasValidUrl ? (
                   <Button
                     onClick={handleShopClick}
+                    disabled={isOpening}
                     variant="primary"
                     size="lg"
                     className="w-full"
+                    aria-label={`Shop ${product.name} bij ${product.retailer || 'winkel'}`}
+                    aria-busy={isOpening}
                   >
-                    <ShoppingBag className="w-5 h-5 mr-2" />
-                    Shop bij {product.retailer || 'winkel'}
-                    <ExternalLink className="w-4 h-4 ml-2" />
+                    {isOpening ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Opent...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag className="w-5 h-5 mr-2" />
+                        Shop bij {product.retailer || 'winkel'}
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                      </>
+                    )}
                   </Button>
                 ) : (
-                  <div className="text-center py-4 text-[var(--color-text)]/60">
-                    <p className="text-sm">Product link niet beschikbaar</p>
+                  <div className="text-center py-6 px-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <p className="text-sm text-amber-800 font-medium mb-1">
+                      Shopfunctie komt binnenkort beschikbaar
+                    </p>
+                    <p className="text-xs text-amber-700">
+                      Deze retailer biedt momenteel geen online shoplink aan
+                    </p>
                   </div>
                 )}
 

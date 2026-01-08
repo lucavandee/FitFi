@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle, Sparkles } from 'lucide-react';
+import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle, Sparkles, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
 import RequireAuth from '@/components/auth/RequireAuth';
@@ -16,6 +16,22 @@ import { ColorHarmonyBadge } from '@/components/outfits/ColorHarmonyBadge';
 import { calculateOutfitColorHarmony } from '@/engine/colorHarmony';
 import { trackSave, trackLike, trackView } from '@/services/ml/interactionTrackingService';
 import { recordOutfitFeedback } from '@/services/ml/adaptiveWeightService';
+import { ShopItemsList } from '@/components/outfits/ShopItemsList';
+
+interface Product {
+  id: string;
+  name: string;
+  brand?: string;
+  imageUrl: string;
+  price?: number;
+  currency?: string;
+  retailer?: string;
+  affiliateUrl?: string;
+  productUrl?: string;
+  category?: string;
+  color?: string;
+  colors?: string[];
+}
 
 interface OutfitCardProps {
   outfit: {
@@ -28,7 +44,7 @@ interface OutfitCardProps {
     dominantColorName?: string;
     archetype?: string;
     tags?: string[];
-    products?: Array<{ colors?: string[] }>;
+    products?: Product[];
   };
   onSave?: () => void;
   onDislike?: () => void;
@@ -52,6 +68,7 @@ export default function OutfitCard({
   const [explanation, setExplanation] = useState<string>('');
   const [showExplanationModal, setShowExplanationModal] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showShopModal, setShowShopModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState<{
     save: boolean;
     like: boolean;
@@ -245,11 +262,11 @@ export default function OutfitCard({
       }
       
       // Track successful explanation
-      track('explanation_generated', { 
+      track('explanation_generated', {
         outfit_id: outfit.id,
         explanation_length: explanationText.length
       });
-      
+
       toast.success('Nova heeft deze outfit uitgelegd!');
     } catch (error) {
       console.error('Error explaining outfit:', error);
@@ -266,6 +283,36 @@ export default function OutfitCard({
         setIsProcessing(prev => ({ ...prev, explain: false }));
       }, 200);
     }
+  };
+
+  const handleShopClick = () => {
+    if (!outfit.products || outfit.products.length === 0) {
+      toast('Geen items beschikbaar', {
+        description: 'Dit outfit bevat nog geen shopbare items.',
+        icon: '🛍️',
+      });
+      return;
+    }
+
+    const availableProducts = outfit.products.filter(
+      (p) => p.affiliateUrl || p.productUrl
+    );
+
+    if (availableProducts.length === 0) {
+      toast('Shopfunctie komt binnenkort beschikbaar', {
+        description: 'Deze items zijn momenteel niet online beschikbaar.',
+        icon: '⏳',
+      });
+      return;
+    }
+
+    track('shop_button_click', {
+      outfit_id: outfit.id,
+      product_count: outfit.products.length,
+      available_count: availableProducts.length,
+    });
+
+    setShowShopModal(true);
   };
 
   const [isHovered, setIsHovered] = useState(false);
@@ -575,12 +622,42 @@ export default function OutfitCard({
               </div>
             </motion.button>
           </RequireAuth>
+
+          {/* Shop Button */}
+          {outfit.products && outfit.products.length > 0 && (
+            <motion.button
+              aria-label="Shop deze look"
+              title="Bekijk en shop alle items uit dit outfit"
+              onClick={handleShopClick}
+              className="col-span-2 px-4 py-2.5 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <ShoppingBag className="w-4 h-4" />
+                <span>Shop deze look ({outfit.products.filter(p => p.affiliateUrl || p.productUrl).length}/{outfit.products.length})</span>
+              </div>
+            </motion.button>
+          )}
         </motion.div>
       </div>
       
       <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
         <strong>Waarom dit werkt:</strong> de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
       </div>
+
+      {/* Shop Modal */}
+      <AnimatePresence>
+        {showShopModal && outfit.products && (
+          <ShopItemsList
+            products={outfit.products}
+            outfitId={outfit.id}
+            isModal={true}
+            onClose={() => setShowShopModal(false)}
+            title={`Shop: ${outfit.title}`}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
