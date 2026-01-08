@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Minus, RefreshCw, Heart, Sparkles } from 'lucide-react';
+import { Check, X, Minus, RefreshCw, Heart, Sparkles, Briefcase, Coffee, Moon } from 'lucide-react';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import SmartImage from '@/components/ui/SmartImage';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
@@ -90,22 +90,81 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     nova_insight: outfit.novaInsight
   };
 
+  // Get occasion icon and colors
+  const getOccasionDetails = () => {
+    const occasion = outfit.occasion?.toLowerCase() || 'casual';
+    const occasionMap: Record<string, { icon: React.ComponentType<any>; bgClass: string; borderClass: string; title: string; subtitle: string }> = {
+      work: {
+        icon: Briefcase,
+        bgClass: 'bg-gradient-to-br from-gray-50 to-blue-50',
+        borderClass: 'border-blue-200',
+        title: 'Kantoor',
+        subtitle: 'Zakelijke meeting of werkdag'
+      },
+      casual: {
+        icon: Coffee,
+        bgClass: 'bg-gradient-to-br from-amber-50 to-orange-50',
+        borderClass: 'border-orange-200',
+        title: 'Casual dag uit',
+        subtitle: 'Lunch, koffie, boodschappen'
+      },
+      evening: {
+        icon: Moon,
+        bgClass: 'bg-gradient-to-br from-indigo-50 to-purple-50',
+        borderClass: 'border-purple-200',
+        title: 'Avondje uit',
+        subtitle: 'Restaurant, borrel of diner'
+      }
+    };
+    return occasionMap[occasion] || occasionMap.casual;
+  };
+
+  const { icon: OccasionIcon, bgClass, borderClass, title, subtitle } = getOccasionDetails();
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lg)] transition-shadow duration-300"
+      className={`bg-[var(--color-surface)] border-2 ${borderClass} rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300`}
     >
-      <div className="grid md:grid-cols-[1.2fr_1fr] gap-0">
-        <div className="relative aspect-[4/5] md:aspect-auto bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)]">
-          <div className="absolute inset-0 grid grid-cols-2 gap-3 p-4 sm:p-6">
+      {/* Header with Icon */}
+      <div className={`${bgClass} px-6 py-5 border-b-2 ${borderClass}`}>
+        <div className="flex items-center gap-4">
+          <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
+            <OccasionIcon className="w-7 h-7 text-[var(--color-text)]" strokeWidth={1.5} />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-[var(--color-text)] mb-0.5">
+              {title}
+            </h3>
+            <p className="text-sm text-[var(--color-text)]/70">
+              {subtitle}
+            </p>
+          </div>
+          <motion.button
+            onClick={handleSaveOutfit}
+            disabled={isSaving || disabled}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-11 h-11 rounded-full bg-white border-2 border-[var(--color-border)] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0 shadow-sm"
+            title="Bewaar outfit"
+          >
+            <Heart className="w-5 h-5 text-[var(--color-muted)] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
+          </motion.button>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-[1fr_1fr] gap-0">
+        {/* Product Images Grid */}
+        <div className="relative bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)] p-6">
+          <div className="grid grid-cols-2 gap-3">
             {outfit.items.top && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-lg ring-1 ring-black/5"
+                className="aspect-square bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
               >
                 <SmartImage
                   src={outfit.items.top.image_url}
@@ -119,7 +178,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="aspect-square bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-lg ring-1 ring-black/5"
+                className="aspect-square bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
               >
                 <SmartImage
                   src={outfit.items.bottom.image_url}
@@ -133,7 +192,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="col-span-2 aspect-[2/1] bg-white rounded-[var(--radius-xl)] overflow-hidden shadow-lg ring-1 ring-black/5"
+                className="col-span-2 aspect-[2/1] bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
               >
                 <SmartImage
                   src={outfit.items.shoes.image_url}
@@ -142,36 +201,29 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                 />
               </motion.div>
             )}
+            {outfit.items.accessory && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+                className="col-span-2 aspect-[2/1] bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
+              >
+                <SmartImage
+                  src={outfit.items.accessory.image_url}
+                  alt={outfit.items.accessory.name}
+                  className="w-full h-full object-contain p-2"
+                />
+              </motion.div>
+            )}
           </div>
         </div>
 
+        {/* Details Section */}
         <div className="space-y-4 p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
-              <div className="flex items-start gap-2">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[var(--color-text)]">
-                    {outfit.title}
-                  </h3>
-                  <p className="text-sm text-[var(--color-muted)] mt-1">
-                    {outfit.occasion === 'work' ? 'Perfect voor werk' : 'Casual daily look'}
-                  </p>
-                </div>
-                <motion.button
-                  onClick={handleSaveOutfit}
-                  disabled={isSaving || disabled}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="w-9 h-9 rounded-full bg-white border-2 border-[var(--color-border)] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0"
-                  title="Bewaar outfit"
-                >
-                  <Heart className="w-4 h-4 text-[var(--color-muted)] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
-                </motion.button>
-              </div>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <div className="text-sm text-[var(--color-muted)]">Totaal</div>
-              <div className="text-lg font-semibold text-[var(--color-text)]">
+              <div className="text-sm font-medium text-[var(--color-muted)] mb-1">Totaalprijs</div>
+              <div className="text-2xl font-bold text-[var(--color-text)]">
                 €{formattedTotal}
               </div>
             </div>
@@ -268,10 +320,10 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                   ? { scale: [1, 1.08, 1], transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] } }
                   : {}
               }
-              className={`w-full py-4 px-4 rounded-[var(--radius-xl)] font-semibold transition-all flex items-center justify-center gap-2 relative overflow-hidden ${
+              className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden shadow-md ${
                 selectedFeedback === 'spot_on'
                   ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-xl shadow-green-500/30'
-                  : 'bg-white text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-green-500 hover:text-green-600 hover:shadow-md'
+                  : 'bg-white text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-green-500 hover:text-green-600 hover:shadow-lg'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <motion.div
@@ -281,7 +333,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                     : {}
                 }
               >
-                <Check className="w-5 h-5" />
+                <Check className="w-5 h-5" strokeWidth={3} />
               </motion.div>
               Spot on!
             </motion.button>
@@ -296,13 +348,13 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                   ? { scale: [1, 1.05, 1], transition: { duration: 0.4 } }
                   : {}
               }
-              className={`w-full py-3 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
+              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm shadow-sm ${
                 selectedFeedback === 'maybe'
                   ? 'bg-[var(--ff-color-primary-600)] text-white shadow-lg'
-                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] hover:shadow-sm'
+                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] hover:shadow-md'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              <Minus className="w-4 h-4" />
+              <Minus className="w-4 h-4" strokeWidth={2.5} />
               Misschien
             </motion.button>
 
@@ -316,13 +368,13 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                   ? { scale: [1, 1.05, 1], transition: { duration: 0.4 } }
                   : {}
               }
-              className={`w-full py-3 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm ${
+              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm shadow-sm ${
                 selectedFeedback === 'not_for_me'
                   ? 'bg-red-500 text-white shadow-lg'
-                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-red-500 hover:text-red-600 hover:shadow-sm'
+                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-red-500 hover:text-red-600 hover:shadow-md'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" strokeWidth={2.5} />
               Lijkt me niks
             </motion.button>
 
@@ -332,7 +384,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               disabled={disabled}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 rounded-[var(--radius-xl)] font-medium transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] border border-[var(--ff-color-primary-200)] hover:from-[var(--ff-color-primary-100)] hover:to-[var(--ff-color-primary-200)] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] border border-[var(--ff-color-primary-200)] hover:from-[var(--ff-color-primary-100)] hover:to-[var(--ff-color-primary-200)] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <Sparkles className="w-4 h-4" />
               Smart Remix
