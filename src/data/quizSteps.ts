@@ -129,31 +129,31 @@ export const getSizeFieldsForGender = (gender?: string) => {
 export const quizSteps: QuizStep[] = [
   {
     id: 1,
-    title: 'Voor wie is deze stijlanalyse?',
-    description: 'Dit helpt ons om passende kleding te adviseren',
+    title: 'Zoek je kleding voor heren of dames?',
+    description: 'We tonen passende kledingstijlen en outfits op basis van jouw keuze',
     field: 'gender',
     type: 'radio',
     required: true,
     options: [
       {
-        value: 'male',
-        label: 'Heren',
-        description: 'Stijladvies voor mannen'
-      },
-      {
         value: 'female',
         label: 'Dames',
-        description: 'Stijladvies voor vrouwen'
+        description: 'Ik zoek dameskleding en stijladvies'
+      },
+      {
+        value: 'male',
+        label: 'Heren',
+        description: 'Ik zoek herenkleding en stijladvies'
       },
       {
         value: 'non-binary',
-        label: 'Non-binair',
-        description: 'Gender-neutraal stijladvies'
+        label: 'Beide/Anders',
+        description: 'Toon me gender-neutrale opties'
       },
       {
         value: 'prefer-not-to-say',
-        label: 'Zeg ik liever niet',
-        description: 'We gebruiken algemeen stijladvies'
+        label: 'Liever niet specificeren',
+        description: 'Toon algemene stijlopties'
       }
     ]
   },

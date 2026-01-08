@@ -11,7 +11,7 @@
  * Marketing Terms Used:
  * - "Contrast & ondertoon analyse"
  * - "Seizoensgebonden kleurpalet"
- * - "Complimentaire combinaties"
+ * - "Complementaire combinaties"
  * - "kleurtemperatuur"
  */
 
@@ -62,7 +62,6 @@ export const STYLE_DNA_LABELS: Record<string, StyleDNALabel> = {
         'medium': 'Gemiddeld contrast',
         'low': 'Laag contrast',
         'hoog': 'Hoog contrast',
-        'medium': 'Gemiddeld contrast',
         'laag': 'Laag contrast'
       };
       return contrastMap[value.toLowerCase()] || value;

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
 import { Heart, X } from 'lucide-react';
 
@@ -13,6 +13,24 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
   const [startTime] = useState(Date.now());
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard support for desktop
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (exitDirection) return; // Don't allow multiple swipes
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handleButtonClick('left');
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        handleButtonClick('right');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [exitDirection]);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -50,6 +68,26 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
 
   return (
     <div className="fixed inset-0 flex flex-col bg-[var(--color-bg)]">
+      {/* Instructions - Only show on first card */}
+      {index === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 safe-top"
+        >
+          <div className="bg-white dark:bg-gray-900 rounded-2xl px-6 py-4 shadow-2xl border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+            <p className="text-center text-sm font-medium text-gray-900 dark:text-white">
+              <span className="hidden sm:inline">Swipe, pijltjestoetsen (← →) of knoppen gebruiken</span>
+              <span className="sm:hidden">Swipe of gebruik de knoppen onderaan</span>
+            </p>
+            <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-1">
+              Je kunt meerdere stijlen leuk vinden!
+            </p>
+          </div>
+        </motion.div>
+      )}
+
       {/* Progress indicator - top */}
       <div className="absolute top-0 left-0 right-0 z-30 p-4 safe-top">
         <div className="flex gap-1.5">

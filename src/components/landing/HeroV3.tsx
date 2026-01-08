@@ -58,7 +58,7 @@ export function HeroV3() {
         />
 
         {/* Gradient overlay for text readability - stronger on mobile for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/75 via-black/55 to-black/35 sm:from-black/60 sm:via-black/40 sm:to-black/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/85 via-black/70 to-black/50 sm:from-black/65 sm:via-black/45 sm:to-black/25"></div>
       </div>
 
       {/* Content */}
@@ -76,7 +76,7 @@ export function HeroV3() {
             Jouw stijlgids{' '}
             <span className="relative inline-block">
               <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-accent-300)] via-white to-[var(--ff-color-primary-300)] bg-clip-text text-transparent">
-                in 5 minuten
+                in 2 minuten
               </span>
               <span className="absolute -bottom-2 left-0 right-0 h-3 bg-[var(--ff-color-accent-400)] opacity-30 blur-sm"></span>
             </span>
@@ -94,16 +94,16 @@ export function HeroV3() {
               onClick={handleStartClick}
               className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-9 sm:py-5 lg:px-10 lg:py-6 min-h-[52px] sm:min-h-[56px] bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
             >
-              Start nu
+              Start de quiz
               <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </button>
 
             <button
               onClick={handleExampleClick}
-              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-9 sm:py-5 lg:px-10 lg:py-6 min-h-[52px] sm:min-h-[56px] bg-white/15 hover:bg-white/25 backdrop-blur-md border-2 border-white/40 hover:border-white/60 text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl transition-all duration-300 hover:scale-[1.03]"
+              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-7 sm:py-4 lg:px-8 lg:py-5 min-h-[52px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 hover:border-white/50 text-white rounded-xl sm:rounded-2xl font-medium text-sm sm:text-base lg:text-lg transition-all duration-300"
             >
-              <Play className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-              Zie voorbeeld
+              <Play className="w-4 h-4 sm:w-5 sm:h-5" />
+              Bekijk voorbeeld
             </button>
           </div>
 

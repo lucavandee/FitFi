@@ -13,7 +13,7 @@ const features = [
     bullets: [
       'Contrast & ondertoon analyse',
       'Seizoensgebonden kleurpalet',
-      'Complimentaire combinaties'
+      'Complementaire combinaties'
     ],
     visualGradient: 'from-pink-400 via-purple-400 to-indigo-400',
     reversed: false
