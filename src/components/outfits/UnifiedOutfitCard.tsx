@@ -8,7 +8,8 @@ import {
   X,
   HelpCircle,
   Sparkles,
-  ShoppingBag
+  ShoppingBag,
+  Info
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
@@ -24,6 +25,7 @@ import { calculateOutfitColorHarmony } from '@/engine/colorHarmony';
 import { trackSave, trackLike, trackView } from '@/services/ml/interactionTrackingService';
 import { recordOutfitFeedback } from '@/services/ml/adaptiveWeightService';
 import { ShopItemsList } from '@/components/outfits/ShopItemsList';
+import OutfitDetailsModal from '@/components/outfits/OutfitDetailsModal';
 import { cn } from '@/utils/cn';
 
 interface Product {
@@ -94,6 +96,7 @@ export default function UnifiedOutfitCard({
   const [showExplanationModal, setShowExplanationModal] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [showShopModal, setShowShopModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState<{
     save: boolean;
     like: boolean;
@@ -620,21 +623,25 @@ export default function UnifiedOutfitCard({
               </motion.button>
             </RequireAuth>
 
-            {/* Shop Button */}
-            {outfit.products && outfit.products.length > 0 && (
-              <motion.button
-                aria-label="Shop deze look"
-                onClick={handleShopClick}
-                className="col-span-2 px-4 py-2.5 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2"
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>Shop deze look ({outfit.products.filter(p => p.affiliateUrl || p.productUrl).length}/{outfit.products.length})</span>
-                </div>
-              </motion.button>
-            )}
+            {/* Details Button - Primary CTA */}
+            <motion.button
+              aria-label="Bekijk alle details"
+              title="Bekijk volledige outfit details met alle items"
+              onClick={() => setShowDetailsModal(true)}
+              className="col-span-2 px-4 py-2.5 border-2 border-[var(--color-primary)] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]/90 text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[var(--color-primary)]/20 focus:ring-offset-2 hover:shadow-lg"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Info className="w-4 h-4" />
+                <span>Bekijk alle details</span>
+                {outfit.products && outfit.products.length > 0 && (
+                  <span className="ml-1 px-2 py-0.5 bg-white/20 rounded-full text-xs font-bold">
+                    {outfit.products.length} items
+                  </span>
+                )}
+              </div>
+            </motion.button>
           </motion.div>
         </div>
       </div>
@@ -716,7 +723,7 @@ export default function UnifiedOutfitCard({
         )}
       </AnimatePresence>
 
-      {/* Shop Modal */}
+      {/* Shop Modal (legacy) */}
       <AnimatePresence>
         {showShopModal && outfit.products && (
           <ShopItemsList
@@ -725,6 +732,23 @@ export default function UnifiedOutfitCard({
             isModal={true}
             onClose={() => setShowShopModal(false)}
             title={`Shop: ${outfit.title}`}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Outfit Details Modal */}
+      <AnimatePresence>
+        {showDetailsModal && (
+          <OutfitDetailsModal
+            outfit={outfit}
+            onClose={() => setShowDetailsModal(false)}
+            onShopProduct={(product) => {
+              track('shop_product_from_details', {
+                outfit_id: outfit.id,
+                product_id: product.id,
+                product_name: product.name
+              });
+            }}
           />
         )}
       </AnimatePresence>
