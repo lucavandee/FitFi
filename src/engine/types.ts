@@ -16,12 +16,14 @@ export interface Product {
   affiliateUrl?: string;
   matchScore?: number;
   season?: string[]; // Season property
-  colors?: string[]; // Product colors
-  color?: string; // Single color
+  colors?: string[]; // Product colors (e.g., ['black', 'white', 'grey'])
+  color?: string; // Single color (legacy field)
   // Photo enhancement fields
   photoColorScore?: number;
   photoEnhanced?: boolean;
   undertoneMatch?: 'warm' | 'cool' | 'neutral';
+  // Color season filtering
+  colorSeasonScore?: number; // 0-1 score for color season compatibility
 }
 
 /**

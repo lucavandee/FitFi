@@ -23,6 +23,16 @@ export interface FitFiUser {
   };
 }
 
+export interface ColorProfile {
+  temperature: "warm" | "koel" | "neutraal";
+  value: "licht" | "medium" | "donker";
+  contrast: "laag" | "medium" | "hoog";
+  chroma: "zacht" | "helder";
+  season: "lente" | "zomer" | "herfst" | "winter";
+  paletteName: string;
+  notes?: string[];
+}
+
 export interface UserProfile extends FitFiUser {
   stylePreferences: {
     casual: number;
@@ -31,6 +41,7 @@ export interface UserProfile extends FitFiUser {
     vintage: number;
     minimalist: number;
   };
+  colorProfile?: ColorProfile; // Color season analysis from quiz
 }
 
 interface UserCtx {

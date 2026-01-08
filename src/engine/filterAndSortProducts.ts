@@ -1,6 +1,7 @@
 import { Product, UserProfile, StylePreferences, ProductCategory } from './types';
 import { calculateMatchScore } from './calculateMatchScore';
 import { getProductCategory } from './helpers';
+import { filterProductsByColorSeason, scoreProductColorCompatibility } from './colorSeasonFiltering';
 
 /**
  * Filters and sorts products based on user preferences with enhanced validation
@@ -77,25 +78,55 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
     console.log(`[FilterAndSort] Gender filter (${user.gender}): ${genderFilteredProducts.length}/${productsWithScores.length} products`);
   }
 
+  // Apply color season filtering if user has color profile
+  let colorFilteredProducts = genderFilteredProducts;
+  if (user.colorProfile && user.colorProfile.season) {
+    console.log(`[FilterAndSort] Applying color season filter: ${user.colorProfile.season} (${user.colorProfile.paletteName})`);
+
+    // Strict mode = block incompatible colors completely
+    colorFilteredProducts = filterProductsByColorSeason(
+      genderFilteredProducts,
+      user.colorProfile,
+      true // strictMode = true (block black in Light Neutral, etc.)
+    );
+
+    console.log(`[FilterAndSort] Color season filter (${user.colorProfile.season}): ${colorFilteredProducts.length}/${genderFilteredProducts.length} products`);
+
+    // Add color compatibility score to products for sorting
+    colorFilteredProducts = colorFilteredProducts.map(product => ({
+      ...product,
+      colorSeasonScore: scoreProductColorCompatibility(product, user.colorProfile)
+    }));
+  }
+
   // Filter out products with very low match scores (below threshold)
   const MATCH_THRESHOLD = 0.1; // Minimum match score to include
-  const matchFilteredProducts = genderFilteredProducts.filter(product => 
+  const matchFilteredProducts = colorFilteredProducts.filter(product =>
     (product.matchScore || 0) >= MATCH_THRESHOLD
   );
 
-  console.log(`[FilterAndSort] Match filter (>=${MATCH_THRESHOLD}): ${matchFilteredProducts.length}/${genderFilteredProducts.length} products`);
+  console.log(`[FilterAndSort] Match filter (>=${MATCH_THRESHOLD}): ${matchFilteredProducts.length}/${colorFilteredProducts.length} products`);
 
-  // Sort by match score (highest first), with secondary sort by price for ties
+  // Sort by multiple criteria: color season compatibility + match score + price
   const sortedProducts = matchFilteredProducts.sort((a, b) => {
-    const scoreA = a.matchScore || 0;
-    const scoreB = b.matchScore || 0;
-    
-    // Primary sort: match score (descending)
-    if (scoreB !== scoreA) {
-      return scoreB - scoreA;
+    // Primary sort: color season compatibility (if available)
+    const colorScoreA = (a as any).colorSeasonScore || 0.5;
+    const colorScoreB = (b as any).colorSeasonScore || 0.5;
+
+    if (Math.abs(colorScoreB - colorScoreA) > 0.15) {
+      // Significant difference in color compatibility
+      return colorScoreB - colorScoreA;
     }
-    
-    // Secondary sort: price (ascending) for products with same match score
+
+    // Secondary sort: style match score (descending)
+    const styleScoreA = a.matchScore || 0;
+    const styleScoreB = b.matchScore || 0;
+
+    if (styleScoreB !== styleScoreA) {
+      return styleScoreB - styleScoreA;
+    }
+
+    // Tertiary sort: price (ascending) for products with same scores
     const priceA = a.price || 0;
     const priceB = b.price || 0;
     return priceA - priceB;
