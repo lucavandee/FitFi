@@ -487,21 +487,21 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
-      {/* Style DNA Section - Responsive padding */}
+      {/* Style DNA Section - Responsive padding with wider desktop layout */}
       {hasCompletedQuiz && color && (
         <section className="py-12 sm:py-16 md:py-20 lg:py-32 bg-[var(--color-surface)]/30 relative">
           <div className="ff-container">
             <AnimatedSection>
-              <div className="text-center mb-20">
+              <div className="text-center mb-12 sm:mb-16 lg:mb-20">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-sm font-bold mb-6">
                   <Zap className="w-4 h-4" />
                   Jouw Style DNA Analyse
                 </div>
-                <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
                   Kleuranalyse & Stijlprofiel
                   <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
                   Op basis van contrast & ondertoon analyse en je seizoensgebonden kleurpalet
                 </p>
 
@@ -515,7 +515,7 @@ export default function EnhancedResultsPage() {
               </div>
             </AnimatedSection>
 
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8 sm:mb-12">
                 <AnimatedSection delay={0.1}>
                   <motion.div
@@ -722,20 +722,20 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
-      {/* Outfit Gallery - Premium - Responsive padding */}
+      {/* Outfit Gallery - Premium - Responsive padding with wider desktop layout */}
       {hasCompletedQuiz && (
         <section className="py-12 sm:py-16 md:py-20 lg:py-32 relative">
           <div className="ff-container">
             <AnimatedSection>
-              <div className="text-center mb-12 sm:mb-20">
+              <div className="text-center mb-8 sm:mb-12 lg:mb-20">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-accent-100)] text-[var(--ff-color-accent-700)] rounded-full text-sm font-bold mb-6">
                   <ShoppingBag className="w-4 h-4" />
                   Jouw Outfits
                 </div>
-                <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
                   Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
                   {displayOutfits.length} zorgvuldig samengestelde outfits die perfect bij jouw stijl passen
                 </p>
 
@@ -860,7 +860,7 @@ export default function EnhancedResultsPage() {
                 className="max-w-7xl mx-auto"
               />
             ) : (
-              <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+              <div className="grid gap-4 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-[1600px] mx-auto">
                 {displayOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
@@ -1203,7 +1203,7 @@ export default function EnhancedResultsPage() {
         )}
       </AnimatePresence>
 
-      {/* Share Modal */}
+      {/* Premium Share Modal - Apple-inspired */}
       <AnimatePresence>
         {showShareModal && (
           <motion.div
@@ -1211,23 +1211,82 @@ export default function EnhancedResultsPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowShareModal(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-[var(--color-surface)] rounded-3xl p-8 max-w-md w-full shadow-2xl"
+              className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
             >
-              <h3 className="text-2xl font-bold mb-4">Deel je Style Report</h3>
-              <p className="text-gray-600 mb-6">Link gekopieerd naar klembord!</p>
-              <button
-                onClick={() => setShowShareModal(false)}
-                className="w-full px-6 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
-              >
-                Sluiten
-              </button>
+              {/* Header with gradient */}
+              <div className="relative p-8 pb-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)]">
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/50 transition-colors"
+                  aria-label="Sluit modal"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center mb-4 shadow-lg">
+                  <Share2 className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2">Deel je Style Report</h3>
+                <p className="text-base text-gray-600">Laat anderen zien wat jouw unieke stijl is</p>
+              </div>
+
+              {/* Share options */}
+              <div className="p-6 space-y-3">
+                <button
+                  onClick={() => {
+                    const url = typeof window !== "undefined" ? window.location.href : canonicalUrl('/results');
+                    navigator.clipboard.writeText(url);
+                    toast.success('Link gekopieerd!', {
+                      icon: '📋',
+                      duration: 2000,
+                    });
+                  }}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
+                    <Download className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[var(--color-text)]">Kopieer link</p>
+                    <p className="text-sm text-gray-600">Deel via WhatsApp, email of social media</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    const url = typeof window !== "undefined" ? window.location.href : canonicalUrl('/results');
+                    const text = `Bekijk mijn persoonlijke Style Report van FitFi! 👗✨`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                    window.open(twitterUrl, '_blank', 'noopener,noreferrer');
+                  }}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <Share2 className="w-6 h-6 text-blue-700" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[var(--color-text)]">Deel op Twitter</p>
+                    <p className="text-sm text-gray-600">Tweet je stijlrapport</p>
+                  </div>
+                </button>
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 pb-6">
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="w-full px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-base hover:bg-[var(--ff-color-primary-700)] transition-all shadow-lg active:scale-[0.98]"
+                >
+                  Sluiten
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
