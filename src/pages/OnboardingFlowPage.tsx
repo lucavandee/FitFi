@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, AlertCircle, X } from "lucide-react";
+import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, AlertCircle, X, Sparkles } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
@@ -765,9 +765,66 @@ export default function OnboardingFlowPage() {
         </div>
       </div>
 
-      {/* Question Content - Compact, no-scroll layout */}
-      <div className="ff-container py-6 sm:py-8 md:py-10">
-        <div className="max-w-3xl mx-auto">
+      {/* Question Content - Responsive desktop layout with sidebar */}
+      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12">
+        <div className="max-w-3xl lg:max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 xl:gap-16">
+
+            {/* Desktop Sidebar - Progress & Context */}
+            <aside className="hidden lg:block lg:w-72 xl:w-80 flex-shrink-0">
+              <div className="sticky top-24 space-y-6">
+                {/* Progress Section */}
+                <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-semibold text-[var(--color-text)]">Voortgang</span>
+                    <span className="text-lg font-bold text-[var(--ff-color-primary-600)]">{Math.round(progress)}%</span>
+                  </div>
+
+                  {/* Vertical Progress Bar */}
+                  <div className="relative h-48 bg-[var(--color-bg)] rounded-full overflow-hidden mb-4">
+                    <div
+                      className="absolute bottom-0 w-full bg-gradient-to-t from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out rounded-full"
+                      style={{ height: `${progress}%` }}
+                    />
+                  </div>
+
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[var(--color-text)] mb-1">
+                      Vraag {currentStep + 1}
+                    </div>
+                    <div className="text-sm text-[var(--color-muted)]">
+                      van {quizSteps.length}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Context Card */}
+                <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] border border-[var(--ff-color-primary-100)] p-6">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-600)] flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-[var(--color-text)] mb-1">Waarom deze vragen?</h3>
+                      <p className="text-sm text-[var(--color-text)]/80 leading-relaxed">
+                        We gebruiken je antwoorden om je unieke stijlprofiel te bepalen en gepersonaliseerde outfit-aanbevelingen te maken.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Time Estimate - Always visible on desktop */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)]">
+                  <Clock className="w-4 h-4 text-[var(--ff-color-accent-600)] flex-shrink-0" />
+                  <span className="text-sm text-[var(--color-text)]">
+                    <strong>Nog {Math.max(1, quizSteps.length - currentStep)} {quizSteps.length - currentStep === 1 ? 'vraag' : 'vragen'}</strong> · ~1 min
+                  </span>
+                </div>
+              </div>
+            </aside>
+
+            {/* Main Question Content */}
+            <div className="flex-1 max-w-3xl lg:max-w-none">
 
           {/* Email Capture Prompt - Show at step 3 */}
           {showEmailCapture && currentStep === 3 && (
@@ -780,26 +837,26 @@ export default function OnboardingFlowPage() {
             />
           )}
 
-          {/* Question Header - Clean & Compact */}
+          {/* Question Header - Responsive typography */}
           <AnimatedQuestionTransition
             questionKey={currentStep}
             direction="forward"
           >
-            <div className="text-center mb-6 sm:mb-8">
-              {/* Time estimate only on first question */}
+            <div className="text-center lg:text-left mb-6 sm:mb-8 lg:mb-10">
+              {/* Time estimate only on first question - Mobile only (desktop has sidebar) */}
               {currentStep === 0 && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
+                <div className="inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
                   <Clock className="w-3 h-3" />
                   Minder dan 2 minuten
                 </div>
               )}
 
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 px-4 max-w-4xl mx-auto leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-5 px-4 lg:px-0 leading-tight lg:leading-tight">
                 {step.title}
               </h1>
 
               {step.description && (
-                <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-2xl mx-auto px-4">
+                <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl lg:max-w-3xl mx-auto lg:mx-0 px-4 lg:px-0 leading-relaxed">
                   {step.description}
                 </p>
               )}
@@ -836,7 +893,7 @@ export default function OnboardingFlowPage() {
                   </div>
                 )}
 
-                <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2">
+                <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
@@ -873,7 +930,7 @@ export default function OnboardingFlowPage() {
 
             {/* Radio (Single Select) - Mobile-first touch targets */}
             {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div className="space-y-2">
+              <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2 lg:grid-cols-2">
                 {step.options.map((option) => {
                   const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
                   return (
@@ -1048,33 +1105,33 @@ export default function OnboardingFlowPage() {
             )}
           </div>
 
-          {/* Navigation Buttons - 52px+ touch targets */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between">
+          {/* Navigation Buttons - Responsive sizing */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 justify-between mt-8 lg:mt-10">
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-6 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-[var(--radius-xl)] font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+              className="inline-flex items-center justify-center gap-2 px-6 lg:px-8 py-4 lg:py-5 min-h-[52px] lg:min-h-[60px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-[var(--radius-xl)] font-semibold text-base lg:text-lg hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm hover:shadow-md"
             >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
               <span>Vorige</span>
             </button>
 
             <button
               onClick={handleNext}
               disabled={!canProceed() || isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-6 py-4 min-h-[52px] bg-[var(--ff-color-primary-600)] text-white rounded-xl sm:rounded-[var(--radius-xl)] font-semibold text-base sm:text-base hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+              className="inline-flex items-center justify-center gap-2 px-6 lg:px-8 py-4 lg:py-5 min-h-[52px] lg:min-h-[60px] bg-[var(--ff-color-primary-600)] text-white rounded-xl sm:rounded-[var(--radius-xl)] font-semibold text-base lg:text-lg hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-md hover:shadow-lg"
             >
               {isSubmitting ? (
                 <span>Verwerken...</span>
               ) : currentStep === totalSteps - 1 ? (
                 <>
                   <span>Afronden</span>
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </>
               ) : (
                 <>
                   <span>Volgende</span>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </>
               )}
             </button>
@@ -1098,8 +1155,15 @@ export default function OnboardingFlowPage() {
               * Deze vraag is verplicht
             </p>
           )}
+            </div>
+            {/* End Main Question Content */}
+
+          </div>
+          {/* End Flex Container */}
         </div>
+        {/* End Max Width Container */}
       </div>
+      {/* End FF Container */}
 
     </main>
 
