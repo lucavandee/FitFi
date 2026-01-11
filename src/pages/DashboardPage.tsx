@@ -286,12 +286,105 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main Content - 2 Column Layout */}
-      <div className="ff-container py-16">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1fr,420px] gap-8">
-            {/* Left Column - Main Widgets */}
-            <div className="space-y-8">
+      {/* Main Content - 3 Column Layout with Sidebar */}
+      <div className="ff-container py-8 sm:py-12 lg:py-16">
+        <div className="max-w-[1600px] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 xl:gap-12">
+
+            {/* Desktop Sidebar Navigation - Left */}
+            <aside className="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
+              <div className="sticky top-24 space-y-4">
+                <p className="px-4 text-xs uppercase tracking-widest text-[var(--color-muted)] font-bold mb-4">
+                  Navigatie
+                </p>
+
+                <button
+                  onClick={() => navigate('/results')}
+                  className="group w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-[var(--color-surface)] border-2 border-transparent hover:border-[var(--ff-color-primary-300)] transition-all text-left"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
+                    <Shirt className="w-5 h-5 text-white" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[var(--color-text)] mb-0.5">Outfits</p>
+                    <p className="text-xs text-[var(--color-muted)] truncate">Bekijk alle looks</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="group w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-[var(--color-surface)] border-2 border-transparent hover:border-[var(--ff-color-primary-300)] transition-all text-left"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center flex-shrink-0">
+                    <Settings className="w-5 h-5 text-white" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[var(--color-text)] mb-0.5">Profiel</p>
+                    <p className="text-xs text-[var(--color-muted)] truncate">Instellingen</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => navigate('/onboarding')}
+                  className="group w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-[var(--color-surface)] border-2 border-transparent hover:border-[var(--ff-color-primary-300)] transition-all text-left"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0">
+                    <RefreshCw className="w-5 h-5 text-white" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[var(--color-text)] mb-0.5">Quiz Opnieuw</p>
+                    <p className="text-xs text-[var(--color-muted)] truncate">Update stijl</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => navigate('/onboarding?step=photo')}
+                  className="group w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-[var(--color-surface)] border-2 border-transparent hover:border-[var(--ff-color-primary-300)] transition-all text-left"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                    <Camera className="w-5 h-5 text-white" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[var(--color-text)] mb-0.5">Upload Foto</p>
+                    <p className="text-xs text-[var(--color-muted)] truncate">AI analyse</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[var(--color-muted)] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
+
+                {/* Quick Stats in Sidebar */}
+                <div className="mt-8 pt-6 border-t border-[var(--color-border)]">
+                  <p className="px-4 text-xs uppercase tracking-widest text-[var(--color-muted)] font-bold mb-4">
+                    Statistieken
+                  </p>
+                  <div className="space-y-3 px-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[var(--color-muted)]">Outfits</span>
+                      <span className="text-sm font-bold text-[var(--color-text)]">{outfitsData?.length || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[var(--color-muted)]">Favorieten</span>
+                      <span className="text-sm font-bold text-[var(--color-text)]">{favCount}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[var(--color-muted)]">Niveau</span>
+                      <span className="text-sm font-bold text-[var(--color-text)]">{gamificationData.level}</span>
+                    </div>
+                    {gamificationData.streak > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-[var(--color-muted)]">Streak</span>
+                        <span className="text-sm font-bold text-orange-600">{gamificationData.streak} 🔥</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            {/* Center Column - Main Widgets */}
+            <div className="flex-1 min-w-0 space-y-8">
               {/* Style Profile Card */}
               {archetype && (
                 <motion.div
@@ -390,12 +483,12 @@ export default function DashboardPage() {
                 </motion.div>
               )}
 
-              {/* Quick Actions Grid */}
+              {/* Quick Actions Grid - Responsive */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.45 }}
-                className="grid sm:grid-cols-2 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6"
               >
                 <button
                   onClick={() => navigate('/results')}
@@ -454,8 +547,8 @@ export default function DashboardPage() {
               </motion.div>
             </div>
 
-            {/* Right Column - Sidebar Widgets */}
-            <div className="space-y-8">
+            {/* Right Column - Stats & Featured Widgets */}
+            <aside className="lg:w-96 xl:w-[420px] flex-shrink-0 space-y-6 lg:space-y-8">
               {/* Level Progress Card */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -550,10 +643,30 @@ export default function DashboardPage() {
                   </div>
                 </motion.div>
               )}
+            </aside>
+            {/* End Right Column */}
+
+          </div>
+          {/* End Flex Container */}
+        </div>
+        {/* End max-w Container */}
+      </div>
+      {/* End ff-container */}
+
+      {/* Loading State Skeleton - Show while outfits loading */}
+      {outfitsLoading && (
+        <div className="ff-container pb-16">
+          <div className="max-w-[1600px] mx-auto">
+            <div className="animate-pulse space-y-6">
+              <div className="h-64 bg-[var(--color-surface)] rounded-3xl" />
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="h-48 bg-[var(--color-surface)] rounded-3xl" />
+                <div className="h-48 bg-[var(--color-surface)] rounded-3xl" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Enhanced FAB */}
       <EnhancedFAB
