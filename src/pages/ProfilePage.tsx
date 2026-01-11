@@ -183,18 +183,119 @@ const ProfilePage: React.FC = () => {
 
       <Breadcrumbs />
 
-      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        {/* Premium Header Card */}
-        <PremiumHeaderCard
-          user={user}
-          level={level}
-          xp={xp}
-          nextLevelXP={nextLevelXP}
-          onLogout={logout}
-        />
+      {/* Desktop Layout with Sidebar */}
+      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12">
+        <div className="max-w-7xl mx-auto">
 
-        {/* Stats Grid - Premium Gradient Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {/* Welcome Message - Premium */}
+          <div className="mb-6 lg:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[var(--color-text)] mb-2 lg:mb-3">
+              Welkom terug, {user.email?.split('@')[0]}
+            </h1>
+            <p className="text-base lg:text-lg text-[var(--color-muted)]">
+              Beheer je stijlprofiel en persoonlijke voorkeuren
+            </p>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 xl:gap-12">
+
+            {/* Desktop Sidebar - Profile Overview */}
+            <aside className="hidden lg:block lg:w-80 xl:w-96 flex-shrink-0">
+              <div className="sticky top-24 space-y-6">
+
+                {/* User Avatar & Identity Card */}
+                <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-[var(--radius-2xl)] p-8 text-white shadow-[var(--shadow-elevated)]">
+                  {/* Avatar */}
+                  <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-white/20 backdrop-blur-sm border-4 border-white/30 flex items-center justify-center shadow-xl">
+                    <User className="w-12 h-12 text-white" />
+                  </div>
+
+                  {/* User Info */}
+                  <div className="text-center mb-6">
+                    <h2 className="text-xl font-bold mb-2 truncate">
+                      {user.email?.split('@')[0]}
+                    </h2>
+                    <p className="text-sm text-white/80 truncate mb-1">
+                      {user.email}
+                    </p>
+                    {user.created_at && (
+                      <p className="text-xs text-white/70">
+                        Lid sinds {new Date(user.created_at).toLocaleDateString('nl-NL', {
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* XP Progress */}
+                  <div>
+                    <div className="flex items-center justify-between text-sm text-white/90 mb-3">
+                      <span className="font-semibold">Level {level}</span>
+                      <span>{xp} / {nextLevelXP} XP</span>
+                    </div>
+                    <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-white to-yellow-300 rounded-full transition-all duration-500"
+                        style={{ width: `${(xp / nextLevelXP) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Stats Sidebar */}
+                <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+                  <h3 className="text-sm font-bold text-[var(--color-text)] uppercase tracking-wider mb-4">
+                    Snelle Overzicht
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[var(--color-muted)]">Stijlprofiel</span>
+                      <span className={`text-sm font-bold ${hasStyleProfile ? 'text-emerald-600' : 'text-[var(--color-muted)]'}`}>
+                        {hasStyleProfile ? '✓ Compleet' : 'Start quiz'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[var(--color-muted)]">Opgeslagen Outfits</span>
+                      <span className="text-sm font-bold text-[var(--color-text)]">
+                        {savedOutfitsCount || 0}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[var(--color-muted)]">Activiteit</span>
+                      <span className="text-sm font-bold text-[var(--color-text)]">
+                        {recentActivity?.length || 0} acties
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Logout Button */}
+                <button
+                  onClick={logout}
+                  className="w-full px-6 py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-text)] hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-all"
+                >
+                  Uitloggen
+                </button>
+              </div>
+            </aside>
+
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+
+              {/* Mobile Header Card (hidden on desktop) */}
+              <div className="lg:hidden mb-6">
+                <PremiumHeaderCard
+                  user={user}
+                  level={level}
+                  xp={xp}
+                  nextLevelXP={nextLevelXP}
+                  onLogout={logout}
+                />
+              </div>
+
+        {/* Stats Grid - Premium Gradient Cards (Mobile Only) */}
+        <div className="lg:hidden grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <PremiumStatCard
             icon={<Target className="w-6 h-6" />}
             label="Stijlprofiel"
@@ -231,8 +332,8 @@ const ProfilePage: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* Main Content Grid - Responsive */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Quick Actions */}
           <PremiumCard title="Snelle Acties" icon={<Sparkles className="w-6 h-6" />} delay={0.2}>
             <div className="space-y-3">
@@ -358,14 +459,24 @@ const ProfilePage: React.FC = () => {
 
           {/* Style Evolution */}
           {hasStyleProfile && (
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 lg:col-span-1 xl:col-span-2">
               <PremiumCard title="Stijlevolutie" icon={<TrendingUp className="w-6 h-6" />} delay={0.4}>
                 <StyleProfileComparison />
               </PremiumCard>
             </div>
           )}
         </div>
+        {/* End Main Content Grid */}
+
+            </div>
+            {/* End Main Content */}
+
+          </div>
+          {/* End Flex Container */}
+        </div>
+        {/* End max-w-7xl Container */}
       </div>
+      {/* End ff-container */}
 
       {/* Quiz Reset Modal */}
       {showResetModal && (
