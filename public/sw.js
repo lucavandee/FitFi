@@ -53,6 +53,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip service worker for external CDNs (Google Fonts, Analytics)
+  // Let browser handle these directly to avoid CSP conflicts
+  if (
+    url.origin.includes('googleapis.com') ||
+    url.origin.includes('gstatic.com') ||
+    url.origin.includes('google-analytics.com') ||
+    url.origin.includes('googletagmanager.com') ||
+    url.origin.includes('analytics.google.com')
+  ) {
+    return; // Let browser fetch directly
+  }
+
   if (url.origin.includes('supabase') && request.method === 'POST') {
     return;
   }
