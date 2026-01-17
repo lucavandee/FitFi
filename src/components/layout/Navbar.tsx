@@ -162,7 +162,7 @@ export default function Navbar() {
         {/* Mobile toggle - 44px touch target */}
         <button
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] focus-visible:shadow-[var(--shadow-ring)] ml-2"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] focus-visible:shadow-[var(--shadow-ring)] ml-2 transition-colors"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
