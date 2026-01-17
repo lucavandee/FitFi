@@ -60,19 +60,19 @@ export default function SiteHeader() {
             className={[
               "md:hidden",
               "h-11 w-11 inline-flex items-center justify-center",
-              "rounded-[var(--radius-xl)] border border-transparent",
+              "rounded-[var(--radius-xl)] border-2 border-[var(--ff-color-primary-800)]",
               "bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)]",
-              "shadow-[var(--shadow-soft)] ff-focus-ring",
-              "text-white transition-transform active:scale-[0.98]"
+              "shadow-lg ff-focus-ring",
+              "text-white transition-all active:scale-95"
             ].join(" ")}
           >
             <span className="sr-only">Open menu</span>
             <svg
-              className="h-5 w-5"
+              className="h-6 w-6"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.5"
               aria-hidden="true"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />

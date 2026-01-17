@@ -209,15 +209,15 @@ export function RealOutfitShowcase() {
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2.5 sm:gap-3 lg:gap-4 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
+                      className="flex items-center gap-3 sm:gap-4 bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
                     >
                       {/* Product image or color swatch */}
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl shadow-inner border-2 border-white flex-shrink-0 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl shadow-md border-2 border-white flex-shrink-0 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
                         {item.image ? (
                           <img
                             src={item.image}
                             alt={item.label}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                             loading="lazy"
                           />
                         ) : (
@@ -227,13 +227,13 @@ export function RealOutfitShowcase() {
 
                       {/* Item details */}
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs sm:text-sm uppercase tracking-wider text-[var(--color-muted)] font-bold mb-0.5 sm:mb-1">
-                          {item.type === 'top' && 'Bovenstuk'}
-                          {item.type === 'bottom' && 'Onderstuk'}
-                          {item.type === 'shoes' && 'Schoenen'}
-                          {item.type === 'accessory' && 'Accessoire'}
+                        <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-1">
+                          {item.type === 'top' && 'BOVENSTUK'}
+                          {item.type === 'bottom' && 'ONDERSTUK'}
+                          {item.type === 'shoes' && 'SCHOENEN'}
+                          {item.type === 'accessory' && 'ACCESSOIRE'}
                         </div>
-                        <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)] truncate">
+                        <div className="text-sm sm:text-base font-bold text-[var(--color-text)] line-clamp-2">
                           {item.label}
                         </div>
                       </div>
@@ -246,7 +246,7 @@ export function RealOutfitShowcase() {
                             : 'opacity-0 scale-75'
                         }`}
                       >
-                        <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--ff-color-primary-600)]" />
+                        <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--ff-color-primary-600)]" />
                       </div>
                     </div>
                   ))}

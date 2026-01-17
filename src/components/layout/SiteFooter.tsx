@@ -42,7 +42,10 @@ export default function SiteFooter() {
       </Container>
       <Container className="py-6 border-t border-[var(--color-border)] bg-[var(--ff-color-primary-25)]">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 text-xs text-[var(--color-text)]/60">
-          <p>© {new Date().getFullYear()} FitFi · Alle rechten voorbehouden.</p>
+          <div className="flex flex-col gap-1">
+            <p>© {new Date().getFullYear()} FitFi · Alle rechten voorbehouden.</p>
+            <p>KVK: 97225665 · BTW: NL005258495B15</p>
+          </div>
           <p>Keizersgracht 520 H · 1017 EK Amsterdam</p>
         </div>
       </Container>
