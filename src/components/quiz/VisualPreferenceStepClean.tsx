@@ -279,43 +279,34 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         </div>
       </div>
 
-      {/* Footer Instructions - Simplified for Mobile */}
-      <div className="flex-shrink-0 px-4 pb-safe pb-4 sm:pb-6">
-        <div className="max-w-md mx-auto">
-          {/* Desktop: Full instructions with enhanced clarity */}
-          <div className="hidden sm:block">
-            <p className="text-center text-sm font-semibold text-[var(--color-text)] mb-3">
-              Klik, sleep of gebruik toetsenbord
+      {/* Footer Instructions - Clean & Minimal */}
+      <div className="flex-shrink-0 px-4 pb-safe pb-6 sm:pb-8">
+        <div className="max-w-lg mx-auto">
+          {/* Desktop: Keyboard shortcuts */}
+          <div className="hidden sm:flex flex-col items-center gap-3">
+            <p className="text-sm font-medium text-[var(--color-text)]">
+              Sleep de foto of gebruik toetsenbord
             </p>
-            <div className="flex items-center justify-center gap-6 text-xs text-[var(--color-muted)]">
+            <div className="flex items-center justify-center gap-8">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full border-2 border-red-400 flex items-center justify-center bg-[var(--color-surface)]">
-                  <X className="w-4 h-4 text-red-500" />
-                </div>
-                <div className="text-left">
-                  <div className="font-medium text-[var(--color-text)]">Niet mijn stijl</div>
-                  <div className="text-xs opacity-75">← of ←</div>
-                </div>
+                <kbd className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+                  ←
+                </kbd>
+                <span className="text-sm text-[var(--color-muted)]">Niet mijn stijl</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-right">
-                  <div className="font-medium text-[var(--color-text)]">Spreekt me aan</div>
-                  <div className="text-xs opacity-75">→ of Space</div>
-                </div>
-                <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center bg-[var(--color-surface)]">
-                  <Heart className="w-4 h-4 text-green-500" />
-                </div>
+                <span className="text-sm text-[var(--color-muted)]">Spreekt me aan</span>
+                <kbd className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+                  → of Space
+                </kbd>
               </div>
             </div>
-            <p className="text-center text-xs text-[var(--color-muted)] mt-3 opacity-60">
-              💡 Tip: Hover over de foto om hints te zien
-            </p>
           </div>
 
-          {/* Mobile: Minimal instructions */}
+          {/* Mobile: Simple instruction */}
           <div className="sm:hidden text-center">
-            <p className="text-xs text-[var(--color-muted)]">
-              Tik op de knoppen of sleep naar links/rechts
+            <p className="text-sm text-[var(--color-muted)]">
+              Tik op de knoppen of sleep de foto
             </p>
           </div>
         </div>
