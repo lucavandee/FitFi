@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Info, HelpCircle, X, Palette, TrendingUp, CheckCircle } from "lucide-react";
+import { Info, HelpCircle, X, Palette, TrendingUp, CheckCircle, Contrast, Circle } from "lucide-react";
 import type { ColorProfile } from "@/lib/quiz/types";
 
 interface ColorProfileExplainerProps {
@@ -62,6 +62,17 @@ export function ColorProfileExplainer({
   };
 
   const detectedSeason = extractSeasonFromPalette(colorProfile.paletteName);
+
+  // Parse contrast level from colorProfile
+  const getContrastLevel = (): 'high' | 'medium' | 'low' => {
+    const contrast = colorProfile.contrast?.toLowerCase() || '';
+
+    if (contrast.includes('high') || contrast.includes('hoog')) return 'high';
+    if (contrast.includes('low') || contrast.includes('laag')) return 'low';
+    return 'medium';
+  };
+
+  const contrastLevel = getContrastLevel();
 
   // Generate contextual explanation based on profile
   const getExplanation = () => {
@@ -131,6 +142,97 @@ export function ColorProfileExplainer({
 
   const explanation = getExplanation();
 
+  // Generate contrast-specific explanation
+  const getContrastExplanation = () => {
+    if (contrastLevel === 'high') {
+      return {
+        title: "Hoog Contrast",
+        description: "Je kunt sterke kleurverschillen aan, zoals zwart met wit of diepe kleuren met lichte tinten.",
+        icon: <Contrast className="w-6 h-6 text-gray-900" />,
+        characteristics: [
+          "Opvallende kleurverschillen staan je goed",
+          "Zwart-wit combinaties zijn ideaal",
+          "Diepe, rijke kleuren flatteren je",
+          "Je kunt bold statements maken zonder overweldigend te zijn"
+        ],
+        doExamples: [
+          { top: "Zwart", bottom: "Wit", description: "Klassiek hoog contrast" },
+          { top: "Marineblauw", bottom: "Crème", description: "Elegant en strak" },
+          { top: "Donkergroen", bottom: "Beige", description: "Aards maar krachtig" }
+        ],
+        dontExamples: [
+          "Pastel-op-pastel (te weinig definitie)",
+          "Beige-op-beige (verdwijnt tegen je huid)",
+          "Eén monotone look zonder accenten"
+        ],
+        tips: [
+          "Combineer altijd licht met donker voor maximaal effect",
+          "Gebruik accessoires in contrasterende kleuren",
+          "Vermijd ton-sur-ton looks (bijv. all-beige)"
+        ]
+      };
+    }
+
+    if (contrastLevel === 'low') {
+      return {
+        title: "Laag Contrast",
+        description: "Je komt het beste uit met kleuren die dicht bij elkaar liggen in intensiteit, zoals pastels of gedempte tinten.",
+        icon: <Circle className="w-6 h-6 text-gray-400" />,
+        characteristics: [
+          "Zachte, subtiele kleuren staan je het best",
+          "Ton-sur-ton looks zijn jouw kracht",
+          "Harde contrasten kunnen je overweldigen",
+          "Gedempte tinten geven een harmonieuze uitstraling"
+        ],
+        doExamples: [
+          { top: "Zachtroze", bottom: "Beige", description: "Zachte monochrome look" },
+          { top: "Lichtblauw", bottom: "Crème", description: "Subtiel en elegant" },
+          { top: "Lavendel", bottom: "Grijs", description: "Gedempt en verfijnd" }
+        ],
+        dontExamples: [
+          "Zwart-wit (te hard en overweldigend)",
+          "Felle primaire kleuren (te intens)",
+          "Harde kleurverschillen (zoals zwart met geel)"
+        ],
+        tips: [
+          "Blijf binnen dezelfde kleurenfamilie (bijv. tinten blauw)",
+          "Kies gedempte versies van kleuren (dusty rose i.p.v. felrood)",
+          "Gebruik neutrale tinten als basis (grijs, beige, zacht wit)"
+        ]
+      };
+    }
+
+    // Medium contrast
+    return {
+      title: "Gemiddeld Contrast",
+      description: "Je hebt balans tussen subtiel en opvallend. Je kunt zowel zachte als contrasterende combinaties dragen.",
+      icon: <Palette className="w-6 h-6 text-[var(--ff-color-primary-600)]" />,
+      characteristics: [
+        "Je hebt de meeste flexibiliteit in kleurcombinaties",
+        "Zowel ton-sur-ton als contrasterende looks werken",
+        "Je kunt experimenteren met verschillende intensiteiten",
+        "Gemiddelde kleurverschillen zijn ideaal"
+      ],
+      doExamples: [
+        { top: "Navy", bottom: "Lichtblauw", description: "Gemiddeld contrast binnen één familie" },
+        { top: "Donkergroen", bottom: "Crème", description: "Subtiel maar gedefinieerd" },
+        { top: "Grijs", bottom: "Oudroze", description: "Balans tussen neutraal en kleur" }
+      ],
+      dontExamples: [
+        "Extreem zwart-wit (te hard)",
+        "Te veel pastels zonder definitie",
+        "Té felle kleuren zonder neutrale balans"
+      ],
+      tips: [
+        "Mix één neutrale kleur met één accent voor balans",
+        "Vermijd extreme uitersten (te hard of te zacht)",
+        "Experimenteer met mid-tones en gedempte helders"
+      ]
+    };
+  };
+
+  const contrastExplanation = getContrastExplanation();
+
   // Format confidence percentage
   const confidencePercentage = Math.round(confidence * 100);
   const getConfidenceLabel = () => {
@@ -184,12 +286,22 @@ export function ColorProfileExplainer({
           </div>
           <div className="bg-white/60 backdrop-blur-sm rounded-xl p-3">
             <p className="text-xs font-semibold text-[var(--color-text-muted)] mb-1">
-              Betrouwbaarheid
+              Contrast niveau
             </p>
             <p className="text-sm font-bold text-[var(--color-text)]">
-              {confidencePercentage}% · {getConfidenceLabel()}
+              {contrastExplanation.title}
             </p>
           </div>
+        </div>
+
+        {/* Contrast Quick Preview */}
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-3 mb-4">
+          <p className="text-xs font-semibold text-[var(--color-text-muted)] mb-2">
+            Betrouwbaarheid: {confidencePercentage}% · {getConfidenceLabel()}
+          </p>
+          <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+            {contrastExplanation.description}
+          </p>
         </div>
 
         {/* Season Link */}
@@ -320,6 +432,103 @@ export function ColorProfileExplainer({
                       </li>
                     ))}
                   </ul>
+                </div>
+
+                {/* Contrast Level Section */}
+                <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-gray-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                      {contrastExplanation.icon}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-gray-900">
+                        {contrastExplanation.title}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Jouw contrast profiel
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                    {contrastExplanation.description}
+                  </p>
+
+                  {/* Characteristics */}
+                  <div className="mb-4">
+                    <h5 className="font-semibold text-sm text-gray-800 mb-2">
+                      Kenmerken van jouw contrast
+                    </h5>
+                    <ul className="space-y-1.5">
+                      {contrastExplanation.characteristics.map((char, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                          <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                          <span>{char}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Visual Examples - DO */}
+                  <div className="mb-4">
+                    <h5 className="font-semibold text-sm text-green-800 mb-2 flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4" />
+                      Draag deze combinaties
+                    </h5>
+                    <div className="space-y-2">
+                      {contrastExplanation.doExamples.map((example, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2 bg-green-50 rounded-lg border border-green-200">
+                          <div className="flex gap-1">
+                            <div className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center text-[10px] font-bold bg-white shadow-sm">
+                              {example.top.substring(0, 2)}
+                            </div>
+                            <div className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center text-[10px] font-bold bg-white shadow-sm">
+                              {example.bottom.substring(0, 2)}
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs font-semibold text-gray-900">
+                              {example.top} + {example.bottom}
+                            </p>
+                            <p className="text-[11px] text-gray-600">
+                              {example.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Visual Examples - DON'T */}
+                  <div className="mb-4">
+                    <h5 className="font-semibold text-sm text-red-800 mb-2 flex items-center gap-2">
+                      <X className="w-4 h-4" />
+                      Vermijd deze combinaties
+                    </h5>
+                    <ul className="space-y-1.5">
+                      {contrastExplanation.dontExamples.map((example, i) => (
+                        <li key={i} className="flex items-start gap-2 p-2 bg-red-50 rounded-lg border border-red-200">
+                          <X className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-xs text-red-900">{example}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Contrast Tips */}
+                  <div>
+                    <h5 className="font-semibold text-sm text-gray-800 mb-2">
+                      Praktische tips
+                    </h5>
+                    <ul className="space-y-1.5">
+                      {contrastExplanation.tips.map((tip, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs text-gray-700">
+                          <span className="text-[var(--ff-color-primary-600)] font-bold mt-0.5">•</span>
+                          <span>{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 {/* Additional Context */}
