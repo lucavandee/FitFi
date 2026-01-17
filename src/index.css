@@ -9,6 +9,7 @@
 @import "./styles/mobile-touch.css";
 @import "./styles/blog-reading.css";
 @import "./styles/responsive-landing.css";
+@import "./styles/responsive-results.css";
 @import "./styles/swipe-performance.css";
 
 /* Tailwind layers — volgorde behouden */
