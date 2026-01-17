@@ -88,40 +88,40 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className={`${style.bg} border ${style.border} rounded-2xl p-4 sm:p-6 ${className}`}
+      className={`${style.bg} border ${style.border} rounded-xl sm:rounded-2xl p-3 sm:p-6 ${className}`}
       role="alert"
       aria-live="polite"
     >
-      <div className="flex items-start gap-3 sm:gap-4">
+      <div className="flex items-start gap-2 sm:gap-4">
         {/* Icon */}
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
-            <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${style.iconColor}`} />
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+            <Icon className={`w-4 h-4 sm:w-6 sm:h-6 ${style.iconColor}`} />
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <h3 className={`text-base sm:text-lg font-bold ${style.titleColor} mb-2`}>
+          <h3 className={`text-sm sm:text-lg font-bold ${style.titleColor} mb-1.5 sm:mb-2`}>
             {style.title}
           </h3>
 
-          <div className={`text-sm sm:text-base ${style.textColor} space-y-2 mb-4`}>
+          <div className={`text-xs sm:text-base ${style.textColor} space-y-2 mb-3 sm:mb-4`}>
             <p className="leading-relaxed">
               {analysis.explanation}
             </p>
 
-            {/* Confidence breakdown */}
-            <div className="flex flex-wrap gap-3 pt-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-full text-xs sm:text-sm font-medium">
+            {/* Confidence breakdown - Responsive */}
+            <div className="flex flex-wrap gap-1.5 sm:gap-3 pt-1 sm:pt-2">
+              <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 bg-white rounded-full text-[10px] sm:text-sm font-medium">
                 <span className="opacity-70">Stijl:</span>
                 <span className="font-bold">{Math.round(analysis.styleConfidence)}%</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-full text-xs sm:text-sm font-medium">
+              <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 bg-white rounded-full text-[10px] sm:text-sm font-medium">
                 <span className="opacity-70">Kleur:</span>
                 <span className="font-bold">{Math.round(analysis.colorConfidence)}%</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-full text-xs sm:text-sm font-medium">
+              <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 bg-white rounded-full text-[10px] sm:text-sm font-medium">
                 <span className="opacity-70">Overall:</span>
                 <span className="font-bold">{Math.round(analysis.overallConfidence)}%</span>
               </div>
@@ -130,15 +130,15 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
 
           {/* Recommendations */}
           {analysis.recommendations.length > 0 && (
-            <div className="space-y-2">
-              <h4 className={`text-sm font-semibold ${style.titleColor} flex items-center gap-1.5`}>
-                <Sparkles className="w-4 h-4" />
+            <div className="space-y-1.5 sm:space-y-2">
+              <h4 className={`text-xs sm:text-sm font-semibold ${style.titleColor} flex items-center gap-1 sm:gap-1.5`}>
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                 Onze aanbeveling:
               </h4>
-              <ul className={`space-y-1.5 ${style.textColor}`}>
+              <ul className={`space-y-1 sm:space-y-1.5 ${style.textColor}`}>
                 {analysis.recommendations.map((rec, index) => (
-                  <li key={index} className="text-sm flex items-start gap-2">
-                    <span className="text-lg leading-none mt-0.5">•</span>
+                  <li key={index} className="text-xs sm:text-sm flex items-start gap-1.5 sm:gap-2">
+                    <span className="text-sm sm:text-lg leading-none mt-0.5">•</span>
                     <span className="flex-1">{rec}</span>
                   </li>
                 ))}
@@ -147,19 +147,19 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
           )}
         </div>
 
-        {/* Close Button */}
+        {/* Close Button - Touch friendly */}
         <button
           onClick={handleDismiss}
-          className={`flex-shrink-0 w-8 h-8 rounded-full hover:bg-white/50 transition-colors flex items-center justify-center ${style.iconColor}`}
+          className={`flex-shrink-0 w-8 h-8 sm:w-8 sm:h-8 rounded-full hover:bg-white/50 active:bg-white/70 transition-colors flex items-center justify-center ${style.iconColor} touch-manipulation`}
           aria-label="Sluit melding"
         >
-          <span className="text-xl leading-none">×</span>
+          <span className="text-xl sm:text-xl leading-none">×</span>
         </button>
       </div>
 
-      {/* Call to Action */}
-      <div className="mt-4 pt-4 border-t border-white/50">
-        <p className={`text-xs sm:text-sm ${style.textColor} opacity-80`}>
+      {/* Call to Action - Compact on mobile */}
+      <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/50">
+        <p className={`text-[10px] sm:text-sm ${style.textColor} opacity-80 leading-snug sm:leading-normal`}>
           💡 <strong>Tip:</strong> De outfits hieronder zijn een mix van verschillende stijlen om je te helpen ontdekken wat je het beste staat. Experimenteer gerust!
         </p>
       </div>
