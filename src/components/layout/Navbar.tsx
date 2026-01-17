@@ -168,7 +168,7 @@ export default function Navbar() {
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
+          {open ? <X className="h-5 w-5" strokeWidth={2.5} aria-hidden /> : <Menu className="h-5 w-5" strokeWidth={2.5} aria-hidden />}
         </button>
       </div>
 

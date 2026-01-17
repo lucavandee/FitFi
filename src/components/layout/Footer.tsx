@@ -104,8 +104,8 @@ export default function Footer() {
                 © {new Date().getFullYear()} FitFi — Alle rechten voorbehouden
               </div>
               <div className="text-xs space-y-0.5">
-                <div>FitFi B.V. — KvK: [Invullen] — BTW: NL[Invullen]B01</div>
-                <div>Gevestigd in Amsterdam, Nederland</div>
+                <div>FitFi B.V. — KVK: 97225665 — BTW: NL005258495B15</div>
+                <div>Keizersgracht 520 H · 1017 EK Amsterdam</div>
               </div>
             </div>
 
