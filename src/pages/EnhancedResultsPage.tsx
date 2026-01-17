@@ -19,6 +19,7 @@ import { StyleIdentityHero } from "@/components/results/StyleIdentityHero";
 import { StyleDNAMixIndicator } from "@/components/results/StyleDNAMixIndicator";
 import { ArchetypeBreakdown } from "@/components/results/ArchetypeBreakdown";
 import { ArchetypeDetector } from "@/services/styleProfile/archetypeDetector";
+import { ColorProfileExplainer } from "@/components/results/ColorProfileExplainer";
 import SmartImage from "@/components/ui/SmartImage";
 import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightExtractor";
 import type { ArchetypeKey } from "@/config/archetypes";
@@ -642,6 +643,16 @@ export default function EnhancedResultsPage() {
                     season={activeColorProfile.season}
                     contrast={activeColorProfile.contrast}
                     chroma={activeColorProfile.chroma}
+                  />
+                </div>
+              </AnimatedSection>
+
+              {/* ✅ NEW: Color Profile Explainer - Neutral Undertone Context */}
+              <AnimatedSection delay={0.58}>
+                <div className="mb-12">
+                  <ColorProfileExplainer
+                    colorProfile={activeColorProfile}
+                    confidence={profileConfidence}
                   />
                 </div>
               </AnimatedSection>

@@ -47,9 +47,15 @@ export function ColorPaletteSection({ season }: ColorPaletteSectionProps) {
           <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2">
             Jouw Kleurpalet: {palette.season}
           </h3>
-          <p className="text-lg text-gray-600 leading-relaxed">
+          <p className="text-lg text-gray-600 leading-relaxed mb-3">
             {palette.description}
           </p>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm">
+            <Info className="w-4 h-4" />
+            <span>
+              Zie de uitleg hierboven voor context over jouw seizoenstype en ondertoon
+            </span>
+          </div>
         </div>
       </div>
 
