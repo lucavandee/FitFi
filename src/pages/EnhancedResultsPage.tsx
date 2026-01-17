@@ -39,6 +39,9 @@ import { SwipeableOutfitGallery } from "@/components/outfits/SwipeableOutfitGall
 import { useMonthlyUpgrades } from "@/hooks/useMonthlyUpgrades";
 import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
 import { ExitIntentModal } from "@/components/results/ExitIntentModal";
+import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/profileConsistency";
+import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
+import { useNavigate } from "react-router-dom";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -67,6 +70,7 @@ const AnimatedSection = ({ children, delay = 0 }: { children: React.ReactNode; d
 
 export default function EnhancedResultsPage() {
   const { user } = useUser();
+  const navigate = useNavigate();
   const { shouldShow: showExitIntent, dismiss: dismissExitIntent } = useExitIntent({
     enabled: !user,
     maxDisplays: 1,
@@ -91,6 +95,16 @@ export default function EnhancedResultsPage() {
   const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
 
   const hasCompletedQuiz = !!answers;
+
+  // ✅ NEW: Analyze profile consistency for mixed/eclectic profiles
+  const [consistencyAnalysis, setConsistencyAnalysis] = React.useState<ConsistencyAnalysis | null>(null);
+
+  React.useEffect(() => {
+    if (answers) {
+      const analysis = analyzeProfileConsistency(answers);
+      setConsistencyAnalysis(analysis);
+    }
+  }, [answers]);
 
   // Exit intent modal trigger
   React.useEffect(() => {
@@ -793,6 +807,32 @@ export default function EnhancedResultsPage() {
                 </motion.div>
               </AnimatedSection>
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Profile Consistency Banner - Only show if needed */}
+      {hasCompletedQuiz && consistencyAnalysis && (
+        <section className="py-6">
+          <div className="ff-container">
+            <ProfileConsistencyBanner
+              analysis={consistencyAnalysis}
+              onRetakeQuiz={() => {
+                // Clear quiz answers and navigate to quiz
+                try {
+                  localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
+                  localStorage.removeItem(LS_KEYS.ARCHETYPE);
+                  localStorage.removeItem(LS_KEYS.COLOR_PROFILE);
+                } catch {}
+                navigate('/onboarding');
+              }}
+              onDismiss={() => {
+                // User can dismiss the banner
+                try {
+                  sessionStorage.setItem('ff_consistency_banner_dismissed', 'true');
+                } catch {}
+              }}
+            />
           </div>
         </section>
       )}
