@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Layers, TrendingUp } from "lucide-react";
 import { ARCHETYPES, type ArchetypeKey } from "@/config/archetypes";
 
 interface ArchetypeScore {
@@ -10,14 +10,16 @@ interface ArchetypeScore {
 
 interface ArchetypeBreakdownProps {
   archetypeScores: ArchetypeScore[];
+  confidence?: number; // 0-1 scale
   className?: string;
 }
 
 /**
  * Archetype Breakdown Component
  * Shows top 3 style archetypes with visual percentages and descriptions
+ * Now with hybrid style detection and adaptive messaging
  */
-export function ArchetypeBreakdown({ archetypeScores, className = "" }: ArchetypeBreakdownProps) {
+export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, className = "" }: ArchetypeBreakdownProps) {
   const top3 = archetypeScores
     .sort((a, b) => b.percentage - a.percentage)
     .slice(0, 3);
@@ -26,21 +28,78 @@ export function ArchetypeBreakdown({ archetypeScores, className = "" }: Archetyp
     return null;
   }
 
+  // Determine if this is a hybrid/mixed style profile
+  const isHybrid = confidence < 0.7 || (top3.length >= 2 && top3[1].percentage > 25);
+  const primary = top3[0];
+  const secondary = top3.length >= 2 ? top3[1] : null;
+
+  // Generate hybrid description
+  const getHybridDescription = () => {
+    if (!isHybrid || !secondary) return null;
+
+    const primaryName = ARCHETYPES[primary.archetype].label;
+    const secondaryName = ARCHETYPES[secondary.archetype].label;
+
+    return `Je combineert ${primaryName.toLowerCase()} (${Math.round(primary.percentage)}%) met ${secondaryName.toLowerCase()} (${Math.round(secondary.percentage)}%) elementen`;
+  };
+
+  // Adaptive messaging based on confidence
+  const getConfidenceMessage = () => {
+    if (confidence >= 0.85) {
+      return "Je hebt een zeer duidelijke en consistente stijlvoorkeur";
+    } else if (confidence >= 0.7) {
+      return "Je stijlvoorkeuren zijn helder en goed gedefinieerd";
+    } else if (confidence >= 0.5) {
+      return "Je stijl is veelzijdig en combineert meerdere elementen";
+    } else {
+      return "Je hebt een eclectische stijl die meerdere archetypen mengt";
+    }
+  };
+
   return (
     <div className={`bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 sm:p-8 ${className}`}>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center">
-          <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center">
+            {isHybrid ? (
+              <Layers className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+            ) : (
+              <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+            )}
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">
+              Jouw stijl DNA
+            </h3>
+            <p className="text-sm text-[var(--color-text-muted)]">
+              {getConfidenceMessage()}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">
-            Jouw stijl DNA
-          </h3>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Top 3 stijlarchetypes die jou definiëren
-          </p>
-        </div>
+
+        {/* Hybrid Style Indicator */}
+        {isHybrid && secondary && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 p-4 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-xl border border-[var(--ff-color-primary-200)]"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+              </div>
+              <div>
+                <p className="font-semibold text-[var(--color-text)] mb-1">
+                  Hybride Stijl Gedetecteerd
+                </p>
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                  {getHybridDescription()}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Archetype Cards */}

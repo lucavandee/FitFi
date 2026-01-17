@@ -16,6 +16,9 @@ import { StyleDNATooltip } from "@/components/results/StyleDNATooltip";
 import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
 import { ColorPaletteSection } from "@/components/results/ColorPaletteSection";
 import { StyleIdentityHero } from "@/components/results/StyleIdentityHero";
+import { StyleDNAMixIndicator } from "@/components/results/StyleDNAMixIndicator";
+import { ArchetypeBreakdown } from "@/components/results/ArchetypeBreakdown";
+import { ArchetypeDetector } from "@/services/styleProfile/archetypeDetector";
 import SmartImage from "@/components/ui/SmartImage";
 import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightExtractor";
 import type { ArchetypeKey } from "@/config/archetypes";
@@ -133,6 +136,14 @@ export default function EnhancedResultsPage() {
   const [profileConfidence, setProfileConfidence] = React.useState<number>(0.5);
   const [profileLoading, setProfileLoading] = React.useState(false);
 
+  // ✅ NEW: Calculate archetype detection result with confidence
+  const [archetypeDetectionResult, setArchetypeDetectionResult] = React.useState<{
+    primary: string;
+    secondary: string | null;
+    scores: Array<{ archetype: string; score: number }>;
+    confidence: number;
+  } | null>(null);
+
   React.useEffect(() => {
     if (!answers) return;
 
@@ -162,6 +173,15 @@ export default function EnhancedResultsPage() {
         setGeneratedProfile(result.colorProfile);
         setProfileDataSource(result.dataSource);
         setProfileConfidence(result.confidence);
+
+        // ✅ NEW: Calculate archetype detection with confidence
+        try {
+          const detectionResult = ArchetypeDetector.detect(answers);
+          console.log('[EnhancedResultsPage] Archetype detection:', detectionResult);
+          setArchetypeDetectionResult(detectionResult as any);
+        } catch (error) {
+          console.warn('[EnhancedResultsPage] Could not detect archetype:', error);
+        }
 
         // Save to localStorage for future use
         try {
@@ -365,8 +385,22 @@ export default function EnhancedResultsPage() {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-600 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-light px-4"
                 >
-                  We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} unieke outfits</strong> samengesteld die perfect
-                  <br className="hidden md:block" /> bij jouw {archetypeName} stijl passen
+                  {archetypeDetectionResult && archetypeDetectionResult.confidence >= 0.7 ? (
+                    <>
+                      We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} unieke outfits</strong> samengesteld die perfect
+                      <br className="hidden md:block" /> bij jouw duidelijke {archetypeName} stijl passen
+                    </>
+                  ) : archetypeDetectionResult && archetypeDetectionResult.confidence >= 0.5 ? (
+                    <>
+                      We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} veelzijdige outfits</strong> samengesteld die verschillende
+                      <br className="hidden md:block" /> aspecten van jouw {archetypeName} stijl reflecteren
+                    </>
+                  ) : (
+                    <>
+                      We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} diverse outfits</strong> samengesteld die jouw
+                      <br className="hidden md:block" /> eclectische stijlmix met {archetypeName} elementen weerspiegelen
+                    </>
+                  )}
                 </motion.p>
 
                 <motion.div
@@ -618,6 +652,36 @@ export default function EnhancedResultsPage() {
                   <ColorPaletteSection season={activeColorProfile.season} />
                 </div>
               </AnimatedSection>
+
+              {/* ✅ NEW: Style DNA Mix Indicator - Visual Breakdown */}
+              {archetypeDetectionResult && archetypeDetectionResult.scores.length > 0 && (
+                <AnimatedSection delay={0.65}>
+                  <div className="mb-12">
+                    <StyleDNAMixIndicator
+                      mixItems={archetypeDetectionResult.scores.map(s => ({
+                        archetype: s.archetype as ArchetypeKey,
+                        percentage: s.score
+                      }))}
+                      confidence={archetypeDetectionResult.confidence}
+                    />
+                  </div>
+                </AnimatedSection>
+              )}
+
+              {/* ✅ NEW: Archetype Breakdown with Confidence */}
+              {archetypeDetectionResult && archetypeDetectionResult.scores.length > 0 && (
+                <AnimatedSection delay={0.67}>
+                  <div className="mb-12">
+                    <ArchetypeBreakdown
+                      archetypeScores={archetypeDetectionResult.scores.map(s => ({
+                        archetype: s.archetype as ArchetypeKey,
+                        percentage: s.score
+                      }))}
+                      confidence={archetypeDetectionResult.confidence}
+                    />
+                  </div>
+                </AnimatedSection>
+              )}
 
               {/* How We Determined Your Style */}
               <AnimatedSection delay={0.7}>
