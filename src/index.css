@@ -10,6 +10,8 @@
 @import "./styles/blog-reading.css";
 @import "./styles/responsive-landing.css";
 @import "./styles/responsive-results.css";
+/* COMPREHENSIVE TABLET FIX - All pages responsive optimization */
+@import "./styles/responsive-universal.css";
 @import "./styles/swipe-performance.css";
 
 /* Tailwind layers — volgorde behouden */
