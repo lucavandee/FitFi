@@ -42,6 +42,7 @@ import { ExitIntentModal } from "@/components/results/ExitIntentModal";
 import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/profileConsistency";
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { useNavigate } from "react-router-dom";
+import { generateOutfitDescription } from "@/engine/outfitContext";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -912,6 +913,7 @@ export default function EnhancedResultsPage() {
                   const idx = displayOutfits.findIndex(o => o === outfit);
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
+                  const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
 
                   return (
                     <div className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] overflow-hidden shadow-lg h-full">
@@ -948,25 +950,19 @@ export default function EnhancedResultsPage() {
 
                       {/* Info */}
                       <div className="p-6">
+                        {/* Occasion Badge */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-100)] rounded-full mb-3">
+                          <span className="text-base">{outfitInfo.context.emoji}</span>
+                          <span className="text-xs font-bold text-[var(--ff-color-accent-700)] uppercase tracking-wide">
+                            {outfitInfo.context.label}
+                          </span>
+                        </div>
+
                         <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">
-                          {'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
+                          {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
                         <p className="text-base text-gray-600">
-                          {(() => {
-                            const archetypeLower = archetypeName.toLowerCase();
-                            // Vary descriptions by category for more diversity
-                            const templates = [
-                              [`Veelzijdige ${archetypeLower} look voor elke gelegenheid`, `Van kantoor naar borrel — ${archetypeLower} elegantie`, `Dag tot avond stijl met ${archetypeLower} flair`],
-                              [`Comfortabel én stijlvol — ${archetypeLower} in balans`, `Moeiteloos draagbaar met ${archetypeLower} statement`, `Ontspannen chic met ${archetypeLower} details`],
-                              [`Tijdloze ${archetypeLower} essentials die altijd werken`, `Klassieke ${archetypeLower} basis met moderne twist`, `Investeer in tijdloze ${archetypeLower} kwaliteit`],
-                              [`Statement ${archetypeLower} met zelfvertrouwen`, `Zelfverzekerde ${archetypeLower} look die opvalt`, `Krachtige ${archetypeLower} combinatie met impact`],
-                              [`Verfijnde ${archetypeLower} finishing touches`, `Stijlvolle details maken deze ${archetypeLower} look`, `Geraffineerde ${archetypeLower} voor de aandachtige dresser`],
-                              [`Seizoensklaar — ${archetypeLower} voor nu`, `Perfect voor het seizoen met ${archetypeLower} vibe`, `Weer-proof ${archetypeLower} stijl`],
-                            ];
-                            const category = Math.floor(idx / 3) % templates.length;
-                            const variant = idx % templates[category].length;
-                            return templates[category][variant];
-                          })()}
+                          {outfitInfo.description}
                         </p>
                       </div>
                     </div>
@@ -979,6 +975,7 @@ export default function EnhancedResultsPage() {
                 {displayOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
+                  const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
 
                   return (
                     <AnimatedSection key={id} delay={idx * 0.05}>
@@ -1065,24 +1062,19 @@ export default function EnhancedResultsPage() {
 
                         {/* Info */}
                         <div className="p-6">
+                          {/* Occasion Badge */}
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--ff-color-accent-100)] rounded-full mb-2">
+                            <span className="text-sm">{outfitInfo.context.emoji}</span>
+                            <span className="text-[10px] font-bold text-[var(--ff-color-accent-700)] uppercase tracking-wider">
+                              {outfitInfo.context.label}
+                            </span>
+                          </div>
+
                           <h3 className="text-lg font-bold mb-2 text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
-                            {'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
+                            {'name' in outfit ? outfit.name : outfitInfo.title}
                           </h3>
                           <p className="text-sm text-gray-600 line-clamp-2">
-                            {(() => {
-                              const archetypeLower = archetypeName.toLowerCase();
-                              const templates = [
-                                [`Veelzijdige ${archetypeLower} look voor elke gelegenheid`, `Van kantoor naar borrel — ${archetypeLower} elegantie`, `Dag tot avond stijl met ${archetypeLower} flair`],
-                                [`Comfortabel én stijlvol — ${archetypeLower} in balans`, `Moeiteloos draagbaar met ${archetypeLower} statement`, `Ontspannen chic met ${archetypeLower} details`],
-                                [`Tijdloze ${archetypeLower} essentials die altijd werken`, `Klassieke ${archetypeLower} basis met moderne twist`, `Investeer in tijdloze ${archetypeLower} kwaliteit`],
-                                [`Statement ${archetypeLower} met zelfvertrouwen`, `Zelfverzekerde ${archetypeLower} look die opvalt`, `Krachtige ${archetypeLower} combinatie met impact`],
-                                [`Verfijnde ${archetypeLower} finishing touches`, `Stijlvolle details maken deze ${archetypeLower} look`, `Geraffineerde ${archetypeLower} voor de aandachtige dresser`],
-                                [`Seizoensklaar — ${archetypeLower} voor nu`, `Perfect voor het seizoen met ${archetypeLower} vibe`, `Weer-proof ${archetypeLower} stijl`],
-                              ];
-                              const category = Math.floor(idx / 3) % templates.length;
-                              const variant = idx % templates[category].length;
-                              return templates[category][variant];
-                            })()}
+                            {outfitInfo.description}
                           </p>
                         </div>
                       </motion.div>
