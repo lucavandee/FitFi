@@ -191,40 +191,31 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
         </motion.div>
       </div>
 
-      {/* Premium action buttons - Subtle and clean */}
-      <div className="relative z-30 pb-8 pt-4 px-6 bg-white/80 backdrop-blur-xl border-t border-[var(--color-border)]/30 safe-bottom">
-        <div className="flex items-center justify-center gap-8 max-w-md mx-auto">
-          {/* Skip button */}
+      {/* Premium action buttons - Two elegant choices */}
+      <div className="relative z-30 pb-8 pt-6 px-6 bg-white/80 backdrop-blur-xl border-t border-[var(--color-border)]/30 safe-bottom">
+        <div className="flex items-center justify-center gap-6 max-w-lg mx-auto">
+          {/* Pass button */}
           <motion.button
             onClick={() => handleButtonClick('left')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group relative flex items-center justify-center w-14 h-14 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative flex-1 flex items-center justify-center gap-3 px-8 py-4 rounded-[20px] bg-white border-2 border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300"
             aria-label="Niet mijn stijl"
           >
-            <ChevronLeft className="w-6 h-6 text-slate-600 group-hover:text-slate-700 transition-colors" strokeWidth={2.5} />
+            <X className="w-5 h-5 text-slate-500 group-hover:text-slate-700 transition-colors" strokeWidth={2.5} />
+            <span className="text-base font-semibold text-slate-700 tracking-tight">Overslaan</span>
           </motion.button>
 
           {/* Like button - Emphasis */}
           <motion.button
             onClick={() => handleButtonClick('right')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group relative flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] shadow-lg hover:shadow-xl transition-all duration-300"
+            whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative flex-1 flex items-center justify-center gap-3 px-8 py-4 rounded-[20px] bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] shadow-lg transition-all duration-300"
             aria-label="Dit spreekt me aan"
           >
-            <Heart className="w-7 h-7 text-white fill-white transition-transform duration-300 group-hover:scale-110" strokeWidth={0} />
-          </motion.button>
-
-          {/* Next button */}
-          <motion.button
-            onClick={() => handleButtonClick('right')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group relative flex items-center justify-center w-14 h-14 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300"
-            aria-label="Volgende"
-          >
-            <ChevronRight className="w-6 h-6 text-slate-600 group-hover:text-slate-700 transition-colors" strokeWidth={2.5} />
+            <Heart className="w-5 h-5 text-white fill-white transition-transform duration-300 group-hover:scale-110" strokeWidth={0} />
+            <span className="text-base font-semibold text-white tracking-tight">Dit vind ik mooi</span>
           </motion.button>
         </div>
 
@@ -233,11 +224,11 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-4 text-center"
+          className="mt-5 text-center"
         >
-          <p className="text-xs text-[var(--color-muted)]">
-            <span className="hidden sm:inline">Gebruik ← voor overslaan • Spatiebalk of → voor like</span>
-            <span className="sm:hidden">Swipe links of rechts</span>
+          <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+            <span className="hidden sm:inline">Of gebruik ← en → pijltjestoetsen</span>
+            <span className="sm:hidden">Of swipe de foto links of rechts</span>
           </p>
         </motion.div>
       </div>
