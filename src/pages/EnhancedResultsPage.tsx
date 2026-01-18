@@ -565,92 +565,132 @@ export default function EnhancedResultsPage() {
               </div>
             </AnimatedSection>
 
+            {/* Ultra-Premium Style Profile Card */}
+            <div className="max-w-5xl mx-auto mb-12">
+              <AnimatedSection delay={0.1}>
+                <div className="relative bg-gradient-to-br from-white via-white to-slate-50/30 backdrop-blur-xl border border-[var(--color-border)]/40 rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
+
+                  {/* Subtle background pattern */}
+                  <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]" />
+                  </div>
+
+                  {/* Content */}
+                  <div className="relative z-10">
+                    {/* Header with badge */}
+                    <div className="mb-10 sm:mb-12">
+                      <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-full text-xs font-bold text-[var(--ff-color-primary-700)] mb-4 shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5" strokeWidth={2.5} />
+                        <span className="tracking-wide">JOUW STIJL</span>
+                      </div>
+                      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-text)] tracking-tight leading-[1.1]">
+                        Je stijlprofiel:{' '}
+                        <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
+                          {archetypeName}
+                        </span>
+                      </h2>
+                    </div>
+
+                    <div className="grid lg:grid-cols-2 gap-10 lg:gap-14">
+                      {/* Ultra-Premium Color Profile with Visual Swatches */}
+                      <div className="space-y-6">
+                        <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
+                          <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
+                          Kleurprofiel
+                        </h3>
+
+                        <div className="space-y-5">
+                          {/* Temperatuur */}
+                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Temperatuur</span>
+                              <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-orange-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                                {formatStyleDNAValue('temperature', activeColorProfile.temperature)}
+                              </span>
+                            </div>
+                            <div className="flex gap-2">
+                              <div className="h-3 flex-1 bg-gradient-to-r from-blue-400 via-slate-300 to-orange-400 rounded-full shadow-inner" />
+                            </div>
+                          </div>
+
+                          {/* Contrast */}
+                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Contrast</span>
+                              <span className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-200 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                                {formatStyleDNAValue('contrast', color.contrast)}
+                              </span>
+                            </div>
+                            <div className="flex gap-2">
+                              <div className="h-3 w-1/3 bg-gradient-to-r from-slate-200 to-slate-300 rounded-l-full shadow-inner" />
+                              <div className="h-3 w-1/3 bg-gradient-to-r from-slate-400 to-slate-500 shadow-inner" />
+                              <div className="h-3 w-1/3 bg-gradient-to-r from-slate-700 to-slate-900 rounded-r-full shadow-inner" />
+                            </div>
+                          </div>
+
+                          {/* Seizoen */}
+                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Seizoen</span>
+                              <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                                {formatStyleDNAValue('season', activeColorProfile.season)}
+                              </span>
+                            </div>
+                            <div className="flex gap-2">
+                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'zomer' ? 'from-sky-200 to-blue-300' : 'from-sky-200 to-blue-300 opacity-30'}`} title="Zomer" />
+                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'herfst' ? 'from-amber-200 to-orange-300' : 'from-amber-200 to-orange-300 opacity-30'}`} title="Herfst" />
+                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'winter' ? 'from-slate-200 to-blue-200' : 'from-slate-200 to-blue-200 opacity-30'}`} title="Winter" />
+                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'lente' ? 'from-pink-200 to-green-200' : 'from-pink-200 to-green-200 opacity-30'}`} title="Lente" />
+                            </div>
+                          </div>
+
+                          {/* Chroma */}
+                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Chroma</span>
+                              <span className="px-3 py-1.5 bg-gradient-to-r from-purple-50 to-pink-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                                {formatStyleDNAValue('chroma', activeColorProfile.chroma)}
+                              </span>
+                            </div>
+                            <div className="flex gap-2">
+                              <div className="h-3 flex-1 bg-gradient-to-r from-gray-300 via-pink-300 to-purple-500 rounded-full shadow-inner" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ultra-Premium Key Insights */}
+                      <div className="space-y-6">
+                        <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
+                          <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
+                          Belangrijkste inzichten
+                        </h3>
+
+                        <ul className="space-y-4">
+                          {activeColorProfile.notes && activeColorProfile.notes.map((note, i) => (
+                            <li
+                              key={i}
+                              className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:bg-white/80 hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                            >
+                              <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-success-500)] to-[var(--ff-color-success-600)] flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
+                                  <Check className="w-5 h-5 text-white" strokeWidth={2.5} />
+                                </div>
+                                <span className="text-[var(--color-text)] font-medium leading-relaxed tracking-wide flex-1 pt-1">
+                                  {note}
+                                </span>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </AnimatedSection>
+            </div>
+
             <div className="max-w-7xl mx-auto">
-              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8 sm:mb-12">
-                <AnimatedSection delay={0.1}>
-                  <motion.div
-                    whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                    className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] p-8 shadow-lg transition-all"
-                  >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-700)] flex items-center justify-center mb-6">
-                      <Award className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      {getStyleDNALabel('archetype').label}
-                    </h3>
-                    <p className="text-3xl font-bold text-[var(--ff-color-primary-600)] mb-2">{archetypeName}</p>
-                    <p className="text-sm text-gray-600">
-                      {getStyleDNALabel('archetype').subtitle}
-                    </p>
-                  </motion.div>
-                </AnimatedSection>
-
-                <AnimatedSection delay={0.2}>
-                  <motion.div
-                    whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                    className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] p-8 shadow-lg transition-all"
-                  >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-500)] mb-6"></div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      {getStyleDNALabel('season').label}
-                    </h3>
-                    <p className="text-3xl font-bold capitalize mb-2">
-                      {formatStyleDNAValue('season', activeColorProfile.season)}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {getSeasonDescription(
-                        activeColorProfile.season,
-                        color.contrast,
-                        activeColorProfile.temperature
-                      )}
-                    </p>
-                    <StyleDNATooltip attribute="season" value={activeColorProfile.season} />
-                  </motion.div>
-                </AnimatedSection>
-
-                <AnimatedSection delay={0.3}>
-                  <motion.div
-                    whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                    className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] p-8 shadow-lg transition-all"
-                  >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-accent-400)] to-[var(--ff-color-accent-600)] flex items-center justify-center mb-6">
-                      <TrendingUp className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      {getStyleDNALabel('contrast').label}
-                    </h3>
-                    <p className="text-3xl font-bold mb-2">
-                      {formatStyleDNAValue('contrast', color.contrast)}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {formatStyleDNAValue('temperature', activeColorProfile.temperature)}
-                    </p>
-                    <StyleDNATooltip attribute="contrast" value={color.contrast} />
-                  </motion.div>
-                </AnimatedSection>
-
-                <AnimatedSection delay={0.4}>
-                  <motion.div
-                    whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                    className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] p-8 shadow-lg transition-all"
-                  >
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-6">
-                      <Sparkles className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      {getStyleDNALabel('chroma').label}
-                    </h3>
-                    <p className="text-3xl font-bold mb-2">
-                      {formatStyleDNAValue('chroma', activeColorProfile.chroma)}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {getStyleDNALabel('chroma').subtitle}
-                    </p>
-                    <StyleDNATooltip attribute="chroma" value={activeColorProfile.chroma} />
-                  </motion.div>
-                </AnimatedSection>
-              </div>
-
               {/* Shopping Guidance - Practical Cheat Sheet */}
               <AnimatedSection delay={0.5}>
                 <div className="mb-12">
