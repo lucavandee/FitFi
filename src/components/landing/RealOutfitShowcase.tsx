@@ -198,7 +198,7 @@ export function RealOutfitShowcase() {
                 </div>
 
                 {/* Titel en context - boven */}
-                <div className="mt-16 sm:mt-20 mb-6 sm:mb-8">
+                <div className="mt-16 sm:mt-20 mb-6">
                   <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2">
                     {outfit.title}
                   </h3>
@@ -207,20 +207,32 @@ export function RealOutfitShowcase() {
                   </p>
                 </div>
 
-                {/* Groot featured product image - neemt meeste ruimte */}
-                <div className="flex-1 flex items-center justify-center">
-                  {outfit.items[0]?.image ? (
-                    <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square">
-                      <img
-                        src={outfit.items[0].image}
-                        alt={outfit.items[0].label}
-                        className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
+                {/* Alle 4 items in een grid - 2x2 */}
+                <div className="flex-1 grid grid-cols-2 gap-3 sm:gap-4">
+                  {outfit.items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="relative aspect-square rounded-2xl bg-white shadow-lg overflow-hidden group/item"
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.label}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover/item:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className={`w-full h-full ${item.color}`} />
+                      )}
+
+                      {/* Subtiele label overlay - alleen zichtbaar on hover */}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-3 sm:p-4 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                        <p className="text-white text-xs sm:text-sm font-semibold line-clamp-2">
+                          {item.label}
+                        </p>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-3xl shadow-2xl bg-white/50 backdrop-blur-sm" />
-                  )}
+                  ))}
                 </div>
 
                 {/* CTA Button - onderaan */}
