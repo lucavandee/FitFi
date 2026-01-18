@@ -125,49 +125,112 @@ export default function ResultsPreviewPage() {
         </div>
       </section>
 
-      {/* Premium Style Profile Summary */}
+      {/* Ultra-Premium Style Profile Summary */}
       <section className="ff-container pb-16 md:pb-20">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm border border-[var(--color-border)]/50 rounded-3xl p-8 sm:p-10 lg:p-12 shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-all duration-700">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 text-[var(--ff-color-text)] tracking-tight">
-              {isPersonalized ? `${userName}'s stijlprofiel` : 'Je stijlprofiel'}: <span className="text-[var(--ff-color-primary-700)]">{DEMO_ARCHETYPE}</span>
-            </h2>
+        <div className="max-w-5xl mx-auto">
+          <div className="relative bg-gradient-to-br from-white via-white to-slate-50/30 backdrop-blur-xl border border-[var(--color-border)]/40 rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
 
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
-              {/* Premium Color Profile */}
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-bold text-[var(--ff-color-text)] tracking-tight">
-                  Kleurprofiel
-                </h3>
-                <div className="space-y-3 text-sm sm:text-base">
-                  <div className="flex justify-between items-center py-3 border-b border-[var(--color-border)]/30">
-                    <span className="text-[var(--color-muted)] font-light">Temperatuur:</span>
-                    <span className="font-semibold text-[var(--ff-color-text)]">Neutraal</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b border-[var(--color-border)]/30">
-                    <span className="text-[var(--color-muted)] font-light">Contrast:</span>
-                    <span className="font-semibold text-[var(--ff-color-text)]">Medium</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3">
-                    <span className="text-[var(--color-muted)] font-light">Seizoen:</span>
-                    <span className="font-semibold text-[var(--ff-color-text)]">Zomer</span>
-                  </div>
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10">
+              {/* Header with badge */}
+              <div className="mb-10 sm:mb-12">
+                <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-full text-xs font-bold text-[var(--ff-color-primary-700)] mb-4 shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5" strokeWidth={2.5} />
+                  <span className="tracking-wide">JOUW STIJL</span>
                 </div>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-text)] tracking-tight leading-[1.1]">
+                  {isPersonalized ? `${userName}'s stijlprofiel` : 'Je stijlprofiel'}:{' '}
+                  <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
+                    {DEMO_ARCHETYPE}
+                  </span>
+                </h2>
               </div>
 
-              {/* Premium Key Insights */}
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-bold text-[var(--ff-color-text)] tracking-tight">
-                  Belangrijkste inzichten
-                </h3>
-                <ul className="space-y-3 text-sm sm:text-base">
-                  {DEMO_COLOR_PROFILE.notes.map((note, i) => (
-                    <li key={i} className="flex items-start gap-3 group">
-                      <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)] mt-0.5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" strokeWidth={2.5} />
-                      <span className="text-[var(--color-muted)] font-light leading-relaxed">{note}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid lg:grid-cols-2 gap-10 lg:gap-14">
+                {/* Ultra-Premium Color Profile with Visual Swatches */}
+                <div className="space-y-6">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
+                    <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
+                    Kleurprofiel
+                  </h3>
+
+                  <div className="space-y-5">
+                    {/* Temperatuur */}
+                    <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Temperatuur</span>
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-orange-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
+                          Neutraal
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-3 flex-1 bg-gradient-to-r from-blue-400 via-slate-300 to-orange-400 rounded-full shadow-inner" />
+                      </div>
+                    </div>
+
+                    {/* Contrast */}
+                    <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Contrast</span>
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-200 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
+                          Medium
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-3 w-1/3 bg-gradient-to-r from-slate-200 to-slate-300 rounded-l-full shadow-inner" />
+                        <div className="h-3 w-1/3 bg-gradient-to-r from-slate-400 to-slate-500 shadow-inner" />
+                        <div className="h-3 w-1/3 bg-gradient-to-r from-slate-700 to-slate-900 rounded-r-full shadow-inner" />
+                      </div>
+                    </div>
+
+                    {/* Seizoen */}
+                    <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Seizoen</span>
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
+                          Zomer
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-10 w-10 bg-gradient-to-br from-sky-200 to-blue-300 rounded-xl shadow-md" title="Zomer" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-amber-200 to-orange-300 rounded-xl opacity-30" title="Herfst" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-slate-200 to-blue-200 rounded-xl opacity-30" title="Winter" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-pink-200 to-green-200 rounded-xl opacity-30" title="Lente" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ultra-Premium Key Insights */}
+                <div className="space-y-6">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
+                    <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
+                    Belangrijkste inzichten
+                  </h3>
+
+                  <ul className="space-y-4">
+                    {DEMO_COLOR_PROFILE.notes.map((note, i) => (
+                      <li
+                        key={i}
+                        className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:bg-white/80 hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-success-500)] to-[var(--ff-color-success-600)] flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
+                            <CheckCircle className="w-5 h-5 text-white" strokeWidth={2.5} fill="currentColor" />
+                          </div>
+                          <span className="text-[var(--color-text)] font-medium leading-relaxed tracking-wide flex-1 pt-1">
+                            {note}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
