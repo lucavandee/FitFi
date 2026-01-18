@@ -209,15 +209,15 @@ export function RealOutfitShowcase() {
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 sm:gap-4 bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
+                      className="flex items-center gap-3 sm:gap-4 bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
                     >
                       {/* Product image or color swatch */}
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl shadow-md border-2 border-white flex-shrink-0 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl shadow-md border-2 border-[var(--color-border)] flex-shrink-0 overflow-hidden bg-[var(--ff-color-neutral-50)]">
                         {item.image ? (
                           <img
                             src={item.image}
                             alt={item.label}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover"
                             loading="lazy"
                           />
                         ) : (
@@ -225,7 +225,7 @@ export function RealOutfitShowcase() {
                         )}
                       </div>
 
-                      {/* Item details */}
+                      {/* Item details - op witte achtergrond, altijd leesbaar */}
                       <div className="flex-1 min-w-0">
                         <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-1">
                           {item.type === 'top' && 'BOVENSTUK'}
