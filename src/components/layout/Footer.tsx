@@ -1,114 +1,178 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { Instagram, Linkedin } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Instagram, Linkedin, ArrowRight, Sparkles } from "lucide-react";
 
 /**
- * Premium minimalist Footer
- * Apple × Lululemon aesthetic: rustig, ruim, essentieel
+ * Modern Premium Footer
+ *
+ * Mobile-first design:
+ * - Compact 2-column grid
+ * - Prominent CTA
+ * - Grouped sections
+ * - Premium aesthetic
  */
 
-const links = [
-  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
-  { to: "/prijzen", label: "Prijzen" },
-  { to: "/blog", label: "Blog" },
-  { to: "/veelgestelde-vragen", label: "FAQ" },
-  { to: "/contact", label: "Contact" },
-];
-
-const legal = [
-  { to: "/privacy", label: "Privacy" },
-  { to: "/terms", label: "Voorwaarden" },
-  { to: "/cookies", label: "Cookies" },
-];
+const navigation = {
+  product: [
+    { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+    { to: "/prijzen", label: "Prijzen" },
+    { to: "/veelgestelde-vragen", label: "FAQ" },
+  ],
+  company: [
+    { to: "/blog", label: "Blog" },
+    { to: "/over-ons", label: "Over ons" },
+    { to: "/contact", label: "Contact" },
+  ],
+  legal: [
+    { to: "/privacy", label: "Privacy" },
+    { to: "/algemene-voorwaarden", label: "Voorwaarden" },
+    { to: "/cookies", label: "Cookies" },
+  ]
+};
 
 export default function Footer() {
+  const navigate = useNavigate();
+
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg)]">
+    <footer className="bg-gradient-to-b from-[var(--color-bg)] to-[var(--ff-color-primary-25)] border-t border-[var(--color-border)]">
       <div className="ff-container">
 
-        {/* Main section - Rust en ruimte */}
-        <div className="py-16 sm:py-20 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 lg:gap-16">
-
-          {/* Brand side - Minimaal maar aanwezig */}
-          <div className="lg:max-w-xs space-y-6">
-            <div className="font-heading text-2xl text-[var(--color-text)] tracking-tight">
-              FitFi
+        {/* Premium CTA - Mobile optimized */}
+        <div className="py-12 sm:py-16 border-b border-[var(--color-border)]">
+          <div className="max-w-3xl mx-auto text-center px-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] rounded-full mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" />
+              <span className="text-xs font-medium text-[var(--ff-color-primary-800)]">
+                Ontdek je stijl in 5 minuten
+              </span>
             </div>
-            <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-              Persoonlijk stijladvies, powered by AI
+
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-3">
+              Klaar om te beginnen?
+            </h2>
+            <p className="text-[var(--color-muted)] text-sm sm:text-base mb-6">
+              Start gratis. Geen creditcard vereist.
             </p>
 
-            {/* Social - subtiel */}
-            <div className="flex gap-3 pt-2">
-              <a
-                href="https://instagram.com/fitfi.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-10 h-10 rounded-full border border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] flex items-center justify-center transition-all hover:scale-105"
-              >
-                <Instagram size={16} className="text-[var(--color-muted)]" />
-              </a>
-              <a
-                href="https://linkedin.com/company/fitfi-ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="w-10 h-10 rounded-full border border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] flex items-center justify-center transition-all hover:scale-105"
-              >
-                <Linkedin size={16} className="text-[var(--color-muted)]" />
-              </a>
-            </div>
-          </div>
-
-          {/* Navigation side - Schoon en georganiseerd */}
-          <div className="flex flex-col sm:flex-row gap-12 sm:gap-16 lg:gap-20">
-
-            {/* Main links */}
-            <nav aria-label="Footer navigatie">
-              <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.to}>
-                    <NavLink
-                      to={link.to}
-                      className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors inline-block"
-                    >
-                      {link.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* Legal links */}
-            <nav aria-label="Juridische paginas">
-              <ul className="space-y-3">
-                {legal.map((link) => (
-                  <li key={link.to}>
-                    <NavLink
-                      to={link.to}
-                      className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors inline-block"
-                    >
-                      {link.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <button
+              onClick={() => navigate('/onboarding')}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold text-sm sm:text-base hover:from-[var(--ff-color-primary-600)] hover:to-[var(--ff-color-primary-500)] transition-all shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-lg)] active:scale-[0.98]"
+            >
+              Start gratis quiz
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Bottom bar - Subtiel en clean */}
-        <div className="border-t border-[var(--color-border)] py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--color-muted)]">
-            <div>
-              © {new Date().getFullYear()} FitFi B.V.
+        {/* Main Footer Content - Compact Grid */}
+        <div className="py-10 sm:py-12">
+
+          {/* Brand + Description */}
+          <div className="mb-8 sm:mb-10">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] shadow-sm" />
+              <span className="text-xl font-bold text-[var(--color-text)]">FitFi</span>
             </div>
-            <div className="flex items-center gap-4">
+            <p className="text-sm text-[var(--color-muted)] max-w-xs leading-relaxed">
+              Persoonlijk stijladvies, powered by AI
+            </p>
+          </div>
+
+          {/* Navigation Grid - 2 columns on mobile, 3 on desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-10 mb-8">
+
+            {/* Product */}
+            <nav>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
+                Product
+              </h3>
+              <ul className="space-y-2.5">
+                {navigation.product.map((link) => (
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className="text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors inline-block"
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Company */}
+            <nav>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
+                Bedrijf
+              </h3>
+              <ul className="space-y-2.5">
+                {navigation.company.map((link) => (
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className="text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors inline-block"
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Legal */}
+            <nav>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
+                Juridisch
+              </h3>
+              <ul className="space-y-2.5">
+                {navigation.legal.map((link) => (
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className="text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors inline-block"
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+
+          {/* Social Links - Subtle */}
+          <div className="flex gap-3 mb-8">
+            <a
+              href="https://instagram.com/fitfi.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="w-9 h-9 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] flex items-center justify-center transition-all"
+            >
+              <Instagram className="w-4 h-4 text-[var(--color-muted)]" />
+            </a>
+            <a
+              href="https://linkedin.com/company/fitfi-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="w-9 h-9 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] flex items-center justify-center transition-all"
+            >
+              <Linkedin className="w-4 h-4 text-[var(--color-muted)]" />
+            </a>
+          </div>
+        </div>
+
+        {/* Bottom Bar - Clean & Compact */}
+        <div className="border-t border-[var(--color-border)] py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[var(--color-muted)]">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+              <span>© {new Date().getFullYear()} FitFi B.V.</span>
+              <span className="hidden sm:inline">•</span>
               <span>KVK 97225665</span>
-              <span className="hidden sm:inline">·</span>
-              <span className="hidden sm:inline">Amsterdam</span>
             </div>
+            <span className="text-[var(--color-muted)]/70">
+              Keizersgracht 520 H · Amsterdam
+            </span>
           </div>
         </div>
 
