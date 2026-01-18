@@ -1,30 +1,48 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, X } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
+
+/**
+ * Subtle FAB (Floating Action Button)
+ * Minder opdringerig dan grote bar
+ */
 
 export function StickyCTA() {
   const { user } = useUser();
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show after scrolling 70% of viewport height (was 50%, now lazier)
-      const scrolled = window.scrollY > window.innerHeight * 0.7;
+      // Show after scrolling 100vh
+      const scrolled = window.scrollY > window.innerHeight;
 
-      // Hide when near bottom (within 300px of footer for smoother exit)
+      // Hide when near bottom (300px from footer)
       const nearBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300;
 
       setIsVisible(scrolled && !isDismissed && !nearBottom);
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial state
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isDismissed]);
+
+  // Show tooltip after 2 seconds, once
+  useEffect(() => {
+    if (isVisible && !showTooltip) {
+      const timer = setTimeout(() => {
+        setShowTooltip(true);
+        // Hide tooltip after 3 seconds
+        setTimeout(() => setShowTooltip(false), 3000);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, showTooltip]);
 
   const handleClick = () => {
     if (user) {
@@ -34,50 +52,36 @@ export function StickyCTA() {
     }
   };
 
-  const handleDismiss = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsDismissed(true);
-  };
-
   if (!isVisible) return null;
 
   return (
     <div
-      className={`fixed bottom-24 sm:bottom-8 left-1/2 -translate-x-1/2 z-[45] transition-all duration-500 px-3 sm:px-0 max-w-[calc(100vw-1.5rem)] sm:max-w-none ${
+      className={`fixed bottom-6 right-6 z-[45] transition-all duration-500 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
       }`}
       style={{ pointerEvents: isVisible ? 'auto' : 'none' }}
     >
-      <div className="bg-[var(--ff-color-primary-700)] text-white rounded-xl sm:rounded-2xl shadow-2xl px-3 sm:px-8 py-2.5 sm:py-5 flex items-center gap-2 sm:gap-6 hover:bg-[var(--ff-color-primary-600)] transition-colors group border-2 border-[var(--ff-color-primary-600)]">
-
-        {/* CTA Button */}
-        <button
-          onClick={handleClick}
-          className="flex items-center gap-1.5 sm:gap-3 font-bold text-sm sm:text-lg"
-        >
-          <span className="hidden xs:inline">Start gratis</span>
-          <span className="xs:hidden">Start nu</span>
-          <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-1" />
-        </button>
-
-        {/* Divider - hidden on mobile */}
-        <div className="hidden sm:block w-px h-8 bg-white/30"></div>
-
-        {/* Trust badge */}
-        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-400"></div>
-          <span className="font-medium">Gratis</span>
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="absolute bottom-full right-0 mb-3 px-3 py-2 bg-[var(--color-text)] text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-bottom-2 duration-300">
+          Start gratis quiz
+          <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[var(--color-text)]"></div>
         </div>
+      )}
 
-        {/* Close button */}
-        <button
-          onClick={handleDismiss}
-          className="ml-auto sm:ml-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors"
-          aria-label="Sluit"
-        >
-          <X className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-        </button>
-      </div>
+      {/* FAB Button */}
+      <button
+        onClick={handleClick}
+        onMouseEnter={() => !showTooltip && setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] text-white shadow-xl hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group border-2 border-white/20"
+        aria-label="Start gratis quiz"
+      >
+        <Sparkles className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" strokeWidth={2.5} />
+
+        {/* Pulse ring */}
+        <div className="absolute inset-0 rounded-full bg-[var(--ff-color-primary-500)] opacity-0 group-hover:opacity-20 animate-ping"></div>
+      </button>
     </div>
   );
 }
