@@ -64,8 +64,8 @@ const outfits: Outfit[] = [
     title: 'Casual dag uit',
     context: 'Lunch, koffie, boodschappen',
     icon: Coffee,
-    gradient: 'from-amber-50 to-orange-50',
-    border: 'border-orange-300',
+    gradient: 'from-slate-50 to-slate-100',
+    border: 'border-slate-300',
     items: [
       { type: 'top', color: 'bg-slate-100', label: 'Gestreepte trui', image: '/images/casual-dag-uit/130aa0a3-d37a-49b4-ad48-ac400044d562.webp' },
       { type: 'bottom', color: 'bg-blue-400', label: 'Lichte jeans', image: '/images/casual-dag-uit/046de5c0-c4a0-43c9-b1fc-fab3995f613a.webp' },
@@ -190,7 +190,7 @@ export function RealOutfitShowcase() {
               onMouseLeave={() => setHoveredId(null)}
             >
               {/* Card met gradient achtergrond */}
-              <div className={`bg-gradient-to-br ${outfit.gradient} p-6 sm:p-8 lg:p-10 aspect-[3/4] flex flex-col relative`}>
+              <div className={`bg-gradient-to-br ${outfit.gradient} p-6 sm:p-8 lg:p-10 aspect-[3/5] flex flex-col relative`}>
 
                 {/* Icon badge - subtiel in hoek */}
                 <div className="absolute top-4 left-4 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
