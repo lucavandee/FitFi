@@ -168,11 +168,11 @@ export function RealOutfitShowcase() {
 
         {/* Outfit Grid/Carousel */}
         <div
-          className="md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-8
+          className="md:grid md:grid-cols-3 md:gap-6 lg:gap-8
                      flex md:block overflow-x-auto md:overflow-visible
                      snap-x snap-mandatory md:snap-none
                      -mx-4 px-4 md:mx-0 md:px-0
-                     gap-4 md:gap-6 lg:gap-8
+                     gap-6
                      pb-4 md:pb-0 scrollbar-hide"
           onScroll={(e) => {
             const scrollLeft = e.currentTarget.scrollLeft;
@@ -183,83 +183,55 @@ export function RealOutfitShowcase() {
           {outfits.map((outfit) => (
             <div
               key={outfit.id}
-              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300 md:hover:-translate-y-2 active:scale-[0.98]
-                         min-w-[85vw] sm:min-w-[70vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center"
+              className="group relative overflow-hidden rounded-3xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500 md:hover:-translate-y-3
+                         min-w-[85vw] sm:min-w-[75vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center"
+              onClick={() => outfit.completeImage && setSelectedOutfit(outfit)}
               onMouseEnter={() => setHoveredId(outfit.id)}
               onMouseLeave={() => setHoveredId(null)}
-              onTouchStart={() => setHoveredId(outfit.id)}
-              onTouchEnd={() => setHoveredId(null)}
             >
-              {/* Card Background */}
-              <div className={`bg-gradient-to-br ${outfit.gradient} border-2 ${outfit.border} p-5 sm:p-6 lg:p-8 aspect-[3/4] flex flex-col`}>
+              {/* Card met gradient achtergrond */}
+              <div className={`bg-gradient-to-br ${outfit.gradient} p-6 sm:p-8 lg:p-10 aspect-[3/4] flex flex-col relative`}>
 
-                {/* Header */}
-                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
-                    <outfit.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--ff-color-primary-700)]" strokeWidth={2} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-[var(--color-text)]">{outfit.title}</h3>
-                    <p className="text-xs sm:text-sm text-[var(--color-muted)]">{outfit.context}</p>
-                  </div>
+                {/* Icon badge - subtiel in hoek */}
+                <div className="absolute top-4 left-4 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                  <outfit.icon className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--ff-color-primary-700)]" strokeWidth={2} />
                 </div>
 
-                {/* Outfit Items - Visual representation */}
-                <div className="flex-1 flex flex-col justify-center gap-2.5 sm:gap-3 lg:gap-4">
-                  {outfit.items.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-3 sm:gap-4 bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      {/* Product image or color swatch */}
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl shadow-md border-2 border-[var(--color-border)] flex-shrink-0 overflow-hidden bg-[var(--ff-color-neutral-50)]">
-                        {item.image ? (
-                          <img
-                            src={item.image}
-                            alt={item.label}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className={`w-full h-full ${item.color}`}></div>
-                        )}
-                      </div>
+                {/* Titel en context - boven */}
+                <div className="mt-16 sm:mt-20 mb-6 sm:mb-8">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2">
+                    {outfit.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-[var(--color-muted)]">
+                    {outfit.context}
+                  </p>
+                </div>
 
-                      {/* Item details - op witte achtergrond, altijd leesbaar */}
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-1">
-                          {item.type === 'top' && 'BOVENSTUK'}
-                          {item.type === 'bottom' && 'ONDERSTUK'}
-                          {item.type === 'shoes' && 'SCHOENEN'}
-                          {item.type === 'accessory' && 'ACCESSOIRE'}
-                        </div>
-                        <div className="text-sm sm:text-base font-bold text-[var(--color-text)] line-clamp-2">
-                          {item.label}
-                        </div>
-                      </div>
-
-                      {/* Shop indicator */}
-                      <div
-                        className={`transition-all duration-300 flex-shrink-0 ${
-                          hoveredId === outfit.id
-                            ? 'opacity-100 scale-100'
-                            : 'opacity-0 scale-75'
-                        }`}
-                      >
-                        <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--ff-color-primary-600)]" />
-                      </div>
+                {/* Groot featured product image - neemt meeste ruimte */}
+                <div className="flex-1 flex items-center justify-center">
+                  {outfit.items[0]?.image ? (
+                    <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square">
+                      <img
+                        src={outfit.items[0].image}
+                        alt={outfit.items[0].label}
+                        className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
                     </div>
-                  ))}
+                  ) : (
+                    <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-3xl shadow-2xl bg-white/50 backdrop-blur-sm" />
+                  )}
                 </div>
 
-                {/* Footer - Shop CTA */}
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-white/50">
+                {/* CTA Button - onderaan */}
+                <div className="mt-6 sm:mt-8">
                   <button
-                    onClick={() => outfit.completeImage && setSelectedOutfit(outfit)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      outfit.completeImage && setSelectedOutfit(outfit);
+                    }}
                     disabled={!outfit.completeImage}
-                    className={`w-full py-2.5 sm:py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-95 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed ${
-                      hoveredId === outfit.id ? 'scale-105' : ''
-                    }`}
+                    className="w-full py-3 sm:py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed group-hover:scale-[1.02]"
                   >
                     Bekijk complete look
                   </button>
