@@ -295,23 +295,31 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="flex items-center justify-center min-h-[600px]"
+        className="fixed inset-0 flex items-center justify-center bg-gradient-to-b from-[var(--color-bg)] to-slate-50"
       >
-        <div className="text-center">
+        <div className="text-center px-6">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            className="inline-block"
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            className="inline-block mb-6"
           >
-            <Loader2 className="w-12 h-12 text-[var(--ff-color-primary-700)]" />
+            <div className="w-16 h-16 rounded-full border-4 border-slate-100 border-t-[var(--ff-color-primary-600)]" />
           </motion.div>
+          <motion.h3
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-xl font-bold text-[var(--ff-color-text)] mb-2 tracking-tight"
+          >
+            Stijlbeelden laden...
+          </motion.h3>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-[var(--color-muted)]"
+            className="text-sm text-[var(--color-muted)]"
           >
-            Beelden laden...
+            We verzamelen inspiratie voor jou
           </motion.p>
         </div>
       </motion.div>
@@ -351,28 +359,31 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
       <AnimatePresence>
         {showCelebration && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-[var(--ff-color-primary-600)]/95 to-[var(--ff-color-accent-600)]/95 backdrop-blur-xl"
           >
             <motion.div
-              initial={{ y: 20 }}
-              animate={{ y: 0 }}
-              className="text-center px-4"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+              className="text-center px-6"
             >
               <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5, repeat: 3 }}
-                className="text-6xl mb-4"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 1, repeat: Infinity, repeatDelay: 1 }}
+                className="mb-6"
               >
-                <PartyPopper className="w-20 h-20 text-green-400 mx-auto" />
+                <div className="w-24 h-24 mx-auto rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <PartyPopper className="w-14 h-14 text-white" strokeWidth={2} />
+                </div>
               </motion.div>
-              <h3 className="text-3xl font-bold text-white mb-2">
-                Perfect! 🎉
+              <h3 className="text-4xl font-bold text-white mb-3 tracking-tight">
+                Perfect!
               </h3>
-              <p className="text-white/80 text-lg">
-                Je stijlprofiel is compleet!
+              <p className="text-white/90 text-lg font-medium">
+                Je stijlprofiel is compleet
               </p>
             </motion.div>
           </motion.div>
@@ -397,32 +408,33 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-6"
             onClick={() => setShowSkipConfirm(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 20, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-md w-full shadow-2xl"
+              className="bg-white rounded-[28px] p-8 max-w-md w-full shadow-2xl border border-slate-100"
             >
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-2xl font-bold text-[var(--ff-color-text)] mb-3 tracking-tight">
                 Deze stap overslaan?
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Je kunt je stijlvoorkeuren later altijd verfijnen via het dashboard.
+              <p className="text-[var(--color-muted)] mb-8 leading-relaxed">
+                We raden aan deze stap te voltooien voor de beste stijlaanbevelingen. Je kunt dit later ook nog doen via je dashboard.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowSkipConfirm(false)}
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                  className="flex-1 px-6 py-3.5 border-2 border-slate-200 rounded-2xl text-[var(--ff-color-text)] hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 font-semibold"
                 >
                   Terug
                 </button>
                 <button
                   onClick={handleSkip}
-                  className="flex-1 px-4 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors font-medium"
+                  className="flex-1 px-6 py-3.5 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-2xl hover:shadow-lg transition-all duration-300 font-semibold"
                 >
                   Overslaan
                 </button>
@@ -432,31 +444,6 @@ export function VisualPreferenceStep({ onComplete, onSwipe, userGender }: Visual
         )}
       </AnimatePresence>
 
-      {/* Undo button - floating bottom left */}
-      <AnimatePresence>
-        {swipeHistory.length > 0 && !showSkipConfirm && (
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            onClick={handleUndo}
-            className="fixed bottom-24 left-4 z-40 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center justify-center hover:scale-110 transition-transform safe-bottom"
-          >
-            <RotateCcw className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Skip button - floating bottom right */}
-      <motion.button
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        onClick={() => setShowSkipConfirm(true)}
-        className="fixed bottom-24 right-4 z-40 px-4 h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl flex items-center gap-2 hover:scale-105 transition-transform safe-bottom"
-      >
-        <SkipForward className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Overslaan</span>
-      </motion.button>
     </>
   );
 }

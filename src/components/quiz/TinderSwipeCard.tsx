@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
-import { Heart, X } from 'lucide-react';
+import { Heart, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface TinderSwipeCardProps {
   imageUrl: string;
@@ -19,7 +19,7 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
     const handleKeyDown = (e: KeyboardEvent) => {
       if (exitDirection) return; // Don't allow multiple swipes
 
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowLeft' || e.key === ' ') {
         e.preventDefault();
         handleButtonClick('left');
       } else if (e.key === 'ArrowRight') {
@@ -34,7 +34,7 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotate = useTransform(x, [-300, 0, 300], [-25, 0, 25]);
+  const rotate = useTransform(x, [-300, 0, 300], [-15, 0, 15]);
   const opacity = useTransform(x, [-250, -150, 0, 150, 250], [0, 0.5, 1, 0.5, 0]);
 
   const swipeThreshold = 120;
@@ -66,49 +66,65 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
     }, 250);
   };
 
+  const progress = ((index / total) * 100).toFixed(0);
+
   return (
-    <div className="fixed inset-0 flex flex-col bg-[var(--color-bg)]">
-      {/* Instructions - Only show on first card */}
-      {index === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 safe-top"
-        >
-          <div className="bg-white dark:bg-gray-900 rounded-2xl px-6 py-4 shadow-2xl border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
-            <p className="text-center text-sm font-medium text-gray-900 dark:text-white">
-              <span className="hidden sm:inline">Swipe, pijltjestoetsen (← →) of knoppen gebruiken</span>
-              <span className="sm:hidden">Swipe of gebruik de knoppen onderaan</span>
-            </p>
-            <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-1">
-              Je kunt meerdere stijlen leuk vinden!
+    <div className="fixed inset-0 flex flex-col bg-gradient-to-b from-[var(--color-bg)] to-slate-50">
+      {/* Premium Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-40 pt-6 pb-4 px-6 bg-white/80 backdrop-blur-xl border-b border-[var(--color-border)]/30 safe-top"
+      >
+        {/* Progress percentage */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-[var(--ff-color-text)] tracking-tight">
+              Visuele Voorkeuren
+            </h2>
+            <p className="text-sm text-[var(--color-muted)] mt-0.5">
+              Swipe door stijlbeelden die je aanspreken
             </p>
           </div>
-        </motion.div>
-      )}
-
-      {/* Progress indicator - top */}
-      <div className="absolute top-0 left-0 right-0 z-30 p-4 safe-top">
-        <div className="flex gap-1.5">
-          {Array.from({ length: total }).map((_, i) => (
-            <div
-              key={i}
-              className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
-            >
-              <motion.div
-                initial={{ width: i < index ? '100%' : '0%' }}
-                animate={{ width: i < index ? '100%' : i === index ? '100%' : '0%' }}
-                transition={{ duration: 0.3 }}
-                className="h-full bg-white"
-              />
+          <div className="text-right">
+            <div className="text-2xl font-bold bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
+              {progress}%
             </div>
-          ))}
+            <div className="text-xs text-[var(--color-muted)] mt-0.5">
+              {index} / {total}
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Main card area */}
-      <div className="relative flex-1 flex items-center justify-center">
+        {/* Premium progress bar */}
+        <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full"
+          />
+        </div>
+
+        {/* Subtle instructions - Only show on first card */}
+        {index === 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-4 pt-4 border-t border-[var(--color-border)]/20"
+          >
+            <p className="text-xs text-center text-[var(--color-muted)] leading-relaxed">
+              <span className="hidden sm:inline">Gebruik pijltjestoetsen (← →), swipe, of de knoppen onderaan</span>
+              <span className="sm:hidden">Swipe horizontaal of gebruik de knoppen onderaan</span>
+            </p>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Main card area with breathing room */}
+      <div className="relative flex-1 flex items-center justify-center px-4 py-8">
         <motion.div
           ref={cardRef}
           style={{ x, y, rotate, opacity }}
@@ -120,64 +136,53 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
             exitDirection
               ? {
                   x: exitDirection === 'right' ? 1000 : -1000,
-                  y: 100,
-                  rotate: exitDirection === 'right' ? 45 : -45,
+                  y: 50,
+                  rotate: exitDirection === 'right' ? 30 : -30,
                   opacity: 0,
-                  transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
+                  transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] }
                 }
               : {}
           }
           whileTap={{ scale: 0.98, cursor: 'grabbing' }}
-          className="absolute inset-0 cursor-grab active:cursor-grabbing"
+          className="relative w-full max-w-md aspect-[9/16] cursor-grab active:cursor-grabbing"
         >
-          {/* Card inner */}
-          <div className="relative w-full h-full">
-            {/* Image - 9:16 ratio, centered */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-full max-w-[500px] h-full max-h-[calc(100vh-180px)] aspect-[9/16]">
-                <img
-                  src={imageUrl}
-                  alt="Style mood"
-                  className="w-full h-full object-cover rounded-3xl shadow-2xl"
-                  draggable={false}
-                />
+          {/* Premium card container */}
+          <div className="relative w-full h-full rounded-[28px] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-white/20">
+            <img
+              src={imageUrl}
+              alt="Style inspiration"
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
 
-                {/* Gradient overlay - subtle */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/30 rounded-3xl pointer-events-none" />
+            {/* Subtle gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent pointer-events-none" />
 
-                {/* Counter badge - bottom left */}
-                <div className="absolute bottom-6 left-6">
-                  <div className="bg-black/40 backdrop-blur-md text-white text-sm font-medium px-4 py-2 rounded-full">
-                    {index + 1} / {total}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Swipe direction indicators */}
+            {/* Subtle swipe indicators on the card itself */}
             <AnimatePresence>
               {exitDirection === 'left' && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
-                  animate={{ opacity: 1, scale: 1.2, rotate: -15 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
                 >
-                  <div className="bg-red-500 text-white p-8 rounded-full shadow-2xl border-4 border-white">
-                    <X className="w-16 h-16" strokeWidth={3} />
+                  <div className="bg-white/95 backdrop-blur-xl p-6 rounded-2xl shadow-2xl">
+                    <X className="w-12 h-12 text-slate-600" strokeWidth={2} />
                   </div>
                 </motion.div>
               )}
 
               {exitDirection === 'right' && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.5, rotate: 20 }}
-                  animate={{ opacity: 1, scale: 1.2, rotate: 15 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
                 >
-                  <div className="bg-green-500 text-white p-8 rounded-full shadow-2xl border-4 border-white">
-                    <Heart className="w-16 h-16 fill-white" strokeWidth={3} />
+                  <div className="bg-white/95 backdrop-blur-xl p-6 rounded-2xl shadow-2xl">
+                    <Heart className="w-12 h-12 text-[var(--ff-color-primary-600)] fill-[var(--ff-color-primary-600)]" strokeWidth={0} />
                   </div>
                 </motion.div>
               )}
@@ -186,29 +191,55 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
         </motion.div>
       </div>
 
-      {/* Action buttons - Tinder style at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 z-30 safe-bottom">
-        <div className="flex items-center justify-center gap-6 py-6 px-4">
+      {/* Premium action buttons - Subtle and clean */}
+      <div className="relative z-30 pb-8 pt-4 px-6 bg-white/80 backdrop-blur-xl border-t border-[var(--color-border)]/30 safe-bottom">
+        <div className="flex items-center justify-center gap-8 max-w-md mx-auto">
+          {/* Skip button */}
           <motion.button
             onClick={() => handleButtonClick('left')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-16 h-16 rounded-full bg-white shadow-xl border-2 border-red-500/20 flex items-center justify-center hover:border-red-500 transition-all active:shadow-lg"
+            className="group relative flex items-center justify-center w-14 h-14 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300"
             aria-label="Niet mijn stijl"
           >
-            <X className="w-8 h-8 text-red-500" strokeWidth={2.5} />
+            <ChevronLeft className="w-6 h-6 text-slate-600 group-hover:text-slate-700 transition-colors" strokeWidth={2.5} />
           </motion.button>
 
+          {/* Like button - Emphasis */}
           <motion.button
             onClick={() => handleButtonClick('right')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-500 shadow-xl flex items-center justify-center hover:shadow-2xl transition-all active:shadow-lg"
+            className="group relative flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] shadow-lg hover:shadow-xl transition-all duration-300"
             aria-label="Dit spreekt me aan"
           >
-            <Heart className="w-10 h-10 text-white fill-white" strokeWidth={0} />
+            <Heart className="w-7 h-7 text-white fill-white transition-transform duration-300 group-hover:scale-110" strokeWidth={0} />
+          </motion.button>
+
+          {/* Next button */}
+          <motion.button
+            onClick={() => handleButtonClick('right')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="group relative flex items-center justify-center w-14 h-14 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300"
+            aria-label="Volgende"
+          >
+            <ChevronRight className="w-6 h-6 text-slate-600 group-hover:text-slate-700 transition-colors" strokeWidth={2.5} />
           </motion.button>
         </div>
+
+        {/* Subtle helper text */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-4 text-center"
+        >
+          <p className="text-xs text-[var(--color-muted)]">
+            <span className="hidden sm:inline">Gebruik ← voor overslaan • Spatiebalk of → voor like</span>
+            <span className="sm:hidden">Swipe links of rechts</span>
+          </p>
+        </motion.div>
       </div>
     </div>
   );
