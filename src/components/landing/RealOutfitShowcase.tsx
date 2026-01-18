@@ -101,7 +101,7 @@ const outfits: Outfit[] = [
     title: 'Avondje uit',
     context: 'Restaurant, borrel of diner',
     icon: Moon,
-    gradient: 'from-slate-50 to-blue-50',
+    gradient: 'from-slate-50 to-slate-100',
     border: 'border-slate-300',
     items: [
       { type: 'top', color: 'bg-slate-800', label: 'Zwart overhemd', image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy copy.webp' },
@@ -144,25 +144,25 @@ export function RealOutfitShowcase() {
     <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[var(--ff-color-primary-50)] border-2 border-[var(--ff-color-primary-200)] rounded-full text-[var(--ff-color-primary-700)] text-xs sm:text-sm font-bold mb-4 sm:mb-6 shadow-md">
-            <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
-            Complete looks, shopbaar
+        {/* Section Header - Premium styling */}
+        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+          <div className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-full text-[var(--ff-color-primary-700)] text-xs sm:text-sm font-bold mb-6 sm:mb-8 shadow-[0_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+            <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
+            <span className="tracking-wide">Complete looks, shopbaar</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] mb-3 sm:mb-4 lg:mb-6 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] mb-4 sm:mb-5 lg:mb-7 leading-[1.1] tracking-tight">
             Voor elk moment
           </h2>
-          <p className="text-sm sm:text-lg lg:text-xl text-[var(--color-muted)] max-w-3xl mx-auto font-light px-4">
+          <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] max-w-3xl mx-auto font-light px-4 leading-relaxed tracking-wide">
             Echte outfits met items die je kunt kopen — geen abstracte moodboards
           </p>
         </div>
 
-        {/* Mobile Swipe Indicator */}
-        <div className="md:hidden text-center mb-4 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2">
+        {/* Mobile Swipe Indicator - Premium */}
+        <div className="md:hidden text-center mb-6 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2 font-medium tracking-wide">
           <span>Swipe voor meer</span>
-          <svg className="w-4 h-4 animate-bounce-horizontal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          <svg className="w-4 h-4 animate-bounce-horizontal opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
         </div>
 
@@ -183,51 +183,56 @@ export function RealOutfitShowcase() {
           {outfits.map((outfit) => (
             <div
               key={outfit.id}
-              className="group relative overflow-hidden rounded-3xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500 md:hover:-translate-y-3
-                         min-w-[85vw] sm:min-w-[75vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center"
+              className="group relative overflow-hidden rounded-3xl cursor-pointer
+                         shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.2)]
+                         transition-all duration-700 md:hover:-translate-y-4 md:hover:scale-[1.02]
+                         min-w-[85vw] sm:min-w-[75vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center
+                         border border-[var(--color-border)]/50 backdrop-blur-sm"
               onClick={() => outfit.completeImage && setSelectedOutfit(outfit)}
               onMouseEnter={() => setHoveredId(outfit.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
               {/* Card met gradient achtergrond */}
-              <div className={`bg-gradient-to-br ${outfit.gradient} p-6 sm:p-8 lg:p-10 aspect-[3/5] flex flex-col relative`}>
+              <div className={`bg-gradient-to-br ${outfit.gradient} p-8 sm:p-10 lg:p-12 aspect-[3/5] flex flex-col relative`}>
 
-                {/* Icon badge - subtiel in hoek */}
-                <div className="absolute top-4 left-4 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                  <outfit.icon className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--ff-color-primary-700)]" strokeWidth={2} />
+                {/* Icon badge - premium styling */}
+                <div className="absolute top-6 left-6 w-14 h-14 sm:w-16 sm:h-16 bg-white/95 backdrop-blur-md rounded-[18px] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.12)] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                  <outfit.icon className="w-7 h-7 sm:w-8 sm:h-8 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
                 </div>
 
-                {/* Titel en context - boven */}
-                <div className="mt-16 sm:mt-20 mb-6">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2">
+                {/* Titel en context - premium typography */}
+                <div className="mt-20 sm:mt-24 mb-8">
+                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-text)] mb-2 tracking-tight">
                     {outfit.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-[var(--color-muted)]">
+                  <p className="text-sm sm:text-base text-[var(--color-muted)] font-light tracking-wide">
                     {outfit.context}
                   </p>
                 </div>
 
-                {/* Alle 4 items in een grid - 2x2 */}
-                <div className="flex-1 grid grid-cols-2 gap-3 sm:gap-4">
+                {/* Premium product grid - 2x2 met verbeterde styling */}
+                <div className="flex-1 grid grid-cols-2 gap-4 sm:gap-5">
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-2xl bg-[var(--color-surface)] shadow-lg overflow-hidden group/item p-6 sm:p-8"
+                      className="relative aspect-square rounded-[20px] bg-white/80 backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)] overflow-hidden group/item transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.16)] hover:scale-[1.03]"
                     >
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.label}
-                          className="w-full h-full object-contain transition-transform duration-500 group-hover/item:scale-105"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className={`w-full h-full ${item.color} rounded-xl`} />
-                      )}
+                      <div className="absolute inset-0 p-6 sm:p-8">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.label}
+                            className="w-full h-full object-contain transition-all duration-700 group-hover/item:scale-110"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className={`w-full h-full ${item.color} rounded-xl`} />
+                        )}
+                      </div>
 
-                      {/* Subtiele label overlay - alleen zichtbaar on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-3 sm:p-4 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex items-end rounded-2xl">
-                        <p className="text-white text-xs sm:text-sm font-semibold line-clamp-2">
+                      {/* Premium label overlay met glassmorphism */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover/item:opacity-100 transition-all duration-500 flex items-end p-4 sm:p-5 rounded-[20px]">
+                        <p className="text-white text-xs sm:text-sm font-semibold line-clamp-2 tracking-wide">
                           {item.label}
                         </p>
                       </div>
@@ -235,17 +240,24 @@ export function RealOutfitShowcase() {
                   ))}
                 </div>
 
-                {/* CTA Button - onderaan met extra witruimte */}
-                <div className="mt-8 sm:mt-10 lg:mt-12 pt-4 sm:pt-6">
+                {/* Premium CTA Button */}
+                <div className="mt-10 sm:mt-12 lg:mt-14">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       outfit.completeImage && setSelectedOutfit(outfit);
                     }}
                     disabled={!outfit.completeImage}
-                    className="w-full py-3 sm:py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed group-hover:scale-[1.02]"
+                    className="w-full py-4 sm:py-5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)]
+                               text-white rounded-[18px] font-bold text-base sm:text-lg tracking-wide
+                               transition-all duration-500
+                               shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)]
+                               disabled:opacity-50 disabled:cursor-not-allowed
+                               group-hover:scale-[1.03] active:scale-[0.98]
+                               relative overflow-hidden"
                   >
-                    Bekijk complete look
+                    <span className="relative z-10">Bekijk complete look</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                   </button>
                 </div>
               </div>
@@ -253,8 +265,8 @@ export function RealOutfitShowcase() {
           ))}
         </div>
 
-        {/* Scroll Indicators (Mobile only) */}
-        <div className="md:hidden flex items-center justify-center gap-2 mt-6">
+        {/* Premium Scroll Indicators (Mobile only) */}
+        <div className="md:hidden flex items-center justify-center gap-2.5 mt-8">
           {outfits.map((_, idx) => (
             <button
               key={idx}
@@ -265,21 +277,21 @@ export function RealOutfitShowcase() {
                   container.scrollTo({ left: cardWidth * idx, behavior: 'smooth' });
                 }
               }}
-              className={`h-2 rounded-full transition-all duration-300 ${
+              className={`rounded-full transition-all duration-500 ${
                 idx === activeIndex
-                  ? 'w-8 bg-[var(--ff-color-primary-600)]'
-                  : 'w-2 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)]'
+                  ? 'w-10 h-2.5 bg-[var(--ff-color-primary-600)] shadow-[0_2px_8px_rgba(0,0,0,0.15)]'
+                  : 'w-2.5 h-2.5 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)] hover:scale-125'
               }`}
               aria-label={`Ga naar outfit ${idx + 1}`}
             />
           ))}
         </div>
 
-        {/* Trust note */}
-        <div className="mt-8 sm:mt-10 lg:mt-12 text-center px-4">
-          <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed">
+        {/* Premium Trust note */}
+        <div className="mt-12 sm:mt-14 lg:mt-16 text-center px-4">
+          <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed tracking-wide font-light">
             <span className="font-semibold text-[var(--color-text)]">Let op:</span> Dit zijn voorbeelden.
-            Jouw persoonlijke Style Report bevat outfits gebaseerd op <span className="font-semibold">jouw voorkeuren en kleuren</span>.
+            Jouw persoonlijke Style Report bevat outfits gebaseerd op <span className="font-semibold text-[var(--color-text)]">jouw voorkeuren en kleuren</span>.
           </p>
         </div>
 
