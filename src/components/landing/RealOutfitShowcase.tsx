@@ -212,21 +212,21 @@ export function RealOutfitShowcase() {
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-2xl bg-white shadow-lg overflow-hidden group/item"
+                      className="relative aspect-square rounded-2xl bg-white shadow-lg overflow-hidden group/item p-4 sm:p-6"
                     >
                       {item.image ? (
                         <img
                           src={item.image}
                           alt={item.label}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover/item:scale-105"
+                          className="w-full h-full object-contain transition-transform duration-500 group-hover/item:scale-105"
                           loading="lazy"
                         />
                       ) : (
-                        <div className={`w-full h-full ${item.color}`} />
+                        <div className={`w-full h-full ${item.color} rounded-xl`} />
                       )}
 
                       {/* Subtiele label overlay - alleen zichtbaar on hover */}
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-3 sm:p-4 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-3 sm:p-4 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex items-end rounded-2xl">
                         <p className="text-white text-xs sm:text-sm font-semibold line-clamp-2">
                           {item.label}
                         </p>
