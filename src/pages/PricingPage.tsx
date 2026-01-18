@@ -7,6 +7,7 @@ import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import { canonicalUrl } from "@/utils/urls";
+import ColorPalettePreview from "@/components/premium/ColorPalettePreview";
 
 export default function PricingPage() {
   const navigate = useNavigate();
@@ -629,6 +630,23 @@ export default function PricingPage() {
                 </div>
               </article>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Color Palette Preview - Premium Feature Showcase */}
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="ff-container">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-8 sm:mb-10">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">
+                Ontdek jouw perfecte kleuren
+              </h2>
+              <p className="text-lg sm:text-xl text-[var(--color-muted)]">
+                Premium members krijgen toegang tot professionele kleurenanalyse en 2025 trend insights
+              </p>
+            </div>
+            <ColorPalettePreview />
           </div>
         </div>
       </section>

@@ -43,6 +43,7 @@ import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/pr
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { useNavigate } from "react-router-dom";
 import { generateOutfitDescription } from "@/engine/outfitContext";
+import TrendInsights from "@/components/premium/TrendInsights";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -718,6 +719,18 @@ export default function EnhancedResultsPage() {
                   <ColorPaletteSection season={activeColorProfile.season} />
                 </div>
               </AnimatedSection>
+
+              {/* 2025 Trend Insights - Premium Only */}
+              {user?.isPremium && (
+                <AnimatedSection delay={0.62}>
+                  <div className="mb-12">
+                    <TrendInsights
+                      userSeason={activeColorProfile.season as 'winter' | 'zomer' | 'herfst' | 'lente'}
+                      compact={false}
+                    />
+                  </div>
+                </AnimatedSection>
+              )}
 
               {/* ✅ NEW: Style DNA Mix Indicator - Visual Breakdown */}
               {archetypeDetectionResult && archetypeDetectionResult.scores.length > 0 && (

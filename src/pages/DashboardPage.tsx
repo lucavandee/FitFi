@@ -11,6 +11,7 @@ import { dismissInsight, getDismissedInsights, filterDismissedInsights } from "@
 import { EnhancedFAB } from "@/components/ui/EnhancedFAB";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import TrendInsights from "@/components/premium/TrendInsights";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -650,6 +651,21 @@ export default function DashboardPage() {
           {/* End Flex Container */}
         </div>
         {/* End max-w Container */}
+
+        {/* 2025 Trend Insights - Compact Teaser */}
+        {color?.season && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="max-w-[1600px] mx-auto mt-12"
+          >
+            <TrendInsights
+              userSeason={color.season as 'winter' | 'zomer' | 'herfst' | 'lente'}
+              compact={true}
+            />
+          </motion.div>
+        )}
       </div>
       {/* End ff-container */}
 
