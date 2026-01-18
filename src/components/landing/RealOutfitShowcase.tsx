@@ -212,7 +212,7 @@ export function RealOutfitShowcase() {
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-2xl bg-white shadow-lg overflow-hidden group/item p-4 sm:p-6"
+                      className="relative aspect-square rounded-2xl bg-white shadow-lg overflow-hidden group/item p-4 pb-8 sm:p-6 sm:pb-12"
                     >
                       {item.image ? (
                         <img
