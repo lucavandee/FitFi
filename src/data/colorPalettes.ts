@@ -1,13 +1,13 @@
 /**
- * Color Palettes - Concrete color recommendations per season/profile
+ * Color Palettes - 2025 Wearable Color Trends
  *
- * Purpose: Transform abstract color theory into practical, named colors
- * that users can identify in stores.
+ * Purpose: Practical, trend-aligned colors that people actually wear
+ * Based on: Quiet luxury, dopamine minimalism, timeless sophistication
  *
  * Structure:
  * - HEX codes (for visual display)
- * - Dutch names (for identification)
- * - Categories (neutrals, accents, etc.)
+ * - Dutch names (for store identification)
+ * - Categories (basis, accent, neutraal)
  * - A11y compliant labels
  */
 
@@ -27,121 +27,122 @@ export interface ColorPalette {
 }
 
 // ==========================================
-// SEASONAL COLOR PALETTES
+// 2025 SEASONAL COLOR PALETTES
+// Wearable, sophisticated, trend-aligned
 // ==========================================
 
 export const COLOR_PALETTES: Record<string, ColorPalette> = {
   winter: {
     season: 'Winter',
-    description: 'Heldere, koele kleuren met hoog contrast. Denk aan ijskristallen en juwelen.',
+    description: 'Heldere, koele kleuren met hoog contrast. Sophisticated en tijdloos.',
     colors: [
-      // Basis kleuren
+      // Basis kleuren - Classic & Wearable
       { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
       { hex: '#000000', name: 'Zwart', category: 'basis' },
-      { hex: '#1A1A2E', name: 'Marine', category: 'basis' },
-      { hex: '#2C3E50', name: 'Donkerblauw', category: 'basis' },
+      { hex: '#1C2833', name: 'Navy', category: 'basis' },
+      { hex: '#34495E', name: 'Donkerblauw', category: 'basis' },
 
-      // Accent kleuren
-      { hex: '#E91E63', name: 'Fuchsia', category: 'accent' },
-      { hex: '#9C27B0', name: 'Amethyst', category: 'accent' },
-      { hex: '#2196F3', name: 'Koningsblauw', category: 'accent' },
-      { hex: '#00BCD4', name: 'Turquoise', category: 'accent' },
-      { hex: '#4CAF50', name: 'Smaragdgroen', category: 'accent' },
-      { hex: '#F06292', name: 'IJsroze', category: 'accent' },
-      { hex: '#FF1744', name: 'Helderrood', category: 'accent' },
+      // Accent kleuren - 2025 Wearable
+      { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
+      { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
+      { hex: '#154360', name: 'Sapphire', category: 'accent' },
+      { hex: '#0E6655', name: 'Petrol', category: 'accent' },
+      { hex: '#943126', name: 'Diep rood', category: 'accent' },
+      { hex: '#117A65', name: 'Bosgroen', category: 'accent' },
+      { hex: '#512E5F', name: 'Aubergine', category: 'accent' },
 
       // Neutrale tinten
-      { hex: '#90A4AE', name: 'Zilvergrijs', category: 'neutraal' },
-      { hex: '#607D8B', name: 'Staalgrijs', category: 'neutraal' },
-      { hex: '#F5F5F5', name: 'Ijswit', category: 'neutraal' }
+      { hex: '#95A5A6', name: 'Zilvergrijs', category: 'neutraal' },
+      { hex: '#AAB7B8', name: 'Lichtgrijs', category: 'neutraal' },
+      { hex: '#F8F9F9', name: 'Gebroken wit', category: 'neutraal' }
     ],
     doColors: [
       { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
       { hex: '#000000', name: 'Zwart', category: 'basis' },
-      { hex: '#2196F3', name: 'Koningsblauw', category: 'accent' },
-      { hex: '#4CAF50', name: 'Smaragdgroen', category: 'accent' },
-      { hex: '#E91E63', name: 'Fuchsia', category: 'accent' },
-      { hex: '#90A4AE', name: 'Zilvergrijs', category: 'neutraal' }
+      { hex: '#1C2833', name: 'Navy', category: 'basis' },
+      { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
+      { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
+      { hex: '#95A5A6', name: 'Zilvergrijs', category: 'neutraal' }
     ],
     dontColors: [
       { hex: '#D4A574', name: 'Camel', description: 'Te warm', category: 'basis' },
-      { hex: '#FF6F00', name: 'Oranje', description: 'Te warm', category: 'accent' },
-      { hex: '#8D6E63', name: 'Bruin', description: 'Te aards', category: 'basis' },
-      { hex: '#FFB74D', name: 'Goud', description: 'Te warm', category: 'accent' }
+      { hex: '#E67E22', name: 'Oranje', description: 'Te warm', category: 'accent' },
+      { hex: '#7D6608', name: 'Mosterd', description: 'Te warm', category: 'accent' },
+      { hex: '#D4AC0D', name: 'Goud', description: 'Te warm', category: 'accent' }
     ]
   },
 
   zomer: {
     season: 'Zomer',
-    description: 'Zachte, gedempte kleuren met koele ondertoon. Denk aan lavendelvelden en pastels.',
+    description: 'Zachte, gedempte kleuren met koele ondertoon. Elegant en verfijnd.',
     colors: [
-      // Basis kleuren
-      { hex: '#F8F8FF', name: 'Zacht wit', category: 'basis' },
-      { hex: '#E8EAF6', name: 'Lichtgrijs', category: 'basis' },
-      { hex: '#B0BEC5', name: 'Grijs-blauw', category: 'basis' },
-      { hex: '#78909C', name: 'Stormblauw', category: 'basis' },
+      // Basis kleuren - Soft & Sophisticated
+      { hex: '#FDFEFE', name: 'Soft white', category: 'basis' },
+      { hex: '#ECF0F1', name: 'Lichtgrijs', category: 'basis' },
+      { hex: '#85929E', name: 'Grijs-blauw', category: 'basis' },
+      { hex: '#5D6D7E', name: 'Slate', category: 'basis' },
 
-      // Accent kleuren
-      { hex: '#CE93D8', name: 'Lavendel', category: 'accent' },
-      { hex: '#90CAF9', name: 'Zachtblauw', category: 'accent' },
-      { hex: '#F48FB1', name: 'Oudroze', category: 'accent' },
-      { hex: '#80CBC4', name: 'Mintgroen', category: 'accent' },
-      { hex: '#C5E1A5', name: 'Saliegroen', category: 'accent' },
-      { hex: '#B39DDB', name: 'Zachtpaars', category: 'accent' },
-      { hex: '#81D4FA', name: 'Babyblauw', category: 'accent' },
+      // Accent kleuren - Muted & Wearable
+      { hex: '#AEB6BF', name: 'Duifgrijs', category: 'accent' },
+      { hex: '#85C1E2', name: 'Soft blauw', category: 'accent' },
+      { hex: '#B7B7B7', name: 'Medium grijs', category: 'accent' },
+      { hex: '#7B8A8B', name: 'Eucalyptus', category: 'accent' },
+      { hex: '#A3B1C1', name: 'Zachte lavendel', category: 'accent' },
+      { hex: '#9BA3A8', name: 'Silver sage', category: 'accent' },
+      { hex: '#C3B1C0', name: 'Dusty mauve', category: 'accent' },
 
       // Neutrale tinten
-      { hex: '#ECEFF1', name: 'Duifgrijs', category: 'neutraal' },
-      { hex: '#CFD8DC', name: 'Zilvergrijs', category: 'neutraal' },
-      { hex: '#E1BEE7', name: 'Lila', category: 'neutraal' }
+      { hex: '#D5D8DC', name: 'Pearl grey', category: 'neutraal' },
+      { hex: '#E5E8E8', name: 'Cloud', category: 'neutraal' },
+      { hex: '#BDC3C7', name: 'Silver', category: 'neutraal' }
     ],
     doColors: [
-      { hex: '#CE93D8', name: 'Lavendel', category: 'accent' },
-      { hex: '#90CAF9', name: 'Zachtblauw', category: 'accent' },
-      { hex: '#F48FB1', name: 'Oudroze', category: 'accent' },
-      { hex: '#80CBC4', name: 'Mintgroen', category: 'accent' },
-      { hex: '#CFD8DC', name: 'Zilvergrijs', category: 'neutraal' },
-      { hex: '#F8F8FF', name: 'Zacht wit', category: 'basis' }
+      { hex: '#85C1E2', name: 'Soft blauw', category: 'accent' },
+      { hex: '#7B8A8B', name: 'Eucalyptus', category: 'accent' },
+      { hex: '#A3B1C1', name: 'Zachte lavendel', category: 'accent' },
+      { hex: '#FDFEFE', name: 'Soft white', category: 'basis' },
+      { hex: '#D5D8DC', name: 'Pearl grey', category: 'neutraal' },
+      { hex: '#85929E', name: 'Grijs-blauw', category: 'basis' }
     ],
     dontColors: [
       { hex: '#000000', name: 'Zwart', description: 'Te hard', category: 'basis' },
-      { hex: '#FF5722', name: 'Felrood', description: 'Te fel', category: 'accent' },
-      { hex: '#FF9800', name: 'Oranje', description: 'Te warm', category: 'accent' },
-      { hex: '#795548', name: 'Bruin', description: 'Te aards', category: 'basis' }
+      { hex: '#CB4335', name: 'Felrood', description: 'Te fel', category: 'accent' },
+      { hex: '#D68910', name: 'Oranje', description: 'Te warm', category: 'accent' },
+      { hex: '#6E2C00', name: 'Bruin', description: 'Te aards', category: 'basis' }
     ]
   },
 
   herfst: {
     season: 'Herfst',
-    description: 'Warme, aardse tinten met rijke diepte. Denk aan herfstbladeren en specerijen.',
+    description: 'Warme, aardse tinten met rijke diepte. Quiet luxury voor 2025.',
     colors: [
-      // Basis kleuren
-      { hex: '#FFFBF0', name: 'Ivoorwit', category: 'basis' },
-      { hex: '#5D4037', name: 'Chocoladebruin', category: 'basis' },
-      { hex: '#6D4C41', name: 'Cognac', category: 'basis' },
-      { hex: '#3E2723', name: 'Espresso', category: 'basis' },
+      // Basis kleuren - Quiet Luxury
+      { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
+      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
+      { hex: '#5D4037', name: 'Espresso', category: 'basis' },
 
-      // Accent kleuren
-      { hex: '#FF6F00', name: 'Pompoenoranje', category: 'accent' },
-      { hex: '#F57F17', name: 'Mosterdgeel', category: 'accent' },
-      { hex: '#827717', name: 'Olijfgroen', category: 'accent' },
-      { hex: '#BF360C', name: 'Roestbruin', category: 'accent' },
-      { hex: '#E65100', name: 'Terracotta', category: 'accent' },
-      { hex: '#558B2F', name: 'Mosgroen', category: 'accent' },
-      { hex: '#8D6E63', name: 'Karamel', category: 'accent' },
+      // Accent kleuren - Earthy 2025 Trends
+      { hex: '#A0785A', name: 'Cognac', category: 'accent' },
+      { hex: '#9C7A5E', name: 'Warm taupe', category: 'accent' },
+      { hex: '#C17767', name: 'Terracotta', category: 'accent' },
+      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#8B6F47', name: 'Hazelnoot', category: 'accent' },
+      { hex: '#9C8170', name: 'Warm beige', category: 'accent' },
+      { hex: '#A0826D', name: 'Toffee', category: 'accent' },
 
       // Neutrale tinten
-      { hex: '#D7CCC8', name: 'Camel', category: 'neutraal' },
-      { hex: '#A1887F', name: 'Taupe', category: 'neutraal' },
-      { hex: '#BCAAA4', name: 'Zand', category: 'neutraal' }
+      { hex: '#E8DDD3', name: 'Sand', category: 'neutraal' },
+      { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' },
+      { hex: '#AFA396', name: 'Taupe', category: 'neutraal' }
     ],
     doColors: [
-      { hex: '#D7CCC8', name: 'Camel', category: 'neutraal' },
-      { hex: '#827717', name: 'Olijfgroen', category: 'accent' },
-      { hex: '#6D4C41', name: 'Cognac', category: 'basis' },
-      { hex: '#E65100', name: 'Terracotta', category: 'accent' },
-      { hex: '#F57F17', name: 'Mosterdgeel', category: 'accent' },
-      { hex: '#FFFBF0', name: 'Ivoorwit', category: 'basis' }
+      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#A0785A', name: 'Cognac', category: 'accent' },
+      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#C17767', name: 'Terracotta', category: 'accent' },
+      { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
+      { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' }
     ],
     dontColors: [
       { hex: '#FFFFFF', name: 'Zuiver wit', description: 'Te koel', category: 'basis' },
@@ -153,41 +154,41 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
 
   lente: {
     season: 'Lente',
-    description: 'Heldere, warme kleuren vol energie. Denk aan lentebloemen en koraalriffen.',
+    description: 'Heldere, warme kleuren met zachte energie. Fresh en toegankelijk.',
     colors: [
-      // Basis kleuren
-      { hex: '#FFF8E1', name: 'Crème', category: 'basis' },
-      { hex: '#FFF3E0', name: 'Perzik', category: 'basis' },
-      { hex: '#4DB6AC', name: 'Turquoise', category: 'basis' },
-      { hex: '#81C784', name: 'Warm groen', category: 'basis' },
+      // Basis kleuren - Warm & Approachable
+      { hex: '#FFF8DC', name: 'Crème', category: 'basis' },
+      { hex: '#F5F5DC', name: 'Beige', category: 'basis' },
+      { hex: '#5F7A61', name: 'Sage groen', category: 'basis' },
+      { hex: '#8B9D83', name: 'Warm groen', category: 'basis' },
 
-      // Accent kleuren
-      { hex: '#FF7043', name: 'Koraalrood', category: 'accent' },
-      { hex: '#FFD54F', name: 'Helder geel', category: 'accent' },
-      { hex: '#4DD0E1', name: 'Aquamarijn', category: 'accent' },
-      { hex: '#9CCC65', name: 'Lentegroen', category: 'accent' },
-      { hex: '#FF8A65', name: 'Abrikoos', category: 'accent' },
-      { hex: '#FFB74D', name: 'Gouden geel', category: 'accent' },
-      { hex: '#AED581', name: 'Lichtgroen', category: 'accent' },
+      // Accent kleuren - Fresh 2025
+      { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
+      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#A3B899', name: 'Licht sage', category: 'accent' },
+      { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
+      { hex: '#E5B299', name: 'Peach', category: 'accent' },
+      { hex: '#B4926B', name: 'Warm sand', category: 'accent' },
+      { hex: '#98B4AA', name: 'Mint sage', category: 'accent' },
 
       // Neutrale tinten
-      { hex: '#F0F4C3', name: 'Zachtgeel', category: 'neutraal' },
-      { hex: '#DCEDC8', name: 'Mintcrème', category: 'neutraal' },
-      { hex: '#FFE0B2', name: 'Zandbeige', category: 'neutraal' }
+      { hex: '#F0EAD6', name: 'Eggshell', category: 'neutraal' },
+      { hex: '#E8DCC4', name: 'Warm ivory', category: 'neutraal' },
+      { hex: '#D5C7B8', name: 'Linen', category: 'neutraal' }
     ],
     doColors: [
-      { hex: '#FF7043', name: 'Koraalrood', category: 'accent' },
-      { hex: '#4DD0E1', name: 'Aquamarijn', category: 'accent' },
-      { hex: '#9CCC65', name: 'Lentegroen', category: 'accent' },
-      { hex: '#FFD54F', name: 'Helder geel', category: 'accent' },
-      { hex: '#FFF8E1', name: 'Crème', category: 'basis' },
-      { hex: '#FFE0B2', name: 'Zandbeige', category: 'neutraal' }
+      { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
+      { hex: '#5F7A61', name: 'Sage groen', category: 'basis' },
+      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
+      { hex: '#FFF8DC', name: 'Crème', category: 'basis' },
+      { hex: '#E8DCC4', name: 'Warm ivory', category: 'neutraal' }
     ],
     dontColors: [
       { hex: '#000000', name: 'Zwart', description: 'Te donker', category: 'basis' },
-      { hex: '#263238', name: 'Donkergrijs', description: 'Te donker', category: 'basis' },
-      { hex: '#5D4037', name: 'Bruin', description: 'Te aards', category: 'basis' },
-      { hex: '#4A148C', name: 'Paars', description: 'Te koel', category: 'accent' }
+      { hex: '#1C2833', name: 'Navy', description: 'Te donker', category: 'basis' },
+      { hex: '#4E342E', name: 'Donkerbruin', description: 'Te zwaar', category: 'basis' },
+      { hex: '#512E5F', name: 'Paars', description: 'Te koel', category: 'accent' }
     ]
   }
 };

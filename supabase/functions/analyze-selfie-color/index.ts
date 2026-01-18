@@ -49,6 +49,30 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // 🔒 PREMIUM ONLY: Check if user has premium access
+    if (userId && !isAnonymous) {
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('tier, subscription_status')
+        .eq('id', userId)
+        .maybeSingle();
+
+      const isPremium = profile?.tier === 'premium' || profile?.tier === 'founder';
+      const hasActiveSubscription = profile?.subscription_status === 'active' || profile?.subscription_status === 'trialing';
+
+      if (!isPremium && !hasActiveSubscription) {
+        console.log('[analyze-selfie-color] Premium required:', { userId, tier: profile?.tier });
+        return new Response(
+          JSON.stringify({
+            error: 'Premium feature',
+            message: 'Color analysis is een premium functie. Upgrade je account om deze feature te gebruiken.',
+            requiresPremium: true
+          }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     console.log('[analyze-selfie-color] Analyzing photo:', { photoUrl, userId, isAnonymous });
 
     // Call OpenAI Vision API for color analysis
