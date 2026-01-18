@@ -235,8 +235,8 @@ export function RealOutfitShowcase() {
                   ))}
                 </div>
 
-                {/* CTA Button - onderaan */}
-                <div className="mt-6 sm:mt-8">
+                {/* CTA Button - onderaan met extra witruimte */}
+                <div className="mt-8 sm:mt-10 lg:mt-12 pt-4 sm:pt-6">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
