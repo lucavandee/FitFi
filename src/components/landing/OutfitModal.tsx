@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, ShoppingBag } from 'lucide-react';
+import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface OutfitProduct {
@@ -56,7 +56,7 @@ export function OutfitModal({ isOpen, onClose, title, completeImage, products }:
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="sticky top-0 z-10 bg-[var(--color-surface)] border-b border-[var(--color-border)] px-6 py-4 flex items-center justify-between">
+              <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)] px-6 py-4 flex items-center justify-between">
                 <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">{title}</h2>
                 <button
                   onClick={onClose}
@@ -108,13 +108,9 @@ export function OutfitModal({ isOpen, onClose, title, completeImage, products }:
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] font-bold mb-1">
                             {product.category}
                           </div>
-                          <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)] mb-2 sm:mb-3 line-clamp-2">
+                          <div className="text-xs sm:text-sm font-semibold text-[var(--color-text)] line-clamp-2">
                             {product.name}
                           </div>
-                          <button className="w-full py-1.5 sm:py-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1.5">
-                            <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span>Shop nu</span>
-                          </button>
                         </div>
                       </motion.div>
                     ))}
@@ -122,11 +118,9 @@ export function OutfitModal({ isOpen, onClose, title, completeImage, products }:
                 </div>
 
                 {/* Footer Note */}
-                <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-xl sm:rounded-2xl">
-                  <p className="text-xs sm:text-sm text-[var(--color-muted)] text-center">
-                    <span className="font-semibold text-[var(--color-text)]">Let op:</span> Dit is een voorbeeld.
-                    Jouw persoonlijke Style Report bevat outfits op basis van{' '}
-                    <span className="font-semibold text-[var(--color-text)]">jouw voorkeuren en stijl</span>.
+                <div className="mt-8 sm:mt-10 p-5 sm:p-6 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-xl sm:rounded-2xl">
+                  <p className="text-xs sm:text-sm text-[var(--color-muted)] text-center leading-relaxed max-w-2xl mx-auto">
+                    <span className="font-semibold text-[var(--color-text)]">Let op:</span> Dit is een voorbeeld. Jouw persoonlijke Style Report bevat outfits op basis van <span className="font-semibold text-[var(--color-text)]">jouw voorkeuren en stijl</span>.
                   </p>
                 </div>
               </div>
