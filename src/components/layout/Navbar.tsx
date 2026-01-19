@@ -162,13 +162,17 @@ export default function Navbar() {
         {/* Mobile toggle - 44px touch target */}
         <button
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] focus-visible:shadow-[var(--shadow-ring)] ml-2 transition-colors"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border-2 border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-50)] focus-visible:shadow-[var(--shadow-ring)] ml-2 transition-all group"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X className="h-5 w-5" strokeWidth={2.5} aria-hidden /> : <Menu className="h-5 w-5" strokeWidth={2.5} aria-hidden />}
+          {open ? (
+            <X className="h-6 w-6 text-[var(--ff-color-primary-700)] group-hover:text-[var(--ff-color-primary-800)]" strokeWidth={2.5} aria-hidden />
+          ) : (
+            <Menu className="h-6 w-6 text-[var(--ff-color-primary-700)] group-hover:text-[var(--ff-color-primary-800)]" strokeWidth={2.5} aria-hidden />
+          )}
         </button>
       </div>
 
