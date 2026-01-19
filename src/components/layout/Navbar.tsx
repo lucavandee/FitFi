@@ -167,11 +167,22 @@ export default function Navbar() {
           aria-expanded={open}
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
+          style={{ color: '#7A614A' }}
         >
           {open ? (
-            <X className="h-6 w-6 text-[var(--ff-color-primary-700)] group-hover:text-[var(--ff-color-primary-800)]" strokeWidth={2.5} aria-hidden />
+            <X
+              className="h-6 w-6 group-hover:scale-110 transition-transform"
+              strokeWidth={2.5}
+              aria-hidden
+              style={{ stroke: '#7A614A', color: '#7A614A' }}
+            />
           ) : (
-            <Menu className="h-6 w-6 text-[var(--ff-color-primary-700)] group-hover:text-[var(--ff-color-primary-800)]" strokeWidth={2.5} aria-hidden />
+            <Menu
+              className="h-6 w-6 group-hover:scale-110 transition-transform"
+              strokeWidth={2.5}
+              aria-hidden
+              style={{ stroke: '#7A614A', color: '#7A614A' }}
+            />
           )}
         </button>
       </div>

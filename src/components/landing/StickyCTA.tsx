@@ -76,8 +76,13 @@ export function StickyCTA() {
         onMouseLeave={() => setShowTooltip(false)}
         className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] shadow-xl hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group border-2 border-white/20"
         aria-label="Start gratis quiz"
+        style={{ color: '#FFFFFF' }}
       >
-        <Sparkles className="w-6 h-6 text-white transition-transform duration-300 group-hover:rotate-12" strokeWidth={2.5} />
+        <Sparkles
+          className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12"
+          strokeWidth={2.5}
+          style={{ stroke: '#FFFFFF', color: '#FFFFFF' }}
+        />
 
         {/* Pulse ring */}
         <div className="absolute inset-0 rounded-full bg-[var(--ff-color-primary-500)] opacity-0 group-hover:opacity-20 animate-ping"></div>
