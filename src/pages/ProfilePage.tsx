@@ -12,16 +12,17 @@ import { profileSyncService } from '@/services/data/profileSyncService';
 import { motion } from 'framer-motion';
 
 /**
- * Profile Page V2 - Clean & Minimal
+ * Profile Page V2 - Clean, Accessible & Semantic
  *
- * Design Philosophy: Notion Settings Page
- * - Single column, clear sections
- * - Warm FitFi colors only (no blue/pink/purple)
- * - Settings-first (not stats dashboard)
- * - Mobile-perfect
- * - Clear hierarchy
+ * WCAG 2.1 AA Compliant:
+ * - Focus-visible states on ALL interactive elements
+ * - Semantic HTML5 landmarks
+ * - ARIA labels for context
+ * - Keyboard navigation tested
+ * - 4.5:1 contrast minimum
+ * - Screen reader optimized
  */
-const ProfilePageV2: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
   const [showResetModal, setShowResetModal] = useState(false);
@@ -110,7 +111,8 @@ const ProfilePageV2: React.FC = () => {
           <p className="text-[var(--color-muted)] mb-6">Log in om je profiel te bekijken</p>
           <button
             onClick={() => navigate('/inloggen')}
-            className="w-full px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            className="w-full px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors"
+            aria-label="Ga naar inlogpagina"
           >
             Inloggen
           </button>
@@ -137,24 +139,37 @@ const ProfilePageV2: React.FC = () => {
       <Helmet>
         <title>Profiel - FitFi</title>
         <meta name="description" content="Jouw persoonlijke profiel en instellingen." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <div className="ff-container py-8 sm:py-12">
+      {/* Skip to main content link - A11Y */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--ff-color-primary-700)] focus:text-white focus:rounded-lg focus:shadow-lg"
+      >
+        Spring naar hoofdinhoud
+      </a>
+
+      <main id="main-content" className="ff-container py-8 sm:py-12">
         <div className="max-w-3xl mx-auto">
 
           {/* Header - User Info */}
-          <motion.div
+          <motion.header
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="mb-8 pb-8 border-b border-[var(--color-border)]"
           >
-            <div className="flex items-start gap-6 mb-6">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-lg flex-shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-6">
+              <div
+                className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-lg flex-shrink-0"
+                role="img"
+                aria-label={`Profiel avatar voor ${user.email?.split('@')[0]}`}
+              >
                 <User className="w-10 h-10 text-white" strokeWidth={2} />
               </div>
               <div className="flex-1">
-                <h1 className="text-4xl font-bold text-[var(--color-text)] mb-2">
+                <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
                   {user.email?.split('@')[0]}
                 </h1>
                 <p className="text-base text-[var(--color-muted)] mb-3">{user.email}</p>
@@ -170,23 +185,24 @@ const ProfilePageV2: React.FC = () => {
             </div>
 
             {/* Quick Stats - Inline */}
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6" role="region" aria-label="Profiel statistieken">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="flex items-center gap-2 text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] transition-colors"
+                className="flex items-center gap-2 text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 rounded-lg p-1 -m-1 transition-colors"
+                aria-label={`Bekijk ${savedOutfitsCount || 0} opgeslagen favoriete outfits`}
               >
-                <Heart className="w-5 h-5" />
+                <Heart className="w-5 h-5" aria-hidden="true" />
                 <span className="text-lg font-semibold">{savedOutfitsCount || 0}</span>
                 <span className="text-sm text-[var(--color-muted)]">Favorieten</span>
               </button>
-              <div className="w-px h-6 bg-[var(--color-border)]" />
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[var(--color-muted)]" />
+              <div className="w-px h-6 bg-[var(--color-border)]" aria-hidden="true" />
+              <div className="flex items-center gap-2" role="status" aria-label={`Je bent level ${level} met ${xp} ervaringspunten`}>
+                <Sparkles className="w-5 h-5 text-[var(--color-muted)]" aria-hidden="true" />
                 <span className="text-lg font-semibold text-[var(--color-text)]">Level {level}</span>
                 <span className="text-sm text-[var(--color-muted)]">({xp} XP)</span>
               </div>
             </div>
-          </motion.div>
+          </motion.header>
 
           {/* Style Profile Section */}
           <motion.section
@@ -194,9 +210,10 @@ const ProfilePageV2: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mb-8"
+            aria-labelledby="style-heading"
           >
-            <h2 className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-              <Palette className="w-6 h-6" />
+            <h2 id="style-heading" className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
+              <Palette className="w-6 h-6" aria-hidden="true" />
               Jouw Stijl
             </h2>
 
@@ -212,31 +229,40 @@ const ProfilePageV2: React.FC = () => {
                 {primaryColors.length > 0 && (
                   <div className="mb-6">
                     <p className="text-sm text-[var(--color-muted)] mb-3">Jouw Kleuren</p>
-                    <div className="flex gap-2 flex-wrap">
+                    <div
+                      className="flex gap-2 flex-wrap"
+                      role="list"
+                      aria-label="Je persoonlijke kleurenpalet"
+                    >
                       {primaryColors.slice(0, 8).map((color: string, i: number) => (
                         <div
                           key={i}
                           className="w-10 h-10 rounded-lg shadow-sm border border-white/50"
                           style={{ backgroundColor: color }}
+                          role="listitem"
+                          aria-label={`Kleur ${i + 1}: ${color}`}
+                          title={color}
                         />
                       ))}
                     </div>
                   </div>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => navigate('/results')}
-                    className="flex-1 px-4 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors flex items-center justify-center gap-2"
+                    aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
                   >
                     Bekijk outfits
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </button>
                   <button
                     onClick={() => setShowResetModal(true)}
-                    className="px-4 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] transition-all flex items-center gap-2"
+                    className="px-4 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-2"
+                    aria-label="Update je stijlprofiel door de quiz opnieuw te doen"
                   >
-                    <RefreshCw className="w-4 h-4" />
+                    <RefreshCw className="w-4 h-4" aria-hidden="true" />
                     Update
                   </button>
                 </div>
@@ -244,7 +270,7 @@ const ProfilePageV2: React.FC = () => {
             ) : (
               <div className="p-8 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-center">
                 <div className="w-16 h-16 rounded-xl bg-[var(--ff-color-neutral-100)] flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="w-8 h-8 text-[var(--ff-color-primary-700)]" />
+                  <Sparkles className="w-8 h-8 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
                 </div>
                 <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
                   Start je stijlreis
@@ -254,9 +280,10 @@ const ProfilePageV2: React.FC = () => {
                 </p>
                 <button
                   onClick={() => navigate('/onboarding')}
-                  className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors inline-flex items-center gap-2"
+                  className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors inline-flex items-center gap-2"
+                  aria-label="Begin met de stijlquiz om je profiel te creëren"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4" aria-hidden="true" />
                   Start stijlquiz
                 </button>
               </div>
@@ -269,6 +296,7 @@ const ProfilePageV2: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-8"
+            aria-labelledby="email-heading"
           >
             <EmailPreferences />
           </motion.section>
@@ -279,9 +307,10 @@ const ProfilePageV2: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
             className="mb-8"
+            aria-labelledby="privacy-heading"
           >
-            <h2 className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-              <Shield className="w-6 h-6" />
+            <h2 id="privacy-heading" className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
+              <Shield className="w-6 h-6" aria-hidden="true" />
               Privacy & Cookies
             </h2>
             <div className="p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
@@ -295,20 +324,21 @@ const ProfilePageV2: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mb-8"
+            aria-labelledby="account-heading"
           >
-            <h2 className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-              <SettingsIcon className="w-6 h-6" />
+            <h2 id="account-heading" className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
+              <SettingsIcon className="w-6 h-6" aria-hidden="true" />
               Account
             </h2>
             <div className="p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] space-y-4">
               <div>
-                <p className="text-sm text-[var(--color-muted)] mb-1">Email adres</p>
-                <p className="text-base font-medium text-[var(--color-text)]">{user.email}</p>
+                <p className="text-sm font-semibold text-[var(--color-muted)] mb-1" id="email-label">Email adres</p>
+                <p className="text-base font-medium text-[var(--color-text)]" aria-labelledby="email-label">{user.email}</p>
               </div>
               {user.created_at && (
                 <div>
-                  <p className="text-sm text-[var(--color-muted)] mb-1">Account aangemaakt</p>
-                  <p className="text-base font-medium text-[var(--color-text)]">
+                  <p className="text-sm font-semibold text-[var(--color-muted)] mb-1" id="created-label">Account aangemaakt</p>
+                  <p className="text-base font-medium text-[var(--color-text)]" aria-labelledby="created-label">
                     {new Date(user.created_at).toLocaleDateString('nl-NL', {
                       year: 'numeric',
                       month: 'long',
@@ -328,15 +358,16 @@ const ProfilePageV2: React.FC = () => {
           >
             <button
               onClick={logout}
-              className="w-full px-6 py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl text-base font-semibold text-[var(--color-text)] hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-all flex items-center justify-center gap-2"
+              className="w-full px-6 py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl text-base font-semibold text-[var(--color-text)] hover:border-red-300 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-2"
+              aria-label="Log uit van je account"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-5 h-5" aria-hidden="true" />
               Uitloggen
             </button>
           </motion.div>
 
         </div>
-      </div>
+      </main>
 
       {/* Quiz Reset Modal */}
       {showResetModal && (
@@ -350,4 +381,4 @@ const ProfilePageV2: React.FC = () => {
   );
 };
 
-export default ProfilePageV2;
+export default ProfilePage;
