@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 
 /**
@@ -76,13 +75,27 @@ export function StickyCTA() {
         onMouseLeave={() => setShowTooltip(false)}
         className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] shadow-xl hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group border-2 border-white/20"
         aria-label="Start gratis quiz"
-        style={{ color: '#FFFFFF' }}
       >
-        <Sparkles
-          className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12"
-          strokeWidth={2.5}
-          style={{ stroke: '#FFFFFF', color: '#FFFFFF' }}
-        />
+        {/* Inline SVG Sparkles Icon - gegarandeerd zichtbaar */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="transition-transform duration-300 group-hover:rotate-12"
+          aria-hidden="true"
+        >
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+          <path d="M5 3v4" />
+          <path d="M19 17v4" />
+          <path d="M3 5h4" />
+          <path d="M17 19h4" />
+        </svg>
 
         {/* Pulse ring */}
         <div className="absolute inset-0 rounded-full bg-[var(--ff-color-primary-500)] opacity-0 group-hover:opacity-20 animate-ping"></div>

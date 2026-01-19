@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Menu, X, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 
 /**
@@ -167,22 +167,42 @@ export default function Navbar() {
           aria-expanded={open}
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
-          style={{ color: '#7A614A' }}
         >
           {open ? (
-            <X
-              className="h-6 w-6 group-hover:scale-110 transition-transform"
-              strokeWidth={2.5}
-              aria-hidden
-              style={{ stroke: '#7A614A', color: '#7A614A' }}
-            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#7A614A"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="group-hover:scale-110 transition-transform"
+              aria-hidden="true"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
           ) : (
-            <Menu
-              className="h-6 w-6 group-hover:scale-110 transition-transform"
-              strokeWidth={2.5}
-              aria-hidden
-              style={{ stroke: '#7A614A', color: '#7A614A' }}
-            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#7A614A"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="group-hover:scale-110 transition-transform"
+              aria-hidden="true"
+            >
+              <path d="M4 12h16" />
+              <path d="M4 6h16" />
+              <path d="M4 18h16" />
+            </svg>
           )}
         </button>
       </div>
