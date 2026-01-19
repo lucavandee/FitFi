@@ -162,11 +162,15 @@ export default function Navbar() {
         {/* Mobile toggle - 44px touch target */}
         <button
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border-2 border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-50)] focus-visible:shadow-[var(--shadow-ring)] ml-2 transition-all group"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
+          style={{
+            backgroundColor: '#F5F1ED',
+            border: '2px solid #E5DED5',
+          }}
         >
           {open ? (
             <svg
@@ -175,12 +179,15 @@ export default function Navbar() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#7A614A"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
               className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
+              style={{
+                stroke: '#7A614A',
+                color: '#7A614A'
+              }}
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -192,12 +199,15 @@ export default function Navbar() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#7A614A"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
               className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
+              style={{
+                stroke: '#7A614A',
+                color: '#7A614A'
+              }}
             >
               <path d="M4 12h16" />
               <path d="M4 6h16" />
