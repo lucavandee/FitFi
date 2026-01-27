@@ -216,7 +216,7 @@ export function EnhancedQuestionCard({
                     key={option.value}
                     ref={index === 0 ? firstInputRef : null}
                     onClick={() => handleMultiSelect(option.value)}
-                    className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)]/30 ${
+                    className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)] ${
                       isSelected
                         ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] shadow-sm'
                         : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:shadow-sm'
@@ -269,7 +269,7 @@ export function EnhancedQuestionCard({
                   key={option.value}
                   ref={index === 0 ? firstInputRef : null}
                   onClick={() => handleSingleSelect(option.value)}
-                  className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)]/30 ${
+                  className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)] ${
                     isSelected
                       ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] shadow-sm'
                       : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:shadow-sm'
@@ -337,7 +337,7 @@ export function EnhancedQuestionCard({
                   const newVal = Math.max(min || 0, currentVal - (step || 5));
                   onChange(field, newVal);
                 }}
-                className="w-12 h-12 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)]/30"
+                className="w-12 h-12 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)]"
                 aria-label="Verlaag budget"
               >
                 −
@@ -353,7 +353,7 @@ export function EnhancedQuestionCard({
                   setTouched(true);
                   onChange(field, parseInt(e.target.value));
                 }}
-                className="flex-1 h-2 bg-[var(--color-bg)] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--ff-color-primary-600)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[var(--ff-color-primary-600)] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)]/30"
+                className="flex-1 h-2 bg-[var(--color-bg)] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--ff-color-primary-600)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[var(--ff-color-primary-600)] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-focus-ring-color)]"
                 aria-label="Selecteer budget"
               />
 
@@ -365,7 +365,7 @@ export function EnhancedQuestionCard({
                   const newVal = Math.min(max || 500, currentVal + (step || 5));
                   onChange(field, newVal);
                 }}
-                className="w-12 h-12 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)]/30"
+                className="w-12 h-12 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)]"
                 aria-label="Verhoog budget"
               >
                 +

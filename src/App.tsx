@@ -52,6 +52,7 @@ const AdminBlogManagementPage = lazy(() => import("@/pages/AdminBlogManagementPa
 const AdminBlogEditorPage = lazy(() => import("@/pages/AdminBlogEditorPage"));
 const AdminBlogTopicsPage = lazy(() => import("@/pages/AdminBlogTopicsPage"));
 const AdminTestimonialsPage = lazy(() => import("@/pages/AdminTestimonialsPage"));
+const AccessibilityTestPage = lazy(() => import("@/pages/AccessibilityTestPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
@@ -94,6 +95,7 @@ const WithSeo = {
   AdminBlogTopics: () => (<><Seo title="Blog Topics — FitFi Admin" description="Beheer blog topic ideeën." path="/admin/blog/topics" noindex /><AdminBlogTopicsPage /></>),
   AdminTestimonials: () => (<><Seo title="Testimonials Beheer — FitFi Admin" description="Beheer klant testimonials voor de homepage." path="/admin/testimonials" noindex /><AdminTestimonialsPage /></>),
   AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
+  AccessibilityTest: () => (<><Seo title="Accessibility Test — FitFi" description="WCAG 2.1 AA compliance test page." path="/accessibility-test" noindex /><AccessibilityTestPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
@@ -164,6 +166,9 @@ export default function App() {
                 <Route path="/admin/blog/topics" element={<RequireAuth><WithSeo.AdminBlogTopics /></RequireAuth>} />
                 <Route path="/admin/testimonials" element={<RequireAuth><WithSeo.AdminTestimonials /></RequireAuth>} />
                 <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
+
+                {/* Accessibility Test (dev/admin only) */}
+                <Route path="/accessibility-test" element={<WithSeo.AccessibilityTest />} />
 
                 {/* 404 */}
                 <Route path="*" element={<WithSeo.NotFound />} />

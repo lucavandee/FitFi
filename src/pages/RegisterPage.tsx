@@ -203,7 +203,7 @@ const RegisterPage: React.FC = () => {
                   placeholder="Jouw naam"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 sm:pl-11 pr-4 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 border-gray-200 transition-all focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)] outline-none"
+                  className="w-full pl-10 sm:pl-11 pr-4 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 border-gray-200 transition-all outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]"
                   disabled={loading}
                 />
               </div>
@@ -226,8 +226,8 @@ const RegisterPage: React.FC = () => {
                   onBlur={() => setTouched({ ...touched, email: true })}
                   className={`w-full pl-10 sm:pl-11 pr-4 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 transition-all ${
                     emailError
-                      ? "border-red-500 focus:border-red-600 focus:ring-4 focus:ring-red-100"
-                      : "border-gray-200 focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)]"
+                      ? "border-red-500 focus-visible:border-red-600 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.4)]"
+                      : "border-gray-200 focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]"
                   } outline-none`}
                   disabled={loading}
                   required
@@ -258,8 +258,8 @@ const RegisterPage: React.FC = () => {
                   onBlur={() => setTouched({ ...touched, password: true })}
                   className={`w-full pl-10 sm:pl-11 pr-12 sm:pr-13 py-3.5 sm:py-3 min-h-[48px] text-base rounded-xl border-2 transition-all ${
                     pwError
-                      ? "border-red-500 focus:border-red-600 focus:ring-4 focus:ring-red-100"
-                      : "border-gray-200 focus:border-[var(--ff-color-primary-600)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)]"
+                      ? "border-red-500 focus-visible:border-red-600 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.4)]"
+                      : "border-gray-200 focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]"
                   } outline-none`}
                   disabled={loading}
                   required

@@ -281,7 +281,7 @@ function NavChip({ to, label }: { to: string; label: string }) {
       className={({ isActive }) =>
         [
           "inline-flex items-center rounded-full px-4 py-2 text-sm min-h-[44px]",
-          "focus-visible:outline-none focus-visible:shadow-[var(--shadow-ring)]",
+          "outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:outline-[3px] focus-visible:outline-solid focus-visible:outline-[var(--ff-focus-ring-color)] focus-visible:outline-offset-2",
           "transition-colors",
           isActive
             ? "bg-[color-mix(in oklab,var(--color-primary) 12%,transparent)] border border-[var(--color-primary)]"

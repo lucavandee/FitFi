@@ -102,7 +102,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="je@email.com"
-              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--ff-color-primary-500)] focus:ring-4 focus:ring-[var(--ff-color-primary-100)] transition-all"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)] transition-all"
               disabled={isSubmitting}
               required
             />
