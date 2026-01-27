@@ -3,10 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 
 /**
- * Subtle FAB (Floating Action Button)
- * Minder opdringerig dan grote bar
+ * Sticky CTA - Mobile Thumb-Friendly FAB
+ *
+ * WCAG 2.1 AA Compliant:
+ * - 56px touch target (>44px minimum)
+ * - Focus-visible keyboard state
+ * - Positioned in mobile thumb zone (bottom-24 = 96px from bottom)
+ * - Escape key to dismiss
+ * - Benefits-driven tooltip (not process-focused)
  */
-
 export function StickyCTA() {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -43,6 +48,18 @@ export function StickyCTA() {
     }
   }, [isVisible, showTooltip]);
 
+  // Keyboard support: Escape to dismiss
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isVisible) {
+        setIsDismissed(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible]);
+
   const handleClick = () => {
     if (user) {
       navigate('/onboarding');
@@ -59,24 +76,34 @@ export function StickyCTA() {
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
       }`}
       style={{ pointerEvents: isVisible ? 'auto' : 'none' }}
+      role="complementary"
+      aria-label="Snelle actie knop"
     >
-      {/* Tooltip */}
+      {/* Tooltip - Benefits-driven */}
       {showTooltip && (
-        <div className="absolute bottom-full right-0 mb-3 px-3 py-2 bg-[var(--color-text)] text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-bottom-2 duration-300">
-          Start gratis quiz
-          <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[var(--color-text)]"></div>
+        <div
+          className="absolute bottom-full right-0 mb-3 px-3 py-2 bg-[var(--color-text)] text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-bottom-2 duration-300"
+          role="tooltip"
+          id="fab-tooltip"
+        >
+          Ontvang je stijladvies
+          <div
+            className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[var(--color-text)]"
+            aria-hidden="true"
+          ></div>
         </div>
       )}
 
-      {/* FAB Button */}
+      {/* FAB Button - 56px for mobile thumb zone */}
       <button
         onClick={handleClick}
         onMouseEnter={() => !showTooltip && setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] shadow-xl hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group border-2 border-white/20"
-        aria-label="Start gratis quiz"
+        className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] shadow-xl hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group border-2 border-white/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+        aria-label="Ontvang gratis persoonlijk stijladvies"
+        aria-describedby={showTooltip ? "fab-tooltip" : undefined}
       >
-        {/* Inline SVG Sparkles Icon - gegarandeerd zichtbaar */}
+        {/* Inline SVG Sparkles Icon - guaranteed visible */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -98,8 +125,16 @@ export function StickyCTA() {
         </svg>
 
         {/* Pulse ring */}
-        <div className="absolute inset-0 rounded-full bg-[var(--ff-color-primary-500)] opacity-0 group-hover:opacity-20 animate-ping"></div>
+        <div
+          className="absolute inset-0 rounded-full bg-[var(--ff-color-primary-500)] opacity-0 group-hover:opacity-20 animate-ping"
+          aria-hidden="true"
+        ></div>
       </button>
+
+      {/* Dismiss hint for keyboard users (screen reader only) */}
+      <div className="sr-only" role="status" aria-live="polite">
+        Druk op Escape om deze knop te verbergen
+      </div>
     </div>
   );
 }

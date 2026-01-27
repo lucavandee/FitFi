@@ -7,19 +7,29 @@ import { FeatureBlocksV4 } from "@/components/landing/FeatureBlocksV4";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { StickyCTA } from "@/components/landing/StickyCTA";
 
+/**
+ * Landing Page - Benefits-Driven & Accessible
+ *
+ * WCAG 2.1 AA Compliant:
+ * - Skip-to-content link for keyboard users
+ * - Semantic HTML with proper landmarks
+ * - Clear value proposition (not vague promises)
+ * - Social proof for credibility
+ * - Mobile-optimized CTAs in thumb zone
+ */
 export default function LandingPage() {
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-x-hidden w-full">
+    <>
       <Helmet>
-        <title>FitFi — Jouw stijlgids in 2 minuten</title>
+        <title>FitFi — Outfits die bij jou passen</title>
         <meta
           name="description"
-          content="Ontdek outfits die bij je passen en shop ze direct. AI-gestuurd stijladvies in ~2 minuten. Gratis style report."
+          content="We geven je persoonlijk stijladvies in 2 minuten. Ontdek outfits die bij je passen en shop ze direct. Gratis start."
         />
-        <meta property="og:title" content="FitFi — Jouw stijlgids in 2 minuten" />
+        <meta property="og:title" content="FitFi — Outfits die bij jou passen" />
         <meta
           property="og:description"
-          content="Ontdek outfits die bij je passen en shop ze direct. AI-gestuurd stijladvies in ~2 minuten."
+          content="We geven je persoonlijk stijladvies in 2 minuten. Ontdek outfits die bij je passen en shop ze direct."
         />
         <meta property="og:image" content="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp" />
         <meta property="og:type" content="website" />
@@ -29,7 +39,7 @@ export default function LandingPage() {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "FitFi",
-            "description": "Jouw stijlgids in 2 minuten. Ontdek outfits die bij je passen en shop ze direct.",
+            "description": "Persoonlijk stijladvies in 2 minuten. Ontdek outfits die bij je passen en shop ze direct.",
             "url": "https://fitfi.nl",
             "applicationCategory": "LifestyleApplication",
             "operatingSystem": "Web",
@@ -48,24 +58,33 @@ export default function LandingPage() {
         </script>
       </Helmet>
 
-      {/* HERO V3 - Short & punchy */}
-      <HeroV3 />
+      {/* Skip to main content link - A11Y */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[var(--ff-color-primary-700)] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+      >
+        Spring naar hoofdinhoud
+      </a>
 
-      {/* SOCIAL PROOF V3 - Testimonials FIRST for credibility */}
-      <SocialProofV3 />
+      <main id="main-content" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-x-hidden w-full">
+        {/* HERO V3 - Benefits-driven, clear promise */}
+        <HeroV3 />
 
-      {/* REAL OUTFIT SHOWCASE - Actual clothing items */}
-      <RealOutfitShowcase />
+        {/* SOCIAL PROOF V3 - Testimonials FIRST for credibility */}
+        <SocialProofV3 />
 
-      {/* FEATURE BLOCKS V4 - Reduced to 2 (Color + Speed) */}
-      <FeatureBlocksV4 />
+        {/* REAL OUTFIT SHOWCASE - Actual clothing items */}
+        <RealOutfitShowcase />
 
-      {/* FINAL CTA - Big conversion push */}
-      <FinalCTA />
+        {/* FEATURE BLOCKS V4 - Reduced to 2 (Color + Speed) */}
+        <FeatureBlocksV4 />
 
-      {/* STICKY CTA - Always accessible after scroll */}
-      <StickyCTA />
+        {/* FINAL CTA - Big conversion push */}
+        <FinalCTA />
 
-    </main>
+        {/* STICKY CTA - Always accessible after scroll, mobile thumb-friendly */}
+        <StickyCTA />
+      </main>
+    </>
   );
 }
