@@ -66,6 +66,7 @@ export default function OnboardingFlowPage() {
   const [transitionTo, setTransitionTo] = useState<'swipes' | 'calibration' | 'reveal' | null>(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [attemptedNext, setAttemptedNext] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
 
   useEffect(() => {
@@ -245,6 +246,18 @@ export default function OnboardingFlowPage() {
       setCurrentStep(prev => prev - 1);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancel = () => {
+    setShowCancelModal(true);
+  };
+
+  const confirmCancel = () => {
+    // Clear any local storage quiz data
+    localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
+    localStorage.removeItem('ff_session_id');
+    // Navigate to home
+    navigate('/');
   };
 
   const saveQuizAnswersIndividually = async (
@@ -742,16 +755,26 @@ export default function OnboardingFlowPage() {
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
-      {/* Minimal Progress Bar - Single Source of Truth */}
+      {/* Minimal Progress Bar with Cancel Button */}
       <div className="sticky top-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-b border-[var(--color-border)] shadow-sm">
         <div className="ff-container py-2.5 sm:py-3">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">
               Vraag {currentStep + 1} van {quizSteps.length}
             </span>
-            <span className="text-xs sm:text-sm font-medium text-[var(--ff-color-primary-600)]">
-              {Math.round(progress)}%
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs sm:text-sm font-medium text-[var(--ff-color-primary-600)]">
+                {Math.round(progress)}%
+              </span>
+              <button
+                onClick={handleCancel}
+                className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                aria-label="Annuleer quiz"
+                title="Annuleer en ga terug naar home"
+              >
+                <X className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] hover:text-[var(--color-text)]" />
+              </button>
+            </div>
           </div>
 
           {/* Clean progress bar */}
@@ -765,66 +788,11 @@ export default function OnboardingFlowPage() {
         </div>
       </div>
 
-      {/* Question Content - Responsive desktop layout with sidebar */}
-      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12">
-        <div className="max-w-3xl lg:max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 xl:gap-16">
-
-            {/* Desktop Sidebar - Progress & Context */}
-            <aside className="hidden lg:block lg:w-72 xl:w-80 flex-shrink-0">
-              <div className="sticky top-24 space-y-6">
-                {/* Progress Section */}
-                <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold text-[var(--color-text)]">Voortgang</span>
-                    <span className="text-lg font-bold text-[var(--ff-color-primary-600)]">{Math.round(progress)}%</span>
-                  </div>
-
-                  {/* Vertical Progress Bar */}
-                  <div className="relative h-48 bg-[var(--color-bg)] rounded-full overflow-hidden mb-4">
-                    <div
-                      className="absolute bottom-0 w-full bg-gradient-to-t from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out rounded-full"
-                      style={{ height: `${progress}%` }}
-                    />
-                  </div>
-
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--color-text)] mb-1">
-                      Vraag {currentStep + 1}
-                    </div>
-                    <div className="text-sm text-[var(--color-muted)]">
-                      van {quizSteps.length}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Context Card */}
-                <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] border border-[var(--ff-color-primary-100)] p-6">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-600)] flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-[var(--color-text)] mb-1">Waarom deze vragen?</h3>
-                      <p className="text-sm text-[var(--color-text)]/80 leading-relaxed">
-                        We gebruiken je antwoorden om je unieke stijlprofiel te bepalen en gepersonaliseerde outfit-aanbevelingen te maken.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Time Estimate - Always visible on desktop */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)]">
-                  <Clock className="w-4 h-4 text-[var(--ff-color-accent-600)] flex-shrink-0" />
-                  <span className="text-sm text-[var(--color-text)]">
-                    <strong>Nog {Math.max(1, quizSteps.length - currentStep)} {quizSteps.length - currentStep === 1 ? 'vraag' : 'vragen'}</strong> · ~1 min
-                  </span>
-                </div>
-              </div>
-            </aside>
-
-            {/* Main Question Content */}
-            <div className="flex-1 max-w-3xl lg:max-w-none">
+      {/* Question Content - Simplified, Centered Layout */}
+      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12 pb-32">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex flex-col gap-6">{/* Main Question Content */}
+            <div className="flex-1">
 
           {/* Email Capture Prompt - Show at step 3 */}
           {showEmailCapture && currentStep === 3 && (
@@ -842,18 +810,33 @@ export default function OnboardingFlowPage() {
             questionKey={currentStep}
             direction="forward"
           >
-            <div className="text-center lg:text-left mb-6 sm:mb-8 lg:mb-10">
-              {/* Time estimate only on first question - Mobile only (desktop has sidebar) */}
+            <div className="text-center mb-6 sm:mb-8 lg:mb-10">
+              {/* Time estimate only on first question */}
               {currentStep === 0 && (
-                <div className="inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
                   <Clock className="w-3 h-3" />
                   Minder dan 2 minuten
                 </div>
               )}
 
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-5 px-4 lg:px-0 leading-tight lg:leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 px-4 lg:px-0 leading-tight">
                 {step.title}
+                {step.required && <span className="text-[var(--ff-color-accent-600)] ml-2">*</span>}
               </h1>
+
+              {/* Inline Error Message */}
+              {attemptedNext && getValidationError() && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center justify-center gap-2 px-4 py-3 mx-4 lg:mx-0 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm font-medium"
+                  role="alert"
+                  aria-live="polite"
+                >
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                  <span>{getValidationError()}</span>
+                </motion.div>
+              )}
 
               {step.description && (
                 <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl lg:max-w-3xl mx-auto lg:mx-0 px-4 lg:px-0 leading-relaxed">
@@ -1105,54 +1088,10 @@ export default function OnboardingFlowPage() {
             )}
           </div>
 
-          {/* Navigation Buttons - Responsive sizing */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 justify-between mt-8 lg:mt-10">
-            <button
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 px-6 lg:px-8 py-4 lg:py-5 min-h-[52px] lg:min-h-[60px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-[var(--radius-xl)] font-semibold text-base lg:text-lg hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm hover:shadow-md"
-            >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-              <span>Vorige</span>
-            </button>
-
-            <button
-              onClick={handleNext}
-              disabled={!canProceed() || isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-6 lg:px-8 py-4 lg:py-5 min-h-[52px] lg:min-h-[60px] bg-[var(--ff-color-primary-600)] text-white rounded-xl sm:rounded-[var(--radius-xl)] font-semibold text-base lg:text-lg hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-md hover:shadow-lg"
-            >
-              {isSubmitting ? (
-                <span>Verwerken...</span>
-              ) : currentStep === totalSteps - 1 ? (
-                <>
-                  <span>Afronden</span>
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-                </>
-              ) : (
-                <>
-                  <span>Volgende</span>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Validation Error - Only show if user attempted to proceed */}
-          {attemptedNext && getValidationError() && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm font-medium"
-            >
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
-              <span>{getValidationError()}</span>
-            </motion.div>
-          )}
-
-          {/* Help Text - Only show if no error */}
+          {/* Help Text - Required field indicator */}
           {step.required && !attemptedNext && (
-            <p className="text-center text-sm text-gray-600 mt-4">
-              * Deze vraag is verplicht
+            <p className="text-center text-xs text-[var(--color-muted)] mt-4">
+              * Verplicht veld
             </p>
           )}
             </div>
@@ -1164,6 +1103,44 @@ export default function OnboardingFlowPage() {
         {/* End Max Width Container */}
       </div>
       {/* End FF Container */}
+
+      {/* Sticky Bottom Bar - Mobile Thumb Zone */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_12px_rgba(0,0,0,0.08)] safe-area-inset-bottom">
+        <div className="ff-container py-3 sm:py-4">
+          <div className="flex gap-3 max-w-3xl mx-auto">
+            <button
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 min-h-[56px] bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm hover:shadow-md flex-shrink-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              aria-label="Ga terug naar vorige vraag"
+            >
+              <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+              <span className="hidden sm:inline">Vorige</span>
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={!canProceed() || isSubmitting}
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-md hover:shadow-lg flex-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === totalSteps - 1 ? "Rond quiz af" : "Ga naar volgende vraag")}
+            >
+              {isSubmitting ? (
+                <span>Verwerken...</span>
+              ) : currentStep === totalSteps - 1 ? (
+                <>
+                  <span>Afronden</span>
+                  <Sparkles className="w-5 h-5" aria-hidden="true" />
+                </>
+              ) : (
+                <>
+                  <span>Volgende</span>
+                  <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
 
     </main>
 
@@ -1220,6 +1197,66 @@ export default function OnboardingFlowPage() {
               >
                 <span>Verder gaan</span>
                 <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
+            role="dialog"
+            aria-labelledby="cancel-modal-title"
+            aria-describedby="cancel-modal-desc"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-red-600" aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 id="cancel-modal-title" className="text-xl font-bold text-gray-900">Quiz annuleren?</h3>
+                  <p className="text-sm text-gray-600">Je voortgang gaat verloren</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCancelModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                aria-label="Sluit modal"
+              >
+                <X className="w-5 h-5 text-gray-500" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <p id="cancel-modal-desc" className="text-gray-700">
+                Weet je zeker dat je de quiz wilt annuleren? Je huidige antwoorden gaan verloren.
+              </p>
+              <div className="bg-[var(--ff-color-accent-50)] border border-[var(--ff-color-accent-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--ff-color-accent-900)] font-medium">
+                  💡 Je kunt ook op "Vorige" klikken om terug te gaan naar een eerdere vraag
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowCancelModal(false)}
+                className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+              >
+                Doorgaan met quiz
+              </button>
+              <button
+                onClick={confirmCancel}
+                className="flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+                <span>Ja, annuleer</span>
               </button>
             </div>
           </motion.div>
