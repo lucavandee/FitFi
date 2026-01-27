@@ -24,6 +24,8 @@
     "prepare": "echo 'husky skipped (Bolt)'",
     "doctor": "node scripts/doctor.mjs",
     "scan:secrets": "bash scripts/scan-secrets.sh",
+    "design:check": "node scripts/check-design-compliance.mjs",
+    "design:check:ci": "node scripts/check-design-compliance.mjs --strict",
     "predev": "npm run doctor",
     "prebuild": "npm run doctor",
     "start": "vite"
