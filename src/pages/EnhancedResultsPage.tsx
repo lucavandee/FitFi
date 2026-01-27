@@ -44,6 +44,7 @@ import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistenc
 import { useNavigate } from "react-router-dom";
 import { generateOutfitDescription } from "@/engine/outfitContext";
 import TrendInsights from "@/components/premium/TrendInsights";
+import { TrustSignals } from "@/components/results/TrustSignals";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -1195,7 +1196,7 @@ export default function EnhancedResultsPage() {
                   </div>
 
                   {/* Social Proof - Dynamic */}
-                  <div className="text-center mb-6">
+                  <div className="text-center mb-8">
                     <p className="text-sm text-[var(--color-muted)]">
                       ⭐ <span className="font-semibold text-[var(--color-text)]">
                         {upgradesLoading ? "2.847+" : `${monthlyUpgradeCount?.toLocaleString("nl-NL") || "2.847"}+`} gebruikers
@@ -1203,32 +1204,43 @@ export default function EnhancedResultsPage() {
                     </p>
                   </div>
 
-                  {/* CTA Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Trust Signals */}
+                  <div className="mb-8">
+                    <TrustSignals />
+                  </div>
+
+                  {/* CTA Buttons - Primary/Secondary Hierarchy */}
+                  <div className="space-y-3">
+                    {/* PRIMARY CTA - Most prominent */}
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="flex-1"
+                      className="w-full"
                     >
                       <NavLink
                         to="/dashboard"
-                        className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-bold text-base hover:shadow-xl transition-all"
+                        className="flex items-center justify-center gap-3 px-8 py-5 min-h-[64px] bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-2xl transition-all shadow-lg w-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                        aria-label="Bekijk je gepersonaliseerde outfits"
                       >
-                        Bekijk gratis outfits
-                        <ArrowRight className="w-5 h-5" />
+                        <ShoppingBag className="w-6 h-6" aria-hidden="true" />
+                        <span>Bekijk je outfits</span>
+                        <ArrowRight className="w-6 h-6" aria-hidden="true" />
                       </NavLink>
                     </motion.div>
+
+                    {/* SECONDARY CTA - Subtle */}
                     <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="w-full"
                     >
                       <NavLink
                         to="/prijzen#premium"
-                        className="flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--ff-color-primary-600)]"
+                        className="flex items-center justify-center gap-2 px-6 py-4 min-h-[56px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                        aria-label="Upgrade naar Premium voor meer functies"
                       >
-                        <Sparkles className="w-5 h-5" />
-                        Upgrade naar Premium
+                        <Sparkles className="w-5 h-5" aria-hidden="true" />
+                        <span>Upgrade naar Premium</span>
                       </NavLink>
                     </motion.div>
                   </div>
