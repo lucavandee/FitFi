@@ -10,6 +10,8 @@ import Seo from "@/components/seo/Seo";
 import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
+import { emailErrors, passwordErrors, nameErrors, getSupabaseAuthError, type ErrorMessage } from "@/utils/formErrors";
+import { InlineError } from "@/components/ui/ErrorAlert";
 
 /** Email validation */
 function isEmail(v: string) {
@@ -49,19 +51,28 @@ const RegisterPage: React.FC = () => {
   const [showPw, setShowPw] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<ErrorMessage | null>(null);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const pwStrength = password ? passwordStrength(password) : null;
 
-  const emailError = touched.email && !email
-    ? "E-mail is verplicht"
-    : touched.email && !isEmail(email)
-    ? "Voer een geldig e-mailadres in"
+  // Enhanced validation with contextual errors
+  const nameError: ErrorMessage | null = touched.name && !name
+    ? nameErrors.required()
+    : touched.name && name.length < 2
+    ? nameErrors.tooShort()
     : null;
 
-  const pwError = touched.password && password.length < 8
-    ? "Minimaal 8 tekens"
+  const emailError: ErrorMessage | null = touched.email && !email
+    ? emailErrors.required()
+    : touched.email && !isEmail(email)
+    ? emailErrors.invalid(email)
+    : null;
+
+  const pwError: ErrorMessage | null = touched.password && !password
+    ? passwordErrors.required()
+    : touched.password && password.length < 8
+    ? passwordErrors.tooShort(8)
     : null;
 
   const canSubmit = isEmail(email) && password.length >= 8 && accepted && !loading;
@@ -70,25 +81,25 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     console.log('🔵 [RegisterPage] Form submitted');
 
-    setTouched({ email: true, password: true });
-    setError(null);
+    setTouched({ name: true, email: true, password: true });
+    setServerError(null);
 
     // Validate fields
     if (!isEmail(email)) {
       console.log('❌ [RegisterPage] Invalid email');
-      setError("Voer een geldig e-mailadres in.");
+      setServerError(emailErrors.invalid(email));
       return;
     }
 
     if (password.length < 8) {
       console.log('❌ [RegisterPage] Password too short');
-      setError("Wachtwoord moet minimaal 8 tekens zijn.");
+      setServerError(passwordErrors.tooShort(8));
       return;
     }
 
     if (!accepted) {
       console.log('❌ [RegisterPage] Terms not accepted');
-      setError("Accepteer de voorwaarden om verder te gaan.");
+      toast.error("Accepteer de voorwaarden om verder te gaan.");
       return;
     }
 
@@ -109,14 +120,14 @@ const RegisterPage: React.FC = () => {
         }, 500);
       } else {
         console.error('❌ [RegisterPage] Registration failed');
-        setError('Er ging iets mis bij het aanmaken van je account. Mogelijk bestaat dit e-mailadres al.');
+        setServerError(emailErrors.alreadyExists());
         toast.error('Account aanmaken mislukt');
       }
     } catch (err) {
       console.error('❌ [RegisterPage] Registration exception:', err);
-      setError('Er is een fout opgetreden. Controleer je internetverbinding en probeer het opnieuw.');
+      setServerError(getSupabaseAuthError(err));
       toast.error('Onverwachte fout opgetreden');
-    } finally {
+    } finally{
       setLoading(false);
     }
   };
@@ -170,14 +181,9 @@ const RegisterPage: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden">
           {/* Form - Responsive padding */}
           <form onSubmit={onSubmit} className="p-5 sm:p-6 md:p-8 space-y-5">
-            {/* Error Alert */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-red-900">{error}</p>
-                </div>
-              </div>
+            {/* Server Error Alert */}
+            {serverError && (
+              <InlineError error={serverError} />
             )}
 
             {/* Social Login Buttons */}
@@ -233,12 +239,7 @@ const RegisterPage: React.FC = () => {
                   required
                 />
               </div>
-              {emailError && (
-                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" />
-                  {emailError}
-                </p>
-              )}
+              <InlineError error={emailError} />
             </div>
 
             {/* Password Field - 48px+ height for mobile */}
@@ -295,12 +296,7 @@ const RegisterPage: React.FC = () => {
                 </div>
               )}
 
-              {pwError && (
-                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" />
-                  {pwError}
-                </p>
-              )}
+              <InlineError error={pwError} />
             </div>
 
             {/* Terms Checkbox - 44px+ touch target */}

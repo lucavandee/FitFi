@@ -7,6 +7,8 @@ import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
 import { SecurityLogger } from "@/services/security/securityLogger";
+import { emailErrors, passwordErrors, getSupabaseAuthError, type ErrorMessage } from "@/utils/formErrors";
+import { InlineError } from "@/components/ui/ErrorAlert";
 
 /** Email validation */
 function isEmail(v: string) {
@@ -50,19 +52,22 @@ export default function LoginPage() {
   const [remember, setRemember] = React.useState(true);
   const [mode, setMode] = React.useState<Mode>("password");
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [serverError, setServerError] = React.useState<ErrorMessage | null>(null);
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
 
   const pwStrength = password ? passwordStrength(password) : null;
 
-  const emailError = touched.email && !email
-    ? "E-mail is verplicht"
+  // Enhanced validation with contextual errors
+  const emailError: ErrorMessage | null = touched.email && !email
+    ? emailErrors.required()
     : touched.email && !isEmail(email)
-    ? "Voer een geldig e-mailadres in"
+    ? emailErrors.invalid(email)
     : null;
 
-  const pwError = touched.password && mode === "password" && password.length < 8
-    ? "Minimaal 8 tekens"
+  const pwError: ErrorMessage | null = touched.password && mode === "password" && !password
+    ? passwordErrors.required()
+    : touched.password && mode === "password" && password.length < 8
+    ? passwordErrors.tooShort(8)
     : null;
 
   const canSubmit = mode === "password"
@@ -77,7 +82,7 @@ export default function LoginPage() {
 
     if (mode === "password") {
       setLoading(true);
-      setError(null);
+      setServerError(null);
 
       try {
         const success = await login(email, password);
@@ -117,18 +122,18 @@ export default function LoginPage() {
         } else {
           // Security logging: failed login
           await SecurityLogger.logLoginFailure(email, 'invalid_credentials');
-          setError("Login mislukt. Controleer je e-mail en wachtwoord.");
+          setServerError(passwordErrors.incorrect());
         }
       } catch (err) {
         // Security logging: login error
         await SecurityLogger.logLoginFailure(email, 'system_error');
-        setError("Er ging iets mis. Probeer het later opnieuw.");
+        setServerError(getSupabaseAuthError(err));
       } finally {
         setLoading(false);
       }
     } else {
       // Magic link placeholder
-      setError("Magic link is momenteel niet beschikbaar.");
+      toast.error("Magic link is momenteel niet beschikbaar.");
     }
   }
 
@@ -187,14 +192,9 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={onSubmit} className="p-5 sm:p-6 md:p-8 space-y-5">
-            {/* Error Alert */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-red-900">{error}</p>
-                </div>
-              </div>
+            {/* Server Error Alert */}
+            {serverError && (
+              <InlineError error={serverError} />
             )}
 
             {/* Social Login Buttons */}
@@ -228,12 +228,7 @@ export default function LoginPage() {
                   }`}
                 />
               </div>
-              {emailError && (
-                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" />
-                  {emailError}
-                </p>
-              )}
+              <InlineError error={emailError} />
             </div>
 
             {/* Password Field (only in password mode) - 48px+ height for mobile */}
@@ -289,12 +284,7 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                {pwError && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
-                    {pwError}
-                  </p>
-                )}
+                <InlineError error={pwError} />
               </div>
             )}
 
