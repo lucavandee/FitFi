@@ -118,8 +118,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div className={`bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow ${className}`}>
-      {/* Product Image */}
-      <div className="aspect-[3/4] overflow-hidden">
+      {/* Product Image - Reserved space for CLS prevention */}
+      <div className="aspect-[3/4] overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
         <SmartImage
           src={imageUrl}
           alt={`${title} van ${brand}`}
@@ -130,6 +130,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
           imgClassName="hover:scale-105 transition-transform duration-300 cursor-pointer"
           onClick={handleClick}
+          loading="lazy"
         />
       </div>
       

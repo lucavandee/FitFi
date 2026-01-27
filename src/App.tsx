@@ -20,6 +20,7 @@ const LandingPage        = lazy(() => import("@/pages/LandingPage"));
 const HowItWorksPage     = lazy(() => import("@/pages/HowItWorksPage"));
 const PricingPage        = lazy(() => import("@/pages/PricingPage"));
 const AboutPage          = lazy(() => import("@/pages/AboutPage"));
+const ShopPage           = lazy(() => import("@/pages/ShopPage"));
 const BlogPage           = lazy(() => import("@/pages/BlogPage"));
 const BlogPostPage       = lazy(() => import("@/pages/BlogPostPage"));
 const FAQPage            = lazy(() => import("@/pages/FAQPage"));
@@ -59,6 +60,7 @@ const WithSeo = {
   How:        () => (<><Seo title="Hoe het werkt — FitFi" description="Zo bouwt FitFi jouw stijlprofiel en vertaalt dat naar outfits." path="/hoe-het-werkt" /><HowItWorksPage /></>),
   Pricing:    () => (<><Seo title="Prijzen — FitFi" description="Eerlijke prijzen. Start gratis, upgrade wanneer jij wilt." path="/prijzen" /><PricingPage /></>),
   About:      () => (<><Seo title="Over ons — FitFi" description="Wij geloven in rustige stijl, niet in ruis." path="/over-ons" /><AboutPage /></>),
+  Shop:       () => (<><Seo title="Shop — FitFi" description="Ontdek kleding en accessoires die perfect bij jouw stijl passen." path="/shop" /><ShopPage /></>),
   Blog:       () => (<><Seo title="Blog — FitFi" description="Rustige inzichten over stijl en silhouet." path="/blog" /><BlogPage /></>),
   BlogPost:   () => (<><Seo title="Artikel — FitFi" description="Lees meer op de FitFi blog." path={typeof window!=="undefined"?window.location.pathname:"/blog"} /><BlogPostPage /></>),
   FAQ:        () => (<><Seo title="Veelgestelde vragen — FitFi" description="Antwoorden op de meest gestelde vragen." path="/veelgestelde-vragen" /><FAQPage /></>),
@@ -112,6 +114,7 @@ export default function App() {
                 <Route path="/hoe-het-werkt" element={<WithSeo.How />} />
                 <Route path="/prijzen" element={<WithSeo.Pricing />} />
                 <Route path="/over-ons" element={<WithSeo.About />} />
+                <Route path="/shop" element={<WithSeo.Shop />} />
                 <Route path="/blog" element={<WithSeo.Blog />} />
                 <Route path="/blog/:slug" element={<WithSeo.BlogPost />} />
                 <Route path="/veelgestelde-vragen" element={<WithSeo.FAQ />} />
