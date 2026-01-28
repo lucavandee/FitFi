@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { profileSyncService } from '@/services/data/profileSyncService';
 
 // Get singleton client
 const sb = supabase();
@@ -115,6 +116,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           hasAppMetadata: !!session.user.app_metadata
         });
 
+        // Load quiz profile data immediately after authentication
+        console.log('🔄 [UserContext] Loading quiz profile data...');
+        profileSyncService.getProfile().then((profile) => {
+          if (profile && profile.quiz_answers) {
+            console.log('✅ [UserContext] Quiz profile loaded and cached');
+          } else {
+            console.log('ℹ️ [UserContext] No quiz profile found (user may need to take quiz)');
+          }
+        }).catch(err => {
+          console.error('❌ [UserContext] Failed to load quiz profile:', err);
+        });
+
         // Fetch tier, admin status, gender, and created_at asynchronously (non-blocking)
         sb.from('profiles')
           .select('tier, is_admin, gender, created_at')
@@ -193,6 +206,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: userData.email
         });
 
+        // Load quiz profile data immediately after authentication
+        console.log('🔄 [UserContext] Loading quiz profile data (onAuthStateChange)...');
+        profileSyncService.getProfile().then((profile) => {
+          if (profile && profile.quiz_answers) {
+            console.log('✅ [UserContext] Quiz profile loaded and cached (onAuthStateChange)');
+          } else {
+            console.log('ℹ️ [UserContext] No quiz profile found (onAuthStateChange)');
+          }
+        }).catch(err => {
+          console.error('❌ [UserContext] Failed to load quiz profile (onAuthStateChange):', err);
+        });
+
         // Fetch tier, admin status, gender, and created_at asynchronously (non-blocking)
         sb.from('profiles')
           .select('tier, is_admin, gender, created_at')
@@ -233,9 +258,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setUser(null);
         setStatus('unauthenticated');
-        // Clear localStorage
+        // Clear user localStorage (but keep quiz data so it persists across sessions)
         try {
           localStorage.removeItem('fitfi_user');
+          console.log('🧹 [UserContext] User logged out, quiz data preserved');
         } catch (e) {
           console.warn('[UserContext] Could not clear user from localStorage:', e);
         }
