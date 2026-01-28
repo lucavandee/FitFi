@@ -177,20 +177,61 @@ export class StyleProfileGenerator {
     preferredColors: string[];
   } | null {
     if (!answers || Object.keys(answers).length === 0) {
+      console.warn('[StyleProfileGenerator] analyzeQuizColors: No answers provided');
       return null;
     }
 
     // ✅ Check for color preference answers (support multiple field names for backwards compatibility)
     // CRITICAL: Quiz uses "baseColors", NOT "colorPreference"
-    const colorPref = answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp || answers.neutrals;
+    const colorPref = answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
     const neutralPreference = answers.neutrals || answers.neutral || false;
 
     console.log('[StyleProfileGenerator] analyzeQuizColors input:', {
+      allAnswers: Object.keys(answers),
       hasBaseColors: !!answers.baseColors,
       baseColors: answers.baseColors,
       hasNeutrals: !!answers.neutrals,
-      colorPref
+      colorPref,
+      answersCount: Object.keys(answers).length
     });
+
+    // ✅ If no color preference data at all, derive from style preferences
+    if (!colorPref) {
+      console.warn('[StyleProfileGenerator] No baseColors found in quiz answers, using fallback logic');
+
+      // Check if user has ANY answers at all
+      const hasStylePreferences = Array.isArray(answers.stylePreferences) && answers.stylePreferences.length > 0;
+      const hasGoals = Array.isArray(answers.goals) && answers.goals.length > 0;
+
+      if (!hasStylePreferences && !hasGoals) {
+        console.error('[StyleProfileGenerator] No quiz data available for color analysis');
+        return null;
+      }
+
+      // Derive temperature from style preferences
+      let temperature = 'neutraal';
+      const preferredColors: string[] = [];
+
+      if (hasStylePreferences) {
+        const styles = answers.stylePreferences as string[];
+        const hasBold = styles.some(s => s.toLowerCase().includes('bold') || s.toLowerCase().includes('statement'));
+        const hasMinimal = styles.some(s => s.toLowerCase().includes('minimal') || s.toLowerCase().includes('clean'));
+
+        if (hasBold) {
+          temperature = 'warm';
+          preferredColors.push('rood', 'elektrischblauw', 'neongeel');
+        } else if (hasMinimal) {
+          temperature = 'koel';
+          preferredColors.push('zwart', 'wit', 'grijs', 'navy');
+        }
+      }
+
+      return {
+        temperature,
+        isNeutral: temperature === 'koel' || preferredColors.includes('zwart') || preferredColors.includes('wit'),
+        preferredColors
+      };
+    }
 
     // Map quiz answers to temperature
     let temperature = 'neutraal';

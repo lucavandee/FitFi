@@ -703,16 +703,47 @@ export default function EnhancedResultsPage() {
             </div>
 
             <div className="max-w-7xl mx-auto">
-              {/* Shopping Guidance - Practical Cheat Sheet */}
-              <AnimatedSection delay={0.5}>
-                <div className="mb-12">
-                  <ShoppingGuidance
-                    season={activeColorProfile.season}
-                    contrast={activeColorProfile.contrast}
-                    chroma={activeColorProfile.chroma}
-                  />
-                </div>
-              </AnimatedSection>
+              {/* Shopping Guidance - PREMIUM ONLY with Photo Required */}
+              {(user?.tier === 'premium' || user?.tier === 'founder' || user?.isPremium) && profileData?.photo_url ? (
+                <AnimatedSection delay={0.5}>
+                  <div className="mb-12">
+                    <ShoppingGuidance
+                      season={activeColorProfile.season}
+                      contrast={activeColorProfile.contrast}
+                      chroma={activeColorProfile.chroma}
+                    />
+                  </div>
+                </AnimatedSection>
+              ) : (
+                <AnimatedSection delay={0.5}>
+                  <div className="mb-12">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl text-center"
+                    >
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center">
+                        <ShoppingBag className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
+                        Ontgrendel je Shopping Cheat Sheet
+                      </h3>
+                      <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                        {!profileData?.photo_url
+                          ? 'Upload een profielfoto en upgrade naar Premium voor persoonlijke kleuradviezen op basis van je ondertoon.'
+                          : 'Upgrade naar Premium voor een persoonlijke shopping gids met kleuradviezen op maat.'}
+                      </p>
+                      <NavLink
+                        to="/prijzen#premium"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        <span>Upgrade naar Premium</span>
+                      </NavLink>
+                    </motion.div>
+                  </div>
+                </AnimatedSection>
+              )}
 
               {/* ✅ NEW: Color Profile Explainer - Neutral Undertone Context */}
               <AnimatedSection delay={0.58}>
