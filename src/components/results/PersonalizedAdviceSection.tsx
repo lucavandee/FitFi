@@ -26,68 +26,114 @@ export function PersonalizedAdviceSection({
   const occasion = answers?.occasion || 'casual';
   const gender = answers?.gender || 'unisex';
 
-  // Generate personalized advice based on body type with visual icons
+  // Generate personalized advice based on body type with visual icons and gender
   const getBodyTypeAdvice = () => {
     const normalized = bodyType.toLowerCase();
+    const isMale = gender.toLowerCase().includes('man') || gender.toLowerCase().includes('male');
 
-    if (normalized.includes('slank') || normalized.includes('dun')) {
+    // TESTCASE 3: Gespierd / Atletisch
+    if (normalized.includes('atletisch') || normalized.includes('gespierd') || normalized.includes('muscular')) {
+      return {
+        title: 'Jouw atletische postuur',
+        subtitle: 'Toon je kracht met de juiste fit',
+        advice: [
+          {
+            text: 'Getailleerde fits laten jouw bouw zien zonder te strak te zitten',
+            icon: '💪',
+            example: isMale
+              ? 'Slim-fit shirts met stretch — beweegt mee, zit niet strak'
+              : 'Body-con silhouetten die flatteren zonder te knellen'
+          },
+          {
+            text: 'Stretch materialen zijn je beste vriend',
+            icon: '🏃',
+            example: 'Denim met elastaan, jersey blends — comfort én vorm'
+          },
+          {
+            text: isMale ? 'V-halzen en open kragen accentueren je schouders' : 'Gestructureerde tops balanceren je silhouet',
+            icon: '✨',
+            example: isMale
+              ? "V-neck tees, polo's met open kraag"
+              : 'Peplum tops, getailleerde blazers'
+          }
+        ]
+      };
+    }
+
+    // TESTCASE 4: Rond / Curves
+    if (normalized.includes('rond') || normalized.includes('curvy') || normalized.includes('volslank') || normalized.includes('plus')) {
+      return {
+        title: 'Jouw vrouwelijke curves',
+        subtitle: 'Vier je figuur met stijlvolle pasvormen',
+        advice: [
+          {
+            text: 'A-lijn silhouetten flatteren je natuurlijke vorm',
+            icon: '👗',
+            example: 'Empire waist jurken, A-lijn rokken — elegant en comfortabel'
+          },
+          {
+            text: 'Gedefinieerde taille creëert een prachtige zandloper',
+            icon: '⌛',
+            example: 'Wrap dresses, belted blazers, high-waist broeken'
+          },
+          {
+            text: 'Verticale lijnen verlengen visueel en flatteren',
+            icon: '📏',
+            example: 'Lange cardigans, verticale naden, monochrome looks'
+          },
+          {
+            text: 'Kwaliteit stoffen met structuur geven vorm én comfort',
+            icon: '✨',
+            example: 'Ponte knits, structured cotton, stretch wool blends'
+          }
+        ]
+      };
+    }
+
+    // Slank / Dun
+    if (normalized.includes('slank') || normalized.includes('dun') || normalized.includes('petite')) {
       return {
         title: 'Jouw slanke lichaamsbouw',
         subtitle: 'Benadrukt jouw elegante lijn',
         advice: [
           {
-            text: 'Slim-fit kledingstukken benadruken jouw slanke lijn perfect',
-            icon: '✨'
+            text: 'Slim-fit kledingstukken tonen jouw slanke lijn perfect',
+            icon: '✨',
+            example: 'Tailored fits zonder extra ruimte — strak maar niet krap'
           },
           {
             text: 'Gestructureerde lagen voegen visuele diepte toe',
-            icon: '🧥'
+            icon: '🧥',
+            example: 'Blazers, vesten, jackets — creëer dimensie'
           },
           {
-            text: 'Horizontale strepen en patronen creëren visuele balans',
-            icon: '📏'
+            text: 'Horizontale lijnen en patronen brengen balans',
+            icon: '📏',
+            example: 'Stripes, color-blocking, textured fabrics'
           }
         ]
       };
     }
 
-    if (normalized.includes('atletisch') || normalized.includes('gespierd')) {
-      return {
-        title: 'Jouw atletische postuur',
-        subtitle: 'Toont jouw kracht en balans',
-        advice: [
-          {
-            text: 'Getailleerde fits tonen jouw gespierde bouw',
-            icon: '💪'
-          },
-          {
-            text: 'Stretch materialen bieden comfort én stijl',
-            icon: '🏃'
-          },
-          {
-            text: 'V-halzen accentueren je schouderpartij',
-            icon: '✨'
-          }
-        ]
-      };
-    }
-
-    // Default/gemiddeld - IMPROVED for business context
+    // Default/gemiddeld
     return {
       title: 'Jouw gebalanceerde lichaamsbouw',
-      subtitle: 'Je hebt de vrijheid om te experimenteren',
+      subtitle: 'De vrijheid om te experimenteren',
       advice: [
         {
-          text: 'Gebalanceerde proporties geven je veel vrijheid in stijlkeuzes',
-          icon: '⚖️'
+          text: 'Gebalanceerde proporties geven je eindeloze mogelijkheden',
+          icon: '⚖️',
+          example: 'Probeer verschillende stijlen — alles staat je goed'
         },
         {
-          text: 'Semi-fitted kledingstukken geven een strakke maar comfortabele look',
-          icon: '👔'
+          text: 'Semi-fitted silhouetten voor een moderne, strakke look',
+          icon: '👔',
+          example: 'Regular fit met taper, structured fits met bewegingsruimte'
         },
         {
-          text: 'Experimenteer met verschillende silhouetten en pasvormen',
-          icon: '✨'
+          text: 'Experimenteer met trends zonder zorgen',
+          icon: '✨',
+          example: 'Oversized, slim, boxy — jij kunt het allemaal dragen'
         }
       ]
     };
@@ -161,25 +207,121 @@ export function PersonalizedAdviceSection({
     };
   };
 
-  // Generate occasion-specific advice with ICONS and inspirational tone
+  // Generate occasion-specific advice with ICONS, gender, and inspirational tone
   const getOccasionAdvice = () => {
-    if (occasion.toLowerCase().includes('casual') || occasion.toLowerCase().includes('vrije tijd')) {
+    const isMale = gender.toLowerCase().includes('man') || gender.toLowerCase().includes('male');
+    const occasionLower = occasion.toLowerCase();
+
+    // TESTCASE 3: Edgy / Daten / Uitgaan
+    if (occasionLower.includes('date') || occasionLower.includes('daten') || occasionLower.includes('uitgaan') || occasionLower.includes('avond uit')) {
       return {
         title: `Perfect voor ${occasion}`,
-        icon: '🌿',
-        tips: [
-          { text: 'Comfort staat voorop: kies ademende, flexibele materialen', icon: '👕' },
-          { text: 'Nette sneakers of loafers houden het verzorgd', icon: '👟' },
-          { text: 'Een strak T-shirt of polo is veelzijdiger dan een overhemd', icon: '✨' }
+        icon: '🔥',
+        tips: isMale ? [
+          {
+            text: 'Start met een strak zwart T-shirt of henley als basis',
+            icon: '🖤',
+            example: 'Slim-fit, stretch katoen — laat je armen zien zonder te flashy te zijn'
+          },
+          {
+            text: 'Laagsgewijs werken: denim jacket of leren jack voor edge',
+            icon: '🧥',
+            example: 'Donkere wassing of zwart leer, niet te bulky'
+          },
+          {
+            text: 'Donkere slim-fit jeans: jouw geheime wapen',
+            icon: '👖',
+            example: 'Zwart of deep indigo, geen rips — strak maar comfortabel'
+          },
+          {
+            text: 'Details maken het verschil: accessoires met attitude',
+            icon: '⚡',
+            example: 'Zilveren ketting, lederen armband, stoere sneakers of boots'
+          }
+        ] : [
+          {
+            text: 'Begin met een strak zwart jurkje of top',
+            icon: '🖤',
+            example: 'Figuurvolgend, minimale details, maximal impact'
+          },
+          {
+            text: 'Leren jacket of oversized blazer voor edge',
+            icon: '🧥',
+            example: 'Zwart leer of donker denim, stoer maar elegant'
+          },
+          {
+            text: 'Statement accessoires: jouw signature move',
+            icon: '💎',
+            example: 'Zilveren jewelry, stoere boots of hakken, kleine clutch'
+          },
+          {
+            text: 'Donkere kleuren met één twist: textuur of glans',
+            icon: '✨',
+            example: 'Satijn, leer, mesh — subtiel maar opvallend'
+          }
         ]
       };
     }
 
-    if (occasion.toLowerCase().includes('kantoor') || occasion.toLowerCase().includes('zakelijk') || occasion.toLowerCase().includes('werk') || occasion.toLowerCase().includes('business')) {
+    // TESTCASE 4: Vakantie / Minimalistisch / Casual
+    if (occasionLower.includes('vakantie') || occasionLower.includes('holiday') || occasionLower.includes('reis') || occasionLower.includes('strand')) {
+      return {
+        title: `Perfect voor ${occasion}`,
+        icon: '🌴',
+        tips: [
+          {
+            text: 'Luchtige, natuurlijke stoffen zijn je beste vriend',
+            icon: '🌿',
+            example: 'Linnen, katoen, lyocell — ademt en voelt luxe aan'
+          },
+          {
+            text: 'Minimalistische basisstukken in zachte tinten',
+            icon: '👗',
+            example: isMale
+              ? 'Witte linnen overhemden, neutrale shorts, simpele tees'
+              : 'A-lijn jurken, losse blouses, lichte broeken — effortless chic'
+          },
+          {
+            text: 'Pastels en neutrale tinten: rustig maar stijlvol',
+            icon: '🎨',
+            example: 'Zacht blauw, beige, off-white, licht roze — combineer vrij'
+          },
+          {
+            text: 'Praktische elegantie: comfort zonder in te leveren op stijl',
+            icon: '👒',
+            example: 'Oversized zonnehoed, lederen sandalen, minimal jewelry'
+          }
+        ]
+      };
+    }
+
+    // Business / Kantoor
+    if (occasionLower.includes('kantoor') || occasionLower.includes('zakelijk') || occasionLower.includes('werk') || occasionLower.includes('business')) {
       return {
         title: `Perfect voor ${occasion}`,
         icon: '💼',
-        tips: [
+        tips: isMale ? [
+          {
+            text: 'Investeer in een klassieke blazer die bij alles past',
+            icon: '🧥',
+            example: 'Marine of grijs, getailleerd voor een strakke lijn'
+          },
+          {
+            text: 'Kwaliteit overhemden in neutrale tinten',
+            icon: '👔',
+            example: 'Wit, lichtblauw of grijs — altijd professioneel'
+          },
+          {
+            text: 'Afgewerkte schoenen maken je outfit compleet',
+            icon: '👞',
+            example: 'Leren dress shoes of loafers in zwart of bruin'
+          },
+          {
+            text: 'Subtiele accessoires geven persoonlijkheid',
+            icon: '⌚',
+            example: 'Klassiek horloge, strakke riem, simpele manchetknopen'
+          }
+        ] : [
           {
             text: 'Investeer in een klassieke blazer die bij alles past',
             icon: '🧥',
@@ -200,6 +342,19 @@ export function PersonalizedAdviceSection({
             icon: '💍',
             example: 'Kleine oorbellen, strakke riem, minimalistische horloge'
           }
+        ]
+      };
+    }
+
+    // Casual / Vrije tijd
+    if (occasionLower.includes('casual') || occasionLower.includes('vrije tijd')) {
+      return {
+        title: `Perfect voor ${occasion}`,
+        icon: '🌿',
+        tips: [
+          { text: 'Comfort staat voorop: kies ademende, flexibele materialen', icon: '👕' },
+          { text: 'Nette sneakers of loafers houden het verzorgd', icon: '👟' },
+          { text: 'Een strak T-shirt of polo is veelzijdiger dan een overhemd', icon: '✨' }
         ]
       };
     }
@@ -387,25 +542,77 @@ export function PersonalizedAdviceSection({
           </div>
           <h4 className="text-2xl font-bold text-text mb-4">Jouw Stijl Samengevat</h4>
           <p className="text-lg text-text max-w-2xl mx-auto leading-relaxed font-medium">
-            {occasion.toLowerCase().includes('business') || occasion.toLowerCase().includes('kantoor') || occasion.toLowerCase().includes('werk') ? (
-              <>
-                <strong className="font-bold">Kortom:</strong> Jij maakt indruk met een klassiek, tijdloos pak in neutrale tinten.
-                Combineer een {bodyType.toLowerCase().includes('slank') ? 'getailleerde' : 'goed passende'} blazer met een kwaliteit blouse
-                en afgewerkte schoenen. Houd het simpel, strak en professioneel — zo straal je betrouwbaarheid uit.
-              </>
-            ) : (
-              <>
-                <strong className="font-bold">Kortom:</strong> Combineer {bodyType.toLowerCase().includes('slank') ? 'slim-fit' : 'goed passende'} kledingstukken met één opvallend
-                element in jouw seizoensgebonden kleurpalet. Houd de rest neutraal voor een gebalanceerde,
-                stijlvolle look die bij élke gelegenheid werkt.
-              </>
-            )}
+            {(() => {
+              const occasionLower = occasion.toLowerCase();
+              const bodyLower = bodyType.toLowerCase();
+              const isMale = gender.toLowerCase().includes('man') || gender.toLowerCase().includes('male');
+
+              // Edgy / Daten
+              if (occasionLower.includes('date') || occasionLower.includes('daten') || occasionLower.includes('uitgaan')) {
+                return (
+                  <>
+                    <strong className="font-bold">Kortom:</strong> Jij maakt indruk met een strakke, edgy look in donkere tinten.
+                    {bodyLower.includes('gespierd') || bodyLower.includes('atletisch')
+                      ? ' Laat je atletische bouw subtiel zien met slim-fit basics'
+                      : ' Combineer getailleerde basics'}
+                    {' '}met één statement piece — leren jack, stoere boots, of opvallende accessoires.
+                    Confidence is jouw beste accessoire. 🔥
+                  </>
+                );
+              }
+
+              // Vakantie / Minimalistisch
+              if (occasionLower.includes('vakantie') || occasionLower.includes('holiday') || occasionLower.includes('reis')) {
+                return (
+                  <>
+                    <strong className="font-bold">Kortom:</strong> Jouw vakantie-stijl is effortless chic — minimalistisch, luchtig en tijdloos.
+                    {bodyLower.includes('rond') || bodyLower.includes('curvy')
+                      ? ' A-lijn silhouetten en gedefinieerde tailles flatteren je curves'
+                      : ' Losse, natuurlijke stoffen'}
+                    {' '}in pastels en neutrale tinten zorgen voor comfort zonder concessies aan stijl.
+                    Pack light, look luxe. 🌴
+                  </>
+                );
+              }
+
+              // Business / Kantoor
+              if (occasionLower.includes('business') || occasionLower.includes('kantoor') || occasionLower.includes('werk')) {
+                return (
+                  <>
+                    <strong className="font-bold">Kortom:</strong> Jij maakt indruk met een klassiek, tijdloos {isMale ? 'pak' : 'ensemble'} in neutrale tinten.
+                    Combineer een {bodyLower.includes('slank') ? 'getailleerde' : 'goed passende'} blazer met een kwaliteit {isMale ? 'overhemd' : 'blouse'}
+                    {' '}en afgewerkte schoenen. Houd het simpel, strak en professioneel — zo straal je betrouwbaarheid uit. 💼
+                  </>
+                );
+              }
+
+              // Default / Casual
+              return (
+                <>
+                  <strong className="font-bold">Kortom:</strong> Combineer {bodyLower.includes('slank') ? 'slim-fit' : 'goed passende'} kledingstukken met één opvallend
+                  element in jouw seizoensgebonden kleurpalet. Houd de rest neutraal voor een gebalanceerde,
+                  stijlvolle look die bij élke gelegenheid werkt. ✨
+                </>
+              );
+            })()}
           </p>
 
-          {/* Inspirational tagline */}
+          {/* Inspirational tagline - context-aware */}
           <div className="mt-6 pt-6 border-t border-[var(--color-border)]/30">
             <p className="text-base text-muted italic">
-              "Stijl is niet wat je draagt, maar hoe je het draagt."
+              {(() => {
+                const occasionLower = occasion.toLowerCase();
+                if (occasionLower.includes('date') || occasionLower.includes('daten') || occasionLower.includes('uitgaan')) {
+                  return '"Confidence is het enige wat je écht nodig hebt."';
+                }
+                if (occasionLower.includes('vakantie') || occasionLower.includes('holiday')) {
+                  return '"De beste outfits voelen als een tweede huid."';
+                }
+                if (occasionLower.includes('business') || occasionLower.includes('kantoor')) {
+                  return '"Goed gekleed is goed voorbereid."';
+                }
+                return '"Stijl is niet wat je draagt, maar hoe je het draagt."';
+              })()}
             </p>
           </div>
         </motion.div>
