@@ -45,6 +45,7 @@ import { useNavigate } from "react-router-dom";
 import { generateOutfitDescription } from "@/engine/outfitContext";
 import TrendInsights from "@/components/premium/TrendInsights";
 import { TrustSignals } from "@/components/results/TrustSignals";
+import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -539,6 +540,15 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
+      {/* ✅ NEW: Personalized Advice Section - Testcase specific */}
+      {hasCompletedQuiz && answers && activeColorProfile && (
+        <PersonalizedAdviceSection
+          answers={answers}
+          archetypeName={archetypeName}
+          colorProfile={activeColorProfile}
+        />
+      )}
+
       {/* Style DNA Section - Responsive padding with wider desktop layout */}
       {hasCompletedQuiz && color && (
         <section className="py-12 sm:py-16 md:py-20 lg:py-32 bg-[var(--color-surface)]/30 relative">
@@ -763,68 +773,121 @@ export default function EnhancedResultsPage() {
                 </AnimatedSection>
               )}
 
-              {/* How We Determined Your Style */}
+              {/* How We Determined Your Style - IMPROVED with bullets */}
               <AnimatedSection delay={0.7}>
                 <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="bg-white rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 md:p-10 shadow-xl mb-8"
+                  whileHover={{ scale: 1.01 }}
+                  className="bg-white rounded-[32px] border-2 border-[var(--ff-color-primary-200)] p-10 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.18)] transition-all duration-500 mb-12"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-700)] flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-white" />
+                  <div className="flex items-center gap-4 mb-10">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-700)] flex items-center justify-center shadow-lg">
+                      <Sparkles className="w-7 h-7 text-white" strokeWidth={2.5} />
                     </div>
-                    <h3 className="text-2xl font-bold text-[var(--color-text)]">Hoe we jouw stijl hebben bepaald</h3>
+                    <h3 className="text-3xl font-bold text-[var(--color-text)]">Hoe we jouw stijl hebben bepaald</h3>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mt-1">
-                        <span className="text-[var(--ff-color-primary-700)] font-bold">1</span>
+                  <div className="space-y-8">
+                    {/* Step 1 */}
+                    <div className="flex items-start gap-5">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[var(--ff-color-primary-600)] flex items-center justify-center shadow-md">
+                        <span className="text-white font-bold text-lg">1</span>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Je stijltype: {archetypeName}</h4>
-                        <p className="text-gray-600 leading-relaxed">
-                          Op basis van je quizantwoorden hebben we je stijlprofiel geanalyseerd. We keken naar je voorkeuren voor pasvorm,
-                          gelegenheden en comfort-niveau. Deze combinatie bepaalt je stijltype, dat de fundering vormt voor al je
-                          outfit-aanbevelingen.
+                      <div className="flex-1">
+                        <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Je stijltype: {archetypeName}</h4>
+                        <p className="text-gray-600 leading-relaxed mb-4">
+                          Op basis van je quizantwoorden hebben we je stijlprofiel geanalyseerd:
                         </p>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Pasvorm voorkeuren:</strong> Slim, regular of relaxed fit</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Gelegenheden:</strong> Kantoor, casual of uitgaan</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Comfort-niveau:</strong> Balans tussen stijl en gemak</span>
+                          </li>
+                        </ul>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--ff-color-accent-100)] flex items-center justify-center mt-1">
-                        <span className="text-[var(--ff-color-accent-700)] font-bold">2</span>
+                    {/* Divider */}
+                    <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
+
+                    {/* Step 2 */}
+                    <div className="flex items-start gap-5">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[var(--ff-color-accent-600)] flex items-center justify-center shadow-md">
+                        <span className="text-white font-bold text-lg">2</span>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Contrast & ondertoon analyse: {activeColorProfile.paletteName}</h4>
-                        <p className="text-gray-600 leading-relaxed">
-                          Door je swipes op moodboards te analyseren, hebben we je visuele voorkeuren in kaart gebracht. Via onze
-                          contrast & ondertoon analyse detecteren we welke kleurtonen en intensiteiten je aantrekkelijk vindt. Dit resulteert
-                          in een seizoensgebonden kleurpalet ({getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}).
+                      <div className="flex-1">
+                        <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Kleuranalyse: {activeColorProfile.paletteName}</h4>
+                        <p className="text-gray-600 leading-relaxed mb-4">
+                          Door je swipes op moodboards te analyseren detecteren we:
                         </p>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Temperatuur:</strong> Warme, koele of neutrale tinten</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Contrast:</strong> Laag, medium of hoog contrast</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Seizoen:</strong> {getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}</span>
+                          </li>
+                        </ul>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mt-1">
-                        <span className="text-[var(--ff-color-primary-700)] font-bold">3</span>
+                    {/* Divider */}
+                    <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
+
+                    {/* Step 3 */}
+                    <div className="flex items-start gap-5">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[var(--ff-color-primary-600)] flex items-center justify-center shadow-md">
+                        <span className="text-white font-bold text-lg">3</span>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-lg text-[var(--color-text)] mb-2">Intelligente matching</h4>
-                        <p className="text-gray-600 leading-relaxed">
-                          We combineren je stijltype met je seizoensgebonden kleurpalet om outfits samen te stellen die zowel bij je stijl als bij je
-                          kleurvoorkeuren passen. Elk kledingstuk wordt gekozen op basis van kleurharmonie, stijlcompatibiliteit en
-                          gelegenheid. Zo krijg je outfits die echt bij jou passen, niet alleen qua stijl maar ook qua kleurtonen.
+                      <div className="flex-1">
+                        <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Intelligente matching</h4>
+                        <p className="text-gray-600 leading-relaxed mb-4">
+                          We combineren alles voor de perfecte match:
                         </p>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Kleurharmonie:</strong> Seizoensgebonden palet per outfit</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Stijlcompatibiliteit:</strong> Past bij jouw {archetypeName.toLowerCase()} DNA</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                            <span className="text-gray-700 leading-relaxed"><strong>Gelegenheidscontext:</strong> Geschikt voor jouw dagelijkse situaties</span>
+                          </li>
+                        </ul>
                       </div>
                     </div>
 
-                    <div className="mt-6 p-4 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--ff-color-primary-200)]">
-                      <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-                        <strong className="text-[var(--color-text)]">Resultaat:</strong> Door quiz-data, visuele voorkeuren en contrast & ondertoon analyse
-                        te combineren, krijg je aanbevelingen die verder gaan dan een simpel stijltype. Elke outfit is afgestemd op jouw
-                        unieke combinatie van stijlvoorkeuren én seizoensgebonden kleurpalet.
-                      </p>
+                    {/* Result Banner */}
+                    <div className="mt-8 p-6 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border-2 border-[var(--ff-color-primary-200)] shadow-sm">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                          <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
+                        </div>
+                        <div>
+                          <p className="text-base text-text leading-relaxed font-medium">
+                            <strong className="font-bold">Resultaat:</strong> Door quiz-data, visuele voorkeuren en kleuranalyse
+                            te combineren, krijg je aanbevelingen die verder gaan dan een simpel stijltype. Elke outfit is afgestemd op jouw
+                            unieke stijl én seizoensgebonden kleurpalet.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -1138,22 +1201,24 @@ export default function EnhancedResultsPage() {
               </div>
             )}
 
-            {/* Premium Preview Card - Transparent & Informative */}
+            {/* Premium Preview Card - SUPER PROMINENT with whitespace */}
             <AnimatedSection delay={0.6}>
-              <div className="mt-20 max-w-3xl mx-auto">
+              <div className="mt-24 md:mt-32 mb-20 max-w-4xl mx-auto">
                 {/* Free Preview Badge */}
-                <div className="text-center mb-6">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-semibold">
-                    <Sparkles className="w-4 h-4" />
+                <div className="text-center mb-10">
+                  <span className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 rounded-full text-base font-bold shadow-sm border-2 border-green-200">
+                    <Sparkles className="w-5 h-5" />
                     Gratis preview: 9 van 50+ gepersonaliseerde outfits
                   </span>
                 </div>
 
                 {/* Premium Preview Card */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-3xl p-8 shadow-lg border border-[var(--ff-color-primary-200)]"
+                  transition={{ duration: 0.6 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-gradient-to-br from-white via-[var(--ff-color-primary-25)] to-[var(--ff-color-accent-50)] rounded-[40px] p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.15)] hover:shadow-[0_30px_80px_rgba(0,0,0,0.2)] transition-all duration-500 border-2 border-[var(--ff-color-primary-200)]"
                 >
                   <div className="text-center mb-6">
                     <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2">
@@ -1209,37 +1274,40 @@ export default function EnhancedResultsPage() {
                     <TrustSignals />
                   </div>
 
-                  {/* CTA Buttons - Primary/Secondary Hierarchy */}
-                  <div className="space-y-3">
-                    {/* PRIMARY CTA - Most prominent */}
+                  {/* CTA Buttons - SUPER PROMINENT with extra whitespace */}
+                  <div className="space-y-5 pt-4">
+                    {/* PRIMARY CTA - HUGE & eye-catching */}
                     <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
                       className="w-full"
                     >
                       <NavLink
                         to="/dashboard"
-                        className="flex items-center justify-center gap-3 px-8 py-5 min-h-[64px] bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-2xl transition-all shadow-lg w-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                        className="flex items-center justify-center gap-4 px-10 py-6 min-h-[72px] bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-600)] text-white rounded-[24px] font-bold text-xl hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-all shadow-[0_10px_40px_rgba(0,0,0,0.15)] w-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-4 relative overflow-hidden group"
                         aria-label="Bekijk je gepersonaliseerde outfits"
                       >
-                        <ShoppingBag className="w-6 h-6" aria-hidden="true" />
-                        <span>Bekijk je outfits</span>
-                        <ArrowRight className="w-6 h-6" aria-hidden="true" />
+                        {/* Shine effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+
+                        <ShoppingBag className="w-7 h-7 relative z-10" aria-hidden="true" strokeWidth={2.5} />
+                        <span className="relative z-10">Bekijk jouw outfits</span>
+                        <ArrowRight className="w-7 h-7 relative z-10 group-hover:translate-x-1 transition-transform" aria-hidden="true" strokeWidth={2.5} />
                       </NavLink>
                     </motion.div>
 
-                    {/* SECONDARY CTA - Subtle */}
+                    {/* SECONDARY CTA - Still prominent but clearly secondary */}
                     <motion.div
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileTap={{ scale: 0.98 }}
                       className="w-full"
                     >
                       <NavLink
                         to="/prijzen#premium"
-                        className="flex items-center justify-center gap-2 px-6 py-4 min-h-[56px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                        className="flex items-center justify-center gap-3 px-8 py-5 min-h-[64px] bg-white text-[var(--ff-color-primary-700)] rounded-[20px] font-semibold text-lg hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--ff-color-primary-300)] hover:border-[var(--ff-color-primary-500)] w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 shadow-sm hover:shadow-md"
                         aria-label="Upgrade naar Premium voor meer functies"
                       >
-                        <Sparkles className="w-5 h-5" aria-hidden="true" />
+                        <Sparkles className="w-6 h-6" aria-hidden="true" strokeWidth={2.5} />
                         <span>Upgrade naar Premium</span>
                       </NavLink>
                     </motion.div>
