@@ -11,6 +11,7 @@ import { CookieSettings } from '@/components/profile/CookieSettings';
 import { profileSyncService } from '@/services/data/profileSyncService';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { Button } from '@/components/ui/Button';
 
 /**
  * Profile Page V2 - Clean, Accessible & Semantic
@@ -113,13 +114,15 @@ const ProfilePage: React.FC = () => {
           </div>
           <h1 className="text-3xl font-bold text-[var(--color-text)] mb-3">Je Stijlprofiel</h1>
           <p className="text-[var(--color-muted)] mb-6">Log in om je stijl te bekijken</p>
-          <button
+          <Button
+            variant="primary"
+            size="lg"
             onClick={() => navigate('/inloggen')}
-            className="w-full px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors"
+            className="w-full"
             aria-label="Ga naar inlogpagina"
           >
             Inloggen
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -270,7 +273,7 @@ const ProfilePage: React.FC = () => {
                           type="text"
                           value={displayName}
                           onChange={(e) => setDisplayName(e.target.value)}
-                          className="flex-1 px-3 py-2 bg-white border-2 border-[var(--ff-color-primary-500)] rounded-lg text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                          className="flex-1 h-11 px-3 bg-white border-2 border-[var(--ff-color-primary-500)] rounded-lg text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
                           placeholder="Typ je naam"
                           autoFocus
                           aria-label="Bewerk je naam"
@@ -288,7 +291,7 @@ const ProfilePage: React.FC = () => {
                             });
                           }}
                           disabled={isSaving}
-                          className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50"
+                          className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-green-600 text-white rounded-lg hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 transition-colors"
                           aria-label="Opslaan"
                         >
                           <CheckCircle className="w-5 h-5" />
@@ -298,7 +301,7 @@ const ProfilePage: React.FC = () => {
                             setIsEditingName(false);
                             setDisplayName('');
                           }}
-                          className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                          className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-red-600 text-white rounded-lg hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 transition-colors"
                           aria-label="Annuleren"
                         >
                           <XCircle className="w-5 h-5" />
@@ -314,7 +317,7 @@ const ProfilePage: React.FC = () => {
                             setDisplayName(user.email?.split('@')[0] || '');
                             setIsEditingName(true);
                           }}
-                          className="p-1.5 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] transition-colors"
+                          className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] transition-colors"
                           aria-label="Wijzig naam"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -402,22 +405,25 @@ const ProfilePage: React.FC = () => {
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button
+                  <Button
+                    variant="primary"
+                    size="md"
                     onClick={() => navigate('/results')}
-                    className="flex-1 px-4 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1"
                     aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
                   >
                     Bekijk je outfits
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
                     onClick={() => setShowResetModal(true)}
-                    className="px-4 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-2"
                     aria-label="Verfijn je stijlprofiel"
                   >
                     <RefreshCw className="w-4 h-4" aria-hidden="true" />
                     Verfijn
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -435,7 +441,9 @@ const ProfilePage: React.FC = () => {
                 <p className="text-sm text-[var(--color-muted)] mb-8 max-w-md mx-auto">
                   Duurt een paar minuten, daarna krijg je direct outfit-aanbevelingen op maat
                 </p>
-                <button
+                <Button
+                  variant="primary"
+                  size="lg"
                   onClick={() => {
                     toast.success('Laten we beginnen!', {
                       duration: 2000,
@@ -443,13 +451,13 @@ const ProfilePage: React.FC = () => {
                     });
                     setTimeout(() => navigate('/onboarding'), 500);
                   }}
-                  className="px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-lg hover:bg-[var(--ff-color-primary-600)] hover:shadow-lg hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all inline-flex items-center gap-3"
+                  className="hover:shadow-lg hover:scale-105"
                   aria-label="Start de stijltest"
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
                   Ontdek je stijl
                   <ArrowRight className="w-5 h-5" aria-hidden="true" />
-                </button>
+                </Button>
 
                 {/* Helpful Context - Copy: Enthousiast & Feitelijk */}
                 <div className="mt-8 pt-8 border-t border-[var(--ff-color-primary-200)]">
@@ -544,33 +552,37 @@ const ProfilePage: React.FC = () => {
                   Wat wil je doen?
                 </p>
                 <div className="space-y-3">
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="md"
                     onClick={() => {
                       toast.success('We sturen je een reset-link', {
                         duration: 4000,
                         position: 'top-center',
                       });
                     }}
-                    className="w-full px-4 py-3 bg-[var(--ff-color-neutral-50)] border border-[var(--color-border)] rounded-lg text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all text-left flex items-center justify-between"
+                    className="w-full justify-between"
                     aria-label="Wijzig je wachtwoord"
                   >
                     <span>Wijzig wachtwoord</span>
-                    <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" />
-                  </button>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
 
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="md"
                     onClick={() => {
                       toast('Neem contact met ons op via info@fitfi.ai', {
                         duration: 5000,
                         position: 'top-center',
                       });
                     }}
-                    className="w-full px-4 py-3 bg-[var(--ff-color-neutral-50)] border border-[var(--color-border)] rounded-lg text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all text-left flex items-center justify-between"
+                    className="w-full justify-between"
                     aria-label="Verwijder je account"
                   >
                     <span>Verwijder account</span>
-                    <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" />
-                  </button>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -582,7 +594,9 @@ const ProfilePage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.35 }}
           >
-            <button
+            <Button
+              variant="secondary"
+              size="lg"
               onClick={() => {
                 toast.success('Tot snel!', {
                   duration: 2000,
@@ -590,12 +604,12 @@ const ProfilePage: React.FC = () => {
                 });
                 setTimeout(() => logout(), 500);
               }}
-              className="w-full px-6 py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl text-base font-semibold text-[var(--color-text)] hover:border-red-300 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-2"
+              className="w-full hover:border-red-300 hover:bg-red-50 hover:text-red-600"
               aria-label="Log uit"
             >
               <LogOut className="w-5 h-5" aria-hidden="true" />
               Uitloggen
-            </button>
+            </Button>
           </motion.div>
 
         </div>
