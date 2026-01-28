@@ -517,18 +517,8 @@ export default function OnboardingFlowPage() {
           archetype: dutchArchetype
         };
 
-        const savePromise = saveToSupabase(client, user, sessionId, updatedResult);
-
-        toast.promise(
-          savePromise,
-          {
-            loading: 'Je profiel wordt opgeslagen...',
-            success: 'Profiel succesvol opgeslagen!',
-            error: 'Let op: je resultaten zijn lokaal opgeslagen maar nog niet gesynchroniseerd. We proberen het later automatisch opnieuw.',
-          }
-        );
-
-        syncSuccess = await savePromise;
+        // Save to database silently (no confusing toast during quiz)
+        syncSuccess = await saveToSupabase(client, user, sessionId, updatedResult);
 
         if (syncSuccess && answers.visualPreferencesCompleted && answers.calibrationCompleted) {
           try {
@@ -1106,12 +1096,12 @@ export default function OnboardingFlowPage() {
 
       {/* Sticky Bottom Bar - Mobile Thumb Zone */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_12px_rgba(0,0,0,0.08)] safe-area-inset-bottom">
-        <div className="ff-container py-3 sm:py-4">
-          <div className="flex gap-3 max-w-3xl mx-auto">
+        <div className="w-full px-4 py-3 sm:py-4">
+          <div className="flex gap-2 sm:gap-3 max-w-3xl mx-auto">
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 min-h-[56px] bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm hover:shadow-md flex-shrink-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-4 min-h-[56px] w-[72px] sm:w-auto bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm hover:shadow-md flex-shrink-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               aria-label="Ga terug naar vorige vraag"
             >
               <ArrowLeft className="w-5 h-5" aria-hidden="true" />
@@ -1121,20 +1111,20 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleNext}
               disabled={!canProceed() || isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-md hover:shadow-lg flex-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-700)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-md hover:shadow-lg flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === totalSteps - 1 ? "Rond quiz af" : "Ga naar volgende vraag")}
             >
               {isSubmitting ? (
-                <span>Verwerken...</span>
+                <span className="truncate">Verwerken...</span>
               ) : currentStep === totalSteps - 1 ? (
                 <>
-                  <span>Afronden</span>
-                  <Sparkles className="w-5 h-5" aria-hidden="true" />
+                  <span className="truncate">Afronden</span>
+                  <Sparkles className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 </>
               ) : (
                 <>
-                  <span>Volgende</span>
-                  <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                  <span className="truncate">Volgende</span>
+                  <ArrowRight className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 </>
               )}
             </button>
