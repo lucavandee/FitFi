@@ -646,7 +646,7 @@ export class StyleProfileGenerator {
         .from('style_profiles')
         .select('color_analysis, photo_url')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.log('[StyleProfileGenerator] No photo analysis found:', error.message);

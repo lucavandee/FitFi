@@ -747,7 +747,7 @@ export class AdaptiveOutfitGenerator {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('active', true)
+      .eq('in_stock', true)
       .limit(100);
 
     if (error) {

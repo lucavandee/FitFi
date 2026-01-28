@@ -271,12 +271,17 @@ export default function OnboardingFlowPage() {
         answer: value,
       }));
 
-      for (const answerData of answersToSave) {
-        await client
-          .from('quiz_answers')
-          .upsert(answerData, {
-            onConflict: 'user_id,question_id',
-          });
+      // Batch upsert with proper conflict resolution
+      const { error } = await client
+        .from('quiz_answers')
+        .upsert(answersToSave, {
+          onConflict: 'user_id,question_id',
+          ignoreDuplicates: false
+        });
+
+      if (error) {
+        console.error('⚠️ [OnboardingFlow] Upsert error:', error);
+        throw error;
       }
 
       console.log('✅ [OnboardingFlow] Individual quiz answers saved');
