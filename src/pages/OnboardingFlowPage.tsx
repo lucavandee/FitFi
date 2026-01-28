@@ -17,7 +17,7 @@ import { VisualPreferenceService } from "@/services/visualPreferences/visualPref
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import { PhaseTransition } from "@/components/quiz/PhaseTransition";
-import { ArchetypePreview } from "@/components/quiz/ArchetypePreview";
+import { ArchetypePreviewEnhanced as ArchetypePreview } from "@/components/quiz/ArchetypePreviewEnhanced";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
