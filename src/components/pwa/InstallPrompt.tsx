@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, Smartphone, Zap, Heart } from 'lucide-react';
 
@@ -8,9 +9,15 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallPrompt() {
+  const { pathname } = useLocation();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+
+  // Verberg tijdens quiz/onboarding
+  if (pathname === '/onboarding' || pathname.startsWith('/onboarding')) {
+    return null;
+  }
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {

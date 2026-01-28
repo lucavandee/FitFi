@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Instagram, Linkedin, ArrowRight } from "lucide-react";
 
 /**
@@ -27,6 +27,12 @@ const navigation = {
 
 export default function Footer() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // Verberg footer tijdens quiz/onboarding voor focus
+  if (pathname === '/onboarding' || pathname.startsWith('/onboarding')) {
+    return null;
+  }
 
   return (
     <footer className="bg-[var(--ff-color-primary-50)] border-t border-[var(--ff-color-primary-100)]">

@@ -37,6 +37,11 @@ export default function Navbar() {
   const isAuthed = !!user;
   useLockBody(open);
 
+  // Verberg navbar tijdens quiz/onboarding
+  if (pathname === '/onboarding' || pathname.startsWith('/onboarding')) {
+    return null;
+  }
+
   const [savedOutfitsCount, setSavedOutfitsCount] = React.useState(0);
 
   React.useEffect(() => {
