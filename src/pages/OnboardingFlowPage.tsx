@@ -789,7 +789,7 @@ export default function OnboardingFlowPage() {
           <div className="flex flex-col gap-6">{/* Main Question Content */}
             <div className="flex-1">
 
-          {/* Email Capture Prompt - Show at step 3 */}
+          {/* Email Capture Prompt - DISABLED during quiz for focus
           {showEmailCapture && currentStep === 3 && (
             <EmailCapturePrompt
               onDismiss={() => setShowEmailCapture(false)}
@@ -799,6 +799,7 @@ export default function OnboardingFlowPage() {
               }}
             />
           )}
+          */}
 
           {/* Question Header - Responsive typography */}
           <AnimatedQuestionTransition

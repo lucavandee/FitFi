@@ -62,15 +62,33 @@ export async function generateRecommendations(
       stylePrefs = user.stylePreferences;
     }
 
-    const profileAnalysis = analyzeUserProfile(stylePrefs);
+    // CRITICAL: Load occasions from quiz answers for occasion-aware matching
+    // Occasions heavily influence archetype (work → formal, sport → sporty)
+    let occasions: string[] = [];
+    try {
+      const storedAnswers = localStorage.getItem('ff_quiz_answers');
+      if (storedAnswers) {
+        const answers = JSON.parse(storedAnswers);
+        if (Array.isArray(answers.occasions)) {
+          occasions = answers.occasions;
+          console.log('[RecommendationEngine] Loaded occasions from quiz:', occasions);
+        }
+      }
+    } catch (error) {
+      console.warn('[RecommendationEngine] Failed to load occasions:', error);
+    }
+
+    // OCCASION-AWARE ANALYSIS: occasions override style preferences
+    const profileAnalysis = analyzeUserProfile(stylePrefs, occasions);
     primaryArchetype = profileAnalysis.dominantArchetype;
     secondaryArchetype = profileAnalysis.secondaryArchetype;
     mixFactor = profileAnalysis.mixFactor;
 
-    console.log('[RecommendationEngine] Archetype analysis:', {
+    console.log('[RecommendationEngine] Occasion-aware archetype analysis:', {
       primary: primaryArchetype,
       secondary: secondaryArchetype,
       mixFactor,
+      occasions,
       scores: profileAnalysis.archetypeScores
     });
   }

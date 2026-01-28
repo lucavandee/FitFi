@@ -94,15 +94,114 @@ interface ProfileAnalysisResult {
 }
 
 /**
+ * Applies occasion-based boosts to style preferences
+ * Occasions heavily influence style - work/formal override casual preferences
+ *
+ * @param stylePreferences - Base style preferences
+ * @param occasions - Array of selected occasions
+ * @returns Enhanced style preferences with occasion boosts
+ */
+function applyOccasionBoosts(
+  stylePreferences: StylePreferences,
+  occasions?: string[]
+): StylePreferences {
+  if (!occasions || occasions.length === 0) {
+    return stylePreferences;
+  }
+
+  // Clone preferences to avoid mutation
+  const enhanced = { ...stylePreferences };
+
+  // Occasion weightings (additive boosts)
+  // These are HEAVY weights because occasions are primary intent
+  occasions.forEach(occasion => {
+    switch (occasion.toLowerCase()) {
+      case 'work':
+      case 'kantoor':
+        // Work occasions demand formal/smart styling
+        enhanced.formal += 2.0;  // MASSIVE boost
+        enhanced.minimalist += 0.8;
+        enhanced.casual -= 0.5;   // Reduce casual
+        enhanced.sporty -= 0.7;   // Reduce sporty
+        break;
+
+      case 'formal':
+      case 'formeel':
+        // Formal events need maximum elegance
+        enhanced.formal += 2.5;   // HUGE boost
+        enhanced.casual -= 0.8;
+        enhanced.sporty -= 1.0;
+        break;
+
+      case 'casual':
+        // Casual occasions allow relaxed styling
+        enhanced.casual += 1.5;
+        enhanced.formal -= 0.3;
+        break;
+
+      case 'date':
+      case 'date night':
+        // Date nights balance elegant and approachable
+        enhanced.formal += 0.8;
+        enhanced.casual += 0.5;
+        enhanced.minimalist += 0.4;
+        break;
+
+      case 'sport':
+      case 'sport & actief':
+      case 'gym':
+        // Athletic occasions prioritize sporty
+        enhanced.sporty += 2.0;
+        enhanced.casual += 0.5;
+        enhanced.formal -= 1.0;
+        break;
+
+      case 'travel':
+      case 'reizen':
+        // Travel needs comfortable, versatile pieces
+        enhanced.casual += 1.0;
+        enhanced.minimalist += 0.6;
+        enhanced.sporty += 0.4;
+        break;
+    }
+  });
+
+  // Normalize to 0-1 range
+  const maxScore = Math.max(...Object.values(enhanced));
+  if (maxScore > 0) {
+    Object.keys(enhanced).forEach(key => {
+      enhanced[key as keyof StylePreferences] = Math.max(0, enhanced[key as keyof StylePreferences]) / maxScore;
+    });
+  }
+
+  return enhanced;
+}
+
+/**
  * Analyzes a user's style preferences to determine their archetype profile
- * 
+ * NOW WITH OCCASION AWARENESS - occasions heavily influence archetype selection
+ *
  * @param stylePreferences - User's style preferences
+ * @param occasions - Optional array of selected occasions (work, casual, formal, etc.)
  * @returns Profile analysis result with dominant and secondary archetypes
  */
-export function analyzeUserProfile(stylePreferences: StylePreferences): ProfileAnalysisResult {
+export function analyzeUserProfile(
+  stylePreferences: StylePreferences,
+  occasions?: string[]
+): ProfileAnalysisResult {
+  // Apply occasion boosts BEFORE calculating archetype scores
+  // This is CRITICAL - occasions are primary intent and override style preferences
+  const enhancedPreferences = applyOccasionBoosts(stylePreferences, occasions);
+
+  console.log('[ProfileMapping] Occasion-enhanced analysis:', {
+    original: stylePreferences,
+    enhanced: enhancedPreferences,
+    occasions
+  });
+
   // Map style preferences to archetype scores
-  const archetypeScores = calculateArchetypeScores(stylePreferences);
-  
+  const archetypeScores = calculateArchetypeScores(enhancedPreferences);
+
   // Sort by score (highest first)
   archetypeScores.sort((a, b) => b.score - a.score);
   
