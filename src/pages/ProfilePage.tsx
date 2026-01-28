@@ -111,8 +111,8 @@ const ProfilePage: React.FC = () => {
           <div className="w-16 h-16 rounded-xl bg-[var(--ff-color-neutral-100)] flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8 text-[var(--color-muted)]" />
           </div>
-          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-3">Profiel</h1>
-          <p className="text-[var(--color-muted)] mb-6">Log in om je profiel te bekijken</p>
+          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-3">Je Stijlprofiel</h1>
+          <p className="text-[var(--color-muted)] mb-6">Log in om je stijl te bekijken</p>
           <button
             onClick={() => navigate('/inloggen')}
             className="w-full px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors"
@@ -141,8 +141,8 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
-        <title>Profiel - FitFi</title>
-        <meta name="description" content="Jouw persoonlijke profiel en instellingen." />
+        <title>Je Stijlprofiel - FitFi</title>
+        <meta name="description" content="Beheer je stijlvoorkeuren, kleuren en persoonlijke instellingen op één plek." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -157,7 +157,7 @@ const ProfilePage: React.FC = () => {
       <main id="main-content" className="ff-container py-8 sm:py-12">
         <div className="max-w-4xl mx-auto">
 
-          {/* Page Title + Purpose - UX: Doelgerichtheid */}
+          {/* Page Title + Purpose - Copy: Fashion-forward & Persoonlijk */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -165,10 +165,10 @@ const ProfilePage: React.FC = () => {
             className="mb-8 text-center"
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-3">
-              Jouw Profiel
+              Jouw Stijlprofiel
             </h1>
             <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl mx-auto">
-              Beheer je persoonlijke gegevens, stijlvoorkeuren en accountinstellingen op één plek
+              Hier vind je al je persoonlijke info, stijlvoorkeuren en instellingen
             </p>
           </motion.div>
 
@@ -193,7 +193,7 @@ const ProfilePage: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-[var(--color-text)] mb-1">Dashboard</div>
                   <div className="text-sm text-[var(--color-muted)]">
-                    {savedOutfitsCount || 0} opgeslagen outfits
+                    {savedOutfitsCount || 0} favoriete {savedOutfitsCount === 1 ? 'outfit' : 'outfits'}
                   </div>
                 </div>
               </div>
@@ -209,9 +209,9 @@ const ProfilePage: React.FC = () => {
                   <Shirt className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-[var(--color-text)] mb-1">Outfits</div>
+                  <div className="font-bold text-[var(--color-text)] mb-1">Jouw Outfits</div>
                   <div className="text-sm text-[var(--color-muted)]">
-                    Bekijk aanbevelingen
+                    Ontdek wat we vonden
                   </div>
                 </div>
               </div>
@@ -220,16 +220,16 @@ const ProfilePage: React.FC = () => {
             <button
               onClick={() => navigate('/onboarding')}
               className="group p-6 rounded-xl bg-gradient-to-br from-[var(--ff-color-neutral-50)] to-[var(--ff-color-neutral-100)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all text-left"
-              aria-label="Update je stijlprofiel"
+              aria-label="Verfijn je stijlprofiel"
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-700)] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <RefreshCw className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-[var(--color-text)] mb-1">Update Stijl</div>
+                  <div className="font-bold text-[var(--color-text)] mb-1">Verfijn je Stijl</div>
                   <div className="text-sm text-[var(--color-muted)]">
-                    Doe quiz opnieuw
+                    Ontdek nieuwe voorkeuren
                   </div>
                 </div>
               </div>
@@ -246,7 +246,7 @@ const ProfilePage: React.FC = () => {
           >
             <h2 id="personal-info-heading" className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
               <User className="w-6 h-6" aria-hidden="true" />
-              Persoonlijke Gegevens
+              Jouw Gegevens
             </h2>
 
             <div className="p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
@@ -259,10 +259,10 @@ const ProfilePage: React.FC = () => {
                   <User className="w-10 h-10 text-white" strokeWidth={2} />
                 </div>
                 <div className="flex-1 space-y-4">
-                  {/* Editable Name - UX: Interactie */}
+                  {/* Editable Name - Copy: Natuurlijk & Toegankelijk */}
                   <div>
                     <label className="text-sm font-semibold text-[var(--color-muted)] mb-2 block">
-                      Weergavenaam
+                      Jouw naam
                     </label>
                     {isEditingName ? (
                       <div className="flex items-center gap-2">
@@ -271,9 +271,9 @@ const ProfilePage: React.FC = () => {
                           value={displayName}
                           onChange={(e) => setDisplayName(e.target.value)}
                           className="flex-1 px-3 py-2 bg-white border-2 border-[var(--ff-color-primary-500)] rounded-lg text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
-                          placeholder="Voer je naam in"
+                          placeholder="Typ je naam"
                           autoFocus
-                          aria-label="Bewerk je weergavenaam"
+                          aria-label="Bewerk je naam"
                         />
                         <button
                           onClick={async () => {
@@ -282,14 +282,14 @@ const ProfilePage: React.FC = () => {
                             await new Promise(r => setTimeout(r, 500));
                             setIsEditingName(false);
                             setIsSaving(false);
-                            toast.success('✓ Naam bijgewerkt!', {
+                            toast.success('Naam opgeslagen', {
                               duration: 3000,
                               position: 'top-center',
                             });
                           }}
                           disabled={isSaving}
                           className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50"
-                          aria-label="Sla wijzigingen op"
+                          aria-label="Opslaan"
                         >
                           <CheckCircle className="w-5 h-5" />
                         </button>
@@ -299,7 +299,7 @@ const ProfilePage: React.FC = () => {
                             setDisplayName('');
                           }}
                           className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-                          aria-label="Annuleer wijzigingen"
+                          aria-label="Annuleren"
                         >
                           <XCircle className="w-5 h-5" />
                         </button>
@@ -315,7 +315,7 @@ const ProfilePage: React.FC = () => {
                             setIsEditingName(true);
                           }}
                           className="p-1.5 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] transition-colors"
-                          aria-label="Bewerk weergavenaam"
+                          aria-label="Wijzig naam"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -325,7 +325,7 @@ const ProfilePage: React.FC = () => {
 
                   <div>
                     <label className="text-sm font-semibold text-[var(--color-muted)] mb-1 block">
-                      Email adres
+                      E-mailadres
                     </label>
                     <p className="text-base font-medium text-[var(--color-text)]">{user.email}</p>
                   </div>
@@ -333,7 +333,7 @@ const ProfilePage: React.FC = () => {
                   {user.created_at && (
                     <div>
                       <label className="text-sm font-semibold text-[var(--color-muted)] mb-1 block">
-                        Lid sinds
+                        Bij FitFi sinds
                       </label>
                       <p className="text-base font-medium text-[var(--color-text)]">
                         {new Date(user.created_at).toLocaleDateString('nl-NL', {
@@ -373,15 +373,15 @@ const ProfilePage: React.FC = () => {
             {hasStyleProfile ? (
               <div className="p-6 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-25)] to-[var(--ff-color-accent-25)] border border-[var(--ff-color-primary-100)]">
                 <div className="mb-4">
-                  <p className="text-sm text-[var(--color-muted)] mb-1">Stijlprofiel</p>
+                  <p className="text-sm text-[var(--color-muted)] mb-1">Je stijlprofiel</p>
                   <p className="text-2xl font-bold text-[var(--color-text)]">
-                    {archetype || 'Niet beschikbaar'}
+                    {archetype || 'We werken aan je profiel'}
                   </p>
                 </div>
 
                 {primaryColors.length > 0 && (
                   <div className="mb-6">
-                    <p className="text-sm text-[var(--color-muted)] mb-3">Jouw Kleuren</p>
+                    <p className="text-sm text-[var(--color-muted)] mb-3">Je kleurenpalet</p>
                     <div
                       className="flex gap-2 flex-wrap"
                       role="list"
@@ -407,70 +407,70 @@ const ProfilePage: React.FC = () => {
                     className="flex-1 px-4 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors flex items-center justify-center gap-2"
                     aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
                   >
-                    Bekijk outfits
+                    Bekijk je outfits
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </button>
                   <button
                     onClick={() => setShowResetModal(true)}
                     className="px-4 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-2"
-                    aria-label="Update je stijlprofiel door de quiz opnieuw te doen"
+                    aria-label="Verfijn je stijlprofiel"
                   >
                     <RefreshCw className="w-4 h-4" aria-hidden="true" />
-                    Update
+                    Verfijn
                   </button>
                 </div>
               </div>
             ) : (
-              /* UX: Foutafhandeling - Empty State met Actionable Message */
+              /* Copy: Fashion-forward Empty State met Wij-vorm */
               <div className="p-8 sm:p-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-25)] to-[var(--ff-color-accent-25)] border-2 border-dashed border-[var(--ff-color-primary-300)] text-center">
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <Sparkles className="w-10 h-10 text-white" aria-hidden="true" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-3">
-                  Nog geen stijlprofiel
+                  Laten we je stijl ontdekken
                 </h3>
                 <p className="text-base sm:text-lg text-[var(--color-muted)] mb-2 max-w-md mx-auto">
-                  Begin met onze interactieve quiz om je persoonlijke stijl te ontdekken
+                  We helpen je jouw unieke stijl vinden met een korte stijltest
                 </p>
                 <p className="text-sm text-[var(--color-muted)] mb-8 max-w-md mx-auto">
-                  💡 Duurt slechts 3 minuten en je krijgt direct outfit-aanbevelingen op maat
+                  Duurt een paar minuten, daarna krijg je direct outfit-aanbevelingen op maat
                 </p>
                 <button
                   onClick={() => {
-                    toast.success('🚀 Starten met de quiz!', {
+                    toast.success('Laten we beginnen!', {
                       duration: 2000,
                       position: 'top-center',
                     });
                     setTimeout(() => navigate('/onboarding'), 500);
                   }}
                   className="px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-lg hover:bg-[var(--ff-color-primary-600)] hover:shadow-lg hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all inline-flex items-center gap-3"
-                  aria-label="Begin met de stijlquiz om je profiel te creëren"
+                  aria-label="Start de stijltest"
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
-                  Start Stijlquiz
+                  Ontdek je stijl
                   <ArrowRight className="w-5 h-5" aria-hidden="true" />
                 </button>
 
-                {/* Helpful Context */}
+                {/* Helpful Context - Copy: Enthousiast & Feitelijk */}
                 <div className="mt-8 pt-8 border-t border-[var(--ff-color-primary-200)]">
                   <p className="text-sm text-[var(--color-muted)] mb-4">
-                    <strong className="text-[var(--color-text)]">Waarom een stijlquiz?</strong>
+                    <strong className="text-[var(--color-text)]">Wat krijg je?</strong>
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
                     <div className="p-4 bg-white/50 rounded-lg">
                       <div className="text-2xl mb-2">🎨</div>
-                      <div className="text-sm font-semibold text-[var(--color-text)] mb-1">Persoonlijk Kleurpalet</div>
-                      <div className="text-xs text-[var(--color-muted)]">Op basis van je voorkeuren</div>
+                      <div className="text-sm font-semibold text-[var(--color-text)] mb-1">Je kleurenpalet</div>
+                      <div className="text-xs text-[var(--color-muted)]">Op basis van je antwoorden</div>
                     </div>
                     <div className="p-4 bg-white/50 rounded-lg">
                       <div className="text-2xl mb-2">👔</div>
-                      <div className="text-sm font-semibold text-[var(--color-text)] mb-1">Outfit Aanbevelingen</div>
-                      <div className="text-xs text-[var(--color-muted)]">Direct beschikbaar</div>
+                      <div className="text-sm font-semibold text-[var(--color-text)] mb-1">Outfit-aanbevelingen</div>
+                      <div className="text-xs text-[var(--color-muted)]">Meteen beschikbaar</div>
                     </div>
                     <div className="p-4 bg-white/50 rounded-lg">
                       <div className="text-2xl mb-2">✨</div>
-                      <div className="text-sm font-semibold text-[var(--color-text)] mb-1">AI Stylist</div>
-                      <div className="text-xs text-[var(--color-muted)]">24/7 beschikbaar</div>
+                      <div className="text-sm font-semibold text-[var(--color-text)] mb-1">Persoonlijk stijladvies</div>
+                      <div className="text-xs text-[var(--color-muted)]">Altijd beschikbaar</div>
                     </div>
                   </div>
                 </div>
@@ -516,73 +516,59 @@ const ProfilePage: React.FC = () => {
           >
             <h2 id="account-heading" className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
               <SettingsIcon className="w-6 h-6" aria-hidden="true" />
-              Accountinstellingen
+              Je Account
             </h2>
             <div className="p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] space-y-6">
-              {/* Account Info with Icons */}
-              <div className="grid sm:grid-cols-2 gap-6">
+              {/* Account Info - Copy: Simplified & Relevant */}
+              {user.created_at && (
                 <div className="p-4 bg-[var(--ff-color-neutral-50)] rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center">
-                      <User className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-accent-100)] flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-[var(--ff-color-accent-700)]" />
                     </div>
-                    <p className="text-sm font-bold text-[var(--color-text)]">Account ID</p>
+                    <p className="text-sm font-bold text-[var(--color-text)]">Bij ons sinds</p>
                   </div>
-                  <p className="text-xs font-mono text-[var(--color-muted)] break-all">
-                    {user.id?.slice(0, 8)}...{user.id?.slice(-4)}
+                  <p className="text-sm text-[var(--color-muted)]">
+                    {new Date(user.created_at).toLocaleDateString('nl-NL', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                   </p>
                 </div>
+              )}
 
-                {user.created_at && (
-                  <div className="p-4 bg-[var(--ff-color-neutral-50)] rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-accent-100)] flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-[var(--ff-color-accent-700)]" />
-                      </div>
-                      <p className="text-sm font-bold text-[var(--color-text)]">Lid sinds</p>
-                    </div>
-                    <p className="text-sm text-[var(--color-muted)]">
-                      {new Date(user.created_at).toLocaleDateString('nl-NL', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Account Actions */}
+              {/* Account Actions - Copy: Action-oriented & Friendly */}
               <div className="pt-4 border-t border-[var(--color-border)]">
                 <p className="text-sm font-semibold text-[var(--color-muted)] mb-3">
-                  Account acties
+                  Wat wil je doen?
                 </p>
                 <div className="space-y-3">
                   <button
                     onClick={() => {
-                      toast.success('✓ Wachtwoord reset email verzonden!', {
+                      toast.success('We sturen je een reset-link', {
                         duration: 4000,
                         position: 'top-center',
                       });
                     }}
                     className="w-full px-4 py-3 bg-[var(--ff-color-neutral-50)] border border-[var(--color-border)] rounded-lg text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all text-left flex items-center justify-between"
-                    aria-label="Reset je wachtwoord"
+                    aria-label="Wijzig je wachtwoord"
                   >
-                    <span>Wachtwoord wijzigen</span>
+                    <span>Wijzig wachtwoord</span>
                     <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" />
                   </button>
 
                   <button
                     onClick={() => {
-                      toast('📧 Neem contact op via info@fitfi.ai', {
+                      toast('Neem contact met ons op via info@fitfi.ai', {
                         duration: 5000,
                         position: 'top-center',
                       });
                     }}
                     className="w-full px-4 py-3 bg-[var(--ff-color-neutral-50)] border border-[var(--color-border)] rounded-lg text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-all text-left flex items-center justify-between"
-                    aria-label="Vraag account verwijdering aan"
+                    aria-label="Verwijder je account"
                   >
-                    <span>Account verwijderen</span>
+                    <span>Verwijder account</span>
                     <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" />
                   </button>
                 </div>
@@ -598,14 +584,14 @@ const ProfilePage: React.FC = () => {
           >
             <button
               onClick={() => {
-                toast.success('👋 Tot snel!', {
+                toast.success('Tot snel!', {
                   duration: 2000,
                   position: 'top-center',
                 });
                 setTimeout(() => logout(), 500);
               }}
               className="w-full px-6 py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl text-base font-semibold text-[var(--color-text)] hover:border-red-300 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-2"
-              aria-label="Log uit van je account"
+              aria-label="Log uit"
             >
               <LogOut className="w-5 h-5" aria-hidden="true" />
               Uitloggen
