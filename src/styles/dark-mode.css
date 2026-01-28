@@ -61,12 +61,9 @@
 
 /* Card styles for dark mode */
 [data-theme="dark"] .card,
-[data-theme="dark"] .bg-white {
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-surface {
   background-color: var(--color-surface);
-}
-
-[data-theme="dark"] .bg-\\[var\\(--color-surface\\)\\] {
-  background-color: var(--color-surface-elevated);
 }
 
 /* Gradient overlays for dark mode */

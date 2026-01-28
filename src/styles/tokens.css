@@ -168,4 +168,30 @@ body {
 /* Focus-ring tokenized */
 .ff-focus { outline: none; box-shadow: var(--shadow-ring); }
 
+/* Profile Components - Herbruikbare UI patterns */
+.ff-profile-avatar {
+  @apply w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg flex-shrink-0;
+}
+
+.ff-profile-badge {
+  @apply inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-100 to-accent-100 rounded-full;
+}
+
+.ff-profile-info-card {
+  @apply p-4 bg-gray-50 rounded-lg;
+}
+
+/* Button states with tokens */
+.ff-btn-success {
+  @apply bg-success-600 text-white hover:bg-success-700 focus-visible:ring-success-500;
+}
+
+.ff-btn-danger {
+  @apply bg-danger-600 text-white hover:bg-danger-700 focus-visible:ring-danger-500;
+}
+
+.ff-btn-logout {
+  @apply hover:border-danger-300 hover:bg-danger-50 hover:text-danger-600;
+}
+
 /* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
