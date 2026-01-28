@@ -17,6 +17,7 @@ import { VisualPreferenceService } from "@/services/visualPreferences/visualPref
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import { PhaseTransition } from "@/components/quiz/PhaseTransition";
+import { ArchetypePreview } from "@/components/quiz/ArchetypePreview";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -800,6 +801,13 @@ export default function OnboardingFlowPage() {
             />
           )}
           */}
+
+          {/* Real-time Archetype Preview - Shows from step 3 onwards */}
+          <ArchetypePreview
+            answers={answers}
+            currentStep={currentStep}
+            totalSteps={quizSteps.length}
+          />
 
           {/* Question Header - Responsive typography */}
           <AnimatedQuestionTransition
