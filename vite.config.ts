@@ -22,7 +22,11 @@ export default defineConfig(({ mode }) => {
       alias: [{ find: "@", replacement: SRC_ALIAS }],
     },
     // Overige projectinstellingen blijven ongewijzigd
-    server: { port: 5173 },
+    server: {
+      port: 5173,
+      host: '0.0.0.0', // Luister op alle network interfaces voor Bolt preview
+      strictPort: false,
+    },
     build: {
       sourcemap: false,
       target: 'es2022',
