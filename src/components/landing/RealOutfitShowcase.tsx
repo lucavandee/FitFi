@@ -193,7 +193,7 @@ export function RealOutfitShowcase() {
               onMouseLeave={() => setHoveredId(null)}
             >
               {/* Card met gradient achtergrond */}
-              <div className={`bg-gradient-to-br ${outfit.gradient} p-8 sm:p-10 lg:p-12 aspect-[3/5] flex flex-col relative`}>
+              <div className={`bg-gradient-to-br ${outfit.gradient} p-6 sm:p-8 lg:p-10 aspect-[3/6] sm:aspect-[3/5.8] lg:aspect-[3/5.5] flex flex-col relative`}>
 
                 {/* Icon badge - premium styling */}
                 <div className="absolute top-6 left-6 w-14 h-14 sm:w-16 sm:h-16 bg-white/95 backdrop-blur-md rounded-[18px] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.12)] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
@@ -201,7 +201,7 @@ export function RealOutfitShowcase() {
                 </div>
 
                 {/* Titel en context - premium typography */}
-                <div className="mt-20 sm:mt-24 mb-8">
+                <div className="mt-16 sm:mt-20 mb-6 sm:mb-8">
                   <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-text)] mb-2 tracking-tight">
                     {outfit.title}
                   </h3>
@@ -211,7 +211,7 @@ export function RealOutfitShowcase() {
                 </div>
 
                 {/* Premium product grid - 2x2 met verbeterde styling */}
-                <div className="flex-1 grid grid-cols-2 gap-4 sm:gap-5">
+                <div className="flex-1 grid grid-cols-2 gap-3 sm:gap-4">
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
@@ -241,7 +241,7 @@ export function RealOutfitShowcase() {
                 </div>
 
                 {/* Premium CTA Button */}
-                <div className="mt-10 sm:mt-12 lg:mt-14">
+                <div className="mt-6 sm:mt-8 lg:mt-10">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
