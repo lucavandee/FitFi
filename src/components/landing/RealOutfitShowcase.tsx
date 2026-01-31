@@ -148,18 +148,18 @@ export function RealOutfitShowcase() {
         <div className="text-center mb-12 sm:mb-16 lg:mb-20">
           <div className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-full text-[var(--ff-color-primary-700)] text-xs sm:text-sm font-bold mb-6 sm:mb-8 shadow-[0_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-sm">
             <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
-            <span className="tracking-wide">Complete looks, shopbaar</span>
+            <span>Complete looks, shopbaar</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] mb-4 sm:mb-5 lg:mb-7 leading-[1.1] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4 sm:mb-5 lg:mb-7 leading-[1.1] tracking-tight">
             Voor elk moment
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] max-w-3xl mx-auto font-light px-4 leading-relaxed tracking-wide">
+          <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] max-w-3xl mx-auto font-light px-4 leading-relaxed">
             Echte outfits met items die je kunt kopen — geen abstracte moodboards
           </p>
         </div>
 
         {/* Mobile Swipe Indicator - Premium */}
-        <div className="md:hidden text-center mb-6 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2 font-medium tracking-wide">
+        <div className="md:hidden text-center mb-6 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2 font-medium">
           <span>Swipe voor meer</span>
           <svg className="w-4 h-4 animate-bounce-horizontal opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -289,7 +289,7 @@ export function RealOutfitShowcase() {
 
         {/* Premium Trust note */}
         <div className="mt-12 sm:mt-14 lg:mt-16 text-center px-4">
-          <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed tracking-wide font-light">
+          <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed font-light">
             <span className="font-semibold text-[var(--color-text)]">Let op:</span> Dit zijn voorbeelden.
             Jouw persoonlijke Style Report bevat outfits gebaseerd op <span className="font-semibold text-[var(--color-text)]">jouw voorkeuren en kleuren</span>.
           </p>

@@ -153,7 +153,7 @@ export function SocialProofV3() {
                 </div>
 
                 {/* Quote - Enhanced mobile readability */}
-                <blockquote className="text-[var(--color-text)] leading-[1.7] mb-6 sm:mb-8 text-lg sm:text-xl lg:text-2xl font-light px-1">
+                <blockquote className="text-[var(--color-text)] leading-[1.7] mb-6 sm:mb-8 text-base sm:text-lg font-light px-1">
                   "{testimonial.quote}"
                 </blockquote>
 
@@ -175,8 +175,8 @@ export function SocialProofV3() {
                       <User className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" strokeWidth={2} aria-hidden="true" />
                     </div>
                   )}
-                  <div>
-                    <cite className="font-bold text-base sm:text-lg text-[var(--color-text)] not-italic">
+                  <div className="space-y-0.5">
+                    <cite className="font-bold text-base sm:text-lg text-[var(--color-text)] not-italic block">
                       {testimonial.author_name}
                     </cite>
                     {testimonial.author_age && (

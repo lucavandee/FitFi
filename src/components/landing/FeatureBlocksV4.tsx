@@ -22,7 +22,7 @@ const features = [
   {
     icon: Zap,
     iconBg: 'from-yellow-500 to-orange-600',
-    title: 'Resultaat ',
+    title: 'Resultaat in 2 minuten',
     description: 'Geen eindeloze vragenlijsten. Beantwoord 6–12 vragen en krijg direct je persoonlijke Style Report met complete outfits.',
     stats: [
       { label: 'Gemiddelde tijd', value: '2 min' },
@@ -99,7 +99,7 @@ export function FeatureBlocksV4() {
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--ff-color-primary-700)] mb-1 lg:mb-2">
                           {stat.value}
                         </div>
-                        <div className="text-xs lg:text-sm text-[var(--color-muted)] font-medium tracking-wide uppercase">
+                        <div className="text-xs lg:text-sm text-[var(--color-muted)] font-medium uppercase">
                           {stat.label}
                         </div>
                       </div>
@@ -108,13 +108,13 @@ export function FeatureBlocksV4() {
                 </div>
 
                 {/* Mobile stats - Below image on mobile */}
-                <div className="sm:hidden flex gap-4 justify-center mt-4">
+                <div className="sm:hidden flex gap-4 justify-center mt-4 px-2">
                   {feature.stats.map((stat, idx) => (
                     <div key={idx} className="text-center">
                       <div className="text-2xl font-bold text-[var(--ff-color-primary-700)] mb-1">
                         {stat.value}
                       </div>
-                      <div className="text-xs text-[var(--color-muted)] font-medium uppercase">
+                      <div className="text-[11px] text-[var(--color-muted)] font-medium uppercase leading-tight">
                         {stat.label}
                       </div>
                     </div>
@@ -131,12 +131,12 @@ export function FeatureBlocksV4() {
               </div>
 
               {/* Title */}
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] mb-4 sm:mb-6 lg:mb-8 leading-[1.1] tracking-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4 sm:mb-6 lg:mb-8 leading-[1.1] tracking-tight">
                 {feature.title}
               </h2>
 
               {/* Description */}
-              <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-[var(--color-muted)] leading-[1.6] sm:leading-[1.7] mb-6 sm:mb-8 lg:mb-10 font-light max-w-xl">
+              <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] leading-[1.6] sm:leading-[1.7] mb-6 sm:mb-8 lg:mb-10 font-light">
                 {feature.description}
               </p>
 

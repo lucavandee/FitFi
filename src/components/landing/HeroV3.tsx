@@ -103,9 +103,9 @@ export function HeroV3() {
           </h1>
 
           {/* Subline - Concrete Value (not "ontdek") */}
-          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/95 leading-relaxed sm:leading-tight max-w-2xl mb-10 sm:mb-12 font-light">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-2xl mb-10 sm:mb-12 font-light">
             We geven je persoonlijk stijladvies in 2 minuten,{' '}
-            <span className="font-bold">zo shop je direct</span>
+            <span className="font-semibold">zo shop je direct</span>
           </p>
 
           {/* CTAs - Benefits-driven labels, mobile-optimized touch targets */}
