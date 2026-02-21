@@ -46,10 +46,10 @@ export function HeroV3() {
         {/* ── Photo half ── */}
         <div className="relative flex-shrink-0" style={{ height: '52svh' }}>
           <img
-            src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
-            alt="Stijlvol stel met persoonlijk stijladvies"
+            src="/images/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
+            alt="Stijlvol stel op een Amsterdams kanaal met persoonlijk stijladvies"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: '50% 18%' }}
+            style={{ objectPosition: '50% 30%' }}
             loading="eager"
           />
 
