@@ -253,42 +253,53 @@ export function HeroV3() {
 
       {/* ═══════════════════════════════════════════════
           DESKTOP  (≥ sm)
-          Classic full-bleed cinematic hero
+          Full-bleed editorial hero — nieuwe Amsterdam foto
       ═══════════════════════════════════════════════ */}
       <div
         className="hidden sm:block relative w-full overflow-hidden"
         style={{
           minHeight: 'min(92vh, 820px)',
-          background: '#0a0908',
+          background: '#2a1f14',
         }}
       >
+        {/* ── Full-bleed foto ── */}
         <div className="absolute inset-0" aria-hidden="true">
           <img
-            src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
+            src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
             alt=""
             className="w-full h-full object-cover"
-            style={{ objectPosition: 'center 30%' }}
+            style={{ objectPosition: 'center 20%' }}
             loading="eager"
           />
+          {/* Linker overlay: warm donker verloop → tekst leesbaar op linker helft */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                'linear-gradient(105deg, rgba(10,9,8,0.90) 0%, rgba(10,9,8,0.62) 42%, rgba(10,9,8,0.12) 100%)',
+                'linear-gradient(100deg, rgba(30,20,10,0.82) 0%, rgba(30,20,10,0.55) 38%, rgba(30,20,10,0.08) 65%, transparent 100%)',
+            }}
+          />
+          {/* Onderste fade naar website-achtergrond voor naadloze overgang */}
+          <div
+            className="absolute bottom-0 inset-x-0 h-40"
+            style={{
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(247,243,236,0.18) 100%)',
             }}
           />
         </div>
 
+        {/* ── Tekstkolom links ── */}
         <div
           className="relative z-10 w-full max-w-7xl mx-auto px-8 lg:px-14 flex items-center"
           style={{ minHeight: 'min(92vh, 820px)' }}
         >
           <div className="max-w-xl lg:max-w-2xl py-28">
 
+            {/* Badge */}
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl"
               style={{
-                background: 'rgba(255,255,255,0.95)',
+                background: 'rgba(247,243,236,0.96)',
                 color: 'var(--ff-color-primary-700)',
               }}
             >
@@ -298,13 +309,16 @@ export function HeroV3() {
 
             <h1
               id="hero-heading"
-              className="font-heading font-bold text-white leading-[1.05] tracking-tight mb-5"
-              style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)' }}
+              className="font-heading font-bold leading-[1.05] tracking-tight mb-5"
+              style={{
+                fontSize: 'clamp(3rem, 6vw, 5.5rem)',
+                color: '#F7F3EC',
+              }}
             >
               Outfits die{' '}
               <em
                 className="not-italic"
-                style={{ color: 'var(--ff-color-accent-300, #e8d5b7)' }}
+                style={{ color: 'var(--ff-color-primary-300)' }}
               >
                 bij jou passen
               </em>
@@ -312,35 +326,40 @@ export function HeroV3() {
 
             <p
               className="text-lg md:text-xl leading-relaxed max-w-lg mb-8 font-light"
-              style={{ color: 'rgba(255,255,255,0.82)' }}
+              style={{ color: 'rgba(247,243,236,0.82)' }}
             >
               In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
             </p>
 
-            <ul className="space-y-3 mb-10" style={{ color: 'rgba(255,255,255,0.88)' }}>
+            <ul className="space-y-3 mb-10">
               {[
                 'Direct combinaties + shoplinks op maat',
                 'Outfits voor werk, weekend en uitgaan',
                 'Aanbevelingen die meegroeien met jou',
               ].map((item) => (
-                <li key={item} className="flex items-center gap-3 text-base">
+                <li
+                  key={item}
+                  className="flex items-center gap-3 text-base"
+                  style={{ color: 'rgba(247,243,236,0.88)' }}
+                >
                   <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <circle cx="10" cy="10" r="9" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
-                    <path d="M6.5 10l2.5 2.5 4.5-4.5" stroke="#4ade80" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="10" cy="10" r="9" stroke="rgba(247,243,236,0.25)" strokeWidth="1.5" />
+                    <path d="M6.5 10l2.5 2.5 4.5-4.5" stroke="var(--ff-color-primary-300)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   {item}
                 </li>
               ))}
             </ul>
 
+            {/* CTA knoppen */}
             <div className="flex items-center gap-3">
               <button
                 onClick={handleStartClick}
                 className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all duration-200 hover:scale-[1.02]"
                 style={{
-                  background: '#fff',
-                  color: 'var(--color-text)',
-                  boxShadow: '0 20px 60px rgba(255,255,255,0.22)',
+                  background: 'var(--ff-color-primary-700)',
+                  color: '#F7F3EC',
+                  boxShadow: '0 8px 40px rgba(122,97,74,0.45)',
                 }}
                 aria-label="Start gratis stijlquiz"
               >
@@ -353,10 +372,11 @@ export function HeroV3() {
 
               <button
                 onClick={handleExampleClick}
-                className="inline-flex items-center gap-2 px-6 py-4 min-h-[56px] rounded-xl font-medium text-base text-white transition-all duration-200"
+                className="inline-flex items-center gap-2 px-6 py-4 min-h-[56px] rounded-xl font-medium text-base transition-all duration-200"
                 style={{
-                  background: 'rgba(255,255,255,0.10)',
-                  border: '1px solid rgba(255,255,255,0.22)',
+                  background: 'rgba(247,243,236,0.10)',
+                  border: '1px solid rgba(247,243,236,0.28)',
+                  color: 'rgba(247,243,236,0.90)',
                 }}
                 aria-label="Bekijk voorbeeld rapport"
               >
@@ -367,31 +387,32 @@ export function HeroV3() {
             {todayCount !== undefined && todayCount > 0 && (
               <p
                 className="mt-5 text-sm flex items-center gap-2"
-                style={{ color: 'rgba(255,255,255,0.6)' }}
+                style={{ color: 'rgba(247,243,236,0.60)' }}
               >
                 <span
                   className="w-2 h-2 rounded-full animate-pulse inline-block"
-                  style={{ background: '#4ade80' }}
+                  style={{ background: 'var(--ff-color-primary-300)' }}
                   aria-hidden="true"
                 />
-                <span style={{ color: '#4ade80', fontWeight: 600 }}>{todayCount}</span>
+                <span style={{ color: 'var(--ff-color-primary-300)', fontWeight: 600 }}>{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </p>
             )}
           </div>
         </div>
 
+        {/* Scroll indicator */}
         <div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce"
           aria-hidden="true"
         >
           <div
             className="w-6 h-10 rounded-full border-2 flex items-start justify-center pt-2"
-            style={{ borderColor: 'rgba(255,255,255,0.35)' }}
+            style={{ borderColor: 'rgba(247,243,236,0.30)' }}
           >
             <div
               className="w-1 h-2 rounded-full"
-              style={{ background: 'rgba(255,255,255,0.6)' }}
+              style={{ background: 'rgba(247,243,236,0.55)' }}
             />
           </div>
         </div>
