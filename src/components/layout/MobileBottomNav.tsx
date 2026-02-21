@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Search, Heart, User } from 'lucide-react';
+import { Home, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '@/context/UserContext';
 
@@ -9,6 +9,7 @@ interface NavItem {
   label: string;
   path: string;
   authRequired?: boolean;
+  guestOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -18,12 +19,18 @@ const navItems: NavItem[] = [
     path: '/',
   },
   {
-    icon: Search,
+    icon: Sparkles,
     label: 'Quiz',
     path: '/onboarding',
   },
   {
-    icon: Heart,
+    icon: Tag,
+    label: 'Prijzen',
+    path: '/prijzen',
+    guestOnly: true,
+  },
+  {
+    icon: LayoutDashboard,
     label: 'Dashboard',
     path: '/dashboard',
     authRequired: true,
@@ -57,9 +64,8 @@ const MobileBottomNav: React.FC = () => {
   }
 
   const visibleItems = navItems.filter(item => {
-    if (item.authRequired && !user) {
-      return false;
-    }
+    if (item.authRequired && !user) return false;
+    if (item.guestOnly && user) return false;
     return true;
   });
 

@@ -50,29 +50,22 @@ export default function SiteHeader() {
             <ThemeToggleCompact />
           </div>
 
-          {/* Mobiele trigger — puur via CSS-breakpoint */}
+          {/* Mobiele trigger */}
           <button
             type="button"
             aria-label="Open menu"
             aria-controls="ff-mobile-menu"
             aria-expanded={open}
             onClick={() => setOpen(true)}
-            className={[
-              "md:hidden",
-              "h-11 w-11 inline-flex items-center justify-center",
-              "rounded-[var(--radius-xl)] border-2 border-[var(--ff-color-primary-800)]",
-              "bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)]",
-              "shadow-lg ff-focus-ring",
-              "text-white transition-all active:scale-95"
-            ].join(" ")}
+            className="md:hidden h-9 w-9 inline-flex items-center justify-center rounded-lg text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors ff-focus-ring"
           >
             <span className="sr-only">Open menu</span>
             <svg
-              className="h-6 w-6"
+              className="h-5 w-5"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.5"
+              strokeWidth="2"
               aria-hidden="true"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />

@@ -4,16 +4,6 @@ import { useUser } from '@/context/UserContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabaseClient';
 
-/**
- * Hero V3 - Benefits-Driven & Accessible
- *
- * WCAG 2.1 AA Compliant:
- * - Focus-visible on all interactive elements
- * - Clear value proposition (not vague)
- * - Benefits-driven CTAs (not process-focused)
- * - Mobile thumb-friendly (>52px touch targets)
- * - Semantic HTML with proper landmarks
- */
 export function HeroV3() {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -23,12 +13,10 @@ export function HeroV3() {
     queryFn: async () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       const { count, error } = await supabase
         .from('style_profiles')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', today.toISOString());
-
       if (error) throw error;
       return count || 0;
     },
@@ -37,11 +25,7 @@ export function HeroV3() {
   });
 
   const handleStartClick = () => {
-    if (user) {
-      navigate('/onboarding');
-    } else {
-      navigate('/register');
-    }
+    navigate(user ? '/onboarding' : '/register');
   };
 
   const handleExampleClick = () => {
@@ -50,191 +34,169 @@ export function HeroV3() {
 
   return (
     <section
-      className="relative min-h-[85vh] flex items-center overflow-hidden bg-[var(--color-bg)]"
+      className="relative w-full overflow-hidden bg-[#0e0e0d]"
+      style={{ minHeight: 'min(90vh, 700px)' }}
       aria-labelledby="hero-heading"
     >
-
-      {/* Background - Premium couple, woman with phone */}
-      <div className="absolute inset-0 bg-[#111110] overflow-hidden" aria-hidden="true">
-        {/*
-          Mobile: the image is 2752×1536 (wide landscape). On a portrait phone,
-          object-cover zooms in ~2× and crops one person out.
-          Solution: position image in upper half of the container at full width,
-          letting it show at natural aspect ratio on mobile.
-        */}
-        <div className="absolute inset-0 sm:hidden flex flex-col">
-          <img
-            src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
-            alt="Stijlvol stel bekijkt outfit aanbevelingen op smartphone - professioneel en modern gekleed"
-            className="w-full flex-shrink-0"
-            loading="eager"
-            fetchpriority="high"
-            style={{
-              aspectRatio: '2752 / 1536',
-              objectFit: 'cover',
-              objectPosition: 'center top',
-            }}
-          />
-        </div>
-        {/* Tablet and up: standard object-cover */}
+      {/* ── Full-bleed background image ── */}
+      <div className="absolute inset-0" aria-hidden="true">
         <img
           src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
-          alt=""
-          className="hidden sm:block w-full h-full"
+          alt="Stijlvol stel bekijkt outfit aanbevelingen"
+          className="w-full h-full object-cover object-[60%_top] sm:object-[center_40%]"
           loading="eager"
-          style={{
-            objectFit: 'cover',
-            objectPosition: 'center 40%',
-            maxWidth: 'none',
-            minWidth: '100%',
-            minHeight: '100%'
-          }}
+          fetchpriority="high"
         />
 
-        {/* Gradient overlay — on mobile covers bottom half where text sits */}
-        <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-black/30 via-black/60 to-black/90"></div>
-        <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-black/65 via-black/45 to-black/25"></div>
+        {/* Mobile gradient: dark bottom panel where text lives */}
+        <div
+          className="absolute inset-0 sm:hidden"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.35) 38%, rgba(14,14,13,0.96) 58%, rgb(14,14,13) 100%)',
+          }}
+        />
+        {/* Desktop gradient: side-to-side */}
+        <div
+          className="absolute inset-0 hidden sm:block"
+          style={{
+            background: 'linear-gradient(to right, rgba(14,14,13,0.82) 0%, rgba(14,14,13,0.55) 50%, rgba(14,14,13,0.18) 100%)',
+          }}
+        />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24">
-        <div className="max-w-4xl">
+      {/* ── Content ── */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
 
-          {/* Badge - Simplified, no tech jargon */}
-          <div
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-2xl"
-            role="status"
-            aria-label="Gratis persoonlijk stijladvies beschikbaar"
-          >
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" aria-hidden="true"></div>
-            Persoonlijk stijladvies
-          </div>
+        {/*
+          Mobile layout: image takes ~42% of height, content starts below midpoint.
+          We use padding-top to push content to the lower portion.
+        */}
+        <div
+          className="flex flex-col justify-end sm:justify-center"
+          style={{ minHeight: 'min(90vh, 700px)' }}
+        >
+          {/* Inner content wrapper — max width on desktop */}
+          <div className="w-full sm:max-w-xl lg:max-w-2xl pb-8 sm:pb-0 sm:py-20 lg:py-28">
 
-          {/* H1 - Clear Promise (not vague "stijlgids") */}
-          <h1
-            id="hero-heading"
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-white leading-[1.05] sm:leading-[0.95] tracking-tight mb-6 sm:mb-8"
-          >
-            Outfits die{' '}
-            <span className="relative inline-block">
-              <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-accent-300)] via-white to-[var(--ff-color-primary-300)] bg-clip-text text-transparent">
-                bij jou passen
-              </span>
-              <span className="absolute -bottom-2 left-0 right-0 h-3 bg-[var(--ff-color-accent-400)] opacity-30 blur-sm" aria-hidden="true"></span>
-            </span>
-          </h1>
-
-          {/* Subline - Concrete Value (not "ontdek") */}
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-2xl mb-6 sm:mb-8 font-light">
-            In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
-          </p>
-
-          {/* What You Get - 3 concrete bullets */}
-          <div className="mb-10 sm:mb-12">
-            <ul className="space-y-3 text-white/90 text-base sm:text-lg">
-              <li className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Direct een overzicht met combinaties + shoplinks</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Outfits voor werk, weekend en uitgaan</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Pas je antwoorden aan en zie direct nieuwe aanbevelingen</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* CTAs - Benefits-driven labels, mobile-optimized touch targets */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5">
-            <button
-              onClick={handleStartClick}
-              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-9 sm:py-5 lg:px-10 lg:py-6 min-h-[52px] sm:min-h-[56px] bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/80 focus-visible:ring-offset-4 focus-visible:ring-offset-black/50"
-              aria-label="Ontvang gratis persoonlijk stijladvies in 2 minuten"
+            {/* Badge */}
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] mb-5 sm:mb-7 shadow-xl"
+              role="status"
             >
-              Start mijn stijlquiz
-              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true" />
-            </button>
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" aria-hidden="true" />
+              Persoonlijk stijladvies
+            </div>
 
-            <button
-              onClick={handleExampleClick}
-              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-7 sm:py-4 lg:px-8 lg:py-5 min-h-[52px] bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 hover:border-white/50 text-white rounded-xl sm:rounded-2xl font-medium text-sm sm:text-base lg:text-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/80 focus-visible:ring-offset-4 focus-visible:ring-offset-black/50"
-              aria-label="Bekijk voorbeeld stijladvies van andere gebruikers"
+            {/* H1 */}
+            <h1
+              id="hero-heading"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] tracking-tight mb-4 sm:mb-5"
             >
-              <Play className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-              Bekijk voorbeeld
-            </button>
-          </div>
-
-          {/* Trust indicators - Enhanced with proper ARIA */}
-          <div
-            className="flex flex-wrap items-center gap-4 sm:gap-5 lg:gap-6 mt-6 sm:mt-8 lg:mt-10 text-white/90 text-base sm:text-lg"
-            role="list"
-            aria-label="Vertrouwensindicatoren"
-          >
-            {todayCount !== undefined && todayCount > 0 && (
-              <div
-                className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2"
-                role="listitem"
-              >
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 flex-shrink-0" aria-hidden="true" />
-                <span className="font-semibold leading-tight">
-                  <span className="text-green-400">{todayCount}</span> {todayCount === 1 ? 'persoon' : 'mensen'} vandaag
+              Outfits die{' '}
+              <span className="relative inline-block">
+                <span className="relative z-10 bg-gradient-to-r from-[var(--ff-color-accent-300)] via-white to-[var(--ff-color-primary-300)] bg-clip-text text-transparent">
+                  bij jou passen
                 </span>
-              </div>
-            )}
-            <div
-              className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2"
-              role="listitem"
-            >
-              <div
-                className="w-6 h-6 sm:w-7 sm:h-7 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0"
-                aria-hidden="true"
-              >
-                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <span className="font-semibold leading-tight">Gratis start</span>
-            </div>
-            <div
-              className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2"
-              role="listitem"
-            >
-              <div
-                className="w-6 h-6 sm:w-7 sm:h-7 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0"
-                aria-hidden="true"
-              >
-                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <span className="font-semibold leading-tight">~2 minuten</span>
-            </div>
-          </div>
+              </span>
+            </h1>
 
+            {/* Subline */}
+            <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed max-w-lg mb-5 sm:mb-7 font-light">
+              In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
+            </p>
+
+            {/* Bullets */}
+            <ul className="space-y-2.5 mb-7 sm:mb-9 text-white/90 text-sm sm:text-base">
+              {[
+                'Direct een overzicht met combinaties + shoplinks',
+                'Outfits voor werk, weekend en uitgaan',
+                'Pas je antwoorden aan en zie direct nieuwe aanbevelingen',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleStartClick}
+                className="group inline-flex items-center justify-center gap-2 px-7 py-4 min-h-[52px] bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-xl font-bold text-sm sm:text-base shadow-2xl transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_20px_60px_rgba(255,255,255,0.35)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/80"
+                aria-label="Ontvang gratis persoonlijk stijladvies in 2 minuten"
+              >
+                Start mijn stijlquiz
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:translate-x-1 flex-shrink-0" aria-hidden="true" />
+              </button>
+
+              <button
+                onClick={handleExampleClick}
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] bg-white/10 hover:bg-white/18 backdrop-blur-sm border border-white/25 hover:border-white/45 text-white rounded-xl font-medium text-sm sm:text-base transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/60"
+                aria-label="Bekijk voorbeeld stijladvies"
+              >
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" aria-hidden="true" />
+                Bekijk voorbeeld
+              </button>
+            </div>
+
+            {/* Trust indicators */}
+            <div
+              className="flex flex-wrap items-center gap-3 sm:gap-5 mt-5 sm:mt-7 text-white/80 text-xs sm:text-sm"
+              role="list"
+              aria-label="Vertrouwensindicatoren"
+            >
+              {todayCount !== undefined && todayCount > 0 && (
+                <div className="flex items-center gap-1.5" role="listitem">
+                  <Users className="w-4 h-4 text-green-400 flex-shrink-0" aria-hidden="true" />
+                  <span className="font-semibold">
+                    <span className="text-green-400">{todayCount}</span>{' '}
+                    {todayCount === 1 ? 'persoon' : 'mensen'} vandaag
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center gap-1.5" role="listitem">
+                <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                  <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <span className="font-semibold">Gratis start</span>
+              </div>
+              <div className="flex items-center gap-1.5" role="listitem">
+                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <span className="font-semibold">~2 minuten</span>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
-      {/* Scroll hint */}
+      {/* Scroll hint — desktop only */}
       <div
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 animate-bounce"
-        role="presentation"
+        className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce"
         aria-hidden="true"
       >
-        <div className="w-8 h-12 border-3 border-white/60 rounded-full flex items-start justify-center p-2">
-          <div className="w-2 h-2 bg-white rounded-full"></div>
+        <div className="w-7 h-10 border-2 border-white/50 rounded-full flex items-start justify-center pt-2">
+          <div className="w-1.5 h-1.5 bg-white/80 rounded-full" />
         </div>
       </div>
-
     </section>
   );
 }
