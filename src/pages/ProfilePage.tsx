@@ -382,8 +382,8 @@ const ProfilePage: React.FC = () => {
                 <div className="flex-1 space-y-3">
                   <p className="text-sm text-[var(--color-muted)] leading-relaxed">
                     {photoPreview
-                      ? "Je rapport blijft up-to-date met je gekozen stijl en kleurprofiel."
-                      : "Voeg een foto toe voor persoonlijk kleuradvies op basis van huidondertoon, haar en ogen."}
+                      ? "Je foto is opgeslagen voor kleuranalyse. Je kunt je foto altijd verwijderen."
+                      : "Foto's gebruiken we alleen voor kleuranalyse (als jij dat wilt). Voeg een foto toe voor advies op basis van huidondertoon, haar en ogen."}
                   </p>
 
                   <div className="flex flex-wrap gap-2">
@@ -433,7 +433,7 @@ const ProfilePage: React.FC = () => {
             <SectionCard delay={0.15}>
               <SectionHeader
                 title="Jouw stijlprofiel"
-                description="Je rapport blijft up-to-date met je gekozen stijl."
+                description="Nieuw rapport maken? Kan altijd."
               />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -462,10 +462,11 @@ const ProfilePage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setShowResetModal(true)}
+                    title="Pas je antwoorden aan om een nieuw rapport te genereren"
                     className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    Quiz opnieuw
+                    Nieuw rapport
                   </button>
                 </div>
               </div>
@@ -485,7 +486,7 @@ const ProfilePage: React.FC = () => {
           <SectionCard delay={0.25}>
             <SectionHeader
               title="Privacy & cookies"
-              description="Beheer hoe wij je gegevens gebruiken."
+              description="We slaan alleen op wat nodig is. Beheer hoe wij je gegevens gebruiken."
             />
             <div className="p-6">
               <CookieSettings />

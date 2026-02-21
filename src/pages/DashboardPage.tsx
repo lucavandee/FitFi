@@ -8,6 +8,7 @@ import {
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
+import { useUser } from "@/context/UserContext";
 import { motion } from "framer-motion";
 
 function readJson<T>(key: string): T | null {
@@ -29,10 +30,12 @@ function formatReportDate(ts: string | null): string {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { user: ctxUser } = useUser();
   const [userName, setUserName] = React.useState<string>("");
   const [userEmail, setUserEmail] = React.useState<string>("");
-  const [isPremium, setIsPremium] = React.useState(false);
   const [favCount, setFavCount] = React.useState(0);
+
+  const isPremium = ctxUser?.tier === 'premium' || ctxUser?.tier === 'founder' || !!ctxUser?.isPremium;
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
@@ -141,6 +144,9 @@ export default function DashboardPage() {
               <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight">
                 {userName || "Welkom terug"}
               </h1>
+              <p className="text-sm text-[var(--color-muted)] mt-0.5">
+                Welkom terug. Dit is je laatste stijlrapport.
+              </p>
             </div>
             <button
               onClick={() => navigate("/profile")}
@@ -217,6 +223,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* CTA row */}
+                <p className="text-xs text-[var(--color-muted)] mb-3">Ga verder waar je gebleven bent.</p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => navigate("/results")}
@@ -227,10 +234,11 @@ export default function DashboardPage() {
                   </button>
                   <button
                     onClick={() => navigate("/onboarding")}
+                    title="Pas je antwoorden aan om een nieuw rapport te genereren"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-transparent border border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    Nieuw rapport
+                    Maak nieuw rapport
                   </button>
                 </div>
               </div>
@@ -254,9 +262,9 @@ export default function DashboardPage() {
                   <Heart className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
                 </div>
                 <div>
-                  <p className="font-semibold text-[var(--color-text)]">Opgeslagen looks</p>
+                  <p className="font-semibold text-[var(--color-text)]">Bekijk opgeslagen outfits</p>
                   <p className="text-sm text-[var(--color-muted)]">
-                    {favCount > 0 ? `${favCount} combinaties bewaard` : "Nog niets bewaard"}
+                    {favCount > 0 ? `${favCount} looks bewaard` : "Je opgeslagen looks staan hier"}
                   </p>
                 </div>
               </div>
@@ -300,7 +308,7 @@ export default function DashboardPage() {
                       <span className="text-sm font-semibold text-[var(--color-text)]">Gratis account</span>
                     </div>
                     <p className="text-sm text-[var(--color-muted)] leading-relaxed mb-4">
-                      Kleurenanalyse op basis van huidondertoon, uitgebreide shopping gids en meer outfit-combinaties zijn beschikbaar in Premium.
+                      Premium geeft je extra kleur- en shopadvies. De modules hieronder zijn vergrendeld.
                     </p>
                     <ul className="space-y-1.5 mb-4">
                       {[
@@ -319,7 +327,7 @@ export default function DashboardPage() {
                       className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
                     >
                       <Star className="w-4 h-4" />
-                      Upgrade naar Premium
+                      Upgrade
                     </NavLink>
                   </div>
                 </div>
@@ -336,7 +344,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base font-bold text-[var(--color-text)]">
-                  Je opgeslagen combinaties
+                  Jouw outfits
                 </h2>
                 <button
                   onClick={() => navigate("/results")}
