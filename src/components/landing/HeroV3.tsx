@@ -55,23 +55,45 @@ export function HeroV3() {
     >
 
       {/* Background - Premium couple, woman with phone */}
-      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div className="absolute inset-0 bg-[#111110] overflow-hidden" aria-hidden="true">
+        {/*
+          Mobile: the image is 2752×1536 (wide landscape). On a portrait phone,
+          object-cover zooms in ~2× and crops one person out.
+          Solution: position image in upper half of the container at full width,
+          letting it show at natural aspect ratio on mobile.
+        */}
+        <div className="absolute inset-0 sm:hidden flex flex-col">
+          <img
+            src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
+            alt="Stijlvol stel bekijkt outfit aanbevelingen op smartphone - professioneel en modern gekleed"
+            className="w-full flex-shrink-0"
+            loading="eager"
+            fetchpriority="high"
+            style={{
+              aspectRatio: '2752 / 1536',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+            }}
+          />
+        </div>
+        {/* Tablet and up: standard object-cover */}
         <img
           src="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
-          alt="Stijlvol stel bekijkt outfit aanbevelingen op smartphone - professioneel en modern gekleed"
-          className="w-full h-full object-cover object-[center_35%] sm:object-[center_40%] md:object-center"
+          alt=""
+          className="hidden sm:block w-full h-full"
           loading="eager"
-          fetchpriority="high"
           style={{
             objectFit: 'cover',
+            objectPosition: 'center 40%',
             maxWidth: 'none',
             minWidth: '100%',
             minHeight: '100%'
           }}
         />
 
-        {/* Gradient overlay for text readability - stronger on mobile for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/85 via-black/70 to-black/50 sm:from-black/65 sm:via-black/45 sm:to-black/25"></div>
+        {/* Gradient overlay — on mobile covers bottom half where text sits */}
+        <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-black/30 via-black/60 to-black/90"></div>
+        <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-black/65 via-black/45 to-black/25"></div>
       </div>
 
       {/* Content */}
