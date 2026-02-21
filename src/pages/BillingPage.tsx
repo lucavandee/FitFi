@@ -38,8 +38,8 @@ export default function BillingPage() {
             Abonnement & facturatie
           </h1>
           <p className="text-sm text-[var(--color-muted)]">
-            Beheer je plan, bekijk inbegrepen functies en download facturen.
-            We tonen je eerst een preview — jij beslist daarna.
+            Beheer je abonnement. Bekijk en download je facturen.
+            Je kunt altijd opzeggen — zonder gedoe.
           </p>
         </motion.div>
 

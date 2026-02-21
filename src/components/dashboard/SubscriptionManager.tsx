@@ -140,7 +140,7 @@ export default function SubscriptionManager() {
           )}
           <div>
             <h2 className="text-base font-bold text-[var(--color-text)]">Abonnement & facturatie</h2>
-            <p className="text-xs text-[var(--color-muted)]">Beheer je plan en betalingen</p>
+            <p className="text-xs text-[var(--color-muted)]">Beheer je abonnement. Bekijk en download je facturen.</p>
           </div>
         </div>
         {isPremium && <StatusBadge status={activeSubscription!.status} />}
@@ -160,7 +160,7 @@ export default function SubscriptionManager() {
                 </span>
               </div>
               <p className="text-xs text-[var(--color-muted)]">
-                Je gratis rapport blijft altijd beschikbaar — ook als je niet upgradet.
+                Je gratis rapport blijft altijd beschikbaar — ook als je niet upgradet. Je kunt altijd opzeggen.
               </p>
             </div>
 
@@ -195,8 +195,8 @@ export default function SubscriptionManager() {
             <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] mb-5 text-xs text-[var(--color-muted)]">
               <Camera className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p>
-                Premium geeft je volledige kleuranalyse. Dit onderdeel is alleen beschikbaar{' '}
-                <strong className="text-[var(--color-text)]">met een foto</strong> — je kan je kleurtype niet automatisch bepalen zonder selfie.
+                Premium ontgrendelt extra advies — maar kleuranalyse werkt alleen{' '}
+                <strong className="text-[var(--color-text)]">met een foto</strong>. Je kleurtype kan niet automatisch worden bepaald zonder selfie.
               </p>
             </div>
 
@@ -207,7 +207,7 @@ export default function SubscriptionManager() {
                 className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
               >
                 <Sparkles className="w-4 h-4" />
-                Upgrade naar Premium
+                Upgrade
               </button>
               <button
                 onClick={() => navigate('/resultaten')}
@@ -261,6 +261,9 @@ export default function SubscriptionManager() {
                   </p>
                 </div>
               </div>
+              {!isLifetime && !activeSubscription.cancel_at_period_end && (
+                <p className="mt-3 text-xs text-[var(--color-muted)]">Je kunt altijd opzeggen — Premium blijft actief tot het einde van de betaalperiode.</p>
+              )}
             </div>
 
             {/* Cancellation warning */}
@@ -293,26 +296,31 @@ export default function SubscriptionManager() {
 
             {/* Action buttons */}
             {!isLifetime && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={handleManageSubscription}
-                  disabled={processingPortal}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
-                >
-                  {processingPortal ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Bezig...</>
-                  ) : (
-                    <><CreditCard className="w-4 h-4" /> Beheer abonnement</>
-                  )}
-                </button>
-                <button
-                  onClick={handleManageSubscription}
-                  disabled={processingPortal}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors disabled:opacity-50"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  Download factuur
-                </button>
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={handleManageSubscription}
+                    disabled={processingPortal}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                  >
+                    {processingPortal ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Bezig...</>
+                    ) : (
+                      <><CreditCard className="w-4 h-4" /> Beheer abonnement</>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleManageSubscription}
+                    disabled={processingPortal}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors disabled:opacity-50"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Download factuur
+                  </button>
+                </div>
+                <p className="text-xs text-[var(--color-muted)] text-center">
+                  Facturen en wijzig betaalmethode vind je in de Stripe-portal (opent nieuw venster).
+                </p>
               </div>
             )}
 
@@ -368,7 +376,7 @@ export default function SubscriptionManager() {
                 disabled={processingPortal}
                 className="mt-2 text-xs font-semibold text-[var(--ff-color-error-600)] underline"
               >
-                Betalingsgegevens bijwerken
+                Wijzig betaalmethode
               </button>
             </div>
           </div>
