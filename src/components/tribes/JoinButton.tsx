@@ -119,7 +119,7 @@ export const JoinButton: React.FC<Props> = ({
       className={`transition-all duration-200 ${
         isMember 
           ? 'border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400' 
-          : 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]'
+          : 'bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)]'
       } ${status !== 'authenticated' ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
       icon={buttonContent.icon}
       iconPosition="left"

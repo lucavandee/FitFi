@@ -83,7 +83,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="w-8 h-8 rounded-lg bg-[#0077B5] flex items-center justify-center hover:scale-110 transition-transform"
+                className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-600)] flex items-center justify-center hover:scale-110 transition-transform"
               >
                 <Linkedin className="w-4 h-4 text-white" fill="white" strokeWidth={0} />
               </a>

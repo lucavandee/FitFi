@@ -110,7 +110,7 @@ export function StickyCTA() {
           height="24"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#FFFFFF"
+          stroke="white"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"

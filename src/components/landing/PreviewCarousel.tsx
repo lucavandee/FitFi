@@ -99,7 +99,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
                     {/* Content */}
                     <div className="p-8 lg:p-12 flex flex-col justify-center">
                       <div className="mb-6">
-                        <div className="inline-flex items-center space-x-2 text-sm text-[#bfae9f] font-medium mb-4">
+                        <div className="inline-flex items-center space-x-2 text-sm text-[var(--ff-color-beige-400)] font-medium mb-4">
                           <Eye size={16} />
                           <span>Preview</span>
                         </div>
@@ -114,11 +114,11 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
                       </div>
                       
                       {/* Quote */}
-                      <div className="bg-[#bfae9f]/10 rounded-xl p-6 border-l-4 border-[#bfae9f]">
+                      <div className="bg-[var(--ff-color-beige-400)]/10 rounded-xl p-6 border-l-4 border-[var(--ff-color-beige-400)]">
                         <p className="text-lg italic text-gray-700 leading-relaxed">
                           "{preview.quote}"
                         </p>
-                        <div className="mt-3 text-sm text-[#bfae9f] font-medium">
+                        <div className="mt-3 text-sm text-[var(--ff-color-beige-400)] font-medium">
                           — Nova AI
                         </div>
                       </div>
@@ -153,7 +153,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-[#bfae9f]' : 'bg-gray-300'
+                  index === currentSlide ? 'bg-[var(--ff-color-beige-400)]' : 'bg-gray-300'
                 }`}
                 aria-label={`Ga naar preview ${index + 1}`}
               />

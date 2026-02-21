@@ -150,7 +150,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
           size="sm"
           icon={<Plus size={16} />}
           iconPosition="left"
-          className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+          className="border-[var(--ff-color-primary-500)] text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)] hover:text-white"
         >
           Suggereer Challenge
         </Button>
@@ -169,7 +169,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
             onClick={() => setFilter(tab.id as any)}
             className={`flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-md transition-all duration-200 ${
               filter === tab.id
-                ? 'bg-white text-[#89CFF0] shadow-sm'
+                ? 'bg-white text-[var(--ff-color-primary-500)] shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -205,7 +205,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
               </div>
               
               <div className="text-right">
-                <div className="text-lg font-bold text-[#89CFF0]">+{challenge.points}</div>
+                <div className="text-lg font-bold text-[var(--ff-color-primary-500)]">+{challenge.points}</div>
                 <div className="text-xs text-gray-500">punten</div>
               </div>
             </div>
@@ -224,7 +224,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-[#89CFF0] h-2 rounded-full transition-all duration-300"
+                    className="bg-[var(--ff-color-primary-500)] h-2 rounded-full transition-all duration-300"
                     style={{ width: `${(challenge.progress / challenge.maxProgress) * 100}%` }}
                   />
                 </div>
@@ -255,7 +255,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
               onClick={() => handleChallengeComplete(challenge.id)}
               className={challenge.completed 
                 ? 'border-green-300 text-green-600 bg-green-50' 
-                : 'bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]'
+                : 'bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)]'
               }
               icon={challenge.completed ? <Star size={16} className="fill-current" /> : <Target size={16} />}
               iconPosition="left"
@@ -281,7 +281,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
           <Button
             variant="outline"
             onClick={() => setFilter('all')}
-            className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+            className="border-[var(--ff-color-primary-500)] text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)] hover:text-white"
           >
             Bekijk alle challenges
           </Button>

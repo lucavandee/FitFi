@@ -15,8 +15,8 @@ export const GradientWord: React.FC<GradientWordProps> = ({
 }) => {
   // Shared gradient stops (ink ↔ turquoise)
   const grad = variant === 'fitfi'
-    ? 'linear-gradient(90deg,#0D1B2A 0%,#9ED9FF 36%,#0D1B2A 100%)'
-    : 'linear-gradient(90deg,#0D1B2A 0%,#89CFF0 48%,#0D1B2A 100%)';
+    ? 'linear-gradient(90deg,var(--color-text) 0%,#9ED9FF 36%,var(--color-text) 100%)'
+    : 'linear-gradient(90deg,var(--color-text) 0%,var(--ff-color-primary-500) 48%,var(--color-text) 100%)';
 
   const style: React.CSSProperties = {
     backgroundImage: grad,
@@ -33,7 +33,7 @@ export const GradientWord: React.FC<GradientWordProps> = ({
 
   // Fallback for browsers without background-clip support
   const fallbackStyle: React.CSSProperties = {
-    color: variant === 'fitfi' ? '#9ED9FF' : '#89CFF0',
+    color: variant === 'fitfi' ? '#9ED9FF' : 'var(--ff-color-primary-500)',
     font: 'inherit',
     lineHeight: 'inherit',
     letterSpacing: 'inherit',

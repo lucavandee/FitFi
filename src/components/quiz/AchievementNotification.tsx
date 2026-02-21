@@ -109,7 +109,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
                 onClick={onShare}
                 icon={<Share2 size={16} />}
                 iconPosition="left"
-                className="flex-1 border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+                className="flex-1 border-[var(--ff-color-primary-500)] text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)] hover:text-white"
               >
                 Delen
               </Button>
@@ -118,7 +118,7 @@ const AchievementNotification: React.FC<AchievementNotificationProps> = ({
             <Button
               variant="primary"
               onClick={handleClose}
-              className="flex-1 bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+              className="flex-1 bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)]"
             >
               Geweldig!
             </Button>

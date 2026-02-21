@@ -60,10 +60,10 @@ export function StyleReportPreview() {
             <div className="text-xs font-semibold text-[var(--color-text)] uppercase tracking-wider mb-3">Jouw Kleurenpalet</div>
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-[var(--color-border)]">
               <div className="grid grid-cols-4 gap-3 mb-3">
-                <div className="aspect-square rounded-lg bg-[#2C3E50] shadow-sm"></div>
-                <div className="aspect-square rounded-lg bg-[#F5F0E8] shadow-sm border border-[var(--color-border)]"></div>
-                <div className="aspect-square rounded-lg bg-[#A6886A] shadow-sm"></div>
-                <div className="aspect-square rounded-lg bg-[#D8CABA] shadow-sm"></div>
+                <div className="aspect-square rounded-lg bg-[var(--color-text)] shadow-sm"></div>
+                <div className="aspect-square rounded-lg bg-[var(--ff-color-beige-50)] shadow-sm border border-[var(--color-border)]"></div>
+                <div className="aspect-square rounded-lg bg-[var(--ff-color-beige-500)] shadow-sm"></div>
+                <div className="aspect-square rounded-lg bg-[var(--ff-color-beige-300)] shadow-sm"></div>
               </div>
               <p className="text-[11px] text-[var(--color-text-muted)] leading-relaxed">
                 Navy, cream, taupe en beige. Warme neutrale tinten voor een elegante basis.

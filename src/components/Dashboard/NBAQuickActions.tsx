@@ -53,7 +53,7 @@ export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActio
             <div className="text-sm text-gray-500 mb-1">{a.badge ?? ""}</div>
             <div className="font-semibold">{a.title}</div>
             {a.subtitle && <div className="text-sm text-gray-600 mt-1">{a.subtitle}</div>}
-            <div className={`mt-3 font-medium ${disabled ? "text-gray-400" : "text-[#6b21a8]"}`}>
+            <div className={`mt-3 font-medium ${disabled ? "text-gray-400" : "text-[var(--ff-color-primary-700)]"}`}>
               {a.cta} →
             </div>
           </a>

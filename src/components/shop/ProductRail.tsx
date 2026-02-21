@@ -13,7 +13,7 @@ export default function ProductRail({ items, onClickItem }: Props) {
 
   return (
     <section aria-label="Aanbevolen items" className="mt-3">
-      <h4 className="mb-2 text-sm font-medium text-[#0D1B2A]">Aanbevolen items</h4>
+      <h4 className="mb-2 text-sm font-medium text-[var(--color-text)]">Aanbevolen items</h4>
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {items.slice(0, 4).map((p) => (
@@ -25,7 +25,7 @@ export default function ProductRail({ items, onClickItem }: Props) {
               onClick={() => onClickItem?.(p)}
               className={cn(
                 "block rounded-2xl overflow-hidden border border-black/10 bg-white shadow-sm",
-                "transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#2B6AF3]/30"
+                "transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]/30"
               )}
             >
               <div className="aspect-[3/4] overflow-hidden bg-gray-100">
@@ -39,7 +39,7 @@ export default function ProductRail({ items, onClickItem }: Props) {
                 />
               </div>
               <div className="p-3">
-                <div className="line-clamp-2 text-sm text-[#0D1B2A]">{p.title}</div>
+                <div className="line-clamp-2 text-sm text-[var(--color-text)]">{p.title}</div>
                 <div className="mt-1 flex items-baseline gap-2">
                   <span className="text-sm font-semibold">
                     €{p.price.current.toFixed(2)}

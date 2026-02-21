@@ -40,7 +40,7 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
     
     // Control variant
     return {
-      bgGradient: 'from-[#bfae9f] to-purple-500',
+      bgGradient: 'from-[var(--ff-color-beige-400)] to-purple-500',
       sparkleColors: ['text-yellow-400', 'text-purple-400', 'text-pink-400', 'text-blue-400'],
       pulseColor: ''
     };

@@ -117,7 +117,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
           variant="primary"
           icon={<RefreshCw size={16} />}
           iconPosition="left"
-          className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+          className="bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)]"
         >
           Probeer opnieuw
         </Button>
@@ -146,7 +146,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
             onClick={handleRefresh}
             icon={<RefreshCw size={16} />}
             iconPosition="left"
-            className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+            className="border-[var(--ff-color-primary-500)] text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)] hover:text-white"
           >
             Vernieuwen
           </Button>
@@ -212,8 +212,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
             {metrics.topPages.map((page, index) => (
               <div key={page.page} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-[#89CFF0]/10 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-[#89CFF0]">{index + 1}</span>
+                  <div className="w-8 h-8 bg-[var(--ff-color-primary-500)]/10 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-medium text-[var(--ff-color-primary-500)]">{index + 1}</span>
                   </div>
                   <div>
                     <div className="font-medium text-gray-900">{page.page}</div>

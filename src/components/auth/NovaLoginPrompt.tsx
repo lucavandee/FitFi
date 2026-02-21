@@ -136,7 +136,7 @@ export default function NovaLoginPrompt({
       <div className="relative z-10 w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl animate-scale-in">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
             {content.icon}
           </div>
           
@@ -160,7 +160,7 @@ export default function NovaLoginPrompt({
             </div>
             <div className="h-2 bg-white rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#89CFF0] transition-all"
+                className="h-full bg-[var(--ff-color-primary-500)] transition-all"
                 style={{ width: `${(usage.current / usage.limit) * 100}%` }}
               />
             </div>
@@ -168,15 +168,15 @@ export default function NovaLoginPrompt({
         )}
 
         {/* Benefits */}
-        <div className="bg-[#89CFF0]/10 rounded-2xl p-4 mb-6">
+        <div className="bg-[var(--ff-color-primary-500)]/10 rounded-2xl p-4 mb-6">
           <h3 className="font-medium text-gray-900 mb-3 flex items-center">
-            <Users className="w-4 h-4 mr-2 text-[#89CFF0]" />
+            <Users className="w-4 h-4 mr-2 text-[var(--ff-color-primary-500)]" />
             {reason === 'quiz' ? 'Waarom de quiz?' : reason === 'rate_limit' ? 'Upgrade voordelen:' : 'Als member krijg je:'}
           </h3>
           <div className="space-y-2">
             {content.benefits.map((benefit, i) => (
               <div key={i} className="flex items-center space-x-2 text-sm">
-                <CheckCircle size={16} className="text-[#89CFF0] shrink-0" />
+                <CheckCircle size={16} className="text-[var(--ff-color-primary-500)] shrink-0" />
                 <span className="text-gray-700">{benefit}</span>
               </div>
             ))}
@@ -192,7 +192,7 @@ export default function NovaLoginPrompt({
             fullWidth
             icon={<ArrowRight size={20} />}
             iconPosition="right"
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] shadow-lg hover:shadow-xl transition-all"
+            className="bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)] shadow-lg hover:shadow-xl transition-all"
           >
             {content.primaryLabel}
           </Button>
@@ -203,7 +203,7 @@ export default function NovaLoginPrompt({
               variant="outline"
               size="lg"
               fullWidth
-              className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+              className="border-[var(--ff-color-primary-500)] text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)] hover:text-white"
             >
               {content.secondaryLabel}
             </Button>

@@ -75,7 +75,7 @@ export const PostsList: React.FC<PostsListProps> = ({
         {showComposer && (
           <Button
             variant="primary"
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A]"
+            className="bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)]"
           >
             Schrijf eerste post
           </Button>
@@ -95,7 +95,7 @@ export const PostsList: React.FC<PostsListProps> = ({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               {/* Author Avatar */}
-              <div className="w-10 h-10 rounded-full bg-[#89CFF0] flex items-center justify-center text-white font-medium">
+              <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-500)] flex items-center justify-center text-white font-medium">
                 {post.authorName?.charAt(0).toUpperCase() || 'U'}
               </div>
               
@@ -155,13 +155,13 @@ export const PostsList: React.FC<PostsListProps> = ({
               </button>
               
               {/* Comments Button */}
-              <button className="flex items-center space-x-2 text-gray-500 hover:text-[#89CFF0] transition-colors group">
+              <button className="flex items-center space-x-2 text-gray-500 hover:text-[var(--ff-color-primary-500)] transition-colors group">
                 <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span className="text-sm font-medium">{post.commentsCount || 0}</span>
               </button>
               
               {/* Share Button */}
-              <button className="flex items-center space-x-2 text-gray-500 hover:text-[#89CFF0] transition-colors group">
+              <button className="flex items-center space-x-2 text-gray-500 hover:text-[var(--ff-color-primary-500)] transition-colors group">
                 <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </button>
             </div>

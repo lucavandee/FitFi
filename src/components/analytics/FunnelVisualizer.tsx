@@ -58,7 +58,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
               <div className="flex items-center space-x-4">
                 {/* Step Number */}
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                  completionRate > 0.5 ? 'bg-[#89CFF0]' : 'bg-gray-400'
+                  completionRate > 0.5 ? 'bg-[var(--ff-color-primary-500)]' : 'bg-gray-400'
                 }`}>
                   {step.order}
                 </div>
@@ -124,7 +124,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
       <div className="mt-6 pt-6 border-t border-gray-200">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-lg font-bold text-[#89CFF0]">
+            <div className="text-lg font-bold text-[var(--ff-color-primary-500)]">
               {Math.round(metrics.completion_rate * 100)}%
             </div>
             <div className="text-sm text-gray-600">Completion Rate</div>

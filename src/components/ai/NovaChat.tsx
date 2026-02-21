@@ -55,7 +55,7 @@ function renderContentWithLinks(content:string){
   return parts.map((part,i)=>{
     if(URL_RE.test(part)){
       return <a key={`url-${i}`} href={part} target="_blank" rel="nofollow noopener noreferrer"
-        className="underline decoration-[#89CFF0] underline-offset-2 hover:opacity-80">{part}</a>;
+        className="underline decoration-[var(--ff-color-primary-500)] underline-offset-2 hover:opacity-80">{part}</a>;
     }
     return <span key={`t-${i}`}>{part}</span>;
   });

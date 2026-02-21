@@ -87,7 +87,7 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
         <div className="p-8">
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">{shareData.achievement.icon}</span>
             </div>
             
@@ -101,13 +101,13 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
           </div>
 
           {/* Preview */}
-          <div className="bg-gradient-to-br from-[#89CFF0]/10 to-purple-50 rounded-2xl p-4 mb-6">
+          <div className="bg-gradient-to-br from-[var(--ff-color-primary-500)]/10 to-purple-50 rounded-2xl p-4 mb-6">
             <div className="text-sm text-gray-700">
               <strong>{shareData.userProfile.name}</strong> heeft zojuist ontdekt: 
               <strong> {shareData.userProfile.styleType}</strong> met een 
               <strong> {shareData.userProfile.matchPercentage}% match!</strong>
               <br />
-              <span className="text-[#89CFF0]">#FitFiStyle #AIStyleAnalysis</span>
+              <span className="text-[var(--ff-color-primary-500)]">#FitFiStyle #AIStyleAnalysis</span>
             </div>
           </div>
 
@@ -166,7 +166,7 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
               onClick={generateShareImage}
               icon={<Download size={16} />}
               iconPosition="left"
-              className="text-[#89CFF0] hover:bg-[#89CFF0]/10"
+              className="text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/10"
             >
               Genereer Share Image
             </Button>

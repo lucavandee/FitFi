@@ -66,7 +66,7 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
         <div className="text-xl font-semibold tabular-nums">{count}/{goal} referrals</div>
         <button
           onClick={share}
-          className="px-4 py-2 rounded-full bg-[#89CFF0] text-white hover:bg-[#5FB7E6] transition-all btn-animate"
+          className="px-4 py-2 rounded-full bg-[var(--ff-color-primary-500)] text-white hover:bg-[var(--ff-color-primary-600)] transition-all btn-animate"
         >
           Deel invite
         </button>

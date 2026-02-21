@@ -20,7 +20,7 @@ export default function ContextSwitcher({ defaultMode = 'outfits', className }: 
       className={[
         'px-3 py-1.5 rounded-full text-sm transition',
         mode === m
-          ? 'bg-[#ECF7FF] text-[#0D1B2A] shadow-[0_1px_6px_rgba(13,27,42,0.06)]'
+          ? 'bg-[var(--ff-color-primary-50)] text-[var(--color-text)] shadow-[0_1px_6px_rgba(13,27,42,0.06)]'
           : 'text-gray-600 hover:bg-black/5'
       ].join(' ')}
       aria-pressed={mode === m}

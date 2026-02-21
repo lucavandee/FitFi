@@ -28,7 +28,7 @@ function ShopLink({o}:{o:Outfit}) {
   return (
     <a
       href={`/shop?q=${q}`}
-      className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium bg-[#89CFF0] text-[#0D1B2A] hover:bg-[#89CFF0]/90 transition"
+      className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium bg-[var(--ff-color-primary-500)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-500)]/90 transition"
     >
       <ShoppingCart size={16}/> Shop outfit
     </a>
@@ -66,7 +66,7 @@ export default function OutfitCards({ data, blur=false, onLockedClick }:{ data:N
             {blur ? (
               <button
                 onClick={onLockedClick}
-                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium bg-[#89CFF0] text-[#0D1B2A] hover:bg-[#89CFF0]/90 transition"
+                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium bg-[var(--ff-color-primary-500)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-500)]/90 transition"
               >
                 Ontgrendel outfits
               </button>
@@ -80,8 +80,8 @@ export default function OutfitCards({ data, blur=false, onLockedClick }:{ data:N
             )}
           </div>
           {blur && (
-            <div className="absolute inset-0 rounded-2xl backdrop-blur-sm bg-white/45 border-dashed border-2 border-[#89CFF0]/50 flex items-center justify-center">
-              <div className="text-[#0D1B2A] font-medium">Word Member (gratis) om te zien</div>
+            <div className="absolute inset-0 rounded-2xl backdrop-blur-sm bg-white/45 border-dashed border-2 border-[var(--ff-color-primary-500)]/50 flex items-center justify-center">
+              <div className="text-[var(--color-text)] font-medium">Word Member (gratis) om te zien</div>
             </div>
           )}
         </div>

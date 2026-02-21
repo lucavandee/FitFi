@@ -72,7 +72,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
               {/* User Avatar */}
-              <div className="w-10 h-10 rounded-full bg-[#89CFF0] flex items-center justify-center text-white font-medium">
+              <div className="w-10 h-10 rounded-full bg-[var(--ff-color-primary-500)] flex items-center justify-center text-white font-medium">
                 {submission.userName?.charAt(0).toUpperCase() || 'U'}
               </div>
               
@@ -98,7 +98,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
             {/* Score & Winner Badge */}
             <div className="flex items-center space-x-2">
               {submission.score && (
-                <span className="px-3 py-1 bg-[#89CFF0]/10 text-[#89CFF0] rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-[var(--ff-color-primary-500)]/10 text-[var(--ff-color-primary-500)] rounded-full text-sm font-medium">
                   {submission.score}/100
                 </span>
               )}
@@ -139,7 +139,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
                 href={submission.linkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-[#89CFF0] hover:text-[#89CFF0]/80 transition-colors"
+                className="inline-flex items-center space-x-2 text-[var(--ff-color-primary-500)] hover:text-[var(--ff-color-primary-500)]/80 transition-colors"
               >
                 <ExternalLink size={16} />
                 <span>Bekijk externe link</span>

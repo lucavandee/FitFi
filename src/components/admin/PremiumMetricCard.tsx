@@ -46,7 +46,7 @@ export default function PremiumMetricCard({
             <h3
               className="text-4xl font-bold tracking-tight"
               style={{
-                color: gradient ? '#fff' : 'var(--color-text)',
+                color: gradient ? 'white' : 'var(--color-text)',
               }}
             >
               {value}

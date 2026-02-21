@@ -112,7 +112,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
     <div className={`bg-white rounded-3xl shadow-sm border border-gray-200 p-6 ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#89CFF0] to-blue-500 rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-blue-500 rounded-full flex items-center justify-center">
             <Plus className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -145,7 +145,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
               placeholder="Bijv. Winter Layering Challenge"
               required
             />
@@ -158,7 +158,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             <select
               value={formData.difficulty}
               onChange={(e) => handleInputChange('difficulty', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
             >
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
@@ -175,7 +175,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
           <textarea
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors resize-none"
+            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors resize-none"
             placeholder="Beschrijf wat deelnemers moeten doen..."
             rows={3}
           />
@@ -191,7 +191,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             type="url"
             value={formData.image}
             onChange={(e) => handleInputChange('image', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
             placeholder="https://images.pexels.com/..."
           />
         </div>
@@ -209,7 +209,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
                   type="text"
                   value={rule}
                   onChange={(e) => updateRule(index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
                   placeholder={`Regel ${index + 1}`}
                 />
                 {formData.rules.length > 1 && (
@@ -233,7 +233,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
               onClick={addRule}
               icon={<Plus size={14} />}
               iconPosition="left"
-              className="border-[#89CFF0] text-[#89CFF0] hover:bg-[#89CFF0] hover:text-white"
+              className="border-[var(--ff-color-primary-500)] text-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)] hover:text-white"
             >
               Regel toevoegen
             </Button>
@@ -251,7 +251,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
               type="number"
               value={formData.rewardPoints}
               onChange={(e) => handleInputChange('rewardPoints', parseInt(e.target.value) || 0)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
               min="0"
               max="1000"
             />
@@ -265,7 +265,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
               type="number"
               value={formData.winnerRewardPoints}
               onChange={(e) => handleInputChange('winnerRewardPoints', parseInt(e.target.value) || 0)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
               min="0"
               max="1000"
             />
@@ -283,7 +283,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
               type="datetime-local"
               value={formData.startAt}
               onChange={(e) => handleInputChange('startAt', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
             />
           </div>
           
@@ -295,7 +295,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
               type="datetime-local"
               value={formData.endAt}
               onChange={(e) => handleInputChange('endAt', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
             />
           </div>
         </div>
@@ -309,7 +309,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             type="text"
             value={formData.tags}
             onChange={(e) => handleInputChange('tags', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#89CFF0] focus:border-[#89CFF0] transition-colors"
+            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors"
             placeholder="winter, layering, italian, smart-casual"
           />
         </div>
@@ -320,13 +320,13 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
             type="submit"
             variant="primary"
             disabled={busy || !formData.title.trim()}
-            className="bg-[#89CFF0] hover:bg-[#89CFF0]/90 text-[#0D1B2A] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)] disabled:opacity-50 disabled:cursor-not-allowed"
             icon={busy ? undefined : <Plus size={16} />}
             iconPosition="left"
           >
             {busy ? (
               <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-[#0D1B2A] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-[var(--color-text)] border-t-transparent rounded-full animate-spin"></div>
                 <span>Aanmaken...</span>
               </div>
             ) : (

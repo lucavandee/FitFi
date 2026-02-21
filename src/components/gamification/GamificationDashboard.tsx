@@ -46,7 +46,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
       label: 'Huidige Level',
       value: currentLevelInfo?.level_name || 'Beginner',
       icon: <Trophy className="w-5 h-5" />,
-      color: 'text-[#89CFF0]',
+      color: 'text-[var(--ff-color-primary-500)]',
       bgColor: 'bg-blue-50'
     },
     {
@@ -80,7 +80,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
               onClick={() => handleViewChange(tab.id as any)}
               className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl transition-all duration-200 ${
                 activeView === tab.id
-                  ? 'bg-[#89CFF0] text-white shadow-sm'
+                  ? 'bg-[var(--ff-color-primary-500)] text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
@@ -126,7 +126,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
             {earnedBadges.length > 0 && (
               <div className="bg-white rounded-3xl shadow-sm p-6">
                 <div className="flex items-center space-x-2 mb-4">
-                  <Gift className="w-5 h-5 text-[#89CFF0]" />
+                  <Gift className="w-5 h-5 text-[var(--ff-color-primary-500)]" />
                   <h3 className="text-lg font-bold text-gray-900">Jouw Badges</h3>
                 </div>
                 
@@ -158,12 +158,12 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-r from-[#89CFF0]/10 to-blue-50 rounded-2xl p-6">
+              <div className="bg-gradient-to-r from-[var(--ff-color-primary-500)]/10 to-blue-50 rounded-2xl p-6">
                 <h4 className="font-medium text-gray-900 mb-4">Deze Week</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Punten verdiend:</span>
-                    <span className="font-bold text-[#89CFF0]">{weeklyPoints.toLocaleString()}</span>
+                    <span className="font-bold text-[var(--ff-color-primary-500)]">{weeklyPoints.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Challenges voltooid:</span>

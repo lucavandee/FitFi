@@ -31,7 +31,7 @@ export const GamificationPanel: React.FC<{ level?: number; xp?: number; streak?:
       </div>
       <div className="flex flex-col items-end">
         <div className="w-36 h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-2 bg-[#89CFF0]" style={{ width: `${pct}%` }} />
+          <div className="h-2 bg-[var(--ff-color-primary-500)]" style={{ width: `${pct}%` }} />
         </div>
         <div className="text-xs text-gray-500 mt-2">🔥 Streak: {streak} dagen</div>
       </div>

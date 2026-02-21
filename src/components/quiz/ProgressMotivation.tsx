@@ -43,7 +43,7 @@ const ProgressMotivation: React.FC<ProgressMotivationProps> = ({
       return {
         icon: Trophy ? <Trophy className="w-5 h-5" /> : <Star className="w-5 h-5" />,
         message: "Perfect! Klaar voor je stijlresultaten.",
-        color: "text-[#bfae9f]"
+        color: "text-[var(--ff-color-beige-400)]"
       };
     }
   };

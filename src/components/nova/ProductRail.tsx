@@ -52,7 +52,7 @@ function ProductCard({ product }: { product: Product }) {
           <div className="text-[13px] text-gray-600">{brand}</div>
           <div className="text-[13px] font-semibold">{price ? `€${price}` : ""}</div>
         </div>
-        <div className="mt-2 flex items-center gap-2 text-[12px] text-[#2B6AF3]">
+        <div className="mt-2 flex items-center gap-2 text-[12px] text-[var(--ff-color-primary-600)]">
           <ShoppingBag size={14} />
           <span>Shop nu</span>
           <ExternalLink size={14} className="ml-auto opacity-70" />
@@ -77,8 +77,8 @@ export default function ProductRail({ items, loading }: ProductRailProps) {
   return (
     <div className="mt-3">
       <div className="flex items-center gap-2 mb-3">
-        <ShoppingBag size={16} className="text-[#2B6AF3]" />
-        <span className="text-sm font-medium text-[#0D1B2A]">
+        <ShoppingBag size={16} className="text-[var(--ff-color-primary-600)]" />
+        <span className="text-sm font-medium text-[var(--color-text)]">
           Shoppable look ({items.length} items)
         </span>
       </div>

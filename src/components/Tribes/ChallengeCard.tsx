@@ -19,7 +19,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
       case 'hard':
         return <Zap className="w-3 h-3 text-orange-600" />;
       default:
-        return <Trophy className="w-3 h-3 text-[#89CFF0]" />;
+        return <Trophy className="w-3 h-3 text-[var(--ff-color-primary-500)]" />;
     }
   };
 
@@ -32,7 +32,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
       case 'hard':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       default:
-        return 'bg-[#89CFF0]/10 text-[#89CFF0] border-[#89CFF0]/20';
+        return 'bg-[var(--ff-color-primary-500)]/10 text-[var(--ff-color-primary-500)] border-[var(--ff-color-primary-500)]/20';
     }
   };
 
@@ -122,10 +122,10 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
         )}
 
         {/* Rewards */}
-        <div className="flex items-center justify-between mb-4 p-3 bg-[#89CFF0]/10 rounded-xl">
+        <div className="flex items-center justify-between mb-4 p-3 bg-[var(--ff-color-primary-500)]/10 rounded-xl">
           <div className="flex items-center space-x-4">
             <div className="text-center">
-              <div className="text-lg font-bold text-[#89CFF0]">+{c.rewardPoints || 0}</div>
+              <div className="text-lg font-bold text-[var(--ff-color-primary-500)]">+{c.rewardPoints || 0}</div>
               <div className="text-xs text-gray-600">Deelname</div>
             </div>
             
@@ -137,7 +137,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
             )}
           </div>
           
-          <Trophy className="w-6 h-6 text-[#89CFF0]" />
+          <Trophy className="w-6 h-6 text-[var(--ff-color-primary-500)]" />
         </div>
 
         {/* Tags */}

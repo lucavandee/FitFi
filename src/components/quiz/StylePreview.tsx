@@ -90,10 +90,10 @@ const StylePreview: React.FC<StylePreviewProps> = ({ answers, currentStep, class
   }
   
   return (
-    <div className={`bg-gradient-to-br from-[#bfae9f]/10 to-purple-50 rounded-2xl p-6 ${className}`}>
+    <div className={`bg-gradient-to-br from-[var(--ff-color-beige-400)]/10 to-purple-50 rounded-2xl p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <Sparkles className="w-5 h-5 text-[#bfae9f]" />
+          <Sparkles className="w-5 h-5 text-[var(--ff-color-beige-400)]" />
           <h3 className="font-medium text-gray-900">Jouw Stijl Ontdekking</h3>
         </div>
         <div className="flex items-center space-x-1">
@@ -112,7 +112,7 @@ const StylePreview: React.FC<StylePreviewProps> = ({ answers, currentStep, class
             <div className="flex items-center space-x-2">
               <div className="w-16 bg-gray-200 rounded-full h-1.5">
                 <div 
-                  className="bg-[#bfae9f] h-1.5 rounded-full transition-all duration-500"
+                  className="bg-[var(--ff-color-beige-400)] h-1.5 rounded-full transition-all duration-500"
                   style={{ width: `${insight.confidence}%` }}
                 />
               </div>

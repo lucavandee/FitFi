@@ -50,7 +50,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         {nextLevelInfo && (
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className="h-2 rounded-full bg-gradient-to-r from-[#89CFF0] to-blue-500 transition-all duration-1000 ease-out"
+              className="h-2 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-blue-500 transition-all duration-1000 ease-out"
               style={{ width: `${progressToNextLevel}%` }}
             />
           </div>
@@ -93,7 +93,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
           <div className="relative">
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div 
-                className="h-3 rounded-full bg-gradient-to-r from-[#89CFF0] to-blue-500"
+                className="h-3 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-blue-500"
                 style={{ 
                   width: `${progressToNextLevel}%`,
                   transition: 'width 0.8s ease-out'
@@ -132,13 +132,13 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
       {showPerks && currentPerks.length > 0 && (
         <div className="mb-6">
           <h4 className="font-medium text-gray-900 mb-3 flex items-center">
-            <Gift className="w-4 h-4 mr-2 text-[#89CFF0]" />
+            <Gift className="w-4 h-4 mr-2 text-[var(--ff-color-primary-500)]" />
             Jouw huidige voordelen:
           </h4>
           <div className="space-y-2">
             {currentPerks.map((perk, index) => (
               <div key={index} className="flex items-center space-x-2 text-sm">
-                <div className="w-2 h-2 bg-[#89CFF0] rounded-full"></div>
+                <div className="w-2 h-2 bg-[var(--ff-color-primary-500)] rounded-full"></div>
                 <span className="text-gray-700">{perk}</span>
               </div>
             ))}

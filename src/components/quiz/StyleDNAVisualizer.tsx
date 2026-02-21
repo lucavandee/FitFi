@@ -10,7 +10,7 @@ interface StyleDNAVisualizerProps {
 
 const STYLE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
   minimal: { label: 'Minimaal', emoji: '⚪', color: '#E8E8E8' },
-  classic: { label: 'Klassiek', emoji: '👔', color: '#2C3E50' },
+  classic: { label: 'Klassiek', emoji: '👔', color: 'var(--color-text)' },
   romantic: { label: 'Romantisch', emoji: '🌸', color: '#FFB6C1' },
   bohemian: { label: 'Bohemian', emoji: '🌿', color: '#D2691E' },
   bold: { label: 'Bold', emoji: '⚡', color: '#FF6B6B' },

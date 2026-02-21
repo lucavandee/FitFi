@@ -173,8 +173,8 @@ export default function Navbar() {
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
           style={{
-            backgroundColor: '#F5F1ED',
-            border: '2px solid #E5DED5',
+            backgroundColor: 'var(--ff-color-beige-100)',
+            border: '2px solid var(--ff-color-beige-200)',
           }}
         >
           {open ? (
@@ -190,8 +190,8 @@ export default function Navbar() {
               className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
               style={{
-                stroke: '#7A614A',
-                color: '#7A614A'
+                stroke: 'var(--ff-color-beige-700)',
+                color: 'var(--ff-color-beige-700)'
               }}
             >
               <path d="M18 6 6 18" />
@@ -210,8 +210,8 @@ export default function Navbar() {
               className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
               style={{
-                stroke: '#7A614A',
-                color: '#7A614A'
+                stroke: 'var(--ff-color-beige-700)',
+                color: 'var(--ff-color-beige-700)'
               }}
             >
               <path d="M4 12h16" />

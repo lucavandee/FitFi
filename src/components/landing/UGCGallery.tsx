@@ -124,7 +124,7 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
         
         {/* Bottom CTA */}
         <div className="text-center mt-12">
-          <div className="bg-gradient-to-r from-[#bfae9f]/10 to-purple-50 rounded-2xl p-8 max-w-2xl mx-auto">
+          <div className="bg-gradient-to-r from-[var(--ff-color-beige-400)]/10 to-purple-50 rounded-2xl p-8 max-w-2xl mx-auto">
             <h3 className="text-xl font-medium text-gray-900 mb-3">
               Deel jouw verhaal
             </h3>
@@ -132,7 +132,7 @@ const UGCGallery: React.FC<UGCGalleryProps> = ({ className = '' }) => {
               Laat zien hoe Nova jouw stijl heeft verbeterd en inspireer anderen
             </p>
             <div className="text-sm text-gray-500">
-              Gebruik <span className="font-medium text-[#bfae9f]">#NovaKnows</span> en tag <span className="font-medium">@fitfi</span>
+              Gebruik <span className="font-medium text-[var(--ff-color-beige-400)]">#NovaKnows</span> en tag <span className="font-medium">@fitfi</span>
             </div>
           </div>
         </div>
