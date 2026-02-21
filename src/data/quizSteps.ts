@@ -127,7 +127,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 1,
     title: 'Zoek je kleding voor heren of dames?',
-    description: 'We tonen passende kledingstijlen en outfits op basis van jouw keuze',
+    description: 'Kies wat jij graag draagt. Dit is geen kleuranalyse.',
     field: 'gender',
     type: 'radio',
     required: true,
@@ -157,7 +157,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 2,
     title: 'Welke stijlen spreken jou aan?',
-    description: 'Kies de stijlen die het beste bij je passen — meerdere keuzes mogelijk',
+    description: 'Kies wat jij graag draagt. Meerdere keuzes zijn prima.',
     field: 'stylePreferences',
     type: 'checkbox',
     required: true,
@@ -191,7 +191,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 4,
     title: 'Hoe licht of donker kleed je je?',
-    description: 'Kies de helderheid die het meest op jouw dagelijkse keuzes lijkt',
+    description: 'We gebruiken je antwoorden om combinaties te maken die logisch zijn.',
     field: 'lightness',
     type: 'radio',
     required: true,
@@ -216,7 +216,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 5,
     title: 'Hoe combineer je kleur en contrast?',
-    description: 'Kies wat je het meest aanspreekt bij een complete outfit',
+    description: 'We gebruiken je antwoorden om combinaties te maken die logisch zijn.',
     field: 'contrast',
     type: 'radio',
     required: true,
@@ -241,7 +241,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 6,
     title: 'Welke pasvorm prefereer je?',
-    description: 'We gebruiken je antwoord om outfits te combineren die logisch zijn voor jouw lichaam',
+    description: 'We gebruiken je antwoorden om combinaties te maken die logisch zijn.',
     field: 'fit',
     type: 'radio',
     required: true,
@@ -271,7 +271,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 7,
     title: 'Voor welke gelegenheden zoek je outfits?',
-    description: 'We gebruiken je antwoorden om outfits te combineren die logisch zijn voor jouw momenten',
+    description: 'We gebruiken je antwoorden om combinaties te maken die logisch zijn.',
     field: 'occasions',
     type: 'multiselect',
     required: true,
@@ -311,7 +311,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 8,
     title: 'Wat zijn jouw stijldoelen?',
-    description: 'Selecteer alles wat voor jou belangrijk is',
+    description: 'Kies wat jij graag draagt. Je kunt straks altijd terug en aanpassen.',
     field: 'goals',
     type: 'multiselect',
     required: true,
@@ -351,7 +351,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 9,
     title: 'Welke prints en patronen prefereer je?',
-    description: 'Kies je voorkeur voor patronen in kleding',
+    description: 'Je kunt straks altijd terug en aanpassen.',
     field: 'prints',
     type: 'radio',
     required: false,
@@ -381,7 +381,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 10,
     title: 'Welke materialen spreken je aan?',
-    description: 'Selecteer alles wat je prettig vindt — meerdere keuzes mogelijk',
+    description: 'Kies wat jij graag draagt. Meerdere keuzes zijn prima.',
     field: 'materials',
     type: 'checkbox',
     required: false,
@@ -421,7 +421,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 11,
     title: 'Wat is jouw budget per kledingstuk?',
-    description: 'Gemiddelde uitgave per item — we tonen producten binnen jouw bereik',
+    description: 'We tonen producten die passen bij jouw keuze.',
     field: 'budgetRange',
     type: 'slider',
     required: true,
@@ -433,7 +433,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 12,
     title: 'Wat zijn jouw maten?',
-    description: 'Je kunt altijd aanpassen — dit helpt ons om producten in jouw maat te vinden',
+    description: 'Je kunt straks altijd terug en aanpassen.',
     field: 'sizes',
     type: 'sizes',
     required: false,
@@ -442,7 +442,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 13,
     title: 'Upload een selfie voor kleurenanalyse',
-    description: 'Voor persoonlijke kleuranalyse (ondertoon) is een foto nodig — dit is volledig optioneel. Natuurlijk licht, geen filters.',
+    description: 'Optioneel. Foto in natuurlijk licht, geen filters. Je kunt deze stap altijd overslaan.',
     field: 'photoUrl',
     type: 'photo',
     required: false

@@ -79,8 +79,7 @@ export default function OnboardingFlowPage() {
       if (existingAnswers) {
         try {
           setAnswers(JSON.parse(existingAnswers));
-        } catch (err) {
-          console.error('Failed to load existing answers:', err);
+        } catch {
         }
       }
     }
@@ -239,16 +238,12 @@ export default function OnboardingFlowPage() {
   };
 
   const handleSwipesComplete = () => {
-    console.log('[OnboardingFlow] ✅ handleSwipesComplete called!');
     setAnswers(prev => ({ ...prev, visualPreferencesCompleted: true }));
-    // Show transition
     setTransitionTo('calibration');
     setShowTransition(true);
-    console.log('[OnboardingFlow] 🎬 Transition started: swipes → calibration');
   };
 
   const handleCalibrationComplete = async () => {
-    console.log('[OnboardingFlow] Calibration complete, starting submit...');
     setAnswers(prev => ({ ...prev, calibrationCompleted: true }));
     await handleSubmit();
   };
@@ -290,7 +285,6 @@ export default function OnboardingFlowPage() {
         answer: value,
       }));
 
-      // Batch upsert with proper conflict resolution
       const { error } = await client
         .from('quiz_answers')
         .upsert(answersToSave, {
@@ -298,14 +292,8 @@ export default function OnboardingFlowPage() {
           ignoreDuplicates: false
         });
 
-      if (error) {
-        console.error('⚠️ [OnboardingFlow] Upsert error:', error);
-        throw error;
-      }
-
-      console.log('✅ [OnboardingFlow] Individual quiz answers saved');
-    } catch (error) {
-      console.error('⚠️ [OnboardingFlow] Failed to save individual answers:', error);
+      if (error) throw error;
+    } catch {
     }
   };
 
@@ -317,12 +305,6 @@ export default function OnboardingFlowPage() {
     retryCount = 0
   ): Promise<boolean> => {
     try {
-      console.log('[OnboardingFlow] 💾 Starting save to database...', {
-        hasUser: !!user,
-        userId: user?.id?.substring(0, 8),
-        sessionId: sessionId.substring(0, 8)
-      });
-
       const profileData = {
         user_id: user?.id || null,
         session_id: !user ? sessionId : null,
@@ -354,16 +336,12 @@ export default function OnboardingFlowPage() {
       let error: any = null;
 
       if (existingProfile) {
-        // Update existing profile
-        console.log('[OnboardingFlow] 🔄 Updating existing profile:', existingProfile.id.substring(0, 8));
         const updateResult = await client
           .from('style_profiles')
           .update(profileData)
           .eq('id', existingProfile.id);
         error = updateResult.error;
       } else {
-        // Insert new profile
-        console.log('[OnboardingFlow] ✨ Creating new profile');
         const insertResult = await client
           .from('style_profiles')
           .insert(profileData);
@@ -372,11 +350,9 @@ export default function OnboardingFlowPage() {
 
       if (error) {
         if (retryCount < 2) {
-          console.warn(`⚠️ [OnboardingFlow] Save failed (attempt ${retryCount + 1}/3), retrying...`, error);
           await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
           return saveToSupabase(client, user, sessionId, result, retryCount + 1);
         }
-        console.error('❌ [OnboardingFlow] Error saving to Supabase after 3 attempts:', error);
         return false;
       }
 
@@ -393,18 +369,10 @@ export default function OnboardingFlowPage() {
         .order('created_at', { ascending: false })
         .maybeSingle();
 
-      if (verifyError || !verifyData) {
-        console.error('❌ [OnboardingFlow] Save verification failed:', verifyError);
-        return false;
-      }
+      if (verifyError || !verifyData) return false;
 
-      console.log('✅ [OnboardingFlow] Quiz saved and verified successfully!', {
-        profileId: verifyData.id.substring(0, 8),
-        completedAt: verifyData.completed_at
-      });
       return true;
-    } catch (error) {
-      console.error('❌ [OnboardingFlow] Exception during save:', error);
+    } catch {
       if (retryCount < 2) {
         await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
         return saveToSupabase(client, user, sessionId, result, retryCount + 1);
@@ -424,21 +392,11 @@ export default function OnboardingFlowPage() {
         try {
           const { data } = await client.auth.getUser();
           userId = data?.user?.id || null;
-        } catch (e) {
-          console.warn('Could not get user for profile generation', e);
+        } catch {
         }
       }
 
-      // ✅ GENERATE COMPLETE STYLE PROFILE FROM QUIZ + SWIPES + PHOTO
-      console.log('[OnboardingFlow] Generating style profile from quiz + swipes...');
-
-      // Get uploaded photo from localStorage
-      const photoUrl = localStorage.getItem('ff_onboarding_photo_url');
       const photoAnalysis = localStorage.getItem('ff_onboarding_photo_analysis');
-
-      if (photoUrl) {
-        console.log('[OnboardingFlow] Photo uploaded during onboarding:', photoUrl);
-      }
 
       let colorProfile: any;
       let archetype: any;
@@ -454,7 +412,6 @@ export default function OnboardingFlowPage() {
         colorProfile = profileResult.colorProfile;
         archetype = profileResult.archetype;
 
-        // Enhance color profile with photo analysis if available
         if (photoAnalysis) {
           try {
             const analysis = JSON.parse(photoAnalysis);
@@ -464,25 +421,10 @@ export default function OnboardingFlowPage() {
               undertone: analysis.undertone || colorProfile.undertone,
               seasonalType: analysis.seasonal_type || colorProfile.seasonalType
             };
-            console.log('[OnboardingFlow] Enhanced color profile with photo analysis');
-          } catch (e) {
-            console.warn('[OnboardingFlow] Failed to parse photo analysis:', e);
+          } catch {
           }
         }
-
-        console.log('[OnboardingFlow] ✅ Style profile generated:', {
-          archetype: profileResult.archetype,
-          secondaryArchetype: profileResult.secondaryArchetype,
-          temperature: colorProfile.temperature,
-          chroma: colorProfile.chroma,
-          contrast: colorProfile.contrast,
-          paletteName: colorProfile.paletteName,
-          confidence: profileResult.confidence,
-          dataSource: profileResult.dataSource
-        });
-      } catch (profileError) {
-        console.error('[OnboardingFlow] Failed to generate style profile, using fallback:', profileError);
-        // Fallback to old logic
+      } catch {
         const fallbackResult = computeResult(answers as any);
         colorProfile = fallbackResult.color;
         archetype = fallbackResult.archetype;
@@ -504,18 +446,14 @@ export default function OnboardingFlowPage() {
           const { data } = await client.auth.getUser();
           user = data?.user || null;
           userId = user?.id || null;
-        } catch (authError) {
-          console.warn('⚠️ [OnboardingFlow] Could not get user, continuing with local save only:', authError);
+        } catch {
         }
       } else if (userId && client?.auth) {
         try {
           const { data } = await client.auth.getUser();
           user = data?.user || null;
-        } catch (authError) {
-          console.warn('⚠️ [OnboardingFlow] Could not get user object:', authError);
+        } catch {
         }
-      } else if (!client) {
-        console.warn('⚠️ [OnboardingFlow] Supabase client not available, using local storage only');
       }
 
       if (client && userId) {
@@ -525,14 +463,10 @@ export default function OnboardingFlowPage() {
               .from('profiles')
               .update({ gender: answers.gender })
               .eq('id', userId);
-            console.log('✅ [OnboardingFlow] Gender updated in profiles');
-          } catch (genderError) {
-            console.warn('⚠️ [OnboardingFlow] Could not update gender in profiles:', genderError);
+          } catch {
           }
         }
 
-        // Create result object with generated profile
-        // Convert archetype to Dutch format for database
         const { archetypeToDutch } = await import('@/config/archetypeMapping');
         const dutchArchetype = archetypeToDutch(archetype);
 
@@ -541,40 +475,24 @@ export default function OnboardingFlowPage() {
           archetype: dutchArchetype
         };
 
-        // Save to database silently (no confusing toast during quiz)
         syncSuccess = await saveToSupabase(client, user, sessionId, updatedResult);
 
         if (syncSuccess && answers.visualPreferencesCompleted && answers.calibrationCompleted) {
           try {
-            // STEP 1: Compute visual embedding from swipe data
-            console.log('[OnboardingFlow] Computing visual embedding from swipes...');
             const embedding = await VisualPreferenceService.computeVisualEmbedding(userId, sessionId);
-            console.log('✅ [OnboardingFlow] Visual embedding computed:', embedding);
 
-            // STEP 2: Save embedding to style_profiles
             if (embedding && Object.keys(embedding).length > 0) {
-              const { error: updateError } = await client
+              await client
                 .from('style_profiles')
                 .update({
                   visual_preference_embedding: embedding,
                   visual_preference_completed_at: new Date().toISOString()
                 })
                 .eq(userId ? 'user_id' : 'session_id', userId || sessionId);
-
-              if (updateError) {
-                console.error('⚠️ [OnboardingFlow] Failed to save embedding:', updateError);
-              } else {
-                console.log('✅ [OnboardingFlow] Embedding saved to style_profiles');
-              }
-            } else {
-              console.warn('⚠️ [OnboardingFlow] Empty embedding computed, skipping save');
             }
 
-            // STEP 3: Lock embedding for finalization
             await EmbeddingService.lockEmbedding(userId, sessionId);
-            console.log('✅ [OnboardingFlow] Embedding locked successfully!');
-          } catch (lockError) {
-            console.error('⚠️ [OnboardingFlow] Failed to compute/save/lock embedding:', lockError);
+          } catch {
           }
         }
       }
@@ -587,13 +505,9 @@ export default function OnboardingFlowPage() {
         colorProfile: colorProfile
       });
 
-      console.log('[OnboardingFlow] Setting phase to reveal...');
       setPhase('reveal');
       setIsSubmitting(false);
-    } catch (error) {
-      console.error('❌ [OnboardingFlow] Error in handleSubmit:', error);
-
-      // Even on error, try to show results with fallback data
+    } catch {
       const fallbackResult = computeResult(answers as any);
 
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
@@ -611,7 +525,6 @@ export default function OnboardingFlowPage() {
 
       toast.error('Er ging iets mis bij het opslaan, maar je resultaten zijn lokaal bewaard.');
 
-      console.log('[OnboardingFlow] Setting phase to reveal (fallback)...');
       setPhase('reveal');
       setIsSubmitting(false);
     }
@@ -886,7 +799,7 @@ export default function OnboardingFlowPage() {
           </AnimatedQuestionTransition>
 
           {/* Answer Options - 52px+ touch targets */}
-          <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+          <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
             {/* Checkbox (Multiple Select) - Mobile-first touch targets */}
             {(step.type === 'checkbox' || step.type === 'multiselect') && step.options && (
               <>
@@ -907,7 +820,7 @@ export default function OnboardingFlowPage() {
                   </div>
                 )}
 
-                <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                <div className="grid gap-3 sm:gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
@@ -944,7 +857,7 @@ export default function OnboardingFlowPage() {
 
             {/* Radio (Single Select) - Mobile-first touch targets */}
             {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2 lg:grid-cols-2">
+              <div className="grid gap-3 sm:gap-3 md:grid-cols-2 lg:grid-cols-2">
                 {step.options.map((option) => {
                   const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
                   return (
@@ -1112,7 +1025,6 @@ export default function OnboardingFlowPage() {
                 value={answers.photoUrl as string}
                 onChange={(url) => handleAnswer('photoUrl', url)}
                 onAnalysisComplete={(analysis) => {
-                  console.log("AI Color Analysis:", analysis);
                   handleAnswer('colorAnalysis', analysis);
                 }}
               />
@@ -1210,10 +1122,10 @@ export default function OnboardingFlowPage() {
             <div className="flex items-start justify-between mb-5">
               <div>
                 <h3 id="review-modal-title" className="text-xl font-bold text-gray-900">
-                  Jouw antwoorden
+                  Laatste stap: check je keuzes.
                 </h3>
                 <p className="text-sm text-gray-600 mt-0.5">
-                  Controleer en pas aan voor je verdergaat
+                  Je kunt altijd terug en aanpassen.
                 </p>
               </div>
               <button
@@ -1261,7 +1173,7 @@ export default function OnboardingFlowPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-800 leading-tight">{s.title}</p>
                         <p className={`text-xs mt-0.5 truncate ${hasValue ? 'text-gray-600' : s.required ? 'text-red-500' : 'text-gray-400'}`}>
-                          {hasValue ? displayVal : s.required ? 'Verplicht — klik om in te vullen' : 'Overgeslagen'}
+                          {hasValue ? displayVal : s.required ? 'Nog niet ingevuld — klik om aan te passen' : 'Overgeslagen'}
                         </p>
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[var(--ff-color-primary-500)] transition-colors flex-shrink-0 mt-1" />
@@ -1277,12 +1189,12 @@ export default function OnboardingFlowPage() {
                 disabled={quizSteps.some(s => s.required && !answers[s.field as keyof QuizAnswers])}
                 className="w-full px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               >
-                <span>Verder naar visuele voorkeuren</span>
+                <span>Maak mijn rapport</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
               <button
                 onClick={() => { setShowReviewModal(false); }}
-                className="w-full px-6 py-3 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all"
+                className="w-full px-6 py-3 min-h-[48px] border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
               >
                 Terug naar vragen
               </button>
