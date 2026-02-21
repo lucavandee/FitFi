@@ -2,6 +2,8 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { HeroV3 } from "@/components/landing/HeroV3";
 import { SocialProofV3 } from "@/components/landing/SocialProofV3";
+import { StyleReportPreviewCard } from "@/components/landing/StyleReportPreviewCard";
+import { TrustBlock } from "@/components/landing/TrustBlock";
 import { RealOutfitShowcase } from "@/components/landing/RealOutfitShowcase";
 import { FeatureBlocksV4 } from "@/components/landing/FeatureBlocksV4";
 import { FinalCTA } from "@/components/landing/FinalCTA";
@@ -21,15 +23,15 @@ export default function LandingPage() {
   return (
     <>
       <Helmet>
-        <title>FitFi — Outfits die bij jou passen</title>
+        <title>FitFi — Persoonlijk stijladvies in 2 minuten</title>
         <meta
           name="description"
-          content="We geven je persoonlijk stijladvies in 2 minuten. Ontdek outfits die bij je passen en shop ze direct. Gratis start."
+          content="In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt. Outfits voor werk, weekend en uitgaan + directe shoplinks. Gratis start."
         />
-        <meta property="og:title" content="FitFi — Outfits die bij jou passen" />
+        <meta property="og:title" content="FitFi — Persoonlijk stijladvies in 2 minuten" />
         <meta
           property="og:description"
-          content="We geven je persoonlijk stijladvies in 2 minuten. Ontdek outfits die bij je passen en shop ze direct."
+          content="Stijlrapport met outfits voor werk, weekend en uitgaan. We vertalen jouw voorkeuren naar combinaties die écht passen."
         />
         <meta property="og:image" content="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp" />
         <meta property="og:type" content="website" />
@@ -72,6 +74,12 @@ export default function LandingPage() {
 
         {/* SOCIAL PROOF V3 - Testimonials FIRST for credibility */}
         <SocialProofV3 />
+
+        {/* STYLE REPORT PREVIEW - Show what users get (blurred example) */}
+        <StyleReportPreviewCard />
+
+        {/* TRUST BLOCK - Privacy, transparency, no medical claims */}
+        <TrustBlock />
 
         {/* REAL OUTFIT SHOWCASE - Actual clothing items */}
         <RealOutfitShowcase />

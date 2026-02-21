@@ -103,10 +103,33 @@ export function HeroV3() {
           </h1>
 
           {/* Subline - Concrete Value (not "ontdek") */}
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-2xl mb-10 sm:mb-12 font-light">
-            We geven je persoonlijk stijladvies in 2 minuten,{' '}
-            <span className="font-semibold">zo shop je direct</span>
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-2xl mb-6 sm:mb-8 font-light">
+            In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
           </p>
+
+          {/* What You Get - 3 concrete bullets */}
+          <div className="mb-10 sm:mb-12">
+            <ul className="space-y-3 text-white/90 text-base sm:text-lg">
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <span>Direct een overzicht met combinaties + shoplinks</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <span>Outfits voor werk, weekend en uitgaan</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                <span>Pas je antwoorden aan en zie direct nieuwe aanbevelingen</span>
+              </li>
+            </ul>
+          </div>
 
           {/* CTAs - Benefits-driven labels, mobile-optimized touch targets */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5">
@@ -115,7 +138,7 @@ export function HeroV3() {
               className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-9 sm:py-5 lg:px-10 lg:py-6 min-h-[52px] sm:min-h-[56px] bg-white hover:bg-gray-50 text-[var(--color-text)] rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg lg:text-xl shadow-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/80 focus-visible:ring-offset-4 focus-visible:ring-offset-black/50"
               aria-label="Ontvang gratis persoonlijk stijladvies in 2 minuten"
             >
-              Ontvang je stijladvies
+              Start mijn stijlquiz
               <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true" />
             </button>
 
