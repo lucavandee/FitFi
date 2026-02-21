@@ -1,11 +1,9 @@
 import { QuizStep } from '../types/quiz';
 
-// Dynamic style options based on gender
 export const getStyleOptionsForGender = (gender?: string) => {
   const isFemale = gender === 'female';
   const isMale = gender === 'male';
 
-  // Shared options (relevant for all genders)
   const sharedOptions = [
     {
       value: 'minimalist',
@@ -28,7 +26,6 @@ export const getStyleOptionsForGender = (gender?: string) => {
     }
   ];
 
-  // Female-specific options
   const femaleOptions = [
     {
       value: 'bohemian',
@@ -47,12 +44,11 @@ export const getStyleOptionsForGender = (gender?: string) => {
     }
   ];
 
-  // Male-specific options
   const maleOptions = [
     {
       value: 'smart-casual',
       label: 'Smart Casual',
-      description: 'Verzorgd en relaxed: chino\'s, polo\'s, loafers'
+      description: "Verzorgd en relaxed: chino's, polo's, loafers"
     },
     {
       value: 'athletic',
@@ -66,7 +62,6 @@ export const getStyleOptionsForGender = (gender?: string) => {
     }
   ];
 
-  // Gender-neutral fallback (non-binary, prefer-not-to-say)
   const neutralOptions = [
     {
       value: 'bohemian',
@@ -90,12 +85,10 @@ export const getStyleOptionsForGender = (gender?: string) => {
   } else if (isFemale) {
     return [...sharedOptions, ...femaleOptions];
   } else {
-    // Non-binary or prefer-not-to-say: show all relevant options
     return [...sharedOptions, ...neutralOptions];
   }
 };
 
-// Dynamic size options based on gender
 export const getSizeFieldsForGender = (gender?: string) => {
   const isFemale = gender === 'female';
   const isMale = gender === 'male';
@@ -111,17 +104,21 @@ export const getSizeFieldsForGender = (gender?: string) => {
       name: 'bottoms',
       label: isFemale ? 'Broeken/Rokken' : 'Broeken (waist)',
       options: isFemale
-        ? ['32', '34', '36', '38', '40', '42', '44', '46'] // Vrouwenmaten
-        : ['28', '30', '31', '32', '33', '34', '36', '38', '40'], // Mannenmaten (waist)
-      helperText: isFemale ? 'US conversie: 32=2, 34=4, 36=6, 38=8, 40=10, 42=12' : 'Inch waist maat (US/EU standaard)'
+        ? ['32', '34', '36', '38', '40', '42', '44', '46']
+        : ['28', '30', '31', '32', '33', '34', '36', '38', '40'],
+      helperText: isFemale
+        ? 'US conversie: 32=2, 34=4, 36=6, 38=8, 40=10, 42=12'
+        : 'Inch waist maat (US/EU standaard)'
     },
     {
       name: 'shoes',
       label: 'Schoenen (EU)',
       options: isFemale
-        ? ['35', '36', '37', '38', '39', '40', '41', '42'] // Vrouwenmaten
-        : ['39', '40', '41', '42', '43', '44', '45', '46'], // Mannenmaten
-      helperText: isFemale ? 'US conversie: EU 36=US 6, 37=7, 38=7.5, 39=8, 40=8.5' : 'US conversie: EU 41=US 8, 42=8.5, 43=9.5, 44=10'
+        ? ['35', '36', '37', '38', '39', '40', '41', '42']
+        : ['39', '40', '41', '42', '43', '44', '45', '46'],
+      helperText: isFemale
+        ? 'US conversie: EU 36=US 6, 37=7, 38=7.5, 39=8, 40=8.5'
+        : 'US conversie: EU 41=US 8, 42=8.5, 43=9.5, 44=10'
     }
   ];
 };
@@ -159,95 +156,122 @@ export const quizSteps: QuizStep[] = [
   },
   {
     id: 2,
-    title: 'Wat zijn jouw stijlvoorkeuren?',
-    description: 'Selecteer alle stijlen die je aanspreken (meerdere keuzes mogelijk)',
+    title: 'Welke stijlen spreken jou aan?',
+    description: 'Kies de stijlen die het beste bij je passen — meerdere keuzes mogelijk',
     field: 'stylePreferences',
     type: 'checkbox',
     required: true,
-    // Note: options are dynamically generated based on gender via getStyleOptionsForGender()
-    // This ensures men see relevant options (Smart Casual, Athletic, Rugged)
-    // and women see their options (Bohemian, Romantic, Edgy)
     options: []
   },
   {
     id: 3,
-    title: 'Welke basiskleuren draag je het liefst?',
-    description: 'Kies de kleurencombinatie die het beste bij je past',
-    field: 'baseColors',
+    title: 'Welke kleuren draag jij het liefst?',
+    description: 'Dit gaat over wat jij graag draagt — niet over je huidskleur of ondertoon.',
+    field: 'neutrals',
     type: 'radio',
     required: true,
     options: [
       {
-        value: 'neutral',
-        label: 'Neutrale tinten',
-        description: 'Zwart, wit, grijs, beige, navy'
+        value: 'warm',
+        label: 'Warme tinten',
+        description: 'Beige, camel, olijfgroen, terracotta, bruin'
       },
       {
-        value: 'earth',
-        label: 'Aardse tinten',
-        description: 'Bruin, camel, khaki, olijfgroen'
+        value: 'koel',
+        label: 'Koele tinten',
+        description: 'Grijs, navy, ijsblauw, donkergroen, wit'
       },
       {
-        value: 'jewel',
-        label: 'Juweel tinten',
-        description: 'Smaragdgroen, saffierblauw, robijnrood'
-      },
-      {
-        value: 'pastel',
-        label: 'Pastel tinten',
-        description: 'Zacht roze, lichtblauw, lavendel'
-      },
-      {
-        value: 'bold',
-        label: 'Felle kleuren',
-        description: 'Felrood, elektrisch blauw, neon geel'
+        value: 'neutraal',
+        label: 'Neutrale mix',
+        description: 'Zwart, wit, grijs — ik combineer graag'
       }
     ]
   },
   {
     id: 4,
-    title: 'Wat beschrijft jouw lichaamsbouw het beste?',
-    description: 'Dit helpt ons de meest flatterende pasvorm voor je te vinden',
-    field: 'bodyType',
-    type: 'select',
+    title: 'Hoe licht of donker kleed je je?',
+    description: 'Kies de helderheid die het meest op jouw dagelijkse keuzes lijkt',
+    field: 'lightness',
+    type: 'radio',
     required: true,
     options: [
       {
-        value: 'pear',
-        label: 'Peer vorm',
-        description: 'Smallere schouders, bredere heupen'
+        value: 'licht',
+        label: 'Licht',
+        description: 'Cremewit, ivoor, lichtgrijs, pasteltinten'
       },
       {
-        value: 'apple',
-        label: 'Appel vorm',
-        description: 'Bredere schouders, smaller middel'
+        value: 'medium',
+        label: 'Middenweg',
+        description: 'Mix van licht en donker, veel "echte" kleuren'
       },
       {
-        value: 'hourglass',
-        label: 'Zandloper vorm',
-        description: 'Gebalanceerde schouders en heupen, smaller middel'
-      },
-      {
-        value: 'rectangle',
-        label: 'Rechthoek vorm',
-        description: 'Rechte lijnen, weinig taille definitie'
-      },
-      {
-        value: 'inverted_triangle',
-        label: 'Omgekeerde driehoek',
-        description: 'Bredere schouders, smallere heupen'
-      },
-      {
-        value: 'athletic',
-        label: 'Atletisch',
-        description: 'Gespierd, gedefinieerde lijnen'
+        value: 'donker',
+        label: 'Donker',
+        description: 'Zwart, donkerblauw, bordeaux, donkerbruin'
       }
     ]
   },
   {
     id: 5,
+    title: 'Hoe combineer je kleur en contrast?',
+    description: 'Kies wat je het meest aanspreekt bij een complete outfit',
+    field: 'contrast',
+    type: 'radio',
+    required: true,
+    options: [
+      {
+        value: 'laag',
+        label: 'Tonal — alles in dezelfde tint',
+        description: 'Bijv. beige top + crème broek + camel schoenen'
+      },
+      {
+        value: 'medium',
+        label: 'Licht contrast',
+        description: 'Lichte top met iets donkerdere broek'
+      },
+      {
+        value: 'hoog',
+        label: 'Sterk contrast',
+        description: 'Bijv. zwarte jas op wit overhemd'
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: 'Welke pasvorm prefereer je?',
+    description: 'We gebruiken je antwoord om outfits te combineren die logisch zijn voor jouw lichaam',
+    field: 'fit',
+    type: 'radio',
+    required: true,
+    options: [
+      {
+        value: 'slim',
+        label: 'Nauwsluitend',
+        description: 'Tailored, strak op maat (slim fit)'
+      },
+      {
+        value: 'regular',
+        label: 'Normaal',
+        description: 'Comfortabel, klassieke pasvorm (regular fit)'
+      },
+      {
+        value: 'relaxed',
+        label: 'Losser',
+        description: 'Ruime, comfortabele pasvorm (relaxed fit)'
+      },
+      {
+        value: 'oversized',
+        label: 'Oversized',
+        description: 'Extra ruim, moderne stijl'
+      }
+    ]
+  },
+  {
+    id: 7,
     title: 'Voor welke gelegenheden zoek je outfits?',
-    description: 'Selecteer alle gelegenheden waarvoor je stijladvies wilt',
+    description: 'We gebruiken je antwoorden om outfits te combineren die logisch zijn voor jouw momenten',
     field: 'occasions',
     type: 'multiselect',
     required: true,
@@ -285,69 +309,79 @@ export const quizSteps: QuizStep[] = [
     ]
   },
   {
-    id: 6,
-    title: 'Wat is jouw budget voor kledingstukken?',
-    description: 'Gemiddelde uitgave per item — we tonen producten binnen jouw bereik',
-    field: 'budgetRange',
-    type: 'slider',
-    required: true,
-    min: 25,
-    max: 500,
-    step: 25,
-    helperText: '€25-75: Budget | €75-150: Middensegment | €150+: Premium'
-  },
-  {
-    id: 7,
-    title: 'Wat zijn jouw maten?',
-    description: 'Dit helpt ons om producten in jouw maat te vinden',
-    field: 'sizes',
-    type: 'sizes',
-    required: false,
-    helperText: 'Niet zeker? Kies wat je meestal draagt — je kunt dit later aanpassen'
-    // sizeFields worden dynamisch gegenereerd op basis van gender
-  },
-  {
     id: 8,
-    title: 'Upload een selfie voor kleurenanalyse',
-    description: 'Voor de beste analyse: natuurlijk licht, geen filters, frontaal gezicht',
-    field: 'photoUrl',
-    type: 'photo',
-    required: false
-  },
-  {
-    id: 9,
-    title: 'Welke pasvorm prefereer je?',
-    description: 'Kies de pasvorm die het beste bij jouw stijl past',
-    field: 'fit',
-    type: 'radio',
+    title: 'Wat zijn jouw stijldoelen?',
+    description: 'Selecteer alles wat voor jou belangrijk is',
+    field: 'goals',
+    type: 'multiselect',
     required: true,
     options: [
       {
-        value: 'slim',
-        label: 'Nauwsluitend',
-        description: 'Tailored, strak op maat (slim fit)'
+        value: 'timeless',
+        label: 'Tijdloze garderobe',
+        description: 'Klassieke stukken die jaren meegaan'
       },
       {
-        value: 'regular',
-        label: 'Normaal',
-        description: 'Comfortabel, klassieke pasvorm (regular fit)'
+        value: 'trendy',
+        label: 'On-trend blijven',
+        description: 'Laatste fashion trends volgen'
       },
       {
-        value: 'relaxed',
-        label: 'Losser',
-        description: 'Ruime, comfortabele pasvorm (relaxed fit)'
+        value: 'minimal',
+        label: 'Minimalistisch',
+        description: 'Minder is meer, clean aesthetic'
       },
       {
-        value: 'oversized',
-        label: 'Oversized',
-        description: 'Extra ruim, moderne stijl'
+        value: 'express',
+        label: 'Mezelf uitdrukken',
+        description: 'Unieke statement pieces, persoonlijke stijl'
+      },
+      {
+        value: 'professional',
+        label: 'Professioneel ogen',
+        description: 'Werk en carrière focus'
+      },
+      {
+        value: 'comfort',
+        label: 'Comfort prioriteit',
+        description: 'Prettig dragen boven alles'
+      }
+    ]
+  },
+  {
+    id: 9,
+    title: 'Welke prints en patronen prefereer je?',
+    description: 'Kies je voorkeur voor patronen in kleding',
+    field: 'prints',
+    type: 'radio',
+    required: false,
+    options: [
+      {
+        value: 'effen',
+        label: 'Effen/Uni',
+        description: 'Geen prints, clean en minimaal'
+      },
+      {
+        value: 'subtiel',
+        label: 'Subtiele prints',
+        description: 'Kleine patronen, strepen, dots'
+      },
+      {
+        value: 'statement',
+        label: 'Statement prints',
+        description: 'Opvallende patronen, bold designs'
+      },
+      {
+        value: 'gemengd',
+        label: 'Mix van alles',
+        description: 'Variatie in prints en patronen'
       }
     ]
   },
   {
     id: 10,
     title: 'Welke materialen spreken je aan?',
-    description: 'Selecteer alle materialen die je prettig vindt (meerdere keuzes mogelijk)',
+    description: 'Selecteer alles wat je prettig vindt — meerdere keuzes mogelijk',
     field: 'materials',
     type: 'checkbox',
     required: false,
@@ -386,72 +420,31 @@ export const quizSteps: QuizStep[] = [
   },
   {
     id: 11,
-    title: 'Wat zijn jouw stijldoelen?',
-    description: 'Selecteer alle doelen die belangrijk voor je zijn',
-    field: 'goals',
-    type: 'multiselect',
+    title: 'Wat is jouw budget per kledingstuk?',
+    description: 'Gemiddelde uitgave per item — we tonen producten binnen jouw bereik',
+    field: 'budgetRange',
+    type: 'slider',
     required: true,
-    options: [
-      {
-        value: 'timeless',
-        label: 'Tijdloze garderobe',
-        description: 'Klassieke stukken die jaren meegaan'
-      },
-      {
-        value: 'trendy',
-        label: 'On-trend blijven',
-        description: 'Laatste fashion trends volgen'
-      },
-      {
-        value: 'minimal',
-        label: 'Minimalistisch',
-        description: 'Minder is meer, clean aesthetic'
-      },
-      {
-        value: 'express',
-        label: 'Mezelf uitdrukken',
-        description: 'Unieke statement pieces, persoonlijke stijl'
-      },
-      {
-        value: 'professional',
-        label: 'Professioneel ogen',
-        description: 'Werk en carrière focus'
-      },
-      {
-        value: 'comfort',
-        label: 'Comfort prioriteit',
-        description: 'Prettig dragen boven alles'
-      }
-    ]
+    min: 25,
+    max: 500,
+    step: 25,
+    helperText: '€25-75: Budget | €75-150: Middensegment | €150+: Premium'
   },
   {
     id: 12,
-    title: 'Welke prints en patronen prefereer je?',
-    description: 'Kies je voorkeur voor patronen in kleding',
-    field: 'prints',
-    type: 'radio',
+    title: 'Wat zijn jouw maten?',
+    description: 'Je kunt altijd aanpassen — dit helpt ons om producten in jouw maat te vinden',
+    field: 'sizes',
+    type: 'sizes',
     required: false,
-    options: [
-      {
-        value: 'effen',
-        label: 'Effen/Uni',
-        description: 'Geen prints, clean en minimaal'
-      },
-      {
-        value: 'subtiel',
-        label: 'Subtiele prints',
-        description: 'Kleine patronen, strepen, dots'
-      },
-      {
-        value: 'statement',
-        label: 'Statement prints',
-        description: 'Opvallende patronen, bold designs'
-      },
-      {
-        value: 'gemengd',
-        label: 'Mix van alles',
-        description: 'Variatie in prints en patronen'
-      }
-    ]
+    helperText: 'Niet zeker? Kies wat je meestal draagt — je kunt dit later aanpassen'
+  },
+  {
+    id: 13,
+    title: 'Upload een selfie voor kleurenanalyse',
+    description: 'Voor persoonlijke kleuranalyse (ondertoon) is een foto nodig — dit is volledig optioneel. Natuurlijk licht, geen filters.',
+    field: 'photoUrl',
+    type: 'photo',
+    required: false
   }
 ];
