@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import { ExternalLink, Heart, Info } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ExternalLink, Bookmark, BookmarkCheck, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext';
 import SmartImage from '@/components/media/SmartImage';
-import Button from './ui/Button';
 import { trackProductClick, trackShopCta, trackImpression } from '@/services/engagement';
 import { buildAffiliateUrl, detectPartner } from '@/utils/deeplinks';
 import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven } from '@/utils/affiliate';
 import toast from 'react-hot-toast';
 import { useUser } from '@/context/UserContext';
 import { trackView, trackLike, trackSave as trackSaveInteraction, trackClick } from '@/services/ml/interactionTrackingService';
+import { cn } from '@/utils/cn';
 
 interface ProductCardProps {
   id: string;
@@ -17,10 +17,13 @@ interface ProductCardProps {
   price: number;
   imageUrl: string;
   deeplink: string;
+  reason?: string;
   className?: string;
   outfitId?: string;
   position?: number;
   context?: Record<string, any>;
+  onFeedbackMore?: (id: string) => void;
+  onFeedbackLess?: (id: string) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -30,77 +33,49 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   imageUrl,
   deeplink,
+  reason,
   className = '',
   outfitId,
   position,
-  context = {}
+  context = {},
+  onFeedbackMore,
+  onFeedbackLess,
 }) => {
   const { saveOutfit } = useGamification();
   const { user } = useUser();
+  const [saved, setSaved] = useState(false);
+  const [feedbackGiven, setFeedbackGiven] = useState<'more' | 'less' | null>(null);
 
-  // Track view on mount (ML interaction tracking)
   useEffect(() => {
-    trackView(id, {
-      outfitId,
-      position,
-      page: 'ProductCard',
-      brand,
-      price,
-      ...context
-    });
-  }, [id, outfitId, position, brand, price]);
+    trackView(id, { outfitId, position, page: 'ProductCard', brand, price, ...context });
+  }, [id]);
 
   const handleSave = async () => {
     try {
-      // Track save interaction for ML
-      trackSaveInteraction(id, {
-        outfitId,
-        position,
-        page: 'ProductCard',
-        brand,
-        price,
-        ...context
-      });
-
+      trackSaveInteraction(id, { outfitId, position, page: 'ProductCard', brand, price, ...context });
       await saveOutfit();
-      toast.success('Product bewaard!');
-    } catch (error) {
-      console.warn('Save failed, using local fallback:', error);
-      const { toggleSave } = await import('@/services/engagement');
-      const saved = toggleSave(id);
-      toast.success(saved ? 'Product bewaard!' : 'Product verwijderd uit favorieten');
+      setSaved(true);
+      toast.success('Bewaard voor later.');
+    } catch {
+      try {
+        const { toggleSave } = await import('@/services/engagement');
+        const isSaved = toggleSave(id);
+        setSaved(isSaved);
+        toast.success(isSaved ? 'Bewaard voor later.' : 'Verwijderd uit bewaarde items.');
+      } catch {
+        toast.error('Bewaren mislukt. Probeer opnieuw.');
+      }
     }
   };
 
   const handleClick = async () => {
-    // Track click interaction for ML
-    trackClick(id, {
-      outfitId,
-      position,
-      page: 'ProductCard',
-      brand,
-      price,
-      source: 'shop_button',
-      ...context
-    });
-
-    trackProductClick({
-      id: id,
-      title: title,
-      brand: brand,
-      price: price,
-      source: 'ProductCard'
-    });
+    trackClick(id, { outfitId, position, page: 'ProductCard', brand, price, source: 'shop_button', ...context });
+    trackProductClick({ id, title, brand, price, source: 'ProductCard' });
 
     const partner = detectPartner(deeplink || '');
     const affiliateUrl = buildAffiliateUrl(deeplink || '#', partner || undefined);
 
-    trackShopCta({
-      id: id,
-      partner: partner || 'unknown',
-      url: affiliateUrl,
-      source: 'ProductCard'
-    });
+    trackShopCta({ id, partner: partner || 'unknown', url: affiliateUrl, source: 'ProductCard' });
 
     if (isAffiliateConsentGiven()) {
       const clickRef = buildClickRef({ outfitId: id, slot: 1, userId: user?.id });
@@ -116,10 +91,31 @@ const ProductCard: React.FC<ProductCardProps> = ({
     window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleFeedbackMore = () => {
+    setFeedbackGiven('more');
+    trackLike(id, { outfitId, position, feedback: 'more', ...context });
+    onFeedbackMore?.(id);
+    toast.success('Goed om te weten. We tonen meer items zoals dit.');
+  };
+
+  const handleFeedbackLess = () => {
+    setFeedbackGiven('less');
+    trackLike(id, { outfitId, position, feedback: 'less', ...context });
+    onFeedbackLess?.(id);
+    toast('Niet jouw smaak? We leren van je feedback.', { duration: 3000 });
+  };
+
   return (
-    <div className={`bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow ${className}`}>
-      {/* Product Image - Reserved space for CLS prevention */}
-      <div className="aspect-[3/4] overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
+    <article
+      className={cn(
+        'rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden',
+        'hover:shadow-[var(--shadow-soft)] transition-shadow',
+        className
+      )}
+      aria-label={`${title} van ${brand}`}
+    >
+      {/* Product image */}
+      <div className="aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)] relative">
         <SmartImage
           src={imageUrl}
           alt={`${title} van ${brand}`}
@@ -132,57 +128,100 @@ const ProductCard: React.FC<ProductCardProps> = ({
           onClick={handleClick}
           loading="lazy"
         />
+
+        {/* Save button (overlay, top-right) */}
+        <button
+          onClick={handleSave}
+          aria-label={saved ? 'Verwijder uit bewaard' : 'Bewaar voor later'}
+          className={cn(
+            'absolute top-2.5 right-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm',
+            saved
+              ? 'bg-[var(--ff-color-primary-700)] text-white'
+              : 'bg-white/90 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)]'
+          )}
+        >
+          {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+        </button>
       </div>
-      
-      {/* Product Info */}
-      <div className="p-4">
-        <div className="mb-3">
-          <h3 className="font-medium text-gray-900 text-sm leading-tight mb-1">
-            {title}
-          </h3>
-          <p className="text-gray-600 text-xs">{brand}</p>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="text-lg font-bold text-gray-900">
+
+      {/* Info */}
+      <div className="p-3.5">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-muted)] mb-0.5">
+          {brand}
+        </p>
+        <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug line-clamp-2 mb-2">
+          {title}
+        </h3>
+
+        {/* Reason line */}
+        {reason && (
+          <p className="text-xs text-[var(--color-muted)] italic mb-2.5 line-clamp-2">
+            {reason}
+          </p>
+        )}
+
+        {/* Price + primary CTA */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <span className="text-base font-bold text-[var(--color-text)]">
             €{price.toFixed(2)}
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSave}
-              icon={<Heart size={14} />}
-              className="text-gray-500 hover:text-red-500 p-1"
-              aria-label="Bewaar product"
-            >
-              <></>
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleClick}
-              icon={<ExternalLink size={14} />}
-              iconPosition="right"
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white text-xs px-3 py-1"
-            >
-              Bekijk
-            </Button>
-          </div>
+          </span>
+          <button
+            onClick={handleClick}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-xs font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            aria-label={`Bekijk ${title} bij partner (je verlaat FitFi)`}
+          >
+            Bekijk item
+            <ExternalLink className="w-3 h-3" />
+          </button>
         </div>
 
-        <p className="mt-2 flex items-center gap-1 text-xs text-[var(--color-text)]/60">
-          <Info size={12} className="flex-shrink-0" />
-          <span>
-            Affiliate link.{' '}
-            <a href="/disclosure" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
-              Meer info
-            </a>
-          </span>
+        {/* Feedback row */}
+        {(onFeedbackMore || onFeedbackLess) && feedbackGiven === null && (
+          <div className="flex items-center gap-2 pt-2.5 border-t border-[var(--color-border)]">
+            <span className="text-[10px] text-[var(--color-muted)] mr-auto">Past dit bij je?</span>
+            <button
+              onClick={handleFeedbackMore}
+              aria-label="Meer zoals dit"
+              title="Meer zoals dit"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
+            >
+              <ThumbsUp className="w-3.5 h-3.5" />
+              Meer
+            </button>
+            <button
+              onClick={handleFeedbackLess}
+              aria-label="Minder zoals dit"
+              title="Minder zoals dit"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-error-600)] hover:bg-[var(--ff-color-error-50)] transition-colors"
+            >
+              <ThumbsDown className="w-3.5 h-3.5" />
+              Minder
+            </button>
+          </div>
+        )}
+
+        {feedbackGiven !== null && (
+          <div className="pt-2.5 border-t border-[var(--color-border)]">
+            <p className="text-[10px] text-[var(--color-muted)] text-center">
+              {feedbackGiven === 'more' ? 'Bedankt — we tonen meer hiervan.' : 'Begrepen — we leren van je.'}
+            </p>
+          </div>
+        )}
+
+        {/* Affiliate disclosure */}
+        <p className="mt-2.5 text-[10px] text-[var(--color-muted)] leading-relaxed">
+          Koop via onze partner (je verlaat FitFi) ·{' '}
+          <a
+            href="/disclosure"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:no-underline"
+          >
+            affiliate info
+          </a>
         </p>
       </div>
-    </div>
+    </article>
   );
 };
 
