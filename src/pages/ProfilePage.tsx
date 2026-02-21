@@ -1,520 +1,569 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, RefreshCw, Sparkles, Palette, Settings as SettingsIcon, Shield, LogOut, ArrowRight, Shirt, LayoutDashboard } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { useUser } from '../context/UserContext';
-import { supabase } from '@/lib/supabaseClient';
-import { Helmet } from 'react-helmet-async';
-import { QuizResetModal } from '@/components/profile/QuizResetModal';
-import { EmailPreferences } from '@/components/profile/EmailPreferences';
-import { CookieSettings } from '@/components/profile/CookieSettings';
-import { ProfileField } from '@/components/profile/ProfileField';
-import { ActionCard } from '@/components/profile/ActionCard';
-import { InfoSection } from '@/components/profile/InfoSection';
-import { EditableField } from '@/components/profile/EditableField';
-import { profileSyncService } from '@/services/data/profileSyncService';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { Button } from '@/components/ui/Button';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import {
+  User, Mail, Shield, LogOut, Camera, Trash2, Key,
+  ChevronRight, Check, AlertCircle, Sparkles, RefreshCw
+} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/context/UserContext";
+import { supabase } from "@/lib/supabaseClient";
+import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
+import { QuizResetModal } from "@/components/profile/QuizResetModal";
+import { EmailPreferences } from "@/components/profile/EmailPreferences";
+import { CookieSettings } from "@/components/profile/CookieSettings";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
-/**
- * Profile Page V2 - Clean, Accessible & Semantic
- *
- * WCAG 2.1 AA Compliant:
- * - Focus-visible states on ALL interactive elements
- * - Semantic HTML5 landmarks
- * - ARIA labels for context
- * - Keyboard navigation tested
- * - 4.5:1 contrast minimum
- * - Screen reader optimized
- */
+function readJson<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function SectionCard({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function SectionHeader({ title, description }: { title: string; description?: string }) {
+  return (
+    <div className="px-6 py-4 border-b border-[var(--color-border)]">
+      <h2 className="text-base font-bold text-[var(--color-text)]">{title}</h2>
+      {description && (
+        <p className="text-sm text-[var(--color-muted)] mt-0.5">{description}</p>
+      )}
+    </div>
+  );
+}
+
 const ProfilePage: React.FC = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [showResetModal, setShowResetModal] = useState(false);
-  const [syncedProfile, setSyncedProfile] = useState<any>(null);
+
+  const [displayName, setDisplayName] = useState("");
+  const [displayNameDirty, setDisplayNameDirty] = useState(false);
+  const [displayNameError, setDisplayNameError] = useState("");
+  const [isSavingName, setIsSavingName] = useState(false);
+
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isSendingReset, setIsSendingReset] = useState(false);
+
+  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
+  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
+  const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
+  const hasPhoto = !!(answers?.photoDataUrl);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const profile = await profileSyncService.getProfile();
-        setSyncedProfile(profile);
-      } catch (error) {
-        console.error('[ProfilePage] Error loading profile:', error);
-      }
-    };
-
-    if (user) {
-      loadProfile();
+    if (user?.email) {
+      const name = user.email.split("@")[0];
+      setDisplayName(name.charAt(0).toUpperCase() + name.slice(1));
     }
   }, [user]);
 
+  useEffect(() => {
+    if (answers?.photoDataUrl) {
+      setPhotoPreview(answers.photoDataUrl);
+    }
+  }, [answers]);
+
   const { data: styleProfile } = useQuery({
-    queryKey: ['styleProfile', user?.id],
+    queryKey: ["styleProfile", user?.id],
     queryFn: async () => {
       const client = supabase();
       if (!client || !user) return null;
-
-      const { data, error } = await client
-        .from('style_profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+      const { data } = await client
+        .from("style_profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
         .maybeSingle();
-
-      if (error) return null;
       return data;
     },
     enabled: !!user,
     staleTime: 300000,
   });
 
-  const { data: savedOutfitsCount } = useQuery({
-    queryKey: ['savedOutfitsCount', user?.id],
-    queryFn: async () => {
+  const archetypeName = React.useMemo(() => {
+    if (!archetype) return styleProfile?.archetype || null;
+    if (typeof archetype === "string") return archetype;
+    if (archetype && "name" in (archetype as any)) return (archetype as any).name;
+    return archetype;
+  }, [archetype, styleProfile]);
+
+  const validateDisplayName = (val: string) => {
+    if (!val.trim()) return "Naam mag niet leeg zijn";
+    if (val.trim().length < 2) return "Naam is te kort (minimaal 2 tekens)";
+    if (val.trim().length > 50) return "Naam is te lang (maximaal 50 tekens)";
+    return "";
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setDisplayName(val);
+    setDisplayNameDirty(true);
+    setDisplayNameError(validateDisplayName(val));
+  };
+
+  const handleSaveName = async () => {
+    const err = validateDisplayName(displayName);
+    if (err) {
+      setDisplayNameError(err);
+      setDisplayNameDirty(true);
+      return;
+    }
+    setIsSavingName(true);
+    try {
       const client = supabase();
-      if (!client || !user) return 0;
+      if (client && user) {
+        await client.auth.updateUser({ data: { display_name: displayName.trim() } });
+      }
+      toast.success("Profiel opgeslagen");
+      setDisplayNameDirty(false);
+    } catch {
+      toast.error("Kon profiel niet opslaan. Probeer het opnieuw.");
+    } finally {
+      setIsSavingName(false);
+    }
+  };
 
-      const { count, error } = await client
-        .from('saved_outfits')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+  const handleCancelName = () => {
+    if (user?.email) {
+      const name = user.email.split("@")[0];
+      setDisplayName(name.charAt(0).toUpperCase() + name.slice(1));
+    }
+    setDisplayNameDirty(false);
+    setDisplayNameError("");
+  };
 
-      if (error) return 0;
-      return count || 0;
-    },
-    enabled: !!user,
-    staleTime: 60000,
-  });
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Foto is te groot. Maximaal 5 MB.");
+      return;
+    }
+    setIsUploadingPhoto(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result as string;
+        setPhotoPreview(dataUrl);
+        const current = readJson<any>(LS_KEYS.QUIZ_ANSWERS) || {};
+        localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify({ ...current, photoDataUrl: dataUrl }));
+        toast.success("Foto opgeslagen voor kleuranalyse");
+        setIsUploadingPhoto(false);
+      };
+      reader.onerror = () => {
+        toast.error("Kon foto niet lezen. Probeer een ander bestand.");
+        setIsUploadingPhoto(false);
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      toast.error("Uploaden mislukt");
+      setIsUploadingPhoto(false);
+    }
+  };
 
-  const { data: gamificationStats } = useQuery({
-    queryKey: ['gamificationStats', user?.id],
-    queryFn: async () => {
+  const handleRemovePhoto = () => {
+    setPhotoPreview(null);
+    const current = readJson<any>(LS_KEYS.QUIZ_ANSWERS) || {};
+    const { photoDataUrl: _removed, ...rest } = current;
+    localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(rest));
+    toast.success("Foto verwijderd");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handlePasswordReset = async () => {
+    if (!user?.email) return;
+    setIsSendingReset(true);
+    try {
       const client = supabase();
-      if (!client || !user) return null;
+      if (client) {
+        await client.auth.resetPasswordForEmail(user.email, {
+          redirectTo: `${window.location.origin}/inloggen`,
+        });
+      }
+      toast.success("Reset-link verstuurd. Controleer je inbox.");
+    } catch {
+      toast.error("Kon reset-link niet versturen. Probeer het opnieuw.");
+    } finally {
+      setIsSendingReset(false);
+    }
+  };
 
-      const { data, error } = await client
-        .from('user_gamification')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error) return null;
-      return data;
-    },
-    enabled: !!user,
-    staleTime: 120000,
-  });
+  const handleLogout = () => {
+    toast.success("Tot snel!");
+    setTimeout(() => logout(), 400);
+  };
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-bg flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <User className="w-8 h-8 text-muted" />
+      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <Helmet><title>Profiel – FitFi</title></Helmet>
+        <div className="ff-container py-16 text-center">
+          <div className="w-14 h-14 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
+            <User className="w-7 h-7 text-[var(--color-muted)]" />
           </div>
-          <h1 className="text-3xl font-bold text-text mb-3">Je Stijlprofiel</h1>
-          <p className="text-muted mb-6">Log in om je stijl te bekijken</p>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => navigate('/inloggen')}
-            className="w-full"
-            aria-label="Ga naar inlogpagina"
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3">Log in om je profiel te bekijken</h1>
+          <button
+            onClick={() => navigate("/inloggen")}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
           >
             Inloggen
-          </Button>
+          </button>
         </div>
-      </div>
+      </main>
     );
   }
 
-  const hasStyleProfile = !!styleProfile || !!syncedProfile;
-  const profile = styleProfile || syncedProfile;
-
-  const archetype = profile?.archetype
-    ? (typeof profile.archetype === 'string' ? profile.archetype : profile.archetype?.name || profile.archetype?.archetype)
-    : null;
-
-  const colorProfile = profile?.color_profile;
-  const primaryColors = colorProfile?.primaryColors || [];
-
-  const level = gamificationStats?.current_level || 1;
-  const xp = gamificationStats?.total_xp || 0;
-
   return (
-    <div className="min-h-screen bg-bg">
+    <main className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
-        <title>Je Stijlprofiel - FitFi</title>
-        <meta name="description" content="Beheer je stijlvoorkeuren, kleuren en persoonlijke instellingen op één plek." />
+        <title>Profiel – FitFi</title>
+        <meta name="description" content="Beheer je persoonlijke gegevens, stijlvoorkeuren en foto." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {/* Skip to main content link - A11Y */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-700 focus:text-white focus:rounded-lg focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--ff-color-primary-700)] focus:text-white focus:rounded-lg"
       >
         Spring naar hoofdinhoud
       </a>
 
-      <main id="main-content" className="ff-container py-8 sm:py-12">
-        <div className="max-w-4xl mx-auto">
+      <div id="main-content" className="ff-container py-8 sm:py-12 lg:py-16">
+        <div className="max-w-2xl mx-auto space-y-5">
 
-          {/* Page Title + Purpose - Copy: Fashion-forward & Persoonlijk */}
+          {/* Page heading */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="mb-8 text-center"
+            className="mb-2"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text mb-3">
-              Jouw Stijlprofiel
+            <p className="text-sm text-[var(--color-muted)]">Accountinstellingen</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight">
+              Jouw profiel
             </h1>
-            <p className="text-base sm:text-lg text-muted max-w-2xl mx-auto">
-              Hier vind je al je persoonlijke info, stijlvoorkeuren en instellingen
+            <p className="text-sm text-[var(--color-muted)] mt-1">
+              Je profiel helpt ons je advies consistent te houden.
             </p>
           </motion.div>
 
-          {/* Quick Actions Navigation - UX: Navigatie */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4"
-            role="navigation"
-            aria-label="Snelle acties"
-          >
-            <ActionCard
-              icon={LayoutDashboard}
-              title="Dashboard"
-              description={`${savedOutfitsCount || 0} favoriete ${savedOutfitsCount === 1 ? 'outfit' : 'outfits'}`}
-              onClick={() => navigate('/dashboard')}
-              variant="primary"
-              aria-label="Ga naar je dashboard"
+          {/* Personal data */}
+          <SectionCard delay={0.05}>
+            <SectionHeader
+              title="Persoonlijke gegevens"
+              description="Wijzig je voorkeuren en klik op Opslaan."
             />
-
-            <ActionCard
-              icon={Shirt}
-              title="Jouw Outfits"
-              description="Ontdek wat we vonden"
-              onClick={() => navigate('/results')}
-              variant="accent"
-              aria-label="Bekijk je outfit aanbevelingen"
-            />
-
-            <ActionCard
-              icon={RefreshCw}
-              title="Verfijn je Stijl"
-              description="Ontdek nieuwe voorkeuren"
-              onClick={() => navigate('/onboarding')}
-              variant="neutral"
-              aria-label="Verfijn je stijlprofiel"
-            />
-          </motion.div>
-
-          {/* Header - User Info with Edit */}
-          <motion.header
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="mb-8"
-            aria-labelledby="personal-info-heading"
-          >
-            <h2 id="personal-info-heading" className="text-xl font-bold text-text mb-4 flex items-center gap-2">
-              <User className="w-6 h-6" aria-hidden="true" />
-              Jouw Gegevens
-            </h2>
-
-            <div className="p-6 rounded-xl bg-surface border border-border">
-              <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
-                <div
-                  className="ff-profile-avatar"
-                  role="img"
-                  aria-label={`Profiel avatar voor ${user.email?.split('@')[0]}`}
+            <div className="p-6 space-y-5">
+              {/* Display name field */}
+              <div>
+                <label
+                  htmlFor="display-name"
+                  className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
                 >
-                  <User className="w-10 h-10 text-white" strokeWidth={2} />
-                </div>
-                <div className="flex-1 space-y-4">
-                  <EditableField
-                    label="Jouw naam"
-                    value={user.email?.split('@')[0] || ''}
-                    onSave={async (value) => {
-                      await new Promise(r => setTimeout(r, 500));
-                    }}
-                    placeholder="Typ je naam"
-                    aria-label="Bewerk je naam"
-                  />
-
-                  <ProfileField
-                    label="E-mailadres"
-                    value={user.email || ''}
-                  />
-
-                  {user.created_at && (
-                    <ProfileField
-                      label="Bij FitFi sinds"
-                      value={new Date(user.created_at).toLocaleDateString('nl-NL', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    />
-                  )}
-
-                  <div className="ff-profile-badge">
-                    <Sparkles className="w-4 h-4 text-primary-700" aria-hidden="true" />
-                    <span className="text-sm font-bold text-primary-700">
-                      Level {level} • {xp} XP
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.header>
-
-          {/* Style Profile Section */}
-          <InfoSection
-            id="style"
-            icon={Palette}
-            title="Jouw Stijl"
-            delay={0.1}
-            variant={hasStyleProfile ? 'gradient' : 'gradient'}
-          >
-            {hasStyleProfile ? (
-              <>
-                <div className="mb-4">
-                  <p className="text-sm text-muted mb-1">Je stijlprofiel</p>
-                  <p className="text-2xl font-bold text-text">
-                    {archetype || 'We werken aan je profiel'}
+                  Naam
+                </label>
+                <input
+                  id="display-name"
+                  type="text"
+                  value={displayName}
+                  onChange={handleNameChange}
+                  placeholder="Jouw naam"
+                  maxLength={50}
+                  className={`w-full h-11 px-3.5 rounded-lg border text-[var(--color-text)] bg-[var(--color-bg)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] ${
+                    displayNameError && displayNameDirty
+                      ? "border-[var(--ff-color-error-500)]"
+                      : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]"
+                  }`}
+                  aria-describedby={displayNameError && displayNameDirty ? "name-error" : undefined}
+                />
+                {displayNameError && displayNameDirty && (
+                  <p
+                    id="name-error"
+                    role="alert"
+                    className="flex items-center gap-1.5 mt-1.5 text-xs text-[var(--ff-color-error-600)]"
+                  >
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    {displayNameError}
                   </p>
-                </div>
-
-                {primaryColors.length > 0 && (
-                  <div className="mb-6">
-                    <p className="text-sm text-muted mb-3">Je kleurenpalet</p>
-                    <div
-                      className="flex gap-2 flex-wrap"
-                      role="list"
-                      aria-label="Je persoonlijke kleurenpalet"
-                    >
-                      {primaryColors.slice(0, 8).map((color: string, i: number) => (
-                        <div
-                          key={i}
-                          className="w-10 h-10 rounded-lg shadow-sm border border-white/50"
-                          style={{ backgroundColor: color }}
-                          role="listitem"
-                          aria-label={`Kleur ${i + 1}: ${color}`}
-                          title={color}
-                        />
-                      ))}
-                    </div>
-                  </div>
                 )}
+              </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={() => navigate('/results')}
-                    className="flex-1"
-                    aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
-                  >
-                    Bekijk je outfits
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => setShowResetModal(true)}
-                    aria-label="Verfijn je stijlprofiel"
-                  >
-                    <RefreshCw className="w-4 h-4" aria-hidden="true" />
-                    Verfijn
-                  </Button>
+              {/* Email (read-only) */}
+              <div>
+                <label className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
+                  E-mailadres
+                </label>
+                <div className="flex items-center gap-3 h-11 px-3.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] opacity-60">
+                  <Mail className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
+                  <span className="text-sm text-[var(--color-text)] truncate">{user.email}</span>
                 </div>
-              </>
-            ) : (
-              <div className="p-8 sm:p-12 rounded-xl bg-gradient-to-br from-primary-25 to-accent-25 border-2 border-dashed border-primary-300 text-center">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <Sparkles className="w-10 h-10 text-white" aria-hidden="true" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-text mb-3">
-                  Laten we je stijl ontdekken
-                </h3>
-                <p className="text-base sm:text-lg text-muted mb-2 max-w-md mx-auto">
-                  We helpen je jouw unieke stijl vinden met een korte stijltest
+                <p className="text-xs text-[var(--color-muted)] mt-1">
+                  E-mailadres kan niet worden gewijzigd
                 </p>
-                <p className="text-sm text-muted mb-8 max-w-md mx-auto">
-                  Duurt een paar minuten, daarna krijg je direct outfit-aanbevelingen op maat
-                </p>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={() => {
-                    toast.success('Laten we beginnen!', {
-                      duration: 2000,
-                      position: 'top-center',
-                    });
-                    setTimeout(() => navigate('/onboarding'), 500);
-                  }}
-                  className="hover:shadow-lg hover:scale-105"
-                  aria-label="Start de stijltest"
+              </div>
+
+              {/* CTA row */}
+              {displayNameDirty && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-3 pt-1"
                 >
-                  <Sparkles className="w-5 h-5" aria-hidden="true" />
-                  Ontdek je stijl
-                  <ArrowRight className="w-5 h-5" aria-hidden="true" />
-                </Button>
+                  <button
+                    onClick={handleSaveName}
+                    disabled={isSavingName || !!displayNameError}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSavingName ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Check className="w-4 h-4" />
+                    )}
+                    Opslaan
+                  </button>
+                  <button
+                    onClick={handleCancelName}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg text-sm font-semibold hover:bg-[var(--color-bg)] transition-colors"
+                  >
+                    Annuleren
+                  </button>
+                </motion.div>
+              )}
+            </div>
+          </SectionCard>
 
-                <div className="mt-8 pt-8 border-t border-primary-200">
-                  <p className="text-sm text-muted mb-4">
-                    <strong className="text-text">Wat krijg je?</strong>
+          {/* Photo module */}
+          <SectionCard delay={0.1}>
+            <SectionHeader
+              title="Foto voor kleuranalyse"
+              description="Foto's gebruiken we alleen voor optionele kleuranalyse. Je kunt je foto altijd verwijderen."
+            />
+            <div className="p-6">
+              <div className="flex items-start gap-5">
+                {/* Preview */}
+                <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-[var(--color-border)] bg-[var(--ff-color-neutral-100)] flex-shrink-0 flex items-center justify-center">
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt="Jouw profielfoto voor kleuranalyse"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="w-7 h-7 text-[var(--color-muted)]" />
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-3">
+                  <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+                    {photoPreview
+                      ? "Je rapport blijft up-to-date met je gekozen stijl en kleurprofiel."
+                      : "Voeg een foto toe voor persoonlijk kleuradvies op basis van huidondertoon, haar en ogen."}
                   </p>
-                  <div className="grid sm:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
-                    <div className="p-4 bg-white/50 rounded-lg">
-                      <div className="text-2xl mb-2">🎨</div>
-                      <div className="text-sm font-semibold text-text mb-1">Je kleurenpalet</div>
-                      <div className="text-xs text-muted">Op basis van je antwoorden</div>
-                    </div>
-                    <div className="p-4 bg-white/50 rounded-lg">
-                      <div className="text-2xl mb-2">👔</div>
-                      <div className="text-sm font-semibold text-text mb-1">Outfit-aanbevelingen</div>
-                      <div className="text-xs text-muted">Meteen beschikbaar</div>
-                    </div>
-                    <div className="p-4 bg-white/50 rounded-lg">
-                      <div className="text-2xl mb-2">✨</div>
-                      <div className="text-sm font-semibold text-text mb-1">Persoonlijk stijladvies</div>
-                      <div className="text-xs text-muted">Altijd beschikbaar</div>
-                    </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingPhoto}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                    >
+                      {isUploadingPhoto ? (
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Camera className="w-4 h-4" />
+                      )}
+                      {photoPreview ? "Foto vervangen" : "Upload foto"}
+                    </button>
+
+                    {photoPreview && (
+                      <button
+                        onClick={handleRemovePhoto}
+                        className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] text-[var(--color-muted)] rounded-lg text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-400)] transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Verwijder foto
+                      </button>
+                    )}
                   </div>
+
+                  <p className="text-xs text-[var(--color-muted)]">
+                    Max 5 MB · JPG of PNG · Privacyveilig opgeslagen
+                  </p>
                 </div>
               </div>
-            )}
-          </InfoSection>
 
-          {/* Email Preferences Section */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handlePhotoSelect}
+                className="sr-only"
+                aria-label="Upload profielfoto"
+              />
+            </div>
+          </SectionCard>
+
+          {/* Style profile summary */}
+          {(archetypeName || color) && (
+            <SectionCard delay={0.15}>
+              <SectionHeader
+                title="Jouw stijlprofiel"
+                description="Je rapport blijft up-to-date met je gekozen stijl."
+              />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-xl font-bold text-[var(--color-text)]">
+                      {archetypeName || "Stijlprofiel"}
+                    </p>
+                    {color?.season && (
+                      <p className="text-sm text-[var(--color-muted)] capitalize mt-0.5">
+                        {color.season} · {color.temperature}
+                      </p>
+                    )}
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => navigate("/results")}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                  >
+                    Bekijk outfits
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setShowResetModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Quiz opnieuw
+                  </button>
+                </div>
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Email preferences */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-8"
+            transition={{ duration: 0.4, delay: 0.2 }}
           >
             <EmailPreferences />
-          </motion.section>
+          </motion.div>
 
-          {/* Privacy & Cookies Section */}
-          <InfoSection
-            id="privacy"
-            icon={Shield}
-            title="Privacy & Cookies"
-            delay={0.25}
-          >
-            <CookieSettings />
-          </InfoSection>
-
-          {/* Account Settings Section */}
-          <InfoSection
-            id="account"
-            icon={SettingsIcon}
-            title="Je Account"
-            delay={0.3}
-          >
-            <div className="space-y-6">
-              {user.created_at && (
-                <div className="ff-profile-info-card">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-accent-100 flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-accent-700" />
-                    </div>
-                    <p className="text-sm font-bold text-text">Bij ons sinds</p>
-                  </div>
-                  <p className="text-sm text-muted">
-                    {new Date(user.created_at).toLocaleDateString('nl-NL', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-              )}
-
-              <div className="pt-4 border-t border-border">
-                <p className="text-sm font-semibold text-muted mb-3">
-                  Wat wil je doen?
-                </p>
-                <div className="space-y-3">
-                  <Button
-                    variant="ghost"
-                    size="md"
-                    onClick={() => {
-                      toast.success('We sturen je een reset-link', {
-                        duration: 4000,
-                        position: 'top-center',
-                      });
-                    }}
-                    className="w-full justify-between"
-                    aria-label="Wijzig je wachtwoord"
-                  >
-                    <span>Wijzig wachtwoord</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="md"
-                    onClick={() => {
-                      toast('Neem contact met ons op via info@fitfi.ai', {
-                        duration: 5000,
-                        position: 'top-center',
-                      });
-                    }}
-                    className="w-full justify-between"
-                    aria-label="Verwijder je account"
-                  >
-                    <span>Verwijder account</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
+          {/* Privacy & cookies */}
+          <SectionCard delay={0.25}>
+            <SectionHeader
+              title="Privacy & cookies"
+              description="Beheer hoe wij je gegevens gebruiken."
+            />
+            <div className="p-6">
+              <CookieSettings />
             </div>
-          </InfoSection>
+          </SectionCard>
 
-          {/* Logout Button with Feedback */}
+          {/* Account actions */}
+          <SectionCard delay={0.3}>
+            <SectionHeader
+              title="Account"
+            />
+            <div className="divide-y divide-[var(--color-border)]">
+              {/* Password reset */}
+              <button
+                onClick={handlePasswordReset}
+                disabled={isSendingReset}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center">
+                    <Key className="w-4 h-4 text-[var(--color-muted)]" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
+                    <p className="text-xs text-[var(--color-muted)]">
+                      We sturen een reset-link naar {user.email}
+                    </p>
+                  </div>
+                </div>
+                {isSendingReset ? (
+                  <RefreshCw className="w-4 h-4 text-[var(--color-muted)] animate-spin" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-[var(--color-muted)]" />
+                )}
+              </button>
+
+              {/* Privacy policy link */}
+              <button
+                onClick={() => navigate("/privacy")}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--color-bg)] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-[var(--color-muted)]" />
+                  </div>
+                  <p className="text-sm font-semibold text-[var(--color-text)]">Privacybeleid</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[var(--color-muted)]" />
+              </button>
+            </div>
+          </SectionCard>
+
+          {/* Logout */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
           >
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => {
-                toast.success('Tot snel!', {
-                  duration: 2000,
-                  position: 'top-center',
-                });
-                setTimeout(() => logout(), 500);
-              }}
-              className="w-full ff-btn-logout"
-              aria-label="Log uit"
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-400)] transition-colors"
             >
-              <LogOut className="w-5 h-5" aria-hidden="true" />
+              <LogOut className="w-4 h-4" />
               Uitloggen
-            </Button>
+            </button>
           </motion.div>
 
         </div>
-      </main>
+      </div>
 
-      {/* Quiz Reset Modal */}
       {showResetModal && (
         <QuizResetModal
           isOpen={showResetModal}
           onClose={() => setShowResetModal(false)}
-          currentArchetype={archetype || undefined}
+          currentArchetype={typeof archetypeName === "string" ? archetypeName : undefined}
         />
       )}
-    </div>
+    </main>
   );
 };
 
