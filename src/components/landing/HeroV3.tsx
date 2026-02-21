@@ -36,186 +36,129 @@ export function HeroV3() {
     <section aria-labelledby="hero-heading">
 
       {/* ═══════════════════════════════════════════════
-          MOBILE  (< sm)  —  Editorial magazine layout
-          Full-viewport, photo top-half, warm content below
+          MOBILE  (< sm)  —  Full-viewport cinematic hero
+          Foto als achtergrond, tekst + CTA onderaan
       ═══════════════════════════════════════════════ */}
       <div
-        className="sm:hidden relative flex flex-col"
-        style={{ minHeight: '100svh' }}
+        className="sm:hidden relative w-full overflow-hidden"
+        style={{ height: '100svh', background: '#2a1f14' }}
       >
-        {/* ── Photo half ── */}
-        <div className="relative flex-shrink-0" style={{ height: '52svh' }}>
-          <img
-            src="/images/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
-            alt="Stijlvol stel op een Amsterdams kanaal met persoonlijk stijladvies"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: '50% 30%' }}
-            loading="eager"
-          />
+        {/* ── Full-bleed foto ── */}
+        <img
+          src="/images/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
+          alt="Stijlvol stel op een Amsterdams kanaal"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: '50% 18%' }}
+          loading="eager"
+        />
 
-          {/* Top fade — merges with header */}
-          <div
-            className="absolute top-0 inset-x-0 h-24 pointer-events-none"
-            style={{
-              background: 'linear-gradient(to bottom, var(--color-bg) 0%, transparent 100%)',
-            }}
+        {/* Onderste gradient — maakt onderste 60% donker voor leesbare tekst */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to bottom, transparent 25%, rgba(28,18,10,0.55) 52%, rgba(28,18,10,0.88) 75%, rgba(28,18,10,0.97) 100%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* AI badge — top left */}
+        <div
+          className="absolute top-5 left-4 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-full shadow-lg"
+          style={{
+            background: 'rgba(247,243,236,0.92)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <Sparkles
+            className="w-3 h-3"
+            style={{ color: 'var(--ff-color-primary-600)' }}
             aria-hidden="true"
           />
-
-          {/* Bottom wave fade — merges photo into warm bg below */}
-          <div
-            className="absolute bottom-0 inset-x-0 h-32 pointer-events-none"
-            style={{
-              background: 'linear-gradient(to bottom, transparent 0%, var(--color-bg) 100%)',
-            }}
-            aria-hidden="true"
-          />
-
-          {/* AI badge — top left */}
-          <div
-            className="absolute top-5 left-4 inline-flex items-center gap-2 px-3.5 py-2 rounded-full shadow-lg"
-            style={{
-              background: 'rgba(255,255,255,0.92)',
-              backdropFilter: 'blur(12px)',
-            }}
+          <span
+            className="text-[11px] font-bold tracking-wide uppercase"
+            style={{ color: 'var(--ff-color-primary-700)' }}
           >
-            <Sparkles
-              className="w-3 h-3"
-              style={{ color: 'var(--ff-color-primary-600)' }}
-              aria-hidden="true"
-            />
-            <span
-              className="text-[11px] font-bold tracking-wide uppercase"
-              style={{ color: 'var(--ff-color-primary-700)' }}
-            >
-              AI Stijladvies
-            </span>
-          </div>
+            AI Stijladvies
+          </span>
+        </div>
 
-          {/* Live count pill — bottom right of photo */}
+        {/* ── Tekstblok + CTA — vastgepind onderaan ── */}
+        <div className="absolute bottom-0 inset-x-0 z-10 px-5 pb-8">
+
+          {/* Live count */}
           {todayCount !== undefined && todayCount > 0 && (
-            <div
-              className="absolute bottom-10 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-              style={{
-                background: 'rgba(255,255,255,0.88)',
-                backdropFilter: 'blur(12px)',
-              }}
-            >
+            <div className="flex items-center gap-1.5 mb-4">
               <div
                 className="w-1.5 h-1.5 rounded-full animate-pulse"
-                style={{ background: '#22c55e' }}
+                style={{ background: 'var(--ff-color-primary-300)' }}
                 aria-hidden="true"
               />
               <span
-                className="text-[11px] font-semibold"
-                style={{ color: 'var(--color-text)' }}
+                className="text-xs font-semibold"
+                style={{ color: 'rgba(247,243,236,0.65)' }}
               >
-                {todayCount} gestart vandaag
+                <span style={{ color: 'var(--ff-color-primary-300)' }}>{todayCount}</span>
+                &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </span>
             </div>
           )}
-        </div>
 
-        {/* ── Content half — sits on warm bg, no dark bg ── */}
-        <div
-          className="flex-1 flex flex-col justify-between px-5 pb-6 pt-0"
-          style={{ background: 'var(--color-bg)' }}
-        >
-          {/* Text block */}
-          <div>
-            <h1
-              id="hero-heading"
-              className="font-heading font-bold leading-[1.05] tracking-tight mb-3"
-              style={{
-                fontSize: 'clamp(2.4rem, 10vw, 3rem)',
-                color: 'var(--color-text)',
-              }}
+          <h1
+            id="hero-heading"
+            className="font-heading font-bold leading-[1.05] tracking-tight mb-3"
+            style={{
+              fontSize: 'clamp(2.6rem, 11vw, 3.2rem)',
+              color: '#F7F3EC',
+            }}
+          >
+            Outfits die{' '}
+            <em
+              className="not-italic"
+              style={{ color: 'var(--ff-color-primary-300)' }}
             >
-              Outfits die{' '}
-              <em
-                className="not-italic"
-                style={{ color: 'var(--ff-color-primary-600)' }}
-              >
-                bij jou
-              </em>{' '}
-              passen
-            </h1>
+              bij jou
+            </em>{' '}
+            passen
+          </h1>
 
-            <p
-              className="text-base leading-relaxed mb-5"
-              style={{ color: 'var(--color-muted)' }}
-            >
-              In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
-            </p>
+          <p
+            className="text-[15px] leading-relaxed mb-6"
+            style={{ color: 'rgba(247,243,236,0.75)' }}
+          >
+            In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
+          </p>
 
-            {/* Feature chips — compact horizontal */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {[
-                'Combinaties + shoplinks',
-                'Werk & weekend outfits',
-                'Aanpasbaar & persoonlijk',
-              ].map((label) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
-                  style={{
-                    background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
-                    color: 'var(--color-text)',
-                  }}
-                >
-                  <svg
-                    className="w-3 h-3 flex-shrink-0"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M2 6l3 3 5-5"
-                      stroke="var(--ff-color-primary-600)"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA block */}
+          {/* CTA knoppen */}
           <div className="flex flex-col gap-3">
-            {/* Primary */}
             <button
               onClick={handleStartClick}
               className="group w-full inline-flex items-center justify-between px-6 min-h-[58px] rounded-2xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
               style={{
                 background: 'var(--ff-color-primary-700)',
-                color: '#fff',
-                boxShadow: '0 8px 32px -4px rgba(0,0,0,0.22)',
+                color: '#F7F3EC',
+                boxShadow: '0 8px 32px rgba(122,97,74,0.5)',
               }}
               aria-label="Start gratis jouw persoonlijk stijlquiz"
             >
               <span>Start mijn stijlquiz</span>
               <span
                 className="w-9 h-9 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
-                style={{ background: 'rgba(255,255,255,0.15)' }}
+                style={{ background: 'rgba(247,243,236,0.15)' }}
                 aria-hidden="true"
               >
                 <ArrowRight className="w-4 h-4" />
               </span>
             </button>
 
-            {/* Secondary + trust inline */}
             <div className="flex items-center gap-3">
               <button
                 onClick={handleExampleClick}
                 className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-xl font-medium text-sm transition-all duration-200"
                 style={{
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-text)',
+                  background: 'rgba(247,243,236,0.10)',
+                  border: '1px solid rgba(247,243,236,0.22)',
+                  color: 'rgba(247,243,236,0.90)',
                 }}
                 aria-label="Bekijk voorbeeld rapport"
               >
@@ -223,11 +166,11 @@ export function HeroV3() {
               </button>
 
               <div
-                className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 min-h-[46px] rounded-xl text-xs font-semibold"
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-xl text-xs font-semibold"
                 style={{
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-muted)',
+                  background: 'rgba(247,243,236,0.10)',
+                  border: '1px solid rgba(247,243,236,0.22)',
+                  color: 'rgba(247,243,236,0.70)',
                 }}
               >
                 <svg
@@ -238,7 +181,7 @@ export function HeroV3() {
                 >
                   <path
                     d="M3.5 7l2.5 2.5 4.5-5"
-                    stroke="#22c55e"
+                    stroke="var(--ff-color-primary-300)"
                     strokeWidth="1.6"
                     strokeLinecap="round"
                     strokeLinejoin="round"
