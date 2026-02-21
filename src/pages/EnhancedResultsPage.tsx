@@ -569,8 +569,10 @@ export default function EnhancedResultsPage() {
                   Kleuranalyse & Stijlprofiel
                   <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
-                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-                  Op basis van contrast & ondertoon analyse en je seizoensgebonden kleurpalet
+                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto mb-4 leading-relaxed">
+                  {answers?.photoUrl
+                    ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
+                    : 'Op basis van jouw kleurvoorkeur uit de quiz — zonder foto geven we geen ondertoonadvies'}
                 </p>
 
                 {/* Confidence Badge - Show data source transparency */}
@@ -1039,26 +1041,28 @@ export default function EnhancedResultsPage() {
                 >
                   <button
                     onClick={() => setGalleryMode('swipe')}
-                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                    aria-pressed={galleryMode === 'swipe'}
+                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 ${
                       galleryMode === 'swipe'
                         ? 'bg-[var(--ff-color-primary-700)] text-white shadow-md'
                         : 'text-[var(--color-text)] hover:bg-[var(--color-bg)]'
                     }`}
                     aria-label="Swipe weergave"
                   >
-                    <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Layers className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                     <span className="hidden xs:inline">Swipe</span>
                   </button>
                   <button
                     onClick={() => setGalleryMode('grid')}
-                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                    aria-pressed={galleryMode === 'grid'}
+                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 ${
                       galleryMode === 'grid'
                         ? 'bg-[var(--ff-color-primary-700)] text-white shadow-md'
                         : 'text-[var(--color-text)] hover:bg-[var(--color-bg)]'
                     }`}
                     aria-label="Grid weergave"
                   >
-                    <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                     <span className="hidden xs:inline">Grid</span>
                   </button>
                 </motion.div>
@@ -1066,13 +1070,16 @@ export default function EnhancedResultsPage() {
             </AnimatedSection>
 
             {outfitsLoading ? (
-              <div className="text-center py-20">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-16 h-16 border-4 border-[var(--ff-color-primary-600)] border-t-transparent rounded-full mx-auto mb-4"
-                />
-                <p className="text-gray-600 text-lg">Jouw perfecte outfits worden geladen...</p>
+              <div
+                role="status"
+                aria-live="polite"
+                className="flex flex-col items-center justify-center py-20 gap-4"
+              >
+                <div className="w-12 h-12 border-[3px] border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" aria-hidden="true" />
+                <div className="text-center">
+                  <p className="text-base font-medium text-[var(--color-text)]">We maken je stijlrapport…</p>
+                  <p className="text-sm text-[var(--color-muted)] mt-1">Bijna klaar — dit duurt meestal minder dan een minuut.</p>
+                </div>
               </div>
             ) : galleryMode === 'swipe' ? (
               <SwipeableOutfitGallery
@@ -1245,9 +1252,14 @@ export default function EnhancedResultsPage() {
                             </span>
                           </div>
 
-                          <h3 className="text-lg font-bold mb-2 text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
+                          <h3 className="text-lg font-bold mb-1 text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
                             {'name' in outfit ? outfit.name : outfitInfo.title}
                           </h3>
+                          {answers && (
+                            <p className="text-xs text-[var(--color-muted)] mb-1.5">
+                              Op basis van jouw keuzes: {[answers.fit, answers.occasions?.[0]].filter(Boolean).join(', ') || archetypeName}
+                            </p>
+                          )}
                           <p className="text-sm text-gray-600 line-clamp-2">
                             {outfitInfo.description}
                           </p>

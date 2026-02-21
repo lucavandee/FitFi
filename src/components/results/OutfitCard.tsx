@@ -3,7 +3,7 @@ import SmartImage from "@/components/ui/SmartImage";
 import { useInView } from "@/hooks/useInView";
 import SaveButton from "@/components/outfits/SaveButton";
 import ProductDetailModal from "@/components/outfits/ProductDetailModal";
-import { ShoppingBag, ExternalLink, Sparkles } from "lucide-react";
+import { ShoppingBag, Sparkles, Info } from "lucide-react";
 import type { Outfit } from "@/engine/types";
 import { track } from "@/utils/telemetry";
 
@@ -15,6 +15,7 @@ interface OutfitCardProps {
   className?: string;
   outfit?: Outfit;
   userId?: string;
+  rationaleTag?: string;
 }
 
 const OutfitCard: React.FC<OutfitCardProps> = ({
@@ -24,7 +25,8 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   shopLink = "#shop",
   className = "",
   outfit,
-  userId
+  userId,
+  rationaleTag,
 }) => {
   const { ref, inView } = useInView<HTMLDivElement>();
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -92,6 +94,14 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
 
       <div className="res-card-footer">
         <h3>{title}</h3>
+
+        {rationaleTag && (
+          <p className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] mb-2 mt-0.5">
+            <Info className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+            <span>{rationaleTag}</span>
+          </p>
+        )}
+
         <ul className="res-bullets">
           {description.map((item, index) => (
             <li key={index}>{item}</li>

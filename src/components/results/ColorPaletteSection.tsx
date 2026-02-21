@@ -57,34 +57,36 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
         </div>
       </div>
 
-      {/* Photo / undertone disclaimer */}
-      {!hasPhoto ? (
-        <div className="flex items-start gap-3 p-4 mb-8 bg-amber-50 border border-amber-200 rounded-xl">
-          <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-amber-900 mb-1">
-              Je uploadde geen foto. Zonder foto geven we geen ondertoonadvies.
-            </p>
-            <p className="text-sm text-amber-800 leading-relaxed">
-              Onderstaande kleurtips zijn gebaseerd op jouw kleurkeuzes in de quiz, niet op huidondertoon.{' '}
-              <button
-                onClick={() => navigate('/onboarding?step=photo')}
-                className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline"
-              >
-                <Camera className="w-3.5 h-3.5" />
-                Upload selfie voor ondertoonanalyse
-              </button>
+      {/* Photo / undertone disclaimer — aria-live so screen readers hear the dynamic state */}
+      <div aria-live="polite" aria-atomic="true">
+        {!hasPhoto ? (
+          <div className="flex items-start gap-3 p-4 mb-8 bg-amber-50 border border-amber-200 rounded-xl" role="note">
+            <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-amber-900 mb-1">
+                Kleurtips op basis van jouw kleurvoorkeur — geen ondertoonadvies
+              </p>
+              <p className="text-sm text-amber-800 leading-relaxed">
+                Zonder foto geven we geen uitspraken over huidondertoon. Onderstaande kleuren zijn gebaseerd op jouw keuzes in de quiz.{' '}
+                <button
+                  onClick={() => navigate('/onboarding?step=photo')}
+                  className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-1 rounded"
+                >
+                  <Camera className="w-3.5 h-3.5" aria-hidden="true" />
+                  Upload selfie voor ondertoonanalyse
+                </button>
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-start gap-3 p-4 mb-8 bg-green-50 border border-green-200 rounded-xl" role="note">
+            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-sm text-green-800 leading-relaxed">
+              <strong className="font-semibold">Foto-gebaseerd kleuradvies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon uit de foto-analyse.
             </p>
           </div>
-        </div>
-      ) : (
-        <div className="flex items-start gap-3 p-4 mb-8 bg-green-50 border border-green-200 rounded-xl">
-          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-green-800 leading-relaxed">
-            <strong className="font-semibold">Foto-gebaseerd kleuradvies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon uit de foto-analyse.
-          </p>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Recommended Colors (DO) */}
       <div className="mb-10">
