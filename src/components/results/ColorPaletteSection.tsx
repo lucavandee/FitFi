@@ -63,17 +63,16 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
           <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm font-semibold text-amber-900 mb-1">
-              Kleurenanalyse op basis van voorkeur, niet huidondertoon
+              Je uploadde geen foto. Zonder foto geven we geen ondertoonadvies.
             </p>
             <p className="text-sm text-amber-800 leading-relaxed">
-              Onderstaande kleurtips zijn afgeleid van jouw kleurvoorkeur in de quiz.
-              Voor een persoonlijk kleuradvies op basis van huidondertoon is een foto nodig.{' '}
+              Onderstaande kleurtips zijn gebaseerd op jouw kleurkeuzes in de quiz, niet op huidondertoon.{' '}
               <button
                 onClick={() => navigate('/onboarding?step=photo')}
                 className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline"
               >
                 <Camera className="w-3.5 h-3.5" />
-                Upload selfie
+                Upload selfie voor ondertoonanalyse
               </button>
             </p>
           </div>
@@ -211,14 +210,14 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
             </div>
             <p className="font-semibold text-[var(--color-text)]">Kleuren om te vermijden</p>
             <p className="text-sm text-[var(--color-muted)] max-w-xs leading-relaxed">
-              Kleurenanalyse (ondertoon) ontgrendel je met een foto — upload een selfie voor persoonlijk kleuradvies.
+              Wil je een persoonlijk kleurenpalet? Upload een selfie — dan analyseren we jouw ondertoon.
             </p>
             <button
               onClick={() => navigate('/onboarding?step=photo')}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
             >
               <Camera className="w-4 h-4" />
-              Upload foto voor kleuranalyse
+              Upload foto voor ondertoonanalyse
             </button>
           </div>
         </div>

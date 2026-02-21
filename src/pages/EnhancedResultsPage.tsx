@@ -176,44 +176,29 @@ export default function EnhancedResultsPage() {
           localStorage.setItem('ff_session_id', sessionId);
         }
 
-        console.log('[EnhancedResultsPage] Generating style profile with:', {
-          hasQuiz: !!answers,
-          userId: user?.id,
-          sessionId: !user?.id ? sessionId : undefined
-        });
-
         const result = await StyleProfileGenerator.generateStyleProfile(
           answers,
           user?.id,
           !user?.id ? sessionId : undefined
         );
 
-        console.log('[EnhancedResultsPage] ✅ Style profile generated:', result);
-
         setGeneratedProfile(result.colorProfile);
         setProfileDataSource(result.dataSource);
         setProfileConfidence(result.confidence);
 
-        // ✅ NEW: Calculate archetype detection with confidence
         try {
           const detectionResult = ArchetypeDetector.detect(answers);
-          console.log('[EnhancedResultsPage] Archetype detection:', detectionResult);
           setArchetypeDetectionResult(detectionResult as any);
-        } catch (error) {
-          console.warn('[EnhancedResultsPage] Could not detect archetype:', error);
+        } catch {
         }
 
-        // Save to localStorage for future use
         try {
           localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.colorProfile));
           localStorage.setItem('ff_profile_data_source', result.dataSource);
           localStorage.setItem('ff_profile_confidence', result.confidence.toString());
-        } catch (e) {
-          console.warn('Could not save color profile to localStorage', e);
+        } catch {
         }
-      } catch (error) {
-        console.error('[EnhancedResultsPage] ❌ CRITICAL: Failed to generate style profile:', error);
-        // Don't crash - just use fallback color profile
+      } catch {
         setGeneratedProfile(null);
       } finally {
         setProfileLoading(false);
@@ -246,8 +231,7 @@ export default function EnhancedResultsPage() {
   const seeds: OutfitSeed[] = React.useMemo(() => {
     try {
       return getSeedOutfits(activeColorProfile, archetypeName) || [];
-    } catch (error) {
-      console.error('[EnhancedResultsPage] Error generating seed outfits:', error);
+    } catch {
       return [];
     }
   }, [activeColorProfile, archetypeName]);
@@ -260,10 +244,8 @@ export default function EnhancedResultsPage() {
       if (seeds && Array.isArray(seeds) && seeds.length > 0) {
         return seeds;
       }
-      // Absolute fallback
       return [];
-    } catch (error) {
-      console.error('[EnhancedResultsPage] Error in displayOutfits:', error);
+    } catch {
       return [];
     }
   }, [realOutfits, seeds]);
@@ -388,14 +370,14 @@ export default function EnhancedResultsPage() {
                   transition={{ duration: 0.8, delay: 0.1 }}
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-bold mb-6 sm:mb-8 leading-[1.1] tracking-tight px-4"
                 >
-                  Je stijl,
+                  Jouw rapport,
                   <motion.span
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-primary-600)] bg-clip-text text-transparent bg-[length:200%_auto] animate-[gradient_3s_linear_infinite]"
                   >
-                    perfect ontcijferd
+                    op basis van jouw keuzes
                   </motion.span>
                 </motion.h1>
 
@@ -445,10 +427,11 @@ export default function EnhancedResultsPage() {
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <NavLink
                       to="/onboarding"
+                      title="Pas je antwoorden aan om een nieuw rapport te genereren"
                       className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto text-[var(--color-text)]"
                     >
                       <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Pas antwoorden aan</span>
+                      <span>Vernieuw mijn rapport</span>
                     </NavLink>
                   </motion.div>
 
@@ -749,19 +732,19 @@ export default function EnhancedResultsPage() {
                         <ShoppingBag className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
-                        Ontgrendel je Shopping Cheat Sheet
+                        Wil je een persoonlijk kleurenpalet?
                       </h3>
                       <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                        {!profileData?.photo_url
-                          ? 'Upload een profielfoto en upgrade naar Premium voor persoonlijke kleuradviezen op basis van je ondertoon.'
-                          : 'Upgrade naar Premium voor een persoonlijke shopping gids met kleuradviezen op maat.'}
+                        {!answers?.photoUrl
+                          ? 'Kleurenanalyse is optioneel. Zonder foto geven we geen ondertoonadvies. Upload een selfie en ontgrendel Premium voor jouw volledige shopping-cheatsheet.'
+                          : 'Ontgrendel Premium voor een persoonlijke shopping-gids met kleuradviezen op basis van jouw ondertoon.'}
                       </p>
                       <NavLink
                         to="/prijzen#premium"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] hover:shadow-lg transition-all"
                       >
                         <Sparkles className="w-5 h-5" />
-                        <span>Upgrade naar Premium</span>
+                        <span>Upgrade voor kleuranalyse</span>
                       </NavLink>
                     </motion.div>
                   </div>
@@ -852,21 +835,33 @@ export default function EnhancedResultsPage() {
                       <div className="flex-1">
                         <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Je stijltype: {archetypeName}</h4>
                         <p className="text-gray-600 leading-relaxed mb-4">
-                          Op basis van je quizantwoorden hebben we je stijlprofiel geanalyseerd:
+                          Dit advies komt uit jouw keuzes:
                         </p>
                         <ul className="space-y-3">
-                          <li className="flex items-start gap-3">
-                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Pasvorm voorkeuren:</strong> Slim, regular of relaxed fit</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Gelegenheden:</strong> Kantoor, casual of uitgaan</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Comfort-niveau:</strong> Balans tussen stijl en gemak</span>
-                          </li>
+                          {answers?.fit && (
+                            <li className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                              <span className="text-gray-700 leading-relaxed"><strong>Pasvorm:</strong> {answers.fit}</span>
+                            </li>
+                          )}
+                          {answers?.occasions && Array.isArray(answers.occasions) && answers.occasions.length > 0 && (
+                            <li className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                              <span className="text-gray-700 leading-relaxed"><strong>Gelegenheden:</strong> {answers.occasions.join(', ')}</span>
+                            </li>
+                          )}
+                          {answers?.goals && Array.isArray(answers.goals) && answers.goals.length > 0 && (
+                            <li className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                              <span className="text-gray-700 leading-relaxed"><strong>Stijldoelen:</strong> {answers.goals.join(', ')}</span>
+                            </li>
+                          )}
+                          {!(answers?.fit || answers?.occasions || answers?.goals) && (
+                            <li className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                              <span className="text-gray-700 leading-relaxed">Jouw antwoorden zijn verwerkt in dit profiel.</span>
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </div>
@@ -882,21 +877,27 @@ export default function EnhancedResultsPage() {
                       <div className="flex-1">
                         <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Kleuranalyse: {activeColorProfile.paletteName}</h4>
                         <p className="text-gray-600 leading-relaxed mb-4">
-                          Door je swipes op moodboards te analyseren detecteren we:
+                          Dit advies komt uit jouw keuzes:
                         </p>
                         <ul className="space-y-3">
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Temperatuur:</strong> Warme, koele of neutrale tinten</span>
+                            <span className="text-gray-700 leading-relaxed"><strong>Temperatuur:</strong> {formatStyleDNAValue('temperature', activeColorProfile.temperature)}</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Contrast:</strong> Laag, medium of hoog contrast</span>
+                            <span className="text-gray-700 leading-relaxed"><strong>Contrast:</strong> {formatStyleDNAValue('contrast', activeColorProfile.contrast)}</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                             <span className="text-gray-700 leading-relaxed"><strong>Seizoen:</strong> {getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}</span>
                           </li>
+                          {!answers?.photoUrl && (
+                            <li className="flex items-start gap-3">
+                              <Check className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                              <span className="text-gray-700 leading-relaxed">Kleurenanalyse is gebaseerd op voorkeur. Zonder foto geven we geen ondertoonadvies.</span>
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </div>
