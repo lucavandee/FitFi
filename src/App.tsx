@@ -90,7 +90,7 @@ const WithSeo = {
   AdminPWADashboard: () => (<><Seo title="PWA Dashboard — FitFi Admin" description="Monitor PWA installations and push notifications." path="/admin/pwa" noindex /><AdminPWADashboard /></>),
   AdminUsers: () => (<><Seo title="Gebruikersbeheer — FitFi Admin" description="Beheer alle gebruikers en hun toegang." path="/admin/users" noindex /><AdminUsersPage /></>),
   AdminAudit: () => (<><Seo title="Audit Log — FitFi Admin" description="Bekijk alle gebruikersactiviteit en systeemgebeurtenissen." path="/admin/audit" noindex /><AdminAuditPage /></>),
-  AdminSwipeAnalytics: () => (<><Seo title="Swipe Analytics — FitFi Admin" description="Bekijk swipe patterns en photo performance analytics." path="/admin/analytics" noindex /><AdminSwipeAnalyticsPage /></>),
+  AdminSwipeAnalytics: () => (<><Seo title="Swipe Analytics — FitFi Admin" description="Bekijk swipe patterns en photo performance analytics." path="/admin/swipe-analytics" noindex /><AdminSwipeAnalyticsPage /></>),
   AdminBlog: () => (<><Seo title="Blog Beheer — FitFi Admin" description="Beheer blog posts en AI-gegenereerde content." path="/admin/blog" noindex /><AdminBlogManagementPage /></>),
   AdminBlogNew: () => (<><Seo title="Nieuwe Post — FitFi Admin" description="Maak een nieuwe blog post." path="/admin/blog/new" noindex /><AdminBlogEditorPage /></>),
   AdminBlogEdit: () => (<><Seo title="Bewerk Post — FitFi Admin" description="Bewerk blog post." path="/admin/blog/edit" noindex /><AdminBlogEditorPage /></>),
@@ -158,6 +158,7 @@ export default function App() {
                 {/* Admin */}
                 <Route path="/admin" element={<RequireAuth><WithSeo.AdminDashboard /></RequireAuth>} />
                 <Route path="/admin/analytics" element={<RequireAuth><WithSeo.Analytics /></RequireAuth>} />
+                <Route path="/admin/swipe-analytics" element={<RequireAuth><WithSeo.AdminSwipeAnalytics /></RequireAuth>} />
                 <Route path="/admin/products" element={<RequireAuth><WithSeo.AdminProducts /></RequireAuth>} />
                 <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
                 <Route path="/admin/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruit /></RequireAuth>} />
@@ -167,7 +168,6 @@ export default function App() {
                 <Route path="/admin/pwa" element={<RequireAuth><WithSeo.AdminPWADashboard /></RequireAuth>} />
                 <Route path="/admin/users" element={<RequireAuth><WithSeo.AdminUsers /></RequireAuth>} />
                 <Route path="/admin/audit" element={<RequireAuth><WithSeo.AdminAudit /></RequireAuth>} />
-                <Route path="/admin/analytics" element={<RequireAuth><WithSeo.AdminSwipeAnalytics /></RequireAuth>} />
                 <Route path="/admin/blog" element={<RequireAuth><WithSeo.AdminBlog /></RequireAuth>} />
                 <Route path="/admin/blog/new" element={<RequireAuth><WithSeo.AdminBlogNew /></RequireAuth>} />
                 <Route path="/admin/blog/edit/:id" element={<RequireAuth><WithSeo.AdminBlogEdit /></RequireAuth>} />
