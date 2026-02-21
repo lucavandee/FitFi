@@ -19,27 +19,33 @@ export default function hostSweep(opts?: Options): Plugin {
     name: "fitfi-host-sweep",
     enforce: "pre",
     transform(code, id) {
-      // Alleen onze bronbestanden
-      if (!id.includes("/src/")) return null;
+      try {
+        // Alleen onze bronbestanden
+        if (!id.includes("/src/")) return null;
 
-      let out = code;
-      let touched = false;
+        let out = code;
+        let touched = false;
 
-      // 1) Hardcoded host vervangen door env-host (string-naar-string, geen styling impact)
-      if (hostRe.test(out)) {
-        out = out.replace(hostRe, configuredHost + "/");
-        touched = true;
-        this.warn(`[host-sweep] Host gerewritten naar ${configuredHost} in: ${id}`);
+        // 1) Hardcoded host vervangen door env-host (string-naar-string, geen styling impact)
+        if (hostRe.test(out)) {
+          out = out.replace(hostRe, configuredHost + "/");
+          touched = true;
+          // Gebruik console.log i.p.v. this.warn voor stabiliteit
+          console.log(`[host-sweep] Host gerewritten naar ${configuredHost} in: ${id}`);
+        }
+
+        // 2) Losse '?ref=' signaleren (liever urls/share helpers)
+        if (refRe.test(out)) {
+          console.log(
+            `[host-sweep] '?ref=' gedetecteerd in: ${id}. Gebruik urls.buildReferralUrl()/share.makeInviteShare() i.p.v. string-concat.`
+          );
+        }
+
+        return touched ? { code: out, map: null } : null;
+      } catch (error) {
+        console.error('[host-sweep] Transform error:', error);
+        return null;
       }
-
-      // 2) Losse '?ref=' signaleren (liever urls/share helpers)
-      if (refRe.test(out)) {
-        this.warn(
-          `[host-sweep] '?ref=' gedetecteerd in: ${id}. Gebruik urls.buildReferralUrl()/share.makeInviteShare() i.p.v. string-concat.`
-        );
-      }
-
-      return touched ? { code: out, map: null } : null;
     },
   };
 }
