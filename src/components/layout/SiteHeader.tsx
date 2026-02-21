@@ -14,24 +14,48 @@ const NAV_LINKS = [
 export default function SiteHeader() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // Drawer sluit altijd bij route-wissel
+  const isHome = location.pathname === "/";
+
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
+  useEffect(() => {
+    if (!isHome) return;
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  const mobileTransparent = isHome && !scrolled && !open;
+
   return (
-    <header role="banner" className="nav-glass sticky top-0 z-50">
-      {/* Exact dezelfde containerbreedte/padding als homepage */}
+    <header
+      role="banner"
+      className={[
+        "sticky top-0 z-50 transition-all duration-300",
+        mobileTransparent
+          ? "bg-transparent border-b border-transparent shadow-none md:nav-glass"
+          : "nav-glass",
+      ].join(" ")}
+    >
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 w-full flex items-center justify-between">
+
           {/* Brand */}
           <NavLink
             to="/"
-            className="font-heading text-lg tracking-wide text-[var(--color-text)]"
+            className={[
+              "font-heading text-lg tracking-wide transition-colors duration-300",
+              mobileTransparent
+                ? "text-[var(--color-text)] md:text-[var(--color-text)]"
+                : "text-[var(--color-text)]",
+            ].join(" ")}
           >
             FitFi
           </NavLink>
 
-          {/* Desktop navigatie */}
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-5">
             <ul className="flex items-center gap-5">
               {NAV_LINKS.map((item) => (
@@ -50,14 +74,15 @@ export default function SiteHeader() {
             <ThemeToggleCompact />
           </div>
 
-          {/* Mobiele trigger */}
+          {/* Mobile hamburger */}
           <button
             type="button"
             aria-label="Open menu"
             aria-controls="ff-mobile-menu"
             aria-expanded={open}
             onClick={() => setOpen(true)}
-            className="md:hidden h-9 w-9 inline-flex items-center justify-center rounded-lg text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors ff-focus-ring"
+            className="md:hidden h-9 w-9 inline-flex items-center justify-center rounded-lg transition-colors ff-focus-ring"
+            style={{ color: "var(--color-text)" }}
           >
             <span className="sr-only">Open menu</span>
             <svg
@@ -74,7 +99,6 @@ export default function SiteHeader() {
         </div>
       </nav>
 
-      {/* Drawer (bestaand component) */}
       <MobileNavDrawer open={open} onClose={() => setOpen(false)} links={NAV_LINKS} />
     </header>
   );
