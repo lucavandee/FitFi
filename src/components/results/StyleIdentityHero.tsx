@@ -6,6 +6,7 @@ import type { ColorProfile } from '@/lib/quiz/types';
 interface StyleIdentityHeroProps {
   primaryArchetype: ArchetypeKey;
   colorProfile: ColorProfile;
+  quizAnswers?: Record<string, any>;
   swipeInsights?: {
     favoriteCategories?: string[];
     preferredPatterns?: string[];
@@ -33,6 +34,7 @@ interface StyleIdentityHeroProps {
 export function StyleIdentityHero({
   primaryArchetype,
   colorProfile,
+  quizAnswers = {},
   swipeInsights = {}
 }: StyleIdentityHeroProps) {
   const archetype = ARCHETYPES[primaryArchetype];
@@ -51,78 +53,79 @@ export function StyleIdentityHero({
     return descriptions[primaryArchetype];
   };
 
-  // Generate evidence-based insights from swipe data
   const getSwipeInsights = (): string[] => {
     const insights: string[] = [];
 
-    // Favorite categories
-    if (swipeInsights.favoriteCategories && swipeInsights.favoriteCategories.length > 0) {
-      const categories = swipeInsights.favoriteCategories.slice(0, 2).join(' en ');
-      insights.push(`Je hebt een voorkeur voor ${categories}`);
-    }
-
-    // Pattern preferences
-    if (swipeInsights.preferredPatterns && swipeInsights.preferredPatterns.length > 0) {
-      const patterns = swipeInsights.preferredPatterns[0];
-      if (patterns.includes('effen')) {
-        insights.push("Je houdt van effen stoffen zonder opvallende prints");
-      } else if (patterns.includes('gestreept')) {
-        insights.push("Je waardeert subtiele strepen en geometrische patronen");
-      } else if (patterns.includes('print')) {
-        insights.push("Je bent niet bang voor opvallende prints en patronen");
-      }
-    }
-
-    // Silhouette preferences from archetype
-    const silhouetteMap: Record<string, string> = {
-      'slim': "Je verkiest slimme, getailleerde silhouetten",
-      'relaxed': "Je waardeert comfortabele, relaxed pasvormen",
-      'oversized': "Je houdt van oversized, losse silhouetten",
-      'tailored': "Je waardeert goed gesneden, tailored pieces",
-      'boxy': "Je houdt van boxy, moderne silhouetten"
-    };
-
-    if (archetype.silhouettes.length > 0) {
-      const silhouette = archetype.silhouettes[0];
-      if (silhouetteMap[silhouette]) {
-        insights.push(silhouetteMap[silhouette]);
-      }
-    }
-
-    // Material preferences
-    if (archetype.materials.length > 0) {
-      const materialDescriptions: Record<string, string> = {
-        'katoen': "natuurlijke stoffen zoals katoen",
-        'wol': "kwalitatieve materialen zoals wol",
-        'tech': "technische, functionele materialen",
-        'leer': "luxe materialen zoals leer",
-        'linnen': "luchtige, natuurlijke stoffen",
-        'fleece': "zachte, comfortabele materialen",
-        'denim': "robuuste, veelzijdige denim"
+    // Derive from real quiz answers first
+    if (quizAnswers.neutrals) {
+      const map: Record<string, string> = {
+        warm: 'Je koos warme tinten — beige, camel en terracotta als basis',
+        koel: 'Je koos koele tinten — grijs, navy en steenkleur als basis',
+        neutraal: 'Je koos neutrale mix — zwart, wit en grijs als basis',
       };
+      if (map[quizAnswers.neutrals]) insights.push(map[quizAnswers.neutrals]);
+    }
 
+    if (quizAnswers.contrast) {
+      const map: Record<string, string> = {
+        laag: 'Je gaf de voorkeur aan tonal outfits — alles in dezelfde tintfamilie',
+        medium: 'Je houdt van rustig contrast — niet tonal, maar ook niet scherp',
+        hoog: 'Je koos sterk contrast — lichte en donkere stukken combineren',
+      };
+      if (map[quizAnswers.contrast]) insights.push(map[quizAnswers.contrast]);
+    }
+
+    if (quizAnswers.fit) {
+      const map: Record<string, string> = {
+        slim: 'Je verkiest nauwsluitende, getailleerde silhouetten',
+        regular: 'Je waardeert een klassieke, comfortabele pasvorm',
+        relaxed: 'Je koos losser — comfortabele, relaxed silhouetten',
+        oversized: 'Je koos oversized — moderne, ruime proporties',
+      };
+      if (map[quizAnswers.fit]) insights.push(map[quizAnswers.fit]);
+    }
+
+    if (Array.isArray(quizAnswers.goals) && quizAnswers.goals.length > 0) {
+      const goalLabels: Record<string, string> = {
+        timeless: 'tijdloze stukken',
+        trendy: 'trendy items',
+        minimal: 'minimale looks',
+        express: 'zelfexpressie',
+        professional: 'professionele uitstraling',
+        comfort: 'comfort boven alles',
+      };
+      const labels = quizAnswers.goals.slice(0, 2).map((g: string) => goalLabels[g] ?? g);
+      insights.push(`Stijldoelen: ${labels.join(' en ')}`);
+    }
+
+    if (quizAnswers.prints) {
+      const map: Record<string, string> = {
+        effen: 'Je gaf géén pastels of prints op — outfits blijven clean',
+        subtiel: 'Je waardeert subtiele prints — strepen of kleine motieven',
+        statement: 'Je bent niet bang voor opvallende prints',
+        gemengd: 'Je combineert prints en effen vrij',
+      };
+      if (map[quizAnswers.prints]) insights.push(map[quizAnswers.prints]);
+    }
+
+    // Fallback from archetype if no quiz data
+    if (insights.length < 2 && archetype.materials.length > 0) {
+      const materialDescriptions: Record<string, string> = {
+        katoen: 'natuurlijke stoffen zoals katoen',
+        wol: 'kwalitatieve materialen zoals wol',
+        tech: 'technische, functionele materialen',
+        leer: 'luxe materialen zoals leer',
+        linnen: 'luchtige, natuurlijke stoffen',
+        fleece: 'zachte, comfortabele materialen',
+        denim: 'robuuste, veelzijdige denim',
+      };
       const material = archetype.materials[0];
       if (materialDescriptions[material]) {
         insights.push(`Je waardeert ${materialDescriptions[material]}`);
       }
     }
 
-    // Color preferences from color profile
-    if (colorProfile.season) {
-      const seasonDescriptions: Record<string, string> = {
-        'winter': "heldere, koele kleuren met contrast",
-        'zomer': "zachte, gedempte pasteltinten",
-        'herfst': "warme, aardse kleuren met diepte",
-        'lente': "heldere, warme kleuren vol energie"
-      };
-
-      const seasonDesc = seasonDescriptions[colorProfile.season.toLowerCase()];
-      if (seasonDesc) {
-        insights.push(`Je komt het best tot je recht in ${seasonDesc}`);
-      }
-    }
-
-    return insights.slice(0, 4); // Max 4 insights
+    return insights.slice(0, 4);
   };
 
   const personalizedDescription = getPersonalizedDescription();
@@ -247,10 +250,15 @@ export function StyleIdentityHero({
         >
           <TrendingUp className="w-5 h-5 text-[var(--ff-color-primary-600)] flex-shrink-0 mt-0.5" />
           <p className="text-sm text-[var(--ff-color-primary-800)] leading-relaxed">
-            <strong>Daarom hebben we voor je geselecteerd:</strong>{" "}
-            Alle onderstaande outfits zijn handmatig afgestemd op jouw {styleName}-stijl
-            en je {colorProfile.season}-kleurpalet. Ze passen perfect bij wat je ons vertelde
-            én wat we zagen in je visual preferences.
+            <strong>Jouw stijl in één zin:</strong>{" "}
+            {quizAnswers.neutrals === 'warm'
+              ? 'Warm, aards en consistent — '
+              : quizAnswers.neutrals === 'koel'
+              ? 'Koel, helder en gestructureerd — '
+              : 'Neutraal en veelzijdig — '}
+            je gaf aan dat je {quizAnswers.fit === 'slim' ? 'getailleerde' : quizAnswers.fit === 'oversized' ? 'oversized' : 'comfortabele'} outfits wilt.
+            Daarom hebben we {archetype.label.toLowerCase()} looks voor je geselecteerd die direct aansluiten op jouw antwoorden.
+            {" "}<em className="not-italic font-medium">Niet eens? Pas je antwoorden aan en vernieuw je rapport.</em>
           </p>
         </motion.div>
       </div>

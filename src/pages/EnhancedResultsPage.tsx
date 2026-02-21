@@ -46,6 +46,7 @@ import { generateOutfitDescription } from "@/engine/outfitContext";
 import TrendInsights from "@/components/premium/TrendInsights";
 import { TrustSignals } from "@/components/results/TrustSignals";
 import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
+import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -429,24 +430,37 @@ export default function EnhancedResultsPage() {
                   className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-4"
                 >
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
+                    whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={sharePage}
-                    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg"
+                    onClick={() => {
+                      document.getElementById('outfits-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-7 sm:px-10 py-4 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all shadow-xl"
                   >
-                    <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Deel je stijl</span>
+                    <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Bekijk outfits</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.button>
 
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <NavLink
                       to="/onboarding"
-                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto"
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto text-[var(--color-text)]"
                     >
                       <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Opnieuw doen</span>
+                      <span>Pas antwoorden aan</span>
                     </NavLink>
                   </motion.div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={sharePage}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-4 min-h-[52px] text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors text-sm font-medium"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span>Deel</span>
+                  </motion.button>
                 </motion.div>
 
                 {/* Stats Bar - Responsive */}
@@ -534,8 +548,17 @@ export default function EnhancedResultsPage() {
             <StyleIdentityHero
               primaryArchetype={archetypeKey}
               colorProfile={activeColorProfile}
+              quizAnswers={answers ?? {}}
               swipeInsights={swipeInsights}
             />
+            {answers && (
+              <div className="mt-8">
+                <QuizInputSummary
+                  answers={answers}
+                  archetypeName={archetypeName}
+                />
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -758,7 +781,10 @@ export default function EnhancedResultsPage() {
               {/* Complete Color Palette - Named Swatches */}
               <AnimatedSection delay={0.6}>
                 <div className="mb-12">
-                  <ColorPaletteSection season={activeColorProfile.season} />
+                  <ColorPaletteSection
+                    season={activeColorProfile.season}
+                    hasPhoto={!!answers?.photoUrl}
+                  />
                 </div>
               </AnimatedSection>
 
@@ -988,7 +1014,7 @@ export default function EnhancedResultsPage() {
 
       {/* Outfit Gallery - Premium - Responsive padding with wider desktop layout */}
       {hasCompletedQuiz && (
-        <section className="py-12 sm:py-16 md:py-20 lg:py-32 relative">
+        <section id="outfits-section" className="py-12 sm:py-16 md:py-20 lg:py-32 relative">
           <div className="ff-container">
             <AnimatedSection>
               <div className="text-center mb-8 sm:mb-12 lg:mb-20">

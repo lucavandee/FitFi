@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
-import { Palette, CheckCircle, XCircle, Info } from 'lucide-react';
+import { Palette, CheckCircle, XCircle, Info, Lock, Camera } from 'lucide-react';
 import { getColorPalette, groupColorsByCategory } from '@/data/colorPalettes';
 import { ColorSwatchGrid } from './ColorSwatchWithLabel';
+import { useNavigate } from 'react-router-dom';
 
 interface ColorPaletteSectionProps {
   season: string;
+  hasPhoto?: boolean;
+  isPremium?: boolean;
 }
 
 /**
@@ -22,7 +25,8 @@ interface ColorPaletteSectionProps {
  * 3. Full palette organized by category
  * 4. Colors to avoid (don'ts) - Red badge
  */
-export function ColorPaletteSection({ season }: ColorPaletteSectionProps) {
+export function ColorPaletteSection({ season, hasPhoto = false, isPremium = false }: ColorPaletteSectionProps) {
+  const navigate = useNavigate();
   const palette = getColorPalette(season);
 
   if (!palette) {
@@ -39,25 +43,49 @@ export function ColorPaletteSection({ season }: ColorPaletteSectionProps) {
       className="bg-white rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 md:p-10 shadow-xl"
     >
       {/* Header */}
-      <div className="flex items-start gap-4 mb-8">
+      <div className="flex items-start gap-4 mb-6">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center flex-shrink-0">
           <Palette className="w-7 h-7 text-white" />
         </div>
         <div className="flex-1">
           <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2">
-            Jouw Kleurpalet: {palette.season}
+            Kleurcombinaties voor {palette.season}
           </h3>
-          <p className="text-lg text-gray-600 leading-relaxed mb-3">
+          <p className="text-lg text-gray-600 leading-relaxed">
             {palette.description}
           </p>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm">
-            <Info className="w-4 h-4" />
-            <span>
-              Zie de uitleg hierboven voor context over jouw seizoenstype en ondertoon
-            </span>
-          </div>
         </div>
       </div>
+
+      {/* Photo / undertone disclaimer */}
+      {!hasPhoto ? (
+        <div className="flex items-start gap-3 p-4 mb-8 bg-amber-50 border border-amber-200 rounded-xl">
+          <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-amber-900 mb-1">
+              Kleurenanalyse op basis van voorkeur, niet huidondertoon
+            </p>
+            <p className="text-sm text-amber-800 leading-relaxed">
+              Onderstaande kleurtips zijn afgeleid van jouw kleurvoorkeur in de quiz.
+              Voor een persoonlijk kleuradvies op basis van huidondertoon is een foto nodig.{' '}
+              <button
+                onClick={() => navigate('/onboarding?step=photo')}
+                className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                Upload selfie
+              </button>
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-start gap-3 p-4 mb-8 bg-green-50 border border-green-200 rounded-xl">
+          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-green-800 leading-relaxed">
+            <strong className="font-semibold">Foto-gebaseerd kleuradvies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon uit de foto-analyse.
+          </p>
+        </div>
+      )}
 
       {/* Recommended Colors (DO) */}
       <div className="mb-10">
@@ -149,31 +177,52 @@ export function ColorPaletteSection({ season }: ColorPaletteSectionProps) {
         )}
       </div>
 
-      {/* Colors to Avoid (DON'T) */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <XCircle className="w-6 h-6 text-red-600" />
-          <h4 className="text-xl font-bold text-red-900">
-            Vermijd deze kleuren
-          </h4>
-        </div>
-        <div className="bg-red-50 rounded-2xl p-6 border-2 border-red-200">
-          <ColorSwatchGrid
-            swatches={palette.dontColors}
-            recommendation="dont"
-            columns={6}
-          />
-          <div className="mt-4 p-3 bg-white rounded-lg">
-            <p className="text-sm text-gray-700 flex items-start gap-2">
-              <Info className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
-              <span>
-                Deze kleuren zijn minder flatterend voor jouw ondertoon en contrast.
-                Ze kunnen je huid dof of grauw maken.
-              </span>
-            </p>
+      {/* Colors to Avoid — only available when undertone is confirmed via photo */}
+      {hasPhoto ? (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <XCircle className="w-6 h-6 text-red-600" />
+            <h4 className="text-xl font-bold text-red-900">
+              Vermijd deze kleuren
+            </h4>
+          </div>
+          <div className="bg-red-50 rounded-2xl p-6 border-2 border-red-200">
+            <ColorSwatchGrid
+              swatches={palette.dontColors}
+              recommendation="dont"
+              columns={6}
+            />
+            <div className="mt-4 p-3 bg-white rounded-lg">
+              <p className="text-sm text-gray-700 flex items-start gap-2">
+                <Info className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                <span>
+                  Op basis van jouw huidondertoon zijn deze kleuren minder flatterend. Ze kunnen je huid dof of grauw maken.
+                </span>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="relative rounded-2xl border-2 border-dashed border-[var(--color-border)] p-8 text-center">
+          <div className="absolute inset-0 bg-[var(--color-bg)]/60 backdrop-blur-[2px] rounded-2xl" />
+          <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center">
+              <Lock className="w-5 h-5 text-[var(--color-muted)]" />
+            </div>
+            <p className="font-semibold text-[var(--color-text)]">Kleuren om te vermijden</p>
+            <p className="text-sm text-[var(--color-muted)] max-w-xs leading-relaxed">
+              Kleurenanalyse (ondertoon) ontgrendel je met een foto — upload een selfie voor persoonlijk kleuradvies.
+            </p>
+            <button
+              onClick={() => navigate('/onboarding?step=photo')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            >
+              <Camera className="w-4 h-4" />
+              Upload foto voor kleuranalyse
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* How to Use This Palette */}
       <div className="mt-8 p-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border border-[var(--ff-color-primary-200)]">
