@@ -73,7 +73,7 @@ export default function DisclosurePage() {
               <p>
                 Deze pagina legt uit hoe FitFi omgaat met aanbevelingen, commerciële relaties,
                 beeldmateriaal en privacy. We kiezen voor een premium maar nuchtere aanpak:
-                <em> duidelijk, </em>.
+                duidelijk, eerlijk en zonder kleine lettertjes.
               </p>
             </section>
 

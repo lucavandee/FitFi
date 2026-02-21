@@ -20,16 +20,29 @@ export default class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-[60vh] flex items-center justify-center ff-container">
           <div className="max-w-lg text-center">
-            <h1 className="text-2xl font-semibold text-[var(--color-text)]">Er ging iets mis</h1>
+            <h1 className="text-2xl font-semibold text-[var(--color-text)]">Oeps — dit ging mis aan onze kant.</h1>
             <p className="mt-2 text-[var(--color-muted)]">
-              Vernieuw de pagina of ga terug naar de homepage.
+              Vernieuw de pagina. Als het blijft gebeuren: ga terug en probeer opnieuw.
             </p>
-            <div className="mt-4 flex gap-2 justify-center">
-              <button onClick={() => window.location.reload()} className="px-3 h-9 inline-flex items-center rounded-lg border border-[var(--color-border)] text-[var(--color-text)]">
-                Vernieuwen
+            <p className="mt-1 text-sm text-[var(--color-muted)]">Je antwoorden zijn waarschijnlijk opgeslagen.</p>
+            <div className="mt-5 flex flex-wrap gap-2 justify-center">
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl bg-[var(--ff-color-primary-700)] text-white text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+              >
+                Vernieuw
               </button>
-              <a href="/" className="px-3 h-9 inline-flex items-center rounded-lg text-white" style={{ background: "var(--ff-color-primary-700)" }}>
-                Naar home
+              <button
+                onClick={() => window.history.back()}
+                className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl border border-[var(--color-border)] text-[var(--color-text)] text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+              >
+                Terug
+              </button>
+              <a
+                href="/"
+                className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl border border-[var(--color-border)] text-[var(--color-text)] text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+              >
+                Naar start
               </a>
             </div>
           </div>
