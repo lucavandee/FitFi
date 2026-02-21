@@ -251,7 +251,7 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-gray-100 active:scale-95 transition-all min-w-[36px] min-h-[36px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
                   {showPw ? (
@@ -301,10 +301,10 @@ const RegisterPage: React.FC = () => {
                 <span className="text-sm text-gray-700 leading-relaxed select-none">
                   Ik ga akkoord met de{" "}
                   <NavLink
-                    to="/voorwaarden"
+                    to="/algemene-voorwaarden"
                     className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2"
                   >
-                    voorwaarden
+                    algemene voorwaarden
                   </NavLink>{" "}
                   en het{" "}
                   <NavLink

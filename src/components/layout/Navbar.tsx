@@ -154,8 +154,8 @@ export default function Navbar() {
                   Uitloggen
                 </button>
                 <div
-                  aria-label="Account"
-                  className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)]"
+                  aria-hidden="true"
+                  className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] select-none"
                 >
                   <span className="text-sm font-semibold">{userInitial}</span>
                 </div>
@@ -167,7 +167,7 @@ export default function Navbar() {
         {/* Mobile toggle - 44px touch target */}
         <button
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -286,7 +286,7 @@ function NavChip({ to, label }: { to: string; label: string }) {
       className={({ isActive }) =>
         [
           "inline-flex items-center rounded-full px-4 py-2 text-sm min-h-[44px]",
-          "outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:outline-[3px] focus-visible:outline-solid focus-visible:outline-[var(--ff-focus-ring-color)] focus-visible:outline-offset-2",
+          "outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2",
           "transition-colors",
           isActive
             ? "bg-[color-mix(in oklab,var(--color-primary) 12%,transparent)] border border-[var(--color-primary)]"

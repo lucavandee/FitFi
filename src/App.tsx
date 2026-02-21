@@ -110,7 +110,12 @@ export default function App() {
             <ProfileSyncInitializer />
             <AwinMasterTag />
             <Navbar />
-          <Suspense fallback={<div className="ff-container py-10">Laden…</div>}>
+          <Suspense fallback={
+            <div className="ff-container py-16 flex flex-col items-center gap-3" role="status" aria-live="polite">
+              <div className="w-8 h-8 border-2 border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" aria-hidden="true" />
+              <span className="text-sm text-[var(--color-muted)]">Laden…</span>
+            </div>
+          }>
             <main id="main">
               <Routes>
                 {/* Marketing */}

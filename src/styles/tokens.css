@@ -69,6 +69,18 @@
   --ff-color-turquoise: #40E0D0;     /* accent color for special elements */
   --ff-color-secondary-600: #6B7280; /* neutral secondary */
 
+  /* Beige/Warm scale — used across landing, quiz, and product components */
+  --ff-color-beige-50:  #FAF8F5;
+  --ff-color-beige-100: #F5F0E8;
+  --ff-color-beige-200: #EDE3D4;
+  --ff-color-beige-300: #DCCFBC;
+  --ff-color-beige-400: #C4B5A0;
+  --ff-color-beige-500: #A6886A;
+  --ff-color-beige-600: #8F7459;
+  --ff-color-beige-700: #7A614A;
+  --ff-color-beige-800: #5C4937;
+  --ff-color-beige-900: #3E3125;
+
   /* Neutral/Gray scale (warm-tinted) */
   --ff-color-neutral-50: #FAFAF9;
   --ff-color-neutral-100: #F5F5F4;
