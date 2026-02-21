@@ -36,129 +36,181 @@ export function HeroV3() {
     <section aria-labelledby="hero-heading">
 
       {/* ═══════════════════════════════════════════════
-          MOBILE  (< sm)  —  Full-viewport cinematic hero
-          Foto als achtergrond, tekst + CTA onderaan
+          MOBILE  (< sm)  —  Cinematic full-viewport hero
+          Foto vult volledig scherm, premium overlays,
+          tekst + CTA vastgepind onderaan
       ═══════════════════════════════════════════════ */}
       <div
         className="sm:hidden relative w-full overflow-hidden"
-        style={{ height: '100svh', background: '#2a1f14' }}
+        style={{ height: '100svh', minHeight: '640px', background: '#1c120a' }}
       >
         {/* ── Full-bleed foto ── */}
         <img
           src="/images/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
           alt="Stijlvol stel op een Amsterdams kanaal"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectPosition: '50% 18%' }}
+          style={{ objectPosition: '50% 22%' }}
           loading="eager"
         />
 
-        {/* Onderste gradient — maakt onderste 60% donker voor leesbare tekst */}
+        {/* ── Bovenste fade — versmelt met header ── */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute top-0 inset-x-0 pointer-events-none"
           style={{
+            height: '30%',
             background:
-              'linear-gradient(to bottom, transparent 25%, rgba(28,18,10,0.55) 52%, rgba(28,18,10,0.88) 75%, rgba(28,18,10,0.97) 100%)',
+              'linear-gradient(to bottom, rgba(28,18,10,0.62) 0%, rgba(28,18,10,0.18) 60%, transparent 100%)',
           }}
           aria-hidden="true"
         />
 
-        {/* AI badge — top left */}
+        {/* ── Onderste gradient — breed, zacht, diep ── */}
         <div
-          className="absolute top-5 left-4 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-full shadow-lg"
+          className="absolute inset-x-0 bottom-0 pointer-events-none"
           style={{
-            background: 'rgba(247,243,236,0.92)',
-            backdropFilter: 'blur(12px)',
+            height: '72%',
+            background:
+              'linear-gradient(to bottom, transparent 0%, rgba(20,13,8,0.50) 30%, rgba(20,13,8,0.82) 58%, rgba(20,13,8,0.96) 78%, rgba(20,13,8,1.0) 100%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* ── Zachte vignet op de randen ── */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse at center, transparent 50%, rgba(20,13,8,0.30) 100%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* ── AI badge — top left, met frosted glass ── */}
+        <div
+          className="absolute top-5 left-4 z-20 inline-flex items-center gap-2 px-3.5 py-2 rounded-full"
+          style={{
+            background: 'rgba(247,243,236,0.15)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(247,243,236,0.25)',
+            boxShadow: '0 2px 16px rgba(0,0,0,0.18)',
           }}
         >
           <Sparkles
             className="w-3 h-3"
-            style={{ color: 'var(--ff-color-primary-600)' }}
+            style={{ color: '#e8d5b0' }}
             aria-hidden="true"
           />
           <span
-            className="text-[11px] font-bold tracking-wide uppercase"
-            style={{ color: 'var(--ff-color-primary-700)' }}
+            className="text-[11px] font-bold tracking-[0.08em] uppercase"
+            style={{ color: '#F7F3EC' }}
           >
             AI Stijladvies
           </span>
         </div>
 
-        {/* ── Tekstblok + CTA — vastgepind onderaan ── */}
-        <div className="absolute bottom-0 inset-x-0 z-10 px-5 pb-8">
+        {/* ── Tekstblok + CTA — vastgepind onderaan, ruime zijmarges ── */}
+        <div className="absolute bottom-0 inset-x-0 z-20 px-6 pb-10">
 
-          {/* Live count */}
+          {/* Live count pill */}
           {todayCount !== undefined && todayCount > 0 && (
-            <div className="flex items-center gap-1.5 mb-4">
-              <div
-                className="w-1.5 h-1.5 rounded-full animate-pulse"
-                style={{ background: 'var(--ff-color-primary-300)' }}
+            <div
+              className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full"
+              style={{
+                background: 'rgba(247,243,236,0.10)',
+                border: '1px solid rgba(247,243,236,0.16)',
+              }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0"
+                style={{ background: '#b8976a' }}
                 aria-hidden="true"
               />
               <span
-                className="text-xs font-semibold"
-                style={{ color: 'rgba(247,243,236,0.65)' }}
+                className="text-[11px] font-semibold tracking-wide"
+                style={{ color: 'rgba(247,243,236,0.72)' }}
               >
-                <span style={{ color: 'var(--ff-color-primary-300)' }}>{todayCount}</span>
+                <span style={{ color: '#e8d5b0', fontWeight: 700 }}>{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </span>
             </div>
           )}
 
+          {/* Heading */}
           <h1
             id="hero-heading"
-            className="font-heading font-bold leading-[1.05] tracking-tight mb-3"
+            className="font-heading font-bold tracking-tight mb-3"
             style={{
-              fontSize: 'clamp(2.6rem, 11vw, 3.2rem)',
+              fontSize: 'clamp(2.5rem, 10.5vw, 3.1rem)',
+              lineHeight: 1.04,
               color: '#F7F3EC',
+              letterSpacing: '-0.02em',
             }}
           >
             Outfits die{' '}
             <em
               className="not-italic"
-              style={{ color: 'var(--ff-color-primary-300)' }}
+              style={{ color: '#d4a96a' }}
             >
               bij jou
-            </em>{' '}
+            </em>
+            <br />
             passen
           </h1>
 
+          {/* Subtekst */}
           <p
-            className="text-[15px] leading-relaxed mb-6"
-            style={{ color: 'rgba(247,243,236,0.75)' }}
+            className="text-[15px] font-light leading-[1.6] mb-7"
+            style={{ color: 'rgba(247,243,236,0.68)', maxWidth: '88%' }}
           >
             In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
           </p>
 
+          {/* Dunne scheidslijn */}
+          <div
+            className="mb-6"
+            style={{
+              height: '1px',
+              background: 'linear-gradient(to right, rgba(247,243,236,0.18) 0%, transparent 80%)',
+            }}
+            aria-hidden="true"
+          />
+
           {/* CTA knoppen */}
           <div className="flex flex-col gap-3">
+            {/* Primary */}
             <button
               onClick={handleStartClick}
-              className="group w-full inline-flex items-center justify-between px-6 min-h-[58px] rounded-2xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
+              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
               style={{
-                background: 'var(--ff-color-primary-700)',
+                background: 'linear-gradient(135deg, #9b7a52 0%, #7a5c38 100%)',
                 color: '#F7F3EC',
-                boxShadow: '0 8px 32px rgba(122,97,74,0.5)',
+                boxShadow: '0 4px 24px rgba(100,72,40,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
+                letterSpacing: '0.01em',
               }}
               aria-label="Start gratis jouw persoonlijk stijlquiz"
             >
               <span>Start mijn stijlquiz</span>
               <span
-                className="w-9 h-9 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
-                style={{ background: 'rgba(247,243,236,0.15)' }}
+                className="w-8 h-8 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
+                style={{ background: 'rgba(255,255,255,0.14)' }}
                 aria-hidden="true"
               >
                 <ArrowRight className="w-4 h-4" />
               </span>
             </button>
 
-            <div className="flex items-center gap-3">
+            {/* Secondary row */}
+            <div className="flex items-center gap-2.5">
               <button
                 onClick={handleExampleClick}
-                className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-xl font-medium text-sm transition-all duration-200"
+                className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]"
                 style={{
-                  background: 'rgba(247,243,236,0.10)',
-                  border: '1px solid rgba(247,243,236,0.22)',
-                  color: 'rgba(247,243,236,0.90)',
+                  background: 'rgba(247,243,236,0.08)',
+                  border: '1px solid rgba(247,243,236,0.18)',
+                  color: 'rgba(247,243,236,0.86)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
                 }}
                 aria-label="Bekijk voorbeeld rapport"
               >
@@ -166,23 +218,25 @@ export function HeroV3() {
               </button>
 
               <div
-                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-xl text-xs font-semibold"
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-[13px] text-[12px] font-semibold"
                 style={{
-                  background: 'rgba(247,243,236,0.10)',
-                  border: '1px solid rgba(247,243,236,0.22)',
-                  color: 'rgba(247,243,236,0.70)',
+                  background: 'rgba(247,243,236,0.08)',
+                  border: '1px solid rgba(247,243,236,0.18)',
+                  color: 'rgba(247,243,236,0.62)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
                 }}
               >
                 <svg
-                  className="w-3.5 h-3.5"
-                  viewBox="0 0 14 14"
+                  className="w-3 h-3 flex-shrink-0"
+                  viewBox="0 0 12 12"
                   fill="none"
                   aria-hidden="true"
                 >
                   <path
-                    d="M3.5 7l2.5 2.5 4.5-5"
-                    stroke="var(--ff-color-primary-300)"
-                    strokeWidth="1.6"
+                    d="M2.5 6l2.5 2.5 4.5-5"
+                    stroke="#b8976a"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
