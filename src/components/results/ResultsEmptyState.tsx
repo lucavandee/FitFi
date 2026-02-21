@@ -14,14 +14,17 @@ export const ResultsEmptyState: React.FC<ResultsEmptyStateProps> = ({
 }) => {
   if (hasFiltersApplied) {
     return (
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-12 text-center">
-        <RefreshCw className="w-16 h-16 mx-auto mb-4 text-[var(--color-text-muted)]" />
+      <div
+        role="status"
+        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-12 text-center"
+      >
+        <RefreshCw className="w-12 h-12 mx-auto mb-4 text-[var(--color-muted)]" aria-hidden="true" />
         <h3 className="font-display text-xl font-semibold text-[var(--color-text)] mb-2">
           Geen outfits gevonden
         </h3>
-        <p className="text-[var(--color-text-muted)] mb-6 max-w-md mx-auto">
+        <p className="text-[var(--color-muted)] mb-6 max-w-md mx-auto text-sm">
           We konden geen outfits vinden die aan je filters voldoen.
-          Probeer je filters aan te passen voor meer resultaten.
+          Pas je filters aan voor meer resultaten.
         </p>
         {onResetFilters && (
           <Button variant="primary" onClick={onResetFilters}>
@@ -33,13 +36,16 @@ export const ResultsEmptyState: React.FC<ResultsEmptyStateProps> = ({
   }
 
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-12 text-center">
-      <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--color-primary)]" />
+    <div
+      role="status"
+      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-12 text-center"
+    >
+      <Sparkles className="w-12 h-12 mx-auto mb-4 text-[var(--ff-color-primary-400)]" aria-hidden="true" />
       <h3 className="font-display text-xl font-semibold text-[var(--color-text)] mb-2">
-        Nog geen outfits
+        Nog geen outfits opgeslagen
       </h3>
-      <p className="text-[var(--color-text-muted)] mb-6 max-w-md mx-auto">
-        Voltooi eerst de stijlquiz om je outfit aanbevelingen te ontvangen.
+      <p className="text-[var(--color-muted)] mb-6 max-w-md mx-auto text-sm">
+        Bewaar je eerste look vanuit je stijlresultaten — dan verschijnen ze hier.
       </p>
       <NavLink to="/onboarding">
         <Button variant="primary">

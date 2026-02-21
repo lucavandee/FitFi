@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { RefreshCw, Home, ArrowLeft, Mail } from 'lucide-react';
 
 interface ErrorFallbackProps {
@@ -10,20 +10,36 @@ interface ErrorFallbackProps {
 
 const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   resetErrorBoundary,
-  title = "Oeps — dit ging mis aan onze kant.",
-  description = "Vernieuw de pagina. Als het blijft gebeuren: ga terug en probeer opnieuw.",
+  title = "Er ging iets mis.",
+  description = "Vernieuw de pagina of probeer het opnieuw.",
 }) => {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6">
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6"
+    >
       <div className="max-w-md w-full text-center">
         <div className="w-14 h-14 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
-          <RefreshCw className="w-6 h-6 text-[var(--color-muted)]" />
+          <RefreshCw className="w-6 h-6 text-[var(--color-muted)]" aria-hidden="true" />
         </div>
 
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">{title}</h1>
+        <h1
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-2xl font-bold text-[var(--color-text)] mb-2 outline-none"
+        >
+          {title}
+        </h1>
         <p className="text-sm text-[var(--color-muted)] mb-1">{description}</p>
         <p className="text-sm text-[var(--color-muted)] mb-8">
-          Je antwoorden zijn waarschijnlijk opgeslagen.
+          We kunnen dit nu niet laden. Probeer later nog eens.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -32,7 +48,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
               onClick={resetErrorBoundary}
               className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
               Probeer opnieuw
             </button>
           ) : (
@@ -40,7 +56,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
               onClick={() => window.location.reload()}
               className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
               Vernieuw
             </button>
           )}
@@ -48,25 +64,25 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
             onClick={() => window.history.back()}
             className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Terug
           </button>
         </div>
 
         <div className="mt-3 flex flex-col sm:flex-row gap-3">
           <a
-            href="/"
+            href="/dashboard"
             className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
           >
-            <Home className="w-4 h-4" />
-            Naar start
+            <Home className="w-4 h-4" aria-hidden="true" />
+            Naar dashboard
           </a>
           <a
             href="/contact"
             className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-muted)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] hover:text-[var(--color-text)] transition-colors"
           >
-            <Mail className="w-4 h-4" />
-            Contact opnemen
+            <Mail className="w-4 h-4" aria-hidden="true" />
+            Contact
           </a>
         </div>
 

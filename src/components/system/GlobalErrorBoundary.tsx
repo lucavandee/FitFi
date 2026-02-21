@@ -22,20 +22,28 @@ export default class GlobalErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6"
+        >
           <div className="max-w-md w-full text-center">
             <div className="w-14 h-14 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
-              <RefreshCw className="w-6 h-6 text-[var(--color-muted)]" />
+              <RefreshCw className="w-6 h-6 text-[var(--color-muted)]" aria-hidden="true" />
             </div>
 
-            <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
-              Oeps — dit ging mis aan onze kant.
+            <h1
+              tabIndex={-1}
+              ref={(el) => el?.focus()}
+              className="text-2xl font-bold text-[var(--color-text)] mb-2 outline-none"
+            >
+              Er ging iets mis.
             </h1>
             <p className="text-sm text-[var(--color-muted)] mb-1">
-              Vernieuw de pagina. Als het blijft gebeuren: ga terug en probeer opnieuw.
+              Vernieuw de pagina of probeer het opnieuw.
             </p>
             <p className="text-sm text-[var(--color-muted)] mb-8">
-              Je antwoorden zijn waarschijnlijk opgeslagen.
+              We kunnen dit nu niet laden. Probeer later nog eens.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -43,32 +51,32 @@ export default class GlobalErrorBoundary extends React.Component<Props, State> {
                 onClick={() => window.location.reload()}
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-4 h-4" aria-hidden="true" />
                 Vernieuw
               </button>
               <button
-                onClick={() => window.history.back()}
+                onClick={this.handleRetry}
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
               >
-                <ArrowLeft className="w-4 h-4" />
-                Terug
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                Probeer opnieuw
               </button>
             </div>
 
             <div className="mt-4 flex flex-col sm:flex-row gap-3">
               <a
-                href="/"
+                href="/dashboard"
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
               >
-                <Home className="w-4 h-4" />
-                Naar start
+                <Home className="w-4 h-4" aria-hidden="true" />
+                Naar dashboard
               </a>
               <a
                 href="/contact"
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-muted)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] hover:text-[var(--color-text)] transition-colors"
               >
-                <Mail className="w-4 h-4" />
-                Contact opnemen
+                <Mail className="w-4 h-4" aria-hidden="true" />
+                Contact
               </a>
             </div>
 
