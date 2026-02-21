@@ -54,6 +54,7 @@ const AdminBlogTopicsPage = lazy(() => import("@/pages/AdminBlogTopicsPage"));
 const AdminTestimonialsPage = lazy(() => import("@/pages/AdminTestimonialsPage"));
 const AccessibilityTestPage = lazy(() => import("@/pages/AccessibilityTestPage"));
 const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
+const BillingPage        = lazy(() => import("@/pages/BillingPage"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 const WithSeo = {
@@ -77,6 +78,7 @@ const WithSeo = {
   Register:   () => (<><Seo title="Registreren — FitFi" description="Maak je account aan en start gratis." path="/registreren" /><RegisterPage /></>),
   Dashboard:  () => (<><Seo title="Dashboard — FitFi" description="Snel overzicht en acties." path="/dashboard" /><DashboardPage /></>),
   Profile:    () => (<><Seo title="Profiel — FitFi" description="Jouw stijlprofiel en embedding insights." path="/profile" /><ProfilePage /></>),
+  Billing:    () => (<><Seo title="Abonnement & facturatie — FitFi" description="Beheer je plan, bekijk functies en download facturen." path="/account/billing" /><BillingPage /></>),
   Analytics:  () => (<><Seo title="Analytics — FitFi" description="Embedding analytics dashboard." path="/admin/analytics" noindex /><EmbeddingAnalytics /></>),
   AdminProducts: () => (<><Seo title="Product Management — FitFi" description="Stripe products management." path="/admin/products" noindex /><AdminProductsPage /></>),
   AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
@@ -144,6 +146,7 @@ export default function App() {
                 {/* App (afgeschermd) */}
                 <Route path="/dashboard" element={<RequireAuth><RequireQuiz><WithSeo.Dashboard /></RequireQuiz></RequireAuth>} />
                 <Route path="/profile" element={<RequireAuth><WithSeo.Profile /></RequireAuth>} />
+                <Route path="/account/billing" element={<RequireAuth><WithSeo.Billing /></RequireAuth>} />
                 <Route path="/results" element={<RequireAuth><RequireQuiz><WithSeo.Results /></RequireQuiz></RequireAuth>} />
                 <Route path="/results/preview" element={<WithSeo.ResultsPreview />} />
 
