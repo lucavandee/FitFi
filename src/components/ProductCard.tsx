@@ -132,7 +132,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Save button (overlay, top-right) */}
         <button
           onClick={handleSave}
-          aria-label={saved ? 'Verwijder uit bewaard' : 'Bewaar voor later'}
+          aria-label={saved ? 'Verwijderd uit bewaard' : 'Bewaar voor later'}
           className={cn(
             'absolute top-2.5 right-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm',
             saved
@@ -168,9 +168,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <button
             onClick={handleClick}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-xs font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
-            aria-label={`Bekijk ${title} bij partner (je verlaat FitFi)`}
+            aria-label={`Shop bij partner (je verlaat FitFi)`}
           >
-            Bekijk item
+            Shop bij partner
             <ExternalLink className="w-3 h-3" />
           </button>
         </div>
@@ -178,7 +178,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Feedback row */}
         {(onFeedbackMore || onFeedbackLess) && feedbackGiven === null && (
           <div className="flex items-center gap-2 pt-2.5 border-t border-[var(--color-border)]">
-            <span className="text-[10px] text-[var(--color-muted)] mr-auto">Past dit bij je?</span>
+            <span className="text-[10px] text-[var(--color-muted)] mr-auto">Niet jouw smaak? Geef feedback.</span>
             <button
               onClick={handleFeedbackMore}
               aria-label="Meer zoals dit"
@@ -186,7 +186,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
             >
               <ThumbsUp className="w-3.5 h-3.5" />
-              Meer
+              Meer zoals dit
             </button>
             <button
               onClick={handleFeedbackLess}
@@ -195,7 +195,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-error-600)] hover:bg-[var(--ff-color-error-50)] transition-colors"
             >
               <ThumbsDown className="w-3.5 h-3.5" />
-              Minder
+              Minder zoals dit
             </button>
           </div>
         )}
@@ -210,14 +210,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Affiliate disclosure */}
         <p className="mt-2.5 text-[10px] text-[var(--color-muted)] leading-relaxed">
-          Koop via onze partner (je verlaat FitFi) ·{' '}
+          Koop bij partner (je verlaat FitFi) ·{' '}
           <a
             href="/disclosure"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:no-underline"
           >
-            affiliate info
+            Meer info
           </a>
         </p>
       </div>

@@ -36,9 +36,9 @@ function buildReason(product: { brand?: string; category?: string; tags?: string
   const archetype = archetypeName || 'jouw stijl';
   const category = product.category || 'item';
   const tag = product.tags?.[0];
-  if (tag) return `Past bij jouw ${archetype} stijl door ${tag}`;
-  if (product.category) return `We tonen dit omdat je koos voor ${category}-items die passen bij ${archetype}`;
-  return `Geselecteerd op basis van jouw stijlprofiel`;
+  if (tag) return `Past bij jouw ${archetype} stijl door ${tag}.`;
+  if (product.category) return `We tonen dit omdat je koos voor ${category}-items die passen bij ${archetype}.`;
+  return `Geselecteerd op basis van jouw stijlprofiel.`;
 }
 
 const CATEGORIES = [
