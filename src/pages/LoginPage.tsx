@@ -1,11 +1,9 @@
 import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import Button from "@/components/ui/Button";
 import Seo from "@/components/seo/Seo";
 import {
   Eye,
   EyeOff,
-  AlertCircle,
   CheckCircle2,
   Mail,
   Shield,
@@ -34,7 +32,7 @@ export default function LoginPage() {
   const nav = useNavigate();
   const location = useLocation();
   const { login } = useUser();
-  const fromPath = (location.state as any)?.from as string | undefined;
+  const fromPath = (location.state as { from?: string })?.from;
 
   const comingFromResults =
     typeof fromPath === "string" && fromPath.startsWith("/results");
@@ -86,9 +84,7 @@ export default function LoginPage() {
           try {
             const { getSupabase } = await import("@/lib/supabase");
             const client = getSupabase();
-            const {
-              data: { user: authUser },
-            } = await client.auth.getUser();
+            const { data: { user: authUser } } = await client.auth.getUser();
             if (!authUser) {
               nav(fromPath || "/dashboard");
               return;
@@ -121,19 +117,20 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-[var(--ff-color-primary-50)] flex items-center justify-center px-4 py-8 sm:py-12">
+    <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4 py-10 sm:py-16">
       <Seo
         title="Inloggen — FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
         path="/inloggen"
       />
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-[420px]">
 
+        {/* Results context banner */}
         {comingFromResults && (
-          <div className="mb-6 flex items-start gap-3 px-5 py-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
-            <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-              <FileText className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+          <div className="mb-6 flex items-start gap-3 px-4 py-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
+            <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
+              <FileText className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
             </div>
             <div>
               <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
@@ -146,8 +143,9 @@ export default function LoginPage() {
           </div>
         )}
 
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
+        {/* Heading */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] tracking-tight mb-2">
             Je bent bijna binnen.
           </h1>
           <p className="text-base text-[var(--color-muted)]">
@@ -155,14 +153,16 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-[var(--color-border)] overflow-hidden">
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-[0_4px_32px_rgba(0,0,0,0.08)] border border-[var(--color-border)]">
           <form
             onSubmit={onSubmit}
             noValidate
-            className="p-6 sm:p-8 space-y-5"
+            className="p-7 space-y-5"
             aria-label="Inlogformulier"
           >
 
+            {/* Server error */}
             {serverError && (
               <div>
                 <ErrorAlert error={serverError} />
@@ -188,16 +188,19 @@ export default function LoginPage() {
               }}
             />
 
-            {/* Email */}
+            {/* Email field */}
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-[var(--color-text)] mb-2"
+                className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
               >
                 E-mailadres
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden="true" />
+                <Mail
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
+                  aria-hidden="true"
+                />
                 <input
                   id="email"
                   type="email"
@@ -210,11 +213,11 @@ export default function LoginPage() {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-11 pr-4 py-3.5 min-h-[48px] text-base rounded-xl border-2 transition-colors outline-none ${
+                  className={`w-full pl-10 pr-4 py-3 text-sm rounded-xl border transition-colors outline-none bg-white text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
                     emailError
-                      ? "border-red-400 focus-visible:border-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]"
-                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:shadow-[0_0_0_3px_rgba(var(--ff-color-primary-rgb,90,101,210),0.15)]"
-                  }`}
+                      ? "border-red-400 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
+                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_rgba(90,101,210,0.12)]"
+                  } disabled:opacity-50`}
                 />
               </div>
               <span id="email-error">
@@ -222,9 +225,9 @@ export default function LoginPage() {
               </span>
             </div>
 
-            {/* Password */}
+            {/* Password field */}
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="password"
                   className="text-sm font-semibold text-[var(--color-text)]"
@@ -233,13 +236,16 @@ export default function LoginPage() {
                 </label>
                 <NavLink
                   to="/wachtwoord-vergeten"
-                  className="text-sm font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline min-h-[44px] inline-flex items-center"
+                  className="text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors hover:underline underline-offset-2"
                 >
                   Wachtwoord vergeten?
                 </NavLink>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden="true" />
+                <Lock
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
+                  aria-hidden="true"
+                />
                 <input
                   id="password"
                   type={showPw ? "text" : "password"}
@@ -251,23 +257,19 @@ export default function LoginPage() {
                   aria-invalid={!!pwError}
                   aria-describedby={pwError ? "pw-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-11 pr-12 py-3.5 min-h-[48px] text-base rounded-xl border-2 transition-colors outline-none ${
+                  className={`w-full pl-10 pr-11 py-3 text-sm rounded-xl border transition-colors outline-none bg-white text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
                     pwError
-                      ? "border-red-400 focus-visible:border-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]"
-                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:shadow-[0_0_0_3px_rgba(var(--ff-color-primary-rgb,90,101,210),0.15)]"
-                  }`}
+                      ? "border-red-400 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
+                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_rgba(90,101,210,0.12)]"
+                  } disabled:opacity-50`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] transition-all"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
-                  {showPw ? (
-                    <EyeOff className="w-5 h-5 text-gray-500" />
-                  ) : (
-                    <Eye className="w-5 h-5 text-gray-500" />
-                  )}
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               <span id="pw-error">
@@ -275,72 +277,87 @@ export default function LoginPage() {
               </span>
             </div>
 
-            {/* Remember me */}
-            <label className="flex items-center gap-2.5 cursor-pointer min-h-[44px] w-fit">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                className="w-5 h-5 rounded border-gray-300 text-[var(--ff-color-primary-600)] focus:ring-[var(--ff-color-primary-500)] cursor-pointer"
-              />
-              <span className="text-sm text-gray-700 font-medium select-none">
+            {/* Remember me — custom styled */}
+            <label className="flex items-center gap-3 cursor-pointer select-none w-fit group">
+              <div className="relative flex-shrink-0">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                  remember
+                    ? "bg-[var(--ff-color-primary-700)] border-[var(--ff-color-primary-700)]"
+                    : "bg-white border-[var(--color-border)] group-hover:border-[var(--ff-color-primary-400)]"
+                }`}>
+                  {remember && (
+                    <svg className="w-3 h-3 text-white" viewBox="0 0 12 10" fill="none" aria-hidden="true">
+                      <path d="M1 5l3.5 3.5L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span className="text-sm text-[var(--color-text)] font-medium">
                 Onthoud mij
               </span>
             </label>
 
-            {/* Submit */}
-            <Button
+            {/* Submit button */}
+            <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] text-white py-4 min-h-[52px] rounded-xl font-bold text-base shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
                   <span>Bezig...</span>
                 </>
               ) : (
                 <>
                   <span>Inloggen</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </>
               )}
-            </Button>
+            </button>
 
             {/* Divider */}
             <div className="relative" aria-hidden="true">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-[var(--color-border)]" />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500 font-medium">
+              <div className="relative flex justify-center">
+                <span className="px-3 bg-white text-xs text-[var(--color-muted)] font-medium">
                   Geen account?
                 </span>
               </div>
             </div>
 
-            {/* Signup CTA */}
+            {/* Register CTA */}
             <NavLink
               to="/registreren"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] w-full border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] font-semibold text-base rounded-xl hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] font-semibold text-sm rounded-xl active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
             >
-              Maak account aan en start direct
-              <ArrowRight className="w-5 h-5" />
+              <span>Maak account aan en start direct</span>
+              <ArrowRight className="w-4 h-4 flex-shrink-0" />
             </NavLink>
 
-            <p className="text-center text-xs text-[var(--color-muted)] leading-relaxed">
+            <p className="text-center text-xs text-[var(--color-muted)]">
               Geen account nodig om de quiz te doen.{" "}
               <NavLink
                 to="/"
-                className="font-medium text-[var(--ff-color-primary-700)] hover:underline"
+                className="font-medium text-[var(--ff-color-primary-700)] hover:underline underline-offset-2"
               >
                 Terug naar start
               </NavLink>
             </p>
+
           </form>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--color-muted)]">
+        {/* Trust badges */}
+        <div className="mt-6 flex items-center justify-center gap-5 text-xs text-[var(--color-muted)]">
           <div className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
             <span>GDPR-compliant</span>
@@ -351,14 +368,14 @@ export default function LoginPage() {
           </div>
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
-            <span>Je data blijft van jou</span>
+            <span>Jouw data</span>
           </div>
         </div>
 
         <div className="mt-4 text-center">
           <NavLink
             to="/contact"
-            className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] underline transition-colors"
+            className="text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] underline underline-offset-2 transition-colors"
           >
             Hulp nodig bij inloggen?
           </NavLink>
