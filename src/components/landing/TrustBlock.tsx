@@ -1,13 +1,5 @@
 import { Shield, Lock, AlertCircle } from 'lucide-react';
 
-/**
- * TrustBlock - Privacy & Transparency
- *
- * Shows users:
- * - Privacy commitment
- * - Data retention policy
- * - What we don't claim (no medical/fitness)
- */
 export function TrustBlock() {
   return (
     <section
@@ -16,7 +8,6 @@ export function TrustBlock() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Heading */}
         <div className="text-center mb-12">
           <h2 id="trust-heading" className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-4">
             Jouw gegevens, jouw controle
@@ -26,13 +17,11 @@ export function TrustBlock() {
           </p>
         </div>
 
-        {/* Trust Cards */}
         <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
 
-          {/* Privacy */}
           <div className="bg-[var(--color-bg)] rounded-2xl p-6 border border-[var(--color-border)] hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                 <Shield className="w-6 h-6 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-[var(--color-text)]">Privacy first</h3>
@@ -42,10 +31,9 @@ export function TrustBlock() {
             </p>
           </div>
 
-          {/* Data Retention */}
           <div className="bg-[var(--color-bg)] rounded-2xl p-6 border border-[var(--color-border)] hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                 <Lock className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-[var(--color-text)]">Jouw data, jouw keuze</h3>
@@ -55,34 +43,35 @@ export function TrustBlock() {
             </p>
           </div>
 
-          {/* No Medical Claims */}
           <div className="bg-[var(--color-bg)] rounded-2xl p-6 border border-[var(--color-border)] hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                 <AlertCircle className="w-6 h-6 text-amber-600" />
               </div>
-              <h3 className="text-xl font-semibold text-[var(--color-text)]">Kleding, geen claims</h3>
+              <h3 className="text-xl font-semibold text-[var(--color-text)]">Mode, geen fitness</h3>
             </div>
             <p className="text-[var(--color-text-secondary)] leading-relaxed">
-              FitFi geeft stijladvies voor kleding. We doen geen medische of fitness-gerelateerde claims over je lichaam.
+              FitFi is een stijl- en kledingadvies-tool. We maken geen uitspraken over gezondheid, lichaamsbouw of fitness.
             </p>
           </div>
 
         </div>
 
-        {/* Transparency Note */}
-        <div className="mt-12 max-w-3xl mx-auto">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <h4 className="font-semibold text-[var(--color-text)] mb-2 flex items-center gap-2">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="mt-10 max-w-3xl mx-auto">
+          <div className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-5 sm:p-6 flex gap-4 items-start">
+            <div className="w-8 h-8 flex-shrink-0 mt-0.5" aria-hidden="true">
+              <svg className="w-8 h-8 text-[var(--ff-color-primary-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Wat we wel en niet weten
-            </h4>
-            <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
-              <strong>Zonder foto:</strong> We geven algemene stijladvies op basis van je voorkeuren en antwoorden.<br />
-              <strong>Met Premium + foto:</strong> We analyseren kleurtonen voor seizoensadvies (lente, zomer, herfst, winter). Dit is geen medisch advies.
-            </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-[var(--color-text)] mb-1 text-sm sm:text-base">
+                Hoe eerlijk kleurenadvies werkt
+              </h4>
+              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                Standaard geven we stijladvies op basis van je voorkeuren en antwoorden. Kleurenanalyse op basis van ondertoon is optioneel — en werkt alleen goed als je zelf die informatie deelt of een foto uploadt. We schatten of claimen dit niet op eigen initiatief.
+              </p>
+            </div>
           </div>
         </div>
 
