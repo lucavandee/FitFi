@@ -19,7 +19,7 @@ export default function SiteHeader() {
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   return (
-    <header role="banner" className="ff-nav-glass">
+    <header role="banner" className="nav-glass sticky top-0 z-50">
       {/* Exact dezelfde containerbreedte/padding als homepage */}
       <nav aria-label="Hoofdmenu" className="ff-container">
         <div className="h-16 w-full flex items-center justify-between">
