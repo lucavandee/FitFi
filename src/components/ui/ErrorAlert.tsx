@@ -117,10 +117,9 @@ export function ErrorAlert({
               {error.message}
             </p>
 
-            {/* Solution (optional) */}
             {!compact && error.solution && (
               <p className={`text-sm ${styles.text} mt-2 font-medium`}>
-                💡 {error.solution}
+                {error.solution}
               </p>
             )}
           </div>
@@ -243,7 +242,7 @@ export function ToastError({ error, onDismiss, duration = 5000 }: ToastErrorProp
             </p>
             {error.solution && (
               <p className={`text-sm ${styles.text} mt-2 font-medium`}>
-                💡 {error.solution}
+                {error.solution}
               </p>
             )}
           </div>

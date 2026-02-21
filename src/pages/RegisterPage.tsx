@@ -131,30 +131,28 @@ const RegisterPage: React.FC = () => {
 
       <div className="w-full max-w-md">
 
-        {/* Context banner — rapport opslaan */}
         <div className="mb-6 flex items-start gap-3 px-5 py-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
           <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
             <FileText className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
-              {comingFromResults
-                ? "Sla je stijlrapport op"
-                : "Jouw stijlprofiel, altijd bij je"}
+              Maak een account zodat we je stijlrapport kunnen opslaan.
             </p>
             <p className="text-sm text-[var(--ff-color-primary-700)] mt-0.5 leading-snug">
-              Maak een account zodat we je outfits en shoplinks kunnen bewaren.
+              {comingFromResults
+                ? "Je outfits en shoplinks zijn al klaar — sla ze op."
+                : "Na het aanmaken starten we je quiz."}
             </p>
           </div>
         </div>
 
-        {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
             Account aanmaken
           </h1>
-          <p className="text-base text-[var(--color-text-secondary)]">
-            Alleen je e-mailadres en een wachtwoord — meer niet.
+          <p className="text-base text-[var(--color-muted)]">
+            We vragen alleen wat nodig is.
           </p>
         </div>
 
@@ -203,6 +201,7 @@ const RegisterPage: React.FC = () => {
                   id="email"
                   type="email"
                   autoComplete="email"
+                  autoFocus
                   placeholder="jij@voorbeeld.nl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -346,7 +345,7 @@ const RegisterPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Account aanmaken</span>
+                  <span>{comingFromResults ? "Account aanmaken" : "Account aanmaken"}</span>
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}

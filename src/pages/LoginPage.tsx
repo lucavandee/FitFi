@@ -3,16 +3,26 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import Seo from "@/components/seo/Seo";
 import {
-  Eye, EyeOff, AlertCircle, CheckCircle2, Mail,
-  Shield, Lock, ArrowRight, Loader2, FileText
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+  Mail,
+  Shield,
+  Lock,
+  ArrowRight,
+  Loader2,
+  FileText,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
 import { SecurityLogger } from "@/services/security/securityLogger";
 import {
-  emailErrors, passwordErrors, getSupabaseAuthError,
-  type ErrorMessage
+  emailErrors,
+  passwordErrors,
+  getSupabaseAuthError,
+  type ErrorMessage,
 } from "@/utils/formErrors";
 import { InlineError, ErrorAlert } from "@/components/ui/ErrorAlert";
 
@@ -53,10 +63,12 @@ export default function LoginPage() {
 
   const canSubmit = isEmail(email) && password.length >= 8 && !loading;
 
-  const showForgotPasswordHint =
+  const isCredentialError =
     serverError?.icon === "AlertCircle" &&
     (serverError.title.toLowerCase().includes("onjuist") ||
-      serverError.title.toLowerCase().includes("ongeldig"));
+      serverError.title.toLowerCase().includes("ongeldig") ||
+      serverError.title.toLowerCase().includes("incorrect") ||
+      serverError.title.toLowerCase().includes("inloggegevens"));
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -118,7 +130,6 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md">
 
-        {/* Gate-context banner — only shown when navigated from /results */}
         {comingFromResults && (
           <div className="mb-6 flex items-start gap-3 px-5 py-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
             <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
@@ -126,36 +137,38 @@ export default function LoginPage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
-                Je stijlrapport wacht op je
+                Log in om je stijlrapport terug te zien.
               </p>
               <p className="text-sm text-[var(--ff-color-primary-700)] mt-0.5 leading-snug">
-                Log in om je outfits, combinaties en shoplinks te bekijken.
+                Je outfits, combinaties en shoplinks wachten op je.
               </p>
             </div>
           </div>
         )}
 
-        {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
-            Inloggen
+            Je bent bijna binnen.
           </h1>
-          <p className="text-base text-[var(--color-text-secondary)]">
+          <p className="text-base text-[var(--color-muted)]">
             Log in om je stijladvies en outfits terug te zien.
           </p>
         </div>
 
-        {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-[var(--color-border)] overflow-hidden">
-          <div className="p-6 sm:p-8 space-y-5">
+          <form
+            onSubmit={onSubmit}
+            noValidate
+            className="p-6 sm:p-8 space-y-5"
+            aria-label="Inlogformulier"
+          >
 
-            {/* Server Error — with inline reset-link action when credentials wrong */}
             {serverError && (
               <div>
                 <ErrorAlert error={serverError} />
-                {showForgotPasswordHint && (
+                {isCredentialError && (
                   <div className="mt-3 flex items-center gap-2 text-sm">
-                    <span className="text-[var(--color-text-secondary)]">Wachtwoord kwijt?</span>
+                    <span className="text-[var(--color-muted)]">Wachtwoord vergeten?</span>
                     <NavLink
                       to="/wachtwoord-vergeten"
                       className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2 transition-colors"
@@ -167,7 +180,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Social Login */}
             <SocialLoginButtons
               mode="login"
               onSuccess={() => {
@@ -185,17 +197,19 @@ export default function LoginPage() {
                 E-mailadres
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden="true" />
                 <input
                   id="email"
                   type="email"
                   autoComplete="email"
+                  autoFocus
                   placeholder="jij@voorbeeld.nl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => setTouched({ ...touched, email: true })}
+                  onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
+                  disabled={loading}
                   className={`w-full pl-11 pr-4 py-3.5 min-h-[48px] text-base rounded-xl border-2 transition-colors outline-none ${
                     emailError
                       ? "border-red-400 focus-visible:border-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]"
@@ -219,13 +233,13 @@ export default function LoginPage() {
                 </label>
                 <NavLink
                   to="/wachtwoord-vergeten"
-                  className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline min-h-[44px] inline-flex items-center"
+                  className="text-sm font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline min-h-[44px] inline-flex items-center"
                 >
                   Wachtwoord vergeten?
                 </NavLink>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden="true" />
                 <input
                   id="password"
                   type={showPw ? "text" : "password"}
@@ -233,9 +247,10 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  onBlur={() => setTouched({ ...touched, password: true })}
+                  onBlur={() => setTouched((t) => ({ ...t, password: true }))}
                   aria-invalid={!!pwError}
                   aria-describedby={pwError ? "pw-error" : undefined}
+                  disabled={loading}
                   className={`w-full pl-11 pr-12 py-3.5 min-h-[48px] text-base rounded-xl border-2 transition-colors outline-none ${
                     pwError
                       ? "border-red-400 focus-visible:border-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]"
@@ -276,14 +291,13 @@ export default function LoginPage() {
             {/* Submit */}
             <Button
               type="submit"
-              onClick={onSubmit as any}
               disabled={!canSubmit}
               className="w-full bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] text-white py-4 min-h-[52px] rounded-xl font-bold text-base shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Inloggen...</span>
+                  <span>Bezig...</span>
                 </>
               ) : (
                 <>
@@ -294,13 +308,13 @@ export default function LoginPage() {
             </Button>
 
             {/* Divider */}
-            <div className="relative">
+            <div className="relative" aria-hidden="true">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-4 bg-white text-gray-500 font-medium">
-                  Nog geen account?
+                  Geen account?
                 </span>
               </div>
             </div>
@@ -310,12 +324,11 @@ export default function LoginPage() {
               to="/registreren"
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] w-full border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] font-semibold text-base rounded-xl hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
-              Maak account aan
+              Maak account aan en start direct
               <ArrowRight className="w-5 h-5" />
             </NavLink>
 
-            {/* Microcopy */}
-            <p className="text-center text-xs text-[var(--color-text-secondary)] leading-relaxed">
+            <p className="text-center text-xs text-[var(--color-muted)] leading-relaxed">
               Geen account nodig om de quiz te doen.{" "}
               <NavLink
                 to="/"
@@ -324,30 +337,28 @@ export default function LoginPage() {
                 Terug naar start
               </NavLink>
             </p>
-          </div>
+          </form>
         </div>
 
-        {/* Trust Strip */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--color-text-secondary)]">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--color-muted)]">
           <div className="flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+            <Shield className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
             <span>GDPR-compliant</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+            <Lock className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
             <span>256-bit encryptie</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
             <span>Je data blijft van jou</span>
           </div>
         </div>
 
-        {/* Help */}
         <div className="mt-4 text-center">
           <NavLink
             to="/contact"
-            className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)] underline transition-colors"
+            className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] underline transition-colors"
           >
             Hulp nodig bij inloggen?
           </NavLink>
