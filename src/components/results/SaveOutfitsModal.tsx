@@ -23,7 +23,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
       return;
     }
 
-    navigate('/register?from=results&action=save');
+    navigate('/registreren?from=results&action=save');
   };
 
   if (!isOpen) return null;

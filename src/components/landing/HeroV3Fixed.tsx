@@ -50,7 +50,7 @@ export function HeroV3Fixed() {
     if (user) {
       navigate('/onboarding');
     } else {
-      navigate('/register');
+      navigate('/registreren');
     }
   };
 

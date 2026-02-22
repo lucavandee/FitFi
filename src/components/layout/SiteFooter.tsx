@@ -4,7 +4,7 @@ import NewsletterSignup from "@/components/marketing/NewsletterSignup";
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-20 bg-white border-t border-[var(--color-border)]">
+    <footer className="mt-20 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
       {/* Newsletter section */}
       <Container className="py-16 border-b border-[var(--color-border)]">
         <div className="max-w-2xl mx-auto">
@@ -22,26 +22,26 @@ export default function SiteFooter() {
         </div>
         <div className="grid gap-3">
           <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Product</strong>
-          <a href="/hoe-het-werkt" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Hoe het werkt</a>
-          <a href="/prijzen" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Prijzen</a>
-          <a href="/results" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Voorbeeld resultaten</a>
-          <a href="/veelgestelde-vragen" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">FAQ</a>
+          <a href="/hoe-het-werkt" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Hoe het werkt</a>
+          <a href="/prijzen" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Prijzen</a>
+          <a href="/results/preview" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Voorbeeld resultaten</a>
+          <a href="/veelgestelde-vragen" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">FAQ</a>
         </div>
         <div className="grid gap-3">
           <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Bedrijf</strong>
-          <a href="/over-ons" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Over ons</a>
-          <a href="/blog" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Blog</a>
-          <a href="/contact" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Contact</a>
+          <a href="/over-ons" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Over ons</a>
+          <a href="/blog" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Blog</a>
+          <a href="/contact" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Contact</a>
         </div>
         <div className="grid gap-3">
           <strong className="text-[var(--color-text)] font-semibold text-base mb-1">Juridisch</strong>
-          <a href="/privacy" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Privacy</a>
-          <a href="/algemene-voorwaarden" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Voorwaarden</a>
-          <a href="/cookies" className="text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors">Cookies</a>
+          <a href="/privacy" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Privacy</a>
+          <a href="/algemene-voorwaarden" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Voorwaarden</a>
+          <a href="/cookies" className="text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm">Cookies</a>
         </div>
       </Container>
       <Container className="py-6 border-t border-[var(--color-border)] bg-[var(--ff-color-primary-25)]">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 text-xs text-[var(--color-text)]/60">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 text-xs text-[var(--color-muted)]">
           <div className="flex flex-col gap-1">
             <p>© {new Date().getFullYear()} FitFi · Alle rechten voorbehouden.</p>
             <p>KVK: 97225665 · BTW: NL005258495B15</p>

@@ -62,11 +62,9 @@ export default function Navbar() {
     };
 
     window.addEventListener("storage", handleStorageChange);
-    const interval = setInterval(handleStorageChange, 2000);
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
     };
   }, []);
 
@@ -139,7 +137,7 @@ export default function Navbar() {
                 >
                   Dashboard
                   {savedOutfitsCount > 0 && (
-                    <span className="flex items-center gap-1 px-2 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full">
+                    <span className="flex items-center gap-1 px-2 py-0.5 bg-[var(--ff-color-primary-700)] text-white text-xs font-bold rounded-full">
                       <Heart className="w-3 h-3 fill-white" />
                       {savedOutfitsCount}
                     </span>
@@ -260,7 +258,7 @@ export default function Navbar() {
               >
                 Dashboard
                 {savedOutfitsCount > 0 && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full">
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[var(--ff-color-primary-700)] text-white text-xs font-bold rounded-full">
                     <Heart className="w-3 h-3 fill-white" />
                     {savedOutfitsCount}
                   </span>

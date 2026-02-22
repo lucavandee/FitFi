@@ -13,7 +13,7 @@ export function HeroMinimal() {
     if (user) {
       navigate('/onboarding');
     } else {
-      navigate('/register');
+      navigate('/registreren');
     }
   };
 

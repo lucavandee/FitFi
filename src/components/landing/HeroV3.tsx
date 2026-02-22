@@ -25,7 +25,7 @@ export function HeroV3() {
   });
 
   const handleStartClick = () => {
-    navigate(user ? '/onboarding' : '/register');
+    navigate(user ? '/onboarding' : '/registreren');
   };
 
   const handleExampleClick = () => {

@@ -101,7 +101,7 @@ const FEATURE_ROWS: Array<{
 
 function CellValue({ value, note }: { value: string | boolean; note?: string }) {
   if (value === true) {
-    return <Check className="w-5 h-5 text-green-600 mx-auto" aria-label="Inbegrepen" />;
+    return <Check className="w-5 h-5 text-[var(--ff-color-success-600)] mx-auto" aria-label="Inbegrepen" />;
   }
   if (value === false) {
     return <Minus className="w-4 h-4 text-[var(--color-muted)] mx-auto" aria-label="Niet inbegrepen" />;
@@ -198,19 +198,19 @@ export default function PricingPage() {
       </Helmet>
 
       {showCancelBanner && (
-        <div className="bg-amber-50 border-b border-amber-200">
+        <div className="bg-[var(--ff-color-warning-50)] border-b border-[var(--color-border)]">
           <div className="ff-container py-3 sm:py-4">
             <div className="flex items-center justify-between max-w-4xl mx-auto gap-3">
               <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 text-[var(--ff-color-warning-600)] flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-amber-900 text-sm">Checkout geannuleerd</p>
-                  <p className="text-xs text-amber-700">Geen zorgen — je kunt altijd later upgraden.</p>
+                  <p className="font-semibold text-[var(--color-text)] text-sm">Checkout geannuleerd</p>
+                  <p className="text-xs text-[var(--color-muted)]">Geen zorgen — je kunt altijd later upgraden.</p>
                 </div>
               </div>
               <button
                 onClick={handleCloseCancelBanner}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-amber-600 hover:text-amber-800 rounded-lg hover:bg-amber-100 transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--ff-color-warning-600)] hover:text-[var(--color-text)] rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors"
                 aria-label="Sluit melding"
               >
                 <X className="w-4 h-4" />
@@ -240,15 +240,15 @@ export default function PricingPage() {
 
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-[var(--color-text)]">
               <div className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-green-600" />
+                <Check className="w-4 h-4 text-[var(--ff-color-success-600)]" />
                 <span>30 dagen geld-terug-garantie</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-green-600" />
+                <Check className="w-4 h-4 text-[var(--ff-color-success-600)]" />
                 <span>Maandelijks opzegbaar</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-green-600" />
+                <Check className="w-4 h-4 text-[var(--ff-color-success-600)]" />
                 <span>Je ziet eerst een preview — daarna beslis je</span>
               </div>
             </div>
@@ -325,9 +325,9 @@ export default function PricingPage() {
               </article>
 
               {/* Premium Plan */}
-              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-5 sm:p-7 md:p-9 shadow-2xl text-white lg:scale-[1.02] mt-2 sm:mt-3 flex flex-col">
+              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-5 sm:p-7 md:p-9 shadow-2xl text-white flex flex-col">
 
-                <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 rounded-full px-5 sm:px-7 py-2 text-sm font-bold bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-2xl border-2 border-white/20 whitespace-nowrap">
+                <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 rounded-full px-5 sm:px-7 py-2 text-sm font-bold bg-[var(--ff-color-warning-600)] text-white shadow-2xl border-2 border-white/20 whitespace-nowrap">
                   MEEST GEKOZEN
                 </div>
 
@@ -434,7 +434,7 @@ export default function PricingPage() {
               <div className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 items-center">
 
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-amber-500/20 rounded-full text-xs sm:text-sm font-bold mb-4">
+                  <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-[var(--ff-color-warning-50)]0/20 rounded-full text-xs sm:text-sm font-bold mb-4">
                     <Crown className="w-4 h-4 text-amber-400" />
                     <span className="text-amber-300">EXCLUSIEF LIFETIME</span>
                   </div>
@@ -466,7 +466,7 @@ export default function PricingPage() {
                   <button
                     onClick={() => founderProduct && handleCheckout(founderProduct.id)}
                     disabled={isLoading || isPending}
-                    className="w-full px-6 py-4 min-h-[52px] bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-base hover:from-amber-400 hover:to-amber-500 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98]"
+                    className="w-full px-6 py-4 min-h-[52px] bg-[var(--ff-color-warning-600)] hover:bg-[var(--color-warning)] text-white rounded-xl font-bold text-base transition-all focus-visible:ring-2 focus-visible:ring-[var(--ff-color-warning-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98]"
                     data-event="cta_start_founder_pricing"
                   >
                     {isLoading ? (
@@ -495,7 +495,7 @@ export default function PricingPage() {
                       { icon: TrendingUp, text: "Invloed op roadmap", sub: "Help bepalen welke features we bouwen" },
                     ].map(({ icon: Icon, text, sub }) => (
                       <li key={text} className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-6 h-6 bg-[var(--ff-color-warning-50)]0/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Icon className="w-3.5 h-3.5 text-amber-400" />
                         </div>
                         <div>
@@ -537,7 +537,7 @@ export default function PricingPage() {
                       <th className="text-center p-4 sm:p-5 font-bold text-[var(--ff-color-primary-600)] text-sm sm:text-base bg-[var(--ff-color-primary-50)]">
                         Premium
                       </th>
-                      <th className="text-center p-4 sm:p-5 font-bold text-amber-600 text-sm sm:text-base bg-amber-50">
+                      <th className="text-center p-4 sm:p-5 font-bold text-[var(--ff-color-warning-600)] text-sm sm:text-base bg-[var(--ff-color-warning-50)]">
                         Founder
                       </th>
                     </tr>
@@ -567,7 +567,7 @@ export default function PricingPage() {
                         <td className="p-4 sm:p-5 text-center bg-[var(--ff-color-primary-50)]/30">
                           <CellValue value={row.premium} />
                         </td>
-                        <td className="p-4 sm:p-5 text-center bg-amber-50/30">
+                        <td className="p-4 sm:p-5 text-center bg-[var(--ff-color-warning-50)]/30">
                           <CellValue value={row.founder} />
                         </td>
                       </tr>
@@ -578,7 +578,7 @@ export default function PricingPage() {
                       <td className="p-4 sm:p-5 text-center text-sm bg-[var(--ff-color-primary-50)]/40">
                         €{premiumPrice}/maand
                       </td>
-                      <td className="p-4 sm:p-5 text-center text-sm bg-amber-50/40">
+                      <td className="p-4 sm:p-5 text-center text-sm bg-[var(--ff-color-warning-50)]/40">
                         €{founderPrice} eenmalig
                       </td>
                     </tr>

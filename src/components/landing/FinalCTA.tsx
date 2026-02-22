@@ -12,7 +12,7 @@ export function FinalCTA() {
     if (user) {
       navigate('/onboarding');
     } else {
-      navigate('/register');
+      navigate('/registreren');
     }
   };
 
@@ -50,7 +50,7 @@ export function FinalCTA() {
 
             <button
               onClick={handleClick}
-              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 sm:px-10 py-4 sm:py-5 lg:py-6 min-h-[52px] bg-white hover:bg-gray-50 text-[var(--ff-color-primary-700)] rounded-xl sm:rounded-2xl font-bold text-lg sm:text-xl shadow-2xl transition-all hover:scale-105 hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)] mb-4 w-full sm:w-auto"
+              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 sm:px-10 py-4 sm:py-5 lg:py-6 min-h-[52px] bg-[var(--color-surface)] hover:bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-xl sm:rounded-2xl font-bold text-lg sm:text-xl shadow-2xl transition-all hover:scale-105 hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)] mb-4 w-full sm:w-auto"
             >
               Maak mijn stijlrapport
               <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-1" aria-hidden="true" />
@@ -58,7 +58,7 @@ export function FinalCTA() {
 
             <div className="mb-8 sm:mb-10">
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/inloggen')}
                 className="text-white/60 hover:text-white/90 text-sm font-medium underline underline-offset-4 decoration-white/30 hover:decoration-white/60 transition-all duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded"
               >
                 Al een account? Log in

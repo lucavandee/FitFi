@@ -570,7 +570,7 @@ export default function OnboardingFlowPage() {
                   key={progress}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-xs sm:text-sm text-gray-600"
+                  className="text-xs sm:text-sm text-[var(--color-muted)]"
                 >
                   {Math.round(progress)}% compleet
                 </motion.span>
@@ -630,7 +630,7 @@ export default function OnboardingFlowPage() {
             <div className="ff-container py-3 sm:py-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs sm:text-sm font-medium">Outfit Calibratie</span>
-                <span className="text-xs sm:text-sm text-gray-600">{Math.round(progress)}% compleet</span>
+                <span className="text-xs sm:text-sm text-[var(--color-muted)] tabular-nums">{Math.round(progress)}% compleet</span>
               </div>
               <div className="h-2 sm:h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
                 <div
@@ -1120,25 +1120,25 @@ export default function OnboardingFlowPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+            className="bg-[var(--color-surface)] rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
             role="dialog"
             aria-labelledby="review-modal-title"
           >
             <div className="flex items-start justify-between mb-5">
               <div>
-                <h3 id="review-modal-title" className="text-xl font-bold text-gray-900">
+                <h3 id="review-modal-title" className="text-xl font-bold text-[var(--color-text)]">
                   Laatste stap: check je keuzes.
                 </h3>
-                <p className="text-sm text-gray-600 mt-0.5">
+                <p className="text-sm text-[var(--color-muted)] mt-0.5">
                   Je kunt altijd terug en aanpassen.
                 </p>
               </div>
               <button
                 onClick={() => setShowReviewModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="p-2 hover:bg-[var(--ff-color-primary-50)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                 aria-label="Sluit overzicht"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-[var(--color-muted)]" />
               </button>
             </div>
 
@@ -1163,7 +1163,7 @@ export default function OnboardingFlowPage() {
                   <li key={s.id} className="flex items-start gap-3">
                     <button
                       onClick={() => { setShowReviewModal(false); setCurrentStep(idx); }}
-                      className="text-left flex-1 flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
+                      className="text-left flex-1 flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--ff-color-primary-50)] transition-colors group"
                       aria-label={`Ga naar vraag ${idx + 1}: ${s.title}`}
                     >
                       <span className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold ${
@@ -1171,17 +1171,17 @@ export default function OnboardingFlowPage() {
                           ? 'bg-[var(--ff-color-primary-600)] text-white'
                           : s.required
                           ? 'bg-red-100 text-red-600'
-                          : 'bg-gray-100 text-gray-400'
+                          : 'bg-[var(--ff-color-neutral-200)] text-[var(--color-muted)]'
                       }`}>
                         {hasValue ? <CheckCircle className="w-3 h-3" /> : idx + 1}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-800 leading-tight">{s.title}</p>
-                        <p className={`text-xs mt-0.5 truncate ${hasValue ? 'text-gray-600' : s.required ? 'text-red-500' : 'text-gray-400'}`}>
+                        <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">{s.title}</p>
+                        <p className={`text-xs mt-0.5 truncate ${hasValue ? 'text-[var(--color-muted)]' : s.required ? 'text-[var(--ff-color-danger-600)]' : 'text-[var(--color-muted)]'}`}>
                           {hasValue ? displayVal : s.required ? 'Nog niet ingevuld — klik om aan te passen' : 'Overgeslagen'}
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[var(--ff-color-primary-500)] transition-colors flex-shrink-0 mt-1" />
+                      <ArrowRight className="w-4 h-4 text-[var(--color-border)] group-hover:text-[var(--ff-color-primary-500)] transition-colors flex-shrink-0 mt-1" />
                     </button>
                   </li>
                 );
@@ -1199,7 +1199,7 @@ export default function OnboardingFlowPage() {
               </button>
               <button
                 onClick={() => { setShowReviewModal(false); }}
-                className="w-full px-6 py-3 min-h-[48px] border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="w-full px-6 py-3 min-h-[48px] border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
               >
                 Terug naar vragen
               </button>
@@ -1214,32 +1214,32 @@ export default function OnboardingFlowPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
+            className="bg-[var(--color-surface)] rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
             role="dialog"
             aria-labelledby="cancel-modal-title"
             aria-describedby="cancel-modal-desc"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                  <AlertCircle className="w-6 h-6 text-red-600" aria-hidden="true" />
+                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-[var(--ff-color-danger-600)]" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 id="cancel-modal-title" className="text-xl font-bold text-gray-900">Quiz annuleren?</h3>
-                  <p className="text-sm text-gray-600">Je voortgang gaat verloren</p>
+                  <h3 id="cancel-modal-title" className="text-xl font-bold text-[var(--color-text)]">Quiz annuleren?</h3>
+                  <p className="text-sm text-[var(--color-muted)]">Je voortgang gaat verloren</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="p-2 hover:bg-[var(--ff-color-primary-50)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                 aria-label="Sluit modal"
               >
-                <X className="w-5 h-5 text-gray-500" aria-hidden="true" />
+                <X className="w-5 h-5 text-[var(--color-muted)]" aria-hidden="true" />
               </button>
             </div>
 
             <div className="space-y-3 mb-6">
-              <p id="cancel-modal-desc" className="text-gray-700">
+              <p id="cancel-modal-desc" className="text-[var(--color-text)]">
                 Wil je je voortgang bewaren en later verdergaan, of wil je alles wissen?
               </p>
             </div>
@@ -1253,13 +1253,13 @@ export default function OnboardingFlowPage() {
               </button>
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="w-full px-6 py-3 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="w-full px-6 py-3 border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
               >
                 Doorgaan met quiz
               </button>
               <button
                 onClick={confirmCancel}
-                className="w-full px-6 py-3 text-sm text-gray-500 hover:text-gray-700 transition-colors underline underline-offset-2"
+                className="w-full px-6 py-3 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
               >
                 Alles wissen en stoppen
               </button>

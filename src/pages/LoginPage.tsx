@@ -154,7 +154,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-[0_4px_32px_rgba(0,0,0,0.08)] border border-[var(--color-border)]">
+        <div className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
           <form
             onSubmit={onSubmit}
             noValidate
@@ -213,10 +213,10 @@ export default function LoginPage() {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3 text-sm rounded-xl border transition-colors outline-none bg-white text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
+                  className={`w-full pl-10 pr-4 py-3 text-sm rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
                     emailError
-                      ? "border-red-400 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
-                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_rgba(90,101,210,0.12)]"
+                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_var(--ff-color-danger-100)]"
+                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
                   } disabled:opacity-50`}
                 />
               </div>
@@ -257,10 +257,10 @@ export default function LoginPage() {
                   aria-invalid={!!pwError}
                   aria-describedby={pwError ? "pw-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3 text-sm rounded-xl border transition-colors outline-none bg-white text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
+                  className={`w-full pl-10 pr-11 py-3 text-sm rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
                     pwError
-                      ? "border-red-400 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
-                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_rgba(90,101,210,0.12)]"
+                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_var(--ff-color-danger-100)]"
+                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
                   } disabled:opacity-50`}
                 />
                 <button
@@ -328,7 +328,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-[var(--color-border)]" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-white text-xs text-[var(--color-muted)] font-medium">
+                <span className="px-3 bg-[var(--color-surface)] text-xs text-[var(--color-muted)] font-medium">
                   Geen account?
                 </span>
               </div>
@@ -359,15 +359,15 @@ export default function LoginPage() {
         {/* Trust badges */}
         <div className="mt-6 flex items-center justify-center gap-5 text-xs text-[var(--color-muted)]">
           <div className="flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
+            <Shield className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
             <span>GDPR-compliant</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
+            <Lock className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
             <span>256-bit encryptie</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" aria-hidden="true" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
             <span>Jouw data</span>
           </div>
         </div>

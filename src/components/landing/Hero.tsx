@@ -13,7 +13,7 @@ export function Hero() {
     if (user) {
       navigate('/onboarding');
     } else {
-      navigate('/register');
+      navigate('/registreren');
     }
   };
   return (

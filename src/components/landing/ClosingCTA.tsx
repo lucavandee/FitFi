@@ -11,7 +11,7 @@ export function ClosingCTA() {
     if (user) {
       navigate('/onboarding');
     } else {
-      navigate('/register');
+      navigate('/registreren');
     }
   };
 

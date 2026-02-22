@@ -136,7 +136,7 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
           </ul>
 
           <div className="mt-6 grid grid-cols-1 gap-2">
-            <NavLink to="/login" className="h-10 inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-text)]" onClick={onClose}>
+            <NavLink to="/inloggen" className="h-10 inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-text)]" onClick={onClose}>
               Inloggen
             </NavLink>
             <NavLink to="/prijzen" className="h-10 inline-flex items-center justify-center rounded-lg text-white"

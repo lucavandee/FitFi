@@ -64,7 +64,7 @@ export function StickyCTA() {
     if (user) {
       navigate('/onboarding');
     } else {
-      navigate('/register');
+      navigate('/registreren');
     }
   };
 

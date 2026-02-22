@@ -32,19 +32,19 @@ function passwordStrength(pw: string): { score: number; label: string; pct: numb
 }
 
 const strengthColors = [
-  "bg-red-400",
-  "bg-orange-400",
-  "bg-yellow-400",
-  "bg-green-400",
-  "bg-emerald-500",
+  "bg-[var(--ff-color-danger-400)]",
+  "bg-[var(--ff-color-danger-300)]",
+  "bg-[var(--ff-color-warning-600)]",
+  "bg-[var(--ff-color-success-500)]",
+  "bg-[var(--ff-color-success-600)]",
 ] as const;
 
 const strengthTextColors = [
-  "text-red-600",
-  "text-orange-600",
-  "text-yellow-600",
-  "text-green-600",
-  "text-emerald-600",
+  "text-[var(--ff-color-danger-600)]",
+  "text-[var(--ff-color-danger-500)]",
+  "text-[var(--ff-color-warning-600)]",
+  "text-[var(--ff-color-success-600)]",
+  "text-[var(--ff-color-success-700)]",
 ] as const;
 
 const RegisterPage: React.FC = () => {
@@ -144,7 +144,7 @@ const RegisterPage: React.FC = () => {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[var(--color-border)]">
+        <div className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
           <form onSubmit={onSubmit} className="p-5 space-y-4">
 
             {/* Server error */}
@@ -155,7 +155,7 @@ const RegisterPage: React.FC = () => {
                   <div className="mt-2 flex items-center gap-2 text-sm">
                     <span className="text-[var(--color-text-secondary)]">Al een account?</span>
                     <NavLink
-                      to="/login"
+                      to="/inloggen"
                       className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2"
                     >
                       Inloggen
@@ -183,7 +183,7 @@ const RegisterPage: React.FC = () => {
                 E-mailadres
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400 pointer-events-none" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
                 <input
                   id="email"
                   type="email"
@@ -196,10 +196,10 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-white outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     emailError
-                      ? "border-red-400 focus-visible:ring-red-300"
-                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
+                      ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
+                      : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
                   }`}
                 />
               </div>
@@ -217,7 +217,7 @@ const RegisterPage: React.FC = () => {
                 Wachtwoord
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400 pointer-events-none" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
                 <input
                   id="password"
                   type={showPw ? "text" : "password"}
@@ -229,25 +229,25 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!pwError}
                   aria-describedby="pw-hint pw-error"
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-white outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     pwError
-                      ? "border-red-400 focus-visible:ring-red-300"
-                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
+                      ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
+                      : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 active:scale-95 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 rounded-lg text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
-                  {showPw ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
 
               {pwData ? (
                 <div className="mt-2" aria-live="polite">
-                  <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-1 bg-[var(--ff-color-neutral-200)] rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-500 ease-out rounded-full ${strengthColors[pwData.score]}`}
                       style={{ width: `${pwData.pct}%` }}
@@ -269,7 +269,7 @@ const RegisterPage: React.FC = () => {
             </div>
 
             {/* Consent block */}
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
               <label className="flex items-start gap-3 cursor-pointer">
                 <div className="flex-shrink-0 mt-0.5">
                   <input
@@ -279,7 +279,7 @@ const RegisterPage: React.FC = () => {
                     className="w-5 h-5 rounded border-2 border-gray-300 accent-[var(--ff-color-primary-600)] cursor-pointer"
                   />
                 </div>
-                <span className="text-sm text-gray-700 leading-relaxed select-none">
+                <span className="text-sm text-[var(--color-text)] leading-relaxed select-none">
                   Ik ga akkoord met de{" "}
                   <NavLink
                     to="/algemene-voorwaarden"
@@ -304,8 +304,8 @@ const RegisterPage: React.FC = () => {
                   "We vragen alleen wat nodig is voor je rapport.",
                   "Je kunt je account altijd verwijderen.",
                 ].map((text) => (
-                  <li key={text} className="flex items-start gap-2 text-xs text-gray-500">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <li key={text} className="flex items-start gap-2 text-xs text-[var(--color-muted)]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" />
                     <span>{text}</span>
                   </li>
                 ))}
@@ -333,15 +333,15 @@ const RegisterPage: React.FC = () => {
 
             {/* Divider */}
             <div className="relative flex items-center gap-3 py-1">
-              <div className="flex-1 border-t border-gray-200" />
-              <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Al een account?</span>
-              <div className="flex-1 border-t border-gray-200" />
+              <div className="flex-1 border-t border-[var(--color-border)]" />
+              <span className="text-xs text-[var(--color-muted)] font-medium whitespace-nowrap">Al een account?</span>
+              <div className="flex-1 border-t border-[var(--color-border)]" />
             </div>
 
             {/* Login CTA */}
             <NavLink
-              to="/login"
-              className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base border-2 border-gray-200 text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              to="/inloggen"
+              className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base border-2 border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
               Ik heb al een account
               <ArrowRight className="w-5 h-5" />
@@ -363,15 +363,15 @@ const RegisterPage: React.FC = () => {
         {/* Trust strip */}
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[var(--color-text-secondary)]">
           <div className="flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+            <Shield className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" />
             <span>GDPR-compliant</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+            <Lock className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" />
             <span>Veilige opslag</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" />
             <span>Geen spam</span>
           </div>
         </div>

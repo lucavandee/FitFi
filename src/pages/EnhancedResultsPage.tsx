@@ -385,7 +385,7 @@ export default function EnhancedResultsPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-600 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-light px-4"
+                  className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[var(--color-muted)] mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-light px-4"
                 >
                   {archetypeDetectionResult && archetypeDetectionResult.confidence >= 0.7 ? (
                     <>
@@ -455,15 +455,15 @@ export default function EnhancedResultsPage() {
                 >
                   <div className="text-center">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{displayOutfits.length}</div>
-                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Outfits</div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Outfits</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">100%</div>
-                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Op maat</div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Op maat</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{favs.length}</div>
-                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Favorieten</div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Favorieten</div>
                   </div>
                 </motion.div>
               </>
@@ -485,7 +485,7 @@ export default function EnhancedResultsPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
-                  className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+                  className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
                 >
                   Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen
                 </motion.p>
@@ -569,7 +569,7 @@ export default function EnhancedResultsPage() {
                   Kleuranalyse & Stijlprofiel
                   <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
-                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto mb-4 leading-relaxed">
+                <p className="text-lg sm:text-xl lg:text-2xl text-[var(--color-muted)] max-w-3xl mx-auto mb-4 leading-relaxed">
                   {answers?.photoUrl
                     ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
                     : 'Op basis van jouw kleurvoorkeur uit de quiz — zonder foto geven we geen ondertoonadvies'}
@@ -736,7 +736,7 @@ export default function EnhancedResultsPage() {
                       <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
                         Wil je een persoonlijk kleurenpalet?
                       </h3>
-                      <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                      <p className="text-[var(--color-muted)] mb-6 max-w-2xl mx-auto">
                         {!answers?.photoUrl
                           ? 'Kleurenanalyse is optioneel. Zonder foto geven we geen ondertoonadvies. Upload een selfie en ontgrendel Premium voor jouw volledige shopping-cheatsheet.'
                           : 'Ontgrendel Premium voor een persoonlijke shopping-gids met kleuradviezen op basis van jouw ondertoon.'}
@@ -836,32 +836,32 @@ export default function EnhancedResultsPage() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Je stijltype: {archetypeName}</h4>
-                        <p className="text-gray-600 leading-relaxed mb-4">
+                        <p className="text-[var(--color-muted)] leading-relaxed mb-4">
                           Dit advies komt uit jouw keuzes:
                         </p>
                         <ul className="space-y-3">
                           {answers?.fit && (
                             <li className="flex items-start gap-3">
                               <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                              <span className="text-gray-700 leading-relaxed"><strong>Pasvorm:</strong> {answers.fit}</span>
+                              <span className="text-[var(--color-text)] leading-relaxed"><strong>Pasvorm:</strong> {answers.fit}</span>
                             </li>
                           )}
                           {answers?.occasions && Array.isArray(answers.occasions) && answers.occasions.length > 0 && (
                             <li className="flex items-start gap-3">
                               <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                              <span className="text-gray-700 leading-relaxed"><strong>Gelegenheden:</strong> {answers.occasions.join(', ')}</span>
+                              <span className="text-[var(--color-text)] leading-relaxed"><strong>Gelegenheden:</strong> {answers.occasions.join(', ')}</span>
                             </li>
                           )}
                           {answers?.goals && Array.isArray(answers.goals) && answers.goals.length > 0 && (
                             <li className="flex items-start gap-3">
                               <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                              <span className="text-gray-700 leading-relaxed"><strong>Stijldoelen:</strong> {answers.goals.join(', ')}</span>
+                              <span className="text-[var(--color-text)] leading-relaxed"><strong>Stijldoelen:</strong> {answers.goals.join(', ')}</span>
                             </li>
                           )}
                           {!(answers?.fit || answers?.occasions || answers?.goals) && (
                             <li className="flex items-start gap-3">
                               <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                              <span className="text-gray-700 leading-relaxed">Jouw antwoorden zijn verwerkt in dit profiel.</span>
+                              <span className="text-[var(--color-text)] leading-relaxed">Jouw antwoorden zijn verwerkt in dit profiel.</span>
                             </li>
                           )}
                         </ul>
@@ -878,26 +878,26 @@ export default function EnhancedResultsPage() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Kleuranalyse: {activeColorProfile.paletteName}</h4>
-                        <p className="text-gray-600 leading-relaxed mb-4">
+                        <p className="text-[var(--color-muted)] leading-relaxed mb-4">
                           Dit advies komt uit jouw keuzes:
                         </p>
                         <ul className="space-y-3">
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Temperatuur:</strong> {formatStyleDNAValue('temperature', activeColorProfile.temperature)}</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Temperatuur:</strong> {formatStyleDNAValue('temperature', activeColorProfile.temperature)}</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Contrast:</strong> {formatStyleDNAValue('contrast', activeColorProfile.contrast)}</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Contrast:</strong> {formatStyleDNAValue('contrast', activeColorProfile.contrast)}</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Seizoen:</strong> {getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Seizoen:</strong> {getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}</span>
                           </li>
                           {!answers?.photoUrl && (
                             <li className="flex items-start gap-3">
                               <Check className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                              <span className="text-gray-700 leading-relaxed">Kleurenanalyse is gebaseerd op voorkeur. Zonder foto geven we geen ondertoonadvies.</span>
+                              <span className="text-[var(--color-text)] leading-relaxed">Kleurenanalyse is gebaseerd op voorkeur. Zonder foto geven we geen ondertoonadvies.</span>
                             </li>
                           )}
                         </ul>
@@ -914,21 +914,21 @@ export default function EnhancedResultsPage() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-xl text-[var(--color-text)] mb-4">Intelligente matching</h4>
-                        <p className="text-gray-600 leading-relaxed mb-4">
+                        <p className="text-[var(--color-muted)] leading-relaxed mb-4">
                           We combineren alles voor de perfecte match:
                         </p>
                         <ul className="space-y-3">
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Kleurharmonie:</strong> Seizoensgebonden palet per outfit</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Kleurharmonie:</strong> Seizoensgebonden palet per outfit</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Stijlcompatibiliteit:</strong> Past bij jouw {archetypeName.toLowerCase()} DNA</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Stijlcompatibiliteit:</strong> Past bij jouw {archetypeName.toLowerCase()} DNA</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-gray-700 leading-relaxed"><strong>Gelegenheidscontext:</strong> Geschikt voor jouw dagelijkse situaties</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Gelegenheidscontext:</strong> Geschikt voor jouw dagelijkse situaties</span>
                           </li>
                         </ul>
                       </div>
@@ -978,7 +978,7 @@ export default function EnhancedResultsPage() {
                         <div className="mt-1 w-6 h-6 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-600)] transition-colors">
                           <Check className="w-4 h-4 text-[var(--ff-color-primary-600)] group-hover:text-white transition-colors" />
                         </div>
-                        <p className="text-gray-700 leading-relaxed text-lg">{note}</p>
+                        <p className="text-[var(--color-text)] leading-relaxed text-lg">{note}</p>
                       </motion.li>
                     ))}
                   </ul>
@@ -1028,7 +1028,7 @@ export default function EnhancedResultsPage() {
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
                   Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
                 </h2>
-                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+                <p className="text-lg sm:text-xl lg:text-2xl text-[var(--color-muted)] max-w-3xl mx-auto mb-8 leading-relaxed">
                   {displayOutfits.length} zorgvuldig samengestelde outfits die perfect bij jouw stijl passen
                 </p>
 
@@ -1100,7 +1100,7 @@ export default function EnhancedResultsPage() {
                   return (
                     <div className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] overflow-hidden shadow-lg h-full">
                       {/* Image Container */}
-                      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)]">
                         {outfit && 'image' in outfit && outfit.image ? (
                           <img
                             src={outfit.image}
@@ -1111,7 +1111,7 @@ export default function EnhancedResultsPage() {
                           <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
                             <div className="text-center p-8">
                               <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
-                              <p className="text-sm text-gray-600 font-medium">Outfit {idx + 1}</p>
+                              <p className="text-sm text-[var(--color-muted)] font-medium">Outfit {idx + 1}</p>
                             </div>
                           </div>
                         )}
@@ -1143,7 +1143,7 @@ export default function EnhancedResultsPage() {
                         <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
-                        <p className="text-base text-gray-600">
+                        <p className="text-base text-[var(--color-muted)]">
                           {outfitInfo.description}
                         </p>
                       </div>
@@ -1166,7 +1166,7 @@ export default function EnhancedResultsPage() {
                         className="group relative bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] overflow-hidden shadow-lg transition-all"
                       >
                         {/* Image Container */}
-                        <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                        <div className="relative aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)]">
                           {outfit && 'image' in outfit && outfit.image ? (
                             <img
                               src={outfit.image}
@@ -1177,7 +1177,7 @@ export default function EnhancedResultsPage() {
                             <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
                               <div className="text-center p-8">
                                 <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
-                                <p className="text-sm text-gray-600 font-medium">Outfit {idx + 1}</p>
+                                <p className="text-sm text-[var(--color-muted)] font-medium">Outfit {idx + 1}</p>
                               </div>
                             </div>
                           )}
@@ -1219,7 +1219,7 @@ export default function EnhancedResultsPage() {
                                 className={`w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
                                   isFav
                                     ? 'bg-red-500 text-white'
-                                    : 'bg-white/90 text-gray-700 hover:bg-white'
+                                    : 'bg-white/90 text-[var(--color-text)] hover:bg-white'
                                 }`}
                                 aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                               >
@@ -1260,7 +1260,7 @@ export default function EnhancedResultsPage() {
                               Op basis van jouw keuzes: {[answers.fit, answers.occasions?.[0]].filter(Boolean).join(', ') || archetypeName}
                             </p>
                           )}
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-sm text-[var(--color-muted)] line-clamp-2">
                             {outfitInfo.description}
                           </p>
                         </div>
@@ -1411,13 +1411,13 @@ export default function EnhancedResultsPage() {
                   <h3 className="text-3xl font-bold mb-2">
                     {'name' in selectedOutfit ? selectedOutfit.name : `Outfit Details`}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-[var(--color-muted)]">
                     Perfect voor {archetypeName.toLowerCase()} stijl
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedOutfit(null)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  className="p-2 rounded-full hover:bg-[var(--ff-color-neutral-100)] transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -1438,7 +1438,7 @@ export default function EnhancedResultsPage() {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-semibold text-lg mb-2">Waarom dit outfit?</h4>
-                  <p className="text-gray-700">
+                  <p className="text-[var(--color-text)]">
                     Dit outfit is speciaal voor jou samengesteld op basis van je stijlvoorkeuren en kleurprofiel.
                     De combinatie past perfect bij {archetypeName.toLowerCase()} en benadrukt jouw unieke style DNA.
                   </p>
@@ -1447,7 +1447,7 @@ export default function EnhancedResultsPage() {
                 {color && (
                   <div>
                     <h4 className="font-semibold text-lg mb-2">Kleuradvies</h4>
-                    <p className="text-gray-700">
+                    <p className="text-[var(--color-text)]">
                       Gebaseerd op jouw kleurprofiel "{activeColorProfile.paletteName}" hebben we kleuren gekozen die jouw
                       natuurlijke uitstraling versterken.
                     </p>
@@ -1459,7 +1459,7 @@ export default function EnhancedResultsPage() {
                     <h4 className="font-semibold text-lg mb-3">Producten in dit outfit</h4>
                     <div className="space-y-2">
                       {selectedOutfit.products.map((product: any, idx: number) => (
-                        <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg">
                           <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                             {product.image_url && (
                               <img
@@ -1474,7 +1474,7 @@ export default function EnhancedResultsPage() {
                               {product.name || `Product ${idx + 1}`}
                             </p>
                             {product.brand && (
-                              <p className="text-xs text-gray-500">{product.brand}</p>
+                              <p className="text-xs text-[var(--color-muted)]">{product.brand}</p>
                             )}
                           </div>
                           {product.price && (
@@ -1503,7 +1503,7 @@ export default function EnhancedResultsPage() {
                 </button>
                 <button
                   onClick={() => setSelectedOutfit(null)}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                  className="px-6 py-3 bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-gray-200 transition-colors"
                 >
                   Sluiten
                 </button>
@@ -1538,13 +1538,13 @@ export default function EnhancedResultsPage() {
                   className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/50 transition-colors"
                   aria-label="Sluit modal"
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  <X className="w-5 h-5 text-[var(--color-muted)]" />
                 </button>
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center mb-4 shadow-lg">
                   <Share2 className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2">Deel je Style Report</h3>
-                <p className="text-base text-gray-600">Laat anderen zien wat jouw unieke stijl is</p>
+                <p className="text-base text-[var(--color-muted)]">Laat anderen zien wat jouw unieke stijl is</p>
               </div>
 
               {/* Share options */}
@@ -1565,7 +1565,7 @@ export default function EnhancedResultsPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-[var(--color-text)]">Kopieer link</p>
-                    <p className="text-sm text-gray-600">Deel via WhatsApp, email of social media</p>
+                    <p className="text-sm text-[var(--color-muted)]">Deel via WhatsApp, email of social media</p>
                   </div>
                 </button>
 
@@ -1583,7 +1583,7 @@ export default function EnhancedResultsPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-[var(--color-text)]">Deel op Twitter</p>
-                    <p className="text-sm text-gray-600">Tweet je stijlrapport</p>
+                    <p className="text-sm text-[var(--color-muted)]">Tweet je stijlrapport</p>
                   </div>
                 </button>
               </div>
