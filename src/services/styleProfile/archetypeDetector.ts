@@ -134,9 +134,15 @@ export class ArchetypeDetector {
 
       // STREETWEAR detection
       if (descriptor.key === 'STREETWEAR') {
-        if (styleKeywords.some(s => s.includes('street') || s.includes('urban') || s.includes('sport') || s.includes('casual'))) {
-          score += 30;
+        // Only explicit streetwear/urban/sport — NOT plain 'casual' (too broad, catches smart-casual)
+        if (styleKeywords.some(s => s === 'streetwear' || s.includes('street') || s.includes('urban'))) {
+          score += 35;
           reasons.push('Streetwear/urban style preference');
+        }
+        // Sport-only (not inside 'smart-casual')
+        if (styleKeywords.some(s => s === 'sport' || s === 'athletic' || s === 'sportief')) {
+          score += 20;
+          reasons.push('Sport/athletic style preference');
         }
         // ✅ Map "Edgy/Stoer" to Streetwear
         if (styleKeywords.some(s => s.includes('edgy') || s.includes('stoer') || s.includes('rock'))) {
@@ -185,16 +191,21 @@ export class ArchetypeDetector {
         }
       }
 
-      // SMART_CASUAL detection (fallback for mixed styles)
+      // SMART_CASUAL detection
       if (descriptor.key === 'SMART_CASUAL') {
-        // Direct Smart Casual selection
-        if (styleKeywords.some(s => s.includes('smart') && s.includes('casual'))) {
-          score += 35;
-          reasons.push('Smart Casual style preference');
+        // Direct Smart Casual selection — strong signal, high score
+        if (styleKeywords.some(s => s === 'smart-casual' || (s.includes('smart') && s.includes('casual')))) {
+          score += 50;
+          reasons.push('Smart Casual style preference (direct match)');
+        }
+        // Classic can lean smart-casual
+        if (styleKeywords.some(s => s.includes('klassiek') || s.includes('classic'))) {
+          score += 10;
+          reasons.push('Classic style (secondary) → Smart Casual');
         }
         // Bohemian can also be Smart Casual (relaxed but polished)
         if (styleKeywords.some(s => s.includes('bohemi'))) {
-          score += 15;
+          score += 10;
           reasons.push('Bohemian (secondary) → Smart Casual');
         }
       }
@@ -374,7 +385,8 @@ export class ArchetypeDetector {
 
     // STREETWEAR detection from swipes
     if (descriptor.key === 'STREETWEAR') {
-      const streetTags = ['street', 'urban', 'oversized', 'hoodie', 'sneaker', 'casual', 'relaxed'];
+      // 'casual' and 'relaxed' removed — too broad, would also match smart-casual/minimalist photos
+      const streetTags = ['street', 'urban', 'oversized', 'hoodie', 'sneaker', 'streetwear', 'graffiti'];
       const matchCount = streetTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
@@ -406,7 +418,7 @@ export class ArchetypeDetector {
 
     // CLASSIC detection from swipes
     if (descriptor.key === 'CLASSIC') {
-      const classicTags = ['classic', 'tailored', 'preppy', 'refined', 'smart'];
+      const classicTags = ['classic', 'tailored', 'preppy', 'refined', 'smart', 'formal', 'elegant', 'chino', 'blazer'];
       const matchCount = classicTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
@@ -414,6 +426,19 @@ export class ArchetypeDetector {
       if (matchCount > 0) {
         score += Math.min(matchCount * 15, 40);
         reasons.push(`Classic tags: ${matchCount}`);
+      }
+    }
+
+    // SMART_CASUAL detection from swipes
+    if (descriptor.key === 'SMART_CASUAL') {
+      const smartCasualTags = ['smart-casual', 'smart', 'casual-chic', 'relaxed-fit', 'chino', 'polo', 'loafer', 'overshirt', 'casual'];
+      const matchCount = smartCasualTags.reduce((sum, tag) => {
+        return sum + (tagCounts[tag] || 0);
+      }, 0);
+
+      if (matchCount > 0) {
+        score += Math.min(matchCount * 15, 40);
+        reasons.push(`Smart Casual tags: ${matchCount}`);
       }
     }
 

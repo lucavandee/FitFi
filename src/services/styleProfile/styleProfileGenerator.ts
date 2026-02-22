@@ -59,7 +59,7 @@ export class StyleProfileGenerator {
       quizAnswers,
       swipeData ? {
         photos: swipeData.photos,
-        likedCount: swipeData.swipes.length,
+        likedCount: swipeData.photos.length,
         rejectedCount: 0
       } : null
     );
@@ -181,16 +181,15 @@ export class StyleProfileGenerator {
       return null;
     }
 
-    // ✅ Check for color preference answers (support multiple field names for backwards compatibility)
-    // CRITICAL: Quiz uses "baseColors", NOT "colorPreference"
-    const colorPref = answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
-    const neutralPreference = answers.neutrals || answers.neutral || false;
+    // Quiz uses "neutrals" (string: 'warm'|'koel'|'neutraal'), NOT "baseColors"
+    // Support legacy field names for backwards compatibility
+    const colorPref = answers.neutrals || answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
+    const neutralPreference = typeof answers.neutrals === 'boolean' ? answers.neutrals : (answers.neutral || false);
 
     console.log('[StyleProfileGenerator] analyzeQuizColors input:', {
       allAnswers: Object.keys(answers),
-      hasBaseColors: !!answers.baseColors,
-      baseColors: answers.baseColors,
       hasNeutrals: !!answers.neutrals,
+      neutrals: answers.neutrals,
       colorPref,
       answersCount: Object.keys(answers).length
     });
@@ -238,23 +237,22 @@ export class StyleProfileGenerator {
     const preferredColors: string[] = [];
 
     if (typeof colorPref === 'string') {
-      const pref = colorPref.toLowerCase();
+      const pref = colorPref.toLowerCase().trim();
 
-      // ✅ Map baseColors values from quiz (EXACT quiz values)
-      if (pref === 'neutral' || pref.includes('neutrale') || pref.includes('zwart') || pref.includes('wit') || pref.includes('grijs')) {
-        temperature = 'koel'; // Zwart/wit/grijs = cool tones
-        preferredColors.push('zwart', 'wit', 'grijs', 'beige', 'navy');
-      } else if (pref === 'earth' || pref.includes('aardse') || pref.includes('warm') || pref.includes('beige') || pref.includes('camel') || pref.includes('bruin')) {
+      // Direct quiz values: 'warm' | 'koel' | 'neutraal'
+      if (pref === 'warm' || pref.includes('aardse') || pref.includes('beige') || pref.includes('camel') || pref.includes('bruin')) {
         temperature = 'warm';
-        preferredColors.push('bruin', 'camel', 'khaki', 'olijfgroen');
-      } else if (pref === 'jewel' || pref.includes('juweel') || pref.includes('koel') || pref.includes('blauw') || pref.includes('navy') || pref.includes('saffierblauw') || pref.includes('smaragdgroen')) {
+        preferredColors.push('bruin', 'camel', 'khaki', 'olijfgroen', 'beige');
+      } else if (pref === 'koel' || pref.includes('blauw') || pref.includes('navy') || pref.includes('saffierblauw') || pref.includes('smaragdgroen') || pref.includes('juweel')) {
         temperature = 'koel';
-        preferredColors.push('smaragdgroen', 'saffierblauw', 'robijnrood');
+        preferredColors.push('smaragdgroen', 'saffierblauw', 'navy', 'robijnrood');
+      } else if (pref === 'neutraal' || pref === 'neutral' || pref.includes('zwart') || pref.includes('wit') || pref.includes('grijs') || pref.includes('neutrale')) {
+        temperature = 'neutraal';
+        preferredColors.push('zwart', 'wit', 'grijs', 'beige', 'navy');
       } else if (pref === 'pastel' || pref.includes('pastel') || pref.includes('roze') || pref.includes('lavendel') || pref.includes('lichtblauw')) {
         temperature = 'koel';
         preferredColors.push('roze', 'lichtblauw', 'lavendel');
       } else if (pref === 'bold' || pref.includes('fel') || pref.includes('felrood') || pref.includes('elektrisch') || pref.includes('neon')) {
-        // ✅ BOLD colors = WARM + HIGH saturation
         temperature = 'warm';
         preferredColors.push('rood', 'elektrischblauw', 'neongeel', 'oranje');
       }
