@@ -1,94 +1,88 @@
-// /src/utils/consent.ts
 export type CookiePrefs = {
   necessary: boolean;
   analytics: boolean;
   marketing: boolean;
+  consented: boolean;
 };
 
-const KEY = "ff_cookie_prefs";
+export const CONSENT_KEY = "fitfi.cookiePrefs.v1";
+
+const DEFAULT_PREFS: CookiePrefs = {
+  necessary: true,
+  analytics: false,
+  marketing: false,
+  consented: false,
+};
 
 export function getCookiePrefs(): CookiePrefs {
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return { necessary: true, analytics: false, marketing: false };
+    const raw = window.localStorage.getItem(CONSENT_KEY);
+    if (!raw) return { ...DEFAULT_PREFS };
     const parsed = JSON.parse(raw);
     return {
       necessary: true,
       analytics: !!parsed.analytics,
       marketing: !!parsed.marketing,
+      consented: !!parsed.consented,
     };
   } catch {
-    return { necessary: true, analytics: false, marketing: false };
+    return { ...DEFAULT_PREFS };
   }
 }
 
 export function setCookiePrefs(prefs: Partial<CookiePrefs>) {
   try {
     const current = getCookiePrefs();
-    const next = { ...current, ...prefs, necessary: true };
+    const next: CookiePrefs = { ...current, ...prefs, necessary: true };
 
-    // If analytics is being disabled, remove GA cookies
-    if (current.analytics && !prefs.analytics) {
+    if (current.analytics && !next.analytics) {
       removeAnalyticsCookies();
     }
 
     const json = JSON.stringify(next);
-    window.localStorage.setItem(KEY, json);
-    // trigger cross-tab listeners
-    window.dispatchEvent(new StorageEvent("storage", { key: KEY, newValue: json }));
+    window.localStorage.setItem(CONSENT_KEY, json);
+    window.dispatchEvent(new StorageEvent("storage", { key: CONSENT_KEY, newValue: json }));
   } catch {}
 }
 
-/**
- * Remove all Google Analytics cookies
- * Called when user withdraws analytics consent
- */
 export function removeAnalyticsCookies() {
-  const gaCookies = ['_ga', '_gid', '_gat', '_gat_gtag'];
+  const names = ["_ga", "_gid", "_gat", "_gat_gtag"];
+  const hostname = window.location.hostname;
   const domains = [
-    window.location.hostname,
-    `.${window.location.hostname}`,
-    window.location.hostname.replace(/^www\./, ''),
-    `.${window.location.hostname.replace(/^www\./, '')}`
+    hostname,
+    `.${hostname}`,
+    hostname.replace(/^www\./, ""),
+    `.${hostname.replace(/^www\./, "")}`,
   ];
 
-  gaCookies.forEach(cookieName => {
-    domains.forEach(domain => {
-      // Remove cookie for each domain variant
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain}`;
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  names.forEach((name) => {
+    domains.forEach((domain) => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain}`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     });
   });
 
-  // Also remove GA cookies that match pattern _ga_<container-id>
-  const allCookies = document.cookie.split(';');
-  allCookies.forEach(cookie => {
-    const cookieName = cookie.split('=')[0].trim();
-    if (cookieName.startsWith('_ga_')) {
-      domains.forEach(domain => {
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain}`;
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  document.cookie.split(";").forEach((c) => {
+    const name = c.split("=")[0].trim();
+    if (name.startsWith("_ga_")) {
+      domains.forEach((domain) => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain}`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
       });
     }
   });
 }
 
-/**
- * Withdraw all consent (reset to defaults)
- * Removes all non-essential cookies
- */
 export function withdrawConsent() {
-  setCookiePrefs({ analytics: false, marketing: false });
+  setCookiePrefs({ analytics: false, marketing: false, consented: false });
   removeAnalyticsCookies();
 }
 
-/**
- * Check if consent banner should be shown
- */
 export function shouldShowConsentBanner(): boolean {
   try {
-    const raw = window.localStorage.getItem(KEY);
-    return !raw; // Show banner if no preferences stored
+    const raw = window.localStorage.getItem(CONSENT_KEY);
+    if (!raw) return true;
+    return !JSON.parse(raw)?.consented;
   } catch {
     return true;
   }
