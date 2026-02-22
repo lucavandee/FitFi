@@ -300,22 +300,24 @@ const BlogPage: React.FC = () => {
           >
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              aria-pressed={selectedCategory === 'all'}
+              className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 ${
                 selectedCategory === 'all'
-                  ? 'bg-[var(--ff-color-primary-600)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)]'
+                  ? 'bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)]'
+                  : 'bg-white text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)]'
               }`}
             >
               Alle artikelen
             </button>
-            {categories.map((category) => (
+            {categories.filter(c => c !== 'all').map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                aria-pressed={selectedCategory === category}
+                className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 ${
                   selectedCategory === category
-                    ? 'bg-[var(--ff-color-primary-600)] text-white'
-                    : 'bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)]'
+                    ? 'bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)]'
+                    : 'bg-white text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)]'
                 }`}
               >
                 {category}
@@ -404,11 +406,19 @@ const BlogPage: React.FC = () => {
                 whileHover={{ y: -8 }}
                 className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-[var(--shadow-lifted)] overflow-hidden hover:shadow-[var(--shadow-elevated)] transition-all duration-300 border-2 border-[var(--color-border)]"
               >
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-48 object-cover"
-                />
+                <div className="relative w-full h-48 bg-[var(--color-bg)]">
+                  <div className="absolute inset-0 bg-[var(--color-border)] animate-pulse rounded-none" />
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    loading="lazy"
+                    className="relative w-full h-48 object-cover"
+                    onLoad={(e) => {
+                      const prev = (e.currentTarget as HTMLImageElement).previousElementSibling as HTMLElement | null;
+                      if (prev) prev.style.display = 'none';
+                    }}
+                  />
+                </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-sm font-medium">
@@ -463,24 +473,25 @@ const BlogPage: React.FC = () => {
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Ontvang de nieuwste stijltips, seizoenstrends en mode-inzichten direct in je inbox
             </p>
-            <div className="max-w-lg mx-auto flex flex-col sm:flex-row gap-4">
+            <form onSubmit={handleNewsletterSubmit} className="max-w-lg mx-auto flex flex-col sm:flex-row gap-3">
+              <label htmlFor="newsletter-email" className="sr-only">E-mailadres</label>
               <input
+                id="newsletter-email"
                 type="email"
                 placeholder="Je e-mailadres"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-6 py-4 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-white/50 text-lg"
+                className="flex-1 px-5 py-3.5 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-white/50 text-base"
                 required
               />
-              <Button
-                variant="secondary"
-                onClick={handleNewsletterSubmit}
+              <button
+                type="submit"
                 disabled={!email}
-                className="px-6 py-4"
+                className="px-6 py-3.5 rounded-xl font-semibold text-base bg-white text-[var(--ff-color-primary-700)] hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-700)]"
               >
-                Aanmelden
-              </Button>
-            </div>
+                {isSubscribed ? 'Aangemeld!' : 'Aanmelden'}
+              </button>
+            </form>
           </div>
         </motion.div>
       </section>

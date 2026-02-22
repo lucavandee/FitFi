@@ -216,10 +216,11 @@ export default function ContactPage() {
                   <label htmlFor="topic" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
                     Onderwerp
                   </label>
+                  <div className="relative">
                   <select
                     id="topic"
                     name="topic"
-                    className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
+                    className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] pl-5 pr-11 py-3.5 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all appearance-none"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value as Topic)}
                   >
@@ -229,6 +230,12 @@ export default function ContactPage() {
                     <option value="feedback">Feedback & Suggesties</option>
                     <option value="bug">Bug of technisch probleem</option>
                   </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center" aria-hidden="true">
+                    <svg className="w-4 h-4 text-[var(--color-muted)]" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 11L2 5h12z" />
+                    </svg>
+                  </div>
+                  </div>
                 </div>
 
                 <div>
@@ -274,9 +281,15 @@ export default function ContactPage() {
                   </NavLink>
                 </div>
 
-                <p className="text-sm text-[var(--color-text)]/50 flex items-start gap-2 pt-2">
-                  <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                  <span>Je mailapp opent automatisch met jouw bericht. Wij ontvangen geen data via deze website.</span>
+                <p className="text-sm text-[var(--color-muted)] flex items-start gap-2 pt-2">
+                  <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
+                  <span>
+                    Je mailapp opent met jouw bericht. Wij ontvangen geen data via deze pagina. Zie onze{" "}
+                    <NavLink to="/privacy" className="underline underline-offset-2 hover:text-[var(--color-text)] transition-colors">
+                      privacyverklaring
+                    </NavLink>
+                    .
+                  </span>
                 </p>
               </form>
             </div>

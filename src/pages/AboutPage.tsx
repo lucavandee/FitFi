@@ -69,7 +69,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              FitFi helpt je betere kledingkeuzes te maken met AI. Geen hype, wel helderheid en rust in je stijl.
+              FitFi helpt je betere kledingkeuzes te maken. Rustig, persoonlijk en zonder ruis.
             </motion.p>
           </div>
         </div>
@@ -79,50 +79,28 @@ export default function AboutPage() {
       <section className="py-20">
         <div className="ff-container">
           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ y: -4 }}
-              className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-6"
-              >
-                <Target className="w-6 h-6 text-white" />
-              </motion.div>
-              <h2 className="text-3xl font-bold mb-4 text-[var(--color-text)]">Onze missie</h2>
+            <div className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] hover:-translate-y-1 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Target className="w-6 h-6 text-[var(--ff-color-primary-700)]" aria-hidden />
+              </div>
+              <h2 className="text-2xl font-bold mb-4 text-[var(--color-text)]">Onze missie</h2>
               <p className="text-[var(--color-muted)] text-lg leading-relaxed">
                 We maken stijl eenvoudig en persoonlijk. Met privacy-vriendelijke technologie en duidelijke keuzes,
                 zodat jij met minder moeite beter voor de dag komt.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              whileHover={{ y: -4 }}
-              className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-6"
-              >
-                <Sparkles className="w-6 h-6 text-white" />
-              </motion.div>
-              <h2 className="text-3xl font-bold mb-4 text-[var(--color-text)]">Onze principes</h2>
-              <div className="space-y-4 text-[var(--color-muted)] text-lg leading-relaxed">
+            <div className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] hover:-translate-y-1 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-6">
+                <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-700)]" aria-hidden />
+              </div>
+              <h2 className="text-2xl font-bold mb-4 text-[var(--color-text)]">Onze principes</h2>
+              <div className="space-y-3 text-[var(--color-muted)] text-base leading-relaxed">
                 <p>Rustig, precies en feitelijk. Wij schrijven en ontwerpen zonder overdrijving.</p>
                 <p>Toegankelijk op elk scherm. Mobile-first, keyboard-navigeerbaar en leesbaar voor iedereen.</p>
                 <p>Geen verborgen kosten of misleidende keuzes. Transparante prijzen, duidelijke opt-outs.</p>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -145,105 +123,57 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0 }}
-              whileHover={{ y: -4 }}
-              className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-6"
+          <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+            {[
+              {
+                Icon: Shield,
+                title: "EU-privacy",
+                body: "Data-minimalistisch en helder over wat we doen. Jouw privacy staat voorop.",
+              },
+              {
+                Icon: Sparkles,
+                title: "Consistente ervaring",
+                body: "Elke pagina ziet er hetzelfde uit, laadt snel en werkt op elk scherm. Rustig en overzichtelijk.",
+              },
+              {
+                Icon: Target,
+                title: "Focus op resultaat",
+                body: "Direct bruikbare outfits en keuzes, geen ruis. Binnen 2 minuten bruikbaar advies.",
+              },
+            ].map(({ Icon, title, body }) => (
+              <div
+                key={title}
+                className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-7 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] hover:-translate-y-1 transition-all flex flex-col"
               >
-                <Shield className="w-6 h-6 text-white" />
-              </motion.div>
-              <h3 className="text-xl font-bold mb-3 text-[var(--color-text)]">EU-privacy</h3>
-              <p className="text-[var(--color-muted)]">
-                Data-minimalistisch en helder over wat we doen. Jouw privacy staat voorop.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              whileHover={{ y: -4 }}
-              className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-6"
-              >
-                <Sparkles className="w-6 h-6 text-white" />
-              </motion.div>
-              <h3 className="text-xl font-bold mb-3 text-[var(--color-text)]">Consistente ervaring</h3>
-              <p className="text-[var(--color-muted)]">
-                Elke pagina ziet er hetzelfde uit, laadt snel en werkt op elk scherm. Rustig en overzichtelijk.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ y: -4 }}
-              className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-6"
-              >
-                <Target className="w-6 h-6 text-white" />
-              </motion.div>
-              <h3 className="text-xl font-bold mb-3 text-[var(--color-text)]">Focus op resultaat</h3>
-              <p className="text-[var(--color-muted)]">
-                Direct bruikbare outfits en keuzes, geen ruis. Binnen 2 minuten bruikbaar advies.
-              </p>
-            </motion.div>
+                <div className="w-11 h-11 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-5 flex-shrink-0">
+                  <Icon className="w-5 h-5 text-[var(--ff-color-primary-700)]" aria-hidden />
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-[var(--color-text)]">{title}</h3>
+                <p className="text-[var(--color-muted)] text-sm leading-relaxed">{body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-[var(--color-bg)]">
+      <section className="py-16 sm:py-20 bg-[var(--color-bg)]">
         <div className="ff-container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center border-2 border-[var(--color-border)] shadow-[var(--shadow-elevated)] relative overflow-hidden"
-          >
-            {/* Decorative gradient blob */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl opacity-20" />
-
-            <div className="relative">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[var(--color-text)]">
-                Probeer FitFi <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">vandaag</span>
-              </h2>
-              <p className="text-xl text-[var(--color-muted)] mb-8">
-                Beantwoord een paar vragen en zie welke outfits bij je passen. Geen account nodig om te starten.
-              </p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <NavLink
-                  to="/onboarding"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-lg focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
-                  data-event="cta_start_free_about"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Start gratis
-                </NavLink>
-              </motion.div>
-            </div>
-          </motion.div>
+          <div className="max-w-3xl mx-auto bg-[var(--ff-color-primary-50)] rounded-[var(--radius-2xl)] p-10 sm:p-12 text-center border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-[var(--color-text)]">
+              Klaar om te starten?
+            </h2>
+            <p className="text-[var(--color-muted)] mb-8 leading-relaxed">
+              Beantwoord een paar vragen en zie welke outfits bij je passen. Geen account nodig om te beginnen.
+            </p>
+            <NavLink
+              to="/onboarding"
+              className="inline-flex items-center justify-center px-8 py-4 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              data-event="cta_start_free_about"
+            >
+              Start gratis
+            </NavLink>
+          </div>
         </div>
       </section>
     </main>

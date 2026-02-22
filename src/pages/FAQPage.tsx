@@ -99,8 +99,8 @@ function FAQItem({ item, index }: { item: QA; index: number }) {
         <span className="font-medium text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors leading-snug">
           {item.q}
         </span>
-        <span className="flex-shrink-0 text-[var(--color-muted)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
-          {isOpen ? <Minus className="w-4 h-4" aria-hidden /> : <Plus className="w-4 h-4" aria-hidden />}
+        <span className="flex-shrink-0 w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text)] group-hover:border-[var(--ff-color-primary-400)] group-hover:text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-50)] transition-colors flex-shrink-0" aria-hidden>
+          {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
         </span>
       </button>
       <AnimatePresence initial={false}>

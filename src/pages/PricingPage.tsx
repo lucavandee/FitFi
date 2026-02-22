@@ -264,7 +264,7 @@ export default function PricingPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
 
               {/* Free Plan */}
-              <article className="lg:col-span-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7 shadow-[var(--shadow-soft)] flex flex-col">
+              <article className="lg:col-span-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7 shadow-[var(--shadow-soft)] flex flex-col h-full">
                 <header className="mb-5 sm:mb-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-bg)] rounded-full text-xs font-bold text-[var(--color-muted)] mb-3 uppercase tracking-wide">
                     Altijd gratis
@@ -315,17 +315,19 @@ export default function PricingPage() {
                   </li>
                 </ul>
 
-                <NavLink
-                  to="/onboarding"
-                  className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
-                  data-event="cta_start_free_pricing"
-                >
-                  Ga door met Free
-                </NavLink>
+                <div className="mt-auto">
+                  <NavLink
+                    to="/onboarding"
+                    className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
+                    data-event="cta_start_free_pricing"
+                  >
+                    Ga door met Free
+                  </NavLink>
+                </div>
               </article>
 
               {/* Premium Plan */}
-              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-5 sm:p-7 md:p-9 shadow-2xl text-white flex flex-col">
+              <article className="lg:col-span-8 relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-5 sm:p-7 md:p-9 shadow-2xl text-white flex flex-col h-full">
 
                 <div className="absolute -top-4 sm:-top-5 left-1/2 -translate-x-1/2 rounded-full px-5 sm:px-7 py-2 text-sm font-bold bg-[var(--ff-color-warning-600)] text-white shadow-2xl border-2 border-white/20 whitespace-nowrap">
                   MEEST GEKOZEN
@@ -524,7 +526,37 @@ export default function PricingPage() {
             </p>
 
             <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]">
-              <div className="overflow-x-auto">
+
+              {/* Mobile: card-per-feature layout */}
+              <div className="sm:hidden divide-y divide-[var(--color-border)]">
+                {/* Mobile header */}
+                <div className="grid grid-cols-4 bg-[var(--color-bg)] text-xs font-bold text-[var(--color-text)] border-b border-[var(--color-border)]">
+                  <div className="col-span-2 p-3">Functie</div>
+                  <div className="p-3 text-center text-[var(--color-muted)]">Gratis</div>
+                  <div className="p-3 text-center text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]">Pro</div>
+                </div>
+                {FEATURE_ROWS.map((row, i) => (
+                  <div key={row.label} className={`grid grid-cols-4 ${i % 2 === 1 ? "bg-[var(--color-bg)]/40" : ""}`}>
+                    <div className="col-span-2 p-3 flex items-start gap-1.5">
+                      <span className="text-xs text-[var(--color-text)] font-medium leading-snug">{row.label}</span>
+                    </div>
+                    <div className="p-3 flex items-center justify-center">
+                      <CellValue value={row.free} />
+                    </div>
+                    <div className="p-3 flex items-center justify-center bg-[var(--ff-color-primary-50)]/30">
+                      <CellValue value={row.premium} />
+                    </div>
+                  </div>
+                ))}
+                <div className="grid grid-cols-4 bg-[var(--color-bg)] font-semibold border-t-2 border-[var(--color-border)]">
+                  <div className="col-span-2 p-3 text-xs">Prijs</div>
+                  <div className="p-3 text-center text-xs">€0</div>
+                  <div className="p-3 text-center text-xs bg-[var(--ff-color-primary-50)]/40">€{premiumPrice}/mnd</div>
+                </div>
+              </div>
+
+              {/* Desktop: full table */}
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
@@ -586,10 +618,10 @@ export default function PricingPage() {
                 </table>
               </div>
 
-              <div className="px-4 sm:px-5 py-4 bg-[var(--color-bg)] border-t border-[var(--color-border)] flex items-start gap-2">
-                <Info className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0 mt-0.5" aria-hidden="true" />
-                <p className="text-xs text-[var(--color-muted)] leading-relaxed">
-                  Kleuranalyse op basis van ondertoon vereist een foto of dat jij deze informatie zelf deelt — we schatten of claimen dit nooit op eigen initiatief. Kleurenadvies zonder foto geeft algemene combinatietips.
+              <div className="px-4 sm:px-5 py-4 bg-[var(--ff-color-primary-50)] border-t border-[var(--color-border)] flex items-start gap-2">
+                <Info className="w-4 h-4 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed font-medium">
+                  Kleuranalyse op ondertoon is een Premium-feature en werkt uitsluitend als jij een foto uploadt of je ondertoon zelf deelt. We schatten of claimen dit nooit op eigen initiatief.
                 </p>
               </div>
             </div>
