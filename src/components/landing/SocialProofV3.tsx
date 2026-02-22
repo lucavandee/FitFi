@@ -192,10 +192,10 @@ export function SocialProofV3() {
         )}
 
         {/* Stats bar - Semantic <dl> definition list */}
-        <dl className="mt-16 sm:mt-20 lg:mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 max-w-5xl mx-auto">
-          <StatItem value="2.400+" label="Tevreden gebruikers" />
-          <StatItem value="98%" label="Zou aanbevelen" />
+        <dl className="mt-16 sm:mt-20 lg:mt-24 grid grid-cols-2 md:grid-cols-4 max-w-5xl mx-auto border border-[var(--color-border)] rounded-2xl overflow-hidden divide-y md:divide-y-0 md:divide-x divide-[var(--color-border)]">
+          <StatItem value="2.400+" label="Gebruikers" />
           <StatItem value="~2 min" label="Gemiddelde tijd" />
+          <StatItem value="Gratis" label="Geen creditcard" />
           <StatItem value="4.9/5" label="Waardering" />
         </dl>
 
@@ -206,13 +206,13 @@ export function SocialProofV3() {
 
 function StatItem({ value, label }: { value: string; label: string }) {
   return (
-    <div className="text-center">
+    <div className="flex flex-col items-center justify-center py-6 px-4 sm:py-8 bg-[var(--color-surface)]">
       <dt className="sr-only">{label}</dt>
       <dd>
-        <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-primary-700)] mb-2 sm:mb-3">
+        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--ff-color-primary-700)] mb-1.5 tabular-nums leading-none">
           {value}
         </div>
-        <div className="text-sm sm:text-base text-[var(--color-muted)] font-medium">
+        <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium text-center leading-snug">
           {label}
         </div>
       </dd>

@@ -163,7 +163,7 @@ export function HeroV3() {
             className="text-[15px] font-light leading-[1.6] mb-7"
             style={{ color: 'rgba(247,243,236,0.68)', maxWidth: '88%' }}
           >
-            In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
+            Beantwoord een paar vragen over jouw stijl en ontvang een persoonlijk rapport — compleet met outfits en shoplinks.
           </p>
 
           {/* Dunne scheidslijn */}
@@ -322,31 +322,11 @@ export function HeroV3() {
             </h1>
 
             <p
-              className="text-lg md:text-xl leading-relaxed max-w-lg mb-8 font-light"
+              className="text-lg md:text-xl leading-relaxed max-w-lg mb-10 font-light"
               style={{ color: 'rgba(247,243,236,0.82)' }}
             >
-              In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt.
+              Beantwoord een paar vragen over jouw stijl en ontvang een persoonlijk rapport — compleet met outfits en shoplinks.
             </p>
-
-            <ul className="space-y-3 mb-10">
-              {[
-                'Direct combinaties + shoplinks op maat',
-                'Outfits voor werk, weekend en uitgaan',
-                'Aanbevelingen die meegroeien met jou',
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-3 text-base"
-                  style={{ color: 'rgba(247,243,236,0.88)' }}
-                >
-                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <circle cx="10" cy="10" r="9" stroke="rgba(247,243,236,0.25)" strokeWidth="1.5" />
-                    <path d="M6.5 10l2.5 2.5 4.5-4.5" stroke="var(--ff-color-primary-300)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
 
             {/* CTA knoppen */}
             <div className="flex items-center gap-3">
