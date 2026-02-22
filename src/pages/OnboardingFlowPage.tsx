@@ -773,7 +773,7 @@ export default function OnboardingFlowPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-center gap-2 px-4 py-3 mx-4 lg:mx-0 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm font-medium"
+                  className="flex items-center justify-center gap-2 px-4 py-3 mx-4 lg:mx-0 bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)] rounded-lg text-[var(--ff-color-danger-700)] text-sm font-medium"
                   role="alert"
                   aria-live="polite"
                 >
@@ -966,7 +966,7 @@ export default function OnboardingFlowPage() {
                     background: `linear-gradient(to right, var(--ff-color-primary-600) 0%, var(--ff-color-primary-600) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) 100%)`
                   }}
                 />
-                <div className="flex justify-between mt-4 text-xs text-gray-500">
+                <div className="flex justify-between mt-4 text-xs text-[var(--color-muted)]">
                   <div className="text-left">
                     <div className="font-medium text-[var(--color-text)]">€{step.min || 0}</div>
                     <div>Budget</div>
@@ -1012,7 +1012,7 @@ export default function OnboardingFlowPage() {
                     {step.helperText}
                   </p>
                 ) : (
-                  <p className="text-sm text-gray-600 italic">
+                  <p className="text-sm text-[var(--color-muted)] italic">
                     Je kunt deze stap overslaan als je wilt.
                   </p>
                 )}
@@ -1057,7 +1057,7 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 min-w-[52px] w-[52px] sm:w-auto sm:px-5 py-3.5 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 min-w-[52px] w-[52px] sm:w-auto sm:px-5 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               aria-label="Ga terug naar vorige vraag"
             >
               <ArrowLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
@@ -1068,7 +1068,7 @@ export default function OnboardingFlowPage() {
             {step && !step.required && (
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center justify-center px-4 py-3.5 min-h-[52px] bg-white border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--color-surface)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center px-4 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                 aria-label="Sla deze stap over"
               >
                 Sla over
@@ -1170,7 +1170,7 @@ export default function OnboardingFlowPage() {
                         hasValue
                           ? 'bg-[var(--ff-color-primary-600)] text-white'
                           : s.required
-                          ? 'bg-red-100 text-red-600'
+                          ? 'bg-[var(--ff-color-danger-100)] text-[var(--ff-color-danger-600)]'
                           : 'bg-[var(--ff-color-neutral-200)] text-[var(--color-muted)]'
                       }`}>
                         {hasValue ? <CheckCircle className="w-3 h-3" /> : idx + 1}

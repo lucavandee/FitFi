@@ -49,7 +49,7 @@ export default function Footer() {
             </p>
             <button
               onClick={() => navigate('/onboarding')}
-              className="inline-flex items-center gap-2 bg-[var(--ff-color-primary-700)] text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+              className="inline-flex items-center gap-2 bg-[var(--ff-color-primary-700)] text-white px-6 py-3 min-h-[44px] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all shadow-sm hover:shadow-md active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
               Start gratis quiz
               <ArrowRight className="w-4 h-4" />
@@ -73,8 +73,8 @@ export default function Footer() {
                 href="https://instagram.com/fitfi.ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center hover:scale-110 transition-transform"
+                aria-label="Volg FitFi op Instagram"
+                className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-lg bg-gradient-to-br from-[var(--ff-color-warning-600)] to-[var(--ff-color-primary-700)] flex items-center justify-center hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               >
                 <Instagram className="w-4 h-4 text-white" strokeWidth={2.5} />
               </a>
@@ -82,8 +82,8 @@ export default function Footer() {
                 href="https://linkedin.com/company/fitfi-ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-600)] flex items-center justify-center hover:scale-110 transition-transform"
+                aria-label="Volg FitFi op LinkedIn"
+                className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-lg bg-[var(--ff-color-primary-600)] flex items-center justify-center hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               >
                 <Linkedin className="w-4 h-4 text-white" fill="white" strokeWidth={0} />
               </a>
@@ -99,7 +99,7 @@ export default function Footer() {
                 <NavLink
                   key={link.to}
                   to={link.to}
-                  className="block text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors"
+                  className="py-1 min-h-[36px] flex items-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm"
                 >
                   {link.label}
                 </NavLink>
@@ -109,7 +109,7 @@ export default function Footer() {
                   <NavLink
                     key={link.to}
                     to={link.to}
-                    className="block text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors"
+                    className="py-1 min-h-[36px] flex items-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm"
                   >
                     {link.label}
                   </NavLink>
@@ -123,7 +123,7 @@ export default function Footer() {
                 <NavLink
                   key={link.to}
                   to={link.to}
-                  className="block text-[var(--color-text)]/70 hover:text-[var(--ff-color-primary-700)] transition-colors"
+                  className="py-1 min-h-[36px] flex items-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm"
                 >
                   {link.label}
                 </NavLink>
@@ -132,13 +132,13 @@ export default function Footer() {
           </div>
 
           {/* Bottom - Ultra Compact */}
-          <div className="pt-4 border-t border-[var(--ff-color-primary-100)] flex flex-col gap-1 text-xs text-[var(--color-text)]/60">
+          <div className="pt-4 border-t border-[var(--ff-color-primary-100)] flex flex-col gap-1 text-xs text-[var(--color-muted)]">
             <div className="flex items-center gap-2">
               <span>© {new Date().getFullYear()} FitFi B.V.</span>
               <span>•</span>
               <span>KVK 97225665</span>
             </div>
-            <span className="text-[var(--color-text)]/50">
+            <span>
               Keizersgracht 520 H, Amsterdam
             </span>
           </div>
