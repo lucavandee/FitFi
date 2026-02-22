@@ -29,7 +29,7 @@ export default function devCSP(): Plugin {
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data: https: blob:",
-            "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://www.google.lk https://images.pexels.com https://example.com https://fonts.googleapis.com https://fonts.gstatic.com ws: wss:",
+            "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://region1.analytics.google.com https://region1.google-analytics.com https://www.googletagmanager.com https://www.google.nl https://www.google.lk https://images.pexels.com https://fonts.googleapis.com https://fonts.gstatic.com ws: wss:",
             "frame-src 'none'",
             isDev ? "frame-ancestors *" : "frame-ancestors 'self'", // Allow iframe in dev for Bolt
             "object-src 'none'",
