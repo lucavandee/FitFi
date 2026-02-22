@@ -1048,38 +1048,42 @@ export default function OnboardingFlowPage() {
       {/* End FF Container */}
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_12px_rgba(0,0,0,0.08)] safe-area-inset-bottom">
-        <div className="w-full px-4 py-3 sm:py-4">
-          <div className="flex gap-2 sm:gap-3 max-w-3xl mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t border-[var(--color-border)] shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="w-full px-4 pt-3 pb-4 max-w-3xl mx-auto">
+
+          {/* Primary row: Vorige + (Sla over) + Volgende */}
+          <div className="flex items-center gap-2">
+            {/* Vorige — fixed width, icon only on mobile */}
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-4 min-h-[56px] w-[60px] sm:w-auto bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm hover:shadow-md flex-shrink-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 min-w-[52px] w-[52px] sm:w-auto sm:px-5 py-3.5 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               aria-label="Ga terug naar vorige vraag"
             >
-              <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+              <ArrowLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">Vorige</span>
             </button>
 
-            {/* Skip — only for optional steps */}
+            {/* Sla over — only for optional steps, shrinks to fit */}
             {step && !step.required && (
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-4 min-h-[56px] bg-white border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--color-surface)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center px-4 py-3.5 min-h-[52px] bg-white border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--color-surface)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                 aria-label="Sla deze stap over"
               >
-                <span>Sla over</span>
+                Sla over
               </button>
             )}
 
+            {/* Volgende — takes remaining space */}
             <button
               onClick={handleNext}
               disabled={(!canProceed() && step?.required) || isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-md hover:shadow-lg flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === quizSteps.length - 1 ? "Bekijk mijn antwoorden" : "Ga naar volgende vraag")}
             >
               {isSubmitting ? (
-                <span className="truncate">Verwerken...</span>
+                <span>Verwerken...</span>
               ) : currentStep === quizSteps.length - 1 ? (
                 <>
                   <span className="truncate">Bekijk mijn antwoorden</span>
@@ -1087,23 +1091,24 @@ export default function OnboardingFlowPage() {
                 </>
               ) : (
                 <>
-                  <span className="truncate">Volgende</span>
+                  <span>Volgende</span>
                   <ArrowRight className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 </>
               )}
             </button>
           </div>
 
-          {/* Mobile save-and-continue link */}
-          <div className="flex justify-center mt-2 sm:hidden">
+          {/* Save and continue later — mobile only */}
+          <div className="flex justify-center mt-2.5 sm:hidden">
             <button
               onClick={handleSaveAndContinueLater}
-              className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors px-3 py-1.5 min-h-[36px]"
+              className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors px-3 py-1.5 min-h-[36px] rounded-lg"
             >
-              <Clock className="w-3.5 h-3.5" />
-              Opslaan en later verder
+              <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Opslaan en later verder</span>
             </button>
           </div>
+
         </div>
       </div>
 
