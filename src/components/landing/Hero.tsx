@@ -50,7 +50,7 @@ export function Hero() {
               <Button
                 onClick={handleStartClick}
                 size="lg"
-                className="bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 Begin quiz
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -61,7 +61,7 @@ export function Hero() {
                 to="/results/preview"
                 variant="ghost"
                 size="lg"
-                className="border border-[var(--ff-color-border)] hover:border-[var(--ff-color-primary-300)] px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                className="w-full sm:w-auto border border-[var(--ff-color-border)] hover:border-[var(--ff-color-primary-300)] px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
               >
                 Zie voorbeeldrapport
               </Button>

@@ -323,9 +323,13 @@ img {
    ACCESSIBILITY ENHANCEMENTS
    ---------------- */
 
-/* Focus states - Enhanced visibility */
-*:focus,
-*:focus-visible {
+/* Focus states - keyboard only, scoped to interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
   outline: 3px solid var(--ff-color-primary-500);
   outline-offset: 3px;
   border-radius: 4px;

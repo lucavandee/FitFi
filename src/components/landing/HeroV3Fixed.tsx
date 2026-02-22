@@ -122,7 +122,7 @@ export function HeroV3Fixed() {
             {/* PRIMARY CTA - Uses ff-btn--primary, xl size, most prominent */}
             <button
               onClick={handleStartClick}
-              className="group ff-btn ff-btn--xl bg-white hover:bg-gray-50 text-[var(--color-text)] shadow-2xl hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
+              className="group w-full sm:w-auto ff-btn ff-btn--xl bg-white hover:bg-gray-50 text-[var(--color-text)] shadow-2xl hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
               aria-label="Ontvang gratis persoonlijk stijladvies in 2 minuten"
             >
               Ontvang je stijladvies
@@ -132,7 +132,7 @@ export function HeroV3Fixed() {
             {/* SECONDARY CTA - Uses ff-btn--ghost, md size, less prominent */}
             <button
               onClick={handleExampleClick}
-              className="group ff-btn ff-btn--ghost ff-btn--md"
+              className="group w-full sm:w-auto ff-btn ff-btn--ghost ff-btn--md"
               aria-label="Bekijk voorbeeld stijladvies van andere gebruikers"
             >
               <Play className="w-5 h-5" aria-hidden="true" />
