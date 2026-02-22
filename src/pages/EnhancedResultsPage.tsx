@@ -428,7 +428,7 @@ export default function EnhancedResultsPage() {
                     <NavLink
                       to="/onboarding"
                       title="Pas je antwoorden aan om een nieuw rapport te genereren"
-                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-white border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--color-surface)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto text-[var(--color-text)]"
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto text-[var(--color-text)]"
                     >
                       <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span>Vernieuw mijn rapport</span>
@@ -621,7 +621,7 @@ export default function EnhancedResultsPage() {
 
                         <div className="space-y-5">
                           {/* Temperatuur */}
-                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                          <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Temperatuur</span>
                               <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-orange-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
@@ -634,7 +634,7 @@ export default function EnhancedResultsPage() {
                           </div>
 
                           {/* Contrast */}
-                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                          <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Contrast</span>
                               <span className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-200 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
@@ -649,7 +649,7 @@ export default function EnhancedResultsPage() {
                           </div>
 
                           {/* Seizoen */}
-                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                          <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Seizoen</span>
                               <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
@@ -665,7 +665,7 @@ export default function EnhancedResultsPage() {
                           </div>
 
                           {/* Chroma */}
-                          <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                          <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Chroma</span>
                               <span className="px-3 py-1.5 bg-gradient-to-r from-purple-50 to-pink-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
@@ -690,7 +690,7 @@ export default function EnhancedResultsPage() {
                           {activeColorProfile.notes && activeColorProfile.notes.map((note, i) => (
                             <li
                               key={i}
-                              className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:bg-white/80 hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                              className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:bg-[var(--color-surface)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
                             >
                               <div className="flex items-start gap-4">
                                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-success-500)] to-[var(--ff-color-success-600)] flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
@@ -819,7 +819,7 @@ export default function EnhancedResultsPage() {
               <AnimatedSection delay={0.7}>
                 <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="bg-white rounded-[32px] border-2 border-[var(--ff-color-primary-200)] p-10 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.18)] transition-all duration-500 mb-12"
+                  className="bg-[var(--color-surface)] rounded-[32px] border-2 border-[var(--ff-color-primary-200)] p-10 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.18)] transition-all duration-500 mb-12"
                 >
                   <div className="flex items-center gap-4 mb-10">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-700)] flex items-center justify-center shadow-lg">
@@ -896,7 +896,7 @@ export default function EnhancedResultsPage() {
                           </li>
                           {!answers?.photoUrl && (
                             <li className="flex items-start gap-3">
-                              <Check className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                              <Check className="w-5 h-5 text-[var(--ff-color-warning-500)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                               <span className="text-[var(--color-text)] leading-relaxed">Kleurenanalyse is gebaseerd op voorkeur. Zonder foto geven we geen ondertoonadvies.</span>
                             </li>
                           )}
@@ -937,7 +937,7 @@ export default function EnhancedResultsPage() {
                     {/* Result Banner */}
                     <div className="mt-8 p-6 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border-2 border-[var(--ff-color-primary-200)] shadow-sm">
                       <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[var(--color-surface)] flex items-center justify-center shadow-sm">
                           <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
                         </div>
                         <div>
@@ -1123,7 +1123,7 @@ export default function EnhancedResultsPage() {
                               e.stopPropagation();
                               setSelectedOutfit(outfit);
                             }}
-                            className="w-full px-6 py-3 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.98] transition-all shadow-lg"
+                            className="w-full px-6 py-3 min-h-[52px] bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.98] transition-all shadow-lg"
                           >
                             Bekijk details
                           </button>
@@ -1218,8 +1218,8 @@ export default function EnhancedResultsPage() {
                                 }}
                                 className={`w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
                                   isFav
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-white/90 text-[var(--color-text)] hover:bg-white'
+                                    ? 'bg-[var(--ff-color-danger-500)] text-white'
+                                    : 'bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]'
                                 }`}
                                 aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                               >
@@ -1233,7 +1233,7 @@ export default function EnhancedResultsPage() {
                                   e.stopPropagation();
                                   setSelectedOutfit(outfit);
                                 }}
-                                className="px-4 sm:px-6 py-3 min-h-[44px] bg-white text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm sm:text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.95] transition-all flex-1 sm:flex-none"
+                                className="px-4 sm:px-6 py-3 min-h-[44px] bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm sm:text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.95] transition-all flex-1 sm:flex-none"
                               >
                                 <span className="hidden xs:inline">Bekijk details</span>
                                 <span className="xs:hidden">Details</span>
@@ -1276,7 +1276,7 @@ export default function EnhancedResultsPage() {
               <div className="mt-24 md:mt-32 mb-20 max-w-4xl mx-auto">
                 {/* Free Preview Badge */}
                 <div className="text-center mb-10">
-                  <span className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 rounded-full text-base font-bold shadow-sm border-2 border-green-200">
+                  <span className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] rounded-full text-base font-bold shadow-sm border-2 border-[var(--ff-color-success-200)]">
                     <Sparkles className="w-5 h-5" />
                     Gratis preview: 9 van 50+ gepersonaliseerde outfits
                   </span>
@@ -1307,7 +1307,7 @@ export default function EnhancedResultsPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center"
+                        className="bg-[var(--color-surface)]/80 backdrop-blur-sm rounded-xl p-4 text-center"
                       >
                         <div className="text-3xl font-bold text-[var(--ff-color-primary-700)] mb-1">
                           {benefit.value}
@@ -1374,7 +1374,7 @@ export default function EnhancedResultsPage() {
                     >
                       <NavLink
                         to="/prijzen#premium"
-                        className="flex items-center justify-center gap-3 px-8 py-5 min-h-[64px] bg-white text-[var(--ff-color-primary-700)] rounded-[20px] font-semibold text-lg hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--ff-color-primary-300)] hover:border-[var(--ff-color-primary-500)] w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 shadow-sm hover:shadow-md"
+                        className="flex items-center justify-center gap-3 px-8 py-5 min-h-[64px] bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-[20px] font-semibold text-lg hover:bg-[var(--ff-color-primary-50)] transition-all border-2 border-[var(--ff-color-primary-300)] hover:border-[var(--ff-color-primary-500)] w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 shadow-sm hover:shadow-md"
                         aria-label="Upgrade naar Premium voor meer functies"
                       >
                         <Sparkles className="w-6 h-6" aria-hidden="true" strokeWidth={2.5} />
@@ -1460,7 +1460,7 @@ export default function EnhancedResultsPage() {
                     <div className="space-y-2">
                       {selectedOutfit.products.map((product: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg">
-                          <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                          <div className="w-16 h-16 bg-[var(--ff-color-neutral-200)] rounded-lg overflow-hidden flex-shrink-0">
                             {product.image_url && (
                               <img
                                 src={product.image_url}
@@ -1503,7 +1503,7 @@ export default function EnhancedResultsPage() {
                 </button>
                 <button
                   onClick={() => setSelectedOutfit(null)}
-                  className="px-6 py-3 bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                  className="px-6 py-3 bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--ff-color-neutral-200)] transition-colors"
                 >
                   Sluiten
                 </button>
@@ -1529,13 +1529,13 @@ export default function EnhancedResultsPage() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
+              className="bg-[var(--color-surface)] rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
             >
               {/* Header with gradient */}
               <div className="relative p-8 pb-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)]">
                 <button
                   onClick={() => setShowShareModal(false)}
-                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/50 transition-colors"
+                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--color-surface)]/50 transition-colors"
                   aria-label="Sluit modal"
                 >
                   <X className="w-5 h-5 text-[var(--color-muted)]" />
@@ -1578,8 +1578,8 @@ export default function EnhancedResultsPage() {
                   }}
                   className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                    <Share2 className="w-6 h-6 text-blue-700" />
+                  <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
+                    <Share2 className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-[var(--color-text)]">Deel op Twitter</p>
@@ -1629,7 +1629,7 @@ export default function EnhancedResultsPage() {
               </div>
               <NavLink
                 to="/prijzen#premium"
-                className="flex-shrink-0 px-5 py-3 bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-50)] transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                className="flex-shrink-0 px-5 py-3 bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-50)] transition-all shadow-lg active:scale-95 whitespace-nowrap"
               >
                 Upgrade nu
               </NavLink>

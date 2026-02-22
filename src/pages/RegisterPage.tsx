@@ -276,7 +276,7 @@ const RegisterPage: React.FC = () => {
                     type="checkbox"
                     checked={accepted}
                     onChange={(e) => setAccepted(e.target.checked)}
-                    className="w-5 h-5 rounded border-2 border-gray-300 accent-[var(--ff-color-primary-600)] cursor-pointer"
+                    className="w-5 h-5 rounded border-2 border-[var(--color-border)] accent-[var(--ff-color-primary-600)] cursor-pointer"
                   />
                 </div>
                 <span className="text-sm text-[var(--color-text)] leading-relaxed select-none">

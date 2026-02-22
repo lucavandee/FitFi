@@ -225,7 +225,7 @@ export default function PricingPage() {
         <div className="ff-container relative">
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
 
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-5 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-5 shadow-sm">
               <Users className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
               <span className="text-xs sm:text-sm font-medium">2.500+ gebruikers ontdekten hun stijl</span>
             </div>
@@ -430,7 +430,7 @@ export default function PricingPage() {
             </div>
 
             {/* Founder Plan */}
-            <article className="mt-8 sm:mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 sm:p-8 md:p-10 text-white shadow-2xl border border-amber-500/20">
+            <article className="mt-8 sm:mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 sm:p-8 md:p-10 text-white shadow-2xl border border-[var(--ff-color-warning-500)]/20">
               <div className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 items-center">
 
                 <div>
