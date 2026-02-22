@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { SwipeCard } from './SwipeCard';
 import { ImagePreloader } from './ImagePreloader';
 import { StyleAnalysisTransition } from './StyleAnalysisTransition';
-import { Sparkles, Loader as Loader2, Heart, X } from 'lucide-react';
+import { Sparkles, Loader as Loader2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 
 interface MoodPhoto {
@@ -36,24 +36,18 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     loadMoodPhotos();
   }, [userGender]);
 
-  // Keyboard Navigation for Desktop Users
   useEffect(() => {
     if (showCelebration || loading || moodPhotos.length === 0) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Prevent default to avoid page scroll
       if (['ArrowLeft', 'ArrowRight', ' ', 'Enter'].includes(e.key)) {
         e.preventDefault();
       }
-
       const currentPhoto = moodPhotos[currentIndex];
       if (!currentPhoto) return;
-
       if (e.key === 'ArrowLeft') {
-        // Left arrow = dislike
         handleSwipe('left', 0);
       } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
-        // Right arrow, Space, or Enter = like (most common action)
         handleSwipe('right', 0);
       }
     };
@@ -64,20 +58,14 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   const loadMoodPhotos = async () => {
     try {
-      // Use centralized service for consistent gender filtering
       const { VisualPreferenceService } = await import('@/services/visualPreferences/visualPreferenceService');
-
       const photos = await VisualPreferenceService.getMoodPhotos(15, userGender);
-
       if (photos.length === 0) {
-        console.warn('⚠️ No mood photos found for gender:', userGender);
-        // Fallback: try loading unisex photos
         const fallbackPhotos = await VisualPreferenceService.getMoodPhotos(15, 'prefer-not-to-say');
         setMoodPhotos(fallbackPhotos);
       } else {
         setMoodPhotos(photos);
       }
-
       setLoading(false);
     } catch (err) {
       console.error('Failed to load mood photos:', err);
@@ -89,24 +77,19 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     const currentPhoto = moodPhotos[currentIndex];
     if (!currentPhoto || showCelebration) return;
 
-    console.log(`📸 Swipe #${swipeCount + 1}/${moodPhotos.length} → ${direction}`);
-
     const newSwipeCount = swipeCount + 1;
     const isLastSwipe = newSwipeCount >= moodPhotos.length;
 
     setSwipeCount(newSwipeCount);
 
-    // Save to database (non-blocking)
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
-
       if (client) {
         const sessionId = sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID();
         if (!sessionStorage.getItem('fitfi_session_id')) {
           sessionStorage.setItem('fitfi_session_id', sessionId);
         }
-
         await client.from('style_swipes').insert({
           user_id: user?.id || null,
           session_id: !user ? sessionId : null,
@@ -115,21 +98,16 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           response_time_ms: responseTimeMs
         });
       }
-
       onSwipe?.(currentPhoto.id, direction);
     } catch (err) {
       console.warn('Failed to save swipe:', err);
     }
 
-    // Check if we're done
     if (isLastSwipe) {
-      console.log('🎉 ALL SWIPES COMPLETE! Starting analysis transition...');
       setShowCelebration(true);
-      // Note: StyleAnalysisTransition handles timing and onComplete call
       return;
     }
 
-    // Move to next photo
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
     }, 100);
@@ -137,44 +115,11 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   if (loading) {
     return (
-      <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
-        {/* Skeleton Header */}
-        <div className="flex-shrink-0 px-4 pt-safe pt-4 sm:pt-6 pb-3 sm:pb-4">
-          <div className="w-40 h-8 bg-[var(--color-border)] rounded-full animate-pulse mb-3" />
-          <div className="w-64 h-7 bg-[var(--color-border)] rounded-lg animate-pulse mb-2" />
-          <div className="w-48 h-5 bg-[var(--color-border)] rounded-lg animate-pulse" />
-          <div className="mt-4 h-2 bg-[var(--color-bg)] rounded-full overflow-hidden border border-[var(--color-border)]">
-            <div className="h-full w-0 bg-[var(--ff-color-primary-600)] animate-pulse" />
-          </div>
-        </div>
-
-        {/* Skeleton Card */}
-        <div className="flex-1 flex items-center justify-center px-4 min-h-0 relative">
-          <div className="w-full max-w-[400px] flex flex-col items-center justify-center gap-6">
-            <div className="w-full max-w-[340px] sm:max-w-[360px] h-[420px] sm:h-[480px] rounded-[var(--radius-2xl)] bg-[var(--color-border)] animate-pulse" />
-
-            {/* Skeleton Buttons */}
-            <div className="flex gap-4 sm:gap-8">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-border)] animate-pulse" />
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--color-border)] animate-pulse" />
-            </div>
-          </div>
-        </div>
-
-        {/* Skeleton Footer */}
-        <div className="flex-shrink-0 px-4 pb-safe pb-4 sm:pb-6">
-          <div className="max-w-md mx-auto flex justify-center">
-            <div className="w-64 h-4 bg-[var(--color-border)] rounded-lg animate-pulse" />
-          </div>
-        </div>
-
-        {/* Loading Message Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-6 py-4 shadow-xl">
-            <div className="flex items-center gap-3">
-              <Loader2 className="w-5 h-5 text-[var(--ff-color-primary-700)] animate-spin" />
-              <p className="text-sm font-medium text-[var(--color-text)]">Stijlbeelden laden...</p>
-            </div>
+      <div className="h-screen flex items-center justify-center bg-[var(--color-bg)] fixed inset-0">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-6 py-4 shadow-xl">
+          <div className="flex items-center gap-3">
+            <Loader2 className="w-5 h-5 text-[var(--ff-color-primary-700)] animate-spin" />
+            <p className="text-sm font-medium text-[var(--color-text)]">Stijlbeelden laden...</p>
           </div>
         </div>
       </div>
@@ -194,18 +139,11 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   const currentPhoto = moodPhotos[currentIndex];
   const progress = (swipeCount / moodPhotos.length) * 100;
-
-  // Extract all image URLs for preloading
   const imageUrls = moodPhotos.map(photo => photo.image_url);
-
-  // Extract storage domain for preconnect (performance optimization)
-  const storageDomain = imageUrls.length > 0
-    ? new URL(imageUrls[0]).origin
-    : '';
+  const storageDomain = imageUrls.length > 0 ? new URL(imageUrls[0]).origin : '';
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
-      {/* Performance: DNS Preconnect for faster image loading */}
       {storageDomain && (
         <Helmet>
           <link rel="preconnect" href={storageDomain} />
@@ -213,16 +151,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         </Helmet>
       )}
 
-      {/* Image Preloader - Preload next 2 images for smooth transitions */}
       {!loading && moodPhotos.length > 0 && (
-        <ImagePreloader
-          imageUrls={imageUrls}
-          currentIndex={currentIndex}
-          lookahead={2}
-        />
+        <ImagePreloader imageUrls={imageUrls} currentIndex={currentIndex} lookahead={2} />
       )}
 
-      {/* Analysis Transition - After last swipe */}
       <StyleAnalysisTransition
         isVisible={showCelebration}
         onComplete={() => {
@@ -231,83 +163,227 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         }}
       />
 
-      {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-safe pt-4 sm:pt-6 pb-3 sm:pb-4">
-        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-2 sm:mb-3">
-          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" />
-          <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">Visuele Voorkeuren</span>
-        </div>
-
-        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--color-text)] mb-1 sm:mb-2">
-          Welke stijl spreekt je aan?
-        </h2>
-        <p className="text-xs sm:text-sm text-[var(--color-muted)]">
-          <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits
-        </p>
-
-        {/* Progress */}
-        <div className="mt-3 sm:mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
-            <span className="text-xs text-[var(--color-muted)]">{swipeCount} van {moodPhotos.length}</span>
+      {/* ── MOBILE layout (< sm) ── */}
+      <div className="sm:hidden flex flex-col h-full">
+        {/* Mobile Header */}
+        <div className="flex-shrink-0 px-4 pt-4 pb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" />
+            <span className="text-xs font-medium text-[var(--color-text)]">Visuele Voorkeuren</span>
           </div>
-          <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden border border-[var(--color-border)]">
-            <motion.div
-              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Swipe Area - Fixed Height to Prevent Scroll Jump */}
-      <div className="flex-1 flex items-center justify-center px-4 min-h-0 relative">
-        <div className="w-full max-w-[400px] h-[600px] sm:h-[680px] flex items-center justify-center">
-          <AnimatePresence mode="popLayout">
-            {currentPhoto && (
-              <SwipeCard
-                key={currentPhoto.id}
-                imageUrl={currentPhoto.image_url}
-                onSwipe={handleSwipe}
-                index={currentIndex}
-                total={moodPhotos.length}
+          <h2 className="text-lg font-bold text-[var(--color-text)] mb-1">
+            Welke stijl spreekt je aan?
+          </h2>
+          <p className="text-xs text-[var(--color-muted)]">
+            <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits
+          </p>
+          <div className="mt-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-xs font-medium text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
+              <span className="text-xs text-[var(--color-muted)]">{swipeCount} / {moodPhotos.length}</span>
+            </div>
+            <div className="h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
               />
-            )}
-          </AnimatePresence>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Swipe Area */}
+        <div className="flex-1 flex items-center justify-center px-4 min-h-0">
+          <div className="w-full max-w-[360px] h-full flex items-center justify-center">
+            <AnimatePresence mode="popLayout">
+              {currentPhoto && (
+                <SwipeCard
+                  key={currentPhoto.id}
+                  imageUrl={currentPhoto.image_url}
+                  onSwipe={handleSwipe}
+                  index={currentIndex}
+                  total={moodPhotos.length}
+                  variant="mobile"
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Mobile Footer */}
+        <div className="flex-shrink-0 px-4 pb-6 pt-2">
+          <p className="text-center text-xs text-[var(--color-muted)]">
+            Tik op de knoppen of sleep de foto
+          </p>
         </div>
       </div>
 
-      {/* Footer Instructions - Clean & Minimal */}
-      <div className="flex-shrink-0 px-4 pb-safe pb-6 sm:pb-8">
-        <div className="max-w-lg mx-auto">
-          {/* Desktop: Keyboard shortcuts */}
-          <div className="hidden sm:flex flex-col items-center gap-3">
-            <p className="text-sm font-medium text-[var(--color-text)]">
-              Sleep de foto of gebruik toetsenbord
-            </p>
-            <div className="flex items-center justify-center gap-8">
-              <div className="flex items-center gap-2">
-                <kbd className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
-                  ←
-                </kbd>
-                <span className="text-sm text-[var(--color-muted)]">Niet mijn stijl</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-[var(--color-muted)]">Spreekt me aan</span>
-                <kbd className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
-                  → of Space
-                </kbd>
-              </div>
+      {/* ── DESKTOP layout (≥ sm) — twee kolommen ── */}
+      <div className="hidden sm:flex h-full">
+
+        {/* Linker kolom: kaart */}
+        <div className="flex-1 flex items-center justify-center px-8 lg:px-16">
+          <div className="w-full max-w-[420px] lg:max-w-[460px]">
+            <AnimatePresence mode="popLayout">
+              {currentPhoto && (
+                <SwipeCard
+                  key={currentPhoto.id}
+                  imageUrl={currentPhoto.image_url}
+                  onSwipe={handleSwipe}
+                  index={currentIndex}
+                  total={moodPhotos.length}
+                  variant="desktop"
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Rechter kolom: header + progress + knoppen + instructies */}
+        <div
+          className="w-[380px] lg:w-[420px] flex-shrink-0 flex flex-col justify-center px-8 lg:px-12 border-l"
+          style={{ borderColor: 'var(--color-border)' }}
+        >
+          {/* Badge */}
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 self-start"
+            style={{
+              background: 'var(--overlay-accent-08a)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+            <span className="text-sm font-semibold text-[var(--color-text)]">Visuele Voorkeuren</span>
+          </div>
+
+          <h2
+            className="font-heading font-bold tracking-tight mb-2"
+            style={{ fontSize: 'clamp(1.75rem, 2.5vw, 2.25rem)', lineHeight: 1.1, color: 'var(--color-text)' }}
+          >
+            Welke stijl spreekt je aan?
+          </h2>
+
+          <p className="text-sm text-[var(--color-muted)] mb-8">
+            <strong className="text-[var(--color-text)] font-semibold">Laatste stap!</strong> Swipe door {moodPhotos.length} outfits en geef aan wat bij jou past.
+          </p>
+
+          {/* Progress */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
+              <span
+                className="text-xs font-medium px-2.5 py-1 rounded-full"
+                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}
+              >
+                {swipeCount} / {moodPhotos.length}
+              </span>
+            </div>
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-border)' }}>
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-primary-700))' }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              />
             </div>
           </div>
 
-          {/* Mobile: Simple instruction */}
-          <div className="sm:hidden text-center">
-            <p className="text-sm text-[var(--color-muted)]">
-              Tik op de knoppen of sleep de foto
-            </p>
+          {/* Actie-knoppen */}
+          <div className="flex gap-4 mb-8">
+            {/* Dislike */}
+            <button
+              onClick={() => {
+                const currentPhoto = moodPhotos[currentIndex];
+                if (currentPhoto) handleSwipe('left', 0);
+              }}
+              className="flex-1 group flex flex-col items-center gap-2 py-5 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                background: 'var(--color-surface)',
+                border: '2px solid var(--color-border)',
+              }}
+              aria-label="Niet mijn stijl"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-colors duration-200 group-hover:bg-red-50"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '2px solid rgba(239,68,68,0.25)' }}
+              >
+                <svg className="w-7 h-7 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </div>
+              <span className="text-xs font-semibold text-[var(--color-muted)] group-hover:text-[var(--color-text)] transition-colors">
+                Niet mijn stijl
+              </span>
+            </button>
+
+            {/* Like */}
+            <button
+              onClick={() => {
+                const currentPhoto = moodPhotos[currentIndex];
+                if (currentPhoto) handleSwipe('right', 0);
+              }}
+              className="flex-1 group flex flex-col items-center gap-2 py-5 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(34,197,94,0.12) 100%)',
+                border: '2px solid rgba(34,197,94,0.30)',
+              }}
+              aria-label="Spreekt me aan"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-colors duration-200 group-hover:bg-green-50"
+                style={{ background: 'rgba(34,197,94,0.10)', border: '2px solid rgba(34,197,94,0.30)' }}
+              >
+                <svg className="w-7 h-7 text-green-500" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1} aria-hidden="true">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </div>
+              <span className="text-xs font-semibold text-green-700 group-hover:text-green-800 transition-colors">
+                Spreekt me aan
+              </span>
+            </button>
+          </div>
+
+          {/* Sneltoetsen */}
+          <div
+            className="rounded-xl px-5 py-4"
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+          >
+            <p className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-3">Sneltoetsen</p>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-[var(--color-muted)]">Niet mijn stijl</span>
+                <kbd
+                  className="px-2.5 py-1 text-xs font-bold rounded-lg"
+                  style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
+                >
+                  ←
+                </kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-[var(--color-muted)]">Spreekt me aan</span>
+                <div className="flex items-center gap-1.5">
+                  <kbd
+                    className="px-2.5 py-1 text-xs font-bold rounded-lg"
+                    style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
+                  >
+                    →
+                  </kbd>
+                  <span className="text-[10px] text-[var(--color-muted)]">of</span>
+                  <kbd
+                    className="px-2.5 py-1 text-xs font-bold rounded-lg"
+                    style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
+                  >
+                    Space
+                  </kbd>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-[var(--color-muted)]">Sleep de foto</span>
+                <span className="text-xs text-[var(--color-muted)]">← →</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

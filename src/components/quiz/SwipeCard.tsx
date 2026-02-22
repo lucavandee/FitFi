@@ -8,9 +8,10 @@ interface SwipeCardProps {
   onSkip?: () => void;
   index: number;
   total: number;
+  variant?: 'mobile' | 'desktop';
 }
 
-export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
+export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' }: SwipeCardProps) {
   const [startTime] = useState(Date.now());
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
   const [showTooltip, setShowTooltip] = useState(index === 0);
@@ -126,7 +127,12 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         }
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 1.02, cursor: 'grabbing' }}
-        className="swipe-card-container swipe-card-draggable w-full max-w-[400px] sm:max-w-[440px] h-[500px] sm:h-[560px] cursor-grab active:cursor-grabbing flex-shrink-0"
+        className={[
+          'swipe-card-container swipe-card-draggable cursor-grab active:cursor-grabbing flex-shrink-0 w-full',
+          variant === 'desktop'
+            ? 'h-[520px] lg:h-[600px] max-w-full'
+            : 'max-w-[360px] h-[460px] sm:h-[520px]',
+        ].join(' ')}
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
           <img
@@ -278,7 +284,8 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
         )}
       </motion.div>
 
-      {/* Action Buttons - Always Visible, Larger on Desktop, Accessible */}
+      {/* Action Buttons — alleen op mobiel, desktop gebruikt eigen knoppen in rechterkolom */}
+      {variant !== 'desktop' && (
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
@@ -375,6 +382,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total }: SwipeCardProps) {
           </div>
         </div>
       </motion.div>
+      )}
     </div>
   );
 }
