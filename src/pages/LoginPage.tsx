@@ -213,7 +213,7 @@ export default function LoginPage() {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
+                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
                     emailError
                       ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_var(--ff-color-danger-100)]"
                       : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
@@ -257,7 +257,7 @@ export default function LoginPage() {
                   aria-invalid={!!pwError}
                   aria-describedby={pwError ? "pw-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] ${
+                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
                     pwError
                       ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_var(--ff-color-danger-100)]"
                       : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
@@ -344,12 +344,12 @@ export default function LoginPage() {
             </NavLink>
 
             <p className="text-center text-xs text-[var(--color-muted)]">
-              Geen account nodig om de quiz te doen.{" "}
+              Gewoon verkennen?{" "}
               <NavLink
-                to="/"
+                to="/onboarding"
                 className="font-medium text-[var(--ff-color-primary-700)] hover:underline underline-offset-2"
               >
-                Terug naar start
+                Start de quiz zonder account
               </NavLink>
             </p>
 

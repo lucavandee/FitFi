@@ -196,7 +196,7 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     emailError
                       ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
                       : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
@@ -229,7 +229,7 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!pwError}
                   aria-describedby="pw-hint pw-error"
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     pwError
                       ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
                       : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
@@ -349,12 +349,12 @@ const RegisterPage: React.FC = () => {
 
             {/* Microcopy */}
             <p className="text-center text-xs text-[var(--color-text-secondary)] leading-relaxed pt-1">
-              Geen account nodig om de quiz te doen.{" "}
+              Wil je eerst kijken?{" "}
               <NavLink
-                to="/"
+                to="/onboarding"
                 className="font-medium text-[var(--ff-color-primary-700)] hover:underline"
               >
-                Terug naar start
+                Start de quiz zonder account
               </NavLink>
             </p>
           </form>

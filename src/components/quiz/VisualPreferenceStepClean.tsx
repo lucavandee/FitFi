@@ -135,7 +135,13 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   const currentPhoto = moodPhotos[currentIndex];
   const progress = (swipeCount / moodPhotos.length) * 100;
   const imageUrls = moodPhotos.map(photo => photo.image_url);
-  const storageDomain = imageUrls.length > 0 ? new URL(imageUrls[0]).origin : '';
+  const storageDomain = (() => {
+    try {
+      return imageUrls.length > 0 ? new URL(imageUrls[0]).origin : '';
+    } catch {
+      return '';
+    }
+  })();
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
