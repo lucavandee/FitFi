@@ -1,346 +1,230 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleHelp as HelpCircle, ShieldCheck, Lock, CreditCard, Clock, Plus, Minus, Search, ThumbsUp, ThumbsDown, Hash } from "lucide-react";
+import { CircleHelp as HelpCircle, ShieldCheck, CreditCard, Clock, Plus, Minus } from "lucide-react";
+import Seo from "@/components/seo/Seo";
 
-type QA = { q: string; a: React.ReactNode; id: string; category: string };
+type QA = { q: string; a: React.ReactNode };
 
 const FAQ_GENERAL: QA[] = [
   {
     q: "Wat krijg ik precies als ik start?",
-    a: (
-      <>
-        Je krijgt <strong>minimaal 5 complete outfits</strong> met uitleg waarom ze bij je passen. Elke outfit heeft directe shoplinks. Je hoeft geen account te maken om te starten.
-      </>
-    ),
+    a: "Je krijgt minimaal vijf complete outfits met uitleg waarom ze bij je passen. Elke outfit heeft directe shoplinks naar webshops. Je hoeft geen account te maken om te beginnen.",
   },
   {
-    q: "Werkt FitFi op mobiel?",
-    a: (
-      <>
-        Ja, volledig. De app is mobile-first: even snel en overzichtelijk op je telefoon als op desktop.
-      </>
-    ),
+    q: "Werkt FitFi op mijn telefoon?",
+    a: "Ja, volledig. Wij bouwen mobile-first: de ervaring op je telefoon is even snel en overzichtelijk als op desktop.",
   },
   {
     q: "Is dit stijladvies persoonlijk of generiek?",
-    a: (
-      <>
-        Persoonlijk. Je antwoorden worden vertaald naar jouw unieke stijlprofiel (zoals "65% Minimalistisch, 25% Casual Chic"). Outfits worden hier op afgestemd.
-      </>
-    ),
+    a: 'Persoonlijk. Je antwoorden worden vertaald naar jouw unieke stijlprofiel — bijvoorbeeld "65% Minimalistisch, 25% Casual Chic". Outfits worden hier direct op afgestemd.',
   },
 ];
 
 const FAQ_PRIVACY: QA[] = [
   {
-    q: "Hoe gaan jullie met mijn data om?",
-    a: (
-      <>
-        We bewaren alleen je quizantwoorden en outfitvoorkeuren. <strong>Geen doorverkoop, geen tracking.</strong> Je kunt je gegevens altijd laten verwijderen via contact@fitfi.ai.
-      </>
-    ),
+    q: "Hoe gaan jullie met mijn gegevens om?",
+    a: "Wij bewaren alleen je quizantwoorden en outfitvoorkeuren. Geen doorverkoop, geen reclame-tracking. Je kunt je gegevens altijd laten verwijderen via contact@fitfi.ai.",
   },
   {
     q: "Moet ik foto's uploaden?",
-    a: (
-      <>
-        Nee, de quiz werkt zonder foto's. Premium-leden kunnen <em>later</em> optioneel foto's uploaden voor kleuranalyse. Volledig vrijwillig.
-      </>
-    ),
+    a: "Nee. De quiz werkt zonder foto's. Premium-leden kunnen later optioneel een foto uploaden voor kleuranalyse op basis van ondertoon. Dat is volledig vrijwillig.",
   },
   {
     q: "Waarom passen deze outfits bij mij?",
-    a: (
-      <>
-        Elke outfit toont een korte uitleg: waarom de kleuren kloppen, welke pasvorm past bij je voorkeur, en hoe de stijl aansluit bij je profiel. Je ziet altijd het <em>waarom</em>.
-      </>
-    ),
+    a: "Elke outfit toont een korte uitleg: waarom de kleuren kloppen, welke pasvorm aansluit bij je voorkeur en hoe de stijl past bij je profiel. Je ziet altijd het waarom.",
   },
 ];
 
 const FAQ_PRICING: QA[] = [
   {
     q: "Blijft er een gratis optie?",
-    a: (
-      <>
-        Ja. Met <strong>Starter</strong> krijg je gratis toegang tot je eerste 5 outfits en stijlprofiel. Je kunt altijd gratis blijven.
-      </>
-    ),
+    a: "Ja. Met het gratis plan krijg je toegang tot je stijlprofiel en je eerste outfits. Je kunt altijd gratis blijven.",
   },
   {
-    q: "Kan ik maandelijks opzeggen of wisselen?",
-    a: (
-      <>
-        Ja. <strong>Geen lange contracten.</strong> Je kunt elk moment opzeggen of van plan wisselen. Maandelijks gefactureerd.
-      </>
-    ),
+    q: "Kan ik maandelijks opzeggen of van plan wisselen?",
+    a: "Ja. Geen lange contracten, geen boetes. Je kunt elk moment opzeggen of wisselen. Wij factureren maandelijks.",
   },
   {
     q: "Welke betaalmethodes ondersteunen jullie?",
-    a: (
-      <>
-        iDEAL, creditcard en Apple Pay via Stripe. Veilig en vertrouwd.
-      </>
-    ),
+    a: "iDEAL, creditcard en Apple Pay via Stripe.",
   },
 ];
 
 const FAQ_PRODUCT: QA[] = [
   {
     q: "Kan ik de quiz opnieuw doen?",
-    a: (
-      <>
-        Ja, <strong>zo vaak als je wilt</strong>. Je krijgt dan nieuwe outfits op basis van je nieuwe antwoorden. Je oude profiel blijft bewaard.
-      </>
-    ),
+    a: "Ja, zo vaak als je wilt. Je krijgt dan nieuwe outfits op basis van je nieuwe antwoorden. Je vorige profiel blijft bewaard.",
   },
   {
     q: "Kan ik outfits opslaan?",
-    a: (
-      <>
-        Ja. Je kunt favoriete outfits opslaan in je dashboard. Shoplinks blijven beschikbaar, zodat je later kunt winkelen.
-      </>
-    ),
+    a: "Ja. Je kunt favoriete outfits opslaan in je dashboard. De shoplinks blijven beschikbaar zodat je later kunt winkelen.",
   },
   {
     q: "Wat als ik hulp nodig heb?",
-    a: (
-      <>
-        Mail ons op <strong>contact@fitfi.ai</strong>. We reageren binnen 24 uur en denken mee over je stijlvragen.
-      </>
-    ),
+    a: "Stuur een mail naar contact@fitfi.ai. Wij reageren binnen 24 uur en denken graag mee over je stijlvragen.",
   },
 ];
 
-function FAQSection({ title, items, delay = 0 }: { title: string; items: QA[]; delay?: number }) {
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    ...FAQ_GENERAL,
+    ...FAQ_PRIVACY,
+    ...FAQ_PRICING,
+    ...FAQ_PRODUCT,
+  ].map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: typeof item.a === "string" ? item.a : String(item.a),
+    },
+  })),
+};
+
+function FAQItem({ item, index }: { item: QA; index: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const id = `faq-${index}`;
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6, delay }}
-      className="ff-container py-8"
-    >
-      <h2 className="font-heading text-2xl text-[var(--color-text)] mb-4">{title}</h2>
-      <div className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] overflow-hidden">
+    <div className="border-t border-[var(--color-border)] first:border-t-0">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left hover:bg-[var(--ff-color-primary-50)] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)]"
+        aria-expanded={isOpen}
+        aria-controls={id}
+      >
+        <span className="font-medium text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors leading-snug">
+          {item.q}
+        </span>
+        <span className="flex-shrink-0 text-[var(--color-muted)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
+          {isOpen ? <Minus className="w-4 h-4" aria-hidden /> : <Plus className="w-4 h-4" aria-hidden />}
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            id={id}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <p className="px-6 pb-5 text-[var(--color-muted)] leading-relaxed text-sm">
+              {item.a}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function FAQSection({ title, items }: { title: string; items: QA[] }) {
+  return (
+    <section className="ff-container py-6">
+      <h2 className="text-lg font-semibold text-[var(--color-text)] mb-3">{title}</h2>
+      <div className="rounded-[var(--radius-xl)] bg-white border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]">
         {items.map((item, i) => (
           <FAQItem key={i} item={item} index={i} />
         ))}
       </div>
-    </motion.section>
-  );
-}
-
-function FAQItem({ item, index }: { item: QA; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="border-t border-[var(--color-border)] first:border-t-0"
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-6 flex items-center justify-between gap-4 text-left hover:bg-[var(--ff-color-primary-50)] transition-colors group"
-      >
-        <span className="font-heading text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors">
-          {item.q}
-        </span>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="flex-shrink-0"
-        >
-          {isOpen ? (
-            <Minus className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-          ) : (
-            <Plus className="w-5 h-5 text-[var(--color-muted)] group-hover:text-[var(--ff-color-primary-600)] transition-colors" />
-          )}
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="px-6 pb-6 text-[var(--color-text)]/80 leading-relaxed">
-              {item.a}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+    </section>
   );
 }
 
 export default function FAQPage() {
-
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
-        {/* Animated gradient blobs */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 90, 0],
-              x: [0, 50, 0],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1, 1.3, 1],
-              rotate: [0, -90, 0],
-              x: [0, -30, 0],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-[var(--ff-color-accent-400)] to-[var(--ff-color-primary-400)] rounded-full blur-3xl"
-          />
-        </div>
+      <Seo
+        title="Veelgestelde vragen — FitFi"
+        description="Antwoorden op de meest gestelde vragen over FitFi: hoe het werkt, privacy, prijzen en je account."
+        path="/veelgestelde-vragen"
+        structuredData={FAQ_SCHEMA}
+      />
 
-        <div className="ff-container relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+      <section className="ff-container py-16 md:py-20">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3 leading-tight">
+            Veelgestelde vragen
+          </h1>
+          <p className="text-[var(--color-muted)] text-lg leading-relaxed">
+            Staat je vraag er niet tussen? Stuur ons een mail via{" "}
+            <a
+              href="mailto:contact@fitfi.ai"
+              className="text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
             >
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--color-text)] mb-8 leading-tight">
-                Veelgestelde
-                <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                  Vragen
-                </span>
-              </h1>
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
-            >
-              Kort, duidelijk en premium — . Staat je vraag er niet tussen? Laat het ons weten.
-            </motion.p>
-          </div>
+              contact@fitfi.ai
+            </a>
+            .
+          </p>
         </div>
       </section>
 
-      {/* Trust badges with animations */}
-      <section className="ff-container py-12">
-        <div className="grid gap-6 md:grid-cols-3">
+      <section className="ff-container pb-8">
+        <div className="grid gap-4 sm:grid-cols-3">
           {[
             {
               icon: ShieldCheck,
               title: "Privacybewust",
-              body:
-                "We verwerken alleen wat nodig is en verkopen niets door. Transparant en zorgvuldig.",
+              body: "Wij verwerken alleen wat nodig is en verkopen niets door.",
             },
             {
               icon: CreditCard,
               title: "Eerlijk geprijsd",
-              body:
-                "Begin gratis. Upgraden kan later.",
+              body: "Begin gratis. Upgraden kan later, opzeggen altijd.",
             },
             {
               icon: Clock,
               title: "Direct resultaat",
-              body:
-                "6 vragen, meerdere looks. Korte redenatie per outfit zodat je zélf kunt kiezen.",
+              body: "Beantwoord een paar vragen en zie outfits met uitleg binnen twee minuten.",
             },
           ].map((c, i) => {
             const Icon = c.icon;
             return (
-              <motion.article
+              <article
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm p-8 shadow-[var(--shadow-lifted)] border border-[var(--color-border)] hover:shadow-[var(--shadow-elevated)] transition-shadow"
+                className="rounded-[var(--radius-xl)] bg-white border border-[var(--color-border)] p-5 shadow-[var(--shadow-soft)]"
               >
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4"
-                >
-                  <Icon className="h-6 w-6 text-white" aria-hidden />
-                </motion.div>
-                <h3 className="font-heading text-xl mb-2 text-[var(--color-text)]">{c.title}</h3>
-                <p className="text-[var(--color-muted)] leading-relaxed">{c.body}</p>
-              </motion.article>
+                <div className="w-9 h-9 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-3">
+                  <Icon className="h-5 w-5 text-[var(--ff-color-primary-700)]" aria-hidden />
+                </div>
+                <h3 className="font-semibold text-[var(--color-text)] mb-1">{c.title}</h3>
+                <p className="text-sm text-[var(--color-muted)] leading-relaxed">{c.body}</p>
+              </article>
             );
           })}
         </div>
       </section>
 
-      {/* FAQ Sections with animated accordions */}
-      <FAQSection title="Algemeen" items={FAQ_GENERAL} delay={0} />
-      <FAQSection title="Privacy & data" items={FAQ_PRIVACY} delay={0.1} />
-      <FAQSection title="Prijzen & abonnementen" items={FAQ_PRICING} delay={0.2} />
-      <FAQSection title="Product & gebruik" items={FAQ_PRODUCT} delay={0.3} />
+      <FAQSection title="Algemeen" items={FAQ_GENERAL} />
+      <FAQSection title="Privacy en gegevens" items={FAQ_PRIVACY} />
+      <FAQSection title="Prijzen en abonnementen" items={FAQ_PRICING} />
+      <FAQSection title="Product en gebruik" items={FAQ_PRODUCT} />
 
-      {/* CTA Section */}
-      <section className="ff-container py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="rounded-[var(--radius-2xl)] bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] p-8 md:p-12 border-2 border-[var(--color-border)] shadow-[var(--shadow-elevated)] relative overflow-hidden"
-        >
-          {/* Decorative gradient blob */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)] rounded-full blur-3xl opacity-20" />
-
-          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg flex-shrink-0"
-            >
-              <HelpCircle className="h-8 w-8 text-white" aria-hidden />
-            </motion.div>
-            <div className="flex-1">
-              <h2 className="font-heading text-2xl md:text-3xl text-[var(--color-text)] mb-2">
-                Nog een vraag?
-              </h2>
-              <p className="text-[var(--color-muted)] text-lg leading-relaxed">
-                We helpen je graag verder. Bekijk de prijzen of start direct —
-                opzeggen kan altijd.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <NavLink to="/prijzen" className="ff-btn ff-btn-secondary px-6 py-3">
-                  Bekijk prijzen
-                </NavLink>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <NavLink to="/results" className="ff-btn ff-btn-primary px-6 py-3">
-                  Start gratis
-                </NavLink>
-              </motion.div>
-            </div>
+      <section className="ff-container py-12 pb-20">
+        <div className="rounded-[var(--radius-xl)] bg-white border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)] flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
+            <HelpCircle className="h-5 w-5 text-[var(--ff-color-primary-700)]" aria-hidden />
           </div>
-        </motion.div>
+          <div className="flex-1">
+            <h2 className="font-semibold text-[var(--color-text)] mb-1">Nog een vraag?</h2>
+            <p className="text-sm text-[var(--color-muted)]">
+              Wij helpen je graag verder. Bekijk de prijzen of start direct.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <NavLink to="/prijzen" className="ff-btn ff-btn-secondary ff-btn--sm">
+              Bekijk prijzen
+            </NavLink>
+            <NavLink to="/onboarding" className="ff-btn ff-btn-primary ff-btn--sm">
+              Start gratis
+            </NavLink>
+          </div>
+        </div>
       </section>
     </main>
   );

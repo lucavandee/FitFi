@@ -3,8 +3,47 @@ publish = "dist"
 functions = "netlify/functions"
 command = "npx vite build"
 
+[build.environment]
+NODE_VERSION = "20"
+
 [functions]
 node_bundler = "esbuild"
+
+[[redirects]]
+from = "/login"
+to = "/inloggen"
+status = 301
+force = true
+
+[[redirects]]
+from = "/register"
+to = "/registreren"
+status = 301
+force = true
+
+[[redirects]]
+from = "/quiz"
+to = "/onboarding"
+status = 301
+force = true
+
+[[redirects]]
+from = "/stijlquiz"
+to = "/onboarding"
+status = 301
+force = true
+
+[[redirects]]
+from = "/faq"
+to = "/veelgestelde-vragen"
+status = 301
+force = true
+
+[[redirects]]
+from = "/terms"
+to = "/algemene-voorwaarden"
+status = 301
+force = true
 
 [[redirects]]
 from = "/*"

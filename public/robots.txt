@@ -1,4 +1,14 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /account/
+Disallow: /results
+Disallow: /onboarding
+Disallow: /inloggen
+Disallow: /registreren
+Disallow: /accessibility-test
+
 Sitemap: https://fitfi.ai/sitemap.xml

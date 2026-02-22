@@ -9,12 +9,15 @@ export default function AboutPage() {
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Helmet>
-        <title>Over ons – FitFi</title>
+        <title>Over ons — FitFi</title>
         <meta
           name="description"
-          content="Wij bouwen een AI-gedreven stylingtool die eerlijk, rustig en effectief is. Leer ons verhaal, onze principes en onze aanpak."
+          content="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak, principes en hoe FitFi werkt."
         />
         <link rel="canonical" href={canonicalUrl('/over-ons')} />
+        <meta property="og:title" content="Over ons — FitFi" />
+        <meta property="og:description" content="Wij bouwen een stijltool die eerlijk, rustig en effectief is." />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       {/* Hero Section */}
@@ -114,38 +117,11 @@ export default function AboutPage() {
                 <Sparkles className="w-6 h-6 text-white" />
               </motion.div>
               <h2 className="text-3xl font-bold mb-4 text-[var(--color-text)]">Onze principes</h2>
-              <ul className="space-y-3 text-[var(--color-muted)] text-lg">
-                <motion.li
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                  className="flex items-start gap-3"
-                >
-                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
-                  <span>Rustig, precies en feitelijk</span>
-                </motion.li>
-                <motion.li
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                  className="flex items-start gap-3"
-                >
-                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
-                  <span>WCAG AA-toegankelijk; mobile-first</span>
-                </motion.li>
-                <motion.li
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
-                  className="flex items-start gap-3"
-                >
-                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--ff-color-primary-600)] flex-shrink-0"></span>
-                  <span>Geen dark patterns; transparante prijzen</span>
-                </motion.li>
-              </ul>
+              <div className="space-y-4 text-[var(--color-muted)] text-lg leading-relaxed">
+                <p>Rustig, precies en feitelijk. Wij schrijven en ontwerpen zonder overdrijving.</p>
+                <p>Toegankelijk op elk scherm. Mobile-first, keyboard-navigeerbaar en leesbaar voor iedereen.</p>
+                <p>Geen verborgen kosten of misleidende keuzes. Transparante prijzen, duidelijke opt-outs.</p>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -206,9 +182,9 @@ export default function AboutPage() {
               >
                 <Sparkles className="w-6 h-6 text-white" />
               </motion.div>
-              <h3 className="text-xl font-bold mb-3 text-[var(--color-text)]">Design-tokens</h3>
+              <h3 className="text-xl font-bold mb-3 text-[var(--color-text)]">Consistente ervaring</h3>
               <p className="text-[var(--color-muted)]">
-                Consistent, snel en toegankelijk in elke view. Premium maar nooit overdone.
+                Elke pagina ziet er hetzelfde uit, laadt snel en werkt op elk scherm. Rustig en overzichtelijk.
               </p>
             </motion.div>
 
@@ -254,7 +230,7 @@ export default function AboutPage() {
                 Probeer FitFi <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">vandaag</span>
               </h2>
               <p className="text-xl text-[var(--color-muted)] mb-8">
-                Binnen 2 minuten een helder Style Report. Geen account nodig.
+                Beantwoord een paar vragen en zie welke outfits bij je passen. Geen account nodig om te starten.
               </p>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <NavLink
