@@ -122,54 +122,41 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-[var(--ff-color-primary-50)] flex items-center justify-center px-4 py-8 sm:py-12">
+    <main className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center px-4 pt-6 pb-10">
       <Seo
         title="Account aanmaken — FitFi"
         description="Maak een gratis FitFi account aan en sla je stijlrapport op."
         path="/registreren"
       />
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-[420px]">
 
-        <div className="mb-6 flex items-start gap-3 px-5 py-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
-          <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-            <FileText className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
-              Maak een account zodat we je stijlrapport kunnen opslaan.
-            </p>
-            <p className="text-sm text-[var(--ff-color-primary-700)] mt-0.5 leading-snug">
-              {comingFromResults
-                ? "Je outfits en shoplinks zijn al klaar — sla ze op."
-                : "Na het aanmaken starten we je quiz."}
-            </p>
-          </div>
-        </div>
-
-        <div className="text-center mb-6">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
+        {/* Page heading */}
+        <div className="text-center mb-5">
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-1">
             Account aanmaken
           </h1>
-          <p className="text-base text-[var(--color-muted)]">
-            We vragen alleen wat nodig is.
+          <p className="text-sm text-[var(--color-muted)]">
+            {comingFromResults
+              ? "Sla je outfits en shoplinks op."
+              : "We vragen alleen wat nodig is."}
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-[var(--color-border)] overflow-hidden">
-          <form onSubmit={onSubmit} className="p-6 sm:p-8 space-y-5">
+        <div className="bg-white rounded-2xl shadow-sm border border-[var(--color-border)]">
+          <form onSubmit={onSubmit} className="p-5 space-y-4">
 
-            {/* Server error with inline recovery */}
+            {/* Server error */}
             {serverError && (
               <div>
                 <ErrorAlert error={serverError} />
                 {isEmailTaken && (
-                  <div className="mt-3 flex items-center gap-2 text-sm">
+                  <div className="mt-2 flex items-center gap-2 text-sm">
                     <span className="text-[var(--color-text-secondary)]">Al een account?</span>
                     <NavLink
                       to="/login"
-                      className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2 transition-colors"
+                      className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2"
                     >
                       Inloggen
                     </NavLink>
@@ -191,12 +178,12 @@ const RegisterPage: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-[var(--color-text)] mb-2"
+                className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
               >
                 E-mailadres
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400 pointer-events-none" />
                 <input
                   id="email"
                   type="email"
@@ -209,10 +196,10 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-11 pr-4 py-3.5 min-h-[48px] text-base rounded-xl border-2 transition-colors outline-none ${
+                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-white outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     emailError
-                      ? "border-red-400 focus-visible:border-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]"
-                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:shadow-[0_0_0_3px_rgba(var(--ff-color-primary-rgb,90,101,210),0.15)]"
+                      ? "border-red-400 focus-visible:ring-red-300"
+                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
                   }`}
                 />
               </div>
@@ -225,12 +212,12 @@ const RegisterPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-[var(--color-text)] mb-2"
+                className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
               >
                 Wachtwoord
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400 pointer-events-none" />
                 <input
                   id="password"
                   type={showPw ? "text" : "password"}
@@ -242,43 +229,35 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!pwError}
                   aria-describedby="pw-hint pw-error"
                   disabled={loading}
-                  className={`w-full pl-11 pr-12 py-3.5 min-h-[48px] text-base rounded-xl border-2 transition-colors outline-none ${
+                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-white outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     pwError
-                      ? "border-red-400 focus-visible:border-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]"
-                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:shadow-[0_0_0_3px_rgba(var(--ff-color-primary-rgb,90,101,210),0.15)]"
+                      ? "border-red-400 focus-visible:ring-red-300"
+                      : "border-gray-200 focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 active:scale-95 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
-                  {showPw ? (
-                    <EyeOff className="w-5 h-5 text-gray-500" />
-                  ) : (
-                    <Eye className="w-5 h-5 text-gray-500" />
-                  )}
+                  {showPw ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
                 </button>
               </div>
 
-              {/* Strength meter — token-safe colors */}
-              {pwData && (
-                <div className="mt-3" aria-live="polite">
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              {pwData ? (
+                <div className="mt-2" aria-live="polite">
+                  <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-500 ease-out rounded-full ${strengthColors[pwData.score]}`}
                       style={{ width: `${pwData.pct}%` }}
                     />
                   </div>
-                  <p className={`text-xs font-semibold mt-1.5 ${strengthTextColors[pwData.score]}`}>
+                  <p className={`text-xs font-medium mt-1 ${strengthTextColors[pwData.score]}`}>
                     {pwData.label}
                   </p>
                 </div>
-              )}
-
-              {/* Hint when field is empty/short */}
-              {!pwData && (
+              ) : (
                 <p id="pw-hint" className="mt-1.5 text-xs text-[var(--color-text-secondary)]">
                   Gebruik minimaal 8 tekens. Een mix van letters en cijfers werkt het best.
                 </p>
@@ -289,54 +268,55 @@ const RegisterPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Consent */}
+            {/* Consent block */}
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={accepted}
-                  onChange={(e) => setAccepted(e.target.checked)}
-                  className="w-5 h-5 mt-0.5 flex-shrink-0 rounded border-2 border-gray-300 text-[var(--ff-color-primary-600)] focus:ring-[var(--ff-color-primary-500)] cursor-pointer"
-                />
+                <div className="flex-shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={accepted}
+                    onChange={(e) => setAccepted(e.target.checked)}
+                    className="w-5 h-5 rounded border-2 border-gray-300 accent-[var(--ff-color-primary-600)] cursor-pointer"
+                  />
+                </div>
                 <span className="text-sm text-gray-700 leading-relaxed select-none">
                   Ik ga akkoord met de{" "}
                   <NavLink
                     to="/algemene-voorwaarden"
-                    className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2"
+                    className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2"
                   >
                     algemene voorwaarden
                   </NavLink>{" "}
                   en het{" "}
                   <NavLink
                     to="/privacy"
-                    className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2"
+                    className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2"
                   >
                     privacybeleid
                   </NavLink>
                   .
                 </span>
               </label>
-              <ul className="mt-3 space-y-1.5 pl-8">
-                <li className="flex items-center gap-2 text-xs text-gray-500">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                  Geen spam. Alleen updates die jij aanzet.
-                </li>
-                <li className="flex items-center gap-2 text-xs text-gray-500">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                  We vragen alleen wat nodig is voor je rapport.
-                </li>
-                <li className="flex items-center gap-2 text-xs text-gray-500">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                  Je kunt je account altijd verwijderen.
-                </li>
+
+              <ul className="mt-3 space-y-2 pl-8">
+                {[
+                  "Geen spam. Alleen updates die jij aanzet.",
+                  "We vragen alleen wat nodig is voor je rapport.",
+                  "Je kunt je account altijd verwijderen.",
+                ].map((text) => (
+                  <li key={text} className="flex items-start gap-2 text-xs text-gray-500">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>{text}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Submit */}
-            <Button
+            <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] text-white py-4 min-h-[52px] rounded-xl font-bold text-base shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base transition-all bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] shadow-sm disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
@@ -345,35 +325,30 @@ const RegisterPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>{comingFromResults ? "Account aanmaken" : "Account aanmaken"}</span>
+                  <span>Account aanmaken</span>
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
-            </Button>
+            </button>
 
             {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500 font-medium">
-                  Al een account?
-                </span>
-              </div>
+            <div className="relative flex items-center gap-3 py-1">
+              <div className="flex-1 border-t border-gray-200" />
+              <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Al een account?</span>
+              <div className="flex-1 border-t border-gray-200" />
             </div>
 
             {/* Login CTA */}
             <NavLink
               to="/login"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] w-full border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] font-semibold text-base rounded-xl hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base border-2 border-gray-200 text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
               Ik heb al een account
               <ArrowRight className="w-5 h-5" />
             </NavLink>
 
             {/* Microcopy */}
-            <p className="text-center text-xs text-[var(--color-text-secondary)] leading-relaxed">
+            <p className="text-center text-xs text-[var(--color-text-secondary)] leading-relaxed pt-1">
               Geen account nodig om de quiz te doen.{" "}
               <NavLink
                 to="/"
@@ -386,7 +361,7 @@ const RegisterPage: React.FC = () => {
         </div>
 
         {/* Trust strip */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--color-text-secondary)]">
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[var(--color-text-secondary)]">
           <div className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
             <span>GDPR-compliant</span>
@@ -402,7 +377,7 @@ const RegisterPage: React.FC = () => {
         </div>
 
         {/* Help */}
-        <div className="mt-4 text-center">
+        <div className="mt-3 text-center">
           <NavLink
             to="/contact"
             className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)] underline transition-colors"

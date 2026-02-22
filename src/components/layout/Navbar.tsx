@@ -167,15 +167,11 @@ export default function Navbar() {
         {/* Mobile toggle - 44px touch target */}
         <button
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 hover:bg-[var(--ff-color-primary-50)]"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
-          style={{
-            backgroundColor: 'var(--ff-color-beige-100)',
-            border: '2px solid var(--ff-color-beige-200)',
-          }}
         >
           {open ? (
             <svg
@@ -190,8 +186,8 @@ export default function Navbar() {
               className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
               style={{
-                stroke: 'var(--ff-color-beige-700)',
-                color: 'var(--ff-color-beige-700)'
+                stroke: 'var(--color-text)',
+                color: 'var(--color-text)'
               }}
             >
               <path d="M18 6 6 18" />
@@ -210,8 +206,8 @@ export default function Navbar() {
               className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
               style={{
-                stroke: 'var(--ff-color-beige-700)',
-                color: 'var(--ff-color-beige-700)'
+                stroke: 'var(--color-text)',
+                color: 'var(--color-text)'
               }}
             >
               <path d="M4 12h16" />
