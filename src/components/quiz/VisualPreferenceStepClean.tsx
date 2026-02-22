@@ -60,12 +60,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     try {
       const { VisualPreferenceService } = await import('@/services/visualPreferences/visualPreferenceService');
       const photos = await VisualPreferenceService.getMoodPhotos(15, userGender);
-      if (photos.length === 0) {
-        const fallbackPhotos = await VisualPreferenceService.getMoodPhotos(15, 'prefer-not-to-say');
-        setMoodPhotos(fallbackPhotos);
-      } else {
-        setMoodPhotos(photos);
-      }
+      setMoodPhotos(photos);
       setLoading(false);
     } catch (err) {
       console.error('Failed to load mood photos:', err);

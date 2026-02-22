@@ -58,36 +58,42 @@ export class VisualPreferenceService {
       return [];
     }
 
-    let query = client
-      .from('mood_photos')
-      .select('*')
-      .eq('active', true);
+    const buildQuery = (genders: string[] | null) => {
+      let q = client
+        .from('mood_photos')
+        .select('*')
+        .eq('active', true);
+      if (genders) {
+        q = q.in('gender', genders);
+      }
+      return q.order('display_order', { ascending: true }).limit(limit);
+    };
 
-    // Apply gender filtering
+    let gendersToTry: string[] | null = null;
     if (gender === 'male') {
-      // Male users see male + unisex photos
-      query = query.in('gender', ['male', 'unisex']);
+      gendersToTry = ['male', 'unisex'];
     } else if (gender === 'female') {
-      // Female users see female + unisex photos
-      query = query.in('gender', ['female', 'unisex']);
-    } else {
-      // Non-binary or prefer-not-to-say: show only unisex photos
-      query = query.eq('gender', 'unisex');
+      gendersToTry = ['female', 'unisex'];
     }
 
-    query = query
-      .order('display_order', { ascending: true })
-      .limit(limit);
-
-    const { data, error } = await query;
+    const { data, error } = await buildQuery(gendersToTry);
 
     if (error) {
       console.error('Failed to fetch mood photos:', error);
       throw error;
     }
 
-    console.log(`✅ [VisualPreferenceService] Loaded ${data?.length || 0} mood photos for gender: ${gender || 'all'}`);
-    return data || [];
+    if (data && data.length > 0) {
+      return data;
+    }
+
+    const { data: fallback, error: fallbackError } = await buildQuery(null);
+    if (fallbackError) {
+      console.error('Failed to fetch fallback mood photos:', fallbackError);
+      throw fallbackError;
+    }
+
+    return fallback || [];
   }
 
   static async recordSwipe(swipe: Omit<StyleSwipe, 'id' | 'created_at'>): Promise<void> {
