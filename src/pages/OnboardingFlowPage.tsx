@@ -725,7 +725,7 @@ export default function OnboardingFlowPage() {
       </div>
 
       {/* Question Content - Simplified, Centered Layout */}
-      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12 pb-32">
+      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12" style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col gap-6">{/* Main Question Content */}
             <div className="flex-1">
@@ -754,7 +754,7 @@ export default function OnboardingFlowPage() {
             questionKey={currentStep}
             direction="forward"
           >
-            <div className="text-center mb-6 sm:mb-8 lg:mb-10">
+            <div className="text-center mb-5 sm:mb-7">
               {/* Time estimate only on first question */}
               {currentStep === 0 && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
@@ -763,27 +763,27 @@ export default function OnboardingFlowPage() {
                 </div>
               )}
 
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 px-4 lg:px-0 leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 leading-tight">
                 {step.title}
-                {step.required && <span className="text-[var(--ff-color-accent-600)] ml-2">*</span>}
+                {step.required && <span className="text-[var(--ff-color-accent-600)] ml-1">*</span>}
               </h1>
 
               {/* Inline Error Message */}
               {attemptedNext && getValidationError() && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-center gap-2 px-4 py-3 mx-4 lg:mx-0 bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)] rounded-lg text-[var(--ff-color-danger-700)] text-sm font-medium"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)] rounded-lg text-[var(--ff-color-danger-700)] text-sm font-medium mb-3"
                   role="alert"
                   aria-live="polite"
                 >
-                  <AlertCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   <span>{getValidationError()}</span>
                 </motion.div>
               )}
 
               {step.description && (
-                <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] max-w-2xl lg:max-w-3xl mx-auto lg:mx-0 px-4 lg:px-0 leading-relaxed">
+                <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed">
                   {step.description}
                 </p>
               )}
@@ -1047,8 +1047,8 @@ export default function OnboardingFlowPage() {
       {/* End FF Container */}
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t border-[var(--color-border)] shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
-        <div className="w-full px-4 pt-3 pb-4 max-w-3xl mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
+        <div className="w-full px-4 pt-3 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
 
           {/* Hint when button is disabled and user hasn't attempted next yet */}
           {step?.required && !canProceed() && !attemptedNext && (
@@ -1060,25 +1060,25 @@ export default function OnboardingFlowPage() {
 
           {/* Primary row: Vorige + (Sla over) + Volgende */}
           <div className="flex items-center gap-2">
-            {/* Vorige — fixed width, icon only on mobile */}
+            {/* Vorige — icon-only on mobile, label on sm+ */}
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 min-w-[52px] w-[52px] sm:w-auto sm:px-5 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-1.5 w-12 sm:w-auto sm:px-4 h-12 sm:h-auto sm:py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
               aria-label="Ga terug naar vorige vraag"
             >
               <ArrowLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">Vorige</span>
             </button>
 
-            {/* Sla over — only for optional steps, shrinks to fit */}
+            {/* Sla over — compact on mobile */}
             {step && !step.required && (
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center justify-center px-4 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center px-3 sm:px-4 h-12 sm:h-auto sm:py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                 aria-label="Sla deze stap over"
               >
-                Sla over
+                <span className="hidden xs:inline">Sla </span>over
               </button>
             )}
 
@@ -1086,7 +1086,7 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleNext}
               disabled={(!canProceed() && step?.required) || isSubmitting}
-              className={`inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[52px] rounded-xl font-bold text-base transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 active:scale-[0.98] ${
+              className={`inline-flex items-center justify-center gap-2 px-4 h-12 sm:h-auto sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 active:scale-[0.98] ${
                 (!canProceed() && step?.required) || isSubmitting
                   ? 'bg-[var(--color-border)] text-[var(--color-muted)] cursor-not-allowed'
                   : 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]'

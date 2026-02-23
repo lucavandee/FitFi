@@ -95,6 +95,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
   const [previousArchetype, setPreviousArchetype] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number>(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [showComparison, setShowComparison] = useState(false);
   const [allScores, setAllScores] = useState<ArchetypeScore[]>([]);
   const [isChanging, setIsChanging] = useState(false);
@@ -166,9 +167,38 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        className="mb-6 sm:mb-8"
+        className="mb-4 sm:mb-6"
       >
-        <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl overflow-hidden relative shadow-lg">
+        {/* Mobile: compact pill that expands on tap */}
+        <div className="sm:hidden">
+          <button
+            onClick={() => setCollapsed(c => !c)}
+            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl text-left"
+            aria-expanded={!collapsed}
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xl flex-shrink-0">{config.emoji}</span>
+              <div className="min-w-0">
+                <span className="text-xs text-[var(--color-muted)]">Jouw stijlprofiel</span>
+                <p className="text-sm font-bold text-[var(--color-text)] truncate">{config.label} · {confidence}% match</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-[var(--color-muted)] flex-shrink-0 transition-transform ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
+          </button>
+          {!collapsed && (
+            <div className="mt-1 p-4 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl">
+              <p className="text-sm text-[var(--color-muted)] mb-2">{config.description}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {config.traits.map(trait => (
+                  <span key={trait} className="inline-block px-2 py-0.5 bg-white/70 rounded-md text-xs font-medium text-[var(--color-text)]">{trait}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: full card */}
+        <div className="hidden sm:block bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl overflow-hidden relative shadow-lg">
 
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-20"></div>

@@ -131,7 +131,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
           'swipe-card-container swipe-card-draggable cursor-grab active:cursor-grabbing flex-shrink-0 w-full',
           variant === 'desktop'
             ? 'h-[520px] lg:h-[600px] max-w-full'
-            : 'max-w-[360px] h-[460px] sm:h-[520px]',
+            : 'max-w-[340px] h-full max-h-[420px] min-h-[280px]',
         ].join(' ')}
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
@@ -289,7 +289,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex gap-4 sm:gap-8 z-10 mt-6 sm:mt-8 flex-shrink-0 relative"
+        className="flex gap-6 sm:gap-10 z-10 mt-4 sm:mt-6 flex-shrink-0 relative"
         role="group"
         aria-label="Stijl voorkeur keuze"
       >
@@ -311,10 +311,10 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
               boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
             }}
-            className="swipe-button w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-white border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-red-300 hover:bg-red-50"
+            className="swipe-button w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-red-300 hover:bg-red-50"
             aria-label="Niet mijn stijl - veeg of klik links"
           >
-            <X className="w-10 h-10 sm:w-14 sm:h-14 text-red-500" strokeWidth={3} aria-hidden="true" />
+            <X className="w-8 h-8 sm:w-10 sm:h-10 text-red-500" strokeWidth={3} aria-hidden="true" />
           </motion.button>
 
           {/* Desktop Hover Tooltip */}
@@ -356,10 +356,10 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
               delay: 0.5
             }}
-            className="swipe-button w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-white border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-green-300 hover:bg-green-50"
+            className="swipe-button w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-green-300 hover:bg-green-50"
             aria-label="Dit spreekt me aan - veeg of klik rechts"
           >
-            <Heart className="w-10 h-10 sm:w-14 sm:h-14 text-green-500" strokeWidth={3} fill="currentColor" aria-hidden="true" />
+            <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-green-500" strokeWidth={3} fill="currentColor" aria-hidden="true" />
           </motion.button>
 
           {/* Desktop Hover Tooltip */}

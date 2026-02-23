@@ -144,7 +144,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   })();
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)] fixed inset-0">
+    <div
+      className="flex flex-col bg-[var(--color-bg)] overflow-hidden"
+      style={{ height: 'calc(100dvh - 56px)', minHeight: 0 }}
+    >
       {storageDomain && (
         <Helmet>
           <link rel="preconnect" href={storageDomain} />
@@ -165,25 +168,17 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       />
 
       {/* ── MOBILE layout (< sm) ── */}
-      <div className="sm:hidden flex flex-col h-full">
+      <div className="sm:hidden flex flex-col h-full min-h-0">
         {/* Mobile Header */}
-        <div className="flex-shrink-0 px-4 pt-4 pb-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" />
-            <span className="text-xs font-medium text-[var(--color-text)]">Visuele Voorkeuren</span>
-          </div>
-          <h2 className="text-lg font-bold text-[var(--color-text)] mb-1">
+        <div className="flex-shrink-0 px-4 pt-3 pb-2">
+          <h2 className="text-base font-bold text-[var(--color-text)] mb-0.5">
             Welke stijl spreekt je aan?
           </h2>
-          <p className="text-xs text-[var(--color-muted)]">
+          <p className="text-xs text-[var(--color-muted)] mb-2">
             <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits
           </p>
-          <div className="mt-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-medium text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
-              <span className="text-xs text-[var(--color-muted)]">{swipeCount} / {moodPhotos.length}</span>
-            </div>
-            <div className="h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
                 initial={{ width: 0 }}
@@ -191,12 +186,13 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               />
             </div>
+            <span className="text-xs text-[var(--color-muted)] flex-shrink-0 tabular-nums">{swipeCount}/{moodPhotos.length}</span>
           </div>
         </div>
 
-        {/* Mobile Swipe Area */}
-        <div className="flex-1 flex items-center justify-center px-4 min-h-0">
-          <div className="w-full max-w-[360px] h-full flex items-center justify-center">
+        {/* Mobile Swipe Area — fills remaining space */}
+        <div className="flex-1 flex items-center justify-center px-3 min-h-0 py-1">
+          <div className="w-full max-w-[340px] h-full flex items-center justify-center min-h-0">
             <AnimatePresence mode="popLayout">
               {currentPhoto && (
                 <SwipeCard
@@ -212,8 +208,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </div>
         </div>
 
-        {/* Mobile Footer */}
-        <div className="flex-shrink-0 px-4 pb-6 pt-2">
+        {/* Mobile Footer — minimal */}
+        <div className="flex-shrink-0 px-4 pt-1" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
           <p className="text-center text-xs text-[var(--color-muted)]">
             Tik op de knoppen of sleep de foto
           </p>
