@@ -158,7 +158,7 @@ export default function LoginPage() {
           <form
             onSubmit={onSubmit}
             noValidate
-            className="p-7 space-y-5"
+            className="p-6 sm:p-8 space-y-6"
             aria-label="Inlogformulier"
           >
 
@@ -189,10 +189,10 @@ export default function LoginPage() {
             />
 
             {/* Email field */}
-            <div>
+            <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
+                className="block text-sm font-semibold text-[var(--color-text)]"
               >
                 E-mailadres
               </label>
@@ -213,21 +213,24 @@ export default function LoginPage() {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
+                  className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
                     emailError
-                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_var(--ff-color-danger-100)]"
+                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
                       : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
                   } disabled:opacity-50`}
                 />
               </div>
-              <span id="email-error">
-                <InlineError error={emailError} />
-              </span>
+              {touched.email && emailError && (
+                <p id="email-error" className="text-xs font-medium text-red-600 flex items-center gap-1.5 mt-1">
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                  <span id="email-error"><InlineError error={emailError} /></span>
+                </p>
+              )}
             </div>
 
             {/* Password field */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
                   className="text-sm font-semibold text-[var(--color-text)]"
@@ -257,9 +260,9 @@ export default function LoginPage() {
                   aria-invalid={!!pwError}
                   aria-describedby={pwError ? "pw-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
+                  className={`w-full pl-10 pr-11 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
                     pwError
-                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_var(--ff-color-danger-100)]"
+                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
                       : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
                   } disabled:opacity-50`}
                 />
@@ -272,9 +275,12 @@ export default function LoginPage() {
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              <span id="pw-error">
-                <InlineError error={pwError} />
-              </span>
+              {touched.password && pwError && (
+                <p id="pw-error" className="text-xs font-medium text-red-600 flex items-center gap-1.5 mt-1">
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                  <InlineError error={pwError} />
+                </p>
+              )}
             </div>
 
             {/* Remember me — custom styled */}
@@ -343,15 +349,22 @@ export default function LoginPage() {
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
             </NavLink>
 
-            <p className="text-center text-xs text-[var(--color-muted)]">
-              Gewoon verkennen?{" "}
+            {/* Quiz CTA — prominent, full-width */}
+            <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] p-4 flex flex-col gap-2">
+              <p className="text-sm font-semibold text-[var(--ff-color-primary-900)]">
+                Nog geen account nodig?
+              </p>
+              <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed">
+                Doe de stijlquiz direct — geen registratie vereist.
+              </p>
               <NavLink
                 to="/onboarding"
-                className="font-medium text-[var(--ff-color-primary-700)] hover:underline underline-offset-2"
+                className="mt-1 inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               >
                 Start de quiz zonder account
+                <ArrowRight className="w-4 h-4 flex-shrink-0" />
               </NavLink>
-            </p>
+            </div>
 
           </form>
         </div>

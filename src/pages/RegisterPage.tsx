@@ -149,7 +149,7 @@ const RegisterPage: React.FC = () => {
 
         {/* Main Card */}
         <div className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
-          <form onSubmit={onSubmit} className="p-5 space-y-4">
+          <form onSubmit={onSubmit} className="p-6 sm:p-8 space-y-6">
 
             {/* Server error */}
             {serverError && (
@@ -179,10 +179,10 @@ const RegisterPage: React.FC = () => {
             />
 
             {/* Email */}
-            <div>
+            <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
+                className="block text-sm font-semibold text-[var(--color-text)]"
               >
                 E-mailadres
               </label>
@@ -200,23 +200,26 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     emailError
                       ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
                       : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
                   }`}
                 />
               </div>
-              <span id="email-error">
-                <InlineError error={emailError} />
-              </span>
+              {touched.email && emailError && (
+                <p id="email-error" className="text-xs font-medium text-red-600 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                  <InlineError error={emailError} />
+                </p>
+              )}
             </div>
 
             {/* Password */}
-            <div>
+            <div className="space-y-1.5">
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
+                className="block text-sm font-semibold text-[var(--color-text)]"
               >
                 Wachtwoord
               </label>
@@ -233,7 +236,7 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!pwError}
                   aria-describedby="pw-hint pw-error"
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3 min-h-[48px] text-base rounded-xl border transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  className={`w-full pl-10 pr-11 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
                     pwError
                       ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
                       : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
@@ -267,9 +270,12 @@ const RegisterPage: React.FC = () => {
                 </p>
               )}
 
-              <span id="pw-error">
-                <InlineError error={pwError} />
-              </span>
+              {touched.password && pwError && (
+                <p id="pw-error" className="text-xs font-medium text-red-600 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                  <InlineError error={pwError} />
+                </p>
+              )}
             </div>
 
             {/* Consent block */}
@@ -351,16 +357,22 @@ const RegisterPage: React.FC = () => {
               <ArrowRight className="w-5 h-5" />
             </NavLink>
 
-            {/* Microcopy */}
-            <p className="text-center text-xs text-[var(--color-text-secondary)] leading-relaxed pt-1">
-              Wil je eerst kijken?{" "}
+            {/* Quiz CTA — prominent, full-width */}
+            <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] p-4 flex flex-col gap-2">
+              <p className="text-sm font-semibold text-[var(--ff-color-primary-900)]">
+                Nog geen account nodig?
+              </p>
+              <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed">
+                Doe de stijlquiz direct — geen registratie vereist.
+              </p>
               <NavLink
                 to="/onboarding"
-                className="font-medium text-[var(--ff-color-primary-700)] hover:underline"
+                className="mt-1 inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               >
                 Start de quiz zonder account
+                <ArrowRight className="w-4 h-4 flex-shrink-0" />
               </NavLink>
-            </p>
+            </div>
           </form>
         </div>
 
