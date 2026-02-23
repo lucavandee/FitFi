@@ -277,42 +277,24 @@ export default function PricingPage() {
                 </header>
 
                 <ul className="space-y-3 mb-6 flex-1">
-                  <li className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-[var(--ff-color-primary-700)]" />
-                    </div>
-                    <span className="text-sm">Stijlprofiel analyse</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-[var(--ff-color-primary-700)]" />
-                    </div>
-                    <span className="text-sm">3 gepersonaliseerde outfit-combinaties</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-[var(--ff-color-primary-700)]" />
-                    </div>
-                    <span className="text-sm">Directe shoplinks voor elk item</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-[var(--ff-color-primary-700)]" />
-                    </div>
-                    <span className="text-sm">Rapport aanpasbaar na herstart</span>
-                  </li>
-                  <li className="flex items-start gap-3 opacity-45">
-                    <div className="w-5 h-5 bg-[var(--color-border)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Minus className="w-3 h-3 text-[var(--color-muted)]" />
-                    </div>
-                    <span className="text-sm">Geen AI-stylist (Nova)</span>
-                  </li>
-                  <li className="flex items-start gap-3 opacity-45">
-                    <div className="w-5 h-5 bg-[var(--color-border)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Minus className="w-3 h-3 text-[var(--color-muted)]" />
-                    </div>
-                    <span className="text-sm">Geen kleuranalyse op basis van foto</span>
-                  </li>
+                  {[
+                    { ok: true, label: "Stijlprofiel analyse" },
+                    { ok: true, label: "3 gepersonaliseerde outfit-combinaties" },
+                    { ok: true, label: "Directe shoplinks voor elk item" },
+                    { ok: true, label: "Rapport aanpasbaar na herstart" },
+                    { ok: false, label: "Geen AI-stylist (Nova)" },
+                    { ok: false, label: "Geen kleuranalyse op basis van foto" },
+                  ].map(({ ok, label }) => (
+                    <li key={label} className={`flex items-start gap-3${ok ? "" : " opacity-45"}`}>
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-[3px] ${ok ? "bg-[var(--ff-color-primary-100)]" : "bg-[var(--color-border)]"}`}>
+                        {ok
+                          ? <Check className="w-3 h-3 text-[var(--ff-color-primary-700)]" />
+                          : <Minus className="w-3 h-3 text-[var(--color-muted)]" />
+                        }
+                      </div>
+                      <span className="text-sm leading-snug">{label}</span>
+                    </li>
+                  ))}
                 </ul>
 
                 <div className="mt-auto">
@@ -380,51 +362,23 @@ export default function PricingPage() {
                       Alles van Free, plus:
                     </h3>
                     <ul className="space-y-3 sm:space-y-4">
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm mb-0.5">Onbeperkte outfits</div>
-                          <div className="text-xs text-white/75">Nieuwe looks voor werk, weekend, uitgaan</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Zap className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm mb-0.5">Nova AI-assistent</div>
-                          <div className="text-xs text-white/75">Chat 24/7 met je persoonlijke stijlcoach</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Sparkles className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm mb-0.5">Kleuranalyse (foto)</div>
-                          <div className="text-xs text-white/75">Upload een foto voor advies op ondertoon — alleen als je dat kiest</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm mb-0.5">Shopping cheatsheet</div>
-                          <div className="text-xs text-white/75">Uitgebreide kleuren- &amp; combinatiegids op maat</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <TrendingUp className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm mb-0.5">Smart learning</div>
-                          <div className="text-xs text-white/75">Systeem leert van je feedback en wordt beter</div>
-                        </div>
-                      </li>
+                      {[
+                        { Icon: Check,      title: "Onbeperkte outfits",     sub: "Nieuwe looks voor werk, weekend, uitgaan" },
+                        { Icon: Zap,        title: "Nova AI-assistent",       sub: "Chat 24/7 met je persoonlijke stijlcoach" },
+                        { Icon: Sparkles,   title: "Kleuranalyse (foto)",     sub: "Upload een foto voor advies op ondertoon — alleen als je dat kiest" },
+                        { Icon: Check,      title: "Shopping cheatsheet",     sub: "Uitgebreide kleuren- & combinatiegids op maat" },
+                        { Icon: TrendingUp, title: "Smart learning",          sub: "Systeem leert van je feedback en wordt beter" },
+                      ].map(({ Icon, title, sub }) => (
+                        <li key={title} className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-[3px]">
+                            <Icon className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-sm leading-snug mb-0.5">{title}</div>
+                            <div className="text-xs text-white/75 leading-snug">{sub}</div>
+                          </div>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -527,33 +481,44 @@ export default function PricingPage() {
 
             <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]">
 
-              {/* Mobile: card-per-feature layout */}
-              <div className="sm:hidden divide-y divide-[var(--color-border)]">
-                {/* Mobile header */}
-                <div className="grid grid-cols-4 bg-[var(--color-bg)] text-xs font-bold text-[var(--color-text)] border-b border-[var(--color-border)]">
-                  <div className="col-span-2 p-3">Functie</div>
-                  <div className="p-3 text-center text-[var(--color-muted)]">Gratis</div>
-                  <div className="p-3 text-center text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]">Pro</div>
-                </div>
-                {FEATURE_ROWS.map((row, i) => (
-                  <div key={row.label} className={`grid grid-cols-4 ${i % 2 === 1 ? "bg-[var(--color-bg)]/40" : ""}`}>
-                    <div className="col-span-2 p-3 flex items-start gap-1.5">
-                      <span className="text-xs text-[var(--color-text)] font-medium leading-snug">{row.label}</span>
-                    </div>
-                    <div className="p-3 flex items-center justify-center">
-                      <CellValue value={row.free} />
-                    </div>
-                    <div className="p-3 flex items-center justify-center bg-[var(--ff-color-primary-50)]/30">
-                      <CellValue value={row.premium} />
-                    </div>
+              {/* Mobile: collapsible tabel */}
+              <details className="sm:hidden group">
+                <summary className="flex items-center justify-between p-4 cursor-pointer select-none list-none font-semibold text-sm text-[var(--color-text)] bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+                  <span>Bekijk volledige vergelijking</span>
+                  <svg
+                    className="w-4 h-4 text-[var(--color-muted)] transition-transform group-open:rotate-180"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <div className="divide-y divide-[var(--color-border)]">
+                  <div className="grid grid-cols-4 bg-[var(--color-bg)] text-xs font-bold text-[var(--color-text)] border-b border-[var(--color-border)]">
+                    <div className="col-span-2 p-3">Functie</div>
+                    <div className="p-3 text-center text-[var(--color-muted)]">Gratis</div>
+                    <div className="p-3 text-center text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]">Pro</div>
                   </div>
-                ))}
-                <div className="grid grid-cols-4 bg-[var(--color-bg)] font-semibold border-t-2 border-[var(--color-border)]">
-                  <div className="col-span-2 p-3 text-xs">Prijs</div>
-                  <div className="p-3 text-center text-xs">€0</div>
-                  <div className="p-3 text-center text-xs bg-[var(--ff-color-primary-50)]/40">€{premiumPrice}/mnd</div>
+                  {FEATURE_ROWS.map((row, i) => (
+                    <div key={row.label} className={`grid grid-cols-4 ${i % 2 === 1 ? "bg-[var(--color-bg)]/40" : ""}`}>
+                      <div className="col-span-2 p-3 flex items-start gap-1.5">
+                        <span className="text-xs text-[var(--color-text)] font-medium leading-snug">{row.label}</span>
+                      </div>
+                      <div className="p-3 flex items-center justify-center">
+                        <CellValue value={row.free} />
+                      </div>
+                      <div className="p-3 flex items-center justify-center bg-[var(--ff-color-primary-50)]/30">
+                        <CellValue value={row.premium} />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="grid grid-cols-4 bg-[var(--color-bg)] font-semibold border-t-2 border-[var(--color-border)]">
+                    <div className="col-span-2 p-3 text-xs">Prijs</div>
+                    <div className="p-3 text-center text-xs">€0</div>
+                    <div className="p-3 text-center text-xs bg-[var(--ff-color-primary-50)]/40">€{premiumPrice}/mnd</div>
+                  </div>
                 </div>
-              </div>
+              </details>
 
               {/* Desktop: full table */}
               <div className="hidden sm:block overflow-x-auto">
@@ -618,11 +583,16 @@ export default function PricingPage() {
                 </table>
               </div>
 
-              <div className="px-4 sm:px-5 py-4 bg-[var(--ff-color-primary-50)] border-t border-[var(--color-border)] flex items-start gap-2">
-                <Info className="w-4 h-4 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" aria-hidden="true" />
-                <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed font-medium">
-                  Kleuranalyse op ondertoon is een Premium-feature en werkt uitsluitend als jij een foto uploadt of je ondertoon zelf deelt. We schatten of claimen dit nooit op eigen initiatief.
-                </p>
+              <div className="px-4 sm:px-6 py-4 sm:py-5 bg-[var(--ff-color-primary-50)] border-t border-[var(--ff-color-primary-200)] flex items-start gap-3">
+                <Info className="w-5 h-5 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <div>
+                  <p className="text-sm font-semibold text-[var(--ff-color-primary-700)] mb-0.5">
+                    Over kleuranalyse
+                  </p>
+                  <p className="text-sm text-[var(--ff-color-primary-700)] leading-relaxed opacity-90">
+                    Kleuranalyse op ondertoon is een Premium-feature en werkt uitsluitend als jij een foto uploadt of je ondertoon zelf deelt. We schatten of claimen dit nooit op eigen initiatief.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -670,18 +640,18 @@ export default function PricingPage() {
                       <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" aria-hidden="true" />
                     ))}
                   </div>
-                  <p className="text-[var(--color-text)] text-sm sm:text-base mb-5 leading-relaxed">
+                  <blockquote className="text-[var(--color-text)] text-base sm:text-lg font-light leading-relaxed mb-5 px-0.5">
                     &ldquo;{quote}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)] text-sm">
+                  </blockquote>
+                  <footer className="flex items-center gap-3">
+                    <div className="w-11 h-11 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center font-bold text-[var(--ff-color-primary-700)] text-base flex-shrink-0">
                       {initial}
                     </div>
                     <div>
-                      <div className="font-semibold text-sm">{name}</div>
-                      <div className="text-xs text-[var(--color-muted)]">{plan}</div>
+                      <cite className="font-semibold text-base text-[var(--color-text)] not-italic block">{name}</cite>
+                      <div className="text-sm text-[var(--color-muted)]">{plan}</div>
                     </div>
-                  </div>
+                  </footer>
                 </article>
               ))}
             </div>
@@ -731,12 +701,15 @@ export default function PricingPage() {
                   key={q}
                   className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 sm:p-6 group"
                 >
-                  <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between min-h-[44px] list-none">
-                    <span>{q}</span>
-                    <ArrowRight
-                      className="w-4 h-4 text-[var(--color-muted)] group-open:rotate-90 transition-transform flex-shrink-0 ml-3"
-                      aria-hidden="true"
-                    />
+                  <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between gap-3 py-1 min-h-[44px] list-none">
+                    <span className="leading-snug">{q}</span>
+                    <svg
+                      className="w-5 h-5 text-[var(--color-muted)] flex-shrink-0 transition-transform duration-200 group-open:rotate-180"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
                   </summary>
                   <p className="mt-3 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
                     {a}
