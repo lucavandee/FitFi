@@ -66,7 +66,7 @@ const HeroStacked: React.FC<Props> = ({
             } as React.CSSProperties
           }
         >
-          <SmartImage id={imageId} alt={imageAlt} className="stack-img" width={800} height={1000} />
+          <SmartImage id={imageId} alt={imageAlt} className="stack-img" width={800} height={1000} eager priority />
           <figcaption className="sr-only">{imageAlt}</figcaption>
         </figure>
       </div>

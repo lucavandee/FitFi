@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -95,6 +96,14 @@ export default function ContactPage() {
 
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <Helmet>
+        <title>Contact — FitFi</title>
+        <meta name="description" content="Heb je een vraag, feedback of wil je samenwerken? Neem contact op met het FitFi team. We reageren binnen 24 uur op werkdagen." />
+        <link rel="canonical" href="/contact" />
+        <meta property="og:title" content="Contact — FitFi" />
+        <meta property="og:description" content="Neem contact op met het FitFi team. We reageren binnen 24 uur op werkdagen." />
+        <meta property="og:type" content="website" />
+      </Helmet>
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-14 sm:py-18 border-b border-[var(--color-border)]">

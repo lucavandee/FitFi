@@ -51,6 +51,7 @@ export function HeroV3() {
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: '50% 22%' }}
           loading="eager"
+          fetchPriority="high"
         />
 
         {/* ── Bovenste fade — versmelt met header ── */}
