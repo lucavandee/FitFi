@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { SwipeCard } from './SwipeCard';
@@ -30,6 +30,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
+  const swipingRef = React.useRef(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -70,7 +71,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
     const currentPhoto = moodPhotos[currentIndex];
-    if (!currentPhoto || showCelebration) return;
+    if (!currentPhoto || showCelebration || swipingRef.current) return;
+    swipingRef.current = true;
 
     const newSwipeCount = swipeCount + 1;
     const isLastSwipe = newSwipeCount >= moodPhotos.length;
@@ -100,11 +102,13 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
     if (isLastSwipe) {
       setShowCelebration(true);
+      swipingRef.current = false;
       return;
     }
 
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
+      swipingRef.current = false;
     }, 100);
   };
 

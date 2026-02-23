@@ -114,9 +114,9 @@ export default function OnboardingFlowPage() {
   const step = getCurrentStep();
 
   const getProgress = () => {
-    if (phase === 'questions') return ((currentStep + 1) / totalSteps) * 100;
-    if (phase === 'swipes') return ((quizSteps.length + 0.5) / totalSteps) * 100;
-    if (phase === 'calibration') return ((quizSteps.length + 1.5) / totalSteps) * 100;
+    if (phase === 'questions') return Math.round(((currentStep + 1) / quizSteps.length) * 100);
+    if (phase === 'swipes') return 100;
+    if (phase === 'calibration') return 100;
     return 100;
   };
 
@@ -688,7 +688,7 @@ export default function OnboardingFlowPage() {
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-xs sm:text-sm font-semibold text-[var(--color-text)] flex-shrink-0">
-                {currentStep + 1} / {quizSteps.length}
+                Stap {currentStep + 1} van {quizSteps.length}
               </span>
               {step && (
                 <span className="text-xs text-[var(--color-muted)] truncate hidden sm:block">

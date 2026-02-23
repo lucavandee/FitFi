@@ -400,46 +400,50 @@ export default function PricingPage() {
                 id="feature-matrix"
                 className="mt-3 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]"
               >
-                {/* Header */}
-                <div className="grid grid-cols-4 border-b border-[var(--color-border)] bg-[var(--color-bg)]">
-                  <div className="col-span-1 p-3 sm:p-4 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wide">Feature</div>
-                  <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--color-text)]">Gratis</div>
-                  <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]">Premium</div>
-                  <div className="p-3 sm:p-4 text-center text-xs font-bold text-amber-600 bg-amber-50">Founder</div>
-                </div>
+                <div className="overflow-x-auto">
+                  <div className="min-w-[480px]">
+                    {/* Header */}
+                    <div className="grid grid-cols-4 border-b border-[var(--color-border)] bg-[var(--color-bg)]">
+                      <div className="col-span-1 p-3 sm:p-4 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wide">Feature</div>
+                      <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--color-text)]">Gratis</div>
+                      <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]">Premium</div>
+                      <div className="p-3 sm:p-4 text-center text-xs font-bold text-amber-600 bg-amber-50">Founder</div>
+                    </div>
 
-                {/* Rows */}
-                <div className="divide-y divide-[var(--color-border)]">
-                  {FEATURE_ROWS.map((row, i) => (
-                    <div key={row.label} className={`grid grid-cols-4 ${i % 2 === 1 ? "bg-[var(--color-bg)]/40" : ""}`}>
-                      <div className="col-span-1 p-3 sm:p-4 flex items-start gap-1">
-                        <span className="text-xs sm:text-sm text-[var(--color-text)] font-medium leading-snug">{row.label}</span>
-                        {row.note && (
-                          <span className="group relative flex-shrink-0 mt-0.5">
-                            <Info className="w-3 h-3 text-[var(--color-muted)] cursor-help" />
-                            <span className="pointer-events-none absolute bottom-full left-0 mb-1 hidden group-hover:block bg-slate-900 text-white text-xs rounded-lg px-3 py-2 w-52 shadow-xl z-10 leading-relaxed">
-                              {row.note}
-                            </span>
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-3 sm:p-4 flex items-center justify-center">
-                        <FeatureDot value={row.free} />
-                      </div>
-                      <div className="p-3 sm:p-4 flex items-center justify-center bg-[var(--ff-color-primary-50)]/30">
-                        <FeatureDot value={row.premium} />
-                      </div>
-                      <div className="p-3 sm:p-4 flex items-center justify-center bg-amber-50/30">
-                        <FeatureDot value={row.founder} />
+                    {/* Rows */}
+                    <div className="divide-y divide-[var(--color-border)]">
+                      {FEATURE_ROWS.map((row, i) => (
+                        <div key={row.label} className={`grid grid-cols-4 ${i % 2 === 1 ? "bg-[var(--color-bg)]/40" : ""}`}>
+                          <div className="col-span-1 p-3 sm:p-4 flex items-start gap-1">
+                            <span className="text-xs sm:text-sm text-[var(--color-text)] font-medium leading-snug">{row.label}</span>
+                            {row.note && (
+                              <span className="group relative flex-shrink-0 mt-0.5">
+                                <Info className="w-3 h-3 text-[var(--color-muted)] cursor-help" />
+                                <span className="pointer-events-none absolute bottom-full left-0 mb-1 hidden group-hover:block bg-slate-900 text-white text-xs rounded-lg px-3 py-2 w-52 shadow-xl z-10 leading-relaxed">
+                                  {row.note}
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                          <div className="p-3 sm:p-4 flex items-center justify-center">
+                            <FeatureDot value={row.free} />
+                          </div>
+                          <div className="p-3 sm:p-4 flex items-center justify-center bg-[var(--ff-color-primary-50)]/30">
+                            <FeatureDot value={row.premium} />
+                          </div>
+                          <div className="p-3 sm:p-4 flex items-center justify-center bg-amber-50/30">
+                            <FeatureDot value={row.founder} />
+                          </div>
+                        </div>
+                      ))}
+                      {/* Price row */}
+                      <div className="grid grid-cols-4 border-t-2 border-[var(--color-border)] bg-[var(--color-bg)] font-semibold">
+                        <div className="col-span-1 p-3 sm:p-4 text-xs sm:text-sm">Prijs</div>
+                        <div className="p-3 sm:p-4 text-center text-xs sm:text-sm">€0</div>
+                        <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-[var(--ff-color-primary-50)]/40">€{premiumPrice}/mnd</div>
+                        <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-amber-50/40">€{founderPrice}</div>
                       </div>
                     </div>
-                  ))}
-                  {/* Price row */}
-                  <div className="grid grid-cols-4 border-t-2 border-[var(--color-border)] bg-[var(--color-bg)] font-semibold">
-                    <div className="col-span-1 p-3 sm:p-4 text-xs sm:text-sm">Prijs</div>
-                    <div className="p-3 sm:p-4 text-center text-xs sm:text-sm">€0</div>
-                    <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-[var(--ff-color-primary-50)]/40">€{premiumPrice}/mnd</div>
-                    <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-amber-50/40">€{founderPrice}</div>
                   </div>
                 </div>
 

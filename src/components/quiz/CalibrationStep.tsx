@@ -11,6 +11,8 @@ import type { CalibrationOutfit } from '@/services/visualPreferences/calibration
 interface CalibrationStepProps {
   onComplete: () => void;
   quizData?: any;
+  sessionId?: string;
+  onBack?: () => void;
 }
 
 const OUTFIT_CACHE_KEY = 'fitfi_calibration_outfits';
@@ -19,7 +21,7 @@ const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 // Feature flag for adaptive system
 const USE_ADAPTIVE_SYSTEM = true;
 
-export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) {
+export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp, onBack }: CalibrationStepProps) {
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
   const loadCalibrationOutfits = async () => {
     try {
       const userId = user?.id;
-      const sessionId = sessionStorage.getItem('fitfi_session_id');
+      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
 
       // Check cache first (only for non-adaptive mode)
       if (!USE_ADAPTIVE_SYSTEM) {
@@ -194,7 +196,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
 
     try {
       const userId = user?.id;
-      const sessionId = sessionStorage.getItem('fitfi_session_id');
+      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
 
       if (USE_ADAPTIVE_SYSTEM) {
         // Use adaptive feedback recording
@@ -229,7 +231,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
 
     try {
       const userId = user?.id;
-      const sessionId = sessionStorage.getItem('fitfi_session_id');
+      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
 
       // Apply calibration to profile
       await CalibrationService.applyCalibrationToProfile(
@@ -325,7 +327,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           Zo ziet jouw stijl er volgens mij uit
         </h2>
         <p className="text-[var(--color-muted)] max-w-2xl mx-auto text-base sm:text-lg">
-          Nova heeft 3 outfits voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
+          Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
         </p>
 
         {isAdaptive && (
