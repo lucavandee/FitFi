@@ -57,7 +57,7 @@ export default function LoginPage() {
       ? passwordErrors.tooShort(8)
       : null;
 
-  const canSubmit = isEmail(email) && password.length >= 8 && !loading;
+  const canSubmit = !loading;
 
   const isCredentialError =
     serverError?.icon === "AlertCircle" &&
@@ -230,6 +230,7 @@ export default function LoginPage() {
                 Wachtwoord
               </label>
               <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
                 <input
                   id="login-password"
                   type={showPw ? "text" : "password"}
@@ -242,7 +243,7 @@ export default function LoginPage() {
                   aria-invalid={!!pwError}
                   aria-describedby={pwError ? "login-pw-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-4 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 ${
+                  className={`w-full pl-10 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden ${
                     pwError
                       ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
                       : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
@@ -251,7 +252,8 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                  tabIndex={-1}
+                  className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-visible:outline-none"
                   aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                 >
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -278,7 +280,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 min-h-[52px] rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-white py-3.5 min-h-[52px] rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
