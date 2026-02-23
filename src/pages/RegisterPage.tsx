@@ -80,7 +80,7 @@ const RegisterPage: React.FC = () => {
       ? passwordErrors.tooShort(8)
       : null;
 
-  const canSubmit = isEmail(email) && password.length >= 8 && accepted && !loading;
+  const canSubmit = !loading;
 
   const isEmailTaken =
     serverError?.title === "E-mailadres al in gebruik";
@@ -238,7 +238,8 @@ const RegisterPage: React.FC = () => {
                   aria-invalid={!!pwError}
                   aria-describedby="pw-hint pw-error"
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 ${
+                  style={{ WebkitTextSecurity: showPw ? undefined : undefined } as React.CSSProperties}
+                  className={`w-full pl-10 pr-14 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden [&::-webkit-contacts-auto-fill-button]:hidden ${
                     pwError
                       ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
                       : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
@@ -331,8 +332,8 @@ const RegisterPage: React.FC = () => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={!canSubmit}
-              className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base transition-all bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] shadow-sm disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base transition-all bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] shadow-sm disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
