@@ -408,7 +408,7 @@ export const quizSteps: QuizStep[] = [
       },
       {
         value: 'tech',
-        label: 'Tech fabrics',
+        label: 'Technische stoffen',
         description: 'Performance, waterafstotend, modern'
       },
       {
