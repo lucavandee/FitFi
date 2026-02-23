@@ -304,30 +304,33 @@ export default function BlogPostPage() {
 
                 {/* Related Articles */}
                 {relatedPosts.length > 0 && (
-                  <div className="mt-16">
-                    <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">
+                  <div className="mt-12 sm:mt-16">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-4 sm:mb-6">
                       Gerelateerde artikelen
                     </h2>
-                    <div className="grid md:grid-cols-3 gap-6">
+                    {/* Mobile: horizontal scroll; desktop: 3-col grid */}
+                    <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 sm:overflow-visible sm:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       {relatedPosts.map((related) => (
                         <Link
                           key={related.id}
                           to={`/blog/${related.slug}`}
-                          className="group bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden hover:shadow-[var(--shadow-lifted)] transition-shadow"
+                          className="group bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden hover:shadow-[var(--shadow-lifted)] transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
                         >
-                          <img
-                            src={related.image}
-                            alt={related.title}
-                            className="w-full h-40 object-cover"
-                          />
+                          <div className="aspect-[16/9] overflow-hidden">
+                            <img
+                              src={related.image}
+                              alt={related.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
                           <div className="p-4">
-                            <span className="text-xs text-[var(--ff-color-primary-600)] font-medium mb-2 block">
+                            <span className="text-xs text-[var(--ff-color-primary-600)] font-medium mb-1.5 block">
                               {related.category}
                             </span>
-                            <h3 className="font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--ff-color-primary-600)] transition-colors">
+                            <h3 className="font-bold text-sm text-[var(--color-text)] mb-1.5 line-clamp-2 group-hover:text-[var(--ff-color-primary-600)] transition-colors leading-snug">
                               {related.title}
                             </h3>
-                            <p className="text-sm text-[var(--color-muted)] line-clamp-2">
+                            <p className="text-xs text-[var(--color-muted)] line-clamp-2 leading-relaxed">
                               {related.excerpt}
                             </p>
                           </div>

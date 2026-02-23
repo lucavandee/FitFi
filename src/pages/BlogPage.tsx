@@ -17,13 +17,13 @@ import { canonicalUrl } from '@/utils/urls';
 
 function BlogCardSkeleton() {
   return (
-    <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden animate-pulse flex-shrink-0 w-[280px] sm:w-auto">
-      <div className="h-44 bg-[var(--color-border)]" />
-      <div className="p-5 space-y-3">
-        <div className="h-3 bg-[var(--color-border)] rounded w-1/3" />
+    <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden animate-pulse flex-shrink-0 w-[260px] sm:w-auto">
+      <div className="aspect-[16/9] bg-[var(--color-border)]" />
+      <div className="p-4 space-y-2.5">
         <div className="h-4 bg-[var(--color-border)] rounded w-4/5" />
-        <div className="h-3 bg-[var(--color-border)] rounded w-full" />
         <div className="h-3 bg-[var(--color-border)] rounded w-2/3" />
+        <div className="h-3 bg-[var(--color-border)] rounded w-full" />
+        <div className="h-3 bg-[var(--color-border)] rounded w-3/4" />
       </div>
     </div>
   );
@@ -37,14 +37,15 @@ type CardProps = {
 function BlogCard({ post, onNavigate }: CardProps) {
   return (
     <article
-      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow duration-200 flex flex-col cursor-pointer group flex-shrink-0 w-[280px] sm:w-auto"
+      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow duration-200 flex flex-col cursor-pointer group flex-shrink-0 w-[260px] sm:w-auto h-full"
       onClick={() => onNavigate(post.slug)}
       tabIndex={0}
       role="link"
       aria-label={`Lees artikel: ${post.title}`}
       onKeyDown={(e) => e.key === 'Enter' && onNavigate(post.slug)}
     >
-      <div className="relative h-44 bg-[var(--color-border)] overflow-hidden">
+      {/* Image — fixed 16:9 so photos never crop unpredictably */}
+      <div className="relative aspect-[16/9] bg-[var(--color-border)] overflow-hidden flex-shrink-0">
         <img
           src={post.image}
           alt={post.title}
@@ -58,31 +59,32 @@ function BlogCard({ post, onNavigate }: CardProps) {
         </div>
       </div>
 
-      <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-2">
-          <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-          <span>{post.date}</span>
-        </div>
-
-        <h3 className="font-bold text-sm sm:text-base leading-snug text-[var(--color-text)] mb-2 line-clamp-2 group-hover:text-[var(--ff-color-primary-700)] transition-colors">
+      <div className="p-4 flex flex-col flex-1">
+        {/* Title — max 2 lines */}
+        <h3 className="font-bold text-sm sm:text-base leading-snug text-[var(--color-text)] mb-1.5 line-clamp-2 group-hover:text-[var(--ff-color-primary-700)] transition-colors">
           {post.title}
         </h3>
 
-        <p className="text-xs sm:text-sm text-[var(--color-muted)] leading-relaxed line-clamp-2 flex-1 mb-4">
+        {/* Author + date compact sub-row directly under title */}
+        <div className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] mb-2.5 min-w-0">
+          <img
+            src={post.author.avatar}
+            alt={post.author.name}
+            className="w-5 h-5 rounded-full flex-shrink-0 object-cover"
+          />
+          <span className="truncate max-w-[80px]">{post.author.name}</span>
+          <span className="flex-shrink-0 opacity-40">·</span>
+          <span className="flex-shrink-0">{post.date}</span>
+        </div>
+
+        {/* Excerpt — max 2 lines with ellipsis */}
+        <p className="text-xs sm:text-sm text-[var(--color-muted)] leading-relaxed line-clamp-2 flex-1 mb-3">
           {post.excerpt}
         </p>
 
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-[var(--color-border)]">
-          <div className="flex items-center gap-2 min-w-0">
-            <img
-              src={post.author.avatar}
-              alt={post.author.name}
-              className="w-7 h-7 rounded-full flex-shrink-0 object-cover"
-            />
-            <span className="text-xs text-[var(--color-muted)] truncate">{post.author.name}</span>
-          </div>
-          <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)] flex-shrink-0">
-            Lees meer <ArrowRight className="w-3.5 h-3.5" />
+        <div className="mt-auto">
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)]">
+            Lees meer <ArrowRight className="w-3 h-3" />
           </span>
         </div>
       </div>
