@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, TrendingUp, Award } from 'lucide-react';
+import { Sparkles, TrendingUp, Award, ChevronDown } from 'lucide-react';
 import { convertStyleArrayToPreferences, analyzeUserProfile } from '@/engine/profile-mapping';
 
 interface ArchetypePreviewProps {
@@ -70,6 +70,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
   const [archetype, setArchetype] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number>(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   useEffect(() => {
     // Only show after gender + style + occasions are answered (step 3+)
@@ -128,64 +129,74 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        className="mb-6 sm:mb-8"
+        exit={{ opacity: 0, y: -12 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        className="mb-4 sm:mb-6"
       >
-        <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl p-4 sm:p-6 shadow-lg overflow-hidden relative">
-          {/* Decorative gradient */}
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-20"></div>
-
-          <div className="relative flex items-start gap-4">
-            {/* Archetype Icon */}
+        {/* Mobile: compact pill — always collapsed by default */}
+        <div className="sm:hidden">
+          <button
+            onClick={() => setCollapsed(c => !c)}
+            className="w-full flex items-center justify-between gap-3 px-3 py-2.5 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl text-left"
+            aria-expanded={!collapsed}
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-lg flex-shrink-0">{config.emoji}</span>
+              <div className="min-w-0">
+                <span className="text-xs text-[var(--color-muted)]">Jouw stijlprofiel</span>
+                <p className="text-sm font-bold text-[var(--color-text)] truncate">{config.label} · {confidence}%</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-[var(--color-muted)] flex-shrink-0 transition-transform duration-200 ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
+          </button>
+          {!collapsed && (
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl shadow-md flex items-center justify-center text-3xl sm:text-4xl"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-1 p-3 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl overflow-hidden"
             >
-              {config.emoji}
+              <p className="text-sm text-[var(--color-muted)] mb-2">{config.description}</p>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 px-2 py-1 bg-white rounded-md shadow-sm">
+                  <TrendingUp className="w-3 h-3 text-green-600" />
+                  <span className="text-xs font-semibold">{confidence}% match</span>
+                </div>
+                <div className="flex-1 h-1.5 bg-white/60 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" style={{ width: `${progress}%` }} />
+                </div>
+                <span className="text-xs text-[var(--color-muted)]">{progress}%</span>
+              </div>
             </motion.div>
+          )}
+        </div>
 
-            {/* Content */}
+        {/* Desktop: full card */}
+        <div className="hidden sm:block bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl p-4 sm:p-6 shadow-lg overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-20"></div>
+          <div className="relative flex items-start gap-4">
+            <div className="flex-shrink-0 w-14 h-14 bg-white rounded-xl shadow-md flex items-center justify-center text-3xl">
+              {config.emoji}
+            </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="w-4 h-4 text-[var(--ff-color-accent-600)] flex-shrink-0" />
-                <span className="text-xs sm:text-sm font-medium text-[var(--color-muted)]">
-                  Jouw stijlprofiel
-                </span>
+                <span className="text-sm font-medium text-[var(--color-muted)]">Jouw stijlprofiel</span>
               </div>
-
-              <h3 className="text-lg sm:text-xl font-bold text-[var(--color-text)] mb-1">
-                {config.label}
-              </h3>
-
-              <p className="text-sm text-[var(--color-muted)] mb-3">
-                {config.description}
-              </p>
-
-              {/* Confidence & Progress */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                {/* Confidence Badge */}
+              <h3 className="text-xl font-bold text-[var(--color-text)] mb-1">{config.label}</h3>
+              <p className="text-sm text-[var(--color-muted)] mb-3">{config.description}</p>
+              <div className="flex flex-wrap items-center gap-3">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
                   <TrendingUp className="w-3.5 h-3.5 text-green-600" />
-                  <span className="text-xs font-semibold text-[var(--color-text)]">
-                    {confidence}% match
-                  </span>
+                  <span className="text-xs font-semibold text-[var(--color-text)]">{confidence}% match</span>
                 </div>
-
-                {/* Progress Badge */}
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
                   <Award className="w-3.5 h-3.5 text-[var(--ff-color-accent-600)]" />
-                  <span className="text-xs font-semibold text-[var(--color-text)]">
-                    {progress}% compleet
-                  </span>
+                  <span className="text-xs font-semibold text-[var(--color-text)]">{progress}% compleet</span>
                 </div>
               </div>
-
-              {/* Progress Bar */}
               <div className="mt-3 h-1.5 bg-white/50 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
@@ -196,18 +207,11 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
               </div>
             </div>
           </div>
-
-          {/* Helper Text */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="mt-3 pt-3 border-t border-[var(--ff-color-primary-200)]"
-          >
+          <div className="mt-3 pt-3 border-t border-[var(--ff-color-primary-200)]">
             <p className="text-xs text-[var(--color-muted)] text-center">
-              💡 Dit profiel past zich aan terwijl je verder gaat met de quiz
+              Dit profiel past zich aan terwijl je verder gaat met de quiz
             </p>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>

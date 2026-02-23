@@ -126,19 +126,19 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-      className={`bg-[var(--color-surface)] border-2 ${borderClass} rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300`}
+      className={`bg-[var(--color-surface)] border-2 ${borderClass} rounded-2xl sm:rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300`}
     >
       {/* Header with Icon */}
-      <div className={`${bgClass} px-6 py-5 border-b-2 ${borderClass}`}>
-        <div className="flex items-center gap-4">
-          <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
-            <OccasionIcon className="w-7 h-7 text-[var(--color-text)]" strokeWidth={1.5} />
+      <div className={`${bgClass} px-4 sm:px-6 py-4 sm:py-5 border-b-2 ${borderClass}`}>
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
+            <OccasionIcon className="w-5 h-5 sm:w-7 sm:h-7 text-[var(--color-text)]" strokeWidth={1.5} />
           </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-[var(--color-text)] mb-0.5">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-xl font-bold text-[var(--color-text)] mb-0.5 truncate">
               {title}
             </h3>
-            <p className="text-sm text-[var(--color-text)]/70">
+            <p className="text-xs sm:text-sm text-[var(--color-text)]/70 truncate">
               {subtitle}
             </p>
           </div>
@@ -157,7 +157,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
 
       <div className="grid md:grid-cols-[1fr_1fr] gap-0">
         {/* Product Images Grid */}
-        <div className="relative bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)] p-6">
+        <div className="relative bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)] p-4 sm:p-6">
           <div className="grid grid-cols-2 gap-3">
             {outfit.items.top && (
               <motion.div
@@ -219,7 +219,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         </div>
 
         {/* Details Section */}
-        <div className="space-y-4 p-6">
+        <div className="space-y-4 p-4 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
               <div className="text-sm font-medium text-[var(--color-muted)] mb-1">Totaalprijs</div>

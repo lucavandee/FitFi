@@ -275,7 +275,7 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[600px]">
+      <div className="flex items-center justify-center min-h-[240px] py-16">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-[var(--color-border)] border-t-[var(--ff-color-primary-700)] rounded-full animate-spin" />
           <p className="mt-4 text-[var(--color-muted)]">Outfits voorbereiden...</p>
@@ -312,8 +312,8 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="text-center mb-8">
+    <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8" style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="text-center mb-6 sm:mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[var(--color-border)] mb-4">
           <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
           <span className="text-sm font-medium text-[var(--color-text)]">
@@ -321,10 +321,10 @@ export function CalibrationStep({ onComplete, quizData }: CalibrationStepProps) 
           </span>
         </div>
 
-        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3">
           Zo ziet jouw stijl er volgens mij uit
         </h2>
-        <p className="text-[var(--color-muted)] max-w-2xl mx-auto text-lg">
+        <p className="text-[var(--color-muted)] max-w-2xl mx-auto text-base sm:text-lg">
           Nova heeft 3 outfits voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
         </p>
 
