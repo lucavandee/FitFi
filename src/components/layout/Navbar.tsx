@@ -3,6 +3,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 
+const HOME_PATHS = ["/", ""];
+
 /**
  * Eén premium Navbar:
  * - Sticky + lichte blur
@@ -35,6 +37,7 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const { user, logout } = useUser();
   const isAuthed = !!user;
+  const isHome = HOME_PATHS.includes(pathname);
   useLockBody(open);
 
   // Verberg navbar tijdens quiz/onboarding
@@ -117,17 +120,19 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* CTA's - 44px touch targets */}
+          {/* CTA's - op homepagina verborgen; hero-CTAs nemen de rol over */}
           <div className="flex items-center gap-2">
             {!isAuthed ? (
-              <>
-                <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary min-h-[44px] px-4" data-event="nav_login">
-                  Inloggen
-                </a>
-                <a href="/registreren" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_start_gratis">
-                  Begin gratis
-                </a>
-              </>
+              !isHome && (
+                <>
+                  <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary min-h-[44px] px-4" data-event="nav_login">
+                    Inloggen
+                  </a>
+                  <a href="/registreren" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_start_gratis">
+                    Begin gratis
+                  </a>
+                </>
+              )
             ) : (
               <>
                 <a
@@ -244,12 +249,14 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Auth CTA's mobiel - 44px touch targets */}
+          {/* Auth CTA's mobiel - op homepagina verborgen */}
           {!isAuthed ? (
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <a href="/inloggen" className="ff-btn ff-btn-secondary min-h-[44px] w-full">Log in</a>
-              <a href="/registreren" className="ff-btn ff-btn-primary min-h-[44px] w-full">Start gratis</a>
-            </div>
+            !isHome && (
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <a href="/inloggen" className="ff-btn ff-btn-secondary min-h-[44px] w-full">Log in</a>
+                <a href="/registreren" className="ff-btn ff-btn-primary min-h-[44px] w-full">Start gratis</a>
+              </div>
+            )
           ) : (
             <div className="mt-4 grid grid-cols-3 gap-2">
               <a

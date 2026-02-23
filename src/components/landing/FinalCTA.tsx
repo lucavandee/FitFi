@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Clock, Shield, Sparkles, CheckCircle } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { events } from '@/utils/ga4';
@@ -56,9 +56,21 @@ export function FinalCTA() {
               <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </button>
 
-            <p className="text-white/55 text-sm mb-8 sm:mb-10">
+            <p className="text-white/55 text-sm mb-4">
               Duurt ongeveer 2 minuten — geen creditcard nodig
             </p>
+
+            {!user && (
+              <p className="text-white/50 text-sm mb-8 sm:mb-10">
+                Al een account?{' '}
+                <Link
+                  to="/inloggen"
+                  className="text-white/80 underline underline-offset-2 hover:text-white transition-colors font-medium"
+                >
+                  Log in
+                </Link>
+              </p>
+            )}
 
             <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-white/70 text-xs sm:text-sm">
               <div className="flex items-center gap-1.5">

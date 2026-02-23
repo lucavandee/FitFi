@@ -56,7 +56,7 @@ export function FeatureBlocksV4() {
             </div>
 
             {/* Content */}
-            <div className={`py-2 ${feature.reversed ? 'lg:col-start-1 lg:row-start-1' : ''}`}>
+            <div className={`py-2 sm:py-4 min-w-0 ${feature.reversed ? 'lg:col-start-1 lg:row-start-1' : ''}`}>
               <div className={`inline-flex w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br ${feature.iconBg} rounded-2xl items-center justify-center mb-6 shadow-md`}>
                 <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" strokeWidth={2} />
               </div>
@@ -77,7 +77,7 @@ export function FeatureBlocksV4() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-base sm:text-lg text-[var(--color-text)] font-medium">{bullet}</span>
+                    <span className="text-base sm:text-lg text-[var(--color-text)] font-medium leading-snug">{bullet}</span>
                   </li>
                 ))}
               </ul>

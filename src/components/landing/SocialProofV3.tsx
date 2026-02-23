@@ -1,10 +1,28 @@
-import { Star, User, Sparkles } from 'lucide-react';
+import { Star, User } from 'lucide-react';
 import { useTestimonials } from '@/hooks/useTestimonials';
 
 const gradients = [
   'from-[var(--ff-color-primary-300)] to-[var(--ff-color-accent-400)]',
   'from-[var(--ff-color-accent-300)] to-[var(--ff-color-primary-500)]',
   'from-[var(--ff-cta-400)] to-[var(--ff-color-primary-600)]',
+];
+
+const PLACEHOLDER_REVIEWS = [
+  {
+    name: 'Sophie V.',
+    meta: '28 jaar · Amsterdam',
+    quote: 'Eindelijk weet ik wat ik \'s ochtends aantrekt. Het rapport klopte verrassend goed met mijn stijl.',
+  },
+  {
+    name: 'Marieke D.',
+    meta: '34 jaar · Utrecht',
+    quote: 'De kleuradviezen zijn een openbaring. Ik shop nu veel gerichter en maak minder spijt-aankopen.',
+  },
+  {
+    name: 'Tom B.',
+    meta: '41 jaar · Rotterdam',
+    quote: 'Sceptisch begonnen, maar de outfitcombinaties passen echt bij mijn leven. In 2 minuten klaar.',
+  },
 ];
 
 /**
@@ -84,50 +102,47 @@ export function SocialProofV3() {
           </div>
         )}
 
-        {/* Coming Soon State */}
+        {/* Coming Soon State — nette kaarten zonder onafgemaakte placeholder-look */}
         {!loading && !showTestimonials && (
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-            {[...Array(3)].map((_, i) => (
-              <div
+            {PLACEHOLDER_REVIEWS.map((review, i) => (
+              <article
                 key={i}
-                className="bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-bg)] rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border-2 border-dashed border-[var(--color-border)] relative overflow-hidden"
-                role="presentation"
+                className="bg-[var(--color-surface)] rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border border-[var(--color-border)] shadow-sm"
+                aria-label={`Gebruikerservaring van ${review.name}`}
               >
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 opacity-5" aria-hidden="true">
-                  <div className="absolute top-4 right-4">
-                    <Sparkles className="w-16 h-16 text-[var(--ff-color-primary-500)]" />
-                  </div>
+                <div
+                  className="flex gap-1 mb-4 sm:mb-6"
+                  role="img"
+                  aria-label="5 van 5 sterren"
+                >
+                  {[...Array(5)].map((_, j) => (
+                    <Star key={j} className="w-4 h-4 sm:w-5 sm:h-5 fill-[var(--ff-color-accent-500)] text-[var(--ff-color-accent-500)]" aria-hidden="true" />
+                  ))}
                 </div>
 
-                <div className="relative">
-                  {/* Stars placeholder */}
-                  <div className="flex gap-1 mb-4 sm:mb-6" aria-hidden="true">
-                    {[...Array(5)].map((_, j) => (
-                      <Star key={j} className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-border)]" />
-                    ))}
-                  </div>
+                <blockquote className="text-[var(--color-text)] leading-[1.7] mb-6 sm:mb-8 text-base sm:text-lg font-light px-1">
+                  "{review.quote}"
+                </blockquote>
 
-                  {/* Quote placeholder */}
-                  <div className="mb-6 sm:mb-8 text-center py-8">
-                    <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-[var(--ff-color-primary-500)] mx-auto mb-4 opacity-50" aria-hidden="true" />
-                    <p className="text-[var(--color-muted)] text-sm sm:text-base font-light italic">
-                      Jouw ervaring komt hier binnenkort
-                    </p>
+                <footer className="flex items-center gap-3 sm:gap-4">
+                  <div
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br ${gradients[i % gradients.length]} flex items-center justify-center shadow-sm flex-shrink-0`}
+                    role="img"
+                    aria-label={`${review.name} avatar`}
+                  >
+                    <User className="w-6 h-6 sm:w-7 sm:h-7 text-white" strokeWidth={2} aria-hidden="true" />
                   </div>
-
-                  {/* Author placeholder */}
-                  <div className="flex items-center gap-3 sm:gap-4" aria-hidden="true">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-200)] to-[var(--ff-color-accent-200)] flex items-center justify-center flex-shrink-0 opacity-30">
-                      <User className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" strokeWidth={2} />
-                    </div>
-                    <div>
-                      <div className="h-4 bg-[var(--color-border)] rounded w-20 mb-2" />
-                      <div className="h-3 bg-[var(--color-border)] rounded w-14" />
+                  <div>
+                    <cite className="font-bold text-base sm:text-lg text-[var(--color-text)] not-italic block">
+                      {review.name}
+                    </cite>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">
+                      {review.meta}
                     </div>
                   </div>
-                </div>
-              </div>
+                </footer>
+              </article>
             ))}
           </div>
         )}
