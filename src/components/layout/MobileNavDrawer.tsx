@@ -119,15 +119,21 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
           </button>
         </div>
 
-        <nav aria-label="Mobiele hoofdmenu" className="px-4 pb-6 max-h-[calc(100dvh-4rem)] overflow-y-auto">
-          <ul className="flex flex-col gap-2">
+        <nav aria-label="Mobiele hoofdmenu" className="px-4 pb-8 max-h-[calc(100dvh-4rem)] overflow-y-auto">
+          <ul className="flex flex-col" role="list">
             {links.map((item) => (
-              <li key={item.to}>
+              <li key={item.to} role="listitem">
                 <NavLink
                   to={item.to}
-                  className="px-3 py-2 rounded-full text-base font-medium text-[var(--color-text)]"
-                  style={({ isActive }) => (isActive ? { background: "color-mix(in oklab, var(--color-accent) 22%, white)" } : undefined) as any}
                   onClick={onClose}
+                  className={({ isActive }) =>
+                    [
+                      "flex items-center px-4 py-3.5 rounded-xl text-base font-medium transition-colors",
+                      isActive
+                        ? "bg-[var(--ff-color-primary-700)] text-white"
+                        : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]",
+                    ].join(" ")
+                  }
                 >
                   {item.label}
                 </NavLink>
@@ -135,12 +141,17 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
             ))}
           </ul>
 
-          <div className="mt-6 grid grid-cols-1 gap-2">
-            <NavLink to="/inloggen" className="h-10 inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] text-[var(--color-text)]" onClick={onClose}>
+          <div className="mt-6 grid grid-cols-1 gap-3 pt-4 border-t border-[var(--color-border)]">
+            <NavLink
+              to="/inloggen"
+              className="h-12 inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] text-[var(--color-text)] font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              onClick={onClose}
+            >
               Inloggen
             </NavLink>
-            <NavLink to="/prijzen" className="h-10 inline-flex items-center justify-center rounded-lg text-white"
-              style={{ background: "var(--ff-color-primary-700)" }}
+            <NavLink
+              to="/prijzen"
+              className="h-12 inline-flex items-center justify-center rounded-xl bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white font-semibold text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
               onClick={onClose}
             >
               Start gratis
