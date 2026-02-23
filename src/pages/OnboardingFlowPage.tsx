@@ -725,7 +725,7 @@ export default function OnboardingFlowPage() {
       </div>
 
       {/* Question Content - Simplified, Centered Layout */}
-      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12" style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12" style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col gap-6">{/* Main Question Content */}
             <div className="flex-1">
@@ -765,22 +765,7 @@ export default function OnboardingFlowPage() {
 
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 leading-tight">
                 {step.title}
-                {step.required && <span className="text-[var(--ff-color-accent-600)] ml-1">*</span>}
               </h1>
-
-              {/* Inline Error Message */}
-              {attemptedNext && getValidationError() && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)] rounded-lg text-[var(--ff-color-danger-700)] text-sm font-medium mb-3"
-                  role="alert"
-                  aria-live="polite"
-                >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                  <span>{getValidationError()}</span>
-                </motion.div>
-              )}
 
               {step.description && (
                 <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed">
@@ -855,35 +840,44 @@ export default function OnboardingFlowPage() {
               </>
             )}
 
-            {/* Radio (Single Select) - Mobile-first touch targets */}
+            {/* Radio (Single Select) */}
             {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div className={`grid grid-cols-1 gap-3 ${step.options.length > 3 ? 'sm:grid-cols-2' : ''}`}>
+              <div className={`grid grid-cols-1 gap-2.5 ${step.options.length > 3 ? 'sm:grid-cols-2' : ''}`}>
                 {step.options.map((option) => {
                   const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
                   return (
                     <button
                       key={option.value}
+                      type="button"
                       onClick={() => handleAnswer(step.field, option.value)}
-                      className={`w-full text-left p-4 min-h-[64px] rounded-xl border-2 transition-all active:scale-[0.98] ${
+                      aria-pressed={isSelected}
+                      className={`w-full text-left px-4 py-4 min-h-[64px] rounded-xl border-2 transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 ${
                         isSelected
-                          ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
+                          ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] shadow-sm'
+                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)]/40'
                       }`}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                           isSelected
-                            ? 'border-[var(--ff-color-primary-600)]'
-                            : 'border-[var(--color-border)]'
+                            ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
+                            : 'border-[var(--color-border)] bg-white'
                         }`}>
-                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-primary-600)]" />}
+                          {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-sm sm:text-base leading-snug">{option.label}</div>
+                          <div className={`font-semibold text-sm sm:text-base leading-snug ${isSelected ? 'text-[var(--ff-color-primary-900)]' : 'text-[var(--color-text)]'}`}>
+                            {option.label}
+                          </div>
                           {option.description && (
-                            <div className="text-xs text-[var(--color-muted)] mt-0.5 line-clamp-2">{option.description}</div>
+                            <div className="text-xs text-[var(--color-muted)] mt-0.5 leading-relaxed">{option.description}</div>
                           )}
                         </div>
+                        {isSelected && (
+                          <svg className="w-5 h-5 text-[var(--ff-color-primary-600)] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                          </svg>
+                        )}
                       </div>
                     </button>
                   );
@@ -1030,12 +1024,6 @@ export default function OnboardingFlowPage() {
             )}
           </div>
 
-          {/* Help Text - Required field indicator */}
-          {step.required && !attemptedNext && (
-            <p className="text-center text-xs text-[var(--color-muted)] mt-4">
-              * Verplicht veld
-            </p>
-          )}
             </div>
             {/* End Main Question Content */}
 
@@ -1050,11 +1038,11 @@ export default function OnboardingFlowPage() {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
         <div className="w-full px-4 pt-3 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
 
-          {/* Hint when button is disabled and user hasn't attempted next yet */}
-          {step?.required && !canProceed() && !attemptedNext && (
-            <p className="text-center text-xs text-[var(--color-muted)] mb-2.5 flex items-center justify-center gap-1.5">
+          {/* Hint when answer required but nothing selected */}
+          {step?.required && !canProceed() && (
+            <p className="text-center text-xs text-[var(--color-muted)] mb-2 flex items-center justify-center gap-1.5">
               <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-              <span>Selecteer een optie om door te gaan</span>
+              <span>{attemptedNext ? getValidationError() : 'Selecteer een optie om door te gaan'}</span>
             </p>
           )}
 
@@ -1085,11 +1073,13 @@ export default function OnboardingFlowPage() {
             {/* Volgende — takes remaining space */}
             <button
               onClick={handleNext}
-              disabled={(!canProceed() && step?.required) || isSubmitting}
+              disabled={isSubmitting}
               className={`inline-flex items-center justify-center gap-2 px-4 h-12 sm:h-auto sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 active:scale-[0.98] ${
-                (!canProceed() && step?.required) || isSubmitting
-                  ? 'bg-[var(--color-border)] text-[var(--color-muted)] cursor-not-allowed'
-                  : 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]'
+                isSubmitting
+                  ? 'bg-[var(--ff-color-primary-700)] text-white opacity-60 cursor-not-allowed'
+                  : canProceed() || !step?.required
+                  ? 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]'
+                  : 'bg-[var(--ff-color-primary-700)] text-white opacity-50'
               }`}
               aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === quizSteps.length - 1 ? "Bekijk mijn antwoorden" : "Ga naar volgende vraag")}
               aria-disabled={(!canProceed() && step?.required) || isSubmitting}
