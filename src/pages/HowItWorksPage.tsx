@@ -130,54 +130,52 @@ export default function HowItWorksPage() {
               </div>
 
               {/* Interactive Timeline */}
-              <div className="grid md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 mb-12 sm:mb-16">
+              <div className="flex flex-col md:grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-10 mb-12 sm:mb-16">
 
                 {/* Step 1 */}
                 <motion.article
                   onHoverStart={() => setActiveStep(1)}
-                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-6 sm:p-7 md:p-8 lg:p-10 transition-all duration-500 cursor-pointer ${
+                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-6 sm:p-8 transition-all duration-500 cursor-pointer ${
                     activeStep === 1
-                      ? 'border-[var(--ff-color-primary-600)] shadow-2xl scale-105'
+                      ? 'border-[var(--ff-color-primary-600)] shadow-2xl md:scale-105'
                       : 'border-[var(--color-border)] shadow-lg hover:shadow-xl'
                   }`}
                   aria-label="Stap 1: Beantwoord 8 vragen"
                 >
-                  <div className="absolute -top-3 sm:-top-4 left-6 sm:left-8 px-4 sm:px-5 py-1.5 sm:py-2 bg-[var(--ff-color-primary-600)] text-white rounded-full text-xs sm:text-sm font-bold shadow-lg">
-                    Stap 1
+                  <div className="flex items-center gap-3 mb-5">
+                    <span className="inline-flex items-center justify-center px-4 py-1.5 bg-[var(--ff-color-primary-600)] text-white rounded-full text-sm font-bold shadow-md flex-shrink-0">
+                      Stap 1
+                    </span>
                   </div>
 
-                  <div className="mb-5 sm:mb-6 mt-2">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6" aria-hidden="true">
-                      <MessageCircle className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" strokeWidth={2} />
+                  <div className="mb-5">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4" aria-hidden="true">
+                      <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" strokeWidth={2} />
                     </div>
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 leading-tight">Beantwoord 8 vragen</h3>
-                    <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-3 leading-tight">Beantwoord 8 vragen</h3>
+                    <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed mb-5">
                       Over jouw lifestyle, voorkeuren en hoe je je wilt voelen. Geen foto's, geen gedoe.
                     </p>
                   </div>
 
-                  <ul className="space-y-2.5 sm:space-y-3" role="list">
-                    <li className="flex items-center gap-2.5 sm:gap-3 group">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors" aria-hidden="true">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                  <ul className="space-y-2.5" role="list">
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium">Volledig privé</span>
+                      <span className="text-sm font-medium">Volledig privé</span>
                     </li>
-                    <li className="flex items-center gap-2.5 sm:gap-3 group">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors" aria-hidden="true">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium">Duurt 2 minuten</span>
+                      <span className="text-sm font-medium">Duurt 2 minuten</span>
                     </li>
-                    <li className="flex items-center gap-2.5 sm:gap-3">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-accent-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-accent-700)]" />
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-accent-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Clock className="w-3.5 h-3.5 text-[var(--ff-color-accent-700)]" />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium text-[var(--color-muted)]">Start nu</span>
+                      <span className="text-sm font-medium text-[var(--color-muted)]">Start nu</span>
                     </li>
                   </ul>
                 </motion.article>
@@ -185,49 +183,47 @@ export default function HowItWorksPage() {
                 {/* Step 2 */}
                 <motion.article
                   onHoverStart={() => setActiveStep(2)}
-                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-6 sm:p-7 md:p-8 lg:p-10 transition-all duration-500 cursor-pointer ${
+                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-6 sm:p-8 transition-all duration-500 cursor-pointer ${
                     activeStep === 2
-                      ? 'border-[var(--ff-color-primary-600)] shadow-2xl scale-105'
+                      ? 'border-[var(--ff-color-primary-600)] shadow-2xl md:scale-105'
                       : 'border-[var(--color-border)] shadow-lg hover:shadow-xl'
                   }`}
                   aria-label="Stap 2: Wij matchen outfits"
                 >
-                  <div className="absolute -top-3 sm:-top-4 left-6 sm:left-8 px-4 sm:px-5 py-1.5 sm:py-2 bg-[var(--ff-color-primary-600)] text-white rounded-full text-xs sm:text-sm font-bold shadow-lg">
-                    Stap 2
+                  <div className="flex items-center gap-3 mb-5">
+                    <span className="inline-flex items-center justify-center px-4 py-1.5 bg-[var(--ff-color-primary-600)] text-white rounded-full text-sm font-bold shadow-md flex-shrink-0">
+                      Stap 2
+                    </span>
                   </div>
 
-                  <div className="mb-5 sm:mb-6 mt-2">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6" aria-hidden="true">
-                      <Brain className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" strokeWidth={2} />
+                  <div className="mb-5">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4" aria-hidden="true">
+                      <Brain className="w-7 h-7 sm:w-8 sm:h-8 text-white" strokeWidth={2} />
                     </div>
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 leading-tight">Wij matchen outfits</h3>
-                    <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-3 leading-tight">Wij matchen outfits</h3>
+                    <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed mb-5">
                       We vinden kleurcombinaties die werken en stellen complete looks samen. Jij hoeft niks te doen.
                     </p>
                   </div>
 
-                  <ul className="space-y-2.5 sm:space-y-3" role="list">
-                    <li className="flex items-center gap-2.5 sm:gap-3 group">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors" aria-hidden="true">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                  <ul className="space-y-2.5" role="list">
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium">12.000+ items</span>
+                      <span className="text-sm font-medium">12.000+ items</span>
                     </li>
-                    <li className="flex items-center gap-2.5 sm:gap-3 group">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors" aria-hidden="true">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium">Duurt 30 seconden</span>
+                      <span className="text-sm font-medium">Duurt 30 seconden</span>
                     </li>
-                    <li className="flex items-center gap-2.5 sm:gap-3">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-accent-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-accent-700)]" />
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-accent-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Zap className="w-3.5 h-3.5 text-[var(--ff-color-accent-700)]" />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium text-[var(--color-muted)]">Automatisch</span>
+                      <span className="text-sm font-medium text-[var(--color-muted)]">Automatisch</span>
                     </li>
                   </ul>
                 </motion.article>
@@ -235,74 +231,71 @@ export default function HowItWorksPage() {
                 {/* Step 3 */}
                 <motion.article
                   onHoverStart={() => setActiveStep(3)}
-                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-6 sm:p-7 md:p-8 lg:p-10 transition-all duration-500 cursor-pointer ${
+                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-6 sm:p-8 transition-all duration-500 cursor-pointer ${
                     activeStep === 3
-                      ? 'border-[var(--ff-color-primary-600)] shadow-2xl scale-105'
+                      ? 'border-[var(--ff-color-primary-600)] shadow-2xl md:scale-105'
                       : 'border-[var(--color-border)] shadow-lg hover:shadow-xl'
                   }`}
                   aria-label="Stap 3: Jij shopt direct"
                 >
-                  <div className="absolute -top-3 sm:-top-4 left-6 sm:left-8 px-4 sm:px-5 py-1.5 sm:py-2 bg-[var(--ff-color-primary-600)] text-white rounded-full text-xs sm:text-sm font-bold shadow-lg">
-                    Stap 3
+                  <div className="flex items-center gap-3 mb-5">
+                    <span className="inline-flex items-center justify-center px-4 py-1.5 bg-[var(--ff-color-primary-600)] text-white rounded-full text-sm font-bold shadow-md flex-shrink-0">
+                      Stap 3
+                    </span>
                   </div>
 
-                  <div className="mb-5 sm:mb-6 mt-2">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-xl mb-5 sm:mb-6" aria-hidden="true">
-                      <Shirt className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" strokeWidth={2} />
+                  <div className="mb-5">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg mb-4" aria-hidden="true">
+                      <Shirt className="w-7 h-7 sm:w-8 sm:h-8 text-white" strokeWidth={2} />
                     </div>
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 leading-tight">Jij shopt direct</h3>
-                    <p className="text-[var(--color-muted)] text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-3 leading-tight">Jij shopt direct</h3>
+                    <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed mb-5">
                       Complete looks, direct shopbaar. Plus: waarom elk item bij jou past.
                     </p>
                   </div>
 
-                  <ul className="space-y-2.5 sm:space-y-3" role="list">
-                    <li className="flex items-center gap-2.5 sm:gap-3 group">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors" aria-hidden="true">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                  <ul className="space-y-2.5" role="list">
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium">6-12 outfits</span>
+                      <span className="text-sm font-medium">6-12 outfits</span>
                     </li>
-                    <li className="flex items-center gap-2.5 sm:gap-3 group">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-200)] transition-colors" aria-hidden="true">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-700)]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium">Directe shoplinks</span>
+                      <span className="text-sm font-medium">Directe shoplinks</span>
                     </li>
-                    <li className="flex items-center gap-2.5 sm:gap-3">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                        <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-700" />
+                    <li className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                        <Heart className="w-3.5 h-3.5 text-pink-700" />
                       </div>
-                      <span className="text-xs sm:text-sm lg:text-base font-medium text-[var(--color-muted)]">Bewaar voor altijd</span>
+                      <span className="text-sm font-medium text-[var(--color-muted)]">Bewaar voor altijd</span>
                     </li>
                   </ul>
                 </motion.article>
               </div>
 
               {/* Total Time + CTA */}
-              <div className="text-center p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-xl sm:rounded-[2rem] border-2 border-[var(--ff-color-primary-200)] shadow-lg mb-8">
-                <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--ff-color-primary-600)] rounded-xl sm:rounded-2xl flex items-center justify-center" aria-hidden="true">
+              <div className="text-center px-6 py-10 sm:px-10 sm:py-12 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--ff-color-primary-200)] shadow-lg mb-8">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                     <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-primary-700)]">2 minuten</span>
+                  <span className="text-3xl sm:text-4xl font-bold text-[var(--ff-color-primary-700)]">2 minuten</span>
                 </div>
-                <p className="text-sm sm:text-base lg:text-lg text-[var(--color-muted)] font-medium mb-6">
+                <p className="text-sm sm:text-base text-[var(--color-muted)] font-medium mb-8">
                   Van eerste vraag tot compleet stijladvies
                 </p>
 
-                {/* CTA Button - Benefits-driven */}
                 <NavLink
                   to="/onboarding"
-                  className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-10 sm:py-5 min-h-[52px] bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-base sm:text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                   aria-label="Start gratis quiz om je stijladvies te ontvangen"
                 >
                   Ontvang je stijladvies
-                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true" />
+                  <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true" />
                 </NavLink>
               </div>
 
@@ -327,84 +320,62 @@ export default function HowItWorksPage() {
                 </p>
               </div>
 
-              {/* Simple comparison grid */}
-              <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+              {/* Comparison grid — stacks on mobile, side-by-side on md+ */}
+              <div className="flex flex-col md:grid md:grid-cols-2 gap-6 lg:gap-8 overflow-hidden">
 
                 {/* Old Way */}
-                <div className="bg-white rounded-2xl md:rounded-[2rem] border-2 border-[var(--color-border)] p-6 lg:p-8 shadow-lg">
-                  <h3 className="font-bold text-2xl lg:text-3xl mb-6 text-center">Trial & Error</h3>
-                  <ul className="space-y-3 mb-6" role="list">
-                    <li className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </div>
-                      <span className="text-base lg:text-lg text-[var(--color-muted)]">3+ uur per winkel sessie</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </div>
-                      <span className="text-base lg:text-lg text-[var(--color-muted)]">€200+ foute aankopen/jaar</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </div>
-                      <span className="text-base lg:text-lg text-[var(--color-muted)]">Kast vol "draag ik nooit"</span>
-                    </li>
+                <div className="bg-white rounded-2xl border-2 border-[var(--color-border)] p-6 sm:p-8 shadow-lg">
+                  <h3 className="font-bold text-xl sm:text-2xl mb-5 text-center text-[var(--color-text)]">Trial & Error</h3>
+                  <ul className="space-y-4" role="list">
+                    {[
+                      "3+ uur per winkelsessie",
+                      "€200+ foute aankopen/jaar",
+                      "Kast vol \"draag ik nooit\"",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                          <svg className="w-3.5 h-3.5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                        <span className="text-sm sm:text-base text-[var(--color-muted)] leading-snug">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
                 {/* FitFi Way */}
-                <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl md:rounded-[2rem] border-2 border-[var(--ff-color-primary-400)] p-6 lg:p-8 text-white shadow-2xl transform md:scale-105">
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-[var(--ff-color-accent-500)] text-white rounded-full text-xs font-bold shadow-lg">
+                <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-6 sm:p-8 text-white shadow-2xl">
+                  <div className="inline-block mb-4 px-4 py-1.5 bg-[var(--ff-color-accent-500)] text-white rounded-full text-xs font-bold shadow-md">
                     BESTE KEUZE
                   </div>
-                  <h3 className="font-bold text-2xl lg:text-3xl mb-6 text-center mt-2">FitFi</h3>
-                  <ul className="space-y-3 mb-6" role="list">
-                    <li className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span className="text-base lg:text-lg font-medium">2 minuten, direct resultaat</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span className="text-base lg:text-lg font-medium">Outfits die je draagt</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span className="text-base lg:text-lg font-medium">€9,99/maand (of gratis)</span>
-                    </li>
+                  <h3 className="font-bold text-xl sm:text-2xl mb-5 text-white">FitFi</h3>
+                  <ul className="space-y-4" role="list">
+                    {[
+                      "2 minuten, direct resultaat",
+                      "Outfits die je draagt",
+                      "€9,99/maand (of gratis)",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-white/25 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                          <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                        </div>
+                        <span className="text-sm sm:text-base font-medium leading-snug">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
 
               {/* CTA After Comparison */}
-              <div className="mt-12 text-center">
+              <div className="mt-10 sm:mt-12 text-center px-0 sm:px-0">
                 <NavLink
                   to="/onboarding"
-                  className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 py-4 sm:px-10 sm:py-5 min-h-[52px] bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-base sm:text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                   aria-label="Probeer FitFi gratis"
                 >
                   Probeer FitFi gratis
-                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true" />
+                  <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true" />
                 </NavLink>
               </div>
 
