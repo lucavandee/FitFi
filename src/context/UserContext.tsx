@@ -173,39 +173,40 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (email: string, password: string, name: string): Promise<boolean> => {
-    if (!sb) return false;
+    if (!sb) throw new Error('Verbinding niet beschikbaar. Probeer het later opnieuw.');
+
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: { data: { name } }
+    });
+
+    if (error) throw error;
+
+    if (!data?.user) return false;
+
+    await new Promise(resolve => setTimeout(resolve, 800));
+
     try {
-      const { data, error } = await sb.auth.signUp({
-        email,
-        password,
-        options: { data: { name } }
-      });
-      if (error) return false;
+      const { data: profile } = await sb
+        .from('profiles')
+        .select('id')
+        .eq('id', data.user.id)
+        .maybeSingle();
 
-      if (data?.user) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const { data: profile } = await sb
-          .from('profiles')
-          .select('id')
-          .eq('id', data.user.id)
-          .maybeSingle();
-
-        if (!profile) {
-          const referralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-          await sb.from('profiles').insert({
-            id: data.user.id,
-            full_name: name || email.split('@')[0],
-            referral_code: referralCode,
-            tier: 'free'
-          });
-        }
-        return true;
+      if (!profile) {
+        const referralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+        await sb.from('profiles').insert({
+          id: data.user.id,
+          full_name: name || email.split('@')[0],
+          referral_code: referralCode,
+          tier: 'free'
+        });
       }
-      return false;
     } catch {
-      return false;
     }
+
+    return true;
   };
 
   const logout = async (): Promise<void> => {

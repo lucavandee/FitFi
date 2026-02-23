@@ -40,7 +40,7 @@ export default function LoginPage() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPw, setShowPw] = React.useState(false);
-  const [remember, setRemember] = React.useState(true);
+  const [remember, setRemember] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [serverError, setServerError] = React.useState<ErrorMessage | null>(null);
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});

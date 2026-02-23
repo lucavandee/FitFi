@@ -328,22 +328,27 @@ export default function ContactPage() {
 
                 <motion.button
                   onClick={() => setAddressExpanded(!addressExpanded)}
-                  className="w-full flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-white transition-all text-left"
+                  className="w-full flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-white transition-all text-left min-h-[56px]"
                   aria-expanded={addressExpanded}
+                  aria-controls="address-details"
                 >
                   <MapPin className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
                   <div className="flex-1">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Adres</div>
-                      <motion.span
+                      <motion.svg
                         animate={{ rotate: addressExpanded ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
-                        className="text-[var(--color-text)]/40 text-xl leading-none"
+                        className="w-5 h-5 text-[var(--color-muted)] flex-shrink-0"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                        aria-hidden="true"
                       >
-                        ▼
-                      </motion.span>
+                        <path d="m6 9 6 6 6-6" />
+                      </motion.svg>
                     </div>
                     <motion.div
+                      id="address-details"
                       initial={false}
                       animate={{
                         height: addressExpanded ? 'auto' : 0,

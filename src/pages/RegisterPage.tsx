@@ -106,16 +106,20 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
     try {
       const displayName = email.split("@")[0];
-      const success = await register(email, password, displayName);
-
-      if (success) {
-        toast.success("Account aangemaakt! Je bent nu ingelogd.");
-        setTimeout(() => navigate("/onboarding"), 400);
-      } else {
+      await register(email, password, displayName);
+      toast.success("Account aangemaakt! Je bent nu ingelogd.");
+      setTimeout(() => navigate("/onboarding"), 400);
+    } catch (err: unknown) {
+      const supaErr = err as { message?: string; status?: number } | null;
+      if (
+        supaErr?.message?.toLowerCase().includes("already registered") ||
+        supaErr?.message?.toLowerCase().includes("user already registered") ||
+        supaErr?.status === 422
+      ) {
         setServerError(emailErrors.alreadyExists());
+      } else {
+        setServerError(getSupabaseAuthError(err));
       }
-    } catch (err) {
-      setServerError(getSupabaseAuthError(err));
     } finally {
       setLoading(false);
     }
