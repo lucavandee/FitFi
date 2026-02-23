@@ -5,7 +5,6 @@ import {
   Eye,
   EyeOff,
   CheckCircle2,
-  Mail,
   Shield,
   Lock,
   ArrowRight,
@@ -40,7 +39,6 @@ export default function LoginPage() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPw, setShowPw] = React.useState(false);
-  const [remember, setRemember] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [serverError, setServerError] = React.useState<ErrorMessage | null>(null);
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
@@ -117,38 +115,38 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-3 sm:px-4 py-8 sm:py-16">
+    <main className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center px-3 sm:px-4 py-8 sm:py-12">
       <Seo
         title="Inloggen — FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
         path="/inloggen"
       />
 
-      <div className="w-full max-w-[420px]">
+      <div className="w-full max-w-[400px]">
 
         {/* Results context banner */}
         {comingFromResults && (
-          <div className="mb-6 flex items-start gap-3 px-4 py-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
-            <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
+          <div className="mb-5 flex items-start gap-3 px-4 py-3.5 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
+            <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 mt-0.5">
               <FileText className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
             </div>
             <div>
               <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
                 Log in om je stijlrapport terug te zien.
               </p>
-              <p className="text-sm text-[var(--ff-color-primary-700)] mt-0.5 leading-snug">
+              <p className="text-xs text-[var(--ff-color-primary-700)] mt-0.5 leading-relaxed">
                 Je outfits, combinaties en shoplinks wachten op je.
               </p>
             </div>
           </div>
         )}
 
-        {/* Heading */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-2">
+        {/* Heading — compact on mobile */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-[var(--color-text)] tracking-tight mb-1.5">
             Je bent bijna binnen.
           </h1>
-          <p className="text-base text-[var(--color-muted)]">
+          <p className="text-sm text-[var(--color-muted)]">
             Log in om je stijladvies en outfits terug te zien.
           </p>
         </div>
@@ -158,7 +156,7 @@ export default function LoginPage() {
           <form
             onSubmit={onSubmit}
             noValidate
-            className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6"
+            className="p-5 sm:p-6 space-y-4 sm:space-y-5"
             aria-label="Inlogformulier"
           >
 
@@ -167,7 +165,7 @@ export default function LoginPage() {
               <div>
                 <ErrorAlert error={serverError} />
                 {isCredentialError && (
-                  <div className="mt-3 flex items-center gap-2 text-sm">
+                  <div className="mt-2.5 flex items-center gap-2 text-sm">
                     <span className="text-[var(--color-muted)]">Wachtwoord vergeten?</span>
                     <NavLink
                       to="/wachtwoord-vergeten"
@@ -191,67 +189,49 @@ export default function LoginPage() {
             {/* Email field */}
             <div className="space-y-1.5">
               <label
-                htmlFor="email"
+                htmlFor="login-email"
                 className="block text-sm font-semibold text-[var(--color-text)]"
               >
                 E-mailadres
               </label>
-              <div className="relative">
-                <Mail
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
-                  aria-hidden="true"
-                />
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  enterKeyHint="next"
-                  placeholder="jij@voorbeeld.nl"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                  aria-invalid={!!emailError}
-                  aria-describedby={emailError ? "email-error" : undefined}
-                  disabled={loading}
-                  className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
-                    emailError
-                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
-                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
-                  } disabled:opacity-50`}
-                />
-              </div>
+              <input
+                id="login-email"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
+                enterKeyHint="next"
+                placeholder="jij@voorbeeld.nl"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                aria-invalid={!!emailError}
+                aria-describedby={emailError ? "login-email-error" : undefined}
+                disabled={loading}
+                className={`w-full px-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 ${
+                  emailError
+                    ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
+                    : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
+                } disabled:opacity-50`}
+              />
               {touched.email && emailError && (
-                <p id="email-error" className="text-xs font-medium text-red-600 flex items-center gap-1.5 mt-1">
+                <p id="login-email-error" role="alert" className="text-xs font-medium text-red-600 flex items-center gap-1.5 mt-1">
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
-                  <span id="email-error"><InlineError error={emailError} /></span>
+                  <InlineError error={emailError} />
                 </p>
               )}
             </div>
 
             {/* Password field */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-semibold text-[var(--color-text)]"
-                >
-                  Wachtwoord
-                </label>
-                <NavLink
-                  to="/wachtwoord-vergeten"
-                  className="text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors hover:underline underline-offset-2"
-                >
-                  Wachtwoord vergeten?
-                </NavLink>
-              </div>
+              <label
+                htmlFor="login-password"
+                className="block text-sm font-semibold text-[var(--color-text)]"
+              >
+                Wachtwoord
+              </label>
               <div className="relative">
-                <Lock
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
-                  aria-hidden="true"
-                />
                 <input
-                  id="password"
+                  id="login-password"
                   type={showPw ? "text" : "password"}
                   autoComplete="current-password"
                   enterKeyHint="done"
@@ -260,9 +240,9 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   onBlur={() => setTouched((t) => ({ ...t, password: true }))}
                   aria-invalid={!!pwError}
-                  aria-describedby={pwError ? "pw-error" : undefined}
+                  aria-describedby={pwError ? "login-pw-error" : undefined}
                   disabled={loading}
-                  className={`w-full pl-10 pr-11 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-50 ${
+                  className={`w-full pl-4 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 ${
                     pwError
                       ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
                       : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
@@ -278,82 +258,58 @@ export default function LoginPage() {
                 </button>
               </div>
               {touched.password && pwError && (
-                <p id="pw-error" className="text-xs font-medium text-red-600 flex items-center gap-1.5 mt-1">
+                <p id="login-pw-error" role="alert" className="text-xs font-medium text-red-600 flex items-center gap-1.5 mt-1">
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
                   <InlineError error={pwError} />
                 </p>
               )}
-            </div>
-
-            {/* Remember me — custom styled */}
-            <label className="flex items-center gap-3 cursor-pointer select-none w-fit group">
-              <div className="relative flex-shrink-0">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  className="sr-only"
-                />
-                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
-                  remember
-                    ? "bg-[var(--ff-color-primary-700)] border-[var(--ff-color-primary-700)]"
-                    : "bg-[var(--color-surface)] border-[var(--color-border)] group-hover:border-[var(--ff-color-primary-400)]"
-                }`}>
-                  {remember && (
-                    <svg className="w-3 h-3 text-white" viewBox="0 0 12 10" fill="none" aria-hidden="true">
-                      <path d="M1 5l3.5 3.5L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </div>
+              {/* Forgot password — below the field, not colliding with label */}
+              <div className="flex justify-end pt-0.5">
+                <NavLink
+                  to="/wachtwoord-vergeten"
+                  className="text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors underline underline-offset-2"
+                >
+                  Wachtwoord vergeten?
+                </NavLink>
               </div>
-              <span className="text-sm text-[var(--color-text)] font-medium">
-                Onthoud mij
-              </span>
-            </label>
+            </div>
 
             {/* Submit button */}
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-white py-3.5 min-h-[52px] rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                  <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" aria-hidden="true" />
                   <span>Bezig...</span>
                 </>
               ) : (
                 <>
                   <span>Inloggen</span>
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </>
               )}
             </button>
 
-            {/* Divider */}
-            <div className="relative" aria-hidden="true">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[var(--color-border)]" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-3 bg-[var(--color-surface)] text-xs text-[var(--color-muted)] font-medium">
-                  Geen account?
-                </span>
-              </div>
+            {/* Register CTA — prominent, not hidden behind a divider */}
+            <div className="pt-1 border-t border-[var(--color-border)]">
+              <p className="text-xs text-center text-[var(--color-muted)] mb-3 mt-3">
+                Nog geen account?
+              </p>
+              <NavLink
+                to="/registreren"
+                className="flex items-center justify-center gap-2 w-full px-5 py-3.5 min-h-[52px] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] font-semibold text-sm rounded-xl active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              >
+                <span>Maak gratis account aan</span>
+                <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </NavLink>
             </div>
 
-            {/* Register CTA */}
-            <NavLink
-              to="/registreren"
-              className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] font-semibold text-sm rounded-xl active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-            >
-              <span>Maak account aan en start direct</span>
-              <ArrowRight className="w-4 h-4 flex-shrink-0" />
-            </NavLink>
-
-            {/* Quiz CTA — prominent, full-width */}
+            {/* Quiz CTA */}
             <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] p-4 flex flex-col gap-2">
-              <p className="text-sm font-semibold text-[var(--ff-color-primary-900)]">
+              <p className="text-xs font-semibold text-[var(--ff-color-primary-900)]">
                 Nog geen account nodig?
               </p>
               <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed">
@@ -361,10 +317,10 @@ export default function LoginPage() {
               </p>
               <NavLink
                 to="/onboarding"
-                className="mt-1 inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                className="mt-1 inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               >
                 Start de quiz zonder account
-                <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </NavLink>
             </div>
 
@@ -372,7 +328,7 @@ export default function LoginPage() {
         </div>
 
         {/* Trust badges */}
-        <div className="mt-6 flex items-center justify-center gap-5 text-xs text-[var(--color-muted)]">
+        <div className="mt-5 flex items-center justify-center gap-4 text-xs text-[var(--color-muted)]">
           <div className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
             <span>GDPR-compliant</span>
