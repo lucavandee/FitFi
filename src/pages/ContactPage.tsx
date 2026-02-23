@@ -1,29 +1,22 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import Breadcrumbs from "@/components/navigation/Breadcrumbs";
-import { Mail, MessageCircle, Users, Clock, Send, MapPin, Sparkles, CheckCircle, X } from "lucide-react";
+import {
+  Mail,
+  MessageCircle,
+  Users,
+  Clock,
+  Send,
+  Sparkles,
+  CheckCircle,
+  AlertCircle,
+  HelpCircle,
+} from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 type Topic = "algemeen" | "pers" | "partners" | "feedback" | "bug";
-const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
 
-function encode(str: string) {
-  return encodeURIComponent(str).replace(/%20/g, "+");
-}
-
-function TrustBadge({ icon, text, delay }: { icon: React.ReactNode; text: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[var(--color-border)] shadow-sm hover-scale"
-    >
-      <div className="text-[var(--ff-color-primary-600)]">{icon}</div>
-      <span className="font-semibold text-[var(--color-text)] text-sm">{text}</span>
-    </motion.div>
-  );
-}
+type FormState = "idle" | "submitting" | "success" | "error";
 
 export default function ContactPage() {
   const [name, setName] = React.useState("");
@@ -31,8 +24,8 @@ export default function ContactPage() {
   const [topic, setTopic] = React.useState<Topic>("algemeen");
   const [message, setMessage] = React.useState("");
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
-  const [addressExpanded, setAddressExpanded] = React.useState(false);
-  const [showConfirmation, setShowConfirmation] = React.useState(false);
+  const [formState, setFormState] = React.useState<FormState>("idle");
+  const [errorMsg, setErrorMsg] = React.useState("");
 
   const errors = {
     name: name.trim().length < 2 ? "Vul je naam in." : "",
@@ -41,186 +34,212 @@ export default function ContactPage() {
   };
   const hasErrors = Object.values(errors).some(Boolean);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setTouched({ name: true, email: true, message: true });
     if (hasErrors) return;
 
-    const to = EMAIL || "mailto:hello@fitfi.ai";
-    const subject = `[FitFi] ${topic.toUpperCase()} — ${name.trim()}`;
-    const body =
-      `${message.trim()}\n\n—\nVan: ${name.trim()} <${email.trim()}>\n` +
-      `Onderwerp: ${topic}\nPagina: https://www.fitfi.ai/contact`;
+    setFormState("submitting");
+    setErrorMsg("");
 
-    // Show confirmation message
-    setShowConfirmation(true);
+    try {
+      const { error } = await supabase.from("contact_messages").insert({
+        name: name.trim(),
+        email: email.trim(),
+        topic,
+        message: message.trim(),
+      });
 
-    // Open mailto after brief delay
-    setTimeout(() => {
-      window.location.href = `${to}?subject=${encode(subject)}&body=${encode(body)}`;
-    }, 500);
+      if (error) throw error;
 
-    // Hide confirmation after 5 seconds
-    setTimeout(() => {
-      setShowConfirmation(false);
-    }, 5000);
+      setFormState("success");
+      setName("");
+      setEmail("");
+      setTopic("algemeen");
+      setMessage("");
+      setTouched({});
+    } catch {
+      setFormState("error");
+      setErrorMsg("Er ging iets mis. Stuur ons een e-mail op contact@fitfi.ai.");
+    }
   }
 
+  const infoCards = [
+    {
+      icon: Mail,
+      title: "E-mail",
+      body: "contact@fitfi.ai",
+      href: "mailto:contact@fitfi.ai",
+    },
+    {
+      icon: Clock,
+      title: "Reactietijd",
+      body: "Binnen 24 uur op werkdagen",
+      href: null,
+    },
+    {
+      icon: HelpCircle,
+      title: "Veelgestelde vragen",
+      body: "Zoek snel in onze FAQ",
+      href: "/veelgestelde-vragen",
+      internal: true,
+    },
+    {
+      icon: Users,
+      title: "Over ons",
+      body: "Leer het team kennen",
+      href: "/over-ons",
+      internal: true,
+    },
+  ];
+
   return (
-    <main id="main" className="bg-[var(--color-bg)]">
-      <Breadcrumbs />
+    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
 
-      {/* Hero Section - Premium with animations */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 lg:py-40 border-b-2 border-[var(--color-border)]">
-        {/* Animated decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.3 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            className="absolute top-20 -right-32 w-[600px] h-[600px] bg-gradient-to-br from-[var(--ff-color-primary-300)] to-[var(--ff-color-accent-300)] rounded-full blur-3xl"
-          />
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.2 }}
-            transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
-            className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-gradient-to-tr from-[var(--ff-color-accent-300)] to-[var(--ff-color-primary-300)] rounded-full blur-3xl"
-          />
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-14 sm:py-18 border-b border-[var(--color-border)]">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 -right-24 w-96 h-96 bg-[var(--ff-color-primary-100)] rounded-full blur-3xl opacity-40" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[var(--ff-color-accent-100)] rounded-full blur-3xl opacity-30" />
         </div>
-
         <div className="ff-container relative">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Animated badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2.5 px-6 py-3 bg-white/90 backdrop-blur-sm rounded-full text-sm font-semibold text-[var(--ff-color-primary-700)] mb-8 shadow-lg border-2 border-[var(--ff-color-primary-200)] hover-lift"
-            >
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-xs font-semibold text-[var(--ff-color-primary-700)] mb-5 border border-[var(--ff-color-primary-200)] shadow-sm">
               <MessageCircle className="w-4 h-4" />
               Contact
-            </motion.div>
-
-            {/* Large, animated heading */}
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-5xl sm:text-6xl md:text-7xl font-bold text-[var(--color-text)] leading-[1.1] tracking-tight mb-8"
-            >
-              We horen graag{' '}
-              <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">van je</span>
-            </motion.h1>
-
-            {/* Animated subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl md:text-2xl text-[var(--color-text)]/70 leading-relaxed max-w-2xl mx-auto mb-12"
-            >
-              Vragen over stijl, partnerships, of gewoon een idee? We reageren binnen 24 uur.
-            </motion.p>
-
-            {/* Trust badges - animated */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex flex-wrap items-center justify-center gap-6 md:gap-8"
-            >
-              <TrustBadge icon={<Clock className="w-5 h-5" />} text="Reactie binnen 24u" delay={0.4} />
-              <TrustBadge icon={<Users className="w-5 h-5" />} text="Persoonlijk team" delay={0.5} />
-              <TrustBadge icon={<CheckCircle className="w-5 h-5" />} text="Privacy first" delay={0.6} />
-            </motion.div>
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight tracking-tight mb-4">
+              We horen graag van je
+            </h1>
+            <p className="text-base sm:text-lg text-[var(--color-muted)] leading-relaxed max-w-md">
+              Vragen over stijl, partnerships of een idee? We reageren binnen 24 uur.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Content Section - Clean two-column */}
-      <section className="ff-container py-20 md:py-28">
-        <div className="grid lg:grid-cols-12 gap-16 lg:gap-20 max-w-7xl mx-auto">
+      {/* ── FORM ── */}
+      <section className="ff-container py-12 sm:py-16">
+        <div className="max-w-lg mx-auto">
 
-          {/* Form Column - 60% */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="lg:col-span-7"
-          >
-            <div className="rounded-3xl bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-[var(--color-border)] p-8 md:p-10 hover-lift">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-lg">
-                  <Send className="w-6 h-6 text-white" />
+          {/* Success state */}
+          <AnimatePresence>
+            {formState === "success" && (
+              <motion.div
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+                className="mb-8 rounded-2xl bg-emerald-50 border border-emerald-200 p-6 flex items-start gap-4"
+                role="alert"
+              >
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-[var(--color-text)]">Stuur een bericht</h2>
-                  <p className="text-sm text-[var(--color-text)]/60">Privacy first, geen tracking</p>
+                  <h2 className="font-semibold text-emerald-900 mb-1">Bericht ontvangen!</h2>
+                  <p className="text-sm text-emerald-700 leading-relaxed">
+                    Bedankt voor je bericht. We reageren binnen 24 uur op werkdagen.
+                  </p>
                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Error banner */}
+          <AnimatePresence>
+            {formState === "error" && (
+              <motion.div
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+                className="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 flex items-start gap-3"
+                role="alert"
+              >
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700">{errorMsg}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-lifted)] p-6 sm:p-8">
+            <div className="flex items-center gap-3 mb-7">
+              <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-700)] flex items-center justify-center shadow-sm">
+                <Send className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-[var(--color-text)]">Stuur een bericht</h2>
+                <p className="text-xs text-[var(--color-muted)]">Privacy first, geen tracking</p>
+              </div>
+            </div>
+
+            <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+
+              {/* Naam — full width */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
+                  Naam
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all"
+                  placeholder="Jouw naam"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+                  aria-invalid={touched.name ? !!errors.name : undefined}
+                  aria-describedby={errors.name ? "err-name" : undefined}
+                  required
+                />
+                {touched.name && errors.name && (
+                  <p id="err-name" className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
-              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
-                      Naam
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      autoComplete="name"
-                      className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
-                      placeholder="Jouw naam"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      onBlur={() => setTouched((t) => ({ ...t, name: true }))}
-                      aria-invalid={!!errors.name}
-                      aria-describedby={errors.name ? "err-name" : undefined}
-                      required
-                    />
-                    {touched.name && errors.name && (
-                      <p id="err-name" className="mt-2 text-sm text-red-600">
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
+              {/* E-mail — full width */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
+                  E-mail
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all"
+                  placeholder="je@email.nl"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                  aria-invalid={touched.email ? !!errors.email : undefined}
+                  aria-describedby={errors.email ? "err-email" : undefined}
+                  required
+                />
+                {touched.email && errors.email && (
+                  <p id="err-email" className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    {errors.email}
+                  </p>
+                )}
+              </div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
-                      E-mail
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all"
-                      placeholder="je@email.nl"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                      aria-invalid={!!errors.email}
-                      aria-describedby={errors.email ? "err-email" : undefined}
-                      required
-                    />
-                    {touched.email && errors.email && (
-                      <p id="err-email" className="mt-2 text-sm text-red-600">
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="topic" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
-                    Onderwerp
-                  </label>
-                  <div className="relative">
+              {/* Onderwerp — full width */}
+              <div>
+                <label htmlFor="topic" className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
+                  Onderwerp
+                </label>
+                <div className="relative">
                   <select
                     id="topic"
                     name="topic"
-                    className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] pl-5 pr-11 py-3.5 text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all appearance-none"
+                    className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] pl-4 pr-10 py-3 text-sm text-[var(--color-text)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all appearance-none"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value as Topic)}
                   >
@@ -230,259 +249,121 @@ export default function ContactPage() {
                     <option value="feedback">Feedback & Suggesties</option>
                     <option value="bug">Bug of technisch probleem</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center" aria-hidden="true">
+                  <div className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center" aria-hidden="true">
                     <svg className="w-4 h-4 text-[var(--color-muted)]" viewBox="0 0 16 16" fill="currentColor">
                       <path d="M8 11L2 5h12z" />
                     </svg>
                   </div>
-                  </div>
                 </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-[var(--color-text)] mb-2.5">
-                    Bericht
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={6}
-                    className="w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] px-5 py-3.5 text-[var(--color-text)] placeholder:text-[var(--color-text)]/40 focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-500)]/10 transition-all resize-none"
-                    placeholder="Waar kunnen we je mee helpen?"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, message: true }))}
-                    aria-invalid={!!errors.message}
-                    aria-describedby={errors.message ? "err-message" : undefined}
-                    required
-                  />
-                  {touched.message && errors.message && (
-                    <p id="err-message" className="mt-2 text-sm text-red-600">
-                      {errors.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <motion.button
-                    type="submit"
-                    disabled={hasErrors && Object.keys(touched).length > 0}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 min-h-[56px] bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] hover:from-[var(--ff-color-primary-600)] hover:to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-base shadow-xl hover:shadow-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Send className="h-5 w-5" />
-                    Verstuur bericht
-                  </motion.button>
-                  <NavLink
-                    to="/veelgestelde-vragen"
-                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 min-h-[56px] bg-white hover:bg-[var(--color-bg)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-2xl font-semibold text-base transition-all duration-200 hover-lift"
-                  >
-                    Bekijk FAQ
-                  </NavLink>
-                </div>
-
-                <p className="text-sm text-[var(--color-muted)] flex items-start gap-2 pt-2">
-                  <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
-                  <span>
-                    Je mailapp opent met jouw bericht. Wij ontvangen geen data via deze pagina. Zie onze{" "}
-                    <NavLink to="/privacy" className="underline underline-offset-2 hover:text-[var(--color-text)] transition-colors">
-                      privacyverklaring
-                    </NavLink>
-                    .
-                  </span>
-                </p>
-              </form>
-            </div>
-          </motion.div>
-
-          {/* Info Column - 40% */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="lg:col-span-5 space-y-6"
-          >
-
-            {/* Contact Info Card */}
-            <div className="rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-white p-8 border-2 border-[var(--color-border)] shadow-xl hover-lift">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-[var(--color-text)]">Direct contact</h3>
               </div>
-              <div className="space-y-5">
-                {EMAIL && (
-                  <motion.a
-                    href={`mailto:${EMAIL}`}
-                    whileHover={{ scale: 1.02 }}
-                    className="flex items-start gap-4 p-4 bg-white/90 backdrop-blur-sm rounded-2xl hover:bg-white transition-all group border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] shadow-md hover:shadow-lg"
-                  >
-                    <Mail className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)] group-hover:scale-110 transition-transform" />
-                    <div>
-                      <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Email</div>
-                      <div className="text-[var(--color-text)]/70 text-sm">{EMAIL}</div>
-                    </div>
-                  </motion.a>
+
+              {/* Bericht — full width */}
+              <div>
+                <label htmlFor="message" className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
+                  Bericht
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={5}
+                  className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]/20 transition-all resize-none"
+                  placeholder="Waar kunnen we je mee helpen?"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onBlur={() => setTouched((t) => ({ ...t, message: true }))}
+                  aria-invalid={touched.message ? !!errors.message : undefined}
+                  aria-describedby={errors.message ? "err-message" : undefined}
+                  required
+                />
+                {touched.message && errors.message && (
+                  <p id="err-message" className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    {errors.message}
+                  </p>
                 )}
-
-                <motion.button
-                  onClick={() => setAddressExpanded(!addressExpanded)}
-                  className="w-full flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-white transition-all text-left min-h-[56px]"
-                  aria-expanded={addressExpanded}
-                  aria-controls="address-details"
-                >
-                  <MapPin className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Adres</div>
-                      <motion.svg
-                        animate={{ rotate: addressExpanded ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-5 h-5 text-[var(--color-muted)] flex-shrink-0"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="m6 9 6 6 6-6" />
-                      </motion.svg>
-                    </div>
-                    <motion.div
-                      id="address-details"
-                      initial={false}
-                      animate={{
-                        height: addressExpanded ? 'auto' : 0,
-                        opacity: addressExpanded ? 1 : 0
-                      }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    >
-                      <div className="text-[var(--color-text)]/70 text-sm leading-relaxed pt-2">
-                        Keizersgracht 520 H<br />
-                        1017 EK Amsterdam<br />
-                        Nederland
-                      </div>
-                    </motion.div>
-                    {!addressExpanded && (
-                      <div className="text-[var(--color-text)]/50 text-xs mt-1">
-                        Klik voor details
-                      </div>
-                    )}
-                  </div>
-                </motion.button>
-
-                <div className="flex items-start gap-4 p-4 bg-white/80 rounded-2xl border-2 border-[var(--color-border)]">
-                  <Clock className="w-5 h-5 flex-shrink-0 mt-1 text-[var(--ff-color-primary-600)]" />
-                  <div>
-                    <div className="font-semibold text-[var(--color-text)] mb-0.5 text-sm">Reactietijd</div>
-                    <div className="text-[var(--color-text)]/70 text-sm">
-                      Binnen 24 uur op werkdagen
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
 
-            {/* Quick Links */}
-            <div className="space-y-4">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-              >
+              {/* Submit */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                <button
+                  type="submit"
+                  disabled={formState === "submitting" || formState === "success"}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-sm shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+                >
+                  {formState === "submitting" ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                      Versturen...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Verstuur bericht
+                    </>
+                  )}
+                </button>
                 <NavLink
                   to="/veelgestelde-vragen"
-                  className="group block p-6 rounded-2xl bg-white border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-xl transition-all hover-lift"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 bg-[var(--color-bg)] hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <MessageCircle className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
-                  </div>
-                  <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Veelgestelde vragen</h3>
-                  <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                    Vind snel antwoorden op de meest gestelde vragen over FitFi.
-                  </p>
+                  Bekijk FAQ
                 </NavLink>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-              >
-                <NavLink
-                  to="/over-ons"
-                  className="group block p-6 rounded-2xl bg-white border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-xl transition-all hover-lift"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <Users className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
-                  </div>
-                  <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Over ons</h3>
-                  <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                    Leer meer over het team achter FitFi en onze missie.
-                  </p>
+              <p className="text-xs text-[var(--color-muted)] flex items-start gap-1.5 pt-1">
+                <Sparkles className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden />
+                Je bericht wordt opgeslagen in onze beveiligde database. Zie onze{" "}
+                <NavLink to="/privacy" className="underline underline-offset-2 hover:text-[var(--color-text)] transition-colors">
+                  privacyverklaring
                 </NavLink>
-              </motion.div>
+                .
+              </p>
+            </form>
+          </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-              >
-                <NavLink
-                  to="/results"
-                  className="group block p-6 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-300)] hover:border-[var(--ff-color-primary-400)] hover:shadow-xl transition-all hover-lift"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
-                    <span className="text-xl text-[var(--color-text)]/30 group-hover:text-[var(--ff-color-primary-600)] group-hover:translate-x-1 transition-all">→</span>
+          {/* ── INFO CARDS (onder formulier, 2×2 grid) ── */}
+          <div className="mt-8 grid grid-cols-2 gap-4">
+            {infoCards.map((card, i) => {
+              const Icon = card.icon;
+              const inner = (
+                <div className="flex flex-col gap-2">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden />
                   </div>
-                  <h3 className="text-base font-bold text-[var(--color-text)] mb-2">Probeer gratis</h3>
-                  <p className="text-sm text-[var(--color-text)]/60 leading-relaxed">
-                    Nog geen stijlprofiel? Start nu en zie jouw outfits.
-                  </p>
-                </NavLink>
-              </motion.div>
-            </div>
-          </motion.div>
+                  <p className="text-sm font-semibold text-[var(--color-text)]">{card.title}</p>
+                  <p className="text-xs text-[var(--color-muted)] leading-snug">{card.body}</p>
+                </div>
+              );
 
+              const baseClass =
+                "p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)] transition-shadow hover:shadow-[var(--shadow-lifted)]";
+
+              if (card.href && card.internal) {
+                return (
+                  <NavLink key={i} to={card.href} className={`${baseClass} block focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`}>
+                    {inner}
+                  </NavLink>
+                );
+              }
+              if (card.href) {
+                return (
+                  <a key={i} href={card.href} className={`${baseClass} block focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`}>
+                    {inner}
+                  </a>
+                );
+              }
+              return (
+                <div key={i} className={baseClass}>
+                  {inner}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
-
-      {/* Confirmation Banner - Fixed bottom */}
-      <AnimatePresence>
-        {showConfirmation && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 max-w-md w-[calc(100%-2rem)]"
-          >
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl shadow-2xl border-2 border-green-400 p-5">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="w-6 h-6" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-1">Bedankt voor je bericht!</h3>
-                  <p className="text-sm text-white/90 leading-relaxed">
-                    Je mailapp opent zo. We reageren binnen 24 uur op werkdagen.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowConfirmation(false)}
-                  className="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors flex-shrink-0"
-                  aria-label="Sluiten"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </main>
   );
 }

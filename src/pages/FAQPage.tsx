@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleHelp as HelpCircle, ShieldCheck, CreditCard, Clock, Plus, Minus } from "lucide-react";
+import {
+  CircleHelp as HelpCircle,
+  ShieldCheck,
+  CreditCard,
+  Clock,
+  Plus,
+  Minus,
+  Package,
+} from "lucide-react";
 import Seo from "@/components/seo/Seo";
 
 type QA = { q: string; a: React.ReactNode };
@@ -66,6 +74,13 @@ const FAQ_PRODUCT: QA[] = [
   },
 ];
 
+const CATEGORIES = [
+  { id: "algemeen", label: "Algemeen", icon: HelpCircle, items: FAQ_GENERAL },
+  { id: "privacy", label: "Privacy & gegevens", icon: ShieldCheck, items: FAQ_PRIVACY },
+  { id: "prijzen", label: "Prijzen", icon: CreditCard, items: FAQ_PRICING },
+  { id: "product", label: "Product & gebruik", icon: Package, items: FAQ_PRODUCT },
+];
+
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -84,59 +99,96 @@ const FAQ_SCHEMA = {
   })),
 };
 
-function FAQItem({ item, index }: { item: QA; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const id = `faq-${index}`;
+type AccordionProps = {
+  items: QA[];
+  categoryId: string;
+  openId: string | null;
+  onToggle: (id: string) => void;
+};
 
+function Accordion({ items, categoryId, openId, onToggle }: AccordionProps) {
   return (
-    <div className="border-t border-[var(--color-border)] first:border-t-0">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left hover:bg-[var(--ff-color-primary-50)] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)]"
-        aria-expanded={isOpen}
-        aria-controls={id}
-      >
-        <span className="font-medium text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors leading-snug">
-          {item.q}
-        </span>
-        <span className="flex-shrink-0 w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text)] group-hover:border-[var(--ff-color-primary-400)] group-hover:text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-50)] transition-colors flex-shrink-0" aria-hidden>
-          {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-        </span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            id={id}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden"
+    <div
+      className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]"
+      role="list"
+    >
+      {items.map((item, i) => {
+        const id = `${categoryId}-${i}`;
+        const isOpen = openId === id;
+        const panelId = `panel-${id}`;
+        const headingId = `heading-${id}`;
+
+        return (
+          <div
+            key={id}
+            className="border-t border-[var(--color-border)] first:border-t-0"
+            role="listitem"
           >
-            <p className="px-6 pb-5 text-[var(--color-muted)] leading-relaxed text-sm">
-              {item.a}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <h3 id={headingId}>
+              <button
+                onClick={() => onToggle(id)}
+                className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-[var(--ff-color-primary-50)] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)]"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                id={headingId}
+              >
+                <span className="font-medium text-sm sm:text-base text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors leading-snug">
+                  {item.q}
+                </span>
+                <span
+                  className={`flex-shrink-0 w-7 h-7 rounded-full border flex items-center justify-center transition-colors ${
+                    isOpen
+                      ? "bg-[var(--ff-color-primary-700)] border-[var(--ff-color-primary-700)] text-white"
+                      : "border-[var(--color-border)] text-[var(--color-text)] group-hover:border-[var(--ff-color-primary-400)] group-hover:text-[var(--ff-color-primary-700)]"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                </span>
+              </button>
+            </h3>
+
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={headingId}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <p className="px-5 pb-5 text-[var(--color-muted)] leading-relaxed text-sm">
+                    {item.a}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-function FAQSection({ title, items }: { title: string; items: QA[] }) {
-  return (
-    <section className="ff-container py-6">
-      <h2 className="text-lg font-semibold text-[var(--color-text)] mb-3">{title}</h2>
-      <div className="rounded-[var(--radius-xl)] bg-white border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]">
-        {items.map((item, i) => (
-          <FAQItem key={i} item={item} index={i} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default function FAQPage() {
+  const [activeCategory, setActiveCategory] = useState("algemeen");
+  const [openId, setOpenId] = useState<string | null>(null);
+  const chipScrollRef = React.useRef<HTMLDivElement>(null);
+
+  const currentCategory = CATEGORIES.find((c) => c.id === activeCategory)!;
+
+  function handleToggle(id: string) {
+    setOpenId((prev) => (prev === id ? null : id));
+  }
+
+  function handleCategoryChange(id: string) {
+    setActiveCategory(id);
+    setOpenId(null);
+  }
+
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Seo
@@ -146,12 +198,13 @@ export default function FAQPage() {
         structuredData={FAQ_SCHEMA}
       />
 
-      <section className="ff-container py-16 md:py-20">
+      {/* ── HERO ── */}
+      <section className="ff-container py-14 md:py-18">
         <div className="max-w-2xl">
           <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3 leading-tight">
             Veelgestelde vragen
           </h1>
-          <p className="text-[var(--color-muted)] text-lg leading-relaxed">
+          <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed">
             Staat je vraag er niet tussen? Stuur ons een mail via{" "}
             <a
               href="mailto:contact@fitfi.ai"
@@ -164,6 +217,7 @@ export default function FAQPage() {
         </div>
       </section>
 
+      {/* ── TRUST BADGES ── */}
       <section className="ff-container pb-8">
         <div className="grid gap-4 sm:grid-cols-3">
           {[
@@ -187,12 +241,12 @@ export default function FAQPage() {
             return (
               <article
                 key={i}
-                className="rounded-[var(--radius-xl)] bg-white border border-[var(--color-border)] p-5 shadow-[var(--shadow-soft)]"
+                className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-5 shadow-[var(--shadow-soft)]"
               >
                 <div className="w-9 h-9 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-3">
                   <Icon className="h-5 w-5 text-[var(--ff-color-primary-700)]" aria-hidden />
                 </div>
-                <h3 className="font-semibold text-[var(--color-text)] mb-1">{c.title}</h3>
+                <h3 className="font-semibold text-[var(--color-text)] mb-1 text-sm sm:text-base">{c.title}</h3>
                 <p className="text-sm text-[var(--color-muted)] leading-relaxed">{c.body}</p>
               </article>
             );
@@ -200,13 +254,71 @@ export default function FAQPage() {
         </div>
       </section>
 
-      <FAQSection title="Algemeen" items={FAQ_GENERAL} />
-      <FAQSection title="Privacy en gegevens" items={FAQ_PRIVACY} />
-      <FAQSection title="Prijzen en abonnementen" items={FAQ_PRICING} />
-      <FAQSection title="Product en gebruik" items={FAQ_PRODUCT} />
+      {/* ── CATEGORY CHIPS (horizontal scroller) ── */}
+      <section className="ff-container pb-5">
+        <div
+          ref={chipScrollRef}
+          className="flex gap-2 overflow-x-auto pb-2 -mx-4 sm:-mx-6 px-4 sm:px-6 scrollbar-hide snap-x"
+          role="tablist"
+          aria-label="FAQ categorieën"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`faq-panel-${cat.id}`}
+                id={`faq-tab-${cat.id}`}
+                onClick={() => handleCategoryChange(cat.id)}
+                className={`snap-start flex-shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold border transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 whitespace-nowrap ${
+                  isActive
+                    ? "bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)] shadow-sm"
+                    : "bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)]"
+                }`}
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
-      <section className="ff-container py-12 pb-20">
-        <div className="rounded-[var(--radius-xl)] bg-white border border-[var(--color-border)] p-8 shadow-[var(--shadow-soft)] flex flex-col sm:flex-row items-start sm:items-center gap-6">
+      {/* ── ACCORDION PANEL ── */}
+      <section
+        className="ff-container pb-12"
+        id={`faq-panel-${currentCategory.id}`}
+        role="tabpanel"
+        aria-labelledby={`faq-tab-${currentCategory.id}`}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+          >
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-4">
+              {currentCategory.label} — {currentCategory.items.length} vragen
+            </p>
+            <Accordion
+              items={currentCategory.items}
+              categoryId={currentCategory.id}
+              openId={openId}
+              onToggle={handleToggle}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </section>
+
+      {/* ── FOOTER CTA ── */}
+      <section className="ff-container pb-20">
+        <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)] flex flex-col sm:flex-row items-start sm:items-center gap-5">
           <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
             <HelpCircle className="h-5 w-5 text-[var(--ff-color-primary-700)]" aria-hidden />
           </div>
@@ -216,7 +328,7 @@ export default function FAQPage() {
               Wij helpen je graag verder. Bekijk de prijzen of start direct.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             <NavLink to="/prijzen" className="ff-btn ff-btn-secondary ff-btn--sm">
               Bekijk prijzen
             </NavLink>
