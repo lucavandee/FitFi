@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNovaChat } from "./NovaChatProvider";
 import Portal from "./Portal";
 import "./ChatTheme.css";
 
+const SCROLL_THRESHOLD = 300;
+
 function useHideOnPaths() {
-  // Paden waar we de chat bewust verbergen (optioneel uitbreiden)
   const HIDE_ON = useMemo(() => ["/privacy", "/terms"], []);
   const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
   return HIDE_ON.some((p) => pathname.startsWith(p));
@@ -14,6 +15,16 @@ export default function NovaChatMount() {
   const { isOpen, setOpen, sending, error, messages, send, reset } = useNovaChat();
   const hidden = useHideOnPaths();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > SCROLL_THRESHOLD);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -25,10 +36,10 @@ export default function NovaChatMount() {
 
   return (
     <>
-      {/* Floating FAB */}
+      {/* Floating FAB — verschijnt na scroll */}
       <button
         aria-label="Open chat"
-        className="nv-fab"
+        className={`nv-fab${scrolled || isOpen ? " nv-fab--visible" : ""}`}
         onClick={() => setOpen(true)}
       >
         <span className="nv-fab-dot" />

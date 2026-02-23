@@ -1,16 +1,20 @@
 /* Minimal, clean, premium */
 .nv-fab{
-  position: fixed; right: 16px; bottom: 16px; z-index: 60;
+  position: fixed; right: 16px; bottom: 88px; z-index: 60;
   width: 52px; height: 52px; border-radius: 9999px;
   display: inline-flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, var(--ff-color-primary-700), var(--ff-color-primary-600));
   box-shadow: 0 8px 30px color-mix(in oklab, var(--color-text) 15%, transparent);
   border: none; cursor: pointer; transform: translateZ(0);
-  transition: transform .15s ease;
+  transition: transform .15s ease, opacity .2s ease;
+  opacity: 0; pointer-events: none;
+}
+.nv-fab.nv-fab--visible{
+  opacity: 1; pointer-events: auto;
 }
 @media (min-width: 640px) {
   .nv-fab{
-    right: 20px; bottom: 20px;
+    right: 20px; bottom: 24px;
     width: 56px; height: 56px;
   }
 }

@@ -158,8 +158,8 @@ export function RealOutfitShowcase() {
           </p>
         </div>
 
-        {/* Mobile Swipe Indicator - Premium */}
-        <div className="md:hidden text-center mb-6 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2 font-medium">
+        {/* Mobile/Tablet Swipe Indicator */}
+        <div className="md:hidden text-center mb-5 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2 font-medium">
           <span>Swipe voor meer</span>
           <svg className="w-4 h-4 animate-bounce-horizontal opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -172,7 +172,7 @@ export function RealOutfitShowcase() {
                      flex md:block overflow-x-auto md:overflow-visible
                      snap-x snap-mandatory md:snap-none
                      -mx-4 px-4 md:mx-0 md:px-0
-                     gap-6
+                     gap-4 sm:gap-6
                      pb-4 md:pb-0 scrollbar-hide"
           onScroll={(e) => {
             const scrollLeft = e.currentTarget.scrollLeft;
@@ -186,7 +186,7 @@ export function RealOutfitShowcase() {
               className="group relative overflow-hidden rounded-3xl cursor-pointer
                          shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.2)]
                          transition-all duration-700 md:hover:-translate-y-4 md:hover:scale-[1.02]
-                         min-w-[85vw] sm:min-w-[75vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center
+                         min-w-[82vw] sm:min-w-[62vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center
                          border border-[var(--color-border)]/50 backdrop-blur-sm"
               onClick={() => outfit.completeImage && setSelectedOutfit(outfit)}
               onMouseEnter={() => setHoveredId(outfit.id)}
@@ -265,8 +265,8 @@ export function RealOutfitShowcase() {
           ))}
         </div>
 
-        {/* Premium Scroll Indicators (Mobile only) */}
-        <div className="md:hidden flex items-center justify-center gap-2.5 mt-8">
+        {/* Scroll Indicators (Mobile + Tablet) */}
+        <div className="md:hidden flex items-center justify-center gap-2.5 mt-6">
           {outfits.map((_, idx) => (
             <button
               key={idx}
