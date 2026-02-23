@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import Seo from '@/components/seo/Seo';
 import {
   Search,
   Calendar,
@@ -13,7 +13,6 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { getPublishedBlogPosts, transformBlogPostForUI, type UIBlogPost } from '@/services/blog/blogService';
-import { canonicalUrl } from '@/utils/urls';
 
 function BlogCardSkeleton() {
   return (
@@ -39,10 +38,6 @@ function BlogCard({ post, onNavigate }: CardProps) {
     <article
       className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow duration-200 flex flex-col cursor-pointer group flex-shrink-0 w-[260px] sm:w-auto h-full"
       onClick={() => onNavigate(post.slug)}
-      tabIndex={0}
-      role="link"
-      aria-label={`Lees artikel: ${post.title}`}
-      onKeyDown={(e) => e.key === 'Enter' && onNavigate(post.slug)}
     >
       {/* Image — fixed 16:9 so photos never crop unpredictably */}
       <div className="relative aspect-[16/9] bg-[var(--color-border)] overflow-hidden flex-shrink-0">
@@ -62,7 +57,14 @@ function BlogCard({ post, onNavigate }: CardProps) {
       <div className="p-4 flex flex-col flex-1">
         {/* Title — max 2 lines */}
         <h3 className="font-bold text-sm sm:text-base leading-snug text-[var(--color-text)] mb-1.5 line-clamp-2 group-hover:text-[var(--ff-color-primary-700)] transition-colors">
-          {post.title}
+          <a
+            href={`/blog/${post.slug}`}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded"
+            onClick={(e) => { e.preventDefault(); onNavigate(post.slug); }}
+            tabIndex={0}
+          >
+            {post.title}
+          </a>
         </h3>
 
         {/* Author + date compact sub-row directly under title */}
@@ -160,11 +162,11 @@ export default function BlogPage() {
 
   return (
     <main id="main" className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Helmet>
-        <title>Blog – FitFi</title>
-        <meta name="description" content="De nieuwste stijltips, seizoenstrends en mode-inzichten van FitFi. Praktische gidsen over silhouet, kleur en outfits." />
-        <link rel="canonical" href={canonicalUrl('/blog')} />
-      </Helmet>
+      <Seo
+        title="Blog — FitFi"
+        description="De nieuwste stijltips, seizoenstrends en mode-inzichten van FitFi. Praktische gidsen over silhouet, kleur en outfits."
+        path="/blog"
+      />
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 sm:py-16 md:py-20 border-b border-[var(--color-border)]">
@@ -294,10 +296,6 @@ export default function BlogPage() {
             <article
               className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-lifted)] cursor-pointer group hover:shadow-[var(--shadow-elevated)] transition-shadow duration-200"
               onClick={() => handleNavigate(featuredPost.slug)}
-              tabIndex={0}
-              role="link"
-              aria-label={`Lees uitgelicht artikel: ${featuredPost.title}`}
-              onKeyDown={(e) => e.key === 'Enter' && handleNavigate(featuredPost.slug)}
             >
               {/* Cover foto bovenaan */}
               <div className="relative h-52 sm:h-64 md:h-72 overflow-hidden">
@@ -329,7 +327,13 @@ export default function BlogPage() {
                 </div>
 
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--color-text)] mb-2 leading-snug group-hover:text-[var(--ff-color-primary-700)] transition-colors">
-                  {featuredPost.title}
+                  <a
+                    href={`/blog/${featuredPost.slug}`}
+                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded"
+                    onClick={(e) => { e.preventDefault(); handleNavigate(featuredPost.slug); }}
+                  >
+                    {featuredPost.title}
+                  </a>
                 </h2>
 
                 <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed mb-5 line-clamp-3">

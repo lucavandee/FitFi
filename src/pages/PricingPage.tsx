@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import Seo from "@/components/seo/Seo";
 import {
   Check,
   Star,
@@ -22,7 +22,6 @@ import { useStripeProducts } from "@/hooks/useStripeProducts";
 import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
-import { canonicalUrl } from "@/utils/urls";
 
 const FEATURE_ROWS: Array<{
   label: string;
@@ -146,14 +145,11 @@ export default function PricingPage() {
 
   return (
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
-      <Helmet>
-        <title>Prijzen – FitFi</title>
-        <meta
-          name="description"
-          content="Free geeft je 3 outfits en shoplinks. Premium ontgrendelt onbeperkte outfits, kleuranalyse en Nova AI. Vergelijk plannen en kies wat bij jou past."
-        />
-        <link rel="canonical" href={canonicalUrl("/prijzen")} />
-      </Helmet>
+      <Seo
+        title="Prijzen — FitFi"
+        description="Free geeft je 3 outfits en shoplinks. Premium ontgrendelt onbeperkte outfits, kleuranalyse en Nova AI. Vergelijk plannen en kies wat bij jou past."
+        path="/prijzen"
+      />
 
       {showCancelBanner && (
         <div className="bg-[var(--ff-color-warning-50)] border-b border-[var(--color-border)]">

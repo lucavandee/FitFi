@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { NavLink } from "react-router-dom";
+import Seo from "@/components/seo/Seo";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -78,13 +78,11 @@ export default function HowItWorksPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Hoe het werkt - Jouw stijladvies in 2 minuten | FitFi</title>
-        <meta
-          name="description"
-          content="In 2 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
-        />
-      </Helmet>
+      <Seo
+        title="Hoe het werkt — Jouw stijladvies in 2 minuten | FitFi"
+        description="In 2 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
+        path="/hoe-het-werkt"
+      />
 
       <a
         href="#main-content"
