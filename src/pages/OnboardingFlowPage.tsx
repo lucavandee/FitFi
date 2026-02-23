@@ -820,31 +820,31 @@ export default function OnboardingFlowPage() {
                   </div>
                 )}
 
-                <div className="grid gap-3 sm:gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
                     <button
                       key={option.value}
                       onClick={() => handleMultiSelect(step.field, option.value)}
-                      className={`text-left p-3 sm:p-4 min-h-[52px] rounded-xl sm:rounded-[var(--radius-xl)] border-2 transition-all active:scale-[0.98] ${
+                      className={`text-left p-4 min-h-[64px] rounded-xl border-2 transition-all active:scale-[0.98] ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
                           : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
                       }`}
                     >
-                      <div className="flex items-start gap-2.5 sm:gap-3">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      <div className="flex items-start gap-3">
+                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                           isSelected
                             ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
                             : 'border-[var(--color-border)]'
                         }`}>
                           {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                         </div>
-                        <div className="flex-1">
-                          <div className="font-semibold text-sm sm:text-base mb-0.5">{option.label}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm sm:text-base leading-snug">{option.label}</div>
                           {option.description && (
-                            <div className="text-xs sm:text-sm text-[var(--color-muted)]">{option.description}</div>
+                            <div className="text-xs text-[var(--color-muted)] mt-0.5 line-clamp-2">{option.description}</div>
                           )}
                         </div>
                       </div>
@@ -857,20 +857,20 @@ export default function OnboardingFlowPage() {
 
             {/* Radio (Single Select) - Mobile-first touch targets */}
             {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div className="grid gap-3 sm:gap-3 md:grid-cols-2 lg:grid-cols-2">
+              <div className={`grid grid-cols-1 gap-3 ${step.options.length > 3 ? 'sm:grid-cols-2' : ''}`}>
                 {step.options.map((option) => {
                   const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
                   return (
                     <button
                       key={option.value}
                       onClick={() => handleAnswer(step.field, option.value)}
-                      className={`w-full text-left p-3 sm:p-4 min-h-[52px] rounded-xl sm:rounded-[var(--radius-xl)] border-2 transition-all active:scale-[0.98] ${
+                      className={`w-full text-left p-4 min-h-[64px] rounded-xl border-2 transition-all active:scale-[0.98] ${
                         isSelected
                           ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
                           : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
                       }`}
                     >
-                      <div className="flex items-start gap-2.5 sm:gap-3">
+                      <div className="flex items-start gap-3">
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                           isSelected
                             ? 'border-[var(--ff-color-primary-600)]'
@@ -878,10 +878,10 @@ export default function OnboardingFlowPage() {
                         }`}>
                           {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-primary-600)]" />}
                         </div>
-                        <div className="flex-1">
-                          <div className="font-semibold text-sm sm:text-base mb-0.5">{option.label}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm sm:text-base leading-snug">{option.label}</div>
                           {option.description && (
-                            <div className="text-xs sm:text-sm text-[var(--color-muted)]">{option.description}</div>
+                            <div className="text-xs text-[var(--color-muted)] mt-0.5 line-clamp-2">{option.description}</div>
                           )}
                         </div>
                       </div>
@@ -985,37 +985,36 @@ export default function OnboardingFlowPage() {
 
             {/* Sizes */}
             {step.type === 'sizes' && (
-              <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 space-y-6">
+              <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 space-y-5">
                 {getSizeFieldsForGender(answers.gender).map((field) => (
-                  <div key={field.name}>
-                    <label className="block text-sm font-medium mb-3">{field.label}</label>
-                    <select
-                      className="w-full px-4 py-3 rounded-[var(--radius-lg)] border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors"
-                      value={((answers.sizes as any) || {})[field.name] || ""}
-                      onChange={(e) => {
-                        const currentSizes = (answers.sizes as any) || {};
-                        handleAnswer('sizes', { ...currentSizes, [field.name]: e.target.value });
-                      }}
-                    >
-                      <option value="">Weet ik niet / Sla over</option>
-                      {field.options.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
+                  <div key={field.name} className="space-y-1.5">
+                    <label className="block text-sm font-semibold text-[var(--color-text)]">{field.label}</label>
                     {(field as any).helperText && (
-                      <p className="mt-2 text-xs text-[var(--color-muted)] italic">{(field as any).helperText}</p>
+                      <p className="text-xs text-[var(--color-muted)]">{(field as any).helperText}</p>
                     )}
+                    <div className="relative">
+                      <select
+                        className="w-full px-4 py-3.5 min-h-[52px] rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors appearance-none pr-10 text-base"
+                        value={((answers.sizes as any) || {})[field.name] || ""}
+                        onChange={(e) => {
+                          const currentSizes = (answers.sizes as any) || {};
+                          handleAnswer('sizes', { ...currentSizes, [field.name]: e.target.value });
+                        }}
+                      >
+                        <option value="">Weet ik niet / Sla over</option>
+                        {field.options.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted)]">
+                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
+                      </div>
+                    </div>
                   </div>
                 ))}
-                {step.helperText ? (
-                  <p className="text-sm text-[var(--color-muted)] italic">
-                    {step.helperText}
-                  </p>
-                ) : (
-                  <p className="text-sm text-[var(--color-muted)] italic">
-                    Je kunt deze stap overslaan als je wilt.
-                  </p>
-                )}
+                <p className="text-xs text-[var(--color-muted)] pt-1">
+                  {step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}
+                </p>
               </div>
             )}
 
@@ -1051,6 +1050,14 @@ export default function OnboardingFlowPage() {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t border-[var(--color-border)] shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
         <div className="w-full px-4 pt-3 pb-4 max-w-3xl mx-auto">
 
+          {/* Hint when button is disabled and user hasn't attempted next yet */}
+          {step?.required && !canProceed() && !attemptedNext && (
+            <p className="text-center text-xs text-[var(--color-muted)] mb-2.5 flex items-center justify-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+              <span>Selecteer een optie om door te gaan</span>
+            </p>
+          )}
+
           {/* Primary row: Vorige + (Sla over) + Volgende */}
           <div className="flex items-center gap-2">
             {/* Vorige — fixed width, icon only on mobile */}
@@ -1079,8 +1086,13 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleNext}
               disabled={(!canProceed() && step?.required) || isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className={`inline-flex items-center justify-center gap-2 px-5 py-3.5 min-h-[52px] rounded-xl font-bold text-base transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 active:scale-[0.98] ${
+                (!canProceed() && step?.required) || isSubmitting
+                  ? 'bg-[var(--color-border)] text-[var(--color-muted)] cursor-not-allowed'
+                  : 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]'
+              }`}
               aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === quizSteps.length - 1 ? "Bekijk mijn antwoorden" : "Ga naar volgende vraag")}
+              aria-disabled={(!canProceed() && step?.required) || isSubmitting}
             >
               {isSubmitting ? (
                 <span>Verwerken...</span>
@@ -1142,7 +1154,7 @@ export default function OnboardingFlowPage() {
               </button>
             </div>
 
-            <ul className="space-y-2.5 mb-6">
+            <ul className="space-y-1.5 mb-6" role="list">
               {quizSteps.map((s, idx) => {
                 const val = answers[s.field as keyof QuizAnswers];
                 const hasValue = val !== undefined && val !== null && val !== '' &&
@@ -1150,44 +1162,58 @@ export default function OnboardingFlowPage() {
                 let displayVal = '—';
                 if (hasValue) {
                   if (Array.isArray(val)) {
-                    displayVal = (val as string[]).join(', ');
+                    const joined = (val as string[]).join(', ');
+                    displayVal = joined.length > 60 ? joined.slice(0, 57) + '…' : joined;
                   } else if (typeof val === 'number') {
-                    displayVal = s.field === 'budgetRange' ? `€${val}` : String(val);
+                    displayVal = s.field === 'budgetRange' ? `€${val} per kledingstuk` : String(val);
                   } else if (typeof val === 'object') {
-                    displayVal = 'Ingevuld';
+                    const entries = Object.entries(val as Record<string, string>).filter(([, v]) => v);
+                    displayVal = entries.length > 0 ? entries.map(([, v]) => v).join(' · ') : 'Ingevuld';
                   } else {
                     displayVal = String(val);
                   }
                 }
                 return (
-                  <li key={s.id} className="flex items-start gap-3">
+                  <li key={s.id}>
                     <button
                       onClick={() => { setShowReviewModal(false); setCurrentStep(idx); }}
-                      className="text-left flex-1 flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--ff-color-primary-50)] transition-colors group"
+                      className="text-left w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-[var(--ff-color-primary-50)] transition-colors group"
                       aria-label={`Ga naar vraag ${idx + 1}: ${s.title}`}
                     >
-                      <span className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold ${
+                      <span className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
                         hasValue
                           ? 'bg-[var(--ff-color-primary-600)] text-white'
                           : s.required
                           ? 'bg-[var(--ff-color-danger-100)] text-[var(--ff-color-danger-600)]'
                           : 'bg-[var(--ff-color-neutral-200)] text-[var(--color-muted)]'
                       }`}>
-                        {hasValue ? <CheckCircle className="w-3 h-3" /> : idx + 1}
+                        {hasValue ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">{s.title}</p>
-                        <p className={`text-xs mt-0.5 truncate ${hasValue ? 'text-[var(--color-muted)]' : s.required ? 'text-[var(--ff-color-danger-600)]' : 'text-[var(--color-muted)]'}`}>
-                          {hasValue ? displayVal : s.required ? 'Nog niet ingevuld — klik om aan te passen' : 'Overgeslagen'}
+                        <p className="text-sm font-semibold text-[var(--color-text)] leading-tight truncate">{s.title}</p>
+                        <p className={`text-xs mt-0.5 truncate ${
+                          hasValue
+                            ? 'text-[var(--color-muted)]'
+                            : s.required
+                            ? 'text-[var(--ff-color-danger-600)] font-medium'
+                            : 'text-[var(--color-muted)]'
+                        }`}>
+                          {hasValue ? displayVal : s.required ? 'Vereist — klik om in te vullen' : 'Overgeslagen'}
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-[var(--color-border)] group-hover:text-[var(--ff-color-primary-500)] transition-colors flex-shrink-0 mt-1" />
+                      <ArrowRight className="w-4 h-4 text-[var(--color-border)] group-hover:text-[var(--ff-color-primary-500)] transition-colors flex-shrink-0" />
                     </button>
                   </li>
                 );
               })}
             </ul>
 
+            {quizSteps.some(s => s.required && !answers[s.field as keyof QuizAnswers]) && (
+              <p className="flex items-center gap-2 text-xs font-medium text-[var(--ff-color-danger-600)] mb-3 px-1">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>Vul de gemarkeerde vragen in om door te gaan</span>
+              </p>
+            )}
             <div className="flex flex-col gap-3">
               <button
                 onClick={handleConfirmProceed}
