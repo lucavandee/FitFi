@@ -156,56 +156,12 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── INFO CARDS — boven het formulier ── */}
-      <section className="ff-container pb-8" aria-label="Contactinformatie">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {INFO_CARDS.map((card, i) => {
-            const Icon = card.icon;
-            const cardClass =
-              "flex items-start gap-3 p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow group";
-            const inner = (
-              <>
-                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
-                  <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[var(--color-text)] leading-snug">{card.title}</p>
-                  <p className="text-xs text-[var(--color-muted)] leading-relaxed mt-0.5">{card.body}</p>
-                  {(card.href) && (
-                    <span className="inline-flex items-center gap-1 mt-1.5 text-xs font-semibold text-[var(--ff-color-primary-700)] group-hover:underline underline-offset-2">
-                      Bekijken <ArrowRight className="w-3 h-3" aria-hidden />
-                    </span>
-                  )}
-                </div>
-              </>
-            );
-
-            if (card.href && card.internal) {
-              return (
-                <NavLink key={i} to={card.href} className={`${cardClass} focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`}>
-                  {inner}
-                </NavLink>
-              );
-            }
-            if (card.href) {
-              return (
-                <a key={i} href={card.href} className={`${cardClass} focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`}>
-                  {inner}
-                </a>
-              );
-            }
-            return (
-              <div key={i} className={cardClass}>
-                {inner}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ── CONTACT FORM ── */}
+      {/* ── 2-COLUMN LAYOUT: Form (left) + Info cards (right) ── */}
       <section className="ff-container pb-16 sm:pb-20">
-        <div className="max-w-lg">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 lg:gap-12 items-start">
+
+          {/* LEFT — contact form */}
+          <div>
 
           {/* Success */}
           <AnimatePresence>
@@ -384,6 +340,54 @@ export default function ContactPage() {
               </p>
             </form>
           </div>
+
+          </div>{/* end LEFT column */}
+
+          {/* RIGHT — info cards */}
+          <aside aria-label="Contactinformatie" className="flex flex-col gap-3">
+            {INFO_CARDS.map((card, i) => {
+              const Icon = card.icon;
+              const cardClass =
+                "flex items-start gap-3 p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow group";
+              const inner = (
+                <>
+                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
+                    <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[var(--color-text)] leading-snug">{card.title}</p>
+                    <p className="text-xs text-[var(--color-muted)] leading-relaxed mt-0.5">{card.body}</p>
+                    {(card.href) && (
+                      <span className="inline-flex items-center gap-1 mt-1.5 text-xs font-semibold text-[var(--ff-color-primary-700)] group-hover:underline underline-offset-2">
+                        Bekijken <ArrowRight className="w-3 h-3" aria-hidden />
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+
+              if (card.href && card.internal) {
+                return (
+                  <NavLink key={i} to={card.href} className={`${cardClass} focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`}>
+                    {inner}
+                  </NavLink>
+                );
+              }
+              if (card.href) {
+                return (
+                  <a key={i} href={card.href} className={`${cardClass} focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`}>
+                    {inner}
+                  </a>
+                );
+              }
+              return (
+                <div key={i} className={cardClass}>
+                  {inner}
+                </div>
+              );
+            })}
+          </aside>
+
         </div>
       </section>
     </main>

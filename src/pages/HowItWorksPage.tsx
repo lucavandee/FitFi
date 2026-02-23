@@ -160,16 +160,16 @@ export default function HowItWorksPage() {
               </p>
             </div>
 
-            <div className="flex flex-col md:grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-10 sm:mb-14">
+            <div className="flex flex-col md:grid md:grid-cols-3 md:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-10 sm:mb-14">
               {steps.map((step) => (
                 <motion.article
                   key={step.id}
                   onClick={() => setActiveStep(step.id)}
                   onHoverStart={() => setActiveStep(step.id)}
-                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-5 sm:p-7 transition-all duration-500 cursor-pointer ${
+                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-5 sm:p-7 transition-all duration-300 cursor-pointer flex flex-col ${
                     activeStep === step.id
-                      ? "border-[var(--ff-color-primary-600)] shadow-xl md:scale-[1.03]"
-                      : "border-[var(--color-border)] shadow-md hover:shadow-lg"
+                      ? "border-[var(--ff-color-primary-600)] shadow-xl"
+                      : "border-[var(--color-border)] shadow-md hover:shadow-lg hover:border-[var(--ff-color-primary-300)]"
                   }`}
                   aria-label={`${step.label}: ${step.title}`}
                   aria-pressed={activeStep === step.id}
@@ -248,9 +248,9 @@ export default function HowItWorksPage() {
             </div>
 
             {/* Comparison table — stacks on mobile */}
-            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 sm:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10">
 
-              <div className="bg-white rounded-2xl border-2 border-[var(--color-border)] p-5 sm:p-7 shadow-md">
+              <div className="bg-white rounded-2xl border-2 border-[var(--color-border)] p-5 sm:p-7 shadow-md flex flex-col">
                 <h3 className="font-bold text-lg sm:text-xl mb-4 text-center text-[var(--color-text)]">Trial &amp; Error</h3>
                 <ul className="space-y-3" role="list">
                   {[
@@ -270,7 +270,7 @@ export default function HowItWorksPage() {
                 </ul>
               </div>
 
-              <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-7 text-white shadow-xl">
+              <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-7 text-white shadow-xl flex flex-col">
                 <div className="inline-block mb-3 px-3 py-1 bg-[var(--ff-color-accent-500)] text-white rounded-full text-xs font-bold">
                   BESTE KEUZE
                 </div>
@@ -310,7 +310,7 @@ export default function HowItWorksPage() {
           className="py-12 sm:py-16 md:py-24 bg-white"
           aria-labelledby="faq-heading"
         >
-          <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
 
             <div className="text-center mb-8 sm:mb-12">
               <h2 id="faq-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
@@ -318,7 +318,7 @@ export default function HowItWorksPage() {
               </h2>
             </div>
 
-            <div className="space-y-3 sm:space-y-4" role="list">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4" role="list">
               {faqs.map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (

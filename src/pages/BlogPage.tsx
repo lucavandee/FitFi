@@ -187,7 +187,7 @@ export default function BlogPage() {
 
       {/* ── SEARCH + FILTER ── */}
       <section className="ff-container py-6 sm:py-8">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-3">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-3">
 
           {/* Search bar — full width */}
           <div className="flex gap-2">
@@ -290,7 +290,7 @@ export default function BlogPage() {
       {/* ── FEATURED ARTICLE ── */}
       {!loading && featuredPost && (
         <section className="ff-container pb-8 sm:pb-10">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-3">Uitgelicht</p>
 
             <article
@@ -352,7 +352,7 @@ export default function BlogPage() {
 
       {/* ── ARTIKEL GRID / CARROUSEL ── */}
       <section className="ff-container pb-12 sm:pb-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
 
           {/* Header met result count */}
           <div className="flex items-center justify-between mb-5">
@@ -434,8 +434,8 @@ export default function BlogPage() {
                 ))}
               </div>
 
-              {/* Desktop: responsive grid */}
-              <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5" role="list">
+              {/* Desktop: responsive grid with equal-height rows */}
+              <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:auto-rows-fr" role="list">
                 {carouselPosts.map((post) => (
                   <div key={post.id} role="listitem">
                     <BlogCard post={post} onNavigate={handleNavigate} />
@@ -450,7 +450,7 @@ export default function BlogPage() {
 
       {/* ── NEWSLETTER ── */}
       <section className="ff-container pb-16 sm:pb-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-8 sm:p-10 text-center overflow-hidden shadow-2xl">
             <div className="absolute -top-12 -right-12 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
