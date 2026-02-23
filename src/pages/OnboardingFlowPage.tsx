@@ -725,7 +725,7 @@ export default function OnboardingFlowPage() {
       </div>
 
       {/* Question Content - Simplified, Centered Layout */}
-      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12" style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="ff-container py-6 sm:py-8 md:py-10 lg:py-12" style={{ paddingBottom: 'calc(7.5rem + env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col gap-6">{/* Main Question Content */}
             <div className="flex-1">
@@ -861,7 +861,7 @@ export default function OnboardingFlowPage() {
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                           isSelected
                             ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
-                            : 'border-[var(--color-border)] bg-white'
+                            : 'border-[var(--color-border)]'
                         }`}>
                           {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                         </div>
@@ -1036,9 +1036,9 @@ export default function OnboardingFlowPage() {
 
       {/* Sticky Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
-        <div className="w-full px-4 pt-3 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="w-full px-4 pt-2.5 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom, 0px))' }}>
 
-          {/* Hint when answer required but nothing selected */}
+          {/* Hint row */}
           {step?.required && !canProceed() && (
             <p className="text-center text-xs text-[var(--color-muted)] mb-2 flex items-center justify-center gap-1.5">
               <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
@@ -1046,67 +1046,63 @@ export default function OnboardingFlowPage() {
             </p>
           )}
 
-          {/* Primary row: Vorige + (Sla over) + Volgende */}
+          {/* Button row: Back icon | [Skip] | Next (flex-1) */}
           <div className="flex items-center gap-2">
-            {/* Vorige — icon-only on mobile, label on sm+ */}
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-1.5 w-12 sm:w-auto sm:px-4 h-12 sm:h-auto sm:py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center w-11 h-11 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
               aria-label="Ga terug naar vorige vraag"
             >
-              <ArrowLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-              <span className="hidden sm:inline">Vorige</span>
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             </button>
 
-            {/* Sla over — compact on mobile */}
             {step && !step.required && (
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center justify-center px-3 sm:px-4 h-12 sm:h-auto sm:py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center px-3 h-11 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                 aria-label="Sla deze stap over"
               >
-                <span className="hidden xs:inline">Sla </span>over
+                Overslaan
               </button>
             )}
 
-            {/* Volgende — takes remaining space */}
             <button
               onClick={handleNext}
               disabled={isSubmitting}
-              className={`inline-flex items-center justify-center gap-2 px-4 h-12 sm:h-auto sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 active:scale-[0.98] ${
+              className={`inline-flex items-center justify-center gap-2 px-4 h-11 rounded-xl font-bold text-sm transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] active:scale-[0.98] ${
                 isSubmitting
                   ? 'bg-[var(--ff-color-primary-700)] text-white opacity-60 cursor-not-allowed'
                   : canProceed() || !step?.required
-                  ? 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]'
+                  ? 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] shadow-[0_2px_8px_rgba(0,0,0,0.15)]'
                   : 'bg-[var(--ff-color-primary-700)] text-white opacity-50'
               }`}
               aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === quizSteps.length - 1 ? "Bekijk mijn antwoorden" : "Ga naar volgende vraag")}
-              aria-disabled={(!canProceed() && step?.required) || isSubmitting}
             >
               {isSubmitting ? (
                 <span>Verwerken...</span>
               ) : currentStep === quizSteps.length - 1 ? (
                 <>
-                  <span className="truncate">Bekijk mijn antwoorden</span>
-                  <ArrowRight className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                  <span className="truncate">Bekijk antwoorden</span>
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </>
               ) : (
                 <>
                   <span>Volgende</span>
-                  <ArrowRight className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 </>
               )}
             </button>
           </div>
 
-          {/* Save and continue later — mobile only */}
-          <div className="flex justify-center mt-2.5 sm:hidden">
+          {/* Opslaan en later verder — subtle link below buttons */}
+          <div className="flex items-center justify-between mt-1.5">
+            <div />
             <button
               onClick={handleSaveAndContinueLater}
-              className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors px-3 py-1.5 min-h-[36px] rounded-lg"
+              className="flex items-center gap-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors py-1 px-2 rounded"
             >
-              <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+              <Clock className="w-3 h-3 flex-shrink-0" />
               <span>Opslaan en later verder</span>
             </button>
           </div>
