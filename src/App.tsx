@@ -168,6 +168,7 @@ export default function App() {
                 <Route path="/login" element={<Navigate to="/inloggen" replace />} />
                 <Route path="/registreren" element={<WithSeo.Register />} />
                 <Route path="/register" element={<Navigate to="/registreren" replace />} />
+                <Route path="/signup" element={<Navigate to="/registreren" replace />} />
 
                 {/* App (afgeschermd) */}
                 <Route path="/dashboard" element={<RequireAuth><RequireQuiz><WithSeo.Dashboard /></RequireQuiz></RequireAuth>} />

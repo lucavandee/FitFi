@@ -117,7 +117,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4 py-10 sm:py-16">
+    <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-3 sm:px-4 py-8 sm:py-16">
       <Seo
         title="Inloggen — FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
@@ -145,7 +145,7 @@ export default function LoginPage() {
 
         {/* Heading */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] tracking-tight mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-2">
             Je bent bijna binnen.
           </h1>
           <p className="text-base text-[var(--color-muted)]">
@@ -158,7 +158,7 @@ export default function LoginPage() {
           <form
             onSubmit={onSubmit}
             noValidate
-            className="p-6 sm:p-8 space-y-6"
+            className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6"
             aria-label="Inlogformulier"
           >
 
@@ -205,7 +205,8 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   autoComplete="email"
-                  autoFocus
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder="jij@voorbeeld.nl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -253,6 +254,7 @@ export default function LoginPage() {
                   id="password"
                   type={showPw ? "text" : "password"}
                   autoComplete="current-password"
+                  enterKeyHint="done"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

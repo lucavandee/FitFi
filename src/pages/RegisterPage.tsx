@@ -126,7 +126,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center px-4 pt-6 pb-10">
+    <main className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center px-3 sm:px-4 pt-6 pb-10">
       <Seo
         title="Account aanmaken — FitFi"
         description="Maak een gratis FitFi account aan en sla je stijlrapport op."
@@ -149,7 +149,7 @@ const RegisterPage: React.FC = () => {
 
         {/* Main Card */}
         <div className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
-          <form onSubmit={onSubmit} className="p-6 sm:p-8 space-y-6">
+          <form onSubmit={onSubmit} className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6">
 
             {/* Server error */}
             {serverError && (
@@ -192,7 +192,8 @@ const RegisterPage: React.FC = () => {
                   id="email"
                   type="email"
                   autoComplete="email"
-                  autoFocus
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder="jij@voorbeeld.nl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -229,6 +230,7 @@ const RegisterPage: React.FC = () => {
                   id="password"
                   type={showPw ? "text" : "password"}
                   autoComplete="new-password"
+                  enterKeyHint="done"
                   placeholder="Minimaal 8 tekens"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -291,19 +293,23 @@ const RegisterPage: React.FC = () => {
                 </div>
                 <span className="text-sm text-[var(--color-text)] leading-relaxed select-none">
                   Ik ga akkoord met de{" "}
-                  <NavLink
-                    to="/algemene-voorwaarden"
+                  <a
+                    href="/algemene-voorwaarden"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2"
                   >
                     algemene voorwaarden
-                  </NavLink>{" "}
+                  </a>{" "}
                   en het{" "}
-                  <NavLink
-                    to="/privacy"
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2"
                   >
                     privacybeleid
-                  </NavLink>
+                  </a>
                   .
                 </span>
               </label>
