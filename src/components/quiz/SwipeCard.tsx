@@ -71,7 +71,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center">
+    <div className="relative w-full h-full flex flex-col items-center justify-end">
       {/* First-Time User Tooltip - WCAG AA Compliant */}
       <AnimatePresence>
         {showTooltip && (
@@ -128,10 +128,10 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 1.02, cursor: 'grabbing' }}
         className={[
-          'swipe-card-container swipe-card-draggable cursor-grab active:cursor-grabbing flex-shrink-0 w-full',
+          'swipe-card-container swipe-card-draggable cursor-grab active:cursor-grabbing w-full',
           variant === 'desktop'
-            ? 'h-[520px] lg:h-[600px] max-w-full'
-            : 'max-w-[340px] h-full max-h-[420px] min-h-[280px]',
+            ? 'flex-shrink-0 h-[520px] lg:h-[600px] max-w-full'
+            : 'flex-1 min-h-0 max-w-[340px] max-h-[calc(100%-96px)]',
         ].join(' ')}
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
@@ -289,7 +289,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex gap-6 sm:gap-10 z-10 mt-4 sm:mt-6 flex-shrink-0 relative"
+        className="flex gap-6 sm:gap-10 z-10 mt-3 mb-1 flex-shrink-0 relative"
         role="group"
         aria-label="Stijl voorkeur keuze"
       >

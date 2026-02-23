@@ -447,13 +447,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             </p>
           )}
 
-          {/* Skip button - always visible */}
           <button
             onClick={handleContinue}
             disabled={applying}
-            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-300)] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {feedbackCount === 0 ? 'Overslaan en doorgaan' : 'Doorgaan zonder alle outfits te beoordelen'}
+            {feedbackCount === 0 ? 'Beoordeling overslaan' : 'Doorgaan zonder alle outfits te beoordelen'}
           </button>
         </motion.div>
       )}

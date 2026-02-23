@@ -194,9 +194,9 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </div>
         </div>
 
-        {/* Mobile Swipe Area — fills remaining space */}
-        <div className="flex-1 flex items-center justify-center px-3 min-h-0 py-1">
-          <div className="w-full max-w-[340px] h-full flex items-center justify-center min-h-0">
+        {/* Mobile Swipe Area — card + buttons in a fixed-budget flex column */}
+        <div className="flex-1 flex flex-col items-center px-3 min-h-0 pt-1 overflow-hidden">
+          <div className="w-full max-w-[340px] flex flex-col items-center h-full min-h-0">
             <AnimatePresence mode="popLayout">
               {currentPhoto && (
                 <SwipeCard
