@@ -159,11 +159,11 @@ export function RealOutfitShowcase() {
         </div>
 
         {/* Mobile/Tablet Swipe Indicator */}
-        <div className="md:hidden text-center mb-5 text-xs text-[var(--color-muted)] flex items-center justify-center gap-2 font-medium">
-          <span>Swipe voor meer</span>
-          <svg className="w-4 h-4 animate-bounce-horizontal opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        <div className="md:hidden flex items-center justify-center gap-2 mb-5 px-4 py-2 rounded-full mx-auto w-fit text-xs font-semibold text-[var(--ff-color-primary-700)]" style={{ background: "var(--ff-color-primary-50)", border: "1px solid var(--ff-color-primary-200)" }}>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
           </svg>
+          <span>Veeg om te wisselen</span>
         </div>
 
         {/* Outfit Grid/Carousel */}
@@ -186,14 +186,14 @@ export function RealOutfitShowcase() {
               className="group relative overflow-hidden rounded-3xl cursor-pointer
                          shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.2)]
                          transition-all duration-700 md:hover:-translate-y-4 md:hover:scale-[1.02]
-                         min-w-[82vw] sm:min-w-[62vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center
+                         min-w-[76vw] sm:min-w-[56vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center
                          border border-[var(--color-border)]/50 backdrop-blur-sm"
               onClick={() => outfit.completeImage && setSelectedOutfit(outfit)}
               onMouseEnter={() => setHoveredId(outfit.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
               {/* Card met gradient achtergrond */}
-              <div className={`bg-gradient-to-br ${outfit.gradient} p-6 sm:p-8 lg:p-10 aspect-[3/6] sm:aspect-[3/5.8] lg:aspect-[3/5.5] flex flex-col relative`}>
+              <div className={`bg-gradient-to-br ${outfit.gradient} p-5 sm:p-8 lg:p-10 aspect-[3/5.2] sm:aspect-[3/5.5] lg:aspect-[3/5.2] flex flex-col relative`}>
 
                 {/* Icon badge - premium styling */}
                 <div className="absolute top-6 left-6 w-14 h-14 sm:w-16 sm:h-16 bg-white/95 backdrop-blur-md rounded-[18px] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.12)] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
