@@ -13,13 +13,10 @@ export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-
-  // Verberg tijdens quiz/onboarding
-  if (pathname === '/onboarding' || pathname.startsWith('/onboarding')) {
-    return null;
-  }
+  const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
 
   useEffect(() => {
+    if (isOnboarding) return;
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
       return;
@@ -65,7 +62,7 @@ export default function InstallPrompt() {
     localStorage.setItem('pwa-install-dismissed', Date.now().toString());
   };
 
-  if (isInstalled || !showPrompt) return null;
+  if (isOnboarding || isInstalled || !showPrompt) return null;
 
   return (
     <AnimatePresence>

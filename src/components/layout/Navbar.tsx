@@ -34,18 +34,13 @@ const links: Array<{ to: string; label: string }> = [
 
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
+  const [savedOutfitsCount, setSavedOutfitsCount] = React.useState(0);
   const { pathname } = useLocation();
   const { user, logout } = useUser();
   const isAuthed = !!user;
   const isHome = HOME_PATHS.includes(pathname);
-  useLockBody(open);
-
-  // Verberg navbar tijdens quiz/onboarding
-  if (pathname === '/onboarding' || pathname.startsWith('/onboarding')) {
-    return null;
-  }
-
-  const [savedOutfitsCount, setSavedOutfitsCount] = React.useState(0);
+  const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
+  useLockBody(open && !isOnboarding);
 
   React.useEffect(() => {
     try {
@@ -65,10 +60,7 @@ export default function Navbar() {
     };
 
     window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Sluit menu bij routewissel of ESC
@@ -78,6 +70,11 @@ export default function Navbar() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
+
+  // Verberg navbar tijdens quiz/onboarding — altijd ná alle hooks
+  if (isOnboarding) {
+    return null;
+  }
 
   const handleLogout = async () => {
     await logout();
