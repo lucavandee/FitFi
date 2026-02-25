@@ -202,7 +202,7 @@ export function HeroV3() {
             </button>
 
             {/* Secondary row */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-4">
               <button
                 onClick={handleExampleClick}
                 className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]"
