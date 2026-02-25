@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
 import { ThemeToggleCompact } from "@/components/ui/ThemeToggle";
 
-const NAV_LINKS = [
+export const HEADER_NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
   { to: "/over-ons", label: "Over ons" },
@@ -21,7 +21,11 @@ export default function SiteHeader() {
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   useEffect(() => {
-    if (!isHome) return;
+    if (!isHome) {
+      setScrolled(false);
+      return;
+    }
+    setScrolled(window.scrollY > 20);
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -58,7 +62,7 @@ export default function SiteHeader() {
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-5">
             <ul className="flex items-center gap-5">
-              {NAV_LINKS.map((item) => (
+              {HEADER_NAV_LINKS.map((item) => (
                 <li key={item.to}>
                   <NavLink
                     to={item.to}
@@ -99,7 +103,7 @@ export default function SiteHeader() {
         </div>
       </nav>
 
-      <MobileNavDrawer open={open} onClose={() => setOpen(false)} links={NAV_LINKS} />
+      <MobileNavDrawer open={open} onClose={() => setOpen(false)} links={HEADER_NAV_LINKS} />
     </header>
   );
 }

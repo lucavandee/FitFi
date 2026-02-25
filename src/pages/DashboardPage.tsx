@@ -37,13 +37,19 @@ export default function DashboardPage() {
 
   const isPremium = ctxUser?.tier === 'premium' || ctxUser?.tier === 'founder' || !!ctxUser?.isPremium;
 
-  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
-  const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
-  const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
-  const reportTs = localStorage.getItem(LS_KEYS.RESULTS_TS);
-  const hasReport = !!(archetype || color);
-  const hasPhoto = !!(answers?.photoUrl);
-  const reportDate = formatReportDate(reportTs);
+  const { color, archetype, hasReport, hasPhoto, reportDate } = React.useMemo(() => {
+    const c = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
+    const a = readJson<Archetype>(LS_KEYS.ARCHETYPE);
+    const ans = readJson<{ photoUrl?: string }>(LS_KEYS.QUIZ_ANSWERS);
+    const ts = localStorage.getItem(LS_KEYS.RESULTS_TS);
+    return {
+      color: c,
+      archetype: a,
+      hasReport: !!(a || c),
+      hasPhoto: !!(ans?.photoUrl),
+      reportDate: formatReportDate(ts),
+    };
+  }, []);
 
   const { data: outfitsData } = useOutfits({
     archetype: archetype?.name,
@@ -55,10 +61,20 @@ export default function DashboardPage() {
     const client = supabase();
     if (!client) return;
     client.auth.getUser().then(({ data }) => {
-      const email = data?.user?.email || "";
+      const u = data?.user;
+      const email = u?.email || "";
       setUserEmail(email);
-      const name = email.split("@")[0];
-      setUserName(name.charAt(0).toUpperCase() + name.slice(1));
+      const displayName =
+        u?.user_metadata?.full_name ||
+        u?.user_metadata?.name ||
+        (() => {
+          const localPart = email.split("@")[0];
+          return localPart
+            .replace(/[._-]+/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase())
+            .trim();
+        })();
+      setUserName(displayName);
     }).catch(() => {});
   }, []);
 

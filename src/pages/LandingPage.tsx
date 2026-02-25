@@ -1,12 +1,23 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Helmet } from "react-helmet-async";
 import { HeroV3 } from "@/components/landing/HeroV3";
 import { SocialProofV3 } from "@/components/landing/SocialProofV3";
-import { StyleReportPreviewCard } from "@/components/landing/StyleReportPreviewCard";
-import { TrustBlock } from "@/components/landing/TrustBlock";
-import { RealOutfitShowcase } from "@/components/landing/RealOutfitShowcase";
-import { FeatureBlocksV4 } from "@/components/landing/FeatureBlocksV4";
-import { FinalCTA } from "@/components/landing/FinalCTA";
+
+const StyleReportPreviewCard = lazy(() =>
+  import("@/components/landing/StyleReportPreviewCard").then((m) => ({ default: m.StyleReportPreviewCard }))
+);
+const TrustBlock = lazy(() =>
+  import("@/components/landing/TrustBlock").then((m) => ({ default: m.TrustBlock }))
+);
+const RealOutfitShowcase = lazy(() =>
+  import("@/components/landing/RealOutfitShowcase").then((m) => ({ default: m.RealOutfitShowcase }))
+);
+const FeatureBlocksV4 = lazy(() =>
+  import("@/components/landing/FeatureBlocksV4").then((m) => ({ default: m.FeatureBlocksV4 }))
+);
+const FinalCTA = lazy(() =>
+  import("@/components/landing/FinalCTA").then((m) => ({ default: m.FinalCTA }))
+);
 import { StickyCTA } from "@/components/landing/StickyCTA";
 
 /**
@@ -49,12 +60,6 @@ export default function LandingPage() {
               "@type": "Offer",
               "price": "0",
               "priceCurrency": "EUR"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "2400",
-              "bestRating": "5"
             }
           })}
         </script>
@@ -69,28 +74,15 @@ export default function LandingPage() {
       </a>
 
       <main id="main-content" className="bg-[var(--color-bg)] text-[var(--color-text)] overflow-x-hidden w-full">
-        {/* HERO V3 - Benefits-driven, clear promise */}
         <HeroV3 />
-
-        {/* SOCIAL PROOF V3 - Testimonials FIRST for credibility */}
         <SocialProofV3 />
-
-        {/* STYLE REPORT PREVIEW - Show what users get (blurred example) */}
-        <StyleReportPreviewCard />
-
-        {/* TRUST BLOCK - Privacy, transparency, no medical claims */}
-        <TrustBlock />
-
-        {/* REAL OUTFIT SHOWCASE - Actual clothing items */}
-        <RealOutfitShowcase />
-
-        {/* FEATURE BLOCKS V4 - Reduced to 2 (Color + Speed) */}
-        <FeatureBlocksV4 />
-
-        {/* FINAL CTA - Big conversion push */}
-        <FinalCTA />
-
-        {/* STICKY CTA - Always accessible after scroll, mobile thumb-friendly */}
+        <Suspense fallback={<div className="h-48" />}>
+          <StyleReportPreviewCard />
+          <TrustBlock />
+          <RealOutfitShowcase />
+          <FeatureBlocksV4 />
+          <FinalCTA />
+        </Suspense>
         <StickyCTA />
       </main>
     </>

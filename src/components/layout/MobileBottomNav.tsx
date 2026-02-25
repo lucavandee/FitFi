@@ -81,7 +81,7 @@ const MobileBottomNav: React.FC = () => {
   return (
     <>
       {/* Spacer to prevent content from being hidden behind nav */}
-      <div className="h-20 md:hidden" />
+      <div className="h-[72px] md:hidden" aria-hidden="true" />
 
       {/* Mobile Bottom Navigation */}
       <motion.nav
@@ -96,7 +96,6 @@ const MobileBottomNav: React.FC = () => {
             <div className="flex items-center justify-around">
               {visibleItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
 
                 return (
                   <NavLink
@@ -106,7 +105,7 @@ const MobileBottomNav: React.FC = () => {
                     className="flex flex-col items-center justify-center min-w-[64px] py-2 px-3 rounded-xl transition-all duration-200 group relative"
                   >
                     {({ isActive: active }) => {
-                      const activeState = active || isActive;
+                      const activeState = active;
                       return (
                         <>
                           {/* Active indicator */}
