@@ -967,24 +967,6 @@ export default function OnboardingFlowPage() {
                 <ArrowLeft style={{ width: '18px', height: '18px' }} />
               </button>
 
-              {step && !step.required && (
-                <button
-                  onClick={handleSkip}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: '0 16px', height: '48px', flexShrink: 0,
-                    borderRadius: '12px',
-                    border: '2px solid var(--color-border)',
-                    backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-muted)',
-                    fontSize: '14px', fontWeight: 500,
-                    whiteSpace: 'nowrap', cursor: 'pointer',
-                  }}
-                >
-                  Overslaan
-                </button>
-              )}
-
               <button
                 onClick={handleNext}
                 disabled={isSubmitting}
@@ -1009,7 +991,15 @@ export default function OnboardingFlowPage() {
               </button>
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginTop: '8px' }}>
+              {step && !step.required && (
+                <button
+                  onClick={handleSkip}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
+                >
+                  Overslaan
+                </button>
+              )}
               <button
                 onClick={handleSaveAndContinueLater}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
