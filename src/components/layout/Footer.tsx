@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Instagram, Linkedin, ArrowRight } from "lucide-react";
+import Logo from "@/components/ui/Logo";
 
 /**
  * Ultra-compact Premium Footer
@@ -62,9 +63,8 @@ export default function Footer() {
 
           {/* Brand - Minimaal */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]" />
-              <span className="text-lg font-bold text-[var(--color-text)]">FitFi</span>
+            <div className="flex items-center">
+              <Logo size="sm" variant="dark" />
             </div>
 
             {/* Social - Gevuld & Kleurrijk */}

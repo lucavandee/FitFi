@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import Logo from "@/components/ui/Logo";
 
 const HOME_PATHS = ["/", ""];
 
@@ -138,10 +139,10 @@ export default function Navbar() {
         {/* Brand */}
         <a
           href="/"
-          className="inline-flex items-center rounded-xl px-3 py-2 min-h-[44px] focus-visible:shadow-[var(--shadow-ring)]"
+          className="inline-flex items-center rounded-xl px-2 py-2 min-h-[44px] focus-visible:shadow-[var(--shadow-ring)] transition-opacity hover:opacity-85"
           aria-label="FitFi Home"
         >
-          <span className="text-base font-semibold tracking-wide">FitFi</span>
+          <Logo size="sm" variant="default" />
         </a>
 
         {/* Desktop nav - Right aligned */}
