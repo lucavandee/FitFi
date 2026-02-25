@@ -103,7 +103,7 @@ export default function NotificationSettings() {
     {
       key: 'achievements' as keyof NotificationPreferences,
       label: 'Achievements',
-      description: 'Meldingen wanneer je een achievement ontgrendelt',
+      description: 'Meldingen wanneer je een badge behaalt',
       icon: Trophy,
     },
     {

@@ -214,7 +214,7 @@ export function ColorProfileExplainer({
         doExamples: [
           { top: "Zwart", bottom: "Wit", description: "Klassiek hoog contrast" },
           { top: "Marineblauw", bottom: "Crème", description: "Elegant en strak" },
-          { top: "Donkergroen", bottom: "Beige", description: "Aards maar krachtig" }
+          { top: "Donkergroen", bottom: "Beige", description: "Aards en goed gedefinieerd" }
         ],
         dontExamples: [
           "Pastel-op-pastel (te weinig definitie)",
@@ -303,7 +303,7 @@ export function ColorProfileExplainer({
           "Primaire kleuren (rood, blauw, geel) werken goed"
         ],
         doExamples: [
-          { color: "Kobaltblauw", description: "Helder en krachtig" },
+          { color: "Kobaltblauw", description: "Helder en contrastrijk" },
           { color: "Knalrood", description: "Verzadigd en opvallend" },
           { color: "Smaragdgroen", description: "Rijk en levendig" },
           { color: "Fuchsia", description: "Bold en energiek" }

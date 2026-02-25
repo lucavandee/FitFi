@@ -51,7 +51,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6 text-center">
         <Sparkles className="w-12 h-12 mx-auto text-[var(--color-muted)] mb-3" />
         <p className="text-[var(--color-muted)]">
-          Voltooi de stijlquiz om je profiel te ontgrendelen
+          Voltooi de stijlquiz om je profiel te vullen
         </p>
       </div>
     );

@@ -37,7 +37,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
       title: "Nova's Aanbevelingen",
       description: "Gepersonaliseerde outfit-tips en voorbeelden",
       image: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
-      quote: "Deze combinatie versterkt jouw natuurlijke charisma."
+      quote: "Deze combinatie past goed bij jouw kleurtype en lichaamsvorm."
     },
     {
       id: 'wishlist',

@@ -104,8 +104,8 @@ export default function NovaLoginPrompt({
     // Default: auth
     return {
       icon: <Sparkles className="w-8 h-8 text-white" />,
-      title: 'Ontgrendel Nova AI',
-      description: 'Word gratis member om toegang te krijgen tot Nova\'s persoonlijke AI-stijladviezen, outfit uitleg en curated shopping aanbevelingen.',
+      title: 'Chat met Nova, jouw stylist',
+      description: 'Word gratis member om vragen te stellen aan Nova — over outfits, kleuren en wat je kunt shoppen.',
       benefits: [
         '10 Nova gesprekken per dag',
         'Persoonlijke outfit aanbevelingen',

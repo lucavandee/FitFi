@@ -195,7 +195,7 @@ export default function SubscriptionManager() {
             <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] mb-5 text-xs text-[var(--color-muted)]">
               <Camera className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p>
-                Premium ontgrendelt extra advies — maar kleuranalyse werkt alleen{' '}
+                Premium geeft extra advies — maar kleuranalyse werkt alleen{' '}
                 <strong className="text-[var(--color-text)]">met een foto</strong>. Je kleurtype kan niet automatisch worden bepaald zonder selfie.
               </p>
             </div>

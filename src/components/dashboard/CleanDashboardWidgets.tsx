@@ -322,7 +322,7 @@ export function EmptyStateWidget() {
           Start je stijlreis
         </h2>
         <p className="text-sm text-[var(--color-muted)] mb-6 max-w-sm">
-          Ontdek jouw persoonlijke stijl met onze AI-powered quiz in 5 minuten
+          Beantwoord een paar vragen en ontdek welke outfits bij jou passen — in 5 minuten
         </p>
         <NavLink
           to="/onboarding"

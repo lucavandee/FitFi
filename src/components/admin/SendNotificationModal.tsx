@@ -118,7 +118,7 @@ export default function SendNotificationModal({
             <textarea
               value={input.message}
               onChange={(e) => setInput({ ...input, message: e.target.value })}
-              placeholder="Bijvoorbeeld: We hebben zojuist nieuwe AI-powered outfit suggestions gelanceerd! Check het uit in je dashboard."
+              placeholder="Bijvoorbeeld: We hebben nieuwe outfit-suggesties toegevoegd. Bekijk ze in je dashboard."
               rows={4}
               className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
             />

@@ -18,7 +18,7 @@ const PremiumUpsellStrip: React.FC<Props> = ({ onCta, className }) => {
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-xl">Upgrade naar Pro</h3>
         <div className="flex items-center gap-2">
-          <button onClick={handleClick} className="ff-btn ff-btn-primary h-10">Ontgrendel premium</button>
+          <button onClick={handleClick} className="ff-btn ff-btn-primary h-10">Ga over op Premium</button>
           <Link to="/prijzen" className="ff-btn ff-btn-secondary h-10">Bekijk plannen</Link>
         </div>
       </div>

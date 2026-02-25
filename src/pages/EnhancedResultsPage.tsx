@@ -738,8 +738,8 @@ export default function EnhancedResultsPage() {
                       </h3>
                       <p className="text-[var(--color-muted)] mb-6 max-w-2xl mx-auto">
                         {!answers?.photoUrl
-                          ? 'Kleurenanalyse is optioneel. Zonder foto geven we geen ondertoonadvies. Upload een selfie en ontgrendel Premium voor jouw volledige shopping-cheatsheet.'
-                          : 'Ontgrendel Premium voor een persoonlijke shopping-gids met kleuradviezen op basis van jouw ondertoon.'}
+                          ? 'Kleurenanalyse is optioneel. Zonder foto geven we geen ondertoonadvies. Upload een selfie en ga over op Premium voor jouw volledige shopping-overzicht.'
+                          : 'Ga over op Premium voor een persoonlijke shopping-gids met kleuradviezen op basis van jouw ondertoon.'}
                       </p>
                       <NavLink
                         to="/prijzen#premium"
@@ -1295,7 +1295,7 @@ export default function EnhancedResultsPage() {
                       Upgrade voor meer gepersonaliseerde outfits
                     </h3>
                     <p className="text-[var(--color-muted)] text-base sm:text-lg">
-                      Ontgrendel 50+ outfits afgestemd op jouw stijl + AI styling assistent
+                      50+ outfits afgestemd op jouw stijl, plus een persoonlijke stylist die vragen beantwoordt
                     </p>
                   </div>
 
@@ -1448,8 +1448,7 @@ export default function EnhancedResultsPage() {
                   <div>
                     <h4 className="font-semibold text-lg mb-2">Kleuradvies</h4>
                     <p className="text-[var(--color-text)]">
-                      Gebaseerd op jouw kleurprofiel "{activeColorProfile.paletteName}" hebben we kleuren gekozen die jouw
-                      natuurlijke uitstraling versterken.
+                      Gebaseerd op jouw kleurprofiel "{activeColorProfile.paletteName}" hebben we kleuren gekozen die goed bij jouw huidskleur en ondertoon passen.
                     </p>
                   </div>
                 )}
@@ -1621,7 +1620,7 @@ export default function EnhancedResultsPage() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold opacity-90 mb-0.5">
-                  Ontgrendel 50+ outfits
+                  Meer outfits zien
                 </p>
                 <p className="text-lg font-bold leading-tight">
                   €9,99<span className="text-xs font-normal opacity-80">/maand</span>

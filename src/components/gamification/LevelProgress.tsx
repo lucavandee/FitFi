@@ -151,7 +151,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
           <h4 className="font-medium text-gray-900 mb-3 flex items-center">
             <TrendingUp className="w-4 h-4 mr-2 text-gray-600" />
-            Unlock bij {nextLevelInfo.level_name}:
+            Beschikbaar bij {nextLevelInfo.level_name}:
           </h4>
           <div className="space-y-2">
             {nextLevelPerks.slice(0, 3).map((perk, index) => (

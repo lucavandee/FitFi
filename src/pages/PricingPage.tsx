@@ -147,7 +147,7 @@ export default function PricingPage() {
     <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
       <Seo
         title="Prijzen — FitFi"
-        description="Free geeft je 3 outfits en shoplinks. Premium ontgrendelt onbeperkte outfits, kleuranalyse en Nova AI. Vergelijk plannen en kies wat bij jou past."
+        description="Free geeft je 3 outfits en shoplinks. Met Premium krijg je onbeperkte outfits, kleuranalyse en een persoonlijke stylist. Vergelijk plannen en kies wat bij jou past."
         path="/prijzen"
       />
 
@@ -188,7 +188,7 @@ export default function PricingPage() {
             </h1>
 
             <p className="text-base sm:text-lg text-[var(--color-muted)] mb-6 max-w-2xl mx-auto leading-relaxed">
-              Free blijft altijd bruikbaar. Premium ontgrendelt kleuranalyse, onbeperkte outfits en je persoonlijke AI-stylist.
+              Free blijft altijd bruikbaar. Met Premium krijg je kleuranalyse, onbeperkte outfits en een persoonlijke stylist die vragen beantwoordt.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-[var(--color-text)]">
@@ -507,7 +507,7 @@ export default function PricingPage() {
                   a: "Je stijlprofiel, je 3 outfit-combinaties en alle shoplinks blijven altijd zichtbaar — ook als je nooit betaalt. Free is niet tijdelijk; het is een volwaardig startpunt.",
                 },
                 {
-                  q: "Wat ontgrendelt Premium precies?",
+                  q: "Wat krijg ik met Premium precies?",
                   a: "Premium geeft je onbeperkte outfit-aanbevelingen, toegang tot de Nova AI-stylist (chat 24/7), een uitgebreide shopping cheatsheet en kleuranalyse op basis van een foto die jij uploadt.",
                 },
                 {

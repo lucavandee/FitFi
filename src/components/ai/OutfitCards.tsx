@@ -68,7 +68,7 @@ export default function OutfitCards({ data, blur=false, onLockedClick }:{ data:N
                 onClick={onLockedClick}
                 className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium bg-[var(--ff-color-primary-500)] text-[var(--color-text)] hover:bg-[var(--ff-color-primary-500)]/90 transition"
               >
-                Ontgrendel outfits
+                Meer outfits zien
               </button>
             ) : (
               <ShopLink o={o}/>

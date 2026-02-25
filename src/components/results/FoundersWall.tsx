@@ -22,7 +22,7 @@ const FoundersWall: React.FC = () => {
         <div>
           <h3 className="text-lg font-medium text-[var(--color-text)]">Founders-toegang</h3>
           <p className="text-[var(--color-text)]/70 text-sm">
-            Ontgrendel extra outfits & challenges. Gratis voor early users.
+            Extra outfits & challenges. Gratis voor vroege gebruikers.
           </p>
         </div>
       </div>
@@ -54,7 +54,7 @@ const FoundersWall: React.FC = () => {
           size="lg"
           icon={<Mail className="w-4 h-4" />}
         >
-          Ontgrendel
+          Aanmelden
         </Button>
       </form>
 

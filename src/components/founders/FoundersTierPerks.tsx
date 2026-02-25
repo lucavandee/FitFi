@@ -33,7 +33,7 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
       <section aria-labelledby="perk-owned">
         <h3 id="perk-owned" className="text-sm font-semibold text-ink mb-3">Jouw voordelen</h3>
         {unlocked.length === 0 ? (
-          <div className="text-sm text-gray-500 mb-4">Nodig vrienden uit om perks te ontgrendelen.</div>
+          <div className="text-sm text-gray-500 mb-4">Nodig vrienden uit om voordelen te verdienen.</div>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="list">
             {unlocked.map(p => {
@@ -45,7 +45,7 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
                   </span>
                   <div className="flex-1">
                     <div className="text-sm text-ink">{p.label}</div>
-                    <div className="text-xs text-gray-500">Ontgrendeld bij {p.unlockedAt} referrals</div>
+                    <div className="text-xs text-gray-500">Beschikbaar vanaf {p.unlockedAt} referrals</div>
                   </div>
                   <span className="opacity-70"><Icon size={16} /></span>
                 </li>
@@ -56,9 +56,9 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
       </section>
 
       <section aria-labelledby="perk-next" className="mt-6">
-        <h3 id="perk-next" className="text-sm font-semibold text-ink mb-3">Volgende unlocks</h3>
+        <h3 id="perk-next" className="text-sm font-semibold text-ink mb-3">Volgende voordelen</h3>
         {upcoming.length === 0 ? (
-          <div className="text-sm text-gray-500">Je hebt alles ontgrendeld — Legend status 🎉</div>
+          <div className="text-sm text-gray-500">Je hebt alle voordelen — Legend status!</div>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="list">
             {upcoming.map(p => {
@@ -71,7 +71,7 @@ export default function FoundersTierPerks({ referrals, className }: Props) {
                   </span>
                   <div className="flex-1">
                     <div className="text-sm text-ink">{p.label}</div>
-                    <div className="text-xs text-gray-500">{remaining} te gaan — unlock bij {p.unlockedAt}</div>
+                    <div className="text-xs text-gray-500">Nog {remaining} referrals — beschikbaar bij {p.unlockedAt}</div>
                   </div>
                   <span className="opacity-70"><Icon size={16} /></span>
                 </li>

@@ -30,7 +30,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 'gamification',
     title: 'Verdien XP & Achievements 🏆',
-    description: 'Level up je style! Elke actie geeft XP. Unlock achievements, behaal milestones en wordt deel van de community.',
+                    description: 'Elke actie geeft XP. Behaal badges, bereik mijlpalen en word deel van de community.',
     icon: <Trophy className="w-6 h-6" />,
     targetSelector: '[data-tour="gamification"]',
     position: 'top',

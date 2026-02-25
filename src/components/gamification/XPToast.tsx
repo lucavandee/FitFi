@@ -50,7 +50,7 @@ export function showXPNotification({
             {leveledUp && (
               <div className="mt-3 pt-3 border-t border-white/20">
                 <div className="text-xs font-semibold opacity-90">
-                  Nieuwe perks ontgrendeld! 🎁
+                  Nieuw niveau, nieuwe voordelen!
                 </div>
               </div>
             )}

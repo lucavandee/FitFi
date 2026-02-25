@@ -75,7 +75,7 @@ export function StyleReportPreview() {
           <div className="bg-white rounded-2xl p-5 border border-[var(--ff-color-primary-200)] shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-[var(--ff-color-primary-700)]">94% Match</span>
-              <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">AI-Powered</span>
+              <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">Persoonlijk</span>
             </div>
             <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
               Gebaseerd op jouw voorkeuren en lichaamstype

@@ -107,7 +107,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
                 Jouw <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Progressie</span>
               </h2>
               <p className="text-[var(--color-muted)]">
-                Verdien XP, unlock achievements en level up je style
+                Verdien XP, behaal badges en zie je stijl groeien
               </p>
             </div>
           </div>

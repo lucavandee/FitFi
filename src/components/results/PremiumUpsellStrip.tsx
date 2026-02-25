@@ -18,7 +18,7 @@ const PremiumUpsellStrip: React.FC<Props> = ({ onCta, className }) => {
       <div className="res-upsell__copy">
         <p className="eyebrow">Upgrade</p>
         <h3 id="upsell-heading" className="res-upsell__title">
-          Ontgrendel <span>9+ extra outfits</span> per silhouet
+          <span>9+ extra outfits</span> per silhouet
         </h3>
         <p className="res-upsell__sub">
           Inclusief seizoensvarianten, materiaal-tips en pro-shoppinglinks — privacy-first.
@@ -31,8 +31,8 @@ const PremiumUpsellStrip: React.FC<Props> = ({ onCta, className }) => {
         </ul>
 
         <div className="res-upsell__ctas">
-          <button className="ff-btn ff-btn-primary h-10" onClick={handleClick} aria-label="Ontgrendel premium outfits">
-            Ontgrendel premium outfits
+          <button className="ff-btn ff-btn-primary h-10" onClick={handleClick} aria-label="Meer outfits zien met Premium">
+            Meer outfits zien
           </button>
           <a className="ff-btn ff-btn-secondary h-10" href="/prijzen">
             Bekijk pakketten
