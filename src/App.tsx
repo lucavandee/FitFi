@@ -1,6 +1,6 @@
 // /src/App.tsx
 import React, { Suspense, lazy } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
@@ -122,21 +122,27 @@ const WithSeo = {
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
-export default function App() {
+function AppShell() {
+  const { pathname } = useLocation();
+  const isFullscreen = pathname.startsWith('/onboarding');
+
   return (
-    <NovaChatProvider>
-      <NotificationProvider>
-        <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
-          <ErrorBoundary>
-            <ProfileSyncInitializer />
-            <AwinMasterTag />
-            <Navbar />
-          <Suspense fallback={
-            <div className="ff-container py-16 flex flex-col items-center gap-3" role="status" aria-live="polite">
-              <div className="w-8 h-8 border-2 border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" aria-hidden="true" />
-              <span className="text-sm text-[var(--color-muted)]">Laden…</span>
-            </div>
-          }>
+    <div className={isFullscreen ? undefined : "min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]"}>
+      <ErrorBoundary>
+        <ProfileSyncInitializer />
+        <AwinMasterTag />
+        {!isFullscreen && <Navbar />}
+        <Suspense fallback={
+          <div className="ff-container py-16 flex flex-col items-center gap-3" role="status" aria-live="polite">
+            <div className="w-8 h-8 border-2 border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" aria-hidden="true" />
+            <span className="text-sm text-[var(--color-muted)]">Laden…</span>
+          </div>
+        }>
+          {isFullscreen ? (
+            <Routes>
+              <Route path="/onboarding" element={<WithSeo.Onboarding />} />
+            </Routes>
+          ) : (
             <main id="main">
               <Routes>
                 {/* Marketing */}
@@ -204,13 +210,22 @@ export default function App() {
                 <Route path="*" element={<WithSeo.NotFound />} />
               </Routes>
             </main>
-          </Suspense>
-          <Footer />
-          <MobileBottomNav />
-          <InstallPrompt />
-          <AnalyticsLoader />
-        </ErrorBoundary>
-      </div>
+          )}
+        </Suspense>
+        {!isFullscreen && <Footer />}
+        {!isFullscreen && <MobileBottomNav />}
+        <InstallPrompt />
+        <AnalyticsLoader />
+      </ErrorBoundary>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <NovaChatProvider>
+      <NotificationProvider>
+        <AppShell />
       </NotificationProvider>
     </NovaChatProvider>
   );

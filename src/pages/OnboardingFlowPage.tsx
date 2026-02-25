@@ -676,14 +676,14 @@ export default function OnboardingFlowPage() {
 
   return (
     <>
-      <main className="flex flex-col bg-[var(--color-bg)] text-[var(--color-text)]" style={{ height: '100dvh', minHeight: '-webkit-fill-available' }}>
+      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
         <Helmet>
           <title>Start je Style Report – FitFi</title>
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
-      {/* Progress Bar — fixed height at top */}
-      <div className="flex-shrink-0 bg-[var(--color-surface)]/95 backdrop-blur-sm border-b border-[var(--color-border)] shadow-sm">
+      {/* Progress Bar */}
+      <div className="sticky top-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-b border-[var(--color-border)] shadow-sm">
         <div className="ff-container py-2.5 sm:py-3">
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-2 min-w-0">
@@ -724,9 +724,8 @@ export default function OnboardingFlowPage() {
         </div>
       </div>
 
-      {/* Question Content — scrollable flex-1 zone */}
-      <div className="flex-1 overflow-y-auto overscroll-contain">
-      <div className="ff-container py-5 sm:py-7">
+      {/* Question Content */}
+      <div className="ff-container py-5 sm:py-7" style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col gap-5">
             <div>
@@ -1034,12 +1033,10 @@ export default function OnboardingFlowPage() {
         {/* End Max Width Container */}
       </div>
       {/* End FF Container */}
-      </div>
-      {/* End scrollable zone */}
 
-      {/* Bottom Bar — flex-shrink-0, always visible */}
-      <div className="flex-shrink-0 bg-[var(--color-surface)]/98 backdrop-blur-sm border-t border-[var(--color-border)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
-        <div className="w-full px-4 pt-2.5 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom, 0px))' }}>
+      {/* Bottom Bar — fixed, altijd zichtbaar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t border-[var(--color-border)] shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+        <div className="w-full px-4 pt-3 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
 
           {/* Hint row */}
           {step?.required && !canProceed() && (
