@@ -39,7 +39,7 @@ export function StyleProfileConfidenceBadge({
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-emerald-900 mb-2 flex items-center gap-2">
-              Gebaseerd op jouw persoonlijke foto-analyse
+              Gebaseerd op jouw persoonlijke kleuranalyse
               <span className="text-xs px-2 py-1 bg-emerald-200 text-emerald-800 rounded-full font-semibold">
                 {Math.round(confidence * 100)}% accuraat
               </span>

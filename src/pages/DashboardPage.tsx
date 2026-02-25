@@ -233,7 +233,7 @@ export default function DashboardPage() {
                   {hasPhoto && (
                     <span className="px-3 py-1 rounded-full bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-sm text-[var(--ff-color-success-700)] font-medium flex items-center gap-1">
                       <Check className="w-3.5 h-3.5" />
-                      Foto-analyse
+                      Kleuranalyse
                     </span>
                   )}
                 </div>

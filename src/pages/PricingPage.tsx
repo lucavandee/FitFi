@@ -162,13 +162,24 @@ export default function PricingPage() {
                   <p className="text-xs text-[var(--color-muted)]">Geen zorgen — je kunt altijd later upgraden.</p>
                 </div>
               </div>
-              <button
-                onClick={handleCloseCancelBanner}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--ff-color-warning-600)] hover:text-[var(--color-text)] rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors"
-                aria-label="Sluit melding"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {premiumProduct && (
+                  <button
+                    onClick={() => { handleCloseCancelBanner(); handleCheckout(premiumProduct.id); }}
+                    disabled={isPending}
+                    className="px-4 py-2 min-h-[44px] bg-[var(--ff-color-primary-600)] text-white text-xs font-semibold rounded-lg hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    Probeer opnieuw
+                  </button>
+                )}
+                <button
+                  onClick={handleCloseCancelBanner}
+                  className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--ff-color-warning-600)] hover:text-[var(--color-text)] rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors"
+                  aria-label="Sluit melding"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -214,8 +225,8 @@ export default function PricingPage() {
         <div className="ff-container">
           <div className="max-w-2xl lg:max-w-5xl mx-auto px-4 sm:px-6">
 
-            {/* Stack on mobile, 3-col on lg */}
-            <div className="flex flex-col lg:grid lg:grid-cols-3 gap-5 sm:gap-6">
+            {/* Stack on mobile, 2-col on md (tablet), 3-col on lg */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
 
               {/* ── Free Plan ── */}
               <article className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 sm:p-7 shadow-[var(--shadow-soft)] flex flex-col">
@@ -259,7 +270,7 @@ export default function PricingPage() {
               </article>
 
               {/* ── Premium Plan ── */}
-              <article className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-6 sm:p-7 shadow-2xl text-white flex flex-col lg:col-span-1">
+              <article className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-6 sm:p-7 shadow-2xl text-white flex flex-col md:col-span-2 lg:col-span-1">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-warning-600)] text-white rounded-full text-xs font-bold mb-3 self-start shadow-md">
                   <Star className="w-3.5 h-3.5 fill-white" />
                   MEEST GEKOZEN
@@ -565,7 +576,7 @@ export default function PricingPage() {
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 min-h-[52px] bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded-xl font-semibold text-base transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 active:scale-[0.98]"
                   data-event="cta_upgrade_premium_pricing_final"
                 >
-                  Upgrade naar Premium
+                  Kies een plan
                   <ArrowRight className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
