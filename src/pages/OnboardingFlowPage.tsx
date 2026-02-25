@@ -725,7 +725,7 @@ export default function OnboardingFlowPage() {
       </div>
 
       {/* Question Content */}
-      <div className="ff-container py-5 sm:py-7" style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="ff-container py-5 sm:py-7" style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col gap-5">
             <div>
@@ -1034,34 +1034,60 @@ export default function OnboardingFlowPage() {
       </div>
       {/* End FF Container */}
 
-      {/* Bottom Bar — fixed, altijd zichtbaar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)] border-t border-[var(--color-border)] shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
-        <div className="w-full px-4 pt-3 max-w-3xl mx-auto" style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
+      {/* Bottom Bar */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 40,
+        backgroundColor: 'var(--color-surface)',
+        borderTop: '1px solid var(--color-border)',
+        boxShadow: '0 -2px 12px rgba(0,0,0,0.08)',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}>
+        <div style={{ padding: '12px 16px 8px', maxWidth: '720px', margin: '0 auto', boxSizing: 'border-box', width: '100%' }}>
 
-          {/* Hint row */}
           {step?.required && !canProceed() && (
-            <p className="text-center text-xs text-[var(--color-muted)] mb-2 flex items-center justify-center gap-1.5">
-              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+            <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--color-muted)', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <AlertCircle style={{ width: '14px', height: '14px', flexShrink: 0 }} aria-hidden="true" />
               <span>{attemptedNext ? getValidationError() : 'Selecteer een optie om door te gaan'}</span>
             </p>
           )}
 
-          {/* Button row: Back icon | [Skip] | Next (flex-1) */}
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className="inline-flex items-center justify-center w-11 h-11 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
-              aria-label="Ga terug naar vorige vraag"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '44px', height: '44px', flexShrink: 0,
+                border: '2px solid var(--color-border)',
+                borderRadius: '12px',
+                backgroundColor: 'var(--color-surface)',
+                cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
+                opacity: currentStep === 0 ? 0.3 : 1,
+              }}
+              aria-label="Ga terug"
             >
-              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              <ArrowLeft style={{ width: '16px', height: '16px' }} />
             </button>
 
             {step && !step.required && (
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center justify-center px-3 h-11 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-muted)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)] active:scale-[0.98] transition-all flex-shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
-                aria-label="Sla deze stap over"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '0 12px', height: '44px', flexShrink: 0,
+                  border: '2px solid var(--color-border)',
+                  borderRadius: '12px',
+                  backgroundColor: 'var(--color-surface)',
+                  color: 'var(--color-muted)',
+                  fontSize: '14px', fontWeight: 500,
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                }}
+                aria-label="Overslaan"
               >
                 Overslaan
               </button>
@@ -1070,39 +1096,33 @@ export default function OnboardingFlowPage() {
             <button
               onClick={handleNext}
               disabled={isSubmitting}
-              className={`inline-flex items-center justify-center gap-2 px-4 h-11 rounded-xl font-bold text-sm transition-all shadow-sm flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] active:scale-[0.98] ${
-                isSubmitting
-                  ? 'bg-[var(--ff-color-primary-700)] text-white opacity-60 cursor-not-allowed'
-                  : canProceed() || !step?.required
-                  ? 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] shadow-[0_2px_8px_rgba(0,0,0,0.15)]'
-                  : 'bg-[var(--ff-color-primary-700)] text-white opacity-50'
-              }`}
-              aria-label={isSubmitting ? "Quiz wordt verwerkt" : (currentStep === quizSteps.length - 1 ? "Bekijk mijn antwoorden" : "Ga naar volgende vraag")}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                flex: 1, height: '44px', minWidth: 0,
+                borderRadius: '12px',
+                backgroundColor: 'var(--ff-color-primary-700)',
+                color: 'white',
+                fontSize: '14px', fontWeight: 700,
+                border: 'none',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                opacity: isSubmitting ? 0.6 : (canProceed() || !step?.required ? 1 : 0.5),
+                boxShadow: canProceed() || !step?.required ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
+              }}
+              aria-label={currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
             >
-              {isSubmitting ? (
-                <span>Verwerken...</span>
-              ) : currentStep === quizSteps.length - 1 ? (
-                <>
-                  <span className="truncate">Bekijk antwoorden</span>
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                </>
-              ) : (
-                <>
-                  <span>Volgende</span>
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                </>
-              )}
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {isSubmitting ? 'Verwerken...' : currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
+              </span>
+              {!isSubmitting && <ArrowRight style={{ width: '16px', height: '16px', flexShrink: 0 }} />}
             </button>
           </div>
 
-          {/* Opslaan en later verder — subtle link below buttons */}
-          <div className="flex items-center justify-between mt-1.5">
-            <div />
+          <div style={{ textAlign: 'center', marginTop: '6px' }}>
             <button
               onClick={handleSaveAndContinueLater}
-              className="flex items-center gap-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors py-1 px-2 rounded"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
             >
-              <Clock className="w-3 h-3 flex-shrink-0" />
+              <Clock style={{ width: '11px', height: '11px', flexShrink: 0 }} />
               <span>Opslaan en later verder</span>
             </button>
           </div>
