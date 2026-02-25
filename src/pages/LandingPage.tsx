@@ -18,7 +18,6 @@ const FeatureBlocksV4 = lazy(() =>
 const FinalCTA = lazy(() =>
   import("@/components/landing/FinalCTA").then((m) => ({ default: m.FinalCTA }))
 );
-import { StickyCTA } from "@/components/landing/StickyCTA";
 
 /**
  * Landing Page - Benefits-Driven & Accessible
@@ -83,7 +82,6 @@ export default function LandingPage() {
           <FeatureBlocksV4 />
           <FinalCTA />
         </Suspense>
-        <StickyCTA />
       </main>
     </>
   );
