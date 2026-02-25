@@ -164,46 +164,45 @@ export function SocialProofV3() {
           <>
             {/* ── MOBILE: single-card swipe carousel ── */}
             <div className="md:hidden">
-              <div className="relative">
-                <TestimonialCard review={reviews[activeIndex]} gradient={reviews[activeIndex].gradient} />
+              <TestimonialCard review={reviews[activeIndex]} gradient={reviews[activeIndex].gradient} />
 
-                {/* Prev / Next arrows */}
+              {/* Prev / Next + dots row */}
+              <div className="flex items-center justify-between gap-3 mt-5 px-1">
                 <button
                   type="button"
                   onClick={prev}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-9 h-9 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] shadow-md flex items-center justify-center hover:border-[var(--ff-color-primary-400)] transition-colors"
+                  className="w-10 h-10 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] shadow-sm flex items-center justify-center hover:border-[var(--ff-color-primary-400)] transition-colors flex-shrink-0"
                   aria-label="Vorige testimonial"
                 >
                   <ChevronLeft className="w-4 h-4 text-[var(--color-text)]" />
                 </button>
+
+                <div className="flex items-center justify-center gap-2" aria-label="Testimonialpagina's">
+                  {reviews.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveIndex(idx)}
+                      className={`rounded-full transition-all duration-300 ${
+                        idx === activeIndex
+                          ? 'w-7 h-2 bg-[var(--ff-color-primary-600)]'
+                          : 'w-2 h-2 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)]'
+                      }`}
+                      aria-label={`Testimonial ${idx + 1}`}
+                      aria-current={idx === activeIndex ? 'true' : undefined}
+                    />
+                  ))}
+                </div>
+
                 <button
                   type="button"
                   onClick={next}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-9 h-9 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] shadow-md flex items-center justify-center hover:border-[var(--ff-color-primary-400)] transition-colors"
+                  className="w-10 h-10 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] shadow-sm flex items-center justify-center hover:border-[var(--ff-color-primary-400)] transition-colors flex-shrink-0"
                   aria-label="Volgende testimonial"
                 >
                   <ChevronRight className="w-4 h-4 text-[var(--color-text)]" />
                 </button>
               </div>
 
-              {/* Dot indicators */}
-              <div className="flex items-center justify-center gap-2 mt-5" aria-label="Testimonialpagina's">
-                {reviews.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveIndex(idx)}
-                    className={`rounded-full transition-all duration-300 ${
-                      idx === activeIndex
-                        ? 'w-7 h-2 bg-[var(--ff-color-primary-600)]'
-                        : 'w-2 h-2 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)]'
-                    }`}
-                    aria-label={`Testimonial ${idx + 1}`}
-                    aria-current={idx === activeIndex ? 'true' : undefined}
-                  />
-                ))}
-              </div>
-
-              {/* Swipe hint */}
               <p className="text-center text-xs text-[var(--color-muted)] mt-3">
                 {activeIndex + 1} van {reviews.length}
               </p>
