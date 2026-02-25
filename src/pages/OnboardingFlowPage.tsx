@@ -676,207 +676,112 @@ export default function OnboardingFlowPage() {
 
   return (
     <>
-      <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+      {/* Fullscreen quiz shell — geen Navbar, geen Footer */}
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', minHeight: '-webkit-fill-available', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', overflow: 'hidden' }}>
         <Helmet>
           <title>Start je Style Report – FitFi</title>
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
-      {/* Progress Bar */}
-      <div className="sticky top-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-b border-[var(--color-border)] shadow-sm">
-        <div className="ff-container py-2.5 sm:py-3">
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xs sm:text-sm font-semibold text-[var(--color-text)] flex-shrink-0">
+        {/* ── HEADER BAR ── */}
+        <div style={{ flexShrink: 0, backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ maxWidth: '720px', margin: '0 auto', padding: '10px 16px 0', boxSizing: 'border-box' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text)' }}>
                 Stap {currentStep + 1} van {quizSteps.length}
               </span>
-              {step && (
-                <span className="text-xs text-[var(--color-muted)] truncate hidden sm:block">
-                  — {step.title.length > 40 ? step.title.substring(0, 40) + '…' : step.title}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <button
-                onClick={handleSaveAndContinueLater}
-                className="hidden sm:flex items-center gap-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors px-2 py-1 rounded hover:bg-[var(--color-bg)]"
-                title="Opslaan en later verdergaan"
-              >
-                <Clock className="w-3.5 h-3.5" />
-                Opslaan & later verder
-              </button>
               <button
                 onClick={handleCancel}
-                className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-muted)' }}
                 aria-label="Stop de quiz"
-                title="Stoppen"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-muted)] hover:text-[var(--color-text)]" />
+                <X style={{ width: '18px', height: '18px' }} />
               </button>
             </div>
-          </div>
-          <div className="relative h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out rounded-full"
-              style={{ width: `${progress}%` }}
-            />
+            <div style={{ height: '3px', backgroundColor: 'var(--color-bg)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0' }}>
+              <div
+                style={{
+                  height: '100%',
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-accent-600))',
+                  borderRadius: '99px',
+                  transition: 'width 0.4s ease',
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Question Content */}
-      <div className="ff-container py-5 sm:py-7" style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom, 0px))' }}>
-        <div className="max-w-3xl mx-auto">
-          <div className="flex flex-col gap-5">
-            <div>
+        {/* ── SCROLLABLE CONTENT ── */}
+        <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 16px 32px', boxSizing: 'border-box' }}>
 
-          {/* Email Capture Prompt - DISABLED during quiz for focus
-          {showEmailCapture && currentStep === 3 && (
-            <EmailCapturePrompt
-              onDismiss={() => setShowEmailCapture(false)}
-              onEmailSaved={(email) => {
-                setEmailCaptured(true);
-                setShowEmailCapture(false);
-              }}
+            <ArchetypePreview
+              answers={answers}
+              currentStep={currentStep}
+              totalSteps={quizSteps.length}
             />
-          )}
-          */}
 
-          {/* Real-time Archetype Preview - Shows from step 3 onwards */}
-          <ArchetypePreview
-            answers={answers}
-            currentStep={currentStep}
-            totalSteps={quizSteps.length}
-          />
-
-          {/* Question Header - Responsive typography */}
-          <AnimatedQuestionTransition
-            questionKey={currentStep}
-            direction="forward"
-          >
-            <div className="text-center mb-5 sm:mb-7">
-              {/* Time estimate only on first question */}
-              {currentStep === 0 && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ff-color-accent-50)] rounded-full text-xs font-medium text-[var(--ff-color-accent-700)] mb-4">
-                  <Clock className="w-3 h-3" />
-                  Minder dan 2 minuten
-                </div>
-              )}
-
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 leading-tight">
-                {step.title}
-              </h1>
-
-              {step.description && (
-                <p className="text-sm sm:text-base text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed">
-                  {step.description}
-                </p>
-              )}
-
-              {/* Multi-select hint for stylePreferences */}
-              {step.field === 'stylePreferences' && step.type === 'checkbox' && (
-                <div className="mt-3 flex items-center justify-center gap-2 text-xs sm:text-sm text-[var(--ff-color-primary-600)]">
-                  <CheckCircle className="w-4 h-4" />
-                  <span className="font-medium">Tip: Kies 2-3 stijlen die het beste bij je passen</span>
-                </div>
-              )}
-            </div>
-          </AnimatedQuestionTransition>
-
-          {/* Answer Options - 52px+ touch targets */}
-          <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-            {/* Checkbox (Multiple Select) - Mobile-first touch targets */}
-            {(step.type === 'checkbox' || step.type === 'multiselect') && step.options && (
-              <>
-                {/* Selection counter for stylePreferences */}
-                {step.field === 'stylePreferences' && (
-                  <div className="text-center mb-2 sm:mb-3">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--ff-color-primary-50)] rounded-full text-xs font-medium text-[var(--ff-color-primary-700)]">
-                      <span className="flex items-center justify-center w-4 h-4 rounded-full bg-[var(--ff-color-primary-600)] text-white text-xs font-bold">
-                        {(answers[step.field as keyof QuizAnswers] as string[] || []).length}
-                      </span>
-                      {(answers[step.field as keyof QuizAnswers] as string[] || []).length === 0
-                        ? 'Geen stijlen'
-                        : (answers[step.field as keyof QuizAnswers] as string[] || []).length === 1
-                          ? '1 stijl'
-                          : `${(answers[step.field as keyof QuizAnswers] as string[] || []).length} stijlen`
-                      }
-                    </span>
+            <AnimatedQuestionTransition questionKey={currentStep} direction="forward">
+              <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                {currentStep === 0 && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', backgroundColor: 'var(--ff-color-accent-50)', borderRadius: '99px', fontSize: '12px', fontWeight: 500, color: 'var(--ff-color-accent-700)', marginBottom: '16px' }}>
+                    <Clock style={{ width: '12px', height: '12px' }} />
+                    Minder dan 2 minuten
                   </div>
                 )}
+                <h1 style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 700, lineHeight: 1.25, marginBottom: '10px', color: 'var(--color-text)' }}>
+                  {step.title}
+                </h1>
+                {step.description && (
+                  <p style={{ fontSize: '15px', color: 'var(--color-muted)', lineHeight: 1.6, maxWidth: '480px', margin: '0 auto' }}>
+                    {step.description}
+                  </p>
+                )}
+                {step.field === 'stylePreferences' && (
+                  <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--ff-color-primary-600)', fontWeight: 500 }}>
+                    <CheckCircle style={{ width: '14px', height: '14px' }} />
+                    Kies 2–3 stijlen
+                  </div>
+                )}
+              </div>
+            </AnimatedQuestionTransition>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* ── ANTWOORD OPTIES ── */}
+
+            {/* Checkbox / multiselect */}
+            {(step.type === 'checkbox' || step.type === 'multiselect') && step.options && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '10px' }}>
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
                     <button
                       key={option.value}
                       onClick={() => handleMultiSelect(step.field, option.value)}
-                      className={`text-left p-4 min-h-[64px] rounded-xl border-2 transition-all active:scale-[0.98] ${
-                        isSelected
-                          ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
-                      }`}
+                      style={{
+                        display: 'flex', alignItems: 'flex-start', gap: '12px',
+                        padding: '14px 16px', minHeight: '64px',
+                        borderRadius: '14px',
+                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
+                        backgroundColor: isSelected ? 'var(--ff-color-primary-50)' : 'var(--color-surface)',
+                        cursor: 'pointer', textAlign: 'left',
+                        transition: 'border-color 0.15s, background-color 0.15s',
+                      }}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                          isSelected
-                            ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
-                            : 'border-[var(--color-border)]'
-                        }`}>
-                          {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-sm sm:text-base leading-snug">{option.label}</div>
-                          {option.description && (
-                            <div className="text-xs text-[var(--color-muted)] mt-0.5 line-clamp-2">{option.description}</div>
-                          )}
-                        </div>
+                      <div style={{
+                        width: '20px', height: '20px', flexShrink: 0, marginTop: '1px',
+                        borderRadius: '6px',
+                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
+                        backgroundColor: isSelected ? 'var(--ff-color-primary-600)' : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s',
+                      }}>
+                        {isSelected && <CheckCircle style={{ width: '13px', height: '13px', color: 'white' }} />}
                       </div>
-                    </button>
-                  );
-                })}
-                </div>
-              </>
-            )}
-
-            {/* Radio (Single Select) */}
-            {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div className={`grid grid-cols-1 gap-2.5 ${step.options.length > 3 ? 'sm:grid-cols-2' : ''}`}>
-                {step.options.map((option) => {
-                  const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleAnswer(step.field, option.value)}
-                      aria-pressed={isSelected}
-                      className={`w-full text-left px-4 py-4 min-h-[64px] rounded-xl border-2 transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 ${
-                        isSelected
-                          ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] shadow-sm'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)]/40'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                          isSelected
-                            ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
-                            : 'border-[var(--color-border)]'
-                        }`}>
-                          {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className={`font-semibold text-sm sm:text-base leading-snug ${isSelected ? 'text-[var(--ff-color-primary-900)]' : 'text-[var(--color-text)]'}`}>
-                            {option.label}
-                          </div>
-                          {option.description && (
-                            <div className="text-xs text-[var(--color-muted)] mt-0.5 leading-relaxed">{option.description}</div>
-                          )}
-                        </div>
-                        {isSelected && (
-                          <svg className="w-5 h-5 text-[var(--ff-color-primary-600)] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                          </svg>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--color-text)', lineHeight: 1.3 }}>{option.label}</div>
+                        {option.description && (
+                          <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
                         )}
                       </div>
                     </button>
@@ -885,67 +790,91 @@ export default function OnboardingFlowPage() {
               </div>
             )}
 
-            {/* Slider */}
+            {/* Radio / select */}
+            {(step.type === 'radio' || step.type === 'select') && step.options && (
+              <div style={{ display: 'grid', gridTemplateColumns: step.options.length > 3 ? 'repeat(auto-fill, minmax(240px, 1fr))' : '1fr', gap: '10px' }}>
+                {step.options.map((option) => {
+                  const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleAnswer(step.field, option.value)}
+                      aria-pressed={isSelected}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '12px',
+                        padding: '14px 16px', minHeight: '64px',
+                        borderRadius: '14px',
+                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
+                        backgroundColor: isSelected ? 'var(--ff-color-primary-50)' : 'var(--color-surface)',
+                        cursor: 'pointer', textAlign: 'left', width: '100%',
+                        transition: 'border-color 0.15s, background-color 0.15s',
+                      }}
+                    >
+                      <div style={{
+                        width: '20px', height: '20px', flexShrink: 0,
+                        borderRadius: '50%',
+                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
+                        backgroundColor: isSelected ? 'var(--ff-color-primary-600)' : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s',
+                      }}>
+                        {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'white' }} />}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--color-text)', lineHeight: 1.3 }}>{option.label}</div>
+                        {option.description && (
+                          <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
+                        )}
+                      </div>
+                      {isSelected && (
+                        <svg style={{ width: '18px', height: '18px', flexShrink: 0, color: 'var(--ff-color-primary-600)' }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Slider / budget */}
             {step.type === 'slider' && (
-              <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-4 sm:p-5">
-                <div className="text-center mb-4 sm:mb-5">
-                  <div className="text-4xl sm:text-5xl font-bold text-[var(--ff-color-primary-600)] mb-1.5">
+              <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '48px', fontWeight: 700, color: 'var(--ff-color-primary-600)', lineHeight: 1 }}>
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
-                  <div className="text-sm font-medium text-[var(--color-text)] mb-0.5">
-                    {(answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 75
-                      ? 'Budget'
-                      : (answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 150
-                      ? 'Middensegment'
-                      : 'Premium'}
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text)', marginTop: '6px' }}>
+                    {(answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 75 ? 'Budget' : (answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 150 ? 'Middensegment' : 'Premium'}
                   </div>
-                  <div className="text-xs sm:text-sm text-[var(--color-muted)] mb-3">Per kledingstuk</div>
-
-                  {/* Plus/Minus Controls for Mobile-Friendly Adjustment */}
-                  <div className="flex items-center justify-center gap-3 sm:gap-4 mt-4 mb-3">
+                  <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>Per kledingstuk</div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
                     <button
                       type="button"
-                      onClick={() => {
-                        const currentVal = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50;
-                        const newVal = Math.max((step.min || 0), currentVal - (step.step || 5));
-                        handleAnswer(step.field, newVal);
-                      }}
-                      className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm"
+                      onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.max(step.min || 0, v - (step.step || 5))); }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--ff-color-primary-300)', backgroundColor: 'var(--color-surface)', color: 'var(--ff-color-primary-700)', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verlaag budget"
-                    >
-                      −
-                    </button>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none">€</span>
+                    >−</button>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)', pointerEvents: 'none' }}>€</span>
                       <input
-                        id="budget-input"
                         type="number"
                         min={step.min || 0}
                         max={step.max || 100}
                         step={step.step || 1}
                         value={answers[step.field as keyof QuizAnswers] as number || step.min || 50}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          if (!isNaN(val) && val >= (step.min || 0) && val <= (step.max || 100)) {
-                            handleAnswer(step.field, val);
-                          }
-                        }}
-                        className="w-24 sm:w-28 pl-7 pr-3 py-2.5 sm:py-2 rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-center font-bold text-lg sm:text-base focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors"
+                        onChange={(e) => { const v = parseInt(e.target.value); if (!isNaN(v) && v >= (step.min || 0) && v <= (step.max || 100)) handleAnswer(step.field, v); }}
+                        style={{ width: '96px', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
                         aria-label="Budget invoeren"
                       />
                     </div>
                     <button
                       type="button"
-                      onClick={() => {
-                        const currentVal = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50;
-                        const newVal = Math.min((step.max || 100), currentVal + (step.step || 5));
-                        handleAnswer(step.field, newVal);
-                      }}
-                      className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-[var(--ff-color-primary-600)] border-2 border-[var(--ff-color-primary-600)] text-white font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-700)] active:scale-95 transition-all shadow-md"
+                      onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.min(step.max || 100, v + (step.step || 5))); }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--ff-color-primary-600)', backgroundColor: 'var(--ff-color-primary-600)', color: 'white', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verhoog budget"
-                    >
-                      +
-                    </button>
+                    >+</button>
                   </div>
                 </div>
                 <input
@@ -955,60 +884,38 @@ export default function OnboardingFlowPage() {
                   step={step.step || 1}
                   value={answers[step.field as keyof QuizAnswers] as number || step.min || 50}
                   onChange={(e) => handleAnswer(step.field, parseInt(e.target.value))}
-                  className="w-full h-3 rounded-full appearance-none cursor-pointer bg-[var(--color-bg)]"
-                  style={{
-                    background: `linear-gradient(to right, var(--ff-color-primary-600) 0%, var(--ff-color-primary-600) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) ${((((answers[step.field as keyof QuizAnswers] as number || step.min || 50) - (step.min || 0)) / ((step.max || 100) - (step.min || 0))) * 100)}%, var(--color-bg) 100%)`
-                  }}
+                  style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--ff-color-primary-600)' }}
                 />
-                <div className="flex justify-between mt-4 text-xs text-[var(--color-muted)]">
-                  <div className="text-left">
-                    <div className="font-medium text-[var(--color-text)]">€{step.min || 0}</div>
-                    <div>Budget</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-medium text-[var(--color-text)]">€75-150</div>
-                    <div>Middensegment</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-[var(--color-text)]">€{step.max || 100}+</div>
-                    <div>Premium</div>
-                  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: 'var(--color-muted)' }}>
+                  <span>€{step.min || 0} Budget</span>
+                  <span>€75–150 Midden</span>
+                  <span>€{step.max || 100}+ Premium</span>
                 </div>
               </div>
             )}
 
             {/* Sizes */}
             {step.type === 'sizes' && (
-              <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] p-5 sm:p-6 space-y-5">
+              <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {getSizeFieldsForGender(answers.gender).map((field) => (
-                  <div key={field.name} className="space-y-1.5">
-                    <label className="block text-sm font-semibold text-[var(--color-text)]">{field.label}</label>
-                    {(field as any).helperText && (
-                      <p className="text-xs text-[var(--color-muted)]">{(field as any).helperText}</p>
-                    )}
-                    <div className="relative">
+                  <div key={field.name}>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', marginBottom: '6px' }}>{field.label}</label>
+                    <div style={{ position: 'relative' }}>
                       <select
-                        className="w-full px-4 py-3.5 min-h-[52px] rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:border-[var(--ff-color-primary-600)] focus:outline-none transition-colors appearance-none pr-10 text-base"
                         value={((answers.sizes as any) || {})[field.name] || ""}
-                        onChange={(e) => {
-                          const currentSizes = (answers.sizes as any) || {};
-                          handleAnswer('sizes', { ...currentSizes, [field.name]: e.target.value });
-                        }}
+                        onChange={(e) => { const s = (answers.sizes as any) || {}; handleAnswer('sizes', { ...s, [field.name]: e.target.value }); }}
+                        style={{ width: '100%', padding: '12px 40px 12px 14px', minHeight: '52px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', fontSize: '15px', appearance: 'none', cursor: 'pointer' }}
                       >
                         <option value="">Weet ik niet / Sla over</option>
-                        {field.options.map(opt => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
+                        {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                       </select>
-                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted)]">
-                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
+                      <div style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--color-muted)' }}>
+                        <svg style={{ width: '16px', height: '16px' }} viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
                       </div>
                     </div>
                   </div>
                 ))}
-                <p className="text-xs text-[var(--color-muted)] pt-1">
-                  {step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}
-                </p>
+                <p style={{ fontSize: '12px', color: 'var(--color-muted)' }}>{step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}</p>
               </div>
             )}
 
@@ -1017,120 +924,108 @@ export default function OnboardingFlowPage() {
               <PhotoUpload
                 value={answers.photoUrl as string}
                 onChange={(url) => handleAnswer('photoUrl', url)}
-                onAnalysisComplete={(analysis) => {
-                  handleAnswer('colorAnalysis', analysis);
-                }}
+                onAnalysisComplete={(analysis) => handleAnswer('colorAnalysis', analysis)}
               />
             )}
-          </div>
-
-            </div>
-            {/* End Main Question Content */}
 
           </div>
-          {/* End Flex Container */}
         </div>
-        {/* End Max Width Container */}
-      </div>
-      {/* End FF Container */}
 
-      {/* Bottom Bar */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 40,
-        backgroundColor: 'var(--color-surface)',
-        borderTop: '1px solid var(--color-border)',
-        boxShadow: '0 -2px 12px rgba(0,0,0,0.08)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      }}>
-        <div style={{ padding: '12px 16px 8px', maxWidth: '720px', margin: '0 auto', boxSizing: 'border-box', width: '100%' }}>
+        {/* ── BOTTOM BAR ── altijd volledig zichtbaar */}
+        <div style={{
+          flexShrink: 0,
+          backgroundColor: 'var(--color-surface)',
+          borderTop: '1px solid var(--color-border)',
+          boxShadow: '0 -2px 12px rgba(0,0,0,0.07)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}>
+          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '10px 16px 12px', boxSizing: 'border-box' }}>
 
-          {step?.required && !canProceed() && (
-            <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--color-muted)', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <AlertCircle style={{ width: '14px', height: '14px', flexShrink: 0 }} aria-hidden="true" />
-              <span>{attemptedNext ? getValidationError() : 'Selecteer een optie om door te gaan'}</span>
-            </p>
-          )}
-
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: '44px', height: '44px', flexShrink: 0,
-                border: '2px solid var(--color-border)',
-                borderRadius: '12px',
-                backgroundColor: 'var(--color-surface)',
-                cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
-                opacity: currentStep === 0 ? 0.3 : 1,
-              }}
-              aria-label="Ga terug"
-            >
-              <ArrowLeft style={{ width: '16px', height: '16px' }} />
-            </button>
-
-            {step && !step.required && (
-              <button
-                onClick={handleSkip}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '0 12px', height: '44px', flexShrink: 0,
-                  border: '2px solid var(--color-border)',
-                  borderRadius: '12px',
-                  backgroundColor: 'var(--color-surface)',
-                  color: 'var(--color-muted)',
-                  fontSize: '14px', fontWeight: 500,
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                }}
-                aria-label="Overslaan"
-              >
-                Overslaan
-              </button>
+            {step?.required && !canProceed() && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '8px', fontSize: '12px', color: 'var(--color-muted)' }}>
+                <AlertCircle style={{ width: '13px', height: '13px', flexShrink: 0 }} aria-hidden="true" />
+                <span>{attemptedNext ? getValidationError() : 'Selecteer een optie om door te gaan'}</span>
+              </div>
             )}
 
-            <button
-              onClick={handleNext}
-              disabled={isSubmitting}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                flex: 1, height: '44px', minWidth: 0,
-                borderRadius: '12px',
-                backgroundColor: 'var(--ff-color-primary-700)',
-                color: 'white',
-                fontSize: '14px', fontWeight: 700,
-                border: 'none',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                opacity: isSubmitting ? 0.6 : (canProceed() || !step?.required ? 1 : 0.5),
-                boxShadow: canProceed() || !step?.required ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
-              }}
-              aria-label={currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
-            >
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {isSubmitting ? 'Verwerken...' : currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
-              </span>
-              {!isSubmitting && <ArrowRight style={{ width: '16px', height: '16px', flexShrink: 0 }} />}
-            </button>
-          </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+              <button
+                onClick={handleBack}
+                disabled={currentStep === 0}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: '48px', height: '48px', flexShrink: 0,
+                  borderRadius: '12px',
+                  border: '2px solid var(--color-border)',
+                  backgroundColor: 'var(--color-surface)',
+                  cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
+                  opacity: currentStep === 0 ? 0.25 : 1,
+                  transition: 'opacity 0.15s',
+                }}
+                aria-label="Vorige vraag"
+              >
+                <ArrowLeft style={{ width: '18px', height: '18px' }} />
+              </button>
 
-          <div style={{ textAlign: 'center', marginTop: '6px' }}>
-            <button
-              onClick={handleSaveAndContinueLater}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
-            >
-              <Clock style={{ width: '11px', height: '11px', flexShrink: 0 }} />
-              <span>Opslaan en later verder</span>
-            </button>
-          </div>
+              {step && !step.required && (
+                <button
+                  onClick={handleSkip}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '0 16px', height: '48px', flexShrink: 0,
+                    borderRadius: '12px',
+                    border: '2px solid var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-muted)',
+                    fontSize: '14px', fontWeight: 500,
+                    whiteSpace: 'nowrap', cursor: 'pointer',
+                  }}
+                >
+                  Overslaan
+                </button>
+              )}
 
+              <button
+                onClick={handleNext}
+                disabled={isSubmitting}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  flex: 1, height: '48px', minWidth: 0,
+                  borderRadius: '12px',
+                  border: 'none',
+                  backgroundColor: canProceed() || !step?.required ? 'var(--ff-color-primary-700)' : 'var(--ff-color-primary-300)',
+                  color: 'white',
+                  fontSize: '15px', fontWeight: 700,
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  transition: 'background-color 0.2s',
+                  boxShadow: canProceed() || !step?.required ? '0 2px 10px rgba(0,0,0,0.18)' : 'none',
+                }}
+                aria-label={currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
+              >
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  {isSubmitting ? 'Verwerken...' : currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
+                </span>
+                {!isSubmitting && <ArrowRight style={{ width: '17px', height: '17px', flexShrink: 0 }} />}
+              </button>
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: '8px' }}>
+              <button
+                onClick={handleSaveAndContinueLater}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
+              >
+                <Clock style={{ width: '11px', height: '11px' }} />
+                Opslaan en later verder
+              </button>
+            </div>
+
+          </div>
         </div>
-      </div>
 
-    </main>
+      </div>
+      {/* Einde quiz shell */}
+
+
 
       {/* Review Modal — samenvatting van keuzes voor submit */}
       {showReviewModal && (
