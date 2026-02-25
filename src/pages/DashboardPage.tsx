@@ -127,7 +127,7 @@ export default function DashboardPage() {
                   className="inline-flex items-center gap-2 px-7 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-lg"
                 >
                   <Sparkles className="w-5 h-5" />
-                  Start gratis stijlquiz
+                  Ontvang jouw stijladvies
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </motion.div>
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 {userName || "Welkom terug"}
               </h1>
               <p className="text-sm text-[var(--color-muted)] mt-0.5">
-                Welkom terug. Dit is je laatste stijlrapport.
+                {archetypeName ? `Jouw stijlprofiel: ${archetypeName}` : "Jouw persoonlijk stijlrapport staat klaar."}
               </p>
             </div>
             <button
@@ -320,11 +320,11 @@ export default function DashboardPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Lock className="w-4 h-4 text-[var(--color-muted)]" />
-                      <span className="text-sm font-semibold text-[var(--color-text)]">Gratis account</span>
+                      <Star className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+                      <span className="text-sm font-semibold text-[var(--color-text)]">Upgrade naar Premium</span>
                     </div>
                     <p className="text-sm text-[var(--color-muted)] leading-relaxed mb-4">
-                      Premium geeft je extra kleur- en shopadvies. De modules hieronder zijn vergrendeld.
+                      Ontgrendel diepgaande kleuranalyse, een persoonlijke shopping cheat sheet en een uitgebreide outfit-bibliotheek.
                     </p>
                     <ul className="space-y-1.5 mb-4">
                       {[

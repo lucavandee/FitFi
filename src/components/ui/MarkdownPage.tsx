@@ -72,9 +72,9 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
 
     // Simple markdown to HTML conversion (with XSS protection)
     return markdown
-      .replace(/^# (.*$)/gim, (match, p1) => `<h1 class="text-3xl font-bold text-gray-900 mb-6">${escapeHtml(p1)}</h1>`)
-      .replace(/^## (.*$)/gim, (match, p1) => `<h2 class="text-2xl font-semibold text-gray-900 mb-4 mt-8">${escapeHtml(p1)}</h2>`)
-      .replace(/^### (.*$)/gim, (match, p1) => `<h3 class="text-xl font-medium text-gray-900 mb-3 mt-6">${escapeHtml(p1)}</h3>`)
+      .replace(/^# (.*$)/gim, (match, p1) => `<h1 class="text-3xl font-bold text-[var(--color-text)] mb-6">${escapeHtml(p1)}</h1>`)
+      .replace(/^## (.*$)/gim, (match, p1) => `<h2 class="text-2xl font-semibold text-[var(--color-text)] mb-4 mt-8">${escapeHtml(p1)}</h2>`)
+      .replace(/^### (.*$)/gim, (match, p1) => `<h3 class="text-xl font-medium text-[var(--color-text)] mb-3 mt-6">${escapeHtml(p1)}</h3>`)
       .replace(/^\*\*(.*)\*\*/gim, (match, p1) => `<strong class="font-semibold">${escapeHtml(p1)}</strong>`)
       .replace(/^\*(.*)\*/gim, (match, p1) => `<em class="italic">${escapeHtml(p1)}</em>`)
       .replace(/^- (.*$)/gim, (match, p1) => `<li class="mb-1 ml-4">• ${escapeHtml(p1)}</li>`)
@@ -83,8 +83,8 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
         const safeUrl = url.trim().toLowerCase().startsWith('javascript:') ? '#' : url;
         return `<a href="${escapeHtml(safeUrl)}" class="text-[var(--ff-color-primary-500)] hover:text-[var(--ff-color-primary-500)]/80 underline">${escapeHtml(text)}</a>`;
       })
-      .replace(/\n\n/g, '</p><p class="text-gray-700 leading-relaxed mb-4">')
-      .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-gray-700 leading-relaxed mb-4">')
+      .replace(/\n\n/g, '</p><p class="text-[var(--color-text)] leading-relaxed mb-4">')
+      .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-[var(--color-text)] leading-relaxed mb-4">')
       .replace(/$(?![>])/gm, '</p>');
   };
 
@@ -94,10 +94,10 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Content niet gevonden</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">Content niet gevonden</h1>
+          <p className="text-[var(--color-muted)] mb-6">{error}</p>
           <Button as={Link} to={backLink} variant="primary">
             {backLabel}
           </Button>
@@ -107,7 +107,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F6F6]">
+    <div className="min-h-screen bg-[var(--color-bg)]">
       <div className="max-w-4xl mx-auto py-12 px-4 md:px-8 lg:px-16">
         {/* Header */}
         {(title || description || backLink) && (
@@ -125,8 +125,8 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
             {(title || description) && (
               <div className="flex items-center justify-between">
                 <div>
-                  {title && <h1 className="text-3xl font-light text-gray-900 mb-2">{title}</h1>}
-                  {description && <p className="text-gray-600">{description}</p>}
+                  {title && <h1 className="text-3xl font-light text-[var(--color-text)] mb-2">{title}</h1>}
+                  {description && <p className="text-[var(--color-muted)]">{description}</p>}
                 </div>
 
                 {downloadUrl && (

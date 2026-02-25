@@ -162,7 +162,7 @@ export default function Navbar() {
                     Inloggen
                   </a>
                   <a href="/registreren" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_start_gratis">
-                    Begin gratis
+                    Stijladvies ontvangen
                   </a>
                 </>
               )
@@ -291,7 +291,7 @@ export default function Navbar() {
             !isHome && (
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <a href="/inloggen" className="ff-btn ff-btn-secondary min-h-[44px] w-full">Log in</a>
-                <a href="/registreren" className="ff-btn ff-btn-primary min-h-[44px] w-full">Start gratis</a>
+                <a href="/registreren" className="ff-btn ff-btn-primary min-h-[44px] w-full">Stijladvies ontvangen</a>
               </div>
             )
           ) : (

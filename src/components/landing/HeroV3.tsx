@@ -189,9 +189,9 @@ export function HeroV3() {
                 boxShadow: '0 4px 24px rgba(100,72,40,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
                 letterSpacing: '0.01em',
               }}
-              aria-label="Start gratis jouw persoonlijk stijlquiz"
+              aria-label="Ontvang jouw persoonlijk stijladvies"
             >
-              <span>Start gratis stijlquiz</span>
+              <span>Ontvang jouw stijladvies</span>
               <span
                 className="w-8 h-8 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
                 style={{ background: 'rgba(255,255,255,0.14)' }}
@@ -339,9 +339,9 @@ export function HeroV3() {
                   color: '#F7F3EC',
                   boxShadow: '0 8px 40px rgba(122,97,74,0.45)',
                 }}
-                aria-label="Start gratis stijlquiz"
+                aria-label="Ontvang jouw persoonlijk stijladvies"
               >
-                Start gratis stijlquiz
+                Ontvang jouw stijladvies
                 <ArrowRight
                   className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1"
                   aria-hidden="true"
