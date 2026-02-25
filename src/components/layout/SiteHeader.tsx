@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import MobileNavDrawer from "@/components/layout/MobileNavDrawer";
 import { ThemeToggleCompact } from "@/components/ui/ThemeToggle";
+import Logo from "@/components/ui/Logo";
 
 export const HEADER_NAV_LINKS = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
@@ -49,14 +50,10 @@ export default function SiteHeader() {
           {/* Brand */}
           <NavLink
             to="/"
-            className={[
-              "font-heading text-lg tracking-wide transition-colors duration-300",
-              mobileTransparent
-                ? "text-[var(--color-text)] md:text-[var(--color-text)]"
-                : "text-[var(--color-text)]",
-            ].join(" ")}
+            className="inline-flex items-center transition-opacity duration-200 hover:opacity-80 focus-visible:outline-none focus-visible:shadow-[var(--shadow-ring)] rounded-sm"
+            aria-label="FitFi Home"
           >
-            FitFi
+            <Logo size="md" variant={mobileTransparent ? "default" : "default"} />
           </NavLink>
 
           {/* Desktop nav */}
