@@ -130,7 +130,14 @@ export default function NovaLoginPrompt({
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+        role="button"
+        tabIndex={-1}
+        aria-label="Sluit dialoog"
+        onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
+      />
       
       {/* Modal */}
       <div className="relative z-10 w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl animate-scale-in">

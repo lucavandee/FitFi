@@ -35,7 +35,7 @@ export default function ChatPanelPro() {
         />
         <button
           type="submit"
-          className="rounded-md bg-[#2B6AF3] px-4 py-2 text-white transition-transform hover:scale-105 disabled:opacity-50"
+          className="rounded-md bg-[var(--ff-color-nova)] px-4 py-2 text-white transition-transform hover:scale-105 hover:bg-[var(--ff-color-nova-hover)] disabled:opacity-50"
           disabled={sending}
         >
           {sending ? "Bezig…" : "Verstuur"}

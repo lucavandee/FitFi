@@ -9,16 +9,16 @@ interface StyleDNAVisualizerProps {
 }
 
 const STYLE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
-  minimal: { label: 'Minimaal', emoji: '⚪', color: '#E8E8E8' },
+  minimal: { label: 'Minimaal', emoji: '⚪', color: 'var(--ff-color-neutral-300)' },
   classic: { label: 'Klassiek', emoji: '👔', color: 'var(--color-text)' },
-  romantic: { label: 'Romantisch', emoji: '🌸', color: '#FFB6C1' },
-  bohemian: { label: 'Bohemian', emoji: '🌿', color: '#D2691E' },
-  bold: { label: 'Bold', emoji: '⚡', color: '#FF6B6B' },
-  urban: { label: 'Urban', emoji: '🏙️', color: '#4A5568' },
-  sporty: { label: 'Sportief', emoji: '⚽', color: '#00CED1' },
-  refined: { label: 'Verfijnd', emoji: '✨', color: '#8B7355' },
-  relaxed: { label: 'Relaxed', emoji: '😌', color: '#87CEEB' },
-  professional: { label: 'Professioneel', emoji: '💼', color: '#34495E' },
+  romantic: { label: 'Romantisch', emoji: '🌸', color: 'var(--ff-color-primary-300)' },
+  bohemian: { label: 'Bohemian', emoji: '🌿', color: 'var(--ff-color-beige-600)' },
+  bold: { label: 'Bold', emoji: '⚡', color: 'var(--ff-color-danger-400)' },
+  urban: { label: 'Urban', emoji: '🏙️', color: 'var(--ff-color-neutral-600)' },
+  sporty: { label: 'Sportief', emoji: '⚽', color: 'var(--ff-color-turquoise)' },
+  refined: { label: 'Verfijnd', emoji: '✨', color: 'var(--ff-color-beige-700)' },
+  relaxed: { label: 'Relaxed', emoji: '😌', color: 'var(--ff-color-accent-400)' },
+  professional: { label: 'Professioneel', emoji: '💼', color: 'var(--ff-color-neutral-700)' },
 };
 
 export function StyleDNAVisualizer({
@@ -77,7 +77,7 @@ export function StyleDNAVisualizer({
                 const style = STYLE_LABELS[styleKey] || {
                   label: styleKey,
                   emoji: '🎨',
-                  color: '#808080'
+                  color: 'var(--ff-color-neutral-500)'
                 };
                 const percentage = Math.round(score);
                 const isTop = index === 0;

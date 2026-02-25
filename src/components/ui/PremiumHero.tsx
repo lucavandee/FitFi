@@ -21,11 +21,11 @@ export default function PremiumHero({
   return (
     <section className="relative py-20 md:py-32 overflow-hidden ff-hero-card">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#2B6AF3]/10 via-transparent to-[#67E8F9]/5"></div>
-      
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)]/40 via-transparent to-[var(--ff-color-accent-100)]/20"></div>
+
       {/* Floating elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-[#2B6AF3]/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-10 right-12 w-40 h-40 bg-[#67E8F9]/20 rounded-full blur-3xl"></div>
+      <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--ff-color-primary-200)]/40 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-10 right-12 w-40 h-40 bg-[var(--ff-color-accent-200)]/40 rounded-full blur-3xl"></div>
 
       <div className="relative ff-container">
         <div className="max-w-2xl">

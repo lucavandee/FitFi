@@ -220,6 +220,33 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {/* ── SOCIAL PROOF STRIP — before pricing to build trust ── */}
+      <section className="py-6 sm:py-8 bg-[var(--color-surface)]/60 border-y border-[var(--color-border)]">
+        <div className="ff-container">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center justify-center text-center sm:text-left">
+              {[
+                { quote: "Binnen 10 minuten wist ik precies wat me staat.", name: "Sophie M.", plan: "Premium" },
+                { quote: "Nova leert mijn smaak en wordt telkens beter.", name: "Thomas V.", plan: "Founder" },
+                { quote: "Bespaard op verkeerde aankopen in de eerste maand.", name: "Lisa R.", plan: "Premium" },
+              ].map(({ quote, name, plan }) => (
+                <div key={name} className="flex items-start gap-3 max-w-xs">
+                  <div className="flex-shrink-0 flex gap-0.5" aria-label="5 sterren">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 text-amber-500 fill-amber-500" aria-hidden="true" />
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-sm text-[var(--color-text)] leading-snug mb-1">&ldquo;{quote}&rdquo;</p>
+                    <p className="text-xs text-[var(--color-muted)]">{name} &middot; {plan}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── PRICING CARDS ── */}
       <section className="py-10 sm:py-14 -mt-4 sm:-mt-6">
         <div className="ff-container">

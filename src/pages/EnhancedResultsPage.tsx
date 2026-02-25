@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Bookmark, BookmarkCheck, Share2, Sparkles, RefreshCw, TrendingUp, Award, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Download, X, Grid3x3, Layers } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -12,7 +12,6 @@ import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
 import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
 import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileConfidenceBadge";
-import { StyleDNATooltip } from "@/components/results/StyleDNATooltip";
 import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
 import { ColorPaletteSection } from "@/components/results/ColorPaletteSection";
 import { StyleIdentityHero } from "@/components/results/StyleIdentityHero";
@@ -20,21 +19,15 @@ import { StyleDNAMixIndicator } from "@/components/results/StyleDNAMixIndicator"
 import { ArchetypeBreakdown } from "@/components/results/ArchetypeBreakdown";
 import { ArchetypeDetector } from "@/services/styleProfile/archetypeDetector";
 import { ColorProfileExplainer } from "@/components/results/ColorProfileExplainer";
-import SmartImage from "@/components/ui/SmartImage";
 import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightExtractor";
 import type { ArchetypeKey } from "@/config/archetypes";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
 import {
-  getStyleDNALabel,
   formatStyleDNAValue,
   getSeasonDescription
 } from "@/config/terminologyMapping";
-import { OutfitFilters, type FilterOptions } from "@/components/results/OutfitFilters";
-import { OutfitZoomModal } from "@/components/results/OutfitZoomModal";
-import { PremiumOutfitCard as PremiumOutfitCardComponent } from "../components/outfits/PremiumOutfitCard";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
-import { canonicalUrl } from "@/utils/urls";
 import { SwipeableOutfitGallery } from "@/components/outfits/SwipeableOutfitGallery";
 import { useMonthlyUpgrades } from "@/hooks/useMonthlyUpgrades";
 import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
@@ -47,6 +40,8 @@ import TrendInsights from "@/components/premium/TrendInsights";
 import { TrustSignals } from "@/components/results/TrustSignals";
 import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
+import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
+import { ShareModal } from "@/components/results/ShareModal";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -91,7 +86,10 @@ export default function EnhancedResultsPage() {
 
   React.useEffect(() => {
     try {
-      localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
+      const existing = localStorage.getItem(LS_KEYS.RESULTS_TS);
+      if (!existing) {
+        localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
+      }
     } catch {}
   }, []);
 
@@ -260,16 +258,6 @@ export default function EnhancedResultsPage() {
 
   const [showShareModal, setShowShareModal] = React.useState(false);
   const [selectedOutfit, setSelectedOutfit] = React.useState<(Outfit | OutfitSeed) | null>(null);
-  const [showZoomModal, setShowZoomModal] = React.useState(false);
-  const [zoomedOutfit, setZoomedOutfit] = React.useState<any | null>(null);
-
-  const [filters, setFilters] = React.useState<FilterOptions>({
-    categories: [],
-    seasons: [],
-    colors: [],
-    sortBy: "match",
-    viewMode: "grid-2",
-  });
 
   // Gallery mode: swipe (mobile-friendly) or grid (desktop-friendly)
   const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
@@ -1390,216 +1378,22 @@ export default function EnhancedResultsPage() {
       )}
 
       {/* Outfit Detail Modal */}
-      <AnimatePresence>
-        {selectedOutfit && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedOutfit(null)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[var(--color-surface)] rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-            >
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h3 className="text-3xl font-bold mb-2">
-                    {'name' in selectedOutfit ? selectedOutfit.name : `Outfit Details`}
-                  </h3>
-                  <p className="text-[var(--color-muted)]">
-                    Perfect voor {archetypeName.toLowerCase()} stijl
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSelectedOutfit(null)}
-                  className="p-2 rounded-full hover:bg-[var(--ff-color-neutral-100)] transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+      <OutfitDetailModal
+        outfit={selectedOutfit}
+        onClose={() => setSelectedOutfit(null)}
+        onToggleFav={toggleFav}
+        favs={favs}
+        allOutfits={displayOutfits as any[]}
+        archetypeName={archetypeName}
+        activeColorProfile={activeColorProfile}
+        colorProfile={color}
+      />
 
-              {/* Image */}
-              {selectedOutfit && 'image' in selectedOutfit && selectedOutfit.image && (
-                <div className="mb-6 rounded-2xl overflow-hidden">
-                  <img
-                    src={selectedOutfit.image}
-                    alt={'name' in selectedOutfit ? selectedOutfit.name : 'Outfit'}
-                    className="w-full h-auto"
-                  />
-                </div>
-              )}
-
-              {/* Details */}
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold text-lg mb-2">Waarom dit outfit?</h4>
-                  <p className="text-[var(--color-text)]">
-                    Dit outfit is speciaal voor jou samengesteld op basis van je stijlvoorkeuren en kleurprofiel.
-                    De combinatie past perfect bij {archetypeName.toLowerCase()} en benadrukt jouw unieke style DNA.
-                  </p>
-                </div>
-
-                {color && (
-                  <div>
-                    <h4 className="font-semibold text-lg mb-2">Kleuradvies</h4>
-                    <p className="text-[var(--color-text)]">
-                      Gebaseerd op jouw kleurprofiel "{activeColorProfile.paletteName}" hebben we kleuren gekozen die goed bij jouw huidskleur en ondertoon passen.
-                    </p>
-                  </div>
-                )}
-
-                {'products' in selectedOutfit && selectedOutfit.products && selectedOutfit.products.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold text-lg mb-3">Producten in dit outfit</h4>
-                    <div className="space-y-2">
-                      {selectedOutfit.products.map((product: any, idx: number) => (
-                        <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg">
-                          <div className="w-16 h-16 bg-[var(--ff-color-neutral-200)] rounded-lg overflow-hidden flex-shrink-0">
-                            {product.image_url && (
-                              <img
-                                src={product.image_url}
-                                alt={product.name || 'Product'}
-                                className="w-full h-full object-cover"
-                              />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm truncate">
-                              {product.name || `Product ${idx + 1}`}
-                            </p>
-                            {product.brand && (
-                              <p className="text-xs text-[var(--color-muted)]">{product.brand}</p>
-                            )}
-                          </div>
-                          {product.price && (
-                            <div className="text-right">
-                              <p className="font-semibold">€{product.price}</p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 mt-8">
-                <button
-                  onClick={() => {
-                    const id = 'id' in selectedOutfit ? String(selectedOutfit.id) : `seed-${displayOutfits.indexOf(selectedOutfit)}`;
-                    toggleFav(id);
-                  }}
-                  className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-200)] transition-colors flex items-center justify-center gap-2"
-                >
-                  <Heart className="w-5 h-5" />
-                  Bewaar outfit
-                </button>
-                <button
-                  onClick={() => setSelectedOutfit(null)}
-                  className="px-6 py-3 bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--ff-color-neutral-200)] transition-colors"
-                >
-                  Sluiten
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Premium Share Modal - Apple-inspired */}
-      <AnimatePresence>
-        {showShareModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowShareModal(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[var(--color-surface)] rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
-            >
-              {/* Header with gradient */}
-              <div className="relative p-8 pb-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)]">
-                <button
-                  onClick={() => setShowShareModal(false)}
-                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--color-surface)]/50 transition-colors"
-                  aria-label="Sluit modal"
-                >
-                  <X className="w-5 h-5 text-[var(--color-muted)]" />
-                </button>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center mb-4 shadow-lg">
-                  <Share2 className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2">Deel je Style Report</h3>
-                <p className="text-base text-[var(--color-muted)]">Laat anderen zien wat jouw unieke stijl is</p>
-              </div>
-
-              {/* Share options */}
-              <div className="p-6 space-y-3">
-                <button
-                  onClick={() => {
-                    const url = typeof window !== "undefined" ? window.location.href : canonicalUrl('/results');
-                    navigator.clipboard.writeText(url);
-                    toast.success('Link gekopieerd!', {
-                      icon: '📋',
-                      duration: 2000,
-                    });
-                  }}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
-                    <Download className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-[var(--color-text)]">Kopieer link</p>
-                    <p className="text-sm text-[var(--color-muted)]">Deel via WhatsApp, email of social media</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    const url = typeof window !== "undefined" ? window.location.href : canonicalUrl('/results');
-                    const text = `Bekijk mijn persoonlijke Style Report van FitFi! 👗✨`;
-                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                    window.open(twitterUrl, '_blank', 'noopener,noreferrer');
-                  }}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
-                    <Share2 className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-[var(--color-text)]">Deel op Twitter</p>
-                    <p className="text-sm text-[var(--color-muted)]">Tweet je stijlrapport</p>
-                  </div>
-                </button>
-              </div>
-
-              {/* Footer */}
-              <div className="px-6 pb-6">
-                <button
-                  onClick={() => setShowShareModal(false)}
-                  className="w-full px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-base hover:bg-[var(--ff-color-primary-700)] transition-all shadow-lg active:scale-[0.98]"
-                >
-                  Sluiten
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Share Modal */}
+      <ShareModal
+        open={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
 
       {/* Exit Intent Discount Modal */}
       <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />

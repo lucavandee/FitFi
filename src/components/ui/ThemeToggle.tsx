@@ -85,7 +85,7 @@ export function ThemeToggleCompact() {
     <button
       onClick={toggleTheme}
       className="p-2 rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors"
-      aria-label="Toggle theme"
+      aria-label={theme === 'light' ? 'Schakel naar dark mode' : 'Schakel naar light mode'}
     >
       {theme === 'light' ? (
         <Moon className="w-5 h-5 text-[var(--color-muted)]" />

@@ -27,14 +27,9 @@ export default function ChatPanel() {
     await send(text);
   };
 
-  console.log('[ChatPanel] Rendering. isOpen =', isOpen);
-
   if (!isOpen) {
-    console.log('[ChatPanel] Not rendering - isOpen is false');
     return null;
   }
-
-  console.log('[ChatPanel] Rendering panel!');
 
   const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
@@ -178,7 +173,7 @@ export default function ChatPanel() {
                   placeholder:text-[var(--color-muted)]
                   focus:outline-none
                   focus:ring-2
-                  focus:ring-[#2B6AF3]/30
+                  focus:ring-[var(--ff-color-nova-ring)]
                   disabled:opacity-50
                   disabled:cursor-not-allowed
                 "

@@ -66,6 +66,11 @@
   --ff-color-danger-800: #991B1B;
   --ff-color-danger-900: #7F1D1D;
 
+  /* Nova AI brand color */
+  --ff-color-nova: #2B6AF3;          /* Nova chat accent (intentional blue — distinct from brand taupe) */
+  --ff-color-nova-hover: #245de0;    /* Nova hover state */
+  --ff-color-nova-ring: rgba(43, 106, 243, 0.30); /* Nova focus ring */
+
   /* Additional utility colors */
   --ff-color-turquoise: #40E0D0;     /* accent color for special elements */
   --ff-color-secondary-600: #6B7280; /* neutral secondary */

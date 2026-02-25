@@ -20,10 +20,10 @@ export default function NovaLauncher() {
         bottom-[max(1rem,env(safe-area-inset-bottom))]
         inline-flex items-center gap-2
         rounded-full px-4 h-12
-        bg-[#2B6AF3] text-white
+        bg-[var(--ff-color-nova)] text-white
         shadow-lg shadow-black/10
-        hover:bg-[#245de0] active:scale-[0.98]
-        focus:outline-none focus:ring-2 focus:ring-[#2B6AF3]/30
+        hover:bg-[var(--ff-color-nova-hover)] active:scale-[0.98]
+        focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-nova-ring)]
         transition-all duration-200
       "
     >

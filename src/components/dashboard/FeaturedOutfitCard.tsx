@@ -92,7 +92,14 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="cursor-pointer group" onClick={handleOutfitClick}>
+        <div
+          className="cursor-pointer group"
+          onClick={handleOutfitClick}
+          role="button"
+          tabIndex={0}
+          aria-label={`Bekijk outfit: ${outfit.title}`}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleOutfitClick(); } }}
+        >
           <SmartImage
             src={outfit.imageUrl}
             alt={outfit.title}
