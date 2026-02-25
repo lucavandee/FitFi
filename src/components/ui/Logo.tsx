@@ -6,68 +6,39 @@ interface LogoProps {
   className?: string;
 }
 
-/*
-  Wordmark: "FitFi" — geen spatie, alles aan elkaar.
-  Ontwerp:
-  - "Fit" — Montserrat 700, donker
-  - een slanke diagonale schuine streep (/) in brand-taupe als visuele verbinding
-    tussen de twee lettergrepen, ingesloten binnen de x-hoogte
-  - "Fi" — Montserrat 300, brand-taupe
-  De slash is bewust smaller en lichter dan de letters, waardoor
-  het woordmerk een modisch/couture gevoel krijgt — vergelijkbaar
-  met mode-labels als A/X of Y-3.
-*/
 const Logo: React.FC<LogoProps> = ({
   size = "md",
   variant = "default",
   className = "",
 }) => {
-  const scale: Record<string, number> = { sm: 16, md: 22, lg: 30 };
-  const fs = scale[size];
+  const scale: Record<string, number> = { sm: 0.65, md: 1, lg: 1.45 };
+  const s = scale[size];
 
-  const textDark =
+  const primary =
     variant === "light"
       ? "#FFFFFF"
       : variant === "dark"
       ? "#1E2333"
       : "var(--color-text)";
 
-  const brandColor =
+  const accent =
     variant === "light"
-      ? "rgba(255,255,255,0.60)"
+      ? "rgba(255,255,255,0.55)"
+      : "var(--ff-color-primary-600)";
+
+  const dot =
+    variant === "light"
+      ? "rgba(255,255,255,0.80)"
       : "var(--ff-color-primary-500)";
 
-  const slashColor =
-    variant === "light"
-      ? "rgba(255,255,255,0.45)"
-      : "var(--ff-color-primary-400)";
-
-  const tracking = fs * 0.03;
-  const baseline = Math.round(fs * 0.82);
-  const h = Math.round(fs * 1.1);
-
-  /* Approximate character widths for Montserrat at this size */
-  const fitWidth = fs * 1.85;   /* "Fit" bold */
-  const slashW = fs * 0.36;     /* visual slash gap */
-  const fiWidth = fs * 1.18;    /* "Fi" light */
-
-  const totalW = Math.ceil(fitWidth + slashW + fiWidth + tracking * 4);
-
-  /* Slash geometry: spans the cap-height, angled ~18 deg */
-  const slashX1 = fitWidth + slashW * 0.12;
-  const slashX2 = fitWidth + slashW * 0.88;
-  const slashTop = h * 0.08;
-  const slashBot = h * 0.92;
-  const slashStroke = Math.max(1, fs * 0.062);
-
-  /* "Fi" starts after slash */
-  const fiX = fitWidth + slashW;
+  const W = Math.round(88 * s);
+  const H = Math.round(28 * s);
 
   return (
     <svg
-      width={totalW}
-      height={h}
-      viewBox={`0 0 ${totalW} ${h}`}
+      width={W}
+      height={H}
+      viewBox="0 0 88 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -75,44 +46,30 @@ const Logo: React.FC<LogoProps> = ({
       role="img"
       style={{ display: "block", overflow: "visible" }}
     >
-      {/* "Fit" — bold, donker */}
-      <text
-        x={0}
-        y={baseline}
-        fontFamily="'Montserrat', 'Inter', system-ui, sans-serif"
-        fontWeight="700"
-        fontSize={fs}
-        letterSpacing={tracking}
-        fill={textDark}
-        style={{ userSelect: "none" }}
-      >
-        Fit
-      </text>
+      {/* ─── F ─── */}
+      <rect x="0" y="2" width="2.8" height="22" rx="1.2" fill={primary} />
+      <rect x="0" y="2" width="13" height="2.8" rx="1.2" fill={primary} />
+      <rect x="0" y="12.6" width="10" height="2.6" rx="1.2" fill={primary} />
 
-      {/* Diagonale verbindingsstreep */}
-      <line
-        x1={slashX1}
-        y1={slashBot}
-        x2={slashX2}
-        y2={slashTop}
-        stroke={slashColor}
-        strokeWidth={slashStroke}
-        strokeLinecap="round"
-      />
+      {/* ─── i ─── */}
+      <rect x="17" y="7" width="2.8" height="17" rx="1.2" fill={primary} />
+      <circle cx="18.4" cy="3.4" r="1.9" fill={dot} />
 
-      {/* "Fi" — light, brand-taupe */}
-      <text
-        x={fiX}
-        y={baseline}
-        fontFamily="'Montserrat', 'Inter', system-ui, sans-serif"
-        fontWeight="300"
-        fontSize={fs}
-        letterSpacing={tracking}
-        fill={brandColor}
-        style={{ userSelect: "none" }}
-      >
-        Fi
-      </text>
+      {/* ─── t ─── */}
+      <rect x="24" y="2" width="2.8" height="22" rx="1.2" fill={primary} />
+      <rect x="20.5" y="7" width="9.5" height="2.6" rx="1.2" fill={primary} />
+
+      {/* ─── thin divider ─── */}
+      <rect x="34" y="6" width="1.2" height="16" rx="0.6" fill={accent} opacity="0.45" />
+
+      {/* ─── F (accent) ─── */}
+      <rect x="39" y="2" width="2.8" height="22" rx="1.2" fill={accent} />
+      <rect x="39" y="2" width="13" height="2.8" rx="1.2" fill={accent} />
+      <rect x="39" y="12.6" width="10" height="2.6" rx="1.2" fill={accent} />
+
+      {/* ─── i (accent) ─── */}
+      <rect x="56" y="7" width="2.8" height="17" rx="1.2" fill={accent} />
+      <circle cx="57.4" cy="3.4" r="1.9" fill={dot} />
     </svg>
   );
 };
