@@ -322,14 +322,14 @@ export function EmptyStateWidget() {
           Start je stijlreis
         </h2>
         <p className="text-sm text-[var(--color-muted)] mb-6 max-w-sm">
-          Beantwoord een paar vragen en ontdek welke outfits bij jou passen — in 5 minuten
+          Beantwoord een paar vragen en ontdek welke outfits bij jou passen — in 2 minuten
         </p>
         <NavLink
           to="/onboarding"
           className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all"
         >
           <Sparkles className="w-5 h-5" />
-          Start stijlquiz
+          Start gratis stijlquiz
           <ArrowRight className="w-5 h-5" />
         </NavLink>
       </div>

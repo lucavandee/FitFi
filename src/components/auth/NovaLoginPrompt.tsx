@@ -70,7 +70,7 @@ export default function NovaLoginPrompt({
           'Ontvang persoonlijk advies van Nova'
         ],
         primaryAction: handleQuiz,
-        primaryLabel: 'Start stijlquiz',
+        primaryLabel: 'Start gratis stijlquiz',
         showSecondary: true,
         secondaryLabel: 'Later'
       };

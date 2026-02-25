@@ -23,12 +23,11 @@ export const ResultsEmptyState: React.FC<ResultsEmptyStateProps> = ({
           Geen outfits gevonden
         </h3>
         <p className="text-[var(--color-muted)] mb-6 max-w-md mx-auto text-sm">
-          We konden geen outfits vinden die aan je filters voldoen.
-          Pas je filters aan voor meer resultaten.
+          Geen outfits gevonden met deze combinatie. Probeer minder filters te combineren, of reset alles om alle outfits te zien.
         </p>
         {onResetFilters && (
           <Button variant="primary" onClick={onResetFilters}>
-            Reset filters
+            Alle filters wissen
           </Button>
         )}
       </div>
@@ -45,11 +44,11 @@ export const ResultsEmptyState: React.FC<ResultsEmptyStateProps> = ({
         Nog geen outfits opgeslagen
       </h3>
       <p className="text-[var(--color-muted)] mb-6 max-w-md mx-auto text-sm">
-        Bewaar je eerste look vanuit je stijlresultaten — dan verschijnen ze hier.
+        Ga naar je stijlrapport en klik op het hartje om outfits op te slaan — ze verschijnen hier.
       </p>
       <NavLink to="/onboarding">
         <Button variant="primary">
-          Start stijlquiz
+          Start gratis stijlquiz
         </Button>
       </NavLink>
     </div>

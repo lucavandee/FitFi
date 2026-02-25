@@ -191,7 +191,7 @@ export function HeroV3() {
               }}
               aria-label="Start gratis jouw persoonlijk stijlquiz"
             >
-              <span>Start mijn stijlquiz</span>
+              <span>Start gratis stijlquiz</span>
               <span
                 className="w-8 h-8 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
                 style={{ background: 'rgba(255,255,255,0.14)' }}
@@ -341,7 +341,7 @@ export function HeroV3() {
                 }}
                 aria-label="Start gratis stijlquiz"
               >
-                Start mijn stijlquiz
+                Start gratis stijlquiz
                 <ArrowRight
                   className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1"
                   aria-hidden="true"

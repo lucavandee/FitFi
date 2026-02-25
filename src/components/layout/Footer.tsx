@@ -45,7 +45,7 @@ export default function Footer() {
               Klaar om te beginnen?
             </h2>
             <p className="text-sm text-[var(--color-muted)] mb-4">
-              Ontdek je stijl in 5 minuten
+              Ontdek je stijl in 2 minuten
             </p>
             <button
               onClick={() => navigate('/onboarding')}

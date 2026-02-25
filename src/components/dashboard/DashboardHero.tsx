@@ -57,7 +57,7 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
                   className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] text-white text-lg font-bold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
                 >
                   <Sparkles className="w-6 h-6" />
-                  Start stijlquiz
+                  Start gratis stijlquiz
                 </Link>
               )}
             </div>

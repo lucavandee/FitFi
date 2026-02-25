@@ -40,6 +40,8 @@ export default function Navbar() {
   const isAuthed = !!user;
   const isHome = HOME_PATHS.includes(pathname);
   const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
   useLockBody(open && !isOnboarding);
 
   React.useEffect(() => {
@@ -66,10 +68,43 @@ export default function Navbar() {
   // Sluit menu bij routewissel of ESC
   React.useEffect(() => setOpen(false), [pathname]);
   React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  }, [open]);
+
+  // Focus trap: zet focus op eerste focusbaar element als menu opent
+  React.useEffect(() => {
+    if (!open || !menuRef.current) return;
+    const focusable = menuRef.current.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    focusable[0]?.focus();
+
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !menuRef.current) return;
+      const all = Array.from(menuRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ));
+      if (!all.length) return;
+      const first = all[0];
+      const last = all[all.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", handleTab);
+    return () => document.removeEventListener("keydown", handleTab);
+  }, [open]);
 
   // Verberg navbar tijdens quiz/onboarding — altijd ná alle hooks
   if (isOnboarding) {
@@ -166,6 +201,7 @@ export default function Navbar() {
 
         {/* Mobile toggle - 44px touch target */}
         <button
+          ref={toggleRef}
           type="button"
           className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 hover:bg-[var(--ff-color-primary-50)]"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
@@ -220,10 +256,13 @@ export default function Navbar() {
 
       {/* Mobile sheet */}
       <div
+        ref={menuRef}
         id="mobile-menu"
         hidden={!open}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobiel navigatiemenu"
         className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]"
-        aria-label="Mobiel menu"
       >
         <div className="ff-container py-4">
           <ul className="flex flex-col gap-1">
@@ -268,7 +307,7 @@ export default function Navbar() {
                   </span>
                 )}
               </a>
-              <button onClick={handleLogout} className="ff-btn ff-btn-secondary min-h-[44px] w-full">Uit</button>
+              <button onClick={handleLogout} className="ff-btn ff-btn-secondary min-h-[44px] w-full">Uitloggen</button>
             </div>
           )}
         </div>

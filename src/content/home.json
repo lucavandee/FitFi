@@ -3,7 +3,7 @@
   "heroSubtitle": "Vul een korte quiz in en krijg een stijlprofiel met outfits die bij je passen.",
   "heroImage": "/uploads/hero-highres.png",
   "ctas": [
-    { "label": "Begin quiz", "to": "/stijlquiz", "variant": "primary" },
+    { "label": "Start gratis stijlquiz", "to": "/stijlquiz", "variant": "primary" },
     { "label": "Bekijk voorbeeld", "to": "/results", "variant": "secondary" }
   ],
   "badges": [],

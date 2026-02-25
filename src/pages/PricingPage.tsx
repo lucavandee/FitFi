@@ -254,7 +254,7 @@ export default function PricingPage() {
                   className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
                   data-event="cta_start_free_pricing"
                 >
-                  Ga door met Free
+                  Start gratis
                 </NavLink>
               </article>
 
@@ -556,7 +556,7 @@ export default function PricingPage() {
                   data-event="cta_start_free_pricing_final"
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
-                  Start mijn stijlquiz
+                  Start gratis stijlquiz
                 </NavLink>
 
                 <button

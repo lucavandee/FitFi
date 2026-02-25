@@ -127,7 +127,7 @@ export default function DashboardPage() {
                   className="inline-flex items-center gap-2 px-7 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-lg"
                 >
                   <Sparkles className="w-5 h-5" />
-                  Start stijlquiz
+                  Start gratis stijlquiz
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </motion.div>
