@@ -6,12 +6,8 @@ export default function NovaLauncher() {
   const { isOpen, setOpen } = useNovaChat();
 
   const onClick = () => {
-    console.log('[NovaLauncher] Button clicked! Current isOpen:', isOpen);
-    console.log('[NovaLauncher] Setting isOpen to:', !isOpen);
     setOpen(!isOpen);
   };
-
-  console.log('[NovaLauncher] Rendering. isOpen =', isOpen);
 
   return (
     <button

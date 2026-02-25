@@ -222,6 +222,11 @@ export function ShopItemsList({
                     {product.category}
                   </span>
                 )}
+                {product.affiliateUrl && (
+                  <span className="text-[10px] font-medium text-[var(--color-text)]/40 border border-[var(--color-border)] rounded px-1 py-0.5 leading-none">
+                    affiliate
+                  </span>
+                )}
               </div>
 
               {/* Shop Button */}

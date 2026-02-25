@@ -116,10 +116,6 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        console.log('✅ [NovaChatProvider] Active session confirmed:', {
-          userId: session.user.id.substring(0, 8) + '...',
-          hasSession: true
-        });
       } catch (authError) {
         console.error('❌ [NovaChatProvider] Session check failed:', authError);
         setError('Authenticatie mislukt. Log opnieuw in.');
