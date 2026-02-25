@@ -177,16 +177,17 @@ export function SocialProofV3() {
                   <ChevronLeft className="w-4 h-4 text-[var(--color-text)]" />
                 </button>
 
-                <div className="flex items-center justify-center gap-2" aria-label="Testimonialpagina's">
+                <div className="flex items-center justify-center gap-3" aria-label="Testimonialpagina's">
                   {reviews.map((_, idx) => (
                     <button
                       key={idx}
                       onClick={() => setActiveIndex(idx)}
-                      className={`rounded-full transition-all duration-300 ${
+                      className={`rounded-full transition-all duration-300 flex-shrink-0 ${
                         idx === activeIndex
-                          ? 'w-7 h-2 bg-[var(--ff-color-primary-600)]'
-                          : 'w-2 h-2 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)]'
+                          ? 'w-6 h-2.5 bg-[var(--ff-color-primary-600)]'
+                          : 'w-2.5 h-2.5 bg-[var(--color-border)] hover:bg-[var(--ff-color-primary-300)]'
                       }`}
+                      style={{ minWidth: idx === activeIndex ? '1.5rem' : '0.625rem' }}
                       aria-label={`Testimonial ${idx + 1}`}
                       aria-current={idx === activeIndex ? 'true' : undefined}
                     />
