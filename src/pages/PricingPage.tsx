@@ -233,7 +233,7 @@ export default function PricingPage() {
                 <div key={name} className="flex items-start gap-3 max-w-xs">
                   <div className="flex-shrink-0 flex gap-0.5" aria-label="5 sterren">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 text-amber-500 fill-amber-500" aria-hidden="true" />
+                      <Star key={i} className="w-3.5 h-3.5 text-[var(--ff-color-warning-600)] fill-[var(--ff-color-warning-600)]" aria-hidden="true" />
                     ))}
                   </div>
                   <div>
@@ -350,8 +350,8 @@ export default function PricingPage() {
               </article>
 
               {/* ── Founder Plan ── */}
-              <article className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 sm:p-7 text-white shadow-2xl border border-amber-500/20 flex flex-col">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-bold mb-3 self-start">
+              <article className="bg-gradient-to-br from-[var(--ff-color-primary-900)] to-[var(--ff-color-primary-800)] rounded-2xl p-6 sm:p-7 text-white shadow-2xl border border-[var(--ff-color-warning-500)]/20 flex flex-col">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-warning-500)]/20 text-[var(--ff-color-warning-300)] rounded-full text-xs font-bold mb-3 self-start">
                   <Crown className="w-3.5 h-3.5" />
                   LIFETIME
                 </div>
@@ -361,14 +361,14 @@ export default function PricingPage() {
                   <span className="text-white/50 line-through text-lg">€999</span>
                 </div>
                 <p className="text-white/55 text-xs mb-1">Eenmalig • Lifetime toegang</p>
-                <p className="text-amber-400 text-xs font-semibold mb-5">
+                <p className="text-[var(--ff-color-warning-400)] text-xs font-semibold mb-5">
                   Break-even: {breakEvenMonths} maanden
                 </p>
 
                 <button
                   onClick={() => founderProduct && handleCheckout(founderProduct.id)}
                   disabled={isLoading || isPending}
-                  className="w-full px-6 py-4 min-h-[52px] bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl font-bold text-base transition-all focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] mb-2"
+                  className="w-full px-6 py-4 min-h-[52px] bg-[var(--ff-color-warning-500)] hover:bg-[var(--ff-color-warning-400)] text-[var(--ff-color-primary-900)] rounded-xl font-bold text-base transition-all focus-visible:ring-2 focus-visible:ring-[var(--ff-color-warning-400)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-900)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] mb-2"
                   data-event="cta_start_founder_pricing"
                 >
                   {isLoading ? (
@@ -382,7 +382,7 @@ export default function PricingPage() {
                 <p className="text-xs text-white/45 text-center mb-6">Beperkt beschikbaar • 30 dagen garantie</p>
 
                 <div className="border-t border-white/10 pt-5 flex-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-amber-400/80 mb-3">Exclusief:</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[var(--ff-color-warning-400)]/80 mb-3">Exclusief:</p>
                   <ul className="space-y-3" role="list">
                     {[
                       { Icon: Check,      title: "Lifetime Premium toegang" },
@@ -392,8 +392,8 @@ export default function PricingPage() {
                       { Icon: TrendingUp, title: "Invloed op roadmap" },
                     ].map(({ Icon, title }) => (
                       <li key={title} className="flex items-center gap-3">
-                        <div className="w-6 h-6 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-3.5 h-3.5 text-amber-400" />
+                        <div className="w-6 h-6 bg-[var(--ff-color-warning-500)]/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-3.5 h-3.5 text-[var(--ff-color-warning-400)]" />
                         </div>
                         <span className="text-sm font-medium">{title}</span>
                       </li>
@@ -441,7 +441,7 @@ export default function PricingPage() {
                       <div className="col-span-1 p-3 sm:p-4 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wide">Feature</div>
                       <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--color-text)]">Gratis</div>
                       <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]">Premium</div>
-                      <div className="p-3 sm:p-4 text-center text-xs font-bold text-amber-600 bg-amber-50">Founder</div>
+                      <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--ff-color-warning-700)] bg-[var(--ff-color-warning-50)]">Founder</div>
                     </div>
 
                     {/* Rows */}
@@ -453,7 +453,7 @@ export default function PricingPage() {
                             {row.note && (
                               <span className="group relative flex-shrink-0 mt-0.5">
                                 <Info className="w-3 h-3 text-[var(--color-muted)] cursor-help" />
-                                <span className="pointer-events-none absolute bottom-full left-0 mb-1 hidden group-hover:block bg-slate-900 text-white text-xs rounded-lg px-3 py-2 w-52 shadow-xl z-10 leading-relaxed">
+                                <span className="pointer-events-none absolute bottom-full left-0 mb-1 hidden group-hover:block bg-[var(--ff-color-primary-900)] text-white text-xs rounded-lg px-3 py-2 w-52 shadow-xl z-10 leading-relaxed">
                                   {row.note}
                                 </span>
                               </span>
@@ -465,7 +465,7 @@ export default function PricingPage() {
                           <div className="p-3 sm:p-4 flex items-center justify-center bg-[var(--ff-color-primary-50)]/30">
                             <FeatureDot value={row.premium} />
                           </div>
-                          <div className="p-3 sm:p-4 flex items-center justify-center bg-amber-50/30">
+                          <div className="p-3 sm:p-4 flex items-center justify-center bg-[var(--ff-color-warning-50)]/30">
                             <FeatureDot value={row.founder} />
                           </div>
                         </div>
@@ -475,7 +475,7 @@ export default function PricingPage() {
                         <div className="col-span-1 p-3 sm:p-4 text-xs sm:text-sm">Prijs</div>
                         <div className="p-3 sm:p-4 text-center text-xs sm:text-sm">€0</div>
                         <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-[var(--ff-color-primary-50)]/40">€{premiumPrice}/mnd</div>
-                        <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-amber-50/40">€{founderPrice}</div>
+                        <div className="p-3 sm:p-4 text-center text-xs sm:text-sm bg-[var(--ff-color-warning-50)]/40">€{founderPrice}</div>
                       </div>
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export default function PricingPage() {
                 <article key={name} className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
                   <div className="flex items-center gap-0.5 mb-4" aria-label="5 van 5 sterren">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" aria-hidden="true" />
+                      <Star key={i} className="w-4 h-4 text-[var(--ff-color-warning-600)] fill-[var(--ff-color-warning-600)]" aria-hidden="true" />
                     ))}
                   </div>
                   <blockquote className="text-[var(--color-text)] text-base font-light leading-relaxed mb-5">

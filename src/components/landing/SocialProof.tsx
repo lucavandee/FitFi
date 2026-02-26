@@ -43,8 +43,8 @@ const SocialProof: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-gray-600 shadow-sm mb-6">
-            <Sparkles className="w-4 h-4 text-emerald-500" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] rounded-full text-sm font-medium text-[var(--color-muted)] shadow-sm mb-6">
+            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
             WAT ANDEREN ZEGGEN
           </div>
           
@@ -55,7 +55,7 @@ const SocialProof: React.FC = () => {
             </span>
           </h2>
 
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-[var(--color-muted)] max-w-3xl mx-auto leading-relaxed">
             Direct toepasbaar stijladvies, geen gedoe.
           </p>
         </div>
@@ -69,13 +69,13 @@ const SocialProof: React.FC = () => {
                 key={index}
                 className="text-center group hover:scale-105 transition-all duration-300"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-turquoise)] mb-4 shadow-lg">
-                  <Icon className="w-8 h-8 text-white" />
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--ff-color-primary-100)] mb-4 shadow-sm">
+                  <Icon className="w-7 h-7 text-[var(--ff-color-primary-700)]" />
                 </div>
                 <div className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--ff-color-primary-600)] transition-colors">
                   {stat.number}
                 </div>
-                <div className="text-gray-600 font-medium">
+                <div className="text-[var(--color-muted)] font-medium">
                   {stat.label}
                 </div>
               </div>
@@ -100,7 +100,7 @@ const SocialProof: React.FC = () => {
                   {benefit.title}
                 </h3>
 
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-[var(--color-muted)] leading-relaxed">
                   {benefit.description}
                 </p>
               </div>

@@ -295,7 +295,7 @@ export default function BlogPostPage() {
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/onboarding')}
-                    className="bg-white text-[var(--ff-color-primary-700)] hover:bg-gray-50"
+                    className="bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-neutral-50)]"
                   >
                     Start gratis quiz
                     <ArrowRight className="w-4 h-4 ml-2" />

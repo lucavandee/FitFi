@@ -81,7 +81,7 @@ export default function ResultsPreviewPage() {
             </div>
             <NavLink
               to="/onboarding"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-lg"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-[var(--ff-color-neutral-50)] transition-all duration-300 hover:scale-105 shadow-lg"
             >
               <span>Start gratis quiz</span>
               <ArrowRight className="w-4 h-4" strokeWidth={2.5} />

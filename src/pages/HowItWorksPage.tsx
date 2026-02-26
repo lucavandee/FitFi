@@ -130,7 +130,7 @@ export default function HowItWorksPage() {
             >
               {[
                 { icon: Clock, bg: "bg-[var(--ff-color-primary-100)]", color: "text-[var(--ff-color-primary-700)]", label: "2 minuten" },
-                { icon: Shield, bg: "bg-green-100", color: "text-green-700", label: "Geen foto's nodig" },
+                { icon: Shield, bg: "bg-[var(--ff-color-success-100)]", color: "text-[var(--ff-color-success-700)]", label: "Geen foto's nodig" },
                 { icon: Sparkles, bg: "bg-[var(--ff-color-accent-100)]", color: "text-[var(--ff-color-accent-700)]", label: "Direct resultaat" },
               ].map(({ icon: Icon, bg, color, label }) => (
                 <div key={label} className="flex items-center gap-2" role="listitem">
@@ -146,7 +146,7 @@ export default function HowItWorksPage() {
 
         {/* ── 3 Steps ── */}
         <section
-          className="py-10 sm:py-14 md:py-20 bg-white"
+          className="py-10 sm:py-14 md:py-20 bg-[var(--color-surface)]"
           aria-labelledby="process-heading"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -250,7 +250,7 @@ export default function HowItWorksPage() {
             {/* Comparison table — stacks on mobile */}
             <div className="flex flex-col sm:grid sm:grid-cols-2 sm:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10">
 
-              <div className="bg-white rounded-2xl border-2 border-[var(--color-border)] p-5 sm:p-7 shadow-md flex flex-col">
+              <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-5 sm:p-7 shadow-md flex flex-col">
                 <h3 className="font-bold text-lg sm:text-xl mb-4 text-center text-[var(--color-text)]">Trial &amp; Error</h3>
                 <ul className="space-y-3" role="list">
                   {[
@@ -259,8 +259,8 @@ export default function HowItWorksPage() {
                     "Kast vol \"draag ik nooit\"",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-danger-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </div>
@@ -307,7 +307,7 @@ export default function HowItWorksPage() {
 
         {/* ── FAQ ── */}
         <section
-          className="py-12 sm:py-16 md:py-24 bg-white"
+          className="py-12 sm:py-16 md:py-24 bg-[var(--color-surface)]"
           aria-labelledby="faq-heading"
         >
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
@@ -398,7 +398,7 @@ export default function HowItWorksPage() {
 
                 <NavLink
                   to="/onboarding"
-                  className="group inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-white hover:bg-gray-50 text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base sm:text-lg shadow-xl transition-all hover:scale-105 hover:shadow-2xl mb-6 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
+                  className="group inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--color-surface)] hover:bg-[var(--ff-color-neutral-50)] text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base sm:text-lg shadow-xl transition-all hover:scale-105 hover:shadow-2xl mb-6 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
                   data-event="cta_start_free_how_it_works"
                   aria-label="Start gratis quiz om je stijladvies te ontvangen"
                 >

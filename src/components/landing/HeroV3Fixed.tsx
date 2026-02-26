@@ -93,7 +93,7 @@ export function HeroV3Fixed() {
             role="status"
             aria-label="Gratis persoonlijk stijladvies beschikbaar"
           >
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" aria-hidden="true"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-success-500)] animate-pulse" aria-hidden="true"></div>
             Persoonlijk stijladvies
           </div>
 
@@ -122,7 +122,7 @@ export function HeroV3Fixed() {
             {/* PRIMARY CTA - Uses ff-btn--primary, xl size, most prominent */}
             <button
               onClick={handleStartClick}
-              className="group w-full sm:w-auto ff-btn ff-btn--xl bg-white hover:bg-gray-50 text-[var(--color-text)] shadow-2xl hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
+              className="group w-full sm:w-auto ff-btn ff-btn--xl bg-[var(--color-surface)] hover:bg-[var(--ff-color-neutral-50)] text-[var(--color-text)] shadow-2xl hover:shadow-[0_25px_80px_rgba(255,255,255,0.4)]"
               aria-label="Ontvang gratis persoonlijk stijladvies in 2 minuten"
             >
               Ontvang je stijladvies
@@ -151,9 +151,9 @@ export function HeroV3Fixed() {
                 className="flex items-center gap-2 sm:gap-3 min-h-[44px] py-2"
                 role="listitem"
               >
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 flex-shrink-0" aria-hidden="true" />
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--ff-color-success-400)] flex-shrink-0" aria-hidden="true" />
                 <span className="font-semibold leading-tight">
-                  <span className="text-green-400">{todayCount}</span> {todayCount === 1 ? 'persoon' : 'mensen'} vandaag
+                  <span className="text-[var(--ff-color-success-400)]">{todayCount}</span> {todayCount === 1 ? 'persoon' : 'mensen'} vandaag
                 </span>
               </div>
             )}

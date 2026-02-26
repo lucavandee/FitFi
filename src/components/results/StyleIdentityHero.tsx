@@ -151,7 +151,7 @@ export function StyleIdentityHero({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="relative overflow-hidden bg-gradient-to-br from-white via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-3xl border-2 border-[var(--ff-color-primary-300)] shadow-2xl p-8 md:p-12"
+      className="relative overflow-hidden bg-gradient-to-br from-[var(--color-surface)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-3xl border border-[var(--ff-color-primary-300)] shadow-2xl p-8 md:p-12"
     >
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--ff-color-primary-200)] to-transparent opacity-20 rounded-full blur-3xl" />
@@ -181,7 +181,7 @@ export function StyleIdentityHero({
           <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] mb-3 leading-tight">
             {styleName}
           </h2>
-          <p className="text-xl md:text-2xl text-gray-700 leading-relaxed font-light">
+          <p className="text-xl md:text-2xl text-[var(--color-text-secondary)] leading-relaxed font-light">
             {personalizedDescription}
           </p>
         </motion.div>
@@ -205,7 +205,7 @@ export function StyleIdentityHero({
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Heart className="w-3.5 h-3.5 text-white fill-white" />
                 </div>
-                <p className="text-sm text-gray-700 leading-snug flex-1">
+                <p className="text-sm text-[var(--color-text-secondary)] leading-snug flex-1">
                   {insight}
                 </p>
               </motion.div>

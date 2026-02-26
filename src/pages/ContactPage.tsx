@@ -71,7 +71,7 @@ function Field({
       </label>
       {children}
       {touched && error && (
-        <p id={errId} role="alert" className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+        <p id={errId} role="alert" className="mt-1.5 text-xs text-[var(--ff-color-danger-600)] flex items-center gap-1">
           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden />
           {error}
         </p>
@@ -172,14 +172,14 @@ export default function ContactPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25 }}
-                className="mb-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-5 flex items-start gap-3"
+                className="mb-6 rounded-2xl bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] p-5 flex items-start gap-3"
                 role="alert"
                 aria-live="polite"
               >
-                <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" aria-hidden />
+                <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" aria-hidden />
                 <div>
-                  <p className="font-semibold text-emerald-900 text-sm">Bericht ontvangen!</p>
-                  <p className="text-xs text-emerald-700 mt-0.5 leading-relaxed">
+                  <p className="font-semibold text-[var(--ff-color-success-900)] text-sm">Bericht ontvangen!</p>
+                  <p className="text-xs text-[var(--ff-color-success-700)] mt-0.5 leading-relaxed">
                     We reageren binnen 24 uur op werkdagen.
                   </p>
                 </div>
@@ -196,12 +196,12 @@ export default function ContactPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25 }}
-                className="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 flex items-start gap-3"
+                className="mb-6 rounded-2xl bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)] p-4 flex items-start gap-3"
                 role="alert"
                 aria-live="polite"
               >
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" aria-hidden />
-                <p className="text-sm text-red-700">{errorMsg}</p>
+                <AlertCircle className="w-5 h-5 text-[var(--ff-color-danger-500)] flex-shrink-0 mt-0.5" aria-hidden />
+                <p className="text-sm text-[var(--ff-color-danger-700)]">{errorMsg}</p>
               </motion.div>
             )}
           </AnimatePresence>

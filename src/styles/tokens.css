@@ -51,8 +51,16 @@
   --ff-color-success-900: #14532D;
 
   --color-warning: #D97706;
-  --ff-color-warning-50: #FFFBEB;
+  --ff-color-warning-50:  #FFFBEB;
+  --ff-color-warning-100: #FEF3C7;
+  --ff-color-warning-200: #FDE68A;
+  --ff-color-warning-300: #FCD34D;
+  --ff-color-warning-400: #FBBF24;
+  --ff-color-warning-500: #F59E0B;
   --ff-color-warning-600: #D97706;   /* main warning */
+  --ff-color-warning-700: #B45309;
+  --ff-color-warning-800: #92400E;
+  --ff-color-warning-900: #78350F;
 
   --color-danger: #DC2626;
   --ff-color-danger-50: #FEF2F2;
@@ -188,28 +196,46 @@ body {
 
 /* Profile Components - Herbruikbare UI patterns */
 .ff-profile-avatar {
-  @apply w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg flex-shrink-0;
+  width: 5rem; height: 5rem;
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(135deg, var(--ff-color-primary-500), var(--ff-color-accent-600));
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  flex-shrink: 0;
 }
 
 .ff-profile-badge {
-  @apply inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-100 to-accent-100 rounded-full;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(to right, var(--ff-color-primary-100), var(--ff-color-accent-100));
+  border-radius: 9999px;
 }
 
 .ff-profile-info-card {
-  @apply p-4 bg-gray-50 rounded-lg;
+  padding: 1rem;
+  background: var(--ff-color-neutral-50);
+  border-radius: var(--radius-lg);
 }
 
 /* Button states with tokens */
 .ff-btn-success {
-  @apply bg-success-600 text-white hover:bg-success-700 focus-visible:ring-success-500;
+  background: var(--ff-color-success-600);
+  color: #fff;
 }
+.ff-btn-success:hover { background: var(--ff-color-success-700); }
+.ff-btn-success:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ff-color-success-300); }
 
 .ff-btn-danger {
-  @apply bg-danger-600 text-white hover:bg-danger-700 focus-visible:ring-danger-500;
+  background: var(--ff-color-danger-600);
+  color: #fff;
 }
+.ff-btn-danger:hover { background: var(--ff-color-danger-700); }
+.ff-btn-danger:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ff-color-danger-300); }
 
-.ff-btn-logout {
-  @apply hover:border-danger-300 hover:bg-danger-50 hover:text-danger-600;
+.ff-btn-logout:hover {
+  border-color: var(--ff-color-danger-300);
+  background: var(--ff-color-danger-50);
+  color: var(--ff-color-danger-600);
 }
 
 /* ⚠️ GEEN component- of app-logica (zoals display toggles) hier. */
