@@ -446,8 +446,10 @@ export default function EnhancedResultsPage() {
                     <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Outfits</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">100%</div>
-                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Op maat</div>
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">
+                      {archetypeDetectionResult ? `${Math.round(archetypeDetectionResult.confidence * 100)}%` : '—'}
+                    </div>
+                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Stijlmatch</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{favs.length}</div>
@@ -1065,9 +1067,28 @@ export default function EnhancedResultsPage() {
               >
                 <div className="w-12 h-12 border-[3px] border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" aria-hidden="true" />
                 <div className="text-center">
-                  <p className="text-base font-medium text-[var(--color-text)]">We maken je stijlrapport…</p>
-                  <p className="text-sm text-[var(--color-muted)] mt-1">Bijna klaar — dit duurt meestal minder dan een minuut.</p>
+                  <p className="text-base font-medium text-[var(--color-text)]">Outfits worden samengesteld…</p>
+                  <p className="text-sm text-[var(--color-muted)] mt-1">We selecteren looks die passen bij jouw stijl en kleurprofiel.</p>
                 </div>
+              </div>
+            ) : displayOutfits.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-5 text-center px-4">
+                <div className="w-16 h-16 rounded-2xl bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-[var(--color-text)] mb-1">Geen outfits gevonden</p>
+                  <p className="text-sm text-[var(--color-muted)] max-w-xs mx-auto">
+                    We konden geen passende outfits samenstellen op basis van jouw profiel. Doe de quiz opnieuw voor betere resultaten.
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate("/onboarding")}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Stijlquiz opnieuw
+                </button>
               </div>
             ) : galleryMode === 'swipe' ? (
               <SwipeableOutfitGallery
@@ -1170,8 +1191,8 @@ export default function EnhancedResultsPage() {
                             </div>
                           )}
 
-                          {/* Overlay Actions - Always visible on mobile, hover on desktop */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+                          {/* Overlay Actions - Always visible */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 transition-opacity duration-300">
                             <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between gap-2">
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
@@ -1181,8 +1202,7 @@ export default function EnhancedResultsPage() {
                                   if (!isFav) {
                                     toast.success('Outfit opgeslagen!', {
                                       duration: 3000,
-                                      position: 'bottom-center',
-                                      icon: '💚',
+                                      position: 'top-center',
                                     });
                                     // Show hint on first save
                                     const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
@@ -1191,16 +1211,14 @@ export default function EnhancedResultsPage() {
                                       setTimeout(() => {
                                         toast('Bewaarde outfits vind je terug in je Dashboard', {
                                           duration: 5000,
-                                          position: 'bottom-center',
-                                          icon: '💡',
+                                          position: 'top-center',
                                         });
                                       }, 1000);
                                     }
                                   } else {
                                     toast('Outfit verwijderd uit favorieten', {
                                       duration: 2000,
-                                      position: 'bottom-center',
-                                      icon: '🗑️',
+                                      position: 'top-center',
                                     });
                                   }
                                 }}

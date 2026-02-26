@@ -239,22 +239,21 @@ export default function DashboardPage() {
                 </div>
 
                 {/* CTA row */}
-                <p className="text-xs text-[var(--color-muted)] mb-3">Ga verder waar je gebleven bent.</p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => navigate("/results")}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-md flex-1 sm:flex-none"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-md flex-1 sm:flex-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                   >
-                    Open mijn rapport
+                    Bekijk mijn outfits
                     <ArrowRight className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => navigate("/onboarding")}
-                    title="Pas je antwoorden aan om een nieuw rapport te genereren"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-transparent border border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors"
+                    title="Wijzig je antwoorden en genereer een nieuw stijlrapport"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-transparent border border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    Maak nieuw rapport
+                    Stijlquiz opnieuw
                   </button>
                 </div>
               </div>
@@ -280,7 +279,7 @@ export default function DashboardPage() {
                 <div>
                   <p className="font-semibold text-[var(--color-text)]">Bekijk opgeslagen outfits</p>
                   <p className="text-sm text-[var(--color-muted)]">
-                    {favCount > 0 ? `${favCount} looks bewaard` : "Je opgeslagen looks staan hier"}
+                    {favCount > 0 ? `${favCount} looks bewaard` : "Bewaar outfits via je resultaten"}
                   </p>
                 </div>
               </div>
