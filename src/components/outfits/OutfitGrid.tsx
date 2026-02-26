@@ -289,7 +289,7 @@ export default function OutfitGrid({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="mb-4 text-6xl">🎨</div>
+          <div className="mb-4 text-4xl sm:text-5xl md:text-6xl">🎨</div>
           <h3 className="text-xl font-semibold mb-2 text-[var(--color-text)]">
             Geen outfits gevonden
           </h3>

@@ -168,7 +168,7 @@ export default function AdminSwipeAnalyticsPage() {
             <TrendingUp className="w-6 h-6 text-green-600" />
             Top 10 Best Performing Photos
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {topPhotos.map((photo, idx) => (
               <div
                 key={photo.photo_id}
@@ -244,7 +244,7 @@ export default function AdminSwipeAnalyticsPage() {
             <TrendingDown className="w-6 h-6 text-red-600" />
             Bottom 10 Photos (Need Improvement)
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {worstPhotos.map((photo, idx) => (
               <div
                 key={photo.photo_id}

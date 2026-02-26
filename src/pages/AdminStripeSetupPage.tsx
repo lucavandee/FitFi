@@ -52,7 +52,7 @@ export default function AdminStripeSetupPage() {
   const hasAllPriceIds = products?.every(p => p.stripe_price_id);
 
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen py-20">
+    <main className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen py-10 sm:py-14 md:py-20">
       <Helmet>
         <title>Stripe Setup - Admin</title>
       </Helmet>

@@ -16,13 +16,13 @@ export function ClosingCTA() {
   };
 
   return (
-    <section className="py-20">
+    <section className="py-12 sm:py-16 md:py-20">
       <div className="ff-container">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-12 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        <div className="max-w-4xl mx-auto bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-[var(--radius-2xl)] p-6 sm:p-8 md:p-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Wat is jouw <span className="text-[var(--ff-color-primary-600)]">stijl</span> is
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8">
             8 vragen, 2 minuten. Direct je rapport met kleuren, stijl en concrete outfits die je kunt samenstellen.
           </p>
           <button

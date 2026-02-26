@@ -21,7 +21,7 @@ export default function AboutPage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-24 md:py-32 border-b-2 border-[var(--color-border)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-14 sm:py-20 md:py-24 lg:py-32 border-b-2 border-[var(--color-border)]">
         {/* Animated gradient blobs */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <motion.div
@@ -76,7 +76,7 @@ export default function AboutPage() {
       </section>
 
       {/* Missie & Principes */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 md:py-20">
         <div className="ff-container">
           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white/80 backdrop-blur-sm border-2 border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8 shadow-[var(--shadow-lifted)] hover:shadow-[var(--shadow-elevated)] hover:-translate-y-1 transition-all">
@@ -106,7 +106,7 @@ export default function AboutPage() {
       </section>
 
       {/* Wat ons onderscheidt */}
-      <section className="py-20 bg-[var(--color-bg)]">
+      <section className="py-12 sm:py-16 md:py-20 bg-[var(--color-bg)]">
         <div className="ff-container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

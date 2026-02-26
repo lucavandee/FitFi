@@ -10,9 +10,9 @@ const NotFoundPage = () => {
         noindex
       />
       <section className="ff-section">
-        <div className="ff-container py-24 text-center">
+        <div className="ff-container py-16 sm:py-20 md:py-24 text-center">
           <p
-            className="text-6xl font-bold text-[var(--ff-color-primary-700)] mb-4"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--ff-color-primary-700)] mb-4"
             aria-hidden="true"
           >
             404

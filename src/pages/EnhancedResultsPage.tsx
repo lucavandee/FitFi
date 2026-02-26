@@ -1038,7 +1038,7 @@ export default function EnhancedResultsPage() {
                     aria-label="Swipe weergave"
                   >
                     <Layers className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                    <span className="hidden xs:inline">Swipe</span>
+                    <span className="hidden sm:inline">Swipe</span>
                   </button>
                   <button
                     onClick={() => setGalleryMode('grid')}
@@ -1051,7 +1051,7 @@ export default function EnhancedResultsPage() {
                     aria-label="Grid weergave"
                   >
                     <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                    <span className="hidden xs:inline">Grid</span>
+                    <span className="hidden sm:inline">Grid</span>
                   </button>
                 </motion.div>
               </div>
@@ -1223,8 +1223,8 @@ export default function EnhancedResultsPage() {
                                 }}
                                 className="px-4 sm:px-6 py-3 min-h-[44px] bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm sm:text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.95] transition-all flex-1 sm:flex-none"
                               >
-                                <span className="hidden xs:inline">Bekijk details</span>
-                                <span className="xs:hidden">Details</span>
+                                <span className="hidden sm:inline">Bekijk details</span>
+                                <span className="sm:hidden">Details</span>
                               </motion.button>
                             </div>
                           </div>

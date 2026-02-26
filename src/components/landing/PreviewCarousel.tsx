@@ -81,7 +81,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
             >
               {previews.map((preview) => (
                 <div key={preview.id} className="w-full flex-shrink-0">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
                     {/* Image */}
                     <div className="relative aspect-[4/5] lg:aspect-auto">
                       <SmartImage
