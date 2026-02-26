@@ -318,11 +318,11 @@ const ProfilePage: React.FC = () => {
             transition={{ duration: 0.4 }}
             className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               <InitialsAvatar name={displayName} email={user.email ?? ''} />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                  <h1 className="text-lg sm:text-xl font-bold text-[var(--color-text)] truncate">
+                <div className="flex items-start gap-2 flex-wrap mb-0.5">
+                  <h1 className="text-lg sm:text-xl font-bold text-[var(--color-text)] break-words min-w-0 leading-snug">
                     {displayName}
                   </h1>
                   <TierBadge tier={user.tier} />
@@ -349,18 +349,18 @@ const ProfilePage: React.FC = () => {
             <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--color-border)]">
               <button
                 onClick={() => navigate("/results")}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               >
-                <Sparkles className="w-4 h-4" />
-                Bekijk outfits
+                <Sparkles className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">Bekijk outfits</span>
               </button>
               {!isPremium && (
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                  className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                 >
-                  <Crown className="w-4 h-4" />
-                  Upgrade
+                  <Crown className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate">Upgrade</span>
                 </button>
               )}
             </div>
@@ -407,16 +407,15 @@ const ProfilePage: React.FC = () => {
                 {color?.palette && color.palette.length > 0 && (
                   <div>
                     <p className="text-xs text-[var(--color-muted)] font-medium mb-2">Jouw kleurpalet</p>
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {color.palette.slice(0, 6).map((hex: string, i: number) => (
-                        <div key={i} className="flex flex-col items-center gap-1">
-                          <div
-                            className="w-8 h-8 rounded-lg border border-[var(--color-border)] shadow-sm"
-                            style={{ backgroundColor: hex }}
-                            title={hex}
-                            aria-label={`Kleur ${hex}`}
-                          />
-                        </div>
+                        <div
+                          key={i}
+                          className="w-8 h-8 rounded-lg border border-[var(--color-border)] shadow-sm flex-shrink-0"
+                          style={{ backgroundColor: hex }}
+                          title={hex}
+                          aria-label={`Kleur ${hex}`}
+                        />
                       ))}
                     </div>
                   </div>

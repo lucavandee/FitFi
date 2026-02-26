@@ -85,12 +85,12 @@ export const CookieSettings: React.FC = () => {
         <div className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
           {prefs.analytics ? (
             <>
-              <CheckCircle className="w-4 h-4 text-green-500" />
+              <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-500,#22c55e)] flex-shrink-0" />
               <span>Google Analytics actief (met IP-anonymisatie)</span>
             </>
           ) : (
             <>
-              <XCircle className="w-4 h-4 text-gray-400" />
+              <XCircle className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
               <span>Geen tracking actief</span>
             </>
           )}
@@ -119,10 +119,10 @@ export const CookieSettings: React.FC = () => {
 
         {/* Analytics Cookies */}
         <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)]">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <Cookie className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+                <Cookie className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
                 <h5 className="font-medium text-[var(--color-text)]">Analytische Cookies</h5>
               </div>
               <p className="text-sm text-[var(--color-muted)] mb-2">
@@ -137,13 +137,16 @@ export const CookieSettings: React.FC = () => {
             <button
               onClick={() => handleToggle('analytics')}
               disabled={isLoading}
+              aria-pressed={prefs.analytics}
+              aria-label="Analytische cookies in- of uitschakelen"
               className={`
-                ml-4 flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors mt-0.5
                 ${prefs.analytics
                   ? 'bg-[var(--ff-color-primary-600)]'
-                  : 'bg-gray-300 dark:bg-gray-600'
+                  : 'bg-[var(--color-border)]'
                 }
                 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2
               `}
             >
               <span
@@ -161,7 +164,7 @@ export const CookieSettings: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <XCircle className="w-4 h-4 text-gray-400" />
+                <XCircle className="w-4 h-4 text-[var(--color-muted)]" />
                 <h5 className="font-medium text-[var(--color-text)]">Marketing Cookies</h5>
               </div>
               <p className="text-sm text-[var(--color-muted)]">

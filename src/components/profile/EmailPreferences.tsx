@@ -160,20 +160,20 @@ export function EmailPreferences() {
         {preferenceOptions.map((option) => (
           <label
             key={option.key}
-            className="flex items-center gap-4 p-3.5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
+            className="flex items-start gap-3.5 p-3.5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-muted)]">
+            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-muted)] mt-0.5">
               {option.icon}
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold text-[var(--color-text)]">
+            <div className="flex-1 min-w-0 pt-0.5">
+              <div className="text-sm font-semibold text-[var(--color-text)] leading-snug">
                 {option.label}
               </div>
-              <div className="text-xs text-[var(--color-muted)] mt-0.5">
+              <div className="text-xs text-[var(--color-muted)] mt-0.5 leading-normal">
                 {option.description}
               </div>
             </div>
-            <div className="relative inline-flex items-center flex-shrink-0">
+            <div className="relative inline-flex items-center flex-shrink-0 mt-1">
               <input
                 type="checkbox"
                 checked={preferences[option.key]}
