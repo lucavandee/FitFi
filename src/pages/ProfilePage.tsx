@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   User, Mail, Shield, LogOut, Camera, Trash2, Key,
-  ChevronRight, Check, AlertCircle, Sparkles, RefreshCw
+  ChevronRight, Check, AlertCircle, Sparkles, RefreshCw,
+  Crown, Star
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/context/UserContext";
@@ -37,7 +38,7 @@ function SectionCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
-      className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden"
+      className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden"
     >
       {children}
     </motion.div>
@@ -46,14 +47,62 @@ function SectionCard({
 
 function SectionHeader({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="px-6 py-4 border-b border-[var(--color-border)]">
-      <h2 className="text-base font-bold text-[var(--color-text)]">{title}</h2>
+    <div className="px-5 py-4 border-b border-[var(--color-border)]">
+      <h2 className="text-sm font-bold text-[var(--color-text)] uppercase tracking-wider">{title}</h2>
       {description && (
-        <p className="text-sm text-[var(--color-muted)] mt-0.5">{description}</p>
+        <p className="text-sm text-[var(--color-muted)] mt-0.5 font-normal normal-case tracking-normal">{description}</p>
       )}
     </div>
   );
 }
+
+function TierBadge({ tier }: { tier?: string }) {
+  if (!tier || tier === 'free') return null;
+  const isFounder = tier === 'founder';
+  return (
+    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
+      isFounder
+        ? 'bg-[var(--ff-color-accent-100)] text-[var(--ff-color-accent-700)]'
+        : 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]'
+    }`}>
+      {isFounder ? <Star className="w-3 h-3" /> : <Crown className="w-3 h-3" />}
+      {isFounder ? 'Founder' : 'Premium'}
+    </span>
+  );
+}
+
+function InitialsAvatar({ name, email }: { name: string; email: string }) {
+  const initials = name
+    ? name.slice(0, 2).toUpperCase()
+    : email.slice(0, 2).toUpperCase();
+  return (
+    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
+      <span className="text-xl sm:text-2xl font-bold text-[var(--ff-color-primary-700)]">{initials}</span>
+    </div>
+  );
+}
+
+const SEASON_LABELS: Record<string, string> = {
+  lente: 'Lente',
+  zomer: 'Zomer',
+  herfst: 'Herfst',
+  winter: 'Winter',
+  spring: 'Lente',
+  summer: 'Zomer',
+  autumn: 'Herfst',
+  fall: 'Herfst',
+};
+
+const SEASON_COLORS: Record<string, string> = {
+  lente: '#f9a8d4',
+  zomer: '#93c5fd',
+  herfst: '#fdba74',
+  winter: '#a5f3fc',
+  spring: '#f9a8d4',
+  summer: '#93c5fd',
+  autumn: '#fdba74',
+  fall: '#fdba74',
+};
 
 const ProfilePage: React.FC = () => {
   const { user, logout } = useUser();
@@ -74,7 +123,8 @@ const ProfilePage: React.FC = () => {
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
   const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
-  const hasPhoto = !!(answers?.photoDataUrl);
+
+  const isPremium = user?.tier === 'premium' || user?.tier === 'founder' || !!user?.isPremium;
 
   useEffect(() => {
     if (user?.email) {
@@ -140,10 +190,10 @@ const ProfilePage: React.FC = () => {
       if (client && user) {
         await client.auth.updateUser({ data: { display_name: displayName.trim() } });
       }
-      toast.success("Profiel opgeslagen");
+      toast.success("Naam opgeslagen");
       setDisplayNameDirty(false);
     } catch {
-      toast.error("Kon profiel niet opslaan. Probeer het opnieuw.");
+      toast.error("Kon naam niet opslaan. Probeer het opnieuw.");
     } finally {
       setIsSavingName(false);
     }
@@ -206,7 +256,7 @@ const ProfilePage: React.FC = () => {
           redirectTo: `${window.location.origin}/inloggen`,
         });
       }
-      toast.success("Reset-link verstuurd. Controleer je inbox.");
+      toast.success("Reset-link verstuurd naar " + user.email);
     } catch {
       toast.error("Kon reset-link niet versturen. Probeer het opnieuw.");
     } finally {
@@ -224,13 +274,13 @@ const ProfilePage: React.FC = () => {
       <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <Helmet><title>Profiel – FitFi</title></Helmet>
         <div className="ff-container py-16 text-center">
-          <div className="w-14 h-14 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
             <User className="w-7 h-7 text-[var(--color-muted)]" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3">Log in om je profiel te bekijken</h1>
           <button
             onClick={() => navigate("/inloggen")}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
           >
             Inloggen
           </button>
@@ -238,6 +288,10 @@ const ProfilePage: React.FC = () => {
       </main>
     );
   }
+
+  const seasonLabel = color?.season ? (SEASON_LABELS[color.season.toLowerCase()] ?? color.season) : null;
+  const seasonColor = color?.season ? (SEASON_COLORS[color.season.toLowerCase()] ?? '#e5e7eb') : null;
+  const hasStyleProfile = !!(archetypeName || color);
 
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
@@ -254,33 +308,198 @@ const ProfilePage: React.FC = () => {
         Spring naar hoofdinhoud
       </a>
 
-      <div id="main-content" className="ff-container py-8 sm:py-12 lg:py-16">
-        <div className="max-w-2xl mx-auto space-y-5">
+      <div id="main-content" className="ff-container py-6 sm:py-10 lg:py-14">
+        <div className="max-w-xl mx-auto space-y-4">
 
-          {/* Page heading */}
+          {/* ── Identity Hero ── */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="mb-2"
+            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6"
           >
-            <p className="text-sm text-[var(--color-muted)]">Accountinstellingen</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight">
-              Jouw profiel
-            </h1>
-            <p className="text-sm text-[var(--color-muted)] mt-1">
-              Je profiel helpt ons je advies consistent te houden.
-            </p>
+            <div className="flex items-center gap-4">
+              <InitialsAvatar name={displayName} email={user.email ?? ''} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <h1 className="text-lg sm:text-xl font-bold text-[var(--color-text)] truncate">
+                    {displayName}
+                  </h1>
+                  <TierBadge tier={user.tier} />
+                </div>
+                <p className="text-sm text-[var(--color-muted)] truncate">{user.email}</p>
+                {hasStyleProfile && (
+                  <div className="flex items-center gap-1.5 mt-2">
+                    {seasonColor && (
+                      <span
+                        className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: seasonColor }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span className="text-xs text-[var(--color-muted)] font-medium">
+                      {[archetypeName, seasonLabel].filter(Boolean).join(' · ')}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick actions */}
+            <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--color-border)]">
+              <button
+                onClick={() => navigate("/results")}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Bekijk outfits
+              </button>
+              {!isPremium && (
+                <button
+                  onClick={() => navigate("/pricing")}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                >
+                  <Crown className="w-4 h-4" />
+                  Upgrade
+                </button>
+              )}
+            </div>
           </motion.div>
 
-          {/* Personal data */}
-          <SectionCard delay={0.05}>
+          {/* ── Stijlprofiel ── */}
+          {hasStyleProfile && (
+            <SectionCard delay={0.05}>
+              <SectionHeader title="Stijlprofiel" />
+              <div className="p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    {archetypeName && (
+                      <p className="text-base font-bold text-[var(--color-text)]">{archetypeName as string}</p>
+                    )}
+                    {color && (
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                        {seasonLabel && (
+                          <span className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]">
+                            {seasonColor && (
+                              <span
+                                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: seasonColor }}
+                                aria-hidden="true"
+                              />
+                            )}
+                            {seasonLabel}
+                          </span>
+                        )}
+                        {color.temperature && (
+                          <span className="text-sm text-[var(--color-muted)] capitalize">{color.temperature}</span>
+                        )}
+                        {color.contrast && (
+                          <span className="text-sm text-[var(--color-muted)] capitalize">{color.contrast} contrast</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {color?.palette && color.palette.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[var(--color-muted)] font-medium mb-2">Jouw kleurpalet</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {color.palette.slice(0, 6).map((hex: string, i: number) => (
+                        <div key={i} className="flex flex-col items-center gap-1">
+                          <div
+                            className="w-8 h-8 rounded-lg border border-[var(--color-border)] shadow-sm"
+                            style={{ backgroundColor: hex }}
+                            title={hex}
+                            aria-label={`Kleur ${hex}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => setShowResetModal(true)}
+                  className="inline-flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors py-1"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  Stijlquiz opnieuw doen
+                </button>
+              </div>
+            </SectionCard>
+          )}
+
+          {/* ── Foto voor kleuranalyse ── */}
+          <SectionCard delay={0.1}>
             <SectionHeader
-              title="Persoonlijke gegevens"
-              description="Wijzig je voorkeuren en klik op Opslaan."
+              title="Foto voor kleuranalyse"
+              description={photoPreview
+                ? "Je foto is opgeslagen. Klik 'Vervangen' voor een nieuw bestand."
+                : "Optioneel: met een foto geven we preciezer kleuradvies op basis van huidondertoon."}
             />
-            <div className="p-6 space-y-5">
-              {/* Display name field */}
+            <div className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[var(--color-border)] bg-[var(--ff-color-neutral-100)] flex-shrink-0 flex items-center justify-center">
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt="Jouw foto voor kleuranalyse"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="w-6 h-6 text-[var(--color-muted)]" />
+                  )}
+                </div>
+
+                <div className="flex-1 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingPhoto}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                  >
+                    {isUploadingPhoto ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Camera className="w-4 h-4" />
+                    )}
+                    {photoPreview ? "Vervangen" : "Foto toevoegen"}
+                  </button>
+
+                  {photoPreview && (
+                    <button
+                      onClick={handleRemovePhoto}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-muted)] rounded-xl text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-400)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-error-400)] focus-visible:ring-offset-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Verwijder
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-xs text-[var(--color-muted)] mt-3">
+                Max 5 MB · JPG, PNG of WebP · Privacyveilig — alleen lokaal opgeslagen
+              </p>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handlePhotoSelect}
+              className="sr-only"
+              aria-label="Upload foto voor kleuranalyse"
+            />
+          </SectionCard>
+
+          {/* ── Naam ── */}
+          <SectionCard delay={0.15}>
+            <SectionHeader title="Persoonlijke gegevens" />
+            <div className="p-5 space-y-4">
               <div>
                 <label
                   htmlFor="display-name"
@@ -295,7 +514,7 @@ const ProfilePage: React.FC = () => {
                   onChange={handleNameChange}
                   placeholder="Jouw naam"
                   maxLength={50}
-                  className={`w-full h-11 px-3.5 rounded-lg border text-[var(--color-text)] bg-[var(--color-bg)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] ${
+                  className={`w-full h-11 px-3.5 rounded-xl border text-[var(--color-text)] bg-[var(--color-bg)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] ${
                     displayNameError && displayNameDirty
                       ? "border-[var(--ff-color-error-500)]"
                       : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]"
@@ -314,12 +533,11 @@ const ProfilePage: React.FC = () => {
                 )}
               </div>
 
-              {/* Email (read-only) */}
               <div>
                 <label className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
                   E-mailadres
                 </label>
-                <div className="flex items-center gap-3 h-11 px-3.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] opacity-60">
+                <div className="flex items-center gap-3 h-11 px-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] opacity-60 select-none">
                   <Mail className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
                   <span className="text-sm text-[var(--color-text)] truncate">{user.email}</span>
                 </div>
@@ -328,17 +546,16 @@ const ProfilePage: React.FC = () => {
                 </p>
               </div>
 
-              {/* CTA row */}
               {displayNameDirty && (
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-3 pt-1"
+                  className="flex gap-2 pt-1"
                 >
                   <button
                     onClick={handleSaveName}
                     disabled={isSavingName || !!displayNameError}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                   >
                     {isSavingName ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
@@ -349,7 +566,7 @@ const ProfilePage: React.FC = () => {
                   </button>
                   <button
                     onClick={handleCancelName}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg text-sm font-semibold hover:bg-[var(--color-bg)] transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                   >
                     Annuleren
                   </button>
@@ -358,122 +575,7 @@ const ProfilePage: React.FC = () => {
             </div>
           </SectionCard>
 
-          {/* Photo module */}
-          <SectionCard delay={0.1}>
-            <SectionHeader
-              title="Foto voor kleuranalyse"
-              description="Foto's gebruiken we alleen voor optionele kleuranalyse. Je kunt je foto altijd verwijderen."
-            />
-            <div className="p-6">
-              <div className="flex items-start gap-5">
-                {/* Preview */}
-                <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-[var(--color-border)] bg-[var(--ff-color-neutral-100)] flex-shrink-0 flex items-center justify-center">
-                  {photoPreview ? (
-                    <img
-                      src={photoPreview}
-                      alt="Jouw profielfoto voor kleuranalyse"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Camera className="w-7 h-7 text-[var(--color-muted)]" />
-                  )}
-                </div>
-
-                <div className="flex-1 space-y-3">
-                  <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-                    {photoPreview
-                      ? "Je foto is opgeslagen voor kleuranalyse. Je kunt je foto altijd verwijderen."
-                      : "Foto's gebruiken we alleen voor kleuranalyse (als jij dat wilt). Voeg een foto toe voor advies op basis van huidondertoon, haar en ogen."}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploadingPhoto}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
-                    >
-                      {isUploadingPhoto ? (
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Camera className="w-4 h-4" />
-                      )}
-                      {photoPreview ? "Foto vervangen" : "Upload foto"}
-                    </button>
-
-                    {photoPreview && (
-                      <button
-                        onClick={handleRemovePhoto}
-                        className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] text-[var(--color-muted)] rounded-lg text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-400)] transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Verwijder foto
-                      </button>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-[var(--color-muted)]">
-                    Max 5 MB · JPG of PNG · Privacyveilig opgeslagen
-                  </p>
-                </div>
-              </div>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handlePhotoSelect}
-                className="sr-only"
-                aria-label="Upload profielfoto"
-              />
-            </div>
-          </SectionCard>
-
-          {/* Style profile summary */}
-          {(archetypeName || color) && (
-            <SectionCard delay={0.15}>
-              <SectionHeader
-                title="Jouw stijlprofiel"
-                description="Nieuw rapport maken? Kan altijd."
-              />
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-xl font-bold text-[var(--color-text)]">
-                      {archetypeName || "Stijlprofiel"}
-                    </p>
-                    {color?.season && (
-                      <p className="text-sm text-[var(--color-muted)] capitalize mt-0.5">
-                        {color.season} · {color.temperature}
-                      </p>
-                    )}
-                  </div>
-                  <div className="w-10 h-10 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
-                    <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => navigate("/results")}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg text-sm font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors"
-                  >
-                    Bekijk outfits
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setShowResetModal(true)}
-                    title="Pas je antwoorden aan om een nieuw rapport te genereren"
-                    className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Nieuw rapport
-                  </button>
-                </div>
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Email preferences */}
+          {/* ── E-mailvoorkeuren ── */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -482,64 +584,60 @@ const ProfilePage: React.FC = () => {
             <EmailPreferences />
           </motion.div>
 
-          {/* Privacy & cookies */}
+          {/* ── Privacy & cookies ── */}
           <SectionCard delay={0.25}>
             <SectionHeader
               title="Privacy & cookies"
-              description="We slaan alleen op wat nodig is. Beheer hoe wij je gegevens gebruiken."
+              description="We slaan alleen op wat nodig is."
             />
-            <div className="p-6">
+            <div className="p-5">
               <CookieSettings />
             </div>
           </SectionCard>
 
-          {/* Account actions */}
+          {/* ── Account-acties ── */}
           <SectionCard delay={0.3}>
-            <SectionHeader
-              title="Account"
-            />
+            <SectionHeader title="Account" />
             <div className="divide-y divide-[var(--color-border)]">
-              {/* Password reset */}
               <button
                 onClick={handlePasswordReset}
                 disabled={isSendingReset}
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50 group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 group-hover:border-[var(--ff-color-primary-300)] transition-colors">
                     <Key className="w-4 h-4 text-[var(--color-muted)]" />
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
                     <p className="text-xs text-[var(--color-muted)]">
-                      We sturen een reset-link naar {user.email}
+                      Reset-link naar {user.email}
                     </p>
                   </div>
                 </div>
                 {isSendingReset ? (
                   <RefreshCw className="w-4 h-4 text-[var(--color-muted)] animate-spin" />
                 ) : (
-                  <ChevronRight className="w-4 h-4 text-[var(--color-muted)]" />
+                  <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
                 )}
               </button>
 
-              {/* Privacy policy link */}
               <button
                 onClick={() => navigate("/privacy")}
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--color-bg)] transition-colors"
+                className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 group-hover:border-[var(--ff-color-primary-300)] transition-colors">
                     <Shield className="w-4 h-4 text-[var(--color-muted)]" />
                   </div>
                   <p className="text-sm font-semibold text-[var(--color-text)]">Privacybeleid</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[var(--color-muted)]" />
+                <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           </SectionCard>
 
-          {/* Logout */}
+          {/* ── Uitloggen ── */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -547,7 +645,7 @@ const ProfilePage: React.FC = () => {
           >
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-400)] transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-300)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-error-400)] focus-visible:ring-offset-2"
             >
               <LogOut className="w-4 h-4" />
               Uitloggen

@@ -129,10 +129,10 @@ export function EmailPreferences() {
 
   if (isLoading) {
     return (
-      <div className="bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl p-6">
-        <div className="animate-pulse space-y-4">
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <div className="animate-pulse space-y-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-16 bg-[var(--color-bg)] rounded-xl" />
+            <div key={i} className="h-14 bg-[var(--color-bg)] rounded-xl" />
           ))}
         </div>
       </div>
@@ -141,62 +141,56 @@ export function EmailPreferences() {
 
   if (!preferences) {
     return (
-      <div className="bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl p-6 text-center">
-        <p className="text-[var(--color-muted)]">Kon voorkeuren niet laden</p>
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-center">
+        <p className="text-sm text-[var(--color-muted)]">Kon voorkeuren niet laden</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-[var(--ff-color-primary-100)] dark:bg-[var(--ff-color-primary-900)] rounded-lg">
-          <Mail className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-[var(--color-text)]">
-            Email voorkeuren
-          </h3>
-          <p className="text-sm text-[var(--color-muted)]">
-            Kies welke emails je wilt ontvangen
-          </p>
-        </div>
+    <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+      <div className="px-5 py-4 border-b border-[var(--color-border)]">
+        <h2 className="text-sm font-bold text-[var(--color-text)] uppercase tracking-wider">E-mailvoorkeuren</h2>
+        <p className="text-sm text-[var(--color-muted)] mt-0.5 font-normal normal-case tracking-normal">
+          Kies welke emails je wilt ontvangen
+        </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="p-5 space-y-2">
         {preferenceOptions.map((option) => (
-          <div
+          <label
             key={option.key}
-            className="flex items-start gap-4 p-4 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors"
+            className="flex items-center gap-4 p-3.5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
           >
-            <div className="p-2 bg-[var(--color-surface)] rounded-lg flex-shrink-0 mt-0.5">
+            <div className="w-8 h-8 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-muted)]">
               {option.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[var(--color-text)] mb-1">
+              <div className="text-sm font-semibold text-[var(--color-text)]">
                 {option.label}
               </div>
-              <div className="text-sm text-[var(--color-muted)]">
+              <div className="text-xs text-[var(--color-muted)] mt-0.5">
                 {option.description}
               </div>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
+            <div className="relative inline-flex items-center flex-shrink-0">
               <input
                 type="checkbox"
                 checked={preferences[option.key]}
                 onChange={(e) => updatePreference(option.key, e.target.checked)}
                 disabled={isSaving}
                 className="sr-only peer"
+                aria-label={option.label}
               />
-              <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--ff-color-primary-200)] dark:peer-focus:ring-[var(--ff-color-primary-800)] rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[var(--ff-color-primary-600)]"></div>
-            </label>
-          </div>
+              <div className="w-10 h-5 bg-[var(--color-border)] peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ff-color-primary-500)] peer-focus-visible:ring-offset-2 rounded-full transition-colors peer-checked:bg-[var(--ff-color-primary-600)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5" />
+            </div>
+          </label>
         ))}
       </div>
 
-      <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-        <p className="text-sm text-blue-900 dark:text-blue-100">
-          <strong>Let op:</strong> Belangrijke account updates en transactie-emails blijf je altijd ontvangen.
+      <div className="mx-5 mb-5 p-3.5 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--ff-color-primary-100)]">
+        <p className="text-xs text-[var(--ff-color-primary-700)]">
+          <strong>Let op:</strong> Account- en transactie-emails ontvang je altijd, ongeacht je voorkeur.
         </p>
       </div>
     </div>
