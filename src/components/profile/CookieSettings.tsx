@@ -101,19 +101,19 @@ export const CookieSettings: React.FC = () => {
       <div className="space-y-3">
         {/* Necessary Cookies */}
         <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] opacity-60">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <Cookie className="w-4 h-4 text-[var(--color-muted)]" />
-                <h5 className="font-medium text-[var(--color-text)]">Essentiële Cookies</h5>
+                <Cookie className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
+                <h5 className="font-semibold text-[var(--color-text)]">Essentiële Cookies</h5>
               </div>
               <p className="text-sm text-[var(--color-muted)]">
                 Nodig voor inloggen en basisfunctionaliteit
               </p>
             </div>
-            <div className="text-sm font-semibold text-[var(--color-muted)] ml-4">
+            <span className="text-sm font-semibold text-[var(--color-muted)] flex-shrink-0 mt-0.5">
               Altijd aan
-            </div>
+            </span>
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export const CookieSettings: React.FC = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Cookie className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
-                <h5 className="font-medium text-[var(--color-text)]">Analytische Cookies</h5>
+                <h5 className="font-semibold text-[var(--color-text)]">Analytische Cookies</h5>
               </div>
               <p className="text-sm text-[var(--color-muted)] mb-2">
                 Google Analytics (met IP-anonymisatie)
@@ -161,19 +161,19 @@ export const CookieSettings: React.FC = () => {
 
         {/* Marketing Cookies */}
         <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] opacity-60">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <XCircle className="w-4 h-4 text-[var(--color-muted)]" />
-                <h5 className="font-medium text-[var(--color-text)]">Marketing Cookies</h5>
+                <XCircle className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
+                <h5 className="font-semibold text-[var(--color-text)]">Marketing Cookies</h5>
               </div>
               <p className="text-sm text-[var(--color-muted)]">
                 We gebruiken geen marketing cookies
               </p>
             </div>
-            <div className="text-sm font-semibold text-[var(--color-muted)] ml-4">
+            <span className="text-sm font-semibold text-[var(--color-muted)] flex-shrink-0 mt-0.5">
               Niet gebruikt
-            </div>
+            </span>
           </div>
         </div>
       </div>

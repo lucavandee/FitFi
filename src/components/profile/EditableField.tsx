@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit2, CheckCircle, XCircle } from 'lucide-react';
+import { Edit2, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface EditableFieldProps {
@@ -26,15 +26,9 @@ export const EditableField: React.FC<EditableFieldProps> = ({
     try {
       await onSave(editValue);
       setIsEditing(false);
-      toast.success('Opgeslagen', {
-        duration: 3000,
-        position: 'top-center',
-      });
-    } catch (error) {
-      toast.error('Er ging iets mis', {
-        duration: 3000,
-        position: 'top-center',
-      });
+      toast.success('Opgeslagen', { duration: 3000 });
+    } catch {
+      toast.error('Er ging iets mis', { duration: 3000 });
     } finally {
       setIsSaving(false);
     }
@@ -47,14 +41,14 @@ export const EditableField: React.FC<EditableFieldProps> = ({
 
   return (
     <div>
-      <label className="text-sm font-semibold text-muted mb-2 block">{label}</label>
+      <label className="text-sm font-semibold text-[var(--color-text)] mb-1.5 block">{label}</label>
       {isEditing ? (
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
-            className="flex-1 h-11 px-3 bg-white border-2 border-primary-500 rounded-lg text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            className="flex-1 h-11 px-3.5 bg-[var(--color-bg)] border border-[var(--ff-color-primary-500)] rounded-xl text-[var(--color-text)] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors"
             placeholder={placeholder}
             autoFocus
             aria-label={ariaLabel || `Bewerk ${label.toLowerCase()}`}
@@ -62,28 +56,28 @@ export const EditableField: React.FC<EditableFieldProps> = ({
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-success-600 text-white rounded-lg hover:bg-success-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success-500 disabled:opacity-50 transition-colors"
+            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 disabled:opacity-50 transition-colors"
             aria-label="Opslaan"
           >
-            <CheckCircle className="w-5 h-5" />
+            <Check className="w-4 h-4" />
           </button>
           <button
             onClick={handleCancel}
-            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-danger-600 text-white rounded-lg hover:bg-danger-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 transition-colors"
+            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center border border-[var(--color-border)] text-[var(--color-muted)] rounded-xl hover:border-[var(--ff-color-primary-400)] hover:text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors"
             aria-label="Annuleren"
           >
-            <XCircle className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-bold text-text">{value}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-[var(--color-text)] flex-1 min-w-0 truncate">{value}</span>
           <button
             onClick={() => {
               setEditValue(value);
               setIsEditing(true);
             }}
-            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-muted hover:text-primary-700 hover:bg-primary-50 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-colors"
+            className="h-9 w-9 min-w-[36px] min-h-[36px] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 transition-colors flex-shrink-0"
             aria-label={`Wijzig ${label.toLowerCase()}`}
           >
             <Edit2 className="w-4 h-4" />

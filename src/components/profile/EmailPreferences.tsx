@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Bell, Sparkles, TrendingUp, Gift, RefreshCw, Check } from 'lucide-react';
+import { Mail, Bell, Sparkles, TrendingUp, Gift, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
@@ -115,7 +115,6 @@ export function EmailPreferences() {
       if (error) throw error;
 
       toast.success('Voorkeur opgeslagen', {
-        icon: <Check className="w-4 h-4 text-green-600" />,
         duration: 2000,
       });
     } catch (error) {
@@ -156,13 +155,13 @@ export function EmailPreferences() {
         </p>
       </div>
 
-      <div className="p-5 space-y-2">
+      <div className="p-5 space-y-3">
         {preferenceOptions.map((option) => (
           <label
             key={option.key}
             className="flex items-start gap-3.5 p-3.5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 text-[var(--color-muted)] mt-0.5">
+            <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0 text-[var(--ff-color-primary-600)] mt-0.5">
               {option.icon}
             </div>
             <div className="flex-1 min-w-0 pt-0.5">

@@ -309,7 +309,7 @@ const ProfilePage: React.FC = () => {
       </a>
 
       <div id="main-content" className="ff-container py-6 sm:py-10 lg:py-14">
-        <div className="max-w-xl mx-auto space-y-4">
+        <div className="max-w-xl mx-auto space-y-5">
 
           {/* ── Identity Hero ── */}
           <motion.div
@@ -423,9 +423,9 @@ const ProfilePage: React.FC = () => {
 
                 <button
                   onClick={() => setShowResetModal(true)}
-                  className="inline-flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors py-1"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors px-3 py-2 rounded-xl -ml-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
+                  <RefreshCw className="w-4 h-4 flex-shrink-0" />
                   Stijlquiz opnieuw doen
                 </button>
               </div>

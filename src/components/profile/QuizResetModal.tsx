@@ -56,7 +56,6 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
         : 'Quiz gereset! Je wordt doorgestuurd...';
 
       toast.success(message, {
-        icon: <CheckCircle className="w-5 h-5 text-green-600" />,
         duration: 3000
       });
 
@@ -73,7 +72,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[var(--color-surface)] rounded-3xl max-w-lg w-full p-8 shadow-2xl border-2 border-[var(--color-border)] relative">
+      <div className="bg-[var(--color-surface)] rounded-2xl max-w-lg w-full p-8 shadow-2xl border border-[var(--color-border)] relative">
         <button
           onClick={onClose}
           disabled={isResetting}
@@ -83,8 +82,8 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <X className="w-5 h-5 text-[var(--color-muted)]" />
         </button>
 
-        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/20 mb-6 mx-auto">
-          <AlertTriangle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--ff-color-accent-100)] mb-6 mx-auto">
+          <AlertTriangle className="w-8 h-8 text-[var(--ff-color-accent-700)]" />
         </div>
 
         <h2 className="text-2xl font-bold text-[var(--color-text)] text-center mb-3">
@@ -107,22 +106,22 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <h3 className="font-semibold text-sm text-[var(--color-text)] mb-2">Wat blijft behouden:</h3>
           <ul className="space-y-1 text-sm text-[var(--color-muted)]">
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
+              <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
               Je oude profiel (gearchiveerd voor vergelijking)
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
+              <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
               Account, email, subscription en tier
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
+              <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
               Gamification voortgang en achievements
             </li>
           </ul>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+          <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">
             Waarom wil je de quiz opnieuw doen? <span className="text-[var(--color-muted)]">(helpt ons)</span>
           </label>
           <select
@@ -154,7 +153,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
         )}
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+          <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">
             Type <strong>"RESET"</strong> om te bevestigen:
           </label>
           <input
@@ -171,14 +170,14 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <button
             onClick={onClose}
             disabled={isResetting}
-            className="flex-1 px-6 py-3 bg-[var(--color-bg)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-all border-2 border-[var(--color-border)] disabled:opacity-50"
+            className="flex-1 px-6 py-3 bg-[var(--color-bg)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-all border border-[var(--color-border)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
           >
             Annuleren
           </button>
           <button
             onClick={handleReset}
             disabled={isResetting || confirmText.toLowerCase() !== 'reset'}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-accent-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-accent-600)] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-accent-500)] focus-visible:ring-offset-2"
           >
             {isResetting ? (
               <>
