@@ -81,15 +81,26 @@ export function EmailPreferences() {
 
       if (error) throw error;
 
+      const defaults: EmailPreference = {
+        marketing_emails: false,
+        product_updates: false,
+        style_tips: false,
+        weekly_digest: false,
+        outfit_recommendations: false,
+        quiz_reminders: false,
+      };
+
       if (data) {
         setPreferences({
-          marketing_emails: data.marketing_emails,
-          product_updates: data.product_updates,
-          style_tips: data.style_tips,
-          weekly_digest: data.weekly_digest,
-          outfit_recommendations: data.outfit_recommendations,
-          quiz_reminders: data.quiz_reminders,
+          marketing_emails: data.marketing_emails ?? false,
+          product_updates: data.product_updates ?? false,
+          style_tips: data.style_tips ?? false,
+          weekly_digest: data.weekly_digest ?? false,
+          outfit_recommendations: data.outfit_recommendations ?? false,
+          quiz_reminders: data.quiz_reminders ?? false,
         });
+      } else {
+        setPreferences(defaults);
       }
     } catch (error) {
       console.error('Error loading email preferences:', error);
@@ -138,13 +149,7 @@ export function EmailPreferences() {
     );
   }
 
-  if (!preferences) {
-    return (
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-center">
-        <p className="text-sm text-[var(--color-muted)]">Kon voorkeuren niet laden</p>
-      </div>
-    );
-  }
+  if (!preferences) return null;
 
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">

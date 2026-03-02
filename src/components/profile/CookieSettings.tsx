@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Cookie, Trash2, ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 import { getCookiePrefs, setCookiePrefs, withdrawConsent, type CookiePrefs } from '@/utils/consent';
-import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -119,7 +118,7 @@ export const CookieSettings: React.FC = () => {
 
         {/* Analytics Cookies */}
         <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)]">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Cookie className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
@@ -128,32 +127,29 @@ export const CookieSettings: React.FC = () => {
               <p className="text-sm text-[var(--color-muted)] mb-2">
                 Google Analytics (met IP-anonymisatie)
               </p>
-              <div className="text-xs text-[var(--color-muted)] space-y-1">
-                <div>• Geanonimiseerde gebruiksstatistieken</div>
-                <div>• Data wordt verstuurd naar VS (USA)</div>
-                <div>• Geen advertenties of profiling</div>
-              </div>
+              <ul className="text-xs text-[var(--color-muted)] space-y-0.5 list-none">
+                <li>Geanonimiseerde gebruiksstatistieken</li>
+                <li>Data verstuurd naar VS (USA)</li>
+                <li>Geen advertenties of profiling</li>
+              </ul>
             </div>
             <button
               onClick={() => handleToggle('analytics')}
               disabled={isLoading}
               aria-pressed={prefs.analytics}
               aria-label="Analytische cookies in- of uitschakelen"
-              className={`
-                flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors mt-0.5
-                ${prefs.analytics
-                  ? 'bg-[var(--ff-color-primary-600)]'
-                  : 'bg-[var(--color-border)]'
-                }
-                ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2
-              `}
+              className={[
+                'flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors mt-0.5',
+                prefs.analytics ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
+                isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2'
+              ].join(' ')}
             >
               <span
-                className={`
-                  inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-                  ${prefs.analytics ? 'translate-x-6' : 'translate-x-1'}
-                `}
+                className={[
+                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                  prefs.analytics ? 'translate-x-6' : 'translate-x-1'
+                ].join(' ')}
               />
             </button>
           </div>
@@ -180,20 +176,18 @@ export const CookieSettings: React.FC = () => {
 
       {/* Actions */}
       <div className="space-y-3">
-        <Button
+        <button
           onClick={handleWithdrawAll}
           disabled={isLoading || (!prefs.analytics && !prefs.marketing)}
-          variant="secondary"
-          fullWidth
-          className="justify-center"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-muted)] hover:border-[var(--color-text)] hover:text-[var(--color-text)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Trash2 className="w-4 h-4" />
-          Verwijder Alle Niet-essentiële Cookies
-        </Button>
+          <Trash2 className="w-4 h-4 flex-shrink-0" />
+          <span>Niet-essentiële cookies verwijderen</span>
+        </button>
 
         <Link to="/cookies" className="block">
           <button className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] transition-colors flex items-center justify-center gap-2">
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-4 h-4 flex-shrink-0" />
             Volledig Cookiebeleid
           </button>
         </Link>
