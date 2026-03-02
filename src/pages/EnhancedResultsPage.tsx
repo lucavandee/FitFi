@@ -317,44 +317,14 @@ export default function EnhancedResultsPage() {
       {/* ── COMPACT HERO ── */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative overflow-hidden py-8 sm:py-12"
+        className="relative overflow-hidden py-8 sm:py-12 bg-gradient-to-b from-[var(--ff-color-primary-50)] to-[var(--color-bg)]"
       >
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)]">
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute -top-1/2 -right-1/4 w-[800px] h-[800px] bg-[var(--ff-color-primary-200)] rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.4, 0.2],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1,
-            }}
-            className="absolute -bottom-1/2 -left-1/4 w-[600px] h-[600px] bg-[var(--ff-color-accent-200)] rounded-full blur-3xl"
-          />
-        </div>
-
         <div className="ff-container relative z-10">
           <div className="max-w-3xl mx-auto">
             {hasCompletedQuiz ? (
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-full text-xs font-bold mb-3 shadow-sm">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-xs font-bold mb-3 border border-[var(--ff-color-primary-200)]">
                     Persoonlijk Style Report
                   </div>
                   <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[var(--color-text)]">
@@ -416,7 +386,7 @@ export default function EnhancedResultsPage() {
 
       {/* ── STICKY TAB BAR ── */}
       {hasCompletedQuiz && (
-        <div className="sticky top-0 z-40 bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)]">
+        <div className="sticky top-0 z-40 bg-[var(--color-surface)]/95 backdrop-blur-md" style={{ boxShadow: '0 1px 0 rgba(30,35,51,0.06), 0 4px 16px rgba(30,35,51,0.04)' }}>
           <div className="ff-container">
             <div className="max-w-3xl mx-auto flex items-center justify-center py-3">
               <div

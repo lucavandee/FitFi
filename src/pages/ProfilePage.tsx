@@ -38,7 +38,8 @@ function SectionCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
-      className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden"
+      className="rounded-2xl bg-[var(--color-surface)] overflow-hidden"
+      style={{ boxShadow: '0 1px 3px rgba(30,35,51,0.06), 0 2px 8px rgba(30,35,51,0.04)' }}
     >
       {children}
     </motion.div>
@@ -48,9 +49,9 @@ function SectionCard({
 function SectionHeader({ title, description }: { title: string; description?: string }) {
   return (
     <div className="px-5 py-4 border-b border-[var(--color-border)]">
-      <h2 className="text-sm font-bold text-[var(--color-text)] uppercase tracking-wider">{title}</h2>
+      <h2 className="text-sm font-semibold text-[var(--color-muted)] tracking-wide">{title}</h2>
       {description && (
-        <p className="text-sm text-[var(--color-muted)] mt-0.5 font-normal normal-case tracking-normal">{description}</p>
+        <p className="text-sm text-[var(--color-muted)] mt-0.5 font-normal">{description}</p>
       )}
     </div>
   );
@@ -76,8 +77,11 @@ function InitialsAvatar({ name, email }: { name: string; email: string }) {
     ? name.slice(0, 2).toUpperCase()
     : email.slice(0, 2).toUpperCase();
   return (
-    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-      <span className="text-xl sm:text-2xl font-bold text-[var(--ff-color-primary-700)]">{initials}</span>
+    <div
+      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-200)] to-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0"
+      style={{ boxShadow: '0 2px 8px rgba(122,97,74,0.15)' }}
+    >
+      <span className="text-xl sm:text-2xl font-bold text-[var(--ff-color-primary-700)] tracking-tight">{initials}</span>
     </div>
   );
 }
@@ -317,7 +321,8 @@ const ProfilePage: React.FC = () => {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6"
+            className="rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--color-surface)] p-5 sm:p-6"
+            style={{ boxShadow: '0 1px 3px rgba(30,35,51,0.06), 0 4px 16px rgba(30,35,51,0.06)' }}
           >
             <div className="flex items-start gap-4">
               <InitialsAvatar name={displayName} email={user.email ?? ''} />
@@ -370,6 +375,7 @@ const ProfilePage: React.FC = () => {
           {/* ── Stijlprofiel ── */}
           {hasStyleProfile && (
             <SectionCard delay={0.05}>
+              <div className="h-0.5 bg-gradient-to-r from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)]" />
               <SectionHeader title="Stijlprofiel" />
               <div className="p-5 space-y-4">
                 <div>
@@ -438,7 +444,7 @@ const ProfilePage: React.FC = () => {
             />
             <div className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[var(--color-border)] bg-[var(--ff-color-neutral-100)] flex-shrink-0 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-[var(--ff-color-primary-50)] flex-shrink-0 flex items-center justify-center" style={{ boxShadow: '0 0 0 1.5px rgba(30,35,51,0.08)' }}>
                   {photoPreview ? (
                     <img
                       src={photoPreview}
@@ -509,10 +515,10 @@ const ProfilePage: React.FC = () => {
                   onChange={handleNameChange}
                   placeholder="Jouw naam"
                   maxLength={50}
-                  className={`w-full h-11 px-3.5 rounded-xl border text-[var(--color-text)] bg-[var(--color-bg)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] ${
+                  className={`w-full h-11 px-3.5 rounded-xl border text-[var(--color-text)] bg-[var(--color-surface)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-[var(--ff-color-primary-400)] ${
                     displayNameError && displayNameDirty
                       ? "border-[var(--ff-color-error-500)]"
-                      : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]"
+                      : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]"
                   }`}
                   aria-describedby={displayNameError && displayNameDirty ? "name-error" : undefined}
                 />
@@ -532,7 +538,7 @@ const ProfilePage: React.FC = () => {
                 <label className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
                   E-mailadres
                 </label>
-                <div className="flex items-center gap-3 h-11 px-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] opacity-60 select-none">
+                <div className="flex items-center gap-3 h-11 px-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] opacity-60 select-none">
                   <Mail className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
                   <span className="text-sm text-[var(--color-text)] truncate">{user.email}</span>
                 </div>
