@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers, Palette, LayoutGrid } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -262,6 +262,10 @@ export default function EnhancedResultsPage() {
   // Gallery mode: swipe (mobile-friendly) or grid (desktop-friendly)
   const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
 
+  // Tab navigation
+  type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
+  const [activeTab, setActiveTab] = React.useState<ResultTab>('overzicht');
+
   // Auto-detect mobile and default to swipe on small screens
   React.useEffect(() => {
     const isMobile = window.innerWidth < 768;
@@ -289,8 +293,14 @@ export default function EnhancedResultsPage() {
     }
   }
 
+  const tabs: { id: ResultTab; label: string; icon: React.ReactNode }[] = [
+    { id: 'overzicht', label: 'Overzicht', icon: <Sparkles className="w-4 h-4" /> },
+    { id: 'stijl-dna', label: 'Stijl DNA', icon: <Palette className="w-4 h-4" /> },
+    { id: 'outfits', label: `Outfits${displayOutfits.length > 0 ? ` (${displayOutfits.length})` : ''}`, icon: <LayoutGrid className="w-4 h-4" /> },
+  ];
+
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)] relative overflow-hidden">
+    <main className="bg-[var(--color-bg)] text-[var(--color-text)] relative">
       <Helmet>
         <title>Jouw Style Report – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
@@ -304,10 +314,10 @@ export default function EnhancedResultsPage() {
 
       <Breadcrumbs />
 
-      {/* Premium Hero Section - Responsive padding */}
+      {/* ── COMPACT HERO ── */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative overflow-hidden py-16 sm:py-24 md:py-32 lg:py-40"
+        className="relative overflow-hidden py-8 sm:py-12"
       >
         {/* Animated Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)]">
@@ -339,184 +349,116 @@ export default function EnhancedResultsPage() {
         </div>
 
         <div className="ff-container relative z-10">
-          <div className="max-w-5xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-full text-xs sm:text-sm font-bold mb-6 sm:mb-8 shadow-lg"
-            >
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-              Jouw Persoonlijke Style Report
-            </motion.div>
-
+          <div className="max-w-3xl mx-auto">
             {hasCompletedQuiz ? (
-              <>
-                <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.1 }}
-                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-bold mb-6 sm:mb-8 leading-[1.1] tracking-tight px-4"
-                >
-                  Jouw rapport,
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-primary-600)] bg-clip-text text-transparent bg-[length:200%_auto] animate-[gradient_3s_linear_infinite]"
-                  >
-                    op basis van jouw keuzes
-                  </motion.span>
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[var(--color-muted)] mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-light px-4"
-                >
-                  {archetypeDetectionResult && archetypeDetectionResult.confidence >= 0.7 ? (
-                    <>
-                      We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} unieke outfits</strong> samengesteld die perfect
-                      <br className="hidden md:block" /> bij jouw duidelijke {archetypeName} stijl passen
-                    </>
-                  ) : archetypeDetectionResult && archetypeDetectionResult.confidence >= 0.5 ? (
-                    <>
-                      We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} veelzijdige outfits</strong> samengesteld die verschillende
-                      <br className="hidden md:block" /> aspecten van jouw {archetypeName} stijl reflecteren
-                    </>
-                  ) : (
-                    <>
-                      We hebben <strong className="font-semibold text-[var(--ff-color-primary-700)]">{displayOutfits?.length || 0} diverse outfits</strong> samengesteld die jouw
-                      <br className="hidden md:block" /> eclectische stijlmix met {archetypeName} elementen weerspiegelen
-                    </>
-                  )}
-                </motion.p>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-4"
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      document.getElementById('outfits-section')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="inline-flex items-center justify-center gap-2 px-7 sm:px-10 py-4 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl sm:rounded-2xl font-bold text-base sm:text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all shadow-xl"
-                  >
-                    <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Bekijk outfits</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </motion.button>
-
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <NavLink
-                      to="/onboarding"
-                      title="Pas je antwoorden aan om een nieuw rapport te genereren"
-                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl sm:rounded-2xl font-semibold text-base sm:text-base hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all shadow-lg w-full sm:w-auto text-[var(--color-text)]"
-                    >
-                      <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Vernieuw mijn rapport</span>
-                    </NavLink>
-                  </motion.div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={sharePage}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-4 min-h-[52px] text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors text-sm font-medium"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    <span>Deel</span>
-                  </motion.button>
-                </motion.div>
-
-                {/* Stats Bar - Responsive */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.8 }}
-                  className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto px-4"
-                >
-                  <div className="text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{displayOutfits.length}</div>
-                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Outfits</div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-full text-xs font-bold mb-3 shadow-sm">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Persoonlijk Style Report
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">
-                      {archetypeDetectionResult ? `${Math.round(archetypeDetectionResult.confidence * 100)}%` : '—'}
-                    </div>
-                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Stijlmatch</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--ff-color-primary-600)] mb-1 sm:mb-2">{favs.length}</div>
-                    <div className="text-xs sm:text-sm text-[var(--color-muted)] font-medium">Favorieten</div>
-                  </div>
-                </motion.div>
-              </>
-            ) : (
-              <>
-                <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.1 }}
-                  className="text-5xl md:text-6xl lg:text-8xl font-bold mb-8 leading-[1.1]"
-                >
-                  Jouw
-                  <span className="block bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                    stijl
-                  </span>
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
-                >
-                  Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen
-                </motion.p>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                  <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[var(--color-text)]">
+                    {archetypeName}
+                    {archetypeDetectionResult && (
+                      <span className="ml-2 text-sm font-normal text-[var(--color-muted)] align-middle">
+                        {Math.round(archetypeDetectionResult.confidence * 100)}% match
+                      </span>
+                    )}
+                  </h1>
+                  <p className="text-sm text-[var(--color-muted)] mt-1">
+                    {displayOutfits.length} outfits · {favs.length} favorieten
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <NavLink
-                    to="/onboarding"
-                    className="inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-2xl transition-all"
+                    to="/onboarding?step=redo"
+                    title="Quiz opnieuw doen"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg font-medium text-sm hover:bg-[var(--ff-color-primary-50)] transition-all text-[var(--color-text)]"
                   >
-                    <Sparkles className="w-6 h-6" />
-                    Start Style Quiz
-                    <ArrowRight className="w-6 h-6" />
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Opnieuw</span>
                   </NavLink>
-                </motion.div>
-              </>
+                  <button
+                    onClick={sharePage}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg font-medium text-sm hover:bg-[var(--ff-color-primary-50)] transition-all text-[var(--color-muted)]"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Delen</span>
+                  </button>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setActiveTab('outfits')}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] bg-[var(--ff-color-primary-700)] text-white rounded-lg font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all shadow-sm"
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    Outfits
+                  </motion.button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <h1 className="text-3xl font-bold mb-4">Jouw stijl</h1>
+                <p className="text-[var(--color-muted)] mb-6">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
+                <NavLink
+                  to="/onboarding"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-bold hover:shadow-xl transition-all"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Start Style Quiz
+                  <ArrowRight className="w-5 h-5" />
+                </NavLink>
+              </div>
             )}
           </div>
         </div>
-
-        {/* Decorative Elements */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/4 right-10 w-20 h-20 border-4 border-[var(--ff-color-primary-300)] rounded-full opacity-20"
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-1/4 left-10 w-32 h-32 border-4 border-[var(--ff-color-accent-300)] rounded-full opacity-20"
-        />
       </motion.section>
+
+      {/* ── STICKY TAB BAR ── */}
+      {hasCompletedQuiz && (
+        <div className="sticky top-0 z-40 bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-sm">
+          <div className="ff-container">
+            <div className="max-w-3xl mx-auto flex items-center gap-1 overflow-x-auto scrollbar-none py-0">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className={`flex items-center gap-1.5 px-4 py-3.5 min-h-[48px] font-semibold text-sm whitespace-nowrap border-b-2 transition-all flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] ${
+                    activeTab === tab.id
+                      ? 'border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)]'
+                      : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)]'
+                  }`}
+                  aria-selected={activeTab === tab.id}
+                  role="tab"
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB CONTENT ── */}
+      <AnimatePresence mode="wait">
+
+      {/* TAB 1: OVERZICHT */}
+      {(!hasCompletedQuiz || activeTab === 'overzicht') && (
+        <motion.div
+          key="tab-overzicht"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+        >
 
       {/* Style Identity Hero - Personal Style Statement */}
       {hasCompletedQuiz && activeColorProfile && (
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]/30">
+        <section className="py-8 sm:py-12 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]/30">
           <div className="ff-container">
             <StyleIdentityHero
               primaryArchetype={archetypeKey}
@@ -525,7 +467,7 @@ export default function EnhancedResultsPage() {
               swipeInsights={swipeInsights}
             />
             {answers && (
-              <div className="mt-8">
+              <div className="mt-6">
                 <QuizInputSummary
                   answers={answers}
                   archetypeName={archetypeName}
@@ -536,7 +478,7 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
-      {/* ✅ NEW: Personalized Advice Section - Testcase specific */}
+      {/* Personalized Advice Section */}
       {hasCompletedQuiz && answers && activeColorProfile && (
         <PersonalizedAdviceSection
           answers={answers}
@@ -545,9 +487,87 @@ export default function EnhancedResultsPage() {
         />
       )}
 
-      {/* Style DNA Section - Responsive padding with wider desktop layout */}
-      {hasCompletedQuiz && color && (
-        <section className="py-12 sm:py-16 md:py-20 lg:py-32 bg-[var(--color-surface)]/30 relative">
+      {/* Profile Consistency Banner */}
+      {hasCompletedQuiz && consistencyAnalysis && (
+        <section className="py-4">
+          <div className="ff-container">
+            <ProfileConsistencyBanner
+              analysis={consistencyAnalysis}
+              onRetakeQuiz={() => {
+                try {
+                  localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
+                  localStorage.removeItem(LS_KEYS.ARCHETYPE);
+                  localStorage.removeItem(LS_KEYS.COLOR_PROFILE);
+                } catch {}
+                navigate('/onboarding');
+              }}
+              onDismiss={() => {
+                try {
+                  sessionStorage.setItem('ff_consistency_banner_dismissed', 'true');
+                } catch {}
+              }}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Quick preview strip: navigeer naar andere tabs */}
+      {hasCompletedQuiz && (
+        <section className="py-8 sm:py-10">
+          <div className="ff-container">
+            <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <motion.button
+                whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { setActiveTab('stijl-dna'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="flex items-center gap-4 p-5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl text-left hover:border-[var(--ff-color-primary-400)] transition-all group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-100)] transition-colors">
+                  <Palette className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+                </div>
+                <div>
+                  <p className="font-semibold text-[var(--color-text)] text-sm">Jouw Stijl DNA</p>
+                  <p className="text-xs text-[var(--color-muted)] mt-0.5">Kleurprofiel, archetype & tips</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[var(--color-muted)] ml-auto group-hover:text-[var(--ff-color-primary-600)] transition-colors" />
+              </motion.button>
+
+              <motion.button
+                whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { setActiveTab('outfits'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="flex items-center gap-4 p-5 bg-[var(--ff-color-primary-700)] text-white rounded-2xl text-left hover:bg-[var(--ff-color-primary-600)] transition-all group shadow-sm"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <ShoppingBag className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">Jouw Outfits</p>
+                  <p className="text-xs opacity-80 mt-0.5">{displayOutfits.length} looks voor jou samengesteld</p>
+                </div>
+                <ArrowRight className="w-4 h-4 opacity-70 ml-auto group-hover:opacity-100 transition-opacity" />
+              </motion.button>
+            </div>
+          </div>
+        </section>
+      )}
+
+        </motion.div>
+      )}
+
+      {/* TAB 2: STIJL DNA */}
+      {hasCompletedQuiz && activeTab === 'stijl-dna' && (
+        <motion.div
+          key="tab-stijl-dna"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+        >
+
+      {/* Style DNA Section */}
+      {color && (
+        <section className="py-8 sm:py-12 bg-[var(--color-surface)]/30 relative">
           <div className="ff-container">
             <AnimatedSection>
               <div className="text-center mb-12 sm:mb-16 lg:mb-20">
@@ -979,48 +999,30 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
-      {/* Profile Consistency Banner - Only show if needed */}
-      {hasCompletedQuiz && consistencyAnalysis && (
-        <section className="py-6">
-          <div className="ff-container">
-            <ProfileConsistencyBanner
-              analysis={consistencyAnalysis}
-              onRetakeQuiz={() => {
-                // Clear quiz answers and navigate to quiz
-                try {
-                  localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
-                  localStorage.removeItem(LS_KEYS.ARCHETYPE);
-                  localStorage.removeItem(LS_KEYS.COLOR_PROFILE);
-                } catch {}
-                navigate('/onboarding');
-              }}
-              onDismiss={() => {
-                // User can dismiss the banner
-                try {
-                  sessionStorage.setItem('ff_consistency_banner_dismissed', 'true');
-                } catch {}
-              }}
-            />
-          </div>
-        </section>
+        </motion.div>
       )}
 
-      {/* Outfit Gallery - Premium - Responsive padding with wider desktop layout */}
-      {hasCompletedQuiz && (
-        <section id="outfits-section" className="py-12 sm:py-16 md:py-20 lg:py-32 relative">
+      {/* TAB 3: OUTFITS */}
+      {hasCompletedQuiz && activeTab === 'outfits' && (
+        <motion.div
+          key="tab-outfits"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+        >
+        <section id="outfits-section" className="py-8 sm:py-10 relative">
           <div className="ff-container">
             <AnimatedSection>
-              <div className="text-center mb-8 sm:mb-12 lg:mb-20">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-accent-100)] text-[var(--ff-color-accent-700)] rounded-full text-sm font-bold mb-6">
-                  <ShoppingBag className="w-4 h-4" />
-                  Jouw Outfits
+              <div className="flex items-center justify-between mb-6 gap-4">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+                    Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
+                  </h2>
+                  <p className="text-sm text-[var(--color-muted)] mt-0.5">
+                    {displayOutfits.length} outfits op basis van jouw {archetypeName} stijl
+                  </p>
                 </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-                  Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
-                </h2>
-                <p className="text-lg sm:text-xl lg:text-2xl text-[var(--color-muted)] max-w-3xl mx-auto mb-8 leading-relaxed">
-                  {displayOutfits.length} zorgvuldig samengestelde outfits die perfect bij jouw stijl passen
-                </p>
 
                 {/* View Mode Toggle */}
                 <motion.div
@@ -1401,7 +1403,10 @@ export default function EnhancedResultsPage() {
             </AnimatedSection>
           </div>
         </section>
+        </motion.div>
       )}
+
+      </AnimatePresence>
 
       {/* Outfit Detail Modal */}
       <OutfitDetailModal
@@ -1424,38 +1429,8 @@ export default function EnhancedResultsPage() {
       {/* Exit Intent Discount Modal */}
       <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
 
-      {/* Mobile Sticky CTA - Only show on scroll & mobile */}
-      {hasCompletedQuiz && !user && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{
-            y: scrollY.get() > 400 ? 0 : 100,
-            opacity: scrollY.get() > 400 ? 1 : 0
-          }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white shadow-2xl border-t-2 border-[var(--ff-color-primary-700)]"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-        >
-          <div className="px-4 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold opacity-90 mb-0.5">
-                  Meer outfits zien
-                </p>
-                <p className="text-lg font-bold leading-tight">
-                  €9,99<span className="text-xs font-normal opacity-80">/maand</span>
-                </p>
-              </div>
-              <NavLink
-                to="/prijzen#premium"
-                className="flex-shrink-0 px-5 py-3 bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-50)] transition-all shadow-lg active:scale-95 whitespace-nowrap"
-              >
-                Upgrade nu
-              </NavLink>
-            </div>
-          </div>
-        </motion.div>
-      )}
+      {/* Mobile bottom padding to avoid sticky tab bar overlap */}
+      <div className="h-16 sm:hidden" aria-hidden="true" />
     </main>
   );
 }
