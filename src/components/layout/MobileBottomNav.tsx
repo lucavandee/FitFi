@@ -81,7 +81,7 @@ const MobileBottomNav: React.FC = () => {
   return (
     <>
       {/* Spacer to prevent content from being hidden behind nav */}
-      <div className="h-[72px] md:hidden" aria-hidden="true" />
+      <div className="h-[58px] md:hidden" aria-hidden="true" />
 
       {/* Mobile Bottom Navigation */}
       <motion.nav
@@ -91,9 +91,13 @@ const MobileBottomNav: React.FC = () => {
         className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
       >
         {/* Backdrop blur container */}
-        <div className="bg-[var(--color-surface)]/95 backdrop-blur-lg border-t border-[var(--color-border)] shadow-2xl">
-          <div className="max-w-screen-sm mx-auto px-2 py-2">
-            <div className="flex items-center justify-around">
+        <div
+          className="bg-[var(--color-surface)]/96 backdrop-blur-xl border-t border-[var(--color-border)]"
+          style={{ boxShadow: "0 -4px 24px rgba(30,35,51,0.08)" }}
+        >
+          {/* safe area spacer for notched phones */}
+          <div className="max-w-screen-sm mx-auto px-1" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+            <div className="flex items-stretch justify-around h-[58px]">
               {visibleItems.map((item) => {
                 const Icon = item.icon;
 
@@ -101,52 +105,43 @@ const MobileBottomNav: React.FC = () => {
                   <NavLink
                     key={item.path}
                     to={item.path}
+                    end={item.path === '/'}
                     onClick={handleVibrate}
-                    className="flex flex-col items-center justify-center min-w-[64px] py-2 px-3 rounded-xl transition-all duration-200 group relative"
+                    className="flex flex-col items-center justify-center flex-1 rounded-xl transition-all duration-150 group relative"
                   >
-                    {({ isActive: active }) => {
-                      const activeState = active;
-                      return (
-                        <>
-                          {/* Active indicator */}
-                          {activeState && (
-                            <motion.div
-                              layoutId="bottomNavIndicator"
-                              className="absolute inset-0 bg-[var(--ff-color-primary-50)] rounded-xl"
-                              initial={false}
-                              transition={{
-                                type: 'spring',
-                                stiffness: 380,
-                                damping: 30,
-                              }}
-                            />
-                          )}
+                    {({ isActive: active }) => (
+                      <>
+                        {active && (
+                          <motion.div
+                            layoutId="bottomNavIndicator"
+                            className="absolute inset-1 rounded-xl"
+                            style={{ backgroundColor: "var(--ff-color-primary-50)" }}
+                            initial={false}
+                            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                          />
+                        )}
 
-                          {/* Icon */}
-                          <div className="relative z-10">
-                            <Icon
-                              className={`w-6 h-6 transition-colors ${
-                                activeState
-                                  ? 'text-[var(--ff-color-primary-700)]'
-                                  : 'text-[var(--color-text)]/60 group-hover:text-[var(--color-text)]'
-                              }`}
-                              strokeWidth={activeState ? 2.5 : 2}
-                            />
-                          </div>
-
-                          {/* Label */}
-                          <span
-                            className={`relative z-10 text-xs font-medium mt-1 transition-colors ${
-                              activeState
+                        <div className="relative z-10 flex flex-col items-center gap-[3px]">
+                          <Icon
+                            className={`w-[22px] h-[22px] transition-colors ${
+                              active
                                 ? 'text-[var(--ff-color-primary-700)]'
-                                : 'text-[var(--color-text)]/60 group-hover:text-[var(--color-text)]'
+                                : 'text-[var(--color-text)]/50 group-hover:text-[var(--color-text)]/80'
+                            }`}
+                            strokeWidth={active ? 2.5 : 1.8}
+                          />
+                          <span
+                            className={`text-[10px] font-semibold leading-none transition-colors ${
+                              active
+                                ? 'text-[var(--ff-color-primary-700)]'
+                                : 'text-[var(--color-text)]/50 group-hover:text-[var(--color-text)]/80'
                             }`}
                           >
                             {item.label}
                           </span>
-                        </>
-                      );
-                    }}
+                        </div>
+                      </>
+                    )}
                   </NavLink>
                 );
               })}
