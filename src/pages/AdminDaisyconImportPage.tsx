@@ -51,7 +51,9 @@ export default function AdminDaisyconImportPage() {
 
   async function loadLogs() {
     setLogsLoading(true);
-    const { data, error } = await supabase
+    const client = supabase();
+    if (!client) { setLogsLoading(false); return; }
+    const { data, error } = await client
       .from("daisycon_imports")
       .select("*")
       .order("imported_at", { ascending: false })
@@ -79,7 +81,9 @@ export default function AdminDaisyconImportPage() {
     setResult(null);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const client = supabase();
+      if (!client) throw new Error("Supabase niet beschikbaar");
+      const { data: { session } } = await client.auth.getSession();
       if (!session) throw new Error("Geen sessie");
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
