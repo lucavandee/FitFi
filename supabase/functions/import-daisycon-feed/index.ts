@@ -235,7 +235,7 @@ Deno.serve(async (req: Request) => {
             image_url: imageUrl,
             images: allImages,
             retailer: programName,
-            url: info.link,
+            affiliate_url: info.link,
             affiliate_link: info.link,
             product_url: info.link,
             category,
