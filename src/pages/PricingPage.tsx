@@ -256,17 +256,17 @@ export default function PricingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
 
               {/* ── Free Plan ── */}
-              <article className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 sm:p-7 shadow-[var(--shadow-soft)] flex flex-col">
-                <div className="inline-block px-3 py-1 bg-[var(--color-bg)] rounded-full text-xs font-bold text-[var(--color-muted)] mb-3 uppercase tracking-wide self-start">
+              <article className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] flex flex-col">
+                <div className="inline-block px-3 py-1 bg-[var(--color-bg)] rounded-full text-xs font-bold text-[var(--color-muted)] mb-4 uppercase tracking-wide self-start">
                   Altijd gratis
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Gratis</h2>
+                <h2 className="text-2xl font-bold mb-2 text-[var(--color-text)]">Gratis</h2>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-4xl sm:text-5xl font-bold">€0</span>
+                  <span className="text-5xl font-bold text-[var(--color-text)]">€0</span>
                 </div>
                 <p className="text-sm text-[var(--color-muted)] mb-6">Voor altijd — geen creditcard</p>
 
-                <ul className="space-y-3 mb-6 flex-1" role="list">
+                <ul className="space-y-3 flex-1 mb-6" role="list">
                   {[
                     { ok: true,  label: "Stijlprofiel analyse" },
                     { ok: true,  label: "3 gepersonaliseerde outfits" },
@@ -275,21 +275,21 @@ export default function PricingPage() {
                     { ok: false, label: "Nova AI-stylist" },
                     { ok: false, label: "Kleuranalyse (foto)" },
                   ].map(({ ok, label }) => (
-                    <li key={label} className={`flex items-center gap-3${ok ? "" : " opacity-45"}`}>
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? "bg-[var(--ff-color-primary-100)]" : "bg-[var(--color-border)]"}`}>
+                    <li key={label} className={`flex items-center gap-3 ${ok ? "" : "opacity-40"}`}>
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? "bg-[var(--ff-color-primary-100)]" : "bg-[var(--color-border)]"}`}>
                         {ok
-                          ? <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
+                          ? <Check className="w-3 h-3 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
                           : <Minus className="w-3 h-3 text-[var(--color-muted)]" />
                         }
                       </div>
-                      <span className="text-sm leading-snug">{label}</span>
+                      <span className="text-sm text-[var(--color-text)] leading-snug">{label}</span>
                     </li>
                   ))}
                 </ul>
 
                 <NavLink
                   to="/onboarding"
-                  className="block text-center px-6 py-3.5 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
+                  className="block text-center px-6 py-3.5 min-h-[52px] rounded-xl font-semibold text-sm border-2 border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98]"
                   data-event="cta_start_free_pricing"
                 >
                   Start gratis
@@ -297,109 +297,105 @@ export default function PricingPage() {
               </article>
 
               {/* ── Premium Plan ── */}
-              <article className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-6 sm:p-7 shadow-2xl text-white flex flex-col md:col-span-2 lg:col-span-1">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-warning-600)] text-white rounded-full text-xs font-bold mb-3 self-start shadow-md">
-                  <Star className="w-3.5 h-3.5 fill-white" />
+              <article className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-6 shadow-2xl text-white flex flex-col">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-warning-600)] text-white rounded-full text-xs font-bold mb-4 self-start shadow-md">
+                  <Star className="w-3 h-3 fill-white" />
                   MEEST GEKOZEN
                 </div>
                 <h2 className="text-2xl font-bold mb-2">
                   {isLoading ? "Premium" : premiumProduct?.name || "Premium"}
                 </h2>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-4xl sm:text-5xl font-bold">€{premiumPrice}</span>
-                  <span className="text-base opacity-80">/maand</span>
+                  <span className="text-5xl font-bold">€{premiumPrice}</span>
+                  <span className="text-base opacity-70">/maand</span>
                 </div>
-                <p className="text-white/60 text-xs mb-1">~€0,33 per dag</p>
-                <p className="text-white/55 text-xs mb-5">Maandelijks opzegbaar</p>
+                <p className="text-white/55 text-xs mb-1">~€0,33 per dag</p>
+                <p className="text-white/45 text-xs mb-6">Maandelijks opzegbaar</p>
+
+                <ul className="space-y-3 flex-1 mb-6" role="list">
+                  <li className="text-xs font-bold uppercase tracking-wider text-white/60 pb-1">Alles van Free, plus:</li>
+                  {[
+                    "Onbeperkte outfits",
+                    "Nova AI-assistent",
+                    "Kleuranalyse (foto)",
+                    "Shopping cheatsheet",
+                    "Smart learning",
+                  ].map((title) => (
+                    <li key={title} className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                      </div>
+                      <span className="text-sm font-medium">{title}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 <button
                   onClick={() => premiumProduct && handleCheckout(premiumProduct.id)}
                   disabled={isLoading || isPending}
-                  className="w-full px-6 py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base hover:bg-white/90 transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] mb-2"
+                  className="w-full px-6 py-3.5 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold text-sm hover:bg-white/90 transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] mb-1.5"
                   data-event="cta_start_premium_pricing"
                 >
                   {isLoading ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Laden...</span></>
+                    <><Loader2 className="w-4 h-4 animate-spin" /><span>Laden...</span></>
                   ) : isPending ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Bezig...</span></>
+                    <><Loader2 className="w-4 h-4 animate-spin" /><span>Bezig...</span></>
                   ) : (
-                    <><span>Upgrade naar Premium</span><ArrowRight className="w-5 h-5" /></>
+                    <><span>Upgrade naar Premium</span><ArrowRight className="w-4 h-4" /></>
                   )}
                 </button>
-                <p className="text-xs text-white/55 text-center mb-6">30 dagen geld-terug-garantie</p>
-
-                <div className="border-t border-white/20 pt-5 flex-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-white/70 mb-3">Alles van Free, plus:</p>
-                  <ul className="space-y-3" role="list">
-                    {[
-                      { Icon: Check,      title: "Onbeperkte outfits" },
-                      { Icon: Zap,        title: "Nova AI-assistent" },
-                      { Icon: Sparkles,   title: "Kleuranalyse (foto)" },
-                      { Icon: Check,      title: "Shopping cheatsheet" },
-                      { Icon: TrendingUp, title: "Smart learning" },
-                    ].map(({ Icon, title }) => (
-                      <li key={title} className="flex items-center gap-3">
-                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-3.5 h-3.5 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">{title}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <p className="text-xs text-white/45 text-center">30 dagen geld-terug-garantie</p>
               </article>
 
               {/* ── Founder Plan ── */}
-              <article className="bg-gradient-to-br from-[var(--ff-color-primary-900)] to-[var(--ff-color-primary-800)] rounded-2xl p-6 sm:p-7 text-white shadow-2xl border border-[var(--ff-color-warning-500)]/20 flex flex-col">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-warning-500)]/20 text-[var(--ff-color-warning-300)] rounded-full text-xs font-bold mb-3 self-start">
-                  <Crown className="w-3.5 h-3.5" />
+              <article className="bg-gradient-to-br from-[var(--ff-color-primary-900)] to-[var(--ff-color-primary-800)] rounded-2xl p-6 text-white shadow-2xl border border-[var(--ff-color-warning-500)]/20 flex flex-col">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-warning-500)]/20 text-[var(--ff-color-warning-300)] rounded-full text-xs font-bold mb-4 self-start">
+                  <Crown className="w-3 h-3" />
                   LIFETIME
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Founder</h2>
                 <div className="flex items-baseline gap-3 mb-1">
-                  <span className="text-4xl sm:text-5xl font-bold">€{founderPrice}</span>
-                  <span className="text-white/50 line-through text-lg">€999</span>
+                  <span className="text-5xl font-bold">€{founderPrice}</span>
+                  <span className="text-white/40 line-through text-base">€999</span>
                 </div>
-                <p className="text-white/55 text-xs mb-1">Eenmalig • Lifetime toegang</p>
-                <p className="text-[var(--ff-color-warning-400)] text-xs font-semibold mb-5">
+                <p className="text-white/45 text-xs mb-1">Eenmalig · Lifetime toegang</p>
+                <p className="text-[var(--ff-color-warning-400)] text-xs font-semibold mb-6">
                   Break-even: {breakEvenMonths} maanden
                 </p>
+
+                <ul className="space-y-3 flex-1 mb-6" role="list">
+                  <li className="text-xs font-bold uppercase tracking-wider text-[var(--ff-color-warning-400)]/70 pb-1">Exclusief:</li>
+                  {[
+                    "Lifetime Premium toegang",
+                    "Founder badge",
+                    "Beta toegang",
+                    "Prioritaire support",
+                    "Invloed op roadmap",
+                  ].map((title) => (
+                    <li key={title} className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-[var(--ff-color-warning-500)]/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 text-[var(--ff-color-warning-400)]" strokeWidth={3} />
+                      </div>
+                      <span className="text-sm font-medium">{title}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 <button
                   onClick={() => founderProduct && handleCheckout(founderProduct.id)}
                   disabled={isLoading || isPending}
-                  className="w-full px-6 py-4 min-h-[52px] bg-[var(--ff-color-warning-500)] hover:bg-[var(--ff-color-warning-400)] text-[var(--ff-color-primary-900)] rounded-xl font-bold text-base transition-all focus-visible:ring-2 focus-visible:ring-[var(--ff-color-warning-400)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-900)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] mb-2"
+                  className="w-full px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-warning-500)] hover:bg-[var(--ff-color-warning-400)] text-[var(--ff-color-primary-900)] rounded-xl font-bold text-sm transition-all focus-visible:ring-2 focus-visible:ring-[var(--ff-color-warning-400)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-900)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] mb-1.5"
                   data-event="cta_start_founder_pricing"
                 >
                   {isLoading ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Laden...</span></>
+                    <><Loader2 className="w-4 h-4 animate-spin" /><span>Laden...</span></>
                   ) : isPending ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Bezig...</span></>
+                    <><Loader2 className="w-4 h-4 animate-spin" /><span>Bezig...</span></>
                   ) : (
-                    <><Crown className="w-5 h-5" /><span>Word Founder lid</span></>
+                    <><span>Word Founder lid</span><ArrowRight className="w-4 h-4" /></>
                   )}
                 </button>
-                <p className="text-xs text-white/45 text-center mb-6">Beperkt beschikbaar • 30 dagen garantie</p>
-
-                <div className="border-t border-white/10 pt-5 flex-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-[var(--ff-color-warning-400)]/80 mb-3">Exclusief:</p>
-                  <ul className="space-y-3" role="list">
-                    {[
-                      { Icon: Check,      title: "Lifetime Premium toegang" },
-                      { Icon: Crown,      title: "Founder badge" },
-                      { Icon: Sparkles,   title: "Beta toegang" },
-                      { Icon: Shield,     title: "Prioritaire support" },
-                      { Icon: TrendingUp, title: "Invloed op roadmap" },
-                    ].map(({ Icon, title }) => (
-                      <li key={title} className="flex items-center gap-3">
-                        <div className="w-6 h-6 bg-[var(--ff-color-warning-500)]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-3.5 h-3.5 text-[var(--ff-color-warning-400)]" />
-                        </div>
-                        <span className="text-sm font-medium">{title}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <p className="text-xs text-white/40 text-center">Beperkt beschikbaar · 30 dagen garantie</p>
               </article>
 
             </div>
