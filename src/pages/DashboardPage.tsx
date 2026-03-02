@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
-  Sparkles, Heart, Camera, ArrowRight, Plus, Lock, FileText,
+  Heart, Camera, ArrowRight, Plus, Lock, FileText,
   RefreshCw, Settings, ChevronRight, Star, Check, ShoppingBag
 } from "lucide-react";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -137,8 +137,8 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="w-16 h-16 rounded-2xl bg-[var(--ff-color-primary-700)] flex items-center justify-center mx-auto mb-8">
-                  <Sparkles className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] flex items-center justify-center mx-auto mb-8">
+                  <span className="text-2xl font-bold text-[var(--ff-color-primary-700)] tracking-tight select-none">FF</span>
                 </div>
                 <h1 className="text-3xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
                   Nog geen stijlrapport
@@ -150,7 +150,6 @@ export default function DashboardPage() {
                   onClick={() => navigate("/onboarding")}
                   className="inline-flex items-center gap-2 px-7 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-lg"
                 >
-                  <Sparkles className="w-5 h-5" />
                   Ontvang jouw stijladvies
                   <ArrowRight className="w-5 h-5" />
                 </button>
@@ -318,8 +317,8 @@ export default function DashboardPage() {
                             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Sparkles className="w-6 h-6 text-[var(--color-muted)]" />
+                          <div className="w-full h-full flex items-center justify-center bg-[var(--color-bg)]">
+                            <span className="text-xs font-bold text-[var(--color-muted)] tracking-widest uppercase select-none">–</span>
                           </div>
                         )}
                       </motion.button>
@@ -328,7 +327,6 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="px-5 pb-5 flex flex-col items-center justify-center py-8 text-center">
-                  <Sparkles className="w-8 h-8 text-[var(--color-muted)] mb-2" />
                   <p className="text-sm text-[var(--color-muted)]">Nog geen outfits geladen</p>
                   <button
                     onClick={() => navigate("/results")}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
-  User, Mail, Shield, LogOut, Camera, Trash2, Key,
+  User, Mail, LogOut, Camera, Trash2,
   ChevronRight, Check, AlertCircle, Sparkles, RefreshCw,
   Crown, Star
 } from "lucide-react";
@@ -94,14 +94,14 @@ const SEASON_LABELS: Record<string, string> = {
 };
 
 const SEASON_COLORS: Record<string, string> = {
-  lente: '#f9a8d4',
-  zomer: '#93c5fd',
-  herfst: '#fdba74',
-  winter: '#a5f3fc',
-  spring: '#f9a8d4',
-  summer: '#93c5fd',
-  autumn: '#fdba74',
-  fall: '#fdba74',
+  lente: 'var(--ff-color-success-200)',
+  zomer: 'var(--ff-color-accent-200)',
+  herfst: 'var(--ff-color-warning-200)',
+  winter: 'var(--ff-color-primary-200)',
+  spring: 'var(--ff-color-success-200)',
+  summer: 'var(--ff-color-accent-200)',
+  autumn: 'var(--ff-color-warning-200)',
+  fall: 'var(--ff-color-warning-200)',
 };
 
 const ProfilePage: React.FC = () => {
@@ -291,7 +291,7 @@ const ProfilePage: React.FC = () => {
   }
 
   const seasonLabel = color?.season ? (SEASON_LABELS[color.season.toLowerCase()] ?? color.season) : null;
-  const seasonColor = color?.season ? (SEASON_COLORS[color.season.toLowerCase()] ?? '#e5e7eb') : null;
+  const seasonColor = color?.season ? (SEASON_COLORS[color.season.toLowerCase()] ?? 'var(--color-border)') : null;
   const hasStyleProfile = !!(archetypeName || color);
 
   return (
@@ -372,37 +372,32 @@ const ProfilePage: React.FC = () => {
             <SectionCard delay={0.05}>
               <SectionHeader title="Stijlprofiel" />
               <div className="p-5 space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    {archetypeName && (
-                      <p className="text-base font-bold text-[var(--color-text)]">{archetypeName as string}</p>
-                    )}
-                    {color && (
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                        {seasonLabel && (
-                          <span className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]">
-                            {seasonColor && (
-                              <span
-                                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: seasonColor }}
-                                aria-hidden="true"
-                              />
-                            )}
-                            {seasonLabel}
-                          </span>
-                        )}
-                        {color.temperature && (
-                          <span className="text-sm text-[var(--color-muted)] capitalize">{color.temperature}</span>
-                        )}
-                        {color.contrast && (
-                          <span className="text-sm text-[var(--color-muted)] capitalize">{color.contrast} contrast</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                <div>
+                  {archetypeName && (
+                    <p className="text-base font-bold text-[var(--color-text)]">{archetypeName as string}</p>
+                  )}
+                  {color && (
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                      {seasonLabel && (
+                        <span className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]">
+                          {seasonColor && (
+                            <span
+                              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: seasonColor }}
+                              aria-hidden="true"
+                            />
+                          )}
+                          {seasonLabel}
+                        </span>
+                      )}
+                      {color.temperature && (
+                        <span className="text-sm text-[var(--color-muted)] capitalize">{color.temperature}</span>
+                      )}
+                      {color.contrast && (
+                        <span className="text-sm text-[var(--color-muted)] capitalize">{color.contrast} contrast</span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {color?.palette && color.palette.length > 0 && (
@@ -604,14 +599,9 @@ const ProfilePage: React.FC = () => {
                   onClick={() => setShowResetConfirm(true)}
                   className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 group-hover:border-[var(--ff-color-primary-300)] transition-colors">
-                      <Key className="w-4 h-4 text-[var(--color-muted)]" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
-                      <p className="text-xs text-[var(--color-muted)]">Reset-link naar {user.email}</p>
-                    </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
+                    <p className="text-xs text-[var(--color-muted)]">Reset-link naar {user.email}</p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
                 </button>
@@ -644,12 +634,7 @@ const ProfilePage: React.FC = () => {
                 onClick={() => navigate("/privacy")}
                 className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors group"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 group-hover:border-[var(--ff-color-primary-300)] transition-colors">
-                    <Shield className="w-4 h-4 text-[var(--color-muted)]" />
-                  </div>
-                  <p className="text-sm font-semibold text-[var(--color-text)]">Privacybeleid</p>
-                </div>
+                <p className="text-sm font-semibold text-[var(--color-text)]">Privacybeleid</p>
                 <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
