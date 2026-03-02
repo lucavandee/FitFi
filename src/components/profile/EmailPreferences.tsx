@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Bell, Sparkles, TrendingUp, Gift, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
@@ -13,57 +12,53 @@ interface EmailPreference {
   quiz_reminders: boolean;
 }
 
-interface PreferenceOption {
-  key: keyof EmailPreference;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-const preferenceOptions: PreferenceOption[] = [
+const PREFERENCE_ROWS: { key: keyof EmailPreference; label: string; description: string }[] = [
   {
     key: 'marketing_emails',
-    label: 'Marketing emails',
+    label: 'Marketing',
     description: 'Nieuws over nieuwe features en aanbiedingen',
-    icon: <Gift className="w-5 h-5" />,
   },
   {
     key: 'product_updates',
-    label: 'Product updates',
-    description: 'Updates over nieuwe producten in je stijl',
-    icon: <TrendingUp className="w-5 h-5" />,
+    label: 'Nieuwe producten',
+    description: 'Producten die bij jouw stijl passen',
   },
   {
     key: 'style_tips',
-    label: 'Styling tips',
-    description: 'Persoonlijke stijladviezen van Nova',
-    icon: <Sparkles className="w-5 h-5" />,
+    label: 'Stijltips',
+    description: 'Persoonlijke adviezen van Nova',
   },
   {
     key: 'weekly_digest',
-    label: 'Wekelijkse samenvatting',
-    description: 'Overzicht van nieuwe outfits en trends',
-    icon: <Mail className="w-5 h-5" />,
+    label: 'Weekoverzicht',
+    description: 'Nieuwe outfits en trends, één keer per week',
   },
   {
     key: 'outfit_recommendations',
-    label: 'Outfit aanbevelingen',
-    description: 'Dagelijkse outfit suggesties op basis van weer en agenda',
-    icon: <Bell className="w-5 h-5" />,
+    label: 'Outfit suggesties',
+    description: 'Dagelijkse aanbevelingen op basis van jouw stijl',
   },
   {
     key: 'quiz_reminders',
-    label: 'Quiz herinneringen',
+    label: 'Profielherinneringen',
     description: 'Herinnering om je stijlprofiel bij te werken',
-    icon: <RefreshCw className="w-5 h-5" />,
   },
 ];
+
+const DEFAULTS: EmailPreference = {
+  marketing_emails: false,
+  product_updates: false,
+  style_tips: false,
+  weekly_digest: false,
+  outfit_recommendations: false,
+  quiz_reminders: false,
+};
 
 export function EmailPreferences() {
   const { user } = useUser();
   const [preferences, setPreferences] = useState<EmailPreference | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
 
   useEffect(() => {
     loadPreferences();
@@ -71,7 +66,6 @@ export function EmailPreferences() {
 
   const loadPreferences = async () => {
     if (!user) return;
-
     try {
       const { data, error } = await supabase()
         .from('email_preferences')
@@ -80,15 +74,6 @@ export function EmailPreferences() {
         .maybeSingle();
 
       if (error) throw error;
-
-      const defaults: EmailPreference = {
-        marketing_emails: false,
-        product_updates: false,
-        style_tips: false,
-        weekly_digest: false,
-        outfit_recommendations: false,
-        quiz_reminders: false,
-      };
 
       if (data) {
         setPreferences({
@@ -100,11 +85,10 @@ export function EmailPreferences() {
           quiz_reminders: data.quiz_reminders ?? false,
         });
       } else {
-        setPreferences(defaults);
+        setPreferences(DEFAULTS);
       }
-    } catch (error) {
-      console.error('Error loading email preferences:', error);
-      toast.error('Kon voorkeuren niet laden');
+    } catch {
+      setPreferences(DEFAULTS);
     } finally {
       setIsLoading(false);
     }
@@ -112,39 +96,35 @@ export function EmailPreferences() {
 
   const updatePreference = async (key: keyof EmailPreference, value: boolean) => {
     if (!user || !preferences) return;
-
-    const newPreferences = { ...preferences, [key]: value };
-    setPreferences(newPreferences);
-    setIsSaving(true);
-
+    const previous = preferences[key];
+    setPreferences(prev => prev ? { ...prev, [key]: value } : prev);
+    setSavingKey(key);
     try {
       const { error } = await supabase()
         .from('email_preferences')
         .update({ [key]: value })
         .eq('user_id', user.id);
-
       if (error) throw error;
-
-      toast.success('Voorkeur opgeslagen', {
-        duration: 2000,
-      });
-    } catch (error) {
-      console.error('Error updating preference:', error);
+    } catch {
+      setPreferences(prev => prev ? { ...prev, [key]: previous } : prev);
       toast.error('Kon voorkeur niet opslaan');
-      setPreferences(preferences);
     } finally {
-      setIsSaving(false);
+      setSavingKey(null);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-        <div className="animate-pulse space-y-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-14 bg-[var(--color-bg)] rounded-xl" />
-          ))}
-        </div>
+      <div className="px-5 py-4 space-y-3">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="flex items-center justify-between py-2">
+            <div className="space-y-1.5">
+              <div className="h-3.5 w-28 bg-[var(--color-border)] rounded animate-pulse" />
+              <div className="h-2.5 w-44 bg-[var(--color-border)] rounded animate-pulse opacity-60" />
+            </div>
+            <div className="h-6 w-10 bg-[var(--color-border)] rounded-full animate-pulse" />
+          </div>
+        ))}
       </div>
     );
   }
@@ -152,49 +132,52 @@ export function EmailPreferences() {
   if (!preferences) return null;
 
   return (
-    <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-      <div className="px-5 py-4 border-b border-[var(--color-border)]">
-        <h2 className="text-sm font-bold text-[var(--color-text)] uppercase tracking-wider">E-mailvoorkeuren</h2>
-        <p className="text-sm text-[var(--color-muted)] mt-0.5 font-normal normal-case tracking-normal">
+    <div>
+      <div className="px-5 pt-4 pb-2 border-b border-[var(--color-border)]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          E-mailvoorkeuren
+        </p>
+        <p className="text-xs text-[var(--color-muted)] mt-0.5">
           Kies welke emails je wilt ontvangen
         </p>
       </div>
 
-      <div className="p-5 space-y-3">
-        {preferenceOptions.map((option) => (
+      <div className="divide-y divide-[var(--color-border)]">
+        {PREFERENCE_ROWS.map(({ key, label, description }) => (
           <label
-            key={option.key}
-            className="flex items-start gap-3.5 p-3.5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-colors cursor-pointer"
+            key={key}
+            className="flex items-center justify-between px-5 py-3.5 cursor-pointer hover:bg-[var(--color-bg)] transition-colors"
           >
-            <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0 text-[var(--ff-color-primary-600)] mt-0.5">
-              {option.icon}
+            <div className="min-w-0 pr-4">
+              <p className="text-sm font-medium text-[var(--color-text)] leading-snug">{label}</p>
+              <p className="text-xs text-[var(--color-muted)] mt-0.5 leading-snug">{description}</p>
             </div>
-            <div className="flex-1 min-w-0 pt-0.5">
-              <div className="text-sm font-semibold text-[var(--color-text)] leading-snug">
-                {option.label}
-              </div>
-              <div className="text-xs text-[var(--color-muted)] mt-0.5 leading-normal">
-                {option.description}
-              </div>
-            </div>
-            <div className="relative inline-flex items-center flex-shrink-0 mt-1">
+            <div className="relative flex-shrink-0">
               <input
                 type="checkbox"
-                checked={preferences[option.key]}
-                onChange={(e) => updatePreference(option.key, e.target.checked)}
-                disabled={isSaving}
+                checked={preferences[key]}
+                onChange={e => updatePreference(key, e.target.checked)}
+                disabled={savingKey === key}
                 className="sr-only peer"
-                aria-label={option.label}
+                aria-label={label}
               />
-              <div className="w-10 h-5 bg-[var(--color-border)] peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ff-color-primary-500)] peer-focus-visible:ring-offset-2 rounded-full transition-colors peer-checked:bg-[var(--ff-color-primary-600)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5" />
+              <div className={[
+                'h-6 w-10 rounded-full transition-colors duration-200',
+                preferences[key] ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
+                savingKey === key ? 'opacity-50' : '',
+              ].join(' ')} />
+              <div className={[
+                'absolute top-[3px] left-[3px] h-[18px] w-[18px] rounded-full bg-white shadow-sm transition-transform duration-200 pointer-events-none',
+                preferences[key] ? 'translate-x-4' : 'translate-x-0',
+              ].join(' ')} />
             </div>
           </label>
         ))}
       </div>
 
-      <div className="mx-5 mb-5 p-3.5 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--ff-color-primary-100)]">
-        <p className="text-xs text-[var(--ff-color-primary-700)]">
-          <strong>Let op:</strong> Account- en transactie-emails ontvang je altijd, ongeacht je voorkeur.
+      <div className="px-5 py-3 border-t border-[var(--color-border)]">
+        <p className="text-[11px] text-[var(--color-muted)] leading-relaxed">
+          Account- en transactie-emails ontvang je altijd.
         </p>
       </div>
     </div>

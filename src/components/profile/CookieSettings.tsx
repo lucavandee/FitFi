@@ -1,205 +1,125 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Cookie, Trash2, ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 import { getCookiePrefs, setCookiePrefs, withdrawConsent, type CookiePrefs } from '@/utils/consent';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
-/**
- * Cookie Settings Component
- *
- * Allows users to manage their cookie preferences and withdraw consent.
- * Displays current consent status and provides controls to modify settings.
- */
 export const CookieSettings: React.FC = () => {
   const [prefs, setPrefs] = useState<CookiePrefs>({ necessary: true, analytics: false, marketing: false });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const currentPrefs = getCookiePrefs();
-    setPrefs(currentPrefs);
+    setPrefs(getCookiePrefs());
   }, []);
 
   const handleToggle = async (key: keyof CookiePrefs) => {
-    if (key === 'necessary') return; // Can't disable necessary cookies
-
+    if (key === 'necessary') return;
     setIsLoading(true);
     const newValue = !prefs[key];
-
     try {
       setCookiePrefs({ [key]: newValue });
       setPrefs(prev => ({ ...prev, [key]: newValue }));
-
-      if (key === 'analytics' && !newValue) {
-        toast.success('Analytische cookies uitgeschakeld en verwijderd', {
-          icon: '🔒',
-          duration: 3000,
-        });
-      } else if (key === 'analytics' && newValue) {
-        toast.success('Analytische cookies ingeschakeld', {
-          icon: '📊',
-          duration: 3000,
-        });
+      if (key === 'analytics') {
+        toast.success(newValue ? 'Analytische cookies ingeschakeld' : 'Analytische cookies uitgeschakeld', { duration: 2500 });
       }
-    } catch (error) {
-      toast.error('Er ging iets mis bij het opslaan van je voorkeuren');
+    } catch {
+      toast.error('Er ging iets mis');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleWithdrawAll = () => {
-    if (!confirm('Weet je zeker dat je alle niet-essentiële cookies wilt verwijderen? Dit kan de functionaliteit beperken.')) {
-      return;
-    }
-
+    if (!confirm('Alle niet-essentiële cookies verwijderen?')) return;
     setIsLoading(true);
     try {
       withdrawConsent();
       setPrefs({ necessary: true, analytics: false, marketing: false });
-      toast.success('Alle niet-essentiële cookies zijn verwijderd', {
-        icon: '🗑️',
-        duration: 4000,
-      });
-    } catch (error) {
-      toast.error('Er ging iets mis bij het verwijderen van cookies');
+      toast.success('Cookies verwijderd', { duration: 3000 });
+    } catch {
+      toast.error('Er ging iets mis');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Current Status */}
-      <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)]">
-        <div className="flex items-start gap-3 mb-3">
-          <Shield className="w-5 h-5 text-[var(--ff-color-primary-600)] flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-[var(--color-text)] mb-1">Privacy Status</h4>
-            <p className="text-sm text-[var(--color-muted)]">
-              Je hebt {prefs.analytics ? 'analytische cookies' : 'alleen essentiële cookies'} ingeschakeld.
-            </p>
+    <div className="space-y-1">
+
+      {/* Status line */}
+      <p className="text-xs text-[var(--color-muted)] pb-3">
+        {prefs.analytics ? 'Google Analytics actief — met IP-anonymisatie' : 'Geen tracking actief'}
+      </p>
+
+      {/* Cookie rows */}
+      <div className="space-y-px">
+
+        {/* Essential */}
+        <div className="flex items-center justify-between py-3 border-b border-[var(--color-border)]">
+          <div className="min-w-0 pr-4">
+            <p className="text-sm font-medium text-[var(--color-text)]">Essentiële cookies</p>
+            <p className="text-xs text-[var(--color-muted)] mt-0.5">Inloggen en basisfunctionaliteit</p>
           </div>
+          <span className="text-xs font-semibold text-[var(--color-muted)] flex-shrink-0">Altijd aan</span>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
-          {prefs.analytics ? (
-            <>
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-500,#22c55e)] flex-shrink-0" />
-              <span>Google Analytics actief (met IP-anonymisatie)</span>
-            </>
-          ) : (
-            <>
-              <XCircle className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
-              <span>Geen tracking actief</span>
-            </>
-          )}
+        {/* Analytics */}
+        <div className="flex items-center justify-between py-3 border-b border-[var(--color-border)]">
+          <div className="min-w-0 pr-4">
+            <p className="text-sm font-medium text-[var(--color-text)]">Analytische cookies</p>
+            <p className="text-xs text-[var(--color-muted)] mt-0.5">Google Analytics, geanonimiseerd</p>
+          </div>
+          <button
+            onClick={() => handleToggle('analytics')}
+            disabled={isLoading}
+            role="switch"
+            aria-checked={prefs.analytics}
+            aria-label="Analytische cookies"
+            className={[
+              'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
+              prefs.analytics ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
+              isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2'
+            ].join(' ')}
+          >
+            <span className={[
+              'absolute top-[3px] left-[3px] h-[18px] w-[18px] rounded-full bg-white shadow-sm transition-transform duration-200',
+              prefs.analytics ? 'translate-x-4' : 'translate-x-0'
+            ].join(' ')} />
+          </button>
         </div>
+
+        {/* Marketing */}
+        <div className="flex items-center justify-between py-3">
+          <div className="min-w-0 pr-4">
+            <p className="text-sm font-medium text-[var(--color-muted)]">Marketing cookies</p>
+            <p className="text-xs text-[var(--color-muted)] mt-0.5">Niet van toepassing</p>
+          </div>
+          <span className="text-xs font-semibold text-[var(--color-muted)] flex-shrink-0">Niet gebruikt</span>
+        </div>
+
       </div>
 
-      {/* Cookie Controls */}
-      <div className="space-y-3">
-        {/* Necessary Cookies */}
-        <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] opacity-60">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Cookie className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
-                <h5 className="font-semibold text-[var(--color-text)]">Essentiële Cookies</h5>
-              </div>
-              <p className="text-sm text-[var(--color-muted)]">
-                Nodig voor inloggen en basisfunctionaliteit
-              </p>
-            </div>
-            <span className="text-sm font-semibold text-[var(--color-muted)] flex-shrink-0 mt-0.5">
-              Altijd aan
-            </span>
-          </div>
-        </div>
-
-        {/* Analytics Cookies */}
-        <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)]">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Cookie className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
-                <h5 className="font-semibold text-[var(--color-text)]">Analytische Cookies</h5>
-              </div>
-              <p className="text-sm text-[var(--color-muted)] mb-2">
-                Google Analytics (met IP-anonymisatie)
-              </p>
-              <ul className="text-xs text-[var(--color-muted)] space-y-0.5 list-none">
-                <li>Geanonimiseerde gebruiksstatistieken</li>
-                <li>Data verstuurd naar VS (USA)</li>
-                <li>Geen advertenties of profiling</li>
-              </ul>
-            </div>
-            <button
-              onClick={() => handleToggle('analytics')}
-              disabled={isLoading}
-              aria-pressed={prefs.analytics}
-              aria-label="Analytische cookies in- of uitschakelen"
-              className={[
-                'flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors mt-0.5',
-                prefs.analytics ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
-                isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2'
-              ].join(' ')}
-            >
-              <span
-                className={[
-                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                  prefs.analytics ? 'translate-x-6' : 'translate-x-1'
-                ].join(' ')}
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* Marketing Cookies */}
-        <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] opacity-60">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <XCircle className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
-                <h5 className="font-semibold text-[var(--color-text)]">Marketing Cookies</h5>
-              </div>
-              <p className="text-sm text-[var(--color-muted)]">
-                We gebruiken geen marketing cookies
-              </p>
-            </div>
-            <span className="text-sm font-semibold text-[var(--color-muted)] flex-shrink-0 mt-0.5">
-              Niet gebruikt
-            </span>
-          </div>
-        </div>
-      </div>
+      {/* Info note */}
+      <p className="text-xs text-[var(--color-muted)] pt-2 leading-relaxed">
+        FitFi werkt volledig zonder analytische cookies. Data wordt nooit voor advertenties gebruikt.
+      </p>
 
       {/* Actions */}
-      <div className="space-y-3">
+      <div className="flex gap-2 pt-3">
         <button
           onClick={handleWithdrawAll}
           disabled={isLoading || (!prefs.analytics && !prefs.marketing)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-muted)] hover:border-[var(--color-text)] hover:text-[var(--color-text)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-2 rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-text)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Trash2 className="w-4 h-4 flex-shrink-0" />
-          <span>Niet-essentiële cookies verwijderen</span>
+          Alles verwijderen
         </button>
-
-        <Link to="/cookies" className="block">
-          <button className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] transition-colors flex items-center justify-center gap-2">
-            <ExternalLink className="w-4 h-4 flex-shrink-0" />
-            Volledig Cookiebeleid
+        <Link to="/cookies" className="flex-1">
+          <button className="w-full py-2 rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors">
+            Cookiebeleid
           </button>
         </Link>
       </div>
 
-      {/* Info Box */}
-      <div className="p-4 rounded-xl bg-[var(--ff-color-primary-50)] dark:bg-[var(--ff-color-primary-900)]/10 border border-[var(--ff-color-primary-200)] dark:border-[var(--ff-color-primary-800)]">
-        <p className="text-sm text-[var(--color-text)]">
-          <strong>Let op:</strong> Als je analytische cookies uitschakelt, worden alle Google Analytics cookies onmiddellijk verwijderd.
-          FitFi blijft volledig functioneel zonder deze cookies.
-        </p>
-      </div>
     </div>
   );
 };
