@@ -72,7 +72,14 @@ export default function OnboardingFlowPage() {
 
 
   useEffect(() => {
+    const alreadyCompleted = localStorage.getItem(LS_KEYS.QUIZ_COMPLETED) === '1';
     const stepParam = searchParams.get('step');
+
+    if (alreadyCompleted && stepParam !== 'redo') {
+      navigate('/results', { replace: true });
+      return;
+    }
+
     if (stepParam === 'visual') {
       setPhase('swipes');
       const existingAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
@@ -83,7 +90,23 @@ export default function OnboardingFlowPage() {
         }
       }
     }
-  }, [searchParams]);
+  }, [searchParams, navigate]);
+
+  useEffect(() => {
+    if (phase === 'reveal') return;
+
+    const handlePopState = () => {
+      window.history.pushState(null, '', window.location.href);
+      setShowCancelModal(true);
+    };
+
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [phase]);
 
   const totalSteps = quizSteps.length + 2;
 
@@ -1139,12 +1162,12 @@ export default function OnboardingFlowPage() {
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center flex-shrink-0">
-                  <AlertCircle className="w-6 h-6 text-[var(--ff-color-danger-600)]" aria-hidden="true" />
+                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-accent-50)] flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-[var(--ff-color-accent-600)]" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 id="cancel-modal-title" className="text-xl font-bold text-[var(--color-text)]">Quiz annuleren?</h3>
-                  <p className="text-sm text-[var(--color-muted)]">Je voortgang gaat verloren</p>
+                  <h3 id="cancel-modal-title" className="text-xl font-bold text-[var(--color-text)]">Even stoppen?</h3>
+                  <p className="text-sm text-[var(--color-muted)]">Je bent bijna klaar met de quiz</p>
                 </div>
               </div>
               <button
@@ -1158,22 +1181,23 @@ export default function OnboardingFlowPage() {
 
             <div className="space-y-3 mb-6">
               <p id="cancel-modal-desc" className="text-[var(--color-text)]">
-                Wil je je voortgang bewaren en later verdergaan, of wil je alles wissen?
+                Wat wil je doen?
               </p>
             </div>
 
             <div className="flex flex-col gap-3">
               <button
-                onClick={handleSaveAndContinueLater}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-              >
-                <span>Opslaan en later verder</span>
-              </button>
-              <button
                 onClick={() => setShowCancelModal(false)}
-                className="w-full px-6 py-3 border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                autoFocus
               >
                 Doorgaan met quiz
+              </button>
+              <button
+                onClick={handleSaveAndContinueLater}
+                className="w-full px-6 py-3 border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+              >
+                Opslaan en later verder
               </button>
               <button
                 onClick={confirmCancel}
