@@ -1105,16 +1105,20 @@ export default function EnhancedResultsPage() {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
+                  const outfitImage = ('image' in outfit && outfit.image)
+                    || ('products' in outfit && Array.isArray(outfit.products) && outfit.products[0]?.imageUrl)
+                    || null;
 
                   return (
                     <div className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] overflow-hidden shadow-lg h-full">
                       {/* Image Container */}
                       <div className="relative aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)]">
-                        {outfit && 'image' in outfit && outfit.image ? (
+                        {outfitImage ? (
                           <img
-                            src={outfit.image}
+                            src={outfitImage}
                             alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                             className="w-full h-full object-cover"
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
@@ -1167,6 +1171,9 @@ export default function EnhancedResultsPage() {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
+                  const outfitImage = ('image' in outfit && outfit.image)
+                    || ('products' in outfit && Array.isArray(outfit.products) && outfit.products[0]?.imageUrl)
+                    || null;
 
                   return (
                     <AnimatedSection key={id} delay={idx * 0.05}>
@@ -1176,11 +1183,12 @@ export default function EnhancedResultsPage() {
                       >
                         {/* Image Container */}
                         <div className="relative aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)]">
-                          {outfit && 'image' in outfit && outfit.image ? (
+                          {outfitImage ? (
                             <img
-                              src={outfit.image}
+                              src={outfitImage}
                               alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                               className="w-full h-full object-cover"
+                              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">

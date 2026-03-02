@@ -31,10 +31,9 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   const { ref, inView } = useInView<HTMLDivElement>();
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
-  // Ensure we have 4 images for the 2x2 grid
   const gridImages = [...images];
   while (gridImages.length < 4) {
-    gridImages.push("/images/outfit-fallback.jpg");
+    gridImages.push("/images/fallbacks/default.jpg");
   }
 
   return (
