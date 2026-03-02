@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
-  Heart, Camera, ArrowRight, Plus, Lock, FileText,
+  Heart, Camera, ArrowRight, Lock, FileText,
   RefreshCw, Settings, ChevronRight, Star, Check, ShoppingBag
 } from "lucide-react";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -122,10 +122,15 @@ export default function DashboardPage() {
   }, []);
 
   const archetypeName = React.useMemo(() => {
+    let raw: string | null = null;
     if (!archetype) return null;
-    if (typeof archetype === "string") return archetype;
-    if (archetype && "name" in archetype) return archetype.name;
-    return null;
+    if (typeof archetype === "string") raw = archetype;
+    else if (archetype && "name" in archetype) raw = archetype.name;
+    if (!raw) return null;
+    return raw
+      .toLowerCase()
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }, [archetype]);
 
   const season = color?.season || null;
@@ -246,24 +251,24 @@ export default function DashboardPage() {
                 <div className="flex flex-wrap gap-2 mb-6">
                   {season && (
                     <span
-                      className="px-3 py-1.5 rounded-full text-sm font-semibold capitalize"
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold capitalize"
                       style={{ backgroundColor: seasonBg, color: seasonFg }}
                     >
                       {season}
                     </span>
                   )}
                   {color?.temperature && (
-                    <span className="px-3 py-1.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-[var(--color-text)] font-medium capitalize">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-xs text-[var(--color-text)] font-medium capitalize">
                       {color.temperature}
                     </span>
                   )}
                   {color?.contrast && (
-                    <span className="px-3 py-1.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-[var(--color-text)] font-medium capitalize">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-xs text-[var(--color-text)] font-medium capitalize">
                       {color.contrast} contrast
                     </span>
                   )}
                   {hasPhoto && (
-                    <span className="px-3 py-1.5 rounded-full bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-sm text-[var(--ff-color-success-700)] font-medium flex items-center gap-1">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-xs text-[var(--ff-color-success-700)] font-medium">
                       <Check className="w-3 h-3" />
                       Kleuranalyse
                     </span>
@@ -313,7 +318,7 @@ export default function DashboardPage() {
               className="lg:col-span-5 rounded-2xl bg-[var(--color-surface)] overflow-hidden"
               style={{ boxShadow: '0 1px 3px rgba(30,35,51,0.06), 0 4px 16px rgba(30,35,51,0.06)' }}
             >
-              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+              <div className="flex items-center justify-between px-4 pt-4 pb-2">
                 <h3 className="text-sm font-bold text-[var(--color-text)] tracking-tight">Jouw outfits</h3>
                 <button
                   onClick={() => navigate("/results")}
@@ -324,7 +329,7 @@ export default function DashboardPage() {
                 </button>
               </div>
               {outfitsData && outfitsData.length > 0 ? (
-                <div className="grid grid-cols-2 gap-1 px-1 pb-1">
+                <div className="grid grid-cols-2 gap-0.5 px-0.5 pb-0.5">
                   {outfitsData.slice(0, 4).map((outfit, i) => {
                     const img = getOutfitImage(outfit);
                     return (
@@ -334,7 +339,7 @@ export default function DashboardPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: 0.15 + i * 0.04 }}
                         onClick={() => navigate("/results")}
-                        className="aspect-[3/4] rounded-xl overflow-hidden bg-[var(--ff-color-neutral-100)] hover:opacity-90 transition-opacity"
+                        className="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--ff-color-primary-25)] hover:opacity-90 transition-opacity"
                       >
                         {img ? (
                           <img
@@ -381,7 +386,7 @@ export default function DashboardPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-100)] transition-colors">
-                    <Heart className="w-4.5 h-4.5 text-[var(--ff-color-primary-600)]" />
+                    <Heart className="w-[18px] h-[18px] text-[var(--ff-color-primary-600)]" />
                   </div>
                   <div>
                     <p className="font-semibold text-[var(--color-text)] text-sm leading-tight">Opgeslagen looks</p>
@@ -408,7 +413,7 @@ export default function DashboardPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-100)] transition-colors">
-                    <Camera className="w-4.5 h-4.5 text-[var(--ff-color-primary-600)]" />
+                    <Camera className="w-[18px] h-[18px] text-[var(--ff-color-primary-600)]" />
                   </div>
                   <div>
                     <p className="font-semibold text-[var(--color-text)] text-sm leading-tight">
@@ -438,7 +443,7 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-100)] transition-colors">
-                      <ShoppingBag className="w-4.5 h-4.5 text-[var(--ff-color-primary-600)]" />
+                      <ShoppingBag className="w-[18px] h-[18px] text-[var(--ff-color-primary-600)]" />
                     </div>
                     <div>
                       <p className="font-semibold text-[var(--color-text)] text-sm leading-tight">Shop jouw stijl</p>
@@ -455,7 +460,7 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                      <Star className="w-4.5 h-4.5 text-white" />
+                      <Star className="w-[18px] h-[18px] text-white" />
                     </div>
                     <div>
                       <p className="font-bold text-white text-sm leading-tight">Upgrade naar Premium</p>
@@ -470,19 +475,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-
-      {/* FAB */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, delay: 0.4 }}
-        onClick={() => navigate("/onboarding")}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[var(--ff-color-primary-700)] text-white hover:scale-110 transition-all flex items-center justify-center z-50"
-        style={{ boxShadow: '0 4px 20px rgba(122,97,74,0.35)' }}
-        aria-label="Nieuw stijlrapport starten"
-      >
-        <Plus className="w-6 h-6" strokeWidth={2.5} />
-      </motion.button>
 
       <PhotoUploadModal
         isOpen={showPhotoModal}
