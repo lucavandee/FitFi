@@ -293,10 +293,10 @@ export default function EnhancedResultsPage() {
     }
   }
 
-  const tabs: { id: ResultTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'overzicht', label: 'Overzicht', icon: <Sparkles className="w-4 h-4" /> },
-    { id: 'stijl-dna', label: 'Stijl DNA', icon: <Palette className="w-4 h-4" /> },
-    { id: 'outfits', label: `Outfits${displayOutfits.length > 0 ? ` (${displayOutfits.length})` : ''}`, icon: <LayoutGrid className="w-4 h-4" /> },
+  const tabs: { id: ResultTab; label: string; sub?: string }[] = [
+    { id: 'overzicht', label: 'Overzicht' },
+    { id: 'stijl-dna', label: 'Stijl DNA' },
+    { id: 'outfits', label: 'Outfits', sub: displayOutfits.length > 0 ? `${displayOutfits.length}` : undefined },
   ];
 
   return (
@@ -416,28 +416,46 @@ export default function EnhancedResultsPage() {
 
       {/* ── STICKY TAB BAR ── */}
       {hasCompletedQuiz && (
-        <div className="sticky top-0 z-40 bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-sm">
+        <div className="sticky top-0 z-40 bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)]">
           <div className="ff-container">
-            <div className="max-w-3xl mx-auto flex items-center gap-1 overflow-x-auto scrollbar-none py-0">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`flex items-center gap-1.5 px-4 py-3.5 min-h-[48px] font-semibold text-sm whitespace-nowrap border-b-2 transition-all flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] ${
-                    activeTab === tab.id
-                      ? 'border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)]'
-                      : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)]'
-                  }`}
-                  aria-selected={activeTab === tab.id}
-                  role="tab"
-                >
-                  {tab.icon}
-                  {tab.label}
-                </button>
-              ))}
+            <div className="max-w-3xl mx-auto flex items-center justify-center py-3">
+              <div
+                role="tablist"
+                className="relative flex items-center bg-[var(--color-bg)] rounded-full p-1 gap-0"
+                style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.07)' }}
+              >
+                {tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className={`relative z-10 flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] ${
+                        isActive
+                          ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
+                          : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                      }`}
+                      style={isActive ? { boxShadow: '0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04)' } : undefined}
+                    >
+                      {tab.label}
+                      {tab.sub && (
+                        <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold transition-colors duration-300 ${
+                          isActive
+                            ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]'
+                            : 'bg-[var(--color-border)] text-[var(--color-muted)]'
+                        }`}>
+                          {tab.sub}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
