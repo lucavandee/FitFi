@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers, Palette, LayoutGrid } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers, Palette, LayoutGrid, CheckCircle } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -314,69 +314,74 @@ export default function EnhancedResultsPage() {
 
       <Breadcrumbs />
 
-      {/* ── COMPACT HERO ── */}
+      {/* ── HERO ── */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative overflow-hidden py-8 sm:py-12 bg-gradient-to-b from-[var(--ff-color-primary-50)] to-[var(--color-bg)]"
+        className="relative overflow-hidden pt-10 pb-8 sm:pt-14 sm:pb-10 bg-gradient-to-b from-[var(--ff-color-primary-50)] to-[var(--color-bg)]"
       >
         <div className="ff-container relative z-10">
           <div className="max-w-3xl mx-auto">
             {hasCompletedQuiz ? (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-xs font-bold mb-3 border border-[var(--ff-color-primary-200)]">
-                    Persoonlijk Style Report
-                  </div>
-                  <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-[var(--color-text)]">
-                    {archetypeName}
-                    {archetypeDetectionResult && (
-                      <span className="ml-2 text-sm font-normal text-[var(--color-muted)] align-middle">
-                        {Math.round(archetypeDetectionResult.confidence * 100)}% match
+              <>
+                <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-5">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
+                      Persoonlijk Style Report
+                    </p>
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-2">
+                      {archetypeName}
+                    </h1>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {archetypeDetectionResult && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-[var(--ff-color-success-700)] rounded-full text-xs font-semibold">
+                          <Check className="w-3 h-3" />
+                          {Math.round(archetypeDetectionResult.confidence * 100)}% match
+                        </span>
+                      )}
+                      <span className="text-sm text-[var(--color-muted)]">
+                        {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
                       </span>
-                    )}
-                  </h1>
-                  <p className="text-sm text-[var(--color-muted)] mt-1">
-                    {displayOutfits.length} outfits · {favs.length} favorieten
-                  </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={sharePage}
+                      className="inline-flex items-center justify-center w-9 h-9 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-all"
+                      aria-label="Delen"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                    <NavLink
+                      to="/onboarding?step=redo"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-300)] transition-all text-[var(--color-text)]"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Opnieuw</span>
+                    </NavLink>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setActiveTab('outfits')}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all"
+                      style={{ boxShadow: '0 2px 8px rgba(122,97,74,0.25)' }}
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5" />
+                      Outfits
+                    </motion.button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <NavLink
-                    to="/onboarding?step=redo"
-                    title="Quiz opnieuw doen"
-                    className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg font-medium text-sm hover:bg-[var(--ff-color-primary-50)] transition-all text-[var(--color-text)]"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Opnieuw</span>
-                  </NavLink>
-                  <button
-                    onClick={sharePage}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg font-medium text-sm hover:bg-[var(--ff-color-primary-50)] transition-all text-[var(--color-muted)]"
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Delen</span>
-                  </button>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setActiveTab('outfits')}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] bg-[var(--ff-color-primary-700)] text-white rounded-lg font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all shadow-sm"
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    Outfits
-                  </motion.button>
-                </div>
-              </div>
+              </>
             ) : (
-              <div className="text-center py-8">
-                <h1 className="text-3xl font-bold mb-4">Jouw stijl</h1>
-                <p className="text-[var(--color-muted)] mb-6">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
+              <div className="text-center py-10">
+                <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-[var(--color-text)] tracking-tight">Jouw stijl</h1>
+                <p className="text-[var(--color-muted)] mb-6 leading-relaxed">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-bold hover:shadow-xl transition-all"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-all"
+                  style={{ boxShadow: '0 2px 10px rgba(122,97,74,0.25)' }}
                 >
-                  <Sparkles className="w-5 h-5" />
                   Start Style Quiz
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>
             )}

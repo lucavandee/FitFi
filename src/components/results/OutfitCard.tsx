@@ -3,7 +3,7 @@ import SmartImage from "@/components/ui/SmartImage";
 import { useInView } from "@/hooks/useInView";
 import SaveButton from "@/components/outfits/SaveButton";
 import ProductDetailModal from "@/components/outfits/ProductDetailModal";
-import { ShoppingBag, Sparkles, Info } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import type { Outfit } from "@/engine/types";
 import { track } from "@/utils/telemetry";
 
@@ -36,105 +36,103 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
     gridImages.push("/images/fallbacks/default.jpg");
   }
 
+  const handleProductClick = (product: any) => {
+    track('product_click', { product_id: product?.id });
+    setSelectedProduct(product);
+  };
+
   return (
-    <article 
-      ref={ref} 
-      className={`res-card ${inView ? 'in' : ''} ${className}`}
+    <article
+      ref={ref}
+      className={`group rounded-2xl bg-[var(--color-surface)] overflow-hidden transition-all duration-300 ${
+        inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      } ${className}`}
+      style={{ boxShadow: '0 1px 3px rgba(30,35,51,0.06), 0 4px 16px rgba(30,35,51,0.06)' }}
     >
-      <div className="res-img-grid">
-        <div style={{ position: 'relative' }}>
+      {/* Image grid */}
+      <div className="grid grid-cols-2 gap-0.5 bg-[var(--color-bg)]">
+        <div className="relative col-span-1 row-span-1 aspect-[3/4]">
           <SmartImage
-            className="res-img"
+            className="w-full h-full object-cover"
             src={gridImages[0]}
-            alt=""
+            alt={title}
             loading="lazy"
             decoding="async"
           />
-          <span className="res-overlay" aria-hidden="true"></span>
-
-          {/* Match score badge */}
-          {outfit && outfit.matchScore && (
-            <div style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10 }}>
-              <div className="inline-flex items-center gap-1 px-2 py-1 bg-green-600 text-white rounded-full text-xs font-semibold shadow-lg">
-                <Sparkles className="w-3 h-3" />
-                <span>{Math.round(outfit.matchScore)}% match</span>
-              </div>
+          {/* Match score */}
+          {outfit?.matchScore && (
+            <div className="absolute top-2.5 left-2.5 z-10">
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-[var(--ff-color-success-600)] text-white leading-none">
+                {Math.round(outfit.matchScore)}%
+              </span>
             </div>
           )}
-
         </div>
-        <SmartImage 
-          className="res-img" 
-          src={gridImages[1]} 
-          alt="" 
-          loading="lazy"
-          decoding="async"
-        />
-        <SmartImage 
-          className="res-img" 
-          src={gridImages[2]} 
-          alt="" 
-          loading="lazy"
-          decoding="async"
-        />
-        <SmartImage 
-          className="res-img" 
-          src={gridImages[3]} 
-          alt="" 
-          loading="lazy"
-          decoding="async"
-        />
+        <div className="grid grid-rows-3 gap-0.5">
+          {[gridImages[1], gridImages[2], gridImages[3]].map((src, i) => (
+            <div key={i} className="relative overflow-hidden">
+              <SmartImage
+                className="w-full h-full object-cover aspect-square"
+                src={src}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="res-card-footer">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="flex-1 !mb-0">{title}</h3>
+      {/* Footer */}
+      <div className="p-4 sm:p-5">
+        {/* Title row */}
+        <div className="flex items-start justify-between gap-2 mb-1.5">
+          <h3 className="text-sm font-bold text-[var(--color-text)] leading-snug flex-1">
+            {title}
+          </h3>
           {outfit && (
-            <SaveButton outfit={outfit} userId={userId} className="flex-shrink-0 -mt-1" />
+            <SaveButton outfit={outfit} userId={userId} className="flex-shrink-0 -mt-0.5" />
           )}
         </div>
 
         {rationaleTag && (
-          <p className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] mb-2 mt-0.5">
-            <Info className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-            <span>{rationaleTag}</span>
+          <p className="text-xs text-[var(--color-muted)] mb-2.5 leading-snug">
+            {rationaleTag}
           </p>
         )}
 
-        <ul className="res-bullets">
-          {description.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+        {/* Description bullets */}
+        {description.length > 0 && (
+          <ul className="space-y-1 mb-3">
+            {description.slice(0, 2).map((item, idx) => (
+              <li key={idx} className="flex items-start gap-1.5 text-xs text-[var(--color-muted)]">
+                <span className="w-1 h-1 rounded-full bg-[var(--ff-color-primary-400)] mt-1.5 flex-shrink-0" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        )}
 
+        {/* Products */}
         {outfit?.products && outfit.products.length > 0 ? (
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-2">
-              {outfit.products.slice(0, 4).map((product, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedProduct(product)}
-                  className="
-                    flex items-center gap-2 px-3 py-2
-                    bg-[var(--color-bg)] hover:bg-[var(--ff-color-primary-50)]
-                    border border-[var(--color-border)]
-                    rounded-lg transition-all
-                    text-sm text-left
-                  "
-                >
-                  <ShoppingBag className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">{product.name}</span>
-                </button>
-              ))}
-            </div>
-            {outfit.products.length > 4 && (
-              <p className="text-xs text-[var(--color-text)]/60 text-center">
-                +{outfit.products.length - 4} meer items
-              </p>
-            )}
+          <div className="grid grid-cols-2 gap-1.5">
+            {outfit.products.slice(0, 4).map((product, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleProductClick(product)}
+                className="flex items-center gap-1.5 px-2.5 py-2 bg-[var(--color-bg)] hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] rounded-xl transition-all text-left"
+              >
+                <ShoppingBag className="w-3 h-3 text-[var(--color-muted)] flex-shrink-0" />
+                <span className="text-xs text-[var(--color-text)] truncate leading-tight">{product.name}</span>
+              </button>
+            ))}
           </div>
         ) : (
-          <a className="res-shoplink" href={shopLink}>
+          <a
+            href={shopLink}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] transition-colors"
+          >
+            <ShoppingBag className="w-3.5 h-3.5" />
             Shop vergelijkbare items
           </a>
         )}
