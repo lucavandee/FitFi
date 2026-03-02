@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import {
   User, Mail, LogOut, Camera, Trash2,
   ChevronRight, Check, AlertCircle, Sparkles, RefreshCw,
-  Crown, Star
+  Crown, Star, Lock, Shield, Palette, ArrowRight
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/context/UserContext";
@@ -13,7 +13,7 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { QuizResetModal } from "@/components/profile/QuizResetModal";
 import { EmailPreferences } from "@/components/profile/EmailPreferences";
 import { CookieSettings } from "@/components/profile/CookieSettings";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
 function readJson<T>(key: string): T | null {
@@ -21,104 +21,95 @@ function readJson<T>(key: string): T | null {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
     return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
-function SectionCard({
-  children,
-  delay = 0,
+const SEASON_LABELS: Record<string, string> = {
+  lente: "Lente", zomer: "Zomer", herfst: "Herfst", winter: "Winter",
+  spring: "Lente", summer: "Zomer", autumn: "Herfst", fall: "Herfst",
+};
+
+/* ── Row item inside a section card ── */
+function RowItem({
+  label, sub, icon, onClick, danger = false, rightEl,
 }: {
-  children: React.ReactNode;
-  delay?: number;
+  label: string;
+  sub?: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+  danger?: boolean;
+  rightEl?: React.ReactNode;
 }) {
   return (
+    <button
+      onClick={onClick}
+      disabled={!onClick}
+      className={`w-full flex items-center gap-3.5 px-4 py-3.5 transition-colors text-left group
+        ${onClick ? "hover:bg-[var(--color-bg)] active:bg-[var(--ff-color-primary-25)]" : "cursor-default"}
+        ${danger ? "hover:bg-red-50" : ""}
+      `}
+    >
+      {icon && (
+        <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
+          danger
+            ? "bg-red-50 text-red-400"
+            : "bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-500)]"
+        }`}>
+          {icon}
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm font-semibold leading-tight ${danger ? "text-red-500" : "text-[var(--color-text)]"}`}>
+          {label}
+        </p>
+        {sub && <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-snug">{sub}</p>}
+      </div>
+      {rightEl ?? (
+        onClick && !danger ? (
+          <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+        ) : null
+      )}
+    </button>
+  );
+}
+
+/* ── Section container ── */
+function Section({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-      className="rounded-2xl bg-[var(--color-surface)] overflow-hidden"
-      style={{ boxShadow: '0 1px 3px rgba(30,35,51,0.06), 0 2px 8px rgba(30,35,51,0.04)' }}
+      transition={{ duration: 0.38, delay }}
+      className="rounded-2xl bg-[var(--color-surface)] overflow-hidden divide-y divide-[var(--color-border)]"
+      style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06), 0 2px 10px rgba(30,35,51,0.04)" }}
     >
       {children}
     </motion.div>
   );
 }
 
-function SectionHeader({ title, description }: { title: string; description?: string }) {
+function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="px-5 py-4 border-b border-[var(--color-border)]">
-      <h2 className="text-sm font-semibold text-[var(--color-muted)] tracking-wide">{title}</h2>
-      {description && (
-        <p className="text-sm text-[var(--color-muted)] mt-0.5 font-normal">{description}</p>
-      )}
-    </div>
+    <p className="px-4 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+      {children}
+    </p>
   );
 }
 
-function TierBadge({ tier }: { tier?: string }) {
-  if (!tier || tier === 'free') return null;
-  const isFounder = tier === 'founder';
-  return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
-      isFounder
-        ? 'bg-[var(--ff-color-accent-100)] text-[var(--ff-color-accent-700)]'
-        : 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]'
-    }`}>
-      {isFounder ? <Star className="w-3 h-3" /> : <Crown className="w-3 h-3" />}
-      {isFounder ? 'Founder' : 'Premium'}
-    </span>
-  );
-}
-
-function InitialsAvatar({ name, email }: { name: string; email: string }) {
-  const initials = name
-    ? name.slice(0, 2).toUpperCase()
-    : email.slice(0, 2).toUpperCase();
-  return (
-    <div
-      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-200)] to-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0"
-      style={{ boxShadow: '0 2px 8px rgba(122,97,74,0.15)' }}
-    >
-      <span className="text-xl sm:text-2xl font-bold text-[var(--ff-color-primary-700)] tracking-tight">{initials}</span>
-    </div>
-  );
-}
-
-const SEASON_LABELS: Record<string, string> = {
-  lente: 'Lente',
-  zomer: 'Zomer',
-  herfst: 'Herfst',
-  winter: 'Winter',
-  spring: 'Lente',
-  summer: 'Zomer',
-  autumn: 'Herfst',
-  fall: 'Herfst',
-};
-
-const SEASON_COLORS: Record<string, string> = {
-  lente: 'var(--ff-color-success-200)',
-  zomer: 'var(--ff-color-accent-200)',
-  herfst: 'var(--ff-color-warning-200)',
-  winter: 'var(--ff-color-primary-200)',
-  spring: 'var(--ff-color-success-200)',
-  summer: 'var(--ff-color-accent-200)',
-  autumn: 'var(--ff-color-warning-200)',
-  fall: 'var(--ff-color-warning-200)',
-};
-
+/* ═══════════════════════════════════════════════════════
+   PAGE
+══════════════════════════════════════════════════════════ */
 const ProfilePage: React.FC = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [showResetModal, setShowResetModal] = useState(false);
-
   const [displayName, setDisplayName] = useState("");
   const [displayNameDirty, setDisplayNameDirty] = useState(false);
   const [displayNameError, setDisplayNameError] = useState("");
   const [isSavingName, setIsSavingName] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
 
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -129,7 +120,8 @@ const ProfilePage: React.FC = () => {
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
   const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
 
-  const isPremium = user?.tier === 'premium' || user?.tier === 'founder' || !!user?.isPremium;
+  const isPremium = user?.tier === "premium" || user?.tier === "founder" || !!user?.isPremium;
+  const isFounder = user?.tier === "founder";
 
   useEffect(() => {
     if (user?.email) {
@@ -139,9 +131,7 @@ const ProfilePage: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (answers?.photoDataUrl) {
-      setPhotoPreview(answers.photoDataUrl);
-    }
+    if (answers?.photoDataUrl) setPhotoPreview(answers.photoDataUrl);
   }, [answers]);
 
   const { data: styleProfile } = useQuery({
@@ -168,10 +158,20 @@ const ProfilePage: React.FC = () => {
     return archetype;
   }, [archetype, styleProfile]);
 
+  const hasStyleProfile = !!(archetypeName || color);
+  const season = color?.season ?? null;
+  const seasonLabel = season ? (SEASON_LABELS[season.toLowerCase()] ?? season) : null;
+
+  const userInitial = React.useMemo(() => {
+    const n = displayName || user?.email || "?";
+    return n[0].toUpperCase();
+  }, [displayName, user?.email]);
+
+  /* ── handlers ── */
   const validateDisplayName = (val: string) => {
     if (!val.trim()) return "Naam mag niet leeg zijn";
-    if (val.trim().length < 2) return "Naam is te kort (minimaal 2 tekens)";
-    if (val.trim().length > 50) return "Naam is te lang (maximaal 50 tekens)";
+    if (val.trim().length < 2) return "Naam is te kort";
+    if (val.trim().length > 50) return "Naam is te lang";
     return "";
   };
 
@@ -184,11 +184,7 @@ const ProfilePage: React.FC = () => {
 
   const handleSaveName = async () => {
     const err = validateDisplayName(displayName);
-    if (err) {
-      setDisplayNameError(err);
-      setDisplayNameDirty(true);
-      return;
-    }
+    if (err) { setDisplayNameError(err); setDisplayNameDirty(true); return; }
     setIsSavingName(true);
     try {
       const client = supabase();
@@ -197,8 +193,9 @@ const ProfilePage: React.FC = () => {
       }
       toast.success("Naam opgeslagen");
       setDisplayNameDirty(false);
+      setIsEditingName(false);
     } catch {
-      toast.error("Kon naam niet opslaan. Probeer het opnieuw.");
+      toast.error("Kon naam niet opslaan.");
     } finally {
       setIsSavingName(false);
     }
@@ -211,15 +208,13 @@ const ProfilePage: React.FC = () => {
     }
     setDisplayNameDirty(false);
     setDisplayNameError("");
+    setIsEditingName(false);
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Foto is te groot. Maximaal 5 MB.");
-      return;
-    }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Foto is te groot. Maximaal 5 MB."); return; }
     setIsUploadingPhoto(true);
     try {
       const reader = new FileReader();
@@ -228,13 +223,10 @@ const ProfilePage: React.FC = () => {
         setPhotoPreview(dataUrl);
         const current = readJson<any>(LS_KEYS.QUIZ_ANSWERS) || {};
         localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify({ ...current, photoDataUrl: dataUrl }));
-        toast.success("Foto opgeslagen voor kleuranalyse");
+        toast.success("Foto opgeslagen");
         setIsUploadingPhoto(false);
       };
-      reader.onerror = () => {
-        toast.error("Kon foto niet lezen. Probeer een ander bestand.");
-        setIsUploadingPhoto(false);
-      };
+      reader.onerror = () => { toast.error("Kon foto niet lezen."); setIsUploadingPhoto(false); };
       reader.readAsDataURL(file);
     } catch {
       toast.error("Uploaden mislukt");
@@ -245,7 +237,7 @@ const ProfilePage: React.FC = () => {
   const handleRemovePhoto = () => {
     setPhotoPreview(null);
     const current = readJson<any>(LS_KEYS.QUIZ_ANSWERS) || {};
-    const { photoDataUrl: _removed, ...rest } = current;
+    const { photoDataUrl: _r, ...rest } = current;
     localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(rest));
     toast.success("Foto verwijderd");
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -261,9 +253,9 @@ const ProfilePage: React.FC = () => {
           redirectTo: `${window.location.origin}/inloggen`,
         });
       }
-      toast.success("Reset-link verstuurd naar " + user.email);
+      toast.success("Reset-link verstuurd");
     } catch {
-      toast.error("Kon reset-link niet versturen. Probeer het opnieuw.");
+      toast.error("Kon reset-link niet versturen.");
     } finally {
       setIsSendingReset(false);
     }
@@ -274,35 +266,39 @@ const ProfilePage: React.FC = () => {
     setTimeout(() => logout(), 400);
   };
 
+  /* ── not logged in ── */
   if (!user) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-6">
         <Helmet><title>Profiel – FitFi</title></Helmet>
-        <div className="ff-container py-16 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-sm w-full text-center"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
             <User className="w-7 h-7 text-[var(--color-muted)]" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3">Log in om je profiel te bekijken</h1>
           <button
             onClick={() => navigate("/inloggen")}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-2xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
           >
             Inloggen
           </button>
-        </div>
+        </motion.div>
       </main>
     );
   }
 
-  const seasonLabel = color?.season ? (SEASON_LABELS[color.season.toLowerCase()] ?? color.season) : null;
-  const seasonColor = color?.season ? (SEASON_COLORS[color.season.toLowerCase()] ?? 'var(--color-border)') : null;
-  const hasStyleProfile = !!(archetypeName || color);
-
+  /* ═══════════════════════════════════════════════════
+     MAIN
+  ═══════════════════════════════════════════════════ */
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
       <Helmet>
         <title>Profiel – FitFi</title>
-        <meta name="description" content="Beheer je persoonlijke gegevens, stijlvoorkeuren en foto." />
+        <meta name="description" content="Beheer je persoonlijke gegevens en stijlprofiel." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -313,356 +309,404 @@ const ProfilePage: React.FC = () => {
         Spring naar hoofdinhoud
       </a>
 
-      <div id="main-content" className="ff-container py-6 sm:py-10 lg:py-14">
-        <div className="max-w-xl mx-auto space-y-5">
+      <div id="main-content" className="max-w-lg mx-auto px-4 pt-6 pb-24 space-y-3">
 
-          {/* ── Identity Hero ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--color-surface)] p-5 sm:p-6"
-            style={{ boxShadow: '0 1px 3px rgba(30,35,51,0.06), 0 4px 16px rgba(30,35,51,0.06)' }}
-          >
-            <div className="flex items-start gap-4">
-              <InitialsAvatar name={displayName} email={user.email ?? ''} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start gap-2 flex-wrap mb-0.5">
-                  <h1 className="text-lg sm:text-xl font-bold text-[var(--color-text)] break-words min-w-0 leading-snug">
-                    {displayName}
-                  </h1>
-                  <TierBadge tier={user.tier} />
+        {/* ══ HERO PROFILE CARD ══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="relative rounded-3xl overflow-hidden"
+          style={{
+            background: "linear-gradient(150deg, #4A3828 0%, #6B5240 40%, #9B7A5E 100%)",
+            boxShadow: "0 16px 48px rgba(74,56,40,0.32), 0 2px 0 rgba(255,255,255,0.08) inset",
+          }}
+        >
+          {/* noise */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")`,
+            }}
+          />
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
+          <div className="relative px-5 pt-5 pb-5">
+
+            {/* Avatar + name row */}
+            <div className="flex items-center gap-4 mb-5">
+              {/* Avatar — photo or initial */}
+              <div className="relative flex-shrink-0">
+                <div
+                  className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center"
+                  style={{
+                    background: photoPreview ? undefined : "rgba(255,255,255,0.15)",
+                    boxShadow: "0 0 0 2px rgba(255,255,255,0.15)",
+                  }}
+                >
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Profielfoto" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-bold text-white select-none">{userInitial}</span>
+                  )}
                 </div>
-                <p className="text-sm text-[var(--color-muted)] truncate">{user.email}</p>
-                {hasStyleProfile && (
-                  <div className="flex items-center gap-1.5 mt-2">
-                    {seasonColor && (
-                      <span
-                        className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: seasonColor }}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span className="text-xs text-[var(--color-muted)] font-medium">
-                      {[archetypeName, seasonLabel].filter(Boolean).join(' · ')}
+                {/* Camera badge */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-md"
+                  aria-label="Foto wijzigen"
+                >
+                  <Camera className="w-3 h-3 text-[#5C4937]" />
+                </button>
+              </div>
+
+              {/* Name + tier */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <h1 className="text-lg font-bold text-white leading-tight truncate">{displayName}</h1>
+                  {isPremium && (
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      isFounder
+                        ? "bg-amber-400/25 text-amber-200 border border-amber-400/30"
+                        : "bg-white/15 text-white/80 border border-white/20"
+                    }`}>
+                      {isFounder ? <Star className="w-2.5 h-2.5" /> : <Crown className="w-2.5 h-2.5" />}
+                      {isFounder ? "Founder" : "Premium"}
                     </span>
-                  </div>
-                )}
+                  )}
+                </div>
+                <p className="text-white/50 text-[12px] truncate">{user.email}</p>
               </div>
             </div>
 
-            {/* Quick actions */}
-            <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--color-border)]">
+            {/* Style profile summary chips */}
+            {hasStyleProfile && (
+              <div className="flex flex-wrap gap-2 mb-5">
+                {archetypeName && (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[11px] text-white/80 font-semibold">
+                    {archetypeName as string}
+                  </span>
+                )}
+                {seasonLabel && (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 border border-white/10 text-[11px] text-white/65 capitalize">
+                    {seasonLabel}
+                  </span>
+                )}
+                {color?.temperature && (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/8 text-[11px] text-white/50 capitalize">
+                    {color.temperature}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Color palette dots */}
+            {color?.palette && color.palette.length > 0 && (
+              <div className="flex items-center gap-1.5 mb-5">
+                <span className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mr-1">Palet</span>
+                {color.palette.slice(0, 8).map((hex: string, i: number) => (
+                  <div
+                    key={i}
+                    className="w-[18px] h-[18px] rounded-full flex-shrink-0 ring-1 ring-white/15"
+                    style={{ backgroundColor: hex }}
+                    title={hex}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* CTA row */}
+            <div className="flex gap-2">
               <button
                 onClick={() => navigate("/results")}
-                className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
+                style={{
+                  background: "rgba(255,255,255,0.96)",
+                  color: "#4A3828",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
+                }}
               >
-                <Sparkles className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">Bekijk outfits</span>
+                <Sparkles className="w-3.5 h-3.5" /> Bekijk outfits
               </button>
               {!isPremium && (
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                  className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm bg-white/12 border border-white/15 text-white/80 hover:bg-white/18 transition-colors active:scale-[0.97]"
                 >
-                  <Crown className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">Upgrade</span>
+                  <Crown className="w-3.5 h-3.5" /> Upgrade
                 </button>
               )}
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
-          {/* ── Stijlprofiel ── */}
-          {hasStyleProfile && (
-            <SectionCard delay={0.05}>
-              <div className="h-0.5 bg-gradient-to-r from-[var(--ff-color-primary-400)] to-[var(--ff-color-accent-400)]" />
-              <SectionHeader title="Stijlprofiel" />
-              <div className="p-5 space-y-4">
-                <div>
-                  {archetypeName && (
-                    <p className="text-base font-bold text-[var(--color-text)]">{archetypeName as string}</p>
-                  )}
-                  {color && (
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                      {seasonLabel && (
-                        <span className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]">
-                          {seasonColor && (
-                            <span
-                              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: seasonColor }}
-                              aria-hidden="true"
-                            />
-                          )}
-                          {seasonLabel}
-                        </span>
-                      )}
-                      {color.temperature && (
-                        <span className="text-sm text-[var(--color-muted)] capitalize">{color.temperature}</span>
-                      )}
-                      {color.contrast && (
-                        <span className="text-sm text-[var(--color-muted)] capitalize">{color.contrast} contrast</span>
-                      )}
-                    </div>
-                  )}
-                </div>
+        {/* ══ STIJLPROFIEL SECTIE ══ */}
+        {hasStyleProfile && (
+          <>
+            <SectionLabel>Stijlprofiel</SectionLabel>
+            <Section delay={0.06}>
+              <RowItem
+                label={archetypeName ? String(archetypeName) : "Jouw stijl"}
+                sub={[seasonLabel, color?.temperature].filter(Boolean).join(" · ") || "Stijlpersoonlijkheid"}
+                icon={<Sparkles className="w-4 h-4" />}
+                onClick={() => navigate("/results")}
+              />
+              <RowItem
+                label="Quiz opnieuw doen"
+                sub="Pas je stijlprofiel aan"
+                icon={<RefreshCw className="w-4 h-4" />}
+                onClick={() => setShowResetModal(true)}
+              />
+            </Section>
+          </>
+        )}
 
-                {color?.palette && color.palette.length > 0 && (
-                  <div>
-                    <p className="text-xs text-[var(--color-muted)] font-medium mb-2">Jouw kleurpalet</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {color.palette.slice(0, 6).map((hex: string, i: number) => (
-                        <div
-                          key={i}
-                          className="w-8 h-8 rounded-lg border border-[var(--color-border)] shadow-sm flex-shrink-0"
-                          style={{ backgroundColor: hex }}
-                          title={hex}
-                          aria-label={`Kleur ${hex}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  onClick={() => setShowResetModal(true)}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors px-3 py-2 rounded-xl -ml-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                >
-                  <RefreshCw className="w-4 h-4 flex-shrink-0" />
-                  Stijlquiz opnieuw doen
-                </button>
-              </div>
-            </SectionCard>
-          )}
-
-          {/* ── Foto voor kleuranalyse ── */}
-          <SectionCard delay={0.1}>
-            <SectionHeader
-              title="Foto voor kleuranalyse"
-              description={photoPreview
-                ? "Je foto is opgeslagen. Klik 'Vervangen' voor een nieuw bestand."
-                : "Optioneel: met een foto geven we preciezer kleuradvies op basis van huidondertoon."}
-            />
-            <div className="p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-[var(--ff-color-primary-50)] flex-shrink-0 flex items-center justify-center" style={{ boxShadow: '0 0 0 1.5px rgba(30,35,51,0.08)' }}>
-                  {photoPreview ? (
-                    <img
-                      src={photoPreview}
-                      alt="Jouw foto voor kleuranalyse"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Camera className="w-6 h-6 text-[var(--color-muted)]" />
-                  )}
-                </div>
-
-                <div className="flex-1 flex flex-wrap gap-2">
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingPhoto}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                  >
-                    {isUploadingPhoto ? (
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Camera className="w-4 h-4" />
-                    )}
-                    {photoPreview ? "Vervangen" : "Foto toevoegen"}
-                  </button>
-
-                  {photoPreview && (
-                    <button
-                      onClick={handleRemovePhoto}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-muted)] rounded-xl text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-400)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-error-400)] focus-visible:ring-offset-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Verwijder
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <p className="text-xs text-[var(--color-muted)] mt-3">
-                Max 5 MB · JPG, PNG of WebP · Privacyveilig — alleen lokaal opgeslagen
-              </p>
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={handlePhotoSelect}
-              className="sr-only"
-              aria-label="Upload foto voor kleuranalyse"
-            />
-          </SectionCard>
-
-          {/* ── Naam ── */}
-          <SectionCard delay={0.15}>
-            <SectionHeader title="Persoonlijke gegevens" />
-            <div className="p-5 space-y-4">
-              <div>
-                <label
-                  htmlFor="display-name"
-                  className="block text-sm font-semibold text-[var(--color-text)] mb-1.5"
-                >
-                  Naam
-                </label>
-                <input
-                  id="display-name"
-                  type="text"
-                  value={displayName}
-                  onChange={handleNameChange}
-                  placeholder="Jouw naam"
-                  maxLength={50}
-                  className={`w-full h-11 px-3.5 rounded-xl border text-[var(--color-text)] bg-[var(--color-surface)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-[var(--ff-color-primary-400)] ${
-                    displayNameError && displayNameDirty
-                      ? "border-[var(--ff-color-error-500)]"
-                      : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]"
-                  }`}
-                  aria-describedby={displayNameError && displayNameDirty ? "name-error" : undefined}
-                />
-                {displayNameError && displayNameDirty && (
-                  <p
-                    id="name-error"
-                    role="alert"
-                    className="flex items-center gap-1.5 mt-1.5 text-xs text-[var(--ff-color-error-600)]"
-                  >
-                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                    {displayNameError}
-                  </p>
+        {/* ══ FOTO SECTIE ══ */}
+        <SectionLabel>Kleuranalyse</SectionLabel>
+        <Section delay={0.1}>
+          <div className="px-4 py-4">
+            <div className="flex items-center gap-3.5">
+              {/* Preview thumbnail */}
+              <div
+                className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-[var(--ff-color-primary-50)]"
+                style={{ border: "1.5px solid var(--color-border)" }}
+              >
+                {photoPreview ? (
+                  <img src={photoPreview} alt="Kleuranalysefoto" className="w-full h-full object-cover" />
+                ) : (
+                  <Camera className="w-5 h-5 text-[var(--color-muted)]" />
                 )}
               </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-[var(--color-text)] mb-1.5">
-                  E-mailadres
-                </label>
-                <div className="flex items-center gap-3 h-11 px-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] opacity-60 select-none">
-                  <Mail className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
-                  <span className="text-sm text-[var(--color-text)] truncate">{user.email}</span>
-                </div>
-                <p className="text-xs text-[var(--color-muted)] mt-1">
-                  E-mailadres kan niet worden gewijzigd
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">
+                  {photoPreview ? "Foto actief" : "Foto toevoegen"}
+                </p>
+                <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-snug">
+                  {photoPreview
+                    ? "Kleuranalyse op basis van jouw huidtoon"
+                    : "Geeft nauwkeuriger kleuradvies"}
                 </p>
               </div>
-
-              {displayNameDirty && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-2 pt-1"
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingPhoto}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white text-xs font-bold transition-colors hover:bg-[var(--ff-color-primary-600)] disabled:opacity-50"
                 >
+                  {isUploadingPhoto ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Camera className="w-3 h-3" />}
+                  {photoPreview ? "Vervang" : "Upload"}
+                </button>
+                {photoPreview && (
                   <button
-                    onClick={handleSaveName}
-                    disabled={isSavingName || !!displayNameError}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                    onClick={handleRemovePhoto}
+                    className="w-8 h-8 rounded-xl border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-red-500 hover:border-red-200 transition-colors"
+                    aria-label="Foto verwijderen"
                   >
-                    {isSavingName ? (
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Check className="w-4 h-4" />
-                    )}
-                    Opslaan
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
+                )}
+              </div>
+            </div>
+            <p className="text-[11px] text-[var(--color-muted)] mt-3">Max 5 MB · JPG, PNG of WebP · Privacyveilig, alleen lokaal opgeslagen</p>
+          </div>
+        </Section>
+
+        {/* ══ PERSOONLIJKE GEGEVENS ══ */}
+        <SectionLabel>Persoonlijke gegevens</SectionLabel>
+        <Section delay={0.14}>
+          {/* Name row */}
+          <div className="px-4 py-3.5">
+            <AnimatePresence mode="wait">
+              {!isEditingName ? (
+                <motion.div
+                  key="name-view"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center gap-3.5"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-[var(--ff-color-primary-500)]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">{displayName}</p>
+                    <p className="text-[11px] text-[var(--color-muted)] mt-0.5">Weergavenaam</p>
+                  </div>
                   <button
-                    onClick={handleCancelName}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                    onClick={() => setIsEditingName(true)}
+                    className="text-xs font-bold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] px-2 py-1 rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors"
                   >
-                    Annuleren
+                    Wijzig
                   </button>
                 </motion.div>
-              )}
-            </div>
-          </SectionCard>
-
-          {/* ── E-mailvoorkeuren ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <EmailPreferences />
-          </motion.div>
-
-          {/* ── Privacy & cookies ── */}
-          <SectionCard delay={0.25}>
-            <SectionHeader
-              title="Privacy & cookies"
-              description="We slaan alleen op wat nodig is."
-            />
-            <div className="p-5">
-              <CookieSettings />
-            </div>
-          </SectionCard>
-
-          {/* ── Account-acties ── */}
-          <SectionCard delay={0.3}>
-            <SectionHeader title="Account" />
-            <div className="divide-y divide-[var(--color-border)]">
-              {!showResetConfirm ? (
-                <button
-                  onClick={() => setShowResetConfirm(true)}
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors group"
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
-                    <p className="text-xs text-[var(--color-muted)]">Reset-link naar {user.email}</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
-                </button>
               ) : (
-                <div className="px-5 py-4 bg-[var(--ff-color-primary-50)] border-y border-[var(--ff-color-primary-100)]">
-                  <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Wachtwoord reset versturen?</p>
-                  <p className="text-xs text-[var(--color-muted)] mb-3">
-                    We sturen een reset-link naar <strong>{user.email}</strong>. Je huidige wachtwoord blijft geldig totdat je het wijzigt.
-                  </p>
+                <motion.div
+                  key="name-edit"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-3"
+                >
+                  <label htmlFor="display-name" className="text-xs font-bold text-[var(--color-text)] uppercase tracking-wide">
+                    Naam
+                  </label>
+                  <input
+                    id="display-name"
+                    type="text"
+                    value={displayName}
+                    onChange={handleNameChange}
+                    placeholder="Jouw naam"
+                    maxLength={50}
+                    autoFocus
+                    className={`w-full h-11 px-3.5 rounded-xl border text-[var(--color-text)] bg-[var(--color-bg)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] ${
+                      displayNameError && displayNameDirty
+                        ? "border-red-400"
+                        : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]"
+                    }`}
+                  />
+                  {displayNameError && displayNameDirty && (
+                    <p className="flex items-center gap-1.5 text-xs text-red-500">
+                      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                      {displayNameError}
+                    </p>
+                  )}
                   <div className="flex gap-2">
                     <button
-                      onClick={async () => { await handlePasswordReset(); setShowResetConfirm(false); }}
-                      disabled={isSendingReset}
-                      className="flex-1 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white text-xs font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                      onClick={handleSaveName}
+                      disabled={isSavingName || !!displayNameError}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
                     >
-                      {isSendingReset ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                      Ja, verstuur link
+                      {isSavingName ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                      Opslaan
                     </button>
                     <button
-                      onClick={() => setShowResetConfirm(false)}
-                      className="flex-1 py-2 rounded-lg border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors"
+                      onClick={handleCancelName}
+                      className="flex-1 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors"
                     >
-                      Annuleren
+                      Annuleer
                     </button>
                   </div>
-                </div>
+                </motion.div>
               )}
+            </AnimatePresence>
+          </div>
 
-              <button
-                onClick={() => navigate("/privacy")}
-                className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors group"
-              >
-                <p className="text-sm font-semibold text-[var(--color-text)]">Privacybeleid</p>
-                <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
-              </button>
+          {/* Email row */}
+          <div className="flex items-center gap-3.5 px-4 py-3.5 opacity-60 select-none">
+            <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
+              <Mail className="w-4 h-4 text-[var(--ff-color-primary-500)]" />
             </div>
-          </SectionCard>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-[var(--color-text)] truncate leading-tight">{user.email}</p>
+              <p className="text-[11px] text-[var(--color-muted)] mt-0.5">E-mail (niet wijzigbaar)</p>
+            </div>
+          </div>
+        </Section>
 
-          {/* ── Uitloggen ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.35 }}
+        {/* ══ E-MAILVOORKEUREN ══ */}
+        <SectionLabel>Notificaties</SectionLabel>
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, delay: 0.18 }}
+          className="rounded-2xl bg-[var(--color-surface)] overflow-hidden"
+          style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06), 0 2px 10px rgba(30,35,51,0.04)" }}
+        >
+          <EmailPreferences />
+        </motion.div>
+
+        {/* ══ PRIVACY & ACCOUNT ══ */}
+        <SectionLabel>Privacy & account</SectionLabel>
+        <Section delay={0.22}>
+          {/* Cookie settings inline */}
+          <div className="px-4 py-3.5">
+            <div className="flex items-center gap-3.5 mb-3">
+              <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
+                <Shield className="w-4 h-4 text-[var(--ff-color-primary-500)]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">Privacy & cookies</p>
+                <p className="text-[11px] text-[var(--color-muted)] mt-0.5">We slaan alleen op wat nodig is</p>
+              </div>
+            </div>
+            <CookieSettings />
+          </div>
+
+          {/* Password reset */}
+          <AnimatePresence mode="wait">
+            {!showResetConfirm ? (
+              <RowItem
+                key="pw-row"
+                label="Wachtwoord wijzigen"
+                sub={`Reset-link naar ${user.email}`}
+                icon={<Lock className="w-4 h-4" />}
+                onClick={() => setShowResetConfirm(true)}
+              />
+            ) : (
+              <motion.div
+                key="pw-confirm"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="px-4 py-4 bg-[var(--ff-color-primary-25)] border-t border-[var(--ff-color-primary-100)]"
+              >
+                <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Reset-link versturen?</p>
+                <p className="text-xs text-[var(--color-muted)] mb-3 leading-snug">
+                  We sturen een link naar <strong>{user.email}</strong>. Je huidige wachtwoord blijft geldig totdat je het wijzigt.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={async () => { await handlePasswordReset(); setShowResetConfirm(false); }}
+                    disabled={isSendingReset}
+                    className="flex-1 py-2.5 rounded-xl bg-[var(--ff-color-primary-700)] text-white text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isSendingReset ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                    Verstuur link
+                  </button>
+                  <button
+                    onClick={() => setShowResetConfirm(false)}
+                    className="flex-1 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors"
+                  >
+                    Annuleer
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <RowItem
+            label="Privacybeleid"
+            sub="Hoe we je data gebruiken"
+            icon={<Shield className="w-4 h-4" />}
+            onClick={() => navigate("/privacy")}
+          />
+        </Section>
+
+        {/* ══ UITLOGGEN ══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, delay: 0.28 }}
+        >
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
           >
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-300)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-error-400)] focus-visible:ring-offset-2"
-            >
-              <LogOut className="w-4 h-4" />
-              Uitloggen
-            </button>
-          </motion.div>
+            <LogOut className="w-4 h-4" />
+            Uitloggen
+          </button>
+        </motion.div>
 
-        </div>
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={handlePhotoSelect}
+        className="sr-only"
+        aria-label="Upload foto voor kleuranalyse"
+      />
 
       {showResetModal && (
         <QuizResetModal
