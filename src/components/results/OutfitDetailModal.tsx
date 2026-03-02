@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart } from "lucide-react";
+import { ExternalLink, Heart, X } from "lucide-react";
 import type { ColorProfile } from "@/lib/quiz/types";
 
 interface OutfitDetailModalProps {
@@ -14,6 +14,26 @@ interface OutfitDetailModalProps {
   colorProfile: ColorProfile | null;
 }
 
+function getProductImage(product: any): string | null {
+  return product?.imageUrl || product?.image_url || product?.image || null;
+}
+
+function getProductUrl(product: any): string | null {
+  return product?.affiliateUrl || product?.productUrl || product?.url || null;
+}
+
+function getOutfitHeroImage(outfit: any): string | null {
+  if (outfit?.image) return outfit.image;
+  if (outfit?.imageUrl) return outfit.imageUrl;
+  if (Array.isArray(outfit?.products)) {
+    for (const p of outfit.products) {
+      const img = getProductImage(p);
+      if (img) return img;
+    }
+  }
+  return null;
+}
+
 export function OutfitDetailModal({
   outfit,
   onClose,
@@ -21,129 +41,235 @@ export function OutfitDetailModal({
   favs,
   allOutfits,
   archetypeName,
-  activeColorProfile,
   colorProfile,
 }: OutfitDetailModalProps) {
   if (!outfit) return null;
 
-  const id = 'id' in outfit ? String(outfit.id) : `seed-${allOutfits.indexOf(outfit)}`;
+  const id = outfit?.id != null ? String(outfit.id) : `seed-${allOutfits.indexOf(outfit)}`;
   const isFav = favs.includes(id);
+  const outfitName = outfit?.name || outfit?.title || "Outfit";
+  const products: any[] = Array.isArray(outfit?.products) ? outfit.products : [];
+  const heroImage = getOutfitHeroImage(outfit);
+
+  const totalPrice = products.reduce((sum: number, p: any) => {
+    const price = typeof p?.price === "number" ? p.price : parseFloat(String(p?.price ?? "")) || 0;
+    return sum + price;
+  }, 0);
 
   return (
     <AnimatePresence>
       <motion.div
+        key="overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
         onClick={onClose}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="outfit-detail-title"
+        aria-labelledby="outfit-modal-title"
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
+          key="panel"
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ type: "spring", damping: 30, stiffness: 320 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--color-surface)] rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+          className="relative w-full sm:max-w-lg bg-[var(--color-surface)] rounded-t-3xl sm:rounded-2xl overflow-hidden flex flex-col"
+          style={{ maxHeight: "92dvh" }}
         >
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h3 id="outfit-detail-title" className="text-3xl font-bold mb-2">
-                {'name' in outfit ? outfit.name : 'Outfit Details'}
-              </h3>
-              <p className="text-[var(--color-muted)]">
-                Perfect voor {archetypeName.toLowerCase()} stijl
+          {/* Drag handle — mobile only */}
+          <div className="flex justify-center pt-3 pb-1 sm:hidden">
+            <div className="w-9 h-1 rounded-full bg-[var(--color-border)]" />
+          </div>
+
+          {/* Header */}
+          <div className="flex items-start justify-between gap-3 px-5 pt-4 pb-3 sm:pt-5">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--color-muted)] mb-0.5">
+                {archetypeName}
               </p>
+              <h2
+                id="outfit-modal-title"
+                className="text-lg font-bold text-[var(--color-text)] leading-snug"
+              >
+                {outfitName}
+              </h2>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-[var(--ff-color-neutral-100)] transition-colors"
-              aria-label="Sluit modal"
+              aria-label="Sluit"
+              className="w-8 h-8 rounded-full bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] flex-shrink-0 mt-0.5 transition-colors"
             >
-              <X className="w-6 h-6" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
-          {outfit && 'image' in outfit && outfit.image && (
-            <div className="mb-6 rounded-2xl overflow-hidden">
-              <img
-                src={outfit.image}
-                alt={'name' in outfit ? outfit.name : 'Outfit'}
-                className="w-full h-auto"
-              />
-            </div>
-          )}
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-4 space-y-4">
 
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold text-lg mb-2">Waarom dit outfit?</h4>
-              <p className="text-[var(--color-text)]">
-                Dit outfit is speciaal voor jou samengesteld op basis van je stijlvoorkeuren en kleurprofiel.
-                De combinatie past perfect bij {archetypeName.toLowerCase()} en benadrukt jouw unieke style DNA.
-              </p>
-            </div>
+            {/* Hero image */}
+            {heroImage && (
+              <div
+                className="rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
+                style={{ aspectRatio: "4/3" }}
+              >
+                <img
+                  src={heroImage}
+                  alt={outfitName}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    const parent = (e.currentTarget as HTMLImageElement).closest("div") as HTMLDivElement | null;
+                    if (parent) parent.style.display = "none";
+                  }}
+                />
+              </div>
+            )}
 
+            {/* Color advice */}
             {colorProfile && (
-              <div>
-                <h4 className="font-semibold text-lg mb-2">Kleuradvies</h4>
-                <p className="text-[var(--color-text)]">
-                  Gebaseerd op jouw kleurprofiel "{activeColorProfile.paletteName}" hebben we kleuren gekozen die goed bij jouw huidskleur en ondertoon passen.
+              <div className="rounded-xl bg-[var(--ff-color-primary-25)] border border-[var(--ff-color-primary-100)] px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-1">
+                  Kleuradvies
+                </p>
+                <p className="text-sm text-[var(--color-text)] leading-relaxed">
+                  Kleuren afgestemd op jouw kleurprofiel{" "}
+                  <span className="font-semibold text-[var(--ff-color-primary-700)]">
+                    {colorProfile.paletteName || colorProfile.season || ""}
+                  </span>
+                  .
                 </p>
               </div>
             )}
 
-            {'products' in outfit && outfit.products && outfit.products.length > 0 && (
+            {/* Product list */}
+            {products.length > 0 && (
               <div>
-                <h4 className="font-semibold text-lg mb-3">Producten in dit outfit</h4>
-                <div className="space-y-2">
-                  {outfit.products.map((product: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg">
-                      <div className="w-16 h-16 bg-[var(--ff-color-neutral-200)] rounded-lg overflow-hidden flex-shrink-0">
-                        {product.image_url && (
-                          <img
-                            src={product.image_url}
-                            alt={product.name || 'Product'}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">
-                          {product.name || `Product ${idx + 1}`}
-                        </p>
-                        {product.brand && (
-                          <p className="text-xs text-[var(--color-muted)]">{product.brand}</p>
-                        )}
-                      </div>
-                      {product.price && (
-                        <div className="text-right">
-                          <p className="font-semibold">€{product.price}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mb-2.5">
+                  <p className="text-sm font-bold text-[var(--color-text)]">
+                    Producten in dit outfit
+                  </p>
+                  {totalPrice > 0 && (
+                    <p className="text-sm font-semibold text-[var(--ff-color-primary-700)]">
+                      €{totalPrice % 1 === 0 ? totalPrice.toFixed(0) : totalPrice.toFixed(2)} totaal
+                    </p>
+                  )}
                 </div>
+
+                <ul className="divide-y divide-[var(--color-border)] border border-[var(--color-border)] rounded-xl overflow-hidden">
+                  {products.map((product: any, idx: number) => {
+                    const img = getProductImage(product);
+                    const url = getProductUrl(product);
+                    const name = product?.name || `Product ${idx + 1}`;
+                    const brand = product?.brand || product?.retailer || null;
+                    const rawPrice = typeof product?.price === "number"
+                      ? product.price
+                      : parseFloat(String(product?.price ?? "")) || null;
+
+                    return (
+                      <li key={idx} className="bg-[var(--color-surface)]">
+                        <div className="flex items-center gap-3 px-3 py-3">
+
+                          {/* Thumbnail */}
+                          <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+                            {img ? (
+                              <img
+                                src={img}
+                                alt={name}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                                onError={(e) => {
+                                  const el = e.currentTarget as HTMLImageElement;
+                                  el.style.display = "none";
+                                  const fallback = el.nextElementSibling as HTMLElement | null;
+                                  if (fallback) fallback.style.display = "flex";
+                                }}
+                              />
+                            ) : null}
+                            <span
+                              className="text-sm font-bold text-[var(--ff-color-primary-300)]"
+                              style={{ display: img ? "none" : "flex" }}
+                            >
+                              {idx + 1}
+                            </span>
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            {brand && (
+                              <p className="text-[10px] text-[var(--color-muted)] truncate leading-tight mb-0.5">
+                                {brand}
+                              </p>
+                            )}
+                            <p className="text-sm font-semibold text-[var(--color-text)] truncate leading-tight">
+                              {name}
+                            </p>
+                          </div>
+
+                          {/* Price + shop link */}
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            {rawPrice != null && rawPrice > 0 && (
+                              <span className="text-sm font-bold text-[var(--ff-color-primary-700)]">
+                                €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
+                              </span>
+                            )}
+                            {url && (
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`Shop ${name}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-7 h-7 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-200)] transition-colors"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             )}
           </div>
 
-          <div className="flex gap-3 mt-8">
-            <button
-              onClick={() => onToggleFav(id)}
-              className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-200)] transition-colors flex items-center justify-center gap-2"
-              aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit in favorieten"}
-            >
-              <Heart className={`w-5 h-5 ${isFav ? 'fill-current' : ''}`} />
-              {isFav ? 'Verwijderd' : 'Bewaar outfit'}
-            </button>
-            <button
-              onClick={onClose}
-              className="px-6 py-3 bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--ff-color-neutral-200)] transition-colors"
-            >
-              Sluiten
-            </button>
+          {/* Sticky footer — altijd zichtbaar */}
+          <div
+            className="flex-shrink-0 px-5 pt-3 border-t border-[var(--color-border)] bg-[var(--color-surface)]"
+            style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}
+          >
+            <div className="flex gap-3">
+              <button
+                onClick={() => onToggleFav(id)}
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
+                style={{
+                  background: isFav
+                    ? "var(--ff-color-primary-700)"
+                    : "var(--ff-color-primary-100)",
+                  color: isFav ? "#fff" : "var(--ff-color-primary-700)",
+                }}
+                aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
+              >
+                <Heart
+                  className="w-4 h-4"
+                  fill={isFav ? "currentColor" : "none"}
+                  strokeWidth={isFav ? 0 : 2}
+                />
+                {isFav ? "Opgeslagen" : "Bewaar outfit"}
+              </button>
+
+              <button
+                onClick={onClose}
+                className="px-5 py-3.5 rounded-xl font-semibold text-sm bg-[var(--ff-color-primary-50)] text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-100)] hover:text-[var(--color-text)] transition-colors"
+              >
+                Sluiten
+              </button>
+            </div>
           </div>
         </motion.div>
       </motion.div>
