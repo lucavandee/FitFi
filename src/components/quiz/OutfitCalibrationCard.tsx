@@ -96,22 +96,22 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     const occasionMap: Record<string, { icon: React.ComponentType<any>; bgClass: string; borderClass: string; title: string; subtitle: string }> = {
       work: {
         icon: Briefcase,
-        bgClass: 'bg-gradient-to-br from-gray-50 to-blue-50',
-        borderClass: 'border-blue-200',
+        bgClass: 'bg-[var(--ff-color-primary-25)]',
+        borderClass: 'border-[var(--ff-color-primary-200)]',
         title: 'Kantoor',
         subtitle: 'Zakelijke meeting of werkdag'
       },
       casual: {
         icon: Coffee,
-        bgClass: 'bg-gradient-to-br from-amber-50 to-orange-50',
-        borderClass: 'border-orange-200',
+        bgClass: 'bg-[var(--ff-color-primary-25)]',
+        borderClass: 'border-[var(--ff-color-primary-200)]',
         title: 'Casual dag uit',
         subtitle: 'Lunch, koffie, boodschappen'
       },
       evening: {
         icon: Moon,
-        bgClass: 'bg-gradient-to-br from-indigo-50 to-purple-50',
-        borderClass: 'border-purple-200',
+        bgClass: 'bg-[var(--ff-color-primary-50)]',
+        borderClass: 'border-[var(--ff-color-primary-200)]',
         title: 'Avondje uit',
         subtitle: 'Restaurant, borrel of diner'
       }
@@ -126,10 +126,11 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-      className={`bg-[var(--color-surface)] border-2 ${borderClass} rounded-2xl sm:rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300`}
+      className={`bg-[var(--color-surface)] border ${borderClass} rounded-2xl overflow-hidden transition-all duration-300`}
+      style={{ boxShadow: '0 2px 12px rgba(74,56,40,0.08), 0 1px 3px rgba(74,56,40,0.06)' }}
     >
       {/* Header with Icon */}
-      <div className={`${bgClass} px-4 sm:px-6 py-4 sm:py-5 border-b-2 ${borderClass}`}>
+      <div className={`${bgClass} px-4 py-4 border-b ${borderClass}`}>
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
             <OccasionIcon className="w-5 h-5 sm:w-7 sm:h-7 text-[var(--color-text)]" strokeWidth={1.5} />
@@ -155,9 +156,9 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         </div>
       </div>
 
-      <div className="grid md:grid-cols-[1fr_1fr] gap-0">
+      <div className="flex flex-col">
         {/* Product Images Grid */}
-        <div className="relative bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)] p-4 sm:p-6">
+        <div className="relative bg-[var(--color-bg)] p-4">
           <div className="grid grid-cols-2 gap-3">
             {outfit.items.top && (
               <motion.div
@@ -276,17 +277,9 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             </div>
 
             {outfit.colorHarmony && outfit.colorHarmony.harmony !== 'acceptable' && (
-              <div className={`p-3 rounded-[var(--radius-lg)] ${
-                outfit.colorHarmony.harmony === 'excellent' ? 'bg-green-50 border border-green-200' :
-                outfit.colorHarmony.harmony === 'good' ? 'bg-blue-50 border border-blue-200' :
-                'bg-yellow-50 border border-yellow-200'
-              }`}>
+              <div className="p-3 rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)]">
                 <div className="flex items-start gap-2">
-                  <div className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                    outfit.colorHarmony.harmony === 'excellent' ? 'bg-green-200 text-green-800' :
-                    outfit.colorHarmony.harmony === 'good' ? 'bg-blue-200 text-blue-800' :
-                    'bg-yellow-200 text-yellow-800'
-                  }`}>
+                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]">
                     {outfit.colorHarmony.score}/100
                   </div>
                   <div className="flex-1">
@@ -320,11 +313,12 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                   ? { scale: [1, 1.08, 1], transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] } }
                   : {}
               }
-              className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden shadow-md ${
+              className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden ${
                 selectedFeedback === 'spot_on'
-                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-xl shadow-green-500/30'
-                  : 'bg-white text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-green-500 hover:text-green-600 hover:shadow-lg'
+                  ? 'bg-[var(--ff-color-primary-700)] text-white'
+                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:text-[var(--ff-color-primary-700)]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
+              style={selectedFeedback === 'spot_on' ? { boxShadow: '0 4px 14px rgba(74,56,40,0.25)' } : {}}
             >
               <motion.div
                 animate={
@@ -348,10 +342,10 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                   ? { scale: [1, 1.05, 1], transition: { duration: 0.4 } }
                   : {}
               }
-              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm shadow-sm ${
+              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
-                  ? 'bg-[var(--ff-color-primary-600)] text-white shadow-lg'
-                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-600)] hover:shadow-md'
+                  ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] border border-[var(--ff-color-primary-200)]'
+                  : 'bg-[var(--color-surface)] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--ff-color-primary-600)]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" strokeWidth={2.5} />
@@ -368,10 +362,10 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                   ? { scale: [1, 1.05, 1], transition: { duration: 0.4 } }
                   : {}
               }
-              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm shadow-sm ${
+              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'not_for_me'
-                  ? 'bg-red-500 text-white shadow-lg'
-                  : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-red-500 hover:text-red-600 hover:shadow-md'
+                  ? 'bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]'
+                  : 'bg-[var(--color-surface)] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-border)]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <X className="w-4 h-4" strokeWidth={2.5} />

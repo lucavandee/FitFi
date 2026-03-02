@@ -363,7 +363,8 @@ export default function UnifiedOutfitCard({
     >
       {/* Gradient overlay on hover */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'linear-gradient(135deg, rgba(122,97,74,0.03) 0%, rgba(155,122,94,0.04) 100%)' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
@@ -372,12 +373,13 @@ export default function UnifiedOutfitCard({
       {/* Match score badge */}
       {outfit.matchPercentage && outfit.matchPercentage > 80 && (
         <motion.div
-          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg text-sm font-bold"
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-xs font-bold"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 15, delay: 0.2 }}
+          style={{ boxShadow: '0 2px 8px rgba(74,56,40,0.3)' }}
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-3 h-3" />
           <span>{Math.round(outfit.matchPercentage)}%</span>
         </motion.div>
       )}
@@ -537,11 +539,11 @@ export default function UnifiedOutfitCard({
                 onClick={handleSave}
                 disabled={saveOutfit.isPending}
                 className={cn(
-                  'relative px-4 py-2.5 border-2 rounded-xl text-sm font-bold transition-all',
-                  'focus:outline-none focus:ring-4 focus:ring-offset-2 overflow-hidden',
+                  'relative px-4 py-2.5 border rounded-xl text-sm font-bold transition-all',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ff-color-primary-400)] overflow-hidden',
                   saveOutfit.isSuccess || saved
-                    ? 'border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white focus:ring-blue-500/20 shadow-lg'
-                    : 'border-blue-500 text-blue-600 hover:bg-blue-50 focus:ring-blue-500/20',
+                    ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-700)] text-white'
+                    : 'border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)]',
                   saveOutfit.isPending && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!saveOutfit.isPending ? { scale: 1.03, y: -2 } : {}}
@@ -565,8 +567,8 @@ export default function UnifiedOutfitCard({
                 onClick={handleMoreLikeThis}
                 disabled={isProcessing.like}
                 className={cn(
-                  'px-4 py-2.5 border-2 border-green-500 text-green-600 hover:bg-green-50 rounded-xl text-sm font-bold',
-                  'transition-all focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:ring-offset-2',
+                  'px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)] rounded-xl text-sm font-bold',
+                  'transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2',
                   isProcessing.like && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!isProcessing.like ? { scale: 1.03, y: -2 } : {}}
@@ -587,8 +589,8 @@ export default function UnifiedOutfitCard({
                 onClick={handleDislike}
                 disabled={isProcessing.dislike}
                 className={cn(
-                  'px-4 py-2.5 border-2 border-red-500 text-red-600 hover:bg-red-50 rounded-xl text-sm font-bold',
-                  'transition-all focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:ring-offset-2',
+                  'px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border)] hover:bg-[var(--color-bg)] rounded-xl text-sm font-bold',
+                  'transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2',
                   isProcessing.dislike && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!isProcessing.dislike ? { scale: 1.03, y: -2 } : {}}
@@ -609,8 +611,8 @@ export default function UnifiedOutfitCard({
                 onClick={handleExplain}
                 disabled={isProcessing.explain}
                 className={cn(
-                  'px-4 py-2.5 border-2 border-purple-500 text-purple-600 hover:bg-purple-50 rounded-xl text-sm font-bold',
-                  'transition-all focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:ring-offset-2',
+                  'px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-xl text-sm font-bold',
+                  'transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2',
                   isProcessing.explain && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!isProcessing.explain ? { scale: 1.03, y: -2 } : {}}
@@ -628,7 +630,7 @@ export default function UnifiedOutfitCard({
               aria-label="Bekijk alle details"
               title="Bekijk volledige outfit details met alle items"
               onClick={() => setShowDetailsModal(true)}
-              className="col-span-2 px-4 py-2.5 border-2 border-[var(--color-primary)] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]/90 text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[var(--color-primary)]/20 focus:ring-offset-2 hover:shadow-lg"
+              className="col-span-2 px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2 hover:bg-[var(--ff-color-primary-600)]"
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
             >

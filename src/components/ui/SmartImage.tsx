@@ -24,7 +24,11 @@ function getCategoryFromUrl(src?: string): string {
 }
 
 const SmartImage: React.FC<Props> = ({ fallbackColor, style, src, alt, ...rest }) => {
-  const [err, setErr] = React.useState(false);
+  const [err, setErr] = React.useState(!src || src === '');
+
+  React.useEffect(() => {
+    setErr(!src || src === '');
+  }, [src]);
 
   if (err) {
     const category = getCategoryFromUrl(src);
