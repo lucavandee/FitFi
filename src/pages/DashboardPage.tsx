@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import { useUser } from "@/context/UserContext";
 import { motion } from "framer-motion";
+import { PhotoUploadModal } from "@/components/nova/PhotoUploadModal";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -34,6 +35,7 @@ export default function DashboardPage() {
   const [userName, setUserName] = React.useState<string>("");
   const [userEmail, setUserEmail] = React.useState<string>("");
   const [favCount, setFavCount] = React.useState(0);
+  const [showPhotoModal, setShowPhotoModal] = React.useState(false);
 
   const isPremium = ctxUser?.tier === 'premium' || ctxUser?.tier === 'founder' || !!ctxUser?.isPremium;
 
@@ -288,7 +290,7 @@ export default function DashboardPage() {
 
             {/* Photo analysis CTA */}
             <button
-              onClick={() => navigate("/onboarding?step=photo")}
+              onClick={() => setShowPhotoModal(true)}
               className="group flex items-center justify-between p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-400)] transition-colors text-left"
             >
               <div className="flex items-center gap-4">
@@ -411,6 +413,11 @@ export default function DashboardPage() {
       >
         <Plus className="w-6 h-6" strokeWidth={2.5} />
       </motion.button>
+
+      <PhotoUploadModal
+        isOpen={showPhotoModal}
+        onClose={() => setShowPhotoModal(false)}
+      />
     </main>
   );
 }

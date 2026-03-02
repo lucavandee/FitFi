@@ -72,7 +72,7 @@ const outfits: Outfit[] = [
       { type: 'shoes', color: 'bg-stone-100', label: 'Witte sneakers', image: '/images/casual-dag-uit/0dccb686-5656-4b4b-872f-f132a6c17d98.webp' },
       { type: 'accessory', color: 'bg-stone-300', label: 'Canvas tas', image: '/images/casual-dag-uit/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp' }
     ],
-    completeImage: '/images/f4a277d2-5a24-42ba-a286-279cdf1aca74 copy copy.webp',
+    completeImage: '/images/f4a277d2-5a24-42ba-a286-279cdf1aca74.webp',
     productImages: [
       {
         name: 'Gestreepte trui',
@@ -104,31 +104,31 @@ const outfits: Outfit[] = [
     gradient: 'from-slate-50 to-slate-100',
     border: 'border-slate-300',
     items: [
-      { type: 'top', color: 'bg-slate-800', label: 'Zwart overhemd', image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy copy.webp' },
-      { type: 'bottom', color: 'bg-slate-900', label: 'Donkerblauwe jeans', image: '/images/gemini_generated_image_vzbawovzbawovzba copy copy.webp' },
-      { type: 'shoes', color: 'bg-slate-950', label: 'Zwarte loafers', image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa copy copy.webp' },
-      { type: 'accessory', color: 'bg-slate-700', label: 'Zilveren ketting', image: '/images/gemini_generated_image_xlj3okxlj3okxlj3 copy copy.webp' }
+      { type: 'top', color: 'bg-slate-800', label: 'Zwart overhemd', image: '/images/gemini_generated_image_sqvymvsqvymvsqvy.webp' },
+      { type: 'bottom', color: 'bg-slate-900', label: 'Donkerblauwe jeans', image: '/images/gemini_generated_image_vzbawovzbawovzba.webp' },
+      { type: 'shoes', color: 'bg-slate-950', label: 'Zwarte loafers', image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa.webp' },
+      { type: 'accessory', color: 'bg-slate-700', label: 'Zilveren ketting', image: '/images/gemini_generated_image_xlj3okxlj3okxlj3.webp' }
     ],
     completeImage: '/images/28115420-679f-4b0a-aac3-fca84c0a4fd2.webp',
     productImages: [
       {
         name: 'Zwart overhemd',
-        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy copy copy.webp',
+        image: '/images/gemini_generated_image_sqvymvsqvymvsqvy.webp',
         category: 'BOVENSTUK'
       },
       {
         name: 'Donkerblauwe jeans',
-        image: '/images/gemini_generated_image_vzbawovzbawovzba copy copy.webp',
+        image: '/images/gemini_generated_image_vzbawovzbawovzba.webp',
         category: 'ONDERSTUK'
       },
       {
         name: 'Zwarte loafers',
-        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa copy copy.webp',
+        image: '/images/gemini_generated_image_8xaa2w8xaa2w8xaa.webp',
         category: 'SCHOENEN'
       },
       {
         name: 'Zilveren ketting',
-        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3 copy copy.webp',
+        image: '/images/gemini_generated_image_xlj3okxlj3okxlj3.webp',
         category: 'ACCESSOIRE'
       }
     ]

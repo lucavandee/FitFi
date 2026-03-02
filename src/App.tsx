@@ -157,6 +157,7 @@ function AppShell() {
                 <Route path="/blog/:slug" element={<WithSeo.BlogPost />} />
                 <Route path="/veelgestelde-vragen" element={<WithSeo.FAQ />} />
                 <Route path="/faq" element={<Navigate to="/veelgestelde-vragen" replace />} />
+                <Route path="/how-it-works" element={<Navigate to="/hoe-het-werkt" replace />} />
                 <Route path="/contact" element={<WithSeo.Contact />} />
 
                 {/* Juridisch (NL canoniek) */}

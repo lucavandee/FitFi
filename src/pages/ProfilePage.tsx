@@ -119,6 +119,7 @@ const ProfilePage: React.FC = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isSendingReset, setIsSendingReset] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
   const archetype = readJson<Archetype>(LS_KEYS.ARCHETYPE);
@@ -598,28 +599,46 @@ const ProfilePage: React.FC = () => {
           <SectionCard delay={0.3}>
             <SectionHeader title="Account" />
             <div className="divide-y divide-[var(--color-border)]">
-              <button
-                onClick={handlePasswordReset}
-                disabled={isSendingReset}
-                className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50 group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 group-hover:border-[var(--ff-color-primary-300)] transition-colors">
-                    <Key className="w-4 h-4 text-[var(--color-muted)]" />
+              {!showResetConfirm ? (
+                <button
+                  onClick={() => setShowResetConfirm(true)}
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-[var(--color-bg)] transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 group-hover:border-[var(--ff-color-primary-300)] transition-colors">
+                      <Key className="w-4 h-4 text-[var(--color-muted)]" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
+                      <p className="text-xs text-[var(--color-muted)]">Reset-link naar {user.email}</p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-[var(--color-text)]">Wachtwoord wijzigen</p>
-                    <p className="text-xs text-[var(--color-muted)]">
-                      Reset-link naar {user.email}
-                    </p>
+                  <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              ) : (
+                <div className="px-5 py-4 bg-[var(--ff-color-primary-50)] border-y border-[var(--ff-color-primary-100)]">
+                  <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Wachtwoord reset versturen?</p>
+                  <p className="text-xs text-[var(--color-muted)] mb-3">
+                    We sturen een reset-link naar <strong>{user.email}</strong>. Je huidige wachtwoord blijft geldig totdat je het wijzigt.
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={async () => { await handlePasswordReset(); setShowResetConfirm(false); }}
+                      disabled={isSendingReset}
+                      className="flex-1 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white text-xs font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    >
+                      {isSendingReset ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                      Ja, verstuur link
+                    </button>
+                    <button
+                      onClick={() => setShowResetConfirm(false)}
+                      className="flex-1 py-2 rounded-lg border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors"
+                    >
+                      Annuleren
+                    </button>
                   </div>
                 </div>
-                {isSendingReset ? (
-                  <RefreshCw className="w-4 h-4 text-[var(--color-muted)] animate-spin" />
-                ) : (
-                  <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform" />
-                )}
-              </button>
+              )}
 
               <button
                 onClick={() => navigate("/privacy")}

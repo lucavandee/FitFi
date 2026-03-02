@@ -63,11 +63,6 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             </div>
           )}
 
-          {outfit && (
-            <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 10 }}>
-              <SaveButton outfit={outfit} userId={userId} />
-            </div>
-          )}
         </div>
         <SmartImage 
           className="res-img" 
@@ -93,7 +88,12 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
       </div>
 
       <div className="res-card-footer">
-        <h3>{title}</h3>
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3 className="flex-1 !mb-0">{title}</h3>
+          {outfit && (
+            <SaveButton outfit={outfit} userId={userId} className="flex-shrink-0 -mt-1" />
+          )}
+        </div>
 
         {rationaleTag && (
           <p className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] mb-2 mt-0.5">
