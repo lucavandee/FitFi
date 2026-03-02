@@ -67,7 +67,18 @@ export function Hero() {
               </Button>
             </div>
 
-            {/* Removed trust badges */}
+            {/* Returning user link */}
+            {!user && (
+              <p className="text-sm text-[var(--ff-color-text-secondary)] text-center lg:text-left">
+                Al een account?{" "}
+                <NavLink
+                  to="/inloggen"
+                  className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2 transition-colors"
+                >
+                  Direct inloggen
+                </NavLink>
+              </p>
+            )}
           </div>
 
           {/* Right Column - Phone Mockup with Floating Elements */}
