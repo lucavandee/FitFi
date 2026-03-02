@@ -171,7 +171,7 @@ export default function OutfitDetailsModal({
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-semibold">Outfit details</h2>
               {outfit.matchPercentage && outfit.matchPercentage > 80 && (
-                <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full text-xs font-bold">
+                <div className="flex items-center gap-1 px-2 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-xs font-bold">
                   <Sparkles className="w-3 h-3" />
                   <span>{Math.round(outfit.matchPercentage)}%</span>
                 </div>
@@ -188,7 +188,7 @@ export default function OutfitDetailsModal({
 
           {/* Content */}
           <div className="overflow-y-auto max-h-[calc(90vh-180px)]">
-            <div className="p-6 grid md:grid-cols-2 gap-6">
+            <div className="p-4 md:p-6 grid md:grid-cols-2 gap-4 md:gap-6">
               {/* Left: Outfit Image + Info */}
               <div className="space-y-4">
                 <div className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-gray-100 to-gray-200">
@@ -279,8 +279,8 @@ export default function OutfitDetailsModal({
                         <motion.div
                           key={product.id}
                           className={cn(
-                            'p-4 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]',
-                            'hover:border-[var(--color-primary)] transition-all',
+                            'p-3 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]',
+                            'hover:border-[var(--ff-color-primary-300)] transition-all',
                             hasUrl && 'cursor-pointer'
                           )}
                           onClick={() => hasUrl && setSelectedProduct(product)}
@@ -288,8 +288,8 @@ export default function OutfitDetailsModal({
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.05 }}
                         >
-                          <div className="flex gap-4">
-                            <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                          <div className="flex gap-3">
+                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-[var(--color-surface)] flex-shrink-0">
                               <LazyImage
                                 src={product.imageUrl}
                                 alt={product.name}
@@ -306,7 +306,7 @@ export default function OutfitDetailsModal({
                                       {product.brand}
                                     </p>
                                   )}
-                                  <h5 className="font-medium text-sm truncate">
+                                  <h5 className="font-medium text-sm leading-snug" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                                     {product.name}
                                   </h5>
                                 </div>
@@ -317,53 +317,25 @@ export default function OutfitDetailsModal({
                                 )}
                               </div>
 
-                              <div className="flex flex-wrap gap-2 mb-2">
-                                {product.category && (
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-full text-xs">
-                                    <Package className="w-3 h-3" />
-                                    {product.category}
-                                  </span>
-                                )}
-                                {product.color && (
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-full text-xs">
-                                    {product.color}
-                                  </span>
-                                )}
-                                {product.inStock !== undefined && (
-                                  <span
-                                    className={cn(
-                                      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium',
-                                      product.inStock
-                                        ? 'bg-green-50 text-green-700 border border-green-200'
-                                        : 'bg-red-50 text-red-700 border border-red-200'
-                                    )}
-                                  >
-                                    {product.inStock ? 'Op voorraad' : 'Niet op voorraad'}
-                                  </span>
-                                )}
-                              </div>
+                              {product.inStock === false && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)] mb-1">
+                                  Niet beschikbaar
+                                </span>
+                              )}
 
                               {hasUrl && (
-                                <Button
+                                <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleShopClick(product);
                                   }}
                                   disabled={isOpening}
-                                  variant="primary"
-                                  size="sm"
-                                  className="w-full mt-2"
+                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                                  aria-label={`Shop ${product.name}`}
                                 >
-                                  {isOpening ? (
-                                    <>Opent...</>
-                                  ) : (
-                                    <>
-                                      <ShoppingBag className="w-4 h-4 mr-1" />
-                                      Shop bij {product.retailer || 'winkel'}
-                                      <ExternalLink className="w-3 h-3 ml-1" />
-                                    </>
-                                  )}
-                                </Button>
+                                  <ExternalLink className="w-3 h-3" />
+                                  {isOpening ? 'Opent...' : `Shop bij ${product.retailer || 'winkel'}`}
+                                </button>
                               )}
                             </div>
                           </div>
@@ -379,15 +351,15 @@ export default function OutfitDetailsModal({
 
                 {/* Sizing Info */}
                 {outfit.products && outfit.products.some(p => p.sizes) && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                    <div className="flex items-start gap-2 mb-2">
-                      <TrendingUp className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm font-medium text-blue-900">
+                  <div className="p-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] rounded-xl">
+                    <div className="flex items-start gap-2 mb-1">
+                      <TrendingUp className="w-4 h-4 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm font-medium text-[var(--ff-color-primary-700)]">
                         Maat-informatie
                       </span>
                     </div>
-                    <p className="text-xs text-blue-800 leading-relaxed">
-                      Klik op een item voor beschikbare maten en maat-informatie
+                    <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                      Klik op een item voor beschikbare maten
                     </p>
                   </div>
                 )}
@@ -512,7 +484,7 @@ export default function OutfitDetailsModal({
                   </div>
 
                   {selectedProduct.price && (
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-2xl font-bold text-[var(--ff-color-primary-700)]">
                       €{selectedProduct.price.toFixed(2)}
                     </div>
                   )}
