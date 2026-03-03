@@ -1,49 +1,227 @@
-# Bolt — Project Prompt: FitFi.ai
+# FitFi — Project Instructie (UI Standaard)
 
-## Identiteit & stijl
-- “Wij”-vorm, NL-talig, premium & rustig. Focus: kleding/stijl.
-- Stijlbronnen: Apple × Lululemon × OpenAI. Palet & typografie via tokens:
-  - Fonts: Montserrat (headings), Lato (body).
-  - Tokensbron: `src/styles/tokens.css`. Extra finesse: `src/styles/polish.css`.
+## Referentie-pagina
+De homepagina (LandingPage.tsx + HeroV3.tsx) is de gouden standaard.
+Elke nieuwe of gewijzigde pagina moet visueel en structureel op dit niveau zitten.
+Lees altijd eerst het bestaande bestand volledig voordat je iets aanpast.
 
-## Architectuur (freeze)
-- Vite + React + TS + Tailwind; alias `@` → `/src`; geen `node:path`.
-- SEO per pagina via `react-helmet-async`.
-- Nova/SSE flags in dev uit; UI degradeert gracieus.
-- Eén Navbar; geen extra headers of DOM-injectors.
+---
 
-## Sanity gates
-- `tsc --noEmit` schoon; `vite build` schoon.
-- **Tokens-gate**: géén `#` kleuren in `src/**` buiten `tokens.css`.
-- Geen dode imports; geen incomplete features.
+## App-shell — NIET aanraken
+- Navbar: sticky, h-16 (64px), z-50, in src/components/layout/Navbar.tsx
+- Alle pagina's vallen onder <main id="main"> ONDER de Navbar
+- Pagina's die de volledige viewport nodig hebben: minHeight: 'calc(100vh - 64px)'
+- Nooit een tweede Navbar, portal-header of extra <main> tag toevoegen
+- Onboarding is de enige fullscreen-uitzondering (aparte Route buiten de main-wrapper)
 
-## Pagina-kaders (bestaand)
-- Home, How it works, Pricing, Results, Blog, FAQ, About, Contact, Dashboard, Login/Register, etc.
-- Hero/SmartImage: gebruik bestaande assets / props; wijzig alleen via `/public` of bestaande props.
+---
 
-## A11y · SEO · Performance
-- AA contrast; focus ring `--shadow-ring`.
-- Mobile-first; alt-teksten verplicht; aria-labels op interactieve elementen.
-- LCP optimaliseren (lichte hero, lazy images); code-splitting.
+## Kleuren — uitsluitend via CSS-variabelen, nooit hex in src/**
 
-## Werkwijze in Bolt (V2)
-1) Gebruik **Discussion Mode** om plan te bevestigen voordat je bouwt.
-2) **Targeted edits**: wijs bestanden expliciet aan (right-click → target file).
-3) Bouw in kleine, verifieerbare stappen (sectie → component → micro-states).
-4) Gebruik **Tailwind** met tokens: `bg-[var(--color-bg)]` etc.; **geen** hex.
-5) Respecteer CTA-regels (primary/ghost) en card-tokens (`--color-surface`, `--color-border`, `--shadow-soft`, `--radius-lg`).
+Achtergrond & oppervlakken:
+  --color-bg: #F7F3EC           (beige paginaachtergrond)
+  --color-surface: #FFFFFF      (kaarten, formulieren)
+  --color-border: rgba(30,35,51,0.08)
 
-## Output-standaard (verplicht, elke run)
-- **SHIP** (paden + wat er is veranderd)
-- **WHY**
-- **SUGGEST_NEXT** (zie Global System Prompt; altijd Improve *of* Feature)
-- **GUARDRAILS** (tokens/1-Navbar/no Node-only)
+Tekst:
+  --color-text: #1E2333
+  --color-muted: #4A5568        (labels, hints — AA 5.8:1)
 
-## Stop-conditions
-Bij overtreding van de freeze of tokens: **STOP** en geef herstelplan.
+Brand (taupe):
+  --ff-color-primary-50  t/m  --ff-color-primary-900
+  Meest gebruikt:
+    -50:  #F6EFE9  (lichte achtergrondtint)
+    -200: #E0C9B3  (zachte borders)
+    -300: #CEB39A  (accenten op foto)
+    -600: #8F7459  (hover op CTA)
+    -700: #7A614A  (CTA knopachtergrond — AA compliant)
+    -900: #3E3125  (hero-achtergrond donker)
 
-## Extra FitFi-specificaties
-- Actieve nav: chip-bg (accent-tint) + `--color-text`.
-- Cards: `--color-surface` / `--color-border` / `--shadow-soft` / `--radius-lg`.
-- CTA’s: “Start gratis” (primary), “Bekijk voorbeeld” (secondary ghost).
-- Teksten feitelijk en rustig; geen hyperbolen; privacy-first.
+Status:
+  --ff-color-success-600: #16A34A
+  --ff-color-warning-600: #D97706
+  --ff-color-danger-500:  #EF4444
+  --ff-color-danger-600:  #DC2626
+
+Nova AI (enige uitzondering op taupe-palet):
+  --ff-color-nova: #2B6AF3
+
+Verboden: purple-*, indigo-*, violet-* Tailwind-klassen. Nooit.
+
+---
+
+## Typografie
+
+Headings: Montserrat, font-bold, tracking-tight, via class="font-heading"
+Body: Lato, font-normal, leading-relaxed
+Responsive koppen: altijd clamp() — voorbeeld uit HeroV3:
+  Desktop: fontSize: 'clamp(3rem, 6vw, 5.5rem)', lineHeight: 1.05
+  Mobiel:  fontSize: 'clamp(2.5rem, 10.5vw, 3.1rem)', lineHeight: 1.04
+
+---
+
+## Spacing — 8px grid
+
+p-1=4px  p-2=8px  p-3=12px  p-4=16px  p-5=20px
+p-6=24px p-8=32px p-10=40px p-12=48px p-16=64px
+
+---
+
+## Vaste utility-klassen (uit polish.css — gebruik altijd)
+
+.ff-container   → max-w-[72rem] mx-auto px-4
+.ff-section     → py-14 sm:py-20
+.ff-btn         → basis knop (min-h 52px, font-semibold)
+.ff-btn-primary → bg primary-700, wit tekst, hover primary-600
+.ff-btn-secondary → surface bg, border, color-text
+.card           → bg-surface, border-border, shadow-soft, radius-lg
+.card-hover     → translateY(-2px) + shadow op hover
+.badge / .badge-soft → inline pill
+
+---
+
+## Knoppen — exacte implementatie
+
+Primaire CTA (op lichte achtergrond):
+  className="inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl
+             font-bold text-base transition-all active:scale-[0.98]
+             focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+  style={{ background: 'var(--ff-color-primary-700)', color: 'var(--color-bg)',
+           boxShadow: '0 8px 40px rgba(166,136,106,0.45)' }}
+
+Primaire CTA (op foto/donkere achtergrond):
+  style={{ background: 'var(--ff-color-primary-600)',
+           boxShadow: '0 4px 24px rgba(166,136,106,0.55), 0 1px 0 rgba(255,255,255,0.08) inset' }}
+
+Secundaire knop (op foto/donkere achtergrond — frosted glass):
+  style={{ background: 'rgba(250,248,245,0.08)',
+           border: '1px solid rgba(250,248,245,0.18)',
+           backdropFilter: 'blur(8px)', color: 'rgba(247,243,236,0.86)' }}
+
+Secundaire knop (op lichte achtergrond):
+  className="border-2 border-[var(--color-border)]
+             hover:border-[var(--ff-color-primary-500)]
+             hover:bg-[var(--ff-color-primary-50)]
+             text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)]
+             font-semibold rounded-xl px-6 py-3.5 min-h-[52px]"
+
+---
+
+## Kaarten
+
+<div className="bg-[var(--color-surface)] rounded-2xl
+                border border-[var(--color-border)]
+                shadow-[var(--shadow-soft)] p-6">
+
+---
+
+## Hero / foto-panelen — afbeeldingen laden
+
+Gebruik background-image via CSS (niet <img>) voor full-panel achtergronden:
+  style={{ backgroundImage: 'url(/pad/naar/foto.webp)',
+           backgroundSize: 'cover', backgroundPosition: 'center top' }}
+
+Gebruik <img> alleen voor inhoudelijke afbeeldingen:
+  className="w-full h-full object-cover"
+  style={{ objectPosition: 'center 20%' }}
+  loading="eager" fetchpriority="high"   ← alleen voor above-the-fold
+  loading="lazy"                          ← voor alles daaronder
+
+Bestaande hero-assets:
+  /hero/hero-style-report-lg.webp   (desktop split-screen)
+  /hero/hero-style-report-md.webp   (tablet)
+  /hero/hero-style-report-sm.webp   (mobiel)
+  /images/hf_20260221_210750_*.webp (desktop hero homepage)
+  /images/hf_20260221_211319_*.webp (mobiel hero homepage)
+
+---
+
+## Gradient-overlays op foto's
+
+Lichte bovenlaag + zware onderlaag (homepage-patroon):
+  Mobiel: linear-gradient(to bottom,
+    rgba(62,49,37,0.82) 0%, rgba(62,49,37,0.55) 38%,
+    rgba(62,49,37,0.08) 65%, transparent 100%)
+
+Split-screen linkerpaneel:
+  linear-gradient(160deg,
+    rgba(20,20,28,0.22) 0%, rgba(20,20,28,0.05) 30%,
+    rgba(20,20,28,0.60) 68%, rgba(20,20,28,0.88) 100%)
+
+Glass-morphism kaart op foto:
+  background: rgba(247,243,236,0.09)
+  border: 1px solid rgba(247,243,236,0.15)
+  backdropFilter: blur(16px)
+
+---
+
+## Split-screen layout (login, register, etc.)
+
+<div className="flex flex-col lg:flex-row"
+     style={{ minHeight: 'calc(100vh - 64px)' }}>
+
+  {/* Linkerpaneel — alleen desktop */}
+  <div className="hidden lg:block relative lg:w-[52%] xl:w-[55%] flex-shrink-0"
+       style={{ minHeight: 'calc(100vh - 64px)' }}>
+    {/* achtergrond via background-image */}
+    {/* gradient overlay */}
+    <div className="relative z-10 flex flex-col justify-between h-full p-8 xl:p-12">
+      <div>{/* label bovenin */}</div>
+      <div>{/* headline + quote + pills onderin */}</div>
+    </div>
+  </div>
+
+  {/* Rechterpaneel — formulier */}
+  <div className="flex-1 flex flex-col items-center justify-center
+                  bg-[var(--color-bg)] px-4 sm:px-8 xl:px-16 py-10 lg:py-12">
+    <div className="w-full max-w-[420px]">
+      {/* inhoud */}
+    </div>
+  </div>
+
+</div>
+
+---
+
+## Responsiviteit
+
+Mobiel-first. Volgorde: geen prefix → sm:640 → md:768 → lg:1024 → xl:1280
+Desktop only: hidden lg:block
+Mobiel only: lg:hidden
+Grids: grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+Sections: .ff-section (3.5rem mobiel, 5rem desktop)
+
+---
+
+## Shadows & radius
+
+--shadow-soft: 0 4px 24px rgba(30,35,51,0.06)        (standaard cards)
+--shadow-ring: 0 0 0 3px rgba(166,136,106,0.20)       (focus ring)
+Hero CTA desktop: 0 8px 40px rgba(166,136,106,0.45)
+Hero CTA mobiel:  0 4px 24px rgba(166,136,106,0.55)
+
+--radius-lg:  1rem    (cards)
+--radius-xl:  1.25rem (knoppen)
+--radius-2xl: 1.5rem  (featured cards)
+
+---
+
+## Verboden patronen — stop onmiddellijk als je dit ziet
+
+- Hex-waarden (#abc) in src/** buiten tokens.css
+- purple-*, indigo-*, violet-* klassen
+- Tweede <Navbar> of portaled header
+- min-h-screen op een pagina-component (Navbar pakt al 64px)
+- node:path of Node-only imports in client-code
+- DROP of DELETE in migraties zonder expliciete instructie
+- Stijlen die niet in de tokens staan raden op eigen houtje
+
+---
+
+## Werkwijze — verplicht voor elke taak
+
+1. Lees het volledige bestaande bestand eerst
+2. Controleer welke tokens en klassen dat bestand al gebruikt
+3. Gebruik een bestaande goed-werkende pagina als directe referentie
+4. Voeg alleen toe wat gevraagd is — geen cleanup, geen extra features
+5. Draai altijd npm run build en zorg dat het schoon is
