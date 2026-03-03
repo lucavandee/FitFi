@@ -1,18 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
-import {
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  Shield,
-  Lock,
-  ArrowRight,
-  Loader2,
-  FileText,
-  Sparkles,
-  Mail,
-} from "lucide-react";
+import { Eye, EyeOff, CircleCheck as CheckCircle2, Shield, Lock, ArrowRight, Loader as Loader2, FileText, Sparkles, Mail } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
