@@ -298,12 +298,12 @@ export default function FAQPage() {
             )}
           </div>
 
-          {/* Categorie tabs — vaste rij, nooit wrappen */}
+          {/* Categorie tabs */}
           {!isSearching && (
             <div
               role="tablist"
               aria-label="FAQ categorieën"
-              className="grid grid-cols-4 gap-1.5 mb-8 p-1 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--color-border)]"
+              className="flex flex-row mb-8 p-1 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--color-border)]"
             >
               {CATEGORIES.map(({ id, label, Icon }) => {
                 const active = activeCat === id;
@@ -314,15 +314,16 @@ export default function FAQPage() {
                     aria-selected={active}
                     onClick={() => changeCat(id)}
                     className={[
-                      "flex flex-col items-center gap-1 py-2.5 px-1 rounded-lg text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1",
+                      "flex-1 flex flex-row items-center justify-center gap-1.5 h-10 px-2 rounded-lg",
+                      "text-[11px] font-semibold whitespace-nowrap overflow-hidden",
+                      "transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1",
                       active
                         ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
                         : "text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/60",
                     ].join(" ")}
                   >
-                    <Icon size={15} aria-hidden="true" />
-                    <span className="hidden sm:inline leading-tight text-center">{label}</span>
-                    <span className="sm:hidden leading-tight text-center text-[10px]">{label.split(" ")[0]}</span>
+                    <Icon size={13} aria-hidden="true" className="shrink-0" />
+                    <span className="truncate">{label}</span>
                   </button>
                 );
               })}
