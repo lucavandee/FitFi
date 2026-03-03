@@ -138,7 +138,10 @@ export default function DashboardPage() {
   /* ── empty state ── */
   if (!hasReport) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-6">
+      <div
+        className="flex items-center justify-center px-6"
+        style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}
+      >
         <Helmet><title>Dashboard – FitFi</title></Helmet>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -147,20 +150,22 @@ export default function DashboardPage() {
           className="max-w-sm w-full text-center"
         >
           <div className="w-16 h-16 rounded-2xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-7">
-            <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" />
+            <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">Nog geen stijlprofiel</h1>
+          <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
+            Nog geen stijlprofiel
+          </h1>
           <p className="text-[var(--color-muted)] text-sm mb-8 leading-relaxed">
             Doe de quiz en ontdek jouw archetype, kleurpalet en gepersonaliseerde outfits.
           </p>
           <button
             onClick={() => navigate("/onboarding")}
-            className="inline-flex items-center gap-2 px-7 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-2xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors w-full justify-center"
+            className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] bg-[var(--ff-color-primary-700)] text-white rounded-2xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors active:scale-[0.98]"
           >
-            Start de stijlquiz <ArrowRight className="w-4 h-4" />
+            Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </motion.div>
-      </main>
+      </div>
     );
   }
 
@@ -168,7 +173,7 @@ export default function DashboardPage() {
      MAIN DASHBOARD
   ═══════════════════════════════════════════════════ */
   return (
-    <main className="min-h-screen bg-[var(--color-bg)]">
+    <div style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}>
       <Helmet>
         <title>Dashboard – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijldashboard." />
@@ -186,7 +191,9 @@ export default function DashboardPage() {
           {/* Avatar */}
           <div
             className="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold text-base flex-shrink-0 select-none"
-            style={{ background: "linear-gradient(135deg, #5C4937 0%, #A6886A 100%)" }}
+            style={{
+              background: "linear-gradient(135deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-500) 100%)"
+            }}
           >
             {userInitial}
           </div>
@@ -196,7 +203,7 @@ export default function DashboardPage() {
             <p className="text-[11px] font-semibold text-[var(--color-muted)] uppercase tracking-[0.12em] leading-none mb-0.5">
               {greeting}
             </p>
-            <h1 className="text-lg font-bold text-[var(--color-text)] tracking-tight leading-tight truncate">
+            <h1 className="font-heading text-lg font-bold text-[var(--color-text)] tracking-tight leading-tight truncate">
               {userName || "Welkom terug"}
             </h1>
           </div>
@@ -205,9 +212,9 @@ export default function DashboardPage() {
           <button
             onClick={() => navigate("/profile")}
             aria-label="Profielinstellingen"
-            className="w-10 h-10 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors flex-shrink-0"
+            className="w-11 h-11 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors flex-shrink-0"
           >
-            <Settings className="w-[18px] h-[18px]" />
+            <Settings className="w-[18px] h-[18px]" aria-hidden="true" />
           </button>
         </motion.header>
 
@@ -218,17 +225,10 @@ export default function DashboardPage() {
           transition={{ duration: 0.5, delay: 0.06 }}
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: "linear-gradient(150deg, #4A3828 0%, #6B5240 40%, #9B7A5E 100%)",
+            background: "linear-gradient(150deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 40%, var(--ff-color-primary-500) 100%)",
             boxShadow: "0 16px 48px rgba(74,56,40,0.35), 0 2px 0 rgba(255,255,255,0.08) inset"
           }}
         >
-          {/* Subtle noise */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")`,
-            }}
-          />
           {/* Top shine */}
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
@@ -242,18 +242,18 @@ export default function DashboardPage() {
               <span
                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
                   isPremium
-                    ? "bg-amber-400/20 text-amber-200 border border-amber-400/25"
+                    ? "bg-[var(--ff-color-warning-400)]/20 text-[var(--ff-color-warning-200)] border border-[var(--ff-color-warning-400)]/25"
                     : "bg-white/10 text-white/40 border border-white/10"
                 }`}
               >
-                {isPremium ? <Star className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
+                {isPremium ? <Star className="w-2.5 h-2.5" aria-hidden="true" /> : <Lock className="w-2.5 h-2.5" aria-hidden="true" />}
                 {isPremium ? "Premium" : "Gratis"}
               </span>
             </div>
 
             {/* Archetype name — the hero */}
             <h2
-              className="font-bold text-white leading-[0.95] mb-1"
+              className="font-heading font-bold text-white leading-[0.95] mb-1"
               style={{ fontSize: "clamp(2.4rem, 11vw, 3.5rem)", letterSpacing: "-0.03em" }}
             >
               {archetypeName ?? "Jouw stijl"}
@@ -278,8 +278,8 @@ export default function DashboardPage() {
                 </span>
               )}
               {hasPhoto && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/25 text-[11px] text-emerald-300 font-semibold">
-                  <Check className="w-2.5 h-2.5" /> Kleuranalyse
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--ff-color-success-600)]/20 border border-[var(--ff-color-success-400)]/25 text-[11px] text-[var(--ff-color-success-300)] font-semibold">
+                  <Check className="w-2.5 h-2.5" aria-hidden="true" /> Kleuranalyse
                 </span>
               )}
             </div>
@@ -294,6 +294,7 @@ export default function DashboardPage() {
                     className="w-[18px] h-[18px] rounded-full flex-shrink-0 ring-1 ring-white/15"
                     style={{ backgroundColor: hex }}
                     title={hex}
+                    aria-hidden="true"
                   />
                 ))}
               </div>
@@ -303,21 +304,21 @@ export default function DashboardPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => navigate("/results")}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 min-h-[48px] rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
                 style={{
                   background: "rgba(255,255,255,0.96)",
-                  color: "#4A3828",
+                  color: "var(--ff-color-primary-800)",
                   boxShadow: "0 2px 12px rgba(0,0,0,0.22)"
                 }}
               >
-                Bekijk outfits <ArrowRight className="w-3.5 h-3.5" />
+                Bekijk outfits <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
               <button
                 onClick={() => navigate("/onboarding")}
                 aria-label="Quiz opnieuw starten"
-                className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-white/70 hover:bg-white/18 transition-colors flex-shrink-0"
+                className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-white/70 hover:bg-white/20 transition-colors flex-shrink-0"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -332,25 +333,24 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.12 }}
-          className="rounded-2xl bg-[var(--color-surface)] overflow-hidden"
-          style={{ boxShadow: "0 2px 12px rgba(30,35,51,0.06)" }}
+          className="rounded-2xl bg-[var(--color-surface)] overflow-hidden border border-[var(--color-border)]"
+          style={{ boxShadow: "var(--shadow-soft)" }}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-3">
             <div>
-              <h3 className="text-sm font-bold text-[var(--color-text)] tracking-tight">Jouw outfits</h3>
+              <h2 className="text-sm font-bold text-[var(--color-text)] tracking-tight">Jouw outfits</h2>
               <p className="text-[11px] text-[var(--color-muted)] mt-0.5">Op maat voor {archetypeName ?? "jou"}</p>
             </div>
             <button
               onClick={() => navigate("/results")}
-              className="inline-flex items-center gap-0.5 text-xs font-bold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] transition-colors"
+              className="inline-flex items-center gap-0.5 min-h-[44px] px-2 text-xs font-bold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] transition-colors"
             >
-              Alles <ChevronRight className="w-3.5 h-3.5" />
+              Alles <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           </div>
 
           {outfitsData && outfitsData.length > 0 ? (
-            /* Horizontal scroll strip with portrait cards */
             <div className="flex gap-2.5 px-4 pb-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
               {outfitsData.slice(0, 6).map((outfit, i) => {
                 const img = getOutfitImage(outfit);
@@ -362,6 +362,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, delay: 0.18 + i * 0.05 }}
                     onClick={() => navigate("/results")}
+                    aria-label={`Bekijk outfit: ${label}`}
                     className="group relative flex-shrink-0 rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
                     style={{ width: 100, height: 130 }}
                   >
@@ -375,11 +376,10 @@ export default function DashboardPage() {
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                        <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-200)]" />
+                        <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-200)]" aria-hidden="true" />
                         <span className="text-[10px] font-bold text-[var(--ff-color-primary-300)]">Look {i + 1}</span>
                       </div>
                     )}
-                    {/* Bottom gradient label */}
                     <div className="absolute inset-x-0 bottom-0 pt-6 pb-2 px-2 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
                       <p className="text-white text-[9px] font-bold truncate capitalize leading-tight">{label}</p>
                     </div>
@@ -389,7 +389,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="flex flex-col items-center py-8 text-center px-6">
-              <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-200)] mb-2.5" />
+              <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-200)] mb-2.5" aria-hidden="true" />
               <p className="text-xs text-[var(--color-muted)] mb-3 leading-relaxed">
                 Outfits worden samengesteld op basis van jouw profiel
               </p>
@@ -414,10 +414,10 @@ export default function DashboardPage() {
           <button
             onClick={() => navigate("/results#saved")}
             className="flex flex-col items-start p-3.5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] text-left"
-            style={{ boxShadow: "0 1px 6px rgba(30,35,51,0.05)" }}
+            style={{ boxShadow: "var(--shadow-soft)" }}
           >
             <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mb-2.5">
-              <Heart className="w-4 h-4 text-[var(--ff-color-primary-500)]" />
+              <Heart className="w-4 h-4 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
             </div>
             <p className="text-xs font-bold text-[var(--color-text)] leading-tight">Opgeslagen</p>
             <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">
@@ -432,14 +432,17 @@ export default function DashboardPage() {
             style={{
               background: hasPhoto ? "var(--ff-color-success-50)" : "var(--color-surface)",
               borderColor: hasPhoto ? "var(--ff-color-success-200)" : "var(--color-border)",
-              boxShadow: "0 1px 6px rgba(30,35,51,0.05)"
+              boxShadow: "var(--shadow-soft)"
             }}
           >
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center mb-2.5"
               style={{ background: hasPhoto ? "var(--ff-color-success-100)" : "var(--ff-color-primary-50)" }}
             >
-              <Camera className={`w-4 h-4 ${hasPhoto ? "text-[var(--ff-color-success-600)]" : "text-[var(--ff-color-primary-500)]"}`} />
+              <Camera
+                className={`w-4 h-4 ${hasPhoto ? "text-[var(--ff-color-success-600)]" : "text-[var(--ff-color-primary-500)]"}`}
+                aria-hidden="true"
+              />
             </div>
             <p className="text-xs font-bold text-[var(--color-text)] leading-tight">
               {hasPhoto ? "Kleuranalyse" : "Foto"}
@@ -453,10 +456,10 @@ export default function DashboardPage() {
           <button
             onClick={() => navigate("/profile")}
             className="flex flex-col items-start p-3.5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] text-left"
-            style={{ boxShadow: "0 1px 6px rgba(30,35,51,0.05)" }}
+            style={{ boxShadow: "var(--shadow-soft)" }}
           >
             <div className="relative w-8 h-8 flex-shrink-0 mb-2.5">
-              <svg className="w-8 h-8 -rotate-90" viewBox="0 0 32 32">
+              <svg className="w-8 h-8 -rotate-90" viewBox="0 0 32 32" aria-hidden="true">
                 <circle cx="16" cy="16" r="13" fill="none" stroke="var(--ff-color-primary-100)" strokeWidth="3" />
                 <motion.circle
                   cx="16" cy="16" r="13" fill="none"
@@ -469,7 +472,7 @@ export default function DashboardPage() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[9px] font-bold text-[var(--ff-color-primary-700)]">{donePct}%</span>
+                <span className="text-[9px] font-bold text-[var(--ff-color-primary-700)]" aria-label={`${donePct} procent compleet`}>{donePct}%</span>
               </div>
             </div>
             <p className="text-xs font-bold text-[var(--color-text)] leading-tight">Profiel</p>
@@ -486,24 +489,24 @@ export default function DashboardPage() {
           {isPremium ? (
             <button
               onClick={() => navigate("/shop")}
-              className="group w-full flex items-center gap-3.5 p-4 rounded-2xl bg-[var(--color-surface)] text-left transition-colors hover:bg-[var(--ff-color-primary-25)] border border-[var(--color-border)]"
-              style={{ boxShadow: "0 2px 10px rgba(30,35,51,0.06)" }}
+              className="group w-full flex items-center gap-3.5 p-4 rounded-2xl bg-[var(--color-surface)] text-left transition-colors hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] min-h-[64px]"
+              style={{ boxShadow: "var(--shadow-soft)" }}
             >
               <div className="w-11 h-11 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
-                <ShoppingBag className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                <ShoppingBag className="w-5 h-5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-[var(--color-text)] text-sm">Shop jouw stijl</p>
                 <p className="text-xs text-[var(--color-muted)] mt-0.5">Producten afgestemd op jou</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
             </button>
           ) : (
             <Link
               to="/prijzen"
-              className="group flex items-center gap-4 p-5 rounded-2xl block"
+              className="group flex items-center gap-4 p-5 rounded-2xl"
               style={{
-                background: "linear-gradient(135deg, #4A3828 0%, #7A614A 100%)",
+                background: "linear-gradient(135deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 100%)",
                 boxShadow: "0 8px 28px rgba(74,56,40,0.30)"
               }}
             >
@@ -515,7 +518,7 @@ export default function DashboardPage() {
                 </p>
               </div>
               <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 group-hover:bg-white/22 flex items-center justify-center transition-colors">
-                <ArrowRight className="w-4 h-4 text-white" />
+                <ArrowRight className="w-4 h-4 text-white" aria-hidden="true" />
               </div>
             </Link>
           )}
@@ -527,21 +530,21 @@ export default function DashboardPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
           onClick={() => navigate("/results")}
-          className="group w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl border border-[var(--ff-color-primary-100)] bg-[var(--ff-color-primary-25)] text-left transition-colors hover:bg-[var(--ff-color-primary-50)] active:scale-[0.99]"
+          className="group w-full flex items-center gap-3.5 px-4 py-3.5 min-h-[60px] rounded-2xl border border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] text-left transition-colors hover:bg-[var(--ff-color-primary-100)] active:scale-[0.99]"
         >
           <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Volledig stijlrapport</p>
             <p className="text-xs text-[var(--color-muted)] mt-0.5">Outfits · kleuren · shopping tips</p>
           </div>
-          <ArrowRight className="w-4 h-4 text-[var(--ff-color-primary-400)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+          <ArrowRight className="w-4 h-4 text-[var(--ff-color-primary-400)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
         </motion.button>
 
       </div>
 
       <PhotoUploadModal isOpen={showPhotoModal} onClose={() => setShowPhotoModal(false)} />
-    </main>
+    </div>
   );
 }
