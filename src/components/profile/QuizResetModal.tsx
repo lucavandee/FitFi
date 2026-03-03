@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, AlertTriangle, RefreshCw, CheckCircle, Clock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, AlertTriangle, RefreshCw, CheckCircle } from 'lucide-react';
 import { profileSyncService } from '@/services/data/profileSyncService';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +24,17 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
   const [selectedReason, setSelectedReason] = useState('');
   const [customReason, setCustomReason] = useState('');
   const navigate = useNavigate();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const headingId = 'quiz-reset-modal-title';
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !isResetting) onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, isResetting, onClose]);
 
   if (!isOpen) return null;
 
@@ -59,24 +70,31 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
         duration: 3000
       });
 
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         navigate('/onboarding');
       }, 1500);
 
     } catch (error) {
-      console.error('[QuizResetModal] Reset error:', error);
       toast.error(error instanceof Error ? error.message : 'Kon quiz niet resetten. Probeer het opnieuw.');
       setIsResetting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[var(--color-surface)] rounded-2xl max-w-lg w-full p-8 shadow-2xl border border-[var(--color-border)] relative">
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4"
+      onClick={(e) => { if (e.target === e.currentTarget && !isResetting) onClose(); }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+        className="bg-[var(--color-surface)] rounded-2xl max-w-lg w-full p-5 sm:p-8 max-h-[90dvh] overflow-y-auto shadow-2xl border border-[var(--color-border)] relative"
+      >
         <button
           onClick={onClose}
           disabled={isResetting}
-          className="absolute top-6 right-6 p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
           aria-label="Sluiten"
         >
           <X className="w-5 h-5 text-[var(--color-muted)]" />
@@ -86,7 +104,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <AlertTriangle className="w-8 h-8 text-[var(--ff-color-accent-700)]" />
         </div>
 
-        <h2 className="text-2xl font-bold text-[var(--color-text)] text-center mb-3">
+        <h2 id={headingId} className="text-2xl font-bold text-[var(--color-text)] text-center mb-3">
           Quiz opnieuw doen?
         </h2>
 
@@ -170,14 +188,14 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <button
             onClick={onClose}
             disabled={isResetting}
-            className="flex-1 px-6 py-3 bg-[var(--color-bg)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-all border border-[var(--color-border)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+            className="flex-1 px-6 py-3 min-h-[44px] bg-[var(--color-bg)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-all border border-[var(--color-border)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
           >
             Annuleren
           </button>
           <button
             onClick={handleReset}
             disabled={isResetting || confirmText.toLowerCase() !== 'reset'}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-accent-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-accent-600)] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-accent-500)] focus-visible:ring-offset-2"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[var(--ff-color-accent-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-accent-600)] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-accent-500)] focus-visible:ring-offset-2"
           >
             {isResetting ? (
               <>

@@ -44,22 +44,22 @@ function RowItem({
     <button
       onClick={onClick}
       disabled={!onClick}
-      className={`w-full flex items-center gap-3.5 px-4 py-3.5 transition-colors text-left group
+      className={`w-full flex items-center gap-3.5 px-4 py-3.5 min-h-[44px] transition-colors text-left group
         ${onClick ? "hover:bg-[var(--color-bg)] active:bg-[var(--ff-color-primary-25)]" : "cursor-default"}
-        ${danger ? "hover:bg-red-50" : ""}
+        ${danger ? "hover:bg-[var(--ff-color-danger-50,#fef2f2)]" : ""}
       `}
     >
       {icon && (
         <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
           danger
-            ? "bg-red-50 text-red-400"
+            ? "bg-[var(--ff-color-danger-50,#fef2f2)] text-[var(--ff-color-danger-400,#f87171)]"
             : "bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-500)]"
         }`}>
           {icon}
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-semibold leading-tight ${danger ? "text-red-500" : "text-[var(--color-text)]"}`}>
+        <p className={`text-sm font-semibold leading-tight ${danger ? "text-[var(--ff-color-danger-500,#ef4444)]" : "text-[var(--color-text)]"}`}>
           {label}
         </p>
         {sub && <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-snug">{sub}</p>}
@@ -300,6 +300,10 @@ const ProfilePage: React.FC = () => {
         <title>Profiel – FitFi</title>
         <meta name="description" content="Beheer je persoonlijke gegevens en stijlprofiel." />
         <meta name="robots" content="noindex, nofollow" />
+        <meta property="og:title" content="Profiel – FitFi" />
+        <meta property="og:description" content="Beheer je persoonlijke gegevens en stijlprofiel." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
       </Helmet>
 
       <a
@@ -318,7 +322,7 @@ const ProfilePage: React.FC = () => {
           transition={{ duration: 0.45 }}
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: "linear-gradient(150deg, #4A3828 0%, #6B5240 40%, #9B7A5E 100%)",
+            background: "linear-gradient(150deg, var(--ff-color-primary-900,#4A3828) 0%, var(--ff-color-primary-800,#6B5240) 40%, var(--ff-color-primary-700,#9B7A5E) 100%)",
             boxShadow: "0 16px 48px rgba(74,56,40,0.32), 0 2px 0 rgba(255,255,255,0.08) inset",
           }}
         >
@@ -353,10 +357,11 @@ const ProfilePage: React.FC = () => {
                 {/* Camera badge */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-md"
+                  className="absolute -bottom-2 -right-2 w-7 h-7 min-w-[44px] min-h-[44px] rounded-full bg-[var(--color-surface)] flex items-center justify-center shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                  style={{ padding: "calc((44px - 28px) / 2)", boxSizing: "content-box" }}
                   aria-label="Foto wijzigen"
                 >
-                  <Camera className="w-3 h-3 text-[#5C4937]" />
+                  <Camera className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" />
                 </button>
               </div>
 
@@ -407,9 +412,10 @@ const ProfilePage: React.FC = () => {
                 {color.palette.slice(0, 8).map((hex: string, i: number) => (
                   <div
                     key={i}
+                    role="img"
+                    aria-label={`Kleur ${hex}`}
                     className="w-[18px] h-[18px] rounded-full flex-shrink-0 ring-1 ring-white/15"
                     style={{ backgroundColor: hex }}
-                    title={hex}
                   />
                 ))}
               </div>
@@ -534,7 +540,7 @@ const ProfilePage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setIsEditingName(true)}
-                    className="text-xs font-bold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] px-2 py-1 rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors"
+                    className="text-xs font-bold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] px-3 py-2.5 min-h-[44px] rounded-lg hover:bg-[var(--ff-color-primary-50)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
                   >
                     Wijzig
                   </button>
@@ -574,14 +580,14 @@ const ProfilePage: React.FC = () => {
                     <button
                       onClick={handleSaveName}
                       disabled={isSavingName || !!displayNameError}
-                      className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-3 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
                     >
                       {isSavingName ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                       Opslaan
                     </button>
                     <button
                       onClick={handleCancelName}
-                      className="flex-1 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors"
+                      className="flex-1 py-3 min-h-[44px] rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                     >
                       Annuleer
                     </button>
@@ -658,14 +664,14 @@ const ProfilePage: React.FC = () => {
                   <button
                     onClick={async () => { await handlePasswordReset(); setShowResetConfirm(false); }}
                     disabled={isSendingReset}
-                    className="flex-1 py-2.5 rounded-xl bg-[var(--ff-color-primary-700)] text-white text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 py-3 min-h-[44px] rounded-xl bg-[var(--ff-color-primary-700)] text-white text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
                   >
                     {isSendingReset ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     Verstuur link
                   </button>
                   <button
                     onClick={() => setShowResetConfirm(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors"
+                    className="flex-1 py-3 min-h-[44px] rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                   >
                     Annuleer
                   </button>
@@ -690,7 +696,7 @@ const ProfilePage: React.FC = () => {
         >
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
+            className="w-full flex items-center justify-center gap-2.5 py-4 min-h-[44px] rounded-2xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-[var(--ff-color-danger-500,#ef4444)] hover:border-[var(--ff-color-danger-200,#fecaca)] hover:bg-[var(--ff-color-danger-50,#fef2f2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-danger-400,#f87171)]"
           >
             <LogOut className="w-4 h-4" />
             Uitloggen

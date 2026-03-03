@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getCookiePrefs, setCookiePrefs, withdrawConsent, type CookiePrefs } from '@/utils/consent';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const CookieSettings: React.FC = () => {
   const [prefs, setPrefs] = useState<CookiePrefs>({ necessary: true, analytics: false, marketing: false });
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmWithdraw, setConfirmWithdraw] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPrefs(getCookiePrefs());
@@ -29,7 +31,6 @@ export const CookieSettings: React.FC = () => {
   };
 
   const handleWithdrawAll = () => {
-    if (!confirm('Alle niet-essentiële cookies verwijderen?')) return;
     setIsLoading(true);
     try {
       withdrawConsent();
@@ -39,6 +40,7 @@ export const CookieSettings: React.FC = () => {
       toast.error('Er ging iets mis');
     } finally {
       setIsLoading(false);
+      setConfirmWithdraw(false);
     }
   };
 
@@ -105,20 +107,42 @@ export const CookieSettings: React.FC = () => {
       </p>
 
       {/* Actions */}
-      <div className="flex gap-2 pt-3">
-        <button
-          onClick={handleWithdrawAll}
-          disabled={isLoading || (!prefs.analytics && !prefs.marketing)}
-          className="flex-1 py-2 rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-text)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          Alles verwijderen
-        </button>
-        <Link to="/cookies" className="flex-1">
-          <button className="w-full py-2 rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors">
+      {confirmWithdraw ? (
+        <div className="pt-3 space-y-2">
+          <p className="text-xs text-[var(--color-text)] font-semibold">Alle niet-essentiële cookies verwijderen?</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleWithdrawAll}
+              disabled={isLoading}
+              className="flex-1 py-2.5 min-h-[44px] rounded-xl bg-[var(--ff-color-danger-600,#dc2626)] text-white text-xs font-bold transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-danger-400,#f87171)]"
+            >
+              Verwijderen
+            </button>
+            <button
+              onClick={() => setConfirmWithdraw(false)}
+              className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+            >
+              Annuleer
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex gap-2 pt-3">
+          <button
+            onClick={() => setConfirmWithdraw(true)}
+            disabled={isLoading || (!prefs.analytics && !prefs.marketing)}
+            className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-text)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+          >
+            Alles verwijderen
+          </button>
+          <button
+            onClick={() => navigate('/cookies')}
+            className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+          >
             Cookiebeleid
           </button>
-        </Link>
-      </div>
+        </div>
+      )}
 
     </div>
   );

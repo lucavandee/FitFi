@@ -102,8 +102,7 @@ export function EmailPreferences() {
     try {
       const { error } = await supabase()
         .from('email_preferences')
-        .update({ [key]: value })
-        .eq('user_id', user.id);
+        .upsert({ user_id: user.id, [key]: value }, { onConflict: 'user_id' });
       if (error) throw error;
     } catch {
       setPreferences(prev => prev ? { ...prev, [key]: previous } : prev);
@@ -146,7 +145,7 @@ export function EmailPreferences() {
         {PREFERENCE_ROWS.map(({ key, label, description }) => (
           <label
             key={key}
-            className="flex items-center justify-between px-5 py-3.5 cursor-pointer hover:bg-[var(--color-bg)] transition-colors"
+            className="flex items-center justify-between px-5 py-3 min-h-[44px] cursor-pointer hover:bg-[var(--color-bg)] transition-colors"
           >
             <div className="min-w-0 pr-4">
               <p className="text-sm font-medium text-[var(--color-text)] leading-snug">{label}</p>
@@ -159,10 +158,11 @@ export function EmailPreferences() {
                 onChange={e => updatePreference(key, e.target.checked)}
                 disabled={savingKey === key}
                 className="sr-only peer"
-                aria-label={label}
+                aria-label={`${label} — ${PREFERENCE_ROWS.find(r => r.key === key)?.description ?? ''}`}
               />
               <div className={[
                 'h-6 w-10 rounded-full transition-colors duration-200',
+                'peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ff-color-primary-500)] peer-focus-visible:ring-offset-2',
                 preferences[key] ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
                 savingKey === key ? 'opacity-50' : '',
               ].join(' ')} />
