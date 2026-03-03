@@ -13,6 +13,7 @@ import {
   X,
   ArrowRight,
   MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 
@@ -108,17 +109,17 @@ const TRUST_ITEMS = [
   {
     icon: ShieldCheck,
     title: "Privacybewust",
-    body: "Wij verwerken alleen wat nodig is en verkopen niets door.",
+    body: "Alleen wat nodig is. Nooit doorverkocht.",
   },
   {
     icon: CreditCard,
     title: "Eerlijk geprijsd",
-    body: "Begin gratis. Upgraden kan later, opzeggen altijd.",
+    body: "Begin gratis. Opzeggen altijd.",
   },
   {
     icon: Clock,
     title: "Direct resultaat",
-    body: "Zie outfits met uitleg binnen twee minuten.",
+    body: "Outfits binnen twee minuten.",
   },
 ];
 
@@ -142,7 +143,10 @@ function highlightText(text: string, term: string): React.ReactNode {
   const parts = text.split(regex);
   return parts.map((part, i) =>
     part.toLowerCase() === term.toLowerCase() ? (
-      <mark key={i} className="bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-800)] rounded px-0.5 not-italic">
+      <mark
+        key={i}
+        className="bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-800)] rounded px-0.5 not-italic"
+      >
         {part}
       </mark>
     ) : (
@@ -160,7 +164,14 @@ type AccordionItemProps = {
   isLast: boolean;
 };
 
-function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast }: AccordionItemProps) {
+function AccordionItem({
+  item,
+  id,
+  isOpen,
+  onToggle,
+  highlightTerm = "",
+  isLast,
+}: AccordionItemProps) {
   const panelId = `panel-${id}`;
   const headingId = `heading-${id}`;
 
@@ -169,22 +180,32 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
       <h3 id={headingId}>
         <button
           onClick={() => onToggle(id)}
-          className="w-full min-h-[44px] px-5 py-4 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-50)]"
+          className="w-full min-h-[56px] px-6 py-4 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-50)]"
           aria-expanded={isOpen}
           aria-controls={panelId}
         >
-          <span className={`font-medium text-base leading-snug transition-colors ${isOpen ? "text-[var(--ff-color-primary-700)]" : "text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)]"}`}>
+          <span
+            className={`font-medium text-base leading-snug transition-colors ${
+              isOpen
+                ? "text-[var(--ff-color-primary-700)]"
+                : "text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)]"
+            }`}
+          >
             {highlightTerm ? highlightText(item.q, highlightTerm) : item.q}
           </span>
           <span
             className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               isOpen
                 ? "bg-[var(--ff-color-primary-700)] text-white"
-                : "bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-100)]"
+                : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-200)]"
             }`}
             aria-hidden="true"
           >
-            {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+            {isOpen ? (
+              <Minus className="w-3.5 h-3.5" />
+            ) : (
+              <Plus className="w-3.5 h-3.5" />
+            )}
           </span>
         </button>
       </h3>
@@ -201,7 +222,7 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
             transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <p className="px-5 pb-5 text-[var(--color-muted)] leading-relaxed text-base">
+            <p className="px-6 pb-6 pt-1 text-[var(--color-muted)] leading-relaxed text-base">
               {highlightTerm && typeof item.a === "string"
                 ? highlightText(item.a, highlightTerm)
                 : item.a}
@@ -219,14 +240,17 @@ type AccordionProps = {
   openId: string | null;
   onToggle: (id: string) => void;
   highlightTerm?: string;
-  liveLabel?: string;
 };
 
-function Accordion({ items, categoryId, openId, onToggle, highlightTerm = "" }: AccordionProps) {
+function Accordion({
+  items,
+  categoryId,
+  openId,
+  onToggle,
+  highlightTerm = "",
+}: AccordionProps) {
   return (
-    <div
-      className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-card,0_2px_12px_rgba(30,35,51,0.06))]"
-    >
+    <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]">
       {items.map((item, i) => {
         const id = `${categoryId}-${i}`;
         return (
@@ -263,7 +287,8 @@ export default function FAQPage() {
     );
   }, [searchTerm, isSearching]);
 
-  const currentCategory = CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
+  const currentCategory =
+    CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
 
   function handleToggle(id: string) {
     setOpenId((prev) => (prev === id ? null : id));
@@ -289,66 +314,245 @@ export default function FAQPage() {
         structuredData={FAQ_SCHEMA}
       />
 
-      {/* ── HERO ── */}
-      <section className="ff-container pt-14 pb-10 md:pt-20 md:pb-14">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] lg:items-end gap-10 lg:gap-16">
+      {/* ═══════════════════════════════════════════════════
+          HERO — cinematic, donker, editorial
+          Zelfde taal als HeroV3
+      ═══════════════════════════════════════════════════ */}
 
-            {/* Left: heading */}
-            <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
-                <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                Hulp & informatie
-              </span>
-              <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-text)] mb-4 leading-[1.1] tracking-tight">
-                Veelgestelde vragen
-              </h1>
-              <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed max-w-md">
-                Alles wat je wilt weten over FitFi. Staat je vraag er niet tussen?{" "}
-                <a
-                  href="mailto:contact@fitfi.ai"
-                  className="text-[var(--ff-color-primary-700)] font-medium underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
+      {/* MOBILE hero */}
+      <section
+        aria-labelledby="faq-heading"
+        className="sm:hidden relative w-full overflow-hidden"
+        style={{ height: '72svh', minHeight: '460px', background: '#1c120a' }}
+      >
+        <img
+          src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: '50% 30%' }}
+          loading="eager"
+          aria-hidden="true"
+        />
+
+        {/* Bovenste fade */}
+        <div
+          className="absolute top-0 inset-x-0 pointer-events-none"
+          style={{
+            height: '35%',
+            background: 'linear-gradient(to bottom, rgba(28,18,10,0.70) 0%, rgba(28,18,10,0.20) 60%, transparent 100%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Onderste fade */}
+        <div
+          className="absolute inset-x-0 bottom-0 pointer-events-none"
+          style={{
+            height: '80%',
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(20,13,8,0.55) 30%, rgba(20,13,8,0.88) 60%, rgba(20,13,8,0.98) 85%, rgba(20,13,8,1.0) 100%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Vignet */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(20,13,8,0.28) 100%)' }}
+          aria-hidden="true"
+        />
+
+        {/* AI badge */}
+        <div
+          className="absolute top-5 left-4 z-20 inline-flex items-center gap-2 px-3.5 py-2 rounded-full"
+          style={{
+            background: 'rgba(247,243,236,0.12)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(247,243,236,0.22)',
+          }}
+        >
+          <Sparkles className="w-3 h-3" style={{ color: '#e8d5b0' }} aria-hidden="true" />
+          <span className="text-[11px] font-bold tracking-[0.08em] uppercase" style={{ color: '#F7F3EC' }}>
+            Hulp & informatie
+          </span>
+        </div>
+
+        {/* Tekst + trust — vastgepind onderaan */}
+        <div className="absolute bottom-0 inset-x-0 z-20 px-6 pb-9">
+          <h1
+            id="faq-heading"
+            className="font-bold tracking-tight mb-3"
+            style={{
+              fontSize: 'clamp(2.25rem, 9.5vw, 2.9rem)',
+              lineHeight: 1.06,
+              color: '#F7F3EC',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Veelgestelde{' '}
+            <em className="not-italic" style={{ color: '#d4a96a' }}>vragen</em>
+          </h1>
+
+          <p
+            className="text-[14px] font-light leading-[1.6] mb-6"
+            style={{ color: 'rgba(247,243,236,0.65)', maxWidth: '90%' }}
+          >
+            Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{' '}
+            <a
+              href="mailto:contact@fitfi.ai"
+              className="font-semibold underline underline-offset-2"
+              style={{ color: '#d4a96a' }}
+            >
+              Stuur ons een bericht.
+            </a>
+          </p>
+
+          {/* Trust pills — horizontal row */}
+          <div className="flex gap-2 flex-wrap">
+            {TRUST_ITEMS.map((t, i) => {
+              const Icon = t.icon;
+              return (
+                <div
+                  key={i}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+                  style={{
+                    background: 'rgba(247,243,236,0.08)',
+                    border: '1px solid rgba(247,243,236,0.16)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                  }}
                 >
-                  Stuur ons een bericht
-                </a>
-                .
-              </p>
-            </div>
-
-            {/* Right: trust badges */}
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:min-w-[260px]">
-              {TRUST_ITEMS.map((c, i) => {
-                const Icon = c.icon;
-                return (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft,0_1px_4px_rgba(30,35,51,0.05))]"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
-                      <Icon className="h-4 w-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[var(--color-text)] leading-none mb-0.5">{c.title}</p>
-                      <p className="text-xs text-[var(--color-muted)] leading-snug">{c.body}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
+                  <Icon className="w-3 h-3 flex-shrink-0" style={{ color: '#b8976a' }} aria-hidden="true" />
+                  <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'rgba(247,243,236,0.80)' }}>
+                    {t.title}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── MAIN CONTENT: sidebar + accordion ── */}
-      <section className="ff-container pb-16 sm:pb-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-10 xl:gap-14">
+      {/* DESKTOP hero */}
+      <section
+        aria-labelledby="faq-heading-desktop"
+        className="hidden sm:block relative w-full overflow-hidden"
+        style={{ minHeight: 'min(52vh, 520px)', background: '#2a1f14' }}
+      >
+        {/* Full-bleed foto */}
+        <div className="absolute inset-0" aria-hidden="true">
+          <img
+            src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ objectPosition: 'center 25%' }}
+            loading="eager"
+          />
+          {/* Linker overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(100deg, rgba(30,20,10,0.90) 0%, rgba(30,20,10,0.68) 36%, rgba(30,20,10,0.22) 62%, transparent 100%)',
+            }}
+          />
+          {/* Onderste fade naar site-achtergrond */}
+          <div
+            className="absolute bottom-0 inset-x-0 h-36"
+            style={{
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(247,243,236,0.22) 100%)',
+            }}
+          />
+        </div>
 
-            {/* ── LEFT: SEARCH + CATEGORY NAV ── */}
-            <aside className="mb-8 lg:mb-0">
+        {/* Tekstkolom */}
+        <div
+          className="relative z-10 w-full max-w-6xl mx-auto px-8 lg:px-14 flex items-center"
+          style={{ minHeight: 'min(52vh, 520px)' }}
+        >
+          <div className="max-w-2xl py-20">
+            {/* Badge */}
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7"
+              style={{
+                background: 'rgba(247,243,236,0.94)',
+                color: 'var(--ff-color-primary-700)',
+              }}
+            >
+              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+              Hulp & informatie
+            </div>
+
+            <h1
+              id="faq-heading-desktop"
+              className="font-bold leading-[1.05] tracking-tight mb-5"
+              style={{
+                fontSize: 'clamp(2.8rem, 5.5vw, 5rem)',
+                color: '#F7F3EC',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Veelgestelde{' '}
+              <em className="not-italic" style={{ color: 'var(--ff-color-primary-300)' }}>
+                vragen
+              </em>
+            </h1>
+
+            <p
+              className="text-lg leading-relaxed max-w-lg mb-9 font-light"
+              style={{ color: 'rgba(247,243,236,0.76)' }}
+            >
+              Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{' '}
+              <a
+                href="mailto:contact@fitfi.ai"
+                className="font-semibold underline underline-offset-2 transition-opacity hover:opacity-80"
+                style={{ color: '#d4a96a' }}
+              >
+                Stuur ons een bericht.
+              </a>
+            </p>
+
+            {/* Trust badges — frosted glass pills */}
+            <div className="flex flex-wrap gap-2.5">
+              {TRUST_ITEMS.map((t, i) => {
+                const Icon = t.icon;
+                return (
+                  <div
+                    key={i}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                    style={{
+                      background: 'rgba(247,243,236,0.09)',
+                      border: '1px solid rgba(247,243,236,0.20)',
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
+                    }}
+                  >
+                    <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#b8976a' }} aria-hidden="true" />
+                    <span className="text-sm font-semibold" style={{ color: 'rgba(247,243,236,0.82)' }}>
+                      {t.title}
+                    </span>
+                    <span className="hidden md:inline text-xs" style={{ color: 'rgba(247,243,236,0.50)' }}>
+                      — {t.body}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          MAIN CONTENT
+      ═══════════════════════════════════════════════════ */}
+      <section className="ff-container py-12 sm:py-16 lg:py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-12 xl:gap-16">
+
+            {/* ── SIDEBAR ── */}
+            <aside className="mb-10 lg:mb-0">
+
               {/* Search */}
-              <div className="relative mb-5">
+              <div className="relative mb-6">
                 <Search
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
                   aria-hidden="true"
@@ -364,7 +568,7 @@ export default function FAQPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   autoComplete="off"
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-base placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-shadow shadow-[var(--shadow-soft,0_1px_4px_rgba(30,35,51,0.06))]"
+                  className="w-full pl-10 pr-12 py-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-base placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-all shadow-[var(--shadow-soft)]"
                 />
                 {searchTerm && (
                   <button
@@ -377,9 +581,9 @@ export default function FAQPage() {
                 )}
               </div>
 
-              {/* Category nav — tablist pattern */}
+              {/* Category nav */}
               <nav aria-label="FAQ categorieën">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-2.5 px-1">
+                <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-muted)] mb-3 px-1">
                   Categorieën
                 </p>
                 <ul
@@ -392,20 +596,40 @@ export default function FAQPage() {
                     const Icon = cat.icon;
                     const isActive = !isSearching && activeCategory === cat.id;
                     return (
-                      <li key={cat.id} role="presentation" className="flex-shrink-0 lg:flex-shrink">
+                      <li
+                        key={cat.id}
+                        role="presentation"
+                        className="flex-shrink-0 lg:flex-shrink"
+                      >
                         <button
                           role="tab"
                           aria-selected={isActive}
                           onClick={() => handleCategoryChange(cat.id)}
-                          className={`min-h-[44px] w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
+                          className={`min-h-[48px] w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
                             isActive
-                              ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
+                              ? "bg-[var(--ff-color-primary-700)] text-white shadow-md"
                               : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]"
                           }`}
                         >
-                          <Icon className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-                          <span className="whitespace-nowrap lg:whitespace-normal flex-1">{cat.label}</span>
-                          <span className={`text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ${isActive ? "bg-white/20 text-white" : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"}`}>
+                          <span
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                              isActive
+                                ? 'bg-white/20'
+                                : 'bg-[var(--ff-color-primary-100)]'
+                            }`}
+                          >
+                            <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                          </span>
+                          <span className="whitespace-nowrap lg:whitespace-normal flex-1">
+                            {cat.label}
+                          </span>
+                          <span
+                            className={`text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ${
+                              isActive
+                                ? "bg-white/20 text-white"
+                                : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"
+                            }`}
+                          >
                             {cat.items.length}
                           </span>
                         </button>
@@ -415,28 +639,36 @@ export default function FAQPage() {
                 </ul>
               </nav>
 
-              {/* Contact card — visible on all breakpoints, compact on mobile */}
-              <div className="mt-6 rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-4">
-                <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-2.5">
-                  <MessageCircle className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
+              {/* Contact card */}
+              <div
+                className="mt-6 rounded-2xl p-5 border border-[var(--ff-color-primary-200)]"
+                style={{
+                  background: 'linear-gradient(135deg, var(--ff-color-primary-50) 0%, var(--ff-color-accent-50) 100%)',
+                }}
+              >
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
+                  style={{ background: 'var(--ff-color-primary-100)' }}
+                >
+                  <MessageCircle className="w-4.5 h-4.5 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
                 </div>
-                <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Nog een vraag?</p>
-                <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-2.5">
-                  Wij reageren binnen 24 uur op je bericht.
+                <p className="text-sm font-bold text-[var(--color-text)] mb-1">Nog een vraag?</p>
+                <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-3">
+                  Wij reageren binnen 24 uur.
                 </p>
                 <a
                   href="mailto:contact@fitfi.ai"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors min-h-[44px] sm:min-h-0 py-2 sm:py-0"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors min-h-[44px] py-1"
                 >
                   contact@fitfi.ai
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               </div>
             </aside>
 
-            {/* ── RIGHT: ACCORDION PANEL ── */}
+            {/* ── ACCORDION PANEL ── */}
             <div>
-              {/* Live region for screen readers */}
+              {/* Screen reader live region */}
               <div aria-live="polite" aria-atomic="true" className="sr-only">
                 {isSearching
                   ? searchResults.length === 0
@@ -449,26 +681,32 @@ export default function FAQPage() {
                 {isSearching ? (
                   <motion.div
                     key="search-results"
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.18 }}
                   >
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-4">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
                       {searchResults.length === 0
                         ? "Geen resultaten"
                         : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} voor "${searchTerm}"`}
                     </p>
 
                     {searchResults.length === 0 ? (
-                      <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-10 text-center">
+                      <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-12 text-center shadow-[var(--shadow-soft)]">
+                        <div
+                          className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+                          style={{ background: 'var(--ff-color-primary-50)' }}
+                        >
+                          <Search className="w-5 h-5 text-[var(--ff-color-primary-400)]" aria-hidden="true" />
+                        </div>
                         <p className="text-[var(--color-muted)] text-base mb-4">
                           Geen vragen gevonden voor{" "}
                           <strong className="text-[var(--color-text)]">"{searchTerm}"</strong>.
                         </p>
                         <button
                           onClick={clearSearch}
-                          className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2 min-h-[44px] px-4"
+                          className="text-sm font-bold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2 min-h-[44px] px-4"
                         >
                           Toon alle vragen
                         </button>
@@ -486,16 +724,18 @@ export default function FAQPage() {
                 ) : (
                   <motion.div
                     key={activeCategory}
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.18 }}
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)]">
-                        {currentCategory.label}
-                      </p>
-                      <span className="text-xs text-[var(--color-muted)]">
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)]">
+                          {currentCategory.label}
+                        </span>
+                      </div>
+                      <span className="text-xs text-[var(--color-muted)] font-medium">
                         {currentCategory.items.length} vragen
                       </span>
                     </div>
@@ -514,21 +754,65 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* ── BOTTOM CTA STRIP ── */}
+      {/* ═══════════════════════════════════════════════════
+          BOTTOM CTA — donker, premium, editorial
+      ═══════════════════════════════════════════════════ */}
       <section className="ff-container pb-20">
         <div className="max-w-5xl mx-auto">
-          <div className="rounded-2xl bg-[var(--ff-color-primary-700)] px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div>
-              <p className="font-bold text-lg text-white mb-1">Klaar om je stijl te ontdekken?</p>
-              <p className="text-sm text-white/75">De quiz duurt minder dan twee minuten.</p>
+          <div
+            className="relative overflow-hidden rounded-3xl px-8 sm:px-12 py-12 sm:py-14"
+            style={{
+              background: 'linear-gradient(135deg, #2a1f14 0%, #3d2b1a 50%, #2a1f14 100%)',
+            }}
+          >
+            {/* Decoratieve lichte cirkel */}
+            <div
+              className="absolute -top-20 -right-20 w-72 h-72 rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(184,151,106,0.18) 0%, transparent 70%)',
+              }}
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(212,169,106,0.10) 0%, transparent 70%)',
+              }}
+              aria-hidden="true"
+            />
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div>
+                <p
+                  className="font-bold text-xl sm:text-2xl mb-2 tracking-tight"
+                  style={{ color: '#F7F3EC' }}
+                >
+                  Klaar om je stijl te ontdekken?
+                </p>
+                <p
+                  className="text-sm font-light"
+                  style={{ color: 'rgba(247,243,236,0.62)' }}
+                >
+                  De quiz duurt minder dan twee minuten. Geen creditcard nodig.
+                </p>
+              </div>
+
+              <NavLink
+                to="/onboarding"
+                className="group flex-shrink-0 inline-flex items-center gap-2.5 px-7 py-3.5 min-h-[52px] rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  background: 'linear-gradient(135deg, #9b7a52 0%, #7a5c38 100%)',
+                  color: '#F7F3EC',
+                  boxShadow: '0 4px 24px rgba(100,72,40,0.50)',
+                }}
+              >
+                Start gratis
+                <ArrowRight
+                  className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
+              </NavLink>
             </div>
-            <NavLink
-              to="/onboarding"
-              className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-[var(--ff-color-primary-800)] font-semibold text-sm px-6 py-3 min-h-[44px] rounded-full hover:bg-[var(--ff-color-primary-50)] transition-colors shadow-sm"
-            >
-              Start gratis
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </NavLink>
           </div>
         </div>
       </section>
