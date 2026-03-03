@@ -62,7 +62,6 @@ type DaisyconFeed = {
 
 function inferCategory(title: string, description: string, categoryPath: string): string {
   const text = (title + " " + description + " " + categoryPath).toLowerCase();
-
   if (/\b(jacket|jas|puffer|anorak|coat|parka|windbreaker|bomber|blazer|mantel)\b/.test(text)) return "outerwear";
   if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|fleece|vest)\b/.test(text)) return "top";
   if (/\b(tee|t-shirt|shirt|blouse|polo|top|longsleeve|tank)\b/.test(text)) return "top";
@@ -70,7 +69,6 @@ function inferCategory(title: string, description: string, categoryPath: string)
   if (/\b(sneaker|shoe|boot|trainer|footwear|loafer|schoen|laars)\b/.test(text)) return "footwear";
   if (/\b(bag|backpack|tote|rugzak|tas|cap|hat|beanie|pet|scarf|sjaal|belt|riem|accessory|watch|jewelry|sieraden)\b/.test(text)) return "accessory";
   if (/\b(dress|jurk|jumpsuit|suit|pak|overall)\b/.test(text)) return "top";
-
   return "top";
 }
 
@@ -93,10 +91,8 @@ function inferStyle(title: string, description: string, brand: string): string {
 function extractTags(title: string, description: string, category: string, keywords: string): string[] {
   const tags: string[] = [category];
   const text = (title + " " + description + " " + keywords).toLowerCase();
-
   const colorWords = ["black", "white", "blue", "navy", "red", "green", "grey", "gray", "cream", "ecru", "lime", "moss", "brown", "beige", "pink", "yellow", "orange", "purple", "khaki", "camel"];
   colorWords.forEach((c) => { if (text.includes(c)) tags.push(c); });
-
   if (text.includes("cotton")) tags.push("cotton");
   if (text.includes("nylon")) tags.push("nylon");
   if (text.includes("linen")) tags.push("linen");
@@ -109,14 +105,12 @@ function extractTags(title: string, description: string, category: string, keywo
   if (text.includes("oversized")) tags.push("oversized");
   if (text.includes("slim") || text.includes("skinny")) tags.push("slim");
   if (text.includes("relaxed") || text.includes("loose")) tags.push("relaxed");
-
   return [...new Set(tags)];
 }
 
 function extractColors(title: string, colorPrimary: string, description: string): string[] {
   const colors: string[] = [];
   if (colorPrimary && colorPrimary.trim()) colors.push(colorPrimary.toLowerCase().trim());
-
   const colorMap: Record<string, string> = {
     black: "black", white: "white", blue: "blue", navy: "navy blue",
     red: "red", green: "green", grey: "grey", gray: "grey",
@@ -124,12 +118,10 @@ function extractColors(title: string, colorPrimary: string, description: string)
     brown: "brown", beige: "beige", pink: "pink", yellow: "yellow",
     orange: "orange", khaki: "khaki", camel: "camel", gold: "gold",
   };
-
   const text = (title + " " + description).toLowerCase();
   Object.entries(colorMap).forEach(([key, val]) => {
     if (text.includes(key) && !colors.includes(val)) colors.push(val);
   });
-
   return colors.length > 0 ? colors : ["unknown"];
 }
 
@@ -146,6 +138,117 @@ function getAllImages(images: DaisyconImage[]): string[] {
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function xmlTextContent(node: Element, tag: string): string {
+  return node.querySelector(tag)?.textContent?.trim() ?? "";
+}
+
+function parseXmlFeed(xmlText: string): DaisyconFeed {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlText, "text/xml");
+
+  const parseError = doc.querySelector("parsererror");
+  if (parseError) throw new Error("Ongeldige XML in feed: " + parseError.textContent?.slice(0, 200));
+
+  const programEl = doc.querySelector("program");
+  if (!programEl) throw new Error("Geen <program> element gevonden in XML feed");
+
+  const programInfo = {
+    id: parseInt(xmlTextContent(programEl, "id") || "0"),
+    name: xmlTextContent(programEl, "name") || "Onbekend programma",
+    currency: xmlTextContent(programEl, "currency") || "EUR",
+    product_count: 0,
+  };
+
+  const productEls = Array.from(doc.querySelectorAll("product"));
+  programInfo.product_count = productEls.length;
+
+  const products: DaisyconProduct[] = productEls.map((p) => {
+    const imageEls = Array.from(p.querySelectorAll("image"));
+    const images: DaisyconImage[] = imageEls.map((img) => ({
+      size: img.getAttribute("size") ?? "",
+      tag: img.getAttribute("tag") ?? "",
+      type: img.getAttribute("type") ?? "",
+      location: img.getAttribute("location") ?? img.textContent?.trim() ?? "",
+    }));
+
+    return {
+      update_info: {
+        daisycon_unique_id: xmlTextContent(p, "id") || xmlTextContent(p, "sku"),
+        status: xmlTextContent(p, "status") || "active",
+      },
+      product_info: {
+        title: xmlTextContent(p, "title") || xmlTextContent(p, "name"),
+        price: parseFloat(xmlTextContent(p, "price") || "0"),
+        price_old: parseFloat(xmlTextContent(p, "price_old") || xmlTextContent(p, "original_price") || "0"),
+        brand: xmlTextContent(p, "brand"),
+        category: xmlTextContent(p, "category"),
+        category_path: xmlTextContent(p, "category_path") || xmlTextContent(p, "category"),
+        color_primary: xmlTextContent(p, "color") || xmlTextContent(p, "color_primary"),
+        sku: xmlTextContent(p, "sku"),
+        description: xmlTextContent(p, "description"),
+        size: xmlTextContent(p, "size"),
+        keywords: xmlTextContent(p, "keywords"),
+        gender_target: xmlTextContent(p, "gender") || xmlTextContent(p, "gender_target"),
+        in_stock: xmlTextContent(p, "in_stock") || xmlTextContent(p, "availability") || "true",
+        currency: xmlTextContent(p, "currency") || "EUR",
+        link: xmlTextContent(p, "affiliate_link") || xmlTextContent(p, "link") || xmlTextContent(p, "url"),
+        images,
+      },
+    };
+  });
+
+  return {
+    datafeed: {
+      info: { product_count: products.length },
+      programs: [{ program_info: programInfo, products }],
+    },
+  };
+}
+
+async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000);
+
+  let feedRes: Response;
+  try {
+    feedRes = await fetch(feedUrl, {
+      signal: controller.signal,
+      headers: { "Accept": "application/json, application/xml, text/xml, */*" },
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!feedRes.ok) {
+    const body = await feedRes.text().catch(() => "");
+    throw new Error(`Feed ophalen mislukt: HTTP ${feedRes.status}${body ? " — " + body.slice(0, 200) : ""}`);
+  }
+
+  const contentType = feedRes.headers.get("content-type") ?? "";
+  const rawText = await feedRes.text();
+
+  if (!rawText || rawText.trim().length === 0) {
+    throw new Error("Feed is leeg — controleer de feed URL en media_id");
+  }
+
+  const isXml = contentType.includes("xml") || rawText.trimStart().startsWith("<");
+  const isJson = contentType.includes("json") || rawText.trimStart().startsWith("{");
+
+  if (isJson) {
+    try {
+      return JSON.parse(rawText) as DaisyconFeed;
+    } catch {
+      throw new Error("Feed kon niet als JSON worden geparseerd: " + rawText.slice(0, 200));
+    }
+  }
+
+  if (isXml) {
+    return parseXmlFeed(rawText);
+  }
+
+  throw new Error(`Onbekend feed formaat (content-type: ${contentType}). Eerste 200 tekens: ${rawText.slice(0, 200)}`);
 }
 
 async function processFeed(
@@ -179,7 +282,7 @@ async function processFeed(
     const batch = products.slice(i, i + BATCH_SIZE);
 
     const rows = batch
-      .filter((p) => p.update_info.status === "active")
+      .filter((p) => p.update_info.status !== "inactive" && p.update_info.status !== "deleted")
       .map((p) => {
         const info = p.product_info;
         const description = stripHtml(info.description ?? "");
@@ -191,9 +294,10 @@ async function processFeed(
         const colors = extractColors(info.title, info.color_primary ?? "", description);
         const imageUrl = getDefaultImage(info.images ?? []);
         const allImages = getAllImages(info.images ?? []);
+        const externalId = p.update_info.daisycon_unique_id || info.sku || "";
 
         return {
-          external_id: p.update_info.daisycon_unique_id,
+          external_id: externalId,
           source: "daisycon",
           name: info.title,
           brand: brandName,
@@ -213,13 +317,14 @@ async function processFeed(
           colors,
           sizes: info.size ? [info.size] : [],
           sku: info.sku || null,
-          in_stock: info.in_stock !== "false",
+          in_stock: info.in_stock !== "false" && info.in_stock !== "0" && info.in_stock !== "out_of_stock",
           rating: null,
           review_count: 0,
           updated_at: new Date().toISOString(),
           ...(campaignId ? { campaign_id: campaignId } : {}),
         };
-      });
+      })
+      .filter((r) => r.external_id && r.name);
 
     if (rows.length === 0) {
       skipped += batch.length;
@@ -228,10 +333,7 @@ async function processFeed(
 
     const { data, error } = await supabase
       .from("products")
-      .upsert(rows, {
-        onConflict: "external_id",
-        ignoreDuplicates: false,
-      })
+      .upsert(rows, { onConflict: "external_id", ignoreDuplicates: false })
       .select("id");
 
     if (error) {
@@ -292,7 +394,7 @@ Deno.serve(async (req: Request) => {
     const userClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
+      { global: { headers: { Authorization: authHeader } } },
     );
 
     const { data: { user }, error: authError } = await userClient.auth.getUser();
@@ -303,19 +405,27 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const body = await req.json() as { feed?: DaisyconFeed; feedUrl?: string; campaignId?: string };
+    let body: { feed?: DaisyconFeed; feedUrl?: string; campaignId?: string };
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Ongeldig JSON in request body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     let feed: DaisyconFeed;
 
     if (body.feedUrl) {
-      const feedRes = await fetch(body.feedUrl);
-      if (!feedRes.ok) {
-        return new Response(JSON.stringify({ error: `Feed ophalen mislukt: ${feedRes.status} ${feedRes.statusText}` }), {
+      try {
+        feed = await fetchAndParseFeed(body.feedUrl);
+      } catch (fetchErr) {
+        return new Response(JSON.stringify({ error: String(fetchErr) }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      feed = await feedRes.json() as DaisyconFeed;
     } else if (body.feed) {
       feed = body.feed;
     } else {
@@ -326,7 +436,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!feed?.datafeed?.programs?.length) {
-      return new Response(JSON.stringify({ error: "Ongeldige feed structuur" }), {
+      return new Response(JSON.stringify({ error: "Ongeldige feed structuur — geen programma's gevonden" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -344,12 +454,12 @@ Deno.serve(async (req: Request) => {
         skipped: result.skipped,
         errors: result.errors.length > 0 ? result.errors : undefined,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
     return new Response(
       JSON.stringify({ error: String(err) }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });
