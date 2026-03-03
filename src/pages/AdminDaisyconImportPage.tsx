@@ -3,17 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
-import {
-  Upload,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  ArrowLeft,
-  Package,
-  RefreshCw,
-  FileJson,
-  Info,
-} from "lucide-react";
+import { Upload, CircleCheck as CheckCircle, CircleAlert as AlertCircle, Loader as Loader2, ArrowLeft, Package, RefreshCw, FileJson, Info } from "lucide-react";
 
 interface ImportResult {
   success: boolean;
