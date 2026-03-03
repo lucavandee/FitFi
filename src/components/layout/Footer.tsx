@@ -1,148 +1,154 @@
 import React from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { Instagram, Linkedin, ArrowRight } from "lucide-react";
+import { NavLink, useLocation } from "react-router-dom";
+import { Instagram, Linkedin } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 
-/**
- * Ultra-compact Premium Footer
- * Rijk, warm, minimale witruimte
- */
+const NAV_PRODUCT = [
+  { to: "/hoe-het-werkt", label: "Hoe het werkt" },
+  { to: "/prijzen",       label: "Prijzen"        },
+  { to: "/veelgestelde-vragen", label: "FAQ"      },
+  { to: "/blog",          label: "Blog"           },
+];
 
-const navigation = {
-  product: [
-    { to: "/hoe-het-werkt", label: "Hoe het werkt" },
-    { to: "/prijzen", label: "Prijzen" },
-    { to: "/veelgestelde-vragen", label: "FAQ" },
-  ],
-  company: [
-    { to: "/blog", label: "Blog" },
-    { to: "/over-ons", label: "Over ons" },
-    { to: "/contact", label: "Contact" },
-  ],
-  legal: [
-    { to: "/privacy", label: "Privacy" },
-    { to: "/algemene-voorwaarden", label: "Voorwaarden" },
-    { to: "/cookies", label: "Cookies" },
-  ]
-};
+const NAV_COMPANY = [
+  { to: "/over-ons",  label: "Over ons" },
+  { to: "/contact",   label: "Contact"  },
+];
+
+const NAV_LEGAL = [
+  { to: "/privacy",                 label: "Privacy"      },
+  { to: "/algemene-voorwaarden",    label: "Voorwaarden"  },
+  { to: "/cookies",                 label: "Cookies"      },
+  { to: "/affiliate-disclosure",    label: "Disclosure"   },
+];
+
+const linkClass =
+  "py-1 min-h-[36px] flex items-center text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm";
 
 export default function Footer() {
-  const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  // Verberg footer tijdens quiz/onboarding voor focus
-  if (pathname === '/onboarding' || pathname.startsWith('/onboarding')) {
-    return null;
-  }
+  if (pathname.startsWith("/onboarding")) return null;
 
   return (
-    <footer className="bg-[var(--ff-color-primary-50)] border-t border-[var(--ff-color-primary-100)]">
-      <div className="ff-container">
+    <footer
+      className="border-t border-[var(--color-border)]"
+      style={{ background: 'var(--ff-color-primary-50)' }}
+    >
+      <div className="ff-container py-12 sm:py-14">
 
-        {/* Compact CTA */}
-        <div className="py-8 border-b border-[var(--ff-color-primary-100)]">
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">
-              Klaar om te beginnen?
-            </h2>
-            <p className="text-sm text-[var(--color-muted)] mb-4">
-              Ontdek je stijl in 2 minuten
+        {/* Top row: logo + social */}
+        <div className="flex items-start justify-between gap-6 mb-10">
+          <div className="flex flex-col gap-3">
+            <Logo size="sm" variant="dark" />
+            <p className="text-xs text-[var(--color-muted)] leading-relaxed max-w-[220px]">
+              Persoonlijk stijladvies op basis van jouw unieke profiel.
             </p>
-            <button
-              onClick={() => navigate('/onboarding')}
-              className="inline-flex items-center gap-2 bg-[var(--ff-color-primary-700)] text-white px-6 py-3 min-h-[44px] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all shadow-sm hover:shadow-md active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+          </div>
+
+          <div className="flex gap-2 shrink-0">
+            <a
+              href="https://instagram.com/fitfi.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Volg FitFi op Instagram"
+              className="w-9 h-9 min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              style={{
+                background: 'var(--ff-color-primary-100)',
+                color: 'var(--ff-color-primary-700)',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-200)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-100)';
+              }}
             >
-              Start gratis quiz
-              <ArrowRight className="w-4 h-4" />
-            </button>
+              <Instagram className="w-4 h-4" strokeWidth={2} />
+            </a>
+            <a
+              href="https://linkedin.com/company/fitfi-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Volg FitFi op LinkedIn"
+              className="w-9 h-9 min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              style={{
+                background: 'var(--ff-color-primary-100)',
+                color: 'var(--ff-color-primary-700)',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-200)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-100)';
+              }}
+            >
+              <Linkedin className="w-4 h-4" strokeWidth={2} />
+            </a>
           </div>
         </div>
 
-        {/* Main Content - Super Compact */}
-        <div className="py-6">
-
-          {/* Brand - Minimaal */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <Logo size="sm" variant="dark" />
-            </div>
-
-            {/* Social - Gevuld & Kleurrijk */}
-            <div className="flex gap-2">
-              <a
-                href="https://instagram.com/fitfi.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Volg FitFi op Instagram"
-                className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-lg bg-gradient-to-br from-[var(--ff-color-warning-600)] to-[var(--ff-color-primary-700)] flex items-center justify-center hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-              >
-                <Instagram className="w-4 h-4 text-white" strokeWidth={2.5} />
-              </a>
-              <a
-                href="https://linkedin.com/company/fitfi-ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Volg FitFi op LinkedIn"
-                className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-lg bg-[var(--ff-color-primary-600)] flex items-center justify-center hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-              >
-                <Linkedin className="w-4 h-4 text-white" fill="white" strokeWidth={0} />
-              </a>
-            </div>
-          </div>
-
-          {/* Navigation - Ultra Compact 2 Columns */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-6 text-sm">
-
-            {/* Column 1 */}
-            <div className="space-y-2">
-              {navigation.product.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className="py-1 min-h-[36px] flex items-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm"
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-              <div className="pt-1 space-y-2">
-                {navigation.company.map((link) => (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    className="py-1 min-h-[36px] flex items-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm"
-                  >
-                    {link.label}
-                  </NavLink>
+        {/* Nav columns */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8 mb-10">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+              Product
+            </p>
+            <nav aria-label="Product navigatie">
+              <ul className="space-y-0.5 list-none p-0 m-0">
+                {NAV_PRODUCT.map((link) => (
+                  <li key={link.to}>
+                    <NavLink to={link.to} className={linkClass}>{link.label}</NavLink>
+                  </li>
                 ))}
-              </div>
-            </div>
-
-            {/* Column 2 */}
-            <div className="space-y-2">
-              {navigation.legal.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className="py-1 min-h-[36px] flex items-center text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded-sm"
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </div>
+              </ul>
+            </nav>
           </div>
 
-          {/* Bottom - Ultra Compact */}
-          <div className="pt-4 border-t border-[var(--ff-color-primary-100)] flex flex-col gap-1 text-xs text-[var(--color-muted)]">
-            <div className="flex items-center gap-2">
-              <span>© {new Date().getFullYear()} FitFi B.V.</span>
-              <span>•</span>
-              <span>KVK 97225665</span>
-            </div>
-            <span>
-              Keizersgracht 520 H, Amsterdam
-            </span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+              Bedrijf
+            </p>
+            <nav aria-label="Bedrijf navigatie">
+              <ul className="space-y-0.5 list-none p-0 m-0">
+                {NAV_COMPANY.map((link) => (
+                  <li key={link.to}>
+                    <NavLink to={link.to} className={linkClass}>{link.label}</NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+              Juridisch
+            </p>
+            <nav aria-label="Juridische links">
+              <ul className="space-y-0.5 list-none p-0 m-0">
+                {NAV_LEGAL.map((link) => (
+                  <li key={link.to}>
+                    <NavLink to={link.to} className={linkClass}>{link.label}</NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div
+          className="pt-6 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-[var(--color-muted)]"
+          style={{ borderColor: 'var(--ff-color-primary-100)' }}
+        >
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span>© {new Date().getFullYear()} FitFi B.V.</span>
+            <span aria-hidden="true">·</span>
+            <span>KVK 97225665</span>
+            <span aria-hidden="true">·</span>
+            <span>Keizersgracht 520 H, Amsterdam</span>
+          </div>
+          <span>Made in Amsterdam</span>
         </div>
 
       </div>
