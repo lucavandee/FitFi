@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
   Sparkles,
@@ -82,6 +82,33 @@ export default function HowItWorksPage() {
         title="Hoe het werkt — Jouw stijladvies in 2 minuten | FitFi"
         description="In 2 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
         path="/hoe-het-werkt"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "Hoe FitFi werkt — stijladvies in 2 minuten",
+          "description": "In 2 minuten van quiz naar compleet stijladvies. Beantwoord 8 vragen, wij matchen outfits, jij shopt direct.",
+          "totalTime": "PT2M",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Beantwoord 8 vragen",
+              "text": "Over jouw lifestyle, voorkeuren en hoe je je wilt voelen. Geen foto's, geen gedoe. Duurt 2 minuten."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Wij matchen outfits",
+              "text": "We vinden kleurcombinaties die werken en stellen complete looks samen. Duurt 30 seconden."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Jij shopt direct",
+              "text": "Complete looks, direct shopbaar. Plus: waarom elk item bij jou past. 6-12 outfits met directe shoplinks."
+            }
+          ]
+        }}
       />
 
       <a
@@ -162,7 +189,7 @@ export default function HowItWorksPage() {
 
             <div className="flex flex-col md:grid md:grid-cols-3 md:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-10 sm:mb-14">
               {steps.map((step) => (
-                <motion.article
+                <motion.div
                   key={step.id}
                   onClick={() => setActiveStep(step.id)}
                   onHoverStart={() => setActiveStep(step.id)}
@@ -175,7 +202,7 @@ export default function HowItWorksPage() {
                   aria-pressed={activeStep === step.id}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) => e.key === "Enter" && setActiveStep(step.id)}
+                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setActiveStep(step.id)}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <span className="inline-flex items-center justify-center px-3 py-1 bg-[var(--ff-color-primary-600)] text-white rounded-full text-xs sm:text-sm font-bold shadow-sm flex-shrink-0">
@@ -203,7 +230,7 @@ export default function HowItWorksPage() {
                       </li>
                     ))}
                   </ul>
-                </motion.article>
+                </motion.div>
               ))}
             </div>
 
@@ -318,30 +345,33 @@ export default function HowItWorksPage() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4" role="list">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               {faqs.map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (
                   <div
                     key={idx}
-                    className={`bg-[var(--color-surface)] rounded-2xl border-2 transition-all duration-300 shadow-sm ${
+                    className={`bg-[var(--color-surface)] rounded-2xl border-2 transition-colors duration-200 shadow-sm ${
                       isOpen
                         ? "border-[var(--ff-color-primary-400)] shadow-md"
                         : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-200)]"
                     }`}
-                    role="listitem"
                   >
                     <button
                       type="button"
+                      id={`faq-trigger-${idx}`}
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      className="w-full flex items-center justify-between gap-3 p-5 sm:p-6 text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 rounded-2xl"
+                      className="w-full flex items-center justify-between gap-3 p-5 sm:p-6 min-h-[56px] text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 rounded-2xl"
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${idx}`}
                     >
                       <span className="font-bold text-sm sm:text-base text-[var(--color-text)] leading-snug pr-2">
                         {faq.q}
                       </span>
-                      <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center transition-colors">
+                      <span
+                        aria-hidden="true"
+                        className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center transition-colors"
+                      >
                         {isOpen
                           ? <Minus className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
                           : <Plus className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
@@ -349,16 +379,26 @@ export default function HowItWorksPage() {
                       </span>
                     </button>
 
-                    {isOpen && (
-                      <div
-                        id={`faq-answer-${idx}`}
-                        className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0"
-                      >
-                        <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed">
-                          {faq.a}
-                        </p>
-                      </div>
-                    )}
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={`faq-answer-${idx}`}
+                          role="region"
+                          aria-labelledby={`faq-trigger-${idx}`}
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.22, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0">
+                            <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed">
+                              {faq.a}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 );
               })}
