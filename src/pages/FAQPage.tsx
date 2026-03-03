@@ -5,7 +5,6 @@ import {
   CircleHelp,
   ShieldCheck,
   CreditCard,
-  Clock,
   Plus,
   Minus,
   Package,
@@ -13,7 +12,6 @@ import {
   X,
   ArrowRight,
   MessageCircle,
-  Users,
   Sparkles,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
@@ -81,10 +79,10 @@ const FAQ_PRODUCT: QA[] = [
 ];
 
 const CATEGORIES = [
-  { id: "algemeen", label: "Algemeen",          Icon: CircleHelp,  items: FAQ_GENERAL  },
-  { id: "privacy",  label: "Privacy",            Icon: ShieldCheck, items: FAQ_PRIVACY  },
-  { id: "prijzen",  label: "Prijzen",             Icon: CreditCard,  items: FAQ_PRICING  },
-  { id: "product",  label: "Product & gebruik",   Icon: Package,     items: FAQ_PRODUCT  },
+  { id: "algemeen", label: "Algemeen",        Icon: CircleHelp,  items: FAQ_GENERAL  },
+  { id: "privacy",  label: "Privacy",          Icon: ShieldCheck, items: FAQ_PRIVACY  },
+  { id: "prijzen",  label: "Prijzen",           Icon: CreditCard,  items: FAQ_PRICING  },
+  { id: "product",  label: "Product & gebruik", Icon: Package,     items: FAQ_PRODUCT  },
 ];
 
 const ALL_QUESTIONS = CATEGORIES.flatMap((c) =>
@@ -121,15 +119,15 @@ function Highlight({ text, term }: { text: string; term: string }) {
 }
 
 function AccordionItem({
-  item, id, isOpen, onToggle, highlight, isLast,
+  item, id, isOpen, onToggle, highlight,
 }: {
   item: QA; id: string; isOpen: boolean;
-  onToggle: (id: string) => void; highlight: string; isLast: boolean;
+  onToggle: (id: string) => void; highlight: string;
 }) {
   return (
     <div
       className={[
-        "bg-[var(--color-surface)] rounded-xl border transition-all duration-200 shadow-[var(--shadow-soft)]",
+        "bg-[var(--color-surface)] rounded-xl border transition-colors duration-200",
         isOpen
           ? "border-[var(--ff-color-primary-300)]"
           : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-200)]",
@@ -140,17 +138,17 @@ function AccordionItem({
           onClick={() => onToggle(id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${id}`}
-          className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 rounded-xl min-h-[60px]"
+          className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 rounded-xl"
         >
           <span className={[
-            "flex-1 text-sm sm:text-base leading-snug font-medium",
-            isOpen ? "text-[var(--ff-color-primary-700)] font-semibold" : "text-[var(--color-text)]",
+            "flex-1 text-sm sm:text-[15px] leading-snug",
+            isOpen ? "font-semibold text-[var(--ff-color-primary-700)]" : "font-medium text-[var(--color-text)]",
           ].join(" ")}>
             <Highlight text={item.q} term={highlight} />
           </span>
           <span
             className={[
-              "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200",
+              "w-6 h-6 shrink-0 rounded-full flex items-center justify-center transition-colors duration-200",
               isOpen
                 ? "bg-[var(--ff-color-primary-700)] text-white"
                 : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]",
@@ -176,11 +174,11 @@ function AccordionItem({
             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             style={{ overflow: "hidden" }}
           >
-            <p className="m-0 px-5 pb-5 pt-0 text-sm leading-relaxed text-[var(--color-muted)] border-t border-[var(--color-border)]">
-              <span className="block pt-3">
+            <div className="px-5 pb-4 pt-0 border-t border-[var(--color-border)]">
+              <p className="pt-3 m-0 text-sm leading-relaxed text-[var(--color-muted)]">
                 <Highlight text={item.a} term={highlight} />
-              </span>
-            </p>
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -220,29 +218,22 @@ export default function FAQPage() {
         structuredData={FAQ_SCHEMA}
       />
 
-      {/* ══════════════════════════════════════════════════
-          HERO — exact patroon van /hoe-het-werkt
-      ══════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 sm:py-16 md:py-24 lg:py-32">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
-
-          {/* Badge — identiek aan HowItWorks */}
-          <div
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 bg-white/95 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-6 shadow-md"
-            role="status"
-          >
-            <CircleHelp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-            <span className="text-xs sm:text-sm font-bold text-[var(--color-text)]">Hulp &amp; informatie</span>
+      {/* HERO */}
+      <section className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-14 sm:py-20 md:py-28">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 border border-[var(--color-border)] rounded-full mb-6 text-xs font-semibold text-[var(--color-text)]">
+            <CircleHelp className="w-3.5 h-3.5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+            Hulp &amp; informatie
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] mb-5 sm:mb-6 leading-[1.1] tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight tracking-tight">
             Veelgestelde{" "}
             <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">
               vragen
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-xl mx-auto leading-relaxed mb-8">
             Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{" "}
             <a
               href="mailto:contact@fitfi.ai"
@@ -252,42 +243,40 @@ export default function FAQPage() {
             </a>
           </p>
 
-          {/* Trust items — ronde icon containers, exact zoals HowItWorks */}
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6" role="list" aria-label="Kernwaarden">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             {[
-              { Icon: ShieldCheck, bg: "bg-[var(--ff-color-primary-100)]",      color: "text-[var(--ff-color-primary-700)]",      label: "Privacybewust"    },
-              { Icon: CreditCard,  bg: "bg-[var(--ff-color-success-100)]",      color: "text-[var(--ff-color-success-700)]",      label: "Eerlijk geprijsd" },
-              { Icon: Sparkles,    bg: "bg-[var(--ff-color-accent-100)]",       color: "text-[var(--ff-color-accent-700)]",       label: "Direct resultaat" },
-            ].map(({ Icon, bg, color, label }) => (
-              <div key={label} className="flex items-center gap-2" role="listitem">
-                <div className={`w-8 h-8 sm:w-9 sm:h-9 ${bg} rounded-full flex items-center justify-center flex-shrink-0`} aria-hidden="true">
-                  <Icon className={`w-4 h-4 ${color}`} />
+              { Icon: ShieldCheck, label: "Privacybewust" },
+              { Icon: CreditCard,  label: "Eerlijk geprijsd" },
+              { Icon: Sparkles,    label: "Direct resultaat" },
+            ].map(({ Icon, label }) => (
+              <div key={label} className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
                 </div>
-                <span className="text-sm sm:text-base font-semibold text-[var(--color-text)]">{label}</span>
+                <span className="text-sm font-semibold text-[var(--color-text)]">{label}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════
-          SEARCH + CATEGORIE TABS
-      ══════════════════════════════════════════════════ */}
-      <section className="py-10 sm:py-14 md:py-20 bg-[var(--color-bg)] border-t border-[var(--color-border)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      {/* ZOEK + TABS + ACCORDION */}
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
-          <div className="text-center mb-6 sm:mb-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 tracking-tight">
+          {/* Kop */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 tracking-tight">
               Vind je antwoord
             </h2>
-            <p className="text-sm sm:text-base text-[var(--color-muted)]">
+            <p className="text-sm text-[var(--color-muted)]">
               Zoek direct of blader per categorie
             </p>
           </div>
 
-          {/* Search bar */}
-          <div className="relative max-w-md mx-auto mb-5 sm:mb-6">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
+          {/* Zoekbalk — full width binnen max-w-2xl container */}
+          <div className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
             <label htmlFor="faq-search" className="sr-only">Zoek in veelgestelde vragen</label>
             <input
               id="faq-search"
@@ -296,55 +285,51 @@ export default function FAQPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoComplete="off"
-              className="w-full pl-10 pr-9 py-2.5 text-sm rounded-full border border-[var(--ff-color-primary-200)] bg-[var(--color-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+              className="w-full pl-11 pr-10 py-3 text-sm rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
             />
             {search && (
               <button
                 onClick={clearSearch}
                 aria-label="Zoekopdracht wissen"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Category tabs — scrollable row, vaste hoogte, nooit uitrekken */}
+          {/* Categorie tabs — vaste rij, nooit wrappen */}
           {!isSearching && (
-            <nav aria-label="FAQ categorieën" className="mb-6 sm:mb-8">
-              <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {CATEGORIES.map(({ id, label, Icon, items }) => {
-                  const active = activeCat === id;
-                  return (
-                    <button
-                      key={id}
-                      onClick={() => changeCat(id)}
-                      aria-pressed={active}
-                      className={[
-                        "inline-flex items-center gap-1.5 px-4 py-2 h-9 rounded-full text-sm font-semibold whitespace-nowrap shrink-0",
-                        "border transition-all duration-200 cursor-pointer",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
-                        active
-                          ? "bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)]"
-                          : "bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--ff-color-primary-200)] hover:border-[var(--ff-color-primary-400)]",
-                      ].join(" ")}
-                    >
-                      <Icon size={13} aria-hidden="true" className={active ? "text-white/80" : "text-[var(--ff-color-primary-600)]"} />
-                      <span>{label}</span>
-                      <span className={[
-                        "w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0",
-                        active ? "bg-white/20 text-white" : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]",
-                      ].join(" ")}>
-                        {items.length}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </nav>
+            <div
+              role="tablist"
+              aria-label="FAQ categorieën"
+              className="grid grid-cols-4 gap-1.5 mb-8 p-1 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--color-border)]"
+            >
+              {CATEGORIES.map(({ id, label, Icon }) => {
+                const active = activeCat === id;
+                return (
+                  <button
+                    key={id}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => changeCat(id)}
+                    className={[
+                      "flex flex-col items-center gap-1 py-2.5 px-1 rounded-lg text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1",
+                      active
+                        ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
+                        : "text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/60",
+                    ].join(" ")}
+                  >
+                    <Icon size={15} aria-hidden="true" />
+                    <span className="hidden sm:inline leading-tight text-center">{label}</span>
+                    <span className="sm:hidden leading-tight text-center text-[10px]">{label.split(" ")[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
           )}
 
-          {/* Live region for a11y */}
+          {/* a11y live region */}
           <div aria-live="polite" aria-atomic="true" className="sr-only">
             {isSearching && (
               searchResults.length === 0
@@ -353,8 +338,8 @@ export default function FAQPage() {
             )}
           </div>
 
-          {/* Section label */}
-          <div className="flex items-center justify-between mb-3 sm:mb-4 px-0.5">
+          {/* Sectielabel */}
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold tracking-widest uppercase text-[var(--ff-color-primary-600)]">
               {isSearching
                 ? searchResults.length === 0
@@ -363,39 +348,37 @@ export default function FAQPage() {
                 : currentCat.label}
             </span>
             {!isSearching && (
-              <span className="text-xs text-[var(--color-muted)] font-medium">
+              <span className="text-xs text-[var(--color-muted)]">
                 {currentCat.items.length} vragen
               </span>
             )}
           </div>
 
-          {/* Accordion — 1 kolom altijd voor consistente uitlijning */}
+          {/* Accordion */}
           <AnimatePresence mode="wait">
             <motion.div
               key={isSearching ? `s-${search}` : activeCat}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.18 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.15 }}
             >
               {displayItems.length === 0 ? (
-                <div className="text-center py-12 sm:py-16 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
-                  <div className="w-10 h-10 rounded-2xl bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-300)] flex items-center justify-center mx-auto mb-3">
-                    <Search className="w-5 h-5" aria-hidden="true" />
-                  </div>
+                <div className="text-center py-12 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)]">
+                  <Search className="w-8 h-8 text-[var(--ff-color-primary-300)] mx-auto mb-3" aria-hidden="true" />
                   <p className="text-sm text-[var(--color-muted)] mb-4">
                     Geen vragen gevonden voor{" "}
                     <strong className="text-[var(--color-text)]">"{search}"</strong>.
                   </p>
                   <button
                     onClick={clearSearch}
-                    className="text-sm font-bold text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer min-h-[44px] px-2"
+                    className="text-sm font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer"
                   >
                     Toon alle vragen
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   {displayItems.map((item, i) => (
                     <AccordionItem
                       key={`${displayKey}-${i}`}
@@ -404,7 +387,6 @@ export default function FAQPage() {
                       isOpen={openId === `${displayKey}-${i}`}
                       onToggle={toggle}
                       highlight={isSearching ? search : ""}
-                      isLast={i === displayItems.length - 1}
                     />
                   ))}
                 </div>
@@ -412,82 +394,76 @@ export default function FAQPage() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Contact block — onder accordion, zelfde stijl als HowItWorks tijdblok */}
-          <div className="mt-8 sm:mt-12 text-center px-5 py-8 sm:px-10 sm:py-10 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--ff-color-primary-200)] shadow-md">
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                <MessageCircle className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-[var(--ff-color-primary-700)]">Nog een vraag?</span>
+          {/* Contact blok */}
+          <div className="mt-10 text-center px-6 py-8 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border border-[var(--ff-color-primary-200)]">
+            <div className="w-10 h-10 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center mx-auto mb-3">
+              <MessageCircle className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
-            <p className="text-sm text-[var(--color-muted)] font-medium mb-6 max-w-sm mx-auto">
+            <h3 className="text-lg font-bold text-[var(--ff-color-primary-700)] mb-1">Nog een vraag?</h3>
+            <p className="text-sm text-[var(--color-muted)] mb-5">
               Wij reageren binnen 24 uur. Stuur ons een bericht via e-mail.
             </p>
             <a
               href="mailto:contact@fitfi.ai"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-base sm:text-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white text-sm font-semibold rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
             >
               contact@fitfi.ai
-              <ArrowRight className="w-5 h-5" aria-hidden="true" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════
-          BOTTOM CTA — identiek aan HowItWorks
-      ══════════════════════════════════════════════════ */}
-      <section className="py-12 sm:py-16 md:py-24 bg-[var(--color-bg)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      {/* BOTTOM CTA */}
+      <section className="py-12 sm:py-16 md:py-20 border-t border-[var(--color-border)]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
-          <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 tracking-tight">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 tracking-tight">
               Klaar om te starten?
             </h2>
-            <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
+            <p className="text-sm text-[var(--color-muted)]">
               De quiz duurt minder dan 2 minuten
             </p>
           </div>
 
-          <div className="flex flex-col sm:grid sm:grid-cols-2 sm:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10">
-            <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-5 sm:p-7 shadow-md flex flex-col">
-              <h3 className="font-bold text-lg sm:text-xl mb-4 text-center text-[var(--color-text)]">Zonder FitFi</h3>
-              <ul className="space-y-3" role="list">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+              <h3 className="font-semibold text-base mb-3 text-[var(--color-text)]">Zonder FitFi</h3>
+              <ul className="space-y-2.5">
                 {[
                   "Uren zoeken zonder resultaat",
                   "Foute aankopen die blijven hangen",
                   "Kast vol kleding die je niet draagt",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-danger-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </div>
-                    <span className="text-sm sm:text-base text-[var(--color-muted)] leading-snug">{item}</span>
+                  <li key={item} className="flex items-start gap-2.5">
+                    <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center shrink-0">
+                      <X className="w-2.5 h-2.5 text-[var(--ff-color-danger-600)]" />
+                    </span>
+                    <span className="text-sm text-[var(--color-muted)] leading-snug">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-7 text-white shadow-xl flex flex-col">
-              <div className="inline-block mb-3 px-3 py-1 bg-[var(--ff-color-accent-500)] text-white rounded-full text-xs font-bold self-start">
-                MET FITFI
-              </div>
-              <h3 className="font-bold text-lg sm:text-xl mb-4 text-white">Stijl die klopt</h3>
-              <ul className="space-y-3" role="list">
+            <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-xl p-5 text-white">
+              <span className="inline-block mb-2 px-2.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                Met FitFi
+              </span>
+              <h3 className="font-semibold text-base mb-3">Stijl die klopt</h3>
+              <ul className="space-y-2.5">
                 {[
                   "Stijladvies in 2 minuten",
                   "Outfits die je écht draagt",
                   "Gratis starten, geen creditcard",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/25 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <li key={item} className="flex items-start gap-2.5">
+                    <span className="mt-0.5 w-4 h-4 rounded-full bg-white/25 flex items-center justify-center shrink-0">
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
-                    </div>
-                    <span className="text-sm sm:text-base font-medium leading-snug">{item}</span>
+                    </span>
+                    <span className="text-sm font-medium leading-snug">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -497,11 +473,11 @@ export default function FAQPage() {
           <div className="text-center">
             <NavLink
               to="/onboarding"
-              className="group inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-base sm:text-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+              className="group inline-flex items-center gap-2 px-8 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               aria-label="Start gratis quiz om je stijladvies te ontvangen"
             >
               Start gratis — 2 minuten
-              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
             </NavLink>
           </div>
         </div>
