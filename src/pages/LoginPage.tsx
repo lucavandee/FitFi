@@ -116,20 +116,43 @@ export default function LoginPage() {
         noindex
       />
 
-      <main className="min-h-[calc(100vh-64px)] bg-[var(--color-bg)] flex flex-col items-center px-4 pt-8 pb-12">
-        <div className="w-full max-w-[400px]">
-
-          <div className="text-center mb-7">
-            <h1 className="text-[1.75rem] font-bold tracking-tight text-[var(--color-text)] mb-1.5">
+      <div
+        className="w-full"
+        style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}
+      >
+        <div
+          className="w-full border-b border-[var(--color-border)]"
+          style={{
+            background: "linear-gradient(160deg, var(--ff-color-primary-50) 0%, var(--color-bg) 100%)",
+          }}
+        >
+          <div className="max-w-[400px] mx-auto px-4 pt-10 pb-7 text-center">
+            <span
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase mb-4"
+              style={{
+                background: "var(--ff-color-primary-100)",
+                color: "var(--ff-color-primary-700)",
+                border: "1px solid var(--ff-color-primary-200)",
+              }}
+            >
+              <Sparkles className="w-3 h-3" aria-hidden="true" />
+              Persoonlijk stijladvies
+            </span>
+            <h1
+              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-2"
+              style={{ fontSize: "clamp(1.6rem, 5vw, 2.25rem)", lineHeight: 1.1 }}
+            >
               Welkom terug
             </h1>
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-[var(--color-muted)] leading-relaxed">
               {comingFromResults
                 ? "Log in om je outfits en shoplinks terug te zien."
                 : "Jouw stijlrapport en outfits wachten op je."}
             </p>
           </div>
+        </div>
 
+        <div className="max-w-[400px] mx-auto px-4 pt-6 pb-12">
           <form
             onSubmit={onSubmit}
             noValidate
@@ -356,7 +379,7 @@ export default function LoginPage() {
           </div>
 
         </div>
-      </main>
+      </div>
     </>
   );
 }
