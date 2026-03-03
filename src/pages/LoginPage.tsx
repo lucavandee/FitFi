@@ -124,6 +124,7 @@ export default function LoginPage() {
         title="Inloggen — FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
         path="/inloggen"
+        noindex
       />
 
       {/*
@@ -187,8 +188,8 @@ export default function LoginPage() {
                 Persoonlijk stijladvies
               </p>
               <h2
-                className="text-4xl xl:text-[2.75rem] font-bold leading-[1.12] mb-4"
-                style={{ color: 'rgba(247,243,236,0.97)' }}
+                className="font-heading font-bold tracking-tight leading-[1.12] mb-4"
+                style={{ color: 'rgba(247,243,236,0.97)', fontSize: 'clamp(2rem, 3vw + 1rem, 2.75rem)' }}
               >
                 Jouw stijl,<br />eindelijk op orde.
               </h2>
@@ -292,7 +293,8 @@ export default function LoginPage() {
 
             {/* Heading */}
             <div className="mb-7">
-              <h1 className="text-2xl lg:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-1.5">
+              <h1 className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-1.5"
+                  style={{ fontSize: 'clamp(1.5rem, 2vw + 1rem, 1.875rem)', lineHeight: 1.15 }}>
                 Welkom terug.
               </h1>
               <p className="text-sm text-[var(--color-muted)]">
@@ -504,7 +506,7 @@ export default function LoginPage() {
                   </p>
                   <NavLink
                     to="/onboarding"
-                    className="mt-1 inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                    className="mt-1 inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[var(--color-surface)] border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                   >
                     Start de quiz zonder account
                     <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
