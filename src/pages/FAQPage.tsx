@@ -82,7 +82,7 @@ const CATEGORIES = [
   { id: "algemeen", label: "Algemeen",        Icon: CircleHelp,  items: FAQ_GENERAL  },
   { id: "privacy",  label: "Privacy",          Icon: ShieldCheck, items: FAQ_PRIVACY  },
   { id: "prijzen",  label: "Prijzen",           Icon: CreditCard,  items: FAQ_PRICING  },
-  { id: "product",  label: "Product & gebruik", Icon: Package,     items: FAQ_PRODUCT  },
+  { id: "product",  label: "Product",           Icon: Package,     items: FAQ_PRODUCT  },
 ];
 
 const ALL_QUESTIONS = CATEGORIES.flatMap((c) =>
@@ -134,21 +134,23 @@ function AccordionItem({
       ].join(" ")}
     >
       <h3 className="m-0">
+        {/* min-h-[52px] = 52px touch target, ruim boven 44px minimum */}
         <button
           onClick={() => onToggle(id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${id}`}
-          className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 rounded-xl"
+          className="w-full min-h-[52px] flex items-center justify-between gap-4 px-4 py-3 text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
         >
           <span className={[
-            "flex-1 text-sm sm:text-[15px] leading-snug",
+            "flex-1 text-base leading-snug",
             isOpen ? "font-semibold text-[var(--ff-color-primary-700)]" : "font-medium text-[var(--color-text)]",
           ].join(" ")}>
             <Highlight text={item.q} term={highlight} />
           </span>
+          {/* 28px icon-knop is OK want de hele button-rij is 52px */}
           <span
             className={[
-              "w-6 h-6 shrink-0 rounded-full flex items-center justify-center transition-colors duration-200",
+              "w-7 h-7 shrink-0 rounded-full flex items-center justify-center transition-colors duration-200",
               isOpen
                 ? "bg-[var(--ff-color-primary-700)] text-white"
                 : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]",
@@ -156,8 +158,8 @@ function AccordionItem({
             aria-hidden="true"
           >
             {isOpen
-              ? <Minus className="w-3 h-3" strokeWidth={2.5} />
-              : <Plus className="w-3 h-3" strokeWidth={2.5} />
+              ? <Minus className="w-3.5 h-3.5" strokeWidth={2.5} />
+              : <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
             }
           </span>
         </button>
@@ -174,7 +176,7 @@ function AccordionItem({
             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             style={{ overflow: "hidden" }}
           >
-            <div className="px-5 pb-4 pt-0 border-t border-[var(--color-border)]">
+            <div className="px-4 pb-4 pt-0 border-t border-[var(--color-border)]">
               <p className="pt-3 m-0 text-sm leading-relaxed text-[var(--color-muted)]">
                 <Highlight text={item.a} term={highlight} />
               </p>
@@ -237,21 +239,21 @@ export default function FAQPage() {
             Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{" "}
             <a
               href="mailto:contact@fitfi.ai"
-              className="text-[var(--ff-color-primary-700)] font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity"
+              className="text-[var(--ff-color-primary-700)] font-semibold underline underline-offset-2"
             >
               Stuur ons een bericht.
             </a>
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
             {[
               { Icon: ShieldCheck, label: "Privacybewust" },
               { Icon: CreditCard,  label: "Eerlijk geprijsd" },
               { Icon: Sparkles,    label: "Direct resultaat" },
             ].map(({ Icon, label }) => (
               <div key={label} className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center shrink-0">
-                  <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
+                <div className="w-8 h-8 bg-[var(--ff-color-primary-100)] rounded-full flex items-center justify-center shrink-0" aria-hidden="true">
+                  <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
                 </div>
                 <span className="text-sm font-semibold text-[var(--color-text)]">{label}</span>
               </div>
@@ -264,7 +266,6 @@ export default function FAQPage() {
       <section className="py-12 sm:py-16 md:py-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
-          {/* Kop */}
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold mb-2 tracking-tight">
               Vind je antwoord
@@ -274,7 +275,7 @@ export default function FAQPage() {
             </p>
           </div>
 
-          {/* Zoekbalk — full width binnen max-w-2xl container */}
+          {/* Zoekbalk — font-size 16px voorkomt iOS auto-zoom */}
           <div className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
             <label htmlFor="faq-search" className="sr-only">Zoek in veelgestelde vragen</label>
@@ -285,20 +286,21 @@ export default function FAQPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoComplete="off"
-              className="w-full pl-11 pr-10 py-3 text-sm rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+              className="w-full pl-11 pr-12 py-3 text-base rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
             />
             {search && (
+              /* 44x44px tap target voor wis-knop */
               <button
                 onClick={clearSearch}
                 aria-label="Zoekopdracht wissen"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>
 
-          {/* Categorie tabs */}
+          {/* Categorie tabs — flex-row, vaste hoogte 44px, nooit wrappend */}
           {!isSearching && (
             <div
               role="tablist"
@@ -314,8 +316,8 @@ export default function FAQPage() {
                     aria-selected={active}
                     onClick={() => changeCat(id)}
                     className={[
-                      "flex-1 flex flex-row items-center justify-center gap-1.5 h-10 px-2 rounded-lg",
-                      "text-[11px] font-semibold whitespace-nowrap overflow-hidden",
+                      "flex-1 flex flex-row items-center justify-center gap-1.5 min-h-[44px] px-2 rounded-lg",
+                      "text-xs font-semibold whitespace-nowrap",
                       "transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1",
                       active
                         ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
@@ -323,7 +325,7 @@ export default function FAQPage() {
                     ].join(" ")}
                   >
                     <Icon size={13} aria-hidden="true" className="shrink-0" />
-                    <span className="truncate">{label}</span>
+                    <span>{label}</span>
                   </button>
                 );
               })}
@@ -371,9 +373,10 @@ export default function FAQPage() {
                     Geen vragen gevonden voor{" "}
                     <strong className="text-[var(--color-text)]">"{search}"</strong>.
                   </p>
+                  {/* min-h-[44px] touch target */}
                   <button
                     onClick={clearSearch}
-                    className="text-sm font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer"
+                    className="min-h-[44px] px-4 text-sm font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer"
                   >
                     Toon alle vragen
                   </button>
@@ -397,16 +400,17 @@ export default function FAQPage() {
 
           {/* Contact blok */}
           <div className="mt-10 text-center px-6 py-8 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border border-[var(--ff-color-primary-200)]">
-            <div className="w-10 h-10 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center mx-auto mb-3">
-              <MessageCircle className="w-5 h-5 text-white" aria-hidden="true" />
+            <div className="w-10 h-10 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center mx-auto mb-3" aria-hidden="true">
+              <MessageCircle className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-lg font-bold text-[var(--ff-color-primary-700)] mb-1">Nog een vraag?</h3>
             <p className="text-sm text-[var(--color-muted)] mb-5">
               Wij reageren binnen 24 uur. Stuur ons een bericht via e-mail.
             </p>
+            {/* min-h-[48px] = comfortabel touch target voor primaire CTA */}
             <a
               href="mailto:contact@fitfi.ai"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white text-sm font-semibold rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 px-6 min-h-[48px] bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white text-sm font-semibold rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
             >
               contact@fitfi.ai
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -431,15 +435,15 @@ export default function FAQPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
               <h3 className="font-semibold text-base mb-3 text-[var(--color-text)]">Zonder FitFi</h3>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3" role="list">
                 {[
                   "Uren zoeken zonder resultaat",
                   "Foute aankopen die blijven hangen",
                   "Kast vol kleding die je niet draagt",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center shrink-0">
-                      <X className="w-2.5 h-2.5 text-[var(--ff-color-danger-600)]" />
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="mt-0.5 w-5 h-5 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center shrink-0" aria-hidden="true">
+                      <X className="w-3 h-3 text-[var(--ff-color-danger-600)]" />
                     </span>
                     <span className="text-sm text-[var(--color-muted)] leading-snug">{item}</span>
                   </li>
@@ -448,19 +452,19 @@ export default function FAQPage() {
             </div>
 
             <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-xl p-5 text-white">
-              <span className="inline-block mb-2 px-2.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              <span className="inline-block mb-3 px-2.5 py-0.5 bg-white/20 rounded-full text-[11px] font-bold uppercase tracking-wider">
                 Met FitFi
               </span>
               <h3 className="font-semibold text-base mb-3">Stijl die klopt</h3>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3" role="list">
                 {[
                   "Stijladvies in 2 minuten",
                   "Outfits die je écht draagt",
                   "Gratis starten, geen creditcard",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 w-4 h-4 rounded-full bg-white/25 flex items-center justify-center shrink-0">
-                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="mt-0.5 w-5 h-5 rounded-full bg-white/25 flex items-center justify-center shrink-0" aria-hidden="true">
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     </span>
@@ -474,7 +478,7 @@ export default function FAQPage() {
           <div className="text-center">
             <NavLink
               to="/onboarding"
-              className="group inline-flex items-center gap-2 px-8 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              className="group inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 min-h-[52px] bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white text-base font-semibold rounded-xl shadow-md transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
               aria-label="Start gratis quiz om je stijladvies te ontvangen"
             >
               Start gratis — 2 minuten
