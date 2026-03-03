@@ -294,6 +294,13 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
     }
 
     if (newSwipeCount >= requiredSwipes) {
+      const pattern = analyzerRef.current.getPattern();
+      if (pattern.archetypeWeights && Object.keys(pattern.archetypeWeights).length > 0) {
+        try {
+          localStorage.setItem('ff_visual_embedding', JSON.stringify(pattern.archetypeWeights));
+          localStorage.setItem('ff_swipe_count', newSwipeCount.toString());
+        } catch {}
+      }
       setTimeout(() => {
         onComplete();
       }, 500);
@@ -305,6 +312,13 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
         setCurrentIndex(prev => prev + 1);
       }, 100);
     } else {
+      const pattern = analyzerRef.current.getPattern();
+      if (pattern.archetypeWeights && Object.keys(pattern.archetypeWeights).length > 0) {
+        try {
+          localStorage.setItem('ff_visual_embedding', JSON.stringify(pattern.archetypeWeights));
+          localStorage.setItem('ff_swipe_count', newSwipeCount.toString());
+        } catch {}
+      }
       setTimeout(() => {
         onComplete();
       }, 500);

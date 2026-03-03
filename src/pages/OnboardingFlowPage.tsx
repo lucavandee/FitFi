@@ -512,6 +512,10 @@ export default function OnboardingFlowPage() {
                   visual_preference_completed_at: new Date().toISOString()
                 })
                 .eq(userId ? 'user_id' : 'session_id', userId || sessionId);
+
+              try {
+                localStorage.setItem('ff_visual_embedding', JSON.stringify(embedding));
+              } catch {}
             }
 
             await EmbeddingService.lockEmbedding(userId, sessionId);

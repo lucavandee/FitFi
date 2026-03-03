@@ -7,6 +7,8 @@ import { shuffleProductsByCategory } from './productShuffling';
 import { handleInsufficientProducts, getCategoryCounts, formatSuggestionMessage } from './insufficientProductsHandler';
 import { generatePhotoEnhancedOutfits, hasPhotoAnalysis } from './photoEnhancedRecommendationEngine';
 import { archetypeToDutch } from '@/config/archetypeMapping';
+import { rankOutfits, ensureDiversity, type RankCtx } from './ranking';
+import { getCurrentSeason } from './helpers';
 
 /**
  * Main recommendation engine that generates personalized outfit recommendations
@@ -219,10 +221,10 @@ export function generateRecommendationsFromAnswers(
   // Shuffle products by category for variety
   const shuffledProducts = shuffleProductsByCategory(filterResult.products);
 
-  const outfits = generateOutfits(
+  const rawOutfits = generateOutfits(
     primaryArchetype,
     shuffledProducts,
-    count,
+    Math.max(count * 2, 6),
     secondaryArchetype,
     mixFactor,
     {
@@ -237,7 +239,32 @@ export function generateRecommendationsFromAnswers(
     }
   );
 
-  console.log(`[RecommendationEngine] Successfully generated ${outfits.length} outfits`);
+  let swipeEmbedding: Record<string, number> = {};
+  let swipeCount = 0;
+  try {
+    const rawEmb = localStorage.getItem('ff_visual_embedding');
+    const rawCount = localStorage.getItem('ff_swipe_count');
+    if (rawEmb) swipeEmbedding = JSON.parse(rawEmb);
+    if (rawCount) swipeCount = parseInt(rawCount, 10) || 0;
+  } catch {}
+
+  const rankCtx: RankCtx = {
+    primaryArchetype,
+    secondaryArchetype,
+    mixFactor,
+    season: getCurrentSeason() as RankCtx['season'],
+    goals: Array.isArray(answers.goals) ? answers.goals : [],
+    prints: answers.prints,
+    swipeEmbedding,
+    swipeCount,
+    recentOccasions: Array.isArray(answers.occasions) ? answers.occasions : [],
+  };
+
+  const ranked = rankOutfits(rawOutfits, rankCtx);
+  const diverse = ensureDiversity(ranked, 2);
+  const outfits = diverse.slice(0, count).map(s => s.outfit);
+
+  console.log(`[RecommendationEngine] Successfully generated ${outfits.length} outfits (ranked from ${rawOutfits.length})`);
 
   return outfits;
 }
