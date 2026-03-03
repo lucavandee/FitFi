@@ -14,6 +14,8 @@ import {
   MessageCircle,
   Plus,
   Minus,
+  ArrowRight,
+  X,
 } from "lucide-react";
 
 const steps = [
@@ -50,7 +52,7 @@ const steps = [
     bullets: [
       { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "6-12 outfits" },
       { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "Directe shoplinks" },
-      { icon: Heart, iconBg: "bg-pink-100", iconColor: "text-pink-700", label: "Bewaar voor altijd", muted: true },
+      { icon: Heart, iconBg: "bg-[var(--ff-color-danger-100)]", iconColor: "text-[var(--ff-color-danger-600)]", label: "Bewaar voor altijd", muted: true },
     ],
   },
 ];
@@ -67,6 +69,10 @@ const faqs = [
   {
     q: "Werkt het voor mannen én vrouwen?",
     a: "Ja! We vragen je voorkeur en passen het assortiment daarop aan.",
+  },
+  {
+    q: "Hoeveel kost FitFi?",
+    a: "De basis stijlquiz is gratis. Premium functies zoals opgeslagen outfits en Nova AI-chat zijn beschikbaar vanaf €9,99/maand.",
   },
 ];
 
@@ -87,25 +93,10 @@ export default function HowItWorksPage() {
           "description": "In 2 minuten van quiz naar compleet stijladvies. Beantwoord 8 vragen, wij matchen outfits, jij shopt direct.",
           "totalTime": "PT2M",
           "step": [
-            {
-              "@type": "HowToStep",
-              "position": 1,
-              "name": "Beantwoord 8 vragen",
-              "text": "Over jouw lifestyle, voorkeuren en hoe je je wilt voelen. Geen foto's, geen gedoe. Duurt 2 minuten."
-            },
-            {
-              "@type": "HowToStep",
-              "position": 2,
-              "name": "Wij matchen outfits",
-              "text": "We vinden kleurcombinaties die werken en stellen complete looks samen. Duurt 30 seconden."
-            },
-            {
-              "@type": "HowToStep",
-              "position": 3,
-              "name": "Jij shopt direct",
-              "text": "Complete looks, direct shopbaar. Plus: waarom elk item bij jou past. 6-12 outfits met directe shoplinks."
-            }
-          ]
+            { "@type": "HowToStep", "position": 1, "name": "Beantwoord 8 vragen", "text": "Over jouw lifestyle, voorkeuren en hoe je je wilt voelen. Geen foto's, geen gedoe. Duurt 2 minuten." },
+            { "@type": "HowToStep", "position": 2, "name": "Wij matchen outfits", "text": "We vinden kleurcombinaties die werken en stellen complete looks samen. Duurt 30 seconden." },
+            { "@type": "HowToStep", "position": 3, "name": "Jij shopt direct", "text": "Complete looks, direct shopbaar. Plus: waarom elk item bij jou past. 6-12 outfits met directe shoplinks." },
+          ],
         }}
       />
 
@@ -120,64 +111,92 @@ export default function HowItWorksPage() {
 
         {/* ── Hero ── */}
         <section
-          className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 sm:py-16 md:py-24 lg:py-32"
+          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] py-14 sm:py-20 md:py-28"
           aria-labelledby="hero-heading"
         >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{
+              background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(166,136,106,0.10) 0%, transparent 70%)',
+            }}
+          />
+          <div className="ff-container relative z-10 text-center">
 
             <div
-              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 bg-white/95 backdrop-blur-sm border border-[var(--color-border)] rounded-full mb-6 shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-sm font-bold text-[var(--color-text)] shadow-[var(--shadow-soft)] mb-7"
               role="status"
               aria-label="2500 mensen gebruiken FitFi"
             >
-              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-              <span className="text-xs sm:text-sm font-bold text-[var(--color-text)]">2.500+ mensen gebruiken FitFi</span>
+              <Users className="w-4 h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+              2.500+ mensen gebruiken FitFi
             </div>
 
             <h1
               id="hero-heading"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] mb-5 sm:mb-6 leading-[1.1] tracking-tight"
+              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-5"
+              style={{ fontSize: 'clamp(2.25rem, 5vw, 4rem)', lineHeight: 1.08 }}
             >
               Zo krijg je{" "}
-              <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] bg-clip-text text-transparent">
+              <em
+                className="not-italic bg-clip-text text-transparent"
+                style={{ backgroundImage: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
+              >
                 outfits die passen
-              </span>
+              </em>
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed font-light">
+            <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] mb-10 max-w-xl mx-auto leading-relaxed font-light">
               In 2 minuten van quiz naar compleet stijladvies. Zo shop je moeiteloos.
             </p>
 
             <div
-              className="flex flex-wrap items-center justify-center gap-3 sm:gap-6"
+              className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-10"
               role="list"
-              aria-label="Belangrijkste voordelen"
+              aria-label="Voordelen"
             >
               {[
                 { icon: Clock, bg: "bg-[var(--ff-color-primary-100)]", color: "text-[var(--ff-color-primary-700)]", label: "2 minuten" },
                 { icon: Shield, bg: "bg-[var(--ff-color-success-100)]", color: "text-[var(--ff-color-success-700)]", label: "Geen foto's nodig" },
                 { icon: Sparkles, bg: "bg-[var(--ff-color-accent-100)]", color: "text-[var(--ff-color-accent-700)]", label: "Direct resultaat" },
               ].map(({ icon: Icon, bg, color, label }) => (
-                <div key={label} className="flex items-center gap-2" role="listitem">
-                  <div className={`w-8 h-8 sm:w-9 sm:h-9 ${bg} rounded-full flex items-center justify-center flex-shrink-0`} aria-hidden="true">
+                <div key={label} className="flex items-center gap-2.5" role="listitem">
+                  <div className={`w-9 h-9 ${bg} rounded-full flex items-center justify-center flex-shrink-0`} aria-hidden="true">
                     <Icon className={`w-4 h-4 ${color}`} />
                   </div>
                   <span className="text-sm sm:text-base font-semibold text-[var(--color-text)]">{label}</span>
                 </div>
               ))}
             </div>
+
+            <a
+              href="/stijlquiz"
+              className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+              style={{
+                background: 'var(--ff-color-primary-700)',
+                color: 'var(--color-bg)',
+                boxShadow: '0 8px 40px rgba(166,136,106,0.45)',
+              }}
+            >
+              Ontvang jouw stijladvies
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            </a>
           </div>
         </section>
 
-        {/* ── 3 Steps ── */}
+        {/* ── 3 Stappen ── */}
         <section
-          className="py-10 sm:py-14 md:py-20 bg-[var(--color-surface)]"
+          className="ff-section bg-[var(--color-surface)]"
           aria-labelledby="process-heading"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="ff-container">
 
-            <div className="text-center mb-8 sm:mb-12 md:mb-16">
-              <h2 id="process-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 tracking-tight">
+            <div className="text-center mb-10 sm:mb-14">
+              <h2
+                id="process-heading"
+                className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-3"
+                style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.75rem)', lineHeight: 1.1 }}
+              >
                 3 stappen naar jouw stijl
               </h2>
               <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
@@ -191,10 +210,10 @@ export default function HowItWorksPage() {
                   key={step.id}
                   onClick={() => setActiveStep(step.id)}
                   onHoverStart={() => setActiveStep(step.id)}
-                  className={`relative bg-[var(--color-surface)] rounded-2xl sm:rounded-[2rem] border-2 p-5 sm:p-7 transition-all duration-300 cursor-pointer flex flex-col ${
+                  className={`relative bg-[var(--color-surface)] rounded-2xl border-2 p-5 sm:p-7 transition-all duration-300 cursor-pointer flex flex-col ${
                     activeStep === step.id
                       ? "border-[var(--ff-color-primary-600)] shadow-xl"
-                      : "border-[var(--color-border)] shadow-md hover:shadow-lg hover:border-[var(--ff-color-primary-300)]"
+                      : "border-[var(--color-border)] shadow-[var(--shadow-soft)] hover:border-[var(--ff-color-primary-300)]"
                   }`}
                   aria-label={`${step.label}: ${step.title}`}
                   aria-pressed={activeStep === step.id}
@@ -209,10 +228,14 @@ export default function HowItWorksPage() {
                   </div>
 
                   <div className="flex-1 flex flex-col mb-0">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-md mb-3" aria-hidden="true">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm mb-4"
+                      style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
+                      aria-hidden="true"
+                    >
                       <step.icon className="w-6 h-6 text-white" strokeWidth={2} />
                     </div>
-                    <h3 className="text-lg font-bold mb-2 leading-tight">{step.title}</h3>
+                    <h3 className="font-heading font-bold text-lg mb-2 leading-tight text-[var(--color-text)]">{step.title}</h3>
                     <p className="text-[var(--color-muted)] text-sm leading-relaxed flex-1">
                       {step.description}
                     </p>
@@ -233,25 +256,29 @@ export default function HowItWorksPage() {
             </div>
 
             <div className="text-center py-4">
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-9 h-9 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
+              <div className="inline-flex items-center gap-3 px-5 py-3 bg-[var(--ff-color-primary-50)] rounded-2xl border border-[var(--ff-color-primary-200)]">
+                <div className="w-9 h-9 bg-[var(--ff-color-primary-700)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
                   <Clock className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-xl font-bold text-[var(--ff-color-primary-700)]">Totaal: 2 minuten</span>
+                <span className="text-lg font-bold text-[var(--ff-color-primary-700)]">Totaal: 2 minuten</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── Comparison ── */}
+        {/* ── Vergelijking ── */}
         <section
-          className="py-12 sm:py-16 md:py-24 bg-[var(--color-bg)]"
+          className="ff-section bg-[var(--color-bg)]"
           aria-labelledby="comparison-heading"
         >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="ff-container">
 
             <div className="text-center mb-10 sm:mb-14">
-              <h2 id="comparison-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 tracking-tight">
+              <h2
+                id="comparison-heading"
+                className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-3"
+                style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.75rem)', lineHeight: 1.1 }}
+              >
                 Waarom FitFi beter is
               </h2>
               <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
@@ -259,12 +286,11 @@ export default function HowItWorksPage() {
               </p>
             </div>
 
-            {/* Comparison table — stacks on mobile */}
-            <div className="flex flex-col sm:grid sm:grid-cols-2 sm:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-3xl mx-auto">
 
-              <div className="bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)] p-5 sm:p-7 shadow-md flex flex-col">
-                <h3 className="font-bold text-lg sm:text-xl mb-4 text-center text-[var(--color-text)]">Trial &amp; Error</h3>
-                <ul className="space-y-3" role="list">
+              <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7 shadow-[var(--shadow-soft)] flex flex-col">
+                <h3 className="font-heading font-bold text-lg sm:text-xl mb-5 text-center text-[var(--color-text)]">Trial &amp; Error</h3>
+                <ul className="space-y-3 flex-1" role="list">
                   {[
                     "3+ uur per winkelsessie",
                     "€200+ foute aankopen/jaar",
@@ -272,9 +298,7 @@ export default function HowItWorksPage() {
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-danger-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-danger-600)]" strokeWidth={2.5} />
                       </div>
                       <span className="text-sm sm:text-base text-[var(--color-muted)] leading-snug">{item}</span>
                     </li>
@@ -282,22 +306,32 @@ export default function HowItWorksPage() {
                 </ul>
               </div>
 
-              <div className="relative bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-7 text-white shadow-xl flex flex-col">
-                <div className="inline-block mb-3 px-3 py-1 bg-[var(--ff-color-accent-500)] text-white rounded-full text-xs font-bold">
+              <div
+                className="relative rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-7 shadow-xl flex flex-col"
+                style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-700), var(--ff-color-primary-900))' }}
+              >
+                <div
+                  className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-bold self-start"
+                  style={{ background: 'var(--ff-color-primary-500)', color: 'var(--color-bg)' }}
+                >
                   BESTE KEUZE
                 </div>
-                <h3 className="font-bold text-lg sm:text-xl mb-4 text-white">FitFi</h3>
-                <ul className="space-y-3" role="list">
+                <h3 className="font-heading font-bold text-lg sm:text-xl mb-5 text-white">FitFi</h3>
+                <ul className="space-y-3 flex-1" role="list">
                   {[
                     "2 minuten, direct resultaat",
                     "Outfits die je draagt",
                     "€9,99/maand (of gratis)",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/25 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                      <div
+                        className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                        style={{ background: 'rgba(255,255,255,0.20)' }}
+                        aria-hidden="true"
+                      >
                         <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" strokeWidth={3} />
                       </div>
-                      <span className="text-sm sm:text-base font-medium leading-snug">{item}</span>
+                      <span className="text-sm sm:text-base font-medium leading-snug text-white">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -309,26 +343,30 @@ export default function HowItWorksPage() {
 
         {/* ── FAQ ── */}
         <section
-          className="py-12 sm:py-16 md:py-24 bg-[var(--color-surface)]"
+          className="ff-section bg-[var(--color-surface)]"
           aria-labelledby="faq-heading"
         >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="ff-container">
 
-            <div className="text-center mb-8 sm:mb-12">
-              <h2 id="faq-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+            <div className="text-center mb-10 sm:mb-12">
+              <h2
+                id="faq-heading"
+                className="font-heading font-bold tracking-tight text-[var(--color-text)]"
+                style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.75rem)', lineHeight: 1.1 }}
+              >
                 Veelgestelde vragen
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-4xl mx-auto">
               {faqs.map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (
                   <div
                     key={idx}
-                    className={`bg-[var(--color-surface)] rounded-2xl border-2 transition-colors duration-200 shadow-sm ${
+                    className={`bg-[var(--color-surface)] rounded-2xl border-2 transition-colors duration-200 shadow-[var(--shadow-soft)] ${
                       isOpen
-                        ? "border-[var(--ff-color-primary-400)] shadow-md"
+                        ? "border-[var(--ff-color-primary-400)]"
                         : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-200)]"
                     }`}
                   >
@@ -336,7 +374,7 @@ export default function HowItWorksPage() {
                       type="button"
                       id={`faq-trigger-${idx}`}
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      className="w-full flex items-center justify-between gap-3 p-5 sm:p-6 min-h-[56px] text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 rounded-2xl"
+                      className="w-full flex items-center justify-between gap-3 p-5 sm:p-6 min-h-[56px] text-left rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${idx}`}
                     >
@@ -377,6 +415,48 @@ export default function HowItWorksPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Sluitende CTA ── */}
+        <section className="ff-section bg-[var(--ff-color-primary-50)]" aria-label="Start met FitFi">
+          <div className="ff-container text-center">
+            <div
+              className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mx-auto mb-6 shadow-sm"
+              style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
+              aria-hidden="true"
+            >
+              <Sparkles className="w-7 h-7 text-white" />
+            </div>
+            <h2
+              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-4"
+              style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.5rem)', lineHeight: 1.1 }}
+            >
+              Klaar voor jouw stijladvies?
+            </h2>
+            <p className="text-base sm:text-lg text-[var(--color-muted)] mb-8 max-w-md mx-auto leading-relaxed font-light">
+              Gratis. 2 minuten. Geen foto's nodig.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="/stijlquiz"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                style={{
+                  background: 'var(--ff-color-primary-700)',
+                  color: 'var(--color-bg)',
+                  boxShadow: '0 8px 40px rgba(166,136,106,0.45)',
+                }}
+              >
+                Start gratis
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              </a>
+              <a
+                href="/voorbeeld"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 min-h-[52px] rounded-xl font-semibold text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)] transition-all"
+              >
+                Bekijk voorbeeld
+              </a>
             </div>
           </div>
         </section>
