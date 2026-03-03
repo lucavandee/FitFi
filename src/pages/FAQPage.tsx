@@ -346,7 +346,7 @@ export default function FAQPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoComplete="off"
-                className="w-full pl-11 pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--ff-color-primary-200)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+                className="w-full pl-11 pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
               />
               {search && (
                 <button
@@ -509,7 +509,8 @@ export default function FAQPage() {
               </Link>
               <a
                 href="mailto:contact@fitfi.ai"
-                className="w-full sm:w-auto inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:text-[var(--ff-color-primary-700)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-800)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-100)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+                style={{ background: 'transparent' }}
               >
                 Stel een vraag
               </a>
