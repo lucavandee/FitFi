@@ -309,7 +309,11 @@ const ProfilePage: React.FC = () => {
         Spring naar hoofdinhoud
       </a>
 
-      <div id="main-content" className="max-w-lg mx-auto px-4 pt-6 pb-24 space-y-3">
+      <div id="main-content" className="ff-container pt-6 pb-24">
+        <div className="flex flex-col lg:flex-row lg:gap-8 xl:gap-10 lg:items-start">
+
+        {/* ══ LEFT COLUMN — sticky profile card (desktop) ══ */}
+        <div className="w-full lg:w-[320px] xl:w-[360px] flex-shrink-0 lg:sticky lg:top-6 space-y-3 mb-3 lg:mb-0">
 
         {/* ══ HERO PROFILE CARD ══ */}
         <motion.div
@@ -443,6 +447,42 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* ── Desktop-only quick links ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, delay: 0.12 }}
+          className="hidden lg:block rounded-2xl bg-[var(--color-surface)] overflow-hidden divide-y divide-[var(--color-border)]"
+          style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06), 0 2px 10px rgba(30,35,51,0.04)" }}
+        >
+          <p className="px-4 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">Snelkoppelingen</p>
+          {[
+            { icon: <Sparkles className="w-4 h-4" />, label: "Mijn outfits", sub: "Bekijk jouw resultaten", to: "/results" },
+            { icon: <Palette className="w-4 h-4" />, label: "Stijlquiz", sub: "Herdoe de quiz", to: "/onboarding" },
+            { icon: <ArrowRight className="w-4 h-4" />, label: "Winkel", sub: "Gepersonaliseerde producten", to: "/shop" },
+          ].map(({ icon, label, sub, to }) => (
+            <button
+              key={label}
+              onClick={() => navigate(to)}
+              className="w-full flex items-center gap-3.5 px-4 py-3.5 min-h-[44px] hover:bg-[var(--color-bg)] active:bg-[var(--ff-color-primary-25)] transition-colors text-left group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-500)] flex items-center justify-center flex-shrink-0">
+                {icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">{label}</p>
+                <p className="text-[11px] text-[var(--color-muted)] mt-0.5">{sub}</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+            </button>
+          ))}
+        </motion.div>
+
+        </div>{/* end left column */}
+
+        {/* ══ RIGHT COLUMN — settings sections ══ */}
+        <div className="flex-1 min-w-0 space-y-3">
 
         {/* ══ STIJLPROFIEL SECTIE ══ */}
         {hasStyleProfile && (
@@ -701,6 +741,8 @@ const ProfilePage: React.FC = () => {
           </button>
         </motion.div>
 
+        </div>{/* end right column */}
+        </div>{/* end flex row */}
       </div>
 
       <input
