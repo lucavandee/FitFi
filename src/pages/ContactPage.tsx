@@ -140,25 +140,25 @@ export default function ContactPage() {
         path="/contact"
       />
 
-      {/* ── HERO ── */}
-      <section className="ff-container py-12 md:py-16">
-        <div className="max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-50)] rounded-full text-xs font-semibold text-[var(--ff-color-primary-700)] mb-4 border border-[var(--ff-color-primary-200)]">
-            <MessageCircle className="w-3.5 h-3.5" aria-hidden />
-            Contact
+      {/* ── HERO + 2-COLUMN LAYOUT ── */}
+      <section className="ff-container pt-12 pb-16 md:pt-16 md:pb-20">
+        <div className="max-w-5xl mx-auto">
+          {/* Hero heading */}
+          <div className="mb-10 md:mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-50)] rounded-full text-xs font-semibold text-[var(--ff-color-primary-700)] mb-4 border border-[var(--ff-color-primary-200)]">
+              <MessageCircle className="w-3.5 h-3.5" aria-hidden />
+              Contact
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] leading-tight mb-2">
+              We horen graag van je
+            </h1>
+            <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed max-w-xl">
+              Vragen over stijl, partnerships of een idee? We reageren binnen 24 uur op werkdagen.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] leading-tight mb-3">
-            We horen graag van je
-          </h1>
-          <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed">
-            Vragen over stijl, partnerships of een idee? We reageren binnen 24 uur op werkdagen.
-          </p>
-        </div>
-      </section>
 
-      {/* ── 2-COLUMN LAYOUT: Form (left) + Info cards (right) ── */}
-      <section className="ff-container pb-16 sm:pb-20">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 lg:gap-12 items-start">
+          {/* 2-column grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8 lg:gap-12 items-start">
 
           {/* LEFT — contact form */}
           <div>
@@ -388,6 +388,7 @@ export default function ContactPage() {
             })}
           </aside>
 
+          </div>
         </div>
       </section>
     </main>

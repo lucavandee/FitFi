@@ -288,53 +288,54 @@ export default function FAQPage() {
         structuredData={FAQ_SCHEMA}
       />
 
-      {/* ── HERO ── */}
-      <section className="ff-container pt-14 pb-12 md:pt-20 md:pb-16">
-        <div className="max-w-3xl">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
-            <HelpCircle className="w-3.5 h-3.5" aria-hidden />
-            Hulp & informatie
-          </span>
-          <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-4 leading-tight tracking-tight">
-            Veelgestelde vragen
-          </h1>
-          <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed max-w-xl">
-            Alles wat je wilt weten over FitFi. Staat je vraag er niet tussen?{" "}
-            <a
-              href="mailto:contact@fitfi.ai"
-              className="text-[var(--ff-color-primary-700)] font-medium underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
-            >
-              Stuur ons een bericht
-            </a>
-            .
-          </p>
-        </div>
-      </section>
-
-      {/* ── TRUST BADGES ── */}
-      <section className="ff-container pb-10">
-        <div className="grid gap-4 sm:grid-cols-3">
-          {TRUST_ITEMS.map((c, i) => {
-            const Icon = c.icon;
-            return (
-              <motion.article
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-5 flex gap-4 items-start"
-                style={{ boxShadow: "0 2px 12px rgba(30,35,51,0.05)" }}
+      {/* ── HERO + TRUST: two-column on desktop ── */}
+      <section className="ff-container pt-12 pb-10 md:pt-16 md:pb-12">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-16">
+          {/* Left: heading */}
+          <div className="lg:max-w-lg">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-4">
+              <HelpCircle className="w-3.5 h-3.5" aria-hidden />
+              Hulp & informatie
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-3 leading-tight tracking-tight">
+              Veelgestelde vragen
+            </h1>
+            <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed">
+              Alles wat je wilt weten over FitFi. Staat je vraag er niet tussen?{" "}
+              <a
+                href="mailto:contact@fitfi.ai"
+                className="text-[var(--ff-color-primary-700)] font-medium underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
               >
-                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center">
-                  <Icon className="h-5 w-5 text-[var(--ff-color-primary-700)]" aria-hidden />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[var(--color-text)] text-sm mb-0.5">{c.title}</h3>
-                  <p className="text-sm text-[var(--color-muted)] leading-relaxed">{c.body}</p>
-                </div>
-              </motion.article>
-            );
-          })}
+                Stuur ons een bericht
+              </a>
+              .
+            </p>
+          </div>
+
+          {/* Right: trust badges */}
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 lg:min-w-[280px] xl:min-w-[320px]">
+            {TRUST_ITEMS.map((c, i) => {
+              const Icon = c.icon;
+              return (
+                <motion.article
+                  key={i}
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.35, delay: i * 0.08 }}
+                  className="rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] p-4 flex gap-3 items-start"
+                  style={{ boxShadow: "0 2px 8px rgba(30,35,51,0.05)" }}
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+                    <Icon className="h-4 w-4 text-[var(--ff-color-primary-700)]" aria-hidden />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-[var(--color-text)] text-sm mb-0.5">{c.title}</h3>
+                    <p className="text-xs text-[var(--color-muted)] leading-relaxed">{c.body}</p>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
