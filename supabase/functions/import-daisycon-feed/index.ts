@@ -180,11 +180,9 @@ function parseXmlFeed(xmlText: string): DaisyconFeed {
     throw new Error("XML feed is leeg");
   }
 
-  const programMatch = xmlText.match(/<program[\s>]/i);
-  if (!programMatch) throw new Error("Geen <program> element gevonden in XML feed");
-
-  const programBlockMatch = xmlText.match(/<program[\s\S]*?>([\s\S]*?)<\/program>/i) ||
-    xmlText.match(/<datafeed>([\s\S]*)<\/datafeed>/i);
+  if (!/<program[\s>]/i.test(xmlText)) {
+    throw new Error("Geen <program> element gevonden in XML feed");
+  }
 
   const fullXml = xmlText;
 
