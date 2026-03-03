@@ -46,15 +46,14 @@ export default function ResultsPreviewPage() {
         toast.success("Gedeeld!");
       } catch (err) {
         if ((err as Error).name !== "AbortError") {
-          console.error("Share error:", err);
+          toast.error("Kon niet delen");
         }
       }
     } else if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(url);
         toast.success("Link gekopieerd!");
-      } catch (err) {
-        console.error("Clipboard error:", err);
+      } catch {
         toast.error("Kon link niet kopiëren");
       }
     }
@@ -128,7 +127,7 @@ export default function ResultsPreviewPage() {
       {/* Ultra-Premium Style Profile Summary */}
       <section className="ff-container pb-16 md:pb-20">
         <div className="max-w-5xl mx-auto">
-          <div className="relative bg-gradient-to-br from-white via-white to-slate-50/30 backdrop-blur-xl border border-[var(--color-border)]/40 rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
+          <div className="relative bg-gradient-to-br from-[var(--color-surface)] via-[var(--color-surface)] to-[var(--color-bg)] backdrop-blur-xl border border-[var(--color-border)]/40 rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
 
             {/* Subtle background pattern */}
             <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
@@ -161,7 +160,7 @@ export default function ResultsPreviewPage() {
 
                   <div className="space-y-5">
                     {/* Temperatuur */}
-                    <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                    <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Temperatuur</span>
                         <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-orange-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
@@ -174,7 +173,7 @@ export default function ResultsPreviewPage() {
                     </div>
 
                     {/* Contrast */}
-                    <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                    <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Contrast</span>
                         <span className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-200 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
@@ -189,7 +188,7 @@ export default function ResultsPreviewPage() {
                     </div>
 
                     {/* Seizoen */}
-                    <div className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
+                    <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Seizoen</span>
                         <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
@@ -197,10 +196,10 @@ export default function ResultsPreviewPage() {
                         </span>
                       </div>
                       <div className="flex gap-2">
-                        <div className="h-10 w-10 bg-gradient-to-br from-sky-200 to-blue-300 rounded-xl shadow-md" title="Zomer" />
-                        <div className="h-10 w-10 bg-gradient-to-br from-amber-200 to-orange-300 rounded-xl opacity-30" title="Herfst" />
-                        <div className="h-10 w-10 bg-gradient-to-br from-slate-200 to-blue-200 rounded-xl opacity-30" title="Winter" />
-                        <div className="h-10 w-10 bg-gradient-to-br from-pink-200 to-green-200 rounded-xl opacity-30" title="Lente" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-sky-200 to-blue-300 rounded-xl shadow-md" role="img" aria-label="Zomer (actief)" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-amber-200 to-orange-300 rounded-xl opacity-30" role="img" aria-label="Herfst" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-slate-200 to-blue-200 rounded-xl opacity-30" role="img" aria-label="Winter" />
+                        <div className="h-10 w-10 bg-gradient-to-br from-pink-200 to-green-200 rounded-xl opacity-30" role="img" aria-label="Lente" />
                       </div>
                     </div>
                   </div>
@@ -217,7 +216,7 @@ export default function ResultsPreviewPage() {
                     {DEMO_COLOR_PROFILE.notes.map((note, i) => (
                       <li
                         key={i}
-                        className="group p-5 bg-white/60 backdrop-blur-sm border border-[var(--color-border)]/30 rounded-[20px] hover:bg-white/80 hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                        className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:bg-[var(--color-surface)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
                       >
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-success-500)] to-[var(--ff-color-success-600)] flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
@@ -249,7 +248,7 @@ export default function ResultsPreviewPage() {
             </p>
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-2.5 px-5 py-3 bg-white/80 backdrop-blur-sm border border-[var(--color-border)]/50 hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] rounded-[18px] font-bold text-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-105 hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+              className="inline-flex items-center gap-2.5 px-5 py-3 min-h-[44px] bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] rounded-[18px] font-bold text-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-105 hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
             >
               <Share2 className="w-4 h-4" strokeWidth={2.5} />
               <span className="tracking-wide">Deel dit voorbeeld</span>
@@ -260,11 +259,11 @@ export default function ResultsPreviewPage() {
             {seeds.slice(0, 6).map((outfit, idx) => (
               <div
                 key={idx}
-                className="group bg-white/80 backdrop-blur-sm border border-[var(--color-border)]/50 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.2)] transition-all duration-700 hover:-translate-y-4 hover:scale-[1.02] animate-in fade-in slide-in-from-bottom-4"
+                className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.2)] transition-all duration-700 hover:-translate-y-4 hover:scale-[1.02]"
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
                 {/* Premium Outfit Visual */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-slate-50 to-slate-100 p-8 relative overflow-hidden">
+                <div className="aspect-[3/4] bg-[var(--ff-color-neutral-50,var(--color-bg))] p-8 relative overflow-hidden">
                   {outfit.pieces && outfit.pieces.length > 0 ? (
                     <div className="space-y-8 flex flex-col items-center justify-center h-full">
                       {outfit.pieces.slice(0, 3).map((piece, pieceIdx) => (
@@ -324,8 +323,8 @@ export default function ResultsPreviewPage() {
 
       {/* Premium CTA Section */}
       <section className="ff-container pb-24 md:pb-28">
-        <div className="max-w-3xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 border border-[var(--color-border)]/50 rounded-3xl p-10 md:p-14 lg:p-16 text-center shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-all duration-700">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/95 backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+        <div className="max-w-3xl mx-auto bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-bg)] border border-[var(--color-border)] rounded-3xl p-10 md:p-14 lg:p-16 text-center shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-all duration-700">
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-[var(--color-surface)] backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
             <span className="tracking-wide">{isPersonalized ? `Klaar ${userName}?` : 'Maak het persoonlijk'}</span>
           </div>

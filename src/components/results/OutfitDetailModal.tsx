@@ -101,7 +101,7 @@ export function OutfitDetailModal({
             <button
               onClick={onClose}
               aria-label="Sluit"
-              className="w-8 h-8 rounded-full bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] flex-shrink-0 mt-0.5 transition-colors"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] flex-shrink-0 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -223,9 +223,9 @@ export function OutfitDetailModal({
                                 rel="noopener noreferrer"
                                 aria-label={`Shop ${name}`}
                                 onClick={(e) => e.stopPropagation()}
-                                className="w-7 h-7 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-200)] transition-colors"
+                                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-200)] transition-colors"
                               >
-                                <ExternalLink className="w-3.5 h-3.5" />
+                                <ExternalLink className="w-4 h-4" />
                               </a>
                             )}
                           </div>

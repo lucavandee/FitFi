@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers, Palette, LayoutGrid, CheckCircle } from "lucide-react";
@@ -34,7 +34,6 @@ import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
 import { ExitIntentModal } from "@/components/results/ExitIntentModal";
 import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/profileConsistency";
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
-import { useNavigate } from "react-router-dom";
 import { generateOutfitDescription } from "@/engine/outfitContext";
 import TrendInsights from "@/components/premium/TrendInsights";
 import { TrustSignals } from "@/components/results/TrustSignals";
@@ -258,6 +257,8 @@ export default function EnhancedResultsPage() {
 
   const [showShareModal, setShowShareModal] = React.useState(false);
   const [selectedOutfit, setSelectedOutfit] = React.useState<(Outfit | OutfitSeed) | null>(null);
+  const hintTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
+  React.useEffect(() => () => clearTimeout(hintTimerRef.current), []);
 
   // Gallery mode: swipe (mobile-friendly) or grid (desktop-friendly)
   const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
@@ -266,12 +267,14 @@ export default function EnhancedResultsPage() {
   type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
   const [activeTab, setActiveTab] = React.useState<ResultTab>('overzicht');
 
-  // Auto-detect mobile and default to swipe on small screens
+  // Auto-detect mobile and keep in sync with window resize / orientation change
   React.useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      setGalleryMode('swipe');
+    function checkWidth() {
+      setGalleryMode(window.innerWidth < 768 ? 'swipe' : 'grid');
     }
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => window.removeEventListener('resize', checkWidth);
   }, []);
 
   function toggleFav(id: string) {
@@ -346,7 +349,7 @@ export default function EnhancedResultsPage() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={sharePage}
-                      className="inline-flex items-center justify-center w-9 h-9 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-all"
+                      className="inline-flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-all"
                       aria-label="Delen"
                     >
                       <Share2 className="w-4 h-4" />
@@ -715,7 +718,7 @@ export default function EnhancedResultsPage() {
 
             <div className="max-w-7xl mx-auto">
               {/* Shopping Guidance - PREMIUM ONLY with Photo Required */}
-              {(user?.tier === 'premium' || user?.tier === 'founder' || user?.isPremium) && profileData?.photo_url ? (
+              {(user?.tier === 'premium' || user?.tier === 'founder' || user?.isPremium) && answers?.photoUrl ? (
                 <AnimatedSection delay={0.5}>
                   <div className="mb-12">
                     <ShoppingGuidance
@@ -944,7 +947,7 @@ export default function EnhancedResultsPage() {
                           <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
                         </div>
                         <div>
-                          <p className="text-base text-text leading-relaxed font-medium">
+                          <p className="text-base text-[var(--color-text)] leading-relaxed font-medium">
                             <strong className="font-bold">Resultaat:</strong> Door quiz-data, visuele voorkeuren en kleuranalyse
                             te combineren, krijg je aanbevelingen die verder gaan dan een simpel stijltype. Elke outfit is afgestemd op jouw
                             unieke stijl én seizoensgebonden kleurpalet.
@@ -1113,12 +1116,13 @@ export default function EnhancedResultsPage() {
                             src={outfitImage}
                             alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                             className="w-full h-full object-cover"
+                            loading="lazy"
                             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
                             <div className="text-center p-8">
-                              <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
+                              <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
                               <p className="text-sm text-[var(--color-muted)] font-medium">Outfit {idx + 1}</p>
                             </div>
                           </div>
@@ -1183,6 +1187,7 @@ export default function EnhancedResultsPage() {
                               src={outfitImage}
                               alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                               className="w-full h-full object-cover"
+                              loading="lazy"
                               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                             />
                           ) : (
@@ -1211,7 +1216,7 @@ export default function EnhancedResultsPage() {
                                     const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
                                     if (!hasSeenHint) {
                                       localStorage.setItem('ff_fav_hint_seen', 'true');
-                                      setTimeout(() => {
+                                      hintTimerRef.current = setTimeout(() => {
                                         toast('Bewaarde outfits vind je terug in je Dashboard', {
                                           duration: 5000,
                                           position: 'top-center',
