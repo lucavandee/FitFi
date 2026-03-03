@@ -151,7 +151,7 @@ function AccordionItem({
           onClick={() => onToggle(id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${id}`}
-          className="w-full min-h-[60px] flex items-center gap-4 px-5 sm:px-6 py-4 text-left rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+          className="w-full min-h-[52px] flex items-center gap-3.5 px-4 sm:px-5 py-3.5 text-left rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
         >
           <span
             className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -198,9 +198,9 @@ function AccordionItem({
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0 pl-[4.25rem]">
+            <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0" style={{ paddingLeft: 'calc(1rem + 1.75rem + 0.875rem)' }}>
               <div className="pt-3 border-t border-[var(--ff-color-primary-100)]">
-                <p className="m-0 text-sm sm:text-base leading-relaxed text-[var(--color-muted)]">
+                <p className="m-0 text-sm leading-relaxed text-[var(--color-muted)]">
                   <Highlight text={item.a} term={highlight} />
                 </p>
               </div>
@@ -346,7 +346,7 @@ export default function FAQPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoComplete="off"
-                className="w-full pl-11 pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+                className="w-full pl-11 pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--ff-color-primary-200)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
               />
               {search && (
                 <button
@@ -359,12 +359,12 @@ export default function FAQPage() {
               )}
             </div>
 
-            {/* Category cards */}
+            {/* Category tabs */}
             {!isSearching && (
               <div
                 role="tablist"
                 aria-label="FAQ categorieën"
-                className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 max-w-3xl mx-auto"
+                className="flex flex-wrap justify-center gap-2.5 mb-10"
               >
                 {CATEGORIES.map(({ id, label, Icon }) => {
                   const active = activeCat === id;
@@ -375,11 +375,11 @@ export default function FAQPage() {
                       aria-selected={active}
                       onClick={() => changeCat(id)}
                       className={[
-                        "relative flex flex-col items-center gap-2 px-4 py-4 rounded-2xl border-2 transition-all duration-200 text-sm font-semibold",
+                        "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all duration-200",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
                         active
-                          ? "shadow-xl"
-                          : "bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-200)] hover:text-[var(--color-text)] shadow-[var(--shadow-soft)]",
+                          ? "shadow-lg"
+                          : "bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--color-text)] shadow-[var(--shadow-soft)]",
                       ].join(" ")}
                       style={
                         active
@@ -392,16 +392,16 @@ export default function FAQPage() {
                       }
                     >
                       <span
-                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                        className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={
                           active
-                            ? { background: 'rgba(255,255,255,0.15)' }
+                            ? { background: 'rgba(255,255,255,0.18)' }
                             : { background: 'var(--ff-color-primary-100)' }
                         }
                         aria-hidden="true"
                       >
                         <Icon
-                          className="w-4 h-4"
+                          className="w-3.5 h-3.5"
                           style={{ color: active ? '#fff' : 'var(--ff-color-primary-700)' }}
                         />
                       </span>
@@ -452,7 +452,7 @@ export default function FAQPage() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-2">
                     {displayItems.map((item, i) => (
                       <AccordionItem
                         key={`${displayKey}-${i}`}
