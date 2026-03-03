@@ -333,7 +333,7 @@ export default function FAQPage() {
           <div className="ff-container">
 
             {/* Search */}
-            <div className="relative mb-8 max-w-xl mx-auto">
+            <div className="relative mb-8 max-w-lg mx-auto">
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
                 aria-hidden="true"
@@ -346,7 +346,8 @@ export default function FAQPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoComplete="off"
-                className="w-full pl-11 pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+                className="w-full pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+                style={{ paddingLeft: '3rem' }}
               />
               {search && (
                 <button
