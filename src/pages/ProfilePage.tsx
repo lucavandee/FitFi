@@ -265,7 +265,7 @@ const ProfilePage: React.FC = () => {
   /* ── not logged in ── */
   if (!user) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-6">
+      <div className="bg-[var(--color-bg)] flex items-center justify-center px-6" style={{ minHeight: 'calc(100vh - 64px)' }}>
         <Helmet><title>Profiel – FitFi</title></Helmet>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -275,7 +275,7 @@ const ProfilePage: React.FC = () => {
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-6">
             <User className="w-7 h-7 text-[var(--color-muted)]" />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3">Log in om je profiel te bekijken</h1>
+          <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3">Log in om je profiel te bekijken</h1>
           <button
             onClick={() => navigate("/inloggen")}
             className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ff-color-primary-700)] text-white rounded-2xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
@@ -283,7 +283,7 @@ const ProfilePage: React.FC = () => {
             Inloggen
           </button>
         </motion.div>
-      </main>
+      </div>
     );
   }
 
@@ -291,7 +291,7 @@ const ProfilePage: React.FC = () => {
      MAIN
   ═══════════════════════════════════════════════════ */
   return (
-    <main className="min-h-screen bg-[var(--color-bg)]">
+    <div className="bg-[var(--color-bg)]" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Helmet>
         <title>Profiel – FitFi</title>
         <meta name="description" content="Beheer je persoonlijke gegevens en stijlprofiel." />
@@ -364,13 +364,15 @@ const ProfilePage: React.FC = () => {
               {/* Name + tier */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                  <h1 className="text-lg font-bold text-white leading-tight truncate">{displayName}</h1>
+                  <h1 className="font-heading text-lg font-bold text-white leading-tight truncate">{displayName}</h1>
                   {isPremium && (
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      isFounder
-                        ? "bg-amber-400/25 text-amber-200 border border-amber-400/30"
-                        : "bg-white/15 text-white/80 border border-white/20"
-                    }`}>
+                    <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                    style={isFounder
+                      ? { background: 'rgba(217,119,6,0.25)', color: 'var(--ff-color-warning-200)', borderColor: 'rgba(217,119,6,0.30)' }
+                      : { background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.80)', borderColor: 'rgba(255,255,255,0.20)' }
+                    }
+                  >
                       {isFounder ? <Star className="w-2.5 h-2.5" /> : <Crown className="w-2.5 h-2.5" />}
                       {isFounder ? "Founder" : "Premium"}
                     </span>
@@ -424,7 +426,7 @@ const ProfilePage: React.FC = () => {
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
                 style={{
                   background: "rgba(255,255,255,0.96)",
-                  color: "#4A3828",
+                  color: "var(--ff-color-primary-900)",
                   boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
                 }}
               >
@@ -501,7 +503,7 @@ const ProfilePage: React.FC = () => {
                 {photoPreview && (
                   <button
                     onClick={handleRemovePhoto}
-                    className="w-8 h-8 rounded-xl border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-red-500 hover:border-red-200 transition-colors"
+                    className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-xl border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--ff-color-danger-500)] hover:border-[var(--ff-color-danger-200)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-danger-400)]"
                     aria-label="Foto verwijderen"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -562,12 +564,12 @@ const ProfilePage: React.FC = () => {
                     autoFocus
                     className={`w-full h-11 px-3.5 rounded-xl border text-[var(--color-text)] bg-[var(--color-bg)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] ${
                       displayNameError && displayNameDirty
-                        ? "border-red-400"
+                        ? "border-[var(--ff-color-danger-400)]"
                         : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]"
                     }`}
                   />
                   {displayNameError && displayNameDirty && (
-                    <p className="flex items-center gap-1.5 text-xs text-red-500">
+                    <p className="flex items-center gap-1.5 text-xs text-[var(--ff-color-danger-500)]">
                       <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                       {displayNameError}
                     </p>
@@ -717,7 +719,7 @@ const ProfilePage: React.FC = () => {
           currentArchetype={typeof archetypeName === "string" ? archetypeName : undefined}
         />
       )}
-    </main>
+    </div>
   );
 };
 
