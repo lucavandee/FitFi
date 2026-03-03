@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, CheckCircle, Info, RefreshCcw, X } from "lucide-react";
+import { CircleAlert as AlertCircle, CircleCheck as CheckCircle, Info, RefreshCcw, X } from "lucide-react";
 import type { ConsistencyAnalysis } from "@/engine/profileConsistency";
 
 interface ProfileConsistencyBannerProps {
