@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useId } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -137,10 +137,11 @@ const FAQ_SCHEMA = {
 
 function highlightText(text: string, term: string): React.ReactNode {
   if (!term.trim()) return text;
-  const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escaped})`, "gi");
   const parts = text.split(regex);
   return parts.map((part, i) =>
-    regex.test(part) ? (
+    part.toLowerCase() === term.toLowerCase() ? (
       <mark key={i} className="bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-800)] rounded px-0.5 not-italic">
         {part}
       </mark>
@@ -168,22 +169,22 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
       <h3 id={headingId}>
         <button
           onClick={() => onToggle(id)}
-          className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-25,rgba(120,80,40,0.02))]"
+          className="w-full min-h-[44px] px-5 py-4 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-50)]"
           aria-expanded={isOpen}
           aria-controls={panelId}
         >
-          <span className={`font-medium text-sm sm:text-base leading-snug transition-colors ${isOpen ? "text-[var(--ff-color-primary-700)]" : "text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)]"}`}>
+          <span className={`font-medium text-base leading-snug transition-colors ${isOpen ? "text-[var(--ff-color-primary-700)]" : "text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)]"}`}>
             {highlightTerm ? highlightText(item.q, highlightTerm) : item.q}
           </span>
           <span
-            className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 ${
+            className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
               isOpen
                 ? "bg-[var(--ff-color-primary-700)] text-white"
                 : "bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-100)]"
             }`}
             aria-hidden="true"
           >
-            {isOpen ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+            {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
           </span>
         </button>
       </h3>
@@ -200,7 +201,7 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
             transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-5 text-[var(--color-muted)] leading-relaxed text-sm">
+            <p className="px-5 pb-5 text-[var(--color-muted)] leading-relaxed text-base">
               {highlightTerm && typeof item.a === "string"
                 ? highlightText(item.a, highlightTerm)
                 : item.a}
@@ -218,14 +219,13 @@ type AccordionProps = {
   openId: string | null;
   onToggle: (id: string) => void;
   highlightTerm?: string;
+  liveLabel?: string;
 };
 
 function Accordion({ items, categoryId, openId, onToggle, highlightTerm = "" }: AccordionProps) {
   return (
     <div
-      className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden"
-      style={{ boxShadow: "0 2px 12px rgba(30,35,51,0.06)" }}
-      role="list"
+      className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-card,0_2px_12px_rgba(30,35,51,0.06))]"
     >
       {items.map((item, i) => {
         const id = `${categoryId}-${i}`;
@@ -249,6 +249,7 @@ export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState("algemeen");
   const [openId, setOpenId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const tablistId = useId();
 
   const isSearching = searchTerm.trim().length > 0;
 
@@ -262,7 +263,7 @@ export default function FAQPage() {
     );
   }, [searchTerm, isSearching]);
 
-  const currentCategory = CATEGORIES.find((c) => c.id === activeCategory)!;
+  const currentCategory = CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
 
   function handleToggle(id: string) {
     setOpenId((prev) => (prev === id ? null : id));
@@ -296,11 +297,11 @@ export default function FAQPage() {
             {/* Left: heading */}
             <div>
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
-                <HelpCircle className="w-3.5 h-3.5" aria-hidden />
+                <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
                 Hulp & informatie
               </span>
               <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-text)] mb-4 leading-[1.1] tracking-tight">
-                Veelgestelde<br />vragen
+                Veelgestelde vragen
               </h1>
               <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed max-w-md">
                 Alles wat je wilt weten over FitFi. Staat je vraag er niet tussen?{" "}
@@ -314,27 +315,23 @@ export default function FAQPage() {
               </p>
             </div>
 
-            {/* Right: trust badges — horizontal row on desktop */}
+            {/* Right: trust badges */}
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:min-w-[260px]">
               {TRUST_ITEMS.map((c, i) => {
                 const Icon = c.icon;
                 return (
-                  <motion.div
+                  <div
                     key={i}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.07 }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]"
-                    style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.05)" }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-soft,0_1px_4px_rgba(30,35,51,0.05))]"
                   >
                     <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
-                      <Icon className="h-4 w-4 text-[var(--ff-color-primary-700)]" aria-hidden />
+                      <Icon className="h-4 w-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[var(--color-text)] leading-none mb-0.5">{c.title}</p>
                       <p className="text-xs text-[var(--color-muted)] leading-snug">{c.body}</p>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -362,40 +359,45 @@ export default function FAQPage() {
                 <input
                   id="faq-search"
                   type="search"
+                  inputMode="search"
                   placeholder="Zoek een vraag…"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   autoComplete="off"
-                  className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-shadow"
-                  style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06)" }}
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-base placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-shadow shadow-[var(--shadow-soft,0_1px_4px_rgba(30,35,51,0.06))]"
                 />
                 {searchTerm && (
                   <button
                     onClick={clearSearch}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] transition-colors"
                     aria-label="Zoekopdracht wissen"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </div>
 
-              {/* Category nav */}
+              {/* Category nav — tablist pattern */}
               <nav aria-label="FAQ categorieën">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-2.5 px-1">
                   Categorieën
                 </p>
-                <ul className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto pb-1 lg:overflow-visible lg:pb-0" style={{ scrollbarWidth: "none" }}>
+                <ul
+                  id={tablistId}
+                  role="tablist"
+                  aria-orientation="horizontal"
+                  className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:overflow-visible lg:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                >
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
                     const isActive = !isSearching && activeCategory === cat.id;
                     return (
-                      <li key={cat.id} className="flex-shrink-0 lg:flex-shrink">
+                      <li key={cat.id} role="presentation" className="flex-shrink-0 lg:flex-shrink">
                         <button
                           role="tab"
                           aria-selected={isActive}
                           onClick={() => handleCategoryChange(cat.id)}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
+                          className={`min-h-[44px] w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
                             isActive
                               ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
                               : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]"
@@ -413,10 +415,10 @@ export default function FAQPage() {
                 </ul>
               </nav>
 
-              {/* Contact card */}
-              <div className="hidden lg:block mt-6 rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-4">
+              {/* Contact card — visible on all breakpoints, compact on mobile */}
+              <div className="mt-6 rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-4">
                 <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-2.5">
-                  <MessageCircle className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden />
+                  <MessageCircle className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
                 </div>
                 <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Nog een vraag?</p>
                 <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-2.5">
@@ -424,7 +426,7 @@ export default function FAQPage() {
                 </p>
                 <a
                   href="mailto:contact@fitfi.ai"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors min-h-[44px] sm:min-h-0 py-2 sm:py-0"
                 >
                   contact@fitfi.ai
                   <ArrowRight className="w-3 h-3" />
@@ -434,6 +436,15 @@ export default function FAQPage() {
 
             {/* ── RIGHT: ACCORDION PANEL ── */}
             <div>
+              {/* Live region for screen readers */}
+              <div aria-live="polite" aria-atomic="true" className="sr-only">
+                {isSearching
+                  ? searchResults.length === 0
+                    ? "Geen resultaten gevonden"
+                    : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} gevonden`
+                  : ""}
+              </div>
+
               <AnimatePresence mode="wait">
                 {isSearching ? (
                   <motion.div
@@ -451,13 +462,13 @@ export default function FAQPage() {
 
                     {searchResults.length === 0 ? (
                       <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-10 text-center">
-                        <p className="text-[var(--color-muted)] text-sm mb-4">
+                        <p className="text-[var(--color-muted)] text-base mb-4">
                           Geen vragen gevonden voor{" "}
                           <strong className="text-[var(--color-text)]">"{searchTerm}"</strong>.
                         </p>
                         <button
                           onClick={clearSearch}
-                          className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2"
+                          className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2 min-h-[44px] px-4"
                         >
                           Toon alle vragen
                         </button>
@@ -506,17 +517,17 @@ export default function FAQPage() {
       {/* ── BOTTOM CTA STRIP ── */}
       <section className="ff-container pb-20">
         <div className="max-w-5xl mx-auto">
-          <div className="rounded-2xl bg-[var(--ff-color-primary-700)] px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="rounded-2xl bg-[var(--ff-color-primary-700)] px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <p className="font-bold text-lg text-white mb-1">Klaar om je stijl te ontdekken?</p>
               <p className="text-sm text-white/75">De quiz duurt minder dan twee minuten.</p>
             </div>
             <NavLink
               to="/onboarding"
-              className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-[var(--ff-color-primary-800)] font-semibold text-sm px-6 py-3 rounded-full hover:bg-[var(--ff-color-primary-50)] transition-colors shadow-sm"
+              className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-[var(--ff-color-primary-800)] font-semibold text-sm px-6 py-3 min-h-[44px] rounded-full hover:bg-[var(--ff-color-primary-50)] transition-colors shadow-sm"
             >
               Start gratis
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </NavLink>
           </div>
         </div>
