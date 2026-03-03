@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useId } from "react";
+import React, { useState, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  CircleHelp as HelpCircle,
+  CircleHelp,
   ShieldCheck,
   CreditCard,
   Clock,
@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 
-type QA = { q: string; a: React.ReactNode; category: string };
+type QA = { q: string; a: string; category: string };
 
 const FAQ_GENERAL: QA[] = [
   {
@@ -99,28 +99,16 @@ const ALL_QUESTIONS: QA[] = [
 ];
 
 const CATEGORIES = [
-  { id: "algemeen", label: "Algemeen", icon: HelpCircle, items: FAQ_GENERAL },
-  { id: "privacy", label: "Privacy & gegevens", icon: ShieldCheck, items: FAQ_PRIVACY },
-  { id: "prijzen", label: "Prijzen", icon: CreditCard, items: FAQ_PRICING },
-  { id: "product", label: "Product & gebruik", icon: Package, items: FAQ_PRODUCT },
+  { id: "algemeen",  label: "Algemeen",          Icon: CircleHelp,   items: FAQ_GENERAL  },
+  { id: "privacy",   label: "Privacy & gegevens", Icon: ShieldCheck,  items: FAQ_PRIVACY  },
+  { id: "prijzen",   label: "Prijzen",             Icon: CreditCard,   items: FAQ_PRICING  },
+  { id: "product",   label: "Product & gebruik",   Icon: Package,      items: FAQ_PRODUCT  },
 ];
 
-const TRUST_ITEMS = [
-  {
-    icon: ShieldCheck,
-    title: "Privacybewust",
-    body: "Alleen wat nodig is. Nooit doorverkocht.",
-  },
-  {
-    icon: CreditCard,
-    title: "Eerlijk geprijsd",
-    body: "Begin gratis. Opzeggen altijd.",
-  },
-  {
-    icon: Clock,
-    title: "Direct resultaat",
-    body: "Outfits binnen twee minuten.",
-  },
+const TRUST_PILLS = [
+  { Icon: ShieldCheck, label: "Privacybewust" },
+  { Icon: CreditCard,  label: "Eerlijk geprijsd" },
+  { Icon: Clock,       label: "Direct resultaat" },
 ];
 
 const FAQ_SCHEMA = {
@@ -129,29 +117,37 @@ const FAQ_SCHEMA = {
   mainEntity: ALL_QUESTIONS.map((item) => ({
     "@type": "Question",
     name: item.q,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: typeof item.a === "string" ? item.a : String(item.a),
-    },
+    acceptedAnswer: { "@type": "Answer", text: item.a },
   })),
 };
 
-function highlightText(text: string, term: string): React.ReactNode {
-  if (!term.trim()) return text;
-  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = new RegExp(`(${escaped})`, "gi");
-  const parts = text.split(regex);
-  return parts.map((part, i) =>
-    part.toLowerCase() === term.toLowerCase() ? (
-      <mark
-        key={i}
-        className="bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-800)] rounded px-0.5 not-italic"
-      >
-        {part}
-      </mark>
-    ) : (
-      part
-    )
+function escapeRegex(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function Highlight({ text, term }: { text: string; term: string }) {
+  if (!term.trim()) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${escapeRegex(term)})`, "gi"));
+  return (
+    <>
+      {parts.map((p, i) =>
+        p.toLowerCase() === term.toLowerCase() ? (
+          <mark
+            key={i}
+            style={{
+              background: "var(--ff-color-primary-100)",
+              color: "var(--ff-color-primary-800)",
+              borderRadius: "2px",
+              padding: "0 2px",
+            }}
+          >
+            {p}
+          </mark>
+        ) : (
+          <React.Fragment key={i}>{p}</React.Fragment>
+        )
+      )}
+    </>
   );
 }
 
@@ -160,52 +156,73 @@ type AccordionItemProps = {
   id: string;
   isOpen: boolean;
   onToggle: (id: string) => void;
-  highlightTerm?: string;
+  highlight: string;
   isLast: boolean;
 };
 
-function AccordionItem({
-  item,
-  id,
-  isOpen,
-  onToggle,
-  highlightTerm = "",
-  isLast,
-}: AccordionItemProps) {
-  const panelId = `panel-${id}`;
-  const headingId = `heading-${id}`;
+function AccordionItem({ item, id, isOpen, onToggle, highlight, isLast }: AccordionItemProps) {
+  const panelId  = `panel-${id}`;
+  const labelId  = `label-${id}`;
 
   return (
-    <div className={!isLast ? "border-b border-[var(--color-border)]" : ""}>
-      <h3 id={headingId}>
+    <div
+      style={{
+        borderBottom: isLast ? "none" : "1px solid var(--color-border)",
+      }}
+    >
+      <h3 id={labelId} style={{ margin: 0 }}>
         <button
           onClick={() => onToggle(id)}
-          className="w-full min-h-[56px] px-6 py-4 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-50)]"
           aria-expanded={isOpen}
           aria-controls={panelId}
+          style={{
+            width: "100%",
+            minHeight: "56px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+            padding: "16px 24px",
+            background: isOpen ? "var(--ff-color-primary-50)" : "transparent",
+            border: "none",
+            cursor: "pointer",
+            textAlign: "left",
+            transition: "background 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            if (!isOpen) (e.currentTarget as HTMLButtonElement).style.background = "var(--ff-color-primary-50)";
+          }}
+          onMouseLeave={(e) => {
+            if (!isOpen) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+          }}
         >
           <span
-            className={`font-medium text-base leading-snug transition-colors ${
-              isOpen
-                ? "text-[var(--ff-color-primary-700)]"
-                : "text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)]"
-            }`}
+            style={{
+              fontSize: "15px",
+              fontWeight: 500,
+              lineHeight: 1.4,
+              color: isOpen ? "var(--ff-color-primary-700)" : "var(--color-text)",
+              flex: 1,
+            }}
           >
-            {highlightTerm ? highlightText(item.q, highlightTerm) : item.q}
+            <Highlight text={item.q} term={highlight} />
           </span>
           <span
-            className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-              isOpen
-                ? "bg-[var(--ff-color-primary-700)] text-white"
-                : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-200)]"
-            }`}
+            style={{
+              flexShrink: 0,
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              background: isOpen ? "var(--ff-color-primary-700)" : "var(--ff-color-primary-100)",
+              color: isOpen ? "#fff" : "var(--ff-color-primary-700)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s ease",
+            }}
             aria-hidden="true"
           >
-            {isOpen ? (
-              <Minus className="w-3.5 h-3.5" />
-            ) : (
-              <Plus className="w-3.5 h-3.5" />
-            )}
+            {isOpen ? <Minus size={13} strokeWidth={2.5} /> : <Plus size={13} strokeWidth={2.5} />}
           </span>
         </button>
       </h3>
@@ -215,17 +232,23 @@ function AccordionItem({
           <motion.div
             id={panelId}
             role="region"
-            aria-labelledby={headingId}
+            aria-labelledby={labelId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            style={{ overflow: "hidden" }}
           >
-            <p className="px-6 pb-6 pt-1 text-[var(--color-muted)] leading-relaxed text-base">
-              {highlightTerm && typeof item.a === "string"
-                ? highlightText(item.a, highlightTerm)
-                : item.a}
+            <p
+              style={{
+                margin: 0,
+                padding: "4px 24px 20px",
+                fontSize: "15px",
+                lineHeight: 1.7,
+                color: "var(--color-muted)",
+              }}
+            >
+              <Highlight text={item.a} term={highlight} />
             </p>
           </motion.div>
         )}
@@ -234,79 +257,43 @@ function AccordionItem({
   );
 }
 
-type AccordionProps = {
-  items: QA[];
-  categoryId: string;
-  openId: string | null;
-  onToggle: (id: string) => void;
-  highlightTerm?: string;
-};
-
-function Accordion({
-  items,
-  categoryId,
-  openId,
-  onToggle,
-  highlightTerm = "",
-}: AccordionProps) {
-  return (
-    <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]">
-      {items.map((item, i) => {
-        const id = `${categoryId}-${i}`;
-        return (
-          <AccordionItem
-            key={id}
-            item={item}
-            id={id}
-            isOpen={openId === id}
-            onToggle={onToggle}
-            highlightTerm={highlightTerm}
-            isLast={i === items.length - 1}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
 export default function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState("algemeen");
-  const [openId, setOpenId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const tablistId = useId();
+  const [activeCat, setActiveCat]     = useState("algemeen");
+  const [openId, setOpenId]           = useState<string | null>(null);
+  const [search, setSearch]           = useState("");
 
-  const isSearching = searchTerm.trim().length > 0;
+  const isSearching = search.trim().length > 0;
 
   const searchResults = useMemo(() => {
     if (!isSearching) return [];
-    const q = searchTerm.trim().toLowerCase();
+    const q = search.trim().toLowerCase();
     return ALL_QUESTIONS.filter(
-      (item) =>
-        item.q.toLowerCase().includes(q) ||
-        (typeof item.a === "string" && item.a.toLowerCase().includes(q))
+      (item) => item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q)
     );
-  }, [searchTerm, isSearching]);
+  }, [search, isSearching]);
 
-  const currentCategory =
-    CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
+  const currentCat = CATEGORIES.find((c) => c.id === activeCat) ?? CATEGORIES[0];
 
-  function handleToggle(id: string) {
+  function toggle(id: string) {
     setOpenId((prev) => (prev === id ? null : id));
   }
 
-  function handleCategoryChange(id: string) {
-    setActiveCategory(id);
+  function changeCat(id: string) {
+    setActiveCat(id);
     setOpenId(null);
-    setSearchTerm("");
+    setSearch("");
   }
 
   function clearSearch() {
-    setSearchTerm("");
+    setSearch("");
     setOpenId(null);
   }
 
+  const displayItems  = isSearching ? searchResults : currentCat.items;
+  const displayCatId  = isSearching ? "search"      : currentCat.id;
+
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+    <main id="main" style={{ background: "var(--color-bg)", color: "var(--color-text)" }}>
       <Seo
         title="Veelgestelde vragen — FitFi"
         description="Antwoorden op de meest gestelde vragen over FitFi: hoe het werkt, privacy, prijzen en je account."
@@ -314,508 +301,676 @@ export default function FAQPage() {
         structuredData={FAQ_SCHEMA}
       />
 
-      {/* ═══════════════════════════════════════════════════
-          HERO — cinematic, donker, editorial
-          Zelfde taal als HeroV3
-      ═══════════════════════════════════════════════════ */}
-
-      {/* MOBILE hero */}
+      {/* ══════════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════════ */}
       <section
-        aria-labelledby="faq-heading"
-        className="sm:hidden relative w-full overflow-hidden"
-        style={{ height: '72svh', minHeight: '460px', background: '#1c120a' }}
+        aria-labelledby="faq-h1"
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          minHeight: "clamp(420px, 52vh, 560px)",
+          background: "#1c1208",
+        }}
       >
+        {/* Photo */}
         <img
           src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectPosition: '50% 30%' }}
+          aria-hidden="true"
           loading="eager"
-          aria-hidden="true"
-        />
-
-        {/* Bovenste fade */}
-        <div
-          className="absolute top-0 inset-x-0 pointer-events-none"
           style={{
-            height: '35%',
-            background: 'linear-gradient(to bottom, rgba(28,18,10,0.70) 0%, rgba(28,18,10,0.20) 60%, transparent 100%)',
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center 20%",
           }}
-          aria-hidden="true"
         />
 
-        {/* Onderste fade */}
+        {/* Left-to-right gradient (keeps text readable) */}
         <div
-          className="absolute inset-x-0 bottom-0 pointer-events-none"
+          aria-hidden="true"
           style={{
-            height: '80%',
-            background: 'linear-gradient(to bottom, transparent 0%, rgba(20,13,8,0.55) 30%, rgba(20,13,8,0.88) 60%, rgba(20,13,8,0.98) 85%, rgba(20,13,8,1.0) 100%)',
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(95deg, rgba(20,13,6,0.92) 0%, rgba(20,13,6,0.72) 38%, rgba(20,13,6,0.30) 62%, rgba(20,13,6,0.10) 100%)",
           }}
-          aria-hidden="true"
         />
 
-        {/* Vignet */}
+        {/* Bottom fade to page bg */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(20,13,8,0.28) 100%)' }}
           aria-hidden="true"
-        />
-
-        {/* AI badge */}
-        <div
-          className="absolute top-5 left-4 z-20 inline-flex items-center gap-2 px-3.5 py-2 rounded-full"
           style={{
-            background: 'rgba(247,243,236,0.12)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(247,243,236,0.22)',
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "160px",
+            background:
+              "linear-gradient(to bottom, transparent 0%, rgba(247,243,236,0.18) 100%)",
+          }}
+        />
+
+        {/* Content */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 10,
+            maxWidth: "1152px",
+            margin: "0 auto",
+            padding: "clamp(80px, 10vw, 120px) clamp(24px, 5vw, 56px) clamp(64px, 8vw, 96px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: 0,
           }}
         >
-          <Sparkles className="w-3 h-3" style={{ color: '#e8d5b0' }} aria-hidden="true" />
-          <span className="text-[11px] font-bold tracking-[0.08em] uppercase" style={{ color: '#F7F3EC' }}>
-            Hulp & informatie
-          </span>
-        </div>
-
-        {/* Tekst + trust — vastgepind onderaan */}
-        <div className="absolute bottom-0 inset-x-0 z-20 px-6 pb-9">
-          <h1
-            id="faq-heading"
-            className="font-bold tracking-tight mb-3"
+          {/* Badge */}
+          <div
             style={{
-              fontSize: 'clamp(2.25rem, 9.5vw, 2.9rem)',
-              lineHeight: 1.06,
-              color: '#F7F3EC',
-              letterSpacing: '-0.02em',
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "7px 14px",
+              borderRadius: "999px",
+              background: "rgba(247,243,236,0.92)",
+              color: "var(--ff-color-primary-700)",
+              fontSize: "12px",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              marginBottom: "24px",
             }}
           >
-            Veelgestelde{' '}
-            <em className="not-italic" style={{ color: '#d4a96a' }}>vragen</em>
+            <Sparkles size={13} aria-hidden="true" />
+            Hulp &amp; informatie
+          </div>
+
+          {/* Heading */}
+          <h1
+            id="faq-h1"
+            style={{
+              margin: 0,
+              fontSize: "clamp(2.6rem, 5.5vw, 4.5rem)",
+              fontWeight: 800,
+              lineHeight: 1.04,
+              letterSpacing: "-0.025em",
+              color: "#F7F3EC",
+              marginBottom: "20px",
+            }}
+          >
+            Veelgestelde{" "}
+            <em
+              className="not-italic"
+              style={{ color: "#d4a96a" }}
+            >
+              vragen
+            </em>
           </h1>
 
+          {/* Subtitle */}
           <p
-            className="text-[14px] font-light leading-[1.6] mb-6"
-            style={{ color: 'rgba(247,243,236,0.65)', maxWidth: '90%' }}
+            style={{
+              margin: 0,
+              fontSize: "clamp(15px, 1.8vw, 18px)",
+              fontWeight: 300,
+              lineHeight: 1.65,
+              color: "rgba(247,243,236,0.72)",
+              maxWidth: "520px",
+              marginBottom: "36px",
+            }}
           >
-            Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{' '}
+            Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{" "}
             <a
               href="mailto:contact@fitfi.ai"
-              className="font-semibold underline underline-offset-2"
-              style={{ color: '#d4a96a' }}
+              style={{
+                color: "#d4a96a",
+                fontWeight: 600,
+                textDecoration: "underline",
+                textUnderlineOffset: "3px",
+              }}
             >
               Stuur ons een bericht.
             </a>
           </p>
 
-          {/* Trust pills — horizontal row */}
-          <div className="flex gap-2 flex-wrap">
-            {TRUST_ITEMS.map((t, i) => {
-              const Icon = t.icon;
-              return (
-                <div
-                  key={i}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-                  style={{
-                    background: 'rgba(247,243,236,0.08)',
-                    border: '1px solid rgba(247,243,236,0.16)',
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
-                  }}
-                >
-                  <Icon className="w-3 h-3 flex-shrink-0" style={{ color: '#b8976a' }} aria-hidden="true" />
-                  <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'rgba(247,243,236,0.80)' }}>
-                    {t.title}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* DESKTOP hero */}
-      <section
-        aria-labelledby="faq-heading-desktop"
-        className="hidden sm:block relative w-full overflow-hidden"
-        style={{ minHeight: 'min(52vh, 520px)', background: '#2a1f14' }}
-      >
-        {/* Full-bleed foto */}
-        <div className="absolute inset-0" aria-hidden="true">
-          <img
-            src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ objectPosition: 'center 25%' }}
-            loading="eager"
-          />
-          {/* Linker overlay */}
+          {/* Trust pills — single row, no wrap */}
           <div
-            className="absolute inset-0"
             style={{
-              background: 'linear-gradient(100deg, rgba(30,20,10,0.90) 0%, rgba(30,20,10,0.68) 36%, rgba(30,20,10,0.22) 62%, transparent 100%)',
-            }}
-          />
-          {/* Onderste fade naar site-achtergrond */}
-          <div
-            className="absolute bottom-0 inset-x-0 h-36"
-            style={{
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(247,243,236,0.22) 100%)',
-            }}
-          />
-        </div>
-
-        {/* Tekstkolom */}
-        <div
-          className="relative z-10 w-full max-w-6xl mx-auto px-8 lg:px-14 flex items-center"
-          style={{ minHeight: 'min(52vh, 520px)' }}
-        >
-          <div className="max-w-2xl py-20">
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7"
-              style={{
-                background: 'rgba(247,243,236,0.94)',
-                color: 'var(--ff-color-primary-700)',
-              }}
-            >
-              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-              Hulp & informatie
-            </div>
-
-            <h1
-              id="faq-heading-desktop"
-              className="font-bold leading-[1.05] tracking-tight mb-5"
-              style={{
-                fontSize: 'clamp(2.8rem, 5.5vw, 5rem)',
-                color: '#F7F3EC',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Veelgestelde{' '}
-              <em className="not-italic" style={{ color: 'var(--ff-color-primary-300)' }}>
-                vragen
-              </em>
-            </h1>
-
-            <p
-              className="text-lg leading-relaxed max-w-lg mb-9 font-light"
-              style={{ color: 'rgba(247,243,236,0.76)' }}
-            >
-              Alles wat je wilt weten over FitFi. Staat je vraag er niet bij?{' '}
-              <a
-                href="mailto:contact@fitfi.ai"
-                className="font-semibold underline underline-offset-2 transition-opacity hover:opacity-80"
-                style={{ color: '#d4a96a' }}
-              >
-                Stuur ons een bericht.
-              </a>
-            </p>
-
-            {/* Trust badges — frosted glass pills */}
-            <div className="flex flex-wrap gap-2.5">
-              {TRUST_ITEMS.map((t, i) => {
-                const Icon = t.icon;
-                return (
-                  <div
-                    key={i}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
-                    style={{
-                      background: 'rgba(247,243,236,0.09)',
-                      border: '1px solid rgba(247,243,236,0.20)',
-                      backdropFilter: 'blur(12px)',
-                      WebkitBackdropFilter: 'blur(12px)',
-                    }}
-                  >
-                    <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#b8976a' }} aria-hidden="true" />
-                    <span className="text-sm font-semibold" style={{ color: 'rgba(247,243,236,0.82)' }}>
-                      {t.title}
-                    </span>
-                    <span className="hidden md:inline text-xs" style={{ color: 'rgba(247,243,236,0.50)' }}>
-                      — {t.body}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          MAIN CONTENT
-      ═══════════════════════════════════════════════════ */}
-      <section className="ff-container py-12 sm:py-16 lg:py-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-12 xl:gap-16">
-
-            {/* ── SIDEBAR ── */}
-            <aside className="mb-10 lg:mb-0">
-
-              {/* Search */}
-              <div className="relative mb-6">
-                <Search
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
-                  aria-hidden="true"
-                />
-                <label htmlFor="faq-search" className="sr-only">
-                  Zoek in veelgestelde vragen
-                </label>
-                <input
-                  id="faq-search"
-                  type="search"
-                  inputMode="search"
-                  placeholder="Zoek een vraag…"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  autoComplete="off"
-                  className="w-full pl-10 pr-12 py-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-base placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-all shadow-[var(--shadow-soft)]"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={clearSearch}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] transition-colors"
-                    aria-label="Zoekopdracht wissen"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Category nav */}
-              <nav aria-label="FAQ categorieën">
-                <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-muted)] mb-3 px-1">
-                  Categorieën
-                </p>
-                <ul
-                  id={tablistId}
-                  role="tablist"
-                  aria-orientation="horizontal"
-                  className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:overflow-visible lg:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-                >
-                  {CATEGORIES.map((cat) => {
-                    const Icon = cat.icon;
-                    const isActive = !isSearching && activeCategory === cat.id;
-                    return (
-                      <li
-                        key={cat.id}
-                        role="presentation"
-                        className="flex-shrink-0 lg:flex-shrink"
-                      >
-                        <button
-                          role="tab"
-                          aria-selected={isActive}
-                          onClick={() => handleCategoryChange(cat.id)}
-                          className={`min-h-[48px] w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
-                            isActive
-                              ? "bg-[var(--ff-color-primary-700)] text-white shadow-md"
-                              : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]"
-                          }`}
-                        >
-                          <span
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
-                              isActive
-                                ? 'bg-white/20'
-                                : 'bg-[var(--ff-color-primary-100)]'
-                            }`}
-                          >
-                            <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                          </span>
-                          <span className="whitespace-nowrap lg:whitespace-normal flex-1">
-                            {cat.label}
-                          </span>
-                          <span
-                            className={`text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ${
-                              isActive
-                                ? "bg-white/20 text-white"
-                                : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"
-                            }`}
-                          >
-                            {cat.items.length}
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </nav>
-
-              {/* Contact card */}
-              <div
-                className="mt-6 rounded-2xl p-5 border border-[var(--ff-color-primary-200)]"
-                style={{
-                  background: 'linear-gradient(135deg, var(--ff-color-primary-50) 0%, var(--ff-color-accent-50) 100%)',
-                }}
-              >
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                  style={{ background: 'var(--ff-color-primary-100)' }}
-                >
-                  <MessageCircle className="w-4.5 h-4.5 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
-                </div>
-                <p className="text-sm font-bold text-[var(--color-text)] mb-1">Nog een vraag?</p>
-                <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-3">
-                  Wij reageren binnen 24 uur.
-                </p>
-                <a
-                  href="mailto:contact@fitfi.ai"
-                  className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors min-h-[44px] py-1"
-                >
-                  contact@fitfi.ai
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </aside>
-
-            {/* ── ACCORDION PANEL ── */}
-            <div>
-              {/* Screen reader live region */}
-              <div aria-live="polite" aria-atomic="true" className="sr-only">
-                {isSearching
-                  ? searchResults.length === 0
-                    ? "Geen resultaten gevonden"
-                    : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} gevonden`
-                  : ""}
-              </div>
-
-              <AnimatePresence mode="wait">
-                {isSearching ? (
-                  <motion.div
-                    key="search-results"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.18 }}
-                  >
-                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
-                      {searchResults.length === 0
-                        ? "Geen resultaten"
-                        : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} voor "${searchTerm}"`}
-                    </p>
-
-                    {searchResults.length === 0 ? (
-                      <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-12 text-center shadow-[var(--shadow-soft)]">
-                        <div
-                          className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-                          style={{ background: 'var(--ff-color-primary-50)' }}
-                        >
-                          <Search className="w-5 h-5 text-[var(--ff-color-primary-400)]" aria-hidden="true" />
-                        </div>
-                        <p className="text-[var(--color-muted)] text-base mb-4">
-                          Geen vragen gevonden voor{" "}
-                          <strong className="text-[var(--color-text)]">"{searchTerm}"</strong>.
-                        </p>
-                        <button
-                          onClick={clearSearch}
-                          className="text-sm font-bold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2 min-h-[44px] px-4"
-                        >
-                          Toon alle vragen
-                        </button>
-                      </div>
-                    ) : (
-                      <Accordion
-                        items={searchResults}
-                        categoryId="search"
-                        openId={openId}
-                        onToggle={handleToggle}
-                        highlightTerm={searchTerm}
-                      />
-                    )}
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key={activeCategory}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.18 }}
-                  >
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)]">
-                          {currentCategory.label}
-                        </span>
-                      </div>
-                      <span className="text-xs text-[var(--color-muted)] font-medium">
-                        {currentCategory.items.length} vragen
-                      </span>
-                    </div>
-                    <Accordion
-                      items={currentCategory.items}
-                      categoryId={currentCategory.id}
-                      openId={openId}
-                      onToggle={handleToggle}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          BOTTOM CTA — donker, premium, editorial
-      ═══════════════════════════════════════════════════ */}
-      <section className="ff-container pb-20">
-        <div className="max-w-5xl mx-auto">
-          <div
-            className="relative overflow-hidden rounded-3xl px-8 sm:px-12 py-12 sm:py-14"
-            style={{
-              background: 'linear-gradient(135deg, #2a1f14 0%, #3d2b1a 50%, #2a1f14 100%)',
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "nowrap",
+              gap: "10px",
             }}
           >
-            {/* Decoratieve lichte cirkel */}
-            <div
-              className="absolute -top-20 -right-20 w-72 h-72 rounded-full pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle, rgba(184,151,106,0.18) 0%, transparent 70%)',
-              }}
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle, rgba(212,169,106,0.10) 0%, transparent 70%)',
-              }}
-              aria-hidden="true"
-            />
-
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div>
-                <p
-                  className="font-bold text-xl sm:text-2xl mb-2 tracking-tight"
-                  style={{ color: '#F7F3EC' }}
-                >
-                  Klaar om je stijl te ontdekken?
-                </p>
-                <p
-                  className="text-sm font-light"
-                  style={{ color: 'rgba(247,243,236,0.62)' }}
-                >
-                  De quiz duurt minder dan twee minuten. Geen creditcard nodig.
-                </p>
-              </div>
-
-              <NavLink
-                to="/onboarding"
-                className="group flex-shrink-0 inline-flex items-center gap-2.5 px-7 py-3.5 min-h-[52px] rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02]"
+            {TRUST_PILLS.map(({ Icon, label }) => (
+              <div
+                key={label}
                 style={{
-                  background: 'linear-gradient(135deg, #9b7a52 0%, #7a5c38 100%)',
-                  color: '#F7F3EC',
-                  boxShadow: '0 4px 24px rgba(100,72,40,0.50)',
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "8px 14px",
+                  borderRadius: "999px",
+                  background: "rgba(247,243,236,0.09)",
+                  border: "1px solid rgba(247,243,236,0.22)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
                 }}
               >
-                Start gratis
-                <ArrowRight
-                  className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                <Icon
+                  size={13}
                   aria-hidden="true"
+                  style={{ color: "#b8976a", flexShrink: 0 }}
                 />
-              </NavLink>
-            </div>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "rgba(247,243,236,0.82)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* ══════════════════════════════════════════════════
+          MAIN CONTENT
+      ══════════════════════════════════════════════════ */}
+      <section
+        style={{
+          maxWidth: "1152px",
+          margin: "0 auto",
+          padding: "clamp(48px, 6vw, 80px) clamp(24px, 5vw, 56px) clamp(64px, 8vw, 80px)",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "220px 1fr",
+            gap: "clamp(32px, 4vw, 64px)",
+            alignItems: "start",
+          }}
+          className="faq-grid"
+        >
+          {/* ── SIDEBAR ── */}
+          <aside>
+            {/* Search */}
+            <div style={{ position: "relative", marginBottom: "20px" }}>
+              <Search
+                size={15}
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  left: "14px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "var(--color-muted)",
+                  pointerEvents: "none",
+                }}
+              />
+              <label htmlFor="faq-search" className="sr-only">
+                Zoek in veelgestelde vragen
+              </label>
+              <input
+                id="faq-search"
+                type="search"
+                placeholder="Zoek een vraag…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoComplete="off"
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  paddingLeft: "40px",
+                  paddingRight: search ? "40px" : "14px",
+                  paddingTop: "12px",
+                  paddingBottom: "12px",
+                  borderRadius: "12px",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface)",
+                  fontSize: "14px",
+                  color: "var(--color-text)",
+                  boxShadow: "var(--shadow-soft)",
+                  outline: "none",
+                  transition: "border-color 0.15s ease",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ff-color-primary-400)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
+              />
+              {search && (
+                <button
+                  onClick={clearSearch}
+                  aria-label="Zoekopdracht wissen"
+                  style={{
+                    position: "absolute",
+                    right: "6px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--color-muted)",
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Category label */}
+            <p
+              style={{
+                margin: "0 0 8px 2px",
+                fontSize: "10px",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--color-muted)",
+              }}
+            >
+              Categorieën
+            </p>
+
+            {/* Category buttons */}
+            <nav aria-label="FAQ categorieën">
+              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "4px" }}>
+                {CATEGORIES.map(({ id, label, Icon, items }) => {
+                  const active = !isSearching && activeCat === id;
+                  return (
+                    <li key={id}>
+                      <button
+                        onClick={() => changeCat(id)}
+                        aria-pressed={active}
+                        style={{
+                          width: "100%",
+                          minHeight: "44px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          padding: "8px 12px",
+                          borderRadius: "10px",
+                          border: "none",
+                          cursor: "pointer",
+                          textAlign: "left",
+                          background: active ? "var(--ff-color-primary-700)" : "transparent",
+                          color: active ? "#fff" : "var(--color-text)",
+                          transition: "all 0.15s ease",
+                          fontWeight: 600,
+                          fontSize: "13.5px",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!active) (e.currentTarget as HTMLButtonElement).style.background = "var(--ff-color-primary-50)";
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                        }}
+                      >
+                        {/* Icon container */}
+                        <span
+                          style={{
+                            flexShrink: 0,
+                            width: "28px",
+                            height: "28px",
+                            borderRadius: "8px",
+                            background: active ? "rgba(255,255,255,0.18)" : "var(--ff-color-primary-100)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: active ? "#fff" : "var(--ff-color-primary-700)",
+                          }}
+                        >
+                          <Icon size={13} aria-hidden="true" />
+                        </span>
+
+                        {/* Label — single line */}
+                        <span
+                          style={{
+                            flex: 1,
+                            lineHeight: 1.2,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {label}
+                        </span>
+
+                        {/* Count badge */}
+                        <span
+                          style={{
+                            flexShrink: 0,
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "50%",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: active ? "rgba(255,255,255,0.20)" : "var(--ff-color-primary-100)",
+                            color: active ? "#fff" : "var(--ff-color-primary-700)",
+                          }}
+                        >
+                          {items.length}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            {/* Contact card */}
+            <div
+              style={{
+                marginTop: "24px",
+                borderRadius: "16px",
+                padding: "20px",
+                background: "linear-gradient(135deg, var(--ff-color-primary-50) 0%, var(--ff-color-accent-50) 100%)",
+                border: "1px solid var(--ff-color-primary-200)",
+              }}
+            >
+              <div
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "10px",
+                  background: "var(--ff-color-primary-100)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "12px",
+                }}
+              >
+                <MessageCircle size={16} style={{ color: "var(--ff-color-primary-700)" }} aria-hidden="true" />
+              </div>
+              <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: 700, color: "var(--color-text)" }}>
+                Nog een vraag?
+              </p>
+              <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--color-muted)", lineHeight: 1.5 }}>
+                Wij reageren binnen 24 uur.
+              </p>
+              <a
+                href="mailto:contact@fitfi.ai"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--ff-color-primary-700)",
+                  textDecoration: "none",
+                  minHeight: "44px",
+                }}
+              >
+                contact@fitfi.ai
+                <ArrowRight size={13} />
+              </a>
+            </div>
+          </aside>
+
+          {/* ── ACCORDION ── */}
+          <div>
+            {/* Live region */}
+            <div aria-live="polite" aria-atomic="true" className="sr-only">
+              {isSearching
+                ? searchResults.length === 0
+                  ? "Geen resultaten gevonden"
+                  : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} gevonden`
+                : ""}
+            </div>
+
+            {/* Header row */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.10em",
+                  textTransform: "uppercase",
+                  color: "var(--ff-color-primary-600)",
+                }}
+              >
+                {isSearching
+                  ? searchResults.length === 0
+                    ? "Geen resultaten"
+                    : `${searchResults.length} resultaat${searchResults.length !== 1 ? "en" : ""} voor "${search}"`
+                  : currentCat.label}
+              </span>
+              {!isSearching && (
+                <span style={{ fontSize: "12px", color: "var(--color-muted)", fontWeight: 500 }}>
+                  {currentCat.items.length} vragen
+                </span>
+              )}
+            </div>
+
+            {/* Accordion panel */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={isSearching ? `search-${search}` : activeCat}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.16 }}
+              >
+                {displayItems.length === 0 ? (
+                  <div
+                    style={{
+                      borderRadius: "16px",
+                      background: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      boxShadow: "var(--shadow-soft)",
+                      padding: "56px 24px",
+                      textAlign: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "44px",
+                        height: "44px",
+                        borderRadius: "14px",
+                        background: "var(--ff-color-primary-50)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 auto 16px",
+                      }}
+                    >
+                      <Search size={18} style={{ color: "var(--ff-color-primary-400)" }} />
+                    </div>
+                    <p style={{ margin: "0 0 16px", color: "var(--color-muted)", fontSize: "15px" }}>
+                      Geen vragen gevonden voor{" "}
+                      <strong style={{ color: "var(--color-text)" }}>"{search}"</strong>.
+                    </p>
+                    <button
+                      onClick={clearSearch}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        fontWeight: 700,
+                        color: "var(--ff-color-primary-700)",
+                        textDecoration: "underline",
+                        textUnderlineOffset: "2px",
+                        minHeight: "44px",
+                        padding: "0 8px",
+                      }}
+                    >
+                      Toon alle vragen
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      borderRadius: "16px",
+                      background: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      boxShadow: "var(--shadow-soft)",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {displayItems.map((item, i) => (
+                      <AccordionItem
+                        key={`${displayCatId}-${i}`}
+                        item={item}
+                        id={`${displayCatId}-${i}`}
+                        isOpen={openId === `${displayCatId}-${i}`}
+                        onToggle={toggle}
+                        highlight={isSearching ? search : ""}
+                        isLast={i === displayItems.length - 1}
+                      />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════
+          BOTTOM CTA
+      ══════════════════════════════════════════════════ */}
+      <section
+        style={{
+          maxWidth: "1152px",
+          margin: "0 auto",
+          padding: "0 clamp(24px, 5vw, 56px) clamp(64px, 8vw, 96px)",
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            borderRadius: "24px",
+            padding: "clamp(40px, 5vw, 56px) clamp(32px, 5vw, 56px)",
+            background: "linear-gradient(135deg, #2a1f14 0%, #3d2b1a 50%, #2a1f14 100%)",
+          }}
+        >
+          {/* Decorative glows */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: "-80px",
+              right: "-80px",
+              width: "280px",
+              height: "280px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(184,151,106,0.20) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              bottom: "-60px",
+              left: "-60px",
+              width: "240px",
+              height: "240px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(212,169,106,0.12) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
+          />
+
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "24px",
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  margin: "0 0 6px",
+                  fontSize: "clamp(18px, 2.5vw, 22px)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
+                  color: "#F7F3EC",
+                }}
+              >
+                Klaar om je stijl te ontdekken?
+              </p>
+              <p style={{ margin: 0, fontSize: "14px", fontWeight: 300, color: "rgba(247,243,236,0.60)" }}>
+                De quiz duurt minder dan twee minuten. Geen creditcard nodig.
+              </p>
+            </div>
+
+            <NavLink
+              to="/onboarding"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "14px 28px",
+                minHeight: "52px",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, #9b7a52 0%, #7a5c38 100%)",
+                color: "#F7F3EC",
+                fontWeight: 700,
+                fontSize: "14px",
+                textDecoration: "none",
+                boxShadow: "0 4px 24px rgba(100,72,40,0.45)",
+                transition: "transform 0.15s ease, box-shadow 0.15s ease",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-1px)";
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 32px rgba(100,72,40,0.55)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 24px rgba(100,72,40,0.45)";
+              }}
+            >
+              Start gratis
+              <ArrowRight size={16} aria-hidden="true" />
+            </NavLink>
+          </div>
+        </div>
+      </section>
+
+      {/* Responsive: stack grid on mobile */}
+      <style>{`
+        @media (max-width: 768px) {
+          .faq-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
