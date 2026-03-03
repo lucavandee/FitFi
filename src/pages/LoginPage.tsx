@@ -39,7 +39,9 @@ export default function LoginPage() {
   const [loading, setLoading] = React.useState(false);
   const [serverError, setServerError] = React.useState<ErrorMessage | null>(null);
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
-  const [quoteIndex] = React.useState(() => Math.floor(Math.random() * SOCIAL_PROOF.length));
+  const [quoteIndex] = React.useState(
+    () => Math.floor(Math.random() * SOCIAL_PROOF.length)
+  );
 
   const emailError: ErrorMessage | null =
     touched.email && !email
@@ -80,7 +82,9 @@ export default function LoginPage() {
           try {
             const { getSupabase } = await import("@/lib/supabase");
             const client = getSupabase();
-            const { data: { user: authUser } } = await client.auth.getUser();
+            const {
+              data: { user: authUser },
+            } = await client.auth.getUser();
             if (!authUser) {
               nav(fromPath || "/dashboard");
               return;
@@ -115,379 +119,439 @@ export default function LoginPage() {
   const quote = SOCIAL_PROOF[quoteIndex];
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] flex flex-col lg:flex-row">
+    <>
       <Seo
         title="Inloggen — FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
         path="/inloggen"
       />
 
-      {/* LEFT PANEL — editorial, desktop only */}
-      <div
-        className="hidden lg:flex lg:w-[52%] xl:w-[56%] relative overflow-hidden flex-col justify-between"
-        aria-hidden="true"
-      >
-        {/* Background image */}
-        <img
-          src="/hero/hero-style-report-lg.webp"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover object-center"
-          fetchPriority="high"
-          decoding="async"
-        />
+      {/*
+        Split-screen layout:
+        - Navbar is sticky h-16 (64px) boven deze pagina
+        - De twee panelen vullen de resterende viewport: calc(100vh - 64px)
+        - Op mobiel: één kolom, geen hero-paneel
+      */}
+      <div className="flex flex-col lg:flex-row" style={{ minHeight: 'calc(100vh - 64px)' }}>
 
-        {/* Gradient overlay — bottom-heavy for text legibility */}
+        {/* ── LEFT PANEL — editorial hero, alleen desktop ── */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(30,35,51,0.18) 0%, rgba(30,35,51,0.08) 35%, rgba(30,35,51,0.55) 70%, rgba(30,35,51,0.82) 100%)',
-          }}
-        />
-
-        {/* Top: wordmark */}
-        <div className="relative z-10 p-8 xl:p-10">
-          <NavLink to="/" className="inline-flex items-center gap-2.5 group">
-            <span
-              className="text-xl font-bold tracking-tight"
-              style={{ color: 'rgba(247,243,236,0.95)' }}
-            >
-              FitFi
-            </span>
-            <span
-              className="text-xs font-medium px-2 py-0.5 rounded-full"
-              style={{
-                background: 'rgba(166,136,106,0.35)',
-                color: 'rgba(247,243,236,0.85)',
-                border: '1px solid rgba(247,243,236,0.18)',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              AI Stijladvies
-            </span>
-          </NavLink>
-        </div>
-
-        {/* Bottom: headline + social proof */}
-        <div className="relative z-10 p-8 xl:p-10 pb-10">
-          <div className="mb-6">
-            <p
-              className="text-[11px] font-semibold tracking-widest uppercase mb-3"
-              style={{ color: 'rgba(166,136,106,0.9)' }}
-            >
-              Persoonlijk stijladvies
-            </p>
-            <h2
-              className="text-3xl xl:text-4xl font-bold leading-[1.18] mb-3"
-              style={{ color: 'rgba(247,243,236,0.97)' }}
-            >
-              Jouw stijl,<br />eindelijk op orde.
-            </h2>
-            <p
-              className="text-[15px] leading-relaxed max-w-[360px]"
-              style={{ color: 'rgba(247,243,236,0.70)' }}
-            >
-              AI analyseert jouw voorkeuren en bouwt een compleet stijlrapport — met outfits die bij jou passen.
-            </p>
-          </div>
-
-          {/* Social proof quote */}
+          className="hidden lg:block relative lg:w-[52%] xl:w-[55%] flex-shrink-0"
+          aria-hidden="true"
+          style={{ minHeight: 'calc(100vh - 64px)' }}
+        >
+          {/* Achtergrondafbeelding via CSS background zodat object-position maximaal werkt */}
           <div
-            className="rounded-2xl p-4 mb-6 max-w-[360px]"
+            className="absolute inset-0"
             style={{
-              background: 'rgba(247,243,236,0.10)',
-              border: '1px solid rgba(247,243,236,0.16)',
-              backdropFilter: 'blur(12px)',
+              backgroundImage: 'url(/hero/hero-style-report-lg.webp)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
             }}
-          >
-            <div className="flex gap-0.5 mb-2">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-3.5 h-3.5 fill-current"
-                  style={{ color: 'rgba(166,136,106,0.9)' }}
-                />
-              ))}
-            </div>
-            <p
-              className="text-[14px] leading-snug mb-2 font-medium"
-              style={{ color: 'rgba(247,243,236,0.90)' }}
-            >
-              "{quote.text}"
-            </p>
-            <p
-              className="text-[12px]"
-              style={{ color: 'rgba(247,243,236,0.55)' }}
-            >
-              — {quote.author}
-            </p>
-          </div>
+          />
 
-          {/* Feature pills */}
-          <div className="flex flex-wrap gap-2">
-            {["Gratis te proberen", "Geen creditcard", "Privacy-first"].map((label) => (
+          {/* Gradient overlay: subtiel bovenaan, zwaar onderaan voor leesbaarheid */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(160deg, rgba(20,20,28,0.22) 0%, rgba(20,20,28,0.05) 30%, rgba(20,20,28,0.60) 68%, rgba(20,20,28,0.88) 100%)',
+            }}
+          />
+
+          {/* Inhoud over het beeld */}
+          <div className="relative z-10 flex flex-col justify-between h-full p-8 xl:p-12">
+
+            {/* Eyebrow label linksboven */}
+            <div>
               <span
-                key={label}
-                className="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-full"
+                className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase px-3 py-1 rounded-full"
                 style={{
-                  background: 'rgba(247,243,236,0.10)',
-                  border: '1px solid rgba(247,243,236,0.18)',
-                  color: 'rgba(247,243,236,0.72)',
-                  backdropFilter: 'blur(6px)',
+                  background: 'rgba(166,136,106,0.25)',
+                  border: '1px solid rgba(247,243,236,0.20)',
+                  color: 'rgba(247,243,236,0.85)',
+                  backdropFilter: 'blur(8px)',
                 }}
               >
-                <CheckCircle2 className="w-3 h-3 flex-shrink-0" />
-                {label}
+                AI Stijladvies
               </span>
-            ))}
-          </div>
-        </div>
-      </div>
+            </div>
 
-      {/* RIGHT PANEL — form */}
-      <div className="flex-1 lg:w-[48%] xl:w-[44%] flex flex-col items-center justify-center px-4 sm:px-8 lg:px-10 xl:px-16 py-10 lg:py-8 min-h-screen lg:min-h-0 bg-[var(--color-bg)]">
+            {/* Onderin: headline + quote + pills */}
+            <div>
+              {/* Headline */}
+              <p
+                className="text-[11px] font-semibold tracking-[0.18em] uppercase mb-4"
+                style={{ color: 'rgba(166,136,106,0.85)' }}
+              >
+                Persoonlijk stijladvies
+              </p>
+              <h2
+                className="text-4xl xl:text-[2.75rem] font-bold leading-[1.12] mb-4"
+                style={{ color: 'rgba(247,243,236,0.97)' }}
+              >
+                Jouw stijl,<br />eindelijk op orde.
+              </h2>
+              <p
+                className="text-base leading-relaxed mb-8 max-w-[380px]"
+                style={{ color: 'rgba(247,243,236,0.65)' }}
+              >
+                AI analyseert jouw voorkeuren en bouwt een compleet stijlrapport — met outfits die bij jou passen.
+              </p>
 
-        {/* Mobile: logo */}
-        <div className="lg:hidden mb-8 text-center">
-          <NavLink to="/" className="inline-flex items-center gap-2">
-            <span className="text-xl font-bold text-[var(--color-text)] tracking-tight">FitFi</span>
-          </NavLink>
-        </div>
-
-        <div className="w-full max-w-[400px]">
-
-          {/* Results context banner */}
-          {comingFromResults && (
-            <div className="mb-5 flex items-start gap-3 px-4 py-3.5 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
-              <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <FileText className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
+              {/* Testimonial kaart */}
+              <div
+                className="rounded-2xl p-5 mb-6 max-w-[380px]"
+                style={{
+                  background: 'rgba(247,243,236,0.09)',
+                  border: '1px solid rgba(247,243,236,0.15)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                }}
+              >
+                <div className="flex gap-1 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-3.5 h-3.5 fill-current flex-shrink-0"
+                      style={{ color: 'rgba(166,136,106,0.95)' }}
+                    />
+                  ))}
+                </div>
+                <p
+                  className="text-[15px] font-medium leading-snug mb-2.5"
+                  style={{ color: 'rgba(247,243,236,0.92)' }}
+                >
+                  "{quote.text}"
+                </p>
+                <p
+                  className="text-[12px] font-medium"
+                  style={{ color: 'rgba(247,243,236,0.48)' }}
+                >
+                  — {quote.author}
+                </p>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
-                  Log in om je stijlrapport terug te zien.
-                </p>
-                <p className="text-xs text-[var(--ff-color-primary-700)] mt-0.5 leading-relaxed">
-                  Je outfits, combinaties en shoplinks wachten op je.
-                </p>
+
+              {/* Feature-pills onderaan */}
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "Gratis te proberen" },
+                  { label: "Geen creditcard" },
+                  { label: "Privacy-first" },
+                ].map(({ label }) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-full"
+                    style={{
+                      background: 'rgba(247,243,236,0.09)',
+                      border: '1px solid rgba(247,243,236,0.16)',
+                      color: 'rgba(247,243,236,0.68)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    <CheckCircle2 className="w-3 h-3 flex-shrink-0" />
+                    {label}
+                  </span>
+                ))}
               </div>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Heading */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-[var(--color-text)] tracking-tight mb-1.5">
-              Welkom terug.
-            </h1>
-            <p className="text-sm text-[var(--color-muted)]">
-              Log in om je stijladvies en outfits terug te zien.
-            </p>
+        {/* ── RIGHT PANEL — formulier ── */}
+        <div className="flex-1 flex flex-col items-center justify-center bg-[var(--color-bg)] px-4 sm:px-8 xl:px-16 py-10 lg:py-12">
+
+          {/* Mobiel: logo (navbar is verborgen op fullscreen-pagina's, maar hier zichtbaar; logo dus alleen als fallback) */}
+          <div className="lg:hidden w-full max-w-[400px] mb-8">
+            <NavLink to="/" className="inline-flex items-center gap-2">
+              <span className="text-xl font-bold text-[var(--color-text)] tracking-tight">FitFi</span>
+            </NavLink>
           </div>
 
-          {/* Card */}
-          <div className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
-            <form
-              onSubmit={onSubmit}
-              noValidate
-              className="p-5 sm:p-6 space-y-4 sm:space-y-5"
-              aria-label="Inlogformulier"
-            >
+          <div className="w-full max-w-[420px]">
 
-              {/* Server error */}
-              {serverError && (
-                <div>
-                  <ErrorAlert error={serverError} />
-                  {isCredentialError && (
-                    <div className="mt-2.5 flex items-center gap-2 text-sm">
-                      <span className="text-[var(--color-muted)]">Wachtwoord vergeten?</span>
-                      <NavLink
-                        to="/wachtwoord-vergeten"
-                        className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2 transition-colors"
-                      >
-                        Stuur resetlink
-                      </NavLink>
-                    </div>
-                  )}
+            {/* Context-banner vanuit /results */}
+            {comingFromResults && (
+              <div className="mb-5 flex items-start gap-3 px-4 py-3.5 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-2xl">
+                <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <FileText
+                    className="w-4 h-4 text-[var(--ff-color-primary-700)]"
+                    aria-hidden="true"
+                  />
                 </div>
-              )}
-
-              <SocialLoginButtons
-                mode="login"
-                onSuccess={() => {
-                  toast.success("Welkom terug!");
-                  nav(fromPath || "/dashboard");
-                }}
-              />
-
-              {/* Email field */}
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="login-email"
-                  className="block text-sm font-semibold text-[var(--color-text)]"
-                >
-                  E-mailadres
-                </label>
-                <input
-                  id="login-email"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  enterKeyHint="next"
-                  placeholder="jij@voorbeeld.nl"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                  aria-invalid={!!emailError}
-                  aria-describedby={emailError ? "login-email-error" : undefined}
-                  disabled={loading}
-                  className={`w-full px-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 ${
-                    emailError
-                      ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
-                      : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
-                  } disabled:opacity-50`}
-                />
-                {touched.email && emailError && (
-                  <p id="login-email-error" role="alert" className="text-xs font-medium text-[var(--ff-color-danger-600)] flex items-center gap-1.5 mt-1">
-                    <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
-                    <InlineError error={emailError} />
+                <div>
+                  <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug">
+                    Log in om je stijlrapport terug te zien.
                   </p>
-                )}
+                  <p className="text-xs text-[var(--ff-color-primary-700)] mt-0.5 leading-relaxed">
+                    Je outfits, combinaties en shoplinks wachten op je.
+                  </p>
+                </div>
               </div>
+            )}
 
-              {/* Password field */}
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="login-password"
-                  className="block text-sm font-semibold text-[var(--color-text)]"
-                >
-                  Wachtwoord
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
+            {/* Heading */}
+            <div className="mb-7">
+              <h1 className="text-2xl lg:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-1.5">
+                Welkom terug.
+              </h1>
+              <p className="text-sm text-[var(--color-muted)]">
+                Log in om je stijladvies en outfits terug te zien.
+              </p>
+            </div>
+
+            {/* Formulier-kaart */}
+            <div className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)]">
+              <form
+                onSubmit={onSubmit}
+                noValidate
+                className="p-6 space-y-5"
+                aria-label="Inlogformulier"
+              >
+
+                {/* Server-fout */}
+                {serverError && (
+                  <div>
+                    <ErrorAlert error={serverError} />
+                    {isCredentialError && (
+                      <div className="mt-2.5 flex items-center gap-2 text-sm">
+                        <span className="text-[var(--color-muted)]">
+                          Wachtwoord vergeten?
+                        </span>
+                        <NavLink
+                          to="/wachtwoord-vergeten"
+                          className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2 transition-colors"
+                        >
+                          Stuur resetlink
+                        </NavLink>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Social login */}
+                <SocialLoginButtons
+                  mode="login"
+                  onSuccess={() => {
+                    toast.success("Welkom terug!");
+                    nav(fromPath || "/dashboard");
+                  }}
+                />
+
+                {/* E-mailadres */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="login-email"
+                    className="block text-sm font-semibold text-[var(--color-text)]"
+                  >
+                    E-mailadres
+                  </label>
                   <input
-                    id="login-password"
-                    type={showPw ? "text" : "password"}
-                    autoComplete="current-password"
-                    enterKeyHint="done"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                    aria-invalid={!!pwError}
-                    aria-describedby={pwError ? "login-pw-error" : undefined}
+                    id="login-email"
+                    type="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    enterKeyHint="next"
+                    placeholder="jij@voorbeeld.nl"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                    aria-invalid={!!emailError}
+                    aria-describedby={emailError ? "login-email-error" : undefined}
                     disabled={loading}
-                    className={`w-full pl-10 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden ${
-                      pwError
+                    className={`w-full px-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 ${
+                      emailError
                         ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
                         : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
                     } disabled:opacity-50`}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw(!showPw)}
-                    tabIndex={-1}
-                    className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-visible:outline-none"
-                    aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
-                  >
-                    {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                  {touched.email && emailError && (
+                    <p
+                      id="login-email-error"
+                      role="alert"
+                      className="text-xs font-medium text-[var(--ff-color-danger-600)] flex items-center gap-1.5 mt-1"
+                    >
+                      <svg
+                        className="w-3.5 h-3.5 flex-shrink-0"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <InlineError error={emailError} />
+                    </p>
+                  )}
                 </div>
-                {touched.password && pwError && (
-                  <p id="login-pw-error" role="alert" className="text-xs font-medium text-[var(--ff-color-danger-600)] flex items-center gap-1.5 mt-1">
-                    <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
-                    <InlineError error={pwError} />
-                  </p>
-                )}
-                <div className="flex justify-end pt-0.5">
-                  <NavLink
-                    to="/wachtwoord-vergeten"
-                    className="text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors underline underline-offset-2"
+
+                {/* Wachtwoord */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="login-password"
+                    className="block text-sm font-semibold text-[var(--color-text)]"
                   >
-                    Wachtwoord vergeten?
+                    Wachtwoord
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
+                    <input
+                      id="login-password"
+                      type={showPw ? "text" : "password"}
+                      autoComplete="current-password"
+                      enterKeyHint="done"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                      aria-invalid={!!pwError}
+                      aria-describedby={pwError ? "login-pw-error" : undefined}
+                      disabled={loading}
+                      className={`w-full pl-10 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors outline-none bg-[var(--color-surface)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden ${
+                        pwError
+                          ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
+                          : "border-[var(--color-border)] focus:border-[var(--ff-color-primary-500)] focus:shadow-[0_0_0_3px_var(--overlay-primary-12a)]"
+                      } disabled:opacity-50`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPw(!showPw)}
+                      tabIndex={-1}
+                      className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-visible:outline-none"
+                      aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                    >
+                      {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {touched.password && pwError && (
+                    <p
+                      id="login-pw-error"
+                      role="alert"
+                      className="text-xs font-medium text-[var(--ff-color-danger-600)] flex items-center gap-1.5 mt-1"
+                    >
+                      <svg
+                        className="w-3.5 h-3.5 flex-shrink-0"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <InlineError error={pwError} />
+                    </p>
+                  )}
+                  <div className="flex justify-end pt-0.5">
+                    <NavLink
+                      to="/wachtwoord-vergeten"
+                      className="text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors underline underline-offset-2"
+                    >
+                      Wachtwoord vergeten?
+                    </NavLink>
+                  </div>
+                </div>
+
+                {/* Inloggen knop */}
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-white py-3.5 min-h-[52px] rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2
+                        className="w-4 h-4 animate-spin flex-shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span>Bezig…</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Inloggen</span>
+                      <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                    </>
+                  )}
+                </button>
+
+                {/* Registreer-CTA */}
+                <div className="pt-1 border-t border-[var(--color-border)]">
+                  <p className="text-xs text-center text-[var(--color-muted)] mb-3 mt-3">
+                    Nog geen account?
+                  </p>
+                  <NavLink
+                    to="/registreren"
+                    className="flex items-center justify-center gap-2 w-full px-5 py-3.5 min-h-[52px] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] font-semibold text-sm rounded-xl active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                  >
+                    <span>Maak gratis account aan</span>
+                    <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   </NavLink>
                 </div>
-              </div>
 
-              {/* Submit button */}
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                className="w-full flex items-center justify-center gap-2 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-white py-3.5 min-h-[52px] rounded-xl font-semibold text-sm tracking-wide shadow-sm hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" aria-hidden="true" />
-                    <span>Bezig...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Inloggen</span>
+                {/* Quiz-CTA */}
+                <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] p-4 flex flex-col gap-2">
+                  <p className="text-xs font-semibold text-[var(--ff-color-primary-900)] flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                    Nog geen account nodig?
+                  </p>
+                  <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed">
+                    Doe de stijlquiz direct — geen registratie vereist.
+                  </p>
+                  <NavLink
+                    to="/onboarding"
+                    className="mt-1 inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                  >
+                    Start de quiz zonder account
                     <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                  </>
-                )}
-              </button>
+                  </NavLink>
+                </div>
 
-              {/* Register CTA */}
-              <div className="pt-1 border-t border-[var(--color-border)]">
-                <p className="text-xs text-center text-[var(--color-muted)] mb-3 mt-3">
-                  Nog geen account?
-                </p>
-                <NavLink
-                  to="/registreren"
-                  className="flex items-center justify-center gap-2 w-full px-5 py-3.5 min-h-[52px] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] text-[var(--color-text)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] font-semibold text-sm rounded-xl active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                >
-                  <span>Maak gratis account aan</span>
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                </NavLink>
+              </form>
+            </div>
+
+            {/* Trust-badges */}
+            <div className="mt-5 flex items-center justify-center gap-4 text-xs text-[var(--color-muted)]">
+              <div className="flex items-center gap-1.5">
+                <Shield
+                  className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span>GDPR-compliant</span>
               </div>
-
-              {/* Quiz CTA */}
-              <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] p-4 flex flex-col gap-2">
-                <p className="text-xs font-semibold text-[var(--ff-color-primary-900)] flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-                  Nog geen account nodig?
-                </p>
-                <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed">
-                  Doe de stijlquiz direct — geen registratie vereist.
-                </p>
-                <NavLink
-                  to="/onboarding"
-                  className="mt-1 inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                >
-                  Start de quiz zonder account
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                </NavLink>
+              <div className="flex items-center gap-1.5">
+                <Lock
+                  className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span>256-bit encryptie</span>
               </div>
-
-            </form>
-          </div>
-
-          {/* Trust badges */}
-          <div className="mt-5 flex items-center justify-center gap-4 text-xs text-[var(--color-muted)]">
-            <div className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
-              <span>GDPR-compliant</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2
+                  className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span>Jouw data</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
-              <span>256-bit encryptie</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] flex-shrink-0" aria-hidden="true" />
-              <span>Jouw data</span>
-            </div>
-          </div>
 
-          <div className="mt-4 text-center">
-            <NavLink
-              to="/contact"
-              className="text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] underline underline-offset-2 transition-colors"
-            >
-              Hulp nodig bij inloggen?
-            </NavLink>
-          </div>
+            <div className="mt-4 text-center">
+              <NavLink
+                to="/contact"
+                className="text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] underline underline-offset-2 transition-colors"
+              >
+                Hulp nodig bij inloggen?
+              </NavLink>
+            </div>
 
+          </div>
         </div>
+
       </div>
-    </main>
+    </>
   );
 }
