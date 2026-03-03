@@ -176,7 +176,7 @@ export default function ContactPage() {
               </div>
               <h1
                 className="font-heading font-bold tracking-tight mb-4 text-[var(--color-text)]"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.1 }}
+                style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', lineHeight: 1.1 }}
               >
                 We horen graag van je
               </h1>
