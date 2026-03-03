@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
-import {
-  Eye, EyeOff, Mail, Shield, Lock, ArrowRight, Loader2, CheckCircle2, Sparkles,
-} from "lucide-react";
+import { Eye, EyeOff, Mail, Shield, Lock, ArrowRight, Loader as Loader2, CircleCheck as CheckCircle2, Sparkles } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
