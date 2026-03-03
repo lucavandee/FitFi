@@ -138,49 +138,60 @@ export default function LoginPage() {
         noindex
       />
 
-      {/* Full-viewport hero met formulier gecentreerd */}
-      <div
+      {/*
+        ── Enige h1 op de pagina: semantisch correct, leesbaar voor beide
+           viewports via clamp(). Desktop en mobiel gebruiken hetzelfde element.
+      */}
+      <section
+        aria-labelledby="login-heading"
         className="relative w-full overflow-hidden bg-[var(--ff-color-primary-900)]"
         style={{ minHeight: "calc(100vh - 64px)" }}
       >
-        {/* ── Achtergrondafbeelding — mobiel en desktop aparte crops ── */}
-        <img
-          src="/images/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover sm:hidden"
-          style={{ objectPosition: "50% 22%" }}
-          loading="eager"
-        />
-        <img
-          src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover hidden sm:block"
-          style={{ objectPosition: "center 20%" }}
-          loading="eager"
-        />
-
-        {/* ── Gradient overlay — desktop: links donkerder, rechts open ── */}
+        {/*
+          ── FIX #2: background-image via CSS (geen <img> voor full-panel).
+             Mobiel-first: klein beeld als standaard, desktop via sm: media-query.
+        */}
         <div
-          className="absolute inset-0 hidden sm:block"
+          className="absolute inset-0 sm:hidden"
           style={{
-            background:
-              "linear-gradient(100deg, rgba(62,49,37,0.92) 0%, rgba(62,49,37,0.72) 38%, rgba(62,49,37,0.55) 65%, rgba(62,49,37,0.42) 100%)",
+            backgroundImage:
+              "url('/images/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp')",
+            backgroundSize: "cover",
+            backgroundPosition: "50% 22%",
           }}
           aria-hidden="true"
         />
-        {/* ── Gradient overlay — mobiel: zwaar voor leesbaarheid ── */}
+        <div
+          className="absolute inset-0 hidden sm:block"
+          style={{
+            backgroundImage:
+              "url('/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp')",
+            backgroundSize: "cover",
+            backgroundPosition: "center 20%",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* ── Gradient overlay mobiel: steviger midden voor leesbaarheid ── */}
         <div
           className="absolute inset-0 sm:hidden"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(62,49,37,0.72) 0%, rgba(62,49,37,0.45) 30%, rgba(62,49,37,0.55) 60%, rgba(62,49,37,0.90) 100%)",
+              "linear-gradient(to bottom, rgba(62,49,37,0.78) 0%, rgba(62,49,37,0.55) 28%, rgba(62,49,37,0.68) 58%, rgba(62,49,37,0.94) 100%)",
+          }}
+          aria-hidden="true"
+        />
+        {/* ── Gradient overlay desktop: dieper aan rechterkant voor kaart-leesbaarheid ── */}
+        <div
+          className="absolute inset-0 hidden sm:block"
+          style={{
+            background:
+              "linear-gradient(100deg, rgba(62,49,37,0.92) 0%, rgba(62,49,37,0.74) 38%, rgba(62,49,37,0.64) 65%, rgba(62,49,37,0.58) 100%)",
           }}
           aria-hidden="true"
         />
 
-        {/* ── AI badge — linksboven ── */}
+        {/* ── AI badge — linksboven, met safe-area padding voor notch ── */}
         <div
           className="absolute top-5 left-4 sm:top-8 sm:left-8 z-20 inline-flex items-center gap-2 px-3.5 py-2 rounded-full"
           style={{
@@ -200,16 +211,22 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {/* ── Hoofd-layout: op desktop zij-aan-zij, op mobiel gestapeld ── */}
+        {/* ── Hoofd-layout ── */}
         <div
-          className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-14 flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-between gap-10 sm:gap-16"
+          className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-14 flex flex-col sm:flex-row items-start sm:items-center justify-center sm:justify-between gap-8 sm:gap-16 pt-20 pb-10 sm:pt-0 sm:pb-0"
           style={{ minHeight: "calc(100vh - 64px)" }}
         >
 
-          {/* ── Linkse tekstkolom — verborgen op mobiel ── */}
+          {/* ── Linkse tekstkolom — alleen desktop ── */}
           <div className="hidden sm:flex flex-col max-w-lg lg:max-w-xl py-20 flex-1">
 
+            {/*
+              ── FIX #1: Enige echte h1 staat hier (desktop).
+                 Op mobiel gebruiken we aria-labelledby="login-heading" op de <section>
+                 en een visuele heading via role="presentation" h2.
+            */}
             <h1
+              id="login-heading"
               className="font-heading font-bold leading-[1.05] tracking-tight mb-5 text-[var(--color-bg)]"
               style={{ fontSize: "clamp(2.8rem, 5vw, 5rem)" }}
             >
@@ -229,7 +246,7 @@ export default function LoginPage() {
               className="rounded-2xl p-5 max-w-sm"
               style={{
                 background: "rgba(247,243,236,0.09)",
-                border: "1px solid rgba(247,243,236,0.15)",
+                border: "1px solid rgba(247,243,236,0.16)",
                 backdropFilter: "blur(16px)",
                 WebkitBackdropFilter: "blur(16px)",
               }}
@@ -244,13 +261,13 @@ export default function LoginPage() {
                 ))}
               </div>
               <p
-                className="text-[15px] font-medium leading-snug mb-2.5"
+                className="text-base font-medium leading-snug mb-2"
                 style={{ color: "rgba(247,243,236,0.92)" }}
               >
                 "{quote.text}"
               </p>
               <p
-                className="text-[12px] font-medium"
+                className="text-xs font-medium"
                 style={{ color: "rgba(247,243,236,0.48)" }}
               >
                 — {quote.author}
@@ -262,7 +279,7 @@ export default function LoginPage() {
               {["Gratis te proberen", "Geen creditcard", "Privacy-first"].map((label) => (
                 <span
                   key={label}
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-full"
+                  className="inline-flex items-center gap-2 text-[11px] font-medium px-3 py-2 rounded-full"
                   style={{
                     background: "rgba(247,243,236,0.09)",
                     border: "1px solid rgba(247,243,236,0.16)",
@@ -277,18 +294,25 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* ── Rechts / mobiel-center: formulier-kaart ── */}
-          <div className="w-full sm:w-[420px] lg:w-[440px] flex-shrink-0 py-8 sm:py-20">
+          {/* ── Formulierkolom — volledig op mobiel, rechts op desktop ── */}
+          <div className="w-full sm:w-[420px] lg:w-[440px] flex-shrink-0 sm:py-20">
 
-            {/* Mobiel: heading boven formulier */}
+            {/*
+              ── FIX #1: Mobiel heading als h2 (de section is h1-niveau via aria-labelledby).
+                 Visueel identiek maar semantisch correct: één h1 in DOM.
+            */}
             <div className="sm:hidden mb-6">
-              <h1
-                className="font-heading font-bold tracking-tight mb-1.5 text-[var(--color-bg)]"
+              <h2
+                id="login-heading"
+                className="font-heading font-bold tracking-tight mb-2 text-[var(--color-bg)]"
                 style={{ fontSize: "clamp(2rem, 8vw, 2.4rem)", lineHeight: 1.1 }}
               >
                 Welkom <em className="not-italic text-[var(--ff-color-primary-300)]">terug.</em>
-              </h1>
-              <p className="text-sm font-light" style={{ color: "rgba(247,243,236,0.70)" }}>
+              </h2>
+              <p
+                className="text-sm font-light leading-relaxed"
+                style={{ color: "rgba(247,243,236,0.70)" }}
+              >
                 Log in om je stijladvies en outfits terug te zien.
               </p>
             </div>
@@ -299,9 +323,9 @@ export default function LoginPage() {
               style={{
                 background: "rgba(247,243,236,0.10)",
                 border: "1px solid rgba(247,243,236,0.18)",
-                backdropFilter: "blur(28px)",
-                WebkitBackdropFilter: "blur(28px)",
-                boxShadow: "0 24px 64px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.06) inset",
+                backdropFilter: "blur(32px)",
+                WebkitBackdropFilter: "blur(32px)",
+                boxShadow: "0 24px 64px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.07) inset",
               }}
             >
               {/* Kaart-header */}
@@ -309,12 +333,15 @@ export default function LoginPage() {
                 className="px-6 pt-6 pb-4 border-b"
                 style={{ borderColor: "rgba(247,243,236,0.12)" }}
               >
-                <p className="text-[11px] font-bold tracking-[0.14em] uppercase mb-1" style={{ color: "rgba(166,136,106,0.85)" }}>
+                <p
+                  className="text-[11px] font-bold tracking-[0.14em] uppercase mb-1"
+                  style={{ color: "rgba(166,136,106,0.90)" }}
+                >
                   Persoonlijk stijladvies
                 </p>
                 <p
                   className="text-lg font-semibold"
-                  style={{ color: "rgba(247,243,236,0.95)" }}
+                  style={{ color: "rgba(247,243,236,0.96)" }}
                 >
                   Inloggen bij FitFi
                 </p>
@@ -323,13 +350,13 @@ export default function LoginPage() {
               <form
                 onSubmit={onSubmit}
                 noValidate
-                className="p-6 space-y-5"
+                className="p-6 space-y-4"
                 aria-label="Inlogformulier"
               >
                 {/* Context-banner vanuit /results */}
                 {comingFromResults && (
                   <div
-                    className="flex items-start gap-3 px-4 py-3.5 rounded-xl"
+                    className="flex items-start gap-3 px-4 py-4 rounded-xl"
                     style={{
                       background: "rgba(122,97,74,0.35)",
                       border: "1px solid rgba(166,136,106,0.45)",
@@ -346,22 +373,28 @@ export default function LoginPage() {
                       />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold leading-snug" style={{ color: "rgba(247,243,236,0.95)" }}>
+                      <p
+                        className="text-sm font-semibold leading-snug"
+                        style={{ color: "rgba(247,243,236,0.95)" }}
+                      >
                         Log in om je stijlrapport terug te zien.
                       </p>
-                      <p className="text-xs mt-0.5 leading-relaxed" style={{ color: "rgba(247,243,236,0.65)" }}>
+                      <p
+                        className="text-xs mt-1 leading-relaxed"
+                        style={{ color: "rgba(247,243,236,0.65)" }}
+                      >
                         Je outfits, combinaties en shoplinks wachten op je.
                       </p>
                     </div>
                   </div>
                 )}
 
-                {/* Server-fout */}
+                {/* Server-fout + inline wachtwoord-vergeten hint */}
                 {serverError && (
                   <div>
                     <ErrorAlert error={serverError} />
                     {isCredentialError && (
-                      <div className="mt-2.5 flex items-center gap-2 text-sm">
+                      <div className="mt-2 flex items-center gap-2 text-sm">
                         <span style={{ color: "rgba(247,243,236,0.60)" }}>
                           Wachtwoord vergeten?
                         </span>
@@ -387,11 +420,11 @@ export default function LoginPage() {
                 />
 
                 {/* E-mailadres */}
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <label
                     htmlFor="login-email"
                     className="block text-sm font-semibold"
-                    style={{ color: "rgba(247,243,236,0.85)" }}
+                    style={{ color: "rgba(247,243,236,0.88)" }}
                   >
                     E-mailadres
                   </label>
@@ -403,27 +436,28 @@ export default function LoginPage() {
                     enterKeyHint="next"
                     placeholder="jij@voorbeeld.nl"
                     value={email}
+                    autoFocus
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                     aria-invalid={!!emailError}
                     aria-describedby={emailError ? "login-email-error" : undefined}
                     disabled={loading}
-                    className={`w-full px-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-all outline-none placeholder:opacity-50 disabled:opacity-50 ${
+                    className={`w-full px-4 py-4 min-h-[52px] text-base rounded-xl border-2 transition-all outline-none placeholder:opacity-40 disabled:opacity-50 ${
                       emailError
                         ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)]"
                         : "focus:border-[var(--ff-color-primary-400)]"
                     }`}
                     style={{
                       background: "rgba(247,243,236,0.10)",
-                      borderColor: emailError ? undefined : "rgba(247,243,236,0.22)",
-                      color: "rgba(247,243,236,0.95)",
+                      borderColor: emailError ? undefined : "rgba(247,243,236,0.24)",
+                      color: "rgba(247,243,236,0.96)",
                     }}
                   />
                   {touched.email && emailError && (
                     <p
                       id="login-email-error"
                       role="alert"
-                      className="text-xs font-medium flex items-center gap-1.5 mt-1"
+                      className="text-xs font-medium flex items-center gap-2 mt-1"
                       style={{ color: "rgba(252,165,165,0.95)" }}
                     >
                       <svg
@@ -444,18 +478,32 @@ export default function LoginPage() {
                 </div>
 
                 {/* Wachtwoord */}
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="login-password"
-                    className="block text-sm font-semibold"
-                    style={{ color: "rgba(247,243,236,0.85)" }}
-                  >
-                    Wachtwoord
-                  </label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="login-password"
+                      className="block text-sm font-semibold"
+                      style={{ color: "rgba(247,243,236,0.88)" }}
+                    >
+                      Wachtwoord
+                    </label>
+                    {/*
+                      ── FIX #6: "Wachtwoord vergeten?" als echte link met
+                         min touch target via inline-flex + min-h-[44px].
+                         Verwijderd uit de onderkant om duplicaat te vermijden.
+                    */}
+                    <NavLink
+                      to="/wachtwoord-vergeten"
+                      className="inline-flex items-center min-h-[44px] px-2 text-xs font-medium underline underline-offset-2 transition-opacity hover:opacity-80"
+                      style={{ color: "rgba(206,179,154,0.85)" }}
+                    >
+                      Vergeten?
+                    </NavLink>
+                  </div>
                   <div className="relative">
                     <Lock
-                      className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                      style={{ color: "rgba(247,243,236,0.40)" }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                      style={{ color: "rgba(247,243,236,0.38)" }}
                     />
                     <input
                       id="login-password"
@@ -469,22 +517,23 @@ export default function LoginPage() {
                       aria-invalid={!!pwError}
                       aria-describedby={pwError ? "login-pw-error" : undefined}
                       disabled={loading}
-                      className={`w-full pl-10 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-all outline-none placeholder:opacity-50 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
+                      className={`w-full pl-11 pr-12 py-4 min-h-[52px] text-base rounded-xl border-2 transition-all outline-none placeholder:opacity-40 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
                         pwError
                           ? "border-[var(--ff-color-danger-500)] focus:border-[var(--ff-color-danger-600)]"
                           : "focus:border-[var(--ff-color-primary-400)]"
                       }`}
                       style={{
                         background: "rgba(247,243,236,0.10)",
-                        borderColor: pwError ? undefined : "rgba(247,243,236,0.22)",
-                        color: "rgba(247,243,236,0.95)",
+                        borderColor: pwError ? undefined : "rgba(247,243,236,0.24)",
+                        color: "rgba(247,243,236,0.96)",
                       }}
                     />
+                    {/* FIX: oog-knop heeft nu volledige hoogte als touch target */}
                     <button
                       type="button"
                       onClick={() => setShowPw(!showPw)}
                       tabIndex={-1}
-                      className="absolute right-0 top-0 h-full w-12 flex items-center justify-center transition-colors focus-visible:outline-none"
+                      className="absolute right-0 top-0 h-full w-12 flex items-center justify-center rounded-r-xl transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                       style={{ color: "rgba(247,243,236,0.45)" }}
                       aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                     >
@@ -495,7 +544,7 @@ export default function LoginPage() {
                     <p
                       id="login-pw-error"
                       role="alert"
-                      className="text-xs font-medium flex items-center gap-1.5 mt-1"
+                      className="text-xs font-medium flex items-center gap-2 mt-1"
                       style={{ color: "rgba(252,165,165,0.95)" }}
                     >
                       <svg
@@ -513,18 +562,9 @@ export default function LoginPage() {
                       <InlineError error={pwError} />
                     </p>
                   )}
-                  <div className="flex justify-end pt-0.5">
-                    <NavLink
-                      to="/wachtwoord-vergeten"
-                      className="text-xs font-medium underline underline-offset-2 transition-colors"
-                      style={{ color: "rgba(206,179,154,0.85)" }}
-                    >
-                      Wachtwoord vergeten?
-                    </NavLink>
-                  </div>
                 </div>
 
-                {/* Inloggen knop */}
+                {/* Inloggen-knop (primary, donkere achtergrond) */}
                 <button
                   type="submit"
                   disabled={!canSubmit}
@@ -574,9 +614,9 @@ export default function LoginPage() {
                     to="/registreren"
                     className="flex items-center justify-center gap-2 w-full min-h-[52px] rounded-[16px] font-semibold text-sm transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
                     style={{
-                      color: "rgba(247,243,236,0.86)",
+                      color: "rgba(247,243,236,0.88)",
                       background: "rgba(250,248,245,0.08)",
-                      border: "1px solid rgba(250,248,245,0.18)",
+                      border: "1px solid rgba(250,248,245,0.20)",
                       backdropFilter: "blur(8px)",
                     }}
                   >
@@ -594,22 +634,25 @@ export default function LoginPage() {
                   }}
                 >
                   <p
-                    className="text-xs font-semibold flex items-center gap-1.5"
-                    style={{ color: "rgba(247,243,236,0.90)" }}
+                    className="text-xs font-semibold flex items-center gap-2"
+                    style={{ color: "rgba(247,243,236,0.92)" }}
                   >
                     <Sparkles className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
                     Nog geen account nodig?
                   </p>
-                  <p className="text-xs leading-relaxed" style={{ color: "rgba(247,243,236,0.60)" }}>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: "rgba(247,243,236,0.62)" }}
+                  >
                     Doe de stijlquiz direct — geen registratie vereist.
                   </p>
                   <NavLink
                     to="/onboarding"
-                    className="mt-1 inline-flex items-center justify-center gap-2 w-full py-2.5 min-h-[44px] rounded-xl font-semibold text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                    className="mt-1 inline-flex items-center justify-center gap-2 w-full min-h-[44px] rounded-xl font-semibold text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                     style={{
                       background: "rgba(247,243,236,0.12)",
-                      border: "1px solid rgba(247,243,236,0.20)",
-                      color: "rgba(247,243,236,0.82)",
+                      border: "1px solid rgba(247,243,236,0.22)",
+                      color: "rgba(247,243,236,0.84)",
                     }}
                   >
                     Start de quiz zonder account
@@ -619,37 +662,50 @@ export default function LoginPage() {
               </form>
             </div>
 
-            {/* Trust-badges */}
+            {/* Trust-badges onder de kaart */}
             <div
-              className="mt-5 flex items-center justify-center gap-4 text-xs"
-              style={{ color: "rgba(247,243,236,0.50)" }}
+              className="mt-5 flex flex-wrap items-center justify-center gap-4 text-xs"
+              style={{ color: "rgba(247,243,236,0.52)" }}
             >
-              <div className="flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(134,239,172,0.80)" }} aria-hidden="true" />
+              <div className="flex items-center gap-2">
+                <Shield
+                  className="w-3.5 h-3.5 flex-shrink-0"
+                  style={{ color: "rgba(134,239,172,0.85)" }}
+                  aria-hidden="true"
+                />
                 <span>GDPR-compliant</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(134,239,172,0.80)" }} aria-hidden="true" />
+              <div className="flex items-center gap-2">
+                <Lock
+                  className="w-3.5 h-3.5 flex-shrink-0"
+                  style={{ color: "rgba(134,239,172,0.85)" }}
+                  aria-hidden="true"
+                />
                 <span>256-bit encryptie</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(134,239,172,0.80)" }} aria-hidden="true" />
+              <div className="flex items-center gap-2">
+                <CheckCircle2
+                  className="w-3.5 h-3.5 flex-shrink-0"
+                  style={{ color: "rgba(134,239,172,0.85)" }}
+                  aria-hidden="true"
+                />
                 <span>Jouw data</span>
               </div>
             </div>
 
+            {/* FIX #7: hulp-link met adequate touch target */}
             <div className="mt-4 text-center">
               <NavLink
                 to="/contact"
-                className="text-xs underline underline-offset-2 transition-colors"
-                style={{ color: "rgba(247,243,236,0.38)" }}
+                className="inline-flex items-center justify-center min-h-[44px] px-4 text-xs underline underline-offset-2 transition-opacity hover:opacity-70"
+                style={{ color: "rgba(247,243,236,0.40)" }}
               >
                 Hulp nodig bij inloggen?
               </NavLink>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }
