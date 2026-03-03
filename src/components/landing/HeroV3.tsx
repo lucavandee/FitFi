@@ -145,8 +145,8 @@ export function HeroV3() {
 
           {/* Subtekst */}
           <p
-            className="text-[15px] font-light leading-[1.6] mb-7" style={{ color: 'rgba(247,243,236,0.70)' }}
-            style={{ maxWidth: '88%' }}
+            className="text-[15px] font-light leading-[1.6] mb-7"
+            style={{ color: 'rgba(247,243,236,0.70)', maxWidth: '88%' }}
           >
             Beantwoord een paar vragen over jouw stijl en ontvang een persoonlijk rapport — compleet met outfits en shoplinks.
           </p>
@@ -186,8 +186,9 @@ export function HeroV3() {
             <div className="flex items-center gap-4">
               <button
                 onClick={handleExampleClick}
-                className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]" style={{ color: 'rgba(247,243,236,0.86)' }}
+                className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]"
                 style={{
+                  color: 'rgba(247,243,236,0.86)',
                   background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.08)',
                   border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18)',
                   backdropFilter: 'blur(8px)',
@@ -199,8 +200,9 @@ export function HeroV3() {
               </button>
 
               <div
-                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-[13px] text-[12px] font-semibold" style={{ color: 'rgba(247,243,236,0.62)' }}
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-[13px] text-[12px] font-semibold"
                 style={{
+                  color: 'rgba(247,243,236,0.62)',
                   background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.08)',
                   border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18)',
                   backdropFilter: 'blur(8px)',
