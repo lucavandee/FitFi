@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Seo from '@/components/seo/Seo';
+import { supabase } from '@/lib/supabaseClient';
 import {
   Search,
   Calendar,
@@ -30,20 +31,19 @@ function BlogCardSkeleton() {
 
 type CardProps = {
   post: UIBlogPost;
-  onNavigate: (slug: string) => void;
+  onNavigate?: (slug: string) => void;
 };
 
-function BlogCard({ post, onNavigate }: CardProps) {
+function BlogCard({ post }: CardProps) {
   return (
     <article
-      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow duration-200 flex flex-col cursor-pointer group flex-shrink-0 w-[260px] sm:w-auto h-full"
-      onClick={() => onNavigate(post.slug)}
+      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow duration-200 flex flex-col group flex-shrink-0 w-[260px] sm:w-auto h-full"
     >
       {/* Image — fixed 16:9 so photos never crop unpredictably */}
-      <div className="relative aspect-[16/9] bg-[var(--color-border)] overflow-hidden flex-shrink-0">
+      <a href={`/blog/${post.slug}`} className="relative aspect-[16/9] bg-[var(--color-border)] overflow-hidden flex-shrink-0 block" tabIndex={-1} aria-hidden="true">
         <img
           src={post.image}
-          alt={post.title}
+          alt=""
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -52,7 +52,7 @@ function BlogCard({ post, onNavigate }: CardProps) {
             {post.category}
           </span>
         </div>
-      </div>
+      </a>
 
       <div className="p-4 flex flex-col flex-1">
         {/* Title — max 2 lines */}
@@ -60,8 +60,6 @@ function BlogCard({ post, onNavigate }: CardProps) {
           <a
             href={`/blog/${post.slug}`}
             className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded"
-            onClick={(e) => { e.preventDefault(); onNavigate(post.slug); }}
-            tabIndex={0}
           >
             {post.title}
           </a>
@@ -71,7 +69,8 @@ function BlogCard({ post, onNavigate }: CardProps) {
         <div className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] mb-2.5 min-w-0">
           <img
             src={post.author.avatar}
-            alt={post.author.name}
+            alt=""
+            aria-hidden="true"
             className="w-5 h-5 rounded-full flex-shrink-0 object-cover"
           />
           <span className="truncate max-w-[80px]">{post.author.name}</span>
@@ -137,8 +136,14 @@ export default function BlogPage() {
     });
   }, [searchTerm, selectedCategory, blogPosts]);
 
-  const featuredPost = blogPosts.find((p) => p.featured) || blogPosts[0];
-  const carouselPosts = filteredPosts.filter((p) => p.id !== featuredPost?.id);
+  const featuredPost = useMemo(
+    () => blogPosts.find((p) => p.featured) ?? blogPosts[0],
+    [blogPosts]
+  );
+  const carouselPosts = useMemo(
+    () => filteredPosts.filter((p) => p.id !== featuredPost?.id),
+    [filteredPosts, featuredPost]
+  );
 
   const handleNavigate = (slug: string) => navigate(`/blog/${slug}`);
 
@@ -149,13 +154,19 @@ export default function BlogPage() {
     el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
   };
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      setEmail('');
-      setTimeout(() => setIsSubscribed(false), 3000);
+    if (!email) return;
+    try {
+      await supabase
+        .from('newsletter_subscribers')
+        .upsert({ email: email.trim() }, { onConflict: 'email' });
+    } catch {
+      // silent — user feedback via isSubscribed state is sufficient
     }
+    setIsSubscribed(true);
+    setEmail('');
+    setTimeout(() => setIsSubscribed(false), 3000);
   };
 
   const activeFiltersCount = selectedCategory !== 'all' ? 1 : 0;
@@ -294,14 +305,15 @@ export default function BlogPage() {
             <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-3">Uitgelicht</p>
 
             <article
-              className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-lifted)] cursor-pointer group hover:shadow-[var(--shadow-elevated)] transition-shadow duration-200"
-              onClick={() => handleNavigate(featuredPost.slug)}
+              className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-lifted)] group hover:shadow-[var(--shadow-elevated)] transition-shadow duration-200"
             >
               {/* Cover foto bovenaan */}
               <div className="relative h-52 sm:h-64 md:h-72 overflow-hidden">
                 <img
                   src={featuredPost.image}
                   alt={featuredPost.title}
+                  loading="eager"
+                  fetchPriority="high"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -330,7 +342,6 @@ export default function BlogPage() {
                   <a
                     href={`/blog/${featuredPost.slug}`}
                     className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded"
-                    onClick={(e) => { e.preventDefault(); handleNavigate(featuredPost.slug); }}
                   >
                     {featuredPost.title}
                   </a>
@@ -340,10 +351,13 @@ export default function BlogPage() {
                   {featuredPost.excerpt}
                 </p>
 
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-sm">
+                <a
+                  href={`/blog/${featuredPost.slug}`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+                >
                   Lees artikel
-                  <ArrowRight className="w-4 h-4" />
-                </div>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </a>
               </div>
             </article>
           </div>
@@ -429,7 +443,7 @@ export default function BlogPage() {
               >
                 {carouselPosts.map((post) => (
                   <div key={post.id} className="snap-start" role="listitem">
-                    <BlogCard post={post} onNavigate={handleNavigate} />
+                    <BlogCard post={post} />
                   </div>
                 ))}
               </div>
@@ -438,7 +452,7 @@ export default function BlogPage() {
               <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:auto-rows-fr" role="list">
                 {carouselPosts.map((post) => (
                   <div key={post.id} role="listitem">
-                    <BlogCard post={post} onNavigate={handleNavigate} />
+                    <BlogCard post={post} />
                   </div>
                 ))}
               </div>

@@ -306,7 +306,7 @@ export async function updateTopicStatus(
   status: BlogTopic['status'],
   generatedPostId?: string
 ): Promise<BlogTopic> {
-  const updates: any = { status };
+  const updates: { status: BlogTopic['status']; generated_post_id?: string } = { status };
   if (generatedPostId) {
     updates.generated_post_id = generatedPostId;
   }
@@ -444,7 +444,7 @@ function estimateReadTime(content: string): number {
 }
 
 function generateSessionId(): string {
-  return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
 export function generateSlug(title: string): string {

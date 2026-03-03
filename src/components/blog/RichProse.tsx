@@ -83,44 +83,58 @@ export function toRichBlocks(content: string): Block[] {
 
 type RichProseProps = {
   blocks: Block[];
+  className?: string;
 };
 
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    }
+    return part;
+  });
+}
+
 /** Render blokken met tokens-first typografie */
-const RichProse: React.FC<RichProseProps> = ({ blocks }) => {
+const RichProse: React.FC<RichProseProps> = ({ blocks, className = "blog-prose" }) => {
   return (
-    <div className="prose">
+    <div className={className}>
       {blocks.map((b, i) => {
         switch (b.type) {
           case "h2":
             return (
-              <h2 key={b.id + i} id={b.id} className="prose-h2">
+              <h2 key={b.id + i} id={b.id}>
                 <a className="heading-anchor" href={`#${b.id}`} aria-label="Koplink">¶</a>
-                {b.text}
+                {renderInline(b.text)}
               </h2>
             );
           case "h3":
             return (
-              <h3 key={b.id + i} id={b.id} className="prose-h3">
+              <h3 key={b.id + i} id={b.id}>
                 <a className="heading-anchor" href={`#${b.id}`} aria-label="Koplink">¶</a>
-                {b.text}
+                {renderInline(b.text)}
               </h3>
             );
           case "ul":
             return (
-              <ul key={"ul-" + i} className="prose-ul">
-                {b.items.map((it, idx) => <li key={idx}>{it}</li>)}
+              <ul key={"ul-" + i}>
+                {b.items.map((it, idx) => <li key={idx}>{renderInline(it)}</li>)}
               </ul>
             );
           case "ol":
             return (
-              <ol key={"ol-" + i} className="prose-ol">
-                {b.items.map((it, idx) => <li key={idx}>{it}</li>)}
+              <ol key={"ol-" + i}>
+                {b.items.map((it, idx) => <li key={idx}>{renderInline(it)}</li>)}
               </ol>
             );
           case "blockquote":
-            return <blockquote key={"q-" + i} className="prose-quote">"{b.text}"</blockquote>;
+            return <blockquote key={"q-" + i}>{renderInline(b.text)}</blockquote>;
           default:
-            return <p key={"p-" + i} className="prose-p">{(b as any).text}</p>;
+            return <p key={"p-" + i}>{renderInline((b as { text: string }).text)}</p>;
         }
       })}
     </div>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { Calendar, Clock, ArrowRight, Share2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import Seo from '@/components/seo/Seo';
 import { Button } from '@/components/ui/Button';
 import { ReadingProgress } from '@/components/blog/reading/ReadingProgress';
 import { TableOfContents } from '@/components/blog/reading/TableOfContents';
 import { TLDRSection } from '@/components/blog/reading/TLDRSection';
+import RichProse, { toRichBlocks } from '@/components/blog/RichProse';
 import {
   getBlogPostBySlug,
   getPublishedBlogPosts,
@@ -15,86 +17,23 @@ import {
   type UIBlogPost
 } from '@/services/blog/blogService';
 
-/**
- * Premium FitFi Blog Post Page
- * Features:
- * - Reading progress bar
- * - Sticky TOC (desktop)
- * - Premium typography
- * - TL;DR section
- * - Related posts
- * - CTA at end
- */
+function toAnchorId(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-');
+}
 
-// Helper: extract H2/H3 headings from markdown content
 function extractHeadings(content: string) {
   const headingRegex = /^(#{2,3})\s+(.+)$/gm;
   const headings: Array<{ id: string; title: string; level: number }> = [];
   let match;
-
   while ((match = headingRegex.exec(content)) !== null) {
     const level = match[1].length;
     const title = match[2].trim();
-    const id = title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-');
-
-    headings.push({ id, title, level });
+    headings.push({ id: toAnchorId(title), title, level });
   }
-
   return headings;
-}
-
-// Helper: render markdown to HTML with heading IDs
-function renderMarkdown(content: string): string {
-  let html = content
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-
-  // H2 & H3 with IDs for TOC
-  html = html.replace(/^###\s?(.*)$/gm, (_, text) => {
-    const id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-');
-    return `<h3 id="${id}">${text}</h3>`;
-  });
-
-  html = html.replace(/^##\s?(.*)$/gm, (_, text) => {
-    const id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-');
-    return `<h2 id="${id}">${text}</h2>`;
-  });
-
-  // Bold/Italic
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-  // Blockquote
-  html = html.replace(/^\>\s?(.*)$/gm, '<blockquote>$1</blockquote>');
-
-  // Lists
-  html = html.replace(/(?:^|\n)-\s+(.*)(?=\n|$)/g, '\n<li>$1</li>');
-  html = html.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
-  html = html.replace(/(?:^|\n)\d+\.\s+(.*)(?=\n|$)/g, '\n<ol><li>$1</li></ol>');
-  html = html.replace(/<\/ol>\s*<ol>/g, '');
-  html = html.replace(/<\/ul>\s*<ul>/g, '');
-
-  // Paragraphs
-  html = html
-    .split(/\n{2,}/)
-    .map((block) =>
-      /^(<h2|<h3|<ul|<ol|<blockquote|<li)/.test(block.trim())
-        ? block
-        : `<p>${block.trim()}</p>`
-    )
-    .join('\n');
-
-  return html;
 }
 
 export default function BlogPostPage() {
@@ -111,9 +50,7 @@ export default function BlogPostPage() {
         const fetchedPost = await getBlogPostBySlug(slug);
         if (fetchedPost) {
           setPost(fetchedPost);
-          incrementViewCount(slug);
-
-          // Load related posts (same category)
+          incrementViewCount(slug).catch(() => {});
           const allPosts = await getPublishedBlogPosts(20, 0);
           const related = allPosts
             .filter((p) => p.slug !== slug && p.category === fetchedPost.category)
@@ -121,8 +58,8 @@ export default function BlogPostPage() {
             .map(transformBlogPostForUI);
           setRelatedPosts(related);
         }
-      } catch (error) {
-        console.error('Failed to load blog post:', error);
+      } catch {
+        // Error shown via !post state
       } finally {
         setLoading(false);
       }
@@ -135,21 +72,21 @@ export default function BlogPostPage() {
     return extractHeadings(post.content);
   }, [post]);
 
-  const renderedContent = useMemo(() => {
-    if (!post) return '';
-    return renderMarkdown(post.content);
+  const blocks = useMemo(() => {
+    if (!post) return [];
+    return toRichBlocks(post.content);
   }, [post]);
 
-  const shareUrl = () => {
+  const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: post?.title || '',
-        text: post?.excerpt || '',
+        title: post?.title ?? '',
+        text: post?.excerpt ?? '',
         url: window.location.href
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link gekopieerd naar klembord');
+      toast.success('Link gekopieerd!');
     }
   };
 
@@ -187,75 +124,82 @@ export default function BlogPostPage() {
     day: 'numeric'
   });
 
-  // Mock TL;DR (in real impl, would come from post metadata or AI)
   const tldrPoints = [
     post.excerpt,
     `Leestijd: ${post.read_time_minutes} minuten`,
     'Ontdek praktische tips die je meteen kunt toepassen'
   ];
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.excerpt,
+    "datePublished": post.published_at,
+    "dateModified": post.updated_at,
+    "author": { "@type": "Person", "name": post.author_name },
+    "publisher": { "@type": "Organization", "name": "FitFi" },
+    "image": post.featured_image_url,
+  };
+
   return (
     <>
-      <Helmet>
-        <title>{post.seo_meta_title || post.title} - FitFi.ai Blog</title>
-        <meta
-          name="description"
-          content={post.seo_meta_description || post.excerpt}
-        />
-      </Helmet>
+      <Seo
+        title={`${post.seo_meta_title || post.title} — FitFi`}
+        description={post.seo_meta_description || post.excerpt}
+        path={`/blog/${post.slug}`}
+        image={post.featured_image_url}
+        structuredData={articleSchema}
+      />
 
       <ReadingProgress />
 
       <main className="bg-[var(--color-bg)] text-[var(--color-text)] pb-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 md:py-16 border-b-2 border-[var(--color-border)]">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 md:py-16 border-b border-[var(--color-border)]">
           <div className="ff-container">
-            {/* Breadcrumb / Category */}
-            <div className="mb-6">
+            {/* Breadcrumb */}
+            <div className="mb-6" aria-label="Breadcrumb">
               <Link
                 to="/blog"
                 className="text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
               >
                 Blog
               </Link>
-              <span className="mx-2 text-[var(--color-muted)]">/</span>
+              <span className="mx-2 text-[var(--color-muted)]" aria-hidden="true">/</span>
               <span className="text-sm font-medium text-[var(--ff-color-primary-600)]">
                 {post.category}
               </span>
             </div>
 
-            {/* Title */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight mb-6 max-w-4xl">
               {post.title}
             </h1>
 
-            {/* Subhead / Excerpt */}
             <p className="text-xl md:text-2xl text-[var(--color-muted)] leading-relaxed mb-8 max-w-3xl">
               {post.excerpt}
             </p>
 
-            {/* Meta Line */}
             <div className="blog-meta mb-8">
               <span className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                {formattedDate}
+                <Calendar className="w-4 h-4" aria-hidden="true" />
+                <time dateTime={post.published_at || post.created_at}>{formattedDate}</time>
               </span>
-              <div className="blog-meta-separator" />
+              <div className="blog-meta-separator" aria-hidden="true" />
               <span className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
+                <Clock className="w-4 h-4" aria-hidden="true" />
                 {post.read_time_minutes} min lezen
               </span>
-              <div className="blog-meta-separator" />
+              <div className="blog-meta-separator" aria-hidden="true" />
               <span>{post.author_name}</span>
             </div>
 
-            {/* Subtle CTA */}
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" onClick={() => navigate('/onboarding')}>
                 Start je Style Report
               </Button>
-              <Button variant="ghost" onClick={shareUrl}>
-                <Share2 className="w-4 h-4 mr-2" />
+              <Button variant="ghost" onClick={handleShare}>
+                <Share2 className="w-4 h-4 mr-2" aria-hidden="true" />
                 Delen
               </Button>
             </div>
@@ -267,7 +211,7 @@ export default function BlogPostPage() {
           <div className="blog-layout-wrapper">
             {/* Sidebar: TOC (sticky on desktop) */}
             {headings.length > 0 && (
-              <aside className="blog-sidebar">
+              <aside className="blog-sidebar" aria-label="Inhoudsopgave">
                 <TableOfContents items={headings} isSticky={true} />
               </aside>
             )}
@@ -275,30 +219,25 @@ export default function BlogPostPage() {
             {/* Main Content */}
             <article className="blog-main-content">
               <div className="blog-content-wrapper">
-                {/* Blog Body */}
-                <div
-                  className="blog-prose"
-                  dangerouslySetInnerHTML={{ __html: renderedContent }}
-                />
+                <RichProse blocks={blocks} className="blog-prose" />
 
-                {/* TL;DR Section */}
                 <TLDRSection points={tldrPoints} />
 
                 {/* End CTA */}
-                <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-800)] rounded-[var(--radius-lg)] p-8 md:p-12 text-center my-12 text-white">
+                <div className="bg-[var(--ff-color-primary-700)] rounded-[var(--radius-lg)] p-8 md:p-12 text-center my-12 text-white">
                   <h2 className="text-3xl font-bold mb-4">
                     Ontdek jouw perfecte stijl
                   </h2>
                   <p className="text-lg mb-6 opacity-90 max-w-2xl mx-auto">
-                    Krijg gepersonaliseerde stijladvies en outfit aanbevelingen op basis van jouw unieke smaak en voorkeuren.
+                    Gepersonaliseerd stijladvies en outfit-aanbevelingen op basis van jouw smaak en voorkeuren.
                   </p>
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/onboarding')}
-                    className="bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-neutral-50)]"
+                    className="bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)]"
                   >
                     Start gratis quiz
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
                   </Button>
                 </div>
 
@@ -308,18 +247,21 @@ export default function BlogPostPage() {
                     <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-4 sm:mb-6">
                       Gerelateerde artikelen
                     </h2>
-                    {/* Mobile: horizontal scroll; desktop: 3-col grid */}
-                    <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 sm:overflow-visible sm:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div
+                      className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 sm:overflow-visible sm:pb-0"
+                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
                       {relatedPosts.map((related) => (
                         <Link
                           key={related.id}
                           to={`/blog/${related.slug}`}
-                          className="group bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden hover:shadow-[var(--shadow-lifted)] transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
+                          className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden hover:shadow-[var(--shadow-lifted)] transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
                         >
                           <div className="aspect-[16/9] overflow-hidden">
                             <img
                               src={related.image}
                               alt={related.title}
+                              loading="lazy"
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           </div>

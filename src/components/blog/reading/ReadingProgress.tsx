@@ -13,7 +13,7 @@ export const ReadingProgress: React.FC = () => {
       setProgress(Math.min(100, Math.max(0, percentage)));
     };
 
-    window.addEventListener('scroll', updateProgress);
+    window.addEventListener('scroll', updateProgress, { passive: true });
     updateProgress();
 
     return () => window.removeEventListener('scroll', updateProgress);

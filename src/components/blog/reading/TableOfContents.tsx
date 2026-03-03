@@ -66,19 +66,21 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
       {/* Mobile toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls="toc-list"
         className="md:hidden w-full flex items-center justify-between text-[var(--color-text)] font-bold mb-4"
       >
         <span>Inhoud</span>
-        {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        {isOpen ? <ChevronUp className="w-5 h-5" aria-hidden="true" /> : <ChevronDown className="w-5 h-5" aria-hidden="true" />}
       </button>
 
       {/* Desktop title */}
-      <h2 className="hidden md:block text-[var(--color-text)] font-bold mb-4">
+      <p className="hidden md:block text-[var(--color-text)] font-bold mb-4">
         In dit artikel
-      </h2>
+      </p>
 
       {/* TOC items */}
-      <ul className={`space-y-2 ${isOpen ? 'block' : 'hidden md:block'}`}>
+      <ul id="toc-list" className={`space-y-2 ${isOpen ? 'block' : 'hidden md:block'}`}>
         {items.map((item) => (
           <li key={item.id}>
             <button
