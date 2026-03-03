@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, AlertTriangle, RefreshCw, CheckCircle } from 'lucide-react';
+import { X, TriangleAlert as AlertTriangle, RefreshCw, CircleCheck as CheckCircle } from 'lucide-react';
 import { profileSyncService } from '@/services/data/profileSyncService';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';

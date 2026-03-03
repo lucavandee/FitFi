@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import {
-  User, Mail, LogOut, Camera, Trash2,
-  ChevronRight, Check, AlertCircle, Sparkles, RefreshCw,
-  Crown, Star, Lock, Shield, Palette, ArrowRight
-} from "lucide-react";
+import { User, Mail, LogOut, Camera, Trash2, ChevronRight, Check, CircleAlert as AlertCircle, Sparkles, RefreshCw, Crown, Star, Lock, Shield, Palette, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabaseClient";
