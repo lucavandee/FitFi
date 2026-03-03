@@ -129,9 +129,9 @@ function AccordionItem({
   return (
     <div
       className={[
-        "bg-[var(--color-surface)] rounded-2xl border-2 transition-all duration-300 shadow-sm",
+        "bg-[var(--color-surface)] rounded-xl border transition-all duration-200 shadow-[var(--shadow-soft)]",
         isOpen
-          ? "border-[var(--ff-color-primary-400)] shadow-md"
+          ? "border-[var(--ff-color-primary-300)]"
           : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-200)]",
       ].join(" ")}
     >
@@ -140,14 +140,17 @@ function AccordionItem({
           onClick={() => onToggle(id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${id}`}
-          className="w-full flex items-center justify-between gap-3 p-5 sm:p-6 text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 rounded-2xl"
+          className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 rounded-xl min-h-[60px]"
         >
-          <span className="font-bold text-sm sm:text-base text-[var(--color-text)] leading-snug pr-2">
+          <span className={[
+            "flex-1 text-sm sm:text-base leading-snug font-medium",
+            isOpen ? "text-[var(--ff-color-primary-700)] font-semibold" : "text-[var(--color-text)]",
+          ].join(" ")}>
             <Highlight text={item.q} term={highlight} />
           </span>
           <span
             className={[
-              "flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors",
+              "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200",
               isOpen
                 ? "bg-[var(--ff-color-primary-700)] text-white"
                 : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]",
@@ -155,8 +158,8 @@ function AccordionItem({
             aria-hidden="true"
           >
             {isOpen
-              ? <Minus className="w-3.5 h-3.5" strokeWidth={2.5} />
-              : <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+              ? <Minus className="w-3 h-3" strokeWidth={2.5} />
+              : <Plus className="w-3 h-3" strokeWidth={2.5} />
             }
           </span>
         </button>
@@ -170,11 +173,13 @@ function AccordionItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             style={{ overflow: "hidden" }}
           >
-            <p className="m-0 px-5 sm:px-6 pb-5 sm:pb-6 pt-0 text-sm sm:text-base leading-relaxed text-[var(--color-muted)]">
-              <Highlight text={item.a} term={highlight} />
+            <p className="m-0 px-5 pb-5 pt-0 text-sm leading-relaxed text-[var(--color-muted)] border-t border-[var(--color-border)]">
+              <span className="block pt-3">
+                <Highlight text={item.a} term={highlight} />
+              </span>
             </p>
           </motion.div>
         )}
@@ -268,21 +273,21 @@ export default function FAQPage() {
       {/* ══════════════════════════════════════════════════
           SEARCH + CATEGORIE TABS
       ══════════════════════════════════════════════════ */}
-      <section className="py-10 sm:py-14 md:py-20 bg-[var(--color-surface)]">
+      <section className="py-10 sm:py-14 md:py-20 bg-[var(--color-bg)] border-t border-[var(--color-border)]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
 
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 tracking-tight">
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 tracking-tight">
               Vind je antwoord
             </h2>
-            <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
+            <p className="text-sm sm:text-base text-[var(--color-muted)]">
               Zoek direct of blader per categorie
             </p>
           </div>
 
-          {/* Search bar */}
-          <div className="relative max-w-xl mx-auto mb-6 sm:mb-8">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
+          {/* Search bar — compacte proportie */}
+          <div className="relative max-w-lg mx-auto mb-5 sm:mb-6">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
             <label htmlFor="faq-search" className="sr-only">Zoek in veelgestelde vragen</label>
             <input
               id="faq-search"
@@ -291,23 +296,23 @@ export default function FAQPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoComplete="off"
-              className="w-full pl-11 pr-10 py-3.5 rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-4 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2 focus:border-[var(--ff-color-primary-400)] transition-all shadow-sm font-medium"
+              className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all shadow-[var(--shadow-soft)]"
             />
             {search && (
               <button
                 onClick={clearSearch}
                 aria-label="Zoekopdracht wissen"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Category tabs — horizontal scrollable on mobile */}
+          {/* Category tabs */}
           {!isSearching && (
-            <nav aria-label="FAQ categorieën" className="mb-8 sm:mb-10">
-              <ul className="flex flex-wrap justify-center gap-2 sm:gap-3 list-none m-0 p-0">
+            <nav aria-label="FAQ categorieën" className="mb-6 sm:mb-8">
+              <ul className="flex flex-wrap justify-center gap-2 list-none m-0 p-0">
                 {CATEGORIES.map(({ id, label, Icon, items }) => {
                   const active = activeCat === id;
                   return (
@@ -316,20 +321,15 @@ export default function FAQPage() {
                         onClick={() => changeCat(id)}
                         aria-pressed={active}
                         className={[
-                          "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold",
-                          "border-2 transition-all duration-200 cursor-pointer min-h-[44px]",
-                          "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2",
+                          "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold",
+                          "border transition-all duration-200 cursor-pointer min-h-[40px]",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
                           active
-                            ? "bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)] shadow-md"
-                            : "bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:shadow-sm",
+                            ? "bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)] shadow-sm"
+                            : "bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]",
                         ].join(" ")}
                       >
-                        <span className={[
-                          "w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0",
-                          active ? "bg-white/20" : "bg-[var(--ff-color-primary-100)]",
-                        ].join(" ")}>
-                          <Icon size={11} aria-hidden="true" className={active ? "text-white" : "text-[var(--ff-color-primary-700)]"} />
-                        </span>
+                        <Icon size={13} aria-hidden="true" className={active ? "text-white opacity-80" : "text-[var(--ff-color-primary-600)]"} />
                         <span>{label}</span>
                         <span className={[
                           "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0",
@@ -355,7 +355,7 @@ export default function FAQPage() {
           </div>
 
           {/* Section label */}
-          <div className="flex items-center justify-between mb-4 sm:mb-5 px-0.5">
+          <div className="flex items-center justify-between mb-3 sm:mb-4 px-0.5">
             <span className="text-xs font-bold tracking-widest uppercase text-[var(--ff-color-primary-600)]">
               {isSearching
                 ? searchResults.length === 0
@@ -370,7 +370,7 @@ export default function FAQPage() {
             )}
           </div>
 
-          {/* Accordion grid — 2 col op md+ zoals HowItWorks FAQ */}
+          {/* Accordion — 1 kolom altijd voor consistente uitlijning */}
           <AnimatePresence mode="wait">
             <motion.div
               key={isSearching ? `s-${search}` : activeCat}
@@ -380,8 +380,8 @@ export default function FAQPage() {
               transition={{ duration: 0.18 }}
             >
               {displayItems.length === 0 ? (
-                <div className="text-center py-12 sm:py-16 bg-[var(--color-surface)] rounded-2xl border-2 border-[var(--color-border)]">
-                  <div className="w-12 h-12 rounded-2xl bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-300)] flex items-center justify-center mx-auto mb-4">
+                <div className="text-center py-12 sm:py-16 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
+                  <div className="w-10 h-10 rounded-2xl bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-300)] flex items-center justify-center mx-auto mb-3">
                     <Search className="w-5 h-5" aria-hidden="true" />
                   </div>
                   <p className="text-sm text-[var(--color-muted)] mb-4">
@@ -396,7 +396,7 @@ export default function FAQPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                <div className="flex flex-col gap-3">
                   {displayItems.map((item, i) => (
                     <AccordionItem
                       key={`${displayKey}-${i}`}
