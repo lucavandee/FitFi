@@ -41,6 +41,7 @@ import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdvi
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
 import { ShareModal } from "@/components/results/ShareModal";
+import { canonicalUrl } from "@/utils/urls";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -307,6 +308,14 @@ export default function EnhancedResultsPage() {
       <Helmet>
         <title>Jouw Style Report – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
+        <link rel="canonical" href={canonicalUrl('/results')} />
+        <meta property="og:title" content={`${archetypeName} Style Report – FitFi`} />
+        <meta property="og:description" content="Ontdek jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies op FitFi." />
+        <meta property="og:url" content={canonicalUrl('/results')} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${archetypeName} Style Report – FitFi`} />
+        <meta name="twitter:description" content="Ontdek jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies op FitFi." />
       </Helmet>
 
       <SaveOutfitsModal
@@ -594,7 +603,7 @@ export default function EnhancedResultsPage() {
             {/* Ultra-Premium Style Profile Card */}
             <div className="max-w-5xl mx-auto mb-12">
               <AnimatedSection delay={0.1}>
-                <div className="relative bg-gradient-to-br from-white via-white to-slate-50/30 backdrop-blur-xl border border-[var(--color-border)]/40 rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
+                <div className="relative bg-gradient-to-br from-[var(--color-surface)] via-[var(--color-surface)] to-[var(--color-bg)] backdrop-blur-xl border border-[var(--color-border)] rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
 
                   {/* Subtle background pattern */}
                   <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
@@ -630,7 +639,7 @@ export default function EnhancedResultsPage() {
                           <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Temperatuur</span>
-                              <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-orange-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                              <span className="px-3 py-1.5 bg-[var(--ff-color-primary-50)] text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
                                 {formatStyleDNAValue('temperature', activeColorProfile.temperature)}
                               </span>
                             </div>
@@ -643,8 +652,8 @@ export default function EnhancedResultsPage() {
                           <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Contrast</span>
-                              <span className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-200 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
-                                {formatStyleDNAValue('contrast', color.contrast)}
+                              <span className="px-3 py-1.5 bg-[var(--color-bg)] text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                                {formatStyleDNAValue('contrast', activeColorProfile.contrast)}
                               </span>
                             </div>
                             <div className="flex gap-2">
@@ -658,15 +667,15 @@ export default function EnhancedResultsPage() {
                           <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Seizoen</span>
-                              <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                              <span className="px-3 py-1.5 bg-[var(--ff-color-accent-50)] text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
                                 {formatStyleDNAValue('season', activeColorProfile.season)}
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'zomer' ? 'from-sky-200 to-blue-300' : 'from-sky-200 to-blue-300 opacity-30'}`} title="Zomer" />
-                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'herfst' ? 'from-amber-200 to-orange-300' : 'from-amber-200 to-orange-300 opacity-30'}`} title="Herfst" />
-                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'winter' ? 'from-slate-200 to-blue-200' : 'from-slate-200 to-blue-200 opacity-30'}`} title="Winter" />
-                              <div className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'lente' ? 'from-pink-200 to-green-200' : 'from-pink-200 to-green-200 opacity-30'}`} title="Lente" />
+                              <div role="img" aria-label={`Zomer${activeColorProfile.season === 'zomer' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-sky-200 to-blue-300 ${activeColorProfile.season === 'zomer' ? '' : 'opacity-30'}`} />
+                              <div role="img" aria-label={`Herfst${activeColorProfile.season === 'herfst' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-amber-200 to-orange-300 ${activeColorProfile.season === 'herfst' ? '' : 'opacity-30'}`} />
+                              <div role="img" aria-label={`Winter${activeColorProfile.season === 'winter' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-slate-200 to-blue-200 ${activeColorProfile.season === 'winter' ? '' : 'opacity-30'}`} />
+                              <div role="img" aria-label={`Lente${activeColorProfile.season === 'lente' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-pink-200 to-green-200 ${activeColorProfile.season === 'lente' ? '' : 'opacity-30'}`} />
                             </div>
                           </div>
 
@@ -674,7 +683,7 @@ export default function EnhancedResultsPage() {
                           <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Chroma</span>
-                              <span className="px-3 py-1.5 bg-gradient-to-r from-purple-50 to-pink-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
+                              <span className="px-3 py-1.5 bg-[var(--ff-color-primary-25)] text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide capitalize">
                                 {formatStyleDNAValue('chroma', activeColorProfile.chroma)}
                               </span>
                             </div>
@@ -702,7 +711,7 @@ export default function EnhancedResultsPage() {
                                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-success-500)] to-[var(--ff-color-success-600)] flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
                                   <Check className="w-5 h-5 text-white" strokeWidth={2.5} />
                                 </div>
-                                <span className="text-[var(--color-text)] font-medium leading-relaxed tracking-wide flex-1 pt-1">
+                                <span className="text-[var(--color-text)] leading-relaxed tracking-wide flex-1 pt-1">
                                   {note}
                                 </span>
                               </div>
@@ -734,7 +743,7 @@ export default function EnhancedResultsPage() {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl text-center"
+                      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-[var(--color-surface)] to-[var(--ff-color-accent-50)] rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl text-center"
                     >
                       <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center">
                         <ShoppingBag className="w-8 h-8 text-white" />
@@ -898,7 +907,7 @@ export default function EnhancedResultsPage() {
                           </li>
                           <li className="flex items-start gap-3">
                             <Check className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Seizoen:</strong> {getSeasonDescription(activeColorProfile.season, color.contrast, activeColorProfile.temperature)}</span>
+                            <span className="text-[var(--color-text)] leading-relaxed"><strong>Seizoen:</strong> {getSeasonDescription(activeColorProfile.season, activeColorProfile.contrast, activeColorProfile.temperature)}</span>
                           </li>
                           {!answers?.photoUrl && (
                             <li className="flex items-start gap-3">
@@ -972,7 +981,7 @@ export default function EnhancedResultsPage() {
                     <h3 className="text-2xl font-bold">Persoonlijke Styling Tips</h3>
                   </div>
                   <ul className="space-y-4">
-                    {color.notes.map((note, i) => (
+                    {(activeColorProfile.notes ?? []).map((note, i) => (
                       <motion.li
                         key={i}
                         initial={{ opacity: 0, x: -20 }}
@@ -1302,7 +1311,7 @@ export default function EnhancedResultsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                   whileHover={{ scale: 1.02 }}
-                  className="bg-gradient-to-br from-white via-[var(--ff-color-primary-25)] to-[var(--ff-color-accent-50)] rounded-[40px] p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.15)] hover:shadow-[0_30px_80px_rgba(0,0,0,0.2)] transition-all duration-500 border-2 border-[var(--ff-color-primary-200)]"
+                  className="bg-gradient-to-br from-[var(--color-surface)] via-[var(--ff-color-primary-25)] to-[var(--ff-color-accent-50)] rounded-[40px] p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.15)] hover:shadow-[0_30px_80px_rgba(0,0,0,0.2)] transition-all duration-500 border-2 border-[var(--ff-color-primary-200)]"
                 >
                   <div className="text-center mb-6">
                     <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2">

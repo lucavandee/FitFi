@@ -75,7 +75,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
         {value !== 'all' && (
           <button
             onClick={() => onChange('all')}
-            className="text-xs text-[var(--color-primary)] hover:underline"
+            className="text-xs text-[var(--ff-color-primary-600)] hover:underline min-h-[44px] px-3"
           >
             Reset filter
           </button>
@@ -91,25 +91,26 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
               key={occasion.value}
               onClick={() => onChange(occasion.value)}
               className={`
-                relative px-4 py-2 rounded-xl text-sm font-medium
+                relative px-4 py-3 min-h-[44px] rounded-xl text-sm font-medium
                 transition-all duration-200
                 flex items-center gap-2
                 ${
                   isActive
-                    ? 'bg-[var(--color-primary)] text-white shadow-lg'
-                    : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--color-primary)]'
+                    ? 'bg-[var(--ff-color-primary-700)] text-white shadow-lg'
+                    : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]'
                 }
               `}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              title={occasion.description}
+              aria-label={`${occasion.label} — ${occasion.description}`}
+              aria-pressed={isActive}
             >
               {occasion.icon}
               <span>{occasion.label}</span>
 
               {isActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-xl bg-[var(--color-primary)]/10 pointer-events-none"
+                  className="absolute inset-0 rounded-xl bg-[var(--ff-color-primary-700)]/10 pointer-events-none"
                   layoutId="occasion-active"
                   transition={{ type: 'spring', damping: 20, stiffness: 300 }}
                 />

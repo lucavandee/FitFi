@@ -53,7 +53,7 @@ export function ResultsStickyCTAFixed({
           aria-label="Hoofd acties"
         >
           {/* Mobile-optimized sticky CTA bar */}
-          <div className="bg-white/95 backdrop-blur-lg border-t-2 border-[var(--color-border)] shadow-2xl">
+          <div className="bg-[var(--color-surface)]/95 backdrop-blur-lg border-t-2 border-[var(--color-border)] shadow-2xl">
             <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
               <div className="flex items-center gap-3">
                 {/* ✅ PRIMARY CTA - The main goal (shop) */}
@@ -74,12 +74,12 @@ export function ResultsStickyCTAFixed({
                 {/* Saved Count Badge (info only, not a CTA) */}
                 {savedCount > 0 && (
                   <div
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-pink-50 rounded-xl border-2 border-pink-200"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-danger-50)] rounded-xl border-2 border-[var(--ff-color-danger-200)]"
                     role="status"
                     aria-live="polite"
                   >
-                    <Heart className="w-5 h-5 text-pink-600 fill-pink-600" aria-hidden="true" />
-                    <span className="text-sm font-semibold text-pink-900">
+                    <Heart className="w-5 h-5 text-[var(--ff-color-danger-600)] fill-[var(--ff-color-danger-600)]" aria-hidden="true" />
+                    <span className="text-sm font-semibold text-[var(--ff-color-danger-900,var(--color-text))]">
                       {savedCount} opgeslagen
                     </span>
                   </div>
@@ -92,7 +92,7 @@ export function ResultsStickyCTAFixed({
           <div className="hidden sm:block bg-[var(--ff-color-primary-50)] border-t border-[var(--ff-color-primary-100)]">
             <div className="max-w-7xl mx-auto px-4 py-2">
               <p className="text-xs text-[var(--color-muted)] text-center">
-                💡 Tip: Bewaar je favoriete outfits met het ❤️ icoon op elke outfit card
+                Tip: Bewaar je favoriete outfits met het hart-icoon op elke outfit card
               </p>
             </div>
           </div>

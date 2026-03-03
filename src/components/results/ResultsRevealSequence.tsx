@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Share2, Download } from 'lucide-react';
 import { fireConfetti, confettiPresets } from '@/utils/confetti';
@@ -22,6 +22,8 @@ export function ResultsRevealSequence({
   const [stage, setStage] = useState<RevealStage>('loading');
   const [progress, setProgress] = useState(0);
   const [loadingStep, setLoadingStep] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const loadingSteps = [
     'Jouw antwoorden analyseren...',
@@ -37,7 +39,7 @@ export function ResultsRevealSequence({
         setProgress(prev => {
           if (prev >= 100) {
             clearInterval(progressInterval);
-            setTimeout(() => setStage('archetypeReveal'), 300);
+            timerRef.current = setTimeout(() => setStage('archetypeReveal'), 300);
             return 100;
           }
           return prev + 2.5;
@@ -62,14 +64,14 @@ export function ResultsRevealSequence({
 
     if (stage === 'archetypeReveal') {
       track('results_archetype_revealed', { archetype });
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setStage('shareCard');
         fireConfetti({ particleCount: 30, spread: 60, startVelocity: 20 });
       }, 2000);
     }
 
     if (stage === 'shareCard') {
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setStage('complete');
         onComplete();
       }, 2500);
@@ -296,7 +298,7 @@ export function ResultsRevealSequence({
                       track('results_view_outfits_clicked', { archetype });
                       onComplete();
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] transition-colors"
                   >
                     Bekijk Outfits
                   </button>
