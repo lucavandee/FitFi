@@ -3,7 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowRight, Camera, Check, ChevronRight,
-  Heart, Lock, RefreshCw, Settings, ShoppingBag, Sparkles, Star, User
+  Heart, Lock, RefreshCw, Settings, ShoppingBag,
+  Sparkles, Star, User, Palette, Crown,
+  TrendingUp, Zap, LayoutGrid,
 } from "lucide-react";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { supabase } from "@/lib/supabaseClient";
@@ -12,7 +14,6 @@ import { useUser } from "@/context/UserContext";
 import { motion } from "framer-motion";
 import { PhotoUploadModal } from "@/components/nova/PhotoUploadModal";
 
-/* ─── helpers ─── */
 function readJson<T>(key: string): T | null {
   try {
     const raw = localStorage.getItem(key);
@@ -42,15 +43,14 @@ function toTitleCase(s: string) {
   return s.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
-/* ─── archetype copy ─── */
 const ARCHETYPE_COPY: Record<string, { tagline: string; tone: string }> = {
-  "Clean Minimal":  { tagline: "Elk stuk telt.",               tone: "Bewust, strak en tijdloos." },
+  "Clean Minimal":  { tagline: "Elk stuk telt.",                tone: "Bewust, strak en tijdloos." },
   "Smart Casual":   { tagline: "Moeiteloos voor elke situatie.", tone: "Veelzijdig, verfijnd en altijd raak." },
-  "Sporty Sharp":   { tagline: "Energie en vorm in balans.",    tone: "Scherp, actief en zelfverzekerd." },
-  "Classic Soft":   { tagline: "Tijdloze elegantie.",           tone: "Verfijnd, warm en aanwezig." },
-  "Streetwear":     { tagline: "Stoer, comfortabel, actueel.",  tone: "Jij draagt wat je wilt — en het werkt." },
-  "Klassiek":       { tagline: "Tijdloos en onberispelijk.",    tone: "Kwaliteit boven trend." },
-  "Minimalist":     { tagline: "Minder is altijd meer.",        tone: "Bewust, strak en doordacht." },
+  "Sporty Sharp":   { tagline: "Energie en vorm in balans.",     tone: "Scherp, actief en zelfverzekerd." },
+  "Classic Soft":   { tagline: "Tijdloze elegantie.",            tone: "Verfijnd, warm en aanwezig." },
+  "Streetwear":     { tagline: "Stoer, comfortabel, actueel.",   tone: "Jij draagt wat je wilt — en het werkt." },
+  "Klassiek":       { tagline: "Tijdloos en onberispelijk.",     tone: "Kwaliteit boven trend." },
+  "Minimalist":     { tagline: "Minder is altijd meer.",         tone: "Bewust, strak en doordacht." },
   "Bohemian":       { tagline: "Vrij, creatief en onmiskenbaar.", tone: "Van kleding maak jij kunst." },
 };
 
@@ -59,9 +59,6 @@ function getArchetypeCopy(name: string | null) {
   return ARCHETYPE_COPY[name] ?? { tagline: "Jouw unieke stijlidentiteit.", tone: "" };
 }
 
-/* ═══════════════════════════════════════════════════════
-   PAGE
-══════════════════════════════════════════════════════════ */
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user: ctxUser } = useUser();
@@ -71,6 +68,7 @@ export default function DashboardPage() {
   const [showPhotoModal, setShowPhotoModal] = React.useState(false);
 
   const isPremium = ctxUser?.tier === "premium" || ctxUser?.tier === "founder" || !!ctxUser?.isPremium;
+  const isFounder = ctxUser?.tier === "founder";
 
   const { color, archetype, hasReport, hasPhoto, reportDate } = React.useMemo(() => {
     const c = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
@@ -126,7 +124,6 @@ export default function DashboardPage() {
   const { tagline, tone } = getArchetypeCopy(archetypeName);
   const season = color?.season ?? null;
 
-  /* completion */
   const steps = [
     { label: "Stijlquiz gedaan",  done: hasReport },
     { label: "Foto toegevoegd",   done: hasPhoto  },
@@ -160,7 +157,8 @@ export default function DashboardPage() {
           </p>
           <button
             onClick={() => navigate("/onboarding")}
-            className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] bg-[var(--ff-color-primary-700)] text-white rounded-2xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors active:scale-[0.98]"
+            className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-2xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
+            style={{ background: "var(--ff-color-primary-700)" }}
           >
             Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -169,380 +167,591 @@ export default function DashboardPage() {
     );
   }
 
-  /* ═══════════════════════════════════════════════════
-     MAIN DASHBOARD
-  ═══════════════════════════════════════════════════ */
   return (
     <div style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}>
       <Helmet>
         <title>Dashboard – FitFi</title>
-        <meta name="description" content="Jouw persoonlijke stijldashboard." />
+        <meta name="description" content="Jouw persoonlijke stijldashboard met outfits, kleurprofiel en stijladvies." />
+        <meta property="og:title" content="Dashboard – FitFi" />
+        <meta property="og:description" content="Jouw persoonlijke stijldashboard." />
+        <meta property="og:type" content="website" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <div className="max-w-lg mx-auto px-4 pt-6 pb-24 space-y-3">
-
-        {/* ══ TOP BAR ══ */}
-        <motion.header
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center gap-3 mb-2"
-        >
-          {/* Avatar */}
-          <div
-            className="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold text-base flex-shrink-0 select-none"
-            style={{
-              background: "linear-gradient(135deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-500) 100%)"
-            }}
-          >
-            {userInitial}
-          </div>
-
-          {/* Greeting */}
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold text-[var(--color-muted)] uppercase tracking-[0.12em] leading-none mb-0.5">
-              {greeting}
-            </p>
-            <h1 className="font-heading text-lg font-bold text-[var(--color-text)] tracking-tight leading-tight truncate">
-              {userName || "Welkom terug"}
-            </h1>
-          </div>
-
-          {/* Profile link */}
-          <button
-            onClick={() => navigate("/profile")}
-            aria-label="Profielinstellingen"
-            className="w-11 h-11 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors flex-shrink-0"
-          >
-            <Settings className="w-[18px] h-[18px]" aria-hidden="true" />
-          </button>
-        </motion.header>
-
-        {/* ══ HERO IDENTITY CARD ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.06 }}
-          className="relative rounded-3xl overflow-hidden"
+      {/* ══ DARK HERO BANNER ══ */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background: "linear-gradient(160deg, var(--ff-color-primary-900) 0%, var(--ff-color-primary-700) 100%)",
+          paddingTop: "clamp(2rem, 4vw, 3.5rem)",
+          paddingBottom: "clamp(2rem, 4vw, 3.5rem)",
+        }}
+      >
+        <div
+          className="absolute inset-0 pointer-events-none"
           style={{
-            background: "linear-gradient(150deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 40%, var(--ff-color-primary-500) 100%)",
-            boxShadow: "0 16px 48px rgba(74,56,40,0.35), 0 2px 0 rgba(255,255,255,0.08) inset"
+            backgroundImage: "url(/hero/hero-style-report-lg.webp)",
+            backgroundSize: "cover",
+            backgroundPosition: "center top",
+            opacity: 0.07,
           }}
-        >
-          {/* Top shine */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+        />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-          <div className="relative px-5 pt-5 pb-5">
+        <div className="ff-container relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
-            {/* Label + tier */}
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">
-                Stijlprofiel
-              </span>
-              <span
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                  isPremium
-                    ? "bg-[var(--ff-color-warning-400)]/20 text-[var(--ff-color-warning-200)] border border-[var(--ff-color-warning-400)]/25"
-                    : "bg-white/10 text-white/40 border border-white/10"
-                }`}
-              >
-                {isPremium ? <Star className="w-2.5 h-2.5" aria-hidden="true" /> : <Lock className="w-2.5 h-2.5" aria-hidden="true" />}
-                {isPremium ? "Premium" : "Gratis"}
-              </span>
-            </div>
-
-            {/* Archetype name — the hero */}
-            <h2
-              className="font-heading font-bold text-white leading-[0.95] mb-1"
-              style={{ fontSize: "clamp(2.4rem, 11vw, 3.5rem)", letterSpacing: "-0.03em" }}
-            >
-              {archetypeName ?? "Jouw stijl"}
-            </h2>
-
-            {/* Tagline */}
-            <p className="text-white/60 text-[13px] leading-snug mb-4 mt-1.5">
-              {tagline}
-              {tone && <span className="block text-white/35 text-[11px] mt-0.5">{tone}</span>}
-            </p>
-
-            {/* Chips row */}
-            <div className="flex flex-wrap items-center gap-2 mb-5">
-              {season && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[11px] text-white/75 font-semibold capitalize">
-                  {season}
-                </span>
-              )}
-              {color?.temperature && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/60 capitalize">
-                  {color.temperature}
-                </span>
-              )}
-              {hasPhoto && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--ff-color-success-600)]/20 border border-[var(--ff-color-success-400)]/25 text-[11px] text-[var(--ff-color-success-300)] font-semibold">
-                  <Check className="w-2.5 h-2.5" aria-hidden="true" /> Kleuranalyse
-                </span>
-              )}
-            </div>
-
-            {/* Color palette dots */}
-            {color?.palette && color.palette.length > 0 && (
-              <div className="flex items-center gap-1.5 mb-5">
-                <span className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mr-1">Palet</span>
-                {color.palette.slice(0, 8).map((hex: string, i: number) => (
-                  <div
-                    key={i}
-                    className="w-[18px] h-[18px] rounded-full flex-shrink-0 ring-1 ring-white/15"
-                    style={{ backgroundColor: hex }}
-                    title={hex}
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => navigate("/results")}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 min-h-[48px] rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
+            {/* Left — greeting + identity */}
+            <div className="flex items-center gap-4 md:gap-5">
+              <div
+                className="w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0 select-none"
                 style={{
-                  background: "rgba(255,255,255,0.96)",
-                  color: "var(--ff-color-primary-800)",
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.22)"
+                  background: "rgba(255,255,255,0.15)",
+                  boxShadow: "0 0 0 2px rgba(255,255,255,0.18), 0 8px 24px rgba(0,0,0,0.2)",
                 }}
               >
-                Bekijk outfits <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-              </button>
-              <button
-                onClick={() => navigate("/onboarding")}
-                aria-label="Quiz opnieuw starten"
-                className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-white/70 hover:bg-white/20 transition-colors flex-shrink-0"
-              >
-                <RefreshCw className="w-4 h-4" aria-hidden="true" />
-              </button>
-            </div>
-
-            {reportDate && (
-              <p className="text-[10px] text-white/25 mt-3.5">Bijgewerkt {reportDate}</p>
-            )}
-          </div>
-        </motion.div>
-
-        {/* ══ OUTFIT STRIP ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.12 }}
-          className="rounded-2xl bg-[var(--color-surface)] overflow-hidden border border-[var(--color-border)]"
-          style={{ boxShadow: "var(--shadow-soft)" }}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 pt-4 pb-3">
-            <div>
-              <h2 className="text-sm font-bold text-[var(--color-text)] tracking-tight">Jouw outfits</h2>
-              <p className="text-[11px] text-[var(--color-muted)] mt-0.5">Op maat voor {archetypeName ?? "jou"}</p>
-            </div>
-            <button
-              onClick={() => navigate("/results")}
-              className="inline-flex items-center gap-0.5 min-h-[44px] px-2 text-xs font-bold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] transition-colors"
-            >
-              Alles <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-          </div>
-
-          {outfitsData && outfitsData.length > 0 ? (
-            <div className="flex gap-2.5 px-4 pb-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-              {outfitsData.slice(0, 6).map((outfit, i) => {
-                const img = getOutfitImage(outfit);
-                const label = (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
-                return (
-                  <motion.button
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.94 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.18 + i * 0.05 }}
-                    onClick={() => navigate("/results")}
-                    aria-label={`Bekijk outfit: ${label}`}
-                    className="group relative flex-shrink-0 rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
-                    style={{ width: 100, height: 130 }}
-                  >
-                    {img ? (
-                      <img
-                        src={img}
-                        alt={label}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                        <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-200)]" aria-hidden="true" />
-                        <span className="text-[10px] font-bold text-[var(--ff-color-primary-300)]">Look {i + 1}</span>
-                      </div>
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 pt-6 pb-2 px-2 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
-                      <p className="text-white text-[9px] font-bold truncate capitalize leading-tight">{label}</p>
-                    </div>
-                  </motion.button>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center py-8 text-center px-6">
-              <Sparkles className="w-6 h-6 text-[var(--ff-color-primary-200)] mb-2.5" aria-hidden="true" />
-              <p className="text-xs text-[var(--color-muted)] mb-3 leading-relaxed">
-                Outfits worden samengesteld op basis van jouw profiel
-              </p>
-              <button
-                onClick={() => navigate("/results")}
-                className="text-xs font-bold text-[var(--ff-color-primary-600)] hover:underline"
-              >
-                Genereer nu →
-              </button>
-            </div>
-          )}
-        </motion.div>
-
-        {/* ══ ACTIONS ROW — 3 cards ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.18 }}
-          className="grid grid-cols-3 gap-2.5"
-        >
-          {/* Saved looks */}
-          <button
-            onClick={() => navigate("/results#saved")}
-            className="flex flex-col items-start p-3.5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] text-left"
-            style={{ boxShadow: "var(--shadow-soft)" }}
-          >
-            <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mb-2.5">
-              <Heart className="w-4 h-4 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
-            </div>
-            <p className="text-xs font-bold text-[var(--color-text)] leading-tight">Opgeslagen</p>
-            <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">
-              {favCount > 0 ? `${favCount} look${favCount !== 1 ? "s" : ""}` : "Leeg"}
-            </p>
-          </button>
-
-          {/* Photo / Kleuranalyse */}
-          <button
-            onClick={() => setShowPhotoModal(true)}
-            className="flex flex-col items-start p-3.5 rounded-2xl border transition-all active:scale-[0.97] text-left"
-            style={{
-              background: hasPhoto ? "var(--ff-color-success-50)" : "var(--color-surface)",
-              borderColor: hasPhoto ? "var(--ff-color-success-200)" : "var(--color-border)",
-              boxShadow: "var(--shadow-soft)"
-            }}
-          >
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center mb-2.5"
-              style={{ background: hasPhoto ? "var(--ff-color-success-100)" : "var(--ff-color-primary-50)" }}
-            >
-              <Camera
-                className={`w-4 h-4 ${hasPhoto ? "text-[var(--ff-color-success-600)]" : "text-[var(--ff-color-primary-500)]"}`}
-                aria-hidden="true"
-              />
-            </div>
-            <p className="text-xs font-bold text-[var(--color-text)] leading-tight">
-              {hasPhoto ? "Kleuranalyse" : "Foto"}
-            </p>
-            <p className={`text-[11px] mt-0.5 leading-tight ${hasPhoto ? "text-[var(--ff-color-success-700)]" : "text-[var(--color-muted)]"}`}>
-              {hasPhoto ? "Actief" : "Toevoegen"}
-            </p>
-          </button>
-
-          {/* Profile completeness */}
-          <button
-            onClick={() => navigate("/profile")}
-            className="flex flex-col items-start p-3.5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] text-left"
-            style={{ boxShadow: "var(--shadow-soft)" }}
-          >
-            <div className="relative w-8 h-8 flex-shrink-0 mb-2.5">
-              <svg className="w-8 h-8 -rotate-90" viewBox="0 0 32 32" aria-hidden="true">
-                <circle cx="16" cy="16" r="13" fill="none" stroke="var(--ff-color-primary-100)" strokeWidth="3" />
-                <motion.circle
-                  cx="16" cy="16" r="13" fill="none"
-                  stroke="var(--ff-color-primary-600)" strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeDasharray={2 * Math.PI * 13}
-                  initial={{ strokeDashoffset: 2 * Math.PI * 13 }}
-                  animate={{ strokeDashoffset: 2 * Math.PI * 13 * (1 - donePct / 100) }}
-                  transition={{ duration: 1.2, delay: 0.7, ease: "easeOut" }}
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[9px] font-bold text-[var(--ff-color-primary-700)]" aria-label={`${donePct} procent compleet`}>{donePct}%</span>
+                {userInitial}
               </div>
-            </div>
-            <p className="text-xs font-bold text-[var(--color-text)] leading-tight">Profiel</p>
-            <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">{donePct}% compleet</p>
-          </button>
-        </motion.div>
-
-        {/* ══ UPGRADE BANNER or SHOP ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.24 }}
-        >
-          {isPremium ? (
-            <button
-              onClick={() => navigate("/shop")}
-              className="group w-full flex items-center gap-3.5 p-4 rounded-2xl bg-[var(--color-surface)] text-left transition-colors hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] min-h-[64px]"
-              style={{ boxShadow: "var(--shadow-soft)" }}
-            >
-              <div className="w-11 h-11 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
-                <ShoppingBag className="w-5 h-5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-[var(--color-text)] text-sm">Shop jouw stijl</p>
-                <p className="text-xs text-[var(--color-muted)] mt-0.5">Producten afgestemd op jou</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
-            </button>
-          ) : (
-            <Link
-              to="/prijzen"
-              className="group flex items-center gap-4 p-5 rounded-2xl"
-              style={{
-                background: "linear-gradient(135deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 100%)",
-                boxShadow: "0 8px 28px rgba(74,56,40,0.30)"
-              }}
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/45 mb-1">Upgrade</p>
-                <p className="font-bold text-white text-base leading-tight">Ontgrendel Premium</p>
-                <p className="text-xs text-white/55 mt-1 leading-snug">
-                  50+ outfits · AI kleuranalyse · persoonlijk advies
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-white/40 mb-0.5">
+                  {greeting}
                 </p>
+                <h1 className="font-heading font-bold text-white leading-tight" style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)" }}>
+                  {userName || "Welkom terug"}
+                </h1>
+                {archetypeName && (
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[11px] text-white/80 font-semibold">
+                      {archetypeName}
+                    </span>
+                    {season && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/8 text-[11px] text-white/55 capitalize">
+                        {season}
+                      </span>
+                    )}
+                    {isPremium && (
+                      <span
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border"
+                        style={isFounder
+                          ? { background: "rgba(217,119,6,0.25)", color: "var(--ff-color-warning-200,#fde68a)", borderColor: "rgba(217,119,6,0.35)" }
+                          : { background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)", borderColor: "rgba(255,255,255,0.22)" }
+                        }
+                      >
+                        {isFounder ? <Star className="w-3 h-3" aria-hidden="true" /> : <Crown className="w-3 h-3" aria-hidden="true" />}
+                        {isFounder ? "Founder" : "Premium"}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 group-hover:bg-white/22 flex items-center justify-center transition-colors">
-                <ArrowRight className="w-4 h-4 text-white" aria-hidden="true" />
+            </div>
+
+            {/* Right — color palette + quick actions */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:flex-col md:items-end">
+              {color?.palette && color.palette.length > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mr-1">Palet</span>
+                  {color.palette.slice(0, 7).map((hex: string, i: number) => (
+                    <div
+                      key={i}
+                      className="w-5 h-5 rounded-full flex-shrink-0 ring-1 ring-white/20"
+                      style={{ backgroundColor: hex }}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate("/results")}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
+                  style={{
+                    background: "rgba(255,255,255,0.96)",
+                    color: "var(--ff-color-primary-900)",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
+                  }}
+                >
+                  <Sparkles className="w-4 h-4" aria-hidden="true" /> Outfits
+                </button>
+                <button
+                  onClick={() => navigate("/profile")}
+                  aria-label="Profielinstellingen"
+                  className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-xl border border-white/20 text-white/70 hover:bg-white/10 transition-colors flex items-center justify-center"
+                  style={{ background: "rgba(255,255,255,0.09)" }}
+                >
+                  <Settings className="w-4 h-4" aria-hidden="true" />
+                </button>
               </div>
-            </Link>
-          )}
-        </motion.div>
-
-        {/* ══ FULL REPORT CTA ══ */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          onClick={() => navigate("/results")}
-          className="group w-full flex items-center gap-3.5 px-4 py-3.5 min-h-[60px] rounded-2xl border border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] text-left transition-colors hover:bg-[var(--ff-color-primary-100)] active:scale-[0.99]"
-        >
-          <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Volledig stijlrapport</p>
-            <p className="text-xs text-[var(--color-muted)] mt-0.5">Outfits · kleuren · shopping tips</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-[var(--ff-color-primary-400)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
-        </motion.button>
+        </div>
+      </section>
 
-      </div>
+      {/* ══ MAIN CONTENT — wide bento grid ══ */}
+      <section className="ff-section">
+        <div className="ff-container">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-6 lg:gap-8 xl:gap-10 items-start">
+
+            {/* ══ LEFT — main column ══ */}
+            <div className="space-y-5">
+
+              {/* Identity hero card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.04 }}
+                className="relative rounded-3xl overflow-hidden"
+                style={{
+                  background: "linear-gradient(150deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 40%, var(--ff-color-primary-500) 100%)",
+                  boxShadow: "0 16px 48px rgba(74,56,40,0.28), 0 2px 0 rgba(255,255,255,0.08) inset",
+                }}
+              >
+                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
+                <div className="relative p-6 sm:p-8">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">
+                          Jouw stijlprofiel
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                            isPremium
+                              ? "bg-[rgba(253,230,138,0.18)] text-[rgba(253,230,138,0.9)] border-[rgba(253,230,138,0.25)]"
+                              : "bg-white/10 text-white/40 border-white/10"
+                          }`}
+                        >
+                          {isPremium
+                            ? <Star className="w-2.5 h-2.5" aria-hidden="true" />
+                            : <Lock className="w-2.5 h-2.5" aria-hidden="true" />}
+                          {isPremium ? "Premium" : "Gratis"}
+                        </span>
+                      </div>
+
+                      <h2
+                        className="font-heading font-bold text-white leading-[0.95] mb-2"
+                        style={{ fontSize: "clamp(2.2rem, 8vw, 3.8rem)", letterSpacing: "-0.03em" }}
+                      >
+                        {archetypeName ?? "Jouw stijl"}
+                      </h2>
+
+                      <p className="text-white/60 text-sm leading-snug mb-1">{tagline}</p>
+                      {tone && <p className="text-white/35 text-[12px] mb-4">{tone}</p>}
+
+                      <div className="flex flex-wrap items-center gap-2 mb-5">
+                        {season && (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[11px] text-white/75 font-semibold capitalize">
+                            {season}
+                          </span>
+                        )}
+                        {color?.temperature && (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/60 capitalize">
+                            {color.temperature}
+                          </span>
+                        )}
+                        {hasPhoto && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[rgba(22,163,74,0.22)] border border-[rgba(22,163,74,0.28)] text-[11px] text-[rgba(134,239,172,0.95)] font-semibold">
+                            <Check className="w-2.5 h-2.5" aria-hidden="true" /> Kleuranalyse
+                          </span>
+                        )}
+                      </div>
+
+                      {color?.palette && color.palette.length > 0 && (
+                        <div className="flex items-center gap-1.5 mb-6">
+                          <span className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mr-1">Palet</span>
+                          {color.palette.slice(0, 8).map((hex: string, i: number) => (
+                            <div
+                              key={i}
+                              className="w-[18px] h-[18px] rounded-full flex-shrink-0 ring-1 ring-white/15"
+                              style={{ backgroundColor: hex }}
+                              title={hex}
+                              aria-hidden="true"
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2.5">
+                    <button
+                      onClick={() => navigate("/results")}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
+                      style={{
+                        background: "rgba(255,255,255,0.96)",
+                        color: "var(--ff-color-primary-800)",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
+                      }}
+                    >
+                      Bekijk volledige outfits <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={() => navigate("/onboarding")}
+                      aria-label="Quiz opnieuw starten"
+                      className="w-13 h-13 min-w-[52px] min-h-[52px] rounded-2xl flex items-center justify-center text-white/70 hover:bg-white/20 transition-colors border border-white/15"
+                      style={{ background: "rgba(255,255,255,0.10)" }}
+                    >
+                      <RefreshCw className="w-4 h-4" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  {reportDate && (
+                    <p className="text-[10px] text-white/25 mt-3">Bijgewerkt {reportDate}</p>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Outfit strip */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.10 }}
+                className="rounded-2xl bg-[var(--color-surface)] overflow-hidden border border-[var(--color-border)]"
+                style={{ boxShadow: "var(--shadow-soft)" }}
+              >
+                <div className="flex items-center justify-between px-5 pt-5 pb-3">
+                  <div>
+                    <h2 className="text-sm font-bold text-[var(--color-text)] tracking-tight">Jouw outfits</h2>
+                    <p className="text-[11px] text-[var(--color-muted)] mt-0.5">Op maat voor {archetypeName ?? "jou"}</p>
+                  </div>
+                  <button
+                    onClick={() => navigate("/results")}
+                    className="inline-flex items-center gap-0.5 min-h-[44px] px-2 text-xs font-bold transition-colors"
+                    style={{ color: "var(--ff-color-primary-600)" }}
+                  >
+                    Alles <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+                  </button>
+                </div>
+
+                {outfitsData && outfitsData.length > 0 ? (
+                  <div className="flex gap-3 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+                    {outfitsData.slice(0, 6).map((outfit, i) => {
+                      const img = getOutfitImage(outfit);
+                      const label = (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
+                      return (
+                        <motion.button
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.94 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 0.18 + i * 0.05 }}
+                          onClick={() => navigate("/results")}
+                          aria-label={`Bekijk outfit: ${label}`}
+                          className="group relative flex-shrink-0 rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
+                          style={{ width: 110, height: 144 }}
+                        >
+                          {img ? (
+                            <img
+                              src={img}
+                              alt={label}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
+                              onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                              <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-200)]" aria-hidden="true" />
+                              <span className="text-[10px] font-bold text-[var(--ff-color-primary-300)]">Look {i + 1}</span>
+                            </div>
+                          )}
+                          <div className="absolute inset-x-0 bottom-0 pt-6 pb-2 px-2 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
+                            <p className="text-white text-[9px] font-bold truncate capitalize leading-tight">{label}</p>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center py-10 text-center px-6">
+                    <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-200)] mb-3" aria-hidden="true" />
+                    <p className="text-sm text-[var(--color-muted)] mb-4 leading-relaxed">
+                      Outfits worden samengesteld op basis van jouw profiel
+                    </p>
+                    <button
+                      onClick={() => navigate("/results")}
+                      className="text-sm font-bold hover:underline"
+                      style={{ color: "var(--ff-color-primary-600)" }}
+                    >
+                      Genereer nu →
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Quick action bento cards */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.16 }}
+                className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+              >
+                {/* Saved looks */}
+                <button
+                  onClick={() => navigate("/results#saved")}
+                  className="group flex flex-col items-start p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] hover:border-[var(--ff-color-primary-200)] hover:bg-[var(--ff-color-primary-25)] text-left"
+                  style={{ boxShadow: "var(--shadow-soft)" }}
+                >
+                  <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mb-3">
+                    <Heart className="w-4 h-4 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
+                  </div>
+                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Opgeslagen</p>
+                  <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">
+                    {favCount > 0 ? `${favCount} look${favCount !== 1 ? "s" : ""}` : "Leeg"}
+                  </p>
+                </button>
+
+                {/* Photo */}
+                <button
+                  onClick={() => setShowPhotoModal(true)}
+                  className="group flex flex-col items-start p-4 rounded-2xl border transition-all active:scale-[0.97] text-left"
+                  style={{
+                    background: hasPhoto ? "var(--ff-color-success-50)" : "var(--color-surface)",
+                    borderColor: hasPhoto ? "var(--ff-color-success-200)" : "var(--color-border)",
+                    boxShadow: "var(--shadow-soft)",
+                  }}
+                >
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
+                    style={{ background: hasPhoto ? "var(--ff-color-success-100)" : "var(--ff-color-primary-50)" }}
+                  >
+                    <Camera
+                      className={`w-4 h-4 ${hasPhoto ? "text-[var(--ff-color-success-600)]" : "text-[var(--ff-color-primary-500)]"}`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">
+                    {hasPhoto ? "Kleuranalyse" : "Foto"}
+                  </p>
+                  <p className={`text-[11px] mt-0.5 leading-tight ${hasPhoto ? "text-[var(--ff-color-success-700)]" : "text-[var(--color-muted)]"}`}>
+                    {hasPhoto ? "Actief" : "Toevoegen"}
+                  </p>
+                </button>
+
+                {/* Profiel completion */}
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="group flex flex-col items-start p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] hover:border-[var(--ff-color-primary-200)] hover:bg-[var(--ff-color-primary-25)] text-left"
+                  style={{ boxShadow: "var(--shadow-soft)" }}
+                >
+                  <div className="relative w-9 h-9 flex-shrink-0 mb-3">
+                    <svg className="w-9 h-9 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="var(--ff-color-primary-100)" strokeWidth="3" />
+                      <motion.circle
+                        cx="18" cy="18" r="14" fill="none"
+                        stroke="var(--ff-color-primary-600)" strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeDasharray={2 * Math.PI * 14}
+                        initial={{ strokeDashoffset: 2 * Math.PI * 14 }}
+                        animate={{ strokeDashoffset: 2 * Math.PI * 14 * (1 - donePct / 100) }}
+                        transition={{ duration: 1.2, delay: 0.7, ease: "easeOut" }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[9px] font-bold text-[var(--ff-color-primary-700)]" aria-label={`${donePct} procent compleet`}>{donePct}%</span>
+                    </div>
+                  </div>
+                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Profiel</p>
+                  <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">{donePct}% compleet</p>
+                </button>
+
+                {/* Shop link */}
+                <button
+                  onClick={() => navigate("/shop")}
+                  className="group flex flex-col items-start p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] hover:border-[var(--ff-color-primary-200)] hover:bg-[var(--ff-color-primary-25)] text-left"
+                  style={{ boxShadow: "var(--shadow-soft)" }}
+                >
+                  <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mb-3">
+                    <ShoppingBag className="w-4 h-4 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
+                  </div>
+                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Winkel</p>
+                  <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">Jouw stijl</p>
+                </button>
+              </motion.div>
+
+              {/* Full report CTA */}
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.24 }}
+                onClick={() => navigate("/results")}
+                className="group w-full flex items-center gap-4 px-5 py-4 min-h-[64px] rounded-2xl border border-[var(--ff-color-primary-200)] text-left transition-colors hover:bg-[var(--ff-color-primary-100)] active:scale-[0.99]"
+                style={{ background: "var(--ff-color-primary-50)" }}
+              >
+                <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Volledig stijlrapport</p>
+                  <p className="text-xs text-[var(--color-muted)] mt-0.5">Outfits · kleuren · shopping tips</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[var(--ff-color-primary-400)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
+              </motion.button>
+
+            </div>{/* end left column */}
+
+            {/* ══ RIGHT — sidebar panels ══ */}
+            <div className="flex flex-col gap-4 lg:sticky lg:top-6">
+
+              {/* Profile completion checklist */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, delay: 0.12 }}
+                className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-5"
+                style={{ boxShadow: "var(--shadow-soft)" }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">Profiel</p>
+                    <p className="font-bold text-[var(--color-text)] text-sm mt-0.5">{donePct}% compleet</p>
+                  </div>
+                  <div className="relative w-12 h-12 flex-shrink-0">
+                    <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+                      <circle cx="24" cy="24" r="19" fill="none" stroke="var(--ff-color-primary-100)" strokeWidth="4" />
+                      <motion.circle
+                        cx="24" cy="24" r="19" fill="none"
+                        stroke="var(--ff-color-primary-600)" strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeDasharray={2 * Math.PI * 19}
+                        initial={{ strokeDashoffset: 2 * Math.PI * 19 }}
+                        animate={{ strokeDashoffset: 2 * Math.PI * 19 * (1 - donePct / 100) }}
+                        transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xs font-bold text-[var(--ff-color-primary-700)]">{donePct}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {steps.map((step, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        step.done
+                          ? "bg-[var(--ff-color-success-600)]"
+                          : "border-2 border-[var(--color-border)]"
+                      }`}>
+                        {step.done && <Check className="w-3 h-3 text-white" aria-hidden="true" />}
+                      </div>
+                      <span className={`text-xs leading-tight ${step.done ? "text-[var(--color-text)] font-semibold" : "text-[var(--color-muted)]"}`}>
+                        {step.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Upgrade card (non-premium) or shop card (premium) */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, delay: 0.18 }}
+              >
+                {isPremium ? (
+                  <button
+                    onClick={() => navigate("/shop")}
+                    className="group w-full flex items-center gap-3.5 p-5 rounded-2xl bg-[var(--color-surface)] text-left transition-colors hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] min-h-[72px]"
+                    style={{ boxShadow: "var(--shadow-soft)" }}
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
+                      <ShoppingBag className="w-5 h-5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-[var(--color-text)] text-sm">Shop jouw stijl</p>
+                      <p className="text-xs text-[var(--color-muted)] mt-0.5">Producten afgestemd op jou</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
+                  </button>
+                ) : (
+                  <Link
+                    to="/prijzen"
+                    className="group flex items-start gap-4 p-5 rounded-2xl"
+                    style={{
+                      background: "linear-gradient(135deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 100%)",
+                      boxShadow: "0 8px 28px rgba(74,56,40,0.28)",
+                    }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/45 mb-1">Upgrade</p>
+                      <p className="font-bold text-white text-base leading-tight">Ontgrendel Premium</p>
+                      <p className="text-xs text-white/55 mt-1.5 leading-snug">
+                        50+ outfits · AI kleuranalyse · persoonlijk advies
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 group-hover:bg-white/22 flex items-center justify-center transition-colors mt-1">
+                      <ArrowRight className="w-4 h-4 text-white" aria-hidden="true" />
+                    </div>
+                  </Link>
+                )}
+              </motion.div>
+
+              {/* Quick links */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, delay: 0.22 }}
+                className="rounded-2xl bg-[var(--color-surface)] overflow-hidden divide-y divide-[var(--color-border)] border border-[var(--color-border)]"
+                style={{ boxShadow: "var(--shadow-soft)" }}
+              >
+                <p className="px-4 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">Snelkoppelingen</p>
+                {[
+                  { icon: <Sparkles className="w-4 h-4" aria-hidden="true" />, label: "Stijlresultaten", sub: "Jouw outfits & advies", to: "/results" },
+                  { icon: <Palette className="w-4 h-4" aria-hidden="true" />, label: "Quiz herdoen", sub: "Profiel bijwerken", to: "/onboarding" },
+                  { icon: <User className="w-4 h-4" aria-hidden="true" />, label: "Profiel", sub: "Instellingen & data", to: "/profile" },
+                  { icon: <LayoutGrid className="w-4 h-4" aria-hidden="true" />, label: "Winkel", sub: "Gepersonaliseerde shop", to: "/shop" },
+                ].map(({ icon, label, sub, to }) => (
+                  <button
+                    key={label}
+                    onClick={() => navigate(to)}
+                    className="w-full flex items-center gap-3.5 px-4 py-3.5 min-h-[52px] hover:bg-[var(--color-bg)] transition-colors text-left group"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-500)] flex items-center justify-center flex-shrink-0">
+                      {icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[var(--color-text)] leading-tight">{label}</p>
+                      <p className="text-[11px] text-[var(--color-muted)] mt-0.5">{sub}</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[var(--color-muted)] group-hover:translate-x-0.5 transition-transform flex-shrink-0" aria-hidden="true" />
+                  </button>
+                ))}
+              </motion.div>
+
+              {/* Style tips card */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.38, delay: 0.28 }}
+                className="rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] p-5"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--ff-color-primary-500)] mb-3">Stijl tip</p>
+                <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug mb-1">
+                  {archetypeName ? `Als ${archetypeName}` : "Jouw stijl"}
+                </p>
+                <p className="text-xs text-[var(--ff-color-primary-700)] leading-relaxed">
+                  {tone || tagline}
+                </p>
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => navigate("/results")}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border border-[var(--ff-color-primary-200)] text-[var(--ff-color-primary-700)] hover:bg-white transition-colors"
+                  >
+                    <Zap className="w-3.5 h-3.5" aria-hidden="true" /> Outfits zien
+                  </button>
+                  <button
+                    onClick={() => navigate("/shop")}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border border-[var(--ff-color-primary-200)] text-[var(--ff-color-primary-700)] hover:bg-white transition-colors"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" /> Shoppen
+                  </button>
+                </div>
+              </motion.div>
+
+            </div>{/* end right column */}
+          </div>
+        </div>
+      </section>
 
       <PhotoUploadModal isOpen={showPhotoModal} onClose={() => setShowPhotoModal(false)} />
     </div>
