@@ -37,12 +37,10 @@ export function HeroV3() {
 
       {/* ═══════════════════════════════════════════════
           MOBILE  (< sm)  —  Cinematic full-viewport hero
-          Foto vult volledig scherm, premium overlays,
-          tekst + CTA vastgepind onderaan
       ═══════════════════════════════════════════════ */}
       <div
-        className="sm:hidden relative w-full overflow-hidden"
-        style={{ height: '100svh', minHeight: '640px', background: '#1c120a' }}
+        className="sm:hidden relative w-full overflow-hidden bg-[var(--ff-color-primary-900)]"
+        style={{ height: '100svh', minHeight: '640px' }}
       >
         {/* ── Full-bleed foto ── */}
         <img
@@ -60,7 +58,7 @@ export function HeroV3() {
           style={{
             height: '30%',
             background:
-              'linear-gradient(to bottom, rgba(28,18,10,0.62) 0%, rgba(28,18,10,0.18) 60%, transparent 100%)',
+              'linear-gradient(to bottom, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.62) 0%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.18) 60%, transparent 100%)',
           }}
           aria-hidden="true"
         />
@@ -71,7 +69,7 @@ export function HeroV3() {
           style={{
             height: '72%',
             background:
-              'linear-gradient(to bottom, transparent 0%, rgba(20,13,8,0.50) 30%, rgba(20,13,8,0.82) 58%, rgba(20,13,8,0.96) 78%, rgba(20,13,8,1.0) 100%)',
+              'linear-gradient(to bottom, transparent 0%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.50) 30%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.82) 58%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.96) 78%, var(--ff-color-primary-900) 100%)',
           }}
           aria-hidden="true"
         />
@@ -81,7 +79,7 @@ export function HeroV3() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse at center, transparent 50%, rgba(20,13,8,0.30) 100%)',
+              'radial-gradient(ellipse at center, transparent 50%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.30) 100%)',
           }}
           aria-hidden="true"
         />
@@ -90,27 +88,23 @@ export function HeroV3() {
         <div
           className="absolute top-5 left-4 z-20 inline-flex items-center gap-2 px-3.5 py-2 rounded-full"
           style={{
-            background: 'rgba(247,243,236,0.15)',
+            background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.15)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(247,243,236,0.25)',
+            border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.25)',
             boxShadow: '0 2px 16px rgba(0,0,0,0.18)',
           }}
         >
           <Sparkles
-            className="w-3 h-3"
-            style={{ color: '#e8d5b0' }}
+            className="w-3 h-3 text-[var(--ff-color-primary-200)]"
             aria-hidden="true"
           />
-          <span
-            className="text-[11px] font-bold tracking-[0.08em] uppercase"
-            style={{ color: '#F7F3EC' }}
-          >
+          <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--color-bg)]">
             AI Stijladvies
           </span>
         </div>
 
-        {/* ── Tekstblok + CTA — vastgepind onderaan, ruime zijmarges ── */}
+        {/* ── Tekstblok + CTA — vastgepind onderaan ── */}
         <div className="absolute bottom-0 inset-x-0 z-20 px-6 pb-10">
 
           {/* Live count pill */}
@@ -118,20 +112,16 @@ export function HeroV3() {
             <div
               className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full"
               style={{
-                background: 'rgba(247,243,236,0.10)',
-                border: '1px solid rgba(247,243,236,0.16)',
+                background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.10)',
+                border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.16)',
               }}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0"
-                style={{ background: '#b8976a' }}
+                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[var(--ff-color-primary-300)]"
                 aria-hidden="true"
               />
-              <span
-                className="text-[11px] font-semibold tracking-wide"
-                style={{ color: 'rgba(247,243,236,0.72)' }}
-              >
-                <span style={{ color: '#e8d5b0', fontWeight: 700 }}>{todayCount}</span>
+              <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'rgba(237,217,200,0.70)' }}>
+                <span className="text-[var(--ff-color-primary-200)] font-bold">{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </span>
             </div>
@@ -140,29 +130,23 @@ export function HeroV3() {
           {/* Heading */}
           <h1
             id="hero-heading"
-            className="font-heading font-bold tracking-tight mb-3"
+            className="font-heading font-bold tracking-tight mb-3 text-[var(--color-bg)]"
             style={{
               fontSize: 'clamp(2.5rem, 10.5vw, 3.1rem)',
               lineHeight: 1.04,
-              color: '#F7F3EC',
               letterSpacing: '-0.02em',
             }}
           >
             Outfits die{' '}
-            <em
-              className="not-italic"
-              style={{ color: '#d4a96a' }}
-            >
-              bij jou
-            </em>
+            <em className="not-italic text-[var(--ff-cta-400)]">bij jou</em>
             <br />
             passen
           </h1>
 
           {/* Subtekst */}
           <p
-            className="text-[15px] font-light leading-[1.6] mb-7"
-            style={{ color: 'rgba(247,243,236,0.68)', maxWidth: '88%' }}
+            className="text-[15px] font-light leading-[1.6] mb-7" style={{ color: 'rgba(247,243,236,0.70)' }}
+            style={{ maxWidth: '88%' }}
           >
             Beantwoord een paar vragen over jouw stijl en ontvang een persoonlijk rapport — compleet met outfits en shoplinks.
           </p>
@@ -172,7 +156,7 @@ export function HeroV3() {
             className="mb-6"
             style={{
               height: '1px',
-              background: 'linear-gradient(to right, rgba(247,243,236,0.18) 0%, transparent 80%)',
+              background: 'linear-gradient(to right, rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18) 0%, transparent 80%)',
             }}
             aria-hidden="true"
           />
@@ -182,19 +166,16 @@ export function HeroV3() {
             {/* Primary */}
             <button
               onClick={handleStartClick}
-              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
+              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-500)] text-[var(--color-bg)]"
               style={{
-                background: 'linear-gradient(135deg, #9b7a52 0%, #7a5c38 100%)',
-                color: '#F7F3EC',
-                boxShadow: '0 4px 24px rgba(100,72,40,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
+                boxShadow: '0 4px 24px rgba(var(--ff-color-primary-500-rgb, 166,136,106),0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
                 letterSpacing: '0.01em',
               }}
               aria-label="Ontvang jouw persoonlijk stijladvies"
             >
               <span>Ontvang jouw stijladvies</span>
               <span
-                className="w-8 h-8 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
-                style={{ background: 'rgba(255,255,255,0.14)' }}
+                className="w-8 h-8 rounded-xl inline-flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5" style={{ background: 'rgba(255,255,255,0.14)' }}
                 aria-hidden="true"
               >
                 <ArrowRight className="w-4 h-4" />
@@ -205,11 +186,10 @@ export function HeroV3() {
             <div className="flex items-center gap-4">
               <button
                 onClick={handleExampleClick}
-                className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]"
+                className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]" style={{ color: 'rgba(247,243,236,0.86)' }}
                 style={{
-                  background: 'rgba(247,243,236,0.08)',
-                  border: '1px solid rgba(247,243,236,0.18)',
-                  color: 'rgba(247,243,236,0.86)',
+                  background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.08)',
+                  border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
@@ -219,11 +199,10 @@ export function HeroV3() {
               </button>
 
               <div
-                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-[13px] text-[12px] font-semibold"
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-[13px] text-[12px] font-semibold" style={{ color: 'rgba(247,243,236,0.62)' }}
                 style={{
-                  background: 'rgba(247,243,236,0.08)',
-                  border: '1px solid rgba(247,243,236,0.18)',
-                  color: 'rgba(247,243,236,0.62)',
+                  background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.08)',
+                  border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
@@ -236,7 +215,7 @@ export function HeroV3() {
                 >
                   <path
                     d="M2.5 6l2.5 2.5 4.5-5"
-                    stroke="#b8976a"
+                    stroke="var(--ff-cta-400)"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -251,37 +230,34 @@ export function HeroV3() {
 
       {/* ═══════════════════════════════════════════════
           DESKTOP  (≥ sm)
-          Full-bleed editorial hero — nieuwe Amsterdam foto
+          Full-bleed editorial hero
       ═══════════════════════════════════════════════ */}
       <div
-        className="hidden sm:block relative w-full overflow-hidden"
-        style={{
-          minHeight: 'min(92vh, 820px)',
-          background: '#2a1f14',
-        }}
+        className="hidden sm:block relative w-full overflow-hidden bg-[var(--ff-color-primary-800)]"
+        style={{ minHeight: 'min(92vh, 820px)' }}
       >
         {/* ── Full-bleed foto ── */}
         <div className="absolute inset-0" aria-hidden="true">
           <img
             src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
-            alt=""
+            alt="Stijlvolle vrouw in een editoriaal portret"
             className="w-full h-full object-cover"
             style={{ objectPosition: 'center 20%' }}
             loading="eager"
           />
-          {/* Linker overlay: warm donker verloop → tekst leesbaar op linker helft */}
+          {/* Linker overlay: warm donker verloop → tekst leesbaar */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                'linear-gradient(100deg, rgba(30,20,10,0.82) 0%, rgba(30,20,10,0.55) 38%, rgba(30,20,10,0.08) 65%, transparent 100%)',
+                'linear-gradient(100deg, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.82) 0%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.55) 38%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.08) 65%, transparent 100%)',
             }}
           />
-          {/* Onderste fade naar website-achtergrond voor naadloze overgang */}
+          {/* Onderste fade naar website-achtergrond */}
           <div
             className="absolute bottom-0 inset-x-0 h-40"
             style={{
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(247,243,236,0.18) 100%)',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18) 100%)',
             }}
           />
         </div>
@@ -295,11 +271,7 @@ export function HeroV3() {
 
             {/* Badge */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl"
-              style={{
-                background: 'rgba(247,243,236,0.96)',
-                color: 'var(--ff-color-primary-700)',
-              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[var(--color-bg)] text-[var(--ff-color-primary-700)]"
             >
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
               Persoonlijk AI-stijladvies
@@ -307,24 +279,17 @@ export function HeroV3() {
 
             <h1
               id="hero-heading"
-              className="font-heading font-bold leading-[1.05] tracking-tight mb-5"
-              style={{
-                fontSize: 'clamp(3rem, 6vw, 5.5rem)',
-                color: '#F7F3EC',
-              }}
+              className="font-heading font-bold leading-[1.05] tracking-tight mb-5 text-[var(--color-bg)]"
+              style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)' }}
             >
               Outfits die{' '}
-              <em
-                className="not-italic"
-                style={{ color: 'var(--ff-color-primary-300)' }}
-              >
+              <em className="not-italic text-[var(--ff-color-primary-300)]">
                 bij jou passen
               </em>
             </h1>
 
             <p
-              className="text-lg md:text-xl leading-relaxed max-w-lg mb-10 font-light"
-              style={{ color: 'rgba(247,243,236,0.82)' }}
+              className="text-lg md:text-xl leading-relaxed max-w-lg mb-10 font-light" style={{ color: 'rgba(247,243,236,0.82)' }}
             >
               Beantwoord een paar vragen over jouw stijl en ontvang een persoonlijk rapport — compleet met outfits en shoplinks.
             </p>
@@ -333,11 +298,9 @@ export function HeroV3() {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleStartClick}
-                className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all duration-200 hover:scale-[1.02]"
+                className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all duration-200 hover:scale-[1.02] bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-[var(--color-bg)]"
                 style={{
-                  background: 'var(--ff-color-primary-700)',
-                  color: '#F7F3EC',
-                  boxShadow: '0 8px 40px rgba(122,97,74,0.45)',
+                  boxShadow: '0 8px 40px rgba(var(--ff-color-primary-500-rgb, 166,136,106),0.45)',
                 }}
                 aria-label="Ontvang jouw persoonlijk stijladvies"
               >
@@ -350,11 +313,10 @@ export function HeroV3() {
 
               <button
                 onClick={handleExampleClick}
-                className="inline-flex items-center gap-2 px-6 py-4 min-h-[56px] rounded-xl font-medium text-base transition-all duration-200"
+                className="inline-flex items-center gap-2 px-6 py-4 min-h-[56px] rounded-xl font-medium text-base transition-all duration-200 text-[var(--color-bg)]/90"
                 style={{
-                  background: 'rgba(247,243,236,0.10)',
-                  border: '1px solid rgba(247,243,236,0.28)',
-                  color: 'rgba(247,243,236,0.90)',
+                  background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.10)',
+                  border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.28)',
                 }}
                 aria-label="Bekijk voorbeeld rapport"
               >
@@ -363,16 +325,12 @@ export function HeroV3() {
             </div>
 
             {todayCount !== undefined && todayCount > 0 && (
-              <p
-                className="mt-5 text-sm flex items-center gap-2"
-                style={{ color: 'rgba(247,243,236,0.60)' }}
-              >
+              <p className="mt-5 text-sm flex items-center gap-2" style={{ color: 'rgba(247,243,236,0.60)' }}>
                 <span
-                  className="w-2 h-2 rounded-full animate-pulse inline-block"
-                  style={{ background: 'var(--ff-color-primary-300)' }}
+                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[var(--ff-color-primary-300)]"
                   aria-hidden="true"
                 />
-                <span style={{ color: 'var(--ff-color-primary-300)', fontWeight: 600 }}>{todayCount}</span>
+                <span className="text-[var(--ff-color-primary-300)] font-semibold">{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </p>
             )}
@@ -386,11 +344,10 @@ export function HeroV3() {
         >
           <div
             className="w-6 h-10 rounded-full border-2 flex items-start justify-center pt-2"
-            style={{ borderColor: 'rgba(247,243,236,0.30)' }}
+            style={{ borderColor: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.30)' }}
           >
             <div
-              className="w-1 h-2 rounded-full"
-              style={{ background: 'rgba(247,243,236,0.55)' }}
+              className="w-1 h-2 rounded-full" style={{ background: 'rgba(247,243,236,0.55)' }}
             />
           </div>
         </div>
