@@ -19,6 +19,7 @@ export function StyleIdentityHero({
   primaryArchetype,
   colorProfile,
   quizAnswers = {},
+  swipeInsights,
 }: StyleIdentityHeroProps) {
   const archetype = ARCHETYPES[primaryArchetype];
 
@@ -82,6 +83,10 @@ export function StyleIdentityHero({
         gemengd: 'Mix van prints en effen',
       };
       if (map[quizAnswers.prints]) insights.push(map[quizAnswers.prints]);
+    }
+    if (swipeInsights?.favoriteCategories && swipeInsights.favoriteCategories.length > 0) {
+      const cats = swipeInsights.favoriteCategories.slice(0, 2).join(' & ');
+      insights.push(`Op basis van swipes: voorkeur voor ${cats}`);
     }
     return insights.slice(0, 4);
   };

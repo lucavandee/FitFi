@@ -1,12 +1,25 @@
 import { Product, Outfit, Season, ProductCategory, OutfitGenerationOptions, Weather, CategoryRatio, VariationLevel } from './types';
 import { generateOutfitTitle, generateOutfitDescription } from './generateOutfitDescriptions';
 import { generateOutfitExplanation } from './explainOutfit';
-import { 
-  getCurrentSeason, 
-  getProductCategory, 
+import { filterProductsByColorSeason } from './colorSeasonFiltering';
+import type { ColorProfile } from '@/lib/quiz/types';
+import {
+  getCurrentSeason,
+  getProductCategory,
   isProductSuitableForWeather,
   getTypicalWeatherForSeason
 } from './helpers';
+
+const OCCASION_KEY_MAP: Record<string, string> = {
+  office: 'Werk',
+  smartcasual: 'Casual',
+  leisure: 'Weekend',
+  werk: 'Werk',
+  casual: 'Casual',
+  weekend: 'Weekend',
+  avond: 'Uitgaan',
+  sport: 'Sport',
+};
 
 /**
  * Essential categories that every outfit should have
@@ -227,15 +240,18 @@ function generateOutfits(
     return [];
   }
 
-  // Extract options
   const excludeIds = options?.excludeIds || [];
-  const preferredOccasions = options?.preferredOccasions || [];
+  const rawOccasions = options?.preferredOccasions || [];
+  const preferredOccasions = rawOccasions.map(o => OCCASION_KEY_MAP[o.toLowerCase()] ?? o);
   const preferredSeasons = options?.preferredSeasons || [];
   const weather = options?.weather;
   const maxAttempts = options?.maxAttempts || 10;
   const variationLevel = options?.variationLevel || 'medium';
   const enforceCompletion = options?.enforceCompletion !== undefined ? options.enforceCompletion : true;
-  const minCompleteness = options?.minCompleteness || 80; // Default to 80% completeness
+  const minCompleteness = options?.minCompleteness || 80;
+  const fitPreference = options?.fit;
+  const printsPreference = options?.prints;
+  const colorProfile = options?.colorProfile;
   
   // Log archetype information
   console.log("Generating outfits with archetypes:", 
@@ -280,17 +296,40 @@ function generateOutfits(
     console.log("Products suitable for weather:", weatherFilteredProducts.length);
   }
   
-  // If we don't have enough seasonal/weather products, fall back to seasonal only or all products
-  const productsToUse = weatherFilteredProducts.length >= 4 
-    ? weatherFilteredProducts 
-    : seasonalProducts.length >= 4 
-      ? seasonalProducts 
+  const basePoolBeforeColor = weatherFilteredProducts.length >= 4
+    ? weatherFilteredProducts
+    : seasonalProducts.length >= 4
+      ? seasonalProducts
       : products;
-  
+
   if (weatherFilteredProducts.length < 4 && seasonalProducts.length >= 4) {
     console.warn(`Not enough products for ${activeWeather} weather, falling back to seasonal products`);
   } else if (seasonalProducts.length < 4) {
     console.warn(`Not enough products for season ${currentSeason}, falling back to all products`);
+  }
+
+  let colorFilteredProducts = basePoolBeforeColor;
+  if (colorProfile) {
+    const colorFiltered = filterProductsByColorSeason(basePoolBeforeColor, colorProfile, false);
+    if (colorFiltered.length >= 4) {
+      colorFilteredProducts = colorFiltered;
+      console.log(`[colorSeason] Filtered to ${colorFiltered.length} color-compatible products`);
+    } else {
+      console.warn(`[colorSeason] Too few color-compatible products (${colorFiltered.length}), using full pool`);
+    }
+  }
+
+  let productsToUse = colorFilteredProducts;
+
+  if (printsPreference === 'effen' || printsPreference === 'geen') {
+    const effeFiltered = productsToUse.filter(p => {
+      const tags = (p.styleTags || []).join(' ').toLowerCase();
+      return !tags.includes('printed') && !tags.includes('pattern') && !tags.includes('graphic') && !tags.includes('floral');
+    });
+    if (effeFiltered.length >= 4) {
+      productsToUse = effeFiltered;
+      console.log(`[prints] Filtered to ${effeFiltered.length} effen products`);
+    }
   }
 
   // Define occasions based on archetype and preferred occasions
@@ -331,16 +370,17 @@ function generateOutfits(
       attemptsPerOccasion[occ]++;
       
       const generatedOutfit = generateOutfitForOccasion(
-        primaryArchetype, 
-        productsToUse, 
-        occ, 
+        primaryArchetype,
+        productsToUse,
+        occ,
         currentSeason,
         activeWeather,
         secondaryArchetype,
         mixFactor,
         variationLevel,
         enforceCompletion,
-        minCompleteness
+        minCompleteness,
+        fitPreference
       );
       
       // Check if the outfit is unique (not in excludeIds)
@@ -385,8 +425,8 @@ function getOccasionsForArchetype(archetype: string): string[] {
  * Generates a single outfit for a specific occasion
  */
 function generateOutfitForOccasion(
-  primaryArchetype: string, 
-  products: Product[], 
+  primaryArchetype: string,
+  products: Product[],
   occasion: string,
   season: Season,
   weather: Weather,
@@ -394,7 +434,8 @@ function generateOutfitForOccasion(
   mixFactor: number = 0.3,
   variationLevel: VariationLevel = 'medium',
   enforceCompletion: boolean = true,
-  minCompleteness: number = 80
+  minCompleteness: number = 80,
+  fitPreference?: string
 ): Outfit | null {
   // Log outfit generation
   console.log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
@@ -460,18 +501,18 @@ function generateOutfitForOccasion(
       continue;
     }
     
-    // Try to get a product for this category
     const selectedProduct = selectProductForCategory(
-      productsByCategory, 
-      category, 
-      primaryArchetype, 
-      occasion, 
+      productsByCategory,
+      category,
+      primaryArchetype,
+      occasion,
       season,
       weather,
       secondaryArchetype,
-      mixFactor
+      mixFactor,
+      fitPreference
     );
-    
+
     if (selectedProduct) {
       outfitProducts.push(selectedProduct);
       selectedCategories.push(category);
@@ -552,24 +593,24 @@ function generateOutfitForOccasion(
       continue;
     }
     
-    // Try to get a product for this category
     const selectedProduct = selectProductForCategory(
-      productsByCategory, 
-      category, 
-      primaryArchetype, 
-      occasion, 
+      productsByCategory,
+      category,
+      primaryArchetype,
+      occasion,
       season,
       weather,
       secondaryArchetype,
-      mixFactor
+      mixFactor,
+      fitPreference
     );
-    
+
     if (selectedProduct) {
       outfitProducts.push(selectedProduct);
       selectedCategories.push(category);
     }
   }
-  
+
   // Calculate completeness score
   const requiredCategoriesCount = outfitStructure.requiredCategories.length;
   const fulfilledRequiredCategories = outfitStructure.requiredCategories.filter(
@@ -663,9 +704,10 @@ function generateOutfitForOccasion(
       weather, // Add weather to the outfit
       categoryRatio, // Add category ratio
       completeness // Add completeness score
-    }, 
-    primaryArchetype, 
-    occasion
+    },
+    primaryArchetype,
+    occasion,
+    { fit: fitPreference, prints: printsPreference }
   );
   
   // Use the first product's image as the outfit image
@@ -749,6 +791,22 @@ function groupProductsByCategory(products: Product[]): Record<ProductCategory, P
  * Selects the best product from a category based on archetypes, occasion, and season
  * Implements the 70/30 hybrid archetype logic
  */
+const FIT_TAG_MAP: Record<string, string[]> = {
+  slim: ['slim', 'fitted', 'tailored', 'skinny', 'narrow'],
+  regular: ['regular', 'straight', 'classic', 'standard'],
+  relaxed: ['relaxed', 'loose', 'comfortable', 'easy'],
+  oversized: ['oversized', 'boxy', 'wide', 'roomy', 'slouchy'],
+  straight: ['straight', 'regular', 'classic'],
+  oversizedTop_slimBottom: ['oversized', 'wide', 'slim', 'fitted'],
+};
+
+function getFitScore(product: Product, fitPreference?: string): number {
+  if (!fitPreference) return 0;
+  const tags = (product.styleTags || []).join(' ').toLowerCase();
+  const fitTags = FIT_TAG_MAP[fitPreference] || [];
+  return fitTags.some(t => tags.includes(t)) ? 0.2 : 0;
+}
+
 function selectProductForCategory(
   productsByCategory: Record<ProductCategory, Product[]>,
   category: ProductCategory,
@@ -757,7 +815,8 @@ function selectProductForCategory(
   season: Season,
   weather: Weather,
   secondaryArchetype?: string,
-  mixFactor: number = 0.3
+  mixFactor: number = 0.3,
+  fitPreference?: string
 ): Product | null {
   const products = productsByCategory[category];
   
@@ -783,28 +842,22 @@ function selectProductForCategory(
       ? seasonalProducts 
       : products;
   
-  // If we don't have a secondary archetype or it's the same as primary, just sort by match score
   if (!secondaryArchetype || secondaryArchetype === primaryArchetype || mixFactor <= 0) {
-    // Sort products by match score
-    const sortedProducts = [...productsToUse].sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
-    
-    // Return the best matching product
+    const sortedProducts = [...productsToUse].sort((a, b) => {
+      const scoreA = (a.matchScore || 0) + getFitScore(a, fitPreference);
+      const scoreB = (b.matchScore || 0) + getFitScore(b, fitPreference);
+      return scoreB - scoreA;
+    });
     return sortedProducts[0] || null;
   }
-  
-  // Implement 70/30 hybrid archetype logic
-  // We'll score products based on how well they match both archetypes
+
   const scoredProducts = productsToUse.map(product => {
-    // Get style tags for the product
     const styleTags = product.styleTags || [];
-    
-    // Calculate primary and secondary scores based on style tags
     const primaryScore = calculateArchetypeStyleScore(styleTags, primaryArchetype);
     const secondaryScore = calculateArchetypeStyleScore(styleTags, secondaryArchetype);
-    
-    // Calculate combined score with 70/30 weighting
-    const combinedScore = (primaryScore * (1 - mixFactor)) + (secondaryScore * mixFactor);
-    
+    const fitBonus = getFitScore(product, fitPreference);
+    const combinedScore = (primaryScore * (1 - mixFactor)) + (secondaryScore * mixFactor) + fitBonus;
+
     return {
       product,
       combinedScore,

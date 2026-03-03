@@ -219,10 +219,9 @@ export function generateRecommendationsFromAnswers(
   // Shuffle products by category for variety
   const shuffledProducts = shuffleProductsByCategory(filterResult.products);
 
-  // Generate outfits with FILTERED and SHUFFLED products
   const outfits = generateOutfits(
     primaryArchetype,
-    shuffledProducts, // ✅ USE FILTERED AND SHUFFLED PRODUCTS
+    shuffledProducts,
     count,
     secondaryArchetype,
     mixFactor,
@@ -230,7 +229,11 @@ export function generateRecommendationsFromAnswers(
       preferredOccasions: answers.occasions,
       maxAttempts: 10,
       variationLevel: 'medium',
-      enforceCompletion: true
+      enforceCompletion: true,
+      fit: answers.fit,
+      prints: answers.prints,
+      goals: answers.goals,
+      colorProfile: answers.colorProfile,
     }
   );
 

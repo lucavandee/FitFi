@@ -1054,8 +1054,14 @@ export default function EnhancedResultsPage() {
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-[var(--color-text)] mb-1">Geen outfits gevonden</p>
-                  <p className="text-sm text-[var(--color-muted)] max-w-xs mx-auto">
-                    We konden geen passende outfits samenstellen op basis van jouw profiel. Doe de quiz opnieuw voor betere resultaten.
+                  <p className="text-sm text-[var(--color-muted)] max-w-sm mx-auto leading-relaxed">
+                    {(() => {
+                      const budget = answers?.budget ?? answers?.budgetRange;
+                      const gender = answers?.gender;
+                      if (budget && budget < 50) return `Je budget (€${budget}) is erg laag — probeer het te verhogen of kies "Geen voorkeur".`;
+                      if (gender === 'non-binary' || gender === 'prefer-not-to-say') return 'We hebben nog beperkt aanbod voor jouw gendervoorkeur. Doe de quiz opnieuw en kies een ruimere filteroptie.';
+                      return 'We konden geen complete looks samenstellen. Dit kan door een combinatie van strakke filters zijn — doe de quiz opnieuw met ruimere voorkeuren.';
+                    })()}
                   </p>
                 </div>
                 <button

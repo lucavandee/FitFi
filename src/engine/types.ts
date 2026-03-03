@@ -110,16 +110,20 @@ export type VariationLevel = 'low' | 'medium' | 'high';
  * Options for generating outfits
  */
 export interface OutfitGenerationOptions {
-  excludeIds?: string[]; // IDs of outfits to exclude from generation
-  preferredOccasions?: string[]; // Preferred occasions to prioritize
-  preferredSeasons?: Season[]; // Preferred seasons to prioritize
-  weather?: Weather; // Current or preferred weather
-  maxAttempts?: number; // Maximum number of attempts to generate a unique outfit
-  variationLevel?: VariationLevel; // Level of variation between outfits
-  enforceCompletion?: boolean; // Whether to strictly enforce outfit completion
-  minCompleteness?: number; // Minimum completeness score (0-100)
-  photoAnalysisId?: string; // Enable photo-enhanced matching
-  usePhotoEnhancement?: boolean; // Toggle photo enhancement
+  excludeIds?: string[];
+  preferredOccasions?: string[];
+  preferredSeasons?: Season[];
+  weather?: Weather;
+  maxAttempts?: number;
+  variationLevel?: VariationLevel;
+  enforceCompletion?: boolean;
+  minCompleteness?: number;
+  photoAnalysisId?: string;
+  usePhotoEnhancement?: boolean;
+  fit?: string;
+  prints?: string;
+  goals?: string[];
+  colorProfile?: import('@/lib/quiz/types').ColorProfile;
 }
 
 /**

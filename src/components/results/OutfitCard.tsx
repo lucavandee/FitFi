@@ -16,6 +16,7 @@ interface OutfitCardProps {
   outfit?: Outfit;
   userId?: string;
   rationaleTag?: string;
+  budgetMax?: number;
 }
 
 const OutfitCard: React.FC<OutfitCardProps> = ({
@@ -27,6 +28,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   outfit,
   userId,
   rationaleTag,
+  budgetMax,
 }) => {
   const { ref, inView } = useInView<HTMLDivElement>();
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -35,6 +37,11 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   while (gridImages.length < 4) {
     gridImages.push("/images/fallbacks/default.jpg");
   }
+
+  const overBudgetProducts = budgetMax && outfit?.products
+    ? outfit.products.filter(p => p.price !== undefined && p.price > budgetMax * 1.1)
+    : [];
+  const isOverBudget = overBudgetProducts.length > 0;
 
   const handleProductClick = (product: any) => {
     track('product_click', { product_id: product?.id });
@@ -87,13 +94,19 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
       <div className="p-4 sm:p-5">
         {/* Title row */}
         <div className="flex items-start justify-between gap-2 mb-1.5">
-          <h3 className="text-sm font-bold text-[var(--color-text)] leading-snug flex-1">
+          <h3 className="text-sm font-bold text-[var(--color-text)] leading-snug flex-1 line-clamp-2">
             {title}
           </h3>
           {outfit && (
             <SaveButton outfit={outfit} userId={userId} className="flex-shrink-0 -mt-0.5" />
           )}
         </div>
+
+        {isOverBudget && (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--ff-color-warning-600)] text-white mb-2">
+            Boven budget
+          </span>
+        )}
 
         {rationaleTag && (
           <p className="text-xs text-[var(--color-muted)] mb-2.5 leading-snug">

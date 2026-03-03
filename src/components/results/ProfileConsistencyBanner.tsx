@@ -33,30 +33,30 @@ export function ProfileConsistencyBanner({
     switch (analysis.level) {
       case 'high':
         return {
-          bg: 'bg-gradient-to-r from-green-50 to-emerald-50',
-          border: 'border-green-300',
-          icon: <CheckCircle className="w-5 h-5 text-green-600" />,
-          iconBg: 'bg-green-100',
-          textColor: 'text-green-900',
-          mutedColor: 'text-green-700',
+          bg: 'bg-[var(--ff-color-primary-25,var(--ff-color-primary-50))]',
+          border: 'border-[var(--ff-color-primary-300)]',
+          icon: <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />,
+          iconBg: 'bg-[var(--ff-color-primary-100)]',
+          textColor: 'text-[var(--color-text)]',
+          mutedColor: 'text-[var(--color-muted)]',
         };
       case 'medium':
         return {
-          bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
-          border: 'border-blue-300',
-          icon: <Info className="w-5 h-5 text-blue-600" />,
-          iconBg: 'bg-blue-100',
-          textColor: 'text-blue-900',
-          mutedColor: 'text-blue-700',
+          bg: 'bg-[var(--ff-color-primary-50)]',
+          border: 'border-[var(--ff-color-primary-200)]',
+          icon: <Info className="w-5 h-5 text-[var(--ff-color-primary-600)]" />,
+          iconBg: 'bg-[var(--ff-color-primary-100)]',
+          textColor: 'text-[var(--color-text)]',
+          mutedColor: 'text-[var(--color-muted)]',
         };
       case 'low':
         return {
-          bg: 'bg-gradient-to-r from-amber-50 to-orange-50',
-          border: 'border-amber-300',
-          icon: <AlertCircle className="w-5 h-5 text-amber-600" />,
-          iconBg: 'bg-amber-100',
-          textColor: 'text-amber-900',
-          mutedColor: 'text-amber-700',
+          bg: 'bg-[var(--ff-color-primary-50)]',
+          border: 'border-[var(--ff-color-warning-600)]',
+          icon: <AlertCircle className="w-5 h-5 text-[var(--ff-color-warning-600)]" />,
+          iconBg: 'bg-[var(--ff-color-primary-100)]',
+          textColor: 'text-[var(--color-text)]',
+          mutedColor: 'text-[var(--color-muted)]',
         };
     }
   };
@@ -90,9 +90,21 @@ export function ProfileConsistencyBanner({
           <div className="flex-1">
             {/* Title */}
             <h3 className={`font-bold text-lg ${style.textColor} mb-2`}>
-              {analysis.level === 'high' && "Consistent Stijlprofiel"}
-              {analysis.level === 'medium' && "Gemengd Stijlprofiel"}
-              {analysis.level === 'low' && "Diverse Stijlvoorkeuren"}
+              {analysis.level === 'high' && (
+                analysis.topArchetypes.length > 0
+                  ? `Consistent profiel — ${analysis.topArchetypes[0]?.name}`
+                  : "Consistent Stijlprofiel"
+              )}
+              {analysis.level === 'medium' && (
+                analysis.topArchetypes.length >= 2
+                  ? `Mix van ${analysis.topArchetypes[0]?.name} en ${analysis.topArchetypes[1]?.name}`
+                  : "Gemengd Stijlprofiel"
+              )}
+              {analysis.level === 'low' && (
+                analysis.topArchetypes.length >= 2
+                  ? `${analysis.topArchetypes[0]?.name} trekt, maar ook ${analysis.topArchetypes[1]?.name}`
+                  : "Diverse Stijlvoorkeuren"
+              )}
             </h3>
 
             {/* Guidance text */}
@@ -129,18 +141,12 @@ export function ProfileConsistencyBanner({
                   {analysis.score}%
                 </span>
               </div>
-              <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[var(--ff-color-primary-100)] rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${analysis.score}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className={`h-full rounded-full ${
-                    analysis.level === 'high'
-                      ? 'bg-green-500'
-                      : analysis.level === 'medium'
-                      ? 'bg-blue-500'
-                      : 'bg-amber-500'
-                  }`}
+                  className="h-full rounded-full bg-[var(--ff-color-primary-600)]"
                 />
               </div>
             </div>
@@ -149,17 +155,16 @@ export function ProfileConsistencyBanner({
             {analysis.level === 'low' && onRetakeQuiz && (
               <button
                 onClick={onRetakeQuiz}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 border-2 border-gray-300 rounded-xl font-semibold text-sm text-gray-900 transition-all hover:scale-105"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] hover:bg-[var(--ff-color-primary-50)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] rounded-xl font-semibold text-sm text-[var(--color-text)] transition-all"
               >
                 <RefreshCcw className="w-4 h-4" />
                 <span>Quiz opnieuw doen</span>
               </button>
             )}
 
-            {/* Helpful tip for medium consistency */}
             {analysis.level === 'medium' && (
-              <div className="p-3 bg-white/60 rounded-lg border border-blue-200">
-                <p className="text-xs text-blue-800 leading-relaxed">
+              <div className="p-3 bg-[var(--color-surface)] rounded-lg border border-[var(--ff-color-primary-200)]">
+                <p className="text-xs text-[var(--color-muted)] leading-relaxed">
                   <strong>Tip:</strong> De outfits hieronder zijn gelabeld per stijl.
                   Gebruik de filters om alleen outfits van één stijlrichting te zien.
                 </p>

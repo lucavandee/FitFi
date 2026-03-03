@@ -9,75 +9,91 @@ import { calculateMatchScore } from '@/services/outfits/matchScoreCalculator';
  * @param occasion - The occasion this outfit is for
  * @returns A detailed explanation string
  */
+export interface ExplainContext {
+  fit?: string;
+  goals?: string[];
+  prints?: string;
+  neutrals?: string;
+}
+
 export function generateOutfitExplanation(
   outfit: Outfit,
   archetype: string,
-  occasion: string
+  occasion: string,
+  ctx?: ExplainContext
 ): string {
-  // Base explanation templates for each archetype
   const archetypeExplanations: Record<string, string> = {
-    'klassiek': 'Deze outfit past perfect bij jouw klassieke stijl door de tijdloze elegantie en verfijnde details.',
-    'casual_chic': 'Deze combinatie belichaamt jouw casual chic aesthetic met moeiteloze elegantie en moderne touches.',
-    'urban': 'Deze look sluit aan bij jouw urban stijl met functionele details en een stoere stadslook.',
-    'streetstyle': 'Deze outfit past bij jouw streetstyle door de authentieke streetwear elementen en creatieve expressie.',
-    'retro': 'Deze combinatie weerspiegelt jouw retro voorkeuren met vintage-geïnspireerde stukken en nostalgische details.',
-    'luxury': 'Deze outfit past bij jouw luxury stijl door de exclusieve stukken en premium kwaliteit.'
+    'klassiek': 'tijdloze elegantie en verfijnde details',
+    'casual_chic': 'moeiteloze elegantie en moderne touches',
+    'urban': 'functionele details en een stoere stadslook',
+    'streetstyle': 'authentieke streetwear-elementen en creatieve expressie',
+    'retro': 'vintage-geïnspireerde stukken en nostalgische details',
+    'luxury': 'exclusieve stukken en premium kwaliteit',
   };
 
-  // Occasion-specific explanations
-  const occasionExplanations: Record<string, string> = {
-    'Werk': 'De professionele uitstraling maakt deze outfit perfect voor zakelijke gelegenheden.',
-    'Formeel': 'De elegante details zorgen voor een geschikte look voor formele evenementen.',
-    'Casual': 'De relaxte pasvorm en comfortabele materialen maken dit ideaal voor dagelijks gebruik.',
-    'Weekend': 'De veelzijdige stukken zijn perfect voor een ontspannen weekend.',
-    'Uitgaan': 'De statement pieces zorgen voor een opvallende look voor sociale gelegenheden.',
-    'Sport': 'De functionele materialen en pasvorm ondersteunen een actieve lifestyle.'
+  const occasionLabels: Record<string, string> = {
+    'Werk': 'voor een professionele werkdag',
+    'Formeel': 'voor formele gelegenheden',
+    'Casual': 'voor alledaags gebruik',
+    'Weekend': 'voor een ontspannen weekend',
+    'Uitgaan': 'voor een avond uit',
+    'Sport': 'voor een actieve dag',
+    'Stad': 'voor een dag in de stad',
+    'Lunch': 'voor een smart-casual middag',
+    'Zakelijk diner': 'voor een zakelijk diner',
+    'Formeel': 'voor een formele gelegenheid',
   };
 
-  // Product-specific insights
-  const productInsights: string[] = [];
-  
-  if (outfit.products && outfit.products.length > 0) {
-    const categories = outfit.products.map(p => p.category || p.type).filter(Boolean);
-    const uniqueCategories = [...new Set(categories)];
-    
-    if (uniqueCategories.length >= 3) {
-      productInsights.push('De complete outfit zorgt voor een gebalanceerde en doordachte look.');
-    }
-    
-    // Check for color coordination
-    const brands = outfit.products.map(p => p.brand).filter(Boolean);
-    if (brands.length > 1) {
-      productInsights.push('De mix van verschillende merken toont jouw persoonlijke stijl.');
-    }
+  const fitLabels: Record<string, string> = {
+    slim: 'nauwsluitende silhouetten',
+    regular: 'klassieke pasvorm',
+    relaxed: 'relaxte silhouetten',
+    oversized: 'oversized proportties',
+    straight: 'rechte snit',
+    oversizedTop_slimBottom: 'contrast in proporties',
+  };
+
+  const goalLabels: Record<string, string> = {
+    timeless: 'tijdloze stukken',
+    trendy: 'trendy items',
+    minimal: 'minimale looks',
+    express: 'zelfexpressie',
+    professional: 'professionele uitstraling',
+    comfort: 'maximaal comfort',
+  };
+
+  const archetypeDesc = archetypeExplanations[archetype] || 'jouw unieke stijl';
+  const occasionLabel = occasionLabels[occasion] || `voor ${occasion.toLowerCase()}`;
+
+  let base = `Samengesteld op basis van ${archetypeDesc} — ${occasionLabel}.`;
+
+  if (ctx?.fit && fitLabels[ctx.fit]) {
+    base += ` Geselecteerd op ${fitLabels[ctx.fit]}.`;
   }
 
-  // Seasonal considerations
-  let seasonalNote = '';
+  if (ctx?.goals && ctx.goals.length > 0) {
+    const topGoals = ctx.goals.slice(0, 2).map(g => goalLabels[g] ?? g);
+    base += ` Stijldoel: ${topGoals.join(' en ')}.`;
+  }
+
+  if (ctx?.prints === 'effen' || ctx?.prints === 'geen') {
+    base += ' Bewust clean gehouden — geen prints.';
+  } else if (ctx?.prints === 'statement') {
+    base += ' Bevat een statement-print passend bij jouw voorkeur.';
+  }
+
   if (outfit.season) {
     const seasonMap: Record<string, string> = {
-      'spring': 'De lichte materialen en frisse kleuren passen perfect bij het lenteweer.',
-      'summer': 'De ademende stoffen en lichte tinten zijn ideaal voor warme zomerdagen.',
-      'autumn': 'De warme lagen en rijke kleuren sluiten aan bij het herfstseizoen.',
-      'winter': 'De isolerende materialen en donkere tinten bieden warmte en stijl in de winter.'
+      spring: 'Frisse lentekleuren en lichte materialen.',
+      summer: 'Luchtige stoffen voor warme dagen.',
+      autumn: 'Warme lagen voor het herfstseizoen.',
+      winter: 'Isolerende materialen voor koude dagen.',
     };
-    
-    if (typeof outfit.season === 'string') {
-      seasonalNote = seasonMap[outfit.season] || '';
-    } else if (Array.isArray(outfit.season) && outfit.season.length > 0) {
-      seasonalNote = seasonMap[outfit.season[0]] || '';
-    }
+    const s = typeof outfit.season === 'string' ? outfit.season : outfit.season[0];
+    if (s && seasonMap[s]) base += ` ${seasonMap[s]}`;
   }
 
-  // Combine all explanations
-  const explanationParts = [
-    archetypeExplanations[archetype] || 'Deze outfit is zorgvuldig geselecteerd voor jouw unieke stijl.',
-    occasionExplanations[occasion] || 'Deze combinatie is geschikt voor verschillende gelegenheden.',
-    ...productInsights,
-    seasonalNote
-  ].filter(Boolean);
-
-  return explanationParts.join(' ');
+  return base;
 }
 
 /**
