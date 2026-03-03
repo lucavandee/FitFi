@@ -1,18 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Mail,
-  MessageCircle,
-  Users,
-  Clock,
-  Send,
-  ShieldCheck,
-  CheckCircle,
-  AlertCircle,
-  HelpCircle,
-  ArrowRight,
-} from "lucide-react";
+import { Mail, MessageCircle, Users, Clock, Send, ShieldCheck, CircleCheck as CheckCircle, CircleAlert as AlertCircle, CircleHelp as HelpCircle, ArrowRight } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import { supabase } from "@/lib/supabaseClient";
 
