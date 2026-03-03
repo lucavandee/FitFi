@@ -6,7 +6,6 @@ import {
   Star,
   Zap,
   Crown,
-  Sparkles,
   Loader2,
   AlertCircle,
   X,
@@ -574,43 +573,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ── FINAL CTA — extra pb-28 zodat floating chat-knop niet overlapt ── */}
-      <section className="py-10 sm:py-14 pb-28 sm:pb-20">
-        <div className="ff-container">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6">
-            <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] rounded-2xl p-8 sm:p-10 text-center text-white shadow-2xl">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Klaar om jouw stijl te ontdekken?</h2>
-              <p className="text-base opacity-90 mb-1">Start gratis. Je ziet eerst een preview — daarna beslis je.</p>
-              <p className="text-sm mb-8 opacity-65">Geen creditcard vereist. Klaar in ~2 minuten.</p>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
-                <NavLink
-                  to="/onboarding"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-4 min-h-[52px] bg-white text-[var(--ff-color-primary-700)] rounded-xl font-bold hover:bg-white/90 transition-all shadow-xl text-base focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
-                  data-event="cta_start_free_pricing_final"
-                >
-                  <Sparkles className="w-5 h-5" aria-hidden="true" />
-                  Start gratis stijlquiz
-                </NavLink>
-
-                <button
-                  onClick={() => premiumProduct && handleCheckout(premiumProduct.id)}
-                  disabled={isLoading || isPending}
-                  className="inline-flex items-center justify-center gap-2 px-7 py-4 min-h-[52px] bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded-xl font-semibold text-base transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-600)] disabled:opacity-50 active:scale-[0.98]"
-                  data-event="cta_upgrade_premium_pricing_final"
-                >
-                  Kies een plan
-                  <ArrowRight className="w-5 h-5" aria-hidden="true" />
-                </button>
-              </div>
-
-              <p className="text-xs opacity-55 mt-5">
-                2.500+ mensen ontdekten al hun stijl · 4.8/5 gemiddelde beoordeling
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

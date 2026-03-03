@@ -1,6 +1,5 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Target, Shield, Sparkles } from "lucide-react";
 import { canonicalUrl } from "@/utils/urls";
@@ -156,26 +155,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 sm:py-20 bg-[var(--color-bg)]">
-        <div className="ff-container">
-          <div className="max-w-3xl mx-auto bg-[var(--ff-color-primary-50)] rounded-[var(--radius-2xl)] p-10 sm:p-12 text-center border border-[var(--color-border)] shadow-[var(--shadow-soft)]">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-[var(--color-text)]">
-              Klaar om te starten?
-            </h2>
-            <p className="text-[var(--color-muted)] mb-8 leading-relaxed">
-              Beantwoord een paar vragen en zie welke outfits bij je passen. Geen account nodig om te beginnen.
-            </p>
-            <NavLink
-              to="/onboarding"
-              className="inline-flex items-center justify-center px-8 py-4 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
-              data-event="cta_start_free_about"
-            >
-              Start gratis
-            </NavLink>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

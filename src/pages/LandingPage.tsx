@@ -15,9 +15,6 @@ const RealOutfitShowcase = lazy(() =>
 const FeatureBlocksV4 = lazy(() =>
   import("@/components/landing/FeatureBlocksV4").then((m) => ({ default: m.FeatureBlocksV4 }))
 );
-const FinalCTA = lazy(() =>
-  import("@/components/landing/FinalCTA").then((m) => ({ default: m.FinalCTA }))
-);
 
 /**
  * Landing Page - Benefits-Driven & Accessible
@@ -80,7 +77,6 @@ export default function LandingPage() {
           <TrustBlock />
           <RealOutfitShowcase />
           <FeatureBlocksV4 />
-          <FinalCTA />
         </Suspense>
       </main>
     </>

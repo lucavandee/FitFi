@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -8,7 +7,6 @@ import {
   Zap,
   Clock,
   Shield,
-  ArrowRight,
   Brain,
   Heart,
   Shirt,
@@ -234,26 +232,13 @@ export default function HowItWorksPage() {
               ))}
             </div>
 
-            {/* Total time CTA */}
-            <div className="text-center px-5 py-8 sm:px-10 sm:py-10 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl sm:rounded-[2rem] border-2 border-[var(--ff-color-primary-200)] shadow-md">
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                  <Clock className="w-5 h-5 text-white" />
+            <div className="text-center py-4">
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-9 h-9 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                  <Clock className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-2xl sm:text-3xl font-bold text-[var(--ff-color-primary-700)]">2 minuten</span>
+                <span className="text-xl font-bold text-[var(--ff-color-primary-700)]">Totaal: 2 minuten</span>
               </div>
-              <p className="text-sm text-[var(--color-muted)] font-medium mb-7">
-                Van eerste vraag tot compleet stijladvies
-              </p>
-
-              <NavLink
-                to="/onboarding"
-                className="group inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-base sm:text-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                aria-label="Start gratis quiz om je stijladvies te ontvangen"
-              >
-                Ontvang je stijladvies
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true" />
-              </NavLink>
             </div>
           </div>
         </section>
@@ -319,16 +304,6 @@ export default function HowItWorksPage() {
               </div>
             </div>
 
-            <div className="text-center">
-              <NavLink
-                to="/onboarding"
-                className="group inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-base sm:text-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                aria-label="Probeer FitFi gratis"
-              >
-                Probeer FitFi gratis
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true" />
-              </NavLink>
-            </div>
           </div>
         </section>
 
@@ -402,73 +377,6 @@ export default function HowItWorksPage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Final CTA ── */}
-        <section
-          className="relative py-12 sm:py-16 md:py-24 bg-gradient-to-br from-[var(--color-bg)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] overflow-hidden"
-          aria-labelledby="final-cta-heading"
-        >
-          <div className="absolute inset-0" aria-hidden="true">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-[var(--ff-color-primary-200)] rounded-full blur-3xl opacity-30" />
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-30" />
-          </div>
-
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)] rounded-2xl sm:rounded-[2.5rem] p-8 sm:p-12 md:p-16 text-center shadow-2xl border border-[var(--ff-color-primary-600)] overflow-hidden">
-
-              <div className="absolute top-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl opacity-10" aria-hidden="true" />
-              <div className="absolute bottom-0 right-0 w-48 h-48 bg-white rounded-full blur-3xl opacity-10" aria-hidden="true" />
-
-              <div className="relative">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs sm:text-sm font-bold mb-6 shadow-md">
-                  <Sparkles className="w-4 h-4" aria-hidden="true" />
-                  Gratis starten
-                </div>
-
-                <h2 id="final-cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-5 sm:mb-6 leading-tight tracking-tight">
-                  Ontvang je stijladvies<br className="hidden sm:block" /> in 2 minuten
-                </h2>
-
-                <p className="text-base sm:text-lg text-white/90 mb-8 max-w-xl mx-auto leading-relaxed font-light">
-                  Beantwoord 8 vragen en ontdek outfits die bij jou passen
-                </p>
-
-                <NavLink
-                  to="/onboarding"
-                  className="group inline-flex items-center justify-center gap-2 px-7 py-4 sm:px-10 sm:py-5 min-h-[52px] w-full sm:w-auto bg-[var(--color-surface)] hover:bg-[var(--ff-color-neutral-50)] text-[var(--ff-color-primary-700)] rounded-xl font-bold text-base sm:text-lg shadow-xl transition-all hover:scale-105 hover:shadow-2xl mb-6 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--ff-color-primary-600)] active:scale-[0.98]"
-                  data-event="cta_start_free_how_it_works"
-                  aria-label="Start gratis quiz om je stijladvies te ontvangen"
-                >
-                  Start gratis quiz
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                </NavLink>
-
-                <div
-                  className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-white/90"
-                  role="list"
-                  aria-label="Belangrijkste garanties"
-                >
-                  <div className="flex items-center gap-1.5" role="listitem">
-                    <Clock className="w-4 h-4" aria-hidden="true" />
-                    <span className="text-xs sm:text-sm font-medium">2 minuten</span>
-                  </div>
-                  <div className="w-1 h-1 rounded-full bg-white/40" aria-hidden="true" />
-                  <div className="flex items-center gap-1.5" role="listitem">
-                    <Shield className="w-4 h-4" aria-hidden="true" />
-                    <span className="text-xs sm:text-sm font-medium">Geen foto's</span>
-                  </div>
-                  <div className="w-1 h-1 rounded-full bg-white/40" aria-hidden="true" />
-                  <div className="flex items-center gap-1.5" role="listitem">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-xs sm:text-sm font-medium">Gratis start</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
