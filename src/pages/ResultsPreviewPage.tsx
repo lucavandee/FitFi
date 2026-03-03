@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Sparkles, CheckCircle, Eye, Share2 } from "lucide-react";
+import { ArrowRight, Sparkles, CircleCheck as CheckCircle, Eye, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { getSeedOutfits } from "@/lib/quiz/seeds";
 import type { ColorProfile } from "@/lib/quiz/types";
