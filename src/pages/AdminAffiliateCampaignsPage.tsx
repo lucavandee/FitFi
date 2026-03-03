@@ -88,9 +88,13 @@ export default function AdminAffiliateCampaignsPage() {
         body: JSON.stringify({ feedUrl: campaign.feed_url, campaignId: campaign.id }),
       });
 
-      const json = await res.json();
+      let json: Record<string, unknown> = {};
+      try { json = await res.json(); } catch { /* leeg antwoord */ }
 
-      if (!res.ok) throw new Error(json.error ?? "Sync mislukt");
+      if (!res.ok) {
+        const msg = (json.error as string) ?? `HTTP ${res.status} — Sync mislukt`;
+        throw new Error(msg);
+      }
 
       setSyncResults(prev => ({
         ...prev,
