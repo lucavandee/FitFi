@@ -118,7 +118,7 @@ const TRUST_ITEMS = [
   {
     icon: Clock,
     title: "Direct resultaat",
-    body: "Beantwoord een paar vragen en zie outfits met uitleg binnen twee minuten.",
+    body: "Zie outfits met uitleg binnen twee minuten.",
   },
 ];
 
@@ -168,7 +168,7 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
       <h3 id={headingId}>
         <button
           onClick={() => onToggle(id)}
-          className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-25)]"
+          className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ff-color-primary-400)] transition-colors hover:bg-[var(--ff-color-primary-25,rgba(120,80,40,0.02))]"
           aria-expanded={isOpen}
           aria-controls={panelId}
         >
@@ -176,14 +176,14 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
             {highlightTerm ? highlightText(item.q, highlightTerm) : item.q}
           </span>
           <span
-            className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+            className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 ${
               isOpen
-                ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
+                ? "bg-[var(--ff-color-primary-700)] text-white"
                 : "bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-100)]"
             }`}
             aria-hidden="true"
           >
-            {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+            {isOpen ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
           </span>
         </button>
       </h3>
@@ -197,10 +197,10 @@ function AccordionItem({ item, id, isOpen, onToggle, highlightTerm = "", isLast 
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.24, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-6 text-[var(--color-muted)] leading-relaxed text-sm">
+            <p className="px-6 pb-5 text-[var(--color-muted)] leading-relaxed text-sm">
               {highlightTerm && typeof item.a === "string"
                 ? highlightText(item.a, highlightTerm)
                 : item.a}
@@ -288,228 +288,237 @@ export default function FAQPage() {
         structuredData={FAQ_SCHEMA}
       />
 
-      {/* ── HERO + TRUST: two-column on desktop ── */}
-      <section className="ff-container pt-12 pb-10 md:pt-16 md:pb-12">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-16">
-          {/* Left: heading */}
-          <div className="lg:max-w-lg">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-4">
-              <HelpCircle className="w-3.5 h-3.5" aria-hidden />
-              Hulp & informatie
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-3 leading-tight tracking-tight">
-              Veelgestelde vragen
-            </h1>
-            <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed">
-              Alles wat je wilt weten over FitFi. Staat je vraag er niet tussen?{" "}
-              <a
-                href="mailto:contact@fitfi.ai"
-                className="text-[var(--ff-color-primary-700)] font-medium underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
-              >
-                Stuur ons een bericht
-              </a>
-              .
-            </p>
-          </div>
+      {/* ── HERO ── */}
+      <section className="ff-container pt-14 pb-10 md:pt-20 md:pb-14">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] lg:items-end gap-10 lg:gap-16">
 
-          {/* Right: trust badges */}
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 lg:min-w-[280px] xl:min-w-[320px]">
-            {TRUST_ITEMS.map((c, i) => {
-              const Icon = c.icon;
-              return (
-                <motion.article
-                  key={i}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.35, delay: i * 0.08 }}
-                  className="rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] p-4 flex gap-3 items-start"
-                  style={{ boxShadow: "0 2px 8px rgba(30,35,51,0.05)" }}
+            {/* Left: heading */}
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
+                <HelpCircle className="w-3.5 h-3.5" aria-hidden />
+                Hulp & informatie
+              </span>
+              <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-text)] mb-4 leading-[1.1] tracking-tight">
+                Veelgestelde<br />vragen
+              </h1>
+              <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed max-w-md">
+                Alles wat je wilt weten over FitFi. Staat je vraag er niet tussen?{" "}
+                <a
+                  href="mailto:contact@fitfi.ai"
+                  className="text-[var(--ff-color-primary-700)] font-medium underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
-                    <Icon className="h-4 w-4 text-[var(--ff-color-primary-700)]" aria-hidden />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-[var(--color-text)] text-sm mb-0.5">{c.title}</h3>
-                    <p className="text-xs text-[var(--color-muted)] leading-relaxed">{c.body}</p>
-                  </div>
-                </motion.article>
-              );
-            })}
+                  Stuur ons een bericht
+                </a>
+                .
+              </p>
+            </div>
+
+            {/* Right: trust badges — horizontal row on desktop */}
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:min-w-[260px]">
+              {TRUST_ITEMS.map((c, i) => {
+                const Icon = c.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: i * 0.07 }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]"
+                    style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.05)" }}
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+                      <Icon className="h-4 w-4 text-[var(--ff-color-primary-700)]" aria-hidden />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-[var(--color-text)] leading-none mb-0.5">{c.title}</p>
+                      <p className="text-xs text-[var(--color-muted)] leading-snug">{c.body}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* ── MAIN CONTENT: sidebar + accordion ── */}
-      <section className="ff-container pb-16 sm:pb-20">
-        <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-10 xl:gap-14">
+      <section className="ff-container pb-16 sm:pb-24">
+        <div className="max-w-5xl mx-auto">
+          <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-10 xl:gap-14">
 
-          {/* ── LEFT: SEARCH + CATEGORY NAV ── */}
-          <aside className="mb-8 lg:mb-0">
-            {/* Search */}
-            <div className="relative mb-6">
-              <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
-                aria-hidden="true"
-              />
-              <label htmlFor="faq-search" className="sr-only">
-                Zoek in veelgestelde vragen
-              </label>
-              <input
-                id="faq-search"
-                type="search"
-                placeholder="Zoek een vraag…"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                autoComplete="off"
-                className="w-full pl-10 pr-10 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-shadow"
-                style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06)" }}
-              />
-              {searchTerm && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
-                  aria-label="Zoekopdracht wissen"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            {/* Category nav */}
-            <nav aria-label="FAQ categorieën">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-3 px-1">
-                Categorieën
-              </p>
-              <ul className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-1 lg:overflow-visible lg:pb-0" style={{ scrollbarWidth: "none" }}>
-                {CATEGORIES.map((cat) => {
-                  const Icon = cat.icon;
-                  const isActive = !isSearching && activeCategory === cat.id;
-                  return (
-                    <li key={cat.id} className="flex-shrink-0">
-                      <button
-                        role="tab"
-                        aria-selected={isActive}
-                        onClick={() => handleCategoryChange(cat.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
-                          isActive
-                            ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
-                            : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]"
-                        }`}
-                      >
-                        <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                        <span className="whitespace-nowrap lg:whitespace-normal">{cat.label}</span>
-                        <span className={`ml-auto text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ${isActive ? "bg-white/20 text-white" : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"}`}>
-                          {cat.items.length}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-
-            {/* Contact card */}
-            <div className="hidden lg:block mt-8 rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-5">
-              <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-3">
-                <MessageCircle className="w-4.5 h-4.5 text-[var(--ff-color-primary-700)]" aria-hidden />
+            {/* ── LEFT: SEARCH + CATEGORY NAV ── */}
+            <aside className="mb-8 lg:mb-0">
+              {/* Search */}
+              <div className="relative mb-5">
+                <Search
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
+                  aria-hidden="true"
+                />
+                <label htmlFor="faq-search" className="sr-only">
+                  Zoek in veelgestelde vragen
+                </label>
+                <input
+                  id="faq-search"
+                  type="search"
+                  placeholder="Zoek een vraag…"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  autoComplete="off"
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:border-transparent transition-shadow"
+                  style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06)" }}
+                />
+                {searchTerm && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
+                    aria-label="Zoekopdracht wissen"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
-              <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Nog een vraag?</p>
-              <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-3">
-                Wij reageren binnen 24 uur op je bericht.
-              </p>
-              <a
-                href="mailto:contact@fitfi.ai"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors"
-              >
-                contact@fitfi.ai
-                <ArrowRight className="w-3 h-3" />
-              </a>
-            </div>
-          </aside>
 
-          {/* ── RIGHT: ACCORDION PANEL ── */}
-          <div>
-            <AnimatePresence mode="wait">
-              {isSearching ? (
-                <motion.div
-                  key="search-results"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
+              {/* Category nav */}
+              <nav aria-label="FAQ categorieën">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-2.5 px-1">
+                  Categorieën
+                </p>
+                <ul className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto pb-1 lg:overflow-visible lg:pb-0" style={{ scrollbarWidth: "none" }}>
+                  {CATEGORIES.map((cat) => {
+                    const Icon = cat.icon;
+                    const isActive = !isSearching && activeCategory === cat.id;
+                    return (
+                      <li key={cat.id} className="flex-shrink-0 lg:flex-shrink">
+                        <button
+                          role="tab"
+                          aria-selected={isActive}
+                          onClick={() => handleCategoryChange(cat.id)}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:outline-none ${
+                            isActive
+                              ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
+                              : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]"
+                          }`}
+                        >
+                          <Icon className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          <span className="whitespace-nowrap lg:whitespace-normal flex-1">{cat.label}</span>
+                          <span className={`text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ${isActive ? "bg-white/20 text-white" : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"}`}>
+                            {cat.items.length}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
+
+              {/* Contact card */}
+              <div className="hidden lg:block mt-6 rounded-2xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-4">
+                <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-2.5">
+                  <MessageCircle className="w-4 h-4 text-[var(--ff-color-primary-700)]" aria-hidden />
+                </div>
+                <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Nog een vraag?</p>
+                <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-2.5">
+                  Wij reageren binnen 24 uur op je bericht.
+                </p>
+                <a
+                  href="mailto:contact@fitfi.ai"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-5">
-                    {searchResults.length === 0
-                      ? "Geen resultaten"
-                      : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} voor "${searchTerm}"`}
-                  </p>
+                  contact@fitfi.ai
+                  <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </aside>
 
-                  {searchResults.length === 0 ? (
-                    <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-10 text-center">
-                      <p className="text-[var(--color-muted)] text-sm mb-4">
-                        Geen vragen gevonden voor{" "}
-                        <strong className="text-[var(--color-text)]">"{searchTerm}"</strong>.
+            {/* ── RIGHT: ACCORDION PANEL ── */}
+            <div>
+              <AnimatePresence mode="wait">
+                {isSearching ? (
+                  <motion.div
+                    key="search-results"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)] mb-4">
+                      {searchResults.length === 0
+                        ? "Geen resultaten"
+                        : `${searchResults.length} ${searchResults.length === 1 ? "resultaat" : "resultaten"} voor "${searchTerm}"`}
+                    </p>
+
+                    {searchResults.length === 0 ? (
+                      <div className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-10 text-center">
+                        <p className="text-[var(--color-muted)] text-sm mb-4">
+                          Geen vragen gevonden voor{" "}
+                          <strong className="text-[var(--color-text)]">"{searchTerm}"</strong>.
+                        </p>
+                        <button
+                          onClick={clearSearch}
+                          className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2"
+                        >
+                          Toon alle vragen
+                        </button>
+                      </div>
+                    ) : (
+                      <Accordion
+                        items={searchResults}
+                        categoryId="search"
+                        openId={openId}
+                        onToggle={handleToggle}
+                        highlightTerm={searchTerm}
+                      />
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={activeCategory}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)]">
+                        {currentCategory.label}
                       </p>
-                      <button
-                        onClick={clearSearch}
-                        className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:underline underline-offset-2"
-                      >
-                        Toon alle vragen
-                      </button>
+                      <span className="text-xs text-[var(--color-muted)]">
+                        {currentCategory.items.length} vragen
+                      </span>
                     </div>
-                  ) : (
                     <Accordion
-                      items={searchResults}
-                      categoryId="search"
+                      items={currentCategory.items}
+                      categoryId={currentCategory.id}
                       openId={openId}
                       onToggle={handleToggle}
-                      highlightTerm={searchTerm}
                     />
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={activeCategory}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex items-center justify-between mb-5">
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[var(--ff-color-primary-600)]">
-                      {currentCategory.label}
-                    </p>
-                    <span className="text-xs text-[var(--color-muted)]">
-                      {currentCategory.items.length} vragen
-                    </span>
-                  </div>
-                  <Accordion
-                    items={currentCategory.items}
-                    categoryId={currentCategory.id}
-                    openId={openId}
-                    onToggle={handleToggle}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* ── BOTTOM CTA STRIP ── */}
       <section className="ff-container pb-20">
-        <div className="rounded-2xl bg-[var(--ff-color-primary-700)] px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div>
-            <p className="font-bold text-lg text-white mb-1">Klaar om je stijl te ontdekken?</p>
-            <p className="text-sm text-white/75">De quiz duurt minder dan twee minuten.</p>
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-2xl bg-[var(--ff-color-primary-700)] px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <p className="font-bold text-lg text-white mb-1">Klaar om je stijl te ontdekken?</p>
+              <p className="text-sm text-white/75">De quiz duurt minder dan twee minuten.</p>
+            </div>
+            <NavLink
+              to="/onboarding"
+              className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-[var(--ff-color-primary-800)] font-semibold text-sm px-6 py-3 rounded-full hover:bg-[var(--ff-color-primary-50)] transition-colors shadow-sm"
+            >
+              Start gratis
+              <ArrowRight className="w-4 h-4" />
+            </NavLink>
           </div>
-          <NavLink
-            to="/onboarding"
-            className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-[var(--ff-color-primary-800)] font-semibold text-sm px-6 py-3 rounded-full hover:bg-[var(--ff-color-primary-50)] transition-colors shadow-sm"
-          >
-            Start gratis
-            <ArrowRight className="w-4 h-4" />
-          </NavLink>
         </div>
       </section>
     </main>
