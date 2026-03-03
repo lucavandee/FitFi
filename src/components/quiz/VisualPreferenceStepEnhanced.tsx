@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SwipeCard } from './SwipeCard';
 import { NovaBubble } from './NovaBubble';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader as Loader2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import { VisualPreferenceErrorBoundary } from './VisualPreferenceErrorBoundary';

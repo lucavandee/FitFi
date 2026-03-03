@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, AlertCircle, X, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, X, Sparkles } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult } from "@/lib/quiz/logic";
