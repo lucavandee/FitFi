@@ -140,60 +140,97 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function xmlTextContent(node: Element, tag: string): string {
-  return node.querySelector(tag)?.textContent?.trim() ?? "";
+function xmlGetText(xml: string, tag: string): string {
+  const openTag = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, "i");
+  const selfClose = new RegExp(`<${tag}(?:\\s[^>]*)?/>`, "i");
+  const m = xml.match(openTag);
+  if (m) return m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").trim();
+  if (selfClose.test(xml)) return "";
+  return "";
+}
+
+function xmlGetAttr(tag: string, attr: string): string {
+  const re = new RegExp(`${attr}="([^"]*)"`, "i");
+  const m = tag.match(re);
+  return m ? m[1] : "";
+}
+
+function xmlGetAll(xml: string, tag: string): string[] {
+  const re = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>|<${tag}(?:\\s[^>]*)?/>`, "gi");
+  const results: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(xml)) !== null) {
+    results.push(m[0]);
+  }
+  return results;
+}
+
+function xmlGetAllWithAttrs(xml: string, tag: string): string[] {
+  const re = new RegExp(`<${tag}[^>]*(?:/>|>[\\s\\S]*?</${tag}>)`, "gi");
+  const results: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(xml)) !== null) {
+    results.push(m[0]);
+  }
+  return results;
 }
 
 function parseXmlFeed(xmlText: string): DaisyconFeed {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(xmlText, "text/xml");
+  if (!xmlText || xmlText.trim().length === 0) {
+    throw new Error("XML feed is leeg");
+  }
 
-  const parseError = doc.querySelector("parsererror");
-  if (parseError) throw new Error("Ongeldige XML in feed: " + parseError.textContent?.slice(0, 200));
+  const programMatch = xmlText.match(/<program[\s>]/i);
+  if (!programMatch) throw new Error("Geen <program> element gevonden in XML feed");
 
-  const programEl = doc.querySelector("program");
-  if (!programEl) throw new Error("Geen <program> element gevonden in XML feed");
+  const programBlockMatch = xmlText.match(/<program[\s\S]*?>([\s\S]*?)<\/program>/i) ||
+    xmlText.match(/<datafeed>([\s\S]*)<\/datafeed>/i);
 
-  const programInfo = {
-    id: parseInt(xmlTextContent(programEl, "id") || "0"),
-    name: xmlTextContent(programEl, "name") || "Onbekend programma",
-    currency: xmlTextContent(programEl, "currency") || "EUR",
-    product_count: 0,
-  };
+  const fullXml = xmlText;
 
-  const productEls = Array.from(doc.querySelectorAll("product"));
-  programInfo.product_count = productEls.length;
+  const programName = xmlGetText(fullXml, "name") || "Onbekend programma";
+  const programId = parseInt(xmlGetText(fullXml, "id") || "0") || 0;
+  const currency = xmlGetText(fullXml, "currency") || "EUR";
 
-  const products: DaisyconProduct[] = productEls.map((p) => {
-    const imageEls = Array.from(p.querySelectorAll("image"));
-    const images: DaisyconImage[] = imageEls.map((img) => ({
-      size: img.getAttribute("size") ?? "",
-      tag: img.getAttribute("tag") ?? "",
-      type: img.getAttribute("type") ?? "",
-      location: img.getAttribute("location") ?? img.textContent?.trim() ?? "",
-    }));
+  const productBlocks = xmlGetAll(fullXml, "product");
+
+  const products: DaisyconProduct[] = productBlocks.map((p) => {
+    const imageBlocks = xmlGetAllWithAttrs(p, "image");
+    const images: DaisyconImage[] = imageBlocks.map((imgTag) => {
+      const locationAttr = xmlGetAttr(imgTag, "location");
+      const locationText = xmlGetText(imgTag, "image");
+      return {
+        size: xmlGetAttr(imgTag, "size"),
+        tag: xmlGetAttr(imgTag, "tag"),
+        type: xmlGetAttr(imgTag, "type"),
+        location: locationAttr || locationText || "",
+      };
+    });
+
+    const id = xmlGetText(p, "id") || xmlGetText(p, "sku");
+    const status = xmlGetText(p, "status") || "active";
 
     return {
       update_info: {
-        daisycon_unique_id: xmlTextContent(p, "id") || xmlTextContent(p, "sku"),
-        status: xmlTextContent(p, "status") || "active",
+        daisycon_unique_id: id,
+        status,
       },
       product_info: {
-        title: xmlTextContent(p, "title") || xmlTextContent(p, "name"),
-        price: parseFloat(xmlTextContent(p, "price") || "0"),
-        price_old: parseFloat(xmlTextContent(p, "price_old") || xmlTextContent(p, "original_price") || "0"),
-        brand: xmlTextContent(p, "brand"),
-        category: xmlTextContent(p, "category"),
-        category_path: xmlTextContent(p, "category_path") || xmlTextContent(p, "category"),
-        color_primary: xmlTextContent(p, "color") || xmlTextContent(p, "color_primary"),
-        sku: xmlTextContent(p, "sku"),
-        description: xmlTextContent(p, "description"),
-        size: xmlTextContent(p, "size"),
-        keywords: xmlTextContent(p, "keywords"),
-        gender_target: xmlTextContent(p, "gender") || xmlTextContent(p, "gender_target"),
-        in_stock: xmlTextContent(p, "in_stock") || xmlTextContent(p, "availability") || "true",
-        currency: xmlTextContent(p, "currency") || "EUR",
-        link: xmlTextContent(p, "affiliate_link") || xmlTextContent(p, "link") || xmlTextContent(p, "url"),
+        title: xmlGetText(p, "title") || xmlGetText(p, "name"),
+        price: parseFloat(xmlGetText(p, "price") || "0") || 0,
+        price_old: parseFloat(xmlGetText(p, "price_old") || xmlGetText(p, "original_price") || "0") || 0,
+        brand: xmlGetText(p, "brand"),
+        category: xmlGetText(p, "category"),
+        category_path: xmlGetText(p, "category_path") || xmlGetText(p, "category"),
+        color_primary: xmlGetText(p, "color") || xmlGetText(p, "color_primary"),
+        sku: xmlGetText(p, "sku"),
+        description: xmlGetText(p, "description"),
+        size: xmlGetText(p, "size"),
+        keywords: xmlGetText(p, "keywords"),
+        gender_target: xmlGetText(p, "gender") || xmlGetText(p, "gender_target"),
+        in_stock: xmlGetText(p, "in_stock") || xmlGetText(p, "availability") || "true",
+        currency: xmlGetText(p, "currency") || currency,
+        link: xmlGetText(p, "affiliate_link") || xmlGetText(p, "link") || xmlGetText(p, "url"),
         images,
       },
     };
@@ -202,20 +239,20 @@ function parseXmlFeed(xmlText: string): DaisyconFeed {
   return {
     datafeed: {
       info: { product_count: products.length },
-      programs: [{ program_info: programInfo, products }],
+      programs: [{ program_info: { id: programId, name: programName, currency, product_count: products.length }, products }],
     },
   };
 }
 
 async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  const timeout = setTimeout(() => controller.abort(), 55000);
 
   let feedRes: Response;
   try {
     feedRes = await fetch(feedUrl, {
       signal: controller.signal,
-      headers: { "Accept": "application/json, application/xml, text/xml, */*" },
+      headers: { "Accept": "application/json, application/xml, text/xml, */*", "User-Agent": "FitFi-Import/1.0" },
     });
   } finally {
     clearTimeout(timeout);
@@ -223,7 +260,7 @@ async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
 
   if (!feedRes.ok) {
     const body = await feedRes.text().catch(() => "");
-    throw new Error(`Feed ophalen mislukt: HTTP ${feedRes.status}${body ? " — " + body.slice(0, 200) : ""}`);
+    throw new Error(`Feed ophalen mislukt: HTTP ${feedRes.status}${body ? " — " + body.slice(0, 300) : ""}`);
   }
 
   const contentType = feedRes.headers.get("content-type") ?? "";
@@ -233,12 +270,25 @@ async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
     throw new Error("Feed is leeg — controleer de feed URL en media_id");
   }
 
-  const isXml = contentType.includes("xml") || rawText.trimStart().startsWith("<");
-  const isJson = contentType.includes("json") || rawText.trimStart().startsWith("{");
+  const trimmed = rawText.trimStart();
+  const isXml = contentType.includes("xml") || trimmed.startsWith("<");
+  const isJson = contentType.includes("json") || trimmed.startsWith("{") || trimmed.startsWith("[");
 
   if (isJson) {
     try {
-      return JSON.parse(rawText) as DaisyconFeed;
+      const parsed = JSON.parse(rawText);
+      if (Array.isArray(parsed)) {
+        return {
+          datafeed: {
+            info: { product_count: parsed.length },
+            programs: [{
+              program_info: { id: 0, name: "Daisycon Feed", currency: "EUR", product_count: parsed.length },
+              products: parsed,
+            }],
+          },
+        };
+      }
+      return parsed as DaisyconFeed;
     } catch {
       throw new Error("Feed kon niet als JSON worden geparseerd: " + rawText.slice(0, 200));
     }
@@ -252,7 +302,7 @@ async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
 }
 
 async function processFeed(
-  supabase: ReturnType<typeof createClient>,
+  supabaseAdmin: ReturnType<typeof createClient>,
   feed: DaisyconFeed,
   userId: string,
   campaignId?: string,
@@ -261,7 +311,7 @@ async function processFeed(
   const { id: programId, name: programName } = program.program_info;
   const products = program.products;
 
-  const { data: importLog } = await supabase
+  const { data: importLog } = await supabaseAdmin
     .from("daisycon_imports")
     .insert({
       program_name: programName,
@@ -331,7 +381,7 @@ async function processFeed(
       continue;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("products")
       .upsert(rows, { onConflict: "external_id", ignoreDuplicates: false })
       .select("id");
@@ -345,7 +395,7 @@ async function processFeed(
   }
 
   if (importLog?.id) {
-    await supabase
+    await supabaseAdmin
       .from("daisycon_imports")
       .update({
         inserted_count: inserted,
@@ -357,7 +407,7 @@ async function processFeed(
       .eq("id", importLog.id);
 
     if (campaignId) {
-      await supabase
+      await supabaseAdmin
         .from("affiliate_campaigns")
         .update({
           last_synced_at: new Date().toISOString(),
