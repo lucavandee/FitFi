@@ -300,12 +300,12 @@ export default function FAQPage() {
             )}
           </div>
 
-          {/* Categorie tabs — flex-row, vaste hoogte 44px, nooit wrappend */}
+          {/* Categorie tabs */}
           {!isSearching && (
             <div
               role="tablist"
               aria-label="FAQ categorieën"
-              className="flex flex-row mb-8 p-1 bg-[var(--ff-color-primary-50)] rounded-xl border border-[var(--color-border)]"
+              className="flex flex-row gap-1 mb-8"
             >
               {CATEGORIES.map(({ id, label, Icon }) => {
                 const active = activeCat === id;
@@ -316,15 +316,22 @@ export default function FAQPage() {
                     aria-selected={active}
                     onClick={() => changeCat(id)}
                     className={[
-                      "flex-1 flex flex-row items-center justify-center gap-1.5 min-h-[44px] px-2 rounded-lg",
-                      "text-xs font-semibold whitespace-nowrap",
-                      "transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1",
+                      "flex-1 flex flex-col items-center justify-center gap-1 min-h-[64px] px-2 rounded-2xl",
+                      "text-[11px] font-semibold whitespace-nowrap transition-all duration-200",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
                       active
-                        ? "bg-[var(--ff-color-primary-700)] text-white shadow-sm"
-                        : "text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-white/60",
+                        ? "bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] shadow-[0_2px_12px_rgba(0,0,0,0.08)] border border-[var(--ff-color-primary-200)]"
+                        : "bg-transparent text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)]/60",
                     ].join(" ")}
                   >
-                    <Icon size={13} aria-hidden="true" className="shrink-0" />
+                    <span className={[
+                      "w-8 h-8 rounded-xl flex items-center justify-center transition-colors duration-200",
+                      active
+                        ? "bg-[var(--ff-color-primary-700)] text-white"
+                        : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-600)]",
+                    ].join(" ")}>
+                      <Icon size={14} aria-hidden="true" />
+                    </span>
                     <span>{label}</span>
                   </button>
                 );
