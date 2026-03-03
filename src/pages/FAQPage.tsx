@@ -285,8 +285,8 @@ export default function FAQPage() {
             </p>
           </div>
 
-          {/* Search bar — compacte proportie */}
-          <div className="relative max-w-lg mx-auto mb-5 sm:mb-6">
+          {/* Search bar */}
+          <div className="relative max-w-md mx-auto mb-5 sm:mb-6">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
             <label htmlFor="faq-search" className="sr-only">Zoek in veelgestelde vragen</label>
             <input
@@ -296,52 +296,51 @@ export default function FAQPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoComplete="off"
-              className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all shadow-[var(--shadow-soft)]"
+              className="w-full pl-10 pr-9 py-2.5 text-sm rounded-full border border-[var(--ff-color-primary-200)] bg-[var(--color-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
             />
             {search && (
               <button
                 onClick={clearSearch}
                 aria-label="Zoekopdracht wissen"
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Category tabs */}
+          {/* Category tabs — scrollable row, vaste hoogte, nooit uitrekken */}
           {!isSearching && (
             <nav aria-label="FAQ categorieën" className="mb-6 sm:mb-8">
-              <ul className="flex flex-wrap justify-center gap-2 list-none m-0 p-0">
+              <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
                 {CATEGORIES.map(({ id, label, Icon, items }) => {
                   const active = activeCat === id;
                   return (
-                    <li key={id}>
-                      <button
-                        onClick={() => changeCat(id)}
-                        aria-pressed={active}
-                        className={[
-                          "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold",
-                          "border transition-all duration-200 cursor-pointer min-h-[40px]",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
-                          active
-                            ? "bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)] shadow-sm"
-                            : "bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]",
-                        ].join(" ")}
-                      >
-                        <Icon size={13} aria-hidden="true" className={active ? "text-white opacity-80" : "text-[var(--ff-color-primary-600)]"} />
-                        <span>{label}</span>
-                        <span className={[
-                          "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0",
-                          active ? "bg-white/20 text-white" : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]",
-                        ].join(" ")}>
-                          {items.length}
-                        </span>
-                      </button>
-                    </li>
+                    <button
+                      key={id}
+                      onClick={() => changeCat(id)}
+                      aria-pressed={active}
+                      className={[
+                        "inline-flex items-center gap-1.5 px-4 py-2 h-9 rounded-full text-sm font-semibold whitespace-nowrap shrink-0",
+                        "border transition-all duration-200 cursor-pointer",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
+                        active
+                          ? "bg-[var(--ff-color-primary-700)] text-white border-[var(--ff-color-primary-700)]"
+                          : "bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--ff-color-primary-200)] hover:border-[var(--ff-color-primary-400)]",
+                      ].join(" ")}
+                    >
+                      <Icon size={13} aria-hidden="true" className={active ? "text-white/80" : "text-[var(--ff-color-primary-600)]"} />
+                      <span>{label}</span>
+                      <span className={[
+                        "w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0",
+                        active ? "bg-white/20 text-white" : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]",
+                      ].join(" ")}>
+                        {items.length}
+                      </span>
+                    </button>
                   );
                 })}
-              </ul>
+              </div>
             </nav>
           )}
 
