@@ -304,7 +304,7 @@ export default function EnhancedResultsPage() {
   ];
 
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)] relative">
+    <div className="bg-[var(--color-bg)] text-[var(--color-text)] relative" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Helmet>
         <title>Jouw Style Report – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
@@ -340,7 +340,7 @@ export default function EnhancedResultsPage() {
                     <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
                       Persoonlijk Style Report
                     </p>
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-2">
+                    <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-2">
                       {archetypeName}
                     </h1>
                     <div className="flex items-center gap-3 flex-wrap">
@@ -385,7 +385,7 @@ export default function EnhancedResultsPage() {
               </>
             ) : (
               <div className="text-center py-10">
-                <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-[var(--color-text)] tracking-tight">Jouw stijl</h1>
+                <h1 className="font-heading text-3xl sm:text-4xl font-bold mb-4 text-[var(--color-text)] tracking-tight">Jouw stijl</h1>
                 <p className="text-[var(--color-muted)] mb-6 leading-relaxed">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
@@ -580,7 +580,7 @@ export default function EnhancedResultsPage() {
                   <Zap className="w-4 h-4" />
                   Jouw Style DNA Analyse
                 </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
+                <h2 className="font-heading font-bold mb-6 tracking-tight" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.1 }}>
                   Kleuranalyse & Stijlprofiel
                   <span className="block text-[var(--ff-color-primary-600)] mt-2">{activeColorProfile.paletteName}</span>
                 </h2>
@@ -618,7 +618,7 @@ export default function EnhancedResultsPage() {
                         <Sparkles className="w-3.5 h-3.5" strokeWidth={2.5} />
                         <span className="tracking-wide">JOUW STIJL</span>
                       </div>
-                      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-text)] tracking-tight leading-[1.1]">
+                      <h2 className="font-heading font-bold text-[var(--ff-color-text)] tracking-tight leading-[1.1]" style={{ fontSize: 'clamp(1.75rem, 4vw, 3rem)' }}>
                         Je stijlprofiel:{' '}
                         <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
                           {archetypeName}
@@ -629,8 +629,8 @@ export default function EnhancedResultsPage() {
                     <div className="grid lg:grid-cols-2 gap-10 lg:gap-14">
                       {/* Ultra-Premium Color Profile with Visual Swatches */}
                       <div className="space-y-6">
-                        <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
-                          <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
+                        <h3 className="font-heading text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
+                          <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" aria-hidden="true" />
                           Kleurprofiel
                         </h3>
 
@@ -644,7 +644,7 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div className="h-3 flex-1 bg-gradient-to-r from-blue-400 via-slate-300 to-orange-400 rounded-full shadow-inner" />
+                              <div className="h-3 flex-1 rounded-full shadow-inner" style={{ background: 'linear-gradient(to right, #93c5fd, #d1d5db, #fb923c)' }} />
                             </div>
                           </div>
 
@@ -657,9 +657,9 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div className="h-3 w-1/3 bg-gradient-to-r from-slate-200 to-slate-300 rounded-l-full shadow-inner" />
-                              <div className="h-3 w-1/3 bg-gradient-to-r from-slate-400 to-slate-500 shadow-inner" />
-                              <div className="h-3 w-1/3 bg-gradient-to-r from-slate-700 to-slate-900 rounded-r-full shadow-inner" />
+                              <div className="h-3 w-1/3 rounded-l-full shadow-inner" style={{ background: 'linear-gradient(to right, #e2e8f0, #cbd5e1)' }} />
+                              <div className="h-3 w-1/3 shadow-inner" style={{ background: 'linear-gradient(to right, #94a3b8, #64748b)' }} />
+                              <div className="h-3 w-1/3 rounded-r-full shadow-inner" style={{ background: 'linear-gradient(to right, #334155, #0f172a)' }} />
                             </div>
                           </div>
 
@@ -672,10 +672,10 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div role="img" aria-label={`Zomer${activeColorProfile.season === 'zomer' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-sky-200 to-blue-300 ${activeColorProfile.season === 'zomer' ? '' : 'opacity-30'}`} />
-                              <div role="img" aria-label={`Herfst${activeColorProfile.season === 'herfst' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-amber-200 to-orange-300 ${activeColorProfile.season === 'herfst' ? '' : 'opacity-30'}`} />
-                              <div role="img" aria-label={`Winter${activeColorProfile.season === 'winter' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-slate-200 to-blue-200 ${activeColorProfile.season === 'winter' ? '' : 'opacity-30'}`} />
-                              <div role="img" aria-label={`Lente${activeColorProfile.season === 'lente' ? ' (actief)' : ''}`} className={`h-10 w-10 bg-gradient-to-br rounded-xl shadow-md transition-opacity duration-300 from-pink-200 to-green-200 ${activeColorProfile.season === 'lente' ? '' : 'opacity-30'}`} />
+                              <div role="img" aria-label={`Zomer${activeColorProfile.season === 'zomer' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'zomer' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, #bae6fd, #93c5fd)' }} />
+                              <div role="img" aria-label={`Herfst${activeColorProfile.season === 'herfst' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'herfst' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, var(--ff-color-warning-200), var(--ff-color-warning-400))' }} />
+                              <div role="img" aria-label={`Winter${activeColorProfile.season === 'winter' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'winter' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, #e2e8f0, #bfdbfe)' }} />
+                              <div role="img" aria-label={`Lente${activeColorProfile.season === 'lente' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'lente' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, var(--ff-color-accent-200), var(--ff-color-success-300))' }} />
                             </div>
                           </div>
 
@@ -688,7 +688,7 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div className="h-3 flex-1 bg-gradient-to-r from-gray-300 via-pink-300 to-purple-500 rounded-full shadow-inner" />
+                              <div className="h-3 flex-1 rounded-full shadow-inner" style={{ background: 'linear-gradient(to right, var(--ff-color-neutral-300), var(--ff-color-accent-400), var(--ff-color-primary-600))' }} />
                             </div>
                           </div>
                         </div>
@@ -696,8 +696,8 @@ export default function EnhancedResultsPage() {
 
                       {/* Ultra-Premium Key Insights */}
                       <div className="space-y-6">
-                        <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
-                          <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
+                        <h3 className="font-heading text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
+                          <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" aria-hidden="true" />
                           Belangrijkste inzichten
                         </h3>
 
@@ -1438,6 +1438,6 @@ export default function EnhancedResultsPage() {
 
       {/* Mobile bottom padding to avoid sticky tab bar overlap */}
       <div className="h-16 sm:hidden" aria-hidden="true" />
-    </main>
+    </div>
   );
 }
