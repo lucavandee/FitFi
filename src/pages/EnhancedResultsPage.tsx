@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Star, Check, Grid3x3, Layers, Palette, CircleCheck as CheckCircle } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Check, Grid3x3, Layers, Palette } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -374,7 +374,7 @@ export default function EnhancedResultsPage() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveTab('outfits')}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all"
                       style={{ boxShadow: '0 2px 8px rgba(122,97,74,0.25)' }}
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
@@ -389,7 +389,7 @@ export default function EnhancedResultsPage() {
                 <p className="text-[var(--color-muted)] mb-6 leading-relaxed">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-all"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] transition-all"
                   style={{ boxShadow: '0 2px 10px rgba(122,97,74,0.25)' }}
                 >
                   Start Style Quiz
@@ -644,7 +644,7 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div className="h-3 flex-1 rounded-full shadow-inner" style={{ background: 'linear-gradient(to right, #93c5fd, #d1d5db, #fb923c)' }} />
+                              <div className="h-3 flex-1 rounded-full shadow-inner" style={{ background: 'linear-gradient(to right, var(--ff-color-accent-200), var(--ff-color-primary-300), var(--ff-color-warning-400))' }} />
                             </div>
                           </div>
 
@@ -657,9 +657,9 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div className="h-3 w-1/3 rounded-l-full shadow-inner" style={{ background: 'linear-gradient(to right, #e2e8f0, #cbd5e1)' }} />
-                              <div className="h-3 w-1/3 shadow-inner" style={{ background: 'linear-gradient(to right, #94a3b8, #64748b)' }} />
-                              <div className="h-3 w-1/3 rounded-r-full shadow-inner" style={{ background: 'linear-gradient(to right, #334155, #0f172a)' }} />
+                              <div className="h-3 w-1/3 rounded-l-full shadow-inner" style={{ background: 'linear-gradient(to right, var(--ff-color-primary-50), var(--ff-color-primary-200))' }} />
+                              <div className="h-3 w-1/3 shadow-inner" style={{ background: 'linear-gradient(to right, var(--ff-color-primary-400), var(--ff-color-primary-600))' }} />
+                              <div className="h-3 w-1/3 rounded-r-full shadow-inner" style={{ background: 'linear-gradient(to right, var(--ff-color-primary-800), var(--ff-color-primary-900))' }} />
                             </div>
                           </div>
 
@@ -672,9 +672,9 @@ export default function EnhancedResultsPage() {
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              <div role="img" aria-label={`Zomer${activeColorProfile.season === 'zomer' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'zomer' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, #bae6fd, #93c5fd)' }} />
+                              <div role="img" aria-label={`Zomer${activeColorProfile.season === 'zomer' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'zomer' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, var(--ff-color-accent-100), var(--ff-color-accent-300))' }} />
                               <div role="img" aria-label={`Herfst${activeColorProfile.season === 'herfst' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'herfst' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, var(--ff-color-warning-200), var(--ff-color-warning-400))' }} />
-                              <div role="img" aria-label={`Winter${activeColorProfile.season === 'winter' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'winter' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, #e2e8f0, #bfdbfe)' }} />
+                              <div role="img" aria-label={`Winter${activeColorProfile.season === 'winter' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'winter' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-50), var(--ff-color-primary-200))' }} />
                               <div role="img" aria-label={`Lente${activeColorProfile.season === 'lente' ? ' (actief)' : ''}`} className={`h-10 w-10 rounded-xl shadow-md transition-opacity duration-300 ${activeColorProfile.season === 'lente' ? '' : 'opacity-30'}`} style={{ background: 'linear-gradient(135deg, var(--ff-color-accent-200), var(--ff-color-success-300))' }} />
                             </div>
                           </div>
@@ -840,7 +840,7 @@ export default function EnhancedResultsPage() {
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-700)] flex items-center justify-center shadow-lg">
                       <Sparkles className="w-7 h-7 text-white" strokeWidth={2.5} />
                     </div>
-                    <h3 className="text-3xl font-bold text-[var(--color-text)]">Hoe we jouw stijl hebben bepaald</h3>
+                    <h3 className="font-heading text-3xl font-bold text-[var(--color-text)]">Hoe we jouw stijl hebben bepaald</h3>
                   </div>
 
                   <div className="space-y-8">
@@ -968,37 +968,6 @@ export default function EnhancedResultsPage() {
                 </motion.div>
               </AnimatedSection>
 
-              {/* Style Tips */}
-              <AnimatedSection delay={0.6}>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="bg-gradient-to-br from-[var(--color-surface)] to-[var(--ff-color-primary-25)] rounded-3xl border border-[var(--color-border)] p-10 shadow-xl"
-                >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center">
-                      <Star className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold">Persoonlijke Styling Tips</h3>
-                  </div>
-                  <ul className="space-y-4">
-                    {(activeColorProfile.notes ?? []).map((note, i) => (
-                      <motion.li
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: i * 0.1 }}
-                        viewport={{ once: true }}
-                        className="flex items-start gap-4 group"
-                      >
-                        <div className="mt-1 w-6 h-6 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--ff-color-primary-600)] transition-colors">
-                          <Check className="w-4 h-4 text-[var(--ff-color-primary-600)] group-hover:text-white transition-colors" />
-                        </div>
-                        <p className="text-[var(--color-text)] leading-relaxed text-lg">{note}</p>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-              </AnimatedSection>
             </div>
           </div>
         </section>
@@ -1021,7 +990,7 @@ export default function EnhancedResultsPage() {
             <AnimatedSection>
               <div className="flex items-center justify-between mb-6 gap-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight">
                     Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
                   </h2>
                   <p className="text-sm text-[var(--color-muted)] mt-0.5">
@@ -1209,7 +1178,7 @@ export default function EnhancedResultsPage() {
                           )}
 
                           {/* Overlay Actions - Always visible */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 transition-opacity duration-300">
+                          <div className="absolute inset-0 opacity-100 transition-opacity duration-300" style={{ background: 'linear-gradient(to top, rgba(20,16,12,0.62) 0%, transparent 55%)' }}>
                             <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between gap-2">
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
