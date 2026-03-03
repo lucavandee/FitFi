@@ -7,22 +7,7 @@ import {
   logAdminAction,
   type DashboardMetrics,
 } from '@/services/admin/adminService';
-import {
-  Users,
-  Image,
-  Package,
-  CreditCard,
-  BarChart3,
-  Settings,
-  Database,
-  FileText,
-  ArrowRight,
-  Activity,
-  TrendingUp,
-  Award,
-  Smartphone,
-  Link
-} from 'lucide-react';
+import { Users, Image, Package, CreditCard, ChartBar as BarChart3, Settings, Database, FileText, ArrowRight, Activity, TrendingUp, Award, Smartphone, Link } from 'lucide-react';
 
 interface AdminModule {
   id: string;
