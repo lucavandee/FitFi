@@ -1,22 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
-import {
-  Check,
-  Star,
-  Zap,
-  Crown,
-  Loader2,
-  AlertCircle,
-  X,
-  Users,
-  TrendingUp,
-  Shield,
-  ArrowRight,
-  Minus,
-  Info,
-  ChevronDown,
-} from "lucide-react";
+import { Check, Star, Zap, Crown, Loader as Loader2, CircleAlert as AlertCircle, X, Users, TrendingUp, Shield, ArrowRight, Minus, Info, ChevronDown } from "lucide-react";
 import { useStripeProducts } from "@/hooks/useStripeProducts";
 import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
