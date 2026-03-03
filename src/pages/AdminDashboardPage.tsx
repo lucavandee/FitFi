@@ -20,7 +20,8 @@ import {
   Activity,
   TrendingUp,
   Award,
-  Smartphone
+  Smartphone,
+  Link
 } from 'lucide-react';
 
 interface AdminModule {
@@ -120,6 +121,15 @@ const adminModules: AdminModule[] = [
     route: '/admin/blog',
     color: 'from-violet-500 to-fuchsia-500',
     badge: 'AI',
+    status: 'active'
+  },
+  {
+    id: 'affiliate-campaigns',
+    title: 'Affiliate Campagnes',
+    description: 'Feed URLs beheren en producten synchroniseren',
+    icon: Link,
+    route: '/admin/affiliate-campaigns',
+    color: 'from-emerald-500 to-teal-500',
     status: 'active'
   },
   {
