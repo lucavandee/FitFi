@@ -63,18 +63,30 @@ export default function AdminDaisyconImportPage() {
     setLogsLoading(false);
   }
 
+  function isUrl(value: string): boolean {
+    const trimmed = value.trim();
+    return trimmed.startsWith("http://") || trimmed.startsWith("https://");
+  }
+
   async function handleImport() {
     if (!feedJson.trim()) {
-      toast.error("Plak of upload eerst een JSON feed.");
+      toast.error("Plak of upload eerst een feed URL of JSON.");
       return;
     }
 
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(feedJson);
-    } catch {
-      toast.error("Ongeldige JSON. Controleer de feed.");
-      return;
+    const trimmed = feedJson.trim();
+    let body: Record<string, unknown>;
+
+    if (isUrl(trimmed)) {
+      body = { feedUrl: trimmed };
+    } else {
+      try {
+        const parsed = JSON.parse(trimmed);
+        body = { feed: parsed };
+      } catch {
+        toast.error("Ongeldige invoer — plak een feed URL (https://...) of geldige JSON.");
+        return;
+      }
     }
 
     setImporting(true);
@@ -93,7 +105,7 @@ export default function AdminDaisyconImportPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ feed: parsed }),
+        body: JSON.stringify(body),
       });
 
       const json = await res.json();
@@ -173,7 +185,7 @@ export default function AdminDaisyconImportPage() {
       <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-4 flex gap-3 mb-6">
         <Info className="w-4 h-4 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
         <div className="text-sm text-[var(--color-text)]">
-          <strong>Hoe het werkt:</strong> Kopieer de JSON feed vanuit Daisycon (gewenst formaat: JSON) en plak die hieronder. Categorieën, kleuren en stijl worden automatisch afgeleid uit de producttitels. Producten worden op basis van <code className="bg-white px-1 rounded text-xs">daisycon_unique_id</code> geüpsert — bestaande producten worden bijgewerkt, nieuwe toegevoegd.
+          <strong>Hoe het werkt:</strong> Plak een Daisycon feed <strong>URL</strong> (de feed wordt automatisch opgehaald) of plak de volledige <strong>JSON</strong> inhoud direct. Zowel JSON als XML feeds worden ondersteund. Categorieën, kleuren en stijl worden automatisch afgeleid uit de producttitels. Producten worden op basis van <code className="bg-white px-1 rounded text-xs">daisycon_unique_id</code> geüpsert.
         </div>
       </div>
 
@@ -198,14 +210,14 @@ export default function AdminDaisyconImportPage() {
           {activeTab === "paste" ? (
             <div>
               <label htmlFor="feed-json" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Plak Daisycon JSON feed
+                Plak feed URL of JSON
               </label>
               <textarea
                 id="feed-json"
                 value={feedJson}
                 onChange={(e) => setFeedJson(e.target.value)}
                 rows={10}
-                placeholder='{"datafeed": {"programs": [...]}}'
+                placeholder={"https://daisycon.io/datafeed/?media_id=...&type=JSON\n\nOf plak hier de volledige JSON feed inhoud."}
                 className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-sm font-mono text-[var(--color-text)] placeholder:text-[var(--color-muted)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] resize-y"
               />
               {feedJson && (
