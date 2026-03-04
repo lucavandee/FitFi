@@ -11,17 +11,17 @@ export interface GeneratedOutfit extends Outfit {
 }
 
 class OutfitService {
-  private productsCache: Product[] | null = null;
-  private cacheTimestamp: number = 0;
-  private readonly CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
+  private productsCache: Map<string, Product[]> = new Map();
+  private cacheTimestamps: Map<string, number> = new Map();
+  private readonly CACHE_DURATION = 1000 * 60 * 30;
 
-  async getProducts(forceRefresh = false): Promise<Product[]> {
-    if (
-      !forceRefresh &&
-      this.productsCache &&
-      Date.now() - this.cacheTimestamp < this.CACHE_DURATION
-    ) {
-      return this.productsCache;
+  async getProducts(gender?: string, forceRefresh = false): Promise<Product[]> {
+    const cacheKey = gender || '_all';
+    const cached = this.productsCache.get(cacheKey);
+    const cachedAt = this.cacheTimestamps.get(cacheKey) ?? 0;
+
+    if (!forceRefresh && cached && Date.now() - cachedAt < this.CACHE_DURATION) {
+      return cached;
     }
 
     const client = supabase();
@@ -31,10 +31,16 @@ class OutfitService {
     }
 
     try {
-      const { data, error } = await client
+      let query = client
         .from('products')
         .select('*')
         .eq('in_stock', true);
+
+      if (gender && gender !== 'unisex' && gender !== 'prefer-not-to-say') {
+        query = query.or(`gender.eq.${gender},gender.eq.unisex`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('[OutfitService] Error fetching products:', error);
@@ -48,15 +54,10 @@ class OutfitService {
 
       const products = data.map(this.mapDatabaseProduct);
 
-      this.productsCache = products;
-      this.cacheTimestamp = Date.now();
+      this.productsCache.set(cacheKey, products);
+      this.cacheTimestamps.set(cacheKey, Date.now());
 
-      const retailerCounts = products.reduce((acc, p) => {
-        acc[p.retailer || 'Unknown'] = (acc[p.retailer || 'Unknown'] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
-
-      console.log(`[OutfitService] Loaded ${products.length} products from unified catalog:`, retailerCounts);
+      console.log(`[OutfitService] Loaded ${products.length} ${gender || 'all'}-gender products`);
       return products;
     } catch (error) {
       console.error('[OutfitService] Exception fetching products:', error);
@@ -69,8 +70,8 @@ class OutfitService {
     count: number = 6
   ): Promise<GeneratedOutfit[]> {
     try {
-      // Get all products - filtering is now done in recommendationEngine
-      const products = await this.getProducts();
+      const gender = quizAnswers.gender as string | undefined;
+      const products = await this.getProducts(gender);
 
       console.log(`[OutfitService] Loaded ${products.length} products from database`);
 
@@ -135,6 +136,10 @@ class OutfitService {
   }
 
   private mapDatabaseProduct(dbProduct: any): Product {
+    const tags: string[] = dbProduct.tags || [];
+    const style: string = dbProduct.style || '';
+    const styleTags = style ? [...tags, ...style.split(/[,;/]+/).map((s: string) => s.trim()).filter(Boolean)] : tags;
+
     return {
       id: dbProduct.id,
       name: dbProduct.name || dbProduct.title,
@@ -145,8 +150,10 @@ class OutfitService {
       type: dbProduct.type,
       gender: dbProduct.gender,
       colors: dbProduct.colors || [],
+      color: (dbProduct.colors || [])[0],
       sizes: dbProduct.sizes || [],
-      tags: dbProduct.tags || [],
+      tags,
+      styleTags,
       retailer: dbProduct.retailer,
       affiliateUrl: dbProduct.affiliate_url || dbProduct.affiliateUrl,
       productUrl: dbProduct.product_url || dbProduct.productUrl,
@@ -183,8 +190,8 @@ class OutfitService {
   }
 
   clearCache(): void {
-    this.productsCache = null;
-    this.cacheTimestamp = 0;
+    this.productsCache.clear();
+    this.cacheTimestamps.clear();
   }
 }
 

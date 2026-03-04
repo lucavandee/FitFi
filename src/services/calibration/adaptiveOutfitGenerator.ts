@@ -49,6 +49,7 @@ interface GenerationContext {
     colors: string[];
     budget: 'low' | 'medium' | 'high';
     occasions: string[];
+    gender?: string;
   };
   swipe_history?: SwipeHistory;
   visual_embedding?: Record<string, number>; // From mood photos
@@ -744,11 +745,17 @@ export class AdaptiveOutfitGenerator {
    * Get product pool from database
    */
   private async getProductPool(context: GenerationContext): Promise<Product[]> {
-    const { data, error } = await supabase
+    let query = supabase
       .from('products')
       .select('*')
-      .eq('in_stock', true)
-      .limit(100);
+      .eq('in_stock', true);
+
+    const g = context.user_profile?.gender;
+    if (g && g !== 'unisex' && g !== 'prefer-not-to-say') {
+      query = query.or(`gender.eq.${g},gender.eq.unisex`);
+    }
+
+    const { data, error } = await query.limit(200);
 
     if (error) {
       console.error('[AdaptiveOutfitGenerator] Error fetching products:', error);

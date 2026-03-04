@@ -126,9 +126,6 @@ export function filterProducts(
   };
 }
 
-/**
- * Filter by gender with proper unisex handling
- */
 function filterByGender(
   products: Product[],
   gender?: 'male' | 'female' | 'unisex',
@@ -139,23 +136,13 @@ function filterByGender(
   }
 
   return products.filter(product => {
-    // Always include unisex products
-    if (product.gender === 'unisex') {
-      return true;
-    }
+    const pg = (product.gender || '').toLowerCase().trim();
 
-    // Always include products without gender specified
-    if (!product.gender) {
-      return true;
-    }
+    if (pg === 'unisex') return true;
+    if (pg === gender) return true;
 
-    // Match exact gender
-    if (product.gender === gender) {
-      return true;
-    }
-
-    // Product doesn't match
-    removed.push(`${product.id} (${product.name}): gender mismatch - wanted ${gender}, got ${product.gender}`);
+    // REJECT: missing gender, empty string, or wrong gender
+    removed.push(`${product.id} (${product.name}): gender mismatch - wanted ${gender}, got "${pg || 'none'}"`);
     return false;
   });
 }
@@ -196,28 +183,55 @@ function filterByBudget(
   });
 }
 
-/**
- * Whitelist of valid clothing categories.
- * Any product whose category does not map to one of these is rejected
- * before it can ever reach the outfit-generation engine.
- */
 const VALID_CLOTHING_CATEGORIES = new Set([
   'top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress', 'jumpsuit',
-  // Dutch synonyms that the import pipeline may produce
   'tops', 'bottoms', 'shoes', 'shoe', 'jacket', 'coat', 'bag', 'bags',
   'shirt', 'blouse', 'trui', 'broek', 'rok', 'schoen', 'sneaker', 'laars',
   'jas', 'jack', 'blazer', 'jurk', 'overall', 'tas', 'sjaal', 'riem', 'pet',
+  'sweater', 'hoodie', 'vest', 'polo', 't-shirt', 'cardigan', 'overhemd',
+  'pantalon', 'chino', 'jeans', 'shorts',
 ]);
 
-/**
- * Returns true when the product's category (or type) is a wearable clothing item.
- * Non-fashion products such as home-decor, posters, mugs, toys, etc. are rejected.
- */
+const NON_OUTFIT_NAME_PATTERNS = [
+  // Underwear & intimates
+  'onderbroek', 'boxer', 'slip', 'bh', 'bralette', 'string', 'thong',
+  'ondergoed', 'lingerie', 'hipster', 'trunk', 'trunks', 'brief',
+  // Sleepwear
+  'pyjama', 'nachthem', 'slaap', 'ochtendjas', 'badjas',
+  // Socks & hosiery
+  'sok', 'sokken', 'sock', 'socks', 'panty', 'kousen', 'kous',
+  // Swimwear
+  'bikini', 'badpak', 'zwembroek', 'zwemshort', 'zwemtop', 'boardshort',
+  // Home & non-clothing
+  'gordijn', 'curtain', 'kussen', 'cushion', 'kaars', 'candle',
+  'handdoek', 'towel', 'laken', 'dekbed', 'overtrek', 'plaid',
+  'vloerkleed', 'tapijt', 'mat', 'vaas', 'mok', 'bord',
+  // Beauty & cosmetics
+  'kunstnagel', 'press-on', 'parfum', 'make-up', 'mascara', 'lipstick',
+  'foundation', 'concealer', 'serum', 'crème', 'shampoo',
+  // Baby & kids specific
+  'romper', 'kruippak', 'slab',
+  // Accessories that are not outfit pieces
+  'telefoonhoesje', 'phone case', 'sleutelhanger', 'keychain',
+  'sticker', 'poster', 'puzzel',
+  // Flip-flops / slippers (not real shoes for outfits)
+  'slipper', 'badslip', 'teenslipper', 'flip-flop',
+];
+
+function isNonOutfitProduct(product: Product): boolean {
+  const searchable = [
+    product.name || '',
+    product.description || '',
+    product.type || '',
+  ].join(' ').toLowerCase();
+
+  return NON_OUTFIT_NAME_PATTERNS.some(pattern => searchable.includes(pattern));
+}
+
 function isWearableProduct(product: Product): boolean {
   const cat = (product.category || product.type || '').toLowerCase().trim();
   if (!cat) return false;
   if (VALID_CLOTHING_CATEGORIES.has(cat)) return true;
-  // Partial match for composite category strings like "tops/shirts"
   for (const valid of VALID_CLOTHING_CATEGORIES) {
     if (cat.includes(valid)) return true;
   }
@@ -248,9 +262,13 @@ function filterByValidation(
       return false;
     }
 
-    // Reject non-fashion products (home decor, posters, toys, etc.)
     if (!isWearableProduct(product)) {
       removed.push(`${product.id} (${product.name}): non-fashion category "${product.category}" rejected`);
+      return false;
+    }
+
+    if (isNonOutfitProduct(product)) {
+      removed.push(`${product.id} (${product.name}): non-outfit item rejected`);
       return false;
     }
 

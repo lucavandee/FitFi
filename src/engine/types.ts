@@ -8,29 +8,34 @@ export interface Product {
   name: string;
   imageUrl?: string;
   type?: string;
-  category?: string; // Added explicit category field
+  category?: string;
   styleTags?: string[];
   description?: string;
   price?: number;
   brand?: string;
   affiliateUrl?: string;
+  productUrl?: string;
   matchScore?: number;
-  season?: string[]; // Season property
-  colors?: string[]; // Product colors (e.g., ['black', 'white', 'grey'])
-  color?: string; // Single color (legacy field)
-  // Photo enhancement fields
+  season?: string[];
+  colors?: string[];
+  color?: string;
+  gender?: string;
+  sizes?: string[];
+  tags?: string[];
+  retailer?: string;
+  inStock?: boolean;
+  rating?: number;
+  reviewCount?: number;
   photoColorScore?: number;
   photoEnhanced?: boolean;
   undertoneMatch?: 'warm' | 'cool' | 'neutral';
-  // Color season filtering
   colorSeasonScore?: number;
-  // Fusion scoring support
-  formality?: number;       // 0-100: 0 = very casual, 100 = very formal
-  materialTags?: string[];  // e.g. ['katoen', 'wol', 'denim']
-  silhouetteTags?: string[]; // e.g. ['slim', 'relaxed', 'boxy']
-  colorTags?: string[];     // e.g. ['zwart', 'navy', 'camel']
-  // User preferences fields (populated from quiz answers for material preference)
-  materials?: string[];     // raw quiz material preferences
+  formality?: number;
+  materialTags?: string[];
+  silhouetteTags?: string[];
+  colorTags?: string[];
+  materials?: string[];
+  [key: string]: any;
 }
 
 /**

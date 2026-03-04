@@ -110,17 +110,23 @@ export class AdaptiveOutfitRemixer {
       archetype: string;
       budget: 'low' | 'medium' | 'high';
       visualEmbedding?: Record<string, number>;
+      gender?: string;
     },
     maxSuggestions: number = 3
   ): Promise<SwapSuggestion[]> {
     const suggestions: SwapSuggestion[] = [];
 
-    // Get available products from database
-    const { data: availableProducts } = await supabase
+    let query = supabase
       .from('products')
       .select('*')
-      .eq('in_stock', true)
-      .limit(100);
+      .eq('in_stock', true);
+
+    const g = userContext.gender;
+    if (g && g !== 'unisex' && g !== 'prefer-not-to-say') {
+      query = query.or(`gender.eq.${g},gender.eq.unisex`);
+    }
+
+    const { data: availableProducts } = await query.limit(200);
 
     if (!availableProducts) return [];
 
