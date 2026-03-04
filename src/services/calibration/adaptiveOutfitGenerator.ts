@@ -1,5 +1,23 @@
 import { supabase } from '@/lib/supabase';
-import type { Product } from '@/types/product';
+
+interface DBProduct {
+  id: string;
+  name: string;
+  brand: string;
+  image_url: string;
+  price: number;
+  original_price?: number;
+  category: string;
+  gender?: string;
+  colors?: string[];
+  tags?: string[];
+  style?: string;
+  affiliate_link?: string;
+  affiliate_url?: string;
+  description?: string;
+}
+
+export type Product = DBProduct;
 
 export interface OutfitScore {
   style_match: number;       // 0-1: How well it matches their archetype
@@ -745,24 +763,34 @@ export class AdaptiveOutfitGenerator {
    * Get product pool from database
    */
   private async getProductPool(context: GenerationContext): Promise<Product[]> {
-    let query = supabase
-      .from('products')
-      .select('*')
-      .eq('in_stock', true);
-
     const g = context.user_profile?.gender;
-    if (g && g !== 'unisex' && g !== 'prefer-not-to-say') {
-      query = query.or(`gender.eq.${g},gender.eq.unisex`);
-    }
+    const categories = ['top', 'bottom', 'footwear'];
+    const perCategory = 70;
 
-    const { data, error } = await query.limit(200);
+    const fetches = categories.map(async (cat) => {
+      let query = supabase
+        .from('products')
+        .select('*')
+        .eq('in_stock', true)
+        .eq('category', cat);
 
-    if (error) {
-      console.error('[AdaptiveOutfitGenerator] Error fetching products:', error);
-      return [];
-    }
+      if (g && g !== 'unisex' && g !== 'prefer-not-to-say') {
+        query = query.or(`gender.eq.${g},gender.eq.unisex`);
+      }
 
-    return data as Product[];
+      const { data, error } = await query.limit(perCategory);
+      if (error) {
+        console.error(`[AdaptiveOutfitGenerator] Error fetching ${cat}:`, error);
+        return [];
+      }
+      return (data || []) as Product[];
+    });
+
+    const results = await Promise.all(fetches);
+    const all = results.flat();
+
+    console.log(`[AdaptiveOutfitGenerator] Pool: ${all.length} products (${categories.map((c, i) => `${c}=${results[i].length}`).join(', ')}), gender=${g || 'any'}`);
+    return all;
   }
 
   /**

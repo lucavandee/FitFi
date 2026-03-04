@@ -36,6 +36,12 @@ const ACCESSORY_PATTERNS = [
   'pochette', 'stropdas', 'manchetknop', 'broche',
 ];
 
+const SKIRT_PATTERNS = [
+  'rok', 'skirt', 'minirok', 'midirok', 'maxirok',
+  'kokerrok', 'pencil skirt', 'plooirok', 'pleated skirt',
+  'a-lijn rok', 'tutu',
+];
+
 const DRESS_PATTERNS = [
   'jurk', 'dress', 'maxijurk', 'minijurk', 'midijurk',
   'avondjurk', 'cocktailjurk', 'zomerjurk',
@@ -65,6 +71,7 @@ const NON_CLOTHING_PATTERNS = [
   'douchegel', 'bodylotion', 'aftershave', 'deodorant',
   'luier', 'fopspeen', 'aankleedkussen',
   'hemd',
+  'bedrok', 'bed skirt', 'tafelkleed', 'tafelloper',
 ];
 
 const NON_CLOTHING_REGEX = new RegExp(
@@ -189,6 +196,7 @@ function classifyByText(text: string): string {
   const lower = text.toLowerCase();
 
   if (matchesAnyWord(lower, FOOTWEAR_PATTERNS)) return 'footwear';
+  if (matchesAnyWord(lower, SKIRT_PATTERNS)) return 'skirt';
   if (matchesAnyWord(lower, BOTTOM_PATTERNS)) return 'bottom';
   if (matchesAnyWord(lower, OUTERWEAR_PATTERNS)) return 'outerwear';
   if (matchesAnyWord(lower, DRESS_PATTERNS)) return 'dress';
@@ -211,6 +219,8 @@ export function reclassifyProducts(products: Product[]): { classified: Product[]
     outerwear_found: 0,
     top_found: 0,
     accessory_found: 0,
+    skirt_found: 0,
+    dress_found: 0,
   };
 
   for (const product of products) {

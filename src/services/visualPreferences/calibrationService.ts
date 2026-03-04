@@ -3,19 +3,33 @@ import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 import type { ArchetypeWeights } from '@/types/style';
 import { ColorHarmonyService } from './colorHarmony';
 
+export interface CalibrationOutfitItem {
+  id: string;
+  name: string;
+  brand: string;
+  price: number;
+  image_url: string;
+  category?: string;
+  colors?: string[];
+  affiliate_link?: string;
+}
+
 export interface CalibrationOutfit {
   id: string;
-  title: string;
+  title?: string;
   items: {
-    top?: { name: string; brand: string; price: number; image_url: string };
-    bottom?: { name: string; brand: string; price: number; image_url: string };
-    shoes?: { name: string; brand: string; price: number; image_url: string };
-    accessory?: { name: string; brand: string; price: number; image_url: string };
+    top?: CalibrationOutfitItem;
+    bottom?: CalibrationOutfitItem;
+    shoes?: CalibrationOutfitItem;
+    accessory?: CalibrationOutfitItem;
   };
   archetypes: ArchetypeWeights;
   dominantColors: string[];
   occasion: string;
   explanation: string;
+  matchScore?: number;
+  badges?: string[];
+  novaInsight?: string;
   colorHarmony?: {
     score: number;
     harmony: 'excellent' | 'good' | 'acceptable' | 'poor';

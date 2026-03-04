@@ -95,6 +95,7 @@ export enum ProductCategory {
   ACCESSORY = 'accessory',
   OUTERWEAR = 'outerwear',
   DRESS = 'dress',
+  SKIRT = 'skirt',
   JUMPSUIT = 'jumpsuit',
   OTHER = 'other'
 }

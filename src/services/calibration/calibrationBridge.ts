@@ -1,7 +1,6 @@
 import { adaptiveOutfitGenerator, type AdaptiveOutfit } from './adaptiveOutfitGenerator';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
-import type { Product } from '@/types/product';
 import { supabase } from '@/lib/supabaseClient';
 
 /**
@@ -38,7 +37,8 @@ export class CalibrationBridge {
           archetype: quizData?.archetype || 'Casual',
           colors: quizData?.colors || quizData?.baseColors?.split(',') || [],
           budget: this.mapBudgetRange(quizData?.budgetRange),
-          occasions: quizData?.occasions || ['casual', 'everyday']
+          occasions: quizData?.occasions || ['casual', 'everyday'],
+          gender: quizData?.gender
         },
         swipe_history: this.calculateLearnedPreferences(swipeHistory),
         visual_embedding: visualEmbedding && Object.keys(visualEmbedding).length > 0 ? visualEmbedding : undefined,
