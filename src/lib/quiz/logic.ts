@@ -20,12 +20,28 @@ function decideSeason(
   temp: ColorProfile["temperature"],
   value: ColorProfile["value"],
   contrast: ColorProfile["contrast"],
-  _chroma: ColorProfile["chroma"]
+  _chroma: ColorProfile["chroma"],
+  photoAnalysis?: AnswerMap["colorAnalysis"]
 ): ColorProfile["season"] {
-  if (temp === "warm") return value === "licht" ? "lente" : "herfst";
-  if (temp === "koel") return value === "donker" || contrast === "hoog" ? "winter" : "zomer";
-  if (value === "donker") return "winter";
+  if (photoAnalysis && photoAnalysis.confidence >= 0.6) {
+    const map: Record<string, ColorProfile["season"]> = {
+      spring: "lente",
+      summer: "zomer",
+      autumn: "herfst",
+      winter: "winter",
+    };
+    const mapped = map[photoAnalysis.seasonal_type];
+    if (mapped) return mapped;
+  }
+
+  if (temp === "warm" && value === "licht") return "lente";
+  if (temp === "warm" && value === "medium") return "herfst";
+  if (temp === "warm") return "herfst";
+  if (temp === "koel" && (value === "donker" || contrast === "hoog")) return "winter";
+  if (temp === "koel") return "zomer";
+  if (value === "donker" && contrast === "hoog") return "winter";
   if (value === "licht") return "zomer";
+  if (contrast === "hoog") return "winter";
   return "herfst";
 }
 function paletteNameOf(season: ColorProfile["season"], temp: ColorProfile["temperature"]) {
@@ -42,7 +58,7 @@ export function computeColorProfile(a: AnswerMap): ColorProfile {
   const value = decideValue(a);
   const contrast = decideContrast(a);
   const chroma = decideChroma(a);
-  const season = decideSeason(temperature, value, contrast, chroma);
+  const season = decideSeason(temperature, value, contrast, chroma, a.colorAnalysis);
 
   const notes: string[] = [];
   if (contrast === "laag") notes.push("Kies lage contrasten en tonal outfits.");
@@ -56,101 +72,119 @@ export function computeColorProfile(a: AnswerMap): ColorProfile {
 }
 
 export function computeArchetype(a: AnswerMap): Archetype {
-  // Edge case handling: check if user has provided any meaningful answers
   const hasAnswers = Object.keys(a).some(key => {
-    const val = a[key];
+    const val = a[key as keyof AnswerMap];
     return val !== undefined && val !== null && val !== '' &&
            (Array.isArray(val) ? val.length > 0 : true);
   });
 
-  if (!hasAnswers) {
-    console.warn('[computeArchetype] No meaningful answers provided, using default archetype');
-    return "Smart Casual";
-  }
+  if (!hasAnswers) return "SMART_CASUAL";
 
-  // Score-based archetype detection for edge cases
-  const scores: Record<string, number> = {
-    'Sporty Sharp': 0,
-    'Clean Minimal': 0,
-    'Classic Soft': 0,
-    'Smart Casual': 10 // baseline score for fallback
+  const scores: Record<Archetype, number> = {
+    MINIMALIST: 0,
+    CLASSIC: 0,
+    SMART_CASUAL: 8,
+    STREETWEAR: 0,
+    ATHLETIC: 0,
+    AVANT_GARDE: 0,
+    "Clean Minimal": 0,
+    "Smart Casual": 0,
+    "Sporty Sharp": 0,
+    "Classic Soft": 0,
   };
 
-  // Style preferences
-  if (Array.isArray(a.stylePreferences) && a.stylePreferences.length > 0) {
-    a.stylePreferences.forEach(style => {
-      const s = style.toLowerCase();
-      if (s.includes('minimal') || s.includes('clean')) scores['Clean Minimal'] += 25;
-      if (s.includes('classic') || s.includes('romantic')) scores['Classic Soft'] += 25;
-      if (s.includes('sport') || s.includes('athletic')) scores['Sporty Sharp'] += 25;
-      if (s.includes('street') || s.includes('casual')) scores['Smart Casual'] += 20;
-    });
+  const stylePrefs = (a.stylePreferences || []).map((s: string) => s.toLowerCase());
+
+  for (const s of stylePrefs) {
+    if (s.includes('minimalis') || s.includes('clean') || s === 'effen') {
+      scores.MINIMALIST += 30;
+    }
+    if (s.includes('classic') || s.includes('klassiek') || s.includes('preppy')) {
+      scores.CLASSIC += 30;
+    }
+    if (s === 'smart-casual' || (s.includes('smart') && s.includes('casual'))) {
+      scores.SMART_CASUAL += 40;
+    }
+    if (s === 'streetwear' || s.includes('street') || s.includes('urban')) {
+      scores.STREETWEAR += 35;
+    }
+    if (s.includes('edgy') || s.includes('stoer') || s.includes('rock')) {
+      scores.STREETWEAR += 20;
+      scores.AVANT_GARDE += 15;
+    }
+    if (s.includes('sport') || s.includes('athletic') || s.includes('actief')) {
+      scores.ATHLETIC += 30;
+    }
+    if (s.includes('bohemi') || s.includes('boho') || s.includes('artistic')) {
+      scores.AVANT_GARDE += 30;
+    }
+    if (s.includes('romantic') || s.includes('romantisch')) {
+      scores.CLASSIC += 20;
+    }
+    if (s.includes('androgyn')) {
+      scores.MINIMALIST += 20;
+    }
   }
 
-  // Goals
-  if (Array.isArray(a.goals)) {
-    a.goals.forEach(goal => {
-      const g = goal.toLowerCase();
-      if (g.includes('sport') || g.includes('comfort')) scores['Sporty Sharp'] += 15;
-      if (g.includes('minimal') || g.includes('timeless') || g.includes('tijdloos')) scores['Clean Minimal'] += 15;
-      if (g.includes('professional') || g.includes('professioneel')) {
-        scores['Smart Casual'] += 15;
-        scores['Classic Soft'] += 10;
-      }
-    });
-  }
-
-  // Fit
   if (a.fit) {
-    if (a.fit === "slim") {
-      scores['Clean Minimal'] += 20;
-      scores['Smart Casual'] += 10;
-    }
-    if (a.fit === "relaxed" || a.fit === "oversized") {
-      scores['Classic Soft'] += 15;
-      scores['Smart Casual'] += 10;
-    }
-    if (a.fit === "regular") scores['Smart Casual'] += 15;
+    const fit = a.fit.toLowerCase();
+    if (fit === 'slim') { scores.MINIMALIST += 15; scores.CLASSIC += 10; }
+    if (fit === 'straight') { scores.SMART_CASUAL += 12; scores.CLASSIC += 8; }
+    if (fit === 'relaxed') { scores.STREETWEAR += 15; scores.SMART_CASUAL += 8; }
+    if (fit.includes('oversized')) { scores.STREETWEAR += 20; scores.AVANT_GARDE += 15; }
   }
 
-  // Materials
+  if (a.comfort) {
+    const c = a.comfort.toLowerCase();
+    if (c === 'structured') { scores.MINIMALIST += 10; scores.CLASSIC += 10; }
+    if (c === 'relaxed') { scores.STREETWEAR += 10; scores.ATHLETIC += 8; }
+  }
+
+  const goals = (a.goals || []).map((g: string) => g.toLowerCase());
+  for (const g of goals) {
+    if (g.includes('sport') || g === 'sport') { scores.ATHLETIC += 20; }
+    if (g.includes('werk') || g.includes('office')) { scores.SMART_CASUAL += 15; scores.CLASSIC += 10; }
+    if (g.includes('casual')) { scores.SMART_CASUAL += 10; scores.STREETWEAR += 8; }
+    if (g.includes('avond')) { scores.CLASSIC += 10; scores.SMART_CASUAL += 8; }
+  }
+
+  const occasions = (a.occasions || []).map((o: string) => o.toLowerCase());
+  for (const o of occasions) {
+    if (o.includes('office')) { scores.SMART_CASUAL += 12; scores.CLASSIC += 8; }
+    if (o.includes('smartcasual')) { scores.SMART_CASUAL += 10; }
+    if (o.includes('leisure')) { scores.STREETWEAR += 8; scores.SMART_CASUAL += 5; }
+  }
+
   if (a.materials) {
-    const materials = Array.isArray(a.materials) ? a.materials : [a.materials];
-    materials.forEach(mat => {
-      const m = mat.toLowerCase();
-      if (m.includes('tech') || m.includes('fleece')) scores['Sporty Sharp'] += 12;
-      if (m.includes('linnen') || m.includes('linen')) scores['Clean Minimal'] += 10;
-      if (m.includes('wol') || m.includes('wool')) scores['Classic Soft'] += 10;
-    });
+    const mats = Array.isArray(a.materials) ? a.materials : [a.materials];
+    for (const m of mats.map((x: string) => x.toLowerCase())) {
+      if (m.includes('tech') || m.includes('fleece')) scores.ATHLETIC += 12;
+      if (m.includes('linnen') || m.includes('linen')) scores.MINIMALIST += 10;
+      if (m.includes('wol') || m.includes('wool')) scores.CLASSIC += 10;
+      if (m === 'mat') { scores.MINIMALIST += 8; scores.CLASSIC += 5; }
+      if (m === 'textuur') { scores.SMART_CASUAL += 5; scores.CLASSIC += 5; }
+      if (m === 'glans') { scores.AVANT_GARDE += 8; }
+    }
   }
 
-  // Occasions
-  if (Array.isArray(a.occasions)) {
-    a.occasions.forEach(occ => {
-      const o = occ.toLowerCase();
-      if (o.includes('sport') || o.includes('activ')) scores['Sporty Sharp'] += 15;
-      if (o.includes('work') || o.includes('office') || o.includes('werk')) {
-        scores['Smart Casual'] += 15;
-        scores['Classic Soft'] += 10;
-      }
-      if (o.includes('casual') || o.includes('leisure')) scores['Smart Casual'] += 12;
-      if (o.includes('formal')) scores['Classic Soft'] += 15;
-    });
+  if (a.prints) {
+    const p = a.prints.toLowerCase();
+    if (p === 'effen' || p === 'geen') { scores.MINIMALIST += 10; }
+    if (p === 'subtiel') { scores.SMART_CASUAL += 8; scores.CLASSIC += 5; }
+    if (p === 'statement') { scores.STREETWEAR += 10; scores.AVANT_GARDE += 10; }
   }
 
-  // Find highest scoring archetype
-  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-  const winner = sorted[0][0] as Archetype;
+  const modernKeys: Archetype[] = [
+    'MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'
+  ];
 
-  console.log('[computeArchetype] Scores:', scores, 'Winner:', winner);
+  const sorted = modernKeys
+    .map(k => ({ key: k, score: scores[k] }))
+    .sort((a, b) => b.score - a.score);
 
-  // Edge case: if all scores are very low (user answered "nothing" or contradictory)
-  if (sorted[0][1] < 15) {
-    console.warn('[computeArchetype] All scores very low, user may have conflicting preferences');
-    return "Smart Casual"; // Neutral fallback
-  }
+  if (sorted[0].score < 10) return "SMART_CASUAL";
 
-  return winner;
+  return sorted[0].key;
 }
 
 export function computeResult(a: AnswerMap): QuizResult {

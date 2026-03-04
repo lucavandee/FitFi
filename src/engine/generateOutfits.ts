@@ -388,8 +388,12 @@ function generateOutfits(
   const usedProductIds = new Set<string>();
   const usedBrandsGlobal = new Set<string>();
 
-  for (let i = 0; i < Math.min(count, occasions.length); i++) {
-    const occ = occasions[i] ?? 'casual';
+  while (occasions.length < count) {
+    occasions.push(...getOccasionsForArchetype(primaryArchetype));
+  }
+
+  for (let i = 0; i < count; i++) {
+    const occ = occasions[i % occasions.length] ?? 'Casual';
     attemptsPerOccasion[occ] = attemptsPerOccasion[occ] ?? 0;
 
     let outfit: Outfit | null = null;
@@ -785,10 +789,21 @@ function generateOutfitForOccasion(
   console.log("Outfit completeness:", completeness + "%");
   console.log("Outfit category ratio:", categoryRatio);
   
-  // Calculate average match score
-  const totalScore = outfitProducts.reduce((sum, product) => sum + (product.matchScore || 0), 0);
-  const averageScore = totalScore / outfitProducts.length;
-  const matchPercentage = Math.min(Math.round(averageScore * 20), 100); // Convert to percentage, max 100%
+  const primaryKey = resolveArchetypeKey(primaryArchetype);
+  const outfitMix: ArchetypeWeights = { [primaryKey]: 1 - (mixFactor ?? 0) };
+  if (secondaryArchetype) {
+    const secKey = resolveArchetypeKey(secondaryArchetype);
+    outfitMix[secKey] = (outfitMix[secKey] ?? 0) + (mixFactor ?? 0);
+  }
+  const fusionScores = outfitProducts.map(p => {
+    const pl = toProductLike(p);
+    return fusionScore(pl, outfitMix).totalScore;
+  });
+  const avgFusion = fusionScores.reduce((a, b) => a + b, 0) / fusionScores.length;
+  const outfitFormalityTarget = getOccasionFormalityTarget(occasion);
+  const formalityAlignment = 1 - (formalities.reduce((sum, f) => sum + Math.abs(f - outfitFormalityTarget), 0) / formalities.length);
+  const rawMatch = avgFusion * 0.55 + colorHarmonyScore * 0.25 + formalityAlignment * 0.20;
+  const matchPercentage = Math.min(Math.round(rawMatch * 100), 98);
   
   // Generate tags based on archetypes and occasion
   const tags = generateTags(primaryArchetype, occasion, season, secondaryArchetype, mixFactor);

@@ -127,20 +127,29 @@ export default function EnhancedResultsPage() {
     return "Smart Casual";
   }, [archetypeRaw]);
 
-  // Convert archetype name to ArchetypeKey
   const archetypeKey = React.useMemo((): ArchetypeKey => {
     const nameToKey: Record<string, ArchetypeKey> = {
       'minimalist': 'MINIMALIST',
+      'clean minimal': 'MINIMALIST',
       'classic': 'CLASSIC',
+      'classic soft': 'CLASSIC',
       'smart casual': 'SMART_CASUAL',
+      'smart_casual': 'SMART_CASUAL',
       'streetwear': 'STREETWEAR',
       'athletic': 'ATHLETIC',
+      'sporty sharp': 'ATHLETIC',
       'avant-garde': 'AVANT_GARDE',
-      'avant garde': 'AVANT_GARDE'
+      'avant garde': 'AVANT_GARDE',
+      'avant_garde': 'AVANT_GARDE',
     };
 
-    const normalized = archetypeName.toLowerCase();
-    return nameToKey[normalized] || 'SMART_CASUAL';
+    const raw = archetypeName.toLowerCase().trim();
+
+    if (raw === raw.toUpperCase().toLowerCase() && Object.values(nameToKey).includes(raw.toUpperCase() as ArchetypeKey)) {
+      return raw.toUpperCase() as ArchetypeKey;
+    }
+
+    return nameToKey[raw] || 'SMART_CASUAL';
   }, [archetypeName]);
 
   // Get swipe insights (mock for now, later from DB)

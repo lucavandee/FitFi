@@ -20,9 +20,9 @@ export type QuizStep =
 
 export type AnswerMap = {
   gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
-  goals?: ("werk" | "casual" | "avond" | "sport")[];
-  fit?: "slim" | "straight" | "relaxed" | "oversizedTop_slimBottom";
-  bodytype?: "rectangle" | "triangle" | "inverted_triangle" | "oval" | "hourglass" | "pear" | "apple";
+  goals?: string[];
+  fit?: string;
+  bodytype?: string;
   sizes?: {
     tops?: string;
     bottoms?: string;
@@ -32,15 +32,16 @@ export type AnswerMap = {
     min: number;
     max: number;
   };
-  comfort?: "structured" | "balanced" | "relaxed";
+  comfort?: string;
   jewelry?: "goud" | "zilver" | "beide";
   neutrals?: "warm" | "koel" | "neutraal";
   lightness?: "licht" | "medium" | "donker";
   contrast?: "laag" | "medium" | "hoog";
-  prints?: "effen" | "subtiel" | "statement" | "geen";
-  materials?: "mat" | "textuur" | "glans";
-  occasions?: ("office" | "smartcasual" | "leisure")[];
+  prints?: string;
+  materials?: string | string[];
+  occasions?: string[];
   brands?: string[];
+  stylePreferences?: string[];
   photoDataUrl?: string | null;
   colorAnalysis?: {
     undertone: "warm" | "cool" | "neutral";
@@ -53,6 +54,7 @@ export type AnswerMap = {
     confidence: number;
     reasoning?: string;
   };
+  [key: string]: any;
 };
 
 export type ColorProfile = {
@@ -69,7 +71,13 @@ export type Archetype =
   | "Clean Minimal"
   | "Smart Casual"
   | "Sporty Sharp"
-  | "Classic Soft";
+  | "Classic Soft"
+  | "MINIMALIST"
+  | "CLASSIC"
+  | "SMART_CASUAL"
+  | "STREETWEAR"
+  | "ATHLETIC"
+  | "AVANT_GARDE";
 
 export type QuizResult = {
   color: ColorProfile;

@@ -184,6 +184,9 @@ export function enrichProduct(product: Product): Product & { _signals: EnrichedS
       silhouetteTags.push('relaxed');
     }
     if (!formalityMatched && !brandHint) formality = Math.min(formality, 0.25);
+  } else if (dbStyle === 'casual') {
+    if (!silhouetteTags.length) silhouetteTags.push('straight');
+    if (!formalityMatched && !brandHint) formality = Math.min(formality, 0.35);
   } else if (dbStyle === 'smart-casual') {
     if (!silhouetteTags.includes('tailored')) silhouetteTags.push('tailored');
     if (!formalityMatched && !brandHint) formality = Math.max(formality, 0.55);
