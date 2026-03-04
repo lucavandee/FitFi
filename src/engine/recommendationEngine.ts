@@ -3,6 +3,7 @@ import { filterAndSortProducts } from './filterAndSortProducts';
 import generateOutfits from './generateOutfits';
 import { analyzeUserProfile, determineArchetypesFromAnswers, convertStyleArrayToPreferences } from './profile-mapping';
 import { filterProducts, getFilteringStats, type FilterCriteria } from './productFiltering';
+import { reclassifyProducts } from './productClassifier';
 import { shuffleProductsByCategory } from './productShuffling';
 import { handleInsufficientProducts, getCategoryCounts, formatSuggestionMessage } from './insufficientProductsHandler';
 import { generatePhotoEnhancedOutfits, hasPhotoAnalysis } from './photoEnhancedRecommendationEngine';
@@ -213,13 +214,13 @@ export function generateRecommendationsFromAnswers(
     return [];
   }
 
-  // Convert quiz answers to archetype profile
+  const { classified: reclassified } = reclassifyProducts(filterResult.products);
+
   const { primaryArchetype, secondaryArchetype, mixFactor } = determineArchetypesFromAnswers(answers);
 
   console.log('[RecommendationEngine] Generating outfits with archetype:', primaryArchetype);
 
-  // Shuffle products by category for variety
-  const shuffledProducts = shuffleProductsByCategory(filterResult.products);
+  const shuffledProducts = shuffleProductsByCategory(reclassified);
 
   const rawOutfits = generateOutfits(
     primaryArchetype,

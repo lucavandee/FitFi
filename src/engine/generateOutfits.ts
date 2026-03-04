@@ -111,6 +111,13 @@ const SUBSTITUTE_CATEGORIES: Record<ProductCategory, ProductCategory[]> = {
 /**
  * Outfit structure blueprints for each archetype
  */
+const BASE_STRUCTURE = {
+  requiredCategories: [ProductCategory.TOP, ProductCategory.BOTTOM, ProductCategory.FOOTWEAR],
+  optionalCategories: [ProductCategory.OUTERWEAR, ProductCategory.ACCESSORY],
+  minItems: 3,
+  maxItems: 5,
+};
+
 const archetypeOutfitStructures: Record<string, {
   requiredCategories: ProductCategory[];
   optionalCategories: ProductCategory[];
@@ -118,90 +125,21 @@ const archetypeOutfitStructures: Record<string, {
   maxItems: number;
   description: string;
 }> = {
-  'klassiek': {
-    requiredCategories: [
-      ProductCategory.TOP,
-      ProductCategory.BOTTOM,
-      ProductCategory.FOOTWEAR
-    ],
-    optionalCategories: [
-      ProductCategory.OUTERWEAR,
-      ProductCategory.ACCESSORY
-    ],
-    minItems: 3,
-    maxItems: 5,
-    description: 'Tijdloze elegantie met verfijnde stukken'
-  },
-  'casual_chic': {
-    requiredCategories: [
-      ProductCategory.TOP,
-      ProductCategory.BOTTOM,
-      ProductCategory.FOOTWEAR
-    ],
-    optionalCategories: [
-      ProductCategory.ACCESSORY,
-      ProductCategory.OUTERWEAR
-    ],
-    minItems: 3,
-    maxItems: 5,
-    description: 'Moeiteloze elegantie met een relaxte twist'
-  },
-  'urban': {
-    requiredCategories: [
-      ProductCategory.TOP,
-      ProductCategory.BOTTOM,
-      ProductCategory.FOOTWEAR
-    ],
-    optionalCategories: [
-      ProductCategory.OUTERWEAR,
-      ProductCategory.ACCESSORY
-    ],
-    minItems: 3,
-    maxItems: 5,
-    description: 'Functionele stadslook met praktische details'
-  },
-  'streetstyle': {
-    requiredCategories: [
-      ProductCategory.TOP,
-      ProductCategory.BOTTOM,
-      ProductCategory.FOOTWEAR
-    ],
-    optionalCategories: [
-      ProductCategory.ACCESSORY,
-      ProductCategory.OUTERWEAR
-    ],
-    minItems: 3,
-    maxItems: 5,
-    description: 'Expressieve streetwear met attitude'
-  },
-  'retro': {
-    requiredCategories: [
-      ProductCategory.TOP,
-      ProductCategory.BOTTOM,
-      ProductCategory.FOOTWEAR
-    ],
-    optionalCategories: [
-      ProductCategory.ACCESSORY,
-      ProductCategory.OUTERWEAR
-    ],
-    minItems: 3,
-    maxItems: 5,
-    description: 'Vintage-geïnspireerde look met nostalgische elementen'
-  },
-  'luxury': {
-    requiredCategories: [
-      ProductCategory.TOP,
-      ProductCategory.BOTTOM,
-      ProductCategory.FOOTWEAR,
-      ProductCategory.ACCESSORY
-    ],
-    optionalCategories: [
-      ProductCategory.OUTERWEAR
-    ],
-    minItems: 4,
-    maxItems: 6,
-    description: 'Exclusieve stukken van topkwaliteit'
-  }
+  'klassiek': { ...BASE_STRUCTURE, description: 'Tijdloze elegantie met verfijnde stukken' },
+  'CLASSIC': { ...BASE_STRUCTURE, description: 'Tijdloze elegantie met verfijnde stukken' },
+  'casual_chic': { ...BASE_STRUCTURE, optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Moeiteloze elegantie met een relaxte twist' },
+  'SMART_CASUAL': { ...BASE_STRUCTURE, optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Moeiteloze elegantie met een relaxte twist' },
+  'minimalist': { ...BASE_STRUCTURE, description: 'Clean en tijdloos met essentiële items' },
+  'MINIMALIST': { ...BASE_STRUCTURE, description: 'Clean en tijdloos met essentiële items' },
+  'urban': { ...BASE_STRUCTURE, description: 'Functionele stadslook met praktische details' },
+  'streetstyle': { ...BASE_STRUCTURE, optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Expressieve streetwear met attitude' },
+  'STREETWEAR': { ...BASE_STRUCTURE, optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Expressieve streetwear met attitude' },
+  'athletic': { ...BASE_STRUCTURE, description: 'Functionele sport-geïnspireerde look' },
+  'ATHLETIC': { ...BASE_STRUCTURE, description: 'Functionele sport-geïnspireerde look' },
+  'retro': { ...BASE_STRUCTURE, optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Vintage-geïnspireerde look met nostalgische elementen' },
+  'avant_garde': { ...BASE_STRUCTURE, description: 'Conceptuele look met statement pieces' },
+  'AVANT_GARDE': { ...BASE_STRUCTURE, description: 'Conceptuele look met statement pieces' },
+  'luxury': { ...BASE_STRUCTURE, requiredCategories: [ProductCategory.TOP, ProductCategory.BOTTOM, ProductCategory.FOOTWEAR, ProductCategory.ACCESSORY], minItems: 4, maxItems: 6, description: 'Exclusieve stukken van topkwaliteit' },
 };
 
 // Default structure for any archetype not explicitly defined
@@ -501,20 +439,26 @@ function generateOutfits(
   return outfits;
 }
 
-/**
- * Gets appropriate occasions for a given archetype
- */
 function getOccasionsForArchetype(archetype: string): string[] {
   const occasionMap: Record<string, string[]> = {
     'klassiek': ['Werk', 'Formeel', 'Zakelijk diner'],
+    'CLASSIC': ['Werk', 'Formeel', 'Zakelijk diner'],
     'casual_chic': ['Casual', 'Weekend', 'Lunch'],
+    'SMART_CASUAL': ['Casual', 'Weekend', 'Lunch'],
+    'minimalist': ['Casual', 'Werk', 'Weekend'],
+    'MINIMALIST': ['Casual', 'Werk', 'Weekend'],
     'urban': ['Stad', 'Casual', 'Actief'],
     'streetstyle': ['Casual', 'Uitgaan', 'Festival'],
+    'STREETWEAR': ['Casual', 'Uitgaan', 'Festival'],
+    'athletic': ['Actief', 'Casual', 'Sport'],
+    'ATHLETIC': ['Actief', 'Casual', 'Sport'],
     'retro': ['Casual', 'Creatief', 'Weekend'],
-    'luxury': ['Formeel', 'Gala', 'Speciale gelegenheid']
+    'avant_garde': ['Casual', 'Creatief', 'Uitgaan'],
+    'AVANT_GARDE': ['Casual', 'Creatief', 'Uitgaan'],
+    'luxury': ['Formeel', 'Gala', 'Speciale gelegenheid'],
   };
 
-  return occasionMap[archetype] || ['Casual', 'Werk', 'Formeel'];
+  return occasionMap[archetype] || ['Casual', 'Werk', 'Weekend'];
 }
 
 /**

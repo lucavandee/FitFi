@@ -1,4 +1,8 @@
 import type { Outfit } from './types';
+import { enrichProduct } from './productEnricher';
+import { fusionScore, normalizeWeights } from './archetypeFusion';
+import type { ArchetypeKey } from '@/config/archetypes';
+import type { ArchetypeWeights } from '@/types/style';
 
 export type ScoredOutfit = {
   outfit: Outfit;
@@ -117,6 +121,57 @@ function scoreSwipeEmbedding(outfit: Outfit, ctx: RankCtx): { score: number; rea
   };
 }
 
+const ARCHETYPE_KEY_MAP: Record<string, ArchetypeKey> = {
+  MINIMALIST: 'MINIMALIST', CLASSIC: 'CLASSIC', SMART_CASUAL: 'SMART_CASUAL',
+  STREETWEAR: 'STREETWEAR', ATHLETIC: 'ATHLETIC', AVANT_GARDE: 'AVANT_GARDE',
+  minimalist: 'MINIMALIST', klassiek: 'CLASSIC', classic: 'CLASSIC',
+  smart_casual: 'SMART_CASUAL', 'smart-casual': 'SMART_CASUAL', casual_chic: 'SMART_CASUAL',
+  urban: 'STREETWEAR', streetstyle: 'STREETWEAR', streetwear: 'STREETWEAR',
+  athletic: 'ATHLETIC', sporty: 'ATHLETIC',
+  avant_garde: 'AVANT_GARDE', avantgarde: 'AVANT_GARDE', retro: 'AVANT_GARDE',
+  bohemian: 'AVANT_GARDE', luxury: 'CLASSIC',
+};
+
+function resolveKey(raw: string): ArchetypeKey {
+  return ARCHETYPE_KEY_MAP[raw] ?? ARCHETYPE_KEY_MAP[raw.toLowerCase()] ?? 'SMART_CASUAL';
+}
+
+function scoreProductQuality(outfit: Outfit, ctx: RankCtx): { score: number; reason: string } {
+  if (!outfit.products || outfit.products.length === 0) {
+    return { score: 0.3, reason: 'no_products' };
+  }
+
+  const primaryKey = resolveKey(ctx.primaryArchetype);
+  const mix: ArchetypeWeights = { [primaryKey]: 1 - (ctx.mixFactor ?? 0) };
+  if (ctx.secondaryArchetype) {
+    const secKey = resolveKey(ctx.secondaryArchetype);
+    mix[secKey] = (mix[secKey] ?? 0) + (ctx.mixFactor ?? 0.3);
+  }
+
+  let totalFusion = 0;
+  for (const product of outfit.products) {
+    const enriched = enrichProduct(product);
+    const s = enriched._signals;
+    const pl = {
+      id: product.id,
+      title: product.name,
+      brand: product.brand,
+      category: product.category,
+      colorTags: s.colorTags,
+      materialTags: s.materialTags,
+      silhouetteTags: s.silhouetteTags,
+      formality: enriched.formality,
+      price: product.price,
+    };
+    const f = fusionScore(pl, mix);
+    totalFusion += f.totalScore;
+  }
+
+  const avg = totalFusion / outfit.products.length;
+  const reason = avg > 0.5 ? 'high_fusion' : avg > 0.25 ? 'medium_fusion' : 'low_fusion';
+  return { score: avg, reason };
+}
+
 function scoreOccasionRecency(outfit: Outfit, ctx: RankCtx): { score: number; reason: string } {
   if (!ctx.recentOccasions || ctx.recentOccasions.length === 0) {
     return { score: 0.5, reason: 'no_recency' };
@@ -129,9 +184,10 @@ function scoreOccasionRecency(outfit: Outfit, ctx: RankCtx): { score: number; re
 
 export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
   const W = {
-    archetype: 0.40,
-    season: 0.15,
-    goals: 0.20,
+    quality: 0.35,
+    archetype: 0.15,
+    season: 0.10,
+    goals: 0.15,
     prints: 0.10,
     swipe: 0.10,
     recency: 0.05,
@@ -139,6 +195,7 @@ export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
 
   return outfits
     .map(outfit => {
+      const qual = scoreProductQuality(outfit, ctx);
       const arch = scoreArchetypeMatch(outfit, ctx);
       const seas = scoreSeasonMatch(outfit, ctx);
       const goal = scoreGoalsMatch(outfit, ctx);
@@ -147,6 +204,7 @@ export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
       const rec = scoreOccasionRecency(outfit, ctx);
 
       const score =
+        W.quality * qual.score +
         W.archetype * arch.score +
         W.season * seas.score +
         W.goals * goal.score +
@@ -154,7 +212,7 @@ export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
         W.swipe * swpe.score +
         W.recency * rec.score;
 
-      const reasons = [arch.reason, seas.reason, goal.reason, prnt.reason, swpe.reason, rec.reason];
+      const reasons = [qual.reason, arch.reason, seas.reason, goal.reason, prnt.reason, swpe.reason, rec.reason];
 
       return { outfit, score, reasons };
     })
