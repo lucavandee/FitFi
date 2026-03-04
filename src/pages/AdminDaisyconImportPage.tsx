@@ -58,6 +58,75 @@ export default function AdminDaisyconImportPage() {
     return trimmed.startsWith("http://") || trimmed.startsWith("https://");
   }
 
+  async function fetchFeedFromUrl(url: string): Promise<unknown> {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Feed ophalen mislukt: HTTP ${res.status}`);
+    const contentType = res.headers.get("content-type") ?? "";
+    const text = await res.text();
+    if (!text.trim()) throw new Error("Feed is leeg");
+    if (contentType.includes("json") || text.trimStart().startsWith("{") || text.trimStart().startsWith("[")) {
+      return JSON.parse(text);
+    }
+    throw new Error("Alleen JSON feeds worden ondersteund bij URL import. Download de feed en plak de inhoud.");
+  }
+
+  function normalizeToProducts(parsed: unknown): { products: unknown[]; programName: string } {
+    if (Array.isArray(parsed)) {
+      return { products: parsed, programName: "Daisycon Feed" };
+    }
+    const p = parsed as Record<string, unknown>;
+    if (p?.datafeed) {
+      const df = p.datafeed as Record<string, unknown>;
+      const programs = df.programs as Array<Record<string, unknown>>;
+      if (programs?.length) {
+        const prog = programs[0];
+        const info = prog.program_info as Record<string, unknown> | undefined;
+        return {
+          products: (prog.products as unknown[]) ?? [],
+          programName: String(info?.name ?? "Daisycon Feed"),
+        };
+      }
+    }
+    if (p?.products && Array.isArray(p.products)) {
+      return { products: p.products, programName: String((p as Record<string, unknown>).program_name ?? "Daisycon Feed") };
+    }
+    if (p?.items && Array.isArray(p.items)) {
+      return { products: p.items, programName: "Daisycon Feed" };
+    }
+    throw new Error("Onbekende feed structuur. Verwacht een array of object met 'products'/'items'.");
+  }
+
+  async function sendBatch(
+    session: { access_token: string },
+    products: unknown[],
+    programName: string,
+    campaignId?: string,
+  ): Promise<ImportResult> {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const feed = {
+      datafeed: {
+        info: { product_count: products.length },
+        programs: [{
+          program_info: { id: 0, name: programName, currency: "EUR", product_count: products.length },
+          products,
+        }],
+      },
+    };
+
+    const res = await fetch(`${supabaseUrl}/functions/v1/import-daisycon-feed`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ feed, ...(campaignId ? { campaignId } : {}) }),
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error ?? "Import mislukt");
+    return json as ImportResult;
+  }
+
   async function handleImport() {
     if (!feedJson.trim()) {
       toast.error("Plak of upload eerst een feed URL of JSON.");
@@ -65,20 +134,6 @@ export default function AdminDaisyconImportPage() {
     }
 
     const trimmed = feedJson.trim();
-    let body: Record<string, unknown>;
-
-    if (isUrl(trimmed)) {
-      body = { feedUrl: trimmed };
-    } else {
-      try {
-        const parsed = JSON.parse(trimmed);
-        body = { feed: parsed };
-      } catch {
-        toast.error("Ongeldige invoer — plak een feed URL (https://...) of geldige JSON.");
-        return;
-      }
-    }
-
     setImporting(true);
     setResult(null);
 
@@ -88,22 +143,53 @@ export default function AdminDaisyconImportPage() {
       const { data: { session } } = await client.auth.getSession();
       if (!session) throw new Error("Geen sessie");
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/import-daisycon-feed`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(body),
-      });
+      let parsed: unknown;
+      if (isUrl(trimmed)) {
+        toast("Feed ophalen...", { icon: "⏳" });
+        parsed = await fetchFeedFromUrl(trimmed);
+      } else {
+        try {
+          parsed = JSON.parse(trimmed);
+        } catch {
+          toast.error("Ongeldige invoer — plak een feed URL (https://...) of geldige JSON.");
+          return;
+        }
+      }
 
-      const json = await res.json();
+      const { products, programName } = normalizeToProducts(parsed);
 
-      if (!res.ok) throw new Error(json.error ?? "Import mislukt");
+      if (products.length === 0) {
+        toast.error("Geen producten gevonden in de feed.");
+        return;
+      }
 
-      setResult(json);
-      toast.success(`${json.inserted} producten geïmporteerd uit ${json.program}`);
+      const BATCH_SIZE = 200;
+      let totalInserted = 0;
+      let totalSkipped = 0;
+      let lastResult: ImportResult | null = null;
+
+      toast(`${products.length} producten gevonden, importeren in batches...`, { icon: "📦" });
+
+      for (let i = 0; i < products.length; i += BATCH_SIZE) {
+        const batch = products.slice(i, i + BATCH_SIZE);
+        const batchResult = await sendBatch(session, batch, programName);
+        totalInserted += batchResult.inserted ?? 0;
+        totalSkipped += batchResult.skipped ?? 0;
+        lastResult = batchResult;
+      }
+
+      const finalResult: ImportResult = {
+        success: true,
+        program: programName,
+        total: products.length,
+        inserted: totalInserted,
+        updated: 0,
+        skipped: totalSkipped,
+        errors: lastResult?.errors,
+      };
+
+      setResult(finalResult);
+      toast.success(`${totalInserted} producten geïmporteerd uit ${programName}`);
       loadLogs();
     } catch (err) {
       toast.error(String(err));
@@ -175,7 +261,7 @@ export default function AdminDaisyconImportPage() {
       <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] p-4 flex gap-3 mb-6">
         <Info className="w-4 h-4 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
         <div className="text-sm text-[var(--color-text)]">
-          <strong>Hoe het werkt:</strong> Plak een Daisycon feed <strong>URL</strong> (de feed wordt automatisch opgehaald) of plak de volledige <strong>JSON</strong> inhoud direct. Zowel JSON als XML feeds worden ondersteund. Categorieën, kleuren en stijl worden automatisch afgeleid uit de producttitels. Producten worden op basis van <code className="bg-white px-1 rounded text-xs">daisycon_unique_id</code> geüpsert.
+          <strong>Hoe het werkt:</strong> Plak een Daisycon feed <strong>URL</strong> of de volledige <strong>JSON</strong> inhoud. Bij een URL wordt de feed eerst in de browser opgehaald, daarna automatisch in batches van 200 producten geïmporteerd. Categorieën, kleuren en stijl worden automatisch afgeleid. Producten worden op basis van <code className="bg-white px-1 rounded text-xs">external_id</code> geüpsert (geen duplicaten).
         </div>
       </div>
 
