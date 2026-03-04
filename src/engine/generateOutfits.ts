@@ -495,22 +495,21 @@ function generateOutfits(
     }
   }
   
-  // Generate one outfit per occasion, up to the requested count
   const outfits: Outfit[] = [];
   const attemptsPerOccasion: Record<string, number> = {};
-  
+  const usedProductIds = new Set<string>();
+
   for (let i = 0; i < Math.min(count, occasions.length); i++) {
     const occ = occasions[i] ?? 'casual';
     attemptsPerOccasion[occ] = attemptsPerOccasion[occ] ?? 0;
-    
+
     let outfit: Outfit | null = null;
     let attempts = 0;
-    
-    // Try to generate a unique outfit for this occasion
+
     while (!outfit && attempts < maxAttempts) {
       attempts++;
       attemptsPerOccasion[occ]++;
-      
+
       const generatedOutfit = generateOutfitForOccasion(
         primaryArchetype,
         productsToUse,
@@ -524,18 +523,17 @@ function generateOutfits(
         minCompleteness,
         fitPreference,
         goalsPreference,
-        comfortPreference
+        comfortPreference,
+        usedProductIds
       );
-      
-      // Check if the outfit is unique (not in excludeIds)
+
       if (generatedOutfit && !excludeIds.includes(generatedOutfit.id)) {
         outfit = generatedOutfit;
-      } else if (generatedOutfit) {
-        console.log(`Outfit already shown, trying again (attempt ${attempts}/${maxAttempts})`);
       }
     }
-    
+
     if (outfit) {
+      outfit.products.forEach(p => usedProductIds.add(p.id));
       outfits.push(outfit);
     } else {
       console.warn(`Failed to generate unique outfit for occasion ${occ} after ${attempts} attempts`);
@@ -581,7 +579,8 @@ function generateOutfitForOccasion(
   minCompleteness: number = 80,
   fitPreference?: string,
   goalsPreference: string[] = [],
-  comfortPreference?: string
+  comfortPreference?: string,
+  usedProductIds?: Set<string>
 ): Outfit | null {
   // Log outfit generation
   console.log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
@@ -655,7 +654,8 @@ function generateOutfitForOccasion(
       mixFactor,
       fitPreference,
       goalsPreference,
-      comfortPreference
+      comfortPreference,
+      usedProductIds
     );
 
     if (selectedProduct) {
@@ -684,7 +684,8 @@ function generateOutfitForOccasion(
             mixFactor,
             fitPreference,
             goalsPreference,
-            comfortPreference
+            comfortPreference,
+            usedProductIds
           );
 
           if (substituteProduct) {
@@ -739,7 +740,8 @@ function generateOutfitForOccasion(
       mixFactor,
       fitPreference,
       goalsPreference,
-      comfortPreference
+      comfortPreference,
+      usedProductIds
     );
 
     if (selectedProduct) {
@@ -816,14 +818,12 @@ function generateOutfitForOccasion(
     return colors;
   });
   const colorHarmonyScore = calculateOutfitColorHarmony(productColorArrays);
-  const MIN_COLOR_HARMONY = 0.35;
+  const MIN_COLOR_HARMONY = 0.5;
   if (colorHarmonyScore < MIN_COLOR_HARMONY) {
     console.warn(`Outfit afgewezen wegens kleurconflict (harmony score: ${colorHarmonyScore.toFixed(2)})`);
     return null;
   }
-  console.log(`[ColorHarmony] Outfit goedgekeurd (score: ${colorHarmonyScore.toFixed(2)})`);
 
-  // Occasion formality gate — apply OCCASION_RULES to pre-screen whole outfit
   const canonicalOccasion = (() => {
     const o = occasion.toLowerCase();
     if (o.includes('werk') || o.includes('kantoor') || o.includes('office')) return 'work';
@@ -841,8 +841,14 @@ function generateOutfitForOccasion(
       outfitProducts.reduce((sum, p) => sum + calculateProductFormality(p), 0) / outfitProducts.length;
 
     const formalityGap = occasionRule.requiredFormality - avgFormality;
-    if (formalityGap > 0.3) {
+    if (formalityGap > 0.2) {
       console.warn(`Outfit afgewezen: te informeel voor ${canonicalOccasion} (formality ${avgFormality.toFixed(2)} vs required ${occasionRule.requiredFormality})`);
+      return null;
+    }
+
+    const overFormal = avgFormality - occasionRule.requiredFormality;
+    if (overFormal > 0.35) {
+      console.warn(`Outfit afgewezen: te formeel voor ${canonicalOccasion} (formality ${avgFormality.toFixed(2)} vs required ${occasionRule.requiredFormality})`);
       return null;
     }
 
@@ -856,6 +862,14 @@ function generateOutfitForOccasion(
         return null;
       }
     }
+  }
+
+  const formalities = outfitProducts.map(p => calculateProductFormality(p));
+  const maxF = Math.max(...formalities);
+  const minF = Math.min(...formalities);
+  if (maxF - minF > 0.5) {
+    console.warn(`Outfit afgewezen: inconsistente formaliteit (spread ${(maxF - minF).toFixed(2)})`);
+    return null;
   }
   
   // Calculate category ratio
@@ -1041,6 +1055,31 @@ function getComfortScore(product: Product, comfort?: string): number {
   return comfortTags.some(t => tags.includes(t)) ? 0.15 : 0;
 }
 
+function getOccasionFormalityTarget(occasion: string): number {
+  const o = occasion.toLowerCase();
+  if (o.includes('werk') || o.includes('kantoor') || o.includes('office') || o.includes('zakelijk')) return 0.7;
+  if (o.includes('formeel') || o.includes('gala') || o.includes('formal')) return 0.9;
+  if (o.includes('date') || o.includes('diner')) return 0.6;
+  if (o.includes('feest') || o.includes('uitgaan') || o.includes('party')) return 0.5;
+  if (o.includes('sport') || o.includes('actief')) return 0.1;
+  if (o.includes('reis') || o.includes('travel')) return 0.4;
+  return 0.3;
+}
+
+function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 5): T | null {
+  if (items.length === 0) return null;
+  const candidates = items.slice(0, Math.min(topN, items.length));
+  const minScore = candidates[candidates.length - 1].combined;
+  const weights = candidates.map(c => Math.max(c.combined - minScore + 0.05, 0.05));
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * totalWeight;
+  for (let i = 0; i < candidates.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return candidates[i];
+  }
+  return candidates[0];
+}
+
 function selectProductForCategory(
   productsByCategory: Record<ProductCategory, Product[]>,
   category: ProductCategory,
@@ -1052,33 +1091,29 @@ function selectProductForCategory(
   mixFactor: number = 0.3,
   fitPreference?: string,
   goals: string[] = [],
-  comfort?: string
+  comfort?: string,
+  usedProductIds?: Set<string>
 ): Product | null {
   const products = productsByCategory[category];
-  
-  if (!products || products.length === 0) {
-    return null;
-  }
-  
-  // First, prioritize products that match the current season
-  const seasonalProducts = products.filter(product => 
-    !product.season || product.season.includes(season)
-  );
-  
-  // Further filter by weather if applicable
-  const weatherFilteredProducts = weather 
-    ? seasonalProducts.filter(product => isProductSuitableForWeather(product, weather))
+  if (!products || products.length === 0) return null;
+
+  let pool = usedProductIds && usedProductIds.size > 0
+    ? products.filter(p => !usedProductIds.has(p.id))
+    : products;
+
+  if (pool.length === 0) pool = products;
+
+  const seasonalProducts = pool.filter(p => !p.season || p.season.includes(season));
+  const weatherFiltered = weather
+    ? seasonalProducts.filter(p => isProductSuitableForWeather(p, weather))
     : seasonalProducts;
-  
-  // If we have weather-filtered products, use those; otherwise fall back to seasonal products
-  // If we don't have enough seasonal products, fall back to all products
-  const productsToUse = weatherFilteredProducts.length > 0 
-    ? weatherFilteredProducts 
-    : seasonalProducts.length > 0 
-      ? seasonalProducts 
-      : products;
-  
-  // Build archetype weight mix for fusionScore()
+
+  const productsToUse = weatherFiltered.length > 0
+    ? weatherFiltered
+    : seasonalProducts.length > 0
+      ? seasonalProducts
+      : pool;
+
   const primaryKey = resolveArchetypeKey(primaryArchetype);
   const mix: ArchetypeWeights = { [primaryKey]: 1 - (mixFactor ?? 0) };
   if (secondaryArchetype && secondaryArchetype !== primaryArchetype && mixFactor && mixFactor > 0) {
@@ -1086,27 +1121,33 @@ function selectProductForCategory(
     mix[secondaryKey] = (mix[secondaryKey] ?? 0) + mixFactor;
   }
 
+  const formalityTarget = getOccasionFormalityTarget(occasion);
+
   const scoredProducts = productsToUse.map(product => {
     const productLike = toProductLike(product);
     const fusion = fusionScore(productLike, mix);
     const fitBonus = getFitScore(product, fitPreference);
     const goalsBonus = getGoalsScore(product, goals);
     const comfortBonus = getComfortScore(product, comfort);
-    // fusionScore is 0-1; bonuses are additive max ~0.55 total
-    // Weight fusion heavily (0.65) vs bonus signals (up to 0.35)
-    const combined = fusion.totalScore * 0.65 + fitBonus + goalsBonus + comfortBonus;
+
+    const productFormality = calculateProductFormality(product);
+    const formalityDelta = Math.abs(productFormality - formalityTarget);
+    const formalityBonus = Math.max(0, 0.25 * (1 - formalityDelta));
+
+    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus;
 
     return { product, combined, fusionScore: fusion.totalScore, signals: fusion.matchedSignals };
   });
 
   scoredProducts.sort((a, b) => b.combined - a.combined);
 
-  if (scoredProducts.length > 0 && scoredProducts[0]) {
-    const top = scoredProducts[0];
-    console.log(`[FusionScore] ${category} → "${top.product.name}" fusion=${top.fusionScore.toFixed(2)} total=${top.combined.toFixed(2)} signals=[${top.signals.slice(0, 3).join(', ')}]`);
+  const picked = weightedRandomPick(scoredProducts);
+
+  if (picked) {
+    console.log(`[Select] ${category} → "${picked.product.name}" score=${picked.combined.toFixed(2)} fusion=${picked.fusionScore.toFixed(2)}`);
   }
 
-  return scoredProducts[0]?.product ?? null;
+  return picked?.product ?? null;
 }
 
 /**
