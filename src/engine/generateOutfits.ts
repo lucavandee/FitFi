@@ -616,40 +616,37 @@ function generateOutfitForOccasion(
   const fulfilledRequiredCategories = outfitStructure.requiredCategories.filter(
     category => selectedCategories.includes(category)
   ).length;
-  
+
   const completeness = Math.round((fulfilledRequiredCategories / requiredCategoriesCount) * 100);
-  
+
   // Check if we have enough products for a valid outfit
-  // We need at least the minimum number of items specified in the structure
-  // and meet the minimum completeness requirement
-  if (outfitProducts.length < outfitStructure.minItems || 
+  if (outfitProducts.length < outfitStructure.minItems ||
       (enforceCompletion && completeness < minCompleteness)) {
     console.warn(`Niet genoeg producten voor een complete ${primaryArchetype} outfit: ${outfitProducts.length}/${outfitStructure.minItems} items, completeness: ${completeness}%`);
-    
+
     // If we have fallback products and we're not enforcing completion, add them
+    // NOTE: fallback products are only added if they are valid wearable items
     if (fallbackProducts.length > 0 && !enforceCompletion) {
       console.log(`Adding ${fallbackProducts.length} fallback products to complete the outfit`);
-      
-      // Add fallback products until we reach the minimum
+
       for (const fallbackProduct of fallbackProducts) {
-        if (outfitProducts.length >= outfitStructure.minItems) {
-          break;
-        }
-        
+        if (outfitProducts.length >= outfitStructure.minItems) break;
+        const fallbackCat = getProductCategory(fallbackProduct);
+        // Never use OTHER products as fallbacks
+        if (fallbackCat === ProductCategory.OTHER) continue;
         outfitProducts.push(fallbackProduct);
-        const category = getProductCategory(fallbackProduct);
-        if (!selectedCategories.includes(category)) {
-          selectedCategories.push(category);
+        if (!selectedCategories.includes(fallbackCat)) {
+          selectedCategories.push(fallbackCat);
         }
       }
-      
+
       // Recalculate completeness
       const newFulfilledRequired = outfitStructure.requiredCategories.filter(
         category => selectedCategories.includes(category)
       ).length;
-      
+
       const newCompleteness = Math.round((newFulfilledRequired / requiredCategoriesCount) * 100);
-      
+
       if (outfitProducts.length < outfitStructure.minItems || newCompleteness < minCompleteness) {
         console.warn(`Still not enough products after adding fallbacks: ${outfitProducts.length}/${outfitStructure.minItems} items, completeness: ${newCompleteness}%`);
         return null;
@@ -657,6 +654,21 @@ function generateOutfitForOccasion(
     } else {
       return null;
     }
+  }
+
+  // Final structural sanity check: every outfit MUST have at least something to wear
+  // on the upper body (top / dress / jumpsuit) AND footwear. Without this the outfit
+  // makes no sense regardless of completeness score.
+  const hasUpperBody = selectedCategories.some(c =>
+    c === ProductCategory.TOP ||
+    c === ProductCategory.DRESS ||
+    c === ProductCategory.JUMPSUIT
+  );
+  const hasFootwear = selectedCategories.includes(ProductCategory.FOOTWEAR);
+
+  if (!hasUpperBody || !hasFootwear) {
+    console.warn(`Outfit afgewezen: ontbrekende bovenkleding (${hasUpperBody}) of schoeisel (${hasFootwear})`);
+    return null;
   }
   
   // Calculate category ratio
@@ -768,22 +780,24 @@ function calculateCategoryRatio(products: Product[]): CategoryRatio {
 }
 
 /**
- * Groups products by their category
+ * Groups products by their category.
+ * Products that map to OTHER are silently dropped — they are not wearable clothing.
  */
 function groupProductsByCategory(products: Product[]): Record<ProductCategory, Product[]> {
   const result: Record<ProductCategory, Product[]> = {} as Record<ProductCategory, Product[]>;
-  
+
   // Initialize empty arrays for each category
   Object.values(ProductCategory).forEach(category => {
     result[category] = [];
   });
-  
-  // Group products by category
+
+  // Group products by category — exclude OTHER (non-fashion items)
   products.forEach(product => {
     const category = getProductCategory(product);
+    if (category === ProductCategory.OTHER) return;
     result[category].push(product);
   });
-  
+
   return result;
 }
 

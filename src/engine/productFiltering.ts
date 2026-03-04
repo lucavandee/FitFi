@@ -197,7 +197,35 @@ function filterByBudget(
 }
 
 /**
- * Filter out products with missing required fields
+ * Whitelist of valid clothing categories.
+ * Any product whose category does not map to one of these is rejected
+ * before it can ever reach the outfit-generation engine.
+ */
+const VALID_CLOTHING_CATEGORIES = new Set([
+  'top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress', 'jumpsuit',
+  // Dutch synonyms that the import pipeline may produce
+  'tops', 'bottoms', 'shoes', 'shoe', 'jacket', 'coat', 'bag', 'bags',
+  'shirt', 'blouse', 'trui', 'broek', 'rok', 'schoen', 'sneaker', 'laars',
+  'jas', 'jack', 'blazer', 'jurk', 'overall', 'tas', 'sjaal', 'riem', 'pet',
+]);
+
+/**
+ * Returns true when the product's category (or type) is a wearable clothing item.
+ * Non-fashion products such as home-decor, posters, mugs, toys, etc. are rejected.
+ */
+function isWearableProduct(product: Product): boolean {
+  const cat = (product.category || product.type || '').toLowerCase().trim();
+  if (!cat) return false;
+  if (VALID_CLOTHING_CATEGORIES.has(cat)) return true;
+  // Partial match for composite category strings like "tops/shirts"
+  for (const valid of VALID_CLOTHING_CATEGORIES) {
+    if (cat.includes(valid)) return true;
+  }
+  return false;
+}
+
+/**
+ * Filter out products with missing required fields or that are not wearable clothing.
  */
 function filterByValidation(
   products: Product[],
@@ -217,6 +245,12 @@ function filterByValidation(
 
     if (!product.category) {
       removed.push(`${product.id} (${product.name}): missing category`);
+      return false;
+    }
+
+    // Reject non-fashion products (home decor, posters, toys, etc.)
+    if (!isWearableProduct(product)) {
+      removed.push(`${product.id} (${product.name}): non-fashion category "${product.category}" rejected`);
       return false;
     }
 

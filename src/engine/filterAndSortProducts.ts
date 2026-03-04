@@ -24,6 +24,24 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
 
   console.log(`[FilterAndSort] Processing ${products.length} products for user ${user.name || user.id}`);
 
+  // Categories that are valid wearable clothing items
+  const WEARABLE_CATEGORIES = new Set([
+    'top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress', 'jumpsuit',
+    'tops', 'bottoms', 'shoes', 'shoe', 'jacket', 'coat', 'bag', 'bags',
+    'shirt', 'blouse', 'trui', 'broek', 'rok', 'schoen', 'sneaker', 'laars',
+    'jas', 'jack', 'blazer', 'jurk', 'overall', 'tas', 'sjaal', 'riem', 'pet',
+  ]);
+
+  const isWearable = (p: Product) => {
+    const cat = (p.category || p.type || '').toLowerCase().trim();
+    if (!cat) return false;
+    if (WEARABLE_CATEGORIES.has(cat)) return true;
+    for (const v of WEARABLE_CATEGORIES) {
+      if (cat.includes(v)) return true;
+    }
+    return false;
+  };
+
   // Validate and filter products with proper data
   const validProducts = products.filter(product => {
     // Basic validation
@@ -38,10 +56,14 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
       return false;
     }
 
+    // Reject non-fashion items (home decor, posters, toys, etc.)
+    if (!isWearable(product)) {
+      return false;
+    }
+
     // Image validation (optional but recommended)
     if (!product.imageUrl) {
       console.warn('[FilterAndSort] Product missing image URL:', product.id);
-      // Don't filter out, but log warning
     }
 
     return true;
@@ -58,23 +80,19 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
     };
   });
 
-  // Filter by gender if user has gender preference
+  // Filter by gender — strictly reject opposite-gender products
   let genderFilteredProducts = productsWithScores;
-  if (user.gender) {
+  if (user.gender && user.gender !== 'unisex') {
     genderFilteredProducts = productsWithScores.filter(product => {
-      // Include unisex items for all genders
-      if (product.gender === 'unisex') return true;
-      
-      // Match user's gender
-      if (user.gender === 'male' && product.gender === 'male') return true;
-      if (user.gender === 'female' && product.gender === 'female') return true;
-      
-      // If product has no gender specified, include it
-      if (!product.gender) return true;
-      
+      const pg = (product.gender || '').toLowerCase();
+      // Always include explicitly unisex or gender-neutral
+      if (pg === 'unisex' || pg === '') return true;
+      // Match exact gender
+      if (pg === user.gender) return true;
+      // Reject opposite gender
       return false;
     });
-    
+
     console.log(`[FilterAndSort] Gender filter (${user.gender}): ${genderFilteredProducts.length}/${productsWithScores.length} products`);
   }
 
