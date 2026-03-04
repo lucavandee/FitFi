@@ -970,17 +970,21 @@ function getOccasionFormalityTarget(occasion: string): number {
   return 0.3;
 }
 
-function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 8): T | null {
+function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 12): T | null {
   if (items.length === 0) return null;
   const candidates = items.slice(0, Math.min(topN, items.length));
-  const weights = candidates.map(c => Math.max(c.combined, 0.01) ** 2);
+  const maxScore = candidates[0]?.combined ?? 0;
+  const minViable = maxScore * 0.5;
+  const viable = candidates.filter(c => c.combined >= minViable);
+  const pool = viable.length >= 3 ? viable : candidates.slice(0, 3);
+  const weights = pool.map(c => Math.max(c.combined, 0.01) ** 2);
   const totalWeight = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * totalWeight;
-  for (let i = 0; i < candidates.length; i++) {
+  for (let i = 0; i < pool.length; i++) {
     r -= weights[i];
-    if (r <= 0) return candidates[i];
+    if (r <= 0) return pool[i];
   }
-  return candidates[0];
+  return pool[0];
 }
 
 function isFashionAppropriate(product: Product): boolean {

@@ -28,12 +28,12 @@ const MATERIAL_PATTERNS: Record<string, string[]> = {
 };
 
 const SILHOUETTE_PATTERNS: Record<string, string[]> = {
-  slim: ['slim', 'skinny', 'fitted', 'nauwsluitend', 'aansluitend', 'slim fit'],
-  straight: ['straight', 'regular', 'regular fit', 'recht'],
-  relaxed: ['relaxed', 'loose', 'comfortable', 'loose fit', 'relaxed fit', 'ruim'],
-  oversized: ['oversized', 'oversize', 'wide', 'boxy', 'wide leg', 'baggy'],
-  tailored: ['tailored', 'blazer', 'suit', 'pak', 'colbert', 'double-breasted', 'single-breasted'],
-  clean: ['clean', 'minimal', 'effen', 'basic'],
+  slim: ['slim', 'skinny', 'fitted', 'nauwsluitend', 'aansluitend', 'slim fit', 'narrow'],
+  straight: ['straight', 'regular', 'regular fit', 'recht', 'classic fit'],
+  relaxed: ['relaxed', 'loose', 'comfortable', 'loose fit', 'relaxed fit', 'ruim', 'easy fit'],
+  oversized: ['oversized', 'oversize', 'wide', 'boxy', 'wide leg', 'baggy', 'wide-leg'],
+  tailored: ['tailored', 'blazer', 'suit', 'pak', 'colbert', 'double-breasted', 'single-breasted', 'pantalon'],
+  clean: ['clean', 'minimal', 'effen', 'basic', 'monochroom', 'simpel', 'strak'],
   draped: ['asymm', 'drape', 'wrap', 'wikkel'],
   cropped: ['cropped', 'crop', 'kort model'],
   longline: ['longline', 'lang model', 'maxi', 'extra lang'],
@@ -81,7 +81,39 @@ const FORMALITY_SIGNALS: { pattern: string[]; value: number }[] = [
   { pattern: ['trenchcoat', 'trench', 'mantel'], value: 0.70 },
   { pattern: ['jas', 'jacket', 'jack'], value: 0.40 },
   { pattern: ['parka', 'regenjas'], value: 0.30 },
+  { pattern: ['cargo'], value: 0.15 },
+  { pattern: ['overshirt'], value: 0.35 },
+  { pattern: ['crewneck', 'sweatshirt'], value: 0.20 },
 ];
+
+const STREETWEAR_BRANDS = new Set([
+  'nike', 'adidas', 'puma', 'new balance', 'jordan', 'stussy', 'stüssy',
+  'carhartt', 'carhartt wip', 'dickies', 'vans', 'converse', 'champion',
+  'the new originals', 'daily paper', 'filling pieces', 'off-white',
+  'supreme', 'palace', 'obey', 'huf', 'reebok', 'fila', 'ellesse',
+  'kappa', 'umbro', 'diadora', 'asics', 'new era',
+]);
+
+const CLASSIC_BRANDS = new Set([
+  'ralph lauren', 'polo ralph lauren', 'tommy hilfiger', 'hugo boss', 'boss',
+  'lacoste', 'gant', "marc o'polo", 'scotch & soda', 'ted baker',
+  'calvin klein', 'michael kors', 'brooks brothers', 'j.crew', 'massimo dutti',
+  'hackett', 'barbour', 'burberry',
+]);
+
+const MINIMALIST_BRANDS = new Set([
+  'cos', 'arket', 'uniqlo', 'muji', 'everlane', 'filippa k', 'theory',
+  'jil sander', 'a.p.c.', 'apc', 'acne studios', 'our legacy', 'norse projects',
+  'margaret howell', 'lemaire',
+]);
+
+function getBrandStyleHint(brand: string): { formality: number; silhouette: string } | null {
+  const b = (brand || '').toLowerCase();
+  if (STREETWEAR_BRANDS.has(b)) return { formality: 0.15, silhouette: 'relaxed' };
+  if (CLASSIC_BRANDS.has(b)) return { formality: 0.65, silhouette: 'tailored' };
+  if (MINIMALIST_BRANDS.has(b)) return { formality: 0.55, silhouette: 'clean' };
+  return null;
+}
 
 function textContains(text: string, patterns: string[]): boolean {
   for (const p of patterns) {
@@ -129,10 +161,37 @@ export function enrichProduct(product: Product): Product & { _signals: EnrichedS
     }
   }
 
+  const brandHint = getBrandStyleHint(product.brand || '');
+
   if (!formalityMatched) {
     if (existingTags.some(t => t.includes('formal') || t.includes('elegant'))) formality = 0.70;
     else if (existingTags.some(t => t.includes('casual') || t.includes('relaxed'))) formality = 0.30;
     else if (existingTags.some(t => t.includes('athletic') || t.includes('sport'))) formality = 0.10;
+    else if (brandHint) formality = brandHint.formality;
+  }
+
+  if (brandHint && !formalityMatched) {
+    formality = formality * 0.4 + brandHint.formality * 0.6;
+  }
+
+  if (brandHint && !silhouetteTags.includes(brandHint.silhouette)) {
+    silhouetteTags.push(brandHint.silhouette);
+  }
+
+  const dbStyle = ((product as any).style || '').toLowerCase();
+  if (dbStyle === 'streetwear' || dbStyle === 'casual-urban') {
+    if (!silhouetteTags.includes('relaxed') && !silhouetteTags.includes('oversized')) {
+      silhouetteTags.push('relaxed');
+    }
+    if (!formalityMatched && !brandHint) formality = Math.min(formality, 0.25);
+  } else if (dbStyle === 'smart-casual') {
+    if (!silhouetteTags.includes('tailored')) silhouetteTags.push('tailored');
+    if (!formalityMatched && !brandHint) formality = Math.max(formality, 0.55);
+  } else if (dbStyle === 'minimalist') {
+    if (!silhouetteTags.includes('clean')) silhouetteTags.push('clean');
+  } else if (dbStyle === 'luxury') {
+    if (!silhouetteTags.includes('tailored')) silhouetteTags.push('tailored');
+    if (!formalityMatched && !brandHint) formality = Math.max(formality, 0.65);
   }
 
   const price = product.price || 0;

@@ -24,15 +24,23 @@ function isFashionProduct(title, categoryPath, description = "") {
 
 function inferCategory(title, description, categoryPath) {
   const text = (title + " " + description + " " + categoryPath).toLowerCase();
-  if (/\b(sneaker|sneakers|shoe|shoes|boot|boots|trainer|trainers|footwear|loafer|loafers|schoen|schoenen|laars|laarzen|chelsea|oxford|derby|brogue|instapper|espadrille|veterschoen|enkellaars|kuitlaars|mocassin|pump|pumps|sandaal|sandal|sandalen)\b/.test(text)) return "footwear";
-  if (/\b(jacket|jas|jack|puffer|pufferjack|anorak|coat|parka|windbreaker|bomber|blazer|mantel|trenchcoat|trench|overcoat|gilet|bodywarmer|donsjas|winterjas|regenjas|regenjack|tussenjas|softshell|hardshell|fleecejack|spijkerjack|overshirt|pilotenjack|gewatteerd)\b/.test(text)) return "outerwear";
-  if (/\b(trouser|trousers|pant|pants|pantalon|cargo|shorts|short|jean|jeans|bottom|skirt|rok|broek|chino|jogger|joggingbroek|sweatpant|sweatpants|legging|tregging|culottes|bermuda|sportbroek|trainingsbroek|werkbroek)\b/.test(text)) return "bottom";
-  if (/\b(dress|jurk|maxijurk|minijurk|midijurk|avondjurk|cocktailjurk|zomerjurk)\b/.test(text)) return "dress";
+
+  if (/\b(sneaker|sneakers|shoe|shoes|boot|boots|trainer|trainers|footwear|loafer|loafers|schoen|schoenen|laars|laarzen|chelsea|oxford|derby|brogue|instapper|espadrille|veterschoen|enkellaars|kuitlaars|mocassin|pump|pumps|sandaal|sandal|sandalen|sloffen|pantoffel|pantoffels|muil|muilen)\b/.test(text)) return "footwear";
+
+  if (/\b(dress|jurk|maxijurk|minijurk|midijurk|avondjurk|cocktailjurk|zomerjurk|blazerjurk|hemdjurk|shirtjurk|wikkeljurk|mouwloze jurk|gebreide jurk|kanten jurk|tulen jurk|maxi-jurk|mini-jurk|midi-jurk)\b/.test(text)) return "dress";
+
   if (/\b(jumpsuit|overall|playsuit)\b/.test(text)) return "jumpsuit";
-  if (/\b(bag|bags|backpack|tote|rugzak|tas|cap|hat|beanie|pet|hoed|scarf|sjaal|belt|riem|accessory|accessories|watch|horloge|jewelry|sieraden|ketting|armband|zonnebril|sunglasses|das|stropdas|portemonnee|wallet)\b/.test(text)) return "accessory";
-  if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|fleece|vest|cardigan|coltrui|turtleneck)\b/.test(text)) return "top";
-  if (/\b(tee|t-shirt|shirt|blouse|polo|poloshirt|top|longsleeve|tank|tanktop|overhemd|hemdje|knit|gebreid|trui)\b/.test(text)) return "top";
-  return "top";
+
+  if (/\b(jacket|jas|jack|puffer|pufferjack|anorak|coat|parka|windbreaker|bomber|blazer|mantel|trenchcoat|trench|overcoat|gilet|bodywarmer|donsjas|winterjas|regenjas|regenjack|tussenjas|softshell|hardshell|fleecejack|spijkerjack|overshirt|pilotenjack|gewatteerd|carcoat|car coat|cape|poncho|dufflecoat|peacoat|bouclé jas)\b/.test(text)) return "outerwear";
+
+  if (/\b(trouser|trousers|pant|pants|pantalon|cargo|shorts|short|jean|jeans|skirt|rok|broek|chino|jogger|joggingbroek|sweatpant|sweatpants|legging|tregging|culottes|bermuda)\b/.test(text)) return "bottom";
+
+  if (/\b(bag|bags|backpack|tote|rugzak|tas|handtas|schoudertas|crossbody|clutch|cap|hat|beanie|pet|hoed|bucket hat|scarf|sjaal|belt|riem|accessory|accessories|watch|horloge|jewelry|sieraden|ketting|armband|oorbel|ring|zonnebril|sunglasses|das|stropdas|vlinderdas|portemonnee|wallet|manchetknoop|broche|haarband|hoofdband|paraplu)\b/.test(text)) return "accessory";
+
+  if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|vest|cardigan|coltrui|turtleneck)\b/.test(text)) return "top";
+  if (/\b(t-shirt|tee|shirt|blouse|polo|poloshirt|longsleeve|tank|tanktop|overhemd|hemdje|knit|gebreid|trui|crop top|bodysuit|body|topje)\b/.test(text)) return "top";
+
+  return "other";
 }
 
 function inferGender(title, genderTarget, categoryPath) {
@@ -44,10 +52,25 @@ function inferGender(title, genderTarget, categoryPath) {
 
 function inferStyle(title, description, brand) {
   const text = (title + " " + description + " " + brand).toLowerCase();
-  if (/\b(jazz|art|creative|graphic|print|culture|street|urban)\b/.test(text)) return "casual-urban";
-  if (/\b(tech|performance|premium|wool|tailored|refined|formal|office)\b/.test(text)) return "smart-casual";
-  if (/\b(cargo|military|utility|tactical|workwear)\b/.test(text)) return "streetwear";
-  if (/\b(linen|silk|elegant|luxe|satin|cashmere)\b/.test(text)) return "luxury";
+
+  const STREETWEAR_BRANDS = ["nike", "adidas", "puma", "new balance", "jordan", "stussy", "stüssy", "carhartt", "dickies", "vans", "converse", "supreme", "palace", "the new originals", "daily paper", "filling pieces", "off-white", "champion"];
+  const PREMIUM_BRANDS = ["ralph lauren", "tommy hilfiger", "hugo boss", "boss", "lacoste", "gant", "marc o'polo", "scotch & soda", "ted baker", "calvin klein", "michael kors"];
+  const LUXURY_BRANDS = ["gucci", "prada", "balenciaga", "saint laurent", "burberry", "versace", "givenchy", "valentino", "fendi", "bottega veneta", "tom ford", "armani"];
+  const MINIMALIST_BRANDS = ["cos", "arket", "uniqlo", "muji", "everlane", "filippa k", "theory", "jil sander", "apc", "acne studios"];
+
+  const brandLower = (brand || "").toLowerCase();
+
+  if (LUXURY_BRANDS.some(b => brandLower.includes(b))) return "luxury";
+  if (MINIMALIST_BRANDS.some(b => brandLower.includes(b))) return "minimalist";
+  if (STREETWEAR_BRANDS.some(b => brandLower.includes(b))) return "streetwear";
+  if (PREMIUM_BRANDS.some(b => brandLower.includes(b))) return "smart-casual";
+
+  if (/\b(hoodie|hooded|jogger|jogging|cargo|bomber|sneaker|graphic|graffiti|oversized|baggy|wide[- ]?leg|skate|hip[- ]?hop)\b/.test(text)) return "streetwear";
+  if (/\b(blazer|colbert|pantalon|overhemd|dress shirt|tailored|single-breasted|double-breasted|chino|oxford|derby|brogue|loafer)\b/.test(text)) return "smart-casual";
+  if (/\b(effen|basic|clean|minimal|simpel|strak|monochroom)\b/.test(text)) return "minimalist";
+  if (/\b(silk|zijde|satin|satijn|cashmere|kasjmier|elegant|luxe|premium|exclusive|high-end)\b/.test(text)) return "luxury";
+  if (/\b(t-shirt|polo|jeans|spijkerbroek|sneakers|casual|relaxed|everyday|alledaags)\b/.test(text)) return "casual";
+
   return "casual";
 }
 
