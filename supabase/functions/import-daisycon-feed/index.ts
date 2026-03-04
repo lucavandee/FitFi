@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior)\b/;
-const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|candle|kaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band)\b/;
+const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|candle|kaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|vaas|spiegel|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|voetbalset|voetbalshirt|keepershandschoen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast)\b/;
 
 function isFashionProduct(title, categoryPath) {
   const text = (title + " " + categoryPath).toLowerCase();
@@ -18,13 +18,14 @@ function isFashionProduct(title, categoryPath) {
 
 function inferCategory(title, description, categoryPath) {
   const text = (title + " " + description + " " + categoryPath).toLowerCase();
-  if (/\b(jacket|jas|puffer|anorak|coat|parka|windbreaker|bomber|blazer|mantel)\b/.test(text)) return "outerwear";
-  if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|fleece|vest)\b/.test(text)) return "top";
-  if (/\b(tee|t-shirt|shirt|blouse|polo|top|longsleeve|tank)\b/.test(text)) return "top";
-  if (/\b(trouser|pant|cargo|shorts|brief|jean|denim|bottom|skirt|rok|broek)\b/.test(text)) return "bottom";
-  if (/\b(sneaker|shoe|boot|trainer|footwear|loafer|schoen|laars)\b/.test(text)) return "footwear";
-  if (/\b(bag|backpack|tote|rugzak|tas|cap|hat|beanie|pet|scarf|sjaal|belt|riem|accessory|watch|jewelry|sieraden)\b/.test(text)) return "accessory";
-  if (/\b(dress|jurk|jumpsuit|suit|pak|overall)\b/.test(text)) return "top";
+  if (/\b(sneaker|sneakers|shoe|shoes|boot|boots|trainer|trainers|footwear|loafer|loafers|schoen|schoenen|laars|laarzen|chelsea|oxford|derby|brogue|instapper|espadrille|veterschoen|enkellaars|kuitlaars|mocassin|pump|pumps|sandaal|sandal|sandalen)\b/.test(text)) return "footwear";
+  if (/\b(jacket|jas|jack|puffer|pufferjack|anorak|coat|parka|windbreaker|bomber|blazer|mantel|trenchcoat|trench|overcoat|gilet|bodywarmer|donsjas|winterjas|regenjas|regenjack|tussenjas|softshell|hardshell|fleecejack|spijkerjack|overshirt|pilotenjack|gewatteerd)\b/.test(text)) return "outerwear";
+  if (/\b(trouser|trousers|pant|pants|pantalon|cargo|shorts|short|jean|jeans|bottom|skirt|rok|broek|chino|jogger|joggingbroek|sweatpant|sweatpants|legging|tregging|culottes|bermuda|sportbroek|trainingsbroek|werkbroek)\b/.test(text)) return "bottom";
+  if (/\b(dress|jurk|maxijurk|minijurk|midijurk|avondjurk|cocktailjurk|zomerjurk)\b/.test(text)) return "dress";
+  if (/\b(jumpsuit|overall|playsuit)\b/.test(text)) return "jumpsuit";
+  if (/\b(bag|bags|backpack|tote|rugzak|tas|cap|hat|beanie|pet|hoed|scarf|sjaal|belt|riem|accessory|accessories|watch|horloge|jewelry|sieraden|ketting|armband|zonnebril|sunglasses|das|stropdas|portemonnee|wallet)\b/.test(text)) return "accessory";
+  if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|fleece|vest|cardigan|coltrui|turtleneck)\b/.test(text)) return "top";
+  if (/\b(tee|t-shirt|shirt|blouse|polo|poloshirt|top|longsleeve|tank|tanktop|overhemd|hemdje|knit|gebreid|trui)\b/.test(text)) return "top";
   return "top";
 }
 
@@ -47,20 +48,27 @@ function inferStyle(title, description, brand) {
 function extractTags(title, description, category, keywords) {
   const tags = [category];
   const text = (title + " " + description + " " + keywords).toLowerCase();
-  const colorWords = ["black", "white", "blue", "navy", "red", "green", "grey", "gray", "cream", "ecru", "lime", "moss", "brown", "beige", "pink", "yellow", "orange", "purple", "khaki", "camel"];
+  const colorWords = ["black", "white", "blue", "navy", "red", "green", "grey", "gray", "cream", "ecru", "lime", "moss", "brown", "beige", "pink", "yellow", "orange", "purple", "khaki", "camel", "burgundy", "bordeaux", "olive", "sand", "taupe", "cognac", "coral", "mustard"];
   colorWords.forEach((c) => { if (text.includes(c)) tags.push(c); });
-  if (text.includes("cotton")) tags.push("cotton");
-  if (text.includes("nylon")) tags.push("nylon");
-  if (text.includes("linen")) tags.push("linen");
-  if (text.includes("wool")) tags.push("wool");
+  const materialWords = { cotton: "cotton", katoen: "cotton", nylon: "nylon", linen: "linen", linnen: "linen", wool: "wool", wol: "wool", merino: "merino", denim: "denim", leather: "leather", leer: "leather", "suède": "suede", suede: "suede", fleece: "fleece", polyester: "polyester", viscose: "viscose", jersey: "jersey", corduroy: "corduroy", ribfluweel: "corduroy", canvas: "canvas", silk: "silk", zijde: "silk", cashmere: "cashmere", kasjmier: "cashmere" };
+  Object.entries(materialWords).forEach(([k, v]) => { if (text.includes(k)) tags.push(v); });
   if (text.includes("recycled") || text.includes("sustainable")) tags.push("sustainable");
   if (text.includes("embroidered")) tags.push("embroidered");
   if (text.includes("graphic")) tags.push("graphic");
   if (text.includes("print") || text.includes("pattern")) tags.push("printed");
   if (text.includes("stripe") || text.includes("stripes")) tags.push("striped");
-  if (text.includes("oversized")) tags.push("oversized");
-  if (text.includes("slim") || text.includes("skinny")) tags.push("slim");
+  if (text.includes("oversized") || text.includes("oversize")) tags.push("oversized");
+  if (text.includes("slim") || text.includes("skinny") || text.includes("fitted")) tags.push("slim");
   if (text.includes("relaxed") || text.includes("loose")) tags.push("relaxed");
+  if (text.includes("regular") || text.includes("straight")) tags.push("regular");
+  if (text.includes("tailored")) tags.push("tailored");
+  if (text.includes("boxy") || text.includes("wide")) tags.push("boxy");
+  if (text.includes("cropped") || text.includes("crop")) tags.push("cropped");
+  if (text.includes("effen") || text.includes("basic") || text.includes("clean")) tags.push("clean");
+  if (text.includes("formal") || text.includes("elegant")) tags.push("formal");
+  if (text.includes("casual")) tags.push("casual");
+  if (text.includes("classic") || text.includes("klassiek") || text.includes("tijdloos")) tags.push("classic");
+  if (text.includes("minimal")) tags.push("minimalist");
   return [...new Set(tags)];
 }
 

@@ -8,6 +8,7 @@ import { fusionScore, normalizeWeights } from './archetypeFusion';
 import type { ArchetypeKey } from '@/config/archetypes';
 import type { ArchetypeWeights, ProductLike } from '@/types/style';
 import type { ColorProfile } from '@/lib/quiz/types';
+import { enrichProduct, type EnrichedSignals } from './productEnricher';
 import {
   getCurrentSeason,
   getProductCategory,
@@ -48,71 +49,19 @@ function resolveArchetypeKey(raw: string): ArchetypeKey {
   return ARCHETYPE_KEY_MAP[raw] ?? ARCHETYPE_KEY_MAP[raw.toLowerCase()] ?? 'SMART_CASUAL';
 }
 
-// Converts a Product to the ProductLike shape expected by fusionScore()
-// Derives colorTags, materialTags, silhouetteTags from existing product fields
 function toProductLike(p: Product): ProductLike {
-  const tags = (p.styleTags || []).map(t => t.toLowerCase());
-  const name = (p.name || '').toLowerCase();
-  const desc = (p.description || '').toLowerCase();
-  const combined = [...tags, name, desc].join(' ');
-
-  // Color tags — map colors + style signals to palette hints used in ARCHETYPES
-  const colorTags: string[] = [];
-  const colorSrc = [...(Array.isArray(p.colors) ? p.colors : p.color ? [p.color] : []), ...tags];
-  for (const c of colorSrc) {
-    const cl = c.toLowerCase();
-    if (['zwart', 'black'].some(k => cl.includes(k))) colorTags.push('zwart');
-    if (['wit', 'white', 'cream', 'off-white'].some(k => cl.includes(k))) colorTags.push('wit');
-    if (['grijs', 'grey', 'gray'].some(k => cl.includes(k))) colorTags.push('grijs');
-    if (['navy', 'donkerblauw', 'dark blue'].some(k => cl.includes(k))) colorTags.push('navy');
-    if (['camel', 'tan', 'sand', 'nude', 'beige'].some(k => cl.includes(k))) colorTags.push('camel');
-    if (['denim', 'jeans', 'blauw', 'blue'].some(k => cl.includes(k))) colorTags.push('denim');
-    if (['graphic', 'print', 'contrast', 'bold'].some(k => cl.includes(k))) colorTags.push('contrast');
-    if (['aardetint', 'earth', 'terracotta', 'rust', 'olive'].some(k => cl.includes(k))) colorTags.push('aardetinten');
-    if (['charcoal', 'antraciet'].some(k => cl.includes(k))) colorTags.push('charcoal');
-    if (['monochroom', 'monochrome', 'tonal'].some(k => cl.includes(k))) colorTags.push('monochrome');
-  }
-
-  // Material tags — map from product type/name/tags to ARCHETYPES material keys
-  const materialTags: string[] = [];
-  if (combined.includes('katoen') || combined.includes('cotton')) materialTags.push('katoen');
-  if (combined.includes('wol') || combined.includes('wool') || combined.includes('merino')) materialTags.push('wol');
-  if (combined.includes('merino')) materialTags.push('merino');
-  if (combined.includes('denim') || combined.includes('jeans')) materialTags.push('denim');
-  if (combined.includes('leer') || combined.includes('leather') || combined.includes('suède') || combined.includes('suede')) materialTags.push('leer');
-  if (combined.includes('linnen') || combined.includes('linen')) materialTags.push('linnen');
-  if (combined.includes('fleece') || combined.includes('sweat')) materialTags.push('fleece');
-  if (combined.includes('tech') || combined.includes('nylon') || combined.includes('polyester') || combined.includes('performance')) materialTags.push('tech');
-  if (combined.includes('stretch') || combined.includes('elastisch')) materialTags.push('stretch');
-  if (combined.includes('mesh')) materialTags.push('mesh');
-  if (combined.includes('canvas')) materialTags.push('canvas');
-  if (combined.includes('coated') || combined.includes('gewaxed') || combined.includes('waxed')) materialTags.push('coated');
-
-  // Silhouette tags — map from fit/style signals
-  const silhouetteTags: string[] = [];
-  if (combined.includes('slim') || combined.includes('skinny') || combined.includes('fitted')) silhouetteTags.push('slim');
-  if (combined.includes('straight') || combined.includes('regular')) silhouetteTags.push('straight');
-  if (combined.includes('relaxed') || combined.includes('loose') || combined.includes('comfortable')) silhouetteTags.push('relaxed');
-  if (combined.includes('oversized') || combined.includes('wide') || combined.includes('boxy')) {
-    silhouetteTags.push('boxy');
-    silhouetteTags.push('oversized');
-  }
-  if (combined.includes('tailored') || combined.includes('blazer') || combined.includes('suit')) silhouetteTags.push('tailored');
-  if (combined.includes('clean') || combined.includes('minimal') || combined.includes('effen')) silhouetteTags.push('clean');
-  if (combined.includes('asymm') || combined.includes('drape') || combined.includes('wrap')) {
-    silhouetteTags.push('draped');
-    silhouetteTags.push('asymmetry');
-  }
+  const enriched = enrichProduct(p);
+  const s = enriched._signals;
 
   return {
     id: p.id,
     title: p.name,
     brand: p.brand,
     category: p.category,
-    colorTags: [...new Set(colorTags)],
-    materialTags: [...new Set(materialTags)],
-    silhouetteTags: [...new Set(silhouetteTags)],
-    formality: p.formality ?? undefined,
+    colorTags: s.colorTags,
+    materialTags: s.materialTags,
+    silhouetteTags: s.silhouetteTags,
+    formality: enriched.formality,
     price: p.price,
   };
 }
@@ -498,6 +447,7 @@ function generateOutfits(
   const outfits: Outfit[] = [];
   const attemptsPerOccasion: Record<string, number> = {};
   const usedProductIds = new Set<string>();
+  const usedBrandsGlobal = new Set<string>();
 
   for (let i = 0; i < Math.min(count, occasions.length); i++) {
     const occ = occasions[i] ?? 'casual';
@@ -524,7 +474,8 @@ function generateOutfits(
         fitPreference,
         goalsPreference,
         comfortPreference,
-        usedProductIds
+        usedProductIds,
+        usedBrandsGlobal
       );
 
       if (generatedOutfit && !excludeIds.includes(generatedOutfit.id)) {
@@ -533,7 +484,10 @@ function generateOutfits(
     }
 
     if (outfit) {
-      outfit.products.forEach(p => usedProductIds.add(p.id));
+      outfit.products.forEach(p => {
+        usedProductIds.add(p.id);
+        if (p.brand) usedBrandsGlobal.add(p.brand.toLowerCase());
+      });
       outfits.push(outfit);
     } else {
       console.warn(`Failed to generate unique outfit for occasion ${occ} after ${attempts} attempts`);
@@ -580,7 +534,8 @@ function generateOutfitForOccasion(
   fitPreference?: string,
   goalsPreference: string[] = [],
   comfortPreference?: string,
-  usedProductIds?: Set<string>
+  usedProductIds?: Set<string>,
+  usedBrandsGlobal?: Set<string>
 ): Outfit | null {
   // Log outfit generation
   console.log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
@@ -634,12 +589,11 @@ function generateOutfitForOccasion(
     `Optional: [${outfitStructure.optionalCategories.join(', ')}]`
   );
   
-  // Select products for each required category
   const outfitProducts: Product[] = [];
   const selectedCategories: ProductCategory[] = [];
   const fallbackProducts: Product[] = [];
-  
-  // First, try to fill all required categories
+  const outfitBrands = new Set<string>(usedBrandsGlobal || []);
+
   for (const category of outfitStructure.requiredCategories) {
     if (selectedCategories.includes(category)) continue;
 
@@ -655,12 +609,14 @@ function generateOutfitForOccasion(
       fitPreference,
       goalsPreference,
       comfortPreference,
-      usedProductIds
+      usedProductIds,
+      outfitBrands
     );
 
     if (selectedProduct) {
       outfitProducts.push(selectedProduct);
       selectedCategories.push(category);
+      if (selectedProduct.brand) outfitBrands.add(selectedProduct.brand.toLowerCase());
     } else {
       console.warn(`Geen product gevonden voor vereiste categorie ${category}`);
 
@@ -685,7 +641,8 @@ function generateOutfitForOccasion(
             fitPreference,
             goalsPreference,
             comfortPreference,
-            usedProductIds
+            usedProductIds,
+            outfitBrands
           );
 
           if (substituteProduct) {
@@ -741,12 +698,14 @@ function generateOutfitForOccasion(
       fitPreference,
       goalsPreference,
       comfortPreference,
-      usedProductIds
+      usedProductIds,
+      outfitBrands
     );
 
     if (selectedProduct) {
       outfitProducts.push(selectedProduct);
       selectedCategories.push(category);
+      if (selectedProduct.brand) outfitBrands.add(selectedProduct.brand.toLowerCase());
     }
   }
 
@@ -838,7 +797,7 @@ function generateOutfitForOccasion(
   const occasionRule = OCCASION_RULES[canonicalOccasion];
   if (occasionRule) {
     const avgFormality =
-      outfitProducts.reduce((sum, p) => sum + calculateProductFormality(p), 0) / outfitProducts.length;
+      outfitProducts.reduce((sum, p) => sum + enrichProduct(p).formality, 0) / outfitProducts.length;
 
     const formalityGap = occasionRule.requiredFormality - avgFormality;
     if (formalityGap > 0.2) {
@@ -864,7 +823,7 @@ function generateOutfitForOccasion(
     }
   }
 
-  const formalities = outfitProducts.map(p => calculateProductFormality(p));
+  const formalities = outfitProducts.map(p => enrichProduct(p).formality);
   const maxF = Math.max(...formalities);
   const minF = Math.min(...formalities);
   if (maxF - minF > 0.5) {
@@ -1092,7 +1051,8 @@ function selectProductForCategory(
   fitPreference?: string,
   goals: string[] = [],
   comfort?: string,
-  usedProductIds?: Set<string>
+  usedProductIds?: Set<string>,
+  usedBrands?: Set<string>
 ): Product | null {
   const products = productsByCategory[category];
   if (!products || products.length === 0) return null;
@@ -1130,11 +1090,13 @@ function selectProductForCategory(
     const goalsBonus = getGoalsScore(product, goals);
     const comfortBonus = getComfortScore(product, comfort);
 
-    const productFormality = calculateProductFormality(product);
-    const formalityDelta = Math.abs(productFormality - formalityTarget);
+    const enriched = enrichProduct(product);
+    const formalityDelta = Math.abs(enriched.formality - formalityTarget);
     const formalityBonus = Math.max(0, 0.25 * (1 - formalityDelta));
 
-    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus;
+    const brandPenalty = usedBrands && product.brand && usedBrands.has(product.brand.toLowerCase()) ? 0.15 : 0;
+
+    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty;
 
     return { product, combined, fusionScore: fusion.totalScore, signals: fusion.matchedSignals };
   });
