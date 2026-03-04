@@ -229,6 +229,14 @@ export default function EnhancedResultsPage() {
     notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
   };
 
+  const parsedBudget = React.useMemo(() => {
+    const b = answers?.budget;
+    if (b && typeof b === 'object' && typeof b.min === 'number' && typeof b.max === 'number' && b.max > 0) {
+      return b as { min: number; max: number };
+    }
+    return undefined;
+  }, [answers?.budget]);
+
   const { data: realOutfits, loading: outfitsLoading } = useOutfits({
     archetype: archetypeKey,
     secondaryArchetype: archetypeDetectionResult?.secondary || undefined,
@@ -242,6 +250,7 @@ export default function EnhancedResultsPage() {
     materials: answers?.materials,
     colorProfile: activeColorProfile,
     occasions: answers?.occasions,
+    budget: parsedBudget,
   });
 
   const seeds: OutfitSeed[] = React.useMemo(() => {

@@ -18,6 +18,7 @@ interface UseOutfitsOptions {
   materials?: string[];
   colorProfile?: any;
   occasions?: string[];
+  budget?: { min: number; max: number };
 }
 
 interface UseOutfitsResult {
@@ -47,6 +48,7 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
     materials,
     colorProfile,
     occasions,
+    budget,
   } = options;
 
   const [data, setData] = useState<Outfit[] | null>(null);
@@ -80,6 +82,7 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
         materials,
         colorProfile,
         occasions,
+        budget,
       });
 
       if (alive) {

@@ -147,6 +147,7 @@ export async function fetchOutfits(_opts?: {
   materials?: string[];
   colorProfile?: any;
   occasions?: string[];
+  budget?: { min: number; max: number };
 }): Promise<DataResponse<Outfit[]>> {
   try {
     const client = supabase();
@@ -157,24 +158,51 @@ export async function fetchOutfits(_opts?: {
     const archetype = _opts?.archetype || "SMART_CASUAL";
     const limit = _opts?.limit || 6;
 
-    let query = client
-      .from("products")
-      .select("*")
-      .eq("in_stock", true);
+    const categories = ['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress'];
+    const perCategory = Math.ceil(300 / categories.length);
+    let allRows: Record<string, any>[] = [];
 
-    if (_opts?.gender && _opts.gender !== "unisex") {
-      query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
+    for (const cat of categories) {
+      let query = client
+        .from("products")
+        .select("*")
+        .eq("in_stock", true)
+        .eq("category", cat);
+
+      if (_opts?.gender && _opts.gender !== "unisex") {
+        query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
+      }
+
+      if (_opts?.budget && _opts.budget.max > 0) {
+        query = query.gte("price", _opts.budget.min).lte("price", _opts.budget.max);
+      }
+
+      query = query.limit(perCategory);
+
+      const { data } = await query;
+      if (data) allRows.push(...data);
     }
 
-    query = query.limit(300);
+    if (allRows.length < 10) {
+      let fallbackQuery = client
+        .from("products")
+        .select("*")
+        .eq("in_stock", true);
 
-    const { data, error } = await query;
+      if (_opts?.gender && _opts.gender !== "unisex") {
+        fallbackQuery = fallbackQuery.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
+      }
 
-    if (error || !data || data.length < 10) {
+      fallbackQuery = fallbackQuery.limit(300);
+      const { data } = await fallbackQuery;
+      if (data && data.length >= 10) allRows = data;
+    }
+
+    if (allRows.length < 10) {
       return wrap([...FALLBACK_OUTFITS], "fallback");
     }
 
-    const engineProducts = data.map(toEngineProduct);
+    const engineProducts = allRows.map(toEngineProduct);
 
     const options: OutfitGenerationOptions = {};
     if (_opts?.fit) options.fit = _opts.fit;
@@ -183,6 +211,7 @@ export async function fetchOutfits(_opts?: {
     if (_opts?.materials) options.materials = _opts.materials;
     if (_opts?.colorProfile) options.colorProfile = _opts.colorProfile;
     if (_opts?.occasions) options.preferredOccasions = _opts.occasions;
+    if (_opts?.budget) options.budget = _opts.budget;
 
     const engineOutfits = generateOutfits(
       archetype,

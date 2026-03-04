@@ -6,14 +6,15 @@ export type ProductLike = {
   id: string;
   title: string;
   brand?: string;
-  category?: string;      // top/bottom/shoes/jacket/accessory
-  colorTags?: string[];   // 'zwart','navy','wit','earth','contrast'
-  materialTags?: string[];// 'katoen','wol','leer','tech','linnen',...
-  silhouetteTags?: string[]; // 'slim','relaxed','boxy','tailored'
-  formality?: number;     // 0-100
-  seasonTags?: string[];  // 'spring','summer','autumn','winter'
+  category?: string;
+  colorTags?: string[];
+  materialTags?: string[];
+  silhouetteTags?: string[];
+  formality?: number;
+  seasonTags?: string[];
   image?: string;
   price?: number;
+  style?: string;
 };
 
 export type FusionScoreDetail = {

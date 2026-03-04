@@ -19,6 +19,16 @@ function tokenMatchScore(tokens: string[] | undefined, needles: string[]): numbe
   return hits / Math.max(needles.length, 1);
 }
 
+const STYLE_TO_ARCHETYPE: Record<string, ArchetypeKey> = {
+  streetwear: 'STREETWEAR',
+  'casual-urban': 'STREETWEAR',
+  casual: 'SMART_CASUAL',
+  'smart-casual': 'SMART_CASUAL',
+  minimalist: 'MINIMALIST',
+  luxury: 'CLASSIC',
+  formal: 'CLASSIC',
+};
+
 export function scoreProductAgainstArchetype(p: ProductLike, key: ArchetypeKey): { score: number; signals: string[] } {
   const a = ARCHETYPES[key];
   const colorScore = tokenMatchScore(p.colorTags, a.paletteHints);
@@ -27,14 +37,20 @@ export function scoreProductAgainstArchetype(p: ProductLike, key: ArchetypeKey):
   const archetypeFormality = a.formality > 1 ? a.formality / 100 : a.formality;
   const formScore = p.formality == null ? 0.5 : 1 - clamp01(Math.abs(p.formality - archetypeFormality));
 
-  // simpele gewichten per dimensie – later tunen
-  const score = clamp01(0.35 * colorScore + 0.25 * matScore + 0.25 * silScore + 0.15 * formScore);
+  const dbStyle = (p.style || '').toLowerCase();
+  const mappedArchetype = STYLE_TO_ARCHETYPE[dbStyle];
+  const styleScore = mappedArchetype === key ? 1.0 : mappedArchetype ? 0.15 : 0.4;
+
+  const score = clamp01(
+    0.25 * colorScore + 0.20 * matScore + 0.20 * silScore + 0.15 * formScore + 0.20 * styleScore
+  );
 
   const signals: string[] = [];
   if (colorScore > 0) signals.push('kleur-match');
   if (matScore > 0) signals.push('materiaal-match');
   if (silScore > 0) signals.push('silhouet-match');
   if (formScore > 0.6) signals.push('formaliteit-match');
+  if (styleScore > 0.8) signals.push('stijl-match');
 
   return { score, signals };
 }

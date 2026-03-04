@@ -138,6 +138,7 @@ export interface OutfitGenerationOptions {
   comfort?: string;
   materials?: string[];
   colorProfile?: import('@/lib/quiz/types').ColorProfile;
+  budget?: { min: number; max: number };
 }
 
 /**

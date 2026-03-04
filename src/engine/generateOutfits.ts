@@ -64,6 +64,7 @@ function toProductLike(p: Product): ProductLike {
     silhouetteTags: s.silhouetteTags,
     formality: enriched.formality,
     price: p.price,
+    style: (p as any).style,
   };
 }
 
@@ -936,9 +937,12 @@ const FIT_TAG_MAP: Record<string, string[]> = {
 
 function getFitScore(product: Product, fitPreference?: string): number {
   if (!fitPreference) return 0;
-  const tags = (product.styleTags || []).join(' ').toLowerCase();
   const fitTags = FIT_TAG_MAP[fitPreference] || [];
-  return fitTags.some(t => tags.includes(t)) ? 0.2 : 0;
+  const enriched = enrichProduct(product);
+  const silhouettes = enriched._signals.silhouetteTags;
+  if (silhouettes.some(s => fitTags.includes(s))) return 0.2;
+  const tags = (product.styleTags || []).join(' ').toLowerCase();
+  return fitTags.some(t => tags.includes(t)) ? 0.15 : 0;
 }
 
 const GOAL_PRODUCT_TAGS: Record<string, string[]> = {
@@ -958,20 +962,36 @@ const COMFORT_FIT_TAGS: Record<string, string[]> = {
 
 function getGoalsScore(product: Product, goals: string[]): number {
   if (!goals || goals.length === 0) return 0;
-  const tags = (product.styleTags || []).join(' ').toLowerCase();
+  const enriched = enrichProduct(product);
+  const signals = enriched._signals;
+  const allTags = [
+    ...(product.styleTags || []),
+    ...signals.silhouetteTags,
+    ...signals.materialTags,
+    ...signals.colorTags,
+  ].join(' ').toLowerCase();
+  const dbStyle = ((product as any).style || '').toLowerCase();
   let hits = 0;
   for (const goal of goals) {
     const goalTags = GOAL_PRODUCT_TAGS[goal] || [];
-    if (goalTags.some(t => tags.includes(t))) hits++;
+    if (goalTags.some(t => allTags.includes(t))) { hits++; continue; }
+    if (goal === 'professional' && signals.formality >= 0.6) { hits++; continue; }
+    if (goal === 'comfort' && signals.formality <= 0.3) { hits++; continue; }
+    if (goal === 'trendy' && (dbStyle === 'streetwear' || dbStyle === 'casual-urban')) { hits++; continue; }
+    if (goal === 'minimal' && dbStyle === 'minimalist') { hits++; continue; }
+    if (goal === 'timeless' && (dbStyle === 'smart-casual' || dbStyle === 'luxury')) { hits++; continue; }
   }
   return (hits / goals.length) * 0.25;
 }
 
 function getComfortScore(product: Product, comfort?: string): number {
   if (!comfort) return 0;
-  const tags = (product.styleTags || []).join(' ').toLowerCase();
   const comfortTags = COMFORT_FIT_TAGS[comfort] || [];
-  return comfortTags.some(t => tags.includes(t)) ? 0.15 : 0;
+  const enriched = enrichProduct(product);
+  const silhouettes = enriched._signals.silhouetteTags;
+  if (silhouettes.some(s => comfortTags.includes(s))) return 0.15;
+  const tags = (product.styleTags || []).join(' ').toLowerCase();
+  return comfortTags.some(t => tags.includes(t)) ? 0.1 : 0;
 }
 
 function getOccasionFormalityTarget(occasion: string): number {
@@ -1080,6 +1100,7 @@ function selectProductForCategory(
       silhouetteTags: s.silhouetteTags,
       formality: enriched.formality,
       price: product.price,
+      style: (product as any).style,
     };
     const fusion = fusionScore(productLike, mix);
     const fitBonus = getFitScore(product, fitPreference);

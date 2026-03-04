@@ -162,6 +162,7 @@ function scoreProductQuality(outfit: Outfit, ctx: RankCtx): { score: number; rea
       silhouetteTags: s.silhouetteTags,
       formality: enriched.formality,
       price: product.price,
+      style: (product as any).style,
     };
     const f = fusionScore(pl, mix);
     totalFusion += f.totalScore;

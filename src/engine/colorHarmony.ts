@@ -100,11 +100,32 @@ function checkMap(c1: string, c2: string, map: Record<string, string[]>): boolea
   return false;
 }
 
+const TONAL_FAMILIES: string[][] = [
+  ['blauw', 'blue', 'navy', 'donkerblauw', 'kobalt', 'cobalt', 'azuur', 'denim'],
+  ['groen', 'green', 'olijf', 'olive', 'sage', 'mint', 'moss', 'khaki', 'forest'],
+  ['rood', 'red', 'bordeaux', 'burgundy', 'wijn', 'wine'],
+  ['bruin', 'brown', 'camel', 'cognac', 'chocolade', 'tan'],
+  ['grijs', 'grey', 'gray', 'antraciet', 'charcoal'],
+  ['roze', 'pink', 'blush', 'rose', 'mauve'],
+  ['oranje', 'orange', 'koraal', 'coral', 'roest', 'rust', 'terracotta'],
+  ['geel', 'yellow', 'mosterd', 'mustard'],
+  ['paars', 'purple', 'lavendel', 'lavender', 'pruim'],
+];
+
+function areTonal(c1: string, c2: string): boolean {
+  for (const family of TONAL_FAMILIES) {
+    const c1InFamily = family.some(f => c1.includes(f) || f.includes(c1));
+    const c2InFamily = family.some(f => c2.includes(f) || f.includes(c2));
+    if (c1InFamily && c2InFamily) return true;
+  }
+  return false;
+}
+
 export function calculateColorHarmonyScore(color1: string, color2: string): number {
   const c1 = normalizeColor(color1);
   const c2 = normalizeColor(color2);
 
-  if (c1 === c2) return 0.6;
+  if (c1 === c2) return 0.85;
 
   if (isNeutralColor(c1) || isNeutralColor(c2)) return 0.8;
 
@@ -115,12 +136,14 @@ export function calculateColorHarmonyScore(color1: string, color2: string): numb
     return 0.9;
   }
 
+  if (areTonal(c1, c2)) return 0.85;
+
   if (checkMap(c1, c2, COLOR_HARMONY_RULES.analogous)) return 0.8;
   if (checkMap(c1, c2, COLOR_HARMONY_RULES.complementary)) return 0.7;
 
-  if ((isWarmColor(c1) && isWarmColor(c2)) || (isCoolColor(c1) && isCoolColor(c2))) return 0.5;
+  if ((isWarmColor(c1) && isWarmColor(c2)) || (isCoolColor(c1) && isCoolColor(c2))) return 0.6;
 
-  return 0.3;
+  return 0.35;
 }
 
 export function calculateOutfitColorHarmony(productColors: string[][]): number {
