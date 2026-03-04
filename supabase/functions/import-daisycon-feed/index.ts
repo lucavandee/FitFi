@@ -6,6 +6,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior)\b/;
+const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|candle|kaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band)\b/;
+
+function isFashionProduct(title, categoryPath) {
+  const text = (title + " " + categoryPath).toLowerCase();
+  if (EXCLUDED_CATEGORY_KEYWORDS.test(text)) return false;
+  if (EXCLUDED_PRODUCT_KEYWORDS.test(text)) return false;
+  return true;
+}
+
 function inferCategory(title, description, categoryPath) {
   const text = (title + " " + description + " " + categoryPath).toLowerCase();
   if (/\b(jacket|jas|puffer|anorak|coat|parka|windbreaker|bomber|blazer|mantel)\b/.test(text)) return "outerwear";
@@ -302,6 +312,7 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
 
     const rows = batch
       .filter((p) => p.update_info?.status !== "inactive" && p.update_info?.status !== "deleted")
+      .filter((p) => isFashionProduct(p.product_info?.title || "", p.product_info?.category_path || ""))
       .map((p) => {
         const info = p.product_info;
         const description = stripHtml(info.description ?? "");
