@@ -713,12 +713,12 @@ function generateOutfitForOccasion(
     return null;
   }
 
-  // Color harmony check — reject outfits where products visually clash
   const productColorArrays = outfitProducts.map(p => {
-    const colors: string[] = [];
-    if (Array.isArray(p.colors)) colors.push(...p.colors);
-    else if (p.color) colors.push(p.color);
-    return colors;
+    const dbColors: string[] = [];
+    if (Array.isArray(p.colors)) dbColors.push(...p.colors);
+    else if (p.color) dbColors.push(p.color);
+    if (dbColors.length > 0) return dbColors;
+    return enrichProduct(p)._signals.colorTags;
   });
   const colorHarmonyScore = calculateOutfitColorHarmony(productColorArrays);
   const MIN_COLOR_HARMONY = 0.5;
@@ -969,11 +969,10 @@ function getOccasionFormalityTarget(occasion: string): number {
   return 0.3;
 }
 
-function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 5): T | null {
+function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 8): T | null {
   if (items.length === 0) return null;
   const candidates = items.slice(0, Math.min(topN, items.length));
-  const minScore = candidates[candidates.length - 1].combined;
-  const weights = candidates.map(c => Math.max(c.combined - minScore + 0.05, 0.05));
+  const weights = candidates.map(c => Math.max(c.combined, 0.01) ** 2);
   const totalWeight = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * totalWeight;
   for (let i = 0; i < candidates.length; i++) {
@@ -1028,13 +1027,24 @@ function selectProductForCategory(
   const formalityTarget = getOccasionFormalityTarget(occasion);
 
   const scoredProducts = productsToUse.map(product => {
-    const productLike = toProductLike(product);
+    const enriched = enrichProduct(product);
+    const s = enriched._signals;
+    const productLike: ProductLike = {
+      id: product.id,
+      title: product.name,
+      brand: product.brand,
+      category: product.category,
+      colorTags: s.colorTags,
+      materialTags: s.materialTags,
+      silhouetteTags: s.silhouetteTags,
+      formality: enriched.formality,
+      price: product.price,
+    };
     const fusion = fusionScore(productLike, mix);
     const fitBonus = getFitScore(product, fitPreference);
     const goalsBonus = getGoalsScore(product, goals);
     const comfortBonus = getComfortScore(product, comfort);
 
-    const enriched = enrichProduct(product);
     const formalityDelta = Math.abs(enriched.formality - formalityTarget);
     const formalityBonus = Math.max(0, 0.25 * (1 - formalityDelta));
 

@@ -39,12 +39,14 @@ export async function generateRecommendations(
   }
 
   // Filter and sort products based on user preferences
-  const relevantProducts = filterAndSortProducts(products, user);
+  const sortedProducts = filterAndSortProducts(products, user);
 
-  if (relevantProducts.length < 4) {
+  if (sortedProducts.length < 4) {
     console.warn('[RecommendationEngine] Not enough relevant products for outfit generation');
     return [];
   }
+
+  const { classified: relevantProducts } = reclassifyProducts(sortedProducts);
 
   // Determine user's style archetypes
   let primaryArchetype = 'casual_chic';

@@ -21,7 +21,7 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
   MINIMALIST: {
     key: 'MINIMALIST',
     label: 'Minimalist',
-    paletteHints: ['neutraal', 'zwart', 'wit', 'grijs', 'navy'],
+    paletteHints: ['zwart', 'wit', 'grijs', 'navy', 'camel', 'charcoal'],
     silhouettes: ['slim', 'straight', 'clean'],
     materials: ['katoen', 'wol', 'merino', 'leer'],
     formality: 60,
@@ -31,8 +31,8 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
   CLASSIC: {
     key: 'CLASSIC',
     label: 'Classic',
-    paletteHints: ['navy', 'camel', 'wit', 'denim'],
-    silhouettes: ['regular', 'tailored'],
+    paletteHints: ['navy', 'camel', 'wit', 'denim', 'bruin', 'grijs'],
+    silhouettes: ['straight', 'tailored'],
     materials: ['katoen', 'wol', 'denim', 'leer'],
     formality: 70,
     vibe: ['tijdloos', 'verzorgd', 'preppy'],
@@ -41,9 +41,9 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
   SMART_CASUAL: {
     key: 'SMART_CASUAL',
     label: 'Smart Casual',
-    paletteHints: ['aardetinten', 'navy', 'wit'],
+    paletteHints: ['aardetinten', 'navy', 'wit', 'camel', 'grijs', 'bruin'],
     silhouettes: ['relaxed', 'tailored'],
-    materials: ['katoen', 'linnen', 'suède', 'wol'],
+    materials: ['katoen', 'linnen', 'leer', 'wol'],
     formality: 50,
     vibe: ['toegankelijk', 'gepolijst'],
     staples: ['linnen overhemd', 'chino', 'suède loafer', 'overshirt'],
@@ -51,8 +51,8 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
   STREETWEAR: {
     key: 'STREETWEAR',
     label: 'Streetwear',
-    paletteHints: ['zwart', 'contrast', 'graphic'],
-    silhouettes: ['relaxed', 'oversized', 'boxy'],
+    paletteHints: ['zwart', 'contrast', 'wit', 'grijs'],
+    silhouettes: ['relaxed', 'oversized'],
     materials: ['fleece', 'tech', 'denim', 'canvas'],
     formality: 20,
     vibe: ['expressief', 'urban', 'sportief'],
@@ -61,7 +61,7 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
   ATHLETIC: {
     key: 'ATHLETIC',
     label: 'Athletic',
-    paletteHints: ['monochrome', 'accentkleur'],
+    paletteHints: ['zwart', 'grijs', 'wit', 'navy', 'monochrome'],
     silhouettes: ['slim', 'relaxed'],
     materials: ['tech', 'stretch', 'mesh'],
     formality: 10,
@@ -71,8 +71,8 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
   AVANT_GARDE: {
     key: 'AVANT_GARDE',
     label: 'Avant-Garde',
-    paletteHints: ['zwart', 'charcoal', 'ton-sur-ton'],
-    silhouettes: ['boxy', 'draped', 'asymmetry'],
+    paletteHints: ['zwart', 'charcoal', 'grijs', 'monochrome', 'contrast'],
+    silhouettes: ['oversized', 'draped', 'cropped'],
     materials: ['wol', 'leer', 'coated', 'tech'],
     formality: 40,
     vibe: ['conceptual', 'edge', 'statement'],
