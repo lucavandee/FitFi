@@ -6,60 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-type DaisyconImage = {
-  size: string;
-  tag: string;
-  type: string;
-  location: string;
-};
-
-type DaisyconProductInfo = {
-  title: string;
-  price: number;
-  price_old: number;
-  brand: string;
-  category: string;
-  category_path: string;
-  color_primary: string;
-  sku: string;
-  description: string;
-  size: string;
-  keywords: string;
-  gender_target: string;
-  in_stock: string;
-  currency: string;
-  link: string;
-  images: DaisyconImage[];
-};
-
-type DaisyconProduct = {
-  update_info: {
-    daisycon_unique_id: string;
-    status: string;
-  };
-  product_info: DaisyconProductInfo;
-};
-
-type DaisyconProgram = {
-  program_info: {
-    id: number;
-    name: string;
-    currency: string;
-    product_count: number;
-  };
-  products: DaisyconProduct[];
-};
-
-type DaisyconFeed = {
-  datafeed: {
-    info: {
-      product_count: number;
-    };
-    programs: DaisyconProgram[];
-  };
-};
-
-function inferCategory(title: string, description: string, categoryPath: string): string {
+function inferCategory(title, description, categoryPath) {
   const text = (title + " " + description + " " + categoryPath).toLowerCase();
   if (/\b(jacket|jas|puffer|anorak|coat|parka|windbreaker|bomber|blazer|mantel)\b/.test(text)) return "outerwear";
   if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|fleece|vest)\b/.test(text)) return "top";
@@ -71,14 +18,14 @@ function inferCategory(title: string, description: string, categoryPath: string)
   return "top";
 }
 
-function inferGender(title: string, genderTarget: string, categoryPath: string): string {
+function inferGender(title, genderTarget, categoryPath) {
   const g = (genderTarget + " " + categoryPath + " " + title).toLowerCase();
   if (g.includes("female") || g.includes("women") || g.includes("vrouw") || g.includes("dames") || g.includes("girl")) return "female";
   if (g.includes("male") || g.includes("men") || g.includes("man") || g.includes("heren") || g.includes("boy")) return "male";
   return "unisex";
 }
 
-function inferStyle(title: string, description: string, brand: string): string {
+function inferStyle(title, description, brand) {
   const text = (title + " " + description + " " + brand).toLowerCase();
   if (/\b(jazz|art|creative|graphic|print|culture|street|urban)\b/.test(text)) return "casual-urban";
   if (/\b(tech|performance|premium|wool|tailored|refined|formal|office)\b/.test(text)) return "smart-casual";
@@ -87,8 +34,8 @@ function inferStyle(title: string, description: string, brand: string): string {
   return "casual";
 }
 
-function extractTags(title: string, description: string, category: string, keywords: string): string[] {
-  const tags: string[] = [category];
+function extractTags(title, description, category, keywords) {
+  const tags = [category];
   const text = (title + " " + description + " " + keywords).toLowerCase();
   const colorWords = ["black", "white", "blue", "navy", "red", "green", "grey", "gray", "cream", "ecru", "lime", "moss", "brown", "beige", "pink", "yellow", "orange", "purple", "khaki", "camel"];
   colorWords.forEach((c) => { if (text.includes(c)) tags.push(c); });
@@ -107,10 +54,10 @@ function extractTags(title: string, description: string, category: string, keywo
   return [...new Set(tags)];
 }
 
-function extractColors(title: string, colorPrimary: string, description: string): string[] {
-  const colors: string[] = [];
+function extractColors(title, colorPrimary, description) {
+  const colors = [];
   if (colorPrimary && colorPrimary.trim()) colors.push(colorPrimary.toLowerCase().trim());
-  const colorMap: Record<string, string> = {
+  const colorMap = {
     black: "black", white: "white", blue: "blue", navy: "navy blue",
     red: "red", green: "green", grey: "grey", gray: "grey",
     cream: "cream", ecru: "ecru", lime: "lime green", moss: "moss green",
@@ -124,110 +71,144 @@ function extractColors(title: string, colorPrimary: string, description: string)
   return colors.length > 0 ? colors : ["unknown"];
 }
 
-function getDefaultImage(images: DaisyconImage[]): string {
+function getDefaultImage(images) {
+  if (!images || images.length === 0) return "";
   const defaultImg = images.find((i) => i.tag === "default" && i.size === "large");
   if (defaultImg) return defaultImg.location;
   const large = images.find((i) => i.size === "large");
   return large?.location ?? images[0]?.location ?? "";
 }
 
-function getAllImages(images: DaisyconImage[]): string[] {
-  return [...new Set(images.map((i) => i.location))];
+function getAllImages(images) {
+  if (!images || images.length === 0) return [];
+  return [...new Set(images.map((i) => i.location).filter(Boolean))];
 }
 
-function stripHtml(html: string): string {
+function stripHtml(html) {
+  if (!html) return "";
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function xmlGetText(xml: string, tag: string): string {
+function xmlGetText(xml, tag) {
   const openTag = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, "i");
-  const selfClose = new RegExp(`<${tag}(?:\\s[^>]*)?/>`, "i");
   const m = xml.match(openTag);
-  if (m) return m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").trim();
-  if (selfClose.test(xml)) return "";
+  if (m) {
+    return m[1]
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'")
+      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+      .trim();
+  }
   return "";
 }
 
-function xmlGetAttr(tag: string, attr: string): string {
+function xmlGetAttr(tag, attr) {
   const re = new RegExp(`${attr}="([^"]*)"`, "i");
   const m = tag.match(re);
   return m ? m[1] : "";
 }
 
-function xmlGetAll(xml: string, tag: string): string[] {
+function xmlGetAll(xml, tag) {
   const re = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>|<${tag}(?:\\s[^>]*)?/>`, "gi");
-  const results: string[] = [];
-  let m: RegExpExecArray | null;
+  const results = [];
+  let m;
   while ((m = re.exec(xml)) !== null) {
     results.push(m[0]);
   }
   return results;
 }
 
-function xmlGetAllWithAttrs(xml: string, tag: string): string[] {
+function xmlGetAllWithAttrs(xml, tag) {
   const re = new RegExp(`<${tag}[^>]*(?:/>|>[\\s\\S]*?</${tag}>)`, "gi");
-  const results: string[] = [];
-  let m: RegExpExecArray | null;
+  const results = [];
+  let m;
   while ((m = re.exec(xml)) !== null) {
     results.push(m[0]);
   }
   return results;
 }
 
-function parseXmlFeed(xmlText: string): DaisyconFeed {
-  if (!xmlText || xmlText.trim().length === 0) {
-    throw new Error("XML feed is leeg");
-  }
+function parseJsonProducts(parsed) {
+  const items = Array.isArray(parsed) ? parsed : parsed?.products ?? parsed?.items ?? [];
+  return items.map((p) => {
+    const images = [];
+    if (p.image_url) images.push({ size: "large", tag: "default", type: "image", location: p.image_url });
+    if (p.images && Array.isArray(p.images)) {
+      p.images.forEach((img) => {
+        if (typeof img === "string") images.push({ size: "medium", tag: "", type: "image", location: img });
+        else if (img.location || img.url) images.push({ size: img.size || "medium", tag: img.tag || "", type: "image", location: img.location || img.url });
+      });
+    }
+    return {
+      update_info: {
+        daisycon_unique_id: String(p.id || p.daisycon_unique_id || p.ean || p.sku || ""),
+        status: p.status || "active",
+      },
+      product_info: {
+        title: p.title || p.name || "",
+        price: parseFloat(p.price || p.sale_price || "0") || 0,
+        price_old: parseFloat(p.price_old || p.original_price || p.list_price || "0") || 0,
+        brand: p.brand || p.brand_name || "",
+        category: p.category || p.category_name || "",
+        category_path: p.category_path || p.category || "",
+        color_primary: p.color || p.color_primary || p.colour || "",
+        sku: p.sku || p.article_number || "",
+        description: p.description || p.short_description || "",
+        size: p.size || "",
+        keywords: p.keywords || p.tags || "",
+        gender_target: p.gender || p.gender_target || p.target_group || "",
+        in_stock: String(p.in_stock ?? p.available ?? p.availability ?? "true"),
+        currency: p.currency || "EUR",
+        link: p.affiliate_link || p.deeplink || p.link || p.url || p.product_url || "",
+        images,
+      },
+    };
+  });
+}
 
-  if (!/<program[\s>]/i.test(xmlText)) {
-    throw new Error("Geen <program> element gevonden in XML feed");
-  }
+function parseXmlFeed(xmlText) {
+  if (!xmlText || xmlText.trim().length === 0) throw new Error("XML feed is leeg");
+  if (!/<product[\s>]/i.test(xmlText)) throw new Error("Geen <product> elementen gevonden in XML feed");
 
-  const fullXml = xmlText;
+  const programName = xmlGetText(xmlText, "name") || xmlGetText(xmlText, "program_name") || "Daisycon Feed";
+  const programId = parseInt(xmlGetText(xmlText, "id") || "0") || 0;
+  const currency = xmlGetText(xmlText, "currency") || "EUR";
 
-  const programName = xmlGetText(fullXml, "name") || "Onbekend programma";
-  const programId = parseInt(xmlGetText(fullXml, "id") || "0") || 0;
-  const currency = xmlGetText(fullXml, "currency") || "EUR";
+  const productBlocks = xmlGetAll(xmlText, "product");
 
-  const productBlocks = xmlGetAll(fullXml, "product");
-
-  const products: DaisyconProduct[] = productBlocks.map((p) => {
+  const products = productBlocks.map((p) => {
     const imageBlocks = xmlGetAllWithAttrs(p, "image");
-    const images: DaisyconImage[] = imageBlocks.map((imgTag) => {
-      const locationAttr = xmlGetAttr(imgTag, "location");
-      const locationText = xmlGetText(imgTag, "image");
-      return {
-        size: xmlGetAttr(imgTag, "size"),
-        tag: xmlGetAttr(imgTag, "tag"),
-        type: xmlGetAttr(imgTag, "type"),
-        location: locationAttr || locationText || "",
-      };
-    });
-
-    const id = xmlGetText(p, "id") || xmlGetText(p, "sku");
-    const status = xmlGetText(p, "status") || "active";
+    const images = imageBlocks.map((imgTag) => ({
+      size: xmlGetAttr(imgTag, "size"),
+      tag: xmlGetAttr(imgTag, "tag"),
+      type: xmlGetAttr(imgTag, "type"),
+      location: xmlGetAttr(imgTag, "location") || xmlGetText(imgTag, "image") || "",
+    }));
 
     return {
       update_info: {
-        daisycon_unique_id: id,
-        status,
+        daisycon_unique_id: xmlGetText(p, "id") || xmlGetText(p, "sku") || xmlGetText(p, "ean") || "",
+        status: xmlGetText(p, "status") || "active",
       },
       product_info: {
-        title: xmlGetText(p, "title") || xmlGetText(p, "name"),
+        title: xmlGetText(p, "title") || xmlGetText(p, "name") || "",
         price: parseFloat(xmlGetText(p, "price") || "0") || 0,
         price_old: parseFloat(xmlGetText(p, "price_old") || xmlGetText(p, "original_price") || "0") || 0,
         brand: xmlGetText(p, "brand"),
         category: xmlGetText(p, "category"),
         category_path: xmlGetText(p, "category_path") || xmlGetText(p, "category"),
-        color_primary: xmlGetText(p, "color") || xmlGetText(p, "color_primary"),
-        sku: xmlGetText(p, "sku"),
-        description: xmlGetText(p, "description"),
+        color_primary: xmlGetText(p, "color") || xmlGetText(p, "color_primary") || xmlGetText(p, "colour"),
+        sku: xmlGetText(p, "sku") || xmlGetText(p, "article_number"),
+        description: xmlGetText(p, "description") || xmlGetText(p, "long_description"),
         size: xmlGetText(p, "size"),
         keywords: xmlGetText(p, "keywords"),
-        gender_target: xmlGetText(p, "gender") || xmlGetText(p, "gender_target"),
+        gender_target: xmlGetText(p, "gender") || xmlGetText(p, "gender_target") || xmlGetText(p, "target_group"),
         in_stock: xmlGetText(p, "in_stock") || xmlGetText(p, "availability") || "true",
         currency: xmlGetText(p, "currency") || currency,
-        link: xmlGetText(p, "affiliate_link") || xmlGetText(p, "link") || xmlGetText(p, "url"),
+        link: xmlGetText(p, "affiliate_link") || xmlGetText(p, "deeplink") || xmlGetText(p, "link") || xmlGetText(p, "url"),
         images,
       },
     };
@@ -241,11 +222,11 @@ function parseXmlFeed(xmlText: string): DaisyconFeed {
   };
 }
 
-async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
+async function fetchAndParseFeed(feedUrl) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 55000);
 
-  let feedRes: Response;
+  let feedRes;
   try {
     feedRes = await fetch(feedUrl, {
       signal: controller.signal,
@@ -263,47 +244,38 @@ async function fetchAndParseFeed(feedUrl: string): Promise<DaisyconFeed> {
   const contentType = feedRes.headers.get("content-type") ?? "";
   const rawText = await feedRes.text();
 
-  if (!rawText || rawText.trim().length === 0) {
-    throw new Error("Feed is leeg — controleer de feed URL en media_id");
-  }
+  if (!rawText || rawText.trim().length === 0) throw new Error("Feed is leeg — controleer de feed URL en media_id");
 
   const trimmed = rawText.trimStart();
   const isXml = contentType.includes("xml") || trimmed.startsWith("<");
   const isJson = contentType.includes("json") || trimmed.startsWith("{") || trimmed.startsWith("[");
 
   if (isJson) {
+    let parsed;
     try {
-      const parsed = JSON.parse(rawText);
-      if (Array.isArray(parsed)) {
-        return {
-          datafeed: {
-            info: { product_count: parsed.length },
-            programs: [{
-              program_info: { id: 0, name: "Daisycon Feed", currency: "EUR", product_count: parsed.length },
-              products: parsed,
-            }],
-          },
-        };
-      }
-      return parsed as DaisyconFeed;
+      parsed = JSON.parse(rawText);
     } catch {
       throw new Error("Feed kon niet als JSON worden geparseerd: " + rawText.slice(0, 200));
     }
+
+    if (parsed?.datafeed?.programs) return parsed;
+
+    const products = parseJsonProducts(parsed);
+    const programName = parsed?.program_name || parsed?.datafeed?.info?.program_name || "Daisycon Feed";
+    return {
+      datafeed: {
+        info: { product_count: products.length },
+        programs: [{ program_info: { id: 0, name: programName, currency: "EUR", product_count: products.length }, products }],
+      },
+    };
   }
 
-  if (isXml) {
-    return parseXmlFeed(rawText);
-  }
+  if (isXml) return parseXmlFeed(rawText);
 
   throw new Error(`Onbekend feed formaat (content-type: ${contentType}). Eerste 200 tekens: ${rawText.slice(0, 200)}`);
 }
 
-async function processFeed(
-  supabaseAdmin: ReturnType<typeof createClient>,
-  feed: DaisyconFeed,
-  userId: string,
-  campaignId?: string,
-): Promise<{ programName: string; total: number; inserted: number; skipped: number; errors: string[]; importLogId?: string }> {
+async function processFeed(supabaseAdmin, feed, userId, campaignId) {
   const program = feed.datafeed.programs[0];
   const { id: programId, name: programName } = program.program_info;
   const products = program.products;
@@ -322,33 +294,33 @@ async function processFeed(
 
   let inserted = 0;
   let skipped = 0;
-  const errors: string[] = [];
+  const errors = [];
   const BATCH_SIZE = 50;
 
   for (let i = 0; i < products.length; i += BATCH_SIZE) {
     const batch = products.slice(i, i + BATCH_SIZE);
 
     const rows = batch
-      .filter((p) => p.update_info.status !== "inactive" && p.update_info.status !== "deleted")
+      .filter((p) => p.update_info?.status !== "inactive" && p.update_info?.status !== "deleted")
       .map((p) => {
         const info = p.product_info;
         const description = stripHtml(info.description ?? "");
-        const category = inferCategory(info.title, description, info.category_path ?? "");
-        const gender = inferGender(info.title, info.gender_target ?? "", info.category_path ?? "");
+        const category = inferCategory(info.title || "", description, info.category_path ?? "");
+        const gender = inferGender(info.title || "", info.gender_target ?? "", info.category_path ?? "");
         const brandName = info.brand?.trim() || programName;
-        const style = inferStyle(info.title, description, brandName);
-        const tags = extractTags(info.title, description, category, info.keywords ?? "");
-        const colors = extractColors(info.title, info.color_primary ?? "", description);
+        const style = inferStyle(info.title || "", description, brandName);
+        const tags = extractTags(info.title || "", description, category, info.keywords ?? "");
+        const colors = extractColors(info.title || "", info.color_primary ?? "", description);
         const imageUrl = getDefaultImage(info.images ?? []);
         const allImages = getAllImages(info.images ?? []);
-        const externalId = p.update_info.daisycon_unique_id || info.sku || "";
+        const externalId = p.update_info?.daisycon_unique_id || info.sku || "";
 
         return {
           external_id: externalId,
           source: "daisycon",
-          name: info.title,
+          name: info.title || "",
           brand: brandName,
-          price: info.price,
+          price: info.price || 0,
           original_price: info.price_old ?? null,
           image_url: imageUrl,
           images: allImages,
@@ -419,7 +391,7 @@ async function processFeed(
   return { programName, total: products.length, inserted, skipped, errors, importLogId: importLog?.id };
 }
 
-Deno.serve(async (req: Request) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
@@ -434,13 +406,13 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      Deno.env.get("SUPABASE_URL"),
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
     );
 
     const userClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      Deno.env.get("SUPABASE_URL"),
+      Deno.env.get("SUPABASE_ANON_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
 
@@ -452,7 +424,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    let body: { feed?: DaisyconFeed; feedUrl?: string; campaignId?: string };
+    let body;
     try {
       body = await req.json();
     } catch {
@@ -462,7 +434,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    let feed: DaisyconFeed;
+    let feed;
 
     if (body.feedUrl) {
       try {
