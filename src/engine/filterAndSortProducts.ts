@@ -2,6 +2,7 @@ import { Product, UserProfile, StylePreferences, ProductCategory } from './types
 import { calculateMatchScore } from './calculateMatchScore';
 import { getProductCategory } from './helpers';
 import { filterProductsByColorSeason, scoreProductColorCompatibility } from './colorSeasonFiltering';
+import { classifyProduct } from './productClassifier';
 
 /**
  * Filters and sorts products based on user preferences with enhanced validation
@@ -24,41 +25,9 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
 
   console.log(`[FilterAndSort] Processing ${products.length} products for user ${user.name || user.id}`);
 
-  const WEARABLE_CATEGORIES = new Set([
-    'top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress', 'jumpsuit',
-    'tops', 'bottoms', 'shoes', 'shoe', 'jacket', 'coat', 'bag', 'bags',
-    'shirt', 'blouse', 'trui', 'broek', 'rok', 'schoen', 'sneaker', 'laars',
-    'jas', 'jack', 'blazer', 'jurk', 'overall', 'tas', 'sjaal', 'riem', 'pet',
-    'sweater', 'hoodie', 'vest', 'polo', 't-shirt', 'cardigan', 'overhemd',
-    'pantalon', 'chino', 'jeans', 'shorts',
-  ]);
-
-  const NON_OUTFIT_PATTERNS = [
-    'onderbroek', 'boxer', 'slip', 'bh', 'bralette', 'string', 'thong',
-    'ondergoed', 'lingerie', 'trunk', 'trunks', 'brief',
-    'pyjama', 'nachthem', 'slaap', 'ochtendjas', 'badjas',
-    'sok', 'sokken', 'sock', 'socks', 'panty', 'kousen',
-    'bikini', 'badpak', 'zwembroek', 'zwemshort', 'zwemtop',
-    'gordijn', 'curtain', 'kussen', 'cushion', 'kaars', 'candle',
-    'handdoek', 'towel', 'laken', 'dekbed', 'plaid',
-    'kunstnagel', 'press-on', 'parfum', 'make-up',
-    'romper', 'kruippak', 'slab',
-    'telefoonhoesje', 'sleutelhanger', 'sticker', 'poster',
-    'slipper', 'badslip', 'teenslipper', 'flip-flop',
-  ];
-
   const isWearable = (p: Product) => {
-    const cat = (p.category || p.type || '').toLowerCase().trim();
-    if (!cat) return false;
-
-    const nameCheck = [p.name || '', p.description || '', p.type || ''].join(' ').toLowerCase();
-    if (NON_OUTFIT_PATTERNS.some(pat => nameCheck.includes(pat))) return false;
-
-    if (WEARABLE_CATEGORIES.has(cat)) return true;
-    for (const v of WEARABLE_CATEGORIES) {
-      if (cat.includes(v)) return true;
-    }
-    return false;
+    const result = classifyProduct(p);
+    return !result.rejected;
   };
 
   // Validate and filter products with proper data
@@ -80,9 +49,8 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
       return false;
     }
 
-    // Image validation (optional but recommended)
     if (!product.imageUrl) {
-      console.warn('[FilterAndSort] Product missing image URL:', product.id);
+      return false;
     }
 
     return true;

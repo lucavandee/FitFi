@@ -24,7 +24,8 @@ export function scoreProductAgainstArchetype(p: ProductLike, key: ArchetypeKey):
   const colorScore = tokenMatchScore(p.colorTags, a.paletteHints);
   const matScore = tokenMatchScore(p.materialTags, a.materials);
   const silScore = tokenMatchScore(p.silhouetteTags, a.silhouettes);
-  const formScore = p.formality == null ? 0.5 : 1 - clamp01(Math.abs(p.formality - a.formality));
+  const archetypeFormality = a.formality > 1 ? a.formality / 100 : a.formality;
+  const formScore = p.formality == null ? 0.5 : 1 - clamp01(Math.abs(p.formality - archetypeFormality));
 
   // simpele gewichten per dimensie – later tunen
   const score = clamp01(0.35 * colorScore + 0.25 * matScore + 0.25 * silScore + 0.15 * formScore);

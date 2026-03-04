@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngine";
 import { generateNovaExplanation } from "@/engine/explainOutfit";
 import { filterByGender, getUserGender } from "@/services/products/genderFilter";
+import { reclassifyProducts } from "@/engine/productClassifier";
 import { curatedMaleProducts } from "@/data/curatedProducts";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
@@ -52,12 +53,14 @@ class OutfitService {
         return this.getFallbackProducts();
       }
 
-      const products = data.map(this.mapDatabaseProduct);
+      const rawProducts = data.map(this.mapDatabaseProduct);
+
+      const { classified: products } = reclassifyProducts(rawProducts);
 
       this.productsCache.set(cacheKey, products);
       this.cacheTimestamps.set(cacheKey, Date.now());
 
-      console.log(`[OutfitService] Loaded ${products.length} ${gender || 'all'}-gender products`);
+      console.log(`[OutfitService] Loaded ${products.length} ${gender || 'all'}-gender classified products`);
       return products;
     } catch (error) {
       console.error('[OutfitService] Exception fetching products:', error);

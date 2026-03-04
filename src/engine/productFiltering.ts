@@ -1,4 +1,5 @@
 import { Product } from './types';
+import { classifyProduct } from './productClassifier';
 
 /**
  * Complete product filtering pipeline
@@ -240,13 +241,13 @@ function isWearableProduct(product: Product): boolean {
 
 /**
  * Filter out products with missing required fields or that are not wearable clothing.
+ * Uses the smart classifier to reject non-clothing items.
  */
 function filterByValidation(
   products: Product[],
   removed: string[] = []
 ): Product[] {
   return products.filter(product => {
-    // Check required fields
     if (!product.id) {
       removed.push('Product missing ID');
       return false;
@@ -257,29 +258,20 @@ function filterByValidation(
       return false;
     }
 
-    if (!product.category) {
-      removed.push(`${product.id} (${product.name}): missing category`);
+    const classification = classifyProduct(product);
+    if (classification.rejected) {
+      removed.push(`${product.id} (${product.name}): ${classification.reason}`);
       return false;
     }
 
-    if (!isWearableProduct(product)) {
-      removed.push(`${product.id} (${product.name}): non-fashion category "${product.category}" rejected`);
-      return false;
-    }
-
-    if (isNonOutfitProduct(product)) {
-      removed.push(`${product.id} (${product.name}): non-outfit item rejected`);
-      return false;
-    }
-
-    // Warn about missing image but don't filter out
     if (!product.imageUrl) {
-      console.warn(`[ProductFiltering] ${product.id} (${product.name}): missing image URL`);
+      removed.push(`${product.id} (${product.name}): missing image URL`);
+      return false;
     }
 
-    // Warn about missing price but don't filter out
     if (typeof product.price !== 'number' || product.price <= 0) {
-      console.warn(`[ProductFiltering] ${product.id} (${product.name}): missing or invalid price`);
+      removed.push(`${product.id} (${product.name}): missing or invalid price`);
+      return false;
     }
 
     return true;

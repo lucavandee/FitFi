@@ -1,5 +1,6 @@
 import type { CategoryRatio, Season } from './types';
 import { Product, ProductCategory, Weather } from './types';
+import { classifyProduct } from './productClassifier';
 
 /**
  * Determines the current season based on the current date
@@ -190,18 +191,22 @@ function mapProductTypeToCategory(type: string | undefined): ProductCategory {
 }
 
 /**
- * Gets the category of a product
- * 
- * @param product - The product to get the category for
- * @returns The product category
+ * Gets the category of a product using the smart classifier.
+ * The classifier analyzes product name, type, and description
+ * to overcome broken database categories (e.g., sneakers labeled as "top").
  */
 export function getProductCategory(product: Product): ProductCategory {
-  // If product has an explicit category field, use that
+  const result = classifyProduct(product);
+  if (result.rejected) return ProductCategory.OTHER;
+
+  const validCategories = Object.values(ProductCategory) as string[];
+  if (validCategories.includes(result.category)) {
+    return result.category as ProductCategory;
+  }
+
   if (product.category) {
     return mapProductTypeToCategory(product.category);
   }
-  
-  // Otherwise, use the type field
   return mapProductTypeToCategory(product.type);
 }
 
