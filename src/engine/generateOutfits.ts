@@ -15,6 +15,7 @@ import {
   isProductSuitableForWeather,
   getTypicalWeatherForSeason
 } from './helpers';
+import { classifyProduct } from './productClassifier';
 
 // Maps all archetype string variants (from quiz, from profile-mapping, from archetypeDetector)
 // to the canonical ARCHETYPES config keys
@@ -895,10 +896,10 @@ function groupProductsByCategory(products: Product[]): Record<ProductCategory, P
     result[category] = [];
   });
 
-  // Group products by category — exclude OTHER (non-fashion items)
   products.forEach(product => {
     const category = getProductCategory(product);
     if (category === ProductCategory.OTHER) return;
+    if (!isFashionAppropriate(product)) return;
     result[category].push(product);
   });
 
@@ -982,6 +983,23 @@ function weightedRandomPick<T extends { combined: number }>(items: T[], topN: nu
   return candidates[0];
 }
 
+function isFashionAppropriate(product: Product): boolean {
+  const result = classifyProduct(product);
+  if (result.rejected) return false;
+
+  const text = [product.name, product.description].filter(Boolean).join(' ').toLowerCase();
+
+  const sportSignals = /\b(fg|ag|sg|mg|tf|ic)\b|\b(voetbal|football|soccer|rugby|hockey|basketbal|fitness|crossfit|spinning|yoga|pilates|marathon|triathlon|cycling|wielren|hardloop|running\s+shoe|trail\s+run|cleat|crampon|keepershandschoen|scheenbeschermer|shin\s+guard)\b/i;
+  if (sportSignals.test(text)) return false;
+
+  const kidsSignals = /\b(baby|peuter|kleuter|newborn|infant|kinder|junior|kids)\b/i;
+  if (kidsSignals.test(text)) return false;
+
+  if (/\bset\s+van\s+\d/i.test(text) || /\b\d+[- ]?(pack|stuks)\b/i.test(text)) return false;
+
+  return true;
+}
+
 function selectProductForCategory(
   productsByCategory: Record<ProductCategory, Product[]>,
   category: ProductCategory,
@@ -1011,11 +1029,15 @@ function selectProductForCategory(
     ? seasonalProducts.filter(p => isProductSuitableForWeather(p, weather))
     : seasonalProducts;
 
-  const productsToUse = weatherFiltered.length > 0
+  const fashionFiltered = (weatherFiltered.length > 0
     ? weatherFiltered
     : seasonalProducts.length > 0
       ? seasonalProducts
-      : pool;
+      : pool
+  ).filter(isFashionAppropriate);
+
+  const productsToUse = fashionFiltered.length > 0 ? fashionFiltered : pool.filter(isFashionAppropriate);
+  if (productsToUse.length === 0) return null;
 
   const primaryKey = resolveArchetypeKey(primaryArchetype);
   const mix: ArchetypeWeights = { [primaryKey]: 1 - (mixFactor ?? 0) };

@@ -6,13 +6,19 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior)\b/;
-const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|candle|kaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|vaas|spiegel|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|voetbalset|voetbalshirt|keepershandschoen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast)\b/;
+const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior|kinder)\b/;
+const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|candle|kaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|vaas|spiegel|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast|voetbal|football|soccer|voetbalset|voetbalshirt|voetbalschoen|voetbalbroek|keepershandschoen|scheenbeschermer|shin\s?guard|rugby|hockey|handbal|basketbal|wielren|cycling|fietsbroek|fietsshirt|wielershirt|hardloop|running\s?shoe|trail\s?run|marathon|tennisschoen|tennisrok|golfschoen|golfbroek|wandelschoen|bergschoen|klimschoen|cleat|crampon|crossfit|spinning|sportbeha|sport\s?bh|skibroek|skipak|snowboard|skischoenen|skistok|wintersport|wetsuit|duik|snorkel|surfboard|multipack|hemd)\b/;
+const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic)\b/i;
+const SET_OF_REGEX = /\bset\s+van\s+\d/i;
+const MULTIPACK_REGEX = /\b\d+[- ]?(pack|stuks|set)\b/i;
 
-function isFashionProduct(title, categoryPath) {
-  const text = (title + " " + categoryPath).toLowerCase();
+function isFashionProduct(title, categoryPath, description = "") {
+  const text = (title + " " + categoryPath + " " + description).toLowerCase();
   if (EXCLUDED_CATEGORY_KEYWORDS.test(text)) return false;
   if (EXCLUDED_PRODUCT_KEYWORDS.test(text)) return false;
+  if (SPORT_FOOTWEAR_REGEX.test(title)) return false;
+  if (SET_OF_REGEX.test(title)) return false;
+  if (MULTIPACK_REGEX.test(title)) return false;
   return true;
 }
 
@@ -320,7 +326,7 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
 
     const rows = batch
       .filter((p) => p.update_info?.status !== "inactive" && p.update_info?.status !== "deleted")
-      .filter((p) => isFashionProduct(p.product_info?.title || "", p.product_info?.category_path || ""))
+      .filter((p) => isFashionProduct(p.product_info?.title || "", p.product_info?.category_path || "", p.product_info?.description || ""))
       .map((p) => {
         const info = p.product_info;
         const description = stripHtml(info.description ?? "");
