@@ -221,9 +221,18 @@ export default function EnhancedResultsPage() {
   };
 
   const { data: realOutfits, loading: outfitsLoading } = useOutfits({
-    archetype: archetypeName,
+    archetype: archetypeKey,
+    secondaryArchetype: archetypeDetectionResult?.secondary || undefined,
+    mixFactor: archetypeDetectionResult?.secondary ? 0.3 : 0,
     limit: 9,
-    enabled: hasCompletedQuiz
+    enabled: hasCompletedQuiz,
+    gender: answers?.gender as any,
+    fit: answers?.fit,
+    prints: answers?.prints,
+    goals: answers?.goals,
+    materials: answers?.materials,
+    colorProfile: activeColorProfile,
+    occasions: answers?.occasions,
   });
 
   const seeds: OutfitSeed[] = React.useMemo(() => {

@@ -1,4 +1,4 @@
-import type { ColorProfile, Archetype } from "./types";
+import type { ColorProfile } from "./types";
 
 export type OutfitPiece = {
   type: "top" | "bottom" | "shoes" | "accessory";
@@ -15,8 +15,15 @@ export type OutfitSeed = {
   tags?: string[];
 };
 
-const BASE_BY_ARCHETYPE: Record<Archetype, Omit<OutfitSeed, "id">[]> = {
-  "Clean Minimal": [
+const LEGACY_TO_KEY: Record<string, string> = {
+  "Clean Minimal": "MINIMALIST",
+  "Smart Casual": "SMART_CASUAL",
+  "Sporty Sharp": "ATHLETIC",
+  "Classic Soft": "CLASSIC",
+};
+
+const SEED_OUTFITS: Record<string, Omit<OutfitSeed, "id">[]> = {
+  MINIMALIST: [
     { title: "Office Minimal", vibe: "Werk / meeting", notes: "Strakke lijnen, laag contrast; nette sneakers of loafers." },
     { title: "Monochrome Light", vibe: "Tonal", notes: "Twee lagen; lang silhouet; minimaal detail." },
     { title: "Soft Greys", vibe: "Smart", notes: "Wol + katoen; subtiele textuur voor diepte." },
@@ -24,7 +31,7 @@ const BASE_BY_ARCHETYPE: Record<Archetype, Omit<OutfitSeed, "id">[]> = {
     { title: "Light Layers", vibe: "Transseason", notes: "Lichte layer met cropped broek voor lengte." },
     { title: "Weekend Clean", vibe: "Weekend", notes: "Polo of knit met rechte chino." },
   ],
-  "Smart Casual": [
+  SMART_CASUAL: [
     { title: "Clean Casual", vibe: "Smart-casual", notes: "Neutrals met rustige textuur; draagbaar elke dag." },
     { title: "Warm Neutral Mix", vibe: "Casual", notes: "Zachte contrasten; koord of rib voor textuur." },
     { title: "Everyday Denim", vibe: "Casual", notes: "Net denim, hoogwaardig breiwerk." },
@@ -32,7 +39,23 @@ const BASE_BY_ARCHETYPE: Record<Archetype, Omit<OutfitSeed, "id">[]> = {
     { title: "City Stroll", vibe: "Leisure", notes: "Comfortabele sneakers; compacte tas." },
     { title: "Dinner Casual", vibe: "Avond", notes: "Donkerdere basis, één verfijnd accent." },
   ],
-  "Sporty Sharp": [
+  CLASSIC: [
+    { title: "Soft Tonals", vibe: "Casual", notes: "Zachte tonale mix; cozy knits centraal." },
+    { title: "Cardigan Set", vibe: "Smart-casual", notes: "Cardigan + tee; warm en rustig." },
+    { title: "Relaxed Chino", vibe: "Leisure", notes: "Ruimvallend silhouet; lage contrasten." },
+    { title: "Knit Dress-Down", vibe: "Casual", notes: "Breiwerk met relaxte broek." },
+    { title: "Weekend Layers", vibe: "Weekend", notes: "Layering met zachte stoffen." },
+    { title: "Quiet Evening", vibe: "Avond", notes: "Tonal, subtiele glans in accessoire." },
+  ],
+  STREETWEAR: [
+    { title: "Urban Layers", vibe: "Streetwear", notes: "Hoodie + oversized jacket; chunky sneakers." },
+    { title: "Cargo Casual", vibe: "Casual", notes: "Cargo pants met graphic tee en bomber jacket." },
+    { title: "Skate Minimal", vibe: "Relaxed", notes: "Loose tee, wide jeans, canvas sneakers." },
+    { title: "Tech Street", vibe: "Urban", notes: "Nylon jacket, joggers, retro runner." },
+    { title: "Weekend Hoodie", vibe: "Leisure", notes: "Premium hoodie met straight jeans." },
+    { title: "Statement Sneaker", vibe: "Statement", notes: "Monochrome outfit, opvallende sneaker." },
+  ],
+  ATHLETIC: [
     { title: "Technical Minimal", vibe: "Sportief-net", notes: "Schone performance-stoffen, geen grote logo's." },
     { title: "Track Smart", vibe: "Athleisure", notes: "Nette jogger met structured top." },
     { title: "Studio to Street", vibe: "Casual", notes: "Stretch top, cleane runner." },
@@ -40,13 +63,13 @@ const BASE_BY_ARCHETYPE: Record<Archetype, Omit<OutfitSeed, "id">[]> = {
     { title: "Hybrid Hoodie", vibe: "Smart", notes: "Fijne hoodie onder strak overshirt." },
     { title: "Rest Day Uniform", vibe: "Leisure", notes: "Zachte fleece + premium tee." },
   ],
-  "Classic Soft": [
-    { title: "Soft Tonals", vibe: "Casual", notes: "Zachte tonale mix; cozy knits centraal." },
-    { title: "Cardigan Set", vibe: "Smart-casual", notes: "Cardigan + tee; warm en rustig." },
-    { title: "Relaxed Chino", vibe: "Leisure", notes: "Ruimvallend silhouet; lage contrasten." },
-    { title: "Knit Dress-Down", vibe: "Casual", notes: "Breiwerk met relaxte broek." },
-    { title: "Weekend Layers", vibe: "Weekend", notes: "Layering met zachte stoffen." },
-    { title: "Quiet Evening", vibe: "Avond", notes: "Tonal, subtiele glans in accessoire." },
+  AVANT_GARDE: [
+    { title: "Draped Layers", vibe: "Avant-garde", notes: "Asymmetrische silhouetten met monochrome kleuren." },
+    { title: "Statement Mix", vibe: "Creatief", notes: "Onverwachte combinaties, bold texturen." },
+    { title: "Dark Minimal", vibe: "Editorial", notes: "All-black met interessante volumes." },
+    { title: "Deconstructed", vibe: "Art", notes: "Raw edges, oversized proportions." },
+    { title: "Gallery Look", vibe: "Smart", notes: "Clean maar onconventioneel; een statement piece." },
+    { title: "Night Creative", vibe: "Avond", notes: "Donkere basis met tactiele textuur." },
   ],
 };
 
@@ -86,7 +109,7 @@ function getSeasonalColors(c: ColorProfile): { base: string[]; accent: string[] 
 
 function generateOutfitPieces(
   outfitTitle: string,
-  archetype: Archetype,
+  _archetype: string,
   colors: { base: string[]; accent: string[] }
 ): OutfitPiece[] {
   const baseColors = colors.base;
@@ -132,17 +155,20 @@ function generateOutfitPieces(
   ];
 }
 
-export function getSeedOutfits(color: ColorProfile, archetype: Archetype) {
-  const base = BASE_BY_ARCHETYPE[archetype];
+export function getSeedOutfits(color: ColorProfile, archetype: string): OutfitSeed[] {
+  const key = LEGACY_TO_KEY[archetype] || archetype;
+  const base = SEED_OUTFITS[key] || SEED_OUTFITS.SMART_CASUAL;
+  if (!base) return [];
+
   const { palette, accentTip } = seasonText(color);
   const seasonalColors = getSeasonalColors(color);
 
   return base.map((b, i) => ({
-    id: `${archetype.replace(/\s+/g, "")}-${color.season}-${i + 1}`,
+    id: `${key}-${color.season}-${i + 1}`,
     title: b.title,
     vibe: b.vibe,
     notes: `${b.notes} Palet: ${palette}. Tip: ${accentTip}.`,
-    pieces: generateOutfitPieces(b.title, archetype, seasonalColors),
-    tags: [archetype, color.season, color.temperature, color.contrast],
+    pieces: generateOutfitPieces(b.title, key, seasonalColors),
+    tags: [key, color.season, color.temperature, color.contrast],
   }));
 }

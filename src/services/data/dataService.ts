@@ -1,13 +1,15 @@
 import { supabase } from "@/lib/supabaseClient";
 import type { BoltProduct, Outfit, FitFiUserProfile, Tribe, DataResponse } from "./types";
+import generateOutfits from "@/engine/generateOutfits";
+import type { Product as EngineProduct, Outfit as EngineOutfit, OutfitGenerationOptions } from "@/engine/types";
 
 const NOW = () => new Date().toISOString();
 
 const FALLBACK_PRODUCTS: BoltProduct[] = [
-  { id: "p-1", title: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#" },
-  { id: "p-2", title: "Licht Overshirt", brand: "ARKET", price: 89, imageUrl: "/images/fallbacks/top.jpg", retailer: "Generic", url: "#" },
-  { id: "p-3", title: "Slim Jeans", brand: "Levi's", price: 119, imageUrl: "/images/fallbacks/bottom.jpg", retailer: "Generic", url: "#" },
-  { id: "p-4", title: "Wol Blend Coat", brand: "COS", price: 190, imageUrl: "/images/fallbacks/default.jpg", retailer: "Generic", url: "#" },
+  { id: "p-1", title: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#", category: "footwear" },
+  { id: "p-2", title: "Licht Overshirt", brand: "ARKET", price: 89, imageUrl: "/images/fallbacks/top.jpg", retailer: "Generic", url: "#", category: "top" },
+  { id: "p-3", title: "Slim Jeans", brand: "Levi's", price: 119, imageUrl: "/images/fallbacks/bottom.jpg", retailer: "Generic", url: "#", category: "bottom" },
+  { id: "p-4", title: "Wol Blend Coat", brand: "COS", price: 190, imageUrl: "/images/fallbacks/default.jpg", retailer: "Generic", url: "#", category: "outerwear" },
 ];
 
 const FALLBACK_OUTFITS: Outfit[] = [
@@ -84,75 +86,119 @@ export async function fetchProducts(_opts?: {
   }
 }
 
+function toEngineProduct(row: Record<string, any>): EngineProduct {
+  return {
+    id: row.id,
+    name: row.name || row.title || "",
+    brand: row.brand,
+    price: typeof row.price === "number" ? row.price : parseFloat(row.price) || 0,
+    imageUrl: row.image_url,
+    category: row.category,
+    description: row.description,
+    tags: row.tags || [],
+    colors: row.colors || [],
+    gender: row.gender,
+    sizes: row.sizes || [],
+    affiliateUrl: row.affiliate_url || row.product_url,
+    productUrl: row.product_url || row.affiliate_url,
+    retailer: row.retailer,
+    style: row.style,
+  };
+}
+
+function engineToBoltOutfit(eo: EngineOutfit): Outfit {
+  const products: BoltProduct[] = eo.products.map(p => ({
+    id: p.id,
+    title: p.name,
+    name: p.name,
+    brand: p.brand,
+    price: p.price,
+    imageUrl: p.imageUrl,
+    image: p.imageUrl,
+    url: p.affiliateUrl || p.productUrl || "#",
+    retailer: p.retailer,
+    category: p.category,
+    description: p.description,
+    tags: p.tags || [],
+    colors: p.colors || [],
+    gender: p.gender as BoltProduct["gender"],
+  }));
+
+  return {
+    id: eo.id,
+    title: eo.title,
+    products,
+    match: eo.matchPercentage,
+    tags: eo.tags,
+    season: eo.season,
+  };
+}
+
 export async function fetchOutfits(_opts?: {
   gender?: 'male' | 'female' | 'unisex';
   archetype?: string;
+  secondaryArchetype?: string;
+  mixFactor?: number;
   season?: string;
   limit?: number;
+  fit?: string;
+  prints?: string;
+  goals?: string[];
+  materials?: string[];
+  colorProfile?: any;
+  occasions?: string[];
 }): Promise<DataResponse<Outfit[]>> {
   try {
-    const productsResponse = await fetchProducts({
-      gender: _opts?.gender,
-      limit: 50
-    });
-
-    if (productsResponse.source === 'fallback' || !productsResponse.data || productsResponse.data.length < 10) {
+    const client = supabase();
+    if (!client) {
       return wrap([...FALLBACK_OUTFITS], "fallback");
     }
 
-    const products = productsResponse.data;
-    const outfits: Outfit[] = [];
+    const archetype = _opts?.archetype || "SMART_CASUAL";
     const limit = _opts?.limit || 6;
 
-    const categories = {
-      top: products.filter(p =>
-        p.category === 'top' ||
-        p.category === "Polo's & T-shirts" ||
-        p.category === 'Shirting' ||
-        p.category === 'Overshirts'
-      ),
-      bottom: products.filter(p =>
-        p.category === 'bottom' ||
-        p.category === 'Trousers'
-      ),
-      footwear: products.filter(p =>
-        p.category === 'footwear'
-      ),
-      outerwear: products.filter(p =>
-        p.category === 'outerwear' ||
-        p.category === 'Outerwear' ||
-        p.category === 'Knitwear' ||
-        p.category === 'Sweatshirts'
-      ),
-      accessory: products.filter(p =>
-        p.category === 'accessory' ||
-        p.category === 'Accessories'
-      ),
-    };
+    let query = client
+      .from("products")
+      .select("*")
+      .eq("in_stock", true);
 
-    for (let i = 0; i < limit; i++) {
-      const outfitProducts: BoltProduct[] = [];
-
-      if (categories.top.length > i) outfitProducts.push(categories.top[i]);
-      if (categories.bottom.length > i) outfitProducts.push(categories.bottom[i]);
-      if (categories.footwear.length > Math.floor(i/2)) outfitProducts.push(categories.footwear[Math.floor(i/2)]);
-      if (i < 3 && categories.outerwear.length > i) outfitProducts.push(categories.outerwear[i]);
-
-      if (outfitProducts.length >= 2) {
-        outfits.push({
-          id: `outfit-${i + 1}`,
-          title: i === 0 ? 'Smart Casual — Minimal' : i === 1 ? 'Urban Clean' : `Look ${i + 1}`,
-          products: outfitProducts
-        });
-      }
+    if (_opts?.gender && _opts.gender !== "unisex") {
+      query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
     }
 
-    if (outfits.length === 0) {
+    query = query.limit(300);
+
+    const { data, error } = await query;
+
+    if (error || !data || data.length < 10) {
       return wrap([...FALLBACK_OUTFITS], "fallback");
     }
 
-    return wrap(outfits, "supabase");
-  } catch (error) {
+    const engineProducts = data.map(toEngineProduct);
+
+    const options: OutfitGenerationOptions = {};
+    if (_opts?.fit) options.fit = _opts.fit;
+    if (_opts?.prints) options.prints = _opts.prints;
+    if (_opts?.goals) options.goals = _opts.goals;
+    if (_opts?.materials) options.materials = _opts.materials;
+    if (_opts?.colorProfile) options.colorProfile = _opts.colorProfile;
+    if (_opts?.occasions) options.preferredOccasions = _opts.occasions;
+
+    const engineOutfits = generateOutfits(
+      archetype,
+      engineProducts,
+      limit,
+      _opts?.secondaryArchetype,
+      _opts?.mixFactor ?? 0.3,
+      options
+    );
+
+    if (!engineOutfits || engineOutfits.length === 0) {
+      return wrap([...FALLBACK_OUTFITS], "fallback");
+    }
+
+    return wrap(engineOutfits.map(engineToBoltOutfit), "supabase");
+  } catch {
     return wrap([...FALLBACK_OUTFITS], "fallback");
   }
 }

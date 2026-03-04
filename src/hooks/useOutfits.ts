@@ -6,9 +6,18 @@ import type { Outfit } from '@/services/data/types';
 
 interface UseOutfitsOptions {
   archetype?: string;
+  secondaryArchetype?: string;
+  mixFactor?: number;
   season?: string;
   limit?: number;
   enabled?: boolean;
+  gender?: 'male' | 'female' | 'unisex';
+  fit?: string;
+  prints?: string;
+  goals?: string[];
+  materials?: string[];
+  colorProfile?: any;
+  occasions?: string[];
 }
 
 interface UseOutfitsResult {
@@ -26,9 +35,18 @@ interface UseOutfitsResult {
 export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
   const {
     archetype,
+    secondaryArchetype,
+    mixFactor,
     season,
     limit,
-    enabled = true
+    enabled = true,
+    gender,
+    fit,
+    prints,
+    goals,
+    materials,
+    colorProfile,
+    occasions,
   } = options;
 
   const [data, setData] = useState<Outfit[] | null>(null);
@@ -44,23 +62,31 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
     }
 
     let alive = true;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetchOutfits({
         archetype,
+        secondaryArchetype,
+        mixFactor,
         season,
-        limit
+        limit,
+        gender,
+        fit,
+        prints,
+        goals,
+        materials,
+        colorProfile,
+        occasions,
       });
-      
+
       if (alive) {
         setData(response.data);
         setSource(response.source);
         setCached(response.cached);
-        
-        // Set warning if using fallback
+
         if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
           setError('Live data niet beschikbaar, fallback gebruikt');
         }
@@ -77,14 +103,14 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
         setLoading(false);
       }
     }
-    
+
     return () => { alive = false; };
   };
 
   useEffect(() => {
     const cleanup = loadOutfits();
     return () => cleanup.then(fn => fn?.());
-  }, [archetype, season, limit, enabled]);
+  }, [archetype, secondaryArchetype, season, limit, enabled, gender]);
 
   return {
     data,
