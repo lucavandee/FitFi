@@ -23,7 +23,14 @@ export interface Product {
   photoEnhanced?: boolean;
   undertoneMatch?: 'warm' | 'cool' | 'neutral';
   // Color season filtering
-  colorSeasonScore?: number; // 0-1 score for color season compatibility
+  colorSeasonScore?: number;
+  // Fusion scoring support
+  formality?: number;       // 0-100: 0 = very casual, 100 = very formal
+  materialTags?: string[];  // e.g. ['katoen', 'wol', 'denim']
+  silhouetteTags?: string[]; // e.g. ['slim', 'relaxed', 'boxy']
+  colorTags?: string[];     // e.g. ['zwart', 'navy', 'camel']
+  // User preferences fields (populated from quiz answers for material preference)
+  materials?: string[];     // raw quiz material preferences
 }
 
 /**
@@ -124,6 +131,7 @@ export interface OutfitGenerationOptions {
   prints?: string;
   goals?: string[];
   comfort?: string;
+  materials?: string[];
   colorProfile?: import('@/lib/quiz/types').ColorProfile;
 }
 

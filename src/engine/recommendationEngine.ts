@@ -236,6 +236,7 @@ export function generateRecommendationsFromAnswers(
       prints: answers.prints,
       goals: answers.goals,
       comfort: answers.comfort,
+      materials: Array.isArray(answers.materials) ? answers.materials : [],
       colorProfile: answers.colorProfile,
     }
   );

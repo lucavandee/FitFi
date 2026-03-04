@@ -4,6 +4,9 @@ import { generateOutfitExplanation } from './explainOutfit';
 import { filterProductsByColorSeason } from './colorSeasonFiltering';
 import { calculateOutfitColorHarmony } from './colorHarmony';
 import { calculateProductFormality, OCCASION_RULES } from './occasionMatching';
+import { fusionScore, normalizeWeights } from './archetypeFusion';
+import type { ArchetypeKey } from '@/config/archetypes';
+import type { ArchetypeWeights, ProductLike } from '@/types/style';
 import type { ColorProfile } from '@/lib/quiz/types';
 import {
   getCurrentSeason,
@@ -11,6 +14,108 @@ import {
   isProductSuitableForWeather,
   getTypicalWeatherForSeason
 } from './helpers';
+
+// Maps all archetype string variants (from quiz, from profile-mapping, from archetypeDetector)
+// to the canonical ARCHETYPES config keys
+const ARCHETYPE_KEY_MAP: Record<string, ArchetypeKey> = {
+  // From archetypeDetector.ts output
+  MINIMALIST: 'MINIMALIST',
+  CLASSIC: 'CLASSIC',
+  SMART_CASUAL: 'SMART_CASUAL',
+  STREETWEAR: 'STREETWEAR',
+  ATHLETIC: 'ATHLETIC',
+  AVANT_GARDE: 'AVANT_GARDE',
+  // From old profile-mapping / generateOutfits internal keys (legacy)
+  minimalist: 'MINIMALIST',
+  klassiek: 'CLASSIC',
+  classic: 'CLASSIC',
+  smart_casual: 'SMART_CASUAL',
+  'smart-casual': 'SMART_CASUAL',
+  casual_chic: 'SMART_CASUAL',
+  urban: 'STREETWEAR',
+  streetstyle: 'STREETWEAR',
+  streetwear: 'STREETWEAR',
+  athletic: 'ATHLETIC',
+  sporty: 'ATHLETIC',
+  avant_garde: 'AVANT_GARDE',
+  avantgarde: 'AVANT_GARDE',
+  retro: 'AVANT_GARDE',
+  bohemian: 'AVANT_GARDE',
+  luxury: 'CLASSIC',
+};
+
+function resolveArchetypeKey(raw: string): ArchetypeKey {
+  return ARCHETYPE_KEY_MAP[raw] ?? ARCHETYPE_KEY_MAP[raw.toLowerCase()] ?? 'SMART_CASUAL';
+}
+
+// Converts a Product to the ProductLike shape expected by fusionScore()
+// Derives colorTags, materialTags, silhouetteTags from existing product fields
+function toProductLike(p: Product): ProductLike {
+  const tags = (p.styleTags || []).map(t => t.toLowerCase());
+  const name = (p.name || '').toLowerCase();
+  const desc = (p.description || '').toLowerCase();
+  const combined = [...tags, name, desc].join(' ');
+
+  // Color tags — map colors + style signals to palette hints used in ARCHETYPES
+  const colorTags: string[] = [];
+  const colorSrc = [...(Array.isArray(p.colors) ? p.colors : p.color ? [p.color] : []), ...tags];
+  for (const c of colorSrc) {
+    const cl = c.toLowerCase();
+    if (['zwart', 'black'].some(k => cl.includes(k))) colorTags.push('zwart');
+    if (['wit', 'white', 'cream', 'off-white'].some(k => cl.includes(k))) colorTags.push('wit');
+    if (['grijs', 'grey', 'gray'].some(k => cl.includes(k))) colorTags.push('grijs');
+    if (['navy', 'donkerblauw', 'dark blue'].some(k => cl.includes(k))) colorTags.push('navy');
+    if (['camel', 'tan', 'sand', 'nude', 'beige'].some(k => cl.includes(k))) colorTags.push('camel');
+    if (['denim', 'jeans', 'blauw', 'blue'].some(k => cl.includes(k))) colorTags.push('denim');
+    if (['graphic', 'print', 'contrast', 'bold'].some(k => cl.includes(k))) colorTags.push('contrast');
+    if (['aardetint', 'earth', 'terracotta', 'rust', 'olive'].some(k => cl.includes(k))) colorTags.push('aardetinten');
+    if (['charcoal', 'antraciet'].some(k => cl.includes(k))) colorTags.push('charcoal');
+    if (['monochroom', 'monochrome', 'tonal'].some(k => cl.includes(k))) colorTags.push('monochrome');
+  }
+
+  // Material tags — map from product type/name/tags to ARCHETYPES material keys
+  const materialTags: string[] = [];
+  if (combined.includes('katoen') || combined.includes('cotton')) materialTags.push('katoen');
+  if (combined.includes('wol') || combined.includes('wool') || combined.includes('merino')) materialTags.push('wol');
+  if (combined.includes('merino')) materialTags.push('merino');
+  if (combined.includes('denim') || combined.includes('jeans')) materialTags.push('denim');
+  if (combined.includes('leer') || combined.includes('leather') || combined.includes('suède') || combined.includes('suede')) materialTags.push('leer');
+  if (combined.includes('linnen') || combined.includes('linen')) materialTags.push('linnen');
+  if (combined.includes('fleece') || combined.includes('sweat')) materialTags.push('fleece');
+  if (combined.includes('tech') || combined.includes('nylon') || combined.includes('polyester') || combined.includes('performance')) materialTags.push('tech');
+  if (combined.includes('stretch') || combined.includes('elastisch')) materialTags.push('stretch');
+  if (combined.includes('mesh')) materialTags.push('mesh');
+  if (combined.includes('canvas')) materialTags.push('canvas');
+  if (combined.includes('coated') || combined.includes('gewaxed') || combined.includes('waxed')) materialTags.push('coated');
+
+  // Silhouette tags — map from fit/style signals
+  const silhouetteTags: string[] = [];
+  if (combined.includes('slim') || combined.includes('skinny') || combined.includes('fitted')) silhouetteTags.push('slim');
+  if (combined.includes('straight') || combined.includes('regular')) silhouetteTags.push('straight');
+  if (combined.includes('relaxed') || combined.includes('loose') || combined.includes('comfortable')) silhouetteTags.push('relaxed');
+  if (combined.includes('oversized') || combined.includes('wide') || combined.includes('boxy')) {
+    silhouetteTags.push('boxy');
+    silhouetteTags.push('oversized');
+  }
+  if (combined.includes('tailored') || combined.includes('blazer') || combined.includes('suit')) silhouetteTags.push('tailored');
+  if (combined.includes('clean') || combined.includes('minimal') || combined.includes('effen')) silhouetteTags.push('clean');
+  if (combined.includes('asymm') || combined.includes('drape') || combined.includes('wrap')) {
+    silhouetteTags.push('draped');
+    silhouetteTags.push('asymmetry');
+  }
+
+  return {
+    id: p.id,
+    title: p.name,
+    brand: p.brand,
+    category: p.category,
+    colorTags: [...new Set(colorTags)],
+    materialTags: [...new Set(materialTags)],
+    silhouetteTags: [...new Set(silhouetteTags)],
+    formality: p.formality ?? undefined,
+    price: p.price,
+  };
+}
 
 const OCCASION_KEY_MAP: Record<string, string> = {
   office: 'Werk',
@@ -255,6 +360,7 @@ function generateOutfits(
   const printsPreference = options?.prints;
   const goalsPreference = options?.goals || [];
   const comfortPreference = options?.comfort;
+  const materialsPreference: string[] = options?.materials || [];
   const colorProfile = options?.colorProfile;
   
   // Log archetype information
@@ -351,6 +457,21 @@ function generateOutfits(
     });
     productsToUse = printedFirst;
     console.log(`[prints] Prioritised statement prints`);
+  }
+
+  // Materials: soft boost — sort preferred materials to the top of each category pool
+  // This works as a preference signal even when products lack explicit materialTags
+  if (materialsPreference.length > 0) {
+    const normPrefs = materialsPreference.map(m => m.toLowerCase());
+    productsToUse = [...productsToUse].sort((a, b) => {
+      const getMatScore = (p: Product) => {
+        const pl = toProductLike(p);
+        const mtags = pl.materialTags || [];
+        return normPrefs.some(m => mtags.includes(m)) ? 1 : 0;
+      };
+      return getMatScore(b) - getMatScore(a);
+    });
+    console.log(`[materials] Re-sorted pool to prefer: ${normPrefs.join(', ')}`);
   }
 
   // Define occasions based on archetype and preferred occasions
@@ -957,45 +1078,35 @@ function selectProductForCategory(
       ? seasonalProducts 
       : products;
   
-  if (!secondaryArchetype || secondaryArchetype === primaryArchetype || mixFactor <= 0) {
-    const sortedProducts = [...productsToUse].sort((a, b) => {
-      const scoreA = (a.matchScore || 0) + getFitScore(a, fitPreference) + getGoalsScore(a, goals) + getComfortScore(a, comfort);
-      const scoreB = (b.matchScore || 0) + getFitScore(b, fitPreference) + getGoalsScore(b, goals) + getComfortScore(b, comfort);
-      return scoreB - scoreA;
-    });
-    return sortedProducts[0] || null;
+  // Build archetype weight mix for fusionScore()
+  const primaryKey = resolveArchetypeKey(primaryArchetype);
+  const mix: ArchetypeWeights = { [primaryKey]: 1 - (mixFactor ?? 0) };
+  if (secondaryArchetype && secondaryArchetype !== primaryArchetype && mixFactor && mixFactor > 0) {
+    const secondaryKey = resolveArchetypeKey(secondaryArchetype);
+    mix[secondaryKey] = (mix[secondaryKey] ?? 0) + mixFactor;
   }
 
   const scoredProducts = productsToUse.map(product => {
-    const styleTags = product.styleTags || [];
-    const primaryScore = calculateArchetypeStyleScore(styleTags, primaryArchetype);
-    const secondaryScore = calculateArchetypeStyleScore(styleTags, secondaryArchetype);
+    const productLike = toProductLike(product);
+    const fusion = fusionScore(productLike, mix);
     const fitBonus = getFitScore(product, fitPreference);
     const goalsBonus = getGoalsScore(product, goals);
     const comfortBonus = getComfortScore(product, comfort);
-    const combinedScore = (primaryScore * (1 - mixFactor)) + (secondaryScore * mixFactor) + fitBonus + goalsBonus + comfortBonus;
+    // fusionScore is 0-1; bonuses are additive max ~0.55 total
+    // Weight fusion heavily (0.65) vs bonus signals (up to 0.35)
+    const combined = fusion.totalScore * 0.65 + fitBonus + goalsBonus + comfortBonus;
 
-    return {
-      product,
-      combinedScore,
-      primaryScore,
-      secondaryScore
-    };
+    return { product, combined, fusionScore: fusion.totalScore, signals: fusion.matchedSignals };
   });
-  
-  // Sort by combined score
-  scoredProducts.sort((a, b) => b.combinedScore - a.combinedScore);
-  
-  // Log the top product's scores
-  if (scoredProducts.length > 0) {
+
+  scoredProducts.sort((a, b) => b.combined - a.combined);
+
+  if (scoredProducts.length > 0 && scoredProducts[0]) {
     const top = scoredProducts[0];
-    if (top) {
-      console.log(`Selected ${category} product: ${top.product.name} - Primary ${top.primaryScore.toFixed(2)} - Secondary ${top.secondaryScore.toFixed(2)} - Combined ${top.combinedScore.toFixed(2)}`);
-    }
+    console.log(`[FusionScore] ${category} → "${top.product.name}" fusion=${top.fusionScore.toFixed(2)} total=${top.combined.toFixed(2)} signals=[${top.signals.slice(0, 3).join(', ')}]`);
   }
-  
-  // Return the product with the highest combined score
-  return scoredProducts[0]?.product || null;
+
+  return scoredProducts[0]?.product ?? null;
 }
 
 /**
