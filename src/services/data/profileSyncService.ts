@@ -23,9 +23,55 @@ export interface StyleProfile {
 const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
 const SYNC_STATUS_KEY = 'ff_sync_status';
 const LAST_SYNC_KEY = 'ff_last_sync';
+const CACHED_USER_KEY = 'ff_cached_user_id';
 
 class ProfileSyncService {
   private syncInProgress = false;
+  private restorePromise: Promise<boolean> | null = null;
+
+  private isCacheStaleForUser(userId: string): boolean {
+    const cachedUserId = localStorage.getItem(CACHED_USER_KEY);
+    if (cachedUserId !== userId) return true;
+    const lastSync = localStorage.getItem(LAST_SYNC_KEY);
+    if (!lastSync) return true;
+    return Date.now() - parseInt(lastSync) > CACHE_DURATION;
+  }
+
+  async restoreForUser(userId: string): Promise<boolean> {
+    if (this.restorePromise) return this.restorePromise;
+
+    if (!this.isCacheStaleForUser(userId)) {
+      return true;
+    }
+
+    this.restorePromise = (async () => {
+      try {
+        const client = supabase();
+        if (!client) return false;
+
+        const { data, error } = await client
+          .from('style_profiles')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .maybeSingle();
+
+        if (error || !data) return false;
+
+        this.cacheProfile(data);
+        localStorage.setItem(CACHED_USER_KEY, userId);
+        localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
+        localStorage.setItem(SYNC_STATUS_KEY, 'synced');
+        return !!(data.quiz_answers && data.completed_at);
+      } catch {
+        return false;
+      } finally {
+        this.restorePromise = null;
+      }
+    })();
+
+    return this.restorePromise;
+  }
 
   async getProfile(): Promise<StyleProfile | null> {
     console.log('[ProfileSync] 🔍 Getting profile...');
@@ -318,6 +364,7 @@ class ProfileSyncService {
   clearCache(): void {
     localStorage.removeItem(SYNC_STATUS_KEY);
     localStorage.removeItem(LAST_SYNC_KEY);
+    localStorage.removeItem(CACHED_USER_KEY);
     localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
     localStorage.removeItem(LS_KEYS.ARCHETYPE);
     localStorage.removeItem(LS_KEYS.COLOR_PROFILE);

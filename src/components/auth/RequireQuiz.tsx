@@ -2,9 +2,11 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { LS_KEYS } from "@/lib/quiz/types";
 import { profileSyncService } from "@/services/data/profileSyncService";
+import { useUser } from "@/context/UserContext";
 
 export function RequireQuiz({ children }: { children: React.ReactElement }) {
   const loc = useLocation();
+  const { user } = useUser();
   const [status, setStatus] = React.useState<'checking' | 'has_quiz' | 'no_quiz'>('checking');
 
   React.useEffect(() => {
@@ -18,23 +20,21 @@ export function RequireQuiz({ children }: { children: React.ReactElement }) {
         return;
       }
 
-      try {
-        const profile = await profileSyncService.getProfile();
-
-        if (profile && profile.quiz_answers && profile.completed_at) {
-          if (localStorage.getItem(LS_KEYS.QUIZ_COMPLETED) !== "1") {
-            localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
+      if (user?.id) {
+        try {
+          const hasQuiz = await profileSyncService.restoreForUser(user.id);
+          if (hasQuiz) {
+            setStatus('has_quiz');
+            return;
           }
-          setStatus('has_quiz');
-          return;
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
       setStatus('no_quiz');
     }
 
     checkQuizCompletion();
-  }, []);
+  }, [user?.id]);
 
   if (status === 'checking') {
     return (

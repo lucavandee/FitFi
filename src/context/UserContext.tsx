@@ -84,52 +84,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     let isSubscriptionActive = true;
 
-    sb.auth.getSession()
-      .then(({ data: { session } }) => {
-        if (!isSubscriptionActive) return;
-
-        if (session?.user) {
-          const isAdminFromJWT = session.user.app_metadata?.is_admin === true;
-          const userData = buildUserData(session.user, isAdminFromJWT);
-          setUser(userData);
-          setStatus('authenticated');
-
-          profileSyncService.getProfile().catch(() => {});
-
-          sb.from('profiles')
-            .select('tier, is_admin, gender, created_at')
-            .eq('id', session.user.id)
-            .maybeSingle()
-            .then(({ data: profile }) => {
-              if (profile) {
-                setUser(prev => prev ? {
-                  ...prev,
-                  tier: profile.tier as 'free' | 'premium' | 'founder',
-                  gender: profile.gender as 'male' | 'female' | undefined,
-                  created_at: profile.created_at
-                } : null);
-              }
-            })
-            .catch(() => {});
-        } else {
-          setUser(null);
-          setStatus('unauthenticated');
-        }
-      })
-      .catch(() => {
-        setStatus('unauthenticated');
-      });
-
-    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
+    const initSession = async (session: { user: { id: string; email?: string; user_metadata?: Record<string, unknown>; app_metadata?: Record<string, unknown> } } | null) => {
       if (!isSubscriptionActive) return;
 
       if (session?.user) {
         const isAdminFromJWT = session.user.app_metadata?.is_admin === true;
         const userData = buildUserData(session.user, isAdminFromJWT);
         setUser(userData);
-        setStatus('authenticated');
 
-        profileSyncService.getProfile().catch(() => {});
+        await profileSyncService.restoreForUser(session.user.id).catch(() => {});
+
+        if (!isSubscriptionActive) return;
+        setStatus('authenticated');
 
         sb.from('profiles')
           .select('tier, is_admin, gender, created_at')
@@ -153,6 +119,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.removeItem('fitfi_user');
         } catch (_) {}
       }
+    };
+
+    sb.auth.getSession()
+      .then(({ data: { session } }) => initSession(session))
+      .catch(() => { setStatus('unauthenticated'); });
+
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
+      (() => { initSession(session); })();
     });
 
     return () => {
