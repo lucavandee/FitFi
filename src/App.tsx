@@ -39,7 +39,6 @@ const ProfilePage        = lazy(() => import("@/pages/ProfilePage"));
 const EmbeddingAnalytics = lazy(() => import("@/components/admin/EmbeddingAnalytics"));
 const AdminProductsPage  = lazy(() => import("@/pages/AdminProductsPage"));
 const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
-const AdminBramsFruitPage = lazy(() => import("@/pages/AdminBramsFruitPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminZalandoImportPage = lazy(() => import("@/pages/AdminZalandoImportPage"));
 const AdminMoodPhotosPage = lazy(() => import("@/pages/AdminMoodPhotosPage"));
@@ -55,7 +54,6 @@ const AdminTestimonialsPage = lazy(() => import("@/pages/AdminTestimonialsPage")
 const AdminDaisyconImportPage = lazy(() => import("@/pages/AdminDaisyconImportPage"));
 const AdminAffiliateCampaignsPage = lazy(() => import("@/pages/AdminAffiliateCampaignsPage"));
 const AccessibilityTestPage = lazy(() => import("@/pages/AccessibilityTestPage"));
-const BramsFruitCatalogPage = lazy(() => import("@/pages/BramsFruitCatalogPageSimple"));
 const BillingPage        = lazy(() => import("@/pages/BillingPage"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
@@ -105,7 +103,6 @@ const WithSeo = {
   Analytics:  () => (<><Seo title="Analytics — FitFi" description="Embedding analytics dashboard." path="/admin/analytics" noindex /><EmbeddingAnalytics /></>),
   AdminProducts: () => (<><Seo title="Product Management — FitFi" description="Stripe products management." path="/admin/products" noindex /><AdminProductsPage /></>),
   AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
-  AdminBramsFruit: () => (<><Seo title="Brams Fruit Admin — FitFi" description="Brams Fruit product management." path="/admin/brams-fruit" noindex /><AdminBramsFruitPage /></>),
   AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
   AdminZalandoImport: () => (<><Seo title="Zalando Import — FitFi Admin" description="Import Zalando products to unified catalog." path="/admin/zalando-import" noindex /><AdminZalandoImportPage /></>),
   AdminMoodPhotos: () => (<><Seo title="Mood Photos Moderation — FitFi Admin" description="Review and moderate mood photos for visual preference quiz." path="/admin/mood-photos" noindex /><AdminMoodPhotosPage /></>),
@@ -121,7 +118,6 @@ const WithSeo = {
   AdminTestimonials: () => (<><Seo title="Testimonials Beheer — FitFi Admin" description="Beheer klant testimonials voor de homepage." path="/admin/testimonials" noindex /><AdminTestimonialsPage /></>),
   AdminDaisyconImport: () => (<><Seo title="Daisycon Import — FitFi Admin" description="Importeer producten vanuit een Daisycon affiliate feed." path="/admin/daisycon-import" noindex /><AdminDaisyconImportPage /></>),
   AdminAffiliateCampaigns: () => (<><Seo title="Affiliate Campagnes — FitFi Admin" description="Beheer affiliate campagnes en synchroniseer productfeeds." path="/admin/affiliate-campaigns" noindex /><AdminAffiliateCampaignsPage /></>),
-  AdminBramsFruitPreview: () => (<><Seo title="Brams Fruit Preview — FitFi Admin" description="Preview van Brams Fruit catalogus (admin only)." path="/admin/preview/brams-fruit" noindex /><BramsFruitCatalogPage /></>),
   AccessibilityTest: () => (<><Seo title="Accessibility Test — FitFi" description="WCAG 2.1 AA compliance test page." path="/accessibility-test" noindex /><AccessibilityTestPage /></>),
   NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
@@ -194,7 +190,6 @@ function AppShell() {
                 <Route path="/admin/swipe-analytics" element={<RequireAuth><WithSeo.AdminSwipeAnalytics /></RequireAuth>} />
                 <Route path="/admin/products" element={<RequireAuth><WithSeo.AdminProducts /></RequireAuth>} />
                 <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
-                <Route path="/admin/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruit /></RequireAuth>} />
                 <Route path="/admin/zalando-import" element={<RequireAuth><WithSeo.AdminZalandoImport /></RequireAuth>} />
                 <Route path="/admin/mood-photos" element={<RequireAuth><WithSeo.AdminMoodPhotos /></RequireAuth>} />
                 <Route path="/admin/images" element={<RequireAuth><WithSeo.AdminImageManager /></RequireAuth>} />
@@ -208,7 +203,6 @@ function AppShell() {
                 <Route path="/admin/testimonials" element={<RequireAuth><WithSeo.AdminTestimonials /></RequireAuth>} />
                 <Route path="/admin/daisycon-import" element={<RequireAuth><WithSeo.AdminDaisyconImport /></RequireAuth>} />
                 <Route path="/admin/affiliate-campaigns" element={<RequireAuth><WithSeo.AdminAffiliateCampaigns /></RequireAuth>} />
-                <Route path="/admin/preview/brams-fruit" element={<RequireAuth><WithSeo.AdminBramsFruitPreview /></RequireAuth>} />
 
                 {/* Accessibility Test (dev/admin only) */}
                 <Route path="/accessibility-test" element={<WithSeo.AccessibilityTest />} />

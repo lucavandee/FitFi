@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Image, AlertCircle } from 'lucide-react';
+import { Image, CircleAlert as AlertCircle } from 'lucide-react';
 import { BulkImageUploader } from '@/components/admin/BulkImageUploader';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/lib/supabase';
@@ -12,8 +12,6 @@ export default function AdminImageManagerPage() {
     totalProducts: number;
     withImages: number;
     withoutImages: number;
-    bramsFruitWithImages: number;
-    bramsFruitTotal: number;
   } | null>(null);
 
   useEffect(() => {
@@ -29,8 +27,7 @@ export default function AdminImageManagerPage() {
   const loadStats = async () => {
     const { data: allProducts } = await supabase
       .from('products')
-      .select('id, brand, image_url')
-      .eq('brand', 'Brams Fruit');
+      .select('id, image_url');
 
     if (!allProducts) return;
 
@@ -41,8 +38,6 @@ export default function AdminImageManagerPage() {
       totalProducts: allProducts.length,
       withImages,
       withoutImages,
-      bramsFruitWithImages: withImages,
-      bramsFruitTotal: allProducts.length
     });
   };
 
@@ -135,10 +130,10 @@ export default function AdminImageManagerPage() {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate('/admin/brams-fruit')}
+            onClick={() => navigate('/admin')}
             className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
           >
-            ← Terug naar Bram's Fruit Admin
+            ← Terug naar Admin Dashboard
           </button>
         </div>
       </div>

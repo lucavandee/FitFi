@@ -3,7 +3,6 @@ import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngin
 import { generateNovaExplanation } from "@/engine/explainOutfit";
 import { filterByGender, getUserGender } from "@/services/products/genderFilter";
 import { reclassifyProducts } from "@/engine/productClassifier";
-import { curatedMaleProducts } from "@/data/curatedProducts";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
@@ -27,8 +26,8 @@ class OutfitService {
 
     const client = supabase();
     if (!client) {
-      console.warn('[OutfitService] No Supabase client, using fallback');
-      return this.getFallbackProducts();
+      console.warn('[OutfitService] No Supabase client available');
+      return [];
     }
 
     try {
@@ -45,12 +44,12 @@ class OutfitService {
 
       if (error) {
         console.error('[OutfitService] Error fetching products:', error);
-        return this.getFallbackProducts();
+        return [];
       }
 
       if (!data || data.length === 0) {
-        console.warn('[OutfitService] No products in database, using fallback');
-        return this.getFallbackProducts();
+        console.warn('[OutfitService] No products in database');
+        return [];
       }
 
       const rawProducts = data.map(this.mapDatabaseProduct);
@@ -64,7 +63,7 @@ class OutfitService {
       return products;
     } catch (error) {
       console.error('[OutfitService] Exception fetching products:', error);
-      return this.getFallbackProducts();
+      return [];
     }
   }
 
@@ -165,31 +164,6 @@ class OutfitService {
       rating: dbProduct.rating,
       reviewCount: dbProduct.review_count,
     };
-  }
-
-  private async getFallbackProducts(): Promise<Product[]> {
-    console.log('[OutfitService] Using curated male products as fallback');
-
-    return curatedMaleProducts.map((product) => ({
-      id: product.id,
-      name: product.title,
-      brand: product.retailer,
-      price: product.price.current,
-      imageUrl: product.image,
-      category: product.category || 'general',
-      type: product.category || 'clothing',
-      gender: product.gender,
-      colors: product.color ? [product.color] : [],
-      sizes: product.sizes || [],
-      tags: [],
-      retailer: product.retailer,
-      affiliateUrl: product.url,
-      productUrl: product.url,
-      description: product.reason || '',
-      inStock: product.availability === 'in_stock',
-      rating: 4.5,
-      reviewCount: 0,
-    }));
   }
 
   clearCache(): void {

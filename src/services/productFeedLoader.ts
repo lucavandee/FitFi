@@ -1,7 +1,6 @@
 import { Product } from '../engine/types';
 import { isValidImageUrl } from '../utils/imageUtils';
 import { safeFetchWithFallback } from '../utils/fetchUtils';
-import { getBramsFruitProductsForOutfitEngine } from './bramsFruit/productService';
 
 /**
  * Interface for product feed data
@@ -69,44 +68,5 @@ export async function loadProductFeed(): Promise<Product[]> {
     console.error('[ProductFeedLoader] Error loading product feed:', error);
     return [];
   }
-}
-
-/**
- * Load Brams Fruit products from database
- */
-export async function loadBramsFruitProducts(): Promise<Product[]> {
-  try {
-    const bramsFruitProducts = await getBramsFruitProductsForOutfitEngine();
-    console.log(`[ProductFeedLoader] Loaded ${bramsFruitProducts.length} Brams Fruit products`);
-    return bramsFruitProducts;
-  } catch (error) {
-    console.error('[ProductFeedLoader] Error loading Brams Fruit products:', error);
-    return [];
-  }
-}
-
-/**
- * Load all products from all sources
- */
-export async function loadAllProducts(options?: { includeBramsFruit?: boolean }): Promise<Product[]> {
-  const includeBramsFruit = options?.includeBramsFruit ?? true;
-
-  const [feedProducts, bramsFruitProducts] = await Promise.all([
-    loadProductFeed(),
-    includeBramsFruit ? loadBramsFruitProducts() : Promise.resolve([])
-  ]);
-
-  const allProducts = [...feedProducts, ...bramsFruitProducts];
-
-  console.log(`[ProductFeedLoader] Total products: ${allProducts.length} (Feed: ${feedProducts.length}, Brams Fruit: ${bramsFruitProducts.length})`);
-
-  return allProducts;
-}
-
-/**
- * Load products with fallback chain
- */
-async function _loadProductsWithFallback(): Promise<Product[]> {
-  return loadAllProducts();
 }
 
