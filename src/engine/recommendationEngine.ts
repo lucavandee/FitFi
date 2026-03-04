@@ -229,12 +229,13 @@ export function generateRecommendationsFromAnswers(
     mixFactor,
     {
       preferredOccasions: answers.occasions,
-      maxAttempts: 10,
+      maxAttempts: 15,
       variationLevel: 'medium',
       enforceCompletion: true,
       fit: answers.fit,
       prints: answers.prints,
       goals: answers.goals,
+      comfort: answers.comfort,
       colorProfile: answers.colorProfile,
     }
   );

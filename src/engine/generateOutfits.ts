@@ -2,6 +2,8 @@ import { Product, Outfit, Season, ProductCategory, OutfitGenerationOptions, Weat
 import { generateOutfitTitle, generateOutfitDescription } from './generateOutfitDescriptions';
 import { generateOutfitExplanation } from './explainOutfit';
 import { filterProductsByColorSeason } from './colorSeasonFiltering';
+import { calculateOutfitColorHarmony } from './colorHarmony';
+import { calculateProductFormality, OCCASION_RULES } from './occasionMatching';
 import type { ColorProfile } from '@/lib/quiz/types';
 import {
   getCurrentSeason,
@@ -251,6 +253,8 @@ function generateOutfits(
   const minCompleteness = options?.minCompleteness || 80;
   const fitPreference = options?.fit;
   const printsPreference = options?.prints;
+  const goalsPreference = options?.goals || [];
+  const comfortPreference = options?.comfort;
   const colorProfile = options?.colorProfile;
   
   // Log archetype information
@@ -321,15 +325,32 @@ function generateOutfits(
 
   let productsToUse = colorFilteredProducts;
 
+  // Prints: hard filter — remove printed items when user prefers plain
   if (printsPreference === 'effen' || printsPreference === 'geen') {
+    const PRINT_KEYWORDS = ['printed', 'pattern', 'graphic', 'floral', 'stripe', 'stripes', 'checked', 'plaid', 'animal print'];
     const effeFiltered = productsToUse.filter(p => {
-      const tags = (p.styleTags || []).join(' ').toLowerCase();
-      return !tags.includes('printed') && !tags.includes('pattern') && !tags.includes('graphic') && !tags.includes('floral');
+      const searchable = [
+        ...(p.styleTags || []),
+        p.type || '',
+        p.description || '',
+        p.name || '',
+      ].join(' ').toLowerCase();
+      return !PRINT_KEYWORDS.some(kw => searchable.includes(kw));
     });
     if (effeFiltered.length >= 4) {
       productsToUse = effeFiltered;
-      console.log(`[prints] Filtered to ${effeFiltered.length} effen products`);
+      console.log(`[prints] Hard-filtered to ${effeFiltered.length} plain products`);
     }
+  } else if (printsPreference === 'statement') {
+    // For statement preference, give printed products priority by moving them to the front
+    const printedFirst = [...productsToUse].sort((a, b) => {
+      const PRINT_KW = ['printed', 'pattern', 'graphic', 'floral', 'stripe', 'bold'];
+      const aHasPrint = PRINT_KW.some(kw => (a.styleTags || []).join(' ').toLowerCase().includes(kw));
+      const bHasPrint = PRINT_KW.some(kw => (b.styleTags || []).join(' ').toLowerCase().includes(kw));
+      return (bHasPrint ? 1 : 0) - (aHasPrint ? 1 : 0);
+    });
+    productsToUse = printedFirst;
+    console.log(`[prints] Prioritised statement prints`);
   }
 
   // Define occasions based on archetype and preferred occasions
@@ -380,7 +401,9 @@ function generateOutfits(
         variationLevel,
         enforceCompletion,
         minCompleteness,
-        fitPreference
+        fitPreference,
+        goalsPreference,
+        comfortPreference
       );
       
       // Check if the outfit is unique (not in excludeIds)
@@ -435,7 +458,9 @@ function generateOutfitForOccasion(
   variationLevel: VariationLevel = 'medium',
   enforceCompletion: boolean = true,
   minCompleteness: number = 80,
-  fitPreference?: string
+  fitPreference?: string,
+  goalsPreference: string[] = [],
+  comfortPreference?: string
 ): Outfit | null {
   // Log outfit generation
   console.log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
@@ -496,11 +521,8 @@ function generateOutfitForOccasion(
   
   // First, try to fill all required categories
   for (const category of outfitStructure.requiredCategories) {
-    // Skip if we already have this category (to avoid duplicates)
-    if (selectedCategories.includes(category)) {
-      continue;
-    }
-    
+    if (selectedCategories.includes(category)) continue;
+
     const selectedProduct = selectProductForCategory(
       productsByCategory,
       category,
@@ -510,7 +532,9 @@ function generateOutfitForOccasion(
       weather,
       secondaryArchetype,
       mixFactor,
-      fitPreference
+      fitPreference,
+      goalsPreference,
+      comfortPreference
     );
 
     if (selectedProduct) {
@@ -518,81 +542,71 @@ function generateOutfitForOccasion(
       selectedCategories.push(category);
     } else {
       console.warn(`Geen product gevonden voor vereiste categorie ${category}`);
-      
+
       // For tops and bottoms, check if we have a dress or jumpsuit as a substitute
-      if ((category === ProductCategory.TOP || category === ProductCategory.BOTTOM) && 
-          !selectedCategories.includes(ProductCategory.DRESS) && 
+      if ((category === ProductCategory.TOP || category === ProductCategory.BOTTOM) &&
+          !selectedCategories.includes(ProductCategory.DRESS) &&
           !selectedCategories.includes(ProductCategory.JUMPSUIT) &&
           variation.allowSubstitutes) {
-        
-        // Try to find a dress or jumpsuit
+
         const substituteCategories = [ProductCategory.DRESS, ProductCategory.JUMPSUIT];
-        
+
         for (const substituteCategory of substituteCategories) {
           const substituteProduct = selectProductForCategory(
-            productsByCategory, 
-            substituteCategory, 
-            primaryArchetype, 
-            occasion, 
+            productsByCategory,
+            substituteCategory,
+            primaryArchetype,
+            occasion,
             season,
             weather,
             secondaryArchetype,
-            mixFactor
+            mixFactor,
+            fitPreference,
+            goalsPreference,
+            comfortPreference
           );
-          
+
           if (substituteProduct) {
             outfitProducts.push(substituteProduct);
             selectedCategories.push(substituteCategory);
-            
-            // Add the categories that this substitute replaces
+
             const replacedCategories = SUBSTITUTE_CATEGORIES[substituteCategory] || [];
             replacedCategories.forEach(replacedCategory => {
               if (!selectedCategories.includes(replacedCategory)) {
                 selectedCategories.push(replacedCategory);
               }
             });
-            
+
             console.log(`Used ${substituteCategory} as substitute for ${category}`);
             break;
           }
         }
       }
-      
-      // If we still don't have this category, add it to fallback list
+
       if (!selectedCategories.includes(category)) {
-        // Find any product that could work as fallback
         const fallbackProduct = products.find(p => getProductCategory(p) === category);
-        if (fallbackProduct) {
-          fallbackProducts.push(fallbackProduct);
-        }
+        if (fallbackProduct) fallbackProducts.push(fallbackProduct);
       }
     }
   }
-  
-  // Then, add optional categories until we reach the max items
-  // Prioritize seasonal categories if specified
+
+  // Then add optional categories
   let optionalCategories = [...outfitStructure.optionalCategories];
-  
-  // Prioritize seasonal categories
+
   if (seasonalAdjustment.priorityCategories) {
-    // Move priority categories to the front
     optionalCategories = [
       ...seasonalAdjustment.priorityCategories.filter(c => optionalCategories.includes(c)),
       ...optionalCategories.filter(c => !seasonalAdjustment.priorityCategories?.includes(c))
     ];
   }
-  
-  // Randomize optional categories based on variation level
-  optionalCategories = optionalCategories.filter(() => 
+
+  optionalCategories = optionalCategories.filter(() =>
     Math.random() < variation.optionalCategoryProbability
   );
-  
+
   for (const category of optionalCategories) {
-    // Skip if we already have this category or if we've reached the max items
-    if (selectedCategories.includes(category) || outfitProducts.length >= outfitStructure.maxItems) {
-      continue;
-    }
-    
+    if (selectedCategories.includes(category) || outfitProducts.length >= outfitStructure.maxItems) continue;
+
     const selectedProduct = selectProductForCategory(
       productsByCategory,
       category,
@@ -602,7 +616,9 @@ function generateOutfitForOccasion(
       weather,
       secondaryArchetype,
       mixFactor,
-      fitPreference
+      fitPreference,
+      goalsPreference,
+      comfortPreference
     );
 
     if (selectedProduct) {
@@ -669,6 +685,56 @@ function generateOutfitForOccasion(
   if (!hasUpperBody || !hasFootwear) {
     console.warn(`Outfit afgewezen: ontbrekende bovenkleding (${hasUpperBody}) of schoeisel (${hasFootwear})`);
     return null;
+  }
+
+  // Color harmony check — reject outfits where products visually clash
+  const productColorArrays = outfitProducts.map(p => {
+    const colors: string[] = [];
+    if (Array.isArray(p.colors)) colors.push(...p.colors);
+    else if (p.color) colors.push(p.color);
+    return colors;
+  });
+  const colorHarmonyScore = calculateOutfitColorHarmony(productColorArrays);
+  const MIN_COLOR_HARMONY = 0.35;
+  if (colorHarmonyScore < MIN_COLOR_HARMONY) {
+    console.warn(`Outfit afgewezen wegens kleurconflict (harmony score: ${colorHarmonyScore.toFixed(2)})`);
+    return null;
+  }
+  console.log(`[ColorHarmony] Outfit goedgekeurd (score: ${colorHarmonyScore.toFixed(2)})`);
+
+  // Occasion formality gate — apply OCCASION_RULES to pre-screen whole outfit
+  const canonicalOccasion = (() => {
+    const o = occasion.toLowerCase();
+    if (o.includes('werk') || o.includes('kantoor') || o.includes('office')) return 'work';
+    if (o.includes('formeel') || o.includes('gala') || o.includes('formal')) return 'formal';
+    if (o.includes('sport') || o.includes('actief')) return 'sports';
+    if (o.includes('date') || o.includes('diner')) return 'date';
+    if (o.includes('feest') || o.includes('uitgaan') || o.includes('party')) return 'party';
+    if (o.includes('reis') || o.includes('travel')) return 'travel';
+    return 'casual';
+  })() as keyof typeof OCCASION_RULES;
+
+  const occasionRule = OCCASION_RULES[canonicalOccasion];
+  if (occasionRule) {
+    const avgFormality =
+      outfitProducts.reduce((sum, p) => sum + calculateProductFormality(p), 0) / outfitProducts.length;
+
+    const formalityGap = occasionRule.requiredFormality - avgFormality;
+    if (formalityGap > 0.3) {
+      console.warn(`Outfit afgewezen: te informeel voor ${canonicalOccasion} (formality ${avgFormality.toFixed(2)} vs required ${occasionRule.requiredFormality})`);
+      return null;
+    }
+
+    if (occasionRule.avoidStyles) {
+      const outfitTagString = outfitProducts.flatMap(p => p.styleTags || []).join(' ').toLowerCase();
+      const hasAvoidedStyle = occasionRule.avoidStyles.some(style =>
+        outfitTagString.includes(style.toLowerCase())
+      );
+      if (hasAvoidedStyle) {
+        console.warn(`Outfit afgewezen: bevat verboden stijl voor ${canonicalOccasion}`);
+        return null;
+      }
+    }
   }
   
   // Calculate category ratio
@@ -821,6 +887,39 @@ function getFitScore(product: Product, fitPreference?: string): number {
   return fitTags.some(t => tags.includes(t)) ? 0.2 : 0;
 }
 
+const GOAL_PRODUCT_TAGS: Record<string, string[]> = {
+  timeless: ['klassiek', 'classic', 'basic', 'clean', 'neutral', 'timeless', 'minimal'],
+  trendy: ['trendy', 'urban', 'statement', 'bold', 'streetstyle', 'graphic'],
+  minimal: ['minimalist', 'clean', 'simple', 'effen', 'basic', 'neutral'],
+  express: ['expressive', 'statement', 'creative', 'avant-garde', 'retro', 'vintage'],
+  professional: ['klassiek', 'formal', 'tailored', 'structured', 'elegant', 'sophisticated'],
+  comfort: ['relaxed', 'casual', 'soft', 'comfortable', 'cozy'],
+};
+
+const COMFORT_FIT_TAGS: Record<string, string[]> = {
+  structured: ['tailored', 'fitted', 'structured', 'slim', 'sharp'],
+  balanced: ['regular', 'straight', 'classic', 'comfortable'],
+  relaxed: ['relaxed', 'loose', 'oversized', 'wide', 'comfortable', 'easy', 'casual'],
+};
+
+function getGoalsScore(product: Product, goals: string[]): number {
+  if (!goals || goals.length === 0) return 0;
+  const tags = (product.styleTags || []).join(' ').toLowerCase();
+  let hits = 0;
+  for (const goal of goals) {
+    const goalTags = GOAL_PRODUCT_TAGS[goal] || [];
+    if (goalTags.some(t => tags.includes(t))) hits++;
+  }
+  return (hits / goals.length) * 0.25;
+}
+
+function getComfortScore(product: Product, comfort?: string): number {
+  if (!comfort) return 0;
+  const tags = (product.styleTags || []).join(' ').toLowerCase();
+  const comfortTags = COMFORT_FIT_TAGS[comfort] || [];
+  return comfortTags.some(t => tags.includes(t)) ? 0.15 : 0;
+}
+
 function selectProductForCategory(
   productsByCategory: Record<ProductCategory, Product[]>,
   category: ProductCategory,
@@ -830,7 +929,9 @@ function selectProductForCategory(
   weather: Weather,
   secondaryArchetype?: string,
   mixFactor: number = 0.3,
-  fitPreference?: string
+  fitPreference?: string,
+  goals: string[] = [],
+  comfort?: string
 ): Product | null {
   const products = productsByCategory[category];
   
@@ -858,8 +959,8 @@ function selectProductForCategory(
   
   if (!secondaryArchetype || secondaryArchetype === primaryArchetype || mixFactor <= 0) {
     const sortedProducts = [...productsToUse].sort((a, b) => {
-      const scoreA = (a.matchScore || 0) + getFitScore(a, fitPreference);
-      const scoreB = (b.matchScore || 0) + getFitScore(b, fitPreference);
+      const scoreA = (a.matchScore || 0) + getFitScore(a, fitPreference) + getGoalsScore(a, goals) + getComfortScore(a, comfort);
+      const scoreB = (b.matchScore || 0) + getFitScore(b, fitPreference) + getGoalsScore(b, goals) + getComfortScore(b, comfort);
       return scoreB - scoreA;
     });
     return sortedProducts[0] || null;
@@ -870,7 +971,9 @@ function selectProductForCategory(
     const primaryScore = calculateArchetypeStyleScore(styleTags, primaryArchetype);
     const secondaryScore = calculateArchetypeStyleScore(styleTags, secondaryArchetype);
     const fitBonus = getFitScore(product, fitPreference);
-    const combinedScore = (primaryScore * (1 - mixFactor)) + (secondaryScore * mixFactor) + fitBonus;
+    const goalsBonus = getGoalsScore(product, goals);
+    const comfortBonus = getComfortScore(product, comfort);
+    const combinedScore = (primaryScore * (1 - mixFactor)) + (secondaryScore * mixFactor) + fitBonus + goalsBonus + comfortBonus;
 
     return {
       product,

@@ -123,6 +123,7 @@ export interface OutfitGenerationOptions {
   fit?: string;
   prints?: string;
   goals?: string[];
+  comfort?: string;
   colorProfile?: import('@/lib/quiz/types').ColorProfile;
 }
 
