@@ -1,7 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
 
-const sb = supabase();
-
 export interface DashboardMetrics {
   total_users: number;
   admin_count: number;
@@ -51,13 +49,13 @@ export interface AuditLogEntry {
 
 export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   try {
+    const sb = supabase();
+    if (!sb) return null;
     const { data, error } = await sb.rpc('get_dashboard_metrics');
-
     if (error) {
       console.error('Failed to fetch dashboard metrics:', error);
       return null;
     }
-
     return data as DashboardMetrics;
   } catch (err) {
     console.error('Exception fetching dashboard metrics:', err);
@@ -74,6 +72,8 @@ export async function searchUsers(params: {
   offset?: number;
 }): Promise<UserSearchResult[]> {
   try {
+    const sb = supabase();
+    if (!sb) return [];
     const { data, error } = await sb.rpc('search_users', {
       p_search_term: params.searchTerm || null,
       p_tier: params.tier || null,
@@ -82,12 +82,10 @@ export async function searchUsers(params: {
       p_limit: params.limit || 50,
       p_offset: params.offset || 0,
     });
-
     if (error) {
       console.error('Failed to search users:', error);
       return [];
     }
-
     return data as UserSearchResult[];
   } catch (err) {
     console.error('Exception searching users:', err);
@@ -101,17 +99,17 @@ export async function setUserAdmin(
   reason?: string
 ): Promise<boolean> {
   try {
+    const sb = supabase();
+    if (!sb) return false;
     const { data, error } = await sb.rpc('set_user_admin', {
       p_target_user_id: targetUserId,
       p_is_admin: isAdmin,
       p_reason: reason || null,
     });
-
     if (error) {
       console.error('Failed to set user admin:', error);
       return false;
     }
-
     return data === true;
   } catch (err) {
     console.error('Exception setting user admin:', err);
@@ -125,6 +123,18 @@ export async function setUserTier(
   reason?: string
 ): Promise<boolean> {
   try {
+    const sb = supabase();
+    if (!sb) {
+      console.error('setUserTier: supabase client is null');
+      return false;
+    }
+
+    const { data: sessionData } = await sb.auth.getSession();
+    if (!sessionData?.session) {
+      console.error('setUserTier: no active session');
+      return false;
+    }
+
     const { data, error } = await sb.rpc('set_user_tier', {
       p_target_user_id: targetUserId,
       p_tier: tier,
@@ -132,7 +142,7 @@ export async function setUserTier(
     });
 
     if (error) {
-      console.error('Failed to set user tier:', error);
+      console.error('setUserTier RPC error:', error.message, error.code, error.details);
       return false;
     }
 
@@ -145,17 +155,17 @@ export async function setUserTier(
 
 export async function getAuditLog(limit = 50, offset = 0): Promise<AuditLogEntry[]> {
   try {
+    const sb = supabase();
+    if (!sb) return [];
     const { data, error } = await sb
       .from('admin_audit_log')
       .select('*')
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
-
     if (error) {
       console.error('Failed to fetch audit log:', error);
       return [];
     }
-
     return data as AuditLogEntry[];
   } catch (err) {
     console.error('Exception fetching audit log:', err);
@@ -169,6 +179,8 @@ export async function logAdminAction(
   details?: Record<string, any>
 ): Promise<boolean> {
   try {
+    const sb = supabase();
+    if (!sb) return false;
     const { error } = await sb.rpc('log_admin_action', {
       p_action: action,
       p_target_user_id: targetUserId || null,
@@ -176,12 +188,10 @@ export async function logAdminAction(
       p_ip_address: null,
       p_user_agent: navigator?.userAgent || null,
     });
-
     if (error) {
       console.error('Failed to log admin action:', error);
       return false;
     }
-
     return true;
   } catch (err) {
     console.error('Exception logging admin action:', err);
@@ -202,6 +212,8 @@ export interface NotificationInput {
 
 export async function sendNotification(input: NotificationInput): Promise<boolean> {
   try {
+    const sb = supabase();
+    if (!sb) return false;
     const { error } = await sb.rpc('send_admin_notification', {
       p_target_user_id: input.targetUserId || null,
       p_target_tier: input.targetTier || null,
@@ -212,12 +224,10 @@ export async function sendNotification(input: NotificationInput): Promise<boolea
       p_action_label: input.actionLabel || null,
       p_expires_at: input.expiresAt || null,
     });
-
     if (error) {
       console.error('Failed to send notification:', error);
       return false;
     }
-
     return true;
   } catch (err) {
     console.error('Exception sending notification:', err);
@@ -228,7 +238,6 @@ export async function sendNotification(input: NotificationInput): Promise<boolea
 export async function exportUsersCSV(): Promise<string | null> {
   try {
     const users = await searchUsers({ limit: 10000 });
-
     const headers = ['Email', 'Name', 'Tier', 'Admin', 'Created', 'Style Profile', 'Saved Outfits', 'Referrals'];
     const rows = users.map(u => [
       u.email,
@@ -240,7 +249,6 @@ export async function exportUsersCSV(): Promise<string | null> {
       u.saved_outfits_count.toString(),
       u.referral_count.toString(),
     ]);
-
     const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
     return csv;
   } catch (err) {
@@ -251,13 +259,13 @@ export async function exportUsersCSV(): Promise<string | null> {
 
 export async function getRealtimeMetrics() {
   try {
+    const sb = supabase();
+    if (!sb) return null;
     const { data, error } = await sb.rpc('get_admin_metrics');
-
     if (error) {
       console.error('Failed to fetch realtime metrics:', error);
       return null;
     }
-
     return data;
   } catch (err) {
     console.error('Exception fetching realtime metrics:', err);
