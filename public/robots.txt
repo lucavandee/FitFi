@@ -1,14 +1,21 @@
 User-agent: *
 Allow: /
 
+# Authenticated / personalised pages — no indexable content for anonymous users
 Disallow: /admin/
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /account/
 Disallow: /results
+
+# Quiz flow — dynamic, session-based, no stable indexable content
 Disallow: /onboarding
+
+# Auth pages — no SEO value
 Disallow: /inloggen
 Disallow: /registreren
+
+# Internal tooling
 Disallow: /accessibility-test
 
 Sitemap: https://fitfi.ai/sitemap.xml
