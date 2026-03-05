@@ -672,6 +672,13 @@ export default function OnboardingFlowPage() {
             sessionId={sessionId}
             onComplete={handleCalibrationComplete}
             onBack={handleBack}
+            quizData={{
+              gender: answers.gender,
+              archetype: answers.stylePreferences?.[0] || 'Casual',
+              colors: answers.baseColors?.split(',') || [],
+              budgetRange: answers.budgetRange,
+              occasions: answers.occasions || [],
+            }}
           />
         </main>
 

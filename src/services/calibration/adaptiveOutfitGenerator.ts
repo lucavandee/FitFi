@@ -74,6 +74,52 @@ interface GenerationContext {
   season?: 'spring' | 'summer' | 'autumn' | 'winter';
 }
 
+const NON_CLOTHING_PATTERNS = [
+  /kaars/i, /candle/i, /lamp/i, /vaas/i, /houder/i, /decor/i,
+  /bedrok/i, /kussen/i, /plaid/i, /handdoek/i, /baddoek/i,
+  /meegroeipakje/i, /baby/i, /peuter/i, /kleuter/i, /romper/i,
+  /wanten/i, /handschoen/i, /bonnet/i, /haarbonnet/i,
+  /pantoffel/i, /sloffen/i, /slippers/i, /flip.?flop/i,
+  /oplaadba/i, /oplader/i, /telefoon/i, /hoesje/i,
+  /speelgoed/i, /knuffel/i, /puzzel/i,
+  /voetbal.*(shirt|short|jersey|tenue)/i,
+  /Marokko\s+20\d/i, /Manchester\s+(City|United)/i,
+  /Marseille/i, /Arsenal/i, /AC\s*Milan/i, /Borussia/i,
+  /Barcelona/i, /Bayern/i, /Liverpool/i, /Chelsea/i,
+  /motorsport/i, /McLAREN/i, /BMW\s+M\s/i, /Ferrari/i,
+  /Red\s+Bull\s+Racing/i, /Scuderia/i,
+  /voetbalschoen/i, /voetbalbroek/i, /keepers/i,
+];
+
+const INAPPROPRIATE_FOOTWEAR_PATTERNS = [
+  /pantoffel/i, /sloffen/i, /slipper(?!s?\s+sneaker)/i,
+  /flip.?flop/i, /sandal/i, /crocs/i, /klompen/i, /muil/i,
+  /badslip/i, /badslipper/i, /teenslip/i,
+];
+
+function isClothingItem(name: string): boolean {
+  return !NON_CLOTHING_PATTERNS.some(p => p.test(name));
+}
+
+function isAppropriateFootwear(name: string): boolean {
+  return !INAPPROPRIATE_FOOTWEAR_PATTERNS.some(p => p.test(name));
+}
+
+type FormalityBand = 'casual' | 'smart' | 'formal';
+
+function getFormalityBand(name: string, style?: string): FormalityBand {
+  const text = `${name} ${style || ''}`.toLowerCase();
+  const formalKeywords = ['blazer', 'kostuum', 'smoking', 'overhemd', 'pantalon', 'colbert', 'dress shirt', 'suit', 'oxford', 'derby', 'loafer', 'monk'];
+  const casualKeywords = ['hoodie', 'jogger', 'sweatpant', 'track', 'sport', 'sneaker', 'trainer', 'athletic', 'training', 'running', 'shorts', 'cargo'];
+
+  const isFormal = formalKeywords.some(k => text.includes(k));
+  const isCasual = casualKeywords.some(k => text.includes(k));
+
+  if (isFormal && !isCasual) return 'formal';
+  if (isCasual && !isFormal) return 'casual';
+  return 'smart';
+}
+
 export class AdaptiveOutfitGenerator {
   private static SCORING_WEIGHTS = {
     style_match: 0.30,
@@ -104,20 +150,29 @@ export class AdaptiveOutfitGenerator {
     // Get recommendations from learned preferences
     const recommendations = await this.getAdaptiveRecommendations(context.session_id);
 
-    // Generate diverse outfits with exploration/exploitation balance
-    for (let i = 0; i < count; i++) {
+    const maxAttempts = count * 3;
+    let attempts = 0;
+
+    while (outfits.length < count && attempts < maxAttempts) {
+      attempts++;
       const shouldExplore = Math.random() < context.exploration_rate;
 
       const outfit = shouldExplore
-        ? await this.generateExploratoryOutfit(products, context, i)
-        : await this.generateOptimizedOutfit(products, context, recommendations, i);
+        ? await this.generateExploratoryOutfit(products, context, outfits.length)
+        : await this.generateOptimizedOutfit(products, context, recommendations, outfits.length);
 
       if (outfit) {
-        outfits.push(outfit);
+        const isDuplicate = outfits.some(existing =>
+          existing.products.some(ep =>
+            outfit.products.some(op => op.id === ep.id)
+          )
+        );
+        if (!isDuplicate) {
+          outfits.push(outfit);
+        }
       }
     }
 
-    // Ensure diversity across the set
     return this.ensureOutfitDiversity(outfits);
   }
 
@@ -199,12 +254,18 @@ export class AdaptiveOutfitGenerator {
     context: GenerationContext,
     strategy: 'optimized' | 'exploratory'
   ): Promise<AdaptiveOutfit | null> {
-    // Product selection strategy
     const top = this.selectProduct(products, 'top', context);
-    const bottom = this.selectProduct(products, 'bottom', context);
-    const footwear = this.selectProduct(products, 'footwear', context);
+    if (!top) {
+      console.warn('[AdaptiveOutfitGenerator] Could not find top');
+      return null;
+    }
 
-    if (!top || !bottom || !footwear) {
+    const topBand = getFormalityBand(top.name, top.style);
+
+    const bottom = this.selectProductWithFormality(products, 'bottom', context, topBand);
+    const footwear = this.selectProductWithFormality(products, 'footwear', context, topBand);
+
+    if (!bottom || !footwear) {
       console.warn('[AdaptiveOutfitGenerator] Could not build complete outfit');
       return null;
     }
@@ -686,6 +747,44 @@ export class AdaptiveOutfitGenerator {
     return topProducts[Math.floor(Math.random() * topProducts.length)];
   }
 
+  private selectProductWithFormality(
+    products: Product[],
+    category: string,
+    context: GenerationContext,
+    targetBand: FormalityBand
+  ): Product | null {
+    let categoryProducts = products.filter(p => p.category === category);
+    if (categoryProducts.length === 0) return null;
+
+    const sameBand = categoryProducts.filter(p =>
+      getFormalityBand(p.name, p.style) === targetBand
+    );
+
+    const compatible = targetBand === 'smart'
+      ? categoryProducts
+      : sameBand.length > 0
+        ? sameBand
+        : categoryProducts.filter(p =>
+            getFormalityBand(p.name, p.style) === 'smart'
+          );
+
+    const pool = compatible.length > 0 ? compatible : categoryProducts;
+
+    const swipeHistory = context.swipe_history;
+    let filtered = [...pool];
+
+    if (swipeHistory) {
+      filtered = filtered.filter(p =>
+        !swipeHistory.disliked_colors.some(c => p.colors?.includes(c))
+      );
+      if (filtered.length === 0) filtered = [...pool];
+    }
+
+    const topN = Math.max(1, Math.ceil(filtered.length * 0.3));
+    const selection = filtered.slice(0, topN);
+    return selection[Math.floor(Math.random() * selection.length)];
+  }
+
   private determinePriceTier(price: number): 'budget' | 'mid' | 'premium' {
     if (price <= 200) return 'budget';
     if (price <= 400) return 'mid';
@@ -765,7 +864,7 @@ export class AdaptiveOutfitGenerator {
   private async getProductPool(context: GenerationContext): Promise<Product[]> {
     const g = context.user_profile?.gender;
     const categories = ['top', 'bottom', 'footwear'];
-    const perCategory = 70;
+    const perCategory = 200;
 
     const fetches = categories.map(async (cat) => {
       let query = supabase
@@ -783,7 +882,19 @@ export class AdaptiveOutfitGenerator {
         console.error(`[AdaptiveOutfitGenerator] Error fetching ${cat}:`, error);
         return [];
       }
-      return (data || []) as Product[];
+
+      const raw = (data || []) as Product[];
+      const filtered = raw.filter(p => {
+        const name = p.name || '';
+        if (!isClothingItem(name)) return false;
+        if (cat === 'footwear' && !isAppropriateFootwear(name)) return false;
+        const price = typeof p.price === 'string' ? parseFloat(p.price) : (p.price || 0);
+        if (price <= 0) return false;
+        p.price = price;
+        return true;
+      });
+
+      return filtered;
     });
 
     const results = await Promise.all(fetches);

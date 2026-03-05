@@ -324,18 +324,40 @@ export class CalibrationService {
     // Get brand affinity data (if available)
     const brandAffinity = await this.getBrandAffinityMap(supabase);
 
-    // CRITICAL: Filter by gender AND BUDGET (client-side)
+    const NON_CLOTHING = [
+      /kaars/i, /candle/i, /lamp/i, /vaas/i, /houder/i, /decor/i,
+      /bedrok/i, /kussen/i, /plaid/i, /handdoek/i, /baddoek/i,
+      /meegroeipakje/i, /baby/i, /peuter/i, /kleuter/i, /romper/i,
+      /wanten/i, /handschoen/i, /bonnet/i, /haarbonnet/i,
+      /pantoffel/i, /sloffen/i, /slippers/i, /flip.?flop/i,
+      /oplaadba/i, /oplader/i, /telefoon/i, /hoesje/i,
+      /speelgoed/i, /knuffel/i, /puzzel/i,
+      /voetbal.*(shirt|short|jersey|tenue)/i,
+      /Marokko\s+20\d/i, /Manchester\s+(City|United)/i,
+      /Marseille/i, /Arsenal/i, /AC\s*Milan/i, /Borussia/i,
+      /Barcelona/i, /Bayern/i, /Liverpool/i, /Chelsea/i,
+      /motorsport/i, /McLAREN/i, /BMW\s+M\s/i, /Ferrari/i,
+      /Red\s+Bull\s+Racing/i, /Scuderia/i,
+      /voetbalschoen/i, /voetbalbroek/i, /keepers/i,
+    ];
+    const BAD_FOOTWEAR = [
+      /pantoffel/i, /sloffen/i, /slipper(?!s?\s+sneaker)/i,
+      /flip.?flop/i, /sandal/i, /crocs/i, /klompen/i, /muil/i,
+      /badslip/i, /badslipper/i, /teenslip/i,
+    ];
+
     let filteredData = data.filter(product => {
-      // Gender filter
       if (gender && product.gender !== gender && product.gender !== 'unisex') {
         return false;
       }
 
-      // BUDGET FILTER (CRITICAL - price is stored as TEXT in DB)
+      const name = product.name || '';
+      if (NON_CLOTHING.some(p => p.test(name))) return false;
+      if (category === 'footwear' && BAD_FOOTWEAR.some(p => p.test(name))) return false;
+
       if (priceRange) {
         const productPrice = parseFloat(product.price);
         if (isNaN(productPrice) || productPrice < priceRange.min || productPrice > priceRange.max) {
-          console.log(`  ❌ Budget filter: ${product.name} (€${product.price}) exceeds range €${priceRange.min}-€${priceRange.max}`);
           return false;
         }
       }
