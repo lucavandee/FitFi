@@ -237,11 +237,20 @@ export default function EnhancedResultsPage() {
     return undefined;
   }, [answers?.budget]);
 
+  const outfitLimit = React.useMemo(() => {
+    if (!user) return 6;
+    const tier = (user as any).tier || ((user as any).isPremium ? 'premium' : 'member');
+    if (tier === 'founder') return 20;
+    if (tier === 'premium' || tier === 'plus') return 12;
+    if (tier === 'member') return 9;
+    return 6;
+  }, [user]);
+
   const { data: realOutfits, loading: outfitsLoading } = useOutfits({
     archetype: archetypeKey,
     secondaryArchetype: archetypeDetectionResult?.secondary || undefined,
     mixFactor: archetypeDetectionResult?.secondary ? 0.3 : 0,
-    limit: 9,
+    limit: outfitLimit,
     enabled: hasCompletedQuiz,
     gender: answers?.gender as any,
     fit: answers?.fit,
