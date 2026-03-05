@@ -1,10 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Users, Search, Shield, CheckCircle, XCircle, Crown,
-  Download, RefreshCw, ChevronUp, ChevronDown, ArrowLeft,
-  Filter, MoreVertical
-} from 'lucide-react';
+import { Users, Search, Shield, CircleCheck as CheckCircle, Circle as XCircle, Crown, Download, RefreshCw, ChevronUp, ChevronDown, ArrowLeft, Filter, MoveVertical as MoreVertical } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { setUserTier, exportUsersCSV } from '@/services/admin/adminService';
