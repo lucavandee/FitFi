@@ -145,7 +145,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
 
           <Button
             as={Link}
-            to="/outfits"
+            to="/results"
             onClick={handleViewMore}
             variant="primary"
             size="lg"

@@ -60,7 +60,7 @@ const StickyBottomBar: React.FC<StickyBottomBarProps> = ({
         <div className="flex space-x-3 max-w-sm mx-auto">
           <Button
             as={Link}
-            to="/outfits"
+            to="/results"
             onClick={handleOutfitsClick}
             variant="primary"
             size="lg"

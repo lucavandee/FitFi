@@ -63,7 +63,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
         <p className="text-[var(--color-text)]/70 mb-6">
           Begin met het opslaan van je favoriete looks om ze hier terug te vinden
         </p>
-        <Button as={NavLink} to="/resultaten" variant="primary">
+        <Button as={NavLink} to="/results" variant="primary">
           Bekijk outfits
         </Button>
       </div>
