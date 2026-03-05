@@ -106,6 +106,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setUser(prev => prev ? {
                 ...prev,
                 tier: profile.tier as 'free' | 'premium' | 'founder',
+                isAdmin: profile.is_admin === true,
                 gender: profile.gender as 'male' | 'female' | undefined,
                 created_at: profile.created_at
               } : null);
