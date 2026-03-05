@@ -6,15 +6,38 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
 };
 
-interface MoodAnalysis {
+interface FullAnalysis {
   moodTags: string[];
+  archetypeWeights: Record<string, number>;
+  dominantColors: string[];
+  styleAttributes: { formality: number; boldness: number };
   confidence: number;
   reasoning: string;
 }
 
-Deno.serve(async (req: Request) => {
-  console.log('🎨 AI Mood Tags function called:', req.method);
+const ARCHETYPES = ['MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'];
 
+const ALLOWED_TAGS = [
+  'minimal', 'clean', 'monochrome', 'modern', 'refined', 'tonal', 'effen', 'simpel',
+  'classic', 'tailored', 'preppy', 'elegant', 'sophisticated', 'timeless', 'vintage', 'smart', 'formal',
+  'smart-casual', 'casual', 'layered', 'knit', 'warm', 'relaxed',
+  'street', 'urban', 'oversized', 'streetwear', 'hoodie', 'sneaker',
+  'sport', 'athletic', 'performance', 'tech', 'athleisure',
+  'avant', 'conceptual', 'asymmetric', 'statement', 'edge', 'dramatic',
+  'kantoor', 'evening', 'weekend', 'date', 'summer', 'winter', 'autumn', 'spring',
+  'power', 'flowing', 'feminine', 'masculine', 'sustainable', 'heritage',
+  'bomber', 'cargo', 'denim', 'leather', 'utility', 'crochet', 'floral',
+  'boho', 'romantic', 'grunge', 'retro', 'sporty', 'cozy', 'effortless', 'chic',
+  'dutch', 'premium', 'sleek', 'bold', 'soft', 'fresh',
+];
+
+const ALLOWED_COLORS = [
+  'zwart', 'wit', 'grijs', 'beige', 'camel', 'navy', 'blauw', 'groen',
+  'olijf', 'bordeaux', 'bruin', 'terracotta', 'roze', 'creme', 'cognac',
+  'goud', 'rood', 'geel', 'kobalt', 'nude', 'oranje', 'lila', 'turquoise',
+];
+
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
@@ -46,25 +69,19 @@ Deno.serve(async (req: Request) => {
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
-      console.error('Auth error:', authError);
       return new Response(
         JSON.stringify({ error: 'Invalid token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Check admin via app_metadata (no DB query, no recursion)
     const isAdmin = user.app_metadata?.is_admin === true;
-    console.log('Admin check:', { userId: user.id.substring(0, 8), isAdmin, appMetadata: user.app_metadata });
-
     if (!isAdmin) {
       return new Response(
         JSON.stringify({ error: 'Admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('✅ Admin verified');
 
     const formData = await req.formData();
     const file = formData.get('image') as File;
@@ -77,9 +94,6 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log('🖼️ Processing image:', { name: file.name, size: file.size, gender });
-
-    // Convert to base64 using chunked approach to avoid stack overflow
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
 
@@ -93,28 +107,46 @@ Deno.serve(async (req: Request) => {
 
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openaiApiKey) {
-      console.error('❌ OpenAI API key not configured');
       return new Response(
         JSON.stringify({ error: 'AI service not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const allTags = [
-      'minimal', 'maximalist', 'scandinavian', 'bohemian', 'industrial',
-      'vintage', 'modern', 'classic', 'avant-garde', 'streetwear',
-      'preppy', 'romantic', 'edgy', 'elegant', 'casual',
-      'confident', 'relaxed', 'sophisticated', 'playful', 'bold',
-      'understated', 'dramatic', 'serene', 'energetic', 'refined',
-      'cozy', 'polished', 'effortless', 'luxe', 'laid-back',
-      'clean', 'layered', 'structured', 'flowing', 'fitted',
-      'oversized', 'tailored', 'artistic', 'athletic', 'chic',
-      'timeless', 'contemporary', 'eclectic', 'monochrome', 'colorful'
-    ];
+    const prompt = `You are a fashion style analysis expert for FitFi, a Dutch style profiling platform.
 
-    console.log('🤖 Calling OpenAI...');
+Analyze this fashion outfit photo and provide a COMPLETE style analysis.
 
-    const prompt = `Analyze this fashion outfit and suggest 5-8 mood tags that describe its style and aesthetic.\n\nGender: ${gender || 'unisex'}\n\nAvailable tags: ${allTags.join(', ')}\n\nConsider: vibe, color palette, fit, formality, styling approach\n\nRespond in JSON:\n{\n  "moodTags": ["tag1", "tag2", ...],\n  "confidence": 0.85,\n  "reasoning": "Brief explanation"\n}`;
+Gender context: ${gender || 'unisex'}
+
+You must return a JSON object with ALL of these fields:
+
+1. "moodTags" - Array of 4-6 tags from this list: ${ALLOWED_TAGS.join(', ')}
+   Pick tags that describe the vibe, fit, formality, and occasion.
+
+2. "archetypeWeights" - Object with weights for these 6 style archetypes. Weights MUST sum to exactly 1.0.
+   Archetypes: ${ARCHETYPES.join(', ')}
+   - MINIMALIST: Clean lines, muted colors, architectural, less-is-more
+   - CLASSIC: Timeless, tailored, preppy, heritage, polished
+   - SMART_CASUAL: Relaxed polish, layered, versatile, approachable
+   - STREETWEAR: Urban, oversized, sneaker culture, bold graphics
+   - ATHLETIC: Performance, sporty, tech fabrics, athleisure
+   - AVANT_GARDE: Conceptual, asymmetric, dramatic, deconstructed
+   Give the primary archetype 0.45-0.75, secondary 0.15-0.35, and optionally a third 0.05-0.20.
+   Only include archetypes with weight > 0.
+
+3. "dominantColors" - Array of 1-3 main colors from this Dutch color list: ${ALLOWED_COLORS.join(', ')}
+   Pick the most prominent colors in the outfit (not the background).
+
+4. "styleAttributes" - Object with exactly two keys:
+   - "formality": number 0.0 (ultra casual / gym) to 1.0 (black tie / gala)
+   - "boldness": number 0.0 (safe / understated / neutral) to 1.0 (maximum statement / dramatic)
+
+5. "confidence" - Your confidence in this analysis, 0.0 to 1.0.
+
+6. "reasoning" - One sentence explaining the overall style assessment.
+
+Respond with ONLY the JSON object, no markdown formatting.`;
 
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -137,8 +169,8 @@ Deno.serve(async (req: Request) => {
             }
           ]
         }],
-        max_tokens: 500,
-        temperature: 0.7
+        max_tokens: 800,
+        temperature: 0.4
       })
     });
 
@@ -160,26 +192,58 @@ Deno.serve(async (req: Request) => {
 
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('Could not parse JSON');
+      throw new Error('Could not parse JSON from AI response');
     }
 
-    const analysis: MoodAnalysis = JSON.parse(jsonMatch[0]);
-    const validTags = analysis.moodTags.filter(tag => allTags.includes(tag.toLowerCase()));
+    const analysis: FullAnalysis = JSON.parse(jsonMatch[0]);
 
-    console.log('✅ Analysis complete:', validTags.length, 'tags');
+    const validTags = (analysis.moodTags || []).filter(
+      (tag: string) => ALLOWED_TAGS.includes(tag.toLowerCase())
+    );
+
+    const validColors = (analysis.dominantColors || []).filter(
+      (color: string) => ALLOWED_COLORS.includes(color.toLowerCase())
+    );
+
+    const validWeights: Record<string, number> = {};
+    let weightSum = 0;
+    if (analysis.archetypeWeights) {
+      for (const arch of ARCHETYPES) {
+        const w = analysis.archetypeWeights[arch];
+        if (typeof w === 'number' && w > 0) {
+          validWeights[arch] = Math.round(w * 100) / 100;
+          weightSum += validWeights[arch];
+        }
+      }
+      if (weightSum > 0 && Math.abs(weightSum - 1.0) > 0.01) {
+        for (const key of Object.keys(validWeights)) {
+          validWeights[key] = Math.round((validWeights[key] / weightSum) * 100) / 100;
+        }
+      }
+    }
+
+    const formality = typeof analysis.styleAttributes?.formality === 'number'
+      ? Math.max(0, Math.min(1, Math.round(analysis.styleAttributes.formality * 100) / 100))
+      : 0.5;
+    const boldness = typeof analysis.styleAttributes?.boldness === 'number'
+      ? Math.max(0, Math.min(1, Math.round(analysis.styleAttributes.boldness * 100) / 100))
+      : 0.3;
 
     return new Response(
       JSON.stringify({
         success: true,
         moodTags: validTags,
-        confidence: analysis.confidence,
-        reasoning: analysis.reasoning
+        archetypeWeights: validWeights,
+        dominantColors: validColors,
+        styleAttributes: { formality, boldness },
+        confidence: analysis.confidence || 0.75,
+        reasoning: analysis.reasoning || ''
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (err) {
-    console.error('❌ Error:', err);
+    console.error('Error:', err);
     return new Response(
       JSON.stringify({
         error: 'Analysis failed',

@@ -46,7 +46,7 @@ export class SwipeAnalyzer {
     // Analyze colors from liked photos
     const colorCounts: Record<string, number> = {};
     likes.forEach(({ photo }) => {
-      photo.color_palette?.forEach(color => {
+      photo.dominant_colors?.forEach(color => {
         colorCounts[color] = (colorCounts[color] || 0) + 1;
       });
     });
@@ -59,7 +59,7 @@ export class SwipeAnalyzer {
     // Analyze style tags from liked photos
     const styleCounts: Record<string, number> = {};
     likes.forEach(({ photo }) => {
-      photo.style_tags?.forEach(tag => {
+      photo.mood_tags?.forEach(tag => {
         styleCounts[tag] = (styleCounts[tag] || 0) + 1;
       });
     });
@@ -243,72 +243,31 @@ export class SwipeAnalyzer {
     return translations[tag] || tag.replace(/_/g, ' ');
   }
 
-  private translateColor(hex: string): string {
-    // Convert hex to color description
-    const colorNames: Record<string, string> = {
-      '#FFFFFF': 'wit',
-      '#000000': 'zwart',
-      '#808080': 'grijs',
-      '#F5F5DC': 'beige',
-      '#8B7355': 'camel',
-      '#2C3E50': 'donkerblauw',
-      '#ECF0F1': 'off-white',
-      '#34495E': 'slate',
-      '#1C1C1C': 'antraciet',
-      '#DC143C': 'rood',
-      '#D2691E': 'terracotta',
-      '#F4A460': 'zandkleur',
-      '#8B4513': 'bruin',
-      '#000080': 'marineblauw',
-      '#C41E3A': 'rood',
-      '#00CED1': 'turquoise',
-      '#FFB6C1': 'roze',
-      '#DDA0DD': 'lila',
-      '#87CEEB': 'lichtblauw',
-      '#F0E68C': 'geel',
-      '#FF6347': 'oranje',
-      '#FFD700': 'goud',
-      '#4169E1': 'kobaltblauw'
+  private translateColor(color: string): string {
+    const displayNames: Record<string, string> = {
+      'zwart': 'zwart',
+      'wit': 'wit',
+      'grijs': 'grijs',
+      'beige': 'beige',
+      'camel': 'camel',
+      'navy': 'donkerblauw',
+      'blauw': 'blauw',
+      'groen': 'groen',
+      'olijf': 'olijfgroen',
+      'bordeaux': 'bordeaux',
+      'bruin': 'bruin',
+      'terracotta': 'terracotta',
+      'roze': 'roze',
+      'creme': 'crème',
+      'cognac': 'cognac',
+      'goud': 'goud',
+      'rood': 'rood',
+      'geel': 'geel',
+      'kobalt': 'kobaltblauw',
+      'nude': 'nude tinten'
     };
 
-    const closest = this.findClosestColor(hex, Object.keys(colorNames));
-    return colorNames[closest] || 'neutrale kleuren';
-  }
-
-  private findClosestColor(targetHex: string, colorHexes: string[]): string {
-    // Simple color distance calculation
-    const target = this.hexToRgb(targetHex);
-    if (!target) return colorHexes[0];
-
-    let minDistance = Infinity;
-    let closest = colorHexes[0];
-
-    for (const hex of colorHexes) {
-      const color = this.hexToRgb(hex);
-      if (!color) continue;
-
-      const distance = Math.sqrt(
-        Math.pow(target.r - color.r, 2) +
-        Math.pow(target.g - color.g, 2) +
-        Math.pow(target.b - color.b, 2)
-      );
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closest = hex;
-      }
-    }
-
-    return closest;
-  }
-
-  private hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
+    return displayNames[color] || color;
   }
 
   getInsightsShown(): number {

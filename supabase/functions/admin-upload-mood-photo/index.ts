@@ -7,16 +7,12 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req: Request) => {
-  console.log('🚀 Admin upload function called:', req.method);
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
-    console.log('🔐 Auth header present:', !!authHeader);
-
     if (!authHeader) {
       return new Response(
         JSON.stringify({ error: 'Missing authorization header' }),
@@ -42,48 +38,32 @@ Deno.serve(async (req: Request) => {
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
-      console.error('❌ Auth failed:', authError?.message);
       return new Response(
         JSON.stringify({ error: 'Invalid token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('✅ User authenticated:', user.id.substring(0, 8));
-
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (profileError || !profile?.is_admin) {
-      console.error('❌ Not admin');
+    const isAdmin = user.app_metadata?.is_admin === true;
+    if (!isAdmin) {
       return new Response(
         JSON.stringify({ error: 'Admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('✅ Admin verified');
-
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const gender = formData.get('gender') as string;
     const moodTagsStr = formData.get('moodTags') as string;
     const displayOrderStr = formData.get('displayOrder') as string;
-
-    console.log('📋 Form data received:', {
-      fileName: file?.name,
-      fileType: file?.type,
-      fileSize: file?.size ? `${(file.size / 1024).toFixed(2)}KB` : 'unknown',
-      gender,
-      tagsCount: moodTagsStr ? JSON.parse(moodTagsStr).length : 0
-    });
+    const archetypeWeightsStr = formData.get('archetypeWeights') as string;
+    const dominantColorsStr = formData.get('dominantColors') as string;
+    const styleAttributesStr = formData.get('styleAttributes') as string;
 
     if (!file || !gender || !moodTagsStr || !displayOrderStr) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields' }),
+        JSON.stringify({ error: 'Missing required fields (file, gender, moodTags, displayOrder)' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -91,17 +71,27 @@ Deno.serve(async (req: Request) => {
     const moodTags = JSON.parse(moodTagsStr);
     const displayOrder = parseInt(displayOrderStr);
 
-    // Generate unique filename
+    let archetypeWeights = {};
+    if (archetypeWeightsStr) {
+      try { archetypeWeights = JSON.parse(archetypeWeightsStr); } catch { /* keep default */ }
+    }
+
+    let dominantColors: string[] = [];
+    if (dominantColorsStr) {
+      try { dominantColors = JSON.parse(dominantColorsStr); } catch { /* keep default */ }
+    }
+
+    let styleAttributes = {};
+    if (styleAttributesStr) {
+      try { styleAttributes = JSON.parse(styleAttributesStr); } catch { /* keep default */ }
+    }
+
     const fileExt = file.name.split('.').pop() || 'jpg';
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = `${gender}/${fileName}`;
 
-    console.log('📤 Uploading to storage:', filePath);
-
-    // Get file buffer
     const fileBuffer = await file.arrayBuffer();
 
-    // Upload to storage
     const { error: uploadError } = await supabaseAdmin.storage
       .from('mood-photos')
       .upload(filePath, fileBuffer, {
@@ -111,29 +101,25 @@ Deno.serve(async (req: Request) => {
       });
 
     if (uploadError) {
-      console.error('❌ Upload error:', uploadError);
       return new Response(
         JSON.stringify({ error: 'Upload failed: ' + uploadError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('✅ File uploaded successfully');
-
-    // Get public URL
     const { data: { publicUrl } } = supabaseAdmin.storage
       .from('mood-photos')
       .getPublicUrl(filePath);
 
-    console.log('💾 Inserting into database...');
-
-    // Insert into database
     const { data, error: dbError } = await supabaseAdmin
       .from('mood_photos')
       .insert({
         image_url: publicUrl,
-        gender: gender,
+        gender,
         mood_tags: moodTags,
+        archetype_weights: archetypeWeights,
+        dominant_colors: dominantColors,
+        style_attributes: styleAttributes,
         active: true,
         display_order: displayOrder
       })
@@ -141,8 +127,6 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (dbError) {
-      console.error('❌ Database error:', dbError);
-      // Cleanup: remove uploaded file
       await supabaseAdmin.storage.from('mood-photos').remove([filePath]);
       return new Response(
         JSON.stringify({ error: 'Database insert failed: ' + dbError.message }),
@@ -150,16 +134,13 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log('✅ Photo added successfully! ID:', data.id);
-    console.log('📊 Format:', file.type, '| Size:', (file.size / 1024).toFixed(2) + 'KB');
-
     return new Response(
       JSON.stringify({ success: true, data }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (err) {
-    console.error('❌ Function error:', err);
+    console.error('Error:', err);
     return new Response(
       JSON.stringify({ error: 'Internal server error: ' + (err as Error).message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

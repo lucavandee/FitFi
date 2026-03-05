@@ -470,7 +470,7 @@ export class ArchetypeDetector {
     });
 
     // Match archetype weights
-    const archetypeKey = descriptor.key.toLowerCase();
+    const archetypeKey = descriptor.key;
     if (archetypeWeights[archetypeKey]) {
       score += Math.min(archetypeWeights[archetypeKey] * 10, 30);
       reasons.push(`Archetype weight match: ${archetypeWeights[archetypeKey]}`);

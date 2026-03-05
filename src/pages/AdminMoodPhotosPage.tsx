@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X, Sparkles, Check } from 'lucide-react';
+import {
+  AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw,
+  Upload, Plus, X, Sparkles, Check, Sliders, Palette, Zap
+} from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
@@ -12,10 +15,42 @@ interface MoodPhoto {
   image_url: string;
   gender: 'male' | 'female' | 'unisex';
   mood_tags: string[];
+  archetype_weights: Record<string, number>;
+  dominant_colors: string[];
+  style_attributes: Record<string, number>;
   active: boolean;
   display_order: number;
   created_at: string;
 }
+
+const ARCHETYPES = ['MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'] as const;
+
+const ARCHETYPE_LABELS: Record<string, string> = {
+  MINIMALIST: 'Minimalist',
+  CLASSIC: 'Classic',
+  SMART_CASUAL: 'Smart Casual',
+  STREETWEAR: 'Streetwear',
+  ATHLETIC: 'Athletic',
+  AVANT_GARDE: 'Avant-Garde',
+};
+
+const ARCHETYPE_COLORS: Record<string, string> = {
+  MINIMALIST: 'bg-gray-100 text-gray-700 border-gray-200',
+  CLASSIC: 'bg-amber-50 text-amber-700 border-amber-200',
+  SMART_CASUAL: 'bg-teal-50 text-teal-700 border-teal-200',
+  STREETWEAR: 'bg-red-50 text-red-700 border-red-200',
+  ATHLETIC: 'bg-blue-50 text-blue-700 border-blue-200',
+  AVANT_GARDE: 'bg-stone-100 text-stone-700 border-stone-300',
+};
+
+const COLOR_SWATCHES: Record<string, string> = {
+  zwart: '#1a1a1a', wit: '#f5f5f5', grijs: '#9ca3af', beige: '#d4c5a9',
+  camel: '#c19a6b', navy: '#1e3a5f', blauw: '#3b82f6', groen: '#22c55e',
+  olijf: '#6b7034', bordeaux: '#722f37', bruin: '#8b5e3c', terracotta: '#c04000',
+  roze: '#f9a8d4', creme: '#f5f0e1', cognac: '#9a5b13', goud: '#d4a017',
+  rood: '#ef4444', geel: '#eab308', kobalt: '#0047ab', nude: '#e8c4a0',
+  oranje: '#f97316', lila: '#c084fc', turquoise: '#06b6d4',
+};
 
 export default function AdminMoodPhotosPage() {
   const { isAdmin, user, isLoading: authLoading } = useIsAdmin();
@@ -24,7 +59,6 @@ export default function AdminMoodPhotosPage() {
   const [filterGender, setFilterGender] = useState<'all' | 'male' | 'female' | 'unisex'>('all');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [isConverting, setIsConverting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -37,7 +71,6 @@ export default function AdminMoodPhotosPage() {
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
-
       if (!client) {
         toast.error('Database niet beschikbaar');
         setLoading(false);
@@ -49,28 +82,18 @@ export default function AdminMoodPhotosPage() {
         .select('*')
         .order('display_order', { ascending: true });
 
-      if (filterGender !== 'all') {
-        query = query.eq('gender', filterGender);
-      }
-
-      if (filterActive === 'active') {
-        query = query.eq('active', true);
-      } else if (filterActive === 'inactive') {
-        query = query.eq('active', false);
-      }
+      if (filterGender !== 'all') query = query.eq('gender', filterGender);
+      if (filterActive === 'active') query = query.eq('active', true);
+      else if (filterActive === 'inactive') query = query.eq('active', false);
 
       const { data, error } = await query;
-
       if (error) {
-        console.error('Error loading photos:', error);
         toast.error('Fout bij laden foto\'s');
         setLoading(false);
         return;
       }
-
       setPhotos(data || []);
-    } catch (err) {
-      console.error('Failed to load photos:', err);
+    } catch {
       toast.error('Fout bij laden foto\'s');
     } finally {
       setLoading(false);
@@ -78,95 +101,48 @@ export default function AdminMoodPhotosPage() {
   };
 
   const toggleActive = async (id: number, currentActive: boolean) => {
-    console.log('🔄 Toggle active called:', { id, currentActive, newValue: !currentActive });
-
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
-
-      console.log('📡 Sending update request...');
-      const { data, error } = await client
+      const { error } = await client
         .from('mood_photos')
         .update({ active: !currentActive })
         .eq('id', id)
         .select();
 
       if (error) {
-        console.error('❌ Update failed:', error);
         toast.error('Fout bij updaten: ' + error.message);
         return;
       }
-
-      console.log('✅ Update succeeded:', data);
       toast.success(currentActive ? 'Gedeactiveerd' : 'Geactiveerd');
-
-      // Update local state immediately
-      setPhotos(prev => prev.map(p =>
-        p.id === id ? { ...p, active: !currentActive } : p
-      ));
+      setPhotos(prev => prev.map(p => p.id === id ? { ...p, active: !currentActive } : p));
     } catch (err) {
-      console.error('💥 Error toggling active:', err);
       toast.error('Fout bij updaten: ' + (err as Error).message);
     }
   };
 
   const deletePhoto = async (id: number) => {
-    console.log('🗑️ Delete photo called:', { id });
-
-    if (!confirm('Weet je zeker dat je deze foto wilt VERWIJDEREN? Dit kan niet ongedaan worden.')) {
-      console.log('❌ Delete cancelled by user');
-      return;
-    }
-
+    if (!confirm('Weet je zeker dat je deze foto wilt verwijderen?')) return;
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
-
       const photo = photos.find(p => p.id === id);
-      if (!photo) {
-        console.error('❌ Photo not found in local state');
-        toast.error('Foto niet gevonden');
-        return;
-      }
+      if (!photo) return;
 
-      console.log('📡 Deleting from database...', { id, url: photo.image_url });
-      const { error: dbError } = await client
-        .from('mood_photos')
-        .delete()
-        .eq('id', id);
-
+      const { error: dbError } = await client.from('mood_photos').delete().eq('id', id);
       if (dbError) {
-        console.error('❌ Database delete failed:', dbError);
-        toast.error('Fout bij verwijderen uit database: ' + dbError.message);
+        toast.error('Fout bij verwijderen: ' + dbError.message);
         return;
       }
-
-      console.log('✅ Database delete succeeded');
-
       if (photo.image_url.includes('supabase')) {
         const urlParts = photo.image_url.split('/mood-photos/');
         if (urlParts.length === 2) {
-          const filePath = urlParts[1];
-          console.log('🗄️ Deleting from storage...', { filePath });
-
-          const { error: storageError } = await client.storage
-            .from('mood-photos')
-            .remove([filePath]);
-
-          if (storageError) {
-            console.warn('⚠️ Storage delete warning:', storageError);
-          } else {
-            console.log('✅ Storage delete succeeded');
-          }
+          await client.storage.from('mood-photos').remove([urlParts[1]]);
         }
       }
-
-      toast.success('Foto succesvol verwijderd');
-
-      // Remove from local state immediately
+      toast.success('Foto verwijderd');
       setPhotos(prev => prev.filter(p => p.id !== id));
     } catch (err) {
-      console.error('💥 Delete error:', err);
       toast.error('Fout bij verwijderen: ' + (err as Error).message);
     }
   };
@@ -188,11 +164,8 @@ export default function AdminMoodPhotosPage() {
         <div className="text-center max-w-md">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">Geen Toegang</h1>
-          <p className="text-[var(--color-muted)] mb-4">
-            Je hebt admin rechten nodig om deze pagina te bekijken.
-          </p>
-          <p className="text-sm text-[var(--color-muted)]">
-            Ingelogd als: {user.email}
+          <p className="text-[var(--color-muted)]">
+            Je hebt admin rechten nodig. Ingelogd als: {user.email}
           </p>
         </div>
       </div>
@@ -200,7 +173,7 @@ export default function AdminMoodPhotosPage() {
   }
 
   const activeCount = photos.filter(p => p.active).length;
-  const inactiveCount = photos.filter(p => !p.active).length;
+  const enrichedCount = photos.filter(p => p.archetype_weights && Object.keys(p.archetype_weights).length > 0).length;
   const maleCount = photos.filter(p => p.gender === 'male').length;
   const femaleCount = photos.filter(p => p.gender === 'female').length;
 
@@ -210,10 +183,10 @@ export default function AdminMoodPhotosPage() {
         <div className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
-              Mood Photos Moderatie
+              Mood Photos Beheer
             </h1>
             <p className="text-[var(--color-muted)]">
-              Review en beheer mood photos voor de visual preference quiz
+              Upload en beheer foto's voor het swipe-systeem met AI-gestuurde metadata
             </p>
           </div>
           <button
@@ -225,53 +198,34 @@ export default function AdminMoodPhotosPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-            <div className="text-sm text-[var(--color-muted)] mb-1">Totaal</div>
-            <div className="text-2xl font-bold text-[var(--color-text)]">{photos.length}</div>
-          </div>
-          <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-            <div className="text-sm text-[var(--color-muted)] mb-1">Actief</div>
-            <div className="text-2xl font-bold text-green-600">{activeCount}</div>
-          </div>
-          <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-            <div className="text-sm text-[var(--color-muted)] mb-1">Male</div>
-            <div className="text-2xl font-bold text-blue-600">{maleCount}</div>
-          </div>
-          <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-            <div className="text-sm text-[var(--color-muted)] mb-1">Female</div>
-            <div className="text-2xl font-bold text-pink-600">{femaleCount}</div>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+          <StatCard label="Totaal" value={photos.length} />
+          <StatCard label="Actief" value={activeCount} color="text-green-600" />
+          <StatCard label="Verrijkt" value={enrichedCount} color="text-[var(--ff-color-primary-700)]" />
+          <StatCard label="Male" value={maleCount} color="text-blue-600" />
+          <StatCard label="Female" value={femaleCount} color="text-pink-600" />
         </div>
 
         <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)] mb-6">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-wrap gap-4 items-center">
             <Filter className="w-5 h-5 text-[var(--color-muted)]" />
-            <h2 className="font-semibold text-[var(--color-text)]">Filters</h2>
-          </div>
-          <div className="flex flex-wrap gap-4">
             <select
               value={filterGender}
-              onChange={(e) => {
-                setFilterGender(e.target.value as any);
-              }}
+              onChange={(e) => setFilterGender(e.target.value as typeof filterGender)}
               className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
             >
               <option value="all">Alle Genders</option>
-              <option value="male">Alleen Male</option>
-              <option value="female">Alleen Female</option>
-              <option value="unisex">Alleen Unisex</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </select>
             <select
               value={filterActive}
-              onChange={(e) => {
-                setFilterActive(e.target.value as any);
-              }}
+              onChange={(e) => setFilterActive(e.target.value as typeof filterActive)}
               className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
             >
               <option value="all">Alle Status</option>
-              <option value="active">Alleen Actief</option>
-              <option value="inactive">Alleen Inactief</option>
+              <option value="active">Actief</option>
+              <option value="inactive">Inactief</option>
             </select>
             <button
               onClick={loadPhotos}
@@ -287,11 +241,11 @@ export default function AdminMoodPhotosPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin w-8 h-8 border-2 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-[var(--color-muted)]">Foto's laden...</p>
+            <p className="text-[var(--color-muted)]">Laden...</p>
           </div>
         ) : photos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[var(--color-muted)]">Geen foto's gevonden met deze filters</p>
+            <p className="text-[var(--color-muted)]">Geen foto's gevonden</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -309,10 +263,7 @@ export default function AdminMoodPhotosPage() {
         {showUploadModal && (
           <UploadModal
             onClose={() => setShowUploadModal(false)}
-            onSuccess={() => {
-              setShowUploadModal(false);
-              loadPhotos();
-            }}
+            onSuccess={() => { setShowUploadModal(false); loadPhotos(); }}
           />
         )}
       </div>
@@ -320,27 +271,32 @@ export default function AdminMoodPhotosPage() {
   );
 }
 
-interface PhotoCardProps {
-  photo: MoodPhoto;
-  onToggleActive: (id: number, currentActive: boolean) => void;
-  onDelete: (id: number) => void;
+function StatCard({ label, value, color = 'text-[var(--color-text)]' }: { label: string; value: number; color?: string }) {
+  return (
+    <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
+      <div className="text-sm text-[var(--color-muted)] mb-1">{label}</div>
+      <div className={`text-2xl font-bold ${color}`}>{value}</div>
+    </div>
+  );
 }
 
-function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
+function PhotoCard({ photo, onToggleActive, onDelete }: {
+  photo: MoodPhoto;
+  onToggleActive: (id: number, active: boolean) => void;
+  onDelete: (id: number) => void;
+}) {
   const [imageError, setImageError] = useState(false);
-
-  const genderColors = {
-    male: 'bg-blue-100 text-blue-700 border-blue-200',
-    female: 'bg-pink-100 text-pink-700 border-pink-200',
-    unisex: 'bg-purple-100 text-purple-700 border-purple-200'
-  };
+  const hasWeights = photo.archetype_weights && Object.keys(photo.archetype_weights).length > 0;
+  const topArchetype = hasWeights
+    ? Object.entries(photo.archetype_weights).sort(([, a], [, b]) => b - a)[0]
+    : null;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`bg-[var(--color-surface)] rounded-lg border-2 overflow-hidden ${
-        photo.active ? 'border-green-500' : 'border-red-500'
+        photo.active ? 'border-green-500/40' : 'border-red-500/40'
       }`}
     >
       <div className="relative aspect-[3/4] bg-[var(--color-bg)]">
@@ -349,14 +305,12 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
             src={photo.image_url}
             alt={`Mood photo ${photo.id}`}
             className="w-full h-full object-cover"
+            loading="lazy"
             onError={() => setImageError(true)}
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <div className="text-center text-[var(--color-muted)]">
-              <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">Foto laadt niet</p>
-            </div>
+            <AlertTriangle className="w-8 h-8 text-[var(--color-muted)]" />
           </div>
         )}
         {!photo.active && (
@@ -364,150 +318,121 @@ function PhotoCard({ photo, onToggleActive, onDelete }: PhotoCardProps) {
             <EyeOff className="w-12 h-12 text-white" />
           </div>
         )}
+        {!hasWeights && (
+          <div className="absolute top-2 right-2 px-2 py-1 bg-amber-500 text-white text-xs rounded font-medium">
+            Niet verrijkt
+          </div>
+        )}
       </div>
 
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <span className={`text-xs px-2 py-1 rounded-full border ${genderColors[photo.gender]}`}>
+      <div className="p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className={`text-xs px-2 py-1 rounded-full border ${
+            photo.gender === 'male' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-pink-50 text-pink-700 border-pink-200'
+          }`}>
             {photo.gender}
           </span>
-          <span className="text-xs text-[var(--color-muted)]">
-            ID: {photo.id}
-          </span>
+          <span className="text-xs text-[var(--color-muted)]">#{photo.id}</span>
         </div>
 
-        <div className="flex flex-wrap gap-1 mb-4">
-          {photo.mood_tags?.slice(0, 3).map((tag, i) => (
-            <span
-              key={i}
-              className="text-xs px-2 py-1 bg-[var(--color-bg)] text-[var(--color-muted)] rounded"
-            >
+        {topArchetype && (
+          <div className="flex items-center gap-2">
+            <span className={`text-xs px-2 py-1 rounded border font-medium ${ARCHETYPE_COLORS[topArchetype[0]] || 'bg-gray-100 text-gray-700'}`}>
+              {ARCHETYPE_LABELS[topArchetype[0]] || topArchetype[0]}
+            </span>
+            <span className="text-xs text-[var(--color-muted)]">
+              {Math.round(topArchetype[1] * 100)}%
+            </span>
+          </div>
+        )}
+
+        {photo.dominant_colors?.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            {photo.dominant_colors.map((color, i) => (
+              <div key={i} className="flex items-center gap-1">
+                <div
+                  className="w-3 h-3 rounded-full border border-[var(--color-border)]"
+                  style={{ backgroundColor: COLOR_SWATCHES[color] || '#ccc' }}
+                />
+                <span className="text-xs text-[var(--color-muted)]">{color}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-1">
+          {photo.mood_tags?.slice(0, 4).map((tag, i) => (
+            <span key={i} className="text-xs px-2 py-0.5 bg-[var(--color-bg)] text-[var(--color-muted)] rounded">
               {tag}
             </span>
           ))}
+          {photo.mood_tags?.length > 4 && (
+            <span className="text-xs text-[var(--color-muted)]">+{photo.mood_tags.length - 4}</span>
+          )}
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => onToggleActive(photo.id, photo.active)}
             className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
-              photo.active
-                ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                : 'bg-green-100 text-green-700 hover:bg-green-200'
+              photo.active ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-green-50 text-green-700 hover:bg-green-100'
             }`}
           >
-            {photo.active ? (
-              <>
-                <EyeOff className="w-4 h-4 inline mr-1" />
-                Deactiveer
-              </>
-            ) : (
-              <>
-                <Eye className="w-4 h-4 inline mr-1" />
-                Activeer
-              </>
-            )}
+            {photo.active ? <><EyeOff className="w-3.5 h-3.5 inline mr-1" />Uit</> : <><Eye className="w-3.5 h-3.5 inline mr-1" />Aan</>}
           </button>
           <button
             onClick={() => onDelete(photo.id)}
-            className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors"
-            title="Verwijder permanent"
+            className="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg transition-colors"
           >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
-
-        <a
-          href={photo.image_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block mt-2 text-xs text-[var(--ff-color-primary-700)] hover:underline truncate"
-        >
-          View origineel →
-        </a>
       </div>
     </motion.div>
   );
 }
 
-interface UploadModalProps {
-  onClose: () => void;
-  onSuccess: () => void;
-}
-
-function UploadModal({ onClose, onSuccess }: UploadModalProps) {
+function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [previewUrl, setPreviewUrl] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [displayOrder, setDisplayOrder] = useState(1);
+  const [uploading, setUploading] = useState(false);
+
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzed, setAnalyzed] = useState(false);
+  const [aiReasoning, setAiReasoning] = useState('');
+  const [aiConfidence, setAiConfidence] = useState(0);
+
   const [moodTags, setMoodTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
-  const [displayOrder, setDisplayOrder] = useState<number>(1);
-  const [uploading, setUploading] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
-  const [aiReasoning, setAiReasoning] = useState<string>('');
+  const [archetypeWeights, setArchetypeWeights] = useState<Record<string, number>>({});
+  const [dominantColors, setDominantColors] = useState<string[]>([]);
+  const [formality, setFormality] = useState(0.5);
+  const [boldness, setBoldness] = useState(0.3);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Selecteer een image bestand');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Bestand te groot (max 5MB)');
-      return;
-    }
-
+    if (!file.type.startsWith('image/')) { toast.error('Selecteer een afbeelding'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('Max 5MB'); return; }
     setSelectedFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-  };
-
-  const addTag = () => {
-    if (!tagInput.trim()) return;
-    if (moodTags.includes(tagInput.trim().toLowerCase())) {
-      toast.error('Tag bestaat al');
-      return;
-    }
-    if (moodTags.length >= 6) {
-      toast.error('Maximum 6 tags toegestaan');
-      return;
-    }
-    setMoodTags([...moodTags, tagInput.trim().toLowerCase()]);
-    setTagInput('');
-  };
-
-  const removeTag = (tag: string) => {
-    setMoodTags(moodTags.filter(t => t !== tag));
+    setPreviewUrl(URL.createObjectURL(file));
+    setAnalyzed(false);
+    setAiReasoning('');
+    setAiConfidence(0);
   };
 
   const analyzeWithAI = async () => {
-    if (!selectedFile) {
-      toast.error('Selecteer eerst een foto');
-      return;
-    }
-
+    if (!selectedFile) { toast.error('Selecteer eerst een foto'); return; }
     setAnalyzing(true);
-    setAiSuggestions([]);
-    setAiReasoning('');
 
     try {
       const client = getSupabaseClient();
-      if (!client) {
-        toast.error('Database niet beschikbaar');
-        setAnalyzing(false);
-        return;
-      }
+      if (!client) { toast.error('Database niet beschikbaar'); setAnalyzing(false); return; }
 
       const { data: sessionData } = await client.auth.getSession();
-      if (!sessionData?.session?.access_token) {
-        toast.error('Sessie verlopen');
-        setAnalyzing(false);
-        return;
-      }
+      if (!sessionData?.session?.access_token) { toast.error('Sessie verlopen'); setAnalyzing(false); return; }
 
       const formData = new FormData();
       formData.append('image', selectedFile);
@@ -516,10 +441,8 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      console.log('🤖 Analyzing image with AI...');
-
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const timeoutId = setTimeout(() => controller.abort(), 45000);
 
       const response = await fetch(`${supabaseUrl}/functions/v1/ai-mood-tags`, {
         method: 'POST',
@@ -534,134 +457,110 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('AI analysis error:', errorText);
         toast.error('AI analyse mislukt');
         setAnalyzing(false);
         return;
       }
 
       const result = await response.json();
-      console.log('✅ AI analysis complete:', result);
 
-      if (result.success && result.moodTags) {
-        setAiSuggestions(result.moodTags);
+      if (result.success) {
+        setMoodTags(result.moodTags || []);
+        setArchetypeWeights(result.archetypeWeights || {});
+        setDominantColors(result.dominantColors || []);
+        setFormality(result.styleAttributes?.formality ?? 0.5);
+        setBoldness(result.styleAttributes?.boldness ?? 0.3);
         setAiReasoning(result.reasoning || '');
-        toast.success(`${result.moodTags.length} tags gesuggereerd door AI!`);
+        setAiConfidence(result.confidence || 0);
+        setAnalyzed(true);
+        toast.success('AI analyse compleet - alle velden ingevuld!');
       } else {
-        toast.error('Geen tags gevonden');
+        toast.error('Analyse gaf geen resultaat');
       }
-
-      setAnalyzing(false);
     } catch (err) {
-      console.error('AI analysis failed:', err);
       if (err instanceof Error && err.name === 'AbortError') {
-        toast.error('AI analyse timeout');
+        toast.error('Timeout - probeer opnieuw');
       } else {
-        toast.error('AI analyse mislukt: ' + (err as Error).message);
+        toast.error('AI analyse mislukt');
       }
+    } finally {
       setAnalyzing(false);
     }
   };
 
-  const acceptAiSuggestion = (tag: string) => {
-    if (moodTags.includes(tag)) {
-      toast.error('Tag is al toegevoegd');
-      return;
-    }
-    if (moodTags.length >= 6) {
-      toast.error('Maximum 6 tags');
-      return;
-    }
+  const addTag = () => {
+    const tag = tagInput.trim().toLowerCase();
+    if (!tag) return;
+    if (moodTags.includes(tag)) { toast.error('Tag bestaat al'); return; }
+    if (moodTags.length >= 8) { toast.error('Max 8 tags'); return; }
     setMoodTags([...moodTags, tag]);
-    toast.success(`"${tag}" toegevoegd`);
+    setTagInput('');
   };
 
-  const acceptAllAiSuggestions = () => {
-    const newTags = aiSuggestions.filter(tag => !moodTags.includes(tag));
-    const available = 6 - moodTags.length;
-    const toAdd = newTags.slice(0, available);
-
-    if (toAdd.length === 0) {
-      toast.error('Alle suggesties zijn al toegevoegd');
-      return;
+  const updateWeight = (arch: string, value: number) => {
+    const newWeights = { ...archetypeWeights };
+    if (value <= 0) {
+      delete newWeights[arch];
+    } else {
+      newWeights[arch] = Math.round(value * 100) / 100;
     }
-
-    setMoodTags([...moodTags, ...toAdd]);
-    toast.success(`${toAdd.length} tags toegevoegd`);
+    setArchetypeWeights(newWeights);
   };
+
+  const normalizeWeights = () => {
+    const sum = Object.values(archetypeWeights).reduce((a, b) => a + b, 0);
+    if (sum <= 0) return;
+    const normalized: Record<string, number> = {};
+    for (const [k, v] of Object.entries(archetypeWeights)) {
+      normalized[k] = Math.round((v / sum) * 100) / 100;
+    }
+    setArchetypeWeights(normalized);
+    toast.success('Gewichten genormaliseerd naar 1.0');
+  };
+
+  const toggleColor = (color: string) => {
+    if (dominantColors.includes(color)) {
+      setDominantColors(dominantColors.filter(c => c !== color));
+    } else if (dominantColors.length < 3) {
+      setDominantColors([...dominantColors, color]);
+    } else {
+      toast.error('Max 3 kleuren');
+    }
+  };
+
+  const weightSum = Object.values(archetypeWeights).reduce((a, b) => a + b, 0);
+  const isWeightValid = Math.abs(weightSum - 1.0) < 0.02;
+  const canUpload = selectedFile && moodTags.length >= 3 && Object.keys(archetypeWeights).length > 0 && isWeightValid && dominantColors.length > 0;
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      toast.error('Selecteer eerst een foto');
-      return;
-    }
-
-    if (moodTags.length < 3) {
-      toast.error('Voeg minimaal 3 mood tags toe');
-      return;
-    }
-
+    if (!canUpload) return;
     setUploading(true);
 
     try {
-      // Step 1: Convert to WebP (client-side)
-      let fileToUpload = selectedFile;
-
-      if (supportsWebP() && selectedFile.type !== 'image/webp') {
-        console.log('🔄 Converting image to WebP...');
-        const convertToast = toast.loading('Foto converteren naar WebP...');
-
+      let fileToUpload = selectedFile!;
+      if (supportsWebP() && selectedFile!.type !== 'image/webp') {
         try {
-          fileToUpload = await convertImageToWebP(selectedFile, 0.85);
-          toast.dismiss(convertToast);
-          toast.success(`WebP conversie: ${((selectedFile.size - fileToUpload.size) / selectedFile.size * 100).toFixed(0)}% kleiner!`, {
-            duration: 2000
-          });
-        } catch (conversionError) {
-          console.warn('⚠️ WebP conversion failed, uploading original:', conversionError);
-          toast.dismiss(convertToast);
-          toast('Uploading origineel formaat...', { icon: '⚠️' });
-        }
+          fileToUpload = await convertImageToWebP(selectedFile!, 0.85);
+        } catch { /* use original */ }
       }
 
       const client = getSupabaseClient();
+      if (!client) { toast.error('Database niet beschikbaar'); setUploading(false); return; }
 
-      if (!client) {
-        toast.error('Database niet beschikbaar');
-        setUploading(false);
-        return;
-      }
+      const { data: sessionData } = await client.auth.getSession();
+      if (!sessionData?.session?.access_token) { toast.error('Sessie verlopen'); setUploading(false); return; }
 
-      const { data: sessionData, error: sessionError } = await client.auth.getSession();
-
-      console.log('📍 Session check:', {
-        hasSession: !!sessionData?.session,
-        hasAccessToken: !!sessionData?.session?.access_token,
-        error: sessionError
-      });
-
-      if (sessionError || !sessionData?.session?.access_token) {
-        console.error('Session error:', sessionError);
-        toast.error('Sessie verlopen - log opnieuw in');
-        setUploading(false);
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('file', fileToUpload);
-      formData.append('gender', gender);
-      formData.append('moodTags', JSON.stringify(moodTags));
-      formData.append('displayOrder', displayOrder.toString());
+      const fd = new FormData();
+      fd.append('file', fileToUpload);
+      fd.append('gender', gender);
+      fd.append('moodTags', JSON.stringify(moodTags));
+      fd.append('displayOrder', displayOrder.toString());
+      fd.append('archetypeWeights', JSON.stringify(archetypeWeights));
+      fd.append('dominantColors', JSON.stringify(dominantColors));
+      fd.append('styleAttributes', JSON.stringify({ formality, boldness }));
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      console.log('🚀 Calling Edge Function:', {
-        url: `${supabaseUrl}/functions/v1/admin-upload-mood-photo`,
-        hasToken: !!sessionData.session.access_token,
-        hasAnonKey: !!anonKey
-      });
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -672,74 +571,31 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
           'Authorization': `Bearer ${sessionData.session.access_token}`,
           'apikey': anonKey
         },
-        body: formData,
+        body: fd,
         signal: controller.signal
       });
 
       clearTimeout(timeoutId);
 
-      console.log('📦 Response status:', response.status);
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Upload error:', { status: response.status, body: errorText });
-
-        let errorMsg = 'Onbekende fout';
-        try {
-          const errorJson = JSON.parse(errorText);
-          errorMsg = errorJson.error || errorMsg;
-        } catch {
-          errorMsg = errorText || errorMsg;
-        }
-
-        toast.error('Fout bij uploaden: ' + errorMsg);
+        let msg = 'Upload mislukt';
+        try { msg = JSON.parse(errorText).error || msg; } catch { /* ignore */ }
+        toast.error(msg);
         setUploading(false);
         return;
       }
 
-      const result = await response.json();
-      console.log('✅ Upload success:', result);
-
-      toast.success('Foto succesvol toegevoegd!');
+      toast.success('Foto succesvol ge-upload met alle metadata!');
       onSuccess();
     } catch (err) {
-      console.error('Upload failed:', err);
-
       if (err instanceof Error && err.name === 'AbortError') {
-        toast.error('Upload timeout (30s) - controleer je internetverbinding');
+        toast.error('Upload timeout');
       } else {
-        toast.error('Er ging iets mis bij uploaden: ' + (err as Error).message);
+        toast.error('Upload mislukt: ' + (err as Error).message);
       }
-
       setUploading(false);
     }
-  };
-
-  const suggestedTags = {
-    male: [
-      'minimal', 'scandinavian', 'clean', 'refined',
-      'professional', 'tailored', 'executive', 'formal',
-      'street', 'urban', 'contemporary', 'edgy',
-      'smart_casual', 'versatile', 'polished', 'elevated',
-      'casual', 'relaxed', 'comfortable', 'weekend',
-      'athletic', 'sporty', 'active', 'performance',
-      'preppy', 'classic', 'traditional', 'collegiate',
-      'monochrome', 'modern', 'minimalist', 'sleek',
-      'bold', 'statement', 'confident', 'expressive',
-      'coastal', 'laid_back', 'summery'
-    ],
-    female: [
-      'minimal', 'effortless', 'neutral', 'scandinavian',
-      'professional', 'structured', 'polished', 'elegant',
-      'romantic', 'feminine', 'soft', 'flowing',
-      'bohemian', 'artistic', 'layered', 'eclectic',
-      'bold', 'statement', 'colorful', 'confident',
-      'athleisure', 'sporty', 'active', 'comfortable',
-      'street', 'urban', 'edgy', 'contemporary',
-      'preppy', 'classic', 'traditional',
-      'coastal', 'breezy', 'relaxed',
-      'monochrome', 'sophisticated', 'sleek', 'modern'
-    ]
   };
 
   return (
@@ -747,259 +603,304 @@ function UploadModal({ onClose, onSuccess }: UploadModalProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-[var(--color-surface)] rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-[var(--color-surface)] rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div className="p-6 border-b border-[var(--color-border)] flex justify-between items-center sticky top-0 bg-[var(--color-surface)] z-10">
-          <h2 className="text-2xl font-bold text-[var(--color-text)]">Nieuwe Mood Photo</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors"
-          >
+          <div>
+            <h2 className="text-xl font-bold text-[var(--color-text)]">Nieuwe Mood Photo</h2>
+            <p className="text-sm text-[var(--color-muted)]">Upload een foto en laat AI alle metadata genereren</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 grid md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="font-semibold text-[var(--color-text)] mb-4">Upload Foto</h3>
-
-            <div className="mb-6">
-              <label className="block w-full">
-                <div className="border-2 border-dashed border-[var(--color-border)] rounded-lg p-8 text-center cursor-pointer hover:border-[var(--ff-color-primary-700)] transition-colors">
+        <div className="p-6">
+          {/* Step 1: Photo + Gender + AI Analyze */}
+          <div className="grid md:grid-cols-[300px_1fr] gap-6 mb-8">
+            <div>
+              <label className="block w-full cursor-pointer">
+                <div className="border-2 border-dashed border-[var(--color-border)] rounded-xl overflow-hidden hover:border-[var(--ff-color-primary-700)] transition-colors aspect-[3/4]">
                   {previewUrl ? (
-                    <div className="space-y-4">
-                      <img
-                        src={previewUrl}
-                        alt="Preview"
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
-                      <p className="text-sm text-[var(--color-muted)]">Klik om andere foto te kiezen</p>
-                    </div>
+                    <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
-                    <>
-                      <Upload className="w-12 h-12 mx-auto mb-4 text-[var(--color-muted)]" />
-                      <p className="text-[var(--color-text)] font-medium mb-2">
-                        Klik om foto te uploaden
-                      </p>
-                      <p className="text-sm text-[var(--color-muted)]">
-                        JPEG, PNG of WebP (max 5MB)
-                      </p>
-                    </>
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                      <Upload className="w-10 h-10 mb-3 text-[var(--color-muted)]" />
+                      <p className="text-sm font-medium text-[var(--color-text)] mb-1">Klik om te uploaden</p>
+                      <p className="text-xs text-[var(--color-muted)]">JPEG, PNG of WebP (max 5MB)</p>
+                    </div>
                   )}
                 </div>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
+                <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" onChange={handleFileSelect} className="hidden" />
               </label>
+              {selectedFile && (
+                <p className="text-xs text-[var(--color-muted)] mt-2 text-center">
+                  {selectedFile.name} ({(selectedFile.size / 1024).toFixed(0)} KB)
+                </p>
+              )}
             </div>
 
-            {selectedFile && (
-              <div className="text-sm text-[var(--color-muted)] space-y-1">
-                <p><strong>Bestand:</strong> {selectedFile.name}</p>
-                <p><strong>Grootte:</strong> {(selectedFile.size / 1024).toFixed(0)} KB</p>
-                <p><strong>Type:</strong> {selectedFile.type}</p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Gender</label>
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value as 'male' | 'female')}
+                    className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Volgorde</label>
+                  <input
+                    type="number"
+                    value={displayOrder}
+                    onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 1)}
+                    min="1"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                  />
+                </div>
               </div>
-            )}
+
+              <button
+                onClick={analyzeWithAI}
+                disabled={analyzing || !selectedFile}
+                className="w-full py-3.5 rounded-xl font-semibold text-white transition-all disabled:opacity-40 flex items-center justify-center gap-2.5"
+                style={{ background: 'var(--ff-color-primary-700)' }}
+              >
+                {analyzing ? (
+                  <>
+                    <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                    AI analyseert de foto...
+                  </>
+                ) : analyzed ? (
+                  <>
+                    <RefreshCw className="w-5 h-5" />
+                    Opnieuw analyseren
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    Analyseer met AI
+                  </>
+                )}
+              </button>
+
+              {analyzed && aiReasoning && (
+                <div className="p-3 bg-[var(--ff-color-primary-50)] rounded-lg border border-[var(--ff-color-primary-200)]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Zap className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                    <span className="text-xs font-medium text-[var(--ff-color-primary-700)]">
+                      AI Analyse (confidence: {Math.round(aiConfidence * 100)}%)
+                    </span>
+                  </div>
+                  <p className="text-sm text-[var(--color-text)]">{aiReasoning}</p>
+                </div>
+              )}
+
+              {!analyzed && !analyzing && selectedFile && (
+                <p className="text-sm text-[var(--color-muted)] text-center">
+                  Klik op "Analyseer met AI" om automatisch alle metadata in te vullen
+                </p>
+              )}
+            </div>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-[var(--color-text)] mb-4">Metadata</h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                  Gender *
-                </label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value as 'male' | 'female')}
-                  className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                  Display Order
-                </label>
-                <input
-                  type="number"
-                  value={displayOrder}
-                  onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 1)}
-                  min="1"
-                  className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                  Mood Tags * (min 3, max 6)
-                </label>
-                <div className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addTag();
-                      }
-                    }}
-                    placeholder="Type tag en druk Enter"
-                    className="flex-1 px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                  />
-                  <button
-                    onClick={addTag}
-                    className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
-                  >
-                    <Plus className="w-5 h-5" />
-                  </button>
+          {/* Step 2: All metadata (visible after analysis or manually) */}
+          <div className="space-y-6">
+            {/* Archetype Weights */}
+            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-[var(--color-muted)]" />
+                  <h3 className="font-semibold text-[var(--color-text)]">Archetype Gewichten</h3>
                 </div>
-
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {moodTags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-sm flex items-center gap-2"
-                    >
-                      {tag}
-                      <button onClick={() => removeTag(tag)} className="hover:text-red-200">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
+                <div className="flex items-center gap-3">
+                  <span className={`text-xs font-medium px-2 py-1 rounded ${
+                    isWeightValid ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                  }`}>
+                    Som: {weightSum.toFixed(2)}
+                  </span>
+                  {!isWeightValid && Object.keys(archetypeWeights).length > 0 && (
+                    <button onClick={normalizeWeights} className="text-xs text-[var(--ff-color-primary-700)] hover:underline font-medium">
+                      Normaliseer
+                    </button>
+                  )}
                 </div>
-
-                {selectedFile && (
-                  <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-purple-600" />
-                        <h4 className="font-semibold text-[var(--color-text)]">AI Suggestions</h4>
-                      </div>
-                      <button
-                        onClick={analyzeWithAI}
-                        disabled={analyzing || !selectedFile}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 flex items-center gap-2 text-sm font-medium shadow-lg shadow-purple-500/30"
-                      >
-                        {analyzing ? (
-                          <>
-                            <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                            Analyzing...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4" />
-                            Analyze with AI
-                          </>
-                        )}
-                      </button>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {ARCHETYPES.map(arch => {
+                  const value = archetypeWeights[arch] || 0;
+                  return (
+                    <div key={arch} className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-1 rounded border font-medium min-w-[90px] text-center ${ARCHETYPE_COLORS[arch]}`}>
+                        {ARCHETYPE_LABELS[arch]}
+                      </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={Math.round(value * 100)}
+                        onChange={(e) => updateWeight(arch, parseInt(e.target.value) / 100)}
+                        className="flex-1 h-1.5 accent-[var(--ff-color-primary-700)]"
+                      />
+                      <span className="text-xs font-mono text-[var(--color-muted)] w-8 text-right">
+                        {Math.round(value * 100)}
+                      </span>
                     </div>
+                  );
+                })}
+              </div>
+            </div>
 
-                    {aiSuggestions.length > 0 && (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm text-[var(--color-muted)]">
-                            AI found {aiSuggestions.length} relevant tags
-                          </p>
-                          <button
-                            onClick={acceptAllAiSuggestions}
-                            className="text-xs px-3 py-1 bg-white/80 dark:bg-gray-800/80 text-purple-700 dark:text-purple-300 rounded-full hover:bg-white dark:hover:bg-gray-800 transition-colors font-medium"
-                          >
-                            Accept All
-                          </button>
-                        </div>
+            {/* Dominant Colors */}
+            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+              <div className="flex items-center gap-2 mb-4">
+                <Palette className="w-4 h-4 text-[var(--color-muted)]" />
+                <h3 className="font-semibold text-[var(--color-text)]">Dominante Kleuren</h3>
+                <span className="text-xs text-[var(--color-muted)]">(selecteer 1-3)</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(COLOR_SWATCHES).map(([name, hex]) => {
+                  const selected = dominantColors.includes(name);
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => toggleColor(name)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                        selected
+                          ? 'border-[var(--ff-color-primary-700)] bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] ring-1 ring-[var(--ff-color-primary-700)]'
+                          : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)]'
+                      }`}
+                    >
+                      <div className="w-3 h-3 rounded-full border border-black/10" style={{ backgroundColor: hex }} />
+                      {name}
+                      {selected && <Check className="w-3 h-3" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-                        <div className="flex flex-wrap gap-2">
-                          {aiSuggestions.map((tag) => (
-                            <button
-                              key={tag}
-                              onClick={() => acceptAiSuggestion(tag)}
-                              disabled={moodTags.includes(tag)}
-                              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                moodTags.includes(tag)
-                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 cursor-not-allowed'
-                                  : 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 cursor-pointer shadow-sm'
-                              }`}
-                            >
-                              {tag}
-                              {moodTags.includes(tag) && <Check className="w-3 h-3 inline ml-1" />}
-                            </button>
-                          ))}
-                        </div>
-
-                        {aiReasoning && (
-                          <div className="text-xs text-[var(--color-muted)] italic p-2 bg-white/50 dark:bg-gray-800/50 rounded">
-                            <strong>AI reasoning:</strong> {aiReasoning}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {!analyzing && aiSuggestions.length === 0 && (
-                      <p className="text-sm text-[var(--color-muted)] text-center">
-                        Click "Analyze with AI" to get mood tag suggestions based on the image
-                      </p>
-                    )}
-                  </div>
+            {/* Mood Tags */}
+            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+              <div className="flex items-center gap-2 mb-4">
+                <h3 className="font-semibold text-[var(--color-text)]">Mood Tags</h3>
+                <span className="text-xs text-[var(--color-muted)]">(min 3, max 8)</span>
+              </div>
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
+                  placeholder="Type en druk Enter"
+                  className="flex-1 px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] text-sm"
+                />
+                <button onClick={addTag} className="px-3 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)]">
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {moodTags.map(tag => (
+                  <span key={tag} className="px-3 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-xs font-medium flex items-center gap-1.5">
+                    {tag}
+                    <button onClick={() => setMoodTags(moodTags.filter(t => t !== tag))} className="hover:text-red-200">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+                {moodTags.length === 0 && (
+                  <span className="text-xs text-[var(--color-muted)]">Nog geen tags - analyseer met AI of voeg handmatig toe</span>
                 )}
+              </div>
+            </div>
 
-                <details className="text-sm">
-                  <summary className="text-[var(--color-muted)] cursor-pointer hover:text-[var(--color-text)]">
-                    Zie suggested tags voor {gender}
-                  </summary>
-                  <div className="mt-2 flex flex-wrap gap-1 max-h-32 overflow-y-auto">
-                    {suggestedTags[gender].map((tag) => (
-                      <button
-                        key={tag}
-                        onClick={() => {
-                          if (!moodTags.includes(tag) && moodTags.length < 6) {
-                            setMoodTags([...moodTags, tag]);
-                          }
-                        }}
-                        className="px-2 py-1 bg-[var(--color-bg)] text-[var(--color-muted)] rounded text-xs hover:bg-[var(--color-border)] transition-colors"
-                      >
-                        {tag}
-                      </button>
-                    ))}
+            {/* Style Attributes */}
+            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+              <h3 className="font-semibold text-[var(--color-text)] mb-4">Stijlkenmerken</h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-[var(--color-text)]">Formaliteit</label>
+                    <span className="text-xs font-mono text-[var(--color-muted)]">{formality.toFixed(2)}</span>
                   </div>
-                </details>
+                  <input
+                    type="range"
+                    min="0" max="100"
+                    value={Math.round(formality * 100)}
+                    onChange={(e) => setFormality(parseInt(e.target.value) / 100)}
+                    className="w-full h-2 accent-[var(--ff-color-primary-700)]"
+                  />
+                  <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
+                    <span>Sportief</span>
+                    <span>Black tie</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-[var(--color-text)]">Gedurfdheid</label>
+                    <span className="text-xs font-mono text-[var(--color-muted)]">{boldness.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0" max="100"
+                    value={Math.round(boldness * 100)}
+                    onChange={(e) => setBoldness(parseInt(e.target.value) / 100)}
+                    className="w-full h-2 accent-[var(--ff-color-primary-700)]"
+                  />
+                  <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
+                    <span>Subtiel</span>
+                    <span>Statement</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6 border-t border-[var(--color-border)] flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            disabled={uploading}
-            className="px-6 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
-          >
-            Annuleer
-          </button>
-          <button
-            onClick={handleUpload}
-            disabled={uploading || !selectedFile || moodTags.length < 3}
-            className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 flex items-center gap-2"
-          >
-            {uploading ? (
-              <>
-                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                Uploaden...
-              </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4" />
-                Upload Foto
-              </>
+        {/* Footer */}
+        <div className="p-6 border-t border-[var(--color-border)] flex items-center justify-between sticky bottom-0 bg-[var(--color-surface)]">
+          <div className="text-xs text-[var(--color-muted)] space-y-0.5">
+            {!canUpload && (
+              <div className="space-y-0.5">
+                {moodTags.length < 3 && <p>- Minimaal 3 mood tags nodig</p>}
+                {Object.keys(archetypeWeights).length === 0 && <p>- Archetype gewichten nodig</p>}
+                {!isWeightValid && Object.keys(archetypeWeights).length > 0 && <p>- Gewichten moeten optellen tot 1.0</p>}
+                {dominantColors.length === 0 && <p>- Selecteer minimaal 1 kleur</p>}
+              </div>
             )}
-          </button>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              disabled={uploading}
+              className="px-6 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
+            >
+              Annuleer
+            </button>
+            <button
+              onClick={handleUpload}
+              disabled={uploading || !canUpload}
+              className="px-6 py-2.5 text-white rounded-lg transition-all disabled:opacity-40 flex items-center gap-2 font-medium"
+              style={{ background: 'var(--ff-color-primary-700)' }}
+            >
+              {uploading ? (
+                <>
+                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                  Uploaden...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4" />
+                  Upload met Metadata
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
