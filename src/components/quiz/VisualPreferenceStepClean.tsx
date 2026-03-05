@@ -60,7 +60,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   const loadMoodPhotos = async () => {
     try {
       const { VisualPreferenceService } = await import('@/services/visualPreferences/visualPreferenceService');
-      const photos = await VisualPreferenceService.getMoodPhotos(15, userGender);
+      const photos = await VisualPreferenceService.getMoodPhotos(30, userGender);
       setMoodPhotos(photos);
       setLoading(false);
     } catch (err) {

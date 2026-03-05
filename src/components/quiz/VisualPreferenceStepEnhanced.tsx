@@ -148,13 +148,13 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
 
       const { data, error} = await query
         .order('display_order', { ascending: true})
-        .limit(15);
+        .limit(30);
 
       if (error) throw error;
 
       let photos = data || [];
 
-      if (photos.length < 15 && genderForQuery) {
+      if (photos.length < 30 && genderForQuery) {
         console.log(`⚠️ Only ${photos.length} photos for ${genderForQuery}, adding unisex photos`);
         const { data: unisexData } = await client
           .from('mood_photos')
@@ -162,7 +162,7 @@ function VisualPreferenceStepInner({ onComplete, onSwipe, userGender }: VisualPr
           .eq('active', true)
           .eq('gender', 'unisex')
           .order('display_order', { ascending: true })
-          .limit(15 - photos.length);
+          .limit(30 - photos.length);
 
         if (unisexData) {
           photos = [...photos, ...unisexData];
