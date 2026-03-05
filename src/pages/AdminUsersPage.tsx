@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Search, Shield, CircleCheck as CheckCircle, Circle as XCircle, Crown, Download, RefreshCw, ChevronUp, ChevronDown, ArrowLeft, Filter, MoveVertical as MoreVertical } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -80,6 +80,7 @@ export default function AdminUsersPage() {
   const [exporting, setExporting] = useState(false);
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 25;
+  const fetchedRef = useRef(false);
 
   const stats = useMemo(() => ({
     total: users.length,
@@ -91,7 +92,10 @@ export default function AdminUsersPage() {
   }), [users]);
 
   useEffect(() => {
-    if (!authLoading && isAdmin) loadUsers();
+    if (authLoading || !isAdmin) return;
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+    loadUsers();
   }, [isAdmin, authLoading]);
 
   const loadUsers = async () => {
@@ -151,11 +155,13 @@ export default function AdminUsersPage() {
 
   const handleQuickTier = async (userId: string, tier: 'free' | 'premium' | 'founder') => {
     setOpenMenuId(null);
+    const prevUsers = users;
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, tier } : u));
     const ok = await setUserTier(userId, tier, 'Quick tier change via admin panel');
     if (ok) {
       toast.success(`Tier gewijzigd naar ${tier}`);
-      await loadUsers();
     } else {
+      setUsers(prevUsers);
       toast.error('Tier wijziging mislukt');
     }
   };

@@ -147,22 +147,25 @@ export default function AdminDashboardPage() {
     if (authLoading) return;
 
     if (!isAdmin) {
-      console.log('❌ Not admin, redirecting to home');
       navigate('/');
       return;
     }
 
-    console.log('✅ Admin verified, loading metrics');
-    loadMetrics();
-    logAdminAction('view_admin_dashboard');
-  }, [isAdmin, authLoading, navigate]);
+    let cancelled = false;
 
-  const loadMetrics = async () => {
-    setLoading(true);
-    const data = await getDashboardMetrics();
-    if (data) setMetrics(data);
-    setLoading(false);
-  };
+    const init = async () => {
+      setLoading(true);
+      const [data] = await Promise.all([
+        getDashboardMetrics(),
+        logAdminAction('view_admin_dashboard'),
+      ]);
+      if (!cancelled && data) setMetrics(data);
+      if (!cancelled) setLoading(false);
+    };
+
+    init();
+    return () => { cancelled = true; };
+  }, [isAdmin, authLoading, navigate]);
 
   if (authLoading) {
     return (
