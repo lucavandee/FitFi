@@ -49,9 +49,9 @@ export class VisualPreferenceService {
     return client;
   }
 
-  static async getMoodPhotos(
-    limit = 10,
-    gender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say'
+  static async getAllMoodPhotos(
+    gender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say',
+    shuffle = true
   ): Promise<MoodPhoto[]> {
     const client = this.getClient();
     if (!client) {
@@ -66,7 +66,7 @@ export class VisualPreferenceService {
       if (genders) {
         q = q.in('gender', genders);
       }
-      return q.order('display_order', { ascending: true }).limit(limit);
+      return q.order('display_order', { ascending: true });
     };
 
     let gendersToTry: string[] | null = null;
@@ -83,17 +83,33 @@ export class VisualPreferenceService {
       throw error;
     }
 
-    if (data && data.length > 0) {
-      return data;
+    let photos = (data && data.length > 0) ? data : [];
+
+    if (photos.length === 0) {
+      const { data: fallback, error: fallbackError } = await buildQuery(null);
+      if (fallbackError) {
+        console.error('Failed to fetch fallback mood photos:', fallbackError);
+        throw fallbackError;
+      }
+      photos = fallback || [];
     }
 
-    const { data: fallback, error: fallbackError } = await buildQuery(null);
-    if (fallbackError) {
-      console.error('Failed to fetch fallback mood photos:', fallbackError);
-      throw fallbackError;
+    if (shuffle) {
+      for (let i = photos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [photos[i], photos[j]] = [photos[j], photos[i]];
+      }
     }
 
-    return fallback || [];
+    return photos;
+  }
+
+  static async getMoodPhotos(
+    limit = 10,
+    gender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say'
+  ): Promise<MoodPhoto[]> {
+    const photos = await this.getAllMoodPhotos(gender, true);
+    return photos.slice(0, limit);
   }
 
   static async recordSwipe(swipe: Omit<StyleSwipe, 'id' | 'created_at'>): Promise<void> {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { SwipeCard } from './SwipeCard';
@@ -6,17 +6,14 @@ import { ImagePreloader } from './ImagePreloader';
 import { StyleAnalysisTransition } from './StyleAnalysisTransition';
 import { Sparkles, Loader as Loader2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
+import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
+import { loadAdaptivePhotos } from '@/services/visualPreferences/adaptiveLoader';
+import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
 
-interface MoodPhoto {
-  id: string;
-  image_url: string;
-  tags?: string[];
-  mood?: string;
-  style_archetype?: string;
-  active: boolean;
-  display_order: number;
-  gender?: string;
-}
+const INITIAL_BATCH = 10;
+const NEXT_BATCH_SIZE = 8;
+const MIN_SWIPES_TO_COMPLETE = 15;
+const ADAPT_AFTER_SWIPES = 7;
 
 interface VisualPreferenceStepProps {
   onComplete: () => void;
@@ -25,43 +22,47 @@ interface VisualPreferenceStepProps {
 }
 
 export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: VisualPreferenceStepProps) {
-  const [moodPhotos, setMoodPhotos] = useState<MoodPhoto[]>([]);
+  const [allPhotos, setAllPhotos] = useState<MoodPhoto[]>([]);
+  const [queue, setQueue] = useState<MoodPhoto[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [swipeCount, setSwipeCount] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
-  const swipingRef = React.useRef(false);
+  const [canComplete, setCanComplete] = useState(false);
+  const swipingRef = useRef(false);
+  const analyzerRef = useRef(new SwipeAnalyzer());
+  const seenIdsRef = useRef<Set<number>>(new Set());
   const { user } = useUser();
 
   useEffect(() => {
-    loadMoodPhotos();
+    loadAllPhotos();
   }, [userGender]);
 
   useEffect(() => {
-    if (showCelebration || loading || moodPhotos.length === 0) return;
+    if (showCelebration || loading || queue.length === 0) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
       if (['ArrowLeft', 'ArrowRight', ' ', 'Enter'].includes(e.key)) {
         e.preventDefault();
       }
-      const currentPhoto = moodPhotos[currentIndex];
-      if (!currentPhoto) return;
-      if (e.key === 'ArrowLeft') {
-        handleSwipe('left', 0);
-      } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
-        handleSwipe('right', 0);
-      }
+      const current = queue[currentIndex];
+      if (!current) return;
+      if (e.key === 'ArrowLeft') handleSwipe('left', 0);
+      else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') handleSwipe('right', 0);
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [currentIndex, moodPhotos, showCelebration, loading]);
+  }, [currentIndex, queue, showCelebration, loading]);
 
-  const loadMoodPhotos = async () => {
+  const loadAllPhotos = async () => {
     try {
       const { VisualPreferenceService } = await import('@/services/visualPreferences/visualPreferenceService');
-      const photos = await VisualPreferenceService.getMoodPhotos(30, userGender);
-      setMoodPhotos(photos);
+      const photos = await VisualPreferenceService.getAllMoodPhotos(userGender, true);
+      setAllPhotos(photos);
+      const initial = photos.slice(0, INITIAL_BATCH);
+      initial.forEach(p => seenIdsRef.current.add(p.id));
+      setQueue(initial);
       setLoading(false);
     } catch (err) {
       console.error('Failed to load mood photos:', err);
@@ -69,15 +70,38 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     }
   };
 
+  const loadNextBatch = (currentSwipeCount: number) => {
+    const pattern = analyzerRef.current.getPattern();
+    const seenIds = Array.from(seenIdsRef.current);
+
+    const nextPhotos = loadAdaptivePhotos({
+      pattern,
+      gender: userGender || 'unisex',
+      excludeIds: seenIds,
+      count: NEXT_BATCH_SIZE,
+      allPhotos,
+    });
+
+    if (nextPhotos.length === 0) return;
+
+    nextPhotos.forEach(p => seenIdsRef.current.add(p.id));
+    setQueue(prev => [...prev, ...nextPhotos]);
+  };
+
   const handleSwipe = async (direction: 'left' | 'right', responseTimeMs: number) => {
-    const currentPhoto = moodPhotos[currentIndex];
+    const currentPhoto = queue[currentIndex];
     if (!currentPhoto || showCelebration || swipingRef.current) return;
     swipingRef.current = true;
 
     const newSwipeCount = swipeCount + 1;
-    const isLastSwipe = newSwipeCount >= moodPhotos.length;
-
     setSwipeCount(newSwipeCount);
+
+    const swipeRecord: StyleSwipe = {
+      mood_photo_id: currentPhoto.id as unknown as number,
+      swipe_direction: direction,
+      response_time_ms: responseTimeMs,
+    };
+    analyzerRef.current.addSwipe(currentPhoto as unknown as import('@/services/visualPreferences/visualPreferenceService').MoodPhoto, swipeRecord);
 
     try {
       const { getSupabase } = await import('@/lib/supabase');
@@ -92,24 +116,46 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           session_id: !user ? sessionId : null,
           mood_photo_id: currentPhoto.id,
           swipe_direction: direction,
-          response_time_ms: responseTimeMs
+          response_time_ms: responseTimeMs,
         });
       }
-      onSwipe?.(currentPhoto.id, direction);
+      onSwipe?.(currentPhoto.id as unknown as string, direction);
     } catch (err) {
       console.warn('Failed to save swipe:', err);
     }
 
-    if (isLastSwipe) {
+    const isLastInQueue = newSwipeCount >= queue.length;
+    const hasMorePhotos = seenIdsRef.current.size < allPhotos.length;
+    const metMinimum = newSwipeCount >= MIN_SWIPES_TO_COMPLETE;
+
+    if (newSwipeCount === ADAPT_AFTER_SWIPES && hasMorePhotos) {
+      loadNextBatch(newSwipeCount);
+    }
+
+    if (isLastInQueue && !hasMorePhotos) {
       setShowCelebration(true);
       swipingRef.current = false;
       return;
+    }
+
+    if (isLastInQueue && hasMorePhotos) {
+      loadNextBatch(newSwipeCount);
+    }
+
+    if (metMinimum && !canComplete) {
+      setCanComplete(true);
     }
 
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
       swipingRef.current = false;
     }, 100);
+  };
+
+  const handleFinishEarly = () => {
+    if (canComplete) {
+      setShowCelebration(true);
+    }
   };
 
   if (loading) {
@@ -125,7 +171,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     );
   }
 
-  if (moodPhotos.length === 0) {
+  if (queue.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-[var(--color-muted)] mb-4">Geen stijlbeelden beschikbaar</p>
@@ -136,9 +182,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     );
   }
 
-  const currentPhoto = moodPhotos[currentIndex];
-  const progress = (swipeCount / moodPhotos.length) * 100;
-  const imageUrls = moodPhotos.map(photo => photo.image_url);
+  const currentPhoto = queue[currentIndex];
+  const totalAvailable = allPhotos.length;
+  const progress = Math.min((swipeCount / Math.max(totalAvailable, MIN_SWIPES_TO_COMPLETE)) * 100, 100);
+  const imageUrls = queue.map(p => p.image_url);
   const storageDomain = (() => {
     try {
       return imageUrls.length > 0 ? new URL(imageUrls[0]).origin : '';
@@ -159,8 +206,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         </Helmet>
       )}
 
-      {!loading && moodPhotos.length > 0 && (
-        <ImagePreloader imageUrls={imageUrls} currentIndex={currentIndex} lookahead={2} />
+      {queue.length > 0 && (
+        <ImagePreloader imageUrls={imageUrls} currentIndex={currentIndex} lookahead={3} />
       )}
 
       <StyleAnalysisTransition
@@ -173,13 +220,12 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
       {/* ── MOBILE layout (< sm) ── */}
       <div className="sm:hidden flex flex-col h-full min-h-0">
-        {/* Mobile Header */}
         <div className="flex-shrink-0 px-4 pt-3 pb-2">
           <h2 className="text-base font-bold text-[var(--color-text)] mb-0.5">
             Welke stijl spreekt je aan?
           </h2>
           <p className="text-xs text-[var(--color-muted)] mb-2">
-            <strong className="text-[var(--color-text)]">Laatste stap!</strong> {moodPhotos.length} outfits
+            <strong className="text-[var(--color-text)]">Swipe</strong> door de foto's — hoe meer, hoe beter je resultaat
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
@@ -190,11 +236,12 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               />
             </div>
-            <span className="text-xs text-[var(--color-muted)] flex-shrink-0 tabular-nums">{swipeCount}/{moodPhotos.length}</span>
+            <span className="text-xs text-[var(--color-muted)] flex-shrink-0 tabular-nums">
+              {swipeCount}/{totalAvailable}
+            </span>
           </div>
         </div>
 
-        {/* Mobile Swipe Area — card + buttons in a fixed-budget flex column */}
         <div className="flex-1 flex flex-col items-center px-3 min-h-0 pt-1 overflow-hidden">
           <div className="w-full max-w-[340px] flex flex-col items-center h-full min-h-0">
             <AnimatePresence mode="popLayout">
@@ -204,7 +251,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                   imageUrl={currentPhoto.image_url}
                   onSwipe={handleSwipe}
                   index={currentIndex}
-                  total={moodPhotos.length}
+                  total={queue.length}
                   variant="mobile"
                 />
               )}
@@ -212,18 +259,24 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </div>
         </div>
 
-        {/* Mobile Footer — minimal */}
-        <div className="flex-shrink-0 px-4 pt-1" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+        <div className="flex-shrink-0 px-4 pt-1 pb-3 flex flex-col gap-2" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+          {canComplete && (
+            <button
+              onClick={handleFinishEarly}
+              className="w-full py-2.5 rounded-xl text-xs font-semibold text-[var(--ff-color-primary-700)] transition-all"
+              style={{ background: 'var(--ff-color-primary-50)', border: '1.5px solid var(--ff-color-primary-200)' }}
+            >
+              Klaar — bekijk mijn stijlprofiel
+            </button>
+          )}
           <p className="text-center text-xs text-[var(--color-muted)]">
             Tik op de knoppen of sleep de foto
           </p>
         </div>
       </div>
 
-      {/* ── DESKTOP layout (≥ sm) — twee kolommen ── */}
+      {/* ── DESKTOP layout (≥ sm) ── */}
       <div className="hidden sm:flex h-full">
-
-        {/* Linker kolom: kaart */}
         <div className="flex-1 flex items-center justify-center px-8 lg:px-16">
           <div className="w-full max-w-[420px] lg:max-w-[460px]">
             <AnimatePresence mode="popLayout">
@@ -233,7 +286,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                   imageUrl={currentPhoto.image_url}
                   onSwipe={handleSwipe}
                   index={currentIndex}
-                  total={moodPhotos.length}
+                  total={queue.length}
                   variant="desktop"
                 />
               )}
@@ -241,12 +294,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </div>
         </div>
 
-        {/* Rechter kolom: header + progress + knoppen + instructies */}
         <div
           className="w-[380px] lg:w-[420px] flex-shrink-0 flex flex-col justify-center px-8 lg:px-12 border-l"
           style={{ borderColor: 'var(--color-border)' }}
         >
-          {/* Badge */}
           <div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 self-start"
             style={{
@@ -266,10 +317,9 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </h2>
 
           <p className="text-sm text-[var(--color-muted)] mb-8">
-            <strong className="text-[var(--color-text)] font-semibold">Laatste stap!</strong> Swipe door {moodPhotos.length} outfits en geef aan wat bij jou past.
+            <strong className="text-[var(--color-text)] font-semibold">Laatste stap!</strong> Swipe door de foto's — Nova leert van elke keuze en past de selectie aan.
           </p>
 
-          {/* Progress */}
           <div className="mb-10">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
@@ -277,7 +327,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 className="text-xs font-medium px-2.5 py-1 rounded-full"
                 style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}
               >
-                {swipeCount} / {moodPhotos.length}
+                {swipeCount} / {totalAvailable}
               </span>
             </div>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-border)' }}>
@@ -289,21 +339,18 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 transition={{ duration: 0.4, ease: 'easeOut' }}
               />
             </div>
+            {canComplete && (
+              <p className="text-xs text-[var(--ff-color-primary-700)] mt-1.5 font-medium">
+                Genoeg data verzameld — je kunt nu afronden of doorgaan voor nog betere resultaten
+              </p>
+            )}
           </div>
 
-          {/* Actie-knoppen */}
-          <div className="flex gap-4 mb-8">
-            {/* Dislike */}
+          <div className="flex gap-4 mb-6">
             <button
-              onClick={() => {
-                const currentPhoto = moodPhotos[currentIndex];
-                if (currentPhoto) handleSwipe('left', 0);
-              }}
+              onClick={() => { const p = queue[currentIndex]; if (p) handleSwipe('left', 0); }}
               className="flex-1 group flex flex-col items-center gap-2 py-5 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                background: 'var(--color-surface)',
-                border: '2px solid var(--color-border)',
-              }}
+              style={{ background: 'var(--color-surface)', border: '2px solid var(--color-border)' }}
               aria-label="Niet mijn stijl"
             >
               <div
@@ -319,12 +366,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               </span>
             </button>
 
-            {/* Like */}
             <button
-              onClick={() => {
-                const currentPhoto = moodPhotos[currentIndex];
-                if (currentPhoto) handleSwipe('right', 0);
-              }}
+              onClick={() => { const p = queue[currentIndex]; if (p) handleSwipe('right', 0); }}
               className="flex-1 group flex flex-col items-center gap-2 py-5 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               style={{
                 background: 'linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(34,197,94,0.12) 100%)',
@@ -346,7 +389,19 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           </div>
 
-          {/* Sneltoetsen */}
+          {canComplete && (
+            <button
+              onClick={handleFinishEarly}
+              className="w-full py-3 rounded-xl text-sm font-semibold mb-6 transition-all hover:opacity-90 active:scale-[0.98]"
+              style={{
+                background: 'var(--ff-color-primary-700)',
+                color: 'var(--color-bg)',
+              }}
+            >
+              Klaar — bekijk mijn stijlprofiel
+            </button>
+          )}
+
           <div
             className="rounded-xl px-5 py-4"
             style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
@@ -355,29 +410,14 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--color-muted)]">Niet mijn stijl</span>
-                <kbd
-                  className="px-2.5 py-1 text-xs font-bold rounded-lg"
-                  style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
-                >
-                  ←
-                </kbd>
+                <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}>←</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--color-muted)]">Spreekt me aan</span>
                 <div className="flex items-center gap-1.5">
-                  <kbd
-                    className="px-2.5 py-1 text-xs font-bold rounded-lg"
-                    style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
-                  >
-                    →
-                  </kbd>
+                  <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}>→</kbd>
                   <span className="text-[10px] text-[var(--color-muted)]">of</span>
-                  <kbd
-                    className="px-2.5 py-1 text-xs font-bold rounded-lg"
-                    style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}
-                  >
-                    Space
-                  </kbd>
+                  <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}>Space</kbd>
                 </div>
               </div>
               <div className="flex items-center justify-between">
