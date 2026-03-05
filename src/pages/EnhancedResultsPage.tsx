@@ -1024,7 +1024,43 @@ export default function EnhancedResultsPage() {
         <section id="outfits-section" className="py-8 sm:py-10 relative">
           <div className="ff-container">
             <AnimatedSection>
-              <div className="flex items-center justify-between mb-6 gap-4">
+              {/* Quiz-anchor context strip */}
+              {answers && (
+                <div className="mb-5 flex flex-wrap items-center gap-2 p-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)] mr-1">Gebaseerd op:</span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                    {archetypeName}
+                  </span>
+                  {answers.fit && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                      Pasvorm: {answers.fit}
+                    </span>
+                  )}
+                  {Array.isArray(answers.occasions) && answers.occasions.slice(0, 2).map((occ: string) => (
+                    <span key={occ} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
+                      {occ}
+                    </span>
+                  ))}
+                  {activeColorProfile?.season && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
+                      Seizoen: {activeColorProfile.season}
+                    </span>
+                  )}
+                  {answers.budgetRange?.max && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
+                      Tot €{answers.budgetRange.max}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => navigate('/onboarding')}
+                    className="ml-auto text-[11px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                  >
+                    Aanpassen →
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mb-4 gap-4">
                 <div>
                   <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight">
                     Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
@@ -1184,9 +1220,29 @@ export default function EnhancedResultsPage() {
                         <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
-                        <p className="text-base text-[var(--color-muted)]">
-                          {outfitInfo.description}
+                        <p className="text-sm text-[var(--color-muted)] mb-3">
+                          {('explanation' in outfit && outfit.explanation)
+                            ? (outfit.explanation as string)
+                            : outfitInfo.description}
                         </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {('matchScore' in outfit && typeof outfit.matchScore === 'number') && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
+                              <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                              {Math.round((outfit as any).matchScore)}% match
+                            </span>
+                          )}
+                          {answers?.fit && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                              {answers.fit}
+                            </span>
+                          )}
+                          {answers?.occasions?.[0] && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
+                              {answers.occasions[0]}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
@@ -1307,14 +1363,30 @@ export default function EnhancedResultsPage() {
                           <h3 className="text-lg font-bold mb-1 text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
                             {'name' in outfit ? outfit.name : outfitInfo.title}
                           </h3>
-                          {answers && (
-                            <p className="text-xs text-[var(--color-muted)] mb-1.5">
-                              Op basis van jouw keuzes: {[answers.fit, answers.occasions?.[0]].filter(Boolean).join(', ') || archetypeName}
-                            </p>
-                          )}
-                          <p className="text-sm text-[var(--color-muted)] line-clamp-2">
-                            {outfitInfo.description}
+                          <p className="text-sm text-[var(--color-muted)] line-clamp-2 mb-3">
+                            {('explanation' in outfit && outfit.explanation)
+                              ? (outfit.explanation as string)
+                              : outfitInfo.description}
                           </p>
+                          {/* Quiz-anchor pills */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {('matchScore' in outfit && typeof outfit.matchScore === 'number') && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
+                                <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                                {Math.round((outfit as any).matchScore)}% match
+                              </span>
+                            )}
+                            {answers?.fit && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                                {answers.fit}
+                              </span>
+                            )}
+                            {answers?.occasions?.[0] && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
+                                {answers.occasions[0]}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </motion.div>
                     </AnimatedSection>
