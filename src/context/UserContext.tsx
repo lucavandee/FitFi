@@ -2,8 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { profileSyncService } from '@/services/data/profileSyncService';
 
-const sb = supabase();
-
 export interface FitFiUser {
   id: string;
   name: string;
@@ -77,6 +75,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isMember = status === 'authenticated' && !!user?.id;
 
   useEffect(() => {
+    const sb = supabase();
     if (!sb) {
       setStatus('unauthenticated');
       return;
@@ -127,7 +126,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .catch(() => { setStatus('unauthenticated'); });
 
     const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
-      (() => { initSession(session); })();
+      initSession(session).catch(() => {});
     });
 
     return () => {
@@ -137,6 +136,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    const sb = supabase();
     if (!sb) return false;
     try {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
@@ -148,6 +148,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (email: string, password: string, name: string): Promise<boolean> => {
+    const sb = supabase();
     if (!sb) throw new Error('Verbinding niet beschikbaar. Probeer het later opnieuw.');
 
     const { data, error } = await sb.auth.signUp({
@@ -185,6 +186,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async (): Promise<void> => {
+    const sb = supabase();
     if (!sb) return;
     try {
       await sb.auth.signOut();
@@ -192,6 +194,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateProfile = async (updates: Partial<FitFiUser>): Promise<void> => {
+    const sb = supabase();
     if (!sb || !user) return;
     try {
       const { error } = await sb.auth.updateUser({ data: updates });
@@ -202,6 +205,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword = async (email: string): Promise<boolean> => {
+    const sb = supabase();
     if (!sb) return false;
     try {
       const { error } = await sb.auth.resetPasswordForEmail(email, {
