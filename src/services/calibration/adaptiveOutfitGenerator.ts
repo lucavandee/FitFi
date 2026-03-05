@@ -89,6 +89,13 @@ const NON_CLOTHING_PATTERNS = [
   /motorsport/i, /McLAREN/i, /BMW\s+M\s/i, /Ferrari/i,
   /Red\s+Bull\s+Racing/i, /Scuderia/i,
   /voetbalschoen/i, /voetbalbroek/i, /keepers/i,
+  /boxer/i, /onderbroek/i, /ondergoed/i, /underwear/i,
+  /lingerie/i, /^bh\b/i, /\bbra\b/i, /string(?!er)/i,
+  /hipster.*brief/i, /trunk.*brief/i, /slip(?!on|per)/i,
+  /bjorn\s*borg/i, /björn\s*borg/i,
+  /sokken/i, /socks/i, /kousen/i,
+  /zwembroek/i, /bikini/i, /badpak/i, /zwemshort/i,
+  /pyjama/i, /nachthem/i, /slaap/i, /ochtendjas/i, /badjas/i,
 ];
 
 const INAPPROPRIATE_FOOTWEAR_PATTERNS = [

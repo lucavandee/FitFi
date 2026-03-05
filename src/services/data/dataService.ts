@@ -5,11 +5,51 @@ import type { Product as EngineProduct, Outfit as EngineOutfit, OutfitGeneration
 
 const NOW = () => new Date().toISOString();
 
+const NON_CLOTHING_PATTERNS = [
+  /kaars/i, /candle/i, /lamp/i, /vaas/i, /houder/i, /decor/i,
+  /bedrok/i, /kussen/i, /plaid/i, /handdoek/i, /baddoek/i,
+  /meegroeipakje/i, /baby/i, /peuter/i, /kleuter/i, /romper/i,
+  /wanten/i, /handschoen/i, /bonnet/i, /haarbonnet/i,
+  /pantoffel/i, /sloffen/i, /slippers/i, /flip.?flop/i,
+  /oplaadba/i, /oplader/i, /telefoon/i, /hoesje/i,
+  /speelgoed/i, /knuffel/i, /puzzel/i,
+  /voetbal.*(shirt|short|jersey|tenue)/i,
+  /Marokko\s+20\d/i, /Manchester\s+(City|United)/i,
+  /Marseille/i, /Arsenal/i, /AC\s*Milan/i, /Borussia/i,
+  /Barcelona/i, /Bayern/i, /Liverpool/i, /Chelsea/i,
+  /motorsport/i, /McLAREN/i, /BMW\s+M\s/i, /Ferrari/i,
+  /Red\s+Bull\s+Racing/i, /Scuderia/i,
+  /voetbalschoen/i, /voetbalbroek/i, /keepers/i,
+  /boxer/i, /onderbroek/i, /ondergoed/i, /underwear/i,
+  /lingerie/i, /^bh\b/i, /\bbra\b/i, /string(?!er)/i,
+  /hipster.*brief/i, /trunk.*brief/i, /slip(?!on|per)/i,
+  /bjorn\s*borg/i, /björn\s*borg/i,
+  /sokken/i, /socks/i, /kousen/i,
+  /zwembroek/i, /bikini/i, /badpak/i, /zwemshort/i,
+  /pyjama/i, /nachthem/i, /slaap/i, /ochtendjas/i, /badjas/i,
+];
+
+const BAD_FOOTWEAR_PATTERNS = [
+  /pantoffel/i, /sloffen/i, /slipper(?!s?\s+sneaker)/i,
+  /flip.?flop/i, /sandal/i, /crocs/i, /klompen/i, /muil/i,
+  /badslip/i, /badslipper/i, /teenslip/i,
+];
+
+function isClothingProduct(row: Record<string, any>): boolean {
+  const name = row.name || row.title || '';
+  if (NON_CLOTHING_PATTERNS.some(p => p.test(name))) return false;
+  if (row.category === 'footwear' && BAD_FOOTWEAR_PATTERNS.some(p => p.test(name))) return false;
+  const price = typeof row.price === 'number' ? row.price : parseFloat(row.price) || 0;
+  if (price <= 0) return false;
+  if (!row.image_url && !row.imageUrl) return false;
+  return true;
+}
+
 const FALLBACK_PRODUCTS: BoltProduct[] = [
-  { id: "p-1", title: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#", category: "footwear" },
-  { id: "p-2", title: "Licht Overshirt", brand: "ARKET", price: 89, imageUrl: "/images/fallbacks/top.jpg", retailer: "Generic", url: "#", category: "top" },
-  { id: "p-3", title: "Slim Jeans", brand: "Levi's", price: 119, imageUrl: "/images/fallbacks/bottom.jpg", retailer: "Generic", url: "#", category: "bottom" },
-  { id: "p-4", title: "Wol Blend Coat", brand: "COS", price: 190, imageUrl: "/images/fallbacks/default.jpg", retailer: "Generic", url: "#", category: "outerwear" },
+  { id: "p-1", title: "Witte Sneaker", name: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#", category: "footwear" },
+  { id: "p-2", title: "Licht Overshirt", name: "Licht Overshirt", brand: "ARKET", price: 89, imageUrl: "/images/fallbacks/top.jpg", retailer: "Generic", url: "#", category: "top" },
+  { id: "p-3", title: "Slim Jeans", name: "Slim Jeans", brand: "Levi's", price: 119, imageUrl: "/images/fallbacks/bottom.jpg", retailer: "Generic", url: "#", category: "bottom" },
+  { id: "p-4", title: "Wol Blend Coat", name: "Wol Blend Coat", brand: "COS", price: 190, imageUrl: "/images/fallbacks/default.jpg", retailer: "Generic", url: "#", category: "outerwear" },
 ];
 
 const FALLBACK_OUTFITS: Outfit[] = [
@@ -62,7 +102,9 @@ export async function fetchProducts(_opts?: {
       return wrap([...FALLBACK_PRODUCTS], "fallback");
     }
 
-    const products: BoltProduct[] = data.map(p => ({
+    const clothingOnly = data.filter(isClothingProduct);
+
+    const products: BoltProduct[] = clothingOnly.map(p => ({
       id: p.id,
       title: p.name || p.title,
       name: p.name || p.title,
@@ -80,7 +122,7 @@ export async function fetchProducts(_opts?: {
       sizes: p.sizes || [],
     }));
 
-    return wrap(products, "supabase");
+    return wrap(products.length > 0 ? products : [...FALLBACK_PRODUCTS], products.length > 0 ? "supabase" : "fallback");
   } catch (error) {
     return wrap([...FALLBACK_PRODUCTS], "fallback");
   }
@@ -183,6 +225,8 @@ export async function fetchOutfits(_opts?: {
       if (data) allRows.push(...data);
     }
 
+    allRows = allRows.filter(isClothingProduct);
+
     if (allRows.length < 10) {
       let fallbackQuery = client
         .from("products")
@@ -195,7 +239,10 @@ export async function fetchOutfits(_opts?: {
 
       fallbackQuery = fallbackQuery.limit(300);
       const { data } = await fallbackQuery;
-      if (data && data.length >= 10) allRows = data;
+      if (data) {
+        const filtered = data.filter(isClothingProduct);
+        if (filtered.length >= 10) allRows = filtered;
+      }
     }
 
     if (allRows.length < 10) {
