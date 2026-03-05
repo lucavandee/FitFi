@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw,
-  Upload, Plus, X, Sparkles, Check, Sliders, Palette, Zap
-} from 'lucide-react';
+import { TriangleAlert as AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X, Sparkles, Check, FileSliders as Sliders, Palette, Zap } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import toast from 'react-hot-toast';
 import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
