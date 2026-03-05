@@ -504,10 +504,7 @@ Layered earth tones, warm and approachable. Dutch cafe sidewalk setting in autum
 
 #### M-STR-08: Cobalt Statement (2026 Color Trend)
 ```
-Fashion editorial photograph, full-body shot of a male model wearing a cobalt blue
-puffer vest over a white long-sleeve t-shirt, black straight-leg jeans, black and white
-sneakers. Pop of bold capri blue against neutrals. Urban Dutch backdrop. The key color
-trend of 2026.
+ z
 ```
 **Metadata:**
 - archetype_weights: `{"STREETWEAR": 0.50, "SMART_CASUAL": 0.25, "ATHLETIC": 0.25}`
