@@ -83,7 +83,7 @@ export function computeArchetype(a: AnswerMap): Archetype {
   const scores: Record<Archetype, number> = {
     MINIMALIST: 0,
     CLASSIC: 0,
-    SMART_CASUAL: 8,
+    SMART_CASUAL: 0,
     STREETWEAR: 0,
     ATHLETIC: 0,
     AVANT_GARDE: 0,
@@ -128,16 +128,16 @@ export function computeArchetype(a: AnswerMap): Archetype {
 
   if (a.fit) {
     const fit = a.fit.toLowerCase();
-    if (fit === 'slim') { scores.MINIMALIST += 15; scores.CLASSIC += 10; }
-    if (fit === 'straight') { scores.SMART_CASUAL += 12; scores.CLASSIC += 8; }
-    if (fit === 'relaxed') { scores.STREETWEAR += 15; scores.SMART_CASUAL += 8; }
-    if (fit.includes('oversized')) { scores.STREETWEAR += 20; scores.AVANT_GARDE += 15; }
+    if (fit === 'slim') { scores.MINIMALIST += 18; scores.CLASSIC += 15; scores.SMART_CASUAL += 8; }
+    if (fit === 'regular' || fit === 'straight') { scores.SMART_CASUAL += 15; scores.CLASSIC += 12; scores.MINIMALIST += 8; }
+    if (fit === 'relaxed') { scores.SMART_CASUAL += 12; scores.STREETWEAR += 10; scores.ATHLETIC += 8; }
+    if (fit.includes('oversized')) { scores.STREETWEAR += 22; scores.AVANT_GARDE += 18; }
   }
 
   if (a.comfort) {
     const c = a.comfort.toLowerCase();
     if (c === 'structured') { scores.MINIMALIST += 10; scores.CLASSIC += 10; }
-    if (c === 'relaxed') { scores.STREETWEAR += 10; scores.ATHLETIC += 8; }
+    if (c === 'relaxed') { scores.SMART_CASUAL += 8; scores.ATHLETIC += 8; }
   }
 
   const goals = (a.goals || []).map((g: string) => g.toLowerCase());
@@ -152,17 +152,19 @@ export function computeArchetype(a: AnswerMap): Archetype {
   for (const o of occasions) {
     if (o.includes('office')) { scores.SMART_CASUAL += 12; scores.CLASSIC += 8; }
     if (o.includes('smartcasual')) { scores.SMART_CASUAL += 10; }
-    if (o.includes('leisure')) { scores.STREETWEAR += 8; scores.SMART_CASUAL += 5; }
+    if (o.includes('leisure')) { scores.SMART_CASUAL += 8; scores.STREETWEAR += 5; }
   }
 
   if (a.materials) {
     const mats = Array.isArray(a.materials) ? a.materials : [a.materials];
     for (const m of mats.map((x: string) => x.toLowerCase())) {
-      if (m.includes('tech') || m.includes('fleece')) scores.ATHLETIC += 12;
-      if (m.includes('linnen') || m.includes('linen')) scores.MINIMALIST += 10;
-      if (m.includes('wol') || m.includes('wool')) scores.CLASSIC += 10;
+      if (m.includes('tech')) { scores.ATHLETIC += 15; scores.STREETWEAR += 5; }
+      if (m.includes('fleece')) { scores.ATHLETIC += 10; scores.STREETWEAR += 5; }
+      if (m.includes('linnen') || m.includes('linen')) { scores.MINIMALIST += 12; scores.SMART_CASUAL += 8; }
+      if (m.includes('wol') || m.includes('wool') || m.includes('kasjmier')) { scores.CLASSIC += 12; scores.MINIMALIST += 8; }
+      if (m.includes('leer') || m.includes('leather')) { scores.CLASSIC += 10; scores.AVANT_GARDE += 8; }
       if (m === 'mat') { scores.MINIMALIST += 8; scores.CLASSIC += 5; }
-      if (m === 'textuur') { scores.SMART_CASUAL += 5; scores.CLASSIC += 5; }
+      if (m === 'textuur') { scores.SMART_CASUAL += 8; scores.CLASSIC += 5; }
       if (m === 'glans') { scores.AVANT_GARDE += 8; }
     }
   }

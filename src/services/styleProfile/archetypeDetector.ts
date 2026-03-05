@@ -54,15 +54,15 @@ export class ArchetypeDetector {
       let score = 0;
       const reasons: string[] = [];
 
-      // QUIZ ANALYSIS (40% weight)
+      // QUIZ ANALYSIS (55% weight - explicit user intent)
       const quizScore = this.analyzeQuiz(quizInputs, descriptor);
-      score += quizScore.score * 0.4;
+      score += quizScore.score * 0.55;
       reasons.push(...quizScore.reasons);
 
-      // SWIPE ANALYSIS (60% weight - more reliable)
+      // SWIPE ANALYSIS (45% weight - implicit preference)
       if (swipeData && swipeData.likedCount > 0) {
         const swipeScore = this.analyzeSwipes(swipeData, descriptor);
-        score += swipeScore.score * 0.6;
+        score += swipeScore.score * 0.45;
         reasons.push(...swipeScore.reasons);
       }
 
@@ -215,25 +215,27 @@ export class ArchetypeDetector {
     if (inputs.fit) {
       const fit = inputs.fit.toLowerCase();
 
-      if (descriptor.silhouettes.some(s => fit.includes(s))) {
-        score += 15;
-        reasons.push(`Fit matches: ${fit}`);
+      if (fit === 'slim' || fit === 'tailored') {
+        if (descriptor.key === 'MINIMALIST') { score += 20; reasons.push('Slim fit → Minimalist'); }
+        if (descriptor.key === 'CLASSIC') { score += 18; reasons.push('Slim fit → Classic'); }
+        if (descriptor.key === 'SMART_CASUAL') { score += 10; reasons.push('Slim fit (secondary) → Smart Casual'); }
       }
 
-      // Oversized fit
-      if (fit.includes('oversized') || fit.includes('loose') || fit.includes('relaxed')) {
-        if (descriptor.key === 'STREETWEAR' || descriptor.key === 'AVANT_GARDE') {
-          score += 20;
-          reasons.push('Oversized fit preference');
-        }
+      if (fit === 'regular' || fit === 'straight') {
+        if (descriptor.key === 'SMART_CASUAL') { score += 18; reasons.push('Regular fit → Smart Casual'); }
+        if (descriptor.key === 'CLASSIC') { score += 15; reasons.push('Regular fit → Classic'); }
+        if (descriptor.key === 'MINIMALIST') { score += 10; reasons.push('Regular fit (secondary) → Minimalist'); }
       }
 
-      // Slim fit
-      if (fit.includes('slim') || fit.includes('tailored')) {
-        if (descriptor.key === 'MINIMALIST' || descriptor.key === 'CLASSIC') {
-          score += 15;
-          reasons.push('Slim/tailored fit preference');
-        }
+      if (fit === 'relaxed') {
+        if (descriptor.key === 'SMART_CASUAL') { score += 15; reasons.push('Relaxed fit → Smart Casual'); }
+        if (descriptor.key === 'STREETWEAR') { score += 12; reasons.push('Relaxed fit → Streetwear'); }
+        if (descriptor.key === 'ATHLETIC') { score += 10; reasons.push('Relaxed fit → Athletic'); }
+      }
+
+      if (fit === 'oversized') {
+        if (descriptor.key === 'STREETWEAR') { score += 25; reasons.push('Oversized fit → Streetwear'); }
+        if (descriptor.key === 'AVANT_GARDE') { score += 20; reasons.push('Oversized fit → Avant-Garde'); }
       }
     }
 
@@ -265,12 +267,15 @@ export class ArchetypeDetector {
         }
       }
 
-      // ATHLETIC: comfort, sport
-      if (goals.some(g => g.includes('comfort') || g.includes('sport') || g.includes('actief'))) {
-        if (descriptor.key === 'ATHLETIC' || descriptor.key === 'STREETWEAR') {
-          score += 15;
-          reasons.push('Comfort/athletic goals');
-        }
+      // ATHLETIC: sport, actief
+      if (goals.some(g => g.includes('sport') || g.includes('actief'))) {
+        if (descriptor.key === 'ATHLETIC') { score += 20; reasons.push('Sport/active goals → Athletic'); }
+      }
+
+      // Comfort is universal, give mild bonus to relaxed archetypes
+      if (goals.some(g => g.includes('comfort'))) {
+        if (descriptor.key === 'SMART_CASUAL') { score += 10; reasons.push('Comfort goals → Smart Casual'); }
+        if (descriptor.key === 'ATHLETIC') { score += 10; reasons.push('Comfort goals → Athletic'); }
       }
     }
 
@@ -279,29 +284,34 @@ export class ArchetypeDetector {
       const materials = Array.isArray(inputs.materials) ? inputs.materials : [inputs.materials];
       const matLower = materials.map(m => m.toLowerCase());
 
-      if (matLower.some(m => m.includes('tech')) && descriptor.key === 'ATHLETIC') {
-        score += 12;
-        reasons.push('Tech material preference');
+      if (matLower.some(m => m.includes('tech'))) {
+        if (descriptor.key === 'ATHLETIC') { score += 15; reasons.push('Tech material → Athletic'); }
+        if (descriptor.key === 'STREETWEAR') { score += 8; reasons.push('Tech material (secondary) → Streetwear'); }
       }
 
-      if (matLower.some(m => m.includes('fleece')) && descriptor.key === 'STREETWEAR') {
-        score += 12;
-        reasons.push('Fleece material preference');
+      if (matLower.some(m => m.includes('fleece'))) {
+        if (descriptor.key === 'ATHLETIC') { score += 10; reasons.push('Fleece → Athletic'); }
+        if (descriptor.key === 'STREETWEAR') { score += 8; reasons.push('Fleece (secondary) → Streetwear'); }
       }
 
-      if (matLower.some(m => m.includes('wol') || m.includes('wool')) && descriptor.key === 'CLASSIC') {
-        score += 10;
-        reasons.push('Wool material preference');
+      if (matLower.some(m => m.includes('wol') || m.includes('wool') || m.includes('kasjmier') || m.includes('cashmere'))) {
+        if (descriptor.key === 'CLASSIC') { score += 12; reasons.push('Wool/cashmere → Classic'); }
+        if (descriptor.key === 'MINIMALIST') { score += 10; reasons.push('Wool (secondary) → Minimalist'); }
       }
 
-      if (matLower.some(m => m.includes('denim')) && descriptor.key === 'STREETWEAR') {
-        score += 10;
-        reasons.push('Denim material preference');
+      if (matLower.some(m => m.includes('linnen') || m.includes('linen'))) {
+        if (descriptor.key === 'MINIMALIST') { score += 12; reasons.push('Linen → Minimalist'); }
+        if (descriptor.key === 'SMART_CASUAL') { score += 10; reasons.push('Linen (secondary) → Smart Casual'); }
       }
 
-      if (matLower.some(m => m.includes('linnen') || m.includes('linen')) && descriptor.key === 'MINIMALIST') {
-        score += 10;
-        reasons.push('Linen material preference');
+      if (matLower.some(m => m.includes('leer') || m.includes('leather'))) {
+        if (descriptor.key === 'CLASSIC') { score += 10; reasons.push('Leather → Classic'); }
+        if (descriptor.key === 'AVANT_GARDE') { score += 8; reasons.push('Leather (secondary) → Avant-Garde'); }
+      }
+
+      if (matLower.some(m => m === 'mat' || m.includes('textuur'))) {
+        if (descriptor.key === 'MINIMALIST') { score += 8; reasons.push('Matte texture → Minimalist'); }
+        if (descriptor.key === 'SMART_CASUAL') { score += 8; reasons.push('Texture → Smart Casual'); }
       }
     }
 
@@ -362,7 +372,7 @@ export class ArchetypeDetector {
 
     // MINIMALIST detection from swipes
     if (descriptor.key === 'MINIMALIST') {
-      const minimalTags = ['minimal', 'clean', 'effen', 'simpel', 'monochrome'];
+      const minimalTags = ['minimal', 'clean', 'effen', 'simpel', 'monochrome', 'modern', 'refined', 'tonal'];
       const matchCount = minimalTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
@@ -385,21 +395,14 @@ export class ArchetypeDetector {
 
     // STREETWEAR detection from swipes
     if (descriptor.key === 'STREETWEAR') {
-      // 'casual' and 'relaxed' removed — too broad, would also match smart-casual/minimalist photos
       const streetTags = ['street', 'urban', 'oversized', 'hoodie', 'sneaker', 'streetwear', 'graffiti'];
       const matchCount = streetTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
 
       if (matchCount > 0) {
-        score += Math.min(matchCount * 15, 40);
+        score += Math.min(matchCount * 12, 35);
         reasons.push(`Streetwear tags: ${matchCount}`);
-      }
-
-      // Check for oversized silhouettes
-      if (tagCounts['oversized'] || tagCounts['loose'] || tagCounts['boxy']) {
-        score += 20;
-        reasons.push('Oversized silhouette preference');
       }
     }
 
@@ -418,7 +421,7 @@ export class ArchetypeDetector {
 
     // CLASSIC detection from swipes
     if (descriptor.key === 'CLASSIC') {
-      const classicTags = ['classic', 'tailored', 'preppy', 'refined', 'smart', 'formal', 'elegant', 'chino', 'blazer'];
+      const classicTags = ['classic', 'tailored', 'preppy', 'refined', 'smart', 'formal', 'elegant', 'chino', 'blazer', 'sophisticated', 'vintage', 'timeless'];
       const matchCount = classicTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
@@ -431,7 +434,7 @@ export class ArchetypeDetector {
 
     // SMART_CASUAL detection from swipes
     if (descriptor.key === 'SMART_CASUAL') {
-      const smartCasualTags = ['smart-casual', 'smart', 'casual-chic', 'relaxed-fit', 'chino', 'polo', 'loafer', 'overshirt', 'casual'];
+      const smartCasualTags = ['smart-casual', 'smart', 'casual-chic', 'relaxed-fit', 'chino', 'polo', 'loafer', 'overshirt', 'casual', 'layered', 'knit', 'modern', 'warm', 'tonal'];
       const matchCount = smartCasualTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
