@@ -228,7 +228,7 @@ export const quizSteps: QuizStep[] = [
       },
       {
         value: 'medium',
-        label: 'Licht contrast',
+        label: 'Licht tot medium contrast',
         description: 'Lichte top met iets donkerdere broek'
       },
       {

@@ -62,6 +62,7 @@ export function computeColorProfile(a: AnswerMap): ColorProfile {
 
   const notes: string[] = [];
   if (contrast === "laag") notes.push("Kies lage contrasten en tonal outfits.");
+  if (contrast === "medium") notes.push("Licht tot medium contrast: combineer aangrenzende tinten voor een verzorgde look.");
   if (contrast === "hoog") notes.push("Hoger contrast mag: licht vs. donker combineren.");
   if (temperature === "warm") notes.push("Warme neutrale basis (zand, klei, camel).");
   if (temperature === "koel") notes.push("Koele neutrale basis (grijs, navy, steenkleur).");

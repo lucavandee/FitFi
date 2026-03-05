@@ -176,16 +176,18 @@ export function generateRecommendationsFromAnswers(
   console.log('[RecommendationEngine] Starting with', products.length, 'products');
   console.log('[RecommendationEngine] Quiz answers:', {
     gender: answers.gender,
+    budgetRange: answers.budgetRange,
     budget: answers.budget,
     archetype: answers.archetype,
     occasions: answers.occasions
   });
 
   // CRITICAL: Apply comprehensive filtering FIRST
+  // budgetRange is a single number from the slider (e.g. 50); convert to {min, max}
+  const budgetMax = answers.budget?.max ?? (typeof answers.budgetRange === 'number' ? answers.budgetRange : undefined);
   const filterCriteria: FilterCriteria = {
     gender: answers.gender,
-    budget: answers.budget,
-    // Future: add more criteria based on quiz answers
+    budget: budgetMax !== undefined ? { min: 0, max: budgetMax } : undefined,
   };
 
   const filterResult = filterProducts(products, filterCriteria);
