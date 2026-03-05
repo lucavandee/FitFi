@@ -1,13 +1,18 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef } from "react";
 import { X, Send, RotateCcw, ChevronDown } from "lucide-react";
 import { useNovaChat } from "./NovaChatProvider";
 import Button from "@/components/ui/Button";
 import { useSwipeToClose } from "@/hooks/useSwipeToClose";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import useBodyScrollLock from "@/hooks/useBodyScrollLock";
 
 export default function ChatPanel() {
   const { isOpen, setOpen, sending, error, messages, send, reset } = useNovaChat();
   const [input, setInput] = React.useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const panelRef = useFocusTrap(isOpen) as React.RefObject<HTMLDivElement>;
+  useBodyScrollLock(isOpen);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,10 +48,14 @@ export default function ChatPanel() {
     <div
       className="fixed inset-0 z-[9998] flex items-end justify-end p-2 sm:p-4 md:p-6 pointer-events-none"
       role="dialog"
-      aria-label="Nova Chat"
+      aria-modal="true"
+      aria-labelledby={titleId}
     >
       <div
-        ref={elementRef}
+        ref={(el) => {
+          (elementRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          (panelRef as React.MutableRefObject<HTMLElement | null>).current = el;
+        }}
         className="
           pointer-events-auto
           w-full max-w-[95vw] sm:max-w-md
@@ -86,7 +95,7 @@ export default function ChatPanel() {
               </svg>
             </div>
             <div>
-              <h2 className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Nova</h2>
+              <h2 id={titleId} className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Nova</h2>
               <p className="text-xs text-[var(--color-muted)] hidden sm:block">
                 {sending ? "Aan het typen..." : "Je persoonlijke style assistent"}
               </p>
@@ -107,8 +116,10 @@ export default function ChatPanel() {
               onClick={() => setOpen(false)}
               variant="ghost"
               size="sm"
+              data-modal-close
               className="w-8 h-8 p-0"
               title="Sluit chat"
+              aria-label="Sluit chat"
             >
               <X className="w-4 h-4" />
             </Button>

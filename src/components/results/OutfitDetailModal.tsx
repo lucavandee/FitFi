@@ -2,6 +2,8 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Heart, X } from "lucide-react";
 import type { ColorProfile } from "@/lib/quiz/types";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import useBodyScrollLock from "@/hooks/useBodyScrollLock";
 
 interface OutfitDetailModalProps {
   outfit: any | null;
@@ -51,6 +53,10 @@ export function OutfitDetailModal({
   archetypeName,
   colorProfile,
 }: OutfitDetailModalProps) {
+  const isOpen = outfit !== null;
+  const panelRef = useFocusTrap(isOpen) as React.RefObject<HTMLDivElement>;
+  useBodyScrollLock(isOpen);
+
   if (!outfit) return null;
 
   const id = outfit?.id != null ? String(outfit.id) : `seed-${allOutfits.indexOf(outfit)}`;
@@ -80,6 +86,7 @@ export function OutfitDetailModal({
       >
         <motion.div
           key="panel"
+          ref={panelRef}
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
@@ -109,6 +116,7 @@ export function OutfitDetailModal({
             <button
               onClick={onClose}
               aria-label="Sluit"
+              data-modal-close
               className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] flex-shrink-0 transition-colors"
             >
               <X className="w-4 h-4" />

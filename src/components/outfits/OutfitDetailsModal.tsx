@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -18,6 +18,8 @@ import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
 import { cn } from '@/utils/cn';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
+import useBodyScrollLock from '@/hooks/useBodyScrollLock';
 
 interface Product {
   id: string;
@@ -64,6 +66,9 @@ export default function OutfitDetailsModal({
   const { user } = useUser();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [openingProductId, setOpeningProductId] = useState<string | null>(null);
+  const titleId = useId();
+  const panelRef = useFocusTrap(true) as React.RefObject<HTMLDivElement>;
+  useBodyScrollLock(true);
 
   const handleShopClick = async (product: Product) => {
     const baseUrl = product.affiliateUrl || product.productUrl;
@@ -159,6 +164,10 @@ export default function OutfitDetailsModal({
         onClick={onClose}
       >
         <motion.div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
           className="bg-[var(--color-surface)] rounded-[var(--radius-lg)] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -169,7 +178,7 @@ export default function OutfitDetailsModal({
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl font-semibold">Outfit details</h2>
+              <h2 id={titleId} className="text-xl font-semibold">Outfit details</h2>
               {outfit.matchPercentage && outfit.matchPercentage > 80 && (
                 <div className="flex items-center gap-1 px-2 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-xs font-bold">
                   <Sparkles className="w-3 h-3" />
@@ -179,6 +188,7 @@ export default function OutfitDetailsModal({
             </div>
             <button
               onClick={onClose}
+              data-modal-close
               className="p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors"
               aria-label="Sluiten"
             >
