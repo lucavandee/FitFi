@@ -1,49 +1,9 @@
 import { supabase } from "@/lib/supabaseClient";
 import type { BoltProduct, Outfit, FitFiUserProfile, Tribe, DataResponse } from "./types";
-import generateOutfits from "@/engine/generateOutfits";
-import type { Product as EngineProduct, Outfit as EngineOutfit, OutfitGenerationOptions } from "@/engine/types";
+import { composeOutfits } from "@/engine/outfitComposer";
+import { isAdultClothingProduct } from "@/engine/productFilter";
 
 const NOW = () => new Date().toISOString();
-
-const NON_CLOTHING_PATTERNS = [
-  /kaars/i, /candle/i, /lamp/i, /vaas/i, /houder/i, /decor/i,
-  /bedrok/i, /kussen/i, /plaid/i, /handdoek/i, /baddoek/i,
-  /meegroeipakje/i, /baby/i, /peuter/i, /kleuter/i, /romper/i,
-  /wanten/i, /handschoen/i, /bonnet/i, /haarbonnet/i,
-  /pantoffel/i, /sloffen/i, /slippers/i, /flip.?flop/i,
-  /oplaadba/i, /oplader/i, /telefoon/i, /hoesje/i,
-  /speelgoed/i, /knuffel/i, /puzzel/i,
-  /voetbal.*(shirt|short|jersey|tenue)/i,
-  /Marokko\s+20\d/i, /Manchester\s+(City|United)/i,
-  /Marseille/i, /Arsenal/i, /AC\s*Milan/i, /Borussia/i,
-  /Barcelona/i, /Bayern/i, /Liverpool/i, /Chelsea/i,
-  /motorsport/i, /McLAREN/i, /BMW\s+M\s/i, /Ferrari/i,
-  /Red\s+Bull\s+Racing/i, /Scuderia/i,
-  /voetbalschoen/i, /voetbalbroek/i, /keepers/i,
-  /boxer/i, /onderbroek/i, /ondergoed/i, /underwear/i,
-  /lingerie/i, /^bh\b/i, /\bbra\b/i, /string(?!er)/i,
-  /hipster.*brief/i, /trunk.*brief/i, /slip(?!on|per)/i,
-  /bjorn\s*borg/i, /björn\s*borg/i,
-  /sokken/i, /socks/i, /kousen/i,
-  /zwembroek/i, /bikini/i, /badpak/i, /zwemshort/i,
-  /pyjama/i, /nachthem/i, /slaap/i, /ochtendjas/i, /badjas/i,
-];
-
-const BAD_FOOTWEAR_PATTERNS = [
-  /pantoffel/i, /sloffen/i, /slipper(?!s?\s+sneaker)/i,
-  /flip.?flop/i, /sandal/i, /crocs/i, /klompen/i, /muil/i,
-  /badslip/i, /badslipper/i, /teenslip/i,
-];
-
-function isClothingProduct(row: Record<string, any>): boolean {
-  const name = row.name || row.title || '';
-  if (NON_CLOTHING_PATTERNS.some(p => p.test(name))) return false;
-  if (row.category === 'footwear' && BAD_FOOTWEAR_PATTERNS.some(p => p.test(name))) return false;
-  const price = typeof row.price === 'number' ? row.price : parseFloat(row.price) || 0;
-  if (price <= 0) return false;
-  if (!row.image_url && !row.imageUrl) return false;
-  return true;
-}
 
 const FALLBACK_PRODUCTS: BoltProduct[] = [
   { id: "p-1", title: "Witte Sneaker", name: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#", category: "footwear" },
@@ -102,7 +62,7 @@ export async function fetchProducts(_opts?: {
       return wrap([...FALLBACK_PRODUCTS], "fallback");
     }
 
-    const clothingOnly = data.filter(isClothingProduct);
+    const clothingOnly = data.filter(isAdultClothingProduct);
 
     const products: BoltProduct[] = clothingOnly.map(p => ({
       id: p.id,
@@ -128,54 +88,6 @@ export async function fetchProducts(_opts?: {
   }
 }
 
-function toEngineProduct(row: Record<string, any>): EngineProduct {
-  return {
-    id: row.id,
-    name: row.name || row.title || "",
-    brand: row.brand,
-    price: typeof row.price === "number" ? row.price : parseFloat(row.price) || 0,
-    imageUrl: row.image_url,
-    category: row.category,
-    description: row.description,
-    tags: row.tags || [],
-    colors: row.colors || [],
-    gender: row.gender,
-    sizes: row.sizes || [],
-    affiliateUrl: row.affiliate_url || row.product_url,
-    productUrl: row.product_url || row.affiliate_url,
-    retailer: row.retailer,
-    style: row.style,
-  };
-}
-
-function engineToBoltOutfit(eo: EngineOutfit): Outfit {
-  const products: BoltProduct[] = eo.products.map(p => ({
-    id: p.id,
-    title: p.name,
-    name: p.name,
-    brand: p.brand,
-    price: p.price,
-    imageUrl: p.imageUrl,
-    image: p.imageUrl,
-    url: p.affiliateUrl || p.productUrl || "#",
-    retailer: p.retailer,
-    category: p.category,
-    description: p.description,
-    tags: p.tags || [],
-    colors: p.colors || [],
-    gender: p.gender as BoltProduct["gender"],
-  }));
-
-  return {
-    id: eo.id,
-    title: eo.title,
-    products,
-    match: eo.matchPercentage,
-    tags: eo.tags,
-    season: eo.season,
-  };
-}
-
 export async function fetchOutfits(_opts?: {
   gender?: 'male' | 'female' | 'unisex';
   archetype?: string;
@@ -198,10 +110,10 @@ export async function fetchOutfits(_opts?: {
     }
 
     const archetype = _opts?.archetype || "SMART_CASUAL";
-    const limit = _opts?.limit || 6;
+    const limit = _opts?.limit || 9;
 
     const categories = ['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress'];
-    const perCategory = Math.ceil(300 / categories.length);
+    const perCategory = 80;
     let allRows: Record<string, any>[] = [];
 
     for (const cat of categories) {
@@ -220,124 +132,56 @@ export async function fetchOutfits(_opts?: {
       }
 
       query = query.limit(perCategory);
-
       const { data } = await query;
       if (data) allRows.push(...data);
     }
 
-    allRows = allRows.filter(isClothingProduct);
-
     if (allRows.length < 10) {
-      let fallbackQuery = client
+      const { data } = await client
         .from("products")
         .select("*")
-        .eq("in_stock", true);
-
-      if (_opts?.gender && _opts.gender !== "unisex") {
-        fallbackQuery = fallbackQuery.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
-      }
-
-      fallbackQuery = fallbackQuery.limit(300);
-      const { data } = await fallbackQuery;
-      if (data) {
-        const filtered = data.filter(isClothingProduct);
-        if (filtered.length >= 10) allRows = filtered;
-      }
+        .eq("in_stock", true)
+        .limit(400);
+      if (data && data.length >= 10) allRows = data;
     }
 
     if (allRows.length < 10) {
       return wrap([...FALLBACK_OUTFITS], "fallback");
     }
 
-    const engineProducts = allRows.map(toEngineProduct);
+    const composed = composeOutfits(allRows, archetype, limit, _opts?.gender);
 
-    const options: OutfitGenerationOptions = {};
-    if (_opts?.fit) options.fit = _opts.fit;
-    if (_opts?.prints) options.prints = _opts.prints;
-    if (_opts?.goals) options.goals = _opts.goals;
-    if (_opts?.materials) options.materials = _opts.materials;
-    if (_opts?.colorProfile) options.colorProfile = _opts.colorProfile;
-    if (_opts?.occasions) options.preferredOccasions = _opts.occasions;
-    if (_opts?.budget) options.budget = _opts.budget;
-
-    let engineOutfits: EngineOutfit[] = [];
-    try {
-      engineOutfits = generateOutfits(
-        archetype,
-        engineProducts,
-        limit,
-        _opts?.secondaryArchetype,
-        _opts?.mixFactor ?? 0.3,
-        options
-      ) || [];
-    } catch (engineErr) {
-      console.error('[fetchOutfits] generateOutfits threw:', engineErr);
+    if (composed.length > 0) {
+      const outfits: Outfit[] = composed.map(c => ({
+        id: c.id,
+        title: c.title,
+        image: c.image,
+        products: c.products.map(p => ({
+          id: p.id,
+          title: p.name,
+          name: p.name,
+          brand: p.brand,
+          price: p.price,
+          imageUrl: p.imageUrl,
+          image: p.imageUrl,
+          url: p.url,
+          retailer: p.retailer,
+          category: p.category,
+          tags: p.tags,
+          colors: p.colors,
+        })),
+        match: c.matchScore,
+        tags: [c.occasion.toLowerCase()],
+        season: undefined,
+      }));
+      return wrap(outfits, "supabase");
     }
 
-    if (engineOutfits.length > 0) {
-      return wrap(engineOutfits.map(engineToBoltOutfit), "supabase");
-    }
-
-    return wrap(buildSimpleOutfitsFromRows(allRows, limit), "supabase");
+    return wrap([...FALLBACK_OUTFITS], "fallback");
   } catch (err) {
-    console.error('[fetchOutfits] Unexpected error:', err);
+    console.error('[fetchOutfits] Error:', err);
     return wrap([...FALLBACK_OUTFITS], "fallback");
   }
-}
-
-function buildSimpleOutfitsFromRows(rows: Record<string, any>[], count: number): Outfit[] {
-  const byCategory: Record<string, Record<string, any>[]> = {};
-  for (const r of rows) {
-    const cat = (r.category || 'other').toLowerCase();
-    if (!byCategory[cat]) byCategory[cat] = [];
-    byCategory[cat].push(r);
-  }
-
-  const occasions = ['Casual', 'Werk', 'Weekend', 'Avond', 'Actief', 'Dagelijks', 'Smart Casual', 'Sport'];
-  const outfits: Outfit[] = [];
-  const usedProductIds = new Set<string>();
-
-  for (let i = 0; i < count; i++) {
-    const occasion = occasions[i % occasions.length];
-    const products: BoltProduct[] = [];
-
-    for (const cat of ['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress']) {
-      const pool = (byCategory[cat] || []).filter(r => !usedProductIds.has(r.id));
-      if (pool.length === 0) continue;
-      const pick = pool[(i * 13 + cat.length * 3) % pool.length];
-      usedProductIds.add(pick.id);
-      products.push({
-        id: pick.id,
-        title: pick.name || pick.title || 'Product',
-        name: pick.name || pick.title || 'Product',
-        brand: pick.brand || '',
-        price: typeof pick.price === 'number' ? pick.price : parseFloat(pick.price) || 0,
-        imageUrl: pick.image_url || '',
-        image: pick.image_url || '',
-        url: pick.affiliate_url || pick.product_url || '#',
-        retailer: pick.retailer || '',
-        category: pick.category || cat,
-        tags: Array.isArray(pick.tags) ? pick.tags : [],
-        colors: Array.isArray(pick.colors) ? pick.colors : [],
-      });
-      if (cat !== 'accessory' && cat !== 'outerwear' && products.length >= 4) break;
-    }
-
-    if (products.length >= 3) {
-      const coverImage = products.find(p => p.imageUrl)?.imageUrl || '';
-      outfits.push({
-        id: `outfit-${i}`,
-        title: `Outfit ${i + 1}: ${occasion}`,
-        products,
-        match: 70 + ((i * 7) % 25),
-        tags: [occasion.toLowerCase()],
-        season: undefined,
-        image: coverImage,
-      } as Outfit);
-    }
-  }
-
-  return outfits.length > 0 ? outfits : [...FALLBACK_OUTFITS];
 }
 
 export async function fetchTribes(): Promise<DataResponse<Tribe[]>> {
