@@ -135,14 +135,18 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
         ].join(' ')}
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
-          <img
-            src={imageUrl}
-            alt="Style mood"
-            className="swipe-card-image w-full h-full object-cover"
-            draggable={false}
-            loading="eager"
-            decoding="async"
-          />
+          <div className="swipe-card-image-wrapper">
+            <img
+              src={imageUrl}
+              alt="Style mood"
+              className="swipe-card-image w-full h-full object-cover"
+              draggable={false}
+              loading="eager"
+              decoding="async"
+              width={400}
+              height={533}
+            />
+          </div>
 
           {/* Stronger gradient for text contrast - WCAG AA compliance */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
@@ -161,46 +165,23 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             </div>
           </div>
 
-          {/* Desktop Drag Indicators - Show ❌/✅ during drag */}
-          <AnimatePresence>
-            {isDragging && (
-              <>
-                {/* Left (Dislike) Indicator */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{
-                    opacity: parseFloat(x.get() as any) < -30 ? 1 : 0.3,
-                    x: 0,
-                    scale: parseFloat(x.get() as any) < -30 ? 1.1 : 1
-                  }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2 }}
-                  className="swipe-drag-indicator absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none"
-                >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
-                    <X className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={3} />
-                  </div>
-                </motion.div>
-
-                {/* Right (Like) Indicator */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{
-                    opacity: parseFloat(x.get() as any) > 30 ? 1 : 0.3,
-                    x: 0,
-                    scale: parseFloat(x.get() as any) > 30 ? 1.1 : 1
-                  }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
-                  className="swipe-drag-indicator absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none"
-                >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
-                    <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" strokeWidth={3} />
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
+          {/* Drag Indicators - always mounted, opacity driven by motion value to avoid DOM mutations */}
+          <motion.div
+            style={{ opacity: useTransform(x, [-120, -30, 0], [1, 0.3, 0]) }}
+            className="swipe-drag-indicator absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none"
+          >
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
+              <X className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={3} />
+            </div>
+          </motion.div>
+          <motion.div
+            style={{ opacity: useTransform(x, [0, 30, 120], [0, 0.3, 1]) }}
+            className="swipe-drag-indicator absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none"
+          >
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-500 flex items-center justify-center shadow-2xl ring-4 ring-white/40">
+              <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" strokeWidth={3} />
+            </div>
+          </motion.div>
 
           {/* Desktop Hover Hint - Only drag instruction, no overlapping icons */}
           {isHovering && !isDragging && (

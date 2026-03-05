@@ -19,6 +19,17 @@
   contain: layout paint style;
 }
 
+/* Reserve space for image before load to eliminate CLS */
+.swipe-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Explicit aspect ratio as fallback when parent height is not set */
+  aspect-ratio: 3 / 4;
+  background-color: var(--ff-color-primary-50);
+  overflow: hidden;
+}
+
 /* Image optimization - Prevent layout shift and optimize rendering */
 .swipe-card-image {
   /* GPU layer */

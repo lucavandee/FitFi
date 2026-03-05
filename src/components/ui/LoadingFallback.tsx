@@ -56,7 +56,7 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   }
 
   return (
-    <div className={`flex items-center justify-center p-8 ${className}`}>
+    <div className={`flex items-center justify-center p-8 ${className}`} style={{ minHeight: '320px' }}>
       {content}
     </div>
   );
