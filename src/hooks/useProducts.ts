@@ -8,6 +8,7 @@ interface UseProductsOptions {
   archetype?: string;
   limit?: number;
   enhanceAffiliate?: boolean;
+  budgetMax?: number;
 }
 
 interface UseProductsResult {
@@ -64,7 +65,7 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
   useEffect(() => {
     const cleanup = loadProducts();
     return () => cleanup.then(fn => fn?.());
-  }, [options.gender, options.category, options.archetype, options.limit]);
+  }, [options.gender, options.category, options.archetype, options.limit, options.budgetMax]);
 
   return {
     data,

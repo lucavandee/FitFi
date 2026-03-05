@@ -66,7 +66,26 @@ export default function ShopPage() {
     return null;
   }, []);
 
-  const { data: products, loading: isLoading, error } = useProducts();
+  const quizGender = useMemo<'male' | 'female' | 'unisex'>(() => {
+    const answers = readQuiz<Record<string, any>>(LS_KEYS.QUIZ_ANSWERS);
+    const g = answers?.gender;
+    if (g === 'male' || g === 'female') return g;
+    return 'unisex';
+  }, []);
+
+  const quizBudgetMax = useMemo<number | undefined>(() => {
+    const answers = readQuiz<Record<string, any>>(LS_KEYS.QUIZ_ANSWERS);
+    if (!answers) return undefined;
+    const b = answers.budget ?? answers.budgetRange;
+    if (typeof b === 'object' && b !== null && typeof b.max === 'number' && b.max > 0) return b.max;
+    if (typeof b === 'number' && b > 0) return b;
+    return undefined;
+  }, []);
+
+  const { data: products, loading: isLoading, error } = useProducts({
+    gender: quizGender,
+    budgetMax: quizBudgetMax,
+  });
 
   React.useEffect(() => {
     track('page_view', { page: 'shop', view_mode: viewMode });
@@ -160,7 +179,7 @@ export default function ShopPage() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-5"
         >
           <p className="text-sm text-[var(--color-muted)] mb-1">Jouw stijlwinkel</p>
           <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-2">
@@ -170,10 +189,38 @@ export default function ShopPage() {
           </h1>
           <p className="text-sm text-[var(--color-muted)] max-w-2xl">
             {archetype
-              ? `Deze items passen bij jouw ${archetype} stijl. We tonen dit omdat je koos voor items die bij jouw profiel aansluiten.`
+              ? `Deze items passen bij jouw ${archetype} stijl.`
               : 'Gecureerde kleding en accessoires afgestemd op jouw persoonlijke stijl.'}
           </p>
         </motion.div>
+
+        {/* Active quiz filter context strip */}
+        {(quizGender !== 'unisex' || quizBudgetMax) && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="flex flex-wrap items-center gap-2 mb-6 px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm"
+          >
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)]">Gefilterd op:</span>
+            {quizGender !== 'unisex' && (
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                {quizGender === 'male' ? 'Heren' : 'Dames'}
+              </span>
+            )}
+            {quizBudgetMax && (
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                Tot €{quizBudgetMax}
+              </span>
+            )}
+            <button
+              onClick={() => navigate('/onboarding')}
+              className="ml-auto text-[11px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+            >
+              Aanpassen →
+            </button>
+          </motion.div>
+        )}
 
         {/* Affiliate disclosure banner */}
         <motion.div

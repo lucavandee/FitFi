@@ -32,6 +32,7 @@ export async function fetchProducts(_opts?: {
   gender?: 'male' | 'female' | 'unisex';
   category?: string;
   limit?: number;
+  budgetMax?: number;
 }): Promise<DataResponse<BoltProduct[]>> {
   const client = supabase();
   if (!client) {
@@ -46,6 +47,10 @@ export async function fetchProducts(_opts?: {
 
     if (_opts?.gender && _opts.gender !== 'unisex') {
       query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
+    }
+
+    if (_opts?.budgetMax && _opts.budgetMax > 0) {
+      query = query.lte('price', _opts.budgetMax);
     }
 
     if (_opts?.category) {
