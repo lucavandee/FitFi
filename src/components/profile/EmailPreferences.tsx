@@ -143,35 +143,33 @@ export function EmailPreferences() {
 
       <div className="divide-y divide-[var(--color-border)]">
         {PREFERENCE_ROWS.map(({ key, label, description }) => (
-          <label
+          <div
             key={key}
-            className="flex items-center justify-between px-5 py-3 min-h-[44px] cursor-pointer hover:bg-[var(--color-bg)] transition-colors"
+            className="flex items-center justify-between px-5 py-3 min-h-[44px] hover:bg-[var(--color-bg)] transition-colors"
           >
             <div className="min-w-0 pr-4">
               <p className="text-sm font-medium text-[var(--color-text)] leading-snug">{label}</p>
               <p className="text-xs text-[var(--color-muted)] mt-0.5 leading-snug">{description}</p>
             </div>
-            <div className="relative flex-shrink-0">
-              <input
-                type="checkbox"
-                checked={preferences[key]}
-                onChange={e => updatePreference(key, e.target.checked)}
-                disabled={savingKey === key}
-                className="sr-only peer"
-                aria-label={`${label} — ${PREFERENCE_ROWS.find(r => r.key === key)?.description ?? ''}`}
-              />
-              <div className={[
-                'h-6 w-10 rounded-full transition-colors duration-200',
-                'peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ff-color-primary-500)] peer-focus-visible:ring-offset-2',
-                preferences[key] ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
-                savingKey === key ? 'opacity-50' : '',
-              ].join(' ')} />
-              <div className={[
+            <button
+              role="switch"
+              aria-checked={preferences[key]}
+              aria-label={`${label} — ${PREFERENCE_ROWS.find(r => r.key === key)?.description ?? ''}`}
+              disabled={savingKey === key}
+              onClick={() => updatePreference(key, !preferences[key])}
+              className={[
+                'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+                preferences[key] ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[#9CA3AF]',
+                savingKey === key ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+              ].join(' ')}
+            >
+              <span className={[
                 'absolute top-[3px] left-[3px] h-[18px] w-[18px] rounded-full bg-white shadow-sm transition-transform duration-200 pointer-events-none',
                 preferences[key] ? 'translate-x-4' : 'translate-x-0',
               ].join(' ')} />
-            </div>
-          </label>
+            </button>
+          </div>
         ))}
       </div>
 

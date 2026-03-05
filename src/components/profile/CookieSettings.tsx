@@ -78,9 +78,9 @@ export const CookieSettings: React.FC = () => {
             aria-label="Analytische cookies"
             className={[
               'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
-              prefs.analytics ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]',
+              prefs.analytics ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[#9CA3AF]',
               isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2'
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
             ].join(' ')}
           >
             <span className={[
