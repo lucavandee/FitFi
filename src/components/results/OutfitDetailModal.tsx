@@ -19,7 +19,15 @@ function getProductImage(product: any): string | null {
 }
 
 function getProductUrl(product: any): string | null {
-  return product?.affiliateUrl || product?.productUrl || product?.url || null;
+  const raw = product?.affiliateUrl || product?.productUrl || product?.url || null;
+  if (!raw) return null;
+  try {
+    const u = new URL(raw);
+    if (u.protocol === 'http:' || u.protocol === 'https:') return raw;
+  } catch {
+    // relative or invalid URL — not safe to use as external link
+  }
+  return null;
 }
 
 function getOutfitHeroImage(outfit: any): string | null {

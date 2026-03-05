@@ -1114,8 +1114,17 @@ export default function EnhancedResultsPage() {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
+                  const getFirstProductImage = (o: any) => {
+                    if (!Array.isArray(o?.products)) return null;
+                    for (const p of o.products) {
+                      const img = p?.imageUrl || p?.image_url || p?.image || null;
+                      if (img) return img;
+                    }
+                    return null;
+                  };
                   const outfitImage = ('image' in outfit && outfit.image)
-                    || ('products' in outfit && Array.isArray(outfit.products) && outfit.products[0]?.imageUrl)
+                    || ('imageUrl' in outfit && outfit.imageUrl)
+                    || getFirstProductImage(outfit)
                     || null;
 
                   return (
@@ -1181,8 +1190,17 @@ export default function EnhancedResultsPage() {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
+                  const getFirstProductImageGrid = (o: any) => {
+                    if (!Array.isArray(o?.products)) return null;
+                    for (const p of o.products) {
+                      const img = p?.imageUrl || p?.image_url || p?.image || null;
+                      if (img) return img;
+                    }
+                    return null;
+                  };
                   const outfitImage = ('image' in outfit && outfit.image)
-                    || ('products' in outfit && Array.isArray(outfit.products) && outfit.products[0]?.imageUrl)
+                    || ('imageUrl' in outfit && outfit.imageUrl)
+                    || getFirstProductImageGrid(outfit)
                     || null;
 
                   return (
