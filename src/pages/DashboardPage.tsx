@@ -427,55 +427,96 @@ export default function DashboardPage() {
                 </div>
 
                 {outfitsData && outfitsData.length > 0 ? (
-                  <div className="flex gap-3 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+                  <div className="flex gap-2.5 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                     {outfitsData.slice(0, 6).map((outfit, i) => {
                       const imgs = getOutfitImages(outfit);
                       const label = (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
+                      const topImg = imgs[0] ?? null;
+                      const midImg = imgs[1] ?? null;
+                      const botImg = imgs[2] ?? null;
                       return (
                         <motion.button
                           key={i}
-                          initial={{ opacity: 0, scale: 0.94 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: 0.18 + i * 0.05 }}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.35, delay: 0.14 + i * 0.06 }}
                           onClick={() => navigate("/results")}
                           aria-label={`Bekijk outfit: ${label}`}
-                          className="group relative flex-shrink-0 rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
-                          style={{ width: 110, height: 144 }}
+                          className="group relative flex-shrink-0 rounded-2xl overflow-hidden"
+                          style={{
+                            width: 128,
+                            height: 184,
+                            background: "var(--ff-color-primary-50)",
+                            boxShadow: "0 2px 12px rgba(30,25,20,0.07)",
+                            transition: "box-shadow 0.25s ease, transform 0.25s ease",
+                          }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(30,25,20,0.14)";
+                            (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(30,25,20,0.07)";
+                            (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                          }}
                         >
-                          {imgs.length >= 2 ? (
-                            <div className="w-full h-full grid grid-cols-2 gap-px bg-[var(--color-border)] transition-transform duration-500 group-hover:scale-105">
-                              {[0, 1, 2, 3].map(slot => (
-                                <div key={slot} className="overflow-hidden bg-[var(--ff-color-primary-50)]">
-                                  {imgs[slot] ? (
-                                    <img
-                                      src={imgs[slot]}
-                                      alt=""
-                                      className="w-full h-full object-cover"
-                                      loading="lazy"
-                                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full" />
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          ) : imgs.length === 1 ? (
-                            <img
-                              src={imgs[0]}
-                              alt={label}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              loading="lazy"
-                              onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
-                            />
-                          ) : (
+                          {imgs.length === 0 ? (
                             <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                               <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-200)]" aria-hidden="true" />
                               <span className="text-[10px] font-bold text-[var(--ff-color-primary-300)]">Look {i + 1}</span>
                             </div>
+                          ) : imgs.length === 1 ? (
+                            <img
+                              src={topImg!}
+                              alt={label}
+                              className="w-full h-full object-contain p-3"
+                              style={{ background: "var(--ff-color-primary-50)" }}
+                              loading="lazy"
+                              onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex flex-col">
+                              <div className="flex-1 overflow-hidden" style={{ borderBottom: "1px solid rgba(166,136,106,0.10)" }}>
+                                {topImg ? (
+                                  <img
+                                    src={topImg}
+                                    alt=""
+                                    className="w-full h-full object-contain p-2.5"
+                                    loading="lazy"
+                                    onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
+                                  />
+                                ) : <div className="w-full h-full" />}
+                              </div>
+                              <div className="flex" style={{ height: "44%" }}>
+                                <div className="flex-1 overflow-hidden" style={{ borderRight: "1px solid rgba(166,136,106,0.10)" }}>
+                                  {midImg ? (
+                                    <img
+                                      src={midImg}
+                                      alt=""
+                                      className="w-full h-full object-contain p-2"
+                                      loading="lazy"
+                                      onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
+                                    />
+                                  ) : <div className="w-full h-full" />}
+                                </div>
+                                <div className="flex-1 overflow-hidden">
+                                  {botImg ? (
+                                    <img
+                                      src={botImg}
+                                      alt=""
+                                      className="w-full h-full object-contain p-2"
+                                      loading="lazy"
+                                      onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
+                                    />
+                                  ) : <div className="w-full h-full" />}
+                                </div>
+                              </div>
+                            </div>
                           )}
-                          <div className="absolute inset-x-0 bottom-0 pt-6 pb-2 px-2 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
-                            <p className="text-white text-[9px] font-bold truncate capitalize leading-tight">{label}</p>
+                          <div
+                            className="absolute inset-x-0 bottom-0 px-3 pb-2.5 pt-8"
+                            style={{ background: "linear-gradient(to top, rgba(62,49,37,0.72) 0%, rgba(62,49,37,0.22) 60%, transparent 100%)" }}
+                          >
+                            <p className="text-white text-[9px] font-bold uppercase tracking-wider truncate leading-tight opacity-90">{label}</p>
                           </div>
                         </motion.button>
                       );
