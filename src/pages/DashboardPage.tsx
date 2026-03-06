@@ -27,16 +27,18 @@ function formatDate(ts: string | null): string {
   return isNaN(d.getTime()) ? "" : d.toLocaleDateString("nl-NL", { day: "numeric", month: "long" });
 }
 
-function getOutfitImage(outfit: any): string | null {
-  if (outfit?.image) return outfit.image;
-  if (outfit?.imageUrl) return outfit.imageUrl;
+function getOutfitImages(outfit: any): string[] {
+  const imgs: string[] = [];
+  if (outfit?.image) imgs.push(outfit.image);
+  if (outfit?.imageUrl) imgs.push(outfit.imageUrl);
   if (Array.isArray(outfit?.products)) {
     for (const p of outfit.products) {
       const img = p?.imageUrl || p?.image_url || p?.image;
-      if (img) return img;
+      if (img && !imgs.includes(img)) imgs.push(img);
+      if (imgs.length >= 4) break;
     }
   }
-  return null;
+  return imgs;
 }
 
 function toTitleCase(s: string) {
@@ -427,7 +429,7 @@ export default function DashboardPage() {
                 {outfitsData && outfitsData.length > 0 ? (
                   <div className="flex gap-3 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                     {outfitsData.slice(0, 6).map((outfit, i) => {
-                      const img = getOutfitImage(outfit);
+                      const imgs = getOutfitImages(outfit);
                       const label = (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
                       return (
                         <motion.button
@@ -440,9 +442,27 @@ export default function DashboardPage() {
                           className="group relative flex-shrink-0 rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
                           style={{ width: 110, height: 144 }}
                         >
-                          {img ? (
+                          {imgs.length >= 2 ? (
+                            <div className="w-full h-full grid grid-cols-2 gap-px bg-[var(--color-border)] transition-transform duration-500 group-hover:scale-105">
+                              {[0, 1, 2, 3].map(slot => (
+                                <div key={slot} className="overflow-hidden bg-[var(--ff-color-primary-50)]">
+                                  {imgs[slot] ? (
+                                    <img
+                                      src={imgs[slot]}
+                                      alt=""
+                                      className="w-full h-full object-cover"
+                                      loading="lazy"
+                                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full" />
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : imgs.length === 1 ? (
                             <img
-                              src={img}
+                              src={imgs[0]}
                               alt={label}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                               loading="lazy"
