@@ -141,6 +141,16 @@ export default function DashboardPage() {
   ];
   const donePct = Math.round(steps.filter(s => s.done).length / steps.length * 100);
 
+  const hasQuizInProgress = React.useMemo(() => {
+    try {
+      const lsAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+      const lsStep = localStorage.getItem('ff_quiz_step');
+      if (!lsAnswers || !lsStep) return false;
+      const ans = JSON.parse(lsAnswers);
+      return Object.keys(ans).length > 0 && parseInt(lsStep, 10) > 0;
+    } catch { return false; }
+  }, []);
+
   /* ── empty state ── */
   if (!hasReport) {
     return (
@@ -158,19 +168,45 @@ export default function DashboardPage() {
           <div className="w-16 h-16 rounded-2xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-7">
             <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
           </div>
-          <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
-            Nog geen stijlprofiel
-          </h1>
-          <p className="text-[var(--color-muted)] text-sm mb-8 leading-relaxed">
-            Doe de quiz en ontdek jouw archetype, kleurpalet en gepersonaliseerde outfits.
-          </p>
-          <button
-            onClick={() => navigate("/onboarding")}
-            className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-2xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
-            style={{ background: "var(--ff-color-primary-700)" }}
-          >
-            Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </button>
+          {hasQuizInProgress ? (
+            <>
+              <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
+                Quiz niet afgemaakt
+              </h1>
+              <p className="text-[var(--color-muted)] text-sm mb-8 leading-relaxed">
+                Je bent al bezig met de stijlquiz. Ga verder waar je gebleven was.
+              </p>
+              <button
+                onClick={() => navigate("/onboarding")}
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-2xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98] mb-3"
+                style={{ background: "var(--ff-color-primary-700)" }}
+              >
+                Verder gaan met quiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </button>
+              <button
+                onClick={() => navigate("/onboarding?step=redo")}
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-2xl font-semibold text-sm transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] text-[var(--color-muted)]"
+              >
+                Opnieuw beginnen
+              </button>
+            </>
+          ) : (
+            <>
+              <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
+                Nog geen stijlprofiel
+              </h1>
+              <p className="text-[var(--color-muted)] text-sm mb-8 leading-relaxed">
+                Doe de quiz en ontdek jouw archetype, kleurpalet en gepersonaliseerde outfits.
+              </p>
+              <button
+                onClick={() => navigate("/onboarding")}
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-2xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
+                style={{ background: "var(--ff-color-primary-700)" }}
+              >
+                Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </>
+          )}
         </motion.div>
       </div>
     );

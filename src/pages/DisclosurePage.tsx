@@ -29,7 +29,7 @@ export default function DisclosurePage() {
           name="description"
           content="Heldere disclosure: hoe FitFi omgaat met aanbevelingen, affiliate, sponsoring, beelden en privacy."
         />
-        <link rel="canonical" href="https://www.fitfi.ai/disclosure" />
+        <link rel="canonical" href="https://www.fitfi.ai/affiliate-disclosure" />
       </Helmet>
 
       <PageHero

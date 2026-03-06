@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { SwipeCard } from './SwipeCard';
 import { ImagePreloader } from './ImagePreloader';
 import { StyleAnalysisTransition } from './StyleAnalysisTransition';
-import { Sparkles, Loader as Loader2 } from 'lucide-react';
+import { Sparkles, Loader as Loader2, SkipForward } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import { loadAdaptivePhotos } from '@/services/visualPreferences/adaptiveLoader';
@@ -260,13 +260,22 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         </div>
 
         <div className="flex-shrink-0 px-4 pt-1 pb-3 flex flex-col gap-2" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
-          {canComplete && (
+          {canComplete ? (
             <button
               onClick={handleFinishEarly}
               className="w-full py-2.5 rounded-xl text-xs font-semibold text-[var(--ff-color-primary-700)] transition-all"
               style={{ background: 'var(--ff-color-primary-50)', border: '1.5px solid var(--ff-color-primary-200)' }}
             >
               Klaar — bekijk mijn stijlprofiel
+            </button>
+          ) : (
+            <button
+              onClick={onComplete}
+              className="w-full py-2 rounded-xl text-xs font-medium text-[var(--color-muted)] transition-all flex items-center justify-center gap-1.5 hover:text-[var(--color-text)]"
+              aria-label="Sla visuele stap over"
+            >
+              <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
+              Sla deze stap over
             </button>
           )}
           <p className="text-center text-xs text-[var(--color-muted)]">
@@ -389,7 +398,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           </div>
 
-          {canComplete && (
+          {canComplete ? (
             <button
               onClick={handleFinishEarly}
               className="w-full py-3 rounded-xl text-sm font-semibold mb-6 transition-all hover:opacity-90 active:scale-[0.98]"
@@ -399,6 +408,16 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               }}
             >
               Klaar — bekijk mijn stijlprofiel
+            </button>
+          ) : (
+            <button
+              onClick={onComplete}
+              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[var(--ff-color-primary-50)] text-[var(--color-muted)] hover:text-[var(--color-text)]"
+              style={{ border: '1px solid var(--color-border)' }}
+              aria-label="Sla visuele stap over"
+            >
+              <SkipForward className="w-4 h-4" aria-hidden="true" />
+              Sla deze stap over
             </button>
           )}
 

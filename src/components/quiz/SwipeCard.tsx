@@ -139,12 +139,13 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             <img
               src={imageUrl}
               alt="Style mood"
-              className="swipe-card-image w-full h-full object-cover"
+              className="swipe-card-image w-full h-full object-contain"
               draggable={false}
               loading="eager"
               decoding="async"
               width={400}
               height={533}
+              style={{ background: 'var(--ff-color-primary-50)' }}
             />
           </div>
 

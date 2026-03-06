@@ -54,6 +54,7 @@ const AdminDaisyconImportPage = lazy(() => import("@/pages/AdminDaisyconImportPa
 const AdminAffiliateCampaignsPage = lazy(() => import("@/pages/AdminAffiliateCampaignsPage"));
 const AccessibilityTestPage = lazy(() => import("@/pages/AccessibilityTestPage"));
 const BillingPage        = lazy(() => import("@/pages/BillingPage"));
+const PasswordResetPage  = lazy(() => import("@/pages/PasswordResetPage"));
 const NotFoundPage       = lazy(() => import("@/pages/NotFoundPage"));
 
 const ORG_SCHEMA = {
@@ -90,12 +91,13 @@ const WithSeo = {
   Terms:      () => (<><Seo title="Algemene voorwaarden — FitFi" description="De gebruiksvoorwaarden van FitFi." path="/algemene-voorwaarden" /><TermsPage /></>),
   Privacy:    () => (<><Seo title="Privacybeleid — FitFi" description="Hoe wij omgaan met je gegevens. Transparant en GDPR-compliant." path="/privacy" /><PrivacyPage /></>),
   Cookies:    () => (<><Seo title="Cookiebeleid — FitFi" description="Welke cookies wij gebruiken en hoe je je voorkeuren kunt aanpassen." path="/cookies" /><CookiesPage /></>),
-  Disclosure: () => (<><Seo title="Affiliate disclosure — FitFi" description="Transparantieverklaring over affiliate links en samenwerkingen." path="/disclosure" /><DisclosurePage /></>),
+  Disclosure: () => (<><Seo title="Affiliate disclosure — FitFi" description="Transparantieverklaring over affiliate links en samenwerkingen." path="/affiliate-disclosure" /><DisclosurePage /></>),
   Onboarding: () => (<><Seo title="Start je stijlquiz — FitFi" description="Beantwoord een paar vragen en zie direct welke outfits bij je passen." path="/onboarding" noindex /><OnboardingFlow /></>),
   Results:    () => (<><Seo title="Jouw stijlresultaten — FitFi" description="Jouw persoonlijke outfits met uitleg en directe shoplinks." path="/results" noindex /><EnhancedResults /></>),
   ResultsPreview: () => (<><Seo title="Voorbeeld stijlrapport — FitFi" description="Bekijk een voorbeeld van een persoonlijk stijlrapport met outfit-aanbevelingen." path="/results/preview" /><ResultsPreview /></>),
   Login:      () => (<><Seo title="Inloggen — FitFi" description="Log in en zie je opgeslagen outfits en stijlprofiel terug." path="/inloggen" noindex /><LoginPage /></>),
   Register:   () => (<><Seo title="Account aanmaken — FitFi" description="Maak een gratis account aan en sla je stijlrapport en outfits op." path="/registreren" noindex /><RegisterPage /></>),
+  PasswordReset: () => (<><Seo title="Wachtwoord vergeten — FitFi" description="Ontvang een resetlink om je wachtwoord opnieuw in te stellen." path="/wachtwoord-vergeten" noindex /><PasswordResetPage /></>),
   Dashboard:  () => (<><Seo title="Dashboard — FitFi" description="Jouw opgeslagen outfits, stijlprofiel en aanbevelingen." path="/dashboard" noindex /><DashboardPage /></>),
   Profile:    () => (<><Seo title="Profiel — FitFi" description="Bekijk en pas je stijlprofiel aan." path="/profile" noindex /><ProfilePage /></>),
   Billing:    () => (<><Seo title="Abonnement — FitFi" description="Bekijk je huidige plan en beheer je abonnement." path="/account/billing" noindex /><BillingPage /></>),
@@ -161,7 +163,8 @@ function AppShell() {
                 <Route path="/terms" element={<Navigate to="/algemene-voorwaarden" replace />} />
                 <Route path="/privacy" element={<WithSeo.Privacy />} />
                 <Route path="/cookies" element={<WithSeo.Cookies />} />
-                <Route path="/disclosure" element={<WithSeo.Disclosure />} />
+                <Route path="/affiliate-disclosure" element={<WithSeo.Disclosure />} />
+                <Route path="/disclosure" element={<Navigate to="/affiliate-disclosure" replace />} />
 
                 {/* Onboarding / Quiz */}
                 <Route path="/onboarding" element={<WithSeo.Onboarding />} />
@@ -174,6 +177,8 @@ function AppShell() {
                 <Route path="/registreren" element={<WithSeo.Register />} />
                 <Route path="/register" element={<Navigate to="/registreren" replace />} />
                 <Route path="/signup" element={<Navigate to="/registreren" replace />} />
+                <Route path="/wachtwoord-vergeten" element={<WithSeo.PasswordReset />} />
+                <Route path="/forgot-password" element={<Navigate to="/wachtwoord-vergeten" replace />} />
 
                 {/* App (afgeschermd) */}
                 <Route path="/dashboard" element={<RequireAuth><RequireQuiz><WithSeo.Dashboard /></RequireQuiz></RequireAuth>} />

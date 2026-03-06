@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,7 @@ import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTr
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import { PhaseTransition } from "@/components/quiz/PhaseTransition";
 import { ArchetypePreviewEnhanced as ArchetypePreview } from "@/components/quiz/ArchetypePreviewEnhanced";
+import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
 
 type QuizAnswers = {
@@ -40,13 +41,57 @@ type QuizAnswers = {
 
 type QuizPhase = 'questions' | 'swipes' | 'calibration' | 'reveal';
 
+async function saveProgressToSupabase(userId: string, step: number, ph: string, ans: QuizAnswers) {
+  try {
+    const { getSupabase } = await import('@/lib/supabase');
+    const client = getSupabase();
+    if (!client) return;
+    await client.from('quiz_progress').upsert(
+      { user_id: userId, current_step: step, phase: ph, answers: ans, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    );
+  } catch {
+    // silent — localStorage is the primary store
+  }
+}
+
+async function loadProgressFromSupabase(userId: string) {
+  try {
+    const { getSupabase } = await import('@/lib/supabase');
+    const client = getSupabase();
+    if (!client) return null;
+    const { data } = await client
+      .from('quiz_progress')
+      .select('current_step, phase, answers')
+      .eq('user_id', userId)
+      .maybeSingle();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+async function clearProgressFromSupabase(userId: string) {
+  try {
+    const { getSupabase } = await import('@/lib/supabase');
+    const client = getSupabase();
+    if (!client) return;
+    await client.from('quiz_progress').delete().eq('user_id', userId);
+  } catch {
+    // silent
+  }
+}
+
 export default function OnboardingFlowPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phase, setPhase] = useState<QuizPhase>('questions');
+  const [progressLoaded, setProgressLoaded] = useState(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const [sessionId] = useState(() => localStorage.getItem('ff_session_id') || crypto.randomUUID());
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(() => {
@@ -84,13 +129,41 @@ export default function OnboardingFlowPage() {
       setPhase('swipes');
       const existingAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
       if (existingAnswers) {
-        try {
-          setAnswers(JSON.parse(existingAnswers));
-        } catch {
+        try { setAnswers(JSON.parse(existingAnswers)); } catch {}
+      }
+      setProgressLoaded(true);
+      return;
+    }
+
+    // Load saved progress (Supabase preferred for logged-in users, localStorage as fallback)
+    const restoreProgress = async () => {
+      const lsAnswers = localStorage.getItem(LS_KEYS.QUIZ_ANSWERS);
+      const lsStep = localStorage.getItem('ff_quiz_step');
+
+      if (user?.id && stepParam !== 'redo') {
+        const remote = await loadProgressFromSupabase(user.id);
+        if (remote && remote.answers && Object.keys(remote.answers).length > 0) {
+          setAnswers(remote.answers as QuizAnswers);
+          setCurrentStep(Math.max(0, Math.min(remote.current_step, quizSteps.length - 1)));
+          if (remote.phase === 'swipes') setPhase('swipes');
+          setProgressLoaded(true);
+          return;
         }
       }
-    }
-  }, [searchParams, navigate]);
+
+      // Fallback: localStorage
+      if (lsAnswers) {
+        try {
+          const parsed = JSON.parse(lsAnswers);
+          setAnswers(parsed);
+          if (lsStep) setCurrentStep(Math.max(0, Math.min(parseInt(lsStep, 10), quizSteps.length - 1)));
+        } catch {}
+      }
+      setProgressLoaded(true);
+    };
+
+    restoreProgress();
+  }, [searchParams, navigate, user?.id]);
 
   useEffect(() => {
     if (phase === 'reveal') return;
@@ -145,16 +218,24 @@ export default function OnboardingFlowPage() {
 
   const progress = getProgress();
 
-  const autosave = (updated: QuizAnswers) => {
+  const autosave = useCallback((updated: QuizAnswers, step?: number, ph?: string) => {
     try {
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(updated));
-    } catch (_) {}
-  };
+      if (step !== undefined) localStorage.setItem('ff_quiz_step', String(step));
+    } catch {}
+
+    if (user?.id) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        saveProgressToSupabase(user.id!, step ?? currentStep, ph ?? phase, updated);
+      }, 1200);
+    }
+  }, [user?.id, currentStep, phase]);
 
   const handleAnswer = (field: string, value: any) => {
     const updated = { ...answers, [field]: value };
     setAnswers(updated);
-    autosave(updated);
+    autosave(updated, currentStep, phase);
     setAttemptedNext(false);
 
     setLastAnsweredField(field);
@@ -169,7 +250,7 @@ export default function OnboardingFlowPage() {
         ? current.filter(v => v !== value)
         : [...current, value];
       const updated = { ...prev, [field]: newValue };
-      autosave(updated);
+      autosave(updated, currentStep, phase);
       return updated;
     });
     setAttemptedNext(false);
@@ -458,7 +539,9 @@ export default function OnboardingFlowPage() {
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
+      localStorage.removeItem('ff_quiz_step');
       localStorage.setItem('ff_session_id', sessionId);
+      if (user?.id) clearProgressFromSupabase(user.id);
 
       // client and userId already declared above
       let syncSuccess = false;
