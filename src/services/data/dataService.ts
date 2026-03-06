@@ -5,6 +5,9 @@ import { isAdultClothingProduct } from "@/engine/productFilter";
 
 const NOW = () => new Date().toISOString();
 
+const outfitCache = new Map<string, { data: Outfit[]; ts: number }>();
+const CACHE_TTL = 5 * 60 * 1000;
+
 const FALLBACK_PRODUCTS: BoltProduct[] = [
   { id: "p-1", title: "Witte Sneaker", name: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#", category: "footwear" },
   { id: "p-2", title: "Licht Overshirt", name: "Licht Overshirt", brand: "ARKET", price: 89, imageUrl: "/images/fallbacks/top.jpg", retailer: "Generic", url: "#", category: "top" },
@@ -116,37 +119,42 @@ export async function fetchOutfits(_opts?: {
 
     const archetype = _opts?.archetype || "SMART_CASUAL";
     const limit = _opts?.limit || 9;
+    const cacheKey = `${archetype}|${_opts?.gender ?? ''}|${_opts?.budget?.max ?? ''}|${limit}`;
+
+    const cached = outfitCache.get(cacheKey);
+    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      return wrap(cached.data, "supabase", true);
+    }
 
     const categories = ['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress'];
-    const perCategory = 80;
-    let allRows: Record<string, any>[] = [];
+    const perCategory = 40;
 
-    for (const cat of categories) {
-      let query = client
-        .from("products")
-        .select("*")
-        .eq("in_stock", true)
-        .eq("category", cat);
+    const results = await Promise.all(
+      categories.map(cat => {
+        let q = client
+          .from("products")
+          .select("id,name,title,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock")
+          .eq("in_stock", true)
+          .eq("category", cat);
 
-      if (_opts?.gender && _opts.gender !== "unisex") {
-        query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
-      }
+        if (_opts?.gender && _opts.gender !== "unisex") {
+          q = q.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
+        }
+        if (_opts?.budget && _opts.budget.max > 0) {
+          q = q.gte("price", _opts.budget.min).lte("price", _opts.budget.max);
+        }
+        return q.limit(perCategory).then(r => r.data ?? []);
+      })
+    );
 
-      if (_opts?.budget && _opts.budget.max > 0) {
-        query = query.gte("price", _opts.budget.min).lte("price", _opts.budget.max);
-      }
-
-      query = query.limit(perCategory);
-      const { data } = await query;
-      if (data) allRows.push(...data);
-    }
+    let allRows: Record<string, any>[] = results.flat();
 
     if (allRows.length < 10) {
       const { data } = await client
         .from("products")
-        .select("*")
+        .select("id,name,title,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock")
         .eq("in_stock", true)
-        .limit(400);
+        .limit(300);
       if (data && data.length >= 10) allRows = data;
     }
 
@@ -179,6 +187,7 @@ export async function fetchOutfits(_opts?: {
         tags: [c.occasion.toLowerCase()],
         season: undefined,
       }));
+      outfitCache.set(cacheKey, { data: outfits, ts: Date.now() });
       return wrap(outfits, "supabase");
     }
 

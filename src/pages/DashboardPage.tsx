@@ -27,17 +27,24 @@ function formatDate(ts: string | null): string {
   return isNaN(d.getTime()) ? "" : d.toLocaleDateString("nl-NL", { day: "numeric", month: "long" });
 }
 
+const CATEGORY_ORDER = ['outerwear', 'top', 'dress', 'bottom', 'footwear', 'accessory'];
+
 function getOutfitImages(outfit: any): string[] {
   const imgs: string[] = [];
-  if (outfit?.image) imgs.push(outfit.image);
-  if (outfit?.imageUrl) imgs.push(outfit.imageUrl);
-  if (Array.isArray(outfit?.products)) {
-    for (const p of outfit.products) {
+  if (Array.isArray(outfit?.products) && outfit.products.length > 0) {
+    const sorted = [...outfit.products].sort((a, b) => {
+      const ai = CATEGORY_ORDER.indexOf(a?.category ?? '');
+      const bi = CATEGORY_ORDER.indexOf(b?.category ?? '');
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+    for (const p of sorted) {
       const img = p?.imageUrl || p?.image_url || p?.image;
       if (img && !imgs.includes(img)) imgs.push(img);
-      if (imgs.length >= 4) break;
+      if (imgs.length >= 3) break;
     }
   }
+  if (imgs.length === 0 && outfit?.image) imgs.push(outfit.image);
+  if (imgs.length === 0 && outfit?.imageUrl) imgs.push(outfit.imageUrl);
   return imgs;
 }
 
@@ -427,96 +434,80 @@ export default function DashboardPage() {
                 </div>
 
                 {outfitsData && outfitsData.length > 0 ? (
-                  <div className="flex gap-2.5 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+                  <div className="flex gap-3 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
                     {outfitsData.slice(0, 5).map((outfit, i) => {
                       const imgs = getOutfitImages(outfit);
-                      const label = (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
-                      const topImg = imgs[0] ?? null;
-                      const midImg = imgs[1] ?? null;
-                      const botImg = imgs[2] ?? null;
+                      const label = (outfit as any)?.tags?.[0] || (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
                       return (
                         <motion.button
                           key={i}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.35, delay: 0.14 + i * 0.06 }}
+                          transition={{ duration: 0.32, delay: 0.12 + i * 0.055 }}
                           onClick={() => navigate("/results")}
                           aria-label={`Bekijk outfit: ${label}`}
-                          className="group relative flex-shrink-0 rounded-2xl overflow-hidden"
+                          className="group relative flex-shrink-0 rounded-[18px] overflow-hidden"
                           style={{
-                            width: 128,
-                            height: 184,
+                            width: 120,
+                            height: 176,
                             background: "var(--ff-color-primary-50)",
-                            boxShadow: "0 2px 12px rgba(30,25,20,0.07)",
-                            transition: "box-shadow 0.25s ease, transform 0.25s ease",
+                            boxShadow: "0 2px 10px rgba(30,25,20,0.06), 0 0 0 1px rgba(166,136,106,0.10)",
+                            transition: "box-shadow 0.22s ease, transform 0.22s ease",
                           }}
                           onMouseEnter={e => {
-                            (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(30,25,20,0.14)";
-                            (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 32px rgba(30,25,20,0.13), 0 0 0 1px rgba(166,136,106,0.16)";
+                            (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
                           }}
                           onMouseLeave={e => {
-                            (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(30,25,20,0.07)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(30,25,20,0.06), 0 0 0 1px rgba(166,136,106,0.10)";
                             (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
                           }}
                         >
                           {imgs.length === 0 ? (
                             <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                               <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-200)]" aria-hidden="true" />
-                              <span className="text-[10px] font-bold text-[var(--ff-color-primary-300)]">Look {i + 1}</span>
                             </div>
-                          ) : imgs.length === 1 ? (
-                            <img
-                              src={topImg!}
-                              alt={label}
-                              className="w-full h-full object-contain p-3"
-                              style={{ background: "var(--ff-color-primary-50)" }}
-                              loading="lazy"
-                              onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
-                            />
                           ) : (
-                            <div className="w-full h-full flex flex-col">
-                              <div className="flex-1 overflow-hidden" style={{ borderBottom: "1px solid rgba(166,136,106,0.10)" }}>
-                                {topImg ? (
-                                  <img
-                                    src={topImg}
-                                    alt=""
-                                    className="w-full h-full object-contain p-2.5"
-                                    loading="lazy"
-                                    onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
-                                  />
-                                ) : <div className="w-full h-full" />}
-                              </div>
-                              <div className="flex" style={{ height: "44%" }}>
-                                <div className="flex-1 overflow-hidden" style={{ borderRight: "1px solid rgba(166,136,106,0.10)" }}>
-                                  {midImg ? (
+                            <div className="w-full h-full grid" style={{
+                              gridTemplateColumns: imgs.length >= 2 ? "1fr 1fr" : "1fr",
+                              gridTemplateRows: imgs.length >= 3 ? "56% 44%" : "1fr",
+                              gap: 0,
+                            }}>
+                              {imgs.slice(0, 4).map((src, slot) => {
+                                const isFirst = slot === 0 && imgs.length >= 2;
+                                return (
+                                  <div
+                                    key={slot}
+                                    className="overflow-hidden flex items-center justify-center"
+                                    style={{
+                                      gridColumn: isFirst ? "1 / span 2" : undefined,
+                                      background: "var(--ff-color-primary-50)",
+                                      borderBottom: isFirst ? "1px solid rgba(166,136,106,0.08)" : undefined,
+                                      borderRight: (slot === 1 || slot === 2) && imgs.length >= 3 ? "1px solid rgba(166,136,106,0.08)" : undefined,
+                                    }}
+                                  >
                                     <img
-                                      src={midImg}
+                                      src={src}
                                       alt=""
-                                      className="w-full h-full object-contain p-2"
                                       loading="lazy"
                                       onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
+                                      style={{
+                                        width: "90%",
+                                        height: "90%",
+                                        objectFit: "contain",
+                                        mixBlendMode: "multiply",
+                                      }}
                                     />
-                                  ) : <div className="w-full h-full" />}
-                                </div>
-                                <div className="flex-1 overflow-hidden">
-                                  {botImg ? (
-                                    <img
-                                      src={botImg}
-                                      alt=""
-                                      className="w-full h-full object-contain p-2"
-                                      loading="lazy"
-                                      onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0"; }}
-                                    />
-                                  ) : <div className="w-full h-full" />}
-                                </div>
-                              </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                           <div
-                            className="absolute inset-x-0 bottom-0 px-3 pb-2.5 pt-8"
-                            style={{ background: "linear-gradient(to top, rgba(62,49,37,0.72) 0%, rgba(62,49,37,0.22) 60%, transparent 100%)" }}
+                            className="absolute inset-x-0 bottom-0 px-2.5 pb-2 pt-7"
+                            style={{ background: "linear-gradient(to top, rgba(54,42,28,0.75) 0%, rgba(54,42,28,0.18) 65%, transparent 100%)" }}
                           >
-                            <p className="text-white text-[9px] font-bold uppercase tracking-wider truncate leading-tight opacity-90">{label}</p>
+                            <p className="text-white text-[9px] font-bold uppercase tracking-[0.06em] truncate leading-tight">{label}</p>
                           </div>
                         </motion.button>
                       );
@@ -526,40 +517,37 @@ export default function DashboardPage() {
                     <motion.button
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, delay: 0.14 + 5 * 0.06 }}
+                      transition={{ duration: 0.32, delay: 0.12 + 5 * 0.055 }}
                       onClick={() => navigate("/results")}
                       aria-label="Bekijk alle outfits"
-                      className="flex-shrink-0 rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-3 group"
+                      className="flex-shrink-0 rounded-[18px] flex flex-col items-center justify-center gap-3"
                       style={{
-                        width: 128,
-                        height: 184,
-                        background: "linear-gradient(160deg, var(--ff-color-primary-100) 0%, var(--ff-color-primary-200) 100%)",
-                        border: "1.5px dashed var(--ff-color-primary-300)",
-                        boxShadow: "0 2px 12px rgba(30,25,20,0.05)",
-                        transition: "box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease",
+                        width: 120,
+                        height: 176,
+                        background: "linear-gradient(145deg, var(--ff-color-primary-100) 0%, var(--ff-color-primary-200) 100%)",
+                        boxShadow: "0 2px 10px rgba(30,25,20,0.05), 0 0 0 1.5px rgba(166,136,106,0.22)",
+                        transition: "box-shadow 0.22s ease, transform 0.22s ease",
                       }}
                       onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(30,25,20,0.12)";
-                        (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
-                        (e.currentTarget as HTMLElement).style.background = "linear-gradient(160deg, var(--ff-color-primary-200) 0%, var(--ff-color-primary-300) 100%)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 32px rgba(30,25,20,0.12), 0 0 0 1.5px rgba(166,136,106,0.35)";
+                        (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
                       }}
                       onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(30,25,20,0.05)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(30,25,20,0.05), 0 0 0 1.5px rgba(166,136,106,0.22)";
                         (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                        (e.currentTarget as HTMLElement).style.background = "linear-gradient(160deg, var(--ff-color-primary-100) 0%, var(--ff-color-primary-200) 100%)";
                       }}
                     >
                       <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center"
-                        style={{ background: "rgba(122,97,74,0.15)" }}
+                        className="w-9 h-9 rounded-full flex items-center justify-center"
+                        style={{ background: "rgba(122,97,74,0.18)" }}
                       >
-                        <ChevronRight className="w-5 h-5" style={{ color: "var(--ff-color-primary-700)" }} aria-hidden="true" />
+                        <ChevronRight className="w-4.5 h-4.5" style={{ color: "var(--ff-color-primary-700)" }} aria-hidden="true" />
                       </div>
                       <div className="text-center px-2">
-                        <p className="text-[10px] font-bold uppercase tracking-wider leading-snug" style={{ color: "var(--ff-color-primary-700)" }}>
+                        <p className="text-[9.5px] font-bold uppercase tracking-[0.07em] leading-snug" style={{ color: "var(--ff-color-primary-800)" }}>
                           Alle outfits
                         </p>
-                        <p className="text-[9px] mt-0.5" style={{ color: "var(--ff-color-primary-600)" }}>
+                        <p className="text-[8.5px] mt-0.5 font-medium" style={{ color: "var(--ff-color-primary-600)" }}>
                           {outfitsData.length > 5 ? `+${outfitsData.length - 5} meer` : "Bekijk alles"}
                         </p>
                       </div>

@@ -302,7 +302,7 @@ export default function EnhancedResultsPage() {
 
   // Tab navigation
   type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
-  const [activeTab, setActiveTab] = React.useState<ResultTab>('overzicht');
+  const [activeTab, setActiveTab] = React.useState<ResultTab>('outfits');
 
   // Auto-detect mobile and keep in sync with window resize / orientation change
   React.useEffect(() => {
