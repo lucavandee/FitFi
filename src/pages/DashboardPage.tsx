@@ -428,7 +428,7 @@ export default function DashboardPage() {
 
                 {outfitsData && outfitsData.length > 0 ? (
                   <div className="flex gap-2.5 px-5 pb-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-                    {outfitsData.slice(0, 6).map((outfit, i) => {
+                    {outfitsData.slice(0, 5).map((outfit, i) => {
                       const imgs = getOutfitImages(outfit);
                       const label = (outfit as any)?.occasion || (outfit as any)?.name || `Look ${i + 1}`;
                       const topImg = imgs[0] ?? null;
@@ -521,6 +521,49 @@ export default function DashboardPage() {
                         </motion.button>
                       );
                     })}
+
+                    {/* "Bekijk alles" kaart */}
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, delay: 0.14 + 5 * 0.06 }}
+                      onClick={() => navigate("/results")}
+                      aria-label="Bekijk alle outfits"
+                      className="flex-shrink-0 rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-3 group"
+                      style={{
+                        width: 128,
+                        height: 184,
+                        background: "linear-gradient(160deg, var(--ff-color-primary-100) 0%, var(--ff-color-primary-200) 100%)",
+                        border: "1.5px dashed var(--ff-color-primary-300)",
+                        boxShadow: "0 2px 12px rgba(30,25,20,0.05)",
+                        transition: "box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease",
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(30,25,20,0.12)";
+                        (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
+                        (e.currentTarget as HTMLElement).style.background = "linear-gradient(160deg, var(--ff-color-primary-200) 0%, var(--ff-color-primary-300) 100%)";
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(30,25,20,0.05)";
+                        (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                        (e.currentTarget as HTMLElement).style.background = "linear-gradient(160deg, var(--ff-color-primary-100) 0%, var(--ff-color-primary-200) 100%)";
+                      }}
+                    >
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ background: "rgba(122,97,74,0.15)" }}
+                      >
+                        <ChevronRight className="w-5 h-5" style={{ color: "var(--ff-color-primary-700)" }} aria-hidden="true" />
+                      </div>
+                      <div className="text-center px-2">
+                        <p className="text-[10px] font-bold uppercase tracking-wider leading-snug" style={{ color: "var(--ff-color-primary-700)" }}>
+                          Alle outfits
+                        </p>
+                        <p className="text-[9px] mt-0.5" style={{ color: "var(--ff-color-primary-600)" }}>
+                          {outfitsData.length > 5 ? `+${outfitsData.length - 5} meer` : "Bekijk alles"}
+                        </p>
+                      </div>
+                    </motion.button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center py-10 text-center px-6">
