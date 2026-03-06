@@ -40,7 +40,6 @@ const EmbeddingAnalytics = lazy(() => import("@/components/admin/EmbeddingAnalyt
 const AdminProductsPage  = lazy(() => import("@/pages/AdminProductsPage"));
 const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
-const AdminZalandoImportPage = lazy(() => import("@/pages/AdminZalandoImportPage"));
 const AdminMoodPhotosPage = lazy(() => import("@/pages/AdminMoodPhotosPage"));
 const AdminImageManagerPage = lazy(() => import("@/pages/AdminImageManagerPage"));
 const AdminPWADashboard = lazy(() => import("@/pages/AdminPWADashboard"));
@@ -104,7 +103,6 @@ const WithSeo = {
   AdminProducts: () => (<><Seo title="Product Management — FitFi" description="Stripe products management." path="/admin/products" noindex /><AdminProductsPage /></>),
   AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
   AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
-  AdminZalandoImport: () => (<><Seo title="Zalando Import — FitFi Admin" description="Import Zalando products to unified catalog." path="/admin/zalando-import" noindex /><AdminZalandoImportPage /></>),
   AdminMoodPhotos: () => (<><Seo title="Mood Photos Moderation — FitFi Admin" description="Review and moderate mood photos for visual preference quiz." path="/admin/mood-photos" noindex /><AdminMoodPhotosPage /></>),
   AdminImageManager: () => (<><Seo title="Image Manager — FitFi Admin" description="Bulk upload product images with SKU matching." path="/admin/images" noindex /><AdminImageManagerPage /></>),
   AdminPWADashboard: () => (<><Seo title="PWA Dashboard — FitFi Admin" description="Monitor PWA installations and push notifications." path="/admin/pwa" noindex /><AdminPWADashboard /></>),
@@ -190,7 +188,6 @@ function AppShell() {
                 <Route path="/admin/swipe-analytics" element={<RequireAuth><WithSeo.AdminSwipeAnalytics /></RequireAuth>} />
                 <Route path="/admin/products" element={<RequireAuth><WithSeo.AdminProducts /></RequireAuth>} />
                 <Route path="/admin/stripe-setup" element={<RequireAuth><WithSeo.AdminStripeSetup /></RequireAuth>} />
-                <Route path="/admin/zalando-import" element={<RequireAuth><WithSeo.AdminZalandoImport /></RequireAuth>} />
                 <Route path="/admin/mood-photos" element={<RequireAuth><WithSeo.AdminMoodPhotos /></RequireAuth>} />
                 <Route path="/admin/images" element={<RequireAuth><WithSeo.AdminImageManager /></RequireAuth>} />
                 <Route path="/admin/pwa" element={<RequireAuth><WithSeo.AdminPWADashboard /></RequireAuth>} />

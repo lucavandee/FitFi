@@ -7,7 +7,7 @@ import {
   logAdminAction,
   type DashboardMetrics,
 } from '@/services/admin/adminService';
-import { Users, Image, Package, CreditCard, ChartBar as BarChart3, Settings, Database, FileText, ArrowRight, Activity, TrendingUp, Award, Smartphone, Link } from 'lucide-react';
+import { Users, Image, Package, CreditCard, ChartBar as BarChart3, Settings, FileText, ArrowRight, Activity, TrendingUp, Award, Smartphone, Link } from 'lucide-react';
 
 interface AdminModule {
   id: string;
@@ -38,15 +38,6 @@ const adminModules: AdminModule[] = [
     icon: Package,
     route: '/admin/products',
     color: 'from-blue-500 to-cyan-500',
-    status: 'active'
-  },
-  {
-    id: 'brams-fruit',
-    title: "Bram's Fruit",
-    description: 'Import en beheer Brams Fruit producten',
-    icon: Package,
-    route: '/admin/brams-fruit',
-    color: 'from-green-500 to-emerald-500',
     status: 'active'
   },
   {
@@ -116,15 +107,6 @@ const adminModules: AdminModule[] = [
     route: '/admin/affiliate-campaigns',
     color: 'from-emerald-500 to-teal-500',
     status: 'active'
-  },
-  {
-    id: 'zalando',
-    title: 'Zalando Import',
-    description: 'Import producten van Zalando',
-    icon: Database,
-    route: '/admin/zalando-import',
-    color: 'from-yellow-500 to-amber-500',
-    status: 'beta'
   },
   {
     id: 'settings',
@@ -212,21 +194,7 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-[var(--color-surface)] rounded-xl p-6 border border-[var(--color-border)] animate-pulse"
-              >
-                <div className="h-12 w-12 bg-[var(--color-bg)] rounded-lg mb-4" />
-                <div className="h-6 bg-[var(--color-bg)] rounded mb-2" />
-                <div className="h-4 bg-[var(--color-bg)] rounded w-2/3" />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <>
+        <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -235,7 +203,7 @@ export default function AdminDashboardPage() {
               >
                 <Users className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {metrics?.total_users || 0}
+                  {loading ? <span className="inline-block w-10 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.total_users || 0)}
                 </div>
                 <div className="text-sm opacity-90">Totaal Gebruikers</div>
               </motion.div>
@@ -248,7 +216,7 @@ export default function AdminDashboardPage() {
               >
                 <Activity className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {metrics?.active_users_last_7_days || 0}
+                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.active_users_last_7_days || 0)}
                 </div>
                 <div className="text-sm opacity-90">Actief (7d)</div>
               </motion.div>
@@ -257,11 +225,11 @@ export default function AdminDashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl p-6 text-white"
+                className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl p-6 text-white"
               >
                 <Award className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {metrics?.premium_users || 0}
+                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.premium_users || 0)}
                 </div>
                 <div className="text-sm opacity-90">Premium Users</div>
               </motion.div>
@@ -270,11 +238,11 @@ export default function AdminDashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-6 text-white"
+                className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl p-6 text-white"
               >
                 <TrendingUp className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {((metrics?.quiz_completion_rate || 0) * 100).toFixed(0)}%
+                  {loading ? <span className="inline-block w-10 h-7 bg-white/30 rounded animate-pulse" /> : `${((metrics?.quiz_completion_rate || 0) * 100).toFixed(0)}%`}
                 </div>
                 <div className="text-sm opacity-90">Quiz Completion</div>
               </motion.div>
@@ -352,12 +320,10 @@ export default function AdminDashboardPage() {
                 <li>• <strong>Mood Photos:</strong> Upload en beheer visual preference photos voor de quiz</li>
                 <li>• <strong>PWA & Push:</strong> Monitor app installaties en verstuur push notificaties naar gebruikers</li>
                 <li>• <strong>Gebruikers Tab:</strong> Sommige modules hebben tabs in dit dashboard (gebruik navbar om te wisselen)</li>
-                <li>• <strong>Brams Fruit:</strong> Import producten via Excel upload</li>
                 <li>• <strong>Coming Soon:</strong> Modules in ontwikkeling komen binnenkort beschikbaar</li>
               </ul>
             </div>
-          </>
-        )}
+        </>
       </div>
     </div>
   );
