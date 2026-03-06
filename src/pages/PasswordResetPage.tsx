@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Mail, ArrowRight, Loader as Loader2, CheckCircle, Lock, ArrowLeft } from "lucide-react";
+import { Mail, ArrowRight, Loader as Loader2, CircleCheck as CheckCircle, Lock, ArrowLeft } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import toast from "react-hot-toast";
 
