@@ -17,6 +17,8 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
   const [showTooltip, setShowTooltip] = useState(index === 0);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -135,19 +137,22 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
         ].join(' ')}
       >
         <div className="relative w-full h-full rounded-[var(--radius-2xl)] overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-soft)] bg-[var(--color-surface)] transition-shadow hover:shadow-[var(--shadow-lg)]">
-          <div className="swipe-card-image-wrapper">
-            <img
-              src={imageUrl}
-              alt="Style mood"
-              className="swipe-card-image w-full h-full object-contain"
-              draggable={false}
-              loading="eager"
-              decoding="async"
-              width={400}
-              height={533}
-              style={{ background: 'var(--ff-color-primary-50)' }}
-            />
-          </div>
+          {!imgLoaded && !imgError && (
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-200)] animate-pulse" />
+          )}
+          {imgError && (
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-200)]" />
+          )}
+          <img
+            src={imageUrl}
+            alt="Style mood"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imgLoaded && !imgError ? 'opacity-100' : 'opacity-0'}`}
+            draggable={false}
+            loading="eager"
+            decoding="async"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => { setImgError(true); setImgLoaded(true); }}
+          />
 
           {/* Stronger gradient for text contrast - WCAG AA compliance */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
