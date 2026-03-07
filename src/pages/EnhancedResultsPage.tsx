@@ -1226,20 +1226,18 @@ export default function EnhancedResultsPage() {
                             : outfitInfo.description}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
-                          {('matchScore' in outfit && typeof outfit.matchScore === 'number') && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
-                              <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                              {Math.round((outfit as any).matchScore)}% match
-                            </span>
-                          )}
+                          {(() => {
+                            const ms = (outfit as any).matchScore ?? (outfit as any).match;
+                            return typeof ms === 'number' ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
+                                <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                                {Math.round(ms)}% match
+                              </span>
+                            ) : null;
+                          })()}
                           {answers?.fit && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
                               {answers.fit}
-                            </span>
-                          )}
-                          {answers?.occasions?.[0] && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
-                              {answers.occasions[0]}
                             </span>
                           )}
                         </div>
@@ -1370,20 +1368,18 @@ export default function EnhancedResultsPage() {
                           </p>
                           {/* Quiz-anchor pills */}
                           <div className="flex flex-wrap gap-1.5">
-                            {('matchScore' in outfit && typeof outfit.matchScore === 'number') && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
-                                <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                                {Math.round((outfit as any).matchScore)}% match
-                              </span>
-                            )}
+                            {(() => {
+                              const ms = (outfit as any).matchScore ?? (outfit as any).match;
+                              return typeof ms === 'number' ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
+                                  <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                                  {Math.round(ms)}% match
+                                </span>
+                              ) : null;
+                            })()}
                             {answers?.fit && (
                               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
                                 {answers.fit}
-                              </span>
-                            )}
-                            {answers?.occasions?.[0] && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
-                                {answers.occasions[0]}
                               </span>
                             )}
                           </div>

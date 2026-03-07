@@ -110,10 +110,19 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
     return () => { alive = false; };
   };
 
+  const prefsKey = [
+    fit ?? '',
+    prints ?? '',
+    (goals || []).join(','),
+    (materials || []).join(','),
+    (occasions || []).join(','),
+    budget?.max ?? '',
+  ].join('|');
+
   useEffect(() => {
     const cleanup = loadOutfits();
     return () => cleanup.then(fn => fn?.());
-  }, [archetype, secondaryArchetype, season, limit, enabled, gender]);
+  }, [archetype, secondaryArchetype, season, limit, enabled, gender, prefsKey]);
 
   return {
     data,

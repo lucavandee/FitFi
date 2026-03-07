@@ -48,6 +48,7 @@ export type Outfit = {
   priceMax?: number;
   tags?: string[];
   season?: string;
+  explanation?: string;
 };
 
 export type Tribe = {

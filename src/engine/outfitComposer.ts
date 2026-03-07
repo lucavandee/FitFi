@@ -23,6 +23,7 @@ export interface ComposedOutfit {
   products: CleanProduct[];
   matchScore: number;
   image: string;
+  explanation: string;
 }
 
 interface OccasionBlueprint {
@@ -165,11 +166,44 @@ function shuffleSeeded(arr: any[], seed: number): any[] {
   return result;
 }
 
+export interface UserPreferences {
+  fit?: string;
+  prints?: string;
+  goals?: string[];
+  materials?: string[];
+  occasions?: string[];
+  colorProfile?: { season?: string; temperature?: string };
+  budget?: { min: number; max: number };
+}
+
+const OCCASION_QUIZ_TO_COMPOSER: Record<string, string> = {
+  work: 'werk',
+  casual: 'casual',
+  formal: 'avond',
+  date: 'date',
+  travel: 'relaxed',
+  sport: 'sport',
+};
+
+function resolveOccasions(
+  userOccasions: string[] | undefined,
+  archetype: string,
+): string[] {
+  if (userOccasions && userOccasions.length > 0) {
+    const mapped = userOccasions
+      .map(o => OCCASION_QUIZ_TO_COMPOSER[o] || o)
+      .filter(o => OCCASION_BLUEPRINTS[o]);
+    if (mapped.length > 0) return mapped;
+  }
+  return ARCHETYPE_OCCASIONS[archetype] || ARCHETYPE_OCCASIONS.SMART_CASUAL;
+}
+
 export function composeOutfits(
   rawRows: Record<string, any>[],
   archetype: string,
   count: number,
   gender?: string,
+  prefs?: UserPreferences,
 ): ComposedOutfit[] {
   const clean = rawRows.filter(isAdultClothingProduct);
 
@@ -211,7 +245,7 @@ export function composeOutfits(
     }
   }
 
-  const occasions = ARCHETYPE_OCCASIONS[archetype] || ARCHETYPE_OCCASIONS.SMART_CASUAL;
+  const occasions = resolveOccasions(prefs?.occasions, archetype);
   const outfits: ComposedOutfit[] = [];
   const usedProductIds = new Set<string>();
   const usedTopBottomCombos = new Set<string>();
@@ -219,7 +253,11 @@ export function composeOutfits(
   for (let i = 0; i < count; i++) {
     const occasionKey = occasions[i % occasions.length];
     const blueprint = OCCASION_BLUEPRINTS[occasionKey] || OCCASION_BLUEPRINTS.casual;
-    const seed = i * 31 + archetype.length * 7 + (gender?.length || 3) * 13;
+    const prefSeed = (prefs?.fit?.length || 0) * 11
+      + (prefs?.prints?.length || 0) * 17
+      + (prefs?.goals?.length || 0) * 23
+      + (prefs?.materials?.length || 0) * 29;
+    const seed = i * 31 + archetype.length * 7 + (gender?.length || 3) * 13 + prefSeed;
 
     const outfit = buildOutfit(
       byCategory,
@@ -229,6 +267,7 @@ export function composeOutfits(
       usedProductIds,
       usedTopBottomCombos,
       i,
+      prefs,
     );
 
     if (outfit) {
@@ -247,6 +286,7 @@ function buildOutfit(
   usedIds: Set<string>,
   usedCombos: Set<string>,
   index: number,
+  prefs?: UserPreferences,
 ): ComposedOutfit | null {
   const selected: CleanProduct[] = [];
   const selectedBrands = new Set<string>();
@@ -256,13 +296,13 @@ function buildOutfit(
     if (pool.length === 0) {
       const fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
       if (fallbackPool.length === 0) return null;
-      const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected);
+      const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs);
       if (!pick) return null;
       selected.push(pick);
       selectedBrands.add(pick.brand.toLowerCase());
       continue;
     }
-    const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected);
+    const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs);
     if (!pick) return null;
     selected.push(pick);
     selectedBrands.add(pick.brand.toLowerCase());
@@ -274,7 +314,7 @@ function buildOutfit(
   if (usedCombos.has(comboKey)) {
     const altBottom = (byCategory['bottom'] || [])
       .filter(p => !usedIds.has(p.id) && p.id !== bottomId && p.price >= blueprint.priceFloor)
-      .sort((a, b) => scoreProduct(b, blueprint, archetype, selectedBrands, selected) - scoreProduct(a, blueprint, archetype, selectedBrands, selected))[0];
+      .sort((a, b) => scoreProduct(b, blueprint, archetype, selectedBrands, selected, prefs) - scoreProduct(a, blueprint, archetype, selectedBrands, selected, prefs))[0];
     if (altBottom) {
       const idx = selected.findIndex(p => p.category === 'bottom');
       if (idx >= 0) selected[idx] = altBottom;
@@ -289,7 +329,7 @@ function buildOutfit(
       !usedIds.has(p.id) && p.price >= blueprint.priceFloor
     );
     if (pool.length === 0) continue;
-    const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected);
+    const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs);
     if (pick) {
       selected.push(pick);
       selectedBrands.add(pick.brand.toLowerCase());
@@ -304,6 +344,7 @@ function buildOutfit(
     || selected[0];
 
   const matchScore = calculateOutfitScore(selected, blueprint, archetype);
+  const explanation = buildExplanation(selected, blueprint, archetype, prefs);
 
   return {
     id: `outfit-${archetype}-${blueprint.label}-${index}`,
@@ -312,7 +353,55 @@ function buildOutfit(
     products: selected,
     matchScore: Math.round(matchScore),
     image: coverProduct?.imageUrl || '',
+    explanation,
   };
+}
+
+function buildExplanation(
+  products: CleanProduct[],
+  blueprint: OccasionBlueprint,
+  archetype: string,
+  prefs?: UserPreferences,
+): string {
+  const parts: string[] = [];
+  const styleMatches = products.filter(p => blueprint.preferredStyles.includes(p.style));
+  if (styleMatches.length > 0) {
+    parts.push(`Past bij jouw ${archetype.replace('_', ' ').toLowerCase()} stijl`);
+  }
+
+  if (prefs?.fit) {
+    const fitLabel: Record<string, string> = {
+      slim: 'nauwsluitende',
+      regular: 'reguliere',
+      relaxed: 'relaxte',
+      oversized: 'oversized',
+    };
+    parts.push(`afgestemd op een ${fitLabel[prefs.fit] || prefs.fit} pasvorm`);
+  }
+
+  if (prefs?.occasions && prefs.occasions.length > 0) {
+    const labelMap: Record<string, string> = {
+      work: 'werk', casual: 'dagelijks', formal: 'formele gelegenheden',
+      date: 'een date', travel: 'reizen', sport: 'sport',
+    };
+    const first = prefs.occasions[0];
+    const label = labelMap[first] || first;
+    parts.push(`ideaal voor ${label}`);
+  }
+
+  const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
+  if (brands.length >= 2) {
+    parts.push(`met ${brands.slice(0, 2).join(' en ')}`);
+  }
+
+  if (parts.length === 0) {
+    return `Samengesteld op basis van jouw ${archetype.replace('_', ' ').toLowerCase()} profiel.`;
+  }
+
+  const sentence = parts[0].charAt(0).toUpperCase() + parts[0].slice(1)
+    + (parts.length > 1 ? ', ' + parts.slice(1).join(' en ') : '')
+    + '.';
+  return sentence;
 }
 
 function pickBest(
@@ -322,11 +411,12 @@ function pickBest(
   seed: number,
   selectedBrands: Set<string>,
   existingProducts: CleanProduct[],
+  prefs?: UserPreferences,
 ): CleanProduct | null {
   if (pool.length === 0) return null;
 
   const scored = pool
-    .map(p => ({ p, score: scoreProduct(p, blueprint, archetype, selectedBrands, existingProducts) }))
+    .map(p => ({ p, score: scoreProduct(p, blueprint, archetype, selectedBrands, existingProducts, prefs) }))
     .sort((a, b) => b.score - a.score);
 
   const topTier = scored.slice(0, Math.max(5, Math.ceil(scored.length * 0.15)));
@@ -334,12 +424,29 @@ function pickBest(
   return topTier[Math.abs(idx)]?.p || scored[0]?.p || null;
 }
 
+const FIT_KEYWORDS: Record<string, RegExp[]> = {
+  slim: [/slim/i, /skinny/i, /fitted/i, /tailored/i, /nauwsluitend/i],
+  regular: [/regular/i, /classic/i, /standaard/i, /normaal/i],
+  relaxed: [/relaxed/i, /loose/i, /comfort/i, /ruim/i, /easy/i],
+  oversized: [/oversized/i, /oversize/i, /extra\s*ruim/i, /wide/i, /baggy/i],
+};
+
+const MATERIAL_KEYWORDS: Record<string, RegExp[]> = {
+  katoen: [/katoen/i, /cotton/i],
+  wol: [/wol/i, /wool/i, /merino/i, /kasjmier/i, /cashmere/i],
+  denim: [/denim/i, /jeans/i, /spijker/i],
+  fleece: [/fleece/i],
+  tech: [/tech/i, /nylon/i, /polyester/i, /stretch/i, /performance/i],
+  linnen: [/linnen/i, /linen/i],
+};
+
 function scoreProduct(
   p: CleanProduct,
   blueprint: OccasionBlueprint,
   archetype: string,
   selectedBrands: Set<string>,
   existingProducts: CleanProduct[],
+  prefs?: UserPreferences,
 ): number {
   let score = 0;
 
@@ -377,6 +484,43 @@ function scoreProduct(
 
   if (p.price >= 40 && p.price <= 200) score += 5;
   if (p.price >= 60 && p.price <= 150) score += 3;
+
+  if (prefs) {
+    const text = `${p.name} ${p.description}`.toLowerCase();
+
+    if (prefs.fit && FIT_KEYWORDS[prefs.fit]) {
+      const fitMatch = FIT_KEYWORDS[prefs.fit].some(r => r.test(text));
+      if (fitMatch) score += 18;
+    }
+
+    if (prefs.materials && prefs.materials.length > 0) {
+      for (const mat of prefs.materials) {
+        const matPatterns = MATERIAL_KEYWORDS[mat];
+        if (matPatterns && matPatterns.some(r => r.test(text))) {
+          score += 10;
+          break;
+        }
+      }
+    }
+
+    if (prefs.prints) {
+      if (prefs.prints === 'effen' && /effen|uni|solid|plain/i.test(text)) score += 8;
+      else if (prefs.prints === 'subtiel' && /stripe|streep|dots|stip|geruit|check/i.test(text)) score += 8;
+      else if (prefs.prints === 'statement' && /print|patroon|floral|bloem|graphic/i.test(text)) score += 8;
+    }
+
+    if (prefs.goals && prefs.goals.length > 0) {
+      if (prefs.goals.includes('timeless') && /classic|tijdloos|timeless|essential/i.test(text)) score += 6;
+      if (prefs.goals.includes('trendy') && /trend|nieuw|new|2025|2026|season/i.test(text)) score += 6;
+      if (prefs.goals.includes('comfort') && /comfort|soft|zacht|stretch|relax/i.test(text)) score += 6;
+      if (prefs.goals.includes('professional') && /business|office|professioneel|kantoor/i.test(text)) score += 6;
+    }
+
+    if (prefs.budget) {
+      if (p.price >= prefs.budget.min && p.price <= prefs.budget.max) score += 12;
+      else if (p.price > prefs.budget.max) score -= 15;
+    }
+  }
 
   return score;
 }

@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import type { BoltProduct, Outfit, FitFiUserProfile, Tribe, DataResponse } from "./types";
-import { composeOutfits } from "@/engine/outfitComposer";
+import { composeOutfits, type UserPreferences } from "@/engine/outfitComposer";
 import { isAdultClothingProduct } from "@/engine/productFilter";
 
 const NOW = () => new Date().toISOString();
@@ -119,7 +119,14 @@ export async function fetchOutfits(_opts?: {
 
     const archetype = _opts?.archetype || "SMART_CASUAL";
     const limit = _opts?.limit || 9;
-    const cacheKey = `${archetype}|${_opts?.gender ?? ''}|${_opts?.budget?.max ?? ''}|${limit}`;
+    const prefKey = [
+      _opts?.fit ?? '',
+      _opts?.prints ?? '',
+      (_opts?.goals || []).sort().join(','),
+      (_opts?.materials || []).sort().join(','),
+      (_opts?.occasions || []).sort().join(','),
+    ].join('|');
+    const cacheKey = `${archetype}|${_opts?.gender ?? ''}|${_opts?.budget?.max ?? ''}|${limit}|${prefKey}`;
 
     const cached = outfitCache.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
@@ -127,13 +134,14 @@ export async function fetchOutfits(_opts?: {
     }
 
     const categories = ['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress'];
-    const perCategory = 40;
+    const selectFields = "id,name,title,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock,style,description";
+    const perCategory = 80;
 
     const results = await Promise.all(
       categories.map(cat => {
         let q = client
           .from("products")
-          .select("id,name,title,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock")
+          .select(selectFields)
           .eq("in_stock", true)
           .eq("category", cat);
 
@@ -152,9 +160,9 @@ export async function fetchOutfits(_opts?: {
     if (allRows.length < 10) {
       const { data } = await client
         .from("products")
-        .select("id,name,title,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock")
+        .select(selectFields)
         .eq("in_stock", true)
-        .limit(300);
+        .limit(400);
       if (data && data.length >= 10) allRows = data;
     }
 
@@ -162,7 +170,17 @@ export async function fetchOutfits(_opts?: {
       return wrap([...FALLBACK_OUTFITS], "fallback");
     }
 
-    const composed = composeOutfits(allRows, archetype, limit, _opts?.gender);
+    const prefs: UserPreferences = {
+      fit: _opts?.fit,
+      prints: _opts?.prints,
+      goals: _opts?.goals,
+      materials: _opts?.materials,
+      occasions: _opts?.occasions,
+      colorProfile: _opts?.colorProfile,
+      budget: _opts?.budget,
+    };
+
+    const composed = composeOutfits(allRows, archetype, limit, _opts?.gender, prefs);
 
     if (composed.length > 0) {
       const outfits: Outfit[] = composed.map(c => ({
@@ -186,7 +204,8 @@ export async function fetchOutfits(_opts?: {
         match: c.matchScore,
         tags: [c.occasion.toLowerCase()],
         season: undefined,
-      }));
+        explanation: c.explanation,
+      } as Outfit));
       outfitCache.set(cacheKey, { data: outfits, ts: Date.now() });
       return wrap(outfits, "supabase");
     }
