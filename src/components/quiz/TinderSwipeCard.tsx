@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
-import { Heart, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, X } from 'lucide-react';
 
 interface TinderSwipeCardProps {
   imageUrl: string;
@@ -12,6 +12,8 @@ interface TinderSwipeCardProps {
 export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipeCardProps) {
   const [startTime] = useState(Date.now());
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Keyboard support for desktop
@@ -148,11 +150,20 @@ export function TinderSwipeCard({ imageUrl, onSwipe, index, total }: TinderSwipe
         >
           {/* Premium card container */}
           <div className="relative w-full h-full rounded-[28px] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-white/20">
+            {!imgLoaded && !imgError && (
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-200)] animate-pulse" />
+            )}
+            {imgError && (
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)] via-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-200)]" />
+            )}
             <img
               src={imageUrl}
               alt="Style inspiration"
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
               draggable={false}
+              loading="eager"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => { setImgError(true); setImgLoaded(true); }}
             />
 
             {/* Subtle gradient overlays */}
