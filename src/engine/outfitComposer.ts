@@ -538,11 +538,19 @@ const FIT_KEYWORDS: Record<string, RegExp[]> = {
 
 const MATERIAL_KEYWORDS: Record<string, RegExp[]> = {
   katoen: [/katoen/i, /cotton/i],
-  wol: [/wol/i, /wool/i, /merino/i, /kasjmier/i, /cashmere/i],
+  wol: [/wol/i, /wool/i, /merino/i],
+  kasjmier: [/kasjmier/i, /cashmere/i],
   denim: [/denim/i, /jeans/i, /spijker/i],
   fleece: [/fleece/i],
-  tech: [/tech/i, /nylon/i, /polyester/i, /stretch/i, /performance/i],
+  tech: [/tech/i, /nylon/i, /polyester/i, /performance/i, /technisch/i],
   linnen: [/linnen/i, /linen/i],
+  leer: [/leer/i, /leder/i, /leather/i, /suede/i, /nubuck/i],
+  canvas: [/canvas/i, /doek/i],
+  coated: [/coated/i, /gecoat/i, /waxed/i, /gewaxed/i],
+  ribstof: [/ribstof/i, /\brib\b/i, /corduroy/i, /ribfluweel/i],
+  stretch: [/stretch/i, /elastan/i, /elastane/i, /spandex/i, /lycra/i],
+  mesh: [/mesh/i, /gaas/i, /netmateriaal/i],
+  zijde: [/zijde/i, /\bsilk\b/i, /satijn/i, /\bsatin\b/i],
 };
 
 function scoreProduct(
@@ -631,13 +639,15 @@ function scoreProduct(
     if (prefs.prints) {
       const PRINT_DETECT = /print|patroon|floral|bloem|graphic|stripe|streep|geruit|check|stip|dots|pattern/i;
       const hasPrint = PRINT_DETECT.test(text);
+      const isExplicitlyClean = /effen|uni|solid|plain/i.test(text);
       if (prefs.prints === 'effen' || prefs.prints === 'geen') {
-        if (!hasPrint && /effen|uni|solid|plain/i.test(text)) score += 12;
-        else if (hasPrint) score -= 8;
+        if (isExplicitlyClean) score += 12;
+        else if (!hasPrint) score += 4;
+        else score -= 8;
       } else if (prefs.prints === 'subtiel') {
         if (/stripe|streep|dots|stip|geruit|check/i.test(text)) score += 14;
       } else if (prefs.prints === 'statement') {
-        if (/print|patroon|floral|bloem|graphic|bold/i.test(text)) score += 14;
+        if (/print|patroon|floral|bloem|graphic|bold|oversized.*tee|graphic tee|allover/i.test(text)) score += 20;
         else if (!hasPrint) score -= 4;
       }
     }
