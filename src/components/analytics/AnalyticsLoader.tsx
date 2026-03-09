@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { getCookiePrefs, CONSENT_KEY } from "@/utils/consent";
+import { setTelemetrySink } from "@/utils/telemetry";
 
 declare global {
   interface Window { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void; }
@@ -19,6 +20,13 @@ function ensureGtag(id: string) {
   window.gtag("config", id, { anonymize_ip: true });
 }
 
+function ga4Sink(event: string, props?: Record<string, unknown>) {
+  try {
+    if (typeof window.gtag !== "function") return;
+    window.gtag("event", event, props ?? {});
+  } catch {}
+}
+
 export default function AnalyticsLoader() {
   const loc = useLocation();
   const id = (import.meta.env.VITE_GTAG_ID as string | undefined) || "";
@@ -33,13 +41,24 @@ export default function AnalyticsLoader() {
       try {
         const ok = !!id && !!getCookiePrefs().analytics;
         setEnabled(ok);
-        if (ok) ensureGtag(id);
+        if (ok) {
+          ensureGtag(id);
+          setTelemetrySink(ga4Sink);
+        } else {
+          setTelemetrySink(null);
+        }
       } catch {}
     };
     window.addEventListener("storage", onStorage);
-    if (enabled) ensureGtag(id);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [id]);
+    if (enabled) {
+      ensureGtag(id);
+      setTelemetrySink(ga4Sink);
+    }
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      setTelemetrySink(null);
+    };
+  }, [id, enabled]);
 
   React.useEffect(() => {
     if (!enabled || typeof window.gtag !== "function") return;
