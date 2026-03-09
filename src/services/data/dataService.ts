@@ -134,7 +134,7 @@ export async function fetchOutfits(_opts?: {
     }
 
     const categories = ['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress'];
-    const selectFields = "id,name,title,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock,style,description";
+    const selectFields = "id,name,brand,price,image_url,product_url,affiliate_url,retailer,category,tags,gender,colors,sizes,in_stock,style,description";
     const perCategory = 80;
 
     const results = await Promise.all(
