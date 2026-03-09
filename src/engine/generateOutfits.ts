@@ -1160,9 +1160,14 @@ function selectProductForCategory(
       : !wantsAthletic && athleticIntent >= 0.8 ? -0.15
       : 0;
 
-    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty + budgetBonus + athleticBonus;
+    const fusionInput: typeof productLike = (wantsAthletic && athleticIntent >= 0.8)
+      ? { ...productLike, style: 'athletic' }
+      : productLike;
+    const fusionResult = (fusionInput === productLike) ? fusion : fusionScore(fusionInput, mix);
 
-    return { product, combined, fusionScore: fusion.totalScore, signals: fusion.matchedSignals };
+    const combined = fusionResult.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty + budgetBonus + athleticBonus;
+
+    return { product, combined, fusionScore: fusionResult.totalScore, signals: fusionResult.matchedSignals };
   });
 
   scoredProducts.sort((a, b) => b.combined - a.combined);
