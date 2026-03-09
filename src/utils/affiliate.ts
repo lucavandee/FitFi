@@ -101,3 +101,122 @@ export function isAffiliateConsentGiven(): boolean {
     return false;
   }
 }
+
+export function resolveProductUrl(product: {
+  affiliateUrl?: string;
+  productUrl?: string;
+  url?: string;
+  affiliate_url?: string;
+  product_url?: string;
+}): string | null {
+  const raw =
+    product.affiliateUrl ||
+    product.affiliate_url ||
+    product.productUrl ||
+    product.product_url ||
+    product.url ||
+    null;
+  if (!raw || raw === '#') return null;
+  try {
+    const u = new URL(raw);
+    if (u.protocol === 'http:' || u.protocol === 'https:') return raw;
+  } catch {
+    /* invalid URL */
+  }
+  return null;
+}
+
+export interface OpenProductLinkParams {
+  product: {
+    id: string;
+    name?: string;
+    retailer?: string;
+    price?: number;
+    affiliateUrl?: string;
+    productUrl?: string;
+    url?: string;
+    affiliate_url?: string;
+    product_url?: string;
+  };
+  outfitId?: string;
+  slot?: number;
+  userId?: string;
+  source?: string;
+}
+
+export async function openProductLink(params: OpenProductLinkParams): Promise<boolean> {
+  const { product, outfitId, slot = 1, userId, source } = params;
+  const baseUrl = resolveProductUrl(product);
+
+  if (!baseUrl) return false;
+
+  try {
+    const { isProductLinkBroken } = await import('@/services/linkHealth/linkHealthService');
+    if (isProductLinkBroken(product.id)) {
+      return false;
+    }
+  } catch {
+    /* link health service not loaded yet — proceed anyway */
+  }
+
+  try {
+    const { track } = await import('@/utils/telemetry');
+    track('product_click', {
+      product_id: product.id,
+      product_name: product.name,
+      retailer: product.retailer,
+      price: product.price,
+      outfit_id: outfitId,
+      position: slot,
+      source: source || 'product_link',
+    });
+
+    if (isAffiliateConsentGiven()) {
+      const clickRef = buildClickRef({
+        outfitId: outfitId || product.id,
+        slot,
+        userId,
+      });
+      const affiliateUrl = buildAwinUrl(baseUrl, clickRef);
+
+      logAffiliateClick({
+        clickRef,
+        outfitId: outfitId || product.id,
+        productUrl: affiliateUrl,
+        userId,
+        merchantName: product.retailer,
+      });
+
+      window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      const url = new URL(baseUrl);
+      url.searchParams.set('utm_source', 'fitfi');
+      url.searchParams.set('utm_medium', 'referral');
+      window.open(url.toString(), '_blank', 'noopener,noreferrer');
+    }
+
+    return true;
+  } catch {
+    window.open(baseUrl, '_blank', 'noopener,noreferrer');
+    return true;
+  }
+}
+
+let _linkHealthModule: { isProductLinkBroken: (id: string) => boolean } | null = null;
+
+import('@/services/linkHealth/linkHealthService')
+  .then((m) => { _linkHealthModule = m; })
+  .catch(() => {});
+
+export function isProductShoppable(product: {
+  id: string;
+  affiliateUrl?: string;
+  productUrl?: string;
+  url?: string;
+  affiliate_url?: string;
+  product_url?: string;
+}): boolean {
+  if (!resolveProductUrl(product)) return false;
+  if (_linkHealthModule?.isProductLinkBroken(product.id)) return false;
+  return true;
+}

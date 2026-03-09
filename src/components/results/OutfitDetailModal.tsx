@@ -1,9 +1,11 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Heart, X } from "lucide-react";
+import { ExternalLink, Heart, X, ShoppingBag } from "lucide-react";
 import type { ColorProfile } from "@/lib/quiz/types";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import useBodyScrollLock from "@/hooks/useBodyScrollLock";
+import { openProductLink, resolveProductUrl } from "@/utils/affiliate";
+import toast from "react-hot-toast";
 
 interface OutfitDetailModalProps {
   outfit: any | null;
@@ -18,18 +20,6 @@ interface OutfitDetailModalProps {
 
 function getProductImage(product: any): string | null {
   return product?.imageUrl || product?.image_url || product?.image || null;
-}
-
-function getProductUrl(product: any): string | null {
-  const raw = product?.affiliateUrl || product?.productUrl || product?.url || null;
-  if (!raw) return null;
-  try {
-    const u = new URL(raw);
-    if (u.protocol === 'http:' || u.protocol === 'https:') return raw;
-  } catch {
-    // relative or invalid URL — not safe to use as external link
-  }
-  return null;
 }
 
 function getOutfitHeroImage(outfit: any): string | null {
@@ -178,7 +168,7 @@ export function OutfitDetailModal({
                 <ul className="divide-y divide-[var(--color-border)] border border-[var(--color-border)] rounded-xl overflow-hidden">
                   {products.map((product: any, idx: number) => {
                     const img = getProductImage(product);
-                    const url = getProductUrl(product);
+                    const url = resolveProductUrl(product);
                     const name = product?.name || `Product ${idx + 1}`;
                     const brand = product?.brand || product?.retailer || null;
                     const rawPrice = typeof product?.price === "number"
@@ -186,10 +176,22 @@ export function OutfitDetailModal({
                       : parseFloat(String(product?.price ?? "")) || null;
 
                     return (
-                      <li key={idx} className="bg-[var(--color-surface)]">
+                      <li
+                        key={idx}
+                        className={`bg-[var(--color-surface)] ${url ? "cursor-pointer hover:bg-[var(--ff-color-primary-50)] transition-colors" : ""}`}
+                        onClick={async () => {
+                          if (!url) return;
+                          const opened = await openProductLink({
+                            product: { id: product?.id || `p-${idx}`, name, retailer: brand || undefined, price: rawPrice || undefined, ...product },
+                            outfitId: id,
+                            slot: idx + 1,
+                            source: "outfit_detail_modal",
+                          });
+                          if (opened) toast.success(`${name} opent in nieuw tabblad`, { duration: 2000 });
+                        }}
+                      >
                         <div className="flex items-center gap-3 px-3 py-3">
 
-                          {/* Thumbnail */}
                           <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--ff-color-primary-50)] flex items-center justify-center">
                             {img ? (
                               <img
@@ -213,7 +215,6 @@ export function OutfitDetailModal({
                             </span>
                           </div>
 
-                          {/* Info */}
                           <div className="flex-1 min-w-0">
                             {brand && (
                               <p className="text-[10px] text-[var(--color-muted)] truncate leading-tight mb-0.5">
@@ -225,25 +226,20 @@ export function OutfitDetailModal({
                             </p>
                           </div>
 
-                          {/* Price + shop link */}
                           <div className="flex items-center gap-2 flex-shrink-0">
                             {rawPrice != null && rawPrice > 0 && (
                               <span className="text-sm font-bold text-[var(--ff-color-primary-700)]">
                                 €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
                               </span>
                             )}
-                            {url && (
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`Shop ${name}`}
-                                onClick={(e) => e.stopPropagation()}
+                            {url ? (
+                              <div
                                 className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-200)] transition-colors"
+                                aria-label={`Shop ${name}`}
                               >
-                                <ExternalLink className="w-4 h-4" />
-                              </a>
-                            )}
+                                <ShoppingBag className="w-4 h-4" />
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                       </li>

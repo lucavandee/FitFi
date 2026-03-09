@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart, Share2, Sparkles, ExternalLink, ShoppingBag } from "lucide-react";
+import { X, Heart, Share2, Sparkles, ShoppingBag, AlertCircle } from "lucide-react";
 import { StyleDNAMatchBadge } from "../outfits/StyleDNAMatchBadge";
 import toast from "react-hot-toast";
 import { NavLink } from "react-router-dom";
+import { openProductLink, resolveProductUrl } from "@/utils/affiliate";
 
 interface OutfitZoomModalProps {
   isOpen: boolean;
@@ -189,8 +190,7 @@ export function OutfitZoomModal({
                       </div>
                       <div className="space-y-3">
                         {outfit.products.map((product, i) => {
-                          const shopUrl = product.affiliate_url || product.product_url || product.url;
-                          const hasShopUrl = !!shopUrl;
+                          const hasShopUrl = !!resolveProductUrl(product);
 
                           return (
                             <motion.div
@@ -200,25 +200,28 @@ export function OutfitZoomModal({
                                 flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] transition-all
                                 ${hasShopUrl ? "hover:border-[var(--ff-color-primary-400)] hover:shadow-md cursor-pointer" : ""}
                               `}
-                              onClick={() => {
-                                if (hasShopUrl) {
-                                  window.open(shopUrl, "_blank", "noopener,noreferrer");
-                                  toast.success("Product opent in nieuw tabblad", {
-                                    icon: "🛍️",
-                                    duration: 2000,
-                                  });
+                              onClick={async () => {
+                                if (!hasShopUrl) return;
+                                const opened = await openProductLink({
+                                  product: { id: product.id || `p-${i}`, name: product.name, retailer: product.brand, price: product.price, ...product },
+                                  outfitId: outfit.id,
+                                  slot: i + 1,
+                                  source: "outfit_zoom_modal",
+                                });
+                                if (opened) {
+                                  toast.success("Product opent in nieuw tabblad", { duration: 2000 });
                                 }
                               }}
                             >
-                              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] flex items-center justify-center flex-shrink-0">
-                                <span className="text-2xl font-bold">{i + 1}</span>
+                              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
+                                <span className="text-2xl font-bold text-[var(--ff-color-primary-300)]">{i + 1}</span>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <h4 className="font-medium text-[var(--color-text)] truncate">
                                   {product.name || product.category || "Product"}
                                 </h4>
-                                <p className="text-sm text-[var(--color-text-muted)] truncate">
-                                  {product.brand || "Fashion Brand"}
+                                <p className="text-sm text-[var(--color-muted)] truncate">
+                                  {product.brand || product.retailer || ""}
                                   {product.price && (
                                     <span className="ml-2 font-semibold text-[var(--ff-color-primary-700)]">
                                       €{typeof product.price === "number" ? product.price.toFixed(2) : product.price}
@@ -226,7 +229,7 @@ export function OutfitZoomModal({
                                   )}
                                 </p>
                               </div>
-                              {hasShopUrl && (
+                              {hasShopUrl ? (
                                 <motion.div
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
@@ -234,9 +237,9 @@ export function OutfitZoomModal({
                                 >
                                   <ShoppingBag className="w-5 h-5" />
                                 </motion.div>
-                              )}
-                              {!hasShopUrl && (
-                                <div className="flex-shrink-0 px-3 py-1.5 bg-gray-100 text-gray-500 text-xs rounded-lg">
+                              ) : (
+                                <div className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)] text-xs rounded-lg">
+                                  <AlertCircle className="w-3 h-3" />
                                   Binnenkort
                                 </div>
                               )}

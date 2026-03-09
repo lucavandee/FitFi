@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { profileSyncService } from '@/services/data/profileSyncService';
+import { initLinkHealth } from '@/services/linkHealth/linkHealthService';
 
 export default function ProfileSyncInitializer() {
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function ProfileSyncInitializer() {
     };
 
     initSync();
+    initLinkHealth().catch(() => {});
 
     const interval = setInterval(() => {
       profileSyncService.checkAndSync();

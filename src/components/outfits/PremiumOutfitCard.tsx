@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import PremiumCard from "@/components/ui/PremiumCard";
 import PremiumChip from "@/components/ui/PremiumChip";
 import PremiumButton from "@/components/ui/PremiumButton";
@@ -6,6 +6,10 @@ import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { ExplainBadge } from "@/components/outfits/ExplainBadge";
 import { useEnhancedNova } from "@/hooks/useEnhancedNova";
 import { MatchFeedbackWidget } from "@/components/outfits/MatchFeedbackWidget";
+import { ShoppingBag, ExternalLink } from "lucide-react";
+import { resolveProductUrl, openProductLink } from "@/utils/affiliate";
+import toast from "react-hot-toast";
+import { trackOutfitExplain } from '@/hooks/useABTesting';
 
 interface OutfitItem {
   id: string;
@@ -14,9 +18,12 @@ interface OutfitItem {
   price: number;
   image: string;
   category: string;
+  affiliateUrl?: string;
+  productUrl?: string;
+  affiliate_url?: string;
+  product_url?: string;
+  url?: string;
 }
-import { trackOutfitExplain } from '@/hooks/useABTesting';
-import { useEffect, useRef } from 'react';
 
 interface PremiumOutfitCardProps {
   outfit: {
@@ -103,26 +110,63 @@ export default function PremiumOutfitCard({
 
         {/* Outfit Items Grid */}
         <div className="grid grid-cols-2 gap-3">
-          {outfit.items.slice(0, 4).map((item) => (
-            <div key={item.id} className="relative group/item">
-              <div className="aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10">
-                <ImageWithFallback
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
-                  fallbackCategory={item.category}
-                />
-              </div>
-              <div className="mt-2">
-                <div className="text-sm font-medium text-white truncate">
-                  {item.name}
+          {outfit.items.slice(0, 4).map((item, idx) => {
+            const hasUrl = !!resolveProductUrl(item);
+            const handleItemClick = async () => {
+              if (!hasUrl) return;
+              const opened = await openProductLink({
+                product: {
+                  id: item.id,
+                  name: item.name,
+                  retailer: item.brand,
+                  price: item.price,
+                  ...item,
+                },
+                outfitId: outfit.id,
+                slot: idx + 1,
+                source: "premium_outfit_card",
+              });
+              if (opened) {
+                toast.success(`${item.name} opent in nieuw tabblad`, { duration: 2000 });
+              }
+            };
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={handleItemClick}
+                disabled={!hasUrl}
+                className={`relative group/item text-left ${hasUrl ? "cursor-pointer" : ""}`}
+              >
+                <div className="aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10 relative">
+                  <ImageWithFallback
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
+                    fallbackCategory={item.category}
+                  />
+                  {hasUrl && (
+                    <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/30 transition-colors flex items-center justify-center">
+                      <div className="opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 text-[var(--ff-color-primary-700)] text-xs font-semibold">
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                        Shop
+                        <ExternalLink className="w-3 h-3" />
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="text-xs text-[#AAB0C0] truncate">
-                  {item.brand} • €{item.price}
+                <div className="mt-2">
+                  <div className="text-sm font-medium text-white truncate">
+                    {item.name}
+                  </div>
+                  <div className="text-xs text-[#AAB0C0] truncate">
+                    {item.brand} {item.price > 0 ? `• €${item.price % 1 === 0 ? item.price.toFixed(0) : item.price.toFixed(2)}` : ""}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </button>
+            );
+          })}
         </div>
 
         {/* Explanation */}
