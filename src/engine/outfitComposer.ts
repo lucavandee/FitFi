@@ -544,7 +544,7 @@ const MATERIAL_KEYWORDS: Record<string, RegExp[]> = {
   fleece: [/fleece/i],
   tech: [/tech/i, /nylon/i, /polyester/i, /performance/i, /technisch/i],
   linnen: [/linnen/i, /linen/i],
-  leer: [/\bleer\b/i, /\bleder\b/i, /leather/i, /suede/i, /nubuck/i],
+  leer: [/\bleer\b/i, /\bleren\b/i, /\bleder\b/i, /\blederen\b/i, /leather/i, /suede/i, /nubuck/i],
   canvas: [/canvas/i],
   coated: [/coated/i, /gecoat/i, /waxed/i, /gewaxed/i],
   ribstof: [/ribstof/i, /\brib\b/i, /corduroy/i, /ribfluweel/i],
@@ -626,9 +626,10 @@ function scoreProduct(
         }
       }
       if (!matMatched) {
-        const allText = `${text} ${p.tags.join(' ')}`.toLowerCase();
+        const allText = `${text} ${p.tags.join(' ')}`;
         for (const mat of prefs.materials) {
-          if (allText.includes(mat)) {
+          const fallbackPatterns = MATERIAL_KEYWORDS[mat];
+          if (fallbackPatterns && fallbackPatterns.some(r => r.test(allText))) {
             score += 10;
             break;
           }
