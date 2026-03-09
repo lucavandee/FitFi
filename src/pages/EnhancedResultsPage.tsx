@@ -1475,15 +1475,15 @@ export default function EnhancedResultsPage() {
                       className="w-full"
                     >
                       <NavLink
-                        to="/dashboard"
+                        to={user ? "/dashboard" : "/registreren"}
                         className="flex items-center justify-center gap-4 px-10 py-6 min-h-[72px] bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-600)] text-white rounded-[24px] font-bold text-xl hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-all shadow-[0_10px_40px_rgba(0,0,0,0.15)] w-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-4 relative overflow-hidden group"
-                        aria-label="Bekijk je gepersonaliseerde outfits"
+                        aria-label={user ? "Ga naar je dashboard" : "Maak gratis account aan om outfits op te slaan"}
                       >
                         {/* Shine effect */}
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
 
                         <ShoppingBag className="w-7 h-7 relative z-10" aria-hidden="true" strokeWidth={2.5} />
-                        <span className="relative z-10">Bekijk jouw outfits</span>
+                        <span className="relative z-10">{user ? "Ga naar mijn dashboard" : "Sla outfits op — gratis account"}</span>
                         <ArrowRight className="w-7 h-7 relative z-10 group-hover:translate-x-1 transition-transform" aria-hidden="true" strokeWidth={2.5} />
                       </NavLink>
                     </motion.div>

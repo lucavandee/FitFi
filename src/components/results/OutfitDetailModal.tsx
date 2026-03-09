@@ -152,6 +152,15 @@ export function OutfitDetailModal({
             )}
 
             {/* Product list */}
+            {products.length === 0 && (
+              <div className="rounded-xl border border-[var(--color-border)] px-4 py-5 bg-[var(--ff-color-primary-25)] text-center">
+                <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-[var(--ff-color-primary-300)]" aria-hidden="true" />
+                <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Productlinks worden binnenkort geladen</p>
+                <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                  Dit is een voorbeeld outfit op basis van jouw stijlprofiel. Maak een account aan voor directe shoplinks naar Nederlandse webshops.
+                </p>
+              </div>
+            )}
             {products.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-2.5">

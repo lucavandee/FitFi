@@ -28,8 +28,14 @@ const TRUST_ITEMS = [
 export default function LoginPage() {
   const nav = useNavigate();
   const location = useLocation();
-  const { login } = useUser();
+  const { login, user, status } = useUser();
   const fromPath = (location.state as { from?: string })?.from;
+
+  React.useEffect(() => {
+    if (status === 'authenticated' && user) {
+      nav(fromPath || '/dashboard', { replace: true });
+    }
+  }, [status, user, fromPath, nav]);
 
   const comingFromResults =
     typeof fromPath === "string" && fromPath.startsWith("/results");
