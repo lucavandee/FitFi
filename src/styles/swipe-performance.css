@@ -15,17 +15,14 @@
   backface-visibility: hidden;
   perspective: 1000px;
 
-  /* CSS Containment - Isolate paint/layout for better performance */
-  contain: layout paint style;
+  /* Paint containment only — layout containment breaks flexbox sizing */
+  contain: paint style;
 }
 
 /* Reserve space for image before load to eliminate CLS */
 .swipe-card-image-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  /* Explicit aspect ratio as fallback when parent height is not set */
-  aspect-ratio: 3 / 4;
+  position: absolute;
+  inset: 0;
   background-color: var(--ff-color-primary-50);
   overflow: hidden;
 }
@@ -35,16 +32,17 @@
   /* GPU layer */
   transform: translateZ(0);
 
-  /* Smooth image rendering */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-
   /* Prevent drag ghosting */
   -webkit-user-drag: none;
   user-select: none;
 
   /* Force GPU compositing */
   backface-visibility: hidden;
+
+  /* Fill container */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Drag animations - Optimized for 60fps */
@@ -202,10 +200,10 @@
   }
 }
 
-/* Firefox - Better font rendering */
+/* Firefox - Rendering optimization */
 @-moz-document url-prefix() {
   .swipe-card-image {
-    image-rendering: -moz-crisp-edges;
+    image-rendering: auto;
   }
 }
 
