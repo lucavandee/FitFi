@@ -94,7 +94,7 @@ const OCCASION_BLUEPRINTS: Record<string, OccasionBlueprint> = {
     emoji: '🏃',
     required: ['top', 'bottom', 'footwear'],
     optional: [],
-    preferredStyles: ['streetwear', 'casual-urban', 'casual'],
+    preferredStyles: ['athletic', 'sport', 'casual'],
     priceFloor: 15,
     formalityHint: 'casual',
     brandDiversity: false,
@@ -544,6 +544,7 @@ function scoreProduct(
     CLASSIC: [/Boss/i, /Profuomo/i, /Cavallaro/i, /Genti/i, /Giorgio/i, /Olymp/i, /Xacus/i, /Pierre cardin/i],
     SMART_CASUAL: [/Cast iron/i, /PME/i, /Vanguard/i, /State of art/i, /Blue industry/i],
     STREETWEAR: [/Puma/i, /Replay/i, /Denham/i, /Nubikk/i],
+    ATHLETIC: [/Nike/i, /Adidas/i, /Puma/i, /New Balance/i, /Reebok/i, /Under Armour/i, /Asics/i],
     AVANT_GARDE: [/Mart Visser/i, /Drykorn/i],
   };
 
