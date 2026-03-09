@@ -1,5 +1,5 @@
 import React from "react";
-import { QuoteIcon } from "lucide-react";
+import { Quote as QuoteIcon } from "lucide-react";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
 import PressLogoBelt from "@/components/landing/PressLogoBelt";
 
