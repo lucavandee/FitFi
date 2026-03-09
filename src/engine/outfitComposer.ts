@@ -460,11 +460,38 @@ function buildExplanation(
       denim: 'denim', leer: 'leer', katoen: 'katoen', linnen: 'linnen',
       wol: 'wol', kasjmier: 'kasjmier', tech: 'technische stoffen',
       fleece: 'fleece', canvas: 'canvas', zijde: 'zijde',
+      coated: 'gecoate stoffen', ribstof: 'ribstof', stretch: 'stretchmateriaal',
+      mesh: 'mesh',
     };
-    const labels = prefs.materials.slice(0, 2).map(m => matLabels[m] || m).filter(Boolean);
-    if (labels.length > 0) {
-      parts.push(`materiaalvoorkeur: ${labels.join(' en ')}`);
+    const matchedInOutfit: string[] = [];
+    for (const mat of prefs.materials) {
+      const label = matLabels[mat] || mat;
+      const matLower = mat.toLowerCase();
+      const found = products.some(p => {
+        const text = `${p.name} ${p.description} ${p.tags.join(' ')}`.toLowerCase();
+        return text.includes(matLower);
+      });
+      if (found) matchedInOutfit.push(label);
     }
+    if (matchedInOutfit.length > 0) {
+      parts.push(`${matchedInOutfit.slice(0, 2).join(' en ')} verwerkt op basis van jouw materiaalvoorkeur`);
+    } else {
+      const labels = prefs.materials.slice(0, 2).map(m => matLabels[m] || m).filter(Boolean);
+      if (labels.length > 0) {
+        parts.push(`materiaalvoorkeur: ${labels.join(' en ')}`);
+      }
+    }
+  }
+
+  if (prefs?.prints) {
+    const printLabel: Record<string, string> = {
+      effen: 'bewust clean en effen gehouden',
+      geen: 'bewust clean en effen gehouden',
+      statement: 'met ruimte voor expressieve prints',
+      subtiel: 'met subtiele patronen voor een verfijnde look',
+    };
+    const label = printLabel[prefs.prints];
+    if (label) parts.push(label);
   }
 
   const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
@@ -581,19 +608,38 @@ function scoreProduct(
     }
 
     if (prefs.materials && prefs.materials.length > 0) {
+      let matMatched = false;
       for (const mat of prefs.materials) {
         const matPatterns = MATERIAL_KEYWORDS[mat];
         if (matPatterns && matPatterns.some(r => r.test(text))) {
-          score += 10;
+          score += 18;
+          matMatched = true;
           break;
+        }
+      }
+      if (!matMatched) {
+        const allText = `${text} ${p.tags.join(' ')}`.toLowerCase();
+        for (const mat of prefs.materials) {
+          if (allText.includes(mat)) {
+            score += 10;
+            break;
+          }
         }
       }
     }
 
     if (prefs.prints) {
-      if (prefs.prints === 'effen' && /effen|uni|solid|plain/i.test(text)) score += 8;
-      else if (prefs.prints === 'subtiel' && /stripe|streep|dots|stip|geruit|check/i.test(text)) score += 8;
-      else if (prefs.prints === 'statement' && /print|patroon|floral|bloem|graphic/i.test(text)) score += 8;
+      const PRINT_DETECT = /print|patroon|floral|bloem|graphic|stripe|streep|geruit|check|stip|dots|pattern/i;
+      const hasPrint = PRINT_DETECT.test(text);
+      if (prefs.prints === 'effen' || prefs.prints === 'geen') {
+        if (!hasPrint && /effen|uni|solid|plain/i.test(text)) score += 12;
+        else if (hasPrint) score -= 8;
+      } else if (prefs.prints === 'subtiel') {
+        if (/stripe|streep|dots|stip|geruit|check/i.test(text)) score += 14;
+      } else if (prefs.prints === 'statement') {
+        if (/print|patroon|floral|bloem|graphic|bold/i.test(text)) score += 14;
+        else if (!hasPrint) score -= 4;
+      }
     }
 
     if (prefs.goals && prefs.goals.length > 0) {

@@ -423,7 +423,11 @@ function generateOutfits(
         goalsPreference,
         comfortPreference,
         usedProductIds,
-        usedBrandsGlobal
+        usedBrandsGlobal,
+        materialsPreference,
+        printsPreference,
+        colorProfile,
+        budgetPref,
       );
 
       if (generatedOutfit && !excludeIds.includes(generatedOutfit.id)) {
@@ -489,7 +493,11 @@ function generateOutfitForOccasion(
   goalsPreference: string[] = [],
   comfortPreference?: string,
   usedProductIds?: Set<string>,
-  usedBrandsGlobal?: Set<string>
+  usedBrandsGlobal?: Set<string>,
+  materialsPreference: string[] = [],
+  printsPreference?: string,
+  colorProfile?: ColorProfile,
+  budgetPref?: { min: number; max: number },
 ): Outfit | null {
   // Log outfit generation
   console.log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
@@ -566,6 +574,8 @@ function generateOutfitForOccasion(
       usedProductIds,
       outfitBrands,
       budgetPref,
+      materialsPreference,
+      printsPreference,
     );
 
     if (selectedProduct) {
@@ -597,7 +607,10 @@ function generateOutfitForOccasion(
             goalsPreference,
             comfortPreference,
             usedProductIds,
-            outfitBrands
+            outfitBrands,
+            undefined,
+            materialsPreference,
+            printsPreference,
           );
 
           if (substituteProduct) {
@@ -656,6 +669,8 @@ function generateOutfitForOccasion(
       usedProductIds,
       outfitBrands,
       budgetPref,
+      materialsPreference,
+      printsPreference,
     );
 
     if (selectedProduct) {
@@ -1009,6 +1024,67 @@ function getComfortScore(product: Product, comfort?: string): number {
   return comfortTags.some(t => tags.includes(t)) ? 0.1 : 0;
 }
 
+const PRINT_KEYWORDS = ['printed', 'pattern', 'graphic', 'floral', 'stripe', 'stripes', 'checked', 'plaid', 'animal print', 'print', 'patroon', 'geruit', 'bloemen', 'stip', 'dots'];
+
+function getMaterialPrintScore(product: Product, materials: string[], prints?: string): number {
+  if (materials.length === 0 && !prints) return 0;
+
+  const enriched = enrichProduct(product);
+  const mtags = enriched._signals.materialTags;
+  const text = [product.name || '', product.description || ''].join(' ').toLowerCase();
+  const allTags = (product.styleTags || []).join(' ').toLowerCase();
+  const searchable = `${text} ${allTags}`;
+
+  let score = 0;
+
+  if (materials.length > 0) {
+    const normPrefs = materials.map(m => m.toLowerCase());
+    const matched = normPrefs.some(m => mtags.includes(m));
+    if (matched) {
+      score += 0.20;
+    } else {
+      const textMatch = normPrefs.some(m => {
+        const patterns = MATERIAL_PATTERNS_LOOKUP[m];
+        if (!patterns) return searchable.includes(m);
+        return patterns.some(p => searchable.includes(p));
+      });
+      if (textMatch) score += 0.12;
+    }
+  }
+
+  if (prints) {
+    const hasPrintSignal = PRINT_KEYWORDS.some(kw => searchable.includes(kw));
+    if (prints === 'statement') {
+      score += hasPrintSignal ? 0.15 : 0;
+    } else if (prints === 'subtiel' || prints === 'subtle') {
+      const hasSubtle = /stripe|streep|dots|stip|geruit|check|subtle/i.test(searchable);
+      score += hasSubtle ? 0.12 : 0;
+    } else if (prints === 'effen' || prints === 'geen') {
+      if (hasPrintSignal) score -= 0.10;
+      else if (/effen|uni|solid|plain/i.test(searchable)) score += 0.08;
+    }
+  }
+
+  return score;
+}
+
+const MATERIAL_PATTERNS_LOOKUP: Record<string, string[]> = {
+  katoen: ['katoen', 'cotton', 'jersey', 'piqué', 'pique'],
+  wol: ['wol', 'wool', 'woolen', 'wollen', 'merino'],
+  denim: ['denim', 'spijker', 'jeans'],
+  leer: ['leer', 'leather', 'lederen', 'suède', 'suede', 'nubuck'],
+  linnen: ['linnen', 'linen'],
+  fleece: ['fleece', 'teddy', 'sherpa'],
+  tech: ['tech', 'nylon', 'polyester', 'performance', 'gore-tex', 'softshell', 'hardshell'],
+  stretch: ['stretch', 'elastaan', 'elastisch', 'spandex', 'lycra'],
+  mesh: ['mesh'],
+  canvas: ['canvas'],
+  coated: ['coated', 'gewaxed', 'waxed', 'gecoat'],
+  zijde: ['zijde', 'silk', 'satijn', 'satin'],
+  kasjmier: ['kasjmier', 'cashmere'],
+  ribstof: ['rib', 'corduroy', 'ribfluweel', 'ribstof'],
+};
+
 function getOccasionFormalityTarget(occasion: string): number {
   const o = occasion.toLowerCase();
   if (o.includes('werk') || o.includes('kantoor') || o.includes('office') || o.includes('zakelijk')) return 0.7;
@@ -1069,6 +1145,8 @@ function selectProductForCategory(
   usedProductIds?: Set<string>,
   usedBrands?: Set<string>,
   budget?: { min: number; max: number },
+  materials: string[] = [],
+  prints?: string,
 ): Product | null {
   const products = productsByCategory[category];
   if (!products || products.length === 0) return null;
@@ -1165,7 +1243,9 @@ function selectProductForCategory(
       : productLike;
     const fusionResult = (fusionInput === productLike) ? fusion : fusionScore(fusionInput, mix);
 
-    const combined = fusionResult.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty + budgetBonus + athleticBonus;
+    const materialPrintBonus = getMaterialPrintScore(product, materials, prints);
+
+    const combined = fusionResult.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus + materialPrintBonus - brandPenalty + budgetBonus + athleticBonus;
 
     return { product, combined, fusionScore: fusionResult.totalScore, signals: fusionResult.matchedSignals };
   });
