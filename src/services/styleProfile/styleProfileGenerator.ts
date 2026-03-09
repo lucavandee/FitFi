@@ -175,39 +175,25 @@ export class StyleProfileGenerator {
     temperature: string;
     isNeutral: boolean;
     preferredColors: string[];
+    lightness: string;
+    contrast: string;
   } | null {
     if (!answers || Object.keys(answers).length === 0) {
-      console.warn('[StyleProfileGenerator] analyzeQuizColors: No answers provided');
       return null;
     }
 
-    // Quiz uses "neutrals" (string: 'warm'|'koel'|'neutraal'), NOT "baseColors"
-    // Support legacy field names for backwards compatibility
     const colorPref = answers.neutrals || answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
-    const neutralPreference = typeof answers.neutrals === 'boolean' ? answers.neutrals : (answers.neutral || false);
+    const lightness: string = answers.lightness || 'medium';
+    const contrast: string = answers.contrast || 'medium';
 
-    console.log('[StyleProfileGenerator] analyzeQuizColors input:', {
-      allAnswers: Object.keys(answers),
-      hasNeutrals: !!answers.neutrals,
-      neutrals: answers.neutrals,
-      colorPref,
-      answersCount: Object.keys(answers).length
-    });
-
-    // ✅ If no color preference data at all, derive from style preferences
     if (!colorPref) {
-      console.warn('[StyleProfileGenerator] No baseColors found in quiz answers, using fallback logic');
-
-      // Check if user has ANY answers at all
       const hasStylePreferences = Array.isArray(answers.stylePreferences) && answers.stylePreferences.length > 0;
       const hasGoals = Array.isArray(answers.goals) && answers.goals.length > 0;
 
       if (!hasStylePreferences && !hasGoals) {
-        console.error('[StyleProfileGenerator] No quiz data available for color analysis');
         return null;
       }
 
-      // Derive temperature from style preferences
       let temperature = 'neutraal';
       const preferredColors: string[] = [];
 
@@ -228,18 +214,18 @@ export class StyleProfileGenerator {
       return {
         temperature,
         isNeutral: temperature === 'koel' || preferredColors.includes('zwart') || preferredColors.includes('wit'),
-        preferredColors
+        preferredColors,
+        lightness,
+        contrast,
       };
     }
 
-    // Map quiz answers to temperature
     let temperature = 'neutraal';
     const preferredColors: string[] = [];
 
     if (typeof colorPref === 'string') {
       const pref = colorPref.toLowerCase().trim();
 
-      // Direct quiz values: 'warm' | 'koel' | 'neutraal'
       if (pref === 'warm' || pref.includes('aardse') || pref.includes('beige') || pref.includes('camel') || pref.includes('bruin')) {
         temperature = 'warm';
         preferredColors.push('bruin', 'camel', 'khaki', 'olijfgroen', 'beige');
@@ -256,18 +242,14 @@ export class StyleProfileGenerator {
         temperature = 'warm';
         preferredColors.push('rood', 'elektrischblauw', 'neongeel', 'oranje');
       }
-
-      console.log('[StyleProfileGenerator] Color mapping:', {
-        input: pref,
-        temperature,
-        preferredColors
-      });
     }
 
     return {
       temperature,
-      isNeutral: neutralPreference || preferredColors.length > 0,
-      preferredColors
+      isNeutral: preferredColors.some(c => ['zwart', 'wit', 'grijs', 'beige', 'navy'].includes(c)),
+      preferredColors,
+      lightness,
+      contrast,
     };
   }
 
@@ -479,54 +461,30 @@ export class StyleProfileGenerator {
       };
     }
 
-    // Quiz only
     if (quizColors) {
       const temperature = quizColors.temperature;
+      const contrast = quizColors.contrast;
+      const value = quizColors.lightness;
 
-      // ✅ IMPROVED: Determine chroma based on color selection
       let chroma: string;
-      let contrast: string;
-
-      // Check if user selected bold/vibrant colors
-      const hasBoldColors = quizColors.preferredColors.some(c =>
-        c.includes('rood') || c.includes('blauw') || c.includes('geel') ||
-        c.includes('elektrisch') || c.includes('neon') || c.includes('oranje')
-      );
-
-      // Check if user selected high-contrast colors (zwart + wit)
-      const hasBlackWhite = quizColors.preferredColors.includes('zwart') && quizColors.preferredColors.includes('wit');
-
-      if (hasBoldColors) {
-        chroma = 'gedurfd'; // Bold colors = high chroma
-        contrast = 'hoog';
-      } else if (hasBlackWhite) {
-        chroma = 'gedurfd'; // Zwart/wit = high contrast
-        contrast = 'hoog';
-      } else if (quizColors.isNeutral) {
+      if (contrast === 'hoog') {
+        chroma = 'gedurfd';
+      } else if (contrast === 'laag') {
         chroma = 'zacht';
-        contrast = 'laag';
       } else {
         chroma = 'gemiddeld';
-        contrast = 'medium';
       }
 
-      console.log('[StyleProfileGenerator] Quiz-only profile:', {
-        temperature,
-        chroma,
-        contrast,
-        hasBoldColors,
-        hasBlackWhite,
-        preferredColors: quizColors.preferredColors
-      });
+      const season = this.determineSeasonFromInputs(temperature, value, contrast);
 
       return {
         temperature,
-        value: contrast === 'hoog' ? 'hoog' : contrast === 'laag' ? 'laag' : 'medium',
+        value,
         contrast,
         chroma,
-        season: this.determineSeason(temperature),
-        paletteName: this.buildPaletteName(quizColors.preferredColors, temperature, quizColors.isNeutral),
-        notes: this.buildNotes(quizColors.preferredColors, chroma, contrast)
+        season,
+        paletteName: this.buildPaletteNameFromInputs(temperature, value, contrast),
+        notes: this.buildNotesFromInputs(temperature, value, contrast)
       };
     }
 
@@ -542,71 +500,104 @@ export class StyleProfileGenerator {
     };
   }
 
-  /**
-   * Build palette name from color analysis
-   */
   private static buildPaletteName(colors: string[], temperature: string, isNeutral: boolean): string {
     if (!colors || colors.length === 0) {
       return `${temperature.charAt(0).toUpperCase() + temperature.slice(1)} Neutrals`;
     }
-
-    // Check for black-dominant palette
+    if (colors.some(c => c.includes('zwart')) && colors.some(c => c.includes('wit'))) {
+      return 'Monochrome Contrast (koel)';
+    }
     if (colors.some(c => c.includes('zwart'))) {
-      if (colors.some(c => c.includes('wit'))) {
-        return 'Monochrome Contrast (koel)';
-      }
       return 'Dark Sophisticated (koel)';
     }
-
-    // Check for neutral palette
     if (isNeutral || colors.every(c => ['wit', 'grijs', 'beige', 'camel'].some(n => c.includes(n)))) {
       return `Earthy ${temperature.charAt(0).toUpperCase() + temperature.slice(1)} Neutrals (neutraal)`;
     }
-
-    // Colorful palette
     return `${temperature.charAt(0).toUpperCase() + temperature.slice(1)} Signature Colors`;
   }
 
-  /**
-   * Determine season from temperature
-   */
   private static determineSeason(temperature: string): string {
     if (temperature === 'warm') return 'herfst';
     if (temperature === 'koel') return 'winter';
     return 'lente';
   }
 
-  /**
-   * Build styling notes
-   */
-  private static buildNotes(colors: string[], chroma: string, contrast: string): string[] {
+  private static determineSeasonFromInputs(
+    temperature: string,
+    value: string,
+    contrast: string
+  ): string {
+    if (temperature === 'warm' && value === 'licht') return 'lente';
+    if (temperature === 'warm' && value === 'donker') return 'herfst';
+    if (temperature === 'warm') return contrast === 'hoog' ? 'lente' : 'herfst';
+    if (temperature === 'koel' && value === 'licht') return 'zomer';
+    if (temperature === 'koel' && value === 'donker') return 'winter';
+    if (temperature === 'koel') return contrast === 'hoog' ? 'winter' : 'zomer';
+    if (value === 'licht') return 'lente';
+    if (value === 'donker') return 'herfst';
+    return 'zomer';
+  }
+
+  private static buildPaletteNameFromInputs(
+    temperature: string,
+    value: string,
+    contrast: string
+  ): string {
+    const tempLabel: Record<string, string> = {
+      warm: 'Warm', koel: 'Cool', neutraal: 'Neutral'
+    };
+    const valueLabel: Record<string, string> = {
+      licht: 'Light', medium: 'Medium', donker: 'Deep'
+    };
+    const contrastLabel: Record<string, string> = {
+      laag: 'Tonal', medium: 'Balanced', hoog: 'High-Contrast'
+    };
+    const t = tempLabel[temperature] || 'Neutral';
+    const v = valueLabel[value] || 'Medium';
+    const c = contrastLabel[contrast] || 'Balanced';
+    return `${v} ${t} ${c}`;
+  }
+
+  private static buildNotesFromInputs(
+    temperature: string,
+    value: string,
+    contrast: string
+  ): string[] {
     const notes: string[] = [];
 
-    // Color-based notes
-    if (colors.includes('zwart')) {
-      notes.push('Zwart als basis kleur voor een sterke statement.');
-    }
-    if (colors.includes('wit')) {
-      notes.push('Wit voor helderheid en frisse contrasten.');
-    }
-    if (colors.includes('grijs') || colors.includes('beige')) {
-      notes.push('Neutrale tinten als foundation voor layering.');
-    }
+    const tempNotes: Record<string, string> = {
+      warm: 'Warme aardtinten en goudkleurige accenten als basis.',
+      koel: 'Koele tinten en zilverkleurige accenten als basis.',
+      neutraal: 'Flexibel palet met zowel warme als koele tinten.'
+    };
+    notes.push(tempNotes[temperature] || tempNotes.neutraal);
 
-    // Chroma notes
-    if (chroma === 'gedurfd') {
-      notes.push('Durf kleurcontrasten en statement pieces.');
-    } else if (chroma === 'zacht') {
-      notes.push('Houd het subtiel met tonal combinaties.');
-    }
+    const valueNotes: Record<string, string> = {
+      licht: 'Lichte kleuren en pastelachtige tinten hebben de voorkeur.',
+      medium: 'Middentonen vormen een veelzijdige basis.',
+      donker: 'Diepe, rijke kleuren geven een krachtige uitstraling.'
+    };
+    notes.push(valueNotes[value] || valueNotes.medium);
 
-    // Contrast notes
-    if (contrast === 'hoog') {
-      notes.push('Speel met high-contrast voor impact.');
-    } else if (contrast === 'laag') {
-      notes.push('Vermijd harde contrasten, kies voor flow.');
-    }
+    const contrastNotes: Record<string, string> = {
+      laag: 'Ton-op-toon combinaties voor een rustige harmonie.',
+      medium: 'Gemiddeld contrast voor veelzijdige combinaties.',
+      hoog: 'Sterk contrast tussen licht en donker voor een krachtig effect.'
+    };
+    notes.push(contrastNotes[contrast] || contrastNotes.medium);
 
+    return notes;
+  }
+
+  private static buildNotes(colors: string[], chroma: string, contrast: string): string[] {
+    const notes: string[] = [];
+    if (colors.includes('zwart')) notes.push('Zwart als basis kleur voor een sterke statement.');
+    if (colors.includes('wit')) notes.push('Wit voor helderheid en frisse contrasten.');
+    if (colors.includes('grijs') || colors.includes('beige')) notes.push('Neutrale tinten als foundation voor layering.');
+    if (chroma === 'gedurfd') notes.push('Durf kleurcontrasten en statement pieces.');
+    else if (chroma === 'zacht') notes.push('Houd het subtiel met tonal combinaties.');
+    if (contrast === 'hoog') notes.push('Speel met high-contrast voor impact.');
+    else if (contrast === 'laag') notes.push('Vermijd harde contrasten, kies voor flow.');
     return notes.length > 0 ? notes : ['Tijdloze stukken die bij je stijl passen.'];
   }
 

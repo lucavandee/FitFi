@@ -61,7 +61,7 @@ export type ColorProfile = {
   temperature: "warm" | "koel" | "neutraal";
   value: "licht" | "medium" | "donker";
   contrast: "laag" | "medium" | "hoog";
-  chroma: "zacht" | "helder";
+  chroma: "zacht" | "helder" | "gedurfd" | "gemiddeld";
   season: "lente" | "zomer" | "herfst" | "winter";
   paletteName: string;
   notes: string[];

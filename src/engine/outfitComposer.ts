@@ -1,4 +1,5 @@
 import { isAdultClothingProduct, classifyCategory } from './productFilter';
+import { matchesColorSeason } from './colorSeasonFiltering';
 
 export interface CleanProduct {
   id: string;
@@ -172,7 +173,7 @@ export interface UserPreferences {
   goals?: string[];
   materials?: string[];
   occasions?: string[];
-  colorProfile?: { season?: string; temperature?: string };
+  colorProfile?: { season?: string; temperature?: string; value?: string; contrast?: string };
   budget?: { min: number; max: number };
 }
 
@@ -379,6 +380,28 @@ function buildExplanation(
     parts.push(`afgestemd op een ${fitLabel[prefs.fit] || prefs.fit} pasvorm`);
   }
 
+  if (prefs?.colorProfile) {
+    const cp = prefs.colorProfile;
+    const colorParts: string[] = [];
+    const tempMap: Record<string, string> = { warm: 'warme', koel: 'koele', neutraal: 'neutrale' };
+    const valMap: Record<string, string> = { licht: 'lichte', medium: 'middentoon', donker: 'diepe' };
+    const conMap: Record<string, string> = { laag: 'laag contrast', medium: 'gemiddeld contrast', hoog: 'hoog contrast' };
+
+    if (cp.temperature && tempMap[cp.temperature]) {
+      colorParts.push(tempMap[cp.temperature] + ' tinten');
+    }
+    if (cp.value && valMap[cp.value]) {
+      colorParts.push(valMap[cp.value] + ' kleuren');
+    }
+    if (cp.contrast && conMap[cp.contrast]) {
+      colorParts.push(conMap[cp.contrast]);
+    }
+
+    if (colorParts.length > 0) {
+      parts.push(`kleurkeuze op basis van jouw voorkeur voor ${colorParts.join(', ')}`);
+    }
+  }
+
   if (prefs?.occasions && prefs.occasions.length > 0) {
     const labelMap: Record<string, string> = {
       work: 'werk', casual: 'dagelijks', formal: 'formele gelegenheden',
@@ -519,6 +542,28 @@ function scoreProduct(
     if (prefs.budget) {
       if (p.price >= prefs.budget.min && p.price <= prefs.budget.max) score += 12;
       else if (p.price > prefs.budget.max) score -= 15;
+    }
+
+    if (prefs.colorProfile?.season && p.colors.length > 0) {
+      const cp = prefs.colorProfile as { season: string; temperature?: string; value?: string; contrast?: string };
+      let bestColorScore = 0;
+      for (const c of p.colors) {
+        const result = matchesColorSeason(c, { season: cp.season } as any);
+        if (!result.isAllowed) {
+          score -= 25;
+          break;
+        }
+        if (result.score > bestColorScore) bestColorScore = result.score;
+      }
+      score += bestColorScore * 20;
+
+      if (cp.value === 'donker') {
+        const hasDark = p.colors.some(c => /zwart|donker|dark|navy|bruin|chocolate|charcoal|burgundy|wine/i.test(c));
+        if (hasDark) score += 8;
+      } else if (cp.value === 'licht') {
+        const hasLight = p.colors.some(c => /wit|licht|light|cream|ivory|pastel|beige|off-white|sand/i.test(c));
+        if (hasLight) score += 8;
+      }
     }
   }
 

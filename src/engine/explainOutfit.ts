@@ -14,6 +14,8 @@ export interface ExplainContext {
   goals?: string[];
   prints?: string;
   neutrals?: string;
+  lightness?: string;
+  contrast?: string;
 }
 
 export function generateOutfitExplanation(
@@ -74,6 +76,35 @@ export function generateOutfitExplanation(
   if (ctx?.goals && ctx.goals.length > 0) {
     const topGoals = ctx.goals.slice(0, 2).map(g => goalLabels[g] ?? g);
     base += ` Stijldoel: ${topGoals.join(' en ')}.`;
+  }
+
+  const colorExplainParts: string[] = [];
+  if (ctx?.neutrals) {
+    const tempMap: Record<string, string> = {
+      warm: 'warme kleurtemperatuur',
+      koel: 'koele kleurtemperatuur',
+      neutraal: 'neutrale kleurtemperatuur',
+    };
+    if (tempMap[ctx.neutrals]) colorExplainParts.push(tempMap[ctx.neutrals]);
+  }
+  if (ctx?.lightness) {
+    const valMap: Record<string, string> = {
+      licht: 'lichte tinten',
+      medium: 'middentonen',
+      donker: 'diepe tinten',
+    };
+    if (valMap[ctx.lightness]) colorExplainParts.push(valMap[ctx.lightness]);
+  }
+  if (ctx?.contrast) {
+    const conMap: Record<string, string> = {
+      laag: 'laag contrast (tonal)',
+      medium: 'gemiddeld contrast',
+      hoog: 'hoog contrast',
+    };
+    if (conMap[ctx.contrast]) colorExplainParts.push(conMap[ctx.contrast]);
+  }
+  if (colorExplainParts.length > 0) {
+    base += ` Kleuren afgestemd op jouw ${colorExplainParts.join(', ')}.`;
   }
 
   if (ctx?.prints === 'effen' || ctx?.prints === 'geen') {

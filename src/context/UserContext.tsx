@@ -23,9 +23,9 @@ export interface FitFiUser {
 
 export interface ColorProfile {
   temperature: "warm" | "koel" | "neutraal";
-  value: "licht" | "medium" | "donker";
+  value: "licht" | "medium" | "donker" | string;
   contrast: "laag" | "medium" | "hoog";
-  chroma: "zacht" | "helder";
+  chroma: "zacht" | "helder" | "gedurfd" | "gemiddeld";
   season: "lente" | "zomer" | "herfst" | "winter";
   paletteName: string;
   notes?: string[];
