@@ -82,6 +82,7 @@ export function ShopItemsList({
 }: ShopItemsListProps) {
   const { user } = useUser();
   const [openingProductId, setOpeningProductId] = useState<string | null>(null);
+  const [confirmedProductId, setConfirmedProductId] = useState<string | null>(null);
 
   const handleShopClick = async (product: Product, index: number) => {
     const baseUrl = product.affiliateUrl || product.productUrl;
@@ -94,6 +95,7 @@ export function ShopItemsList({
       return;
     }
 
+    if (openingProductId) return;
     setOpeningProductId(product.id);
 
     try {
@@ -107,37 +109,36 @@ export function ShopItemsList({
         source: 'shop_items_list',
       });
 
+      let targetUrl = baseUrl;
+
       if (isAffiliateConsentGiven()) {
         const clickRef = buildClickRef({
           outfitId: outfitId || product.id,
           slot: index + 1,
           userId: user?.id,
         });
-        const affiliateUrl = buildAwinUrl(baseUrl, clickRef);
+        targetUrl = buildAwinUrl(baseUrl, clickRef);
 
         await logAffiliateClick({
           clickRef,
           outfitId: outfitId || product.id,
-          productUrl: affiliateUrl,
+          productUrl: targetUrl,
           userId: user?.id,
           merchantName: product.retailer,
         });
-
-        window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
-      } else {
-        window.open(baseUrl, '_blank', 'noopener,noreferrer');
       }
 
-      toast.success(`${product.name} opent in nieuw tabblad`, {
-        icon: '🛍️',
-      });
-    } catch (error) {
-      console.error('Error opening shop link:', error);
+      setConfirmedProductId(product.id);
+      await new Promise((resolve) => setTimeout(resolve, 700));
+
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    } catch {
       toast.error('Kon shoplink niet openen', {
         description: 'Probeer het opnieuw of gebruik de directe link.',
       });
     } finally {
       setOpeningProductId(null);
+      setConfirmedProductId(null);
     }
   };
 
@@ -176,6 +177,7 @@ export function ShopItemsList({
       {products.map((product, index) => {
         const hasValidUrl = product.affiliateUrl || product.productUrl;
         const isOpening = openingProductId === product.id;
+        const isConfirmed = confirmedProductId === product.id;
 
         return (
           <motion.div
@@ -241,10 +243,15 @@ export function ShopItemsList({
                     aria-label={`Shop ${product.name} bij ${product.retailer || 'winkel'}`}
                     aria-busy={isOpening}
                   >
-                    {isOpening ? (
+                    {isConfirmed ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        Opent bij {product.retailer || 'winkel'}...
+                      </>
+                    ) : isOpening ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Opent...
+                        Voorbereiden...
                       </>
                     ) : (
                       <>
@@ -278,7 +285,7 @@ export function ShopItemsList({
             <span>
               Affiliate links.{' '}
               <a
-                href="/disclosure"
+                href="/affiliate-disclosure"
                 className="underline hover:no-underline"
                 target="_blank"
                 rel="noopener noreferrer"

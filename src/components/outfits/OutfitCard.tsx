@@ -319,7 +319,7 @@ export default function OutfitCard({
 
   return (
     <motion.div
-      className="group relative rounded-3xl border-2 border-gray-200 bg-white p-5 shadow-lg hover:shadow-2xl transition-all focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-500 overflow-hidden"
+      className="group relative rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)] hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[var(--ff-color-primary-500)] overflow-hidden"
       data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
@@ -328,24 +328,26 @@ export default function OutfitCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
       whileHover={{
-        y: -8,
+        y: -4,
         transition: { type: 'spring', stiffness: 400, damping: 20 }
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      {/* Gradient overlay on hover */}
+      {/* Subtle hover overlay */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'var(--ff-color-primary-50)' }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: isHovered ? 1 : 0 }}
+        animate={{ opacity: isHovered ? 0.4 : 0 }}
         transition={{ duration: 0.3 }}
       />
 
       {/* Match score badge floating */}
       {outfit.matchPercentage && outfit.matchPercentage > 80 && (
         <motion.div
-          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg text-sm font-bold"
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 rounded-full shadow-md text-sm font-bold text-white"
+          style={{ background: 'var(--ff-color-primary-700)' }}
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 15, delay: 0.2 }}
@@ -362,9 +364,10 @@ export default function OutfitCard({
         </div>
       )}
 
-      <div className="relative rounded-2xl overflow-hidden mb-4">
+      <div className="relative rounded-xl overflow-hidden mb-4">
         <motion.div
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/5] shadow-inner"
+          className="relative overflow-hidden rounded-xl aspect-[4/5] shadow-inner"
+          style={{ background: 'var(--ff-color-primary-50)' }}
           whileHover={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
@@ -372,11 +375,10 @@ export default function OutfitCard({
             src={outfit.imageUrl}
             alt={outfit.title || 'Outfit'}
             className="w-full h-full"
-            fallback="/placeholder.png"
+            fallback="/images/fallbacks/default.jpg"
             onLoad={() => setLoaded(true)}
           />
 
-          {/* Image overlay gradient on hover */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"
             initial={{ opacity: 0 }}
@@ -385,108 +387,101 @@ export default function OutfitCard({
           />
         </motion.div>
       </div>
-      
+
       <div className="space-y-3">
         <div>
           <h3
             id={titleId}
-            className="text-lg font-medium text-[var(--color-text)] leading-tight"
+            className="text-base font-semibold text-[var(--color-text)] leading-tight"
           >
             {outfit.title}
           </h3>
-          <p 
+          <p
             id={descId}
-            className="mt-1 text-sm text-gray-600 leading-relaxed"
+            className="mt-1 text-sm text-[var(--color-muted)] leading-relaxed"
           >
             {outfit.description}
           </p>
         </div>
-        
-        {/* Match Score with Explanation Link */}
-        <div className="mt-2 flex items-center justify-between text-sm text-gray-500">
-          <span 
-            className="rounded-full border border-gray-200 px-2 py-0.5 bg-white"
+
+        {/* Match Score + tags */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text)] bg-[var(--color-surface)]"
             role="status"
-            aria-label={`Match percentage: ${Math.round(outfit.matchPercentage || 75)} procent`}
+            aria-label={`Match: ${Math.round(outfit.matchPercentage || 75)} procent`}
           >
             Match {Math.round(outfit.matchPercentage || 75)}%
           </span>
-          
-          <RequireAuth cta="Inloggen voor uitleg">
-            <button
-              onClick={() => setShowExplanationModal(true)}
-              className="flex items-center space-x-1 text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
-              aria-label="Waarom deze match?"
-            >
-              <HelpCircle size={14} />
-              <span className="text-xs">Waarom deze match?</span>
-            </button>
-          </RequireAuth>
-        </div>
-        
-        <div className="mt-2 flex flex-wrap gap-2 text-sm text-gray-500">
           {outfit.currentSeasonLabel && (
-            <span 
-              className="rounded-full border border-gray-200 px-2 py-0.5 bg-white"
-              role="status"
-              aria-label={`Seizoen: ${outfit.currentSeasonLabel}`}
+            <span
+              className="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs text-[var(--color-muted)] bg-[var(--color-surface)]"
             >
               {outfit.currentSeasonLabel}
             </span>
           )}
           {outfit.dominantColorName && (
-            <span 
-              className="rounded-full border border-gray-200 px-2 py-0.5 bg-white"
-              role="status"
-              aria-label={`Dominante kleur: ${outfit.dominantColorName}`}
+            <span
+              className="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs text-[var(--color-muted)] bg-[var(--color-surface)]"
             >
               {outfit.dominantColorName}
             </span>
           )}
+          <RequireAuth cta="Inloggen voor uitleg">
+            <button
+              onClick={() => setShowExplanationModal(true)}
+              className="flex items-center gap-1 text-xs text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors ml-auto"
+              aria-label="Waarom deze match?"
+            >
+              <HelpCircle size={13} />
+              <span>Waarom?</span>
+            </button>
+          </RequireAuth>
         </div>
-        
+
         {/* Explanation */}
         {showExplanation && explanation && (
-          <div className="mt-3 p-3 bg-[var(--color-primary)]/10 rounded-xl border border-[var(--color-primary)]/20">
-            <div className="flex items-start space-x-2 mb-2">
-              <MessageCircle className="w-4 h-4 text-[var(--color-primary)] flex-shrink-0 mt-0.5" />
-              <span className="text-sm font-medium text-[var(--color-primary)]">Nova's uitleg:</span>
+          <div className="mt-2 p-3 rounded-xl border border-[var(--ff-color-primary-200)]" style={{ background: 'var(--ff-color-primary-50)' }}>
+            <div className="flex items-start gap-2 mb-1.5">
+              <MessageCircle className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
+              <span className="text-xs font-semibold text-[var(--ff-color-primary-700)]">Nova's uitleg:</span>
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed">{explanation}</p>
+            <p className="text-xs text-[var(--color-text)] leading-relaxed">{explanation}</p>
             <button
               onClick={() => setShowExplanation(false)}
-              className="mt-2 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+              className="mt-2 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
             >
               Verberg uitleg
             </button>
           </div>
         )}
-        
+
         {/* Explanation Modal */}
         {showExplanationModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div 
+            <div
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowExplanationModal(false)}
             />
-            <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
+            <div className="relative rounded-2xl shadow-2xl max-w-md w-full p-6" style={{ background: 'var(--color-surface)' }}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Waarom deze match?</h3>
+                <h3 className="text-base font-semibold text-[var(--color-text)]">Waarom deze match?</h3>
                 <button
                   onClick={() => setShowExplanationModal(false)}
-                  className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:opacity-70"
+                  style={{ background: 'var(--ff-color-primary-100)' }}
                 >
-                  <X size={16} className="text-gray-600" />
+                  <X size={15} className="text-[var(--ff-color-primary-700)]" />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
-                <div className="bg-[var(--color-primary)]/10 rounded-2xl p-4">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <MessageCircle className="w-4 h-4 text-[var(--color-primary)]" />
-                    <span className="text-sm font-medium text-[var(--color-primary)]">Nova's analyse:</span>
+                <div className="rounded-xl p-4" style={{ background: 'var(--ff-color-primary-50)', border: '1px solid var(--ff-color-primary-200)' }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <MessageCircle className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                    <span className="text-sm font-semibold text-[var(--ff-color-primary-700)]">Nova's analyse:</span>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">
+                  <p className="text-sm text-[var(--color-text)] leading-relaxed">
                     {generateNovaExplanation(
                       {
                         id: outfit.id,
@@ -515,22 +510,23 @@ export default function OutfitCard({
                     )}
                   </p>
                 </div>
-                
+
                 <div className="text-center">
                   <button
                     onClick={() => setShowExplanationModal(false)}
-                    className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-2xl hover:bg-[var(--color-primary)]/90 transition-colors"
+                    className="px-6 py-2.5 rounded-xl font-semibold text-sm text-white transition-colors hover:opacity-90"
+                    style={{ background: 'var(--ff-color-primary-700)' }}
                   >
-                    Begrepen!
+                    Begrepen
                   </button>
                 </div>
               </div>
             </div>
           </div>
         )}
-        
+
         <motion.div
-          className="mt-4 grid grid-cols-2 gap-2 relative z-10"
+          className="mt-3 grid grid-cols-2 gap-2 relative z-10"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -542,21 +538,25 @@ export default function OutfitCard({
               title="Bewaar deze look"
               onClick={handleSave}
               disabled={saveOutfit.isPending}
-              className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-offset-2 overflow-hidden ${
+              className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 overflow-hidden ${
                 saveOutfit.isSuccess || saved
-                  ? 'border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white focus:ring-blue-500/20 shadow-lg'
-                  : 'border-blue-500 text-blue-600 hover:bg-blue-50 focus:ring-blue-500/20'
+                  ? 'text-white'
+                  : 'text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)]'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
-              whileHover={!saveOutfit.isPending ? { scale: 1.03, y: -2 } : {}}
+              style={{
+                borderColor: 'var(--ff-color-primary-600)',
+                background: saveOutfit.isSuccess || saved ? 'var(--ff-color-primary-700)' : undefined,
+              }}
+              whileHover={!saveOutfit.isPending ? { scale: 1.02, y: -1 } : {}}
               whileTap={!saveOutfit.isPending ? { scale: 0.97 } : {}}
             >
               <motion.div
                 className="flex items-center justify-center gap-1.5"
-                animate={saveOutfit.isSuccess || saved ? { scale: [1, 1.2, 1] } : {}}
+                animate={saveOutfit.isSuccess || saved ? { scale: [1, 1.15, 1] } : {}}
                 transition={{ duration: 0.3 }}
               >
                 <Heart className={`w-4 h-4 ${saveOutfit.isSuccess || saved ? 'fill-current' : ''} ${saveOutfit.isPending ? 'animate-pulse' : ''}`} />
-                <span>{saveOutfit.isSuccess ? 'Bewaard ✓' : saveOutfit.isPending ? 'Bewaren…' : 'Bewaar'}</span>
+                <span>{saveOutfit.isSuccess ? 'Bewaard' : saveOutfit.isPending ? 'Bewaren…' : 'Bewaar'}</span>
               </motion.div>
             </motion.button>
           </RequireAuth>
@@ -568,10 +568,10 @@ export default function OutfitCard({
               title="Voeg vergelijkbare outfits toe aan je feed"
               onClick={handleMoreLikeThis}
               disabled={isProcessing.like}
-              className={`px-4 py-2.5 border-2 border-green-500 text-green-600 hover:bg-green-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              whileHover={!isProcessing.like ? { scale: 1.03, y: -2 } : {}}
+              whileHover={!isProcessing.like ? { scale: 1.02, y: -1 } : {}}
               whileTap={!isProcessing.like ? { scale: 0.97 } : {}}
             >
               <div className="flex items-center justify-center gap-1.5">
@@ -589,10 +589,10 @@ export default function OutfitCard({
               title="Verberg dit type outfit uit je feed"
               onClick={handleDislike}
               disabled={isProcessing.dislike}
-              className={`px-4 py-2.5 border-2 border-red-500 text-red-600 hover:bg-red-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-danger-500)] hover:text-[var(--ff-color-danger-600)] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              whileHover={!isProcessing.dislike ? { scale: 1.03, y: -2 } : {}}
+              whileHover={!isProcessing.dislike ? { scale: 1.02, y: -1 } : {}}
               whileTap={!isProcessing.dislike ? { scale: 0.97 } : {}}
             >
               <div className="flex items-center justify-center gap-1.5">
@@ -610,10 +610,10 @@ export default function OutfitCard({
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`px-4 py-2.5 border-2 border-purple-500 text-purple-600 hover:bg-purple-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-400)] hover:text-[var(--ff-color-primary-700)] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              whileHover={!isProcessing.explain ? { scale: 1.03, y: -2 } : {}}
+              whileHover={!isProcessing.explain ? { scale: 1.02, y: -1 } : {}}
               whileTap={!isProcessing.explain ? { scale: 0.97 } : {}}
             >
               <div className="flex items-center justify-center gap-1.5">
@@ -629,8 +629,9 @@ export default function OutfitCard({
               aria-label="Shop deze look"
               title="Bekijk en shop alle items uit dit outfit"
               onClick={handleShopClick}
-              className="col-span-2 px-4 py-2.5 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2"
-              whileHover={{ scale: 1.03, y: -2 }}
+              className="col-span-2 px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 text-white"
+              style={{ borderColor: 'var(--ff-color-primary-700)', background: 'var(--ff-color-primary-700)' }}
+              whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.97 }}
             >
               <div className="flex items-center justify-center gap-2">
@@ -641,10 +642,8 @@ export default function OutfitCard({
           )}
         </motion.div>
       </div>
-      
-      <div ref={explainRef} className="explain text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-        <strong>Waarom dit werkt:</strong> de zachte taupe top kleurt warm bij je huidtint; de rechte pantalon verlengt je silhouet en houdt het minimal-chic.
-      </div>
+
+      <div ref={explainRef} aria-hidden="true" className="sr-only" />
 
       {/* Shop Modal */}
       <AnimatePresence>

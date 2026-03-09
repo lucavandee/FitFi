@@ -492,8 +492,16 @@ export default function OnboardingFlowPage() {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
-    try {
+
+    const SUBMIT_TIMEOUT_MS = 20_000;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('timeout')), SUBMIT_TIMEOUT_MS);
+    });
+
+    const doSubmit = async () => {
       // Get user/session for swipe data
       const client = supabase();
       let userId: string | null = null;
@@ -632,26 +640,32 @@ export default function OnboardingFlowPage() {
 
       setPhase('reveal');
       setIsSubmitting(false);
-    } catch {
-      const fallbackResult = computeResult(answers as any);
+    };
 
+    const applyFallback = () => {
+      const fallbackResult = computeResult(answers as any);
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
       localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(fallbackResult.color));
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(fallbackResult.archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
       localStorage.setItem('ff_sync_status', 'pending');
-
       setRevealData({
         archetype: fallbackResult.archetype || 'Balanced Minimalist',
         archetypeDescription: 'Jouw stijl combineert eenvoud met elegantie. Je waardeert kwaliteit boven kwantiteit.',
         colorProfile: fallbackResult.color
       });
-
       toast.error('Er ging iets mis bij het opslaan, maar je resultaten zijn lokaal bewaard.');
-
       setPhase('reveal');
       setIsSubmitting(false);
+    };
+
+    try {
+      await Promise.race([doSubmit(), timeoutPromise]);
+    } catch {
+      applyFallback();
+    } finally {
+      clearTimeout(timeoutId);
     }
   };
 
