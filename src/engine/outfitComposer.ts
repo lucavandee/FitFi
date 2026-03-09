@@ -15,6 +15,7 @@ export interface CleanProduct {
   description: string;
   retailer: string;
   tags: string[];
+  athleticIntent?: number;
 }
 
 export interface ComposedOutfit {
@@ -199,6 +200,34 @@ function resolveOccasions(
   return ARCHETYPE_OCCASIONS[archetype] || ARCHETYPE_OCCASIONS.SMART_CASUAL;
 }
 
+const PERFORMANCE_BRAND_REGEX = /^(Nike|Adidas|Puma|Reebok|Asics|Under Armour|New Balance|Fila|Ellesse|Kappa|Umbro|Diadora)$/i;
+const LIFESTYLE_LINE_REGEX = /\bOriginals\b|\bSportswear\b|\bLifestyle\b|\bClassics\b|\bRetro\b|\bHeritage\b/i;
+const PERFORMANCE_NAME_REGEX = /\b(training|trainings|running|run\b|hardloop|performance|dri-?fit|cloudspun|dryelite|aeroready|climalite|climacool|techfit|compression|basislaag|baselayer|pro\s+tight|track\s*pant|track\s*jacket|sport\s*tight|gym|workout|hiit|hyrox)\b/i;
+const LIFESTYLE_NAME_REGEX = /\b(essentials?\b|graphic|print|logo|street|glam|wardrobe|fashion|jeans|oversized|relaxed\s+shirt|lifestyle|originals|classics|retro|vintage|heritage)\b/i;
+const TEAM_SPORT_REGEX = /\b(Marseille|Arsenal|Milan|Borussia|Barcelona|Bayern|Liverpool|Chelsea|Manchester|Dortmund|Ferrari|McLaren|Red\s*Bull|Racing|Motorsport|voetbal|football|soccer|rugby|hockey|thuisshirt|uitshirt|thuistenue|uittenue)\b/i;
+
+function deriveAthleticIntent(p: CleanProduct): number {
+  const brandMatch = PERFORMANCE_BRAND_REGEX.test(p.brand);
+  if (!brandMatch) return 0;
+
+  const fullBrand = p.brand;
+  const text = `${p.name} ${p.description}`;
+
+  if (TEAM_SPORT_REGEX.test(text) || TEAM_SPORT_REGEX.test(fullBrand)) return 0;
+
+  const isLifestyleLine = LIFESTYLE_LINE_REGEX.test(fullBrand);
+  const hasPerformanceSignal = PERFORMANCE_NAME_REGEX.test(text);
+  const hasLifestyleSignal = LIFESTYLE_NAME_REGEX.test(text);
+
+  if (isLifestyleLine && !hasPerformanceSignal) return 0.15;
+  if (hasPerformanceSignal && !hasLifestyleSignal) return 1.0;
+  if (hasPerformanceSignal && hasLifestyleSignal) return 0.6;
+  if (!hasPerformanceSignal && hasLifestyleSignal) return 0.1;
+
+  if (p.category === 'footwear') return 0.4;
+  return 0.3;
+}
+
 export function composeOutfits(
   rawRows: Record<string, any>[],
   archetype: string,
@@ -208,21 +237,25 @@ export function composeOutfits(
 ): ComposedOutfit[] {
   const clean = rawRows.filter(isAdultClothingProduct);
 
-  const products: CleanProduct[] = clean.map(r => ({
-    id: r.id,
-    name: r.name || r.title || '',
-    brand: r.brand || '',
-    price: typeof r.price === 'number' ? r.price : parseFloat(r.price) || 0,
-    imageUrl: r.image_url || r.imageUrl || '',
-    url: r.affiliate_url || r.product_url || '',
-    category: classifyCategory(r),
-    colors: Array.isArray(r.colors) ? r.colors : [],
-    style: r.style || 'casual',
-    gender: r.gender || 'unisex',
-    description: r.description || '',
-    retailer: r.retailer || '',
-    tags: Array.isArray(r.tags) ? r.tags : [],
-  })).filter(p => p.category !== 'other' && p.imageUrl && p.url);
+  const products: CleanProduct[] = clean.map(r => {
+    const base: CleanProduct = {
+      id: r.id,
+      name: r.name || r.title || '',
+      brand: r.brand || '',
+      price: typeof r.price === 'number' ? r.price : parseFloat(r.price) || 0,
+      imageUrl: r.image_url || r.imageUrl || '',
+      url: r.affiliate_url || r.product_url || '',
+      category: classifyCategory(r),
+      colors: Array.isArray(r.colors) ? r.colors : [],
+      style: r.style || 'casual',
+      gender: r.gender || 'unisex',
+      description: r.description || '',
+      retailer: r.retailer || '',
+      tags: Array.isArray(r.tags) ? r.tags : [],
+    };
+    base.athleticIntent = deriveAthleticIntent(base);
+    return base;
+  }).filter(p => p.category !== 'other' && p.imageUrl && p.url);
 
   if (gender && gender !== 'unisex') {
     const genFiltered = products.filter(p => p.gender === gender || p.gender === 'unisex');
@@ -524,6 +557,14 @@ function scoreProduct(
   else if (styleIdx >= 2) score += 10;
   else score += 3;
 
+  const blueprintWantsAthletic = blueprint.preferredStyles.includes('athletic');
+  const intent = p.athleticIntent ?? 0;
+  if (blueprintWantsAthletic && intent > 0) {
+    score += Math.round(intent * 35);
+  } else if (!blueprintWantsAthletic && intent >= 0.8) {
+    score -= 15;
+  }
+
   const formality = formalityScore(p);
   const targetFormality = blueprint.formalityHint === 'formal' ? 0.8 : blueprint.formalityHint === 'smart' ? 0.6 : 0.3;
   score += (1 - Math.abs(formality - targetFormality)) * 15;
@@ -630,8 +671,13 @@ function calculateOutfitScore(
 ): number {
   let score = 60;
 
-  const styleMatches = products.filter(p => blueprint.preferredStyles.includes(p.style)).length;
-  score += (styleMatches / products.length) * 15;
+  let styleMatches = products.filter(p => blueprint.preferredStyles.includes(p.style)).length;
+  if (blueprint.preferredStyles.includes('athletic')) {
+    styleMatches += products.filter(p =>
+      !blueprint.preferredStyles.includes(p.style) && (p.athleticIntent ?? 0) >= 0.5
+    ).length;
+  }
+  score += (Math.min(styleMatches, products.length) / products.length) * 15;
 
   const brands = new Set(products.map(p => p.brand.toLowerCase()));
   const diversityRatio = brands.size / products.length;
