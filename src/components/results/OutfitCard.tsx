@@ -23,7 +23,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   title,
   description,
   images,
-  shopLink = "#shop",
+  shopLink,
   className = "",
   outfit,
   userId,
@@ -140,14 +140,21 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
               </button>
             ))}
           </div>
-        ) : (
+        ) : shopLink ? (
           <a
             href={shopLink}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] transition-colors"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             Shop vergelijkbare items
           </a>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-muted)] cursor-default select-none">
+            <ShoppingBag className="w-3.5 h-3.5 opacity-40" aria-hidden="true" />
+            Nog geen shoplinks beschikbaar
+          </span>
         )}
       </div>
 

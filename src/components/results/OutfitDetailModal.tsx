@@ -14,7 +14,7 @@ interface OutfitDetailModalProps {
   favs: string[];
   allOutfits: any[];
   archetypeName: string;
-  activeColorProfile: ColorProfile;
+  activeColorProfile: ColorProfile | null;
   colorProfile: ColorProfile | null;
 }
 
@@ -142,11 +142,20 @@ export function OutfitDetailModal({
                   Kleuradvies
                 </p>
                 <p className="text-sm text-[var(--color-text)] leading-relaxed">
-                  Kleuren afgestemd op jouw kleurprofiel{" "}
-                  <span className="font-semibold text-[var(--ff-color-primary-700)]">
-                    {colorProfile.paletteName || colorProfile.season || ""}
-                  </span>
-                  .
+                  {(() => {
+                    const profileLabel = colorProfile.paletteName || colorProfile.season;
+                    return profileLabel ? (
+                      <>
+                        Kleuren afgestemd op jouw kleurprofiel{" "}
+                        <span className="font-semibold text-[var(--ff-color-primary-700)]">
+                          {profileLabel}
+                        </span>
+                        .
+                      </>
+                    ) : (
+                      "Kleuren afgestemd op jouw persoonlijke kleurprofiel."
+                    );
+                  })()}
                 </p>
               </div>
             )}
