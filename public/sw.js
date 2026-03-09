@@ -69,6 +69,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Bypass SW for cross-origin retailer image requests.
+  // These are product images from external retailers (giglio, hm, puma, onlyformen, etc.).
+  // The browser handles them directly via img-src CSP — routing them through SW fetch()
+  // triggers connect-src violations because SW fetch is treated as a connection, not an image load.
+  if (url.origin !== self.location.origin && CACHE_STRATEGIES.images.some((pattern) => pattern.test(request.url))) {
+    return;
+  }
+
   if (CACHE_STRATEGIES.images.some((pattern) => pattern.test(request.url))) {
     event.respondWith(cacheFirstStrategy(request, IMAGE_CACHE));
   } else if (CACHE_STRATEGIES.static.some((pattern) => pattern.test(request.url))) {
