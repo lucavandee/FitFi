@@ -227,3 +227,41 @@ export function enrichProduct(product: Product): Product & { _signals: EnrichedS
 export function enrichProducts(products: Product[]): (Product & { _signals: EnrichedSignals })[] {
   return products.map(enrichProduct);
 }
+
+const PERF_BRAND_RE = /^(Nike|Adidas|Puma|Reebok|Asics|Under Armour|New Balance|Fila|Ellesse|Kappa|Umbro|Diadora)$/i;
+const LIFESTYLE_LINE_RE = /\bOriginals\b|\bSportswear\b|\bLifestyle\b|\bClassics\b|\bRetro\b|\bHeritage\b/i;
+const PERF_NAME_RE = /\b(training|trainings|running|run\b|hardloop|performance|dri-?fit|cloudspun|dryelite|aeroready|climalite|climacool|techfit|compression|basislaag|baselayer|pro\s+tight|track\s*pant|track\s*jacket|sport\s*tight|gym|workout|hiit|hyrox)\b/i;
+const LIFESTYLE_NAME_RE = /\b(essentials?\b|graphic|print|logo|street|glam|wardrobe|fashion|jeans|oversized|relaxed\s+shirt|lifestyle|originals|classics|retro|vintage|heritage)\b/i;
+const TEAM_SPORT_RE = /\b(Marseille|Arsenal|Milan|Borussia|Barcelona|Bayern|Liverpool|Chelsea|Manchester|Dortmund|Ferrari|McLaren|Red\s*Bull|Racing|Motorsport|voetbal|football|soccer|rugby|hockey|thuisshirt|uitshirt|thuistenue|uittenue)\b/i;
+
+/**
+ * Returns a 0-1 score indicating how strongly a product signals athletic/performance use.
+ * 0   = no athletic signal (lifestyle brand or non-performance brand)
+ * 0.1 = lifestyle variant of a performance brand
+ * 0.3 = unclassified performance brand product (e.g. accessories)
+ * 0.4 = footwear from a performance brand (likely training/running shoe)
+ * 0.6 = mixed performance+lifestyle signals
+ * 1.0 = clear performance product (running, training, gym)
+ *
+ * Non-performance brands always return 0.
+ * Team-sport kits always return 0 (jersey, football kit — not lifestyle relevant).
+ */
+export function deriveAthleticIntent(brand: string, name: string, description: string, category: string): number {
+  if (!PERF_BRAND_RE.test(brand)) return 0;
+
+  const text = `${name} ${description}`;
+
+  if (TEAM_SPORT_RE.test(text) || TEAM_SPORT_RE.test(brand)) return 0;
+
+  const isLifestyleLine = LIFESTYLE_LINE_RE.test(brand);
+  const hasPerformanceSignal = PERF_NAME_RE.test(text);
+  const hasLifestyleSignal = LIFESTYLE_NAME_RE.test(text);
+
+  if (isLifestyleLine && !hasPerformanceSignal) return 0.15;
+  if (hasPerformanceSignal && !hasLifestyleSignal) return 1.0;
+  if (hasPerformanceSignal && hasLifestyleSignal) return 0.6;
+  if (!hasPerformanceSignal && hasLifestyleSignal) return 0.1;
+
+  if (category === 'footwear') return 0.4;
+  return 0.3;
+}

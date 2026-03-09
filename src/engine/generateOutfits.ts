@@ -8,7 +8,7 @@ import { fusionScore, normalizeWeights } from './archetypeFusion';
 import type { ArchetypeKey } from '@/config/archetypes';
 import type { ArchetypeWeights, ProductLike } from '@/types/style';
 import type { ColorProfile } from '@/lib/quiz/types';
-import { enrichProduct, type EnrichedSignals } from './productEnricher';
+import { enrichProduct, deriveAthleticIntent, type EnrichedSignals } from './productEnricher';
 import {
   getCurrentSeason,
   getProductCategory,
@@ -1148,7 +1148,19 @@ function selectProductForCategory(
       }
     }
 
-    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty + budgetBonus;
+    const athleticIntent = deriveAthleticIntent(
+      product.brand || '',
+      product.name || '',
+      product.description || '',
+      product.category || '',
+    );
+    const wantsAthletic = primaryKey === 'ATHLETIC';
+    const athleticBonus = wantsAthletic && athleticIntent >= 0.8 ? 0.20
+      : wantsAthletic && athleticIntent >= 0.4 ? 0.08
+      : !wantsAthletic && athleticIntent >= 0.8 ? -0.15
+      : 0;
+
+    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty + budgetBonus + athleticBonus;
 
     return { product, combined, fusionScore: fusion.totalScore, signals: fusion.matchedSignals };
   });

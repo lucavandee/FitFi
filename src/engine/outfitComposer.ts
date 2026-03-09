@@ -1,5 +1,6 @@
 import { isAdultClothingProduct, classifyCategory } from './productFilter';
 import { matchesColorSeason } from './colorSeasonFiltering';
+import { deriveAthleticIntent as _deriveAthleticIntentFromEnricher } from './productEnricher';
 
 export interface CleanProduct {
   id: string;
@@ -200,32 +201,8 @@ function resolveOccasions(
   return ARCHETYPE_OCCASIONS[archetype] || ARCHETYPE_OCCASIONS.SMART_CASUAL;
 }
 
-const PERFORMANCE_BRAND_REGEX = /^(Nike|Adidas|Puma|Reebok|Asics|Under Armour|New Balance|Fila|Ellesse|Kappa|Umbro|Diadora)$/i;
-const LIFESTYLE_LINE_REGEX = /\bOriginals\b|\bSportswear\b|\bLifestyle\b|\bClassics\b|\bRetro\b|\bHeritage\b/i;
-const PERFORMANCE_NAME_REGEX = /\b(training|trainings|running|run\b|hardloop|performance|dri-?fit|cloudspun|dryelite|aeroready|climalite|climacool|techfit|compression|basislaag|baselayer|pro\s+tight|track\s*pant|track\s*jacket|sport\s*tight|gym|workout|hiit|hyrox)\b/i;
-const LIFESTYLE_NAME_REGEX = /\b(essentials?\b|graphic|print|logo|street|glam|wardrobe|fashion|jeans|oversized|relaxed\s+shirt|lifestyle|originals|classics|retro|vintage|heritage)\b/i;
-const TEAM_SPORT_REGEX = /\b(Marseille|Arsenal|Milan|Borussia|Barcelona|Bayern|Liverpool|Chelsea|Manchester|Dortmund|Ferrari|McLaren|Red\s*Bull|Racing|Motorsport|voetbal|football|soccer|rugby|hockey|thuisshirt|uitshirt|thuistenue|uittenue)\b/i;
-
 function deriveAthleticIntent(p: CleanProduct): number {
-  const brandMatch = PERFORMANCE_BRAND_REGEX.test(p.brand);
-  if (!brandMatch) return 0;
-
-  const fullBrand = p.brand;
-  const text = `${p.name} ${p.description}`;
-
-  if (TEAM_SPORT_REGEX.test(text) || TEAM_SPORT_REGEX.test(fullBrand)) return 0;
-
-  const isLifestyleLine = LIFESTYLE_LINE_REGEX.test(fullBrand);
-  const hasPerformanceSignal = PERFORMANCE_NAME_REGEX.test(text);
-  const hasLifestyleSignal = LIFESTYLE_NAME_REGEX.test(text);
-
-  if (isLifestyleLine && !hasPerformanceSignal) return 0.15;
-  if (hasPerformanceSignal && !hasLifestyleSignal) return 1.0;
-  if (hasPerformanceSignal && hasLifestyleSignal) return 0.6;
-  if (!hasPerformanceSignal && hasLifestyleSignal) return 0.1;
-
-  if (p.category === 'footwear') return 0.4;
-  return 0.3;
+  return _deriveAthleticIntentFromEnricher(p.brand, p.name, p.description, p.category);
 }
 
 export function composeOutfits(
