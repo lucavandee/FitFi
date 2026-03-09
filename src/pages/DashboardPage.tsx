@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowRight, Camera, Check, ChevronRight,
@@ -70,6 +70,7 @@ function getArchetypeCopy(name: string | null) {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user: ctxUser } = useUser();
   const [userName, setUserName] = React.useState("");
   const [userInitial, setUserInitial] = React.useState("?");
@@ -116,6 +117,14 @@ export default function DashboardPage() {
       setFavCount(Array.isArray(favs) ? favs.length : 0);
     } catch { setFavCount(0); }
   }, []);
+
+  React.useEffect(() => {
+    if (searchParams.get("checkout") === "success") {
+      import("@/utils/telemetry").then(({ default: track }) => {
+        track("checkout_success", { tier: ctxUser?.tier || "unknown" });
+      }).catch(() => {});
+    }
+  }, [searchParams, ctxUser?.tier]);
 
   const greeting = React.useMemo(() => {
     const h = new Date().getHours();

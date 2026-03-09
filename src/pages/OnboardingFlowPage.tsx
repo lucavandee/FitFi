@@ -20,6 +20,7 @@ import { PhaseTransition } from "@/components/quiz/PhaseTransition";
 import { ArchetypePreviewEnhanced as ArchetypePreview } from "@/components/quiz/ArchetypePreviewEnhanced";
 import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
+import track from "@/utils/telemetry";
 
 type QuizAnswers = {
   gender?: string;
@@ -238,6 +239,8 @@ export default function OnboardingFlowPage() {
     autosave(updated, currentStep, phase);
     setAttemptedNext(false);
 
+    track("quiz_answer", { field, step: currentStep, phase, value: typeof value === 'object' ? JSON.stringify(value) : value });
+
     setLastAnsweredField(field);
     setShowNovaReaction(true);
     setTimeout(() => setShowNovaReaction(false), 3500);
@@ -322,6 +325,7 @@ export default function OnboardingFlowPage() {
 
   const handleSaveAndContinueLater = () => {
     autosave(answers);
+    track("quiz_saved_for_later", { phase, step: currentStep, answeredFields: Object.keys(answers).length });
     toast.success('Je antwoorden zijn opgeslagen. Je kunt later verdergaan.');
     navigate('/');
   };
@@ -331,6 +335,7 @@ export default function OnboardingFlowPage() {
     setShowReviewModal(false);
     setTransitionTo('swipes');
     setShowTransition(true);
+    track("quiz_phase_complete", { phase: "questions", step: currentStep, answeredFields: Object.keys(answers).length });
   };
 
   const handleTransitionComplete = () => {
@@ -345,10 +350,12 @@ export default function OnboardingFlowPage() {
     setAnswers(prev => ({ ...prev, visualPreferencesCompleted: true }));
     setTransitionTo('calibration');
     setShowTransition(true);
+    track("quiz_phase_complete", { phase: "swipes" });
   };
 
   const handleCalibrationComplete = async () => {
     setAnswers(prev => ({ ...prev, calibrationCompleted: true }));
+    track("quiz_phase_complete", { phase: "calibration" });
     await handleSubmit();
   };
 
@@ -371,10 +378,9 @@ export default function OnboardingFlowPage() {
   };
 
   const confirmCancel = () => {
-    // Clear any local storage quiz data
+    track("quiz_abandoned", { phase, step: currentStep, answeredFields: Object.keys(answers).length });
     localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
     localStorage.removeItem('ff_session_id');
-    // Navigate to home
     navigate('/');
   };
 
@@ -608,6 +614,15 @@ export default function OnboardingFlowPage() {
       }
 
       localStorage.setItem('ff_sync_status', syncSuccess ? 'synced' : 'pending');
+
+      track("quiz_completed", {
+        archetype: archetype || 'Balanced Minimalist',
+        answeredFields: Object.keys(answers).length,
+        hasPhoto: !!answers.photoUrl,
+        hasVisualPreferences: !!answers.visualPreferencesCompleted,
+        hasCalibration: !!answers.calibrationCompleted,
+        syncSuccess,
+      });
 
       setRevealData({
         archetype: archetype || 'Balanced Minimalist',

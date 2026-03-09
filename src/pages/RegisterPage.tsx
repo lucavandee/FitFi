@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Shield, Lock, ArrowRight, Loader as Loader2, CircleC
 import Seo from "@/components/seo/Seo";
 import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
+import track from "@/utils/telemetry";
 import {
   emailErrors, passwordErrors, getSupabaseAuthError,
   type ErrorMessage,
@@ -96,6 +97,7 @@ const RegisterPage: React.FC = () => {
     try {
       const displayName = email.split("@")[0];
       await register(email, password, displayName);
+      track("registration_success", { source: fromPath || "direct" });
       toast.success("Account aangemaakt! Je bent nu ingelogd.");
       setTimeout(() => navigate("/onboarding"), 400);
     } catch (err: unknown) {
@@ -109,6 +111,7 @@ const RegisterPage: React.FC = () => {
       } else {
         setServerError(getSupabaseAuthError(err));
       }
+      track("registration_error", { reason: (err as Error)?.message || "unknown" });
     } finally {
       setLoading(false);
     }

@@ -42,6 +42,7 @@ import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
 import { ShareModal } from "@/components/results/ShareModal";
 import { canonicalUrl } from "@/utils/urls";
+import track from "@/utils/telemetry";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -91,6 +92,7 @@ export default function EnhancedResultsPage() {
         localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       }
     } catch {}
+    track("results_page_viewed", { authenticated: !!user });
   }, []);
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);

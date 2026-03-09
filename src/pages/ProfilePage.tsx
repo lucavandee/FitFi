@@ -13,8 +13,10 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { QuizResetModal } from "@/components/profile/QuizResetModal";
 import { EmailPreferences } from "@/components/profile/EmailPreferences";
 import { CookieSettings } from "@/components/profile/CookieSettings";
+import SavedOutfitHistory from "@/components/profile/SavedOutfitHistory";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { Heart } from "lucide-react";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -474,6 +476,12 @@ const ProfilePage: React.FC = () => {
                   </SectionCard>
                 </div>
               )}
+
+              {/* Opgeslagen outfits */}
+              <div>
+                <SectionLabel>Opgeslagen outfits</SectionLabel>
+                <SavedOutfitHistory userId={user.id} />
+              </div>
 
               {/* Kleuranalyse foto */}
               <div>

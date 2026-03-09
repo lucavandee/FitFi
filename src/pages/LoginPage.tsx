@@ -5,6 +5,7 @@ import { Eye, EyeOff, CircleCheck as CheckCircle2, Shield, Lock, ArrowRight, Loa
 import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
+import track from "@/utils/telemetry";
 import { SecurityLogger } from "@/services/security/securityLogger";
 import {
   emailErrors,
@@ -75,6 +76,7 @@ export default function LoginPage() {
       const success = await login(email, password);
 
       if (success) {
+        track("login_success", { source: fromPath || "direct" });
         setTimeout(async () => {
           try {
             const { getSupabase } = await import("@/lib/supabase");

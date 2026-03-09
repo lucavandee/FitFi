@@ -126,7 +126,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .catch(() => { setStatus('unauthenticated'); });
 
     const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
-      initSession(session).catch(() => {});
+      (async () => {
+        try { await initSession(session); } catch {}
+      })();
     });
 
     return () => {
@@ -209,7 +211,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!sb) return false;
     try {
       const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}/wachtwoord-vergeten`,
       });
       return !error;
     } catch {

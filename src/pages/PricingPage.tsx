@@ -22,6 +22,7 @@ import { useStripeProducts } from "@/hooks/useStripeProducts";
 import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
+import track from "@/utils/telemetry";
 
 const FEATURE_ROWS: Array<{
   label: string;
@@ -101,8 +102,13 @@ export default function PricingPage() {
   const premiumProduct = products?.find((p) => p.interval === "month");
 
   useEffect(() => {
+    track("pricing_page_viewed", {});
+  }, []);
+
+  useEffect(() => {
     const checkoutStatus = searchParams.get("checkout");
     if (checkoutStatus === "cancelled") {
+      track("checkout_cancelled", { returnedTo: "pricing" });
       setShowCancelBanner(true);
       const timer = setTimeout(() => {
         navigate("/prijzen", { replace: true });
@@ -117,10 +123,14 @@ export default function PricingPage() {
   };
 
   const handleCheckout = async (productId: string) => {
+    const planType = productId === founderProduct?.id ? "founder" : "premium";
+    track("checkout_initiated", { productId, plan: planType });
+
     setCheckingAuth(true);
     const client = supabase();
     if (!client) {
       setCheckingAuth(false);
+      track("checkout_error", { reason: "no_client", plan: planType });
       toast.error("Verbinding niet beschikbaar. Probeer het later opnieuw.");
       return;
     }
@@ -129,6 +139,7 @@ export default function PricingPage() {
     } = await client.auth.getSession();
     if (!session) {
       setCheckingAuth(false);
+      track("checkout_blocked", { reason: "unauthenticated", plan: planType });
       toast.error("Log eerst in om te kunnen upgraden");
       navigate("/login?redirect=/prijzen");
       return;
@@ -136,9 +147,13 @@ export default function PricingPage() {
     setCheckingAuth(false);
     try {
       const result = await createCheckout.mutateAsync({ productId });
-      if (result.url) window.location.href = result.url;
+      if (result.url) {
+        track("checkout_redirect", { plan: planType });
+        window.location.href = result.url;
+      }
     } catch (error: any) {
       const msg = error.message || "Er ging iets mis. Probeer het opnieuw.";
+      track("checkout_error", { reason: msg, plan: planType });
       if (msg.includes("not configured") || msg.includes("STRIPE_SECRET_KEY")) {
         toast.error("Betalingen zijn momenteel niet beschikbaar.");
       } else {
