@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart, Share2, Sparkles, ShoppingBag, AlertCircle } from "lucide-react";
+import { X, Heart, Share2, Sparkles, ShoppingBag, CircleAlert as AlertCircle } from "lucide-react";
 import { StyleDNAMatchBadge } from "../outfits/StyleDNAMatchBadge";
 import toast from "react-hot-toast";
 import { NavLink } from "react-router-dom";
