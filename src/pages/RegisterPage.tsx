@@ -52,8 +52,14 @@ const STEPS = [
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { register } = useUser();
+  const { register, user, status } = useUser();
   const fromPath = (location.state as { from?: string })?.from;
+
+  React.useEffect(() => {
+    if (status === 'authenticated' && user) {
+      navigate(fromPath || '/dashboard', { replace: true });
+    }
+  }, [status, user, fromPath, navigate]);
 
   const comingFromResults =
     typeof fromPath === "string" && fromPath.startsWith("/results");

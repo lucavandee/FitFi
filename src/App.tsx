@@ -206,8 +206,8 @@ function AppShell() {
                 <Route path="/admin/daisycon-import" element={<RequireAuth><WithSeo.AdminDaisyconImport /></RequireAuth>} />
                 <Route path="/admin/affiliate-campaigns" element={<RequireAuth><WithSeo.AdminAffiliateCampaigns /></RequireAuth>} />
 
-                {/* Accessibility Test (dev/admin only) */}
-                <Route path="/accessibility-test" element={<WithSeo.AccessibilityTest />} />
+                {/* Accessibility Test (admin only) */}
+                <Route path="/accessibility-test" element={<RequireAuth><WithSeo.AccessibilityTest /></RequireAuth>} />
 
                 {/* 404 */}
                 <Route path="*" element={<WithSeo.NotFound />} />
