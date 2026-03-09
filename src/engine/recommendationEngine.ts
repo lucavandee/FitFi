@@ -243,6 +243,7 @@ export function generateRecommendationsFromAnswers(
       comfort: answers.comfort,
       materials: Array.isArray(answers.materials) ? answers.materials : [],
       colorProfile: answers.colorProfile,
+      budget: budgetMax !== undefined ? { min: 0, max: budgetMax } : undefined,
     }
   );
 

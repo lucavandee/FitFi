@@ -279,6 +279,20 @@ export function composeOutfits(
   return outfits;
 }
 
+function perItemCeiling(budget: { min: number; max: number } | undefined): number {
+  if (!budget || budget.max <= 0) return Infinity;
+  return budget.max * 1.35;
+}
+
+function budgetFilterPool(
+  pool: CleanProduct[],
+  itemCeiling: number,
+): CleanProduct[] {
+  if (itemCeiling === Infinity) return pool;
+  const withinBudget = pool.filter(p => p.price <= itemCeiling);
+  return withinBudget.length >= 2 ? withinBudget : pool;
+}
+
 function buildOutfit(
   byCategory: Record<string, CleanProduct[]>,
   blueprint: OccasionBlueprint,
@@ -291,11 +305,14 @@ function buildOutfit(
 ): ComposedOutfit | null {
   const selected: CleanProduct[] = [];
   const selectedBrands = new Set<string>();
+  const itemCeiling = perItemCeiling(prefs?.budget);
 
   for (const cat of blueprint.required) {
-    const pool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id) && p.price >= blueprint.priceFloor);
+    let pool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id) && p.price >= blueprint.priceFloor);
+    pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) {
-      const fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
+      let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
+      fallbackPool = budgetFilterPool(fallbackPool, itemCeiling);
       if (fallbackPool.length === 0) return null;
       const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs);
       if (!pick) return null;
@@ -313,8 +330,10 @@ function buildOutfit(
   const bottomId = selected.find(p => p.category === 'bottom')?.id || '';
   const comboKey = `${topId}-${bottomId}`;
   if (usedCombos.has(comboKey)) {
-    const altBottom = (byCategory['bottom'] || [])
-      .filter(p => !usedIds.has(p.id) && p.id !== bottomId && p.price >= blueprint.priceFloor)
+    let altPool = (byCategory['bottom'] || [])
+      .filter(p => !usedIds.has(p.id) && p.id !== bottomId && p.price >= blueprint.priceFloor);
+    altPool = budgetFilterPool(altPool, itemCeiling);
+    const altBottom = altPool
       .sort((a, b) => scoreProduct(b, blueprint, archetype, selectedBrands, selected, prefs) - scoreProduct(a, blueprint, archetype, selectedBrands, selected, prefs))[0];
     if (altBottom) {
       const idx = selected.findIndex(p => p.category === 'bottom');
@@ -326,9 +345,10 @@ function buildOutfit(
   usedCombos.add(newComboKey);
 
   for (const cat of blueprint.optional) {
-    const pool = (byCategory[cat] || []).filter(p =>
+    let pool = (byCategory[cat] || []).filter(p =>
       !usedIds.has(p.id) && p.price >= blueprint.priceFloor
     );
+    pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) continue;
     const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs);
     if (pick) {
@@ -345,7 +365,7 @@ function buildOutfit(
     || selected[0];
 
   const matchScore = calculateOutfitScore(selected, blueprint, archetype);
-  const explanation = buildExplanation(selected, blueprint, archetype, prefs);
+  const explanation = buildExplanation(selected, blueprint, archetype, prefs, totalPrice);
 
   return {
     id: `outfit-${archetype}-${blueprint.label}-${index}`,
@@ -363,6 +383,7 @@ function buildExplanation(
   blueprint: OccasionBlueprint,
   archetype: string,
   prefs?: UserPreferences,
+  totalPrice?: number,
 ): string {
   const parts: string[] = [];
   const styleMatches = products.filter(p => blueprint.preferredStyles.includes(p.style));
@@ -399,6 +420,15 @@ function buildExplanation(
 
     if (colorParts.length > 0) {
       parts.push(`kleurkeuze op basis van jouw voorkeur voor ${colorParts.join(', ')}`);
+    }
+  }
+
+  if (prefs?.budget && prefs.budget.max > 0 && totalPrice !== undefined) {
+    const max = prefs.budget.max;
+    if (totalPrice <= max) {
+      parts.push(`binnen jouw budget van \u20AC${max} per stuk`);
+    } else {
+      parts.push(`let op: enkele items liggen boven jouw budget van \u20AC${max} door beperkte beschikbaarheid`);
     }
   }
 
@@ -539,9 +569,16 @@ function scoreProduct(
       if (prefs.goals.includes('professional') && /business|office|professioneel|kantoor/i.test(text)) score += 6;
     }
 
-    if (prefs.budget) {
-      if (p.price >= prefs.budget.min && p.price <= prefs.budget.max) score += 12;
-      else if (p.price > prefs.budget.max) score -= 15;
+    if (prefs.budget && prefs.budget.max > 0) {
+      const max = prefs.budget.max;
+      if (p.price <= max) {
+        score += 20;
+        const ratio = p.price / max;
+        if (ratio >= 0.3 && ratio <= 0.9) score += 10;
+      } else {
+        const overshoot = (p.price - max) / max;
+        score -= 30 + Math.round(overshoot * 40);
+      }
     }
 
     if (prefs.colorProfile?.season && p.colors.length > 0) {

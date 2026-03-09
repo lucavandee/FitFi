@@ -251,6 +251,7 @@ function generateOutfits(
   const comfortPreference = options?.comfort;
   const materialsPreference: string[] = options?.materials || [];
   const colorProfile = options?.colorProfile;
+  const budgetPref = options?.budget;
   
   // Log archetype information
   console.log("Generating outfits with archetypes:", 
@@ -560,7 +561,8 @@ function generateOutfitForOccasion(
       goalsPreference,
       comfortPreference,
       usedProductIds,
-      outfitBrands
+      outfitBrands,
+      budgetPref,
     );
 
     if (selectedProduct) {
@@ -649,7 +651,8 @@ function generateOutfitForOccasion(
       goalsPreference,
       comfortPreference,
       usedProductIds,
-      outfitBrands
+      outfitBrands,
+      budgetPref,
     );
 
     if (selectedProduct) {
@@ -847,6 +850,7 @@ function generateOutfitForOccasion(
       neutrals: colorProfile?.temperature,
       lightness: colorProfile?.value,
       contrast: colorProfile?.contrast,
+      budgetMax: budgetPref?.max,
     }
   );
   
@@ -1059,7 +1063,8 @@ function selectProductForCategory(
   goals: string[] = [],
   comfort?: string,
   usedProductIds?: Set<string>,
-  usedBrands?: Set<string>
+  usedBrands?: Set<string>,
+  budget?: { min: number; max: number },
 ): Product | null {
   const products = productsByCategory[category];
   if (!products || products.length === 0) return null;
@@ -1082,8 +1087,16 @@ function selectProductForCategory(
       : pool
   ).filter(isFashionAppropriate);
 
-  const productsToUse = fashionFiltered.length > 0 ? fashionFiltered : pool.filter(isFashionAppropriate);
+  let productsToUse = fashionFiltered.length > 0 ? fashionFiltered : pool.filter(isFashionAppropriate);
   if (productsToUse.length === 0) return null;
+
+  if (budget && budget.max > 0) {
+    const ceiling = budget.max * 1.35;
+    const budgetFiltered = productsToUse.filter(p => !p.price || p.price <= ceiling);
+    if (budgetFiltered.length >= 2) {
+      productsToUse = budgetFiltered;
+    }
+  }
 
   const primaryKey = resolveArchetypeKey(primaryArchetype);
   const mix: ArchetypeWeights = { [primaryKey]: 1 - (mixFactor ?? 0) };
@@ -1119,7 +1132,19 @@ function selectProductForCategory(
 
     const brandPenalty = usedBrands && product.brand && usedBrands.has(product.brand.toLowerCase()) ? 0.15 : 0;
 
-    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty;
+    let budgetBonus = 0;
+    if (budget && budget.max > 0 && product.price) {
+      if (product.price <= budget.max) {
+        budgetBonus = 0.15;
+        const ratio = product.price / budget.max;
+        if (ratio >= 0.3 && ratio <= 0.9) budgetBonus += 0.08;
+      } else {
+        const overshoot = (product.price - budget.max) / budget.max;
+        budgetBonus = -(0.20 + overshoot * 0.30);
+      }
+    }
+
+    const combined = fusion.totalScore * 0.50 + formalityBonus + fitBonus + goalsBonus + comfortBonus - brandPenalty + budgetBonus;
 
     return { product, combined, fusionScore: fusion.totalScore, signals: fusion.matchedSignals };
   });

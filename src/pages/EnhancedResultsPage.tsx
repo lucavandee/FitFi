@@ -236,8 +236,12 @@ export default function EnhancedResultsPage() {
     if (b && typeof b === 'object' && typeof b.min === 'number' && typeof b.max === 'number' && b.max > 0) {
       return b as { min: number; max: number };
     }
+    const slider = answers?.budgetRange;
+    if (typeof slider === 'number' && slider > 0) {
+      return { min: 0, max: slider };
+    }
     return undefined;
-  }, [answers?.budget]);
+  }, [answers?.budget, answers?.budgetRange]);
 
   const outfitLimit = React.useMemo(() => {
     if (!user) return 6;

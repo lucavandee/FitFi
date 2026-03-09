@@ -16,6 +16,7 @@ export interface ExplainContext {
   neutrals?: string;
   lightness?: string;
   contrast?: string;
+  budgetMax?: number;
 }
 
 export function generateOutfitExplanation(
@@ -111,6 +112,10 @@ export function generateOutfitExplanation(
     base += ' Bewust clean gehouden — geen prints.';
   } else if (ctx?.prints === 'statement') {
     base += ' Bevat een statement-print passend bij jouw voorkeur.';
+  }
+
+  if (ctx?.budgetMax && ctx.budgetMax > 0) {
+    base += ` Geselecteerd binnen jouw budget van \u20AC${ctx.budgetMax} per stuk.`;
   }
 
   if (outfit.season) {
