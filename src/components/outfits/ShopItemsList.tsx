@@ -15,15 +15,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  X,
-  ExternalLink,
-  ShoppingBag,
-  Loader2,
-  AlertCircle,
-  Check,
-  Info
-} from 'lucide-react';
+import { X, ExternalLink, ShoppingBag, Loader as Loader2, CircleAlert as AlertCircle, Check, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ProductImage } from '@/components/ui/ProductImage';
 import Button from '@/components/ui/Button';

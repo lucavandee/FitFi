@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, HelpCircle, Sparkles, ShoppingBag } from 'lucide-react';
+import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, CircleHelp as HelpCircle, Sparkles, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
 import RequireAuth from '@/components/auth/RequireAuth';
