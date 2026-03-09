@@ -233,7 +233,7 @@ export default function ShopPage() {
           <p>
             Transparantie: sommige links zijn <strong className="font-semibold text-[var(--color-text)]">affiliate links</strong>.
             Als je via FitFi shopt, kan FitFi een kleine commissie ontvangen — zonder extra kosten voor jou.{' '}
-            <a href="/disclosure" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+            <a href="/affiliate-disclosure" className="underline hover:no-underline">
               Meer informatie
             </a>
           </p>

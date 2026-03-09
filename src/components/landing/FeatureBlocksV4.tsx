@@ -22,7 +22,7 @@ const features = [
     title: 'Klaar in een paar minuten',
     description: 'Geen lange vragenlijsten. Beantwoord een paar vragen en ontvang direct je persoonlijk stijlrapport — compleet met outfits en shoplinks.',
     bullets: [
-      'Gerichte vragen, geen ruis',
+      'Gerichte vragen, direct resultaat',
       'Direct resultaat, geen wachten',
       'Shopbare outfit-links'
     ],

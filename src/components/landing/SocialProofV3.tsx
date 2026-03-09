@@ -131,7 +131,7 @@ export function SocialProofV3() {
             Wat anderen zeggen
           </h2>
           <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
-            {showTestimonials ? 'Echte mensen, echte resultaten' : 'Binnenkort hier'}
+            Ervaringen van gebruikers
           </p>
         </div>
 

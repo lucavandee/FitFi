@@ -41,7 +41,7 @@ const SocialProofEditorial: React.FC = () => {
         <header className="flow-sm">
           <h2 id="social-proof-title" className="section-title">Wat gebruikers zeggen</h2>
           <p className="text-[var(--color-muted)] max-w-prose">
-            Echte ervaringen — kort en helder. Geen ruis, wel resultaat.
+            Echte ervaringen — kort en helder.
           </p>
         </header>
 

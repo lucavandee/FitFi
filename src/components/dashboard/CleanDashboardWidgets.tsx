@@ -59,20 +59,21 @@ export function PhotoUploadWidget() {
   return (
     <BentoCard size="medium">
       <div className="flex flex-col items-center text-center py-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center mb-3 shadow-lg">
-          <Camera className="w-6 h-6 text-white" />
+        <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-3">
+          <Camera className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
         </div>
         <h3 className="text-sm font-bold text-[var(--color-text)] mb-1">
-          Upload je foto
+          Voeg een foto toe
         </h3>
         <p className="text-xs text-[var(--color-muted)] mb-4">
-          Krijg AI-styling advies
+          Verfijn je kleurprofiel met een selfie
         </p>
         <NavLink
           to="/onboarding?step=photo"
-          className="w-full px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity shadow-md"
+          className="w-full px-4 py-2 text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity"
+          style={{ background: 'var(--ff-color-primary-700)' }}
         >
-          Upload foto
+          Foto toevoegen
         </NavLink>
       </div>
     </BentoCard>

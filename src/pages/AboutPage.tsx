@@ -68,7 +68,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-xl md:text-2xl text-[var(--color-muted)] mb-12 max-w-3xl mx-auto leading-relaxed"
             >
-              FitFi helpt je betere kledingkeuzes te maken. Rustig, persoonlijk en zonder ruis.
+              FitFi helpt je betere kledingkeuzes te maken. Rustig, persoonlijk en gericht.
             </motion.p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function AboutPage() {
               {
                 Icon: Target,
                 title: "Focus op resultaat",
-                body: "Direct bruikbare outfits en keuzes, geen ruis. Binnen 2 minuten bruikbaar advies.",
+                body: "Direct bruikbare outfits en keuzes. Binnen 2 minuten bruikbaar advies.",
               },
             ].map(({ Icon, title, body }) => (
               <div

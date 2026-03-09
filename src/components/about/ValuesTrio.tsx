@@ -14,7 +14,7 @@ const ValuesTrio: React.FC<Props> = ({ className = "" }) => {
     },
     {
       icon: Heart,
-      title: "Zonder ruis",
+      title: "Overzichtelijk",
       text: "Geen overweldigende keuzes of pushy marketing. Rustige interface, heldere adviezen, jouw tempo.",
     },
     {
