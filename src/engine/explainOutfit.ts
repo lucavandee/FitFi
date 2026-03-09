@@ -17,6 +17,7 @@ export interface ExplainContext {
   lightness?: string;
   contrast?: string;
   budgetMax?: number;
+  materials?: string[];
 }
 
 export function generateOutfitExplanation(
@@ -27,24 +28,33 @@ export function generateOutfitExplanation(
 ): string {
   const archetypeExplanations: Record<string, string> = {
     'klassiek': 'tijdloze elegantie en verfijnde details',
+    'CLASSIC': 'tijdloze elegantie en verfijnde details',
     'casual_chic': 'moeiteloze elegantie en moderne touches',
-    'urban': 'functionele details en een stoere stadslook',
-    'streetstyle': 'authentieke streetwear-elementen en creatieve expressie',
+    'SMART_CASUAL': 'moeiteloze elegantie en moderne touches',
+    'urban': 'expressieve streetwear-elementen en een stoere stadslook',
+    'streetstyle': 'authentieke streetwear met statement-stukken en creatieve expressie',
+    'STREETWEAR': 'expressieve streetwear met oversized silhouetten en urban invloeden',
+    'minimalist': 'clean lijnen en doordachte eenvoud',
+    'MINIMALIST': 'clean lijnen en doordachte eenvoud',
     'retro': 'vintage-geïnspireerde stukken en nostalgische details',
     'luxury': 'exclusieve stukken en premium kwaliteit',
+    'ATHLETIC': 'functionele sportswear met nadruk op performance en comfort',
+    'athletic': 'functionele sportswear met nadruk op performance en comfort',
+    'avant_garde': 'conceptuele mode met onverwachte proporties en texturen',
+    'AVANT_GARDE': 'conceptuele mode met onverwachte proporties en texturen',
   };
 
   const occasionLabels: Record<string, string> = {
     'Werk': 'voor een professionele werkdag',
-    'Formeel': 'voor formele gelegenheden',
-    'Casual': 'voor alledaags gebruik',
+    'Smart Casual': 'voor een smart-casual gelegenheid',
+    'Dagelijks': 'voor alledaags gebruik',
     'Weekend': 'voor een ontspannen weekend',
+    'Avond uit': 'voor een avond uit',
+    'Actief': 'voor een actieve dag',
+    'Date': 'voor een date',
+    'Relaxed': 'voor een relaxte dag',
+    'Casual': 'voor alledaags gebruik',
     'Uitgaan': 'voor een avond uit',
-    'Sport': 'voor een actieve dag',
-    'Stad': 'voor een dag in de stad',
-    'Lunch': 'voor een smart-casual middag',
-    'Zakelijk diner': 'voor een zakelijk diner',
-    'Formeel': 'voor een formele gelegenheid',
   };
 
   const fitLabels: Record<string, string> = {
@@ -112,6 +122,24 @@ export function generateOutfitExplanation(
     base += ' Bewust clean gehouden — geen prints.';
   } else if (ctx?.prints === 'statement') {
     base += ' Bevat een statement-print passend bij jouw voorkeur.';
+  } else if (ctx?.prints === 'subtiel' || ctx?.prints === 'subtle') {
+    base += ' Subtiele prints voor een verfijnde look.';
+  }
+
+  if (ctx?.materials && ctx.materials.length > 0) {
+    const materialLabels: Record<string, string> = {
+      denim: 'denim', leer: 'leer', katoen: 'katoen', linnen: 'linnen',
+      wol: 'wol', kasjmier: 'kasjmier', tech: 'technische stoffen',
+      fleece: 'fleece', canvas: 'canvas', zijde: 'zijde', coated: 'gecoate stoffen',
+      ribstof: 'ribstof', stretch: 'stretchmateriaal', mesh: 'mesh',
+    };
+    const labels = ctx.materials
+      .map(m => materialLabels[m] || m)
+      .filter(Boolean)
+      .slice(0, 3);
+    if (labels.length > 0) {
+      base += ` Materiaalvoorkeur verwerkt: ${labels.join(', ')}.`;
+    }
   }
 
   if (ctx?.budgetMax && ctx.budgetMax > 0) {

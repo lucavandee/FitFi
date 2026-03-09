@@ -134,20 +134,17 @@ export class ArchetypeDetector {
 
       // STREETWEAR detection
       if (descriptor.key === 'STREETWEAR') {
-        // Only explicit streetwear/urban/sport — NOT plain 'casual' (too broad, catches smart-casual)
         if (styleKeywords.some(s => s === 'streetwear' || s.includes('street') || s.includes('urban'))) {
           score += 35;
           reasons.push('Streetwear/urban style preference');
         }
-        // Sport-only (not inside 'smart-casual')
-        if (styleKeywords.some(s => s === 'sport' || s === 'athletic' || s === 'sportief')) {
-          score += 20;
-          reasons.push('Sport/athletic style preference');
-        }
-        // ✅ Map "Edgy/Stoer" to Streetwear
         if (styleKeywords.some(s => s.includes('edgy') || s.includes('stoer') || s.includes('rock'))) {
           score += 25;
           reasons.push('Edgy/Rock style → Streetwear');
+        }
+        if (styleKeywords.some(s => s.includes('oversized') || s.includes('statement') || s.includes('expressie'))) {
+          score += 15;
+          reasons.push('Expressive/oversized style → Streetwear');
         }
       }
 

@@ -53,9 +53,9 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
     label: 'Streetwear',
     paletteHints: ['zwart', 'contrast', 'wit', 'grijs', 'aardetinten', 'monochrome'],
     silhouettes: ['relaxed', 'oversized', 'straight', 'cropped'],
-    materials: ['fleece', 'tech', 'denim', 'canvas', 'katoen', 'stretch', 'ribstof'],
+    materials: ['denim', 'canvas', 'katoen', 'ribstof', 'fleece', 'coated', 'leer'],
     formality: 20,
-    vibe: ['expressief', 'urban', 'sportief'],
+    vibe: ['expressief', 'urban', 'statement'],
     staples: ['hoodie', 'wide-leg jeans', 'high-top sneaker', 'cap', 'cargo', 'bomber'],
   },
   ATHLETIC: {

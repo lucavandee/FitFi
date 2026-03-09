@@ -87,11 +87,15 @@ const FORMALITY_SIGNALS: { pattern: string[]; value: number }[] = [
 ];
 
 const STREETWEAR_BRANDS = new Set([
-  'nike', 'adidas', 'puma', 'new balance', 'jordan', 'stussy', 'stüssy',
-  'carhartt', 'carhartt wip', 'dickies', 'vans', 'converse', 'champion',
-  'the new originals', 'daily paper', 'filling pieces', 'off-white',
-  'supreme', 'palace', 'obey', 'huf', 'reebok', 'fila', 'ellesse',
-  'kappa', 'umbro', 'diadora', 'asics', 'new era',
+  'stussy', 'stüssy', 'carhartt', 'carhartt wip', 'dickies', 'vans',
+  'converse', 'the new originals', 'daily paper', 'filling pieces',
+  'off-white', 'supreme', 'palace', 'obey', 'huf', 'new era',
+  'jordan', 'champion',
+]);
+
+const ATHLETIC_BRANDS = new Set([
+  'nike', 'adidas', 'puma', 'new balance', 'reebok', 'asics',
+  'fila', 'ellesse', 'kappa', 'umbro', 'diadora', 'under armour',
 ]);
 
 const CLASSIC_BRANDS = new Set([
@@ -107,9 +111,10 @@ const MINIMALIST_BRANDS = new Set([
   'margaret howell', 'lemaire',
 ]);
 
-function getBrandStyleHint(brand: string): { formality: number; silhouette: string } | null {
+function getBrandStyleHint(brand: string): { formality: number; silhouette: string; archetype?: string } | null {
   const b = (brand || '').toLowerCase();
-  if (STREETWEAR_BRANDS.has(b)) return { formality: 0.15, silhouette: 'relaxed' };
+  if (STREETWEAR_BRANDS.has(b)) return { formality: 0.15, silhouette: 'relaxed', archetype: 'streetwear' };
+  if (ATHLETIC_BRANDS.has(b)) return { formality: 0.10, silhouette: 'slim', archetype: 'athletic' };
   if (CLASSIC_BRANDS.has(b)) return { formality: 0.65, silhouette: 'tailored' };
   if (MINIMALIST_BRANDS.has(b)) return { formality: 0.55, silhouette: 'clean' };
   return null;

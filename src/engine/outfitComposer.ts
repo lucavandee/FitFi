@@ -125,7 +125,7 @@ const ARCHETYPE_OCCASIONS: Record<string, string[]> = {
   MINIMALIST:   ['werk', 'casual', 'weekend', 'smart', 'date', 'avond', 'relaxed'],
   CLASSIC:      ['werk', 'smart', 'avond', 'date', 'casual', 'weekend'],
   SMART_CASUAL: ['casual', 'werk', 'weekend', 'date', 'avond', 'smart', 'relaxed'],
-  STREETWEAR:   ['weekend', 'casual', 'sport', 'relaxed', 'avond', 'date'],
+  STREETWEAR:   ['weekend', 'casual', 'relaxed', 'avond', 'date'],
   ATHLETIC:     ['sport', 'casual', 'weekend', 'relaxed'],
   AVANT_GARDE:  ['avond', 'date', 'casual', 'weekend', 'smart'],
 };
@@ -432,14 +432,29 @@ function buildExplanation(
     }
   }
 
-  if (prefs?.occasions && prefs.occasions.length > 0) {
-    const labelMap: Record<string, string> = {
-      work: 'werk', casual: 'dagelijks', formal: 'formele gelegenheden',
-      date: 'een date', travel: 'reizen', sport: 'sport',
+  const occasionLabelMap: Record<string, string> = {
+    'Werk': 'een werkdag', 'Smart Casual': 'smart-casual gelegenheden',
+    'Weekend': 'het weekend', 'Dagelijks': 'dagelijks gebruik',
+    'Avond uit': 'een avond uit', 'Date': 'een date',
+    'Actief': 'een actieve dag', 'Relaxed': 'een relaxte dag',
+    'Casual': 'dagelijks gebruik', 'Uitgaan': 'een avond uit',
+    'Festival': 'festivals', 'Formeel': 'formele gelegenheden',
+  };
+  const occasionText = occasionLabelMap[blueprint.label];
+  if (occasionText) {
+    parts.push(`samengesteld voor ${occasionText}`);
+  }
+
+  if (prefs?.materials && prefs.materials.length > 0) {
+    const matLabels: Record<string, string> = {
+      denim: 'denim', leer: 'leer', katoen: 'katoen', linnen: 'linnen',
+      wol: 'wol', kasjmier: 'kasjmier', tech: 'technische stoffen',
+      fleece: 'fleece', canvas: 'canvas', zijde: 'zijde',
     };
-    const first = prefs.occasions[0];
-    const label = labelMap[first] || first;
-    parts.push(`ideaal voor ${label}`);
+    const labels = prefs.materials.slice(0, 2).map(m => matLabels[m] || m).filter(Boolean);
+    if (labels.length > 0) {
+      parts.push(`materiaalvoorkeur: ${labels.join(' en ')}`);
+    }
   }
 
   const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];

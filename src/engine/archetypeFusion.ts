@@ -27,6 +27,9 @@ const STYLE_TO_ARCHETYPE: Record<string, ArchetypeKey> = {
   minimalist: 'MINIMALIST',
   luxury: 'CLASSIC',
   formal: 'CLASSIC',
+  athletic: 'ATHLETIC',
+  sport: 'ATHLETIC',
+  sportswear: 'ATHLETIC',
 };
 
 export function scoreProductAgainstArchetype(p: ProductLike, key: ArchetypeKey): { score: number; signals: string[] } {

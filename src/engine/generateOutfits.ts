@@ -70,13 +70,16 @@ function toProductLike(p: Product): ProductLike {
 
 const OCCASION_KEY_MAP: Record<string, string> = {
   office: 'Werk',
-  smartcasual: 'Casual',
+  smartcasual: 'Smart Casual',
   leisure: 'Weekend',
   werk: 'Werk',
-  casual: 'Casual',
+  casual: 'Dagelijks',
   weekend: 'Weekend',
-  avond: 'Uitgaan',
-  sport: 'Sport',
+  avond: 'Avond uit',
+  sport: 'Actief',
+  date: 'Date',
+  relaxed: 'Relaxed',
+  smart: 'Smart Casual',
 };
 
 /**
@@ -448,24 +451,24 @@ function generateOutfits(
 
 function getOccasionsForArchetype(archetype: string): string[] {
   const occasionMap: Record<string, string[]> = {
-    'klassiek': ['Werk', 'Formeel', 'Zakelijk diner'],
-    'CLASSIC': ['Werk', 'Formeel', 'Zakelijk diner'],
-    'casual_chic': ['Casual', 'Weekend', 'Lunch'],
-    'SMART_CASUAL': ['Casual', 'Weekend', 'Lunch'],
-    'minimalist': ['Casual', 'Werk', 'Weekend'],
-    'MINIMALIST': ['Casual', 'Werk', 'Weekend'],
-    'urban': ['Stad', 'Casual', 'Actief'],
-    'streetstyle': ['Casual', 'Uitgaan', 'Festival'],
-    'STREETWEAR': ['Casual', 'Uitgaan', 'Festival'],
-    'athletic': ['Actief', 'Casual', 'Sport'],
-    'ATHLETIC': ['Actief', 'Casual', 'Sport'],
-    'retro': ['Casual', 'Creatief', 'Weekend'],
-    'avant_garde': ['Casual', 'Creatief', 'Uitgaan'],
-    'AVANT_GARDE': ['Casual', 'Creatief', 'Uitgaan'],
-    'luxury': ['Formeel', 'Gala', 'Speciale gelegenheid'],
+    'klassiek': ['Werk', 'Smart Casual', 'Avond uit', 'Date', 'Weekend', 'Dagelijks'],
+    'CLASSIC': ['Werk', 'Smart Casual', 'Avond uit', 'Date', 'Weekend', 'Dagelijks'],
+    'casual_chic': ['Dagelijks', 'Weekend', 'Date', 'Werk', 'Avond uit', 'Relaxed'],
+    'SMART_CASUAL': ['Dagelijks', 'Weekend', 'Date', 'Werk', 'Avond uit', 'Relaxed'],
+    'minimalist': ['Dagelijks', 'Werk', 'Weekend', 'Smart Casual', 'Date', 'Relaxed'],
+    'MINIMALIST': ['Dagelijks', 'Werk', 'Weekend', 'Smart Casual', 'Date', 'Relaxed'],
+    'urban': ['Weekend', 'Dagelijks', 'Avond uit', 'Date', 'Relaxed'],
+    'streetstyle': ['Weekend', 'Avond uit', 'Dagelijks', 'Date', 'Relaxed'],
+    'STREETWEAR': ['Weekend', 'Avond uit', 'Dagelijks', 'Date', 'Relaxed'],
+    'athletic': ['Actief', 'Dagelijks', 'Weekend', 'Relaxed'],
+    'ATHLETIC': ['Actief', 'Dagelijks', 'Weekend', 'Relaxed'],
+    'retro': ['Dagelijks', 'Weekend', 'Avond uit', 'Date', 'Relaxed'],
+    'avant_garde': ['Avond uit', 'Date', 'Weekend', 'Dagelijks', 'Smart Casual'],
+    'AVANT_GARDE': ['Avond uit', 'Date', 'Weekend', 'Dagelijks', 'Smart Casual'],
+    'luxury': ['Avond uit', 'Smart Casual', 'Date', 'Werk', 'Weekend'],
   };
 
-  return occasionMap[archetype] || ['Casual', 'Werk', 'Weekend'];
+  return occasionMap[archetype] || ['Dagelijks', 'Werk', 'Weekend', 'Date', 'Relaxed'];
 }
 
 /**
@@ -851,6 +854,7 @@ function generateOutfitForOccasion(
       lightness: colorProfile?.value,
       contrast: colorProfile?.contrast,
       budgetMax: budgetPref?.max,
+      materials: materialsPreference.length > 0 ? materialsPreference : undefined,
     }
   );
   
@@ -1130,7 +1134,7 @@ function selectProductForCategory(
     const formalityDelta = Math.abs(enriched.formality - formalityTarget);
     const formalityBonus = Math.max(0, 0.25 * (1 - formalityDelta));
 
-    const brandPenalty = usedBrands && product.brand && usedBrands.has(product.brand.toLowerCase()) ? 0.15 : 0;
+    const brandPenalty = usedBrands && product.brand && usedBrands.has(product.brand.toLowerCase()) ? 0.30 : 0;
 
     let budgetBonus = 0;
     if (budget && budget.max > 0 && product.price) {
