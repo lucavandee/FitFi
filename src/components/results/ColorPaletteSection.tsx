@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, CheckCircle, XCircle, Info, Lock, Camera } from 'lucide-react';
+import { Palette, CircleCheck as CheckCircle, Circle as XCircle, Info, Lock, Camera } from 'lucide-react';
 import { getColorPalette, groupColorsByCategory } from '@/data/colorPalettes';
 import { ColorSwatchGrid } from './ColorSwatchWithLabel';
 import { useNavigate } from 'react-router-dom';
