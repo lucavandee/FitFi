@@ -417,47 +417,45 @@ export class StyleProfileGenerator {
   ): ColorProfile {
     // Priority: swipes > quiz > fallback
 
-    // If we have both, combine intelligently
     if (quizColors && swipeColors) {
-      const temperature = swipeColors.temperature; // Swipes have priority
+      const temperature = swipeColors.temperature;
       const chroma = swipeColors.chroma;
-      const contrast = swipeColors.contrast;
-
-      // Build palette name
-      const paletteName = this.buildPaletteName(
-        swipeColors.dominantColors,
-        temperature,
-        quizColors.isNeutral
-      );
+      const contrast = quizColors.contrast;
+      const value = quizColors.lightness;
+      const season = this.determineSeasonFromInputs(temperature, value, contrast);
 
       return {
         temperature,
-        value: contrast === 'hoog' ? 'hoog' : contrast === 'laag' ? 'laag' : 'medium',
+        value,
         contrast,
         chroma,
-        season: this.determineSeason(temperature),
-        paletteName,
-        notes: this.buildNotes(swipeColors.dominantColors, chroma, contrast)
+        season,
+        paletteName: this.buildPaletteNameFromInputs(temperature, value, contrast),
+        notes: this.buildNotesFromInputs(temperature, value, contrast)
       };
     }
 
-    // Swipes only
     if (swipeColors) {
       const temperature = swipeColors.temperature;
-      const paletteName = this.buildPaletteName(
-        swipeColors.dominantColors,
-        temperature,
-        false
+      const contrast = swipeColors.contrast;
+      const hasDarkColors = swipeColors.dominantColors.some(c =>
+        /zwart|donker|navy|bruin/.test(c)
       );
+      const hasLightColors = swipeColors.dominantColors.some(c =>
+        /wit|licht|beige|cream/.test(c)
+      );
+      const value: string = hasDarkColors && !hasLightColors ? 'donker'
+        : hasLightColors && !hasDarkColors ? 'licht'
+        : 'medium';
 
       return {
         temperature,
-        value: swipeColors.contrast === 'hoog' ? 'hoog' : swipeColors.contrast === 'laag' ? 'laag' : 'medium',
-        contrast: swipeColors.contrast,
+        value,
+        contrast,
         chroma: swipeColors.chroma,
-        season: this.determineSeason(temperature),
-        paletteName,
-        notes: this.buildNotes(swipeColors.dominantColors, swipeColors.chroma, swipeColors.contrast)
+        season: this.determineSeasonFromInputs(temperature, value, contrast),
+        paletteName: this.buildPaletteNameFromInputs(temperature, value, contrast),
+        notes: this.buildNotesFromInputs(temperature, value, contrast)
       };
     }
 

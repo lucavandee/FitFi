@@ -840,7 +840,14 @@ function generateOutfitForOccasion(
     },
     primaryArchetype,
     occasion,
-    { fit: fitPreference, prints: printsPreference }
+    {
+      fit: fitPreference,
+      prints: printsPreference,
+      goals: goalsPreference,
+      neutrals: colorProfile?.temperature,
+      lightness: colorProfile?.value,
+      contrast: colorProfile?.contrast,
+    }
   );
   
   // Use the first product's image as the outfit image
