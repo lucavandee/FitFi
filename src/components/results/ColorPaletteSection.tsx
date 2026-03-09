@@ -10,22 +10,7 @@ interface ColorPaletteSectionProps {
   isPremium?: boolean;
 }
 
-/**
- * ColorPaletteSection - Complete color palette display with categories
- *
- * Purpose:
- * - Show concrete, named colors for user's season
- * - Organize by category (basis, accent, neutral)
- * - Highlight do's and don'ts
- * - Fully accessible and educational
- *
- * Layout:
- * 1. Header with season description
- * 2. Recommended colors (do's) - Green badge
- * 3. Full palette organized by category
- * 4. Colors to avoid (don'ts) - Red badge
- */
-export function ColorPaletteSection({ season, hasPhoto = false, isPremium = false }: ColorPaletteSectionProps) {
+export function ColorPaletteSection({ season, hasPhoto = false }: ColorPaletteSectionProps) {
   const navigate = useNavigate();
   const palette = getColorPalette(season);
 
@@ -40,74 +25,88 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className="bg-white rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 md:p-10 shadow-xl"
+      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 sm:p-8 shadow-[var(--shadow-soft)]"
     >
       {/* Header */}
       <div className="flex items-start gap-4 mb-6">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center flex-shrink-0">
-          <Palette className="w-7 h-7 text-white" />
+        <div
+          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: 'var(--ff-color-primary-100)' }}
+        >
+          <Palette className="w-6 h-6 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
         </div>
-        <div className="flex-1">
-          <h3 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-1">
             Kleurcombinaties voor {palette.season}
           </h3>
-          <p className="text-lg text-gray-600 leading-relaxed">
+          <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed">
             {palette.description}
           </p>
         </div>
       </div>
 
-      {/* Photo / undertone disclaimer — aria-live so screen readers hear the dynamic state */}
+      {/* Photo / undertone disclaimer */}
       <div aria-live="polite" aria-atomic="true">
         {!hasPhoto ? (
-          <div className="flex items-start gap-3 p-4 mb-8 bg-amber-50 border border-amber-200 rounded-xl" role="note">
-            <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-amber-900 mb-1">
-                Kleurtips op basis van jouw kleurvoorkeur — geen ondertoonadvies
+          <div
+            className="flex items-start gap-3 p-4 mb-8 rounded-xl border border-[var(--color-border)]"
+            style={{ background: 'var(--ff-color-primary-50)' }}
+            role="note"
+          >
+            <Info className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-[var(--color-text)] mb-1">
+                Kleurtips op basis van jouw kleurvoorkeur
               </p>
-              <p className="text-sm text-amber-800 leading-relaxed">
+              <p className="text-sm text-[var(--color-muted)] leading-relaxed">
                 Zonder foto geven we geen uitspraken over huidondertoon. Onderstaande kleuren zijn gebaseerd op jouw keuzes in de quiz.{' '}
                 <button
                   onClick={() => navigate('/onboarding?step=photo')}
-                  className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-1 rounded"
+                  className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline text-[var(--ff-color-primary-700)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1 rounded"
+                  aria-label="Voeg een selfie toe voor ondertoonanalyse"
                 >
                   <Camera className="w-3.5 h-3.5" aria-hidden="true" />
-                  Upload selfie voor ondertoonanalyse
+                  Voeg selfie toe
                 </button>
               </p>
             </div>
           </div>
         ) : (
-          <div className="flex items-start gap-3 p-4 mb-8 bg-green-50 border border-green-200 rounded-xl" role="note">
-            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-sm text-green-800 leading-relaxed">
-              <strong className="font-semibold">Foto-gebaseerd kleuradvies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon uit de kleuranalyse.
+          <div
+            className="flex items-start gap-3 p-4 mb-8 rounded-xl border border-[var(--color-border)]"
+            style={{ background: 'var(--ff-color-primary-50)' }}
+            role="note"
+          >
+            <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+              <strong className="font-semibold text-[var(--color-text)]">Foto-gebaseerd kleuradvies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon uit de kleuranalyse.
             </p>
           </div>
         )}
       </div>
 
-      {/* Recommended Colors (DO) */}
-      <div className="mb-10">
-        <div className="flex items-center gap-2 mb-4">
-          <CheckCircle className="w-6 h-6 text-green-600" />
-          <h4 className="text-xl font-bold text-green-900">
+      {/* Recommended Colors */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" aria-hidden="true" />
+          <h4 className="text-base font-bold text-[var(--color-text)]">
             Draag deze kleuren
           </h4>
         </div>
-        <div className="bg-green-50 rounded-2xl p-6 border-2 border-green-200">
+        <div
+          className="rounded-xl p-4 sm:p-6 border border-[var(--color-border)]"
+          style={{ background: 'var(--ff-color-primary-50)' }}
+        >
           <ColorSwatchGrid
             swatches={palette.doColors}
             recommendation="do"
             columns={6}
           />
-          <div className="mt-4 p-3 bg-white rounded-lg">
-            <p className="text-sm text-gray-700 flex items-start gap-2">
-              <Info className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+          <div className="mt-4 p-3 bg-[var(--color-surface)] rounded-lg">
+            <p className="text-sm text-[var(--color-muted)] flex items-start gap-2">
+              <Info className="w-4 h-4 text-[var(--ff-color-primary-600)] mt-0.5 flex-shrink-0" aria-hidden="true" />
               <span>
-                Deze kleuren flatteren je het meest. Screenshot deze sectie en
-                bewaar hem in je telefoon voor tijdens het shoppen!
+                Deze kleuren staan je het beste. Sla deze sectie op voor tijdens het shoppen.
               </span>
             </p>
           </div>
@@ -115,21 +114,20 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
       </div>
 
       {/* Full Palette by Category */}
-      <div className="mb-10">
-        <h4 className="text-xl font-bold text-gray-800 mb-6">
-          Compleet Kleurpalet
+      <div className="mb-8">
+        <h4 className="text-base font-bold text-[var(--color-text)] mb-5">
+          Compleet kleurpalet
         </h4>
 
-        {/* Basis Kleuren */}
         {groupedColors.basis.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-[var(--ff-color-primary-500)]" />
-              <h5 className="text-lg font-semibold text-gray-700">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-primary-500)]" aria-hidden="true" />
+              <h5 className="text-sm font-semibold text-[var(--color-text)]">
                 Basiskleuren
               </h5>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-[var(--color-muted)] mb-3">
               Bouw je garderobe hierop. Deze kleuren vormen je foundation.
             </p>
             <ColorSwatchGrid
@@ -139,16 +137,15 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
           </div>
         )}
 
-        {/* Accent Kleuren */}
         {groupedColors.accent.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-[var(--ff-color-accent-500)]" />
-              <h5 className="text-lg font-semibold text-gray-700">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-accent-500)]" aria-hidden="true" />
+              <h5 className="text-sm font-semibold text-[var(--color-text)]">
                 Accentkleuren
               </h5>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-[var(--color-muted)] mb-3">
               Voeg energie toe aan je outfits. Mix met basiskleuren voor balans.
             </p>
             <ColorSwatchGrid
@@ -158,17 +155,16 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
           </div>
         )}
 
-        {/* Neutrale Tinten */}
         {groupedColors.neutraal.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-gray-400" />
-              <h5 className="text-lg font-semibold text-gray-700">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-[var(--color-muted)]" aria-hidden="true" />
+              <h5 className="text-sm font-semibold text-[var(--color-text)]">
                 Neutrale tinten
               </h5>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
-              Perfecte complementen. Combineer met elke andere kleur uit je palet.
+            <p className="text-sm text-[var(--color-muted)] mb-3">
+              Perfecte complementen voor elke andere kleur uit je palet.
             </p>
             <ColorSwatchGrid
               swatches={groupedColors.neutraal}
@@ -178,126 +174,84 @@ export function ColorPaletteSection({ season, hasPhoto = false, isPremium = fals
         )}
       </div>
 
-      {/* Colors to Avoid — only available when undertone is confirmed via photo */}
+      {/* Colors to Avoid */}
       {hasPhoto ? (
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <XCircle className="w-6 h-6 text-red-600" />
-            <h4 className="text-xl font-bold text-red-900">
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <XCircle className="w-5 h-5 text-[var(--ff-color-danger-600)]" aria-hidden="true" />
+            <h4 className="text-base font-bold text-[var(--color-text)]">
               Vermijd deze kleuren
             </h4>
           </div>
-          <div className="bg-red-50 rounded-2xl p-6 border-2 border-red-200">
+          <div
+            className="rounded-xl p-4 sm:p-6 border border-[var(--color-border)]"
+            style={{ background: 'var(--ff-color-primary-50)' }}
+          >
             <ColorSwatchGrid
               swatches={palette.dontColors}
               recommendation="dont"
               columns={6}
             />
-            <div className="mt-4 p-3 bg-white rounded-lg">
-              <p className="text-sm text-gray-700 flex items-start gap-2">
-                <Info className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+            <div className="mt-4 p-3 bg-[var(--color-surface)] rounded-lg">
+              <p className="text-sm text-[var(--color-muted)] flex items-start gap-2">
+                <Info className="w-4 h-4 text-[var(--ff-color-danger-500)] mt-0.5 flex-shrink-0" aria-hidden="true" />
                 <span>
-                  Op basis van jouw huidondertoon zijn deze kleuren minder flatterend. Ze kunnen je huid dof of grauw maken.
+                  Op basis van jouw huidondertoon zijn deze kleuren minder flatterend.
                 </span>
               </p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="relative rounded-2xl border-2 border-dashed border-[var(--color-border)] p-8 text-center">
+        <div className="relative rounded-2xl border-2 border-dashed border-[var(--color-border)] p-8 text-center mb-8">
           <div className="absolute inset-0 bg-[var(--color-bg)]/60 backdrop-blur-[2px] rounded-2xl" />
           <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center">
-              <Lock className="w-5 h-5 text-[var(--color-muted)]" />
+            <div className="w-10 h-10 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center">
+              <Lock className="w-4 h-4 text-[var(--color-muted)]" aria-hidden="true" />
             </div>
-            <p className="font-semibold text-[var(--color-text)]">Kleuren om te vermijden</p>
+            <p className="font-semibold text-[var(--color-text)] text-sm">Kleuren om te vermijden</p>
             <p className="text-sm text-[var(--color-muted)] max-w-xs leading-relaxed">
-              Wil je een persoonlijk kleurenpalet? Upload een selfie — dan analyseren we jouw ondertoon.
+              Upload een selfie — dan analyseren we jouw ondertoon voor persoonlijk kleuradvies.
             </p>
             <button
               onClick={() => navigate('/onboarding?step=photo')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+              style={{ background: 'var(--ff-color-primary-700)' }}
             >
-              <Camera className="w-4 h-4" />
-              Upload foto voor ondertoonanalyse
+              <Camera className="w-4 h-4" aria-hidden="true" />
+              Foto toevoegen
             </button>
           </div>
         </div>
       )}
 
       {/* How to Use This Palette */}
-      <div className="mt-8 p-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border border-[var(--ff-color-primary-200)]">
-        <h5 className="font-bold text-lg text-[var(--ff-color-primary-800)] mb-3">
-          💡 Hoe gebruik je dit palet?
+      <div
+        className="p-5 sm:p-6 rounded-2xl border border-[var(--color-border)]"
+        style={{ background: 'var(--ff-color-primary-50)' }}
+      >
+        <h5 className="font-bold text-sm text-[var(--color-text)] mb-3">
+          Zo gebruik je dit palet
         </h5>
-        <ul className="space-y-2 text-sm text-[var(--ff-color-primary-700)]">
+        <ul className="space-y-2 text-sm text-[var(--color-muted)]">
           <li className="flex items-start gap-2">
-            <span className="text-[var(--ff-color-primary-500)] mt-0.5">•</span>
-            <span>
-              <strong>Basis 60%:</strong> Kies 2-3 basiskleuren voor je garderobe foundation (broeken, jasjes, basics).
-            </span>
+            <span className="text-[var(--ff-color-primary-500)] mt-0.5 font-bold" aria-hidden="true">–</span>
+            <span><strong className="text-[var(--color-text)]">Basis 60%:</strong> Kies 2–3 basiskleuren voor je garderobe (broeken, jasjes, basics).</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[var(--ff-color-primary-500)] mt-0.5">•</span>
-            <span>
-              <strong>Accent 30%:</strong> Gebruik accentkleuren voor tops, accessoires en statement pieces.
-            </span>
+            <span className="text-[var(--ff-color-primary-500)] mt-0.5 font-bold" aria-hidden="true">–</span>
+            <span><strong className="text-[var(--color-text)]">Accent 30%:</strong> Gebruik accentkleuren voor tops, accessoires en statement pieces.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[var(--ff-color-primary-500)] mt-0.5">•</span>
-            <span>
-              <strong>Neutrale 10%:</strong> Neutrale tinten zijn perfecte complementen en binders.
-            </span>
+            <span className="text-[var(--ff-color-primary-500)] mt-0.5 font-bold" aria-hidden="true">–</span>
+            <span><strong className="text-[var(--color-text)]">Neutraal 10%:</strong> Neutrale tinten zijn perfecte complementen en binders.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[var(--ff-color-primary-500)] mt-0.5">•</span>
-            <span>
-              <strong>Test in winkel:</strong> Houd een kledingstuk bij je gezicht in natuurlijk licht.
-              Zie je een gezonde gloed? Dan past het bij je palet!
-            </span>
+            <span className="text-[var(--ff-color-primary-500)] mt-0.5 font-bold" aria-hidden="true">–</span>
+            <span><strong className="text-[var(--color-text)]">Test in winkel:</strong> Houd een kledingstuk bij je gezicht in natuurlijk licht voor een goede indruk.</span>
           </li>
         </ul>
       </div>
     </motion.div>
   );
 }
-
-/**
- * UX Psychology & Design Decisions:
- *
- * 1. Visual Hierarchy:
- *    ✅ DO (green) → FULL PALETTE → ❌ DON'T (red)
- *    Priority: Show recommended first, avoid last
- *
- * 2. Color Organization:
- *    - Group by function (basis, accent, neutral)
- *    - Each group has clear purpose explained
- *    - 60-30-10 rule guidance
- *
- * 3. Practical Application:
- *    - "Draag deze" (not "you could wear")
- *    - Screenshot encouragement
- *    - In-store testing tips
- *
- * 4. Accessibility:
- *    - All swatches have names (not just hex)
- *    - Hover/touch to see name
- *    - Screen reader support
- *    - Color contrast compliance
- *
- * 5. Educational Content:
- *    - Why categories matter
- *    - How to build a wardrobe
- *    - Practical usage ratios
- *
- * 6. Mobile Optimization:
- *    - Grid adapts to screen size
- *    - Touch-friendly swatches
- *    - Labels always visible (no hover dependency)
- *
- * References:
- * - Color Theory: 60-30-10 Rule
- * - Fashion Capsule Wardrobe Principles
- * - WCAG 2.1: Non-text Contrast
- * - Material Design: Color Systems
- */

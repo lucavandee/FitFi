@@ -52,38 +52,18 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op Instagram"
-              className="w-9 h-9 min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-              style={{
-                background: 'var(--ff-color-primary-100)',
-                color: 'var(--ff-color-primary-700)',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-200)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-100)';
-              }}
+              className="w-9 h-9 min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 bg-[var(--ff-color-primary-100)] hover:bg-[var(--ff-color-primary-200)] text-[var(--ff-color-primary-700)]"
             >
-              <Instagram className="w-4 h-4" strokeWidth={2} />
+              <Instagram className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
             </a>
             <a
               href="https://linkedin.com/company/fitfi-ai"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op LinkedIn"
-              className="w-9 h-9 min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-              style={{
-                background: 'var(--ff-color-primary-100)',
-                color: 'var(--ff-color-primary-700)',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-200)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--ff-color-primary-100)';
-              }}
+              className="w-9 h-9 min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2 bg-[var(--ff-color-primary-100)] hover:bg-[var(--ff-color-primary-200)] text-[var(--ff-color-primary-700)]"
             >
-              <Linkedin className="w-4 h-4" strokeWidth={2} />
+              <Linkedin className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -91,9 +71,9 @@ export default function Footer() {
         {/* Nav columns */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-8 mb-10">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+            <h3 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
               Product
-            </p>
+            </h3>
             <nav aria-label="Product navigatie">
               <ul className="space-y-0.5 list-none p-0 m-0">
                 {NAV_PRODUCT.map((link) => (
@@ -106,9 +86,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+            <h3 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
               Bedrijf
-            </p>
+            </h3>
             <nav aria-label="Bedrijf navigatie">
               <ul className="space-y-0.5 list-none p-0 m-0">
                 {NAV_COMPANY.map((link) => (
@@ -121,9 +101,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+            <h3 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
               Juridisch
-            </p>
+            </h3>
             <nav aria-label="Juridische links">
               <ul className="space-y-0.5 list-none p-0 m-0">
                 {NAV_LEGAL.map((link) => (

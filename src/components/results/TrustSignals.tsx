@@ -44,7 +44,7 @@ export function TrustSignals() {
             className="flex items-start gap-3"
           >
             <div
-              className="flex-shrink-0 w-10 h-10 rounded-full bg-white flex items-center justify-center text-[var(--ff-color-primary-600)] shadow-sm"
+              className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-surface)] flex items-center justify-center text-[var(--ff-color-primary-600)] shadow-sm"
               aria-hidden="true"
             >
               {signal.icon}

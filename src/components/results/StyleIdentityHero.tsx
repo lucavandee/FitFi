@@ -122,14 +122,14 @@ export function StyleIdentityHero({
       <div className="p-6 sm:p-8">
         {/* Kicker */}
         <div className="flex items-center gap-2 mb-5">
-          <Sparkles className="w-3.5 h-3.5 text-[var(--ff-color-primary-500)]" />
+          <Sparkles className="w-3.5 h-3.5 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)]">
-            Jouw stijl-identiteit
+            Jouw stijlprofiel
           </span>
         </div>
 
         {/* Title */}
-        <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] tracking-tight leading-none mb-3">
+        <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] tracking-tight leading-tight mb-3">
           {styleName}
         </h2>
         <p className="text-base text-[var(--color-muted)] leading-relaxed mb-6 max-w-xl">
@@ -148,7 +148,7 @@ export function StyleIdentityHero({
                 className="flex items-start gap-2.5 p-3 rounded-xl bg-[var(--ff-color-primary-25)] border border-[var(--ff-color-primary-100)]"
               >
                 <div className="w-5 h-5 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-[var(--ff-color-primary-600)]" />
+                  <Check className="w-3 h-3 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
                 </div>
                 <p className="text-sm text-[var(--color-text)] leading-snug">{insight}</p>
               </motion.div>
