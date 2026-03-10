@@ -345,6 +345,7 @@ export function composeOutfits(
   const usedProductIds = new Set<string>();
   const usedTopBottomCombos = new Set<string>();
   const diversityTracker = createDiversityTracker();
+  const occasionUsageCounts: Record<string, number> = {};
 
   for (let i = 0; i < count; i++) {
     const occasionKey = occasions[i % occasions.length];
@@ -353,7 +354,11 @@ export function composeOutfits(
       + (prefs?.prints?.length || 0) * 17
       + (prefs?.goals?.length || 0) * 23
       + (prefs?.materials?.length || 0) * 29;
-    const seed = i * 31 + archetype.length * 7 + (gender?.length || 3) * 13 + prefSeed;
+
+    const occasionUseCount = occasionUsageCounts[occasionKey] || 0;
+    const isRepeatedOccasion = occasionUseCount > 0;
+    const repeatOffset = isRepeatedOccasion ? occasionUseCount * 97 : 0;
+    const seed = i * 31 + archetype.length * 7 + (gender?.length || 3) * 13 + prefSeed + repeatOffset;
 
     const outfit = buildOutfit(
       byCategory,
@@ -365,7 +370,10 @@ export function composeOutfits(
       i,
       prefs,
       diversityTracker,
+      isRepeatedOccasion,
     );
+
+    occasionUsageCounts[occasionKey] = occasionUseCount + 1;
 
     if (outfit) {
       registerOutfit(outfit.products, diversityTracker);
@@ -400,6 +408,7 @@ function buildOutfit(
   index: number,
   prefs?: UserPreferences,
   diversityTracker?: ReportDiversityTracker,
+  isRepeatedOccasion?: boolean,
 ): ComposedOutfit | null {
   const selected: CleanProduct[] = [];
   const selectedBrands = new Set<string>();
@@ -412,13 +421,13 @@ function buildOutfit(
       let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
       fallbackPool = budgetFilterPool(fallbackPool, itemCeiling);
       if (fallbackPool.length === 0) return null;
-      const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker);
+      const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
       if (!pick) return null;
       selected.push(pick);
       selectedBrands.add(pick.brand.toLowerCase());
       continue;
     }
-    const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker);
+    const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (!pick) return null;
     selected.push(pick);
     selectedBrands.add(pick.brand.toLowerCase());
@@ -448,7 +457,7 @@ function buildOutfit(
     );
     pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) continue;
-    const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs, diversityTracker);
+    const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (pick) {
       selected.push(pick);
       selectedBrands.add(pick.brand.toLowerCase());
@@ -458,7 +467,7 @@ function buildOutfit(
   if (diversityTracker && diversityTracker.outfitCount >= 2) {
     const candidateSig = selected.map(p => p.subType || p.category).sort();
     const similarity = structureSimilarity(candidateSig, diversityTracker);
-    if (similarity >= 0.85) {
+    if (similarity >= 0.67) {
       const swappableCats = ['top', 'footwear', 'bottom'];
       for (const swapCat of swappableCats) {
         const currentItem = selected.find(p => p.category === swapCat);
@@ -470,7 +479,7 @@ function buildOutfit(
             && (p.subType || p.category) !== (currentItem.subType || currentItem.category)
           );
         if (altPool.length === 0) continue;
-        const alt = pickBest(altPool, blueprint, archetype, seed + swapCat.length * 7, selectedBrands, selected, prefs, diversityTracker);
+        const alt = pickBest(altPool, blueprint, archetype, seed + swapCat.length * 7, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
         if (alt) {
           const idx = selected.indexOf(currentItem);
           if (idx >= 0) selected[idx] = alt;
@@ -631,6 +640,7 @@ function pickBest(
   existingProducts: CleanProduct[],
   prefs?: UserPreferences,
   diversityTracker?: ReportDiversityTracker,
+  isRepeatedOccasion?: boolean,
 ): CleanProduct | null {
   if (pool.length === 0) return null;
 
@@ -642,15 +652,21 @@ function pickBest(
         const usedSubTypes = diversityTracker.subTypeSignatures.flat();
         const pSub = p.subType || p.category;
         const subTypeCount = usedSubTypes.filter(st => st === pSub).length;
-        if (subTypeCount >= 2) s -= 15;
-        else if (subTypeCount === 1) s -= 6;
+        if (isRepeatedOccasion) {
+          if (subTypeCount >= 2) s -= 30;
+          else if (subTypeCount === 1) s -= 12;
+        } else {
+          if (subTypeCount >= 2) s -= 15;
+          else if (subTypeCount === 1) s -= 6;
+        }
       }
       return { p, score: s };
     })
     .sort((a, b) => b.score - a.score);
 
   const topTier = scored.slice(0, Math.max(5, Math.ceil(scored.length * 0.2)));
-  const idx = ((seed * 16807) % 2147483647) % topTier.length;
+  const effectiveSeed = isRepeatedOccasion ? seed + 199 : seed;
+  const idx = ((effectiveSeed * 16807) % 2147483647) % topTier.length;
   return topTier[Math.abs(idx)]?.p || scored[0]?.p || null;
 }
 
