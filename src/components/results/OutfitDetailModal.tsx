@@ -6,6 +6,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import useBodyScrollLock from "@/hooks/useBodyScrollLock";
 import { openProductLink, resolveProductUrl } from "@/utils/affiliate";
 import toast from "react-hot-toast";
+import track from "@/utils/telemetry";
 
 interface OutfitDetailModalProps {
   outfit: any | null;
@@ -89,12 +90,42 @@ export function OutfitDetailModal({
   const panelRef = useFocusTrap(isOpen) as React.RefObject<HTMLDivElement>;
   useBodyScrollLock(isOpen);
 
-  if (!outfit) return null;
+  const shoppedRef = React.useRef(false);
 
   const id = outfit?.id != null ? String(outfit.id) : `seed-${allOutfits.indexOf(outfit)}`;
-  const isFav = favs.includes(id);
   const outfitName = outfit?.name || outfit?.title || "Outfit";
   const products: any[] = Array.isArray(outfit?.products) ? outfit.products : [];
+  const shoppableProducts = products.filter((p: any) => resolveProductUrl(p));
+
+  React.useEffect(() => {
+    if (!isOpen || !outfit) return;
+    shoppedRef.current = false;
+    const outfitId = outfit?.id != null ? String(outfit.id) : `seed-${allOutfits.indexOf(outfit)}`;
+    track("outfit_modal_open", {
+      outfit_id: outfitId,
+      outfit_title: outfit?.name || outfit?.title || "Outfit",
+      archetype: archetypeName,
+      match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
+      shoppable_product_count: products.filter((p: any) => resolveProductUrl(p)).length,
+      total_product_count: products.length,
+    });
+  }, [isOpen, id]);
+
+  const handleClose = React.useCallback(() => {
+    if (!shoppedRef.current && isOpen) {
+      track("modal_close_without_shop", {
+        outfit_id: id,
+        outfit_title: outfitName,
+        archetype: archetypeName,
+        shoppable_product_count: shoppableProducts.length,
+      });
+    }
+    onClose();
+  }, [isOpen, id, outfitName, archetypeName, shoppableProducts.length, onClose]);
+
+  if (!outfit) return null;
+
+  const isFav = favs.includes(id);
   const heroImage = getOutfitHeroImage(outfit);
 
   const totalPrice = products.reduce((sum: number, p: any) => {
@@ -102,7 +133,6 @@ export function OutfitDetailModal({
     return sum + price;
   }, 0);
 
-  const shoppableProducts = products.filter((p: any) => resolveProductUrl(p));
   const hasShoppable = shoppableProducts.length > 0;
 
   return (
@@ -113,7 +143,7 @@ export function OutfitDetailModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
-        onClick={onClose}
+        onClick={handleClose}
         className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4"
         role="dialog"
         aria-modal="true"
@@ -149,7 +179,7 @@ export function OutfitDetailModal({
               </h2>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               aria-label="Sluit"
               data-modal-close
               className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] flex-shrink-0 transition-colors"
@@ -229,6 +259,17 @@ export function OutfitDetailModal({
                         className={`bg-[var(--color-surface)] ${url ? "cursor-pointer hover:bg-[var(--ff-color-primary-50)] transition-colors" : ""}`}
                         onClick={async () => {
                           if (!url) return;
+                          shoppedRef.current = true;
+                          track("product_shop_click", {
+                            outfit_id: id,
+                            outfit_title: outfitName,
+                            archetype: archetypeName,
+                            product_name: name,
+                            product_brand: brand ?? null,
+                            product_price: rawPrice ?? null,
+                            product_slot: idx + 1,
+                            source: "modal",
+                          });
                           const opened = await openProductLink({
                             product: { id: product?.id || `p-${idx}`, name, retailer: brand || undefined, price: rawPrice || undefined, ...product },
                             outfitId: id,
@@ -291,6 +332,14 @@ export function OutfitDetailModal({
               {hasShoppable ? (
                 <button
                   onClick={async () => {
+                    shoppedRef.current = true;
+                    track("shop_all_click", {
+                      outfit_id: id,
+                      outfit_title: outfitName,
+                      archetype: archetypeName,
+                      shoppable_product_count: shoppableProducts.length,
+                      source: "modal_footer",
+                    });
                     for (let i = 0; i < shoppableProducts.length; i++) {
                       const p = shoppableProducts[i];
                       const name = p?.name || `Product ${i + 1}`;

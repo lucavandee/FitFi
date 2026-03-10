@@ -92,7 +92,10 @@ export default function EnhancedResultsPage() {
         localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       }
     } catch {}
-    track("results_page_viewed", { authenticated: !!user });
+    track("results_view", {
+      authenticated: !!user,
+      archetype: archetypeName,
+    });
   }, []);
 
   const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
@@ -302,6 +305,20 @@ export default function EnhancedResultsPage() {
   const [selectedOutfit, setSelectedOutfit] = React.useState<(Outfit | OutfitSeed) | null>(null);
   const hintTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
   React.useEffect(() => () => clearTimeout(hintTimerRef.current), []);
+
+  const outfitsLoadedTrackedRef = React.useRef(false);
+  React.useEffect(() => {
+    if (outfitsLoadedTrackedRef.current) return;
+    if (!outfitsLoading && displayOutfits.length > 0) {
+      outfitsLoadedTrackedRef.current = true;
+      track("results_outfits_loaded", {
+        archetype: archetypeName,
+        outfit_count: displayOutfits.length,
+        source: realOutfits && realOutfits.length > 0 ? "realtime" : "seed",
+        gallery_mode: galleryMode,
+      });
+    }
+  }, [outfitsLoading, displayOutfits.length]);
 
   // Gallery mode: swipe (mobile-friendly) or grid (desktop-friendly)
   const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
@@ -1188,7 +1205,15 @@ export default function EnhancedResultsPage() {
                             alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                             className="w-full h-full object-cover"
                             loading="lazy"
-                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              track("product_image_fallback_shown", {
+                                outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
+                                outfit_index: idx,
+                                archetype: archetypeName,
+                                source: "swipe",
+                              });
+                            }}
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
@@ -1205,6 +1230,16 @@ export default function EnhancedResultsPage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               const outfitId = 'id' in outfit ? outfit.id : `seed-${idx}`;
+                              const isCurrentlyFav = favs.includes(String(outfitId));
+                              track("save_outfit_click", {
+                                outfit_id: String(outfitId),
+                                outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                                outfit_index: idx,
+                                occasion: outfitInfo.context.label,
+                                archetype: archetypeName,
+                                action: isCurrentlyFav ? "unsave" : "save",
+                                source: "swipe",
+                              });
                               toggleFav(String(outfitId));
                             }}
                             className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-md ${
@@ -1223,6 +1258,16 @@ export default function EnhancedResultsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
+                              track("outfit_card_click", {
+                                outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
+                                outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                                outfit_index: idx,
+                                occasion: outfitInfo.context.label,
+                                archetype: archetypeName,
+                                match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
+                                shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
+                                source: "swipe",
+                              });
                               setSelectedOutfit(outfit);
                             }}
                             className="w-full px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-700)] text-white font-bold text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
@@ -1307,7 +1352,15 @@ export default function EnhancedResultsPage() {
                               alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
                               className="w-full h-full object-cover"
                               loading="lazy"
-                              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = 'none';
+                                track("product_image_fallback_shown", {
+                                  outfit_id: String(id),
+                                  outfit_index: idx,
+                                  archetype: archetypeName,
+                                  source: "grid",
+                                });
+                              }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
@@ -1326,6 +1379,15 @@ export default function EnhancedResultsPage() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleFav(String(id));
+                                track("save_outfit_click", {
+                                  outfit_id: String(id),
+                                  outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                                  outfit_index: idx,
+                                  occasion: outfitInfo.context.label,
+                                  archetype: archetypeName,
+                                  action: isFav ? "unsave" : "save",
+                                  source: "grid",
+                                });
                                 if (!isFav) {
                                   toast.success('Outfit opgeslagen!', {
                                     duration: 3000,
@@ -1366,6 +1428,16 @@ export default function EnhancedResultsPage() {
                               whileTap={{ scale: 0.99 }}
                               onClick={(e) => {
                                 e.stopPropagation();
+                                track("outfit_card_click", {
+                                  outfit_id: String(id),
+                                  outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                                  outfit_index: idx,
+                                  occasion: outfitInfo.context.label,
+                                  archetype: archetypeName,
+                                  match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
+                                  shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
+                                  source: "grid",
+                                });
                                 setSelectedOutfit(outfit);
                               }}
                               className="w-full px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-700)] text-white font-bold text-sm hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
