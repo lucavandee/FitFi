@@ -440,11 +440,12 @@ export default function EnhancedResultsPage() {
 
                     {/* 3. Tertiary: icon-only share */}
                     <button
+                      type="button"
                       onClick={sharePage}
-                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-transparent border border-[rgba(30,35,51,0.22)] rounded-full text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] transition-all flex-shrink-0"
                       aria-label="Delen"
+                      className="inline-flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-[rgba(30,35,51,0.16)] bg-[rgba(255,255,255,0.72)] text-[var(--color-text)] transition-all duration-200 hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)] hover:border-[var(--ff-color-primary-400)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 shrink-0"
                     >
-                      <Share2 className="w-4 h-4 shrink-0" />
+                      <Share2 className="w-4 h-4 shrink-0 text-current" />
                     </button>
                   </div>
                 </div>
