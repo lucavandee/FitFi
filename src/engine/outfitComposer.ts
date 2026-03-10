@@ -17,6 +17,7 @@ export interface CleanProduct {
   retailer: string;
   tags: string[];
   athleticIntent?: number;
+  subType?: string;
 }
 
 export interface ComposedOutfit {
@@ -147,6 +148,88 @@ function formalityScore(product: CleanProduct): number {
   return Math.max(0, Math.min(1, score));
 }
 
+const SUB_TYPE_PATTERNS: Record<string, RegExp> = {
+  hoodie: /hoodie|hooded/i,
+  sweater: /sweater|sweatshirt|crewneck/i,
+  knit: /knit|gebreid|pullover|trui|coltrui|turtleneck/i,
+  tshirt: /t-shirt|tee\b|t shirt/i,
+  polo: /polo/i,
+  shirt: /overhemd|shirt(?!.*t-shirt)|blouse/i,
+  overshirt: /overshirt|shacket/i,
+  cardigan: /cardigan|vest/i,
+  jeans: /jeans|denim.*broek|spijker/i,
+  chino: /chino/i,
+  trouser: /pantalon|broek(?!.*spijker)/i,
+  jogger: /jogger|sweatpant|trainingsbroek/i,
+  cargo: /cargo/i,
+  short: /short/i,
+  sneaker: /sneaker/i,
+  boot: /boot|laars|chelsea/i,
+  loafer: /loafer|mocassin|instapper/i,
+  derby: /derby|oxford|brogue|veterschoen/i,
+  blazer: /blazer|colbert/i,
+  jacket: /jack(?!et)|jacket|bomber|puffer/i,
+  coat: /coat|jas|parka|mantel|trench/i,
+  gilet: /gilet|bodywarmer/i,
+};
+
+function classifySubType(p: CleanProduct): string {
+  const text = `${p.name} ${p.description}`.toLowerCase();
+  for (const [subType, pattern] of Object.entries(SUB_TYPE_PATTERNS)) {
+    if (pattern.test(text)) return subType;
+  }
+  return p.category;
+}
+
+interface ReportDiversityTracker {
+  brandCounts: Record<string, number>;
+  subTypeSignatures: string[][];
+  outfitCount: number;
+}
+
+function createDiversityTracker(): ReportDiversityTracker {
+  return { brandCounts: {}, subTypeSignatures: [], outfitCount: 0 };
+}
+
+function reportBrandPenalty(brand: string, tracker: ReportDiversityTracker): number {
+  const key = brand.toLowerCase();
+  const count = tracker.brandCounts[key] || 0;
+  if (count === 0) return 0;
+  if (count === 1) return -12;
+  if (count === 2) return -25;
+  return -35;
+}
+
+function registerOutfit(products: CleanProduct[], tracker: ReportDiversityTracker): void {
+  for (const p of products) {
+    const key = p.brand.toLowerCase();
+    tracker.brandCounts[key] = (tracker.brandCounts[key] || 0) + 1;
+  }
+  const sig = products.map(p => p.subType || p.category).sort();
+  tracker.subTypeSignatures.push(sig);
+  tracker.outfitCount++;
+}
+
+function structureSimilarity(candidateSig: string[], tracker: ReportDiversityTracker): number {
+  if (tracker.subTypeSignatures.length === 0) return 0;
+  let maxOverlap = 0;
+  for (const existing of tracker.subTypeSignatures) {
+    let shared = 0;
+    const pool = [...existing];
+    for (const st of candidateSig) {
+      const idx = pool.indexOf(st);
+      if (idx >= 0) {
+        shared++;
+        pool.splice(idx, 1);
+      }
+    }
+    const total = Math.max(candidateSig.length, existing.length);
+    const overlap = total > 0 ? shared / total : 0;
+    if (overlap > maxOverlap) maxOverlap = overlap;
+  }
+  return maxOverlap;
+}
+
 function colorCompatibility(a: string[], b: string[]): number {
   if (!a.length || !b.length) return 0.5;
   const NEUTRAL = ['zwart', 'wit', 'grijs', 'beige', 'donkerblauw', 'navy', 'cream', 'taupe', 'bruin', 'ecru', 'off-white', 'antraciet', 'black', 'white', 'grey', 'blue'];
@@ -231,6 +314,7 @@ export function composeOutfits(
       tags: Array.isArray(r.tags) ? r.tags : [],
     };
     base.athleticIntent = deriveAthleticIntent(base);
+    base.subType = classifySubType(base);
     return base;
   }).filter(p => p.category !== 'other' && p.imageUrl && p.url);
 
@@ -260,6 +344,7 @@ export function composeOutfits(
   const outfits: ComposedOutfit[] = [];
   const usedProductIds = new Set<string>();
   const usedTopBottomCombos = new Set<string>();
+  const diversityTracker = createDiversityTracker();
 
   for (let i = 0; i < count; i++) {
     const occasionKey = occasions[i % occasions.length];
@@ -279,9 +364,11 @@ export function composeOutfits(
       usedTopBottomCombos,
       i,
       prefs,
+      diversityTracker,
     );
 
     if (outfit) {
+      registerOutfit(outfit.products, diversityTracker);
       outfits.push(outfit);
     }
   }
@@ -312,6 +399,7 @@ function buildOutfit(
   usedCombos: Set<string>,
   index: number,
   prefs?: UserPreferences,
+  diversityTracker?: ReportDiversityTracker,
 ): ComposedOutfit | null {
   const selected: CleanProduct[] = [];
   const selectedBrands = new Set<string>();
@@ -324,13 +412,13 @@ function buildOutfit(
       let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
       fallbackPool = budgetFilterPool(fallbackPool, itemCeiling);
       if (fallbackPool.length === 0) return null;
-      const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs);
+      const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker);
       if (!pick) return null;
       selected.push(pick);
       selectedBrands.add(pick.brand.toLowerCase());
       continue;
     }
-    const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs);
+    const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker);
     if (!pick) return null;
     selected.push(pick);
     selectedBrands.add(pick.brand.toLowerCase());
@@ -360,10 +448,35 @@ function buildOutfit(
     );
     pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) continue;
-    const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs);
+    const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs, diversityTracker);
     if (pick) {
       selected.push(pick);
       selectedBrands.add(pick.brand.toLowerCase());
+    }
+  }
+
+  if (diversityTracker && diversityTracker.outfitCount >= 2) {
+    const candidateSig = selected.map(p => p.subType || p.category).sort();
+    const similarity = structureSimilarity(candidateSig, diversityTracker);
+    if (similarity >= 0.85) {
+      const swappableCats = ['top', 'footwear', 'bottom'];
+      for (const swapCat of swappableCats) {
+        const currentItem = selected.find(p => p.category === swapCat);
+        if (!currentItem) continue;
+        const altPool = (byCategory[swapCat] || [])
+          .filter(p =>
+            !usedIds.has(p.id)
+            && p.id !== currentItem.id
+            && (p.subType || p.category) !== (currentItem.subType || currentItem.category)
+          );
+        if (altPool.length === 0) continue;
+        const alt = pickBest(altPool, blueprint, archetype, seed + swapCat.length * 7, selectedBrands, selected, prefs, diversityTracker);
+        if (alt) {
+          const idx = selected.indexOf(currentItem);
+          if (idx >= 0) selected[idx] = alt;
+          break;
+        }
+      }
     }
   }
 
@@ -517,14 +630,26 @@ function pickBest(
   selectedBrands: Set<string>,
   existingProducts: CleanProduct[],
   prefs?: UserPreferences,
+  diversityTracker?: ReportDiversityTracker,
 ): CleanProduct | null {
   if (pool.length === 0) return null;
 
   const scored = pool
-    .map(p => ({ p, score: scoreProduct(p, blueprint, archetype, selectedBrands, existingProducts, prefs) }))
+    .map(p => {
+      let s = scoreProduct(p, blueprint, archetype, selectedBrands, existingProducts, prefs);
+      if (diversityTracker) {
+        s += reportBrandPenalty(p.brand, diversityTracker);
+        const usedSubTypes = diversityTracker.subTypeSignatures.flat();
+        const pSub = p.subType || p.category;
+        const subTypeCount = usedSubTypes.filter(st => st === pSub).length;
+        if (subTypeCount >= 2) s -= 15;
+        else if (subTypeCount === 1) s -= 6;
+      }
+      return { p, score: s };
+    })
     .sort((a, b) => b.score - a.score);
 
-  const topTier = scored.slice(0, Math.max(5, Math.ceil(scored.length * 0.15)));
+  const topTier = scored.slice(0, Math.max(5, Math.ceil(scored.length * 0.2)));
   const idx = ((seed * 16807) % 2147483647) % topTier.length;
   return topTier[Math.abs(idx)]?.p || scored[0]?.p || null;
 }
