@@ -53,27 +53,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip service worker for external CDNs (Google Fonts, Analytics)
-  // Let browser handle these directly to avoid CSP conflicts
-  if (
-    url.origin.includes('googleapis.com') ||
-    url.origin.includes('gstatic.com') ||
-    url.origin.includes('google-analytics.com') ||
-    url.origin.includes('googletagmanager.com') ||
-    url.origin.includes('analytics.google.com')
-  ) {
-    return; // Let browser fetch directly
-  }
-
-  if (url.origin.includes('supabase') && request.method === 'POST') {
-    return;
-  }
-
-  // Bypass SW for cross-origin retailer image requests.
-  // These are product images from external retailers (giglio, hm, puma, onlyformen, etc.).
-  // The browser handles them directly via img-src CSP — routing them through SW fetch()
-  // triggers connect-src violations because SW fetch is treated as a connection, not an image load.
-  if (url.origin !== self.location.origin && CACHE_STRATEGIES.images.some((pattern) => pattern.test(request.url))) {
+  // Bypass SW for ALL cross-origin requests.
+  // Only same-origin assets should be cached/fetched through the service worker.
+  // Cross-origin requests (retailer images, CDNs, analytics, Supabase) are handled
+  // directly by the browser using the appropriate CSP directive (img-src, connect-src, etc.).
+  // Routing them through SW fetch() converts them into connect-src requests,
+  // causing CSP violations for domains only allowed in img-src.
+  if (url.origin !== self.location.origin) {
     return;
   }
 

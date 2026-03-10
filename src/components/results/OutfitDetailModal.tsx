@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Heart, X, ShoppingBag } from "lucide-react";
+import { Heart, X, ShoppingBag } from "lucide-react";
 import type { ColorProfile } from "@/lib/quiz/types";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import useBodyScrollLock from "@/hooks/useBodyScrollLock";
@@ -32,6 +32,48 @@ function getOutfitHeroImage(outfit: any): string | null {
     }
   }
   return null;
+}
+
+function HeroImage({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return null;
+  return (
+    <div
+      className="rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
+      style={{ aspectRatio: "4/3" }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover"
+        loading="lazy"
+        onError={() => setFailed(true)}
+      />
+    </div>
+  );
+}
+
+function ProductThumb({ src, alt, index }: { src: string | null; alt: string; index: number }) {
+  const [failed, setFailed] = useState(false);
+  const showFallback = !src || failed;
+  return (
+    <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+      {!showFallback && (
+        <img
+          src={src!}
+          alt={alt}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          onError={() => setFailed(true)}
+        />
+      )}
+      {showFallback && (
+        <span className="text-sm font-bold text-[var(--ff-color-primary-300)]">
+          {index + 1}
+        </span>
+      )}
+    </div>
+  );
 }
 
 export function OutfitDetailModal({
@@ -116,23 +158,8 @@ export function OutfitDetailModal({
           {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-4 space-y-4">
 
-            {/* Hero image */}
             {heroImage && (
-              <div
-                className="rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
-                style={{ aspectRatio: "4/3" }}
-              >
-                <img
-                  src={heroImage}
-                  alt={outfitName}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  onError={(e) => {
-                    const parent = (e.currentTarget as HTMLImageElement).closest("div") as HTMLDivElement | null;
-                    if (parent) parent.style.display = "none";
-                  }}
-                />
-              </div>
+              <HeroImage src={heroImage} alt={outfitName} />
             )}
 
             {/* Color advice */}
@@ -210,28 +237,7 @@ export function OutfitDetailModal({
                       >
                         <div className="flex items-center gap-3 px-3 py-3">
 
-                          <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--ff-color-primary-50)] flex items-center justify-center">
-                            {img ? (
-                              <img
-                                src={img}
-                                alt={name}
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                                onError={(e) => {
-                                  const el = e.currentTarget as HTMLImageElement;
-                                  el.style.display = "none";
-                                  const fallback = el.nextElementSibling as HTMLElement | null;
-                                  if (fallback) fallback.style.display = "flex";
-                                }}
-                              />
-                            ) : null}
-                            <span
-                              className="text-sm font-bold text-[var(--ff-color-primary-300)]"
-                              style={{ display: img ? "none" : "flex" }}
-                            >
-                              {idx + 1}
-                            </span>
-                          </div>
+                          <ProductThumb src={img} alt={name} index={idx} />
 
                           <div className="flex-1 min-w-0">
                             {brand && (

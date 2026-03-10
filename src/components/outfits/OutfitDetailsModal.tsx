@@ -14,7 +14,7 @@ import {
 import { LazyImage } from '@/components/ui/LazyImage';
 import Button from '@/components/ui/Button';
 import { track } from '@/utils/telemetry';
-import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl } from '@/utils/affiliate';
+import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl, resolveProductUrl } from '@/utils/affiliate';
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
 import { cn } from '@/utils/cn';
@@ -71,13 +71,10 @@ export default function OutfitDetailsModal({
   useBodyScrollLock(true);
 
   const handleShopClick = async (product: Product) => {
-    const baseUrl = product.affiliateUrl || product.productUrl;
+    const baseUrl = resolveProductUrl(product);
 
-    if (!baseUrl || baseUrl === '#') {
-      toast.error('Shoplink niet beschikbaar', {
-        description: 'Deze retailer biedt momenteel geen online shoplink aan.',
-        icon: '🛍️',
-      });
+    if (!baseUrl) {
+      toast('Shoplink niet beschikbaar');
       return;
     }
 
@@ -130,31 +127,29 @@ export default function OutfitDetailsModal({
       return;
     }
 
-    const availableProducts = outfit.products.filter(p => p.affiliateUrl || p.productUrl);
+    const shoppable = outfit.products.filter(p => resolveProductUrl(p));
 
-    if (availableProducts.length === 0) {
+    if (shoppable.length === 0) {
       toast('Shopfunctie komt binnenkort beschikbaar');
       return;
     }
 
     track('shop_all_from_outfit_details', {
       outfit_id: outfit.id,
-      product_count: availableProducts.length,
+      product_count: shoppable.length,
     });
 
-    availableProducts.forEach((product, index) => {
+    shoppable.forEach((product, index) => {
       setTimeout(() => {
         handleShopClick(product);
       }, index * 500);
     });
 
-    toast.success(`${availableProducts.length} items openen...`, {
-      icon: '🛍️',
-    });
+    toast.success(`${shoppable.length} items openen...`);
   };
 
   const totalPrice = outfit.totalPrice || outfit.products?.reduce((sum, p) => sum + (p.price || 0), 0) || 0;
-  const availableProducts = outfit.products?.filter(p => p.affiliateUrl || p.productUrl) || [];
+  const availableProducts = outfit.products?.filter(p => resolveProductUrl(p)) || [];
   const allAvailable = availableProducts.length === outfit.products?.length;
 
   return (
@@ -282,7 +277,7 @@ export default function OutfitDetailsModal({
                 <div className="space-y-3">
                   {outfit.products && outfit.products.length > 0 ? (
                     outfit.products.map((product, idx) => {
-                      const hasUrl = product.affiliateUrl || product.productUrl;
+                      const hasUrl = !!resolveProductUrl(product);
                       const isOpening = openingProductId === product.id;
 
                       return (

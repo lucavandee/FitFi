@@ -1,16 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Heart,
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  X,
-  HelpCircle,
-  Sparkles,
-  ShoppingBag,
-  Info
-} from 'lucide-react';
+import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, CircleHelp as HelpCircle, Sparkles, ShoppingBag, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
 import RequireAuth from '@/components/auth/RequireAuth';
@@ -291,13 +281,14 @@ export default function UnifiedOutfitCard({
       return;
     }
 
-    const availableProducts = outfit.products.filter(p => p.affiliateUrl || p.productUrl);
+    const availableProducts = outfit.products.filter(p => {
+      const url = p.affiliateUrl || p.productUrl;
+      if (!url || url === '#') return false;
+      try { return new URL(url).protocol.startsWith('http'); } catch { return false; }
+    });
 
     if (availableProducts.length === 0) {
-      toast('Shopfunctie komt binnenkort beschikbaar', {
-        description: 'Deze items zijn momenteel niet online beschikbaar.',
-        icon: '⏳',
-      });
+      toast('Shopfunctie komt binnenkort beschikbaar');
       return;
     }
 

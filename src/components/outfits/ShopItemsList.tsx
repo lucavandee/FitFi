@@ -25,7 +25,8 @@ import {
   buildClickRef,
   logAffiliateClick,
   isAffiliateConsentGiven,
-  buildAwinUrl
+  buildAwinUrl,
+  resolveProductUrl
 } from '@/utils/affiliate';
 import { useUser } from '@/context/UserContext';
 import { cn } from '@/utils/cn';
@@ -77,13 +78,10 @@ export function ShopItemsList({
   const [confirmedProductId, setConfirmedProductId] = useState<string | null>(null);
 
   const handleShopClick = async (product: Product, index: number) => {
-    const baseUrl = product.affiliateUrl || product.productUrl;
+    const baseUrl = resolveProductUrl(product);
 
-    if (!baseUrl || baseUrl === '#') {
-      toast.error('Shoplink niet beschikbaar', {
-        description: `${product.retailer || 'Deze retailer'} biedt momenteel geen online shoplink aan.`,
-        icon: '🛍️',
-      });
+    if (!baseUrl) {
+      toast('Shoplink niet beschikbaar');
       return;
     }
 
@@ -167,7 +165,7 @@ export function ShopItemsList({
 
       {/* Products list */}
       {products.map((product, index) => {
-        const hasValidUrl = product.affiliateUrl || product.productUrl;
+        const hasValidUrl = !!resolveProductUrl(product);
         const isOpening = openingProductId === product.id;
         const isConfirmed = confirmedProductId === product.id;
 
@@ -328,7 +326,7 @@ export function ShopItemsButton({
   const [isOpen, setIsOpen] = useState(false);
 
   const availableCount = products.filter(
-    (p) => p.affiliateUrl || p.productUrl
+    (p) => !!resolveProductUrl(p)
   ).length;
 
   if (products.length === 0) return null;
