@@ -382,9 +382,9 @@ export function composeOutfits(
   }
 
   for (const outfit of outfits) {
-    const siblingLabels = outfits
-      .filter(o => o.id !== outfit.id)
-      .map(o => o.occasion);
+    const siblings = outfits.filter(o => o.id !== outfit.id);
+    const siblingLabels = siblings.map(o => o.occasion);
+    const siblingProducts = siblings.map(o => o.products);
     const bp = Object.values(OCCASION_BLUEPRINTS).find(b => b.label === outfit.occasion)
       || OCCASION_BLUEPRINTS.casual;
     outfit.explanation = buildExplanation(
@@ -394,6 +394,7 @@ export function composeOutfits(
       prefs,
       outfit.products.reduce((s, p) => s + p.price, 0),
       siblingLabels,
+      siblingProducts,
     );
   }
 
@@ -613,10 +614,47 @@ function detectPrintMatch(products: CleanProduct[]): 'clean' | 'print' | 'mixed'
   return 'clean';
 }
 
+const FOOTWEAR_FORMALITY_RANK: Record<string, number> = {
+  derby: 3, loafer: 2, boot: 1, sneaker: 0,
+};
+
+const LAYERING_SUBTYPES = new Set(['blazer', 'jacket', 'coat', 'gilet', 'overshirt', 'cardigan']);
+const SLIM_RE = /slim|skinny|fitted|tailored|nauwsluitend/i;
+const RELAXED_RE = /relaxed|loose|comfort|ruim|easy|oversized|oversize|wide|baggy/i;
+
+function detectFootwearType(products: CleanProduct[]): string | null {
+  const shoe = products.find(p => p.category === 'footwear');
+  if (!shoe) return null;
+  const sub = shoe.subType || '';
+  if (sub === 'derby') return 'derby';
+  if (sub === 'loafer') return 'loafer';
+  if (sub === 'boot') return 'boot';
+  if (sub === 'sneaker') return 'sneaker';
+  return null;
+}
+
+function detectLayering(products: CleanProduct[]): boolean {
+  return products.some(p => LAYERING_SUBTYPES.has(p.subType || ''));
+}
+
+function detectSilhouette(products: CleanProduct[]): 'slim' | 'relaxed' | 'neutral' {
+  let slim = 0;
+  let relaxed = 0;
+  for (const p of products) {
+    const t = `${p.name} ${p.description}`.toLowerCase();
+    if (SLIM_RE.test(t)) slim++;
+    if (RELAXED_RE.test(t)) relaxed++;
+  }
+  if (slim > relaxed) return 'slim';
+  if (relaxed > slim) return 'relaxed';
+  return 'neutral';
+}
+
 function buildDifferentiator(
   blueprint: OccasionBlueprint,
   products: CleanProduct[],
   siblingLabels: string[],
+  siblingProducts?: CleanProduct[][],
 ): string {
   if (siblingLabels.length === 0) return '';
 
@@ -650,6 +688,79 @@ function buildDifferentiator(
       : 'Een trede netter dan de casual looks.';
   }
 
+  const thisFootwear = detectFootwearType(products);
+  const thisLayering = detectLayering(products);
+  const thisSilhouette = detectSilhouette(products);
+
+  if (siblingProducts && siblingProducts.length > 0) {
+    const siblingFootwears = siblingProducts.map(detectFootwearType);
+    const siblingLayerings = siblingProducts.map(detectLayering);
+    const siblingSlhouettes = siblingProducts.map(detectSilhouette);
+
+    if (thisFootwear) {
+      const thisRank = FOOTWEAR_FORMALITY_RANK[thisFootwear] ?? -1;
+      const siblingRanks = siblingFootwears
+        .filter((f): f is string => f !== null)
+        .map(f => FOOTWEAR_FORMALITY_RANK[f] ?? -1);
+      if (siblingRanks.length > 0) {
+        const allSiblingsCasualShoe = siblingRanks.every(r => r < thisRank);
+        const allSiblingsNetterShoe = siblingRanks.every(r => r > thisRank);
+        if (allSiblingsCasualShoe) {
+          const shoeNL: Record<string, string> = { derby: 'derby', loafer: 'loafer', boot: 'boot', sneaker: 'sneaker' };
+          return `Nettere schoen (${shoeNL[thisFootwear] || thisFootwear}) dan in de andere looks.`;
+        }
+        if (allSiblingsNetterShoe) {
+          const shoeNL: Record<string, string> = { derby: 'derby', loafer: 'loafer', boot: 'boot', sneaker: 'sneaker' };
+          return `Casualere schoen (${shoeNL[thisFootwear] || thisFootwear}) dan in de andere looks.`;
+        }
+      }
+    }
+
+    const allSiblingsLayered = siblingLayerings.every(l => l);
+    const allSiblingsUnlayered = siblingLayerings.every(l => !l);
+    if (thisLayering && allSiblingsUnlayered) {
+      return 'Meer gelaagd dan de andere looks — met extra structuur bovenop.';
+    }
+    if (!thisLayering && allSiblingsLayered) {
+      return 'Lichter opgebouwd dan de andere looks — zonder bovenlaag.';
+    }
+
+    const allSiblingsSame = siblingSlhouettes.every(s => s === thisSilhouette);
+    const anyDifferent = siblingSlhouettes.some(s => s !== thisSilhouette);
+    if (anyDifferent || !allSiblingsSame) {
+      if (thisSilhouette === 'relaxed') {
+        return itemStr
+          ? `Ruimer silhouet dan de andere looks, opgebouwd rond ${itemStr}.`
+          : 'Ruimer silhouet dan de andere looks.';
+      }
+      if (thisSilhouette === 'slim') {
+        return itemStr
+          ? `Strakker silhouet dan de andere looks, opgebouwd rond ${itemStr}.`
+          : 'Strakker silhouet dan de andere looks.';
+      }
+    }
+  }
+
+  if (thisLayering) {
+    return itemStr
+      ? `Meer gelaagde look, opgebouwd rond ${itemStr}.`
+      : 'Meer gelaagde structuur dan de andere looks.';
+  }
+
+  if (thisFootwear) {
+    const footwearLabel: Record<string, string> = {
+      derby: 'nette veterschoen', loafer: 'loafer', boot: 'boot', sneaker: 'sneaker',
+    };
+    return `Afgemaakt met een ${footwearLabel[thisFootwear] || thisFootwear}.`;
+  }
+
+  if (thisSilhouette === 'relaxed') {
+    return itemStr ? `Ruim en relaxed silhouet, rond ${itemStr}.` : 'Ruim en relaxed silhouet.';
+  }
+  if (thisSilhouette === 'slim') {
+    return itemStr ? `Strak en gestroomlijnd silhouet, met ${itemStr}.` : 'Strak en gestroomlijnd silhouet.';
+  }
+
   if (itemStr) {
     return `Deze variant draait om ${itemStr}.`;
   }
@@ -664,6 +775,7 @@ function buildExplanation(
   prefs?: UserPreferences,
   totalPrice?: number,
   siblingLabels?: string[],
+  siblingProducts?: CleanProduct[][],
 ): string {
   const lines: string[] = [];
 
@@ -768,7 +880,7 @@ function buildExplanation(
     lines.push(signalStr);
   }
 
-  const diff = buildDifferentiator(blueprint, products, siblingLabels || []);
+  const diff = buildDifferentiator(blueprint, products, siblingLabels || [], siblingProducts);
   if (diff) lines.push(diff);
 
   const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
