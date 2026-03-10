@@ -394,15 +394,15 @@ export default function EnhancedResultsPage() {
           <div className="max-w-3xl mx-auto">
             {hasCompletedQuiz ? (
               <>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-0">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-1.5">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
                       Persoonlijk Style Report
                     </p>
-                    <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-1.5">
+                    <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-3">
                       {archetypeName}
                     </h1>
-                    <div className="flex items-center gap-2.5 flex-wrap">
+                    <div className="flex items-center gap-2.5 flex-wrap mb-4">
                       {archetypeDetectionResult && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-[var(--ff-color-success-700)] rounded-full text-xs font-semibold">
                           <Check className="w-3 h-3" />
@@ -807,28 +807,44 @@ export default function EnhancedResultsPage() {
                 <AnimatedSection delay={0.5}>
                   <div className="mb-12">
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-[var(--color-surface)] to-[var(--ff-color-accent-50)] rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl text-center"
+                      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--ff-color-primary-200)] p-6 sm:p-8"
+                      style={{ boxShadow: '0 2px 12px rgba(122,97,74,0.08)' }}
                     >
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center">
-                        <ShoppingBag className="w-8 h-8 text-white" />
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+                        {/* Icon */}
+                        <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] flex items-center justify-center">
+                          <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                        </div>
+
+                        {/* Text stack */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-1">
+                            Premium kleuranalyse
+                          </p>
+                          <h3 className="text-base font-bold text-[var(--color-text)] leading-snug mb-1">
+                            Persoonlijk kleurenpalet op basis van jouw ondertoon
+                          </h3>
+                          <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+                            {!answers?.photoUrl
+                              ? 'Upload een selfie en activeer Premium voor kleuradvies afgestemd op jouw huidtint.'
+                              : 'Activeer Premium voor jouw persoonlijke shopping-gids met seizoensgebonden kleuradviezen.'}
+                          </p>
+                        </div>
+
+                        {/* CTA */}
+                        <div className="flex-shrink-0">
+                          <NavLink
+                            to="/prijzen#premium"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all whitespace-nowrap"
+                            style={{ boxShadow: '0 2px 8px rgba(122,97,74,0.25)' }}
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            <span>Bekijk Premium</span>
+                          </NavLink>
+                        </div>
                       </div>
-                      <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
-                        Wil je een persoonlijk kleurenpalet?
-                      </h3>
-                      <p className="text-[var(--color-muted)] mb-6 max-w-2xl mx-auto">
-                        {!answers?.photoUrl
-                          ? 'Kleurenanalyse is optioneel. Zonder foto geven we geen ondertoonadvies. Upload een selfie en ga over op Premium voor jouw volledige shopping-overzicht.'
-                          : 'Ga over op Premium voor een persoonlijke shopping-gids met kleuradviezen op basis van jouw ondertoon.'}
-                      </p>
-                      <NavLink
-                        to="/prijzen#premium"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] hover:shadow-lg transition-all"
-                      >
-                        <Sparkles className="w-5 h-5" />
-                        <span>Upgrade voor kleuranalyse</span>
-                      </NavLink>
                     </motion.div>
                   </div>
                 </AnimatedSection>
@@ -1056,76 +1072,76 @@ export default function EnhancedResultsPage() {
             <AnimatedSection>
               {/* Quiz-anchor context strip */}
               {answers && (
-                <div className="mb-4 flex flex-wrap items-center gap-1.5 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mr-0.5">Basis:</span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                <div className="mb-3 flex flex-wrap items-center gap-1 px-2.5 py-1.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--color-muted)] opacity-60 mr-0.5">Basis:</span>
+                  <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
                     {archetypeName}
                   </span>
                   {answers.fit && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
-                      {answers.fit}
+                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
+                      · {answers.fit}
                     </span>
                   )}
                   {Array.isArray(answers.occasions) && answers.occasions.slice(0, 2).map((occ: string) => (
-                    <span key={occ} className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
-                      {occ}
+                    <span key={occ} className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
+                      · {occ}
                     </span>
                   ))}
                   {activeColorProfile?.season && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
-                      {activeColorProfile.season}
+                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
+                      · {activeColorProfile.season}
                     </span>
                   )}
                   {answers.budgetRange?.max && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
-                      €{answers.budgetRange.max}
+                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
+                      · €{answers.budgetRange.max}
                     </span>
                   )}
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="ml-auto text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                    className="ml-auto text-[10px] font-medium text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline"
                   >
-                    Aanpassen →
+                    Aanpassen
                   </button>
                 </div>
               )}
 
-              <div className="flex items-center justify-between mb-4 gap-3">
+              <div className="flex items-end justify-between mb-4 gap-3">
                 <div>
-                  <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight">
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight leading-tight">
                     Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
                   </h2>
-                  <p className="text-sm text-[var(--color-muted)] mt-0.5">
-                    {displayOutfits.length} outfits op basis van jouw {archetypeName} stijl
+                  <p className="text-xs text-[var(--color-muted)] mt-0.5 font-normal">
+                    {displayOutfits.length} looks · {archetypeName}
                   </p>
                 </div>
 
-                {/* View Mode Toggle — compact, naast header */}
+                {/* View Mode Toggle — uitlijning op baseline van header */}
                 <div className="inline-flex items-center p-0.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg flex-shrink-0" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.06)' }}>
                   <button
                     onClick={() => setGalleryMode('swipe')}
                     aria-pressed={galleryMode === 'swipe'}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold text-xs transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
                       galleryMode === 'swipe'
                         ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
                         : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
                     }`}
                     aria-label="Swipe weergave"
                   >
-                    <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+                    <Layers className="w-3 h-3" aria-hidden="true" />
                     <span>Swipe</span>
                   </button>
                   <button
                     onClick={() => setGalleryMode('grid')}
                     aria-pressed={galleryMode === 'grid'}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold text-xs transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
                       galleryMode === 'grid'
                         ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
                         : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
                     }`}
                     aria-label="Grid weergave"
                   >
-                    <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
+                    <Grid3x3 className="w-3 h-3" aria-hidden="true" />
                     <span>Grid</span>
                   </button>
                 </div>
