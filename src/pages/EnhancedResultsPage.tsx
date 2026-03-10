@@ -394,30 +394,30 @@ export default function EnhancedResultsPage() {
           <div className="max-w-3xl mx-auto">
             {hasCompletedQuiz ? (
               <>
-                <div className="flex flex-col gap-0">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
-                      Persoonlijk Style Report
-                    </p>
-                    <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-3">
-                      {archetypeName}
-                    </h1>
-                    <div className="flex items-center gap-2.5 flex-wrap mb-4">
-                      {archetypeDetectionResult && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-[var(--ff-color-success-700)] rounded-full text-xs font-semibold">
-                          <Check className="w-3 h-3" />
-                          {Math.round(archetypeDetectionResult.confidence * 100)}% match
-                        </span>
-                      )}
-                      <span className="text-sm text-[var(--color-muted)]">
-                        {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
+                <div className="flex flex-col">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
+                    Persoonlijk Style Report
+                  </p>
+                  <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-[var(--color-text)] mb-3">
+                    {archetypeName}
+                  </h1>
+
+                  {/* Statistiekregel */}
+                  <div className="flex items-center gap-2.5 flex-wrap mb-5">
+                    {archetypeDetectionResult && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] text-[var(--ff-color-success-700)] rounded-full text-xs font-semibold">
+                        <Check className="w-3 h-3" />
+                        {Math.round(archetypeDetectionResult.confidence * 100)}% match
                       </span>
-                    </div>
+                    )}
+                    <span className="text-sm text-[var(--color-muted)]">
+                      {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
+                    </span>
                   </div>
 
-                  {/* CTA row: Bekijk outfits (primary) · Quiz opnieuw (secondary) · Share (tertiary) */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {/* Primary: filled */}
+                  {/* CTA row: 1. Bekijk outfits · 2. Quiz opnieuw · 3. Share */}
+                  <div className="flex items-center gap-2">
+                    {/* 1. Primary: filled */}
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
@@ -429,7 +429,7 @@ export default function EnhancedResultsPage() {
                       Bekijk outfits
                     </motion.button>
 
-                    {/* Secondary: outline */}
+                    {/* 2. Secondary: outline */}
                     <NavLink
                       to="/onboarding?step=redo"
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] bg-transparent border border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-all text-[var(--color-text)]"
@@ -438,10 +438,10 @@ export default function EnhancedResultsPage() {
                       <span>Quiz opnieuw</span>
                     </NavLink>
 
-                    {/* Tertiary: share icon-only */}
+                    {/* 3. Tertiary: icon-only, geen witte achtergrond */}
                     <button
                       onClick={sharePage}
-                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-all"
+                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-transparent border border-[var(--color-border)] rounded-full text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:border-[var(--ff-color-primary-400)] transition-all"
                       aria-label="Delen"
                     >
                       <Share2 className="w-4 h-4" />
