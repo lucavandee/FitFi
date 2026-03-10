@@ -381,6 +381,22 @@ export function composeOutfits(
     }
   }
 
+  for (const outfit of outfits) {
+    const siblingLabels = outfits
+      .filter(o => o.id !== outfit.id)
+      .map(o => o.occasion);
+    const bp = Object.values(OCCASION_BLUEPRINTS).find(b => b.label === outfit.occasion)
+      || OCCASION_BLUEPRINTS.casual;
+    outfit.explanation = buildExplanation(
+      outfit.products,
+      bp,
+      archetype,
+      prefs,
+      outfit.products.reduce((s, p) => s + p.price, 0),
+      siblingLabels,
+    );
+  }
+
   return outfits;
 }
 
@@ -497,7 +513,6 @@ function buildOutfit(
     || selected[0];
 
   const matchScore = calculateOutfitScore(selected, blueprint, archetype);
-  const explanation = buildExplanation(selected, blueprint, archetype, prefs, totalPrice);
 
   return {
     id: `outfit-${archetype}-${blueprint.label}-${index}`,
@@ -506,8 +521,140 @@ function buildOutfit(
     products: selected,
     matchScore: Math.round(matchScore),
     image: coverProduct?.imageUrl || '',
-    explanation,
+    explanation: '',
   };
+}
+
+const ARCHETYPE_VIBE_LABELS: Record<string, string> = {
+  MINIMALIST: 'clean en tijdloos',
+  CLASSIC: 'tijdloos en verzorgd',
+  SMART_CASUAL: 'toegankelijk en gepolijst',
+  STREETWEAR: 'expressief en urban',
+  ATHLETIC: 'functioneel en clean',
+  AVANT_GARDE: 'conceptueel en statement',
+};
+
+const FORMALITY_LABEL: Record<string, string> = {
+  casual: 'casual',
+  smart: 'netter',
+  formal: 'formeel',
+};
+
+const OCCASION_CONTEXT: Record<string, string> = {
+  Werk: 'een werkdag',
+  'Smart Casual': 'smart-casual gelegenheden',
+  Weekend: 'het weekend',
+  Dagelijks: 'dagelijks gebruik',
+  'Avond uit': 'een avond uit',
+  Date: 'een date',
+  Actief: 'een actieve dag',
+  Relaxed: 'een relaxte dag',
+};
+
+const MAT_LABELS: Record<string, string> = {
+  denim: 'denim', leer: 'leer', katoen: 'katoen', linnen: 'linnen',
+  wol: 'wol', kasjmier: 'kasjmier', tech: 'technische stoffen',
+  fleece: 'fleece', canvas: 'canvas', zijde: 'zijde',
+  coated: 'gecoate stoffen', ribstof: 'ribstof', stretch: 'stretchmateriaal',
+  mesh: 'mesh',
+};
+
+const SUBTYPE_NL: Record<string, string> = {
+  hoodie: 'hoodie', sweater: 'sweater', knit: 'knit', tshirt: 't-shirt',
+  polo: 'polo', shirt: 'overhemd', overshirt: 'overshirt', cardigan: 'vest',
+  jeans: 'jeans', chino: 'chino', trouser: 'pantalon', jogger: 'jogger',
+  cargo: 'cargo', short: 'short', sneaker: 'sneaker', boot: 'boot',
+  loafer: 'loafer', derby: 'derby', blazer: 'blazer', jacket: 'jacket',
+  coat: 'jas', gilet: 'gilet',
+};
+
+function describeItemTypes(products: CleanProduct[]): string {
+  const types = products
+    .map(p => SUBTYPE_NL[p.subType || ''] || p.subType || p.category)
+    .filter(Boolean);
+  if (types.length === 0) return '';
+  if (types.length === 1) return types[0];
+  return types.slice(0, -1).join(', ') + ' en ' + types[types.length - 1];
+}
+
+function detectMaterialMatches(
+  products: CleanProduct[],
+  preferredMaterials: string[],
+): { found: string[]; notFound: string[] } {
+  const found: string[] = [];
+  const notFound: string[] = [];
+  for (const mat of preferredMaterials) {
+    const matLower = mat.toLowerCase();
+    const patterns = MATERIAL_KEYWORDS[mat];
+    const matched = products.some(p => {
+      const text = `${p.name} ${p.description} ${p.tags.join(' ')}`.toLowerCase();
+      if (text.includes(matLower)) return true;
+      return patterns ? patterns.some(r => r.test(text)) : false;
+    });
+    const label = MAT_LABELS[mat] || mat;
+    if (matched) found.push(label);
+    else notFound.push(label);
+  }
+  return { found, notFound };
+}
+
+function detectPrintMatch(products: CleanProduct[]): 'clean' | 'print' | 'mixed' {
+  const PRINT_RE = /print|patroon|floral|bloem|graphic|stripe|streep|geruit|check|stip|dots|pattern/i;
+  const CLEAN_RE = /effen|uni|solid|plain/i;
+  let prints = 0;
+  let cleans = 0;
+  for (const p of products) {
+    const text = `${p.name} ${p.description}`.toLowerCase();
+    if (PRINT_RE.test(text)) prints++;
+    else if (CLEAN_RE.test(text)) cleans++;
+  }
+  if (prints > 0 && cleans > 0) return 'mixed';
+  if (prints > 0) return 'print';
+  return 'clean';
+}
+
+function buildDifferentiator(
+  blueprint: OccasionBlueprint,
+  products: CleanProduct[],
+  siblingLabels: string[],
+): string {
+  if (siblingLabels.length === 0) return '';
+
+  const formalityDesc = FORMALITY_LABEL[blueprint.formalityHint] || 'casual';
+  const itemStr = describeItemTypes(products);
+
+  const otherFormalities = siblingLabels
+    .map(l => {
+      for (const [, bp] of Object.entries(OCCASION_BLUEPRINTS)) {
+        if (bp.label === l) return FORMALITY_LABEL[bp.formalityHint];
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  const allSameFormality = otherFormalities.every(f => f === formalityDesc);
+
+  if (!allSameFormality) {
+    if (formalityDesc === 'casual') {
+      return itemStr
+        ? `Relaxter dan de andere looks, opgebouwd rond ${itemStr}.`
+        : 'Relaxter dan de andere looks in dit rapport.';
+    }
+    if (formalityDesc === 'formeel') {
+      return itemStr
+        ? `De meest nette look in dit rapport, met ${itemStr}.`
+        : 'De meest nette look in dit rapport.';
+    }
+    return itemStr
+      ? `Een trede netter, gebaseerd op ${itemStr}.`
+      : 'Een trede netter dan de casual looks.';
+  }
+
+  if (itemStr) {
+    return `Deze variant draait om ${itemStr}.`;
+  }
+
+  return '';
 }
 
 function buildExplanation(
@@ -516,119 +663,120 @@ function buildExplanation(
   archetype: string,
   prefs?: UserPreferences,
   totalPrice?: number,
+  siblingLabels?: string[],
 ): string {
-  const parts: string[] = [];
-  const styleMatches = products.filter(p => blueprint.preferredStyles.includes(p.style));
-  if (styleMatches.length > 0) {
-    parts.push(`Past bij jouw ${archetype.replace('_', ' ').toLowerCase()} stijl`);
+  const lines: string[] = [];
+
+  const vibeLabel = ARCHETYPE_VIBE_LABELS[archetype] || archetype.replace('_', ' ').toLowerCase();
+  const occasionText = OCCASION_CONTEXT[blueprint.label];
+  const formalityDesc = FORMALITY_LABEL[blueprint.formalityHint] || '';
+
+  const itemStr = describeItemTypes(products);
+  if (occasionText && itemStr) {
+    lines.push(`Samengesteld voor ${occasionText}: ${itemStr} — ${formalityDesc} en ${vibeLabel}.`);
+  } else if (occasionText) {
+    lines.push(`Samengesteld voor ${occasionText}, aansluitend bij jouw ${vibeLabel} profiel.`);
+  } else {
+    lines.push(`Opgebouwd vanuit jouw ${vibeLabel} stijlprofiel.`);
   }
+
+  const signalParts: string[] = [];
 
   if (prefs?.fit) {
     const fitLabel: Record<string, string> = {
-      slim: 'nauwsluitende',
-      regular: 'reguliere',
-      relaxed: 'relaxte',
-      oversized: 'oversized',
+      slim: 'nauwsluitend', regular: 'regulier', relaxed: 'relaxed', oversized: 'oversized',
     };
-    parts.push(`afgestemd op een ${fitLabel[prefs.fit] || prefs.fit} pasvorm`);
-  }
-
-  if (prefs?.colorProfile) {
-    const cp = prefs.colorProfile;
-    const colorParts: string[] = [];
-    const tempMap: Record<string, string> = { warm: 'warme', koel: 'koele', neutraal: 'neutrale' };
-    const valMap: Record<string, string> = { licht: 'lichte', medium: 'middentoon', donker: 'diepe' };
-    const conMap: Record<string, string> = { laag: 'laag contrast', medium: 'gemiddeld contrast', hoog: 'hoog contrast' };
-
-    if (cp.temperature && tempMap[cp.temperature]) {
-      colorParts.push(tempMap[cp.temperature] + ' tinten');
-    }
-    if (cp.value && valMap[cp.value]) {
-      colorParts.push(valMap[cp.value] + ' kleuren');
-    }
-    if (cp.contrast && conMap[cp.contrast]) {
-      colorParts.push(conMap[cp.contrast]);
-    }
-
-    if (colorParts.length > 0) {
-      parts.push(`kleurkeuze op basis van jouw voorkeur voor ${colorParts.join(', ')}`);
-    }
-  }
-
-  if (prefs?.budget && prefs.budget.max > 0 && totalPrice !== undefined) {
-    const max = prefs.budget.max;
-    if (totalPrice <= max) {
-      parts.push(`binnen jouw budget van \u20AC${max} per stuk`);
+    const fitText = `${fitLabel[prefs.fit] || prefs.fit} silhouet`;
+    const FIT_KW = FIT_KEYWORDS[prefs.fit];
+    if (FIT_KW) {
+      const fitFound = products.some(p => {
+        const t = `${p.name} ${p.description}`.toLowerCase();
+        return FIT_KW.some(r => r.test(t));
+      });
+      if (fitFound) {
+        signalParts.push(`${fitText} (bevestigd in de productomschrijving)`);
+      } else {
+        signalParts.push(`${fitText} (als scoringsrichting meegenomen)`);
+      }
     } else {
-      parts.push(`let op: enkele items liggen boven jouw budget van \u20AC${max} door beperkte beschikbaarheid`);
+      signalParts.push(fitText);
     }
-  }
-
-  const occasionLabelMap: Record<string, string> = {
-    'Werk': 'een werkdag', 'Smart Casual': 'smart-casual gelegenheden',
-    'Weekend': 'het weekend', 'Dagelijks': 'dagelijks gebruik',
-    'Avond uit': 'een avond uit', 'Date': 'een date',
-    'Actief': 'een actieve dag', 'Relaxed': 'een relaxte dag',
-    'Casual': 'dagelijks gebruik', 'Uitgaan': 'een avond uit',
-    'Festival': 'festivals', 'Formeel': 'formele gelegenheden',
-  };
-  const occasionText = occasionLabelMap[blueprint.label];
-  if (occasionText) {
-    parts.push(`samengesteld voor ${occasionText}`);
   }
 
   if (prefs?.materials && prefs.materials.length > 0) {
-    const matLabels: Record<string, string> = {
-      denim: 'denim', leer: 'leer', katoen: 'katoen', linnen: 'linnen',
-      wol: 'wol', kasjmier: 'kasjmier', tech: 'technische stoffen',
-      fleece: 'fleece', canvas: 'canvas', zijde: 'zijde',
-      coated: 'gecoate stoffen', ribstof: 'ribstof', stretch: 'stretchmateriaal',
-      mesh: 'mesh',
-    };
-    const matchedInOutfit: string[] = [];
-    for (const mat of prefs.materials) {
-      const label = matLabels[mat] || mat;
-      const matLower = mat.toLowerCase();
-      const found = products.some(p => {
-        const text = `${p.name} ${p.description} ${p.tags.join(' ')}`.toLowerCase();
-        return text.includes(matLower);
-      });
-      if (found) matchedInOutfit.push(label);
+    const { found, notFound } = detectMaterialMatches(products, prefs.materials);
+    if (found.length > 0) {
+      signalParts.push(`${found.slice(0, 2).join(' en ')} teruggevonden in de selectie`);
     }
-    if (matchedInOutfit.length > 0) {
-      parts.push(`${matchedInOutfit.slice(0, 2).join(' en ')} verwerkt op basis van jouw materiaalvoorkeur`);
-    } else {
-      const labels = prefs.materials.slice(0, 2).map(m => matLabels[m] || m).filter(Boolean);
-      if (labels.length > 0) {
-        parts.push(`materiaalvoorkeur: ${labels.join(' en ')}`);
-      }
+    if (notFound.length > 0 && found.length === 0) {
+      signalParts.push(`voorkeur voor ${notFound.slice(0, 2).join(' en ')} als richting meegewogen, niet letterlijk aanwezig`);
     }
   }
 
   if (prefs?.prints) {
-    const printLabel: Record<string, string> = {
-      effen: 'bewust clean en effen gehouden',
-      geen: 'bewust clean en effen gehouden',
-      statement: 'met ruimte voor expressieve prints',
-      subtiel: 'met subtiele patronen voor een verfijnde look',
-    };
-    const label = printLabel[prefs.prints];
-    if (label) parts.push(label);
+    const actualPrintStatus = detectPrintMatch(products);
+    if (prefs.prints === 'effen' || prefs.prints === 'geen') {
+      if (actualPrintStatus === 'clean') {
+        signalParts.push('effen items geselecteerd, conform jouw voorkeur');
+      } else {
+        signalParts.push('voorkeur voor effen meegewogen, maar niet alle items bevestigen dit');
+      }
+    } else if (prefs.prints === 'subtiel') {
+      if (actualPrintStatus === 'print' || actualPrintStatus === 'mixed') {
+        signalParts.push('subtiele patronen meegenomen in de selectie');
+      } else {
+        signalParts.push('voorkeur voor subtiele patronen meegewogen als richting');
+      }
+    } else if (prefs.prints === 'statement') {
+      if (actualPrintStatus === 'print') {
+        signalParts.push('expressieve prints geselecteerd, aansluitend bij jouw voorkeur');
+      } else {
+        signalParts.push('voorkeur voor statement prints meegewogen, beperkt beschikbaar in de catalogus');
+      }
+    }
   }
+
+  if (prefs?.colorProfile) {
+    const cp = prefs.colorProfile;
+    const colorDesc: string[] = [];
+    const tempMap: Record<string, string> = { warm: 'warme', koel: 'koele', neutraal: 'neutrale' };
+    const valMap: Record<string, string> = { licht: 'lichte', medium: 'middentoon', donker: 'diepe' };
+    if (cp.temperature && tempMap[cp.temperature]) colorDesc.push(tempMap[cp.temperature]);
+    if (cp.value && valMap[cp.value]) colorDesc.push(valMap[cp.value]);
+    if (colorDesc.length > 0) {
+      signalParts.push(`kleurkeuze gericht op ${colorDesc.join(', ')} tinten`);
+    }
+  }
+
+  if (prefs?.goals && prefs.goals.length > 0) {
+    const goalLabels: Record<string, string> = {
+      timeless: 'tijdloze basisstukken',
+      trendy: 'actuele trends',
+      comfort: 'draagcomfort',
+      professional: 'professionele uitstraling',
+    };
+    const matched = prefs.goals.map(g => goalLabels[g]).filter(Boolean);
+    if (matched.length > 0) {
+      signalParts.push(`gericht op ${matched.slice(0, 2).join(' en ')}`);
+    }
+  }
+
+  if (signalParts.length > 0) {
+    const signalStr = signalParts[0].charAt(0).toUpperCase() + signalParts[0].slice(1)
+      + (signalParts.length > 1 ? '; ' + signalParts.slice(1).join('; ') : '')
+      + '.';
+    lines.push(signalStr);
+  }
+
+  const diff = buildDifferentiator(blueprint, products, siblingLabels || []);
+  if (diff) lines.push(diff);
 
   const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
   if (brands.length >= 2) {
-    parts.push(`met ${brands.slice(0, 2).join(' en ')}`);
+    lines.push(`Mix van ${brands.slice(0, 3).join(', ')}.`);
   }
 
-  if (parts.length === 0) {
-    return `Samengesteld op basis van jouw ${archetype.replace('_', ' ').toLowerCase()} profiel.`;
-  }
-
-  const sentence = parts[0].charAt(0).toUpperCase() + parts[0].slice(1)
-    + (parts.length > 1 ? ', ' + parts.slice(1).join(' en ') : '')
-    + '.';
-  return sentence;
+  return lines.join(' ');
 }
 
 function pickBest(
