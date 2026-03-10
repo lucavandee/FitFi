@@ -394,7 +394,7 @@ export default function EnhancedResultsPage() {
           <div className="max-w-3xl mx-auto">
             {hasCompletedQuiz ? (
               <>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-1.5">
                       Persoonlijk Style Report
@@ -415,26 +415,8 @@ export default function EnhancedResultsPage() {
                     </div>
                   </div>
 
-                  {/* CTA row: Share (tertiary) · Quiz opnieuw (secondary) · Bekijk outfits (primary) */}
-                  <div className="flex items-center gap-2 flex-shrink-0 flex-wrap sm:flex-nowrap">
-                    {/* Tertiary: share icon-only */}
-                    <button
-                      onClick={sharePage}
-                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-all"
-                      aria-label="Delen"
-                    >
-                      <Share2 className="w-4 h-4" />
-                    </button>
-
-                    {/* Secondary: outline */}
-                    <NavLink
-                      to="/onboarding?step=redo"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] bg-transparent border border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-all text-[var(--color-text)]"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      <span>Quiz opnieuw</span>
-                    </NavLink>
-
+                  {/* CTA row: Bekijk outfits (primary) · Quiz opnieuw (secondary) · Share (tertiary) */}
+                  <div className="flex items-center gap-2 flex-wrap">
                     {/* Primary: filled */}
                     <motion.button
                       whileHover={{ scale: 1.02 }}
@@ -446,6 +428,24 @@ export default function EnhancedResultsPage() {
                       <ShoppingBag className="w-3.5 h-3.5" />
                       Bekijk outfits
                     </motion.button>
+
+                    {/* Secondary: outline */}
+                    <NavLink
+                      to="/onboarding?step=redo"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] bg-transparent border border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-all text-[var(--color-text)]"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Quiz opnieuw</span>
+                    </NavLink>
+
+                    {/* Tertiary: share icon-only */}
+                    <button
+                      onClick={sharePage}
+                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-all"
+                      aria-label="Delen"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </>
@@ -1056,41 +1056,41 @@ export default function EnhancedResultsPage() {
             <AnimatedSection>
               {/* Quiz-anchor context strip */}
               {answers && (
-                <div className="mb-5 flex flex-wrap items-center gap-2 p-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)] mr-1">Gebaseerd op:</span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                <div className="mb-4 flex flex-wrap items-center gap-1.5 px-3 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mr-0.5">Basis:</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
                     {archetypeName}
                   </span>
                   {answers.fit && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
-                      Pasvorm: {answers.fit}
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+                      {answers.fit}
                     </span>
                   )}
                   {Array.isArray(answers.occasions) && answers.occasions.slice(0, 2).map((occ: string) => (
-                    <span key={occ} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
+                    <span key={occ} className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--ff-color-accent-50)] text-[var(--ff-color-accent-700)]">
                       {occ}
                     </span>
                   ))}
                   {activeColorProfile?.season && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
-                      Seizoen: {activeColorProfile.season}
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
+                      {activeColorProfile.season}
                     </span>
                   )}
                   {answers.budgetRange?.max && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
-                      Tot €{answers.budgetRange.max}
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]">
+                      €{answers.budgetRange.max}
                     </span>
                   )}
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="ml-auto text-[11px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                    className="ml-auto text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
                   >
                     Aanpassen →
                   </button>
                 </div>
               )}
 
-              <div className="flex items-center justify-between mb-4 gap-4">
+              <div className="flex items-center justify-between mb-4 gap-3">
                 <div>
                   <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight">
                     Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
@@ -1100,40 +1100,35 @@ export default function EnhancedResultsPage() {
                   </p>
                 </div>
 
-                {/* View Mode Toggle */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="inline-flex items-center gap-2 p-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl shadow-sm"
-                >
+                {/* View Mode Toggle — compact, naast header */}
+                <div className="inline-flex items-center p-0.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg flex-shrink-0" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.06)' }}>
                   <button
                     onClick={() => setGalleryMode('swipe')}
                     aria-pressed={galleryMode === 'swipe'}
-                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold text-xs transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
                       galleryMode === 'swipe'
-                        ? 'bg-[var(--ff-color-primary-700)] text-white shadow-md'
-                        : 'text-[var(--color-text)] hover:bg-[var(--color-bg)]'
+                        ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
+                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
                     }`}
                     aria-label="Swipe weergave"
                   >
-                    <Layers className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                    <span className="hidden sm:inline">Swipe</span>
+                    <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Swipe</span>
                   </button>
                   <button
                     onClick={() => setGalleryMode('grid')}
                     aria-pressed={galleryMode === 'grid'}
-                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 min-h-[48px] rounded-lg font-semibold text-sm sm:text-base transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold text-xs transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
                       galleryMode === 'grid'
-                        ? 'bg-[var(--ff-color-primary-700)] text-white shadow-md'
-                        : 'text-[var(--color-text)] hover:bg-[var(--color-bg)]'
+                        ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
+                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
                     }`}
                     aria-label="Grid weergave"
                   >
-                    <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                    <span className="hidden sm:inline">Grid</span>
+                    <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Grid</span>
                   </button>
-                </motion.div>
+                </div>
               </div>
             </AnimatedSection>
 
@@ -1277,7 +1272,7 @@ export default function EnhancedResultsPage() {
                               });
                               setSelectedOutfit(outfit);
                             }}
-                            className="w-full px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-700)] text-white font-bold text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                            className="w-full px-4 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white font-bold text-sm hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
                             style={{ boxShadow: '0 -4px 16px rgba(0,0,0,0.15)' }}
                           >
                             <ShoppingBag className="w-4 h-4" />

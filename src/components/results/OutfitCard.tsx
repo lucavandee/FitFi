@@ -58,7 +58,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
     >
       {/* Image grid */}
       <div className="grid grid-cols-2 gap-0.5 bg-[var(--color-bg)]">
-        <div className="relative col-span-1 row-span-1 aspect-[3/4]">
+        <div className="relative col-span-1 row-span-1 aspect-[4/5]">
           <SmartImage
             className="w-full h-full object-cover"
             src={gridImages[0]}
@@ -91,10 +91,10 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="p-4 sm:p-5">
+      <div className="p-3 sm:p-4">
         {/* Title row */}
         <div className="flex items-start justify-between gap-2 mb-1.5">
-          <h3 className="text-sm font-bold text-[var(--color-text)] leading-snug flex-1 line-clamp-2">
+          <h3 className="text-sm font-bold text-[var(--color-text)] leading-snug flex-1 line-clamp-2" style={{ WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {title}
           </h3>
           {outfit && (
