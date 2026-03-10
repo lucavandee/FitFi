@@ -30,6 +30,13 @@ import { OnboardingProvider } from "@/context/OnboardingContext";
 // Performance & PWA
 import { registerServiceWorker } from "@/utils/serviceWorker.ts";
 
+// Analytics
+import { initAnalytics, track as analyticsTrack } from "@/utils/analytics";
+import { setTelemetrySink } from "@/utils/telemetry";
+
+initAnalytics();
+setTelemetrySink(analyticsTrack);
+
 // Initialize optimizations (production only)
 if (typeof window !== 'undefined' && import.meta.env.PROD) {
   try {
