@@ -200,6 +200,7 @@ export async function fetchOutfits(_opts?: {
           category: p.category,
           tags: p.tags,
           colors: p.colors,
+          itemReason: p.itemReason,
         })),
         match: c.matchScore,
         tags: [c.occasion.toLowerCase()],

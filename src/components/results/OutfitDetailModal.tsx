@@ -242,6 +242,11 @@ export function OutfitDetailModal({
                             <p className="text-sm font-semibold text-[var(--color-text)] truncate leading-tight">
                               {name}
                             </p>
+                            {product?.itemReason && (
+                              <p className="text-[11px] text-[var(--ff-color-primary-600)] leading-snug mt-0.5 line-clamp-1">
+                                {product.itemReason}
+                              </p>
+                            )}
                           </div>
 
                           <div className="flex items-center gap-2 flex-shrink-0">

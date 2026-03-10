@@ -18,6 +18,7 @@ export interface CleanProduct {
   tags: string[];
   athleticIntent?: number;
   subType?: string;
+  itemReason?: string;
 }
 
 export interface ComposedOutfit {
@@ -387,6 +388,7 @@ export function composeOutfits(
     const siblingProducts = siblings.map(o => o.products);
     const bp = Object.values(OCCASION_BLUEPRINTS).find(b => b.label === outfit.occasion)
       || OCCASION_BLUEPRINTS.casual;
+    buildItemReasons(outfit.products, bp, archetype, prefs);
     outfit.explanation = buildExplanation(
       outfit.products,
       bp,
@@ -766,6 +768,106 @@ function buildDifferentiator(
   }
 
   return '';
+}
+
+const CATEGORY_ROLE_NL: Record<string, string> = {
+  top: 'bovenlaag',
+  bottom: 'onderlaag',
+  footwear: 'schoen',
+  outerwear: 'buitenlaag',
+  accessory: 'accessoire',
+};
+
+function buildItemReasons(
+  products: CleanProduct[],
+  blueprint: OccasionBlueprint,
+  archetype: string,
+  prefs?: UserPreferences,
+): void {
+  const formalityHint = blueprint.formalityHint;
+  const vibeLabel = ARCHETYPE_VIBE_LABELS[archetype] || '';
+
+  for (const p of products) {
+    const reasons: string[] = [];
+    const text = `${p.name} ${p.description}`.toLowerCase();
+    const sub = p.subType || '';
+
+    if (prefs?.fit && FIT_KEYWORDS[prefs.fit]) {
+      const fitMatch = FIT_KEYWORDS[prefs.fit].some(r => r.test(text));
+      if (fitMatch) {
+        const fitNL: Record<string, string> = {
+          slim: 'nauwsluitend silhouet', regular: 'reguliere pasvorm',
+          relaxed: 'relaxed silhouet', oversized: 'oversized pasvorm',
+        };
+        reasons.push(`past bij je voorkeur voor ${fitNL[prefs.fit] || prefs.fit}`);
+      }
+    }
+
+    if (prefs?.materials && prefs.materials.length > 0) {
+      for (const mat of prefs.materials) {
+        const patterns = MATERIAL_KEYWORDS[mat];
+        if (patterns && patterns.some(r => r.test(text))) {
+          const label = MAT_LABELS[mat] || mat;
+          reasons.push(`bevat ${label}, een van je voorkeursmateriaal`);
+          break;
+        }
+      }
+    }
+
+    if (reasons.length === 0 && prefs?.prints) {
+      const PRINT_RE = /print|patroon|floral|bloem|graphic|stripe|streep|geruit|check|stip|dots|pattern/i;
+      const CLEAN_RE = /effen|uni|solid|plain/i;
+      if ((prefs.prints === 'effen' || prefs.prints === 'geen') && CLEAN_RE.test(text)) {
+        reasons.push('effen item, conform je voorkeur');
+      } else if (prefs.prints === 'statement' && PRINT_RE.test(text)) {
+        reasons.push('expressief patroon, passend bij je voorkeur');
+      }
+    }
+
+    if (reasons.length === 0) {
+      if (LAYERING_SUBTYPES.has(sub)) {
+        if (formalityHint === 'smart' || formalityHint === 'formal') {
+          reasons.push('voegt structuur toe aan deze look');
+        } else {
+          reasons.push('geeft deze look extra diepte');
+        }
+      }
+
+      if (reasons.length === 0 && p.category === 'footwear') {
+        const rank = FOOTWEAR_FORMALITY_RANK[sub] ?? -1;
+        if (formalityHint === 'smart' && rank >= 2) {
+          reasons.push('houdt deze look netter afgewerkt');
+        } else if (formalityHint === 'casual' && rank <= 1) {
+          reasons.push('houdt deze look casual');
+        } else if (sub === 'boot') {
+          reasons.push('voegt een robuustere basis toe');
+        }
+      }
+
+      if (reasons.length === 0 && p.category === 'top') {
+        if (formalityHint === 'casual' && (sub === 'hoodie' || sub === 'sweater' || sub === 'tshirt')) {
+          reasons.push('relaxed basis voor deze look');
+        } else if ((formalityHint === 'smart' || formalityHint === 'formal') && (sub === 'shirt' || sub === 'polo' || sub === 'knit')) {
+          reasons.push('nettere basis voor deze look');
+        }
+      }
+
+      if (reasons.length === 0 && p.category === 'bottom') {
+        if (sub === 'chino' || sub === 'trouser') {
+          reasons.push('veelzijdige broek die bij de gelegenheid past');
+        } else if (sub === 'jeans') {
+          reasons.push('solide denim basis');
+        } else if (sub === 'jogger' || sub === 'cargo') {
+          reasons.push('comfortabel en casual');
+        }
+      }
+    }
+
+    if (reasons.length > 0) {
+      const r = reasons[0];
+      p.itemReason = r.charAt(0).toUpperCase() + r.slice(1);
+    }
+  }
 }
 
 function buildExplanation(

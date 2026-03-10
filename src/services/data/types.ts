@@ -36,6 +36,7 @@ export type BoltProduct = {
   rating?: number;
   review_count?: number;
   tags?: string[];
+  itemReason?: string;
 };
 
 export type Outfit = {
