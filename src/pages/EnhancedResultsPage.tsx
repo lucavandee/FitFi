@@ -1199,16 +1199,37 @@ export default function EnhancedResultsPage() {
                           </div>
                         )}
 
-                        {/* Details Button Overlay */}
-                        <div className="absolute bottom-4 left-4 right-4">
+                        {/* Save button - top right corner */}
+                        <div className="absolute top-3 right-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const outfitId = 'id' in outfit ? outfit.id : `seed-${idx}`;
+                              toggleFav(String(outfitId));
+                            }}
+                            className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-md ${
+                              favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
+                                ? 'bg-[var(--ff-color-danger-500)] text-white'
+                                : 'bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]'
+                            }`}
+                            aria-label={favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
+                          >
+                            <Heart className={`w-4 h-4 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-current' : ''}`} />
+                          </button>
+                        </div>
+
+                        {/* Primary CTA - bottom full width */}
+                        <div className="absolute bottom-0 left-0 right-0">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOutfit(outfit);
                             }}
-                            className="w-full px-6 py-3 min-h-[52px] bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.98] transition-all shadow-lg"
+                            className="w-full px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-700)] text-white font-bold text-base hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                            style={{ boxShadow: '0 -4px 16px rgba(0,0,0,0.15)' }}
                           >
-                            Bekijk details
+                            <ShoppingBag className="w-4 h-4" />
+                            Bekijk &amp; shop
                           </button>
                         </div>
                       </div>
@@ -1297,60 +1318,65 @@ export default function EnhancedResultsPage() {
                             </div>
                           )}
 
-                          {/* Overlay Actions - Always visible */}
-                          <div className="absolute inset-0 opacity-100 transition-opacity duration-300" style={{ background: 'linear-gradient(to top, rgba(20,16,12,0.62) 0%, transparent 55%)' }}>
-                            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex items-center justify-between gap-2">
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => {
-                                  toggleFav(String(id));
-                                  if (!isFav) {
-                                    toast.success('Outfit opgeslagen!', {
-                                      duration: 3000,
-                                      position: 'top-center',
-                                    });
-                                    // Show hint on first save
-                                    const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
-                                    if (!hasSeenHint) {
-                                      localStorage.setItem('ff_fav_hint_seen', 'true');
-                                      hintTimerRef.current = setTimeout(() => {
-                                        toast('Bewaarde outfits vind je terug in je Dashboard', {
-                                          duration: 5000,
-                                          position: 'top-center',
-                                        });
-                                      }, 1000);
-                                    }
-                                  } else {
-                                    toast('Outfit verwijderd uit favorieten', {
-                                      duration: 2000,
-                                      position: 'top-center',
-                                    });
+                          {/* Heart - top right corner, subtle */}
+                          <div className="absolute top-3 right-3">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFav(String(id));
+                                if (!isFav) {
+                                  toast.success('Outfit opgeslagen!', {
+                                    duration: 3000,
+                                    position: 'top-center',
+                                  });
+                                  const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
+                                  if (!hasSeenHint) {
+                                    localStorage.setItem('ff_fav_hint_seen', 'true');
+                                    hintTimerRef.current = setTimeout(() => {
+                                      toast('Bewaarde outfits vind je terug in je Dashboard', {
+                                        duration: 5000,
+                                        position: 'top-center',
+                                      });
+                                    }, 1000);
                                   }
-                                }}
-                                className={`w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
-                                  isFav
-                                    ? 'bg-[var(--ff-color-danger-500)] text-white'
-                                    : 'bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]'
-                                }`}
-                                aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-                              >
-                                {isFav ? <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-current" /> : <Heart className="w-4 h-4 sm:w-5 sm:h-5" />}
-                              </motion.button>
+                                } else {
+                                  toast('Outfit verwijderd uit favorieten', {
+                                    duration: 2000,
+                                    position: 'top-center',
+                                  });
+                                }
+                              }}
+                              className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-md ${
+                                isFav
+                                  ? 'bg-[var(--ff-color-danger-500)] text-white'
+                                  : 'bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]'
+                              }`}
+                              aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
+                            >
+                              <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
+                            </motion.button>
+                          </div>
 
-                              <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedOutfit(outfit);
-                                }}
-                                className="px-4 sm:px-6 py-3 min-h-[44px] bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-full font-semibold text-sm sm:text-sm hover:bg-[var(--ff-color-primary-600)] hover:text-white active:scale-[0.95] transition-all flex-1 sm:flex-none"
-                              >
-                                <span className="hidden sm:inline">Bekijk details</span>
-                                <span className="sm:hidden">Details</span>
-                              </motion.button>
-                            </div>
+                          {/* Primary CTA - full width bottom bar */}
+                          <div className="absolute bottom-0 left-0 right-0">
+                            <motion.button
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedOutfit(outfit);
+                              }}
+                              className="w-full px-6 py-4 min-h-[56px] bg-[var(--ff-color-primary-700)] text-white font-bold text-sm hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                              style={{ boxShadow: '0 -4px 16px rgba(0,0,0,0.15)' }}
+                            >
+                              <ShoppingBag className="w-4 h-4" />
+                              <span>Bekijk &amp; shop</span>
+                              {Array.isArray((outfit as any).products) && (outfit as any).products.length > 0 && (
+                                <span className="px-1.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">{(outfit as any).products.length}</span>
+                              )}
+                            </motion.button>
                           </div>
                         </div>
 
