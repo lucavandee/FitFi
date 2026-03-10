@@ -1,20 +1,17 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, CircleHelp as HelpCircle, Sparkles, ShoppingBag, Info } from 'lucide-react';
+import { Heart, Sparkles, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { isSaved, toggleSave } from '@/services/engagement';
-import { generateOutfitExplanation, generateNovaExplanation } from '@/engine/explainOutfit';
 import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
-import { trackOutfitExplain } from '@/hooks/useABTesting';
 import { ColorHarmonyBadge } from '@/components/outfits/ColorHarmonyBadge';
 import { calculateOutfitColorHarmony } from '@/engine/colorHarmony';
-import { trackSave, trackLike, trackView } from '@/services/ml/interactionTrackingService';
+import { trackSave, trackView } from '@/services/ml/interactionTrackingService';
 import { recordOutfitFeedback } from '@/services/ml/adaptiveWeightService';
-import { ShopItemsList } from '@/components/outfits/ShopItemsList';
 import OutfitDetailsModal from '@/components/outfits/OutfitDetailsModal';
 import { cn } from '@/utils/cn';
 
@@ -82,22 +79,7 @@ export default function UnifiedOutfitCard({
   const descId = `desc-${outfit.id}`;
   const [saved, setSaved] = useState<boolean>(isSaved(outfit.id));
   const [loaded, setLoaded] = React.useState(false);
-  const [explanation, setExplanation] = useState<string>('');
-  const [showExplanationModal, setShowExplanationModal] = useState(false);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [showShopModal, setShowShopModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [isProcessing, setIsProcessing] = useState<{
-    save: boolean;
-    like: boolean;
-    dislike: boolean;
-    explain: boolean;
-  }>({
-    save: false,
-    like: false,
-    dislike: false,
-    explain: false
-  });
   const [isHovered, setIsHovered] = useState(false);
   const explainRef = useRef<HTMLDivElement>(null);
 
@@ -105,7 +87,6 @@ export default function UnifiedOutfitCard({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          trackOutfitExplain(outfit.id);
           trackView(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
         }
       },
@@ -126,7 +107,7 @@ export default function UnifiedOutfitCard({
   }, [outfit.products]);
 
   const handleSave = async () => {
-    if (isProcessing.save || saveOutfit.isPending) return;
+    if (saveOutfit.isPending) return;
 
     if (!user?.id) {
       track('save_click_unauth', { outfit_id: outfit.id });
@@ -167,139 +148,6 @@ export default function UnifiedOutfitCard({
     if (onSave) onSave();
   };
 
-  const handleMoreLikeThis = async () => {
-    if (isProcessing.like) return;
-    setIsProcessing(prev => ({ ...prev, like: true }));
-
-    trackLike(outfit.id, { source: 'outfit_card', archetype: outfit.archetype });
-
-    if (user?.id) {
-      await recordOutfitFeedback({
-        user_id: user.id,
-        outfit_id: outfit.id,
-        liked: true,
-        archetype: outfit.archetype || 'casual_chic',
-        feedback_type: 'like'
-      });
-    }
-
-    track('request_similar', {
-      outfit_id: outfit.id,
-      outfit_title: outfit.title,
-      outfit_archetype: outfit.archetype
-    });
-
-    toast.success('We leren van je voorkeur!');
-    onMoreLikeThis?.();
-
-    setTimeout(() => setIsProcessing(prev => ({ ...prev, like: false })), 200);
-  };
-
-  const handleDislike = async () => {
-    if (isProcessing.dislike) return;
-    setIsProcessing(prev => ({ ...prev, dislike: true }));
-
-    track('feedback_dislike', {
-      outfit_id: outfit.id,
-      outfit_title: outfit.title,
-      outfit_archetype: outfit.archetype
-    });
-
-    if (user?.id) {
-      await recordOutfitFeedback({
-        user_id: user.id,
-        outfit_id: outfit.id,
-        liked: false,
-        archetype: outfit.archetype || 'casual_chic',
-        feedback_type: 'dislike'
-      });
-    }
-
-    toast('We passen je aanbevelingen aan');
-    onDislike?.();
-
-    setTimeout(() => setIsProcessing(prev => ({ ...prev, dislike: false })), 200);
-  };
-
-  const handleExplain = async () => {
-    if (isProcessing.explain) return;
-    setIsProcessing(prev => ({ ...prev, explain: true }));
-
-    try {
-      track('request_explanation', {
-        outfit_id: outfit.id,
-        outfit_title: outfit.title,
-        outfit_archetype: outfit.archetype
-      });
-
-      const explanationText = generateOutfitExplanation(
-        {
-          id: outfit.id,
-          title: outfit.title,
-          description: outfit.description,
-          archetype: outfit.archetype || 'casual_chic',
-          occasion: outfit.occasion || 'Casual',
-          products: [],
-          imageUrl: outfit.imageUrl,
-          tags: outfit.tags || [],
-          matchPercentage: outfit.matchPercentage || 75,
-          explanation: ''
-        },
-        outfit.archetype || 'casual_chic',
-        outfit.occasion || 'Casual'
-      );
-
-      setExplanation(explanationText);
-      setShowExplanation(true);
-
-      if (onExplain) onExplain(explanationText);
-
-      track('explanation_generated', {
-        outfit_id: outfit.id,
-        explanation_length: explanationText.length
-      });
-
-      toast.success('Nova heeft deze outfit uitgelegd!');
-    } catch (error) {
-      console.error('Error explaining outfit:', error);
-      track('explanation_failed', {
-        outfit_id: outfit.id,
-        error_message: error instanceof Error ? error.message : 'Unknown error'
-      });
-      toast.error('Kon uitleg niet genereren');
-    } finally {
-      setTimeout(() => setIsProcessing(prev => ({ ...prev, explain: false })), 200);
-    }
-  };
-
-  const handleShopClick = () => {
-    if (!outfit.products || outfit.products.length === 0) {
-      toast('Geen items beschikbaar', {
-        description: 'Dit outfit bevat nog geen shopbare items.',
-        icon: '🛍️',
-      });
-      return;
-    }
-
-    const availableProducts = outfit.products.filter(p => {
-      const url = p.affiliateUrl || p.productUrl;
-      if (!url || url === '#') return false;
-      try { return new URL(url).protocol.startsWith('http'); } catch { return false; }
-    });
-
-    if (availableProducts.length === 0) {
-      toast('Shopfunctie komt binnenkort beschikbaar');
-      return;
-    }
-
-    track('shop_button_click', {
-      outfit_id: outfit.id,
-      product_count: outfit.products.length,
-      available_count: availableProducts.length,
-    });
-
-    setShowShopModal(true);
-  };
 
   // Theme-based styles
   const themeStyles = {
@@ -307,15 +155,13 @@ export default function UnifiedOutfitCard({
       container: 'bg-[var(--color-surface)] border-[var(--color-border)]',
       text: 'text-[var(--color-text)]',
       textMuted: 'text-[var(--color-text)]/60',
-      badge: 'bg-white border-gray-200',
-      explanation: 'bg-[var(--ff-color-primary-50)] border-[var(--ff-color-primary-200)]'
+      badge: 'bg-white border-gray-200'
     },
     dark: {
       container: 'bg-[#1E2433] border-white/10',
       text: 'text-white',
       textMuted: 'text-[#AAB0C0]',
-      badge: 'bg-white/5 border-white/10',
-      explanation: 'bg-white/5 border-white/10'
+      badge: 'bg-white/5 border-white/10'
     }
   };
 
@@ -457,8 +303,8 @@ export default function UnifiedOutfitCard({
             </p>
           </div>
 
-          {/* Match Score with Explanation Link */}
-          <div className="flex items-center justify-between text-sm">
+          {/* Match Score */}
+          <div className="flex items-center text-sm">
             <span
               className={cn("rounded-full border px-2 py-0.5", currentTheme.badge)}
               role="status"
@@ -466,17 +312,6 @@ export default function UnifiedOutfitCard({
             >
               Match {Math.round(outfit.matchPercentage || 75)}%
             </span>
-
-            <RequireAuth cta="Inloggen voor uitleg">
-              <button
-                onClick={() => setShowExplanationModal(true)}
-                className="flex items-center space-x-1 text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
-                aria-label="Waarom deze match?"
-              >
-                <HelpCircle size={14} />
-                <span className="text-xs">Waarom deze match?</span>
-              </button>
-            </RequireAuth>
           </div>
 
           {/* Tags */}
@@ -498,236 +333,54 @@ export default function UnifiedOutfitCard({
             )}
           </div>
 
-          {/* Explanation */}
-          {showExplanation && explanation && (
-            <div className={cn("p-3 rounded-xl border", currentTheme.explanation)}>
-              <div className="flex items-start space-x-2 mb-2">
-                <MessageCircle className="w-4 h-4 text-[var(--color-primary)] flex-shrink-0 mt-0.5" />
-                <span className="text-sm font-medium text-[var(--color-primary)]">Nova's uitleg:</span>
-              </div>
-              <p className={cn("text-sm leading-relaxed", currentTheme.text)}>{explanation}</p>
-              <button
-                onClick={() => setShowExplanation(false)}
-                className={cn("mt-2 text-xs hover:opacity-80 transition-opacity", currentTheme.textMuted)}
-              >
-                Verberg uitleg
-              </button>
-            </div>
-          )}
-
-          {/* Actions */}
+          {/* Actions -- primary: details/shop, secondary: save */}
           <motion.div
-            className="grid grid-cols-2 gap-2 relative z-10"
+            className="flex gap-2 relative z-10"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <RequireAuth cta="Inloggen om te bewaren">
-              <motion.button
-                aria-label="Bewaar look"
-                aria-busy={saveOutfit.isPending}
-                title="Bewaar deze look"
-                onClick={handleSave}
-                disabled={saveOutfit.isPending}
-                className={cn(
-                  'relative px-4 py-2.5 border rounded-xl text-sm font-bold transition-all',
-                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ff-color-primary-400)] overflow-hidden',
-                  saveOutfit.isSuccess || saved
-                    ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-700)] text-white'
-                    : 'border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)]',
-                  saveOutfit.isPending && 'opacity-50 cursor-not-allowed'
-                )}
-                whileHover={!saveOutfit.isPending ? { scale: 1.03, y: -2 } : {}}
-                whileTap={!saveOutfit.isPending ? { scale: 0.97 } : {}}
-              >
-                <motion.div
-                  className="flex items-center justify-center gap-1.5"
-                  animate={saveOutfit.isSuccess || saved ? { scale: [1, 1.2, 1] } : {}}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Heart className={cn('w-4 h-4', (saveOutfit.isSuccess || saved) && 'fill-current', saveOutfit.isPending && 'animate-pulse')} />
-                  <span>{saveOutfit.isSuccess ? 'Bewaard ✓' : saveOutfit.isPending ? 'Bewaren…' : 'Bewaar'}</span>
-                </motion.div>
-              </motion.button>
-            </RequireAuth>
-
-            <RequireAuth cta="Inloggen voor meer looks">
-              <motion.button
-                aria-label="Meer zoals dit"
-                aria-busy={isProcessing.like}
-                onClick={handleMoreLikeThis}
-                disabled={isProcessing.like}
-                className={cn(
-                  'px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)] rounded-xl text-sm font-bold',
-                  'transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2',
-                  isProcessing.like && 'opacity-50 cursor-not-allowed'
-                )}
-                whileHover={!isProcessing.like ? { scale: 1.03, y: -2 } : {}}
-                whileTap={!isProcessing.like ? { scale: 0.97 } : {}}
-              >
-                <div className="flex items-center justify-center gap-1.5">
-                  <ThumbsUp className={cn('w-4 h-4', isProcessing.like && 'animate-pulse')} />
-                  <span className="hidden sm:inline">Meer zoals dit</span>
-                  <span className="sm:hidden">Meer</span>
-                </div>
-              </motion.button>
-            </RequireAuth>
-
-            <RequireAuth cta="Inloggen voor feedback">
-              <motion.button
-                aria-label="Niet mijn stijl"
-                aria-busy={isProcessing.dislike}
-                onClick={handleDislike}
-                disabled={isProcessing.dislike}
-                className={cn(
-                  'px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border)] hover:bg-[var(--color-bg)] rounded-xl text-sm font-bold',
-                  'transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2',
-                  isProcessing.dislike && 'opacity-50 cursor-not-allowed'
-                )}
-                whileHover={!isProcessing.dislike ? { scale: 1.03, y: -2 } : {}}
-                whileTap={!isProcessing.dislike ? { scale: 0.97 } : {}}
-              >
-                <div className="flex items-center justify-center gap-1.5">
-                  <ThumbsDown className={cn('w-4 h-4', isProcessing.dislike && 'animate-pulse')} />
-                  <span className="hidden sm:inline">Niet mijn stijl</span>
-                  <span className="sm:hidden">Niet</span>
-                </div>
-              </motion.button>
-            </RequireAuth>
-
-            <RequireAuth cta="Inloggen voor uitleg">
-              <motion.button
-                aria-label="Laat Nova dit outfit uitleggen"
-                aria-busy={isProcessing.explain}
-                onClick={handleExplain}
-                disabled={isProcessing.explain}
-                className={cn(
-                  'px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-xl text-sm font-bold',
-                  'transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2',
-                  isProcessing.explain && 'opacity-50 cursor-not-allowed'
-                )}
-                whileHover={!isProcessing.explain ? { scale: 1.03, y: -2 } : {}}
-                whileTap={!isProcessing.explain ? { scale: 0.97 } : {}}
-              >
-                <div className="flex items-center justify-center gap-1.5">
-                  <MessageCircle className={cn('w-4 h-4', isProcessing.explain && 'animate-pulse')} />
-                  <span>{showExplanation ? 'Verberg' : 'Leg uit'}</span>
-                </div>
-              </motion.button>
-            </RequireAuth>
-
-            {/* Details Button - Primary CTA */}
             <motion.button
-              aria-label="Bekijk alle details"
-              title="Bekijk volledige outfit details met alle items"
+              aria-label="Bekijk outfit details en shop"
               onClick={() => setShowDetailsModal(true)}
-              className="col-span-2 px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2 hover:bg-[var(--ff-color-primary-600)]"
-              whileHover={{ scale: 1.03, y: -2 }}
+              className="flex-1 px-4 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)] focus:ring-offset-2 hover:bg-[var(--ff-color-primary-600)]"
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.97 }}
             >
               <div className="flex items-center justify-center gap-2">
-                <Info className="w-4 h-4" />
-                <span>Bekijk alle details</span>
+                <ShoppingBag className="w-4 h-4" />
+                <span>Bekijk &amp; shop</span>
                 {outfit.products && outfit.products.length > 0 && (
-                  <span className="ml-1 px-2 py-0.5 bg-white/20 rounded-full text-xs font-bold">
-                    {outfit.products.length} items
+                  <span className="px-1.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">
+                    {outfit.products.length}
                   </span>
                 )}
               </div>
             </motion.button>
+
+            <RequireAuth cta="Inloggen om te bewaren">
+              <motion.button
+                aria-label={saved || saveOutfit.isSuccess ? "Opgeslagen" : "Bewaar outfit"}
+                aria-busy={saveOutfit.isPending}
+                onClick={handleSave}
+                disabled={saveOutfit.isPending}
+                className={cn(
+                  'w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center border rounded-xl transition-all',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ff-color-primary-400)]',
+                  saveOutfit.isSuccess || saved
+                    ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-700)] text-white'
+                    : 'border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--ff-color-primary-700)]',
+                  saveOutfit.isPending && 'opacity-50 cursor-not-allowed'
+                )}
+                whileHover={!saveOutfit.isPending ? { scale: 1.05 } : {}}
+                whileTap={!saveOutfit.isPending ? { scale: 0.93 } : {}}
+              >
+                <Heart className={cn('w-5 h-5', (saveOutfit.isSuccess || saved) && 'fill-current', saveOutfit.isPending && 'animate-pulse')} />
+              </motion.button>
+            </RequireAuth>
           </motion.div>
         </div>
       </div>
-
-      {/* Explanation Modal */}
-      <AnimatePresence>
-        {showExplanationModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-              onClick={() => setShowExplanationModal(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <motion.div
-              className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 z-10"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Waarom deze match?</h3>
-                <button
-                  onClick={() => setShowExplanationModal(false)}
-                  className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                >
-                  <X size={16} className="text-gray-600" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-[var(--ff-color-primary-50)] rounded-2xl p-4">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <MessageCircle className="w-4 h-4 text-[var(--color-primary)]" />
-                    <span className="text-sm font-medium text-[var(--color-primary)]">Nova's analyse:</span>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {generateNovaExplanation(
-                      {
-                        id: outfit.id,
-                        title: outfit.title,
-                        description: outfit.description,
-                        archetype: outfit.archetype || 'casual_chic',
-                        occasion: outfit.occasion || 'Casual',
-                        products: [],
-                        imageUrl: outfit.imageUrl,
-                        tags: outfit.tags || [],
-                        matchPercentage: outfit.matchPercentage || 75,
-                        explanation: ''
-                      },
-                      user ? {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        stylePreferences: {
-                          casual: 3,
-                          formal: 3,
-                          sporty: 3,
-                          vintage: 3,
-                          minimalist: 3
-                        }
-                      } : undefined
-                    )}
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <button
-                    onClick={() => setShowExplanationModal(false)}
-                    className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-2xl hover:bg-[var(--color-primary)]/90 transition-colors"
-                  >
-                    Begrepen!
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Shop Modal (legacy) */}
-      <AnimatePresence>
-        {showShopModal && outfit.products && (
-          <ShopItemsList
-            products={outfit.products}
-            outfitId={outfit.id}
-            isModal={true}
-            onClose={() => setShowShopModal(false)}
-            title={`Shop: ${outfit.title}`}
-          />
-        )}
-      </AnimatePresence>
 
       {/* Outfit Details Modal */}
       <AnimatePresence>

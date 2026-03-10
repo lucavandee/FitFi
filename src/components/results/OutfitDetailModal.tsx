@@ -102,6 +102,9 @@ export function OutfitDetailModal({
     return sum + price;
   }, 0);
 
+  const shoppableProducts = products.filter((p: any) => resolveProductUrl(p));
+  const hasShoppable = shoppableProducts.length > 0;
+
   return (
     <AnimatePresence>
       <motion.div
@@ -279,37 +282,74 @@ export function OutfitDetailModal({
             )}
           </div>
 
-          {/* Sticky footer — altijd zichtbaar */}
+          {/* Sticky footer */}
           <div
             className="flex-shrink-0 px-5 pt-3 border-t border-[var(--color-border)] bg-[var(--color-surface)]"
             style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}
           >
             <div className="flex gap-3">
-              <button
-                onClick={() => onToggleFav(id)}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
-                style={{
-                  background: isFav
-                    ? "var(--ff-color-primary-700)"
-                    : "var(--ff-color-primary-100)",
-                  color: isFav ? "#fff" : "var(--ff-color-primary-700)",
-                }}
-                aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
-              >
-                <Heart
-                  className="w-4 h-4"
-                  fill={isFav ? "currentColor" : "none"}
-                  strokeWidth={isFav ? 0 : 2}
-                />
-                {isFav ? "Opgeslagen" : "Bewaar outfit"}
-              </button>
+              {hasShoppable ? (
+                <button
+                  onClick={async () => {
+                    for (let i = 0; i < shoppableProducts.length; i++) {
+                      const p = shoppableProducts[i];
+                      const name = p?.name || `Product ${i + 1}`;
+                      setTimeout(async () => {
+                        await openProductLink({
+                          product: { id: p?.id || `p-${i}`, name, retailer: p?.brand || p?.retailer || undefined, price: p?.price || undefined, ...p },
+                          outfitId: id,
+                          slot: i + 1,
+                          source: "outfit_detail_modal_shop_all",
+                        });
+                      }, i * 400);
+                    }
+                    toast.success(`${shoppableProducts.length} items openen...`, { duration: 2500 });
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
+                  style={{
+                    background: "var(--ff-color-primary-700)",
+                    color: "#fff",
+                    boxShadow: "0 4px 16px rgba(122,97,74,0.3)",
+                  }}
+                  aria-label={`Shop ${shoppableProducts.length} items`}
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  Shop items
+                  <span
+                    className="px-1.5 py-0.5 rounded-full text-[10px] font-bold"
+                    style={{ background: "rgba(255,255,255,0.2)" }}
+                  >
+                    {shoppableProducts.length}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => onToggleFav(id)}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
+                  style={{
+                    background: isFav ? "var(--ff-color-primary-700)" : "var(--ff-color-primary-100)",
+                    color: isFav ? "#fff" : "var(--ff-color-primary-700)",
+                  }}
+                  aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
+                >
+                  <Heart className="w-4 h-4" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
+                  {isFav ? "Opgeslagen" : "Bewaar outfit"}
+                </button>
+              )}
 
-              <button
-                onClick={onClose}
-                className="px-5 py-3.5 rounded-xl font-semibold text-sm bg-[var(--ff-color-primary-50)] text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-100)] hover:text-[var(--color-text)] transition-colors"
-              >
-                Sluiten
-              </button>
+              {hasShoppable && (
+                <button
+                  onClick={() => onToggleFav(id)}
+                  className="w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-xl transition-all active:scale-[0.95]"
+                  style={{
+                    background: isFav ? "var(--ff-color-primary-700)" : "var(--ff-color-primary-100)",
+                    color: isFav ? "#fff" : "var(--ff-color-primary-700)",
+                  }}
+                  aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
+                >
+                  <Heart className="w-5 h-5" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
+                </button>
+              )}
             </div>
           </div>
         </motion.div>
