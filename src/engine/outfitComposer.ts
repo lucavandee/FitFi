@@ -120,7 +120,7 @@ const OCCASION_BLUEPRINTS: Record<string, OccasionBlueprint> = {
     preferredStyles: ['casual', 'casual-urban'],
     priceFloor: 15,
     formalityHint: 'casual',
-    brandDiversity: false,
+    brandDiversity: true,
   },
 };
 
