@@ -438,13 +438,13 @@ export default function EnhancedResultsPage() {
                       <span>Quiz opnieuw</span>
                     </NavLink>
 
-                    {/* 3. Tertiary: icon-only, geen witte achtergrond */}
+                    {/* 3. Tertiary: icon-only share */}
                     <button
                       onClick={sharePage}
-                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-transparent border border-[var(--color-border)] rounded-full text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:border-[var(--ff-color-primary-400)] transition-all"
+                      className="inline-flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:border-[var(--ff-color-primary-400)] transition-all flex-shrink-0"
                       aria-label="Delen"
                     >
-                      <Share2 className="w-4 h-4" />
+                      <Share2 className="w-4 h-4 shrink-0" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -614,7 +614,7 @@ export default function EnhancedResultsPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm">Jouw Outfits</p>
-                  <p className="text-xs opacity-80 mt-0.5">{displayOutfits.length} looks voor jou samengesteld</p>
+                  <p className="text-xs opacity-80 mt-0.5">{displayOutfits.length} outfits voor jou samengesteld</p>
                 </div>
                 <ArrowRight className="w-4 h-4 opacity-70 ml-auto group-hover:opacity-100 transition-opacity" />
               </motion.button>
@@ -1072,34 +1072,24 @@ export default function EnhancedResultsPage() {
             <AnimatedSection>
               {/* Quiz-anchor context strip */}
               {answers && (
-                <div className="mb-3 flex flex-wrap items-center gap-1 px-2 py-1 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] opacity-60 mr-0.5">Basis:</span>
-                  <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
-                    {archetypeName}
-                  </span>
-                  {answers.fit && (
-                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
-                      · {answers.fit}
+                <div className="mb-2 flex items-center gap-1.5 overflow-hidden">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)] opacity-50 shrink-0">Basis:</span>
+                  <div className="flex items-center gap-1 min-w-0 overflow-hidden flex-wrap">
+                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] shrink-0">
+                      {archetypeName}
                     </span>
-                  )}
-                  {Array.isArray(answers.occasions) && answers.occasions.slice(0, 2).map((occ: string) => (
-                    <span key={occ} className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
-                      · {occ}
+                    <span className="text-[10px] text-[var(--color-muted)] truncate">
+                      {[
+                        answers.fit,
+                        ...(Array.isArray(answers.occasions) ? answers.occasions.slice(0, 1) : []),
+                        activeColorProfile?.season,
+                        answers.budgetRange?.max ? `€${answers.budgetRange.max}` : null,
+                      ].filter(Boolean).join(' · ')}
                     </span>
-                  ))}
-                  {activeColorProfile?.season && (
-                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
-                      · {activeColorProfile.season}
-                    </span>
-                  )}
-                  {answers.budgetRange?.max && (
-                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-medium text-[var(--color-muted)]">
-                      · €{answers.budgetRange.max}
-                    </span>
-                  )}
+                  </div>
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="ml-auto text-[10px] font-medium text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline"
+                    className="ml-auto shrink-0 text-[10px] font-medium text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline"
                   >
                     Aanpassen
                   </button>
@@ -1112,7 +1102,7 @@ export default function EnhancedResultsPage() {
                     Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
                   </h2>
                   <p className="text-xs text-[var(--color-muted)] mt-0.5 font-normal">
-                    {displayOutfits.length} looks · {archetypeName}
+                    {displayOutfits.length} outfits · {archetypeName}
                   </p>
                 </div>
 
@@ -1157,7 +1147,7 @@ export default function EnhancedResultsPage() {
                 <div className="w-12 h-12 border-[3px] border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin" aria-hidden="true" />
                 <div className="text-center">
                   <p className="text-base font-medium text-[var(--color-text)]">Outfits worden samengesteld…</p>
-                  <p className="text-sm text-[var(--color-muted)] mt-1">We selecteren looks die passen bij jouw stijl en kleurprofiel.</p>
+                  <p className="text-sm text-[var(--color-muted)] mt-1">We selecteren outfits die passen bij jouw stijl en kleurprofiel.</p>
                 </div>
               </div>
             ) : displayOutfits.length === 0 ? (
@@ -1173,7 +1163,7 @@ export default function EnhancedResultsPage() {
                       const gender = answers?.gender;
                       if (budget && budget < 50) return `Je budget (€${budget}) is erg laag — probeer het te verhogen of kies "Geen voorkeur".`;
                       if (gender === 'non-binary' || gender === 'prefer-not-to-say') return 'We hebben nog beperkt aanbod voor jouw gendervoorkeur. Doe de quiz opnieuw en kies een ruimere filteroptie.';
-                      return 'We konden geen complete looks samenstellen. Dit kan door een combinatie van strakke filters zijn — doe de quiz opnieuw met ruimere voorkeuren.';
+                      return 'We konden geen complete outfits samenstellen. Dit kan door een combinatie van strakke filters zijn — doe de quiz opnieuw met ruimere voorkeuren.';
                     })()}
                   </p>
                 </div>
