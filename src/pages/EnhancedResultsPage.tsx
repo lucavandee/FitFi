@@ -1011,6 +1011,7 @@ export default function EnhancedResultsPage() {
         <section id="outfits-section" className="py-6 sm:py-8">
           <div className="ff-container">
             <AnimatedSection>
+              <div className="max-w-5xl mx-auto">
               {/* Quiz-anchor context strip */}
               {answers && (
                 <div className="mb-2 flex items-center gap-2 overflow-hidden">
@@ -1070,6 +1071,7 @@ export default function EnhancedResultsPage() {
                   </div>
                 }
               />
+              </div>
             </AnimatedSection>
 
             {outfitsLoading ? (
@@ -1252,10 +1254,10 @@ export default function EnhancedResultsPage() {
                     </div>
                   );
                 }}
-                className="max-w-7xl mx-auto"
+                className="max-w-5xl mx-auto"
               />
             ) : (
-              <div className="grid gap-4 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-[1600px] mx-auto">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
                 {displayOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
@@ -1403,9 +1405,9 @@ export default function EnhancedResultsPage() {
 
                   {/* Social proof */}
                   <p className="text-xs text-[var(--color-muted)] mb-4">
-                    ⭐ <span className="font-semibold text-[var(--color-text)]">
+                    <span className="font-semibold text-[var(--color-text)]">
                       {upgradesLoading ? "2.847+" : `${monthlyUpgradeCount?.toLocaleString("nl-NL") || "2.847"}+`} gebruikers
-                    </span> geüpgraded deze maand
+                    </span>{" "}geüpgraded deze maand
                   </p>
 
                   {/* Trust Signals */}
