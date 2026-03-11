@@ -382,22 +382,29 @@ export default function EnhancedResultsPage() {
 
       <Breadcrumbs />
 
-      {/* ── HERO ── compact product-page hero */}
+      {/* ── HERO ── */}
       <motion.section
-        style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative pt-8 pb-6 sm:pt-10 sm:pb-8 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
+        style={{
+          opacity: heroOpacity,
+          scale: heroScale,
+          background: 'linear-gradient(160deg, var(--ff-color-primary-50) 0%, var(--color-bg) 55%, var(--ff-color-primary-50) 100%)',
+        }}
+        className="relative py-12 sm:py-16 border-b border-[var(--color-border)] overflow-hidden"
       >
         <div className="ff-container">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
             {hasCompletedQuiz ? (
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-3">
                 {/* Kicker */}
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)]">
+                <p className="text-xs sm:text-sm font-medium uppercase tracking-widest" style={{ color: 'var(--ff-color-primary-600)' }}>
                   Persoonlijk Style Report
                 </p>
 
-                {/* H1 — product scale, not marketing */}
-                <h1 className="font-heading text-xl sm:text-2xl font-semibold leading-tight tracking-tight text-[var(--color-text)]">
+                {/* H1 */}
+                <h1
+                  className="font-heading font-bold tracking-tight text-[var(--color-text)]"
+                  style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', lineHeight: 1.1 }}
+                >
                   {archetypeName}
                 </h1>
 
@@ -408,13 +415,13 @@ export default function EnhancedResultsPage() {
                       {Math.round(archetypeDetectionResult.confidence * 100)}% match
                     </BadgePill>
                   )}
-                  <span className="text-xs text-[var(--color-muted)]">
+                  <span className="text-sm text-[var(--color-muted)]">
                     {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
                   </span>
                 </div>
 
-                {/* CTA row — all same height */}
-                <div className="flex items-center gap-2 pt-0.5">
+                {/* CTA row */}
+                <div className="flex items-center gap-2 pt-1">
                   <PrimaryButton
                     size="sm"
                     icon={<ShoppingBag className="w-3.5 h-3.5" />}
@@ -437,12 +444,20 @@ export default function EnhancedResultsPage() {
                 </div>
               </div>
             ) : (
-              <div className="py-10">
-                <h1 className="font-heading text-xl sm:text-2xl font-semibold mb-3 text-[var(--color-text)] tracking-tight">Jouw stijl</h1>
+              <div className="py-4">
+                <p className="text-xs sm:text-sm font-medium uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+                  Style Report
+                </p>
+                <h1
+                  className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-3"
+                  style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', lineHeight: 1.1 }}
+                >
+                  Jouw stijl
+                </h1>
                 <p className="text-sm text-[var(--color-muted)] mb-6 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[40px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                 >
                   Start Style Quiz
                   <ArrowRight className="w-4 h-4" />
