@@ -45,10 +45,10 @@ export function ResultsOutfitCard({
       as="article"
       hover={false}
       padding="none"
-      className="group overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,35,51,0.10)]"
+      className="group overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(30,35,51,0.09)]"
     >
-      {/* Image area — aspect 3:4, dominates the card */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)]">
+      {/* Image area — 4:5 ratio keeps the card proportionate without tower effect */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-[var(--ff-color-neutral-100)]">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -59,67 +59,68 @@ export function ResultsOutfitCard({
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
-            <div className="text-center p-6">
-              <Sparkles className="w-12 h-12 mx-auto mb-3 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-              <p className="text-xs text-[var(--color-muted)] font-medium">Outfit {index + 1}</p>
+            <div className="text-center p-4">
+              <Sparkles className="w-10 h-10 mx-auto mb-2 text-[var(--ff-color-primary-400)]" aria-hidden="true" />
+              <p className="text-[11px] text-[var(--color-muted)] font-medium">Outfit {index + 1}</p>
             </div>
           </div>
         )}
 
-        {/* Favorite toggle — top right */}
+        {/* Favorite toggle — top right, smaller footprint */}
         <motion.button
           type="button"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
           onClick={onToggleFavorite}
           aria-label={isFavorite ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-          className={`absolute top-3 right-3 w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center backdrop-blur-md shadow-sm transition-colors ${
+          className={`absolute top-2.5 right-2.5 w-8 h-8 min-w-[32px] min-h-[32px] rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm transition-colors ${
             isFavorite
               ? "bg-[var(--ff-color-danger-500)] text-white"
-              : "bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]"
+              : "bg-[var(--color-surface)]/85 text-[var(--color-text)] hover:bg-[var(--color-surface)]"
           }`}
         >
-          <Heart className={`w-3.5 h-3.5 ${isFavorite ? "fill-current" : ""}`} />
+          <Heart className={`w-3 h-3 ${isFavorite ? "fill-current" : ""}`} />
         </motion.button>
 
-        {/* Shop CTA — slim overlay at bottom of image */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[rgba(18,18,18,0.60)] to-transparent pt-6">
-          <button
-            type="button"
-            onClick={onSelect}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-[40px] bg-[var(--ff-color-primary-700)] text-white text-xs font-semibold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-0"
-          >
-            <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-            <span>Bekijk &amp; shop</span>
-            {productCount > 0 && (
-              <span className="px-1.5 py-px bg-white/20 rounded-full text-[10px] font-bold leading-none">
-                {productCount}
-              </span>
-            )}
-          </button>
-        </div>
+        {/* CTA overlay — decorative gradient + slim action bar, no heavy block */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none h-20 bg-gradient-to-t from-[rgba(10,10,10,0.45)] to-transparent" />
+        <button
+          type="button"
+          onClick={onSelect}
+          className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[36px] bg-[var(--ff-color-primary-700)]/95 text-white text-[11px] font-semibold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-0"
+        >
+          <ShoppingBag className="w-3 h-3 shrink-0" />
+          <span>Bekijk &amp; shop</span>
+          {productCount > 0 && (
+            <span className="px-1.5 py-px bg-white/25 rounded-full text-[9px] font-bold leading-none">
+              {productCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Info area — compact */}
-      <div className="px-3 pt-3 pb-3.5">
-        {/* Occasion */}
-        <BadgePill variant="soft" className="mb-2">
-          <span className="text-xs mr-0.5">{occasionContext.emoji}</span>
-          {occasionContext.label}
-        </BadgePill>
+      {/* Info area */}
+      <div className="px-3 pt-2.5 pb-3">
+        {/* Occasion — leading meta, stays small */}
+        <div className="flex items-center gap-1 mb-1.5">
+          <span className="text-[11px] leading-none">{occasionContext.emoji}</span>
+          <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wide leading-none">
+            {occasionContext.label}
+          </span>
+        </div>
 
-        {/* Title */}
+        {/* Title — scannable anchor */}
         <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug line-clamp-2 mb-1 group-hover:text-[var(--ff-color-primary-600)] transition-colors">
           {name}
         </h3>
 
-        {/* Description */}
-        <p className="text-xs text-[var(--color-muted)] line-clamp-2 leading-relaxed mb-2.5">
+        {/* Description — supporting, compact */}
+        <p className="text-[11px] text-[var(--color-muted)] line-clamp-2 leading-normal mb-2">
           {description}
         </p>
 
-        {/* Meta pills */}
-        {(matchScore !== null || fitLabel) && (
+        {/* Meta pills — subordinate, only if data exists */}
+        {(typeof matchScore === "number" || fitLabel) && (
           <div className="flex flex-wrap gap-1">
             {typeof matchScore === "number" && (
               <BadgePill variant="success" icon={<Check className="w-2.5 h-2.5" strokeWidth={3} />}>
