@@ -108,7 +108,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
             Pas aan <ArrowRight className="w-3 h-3" />
           </button>
         </div>
-        <h3 className="text-base font-bold text-[var(--color-text)] leading-snug">
+        <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug">
           Waarom dit rapport past bij{' '}
           <span className="text-[var(--ff-color-primary-700)]">{archetypeName}</span>
         </h3>
