@@ -1346,11 +1346,11 @@ export default function EnhancedResultsPage() {
               </div>
             )}
 
-            {/* Upsell Block — product-page card discipline */}
+            {/* Upsell Block */}
             <AnimatedSection delay={0.6}>
-              <div className="mt-10 sm:mt-12 mb-6 max-w-3xl mx-auto">
+              <div className="mt-10 sm:mt-12 mb-6">
                 {/* Preview label */}
-                <div className="text-center mb-4">
+                <div className="mb-3">
                   <BadgePill variant="success" icon={<Sparkles className="w-3 h-3" />}>
                     Gratis preview: 9 van 50+ gepersonaliseerde outfits
                   </BadgePill>
@@ -1358,80 +1358,99 @@ export default function EnhancedResultsPage() {
 
                 {/* Upsell card */}
                 <div
-                  className="bg-[var(--color-surface)] rounded-2xl p-5 sm:p-6 border border-[var(--color-border)]"
-                  style={{ boxShadow: 'var(--shadow-soft)' }}
+                  className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden"
+                  style={{ boxShadow: '0 2px 16px rgba(30,35,51,0.07), 0 1px 4px rgba(30,35,51,0.05)' }}
                 >
-                  {/* Header */}
-                  <div className="mb-4">
-                    <h3 className="text-base sm:text-lg font-bold text-[var(--color-text)] mb-1">
-                      Upgrade voor meer gepersonaliseerde outfits
-                    </h3>
-                    <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-                      50+ outfits afgestemd op jouw stijl, plus een persoonlijke stylist die vragen beantwoordt
+                  {/* Card body */}
+                  <div className="p-5 sm:p-6">
+                    {/* Kicker */}
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
+                      Premium
                     </p>
-                  </div>
 
-                  {/* Benefits Grid */}
-                  <div className="grid grid-cols-3 gap-2 mb-4">
-                    {getBenefitsForArchetype(archetypeName).map((benefit, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.08 }}
-                        className="bg-[var(--color-bg)] rounded-xl p-3 text-center border border-[var(--color-border)]"
-                      >
-                        <div className="text-lg font-bold text-[var(--ff-color-primary-700)] mb-0.5">
-                          {benefit.value}
-                        </div>
-                        <div className="text-[10px] text-[var(--color-muted)] leading-snug">
-                          {benefit.label}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
+                    {/* Headline */}
+                    <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text)] leading-snug mb-4">
+                      Jouw volledige stijlprofiel,<br className="hidden sm:block" /> onbeperkt toegankelijk
+                    </h3>
 
-                  {/* Pricing */}
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-2xl font-bold text-[var(--color-text)]">€9,99</span>
-                    <span className="text-sm text-[var(--color-muted)]">/maand</span>
-                  </div>
-                  <p className="text-xs text-[var(--color-muted)] mb-3">
-                    Eerste maand gratis · Stop wanneer je wilt
-                  </p>
+                    {/* Feature checklist */}
+                    <ul className="space-y-2 mb-5">
+                      {getBenefitsForArchetype(archetypeName).map((benefit, idx) => (
+                        <li key={idx} className="flex items-start gap-2.5">
+                          <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center shrink-0">
+                            <Check className="w-2.5 h-2.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} aria-hidden="true" />
+                          </span>
+                          <span className="text-sm text-[var(--color-text)] leading-snug">
+                            <span className="font-semibold">{benefit.value}</span>
+                            {benefit.value !== benefit.label && (
+                              <span className="text-[var(--color-muted)]"> — {benefit.label}</span>
+                            )}
+                          </span>
+                        </li>
+                      ))}
+                      <li className="flex items-start gap-2.5">
+                        <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center shrink-0">
+                          <Check className="w-2.5 h-2.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} aria-hidden="true" />
+                        </span>
+                        <span className="text-sm text-[var(--color-text)] leading-snug">
+                          <span className="font-semibold">Nova AI</span>
+                          <span className="text-[var(--color-muted)]"> — persoonlijke stylist, altijd beschikbaar</span>
+                        </span>
+                      </li>
+                    </ul>
 
-                  {/* Social proof */}
-                  <p className="text-xs text-[var(--color-muted)] mb-4">
-                    <span className="font-semibold text-[var(--color-text)]">
-                      {upgradesLoading ? "2.847+" : `${monthlyUpgradeCount?.toLocaleString("nl-NL") || "2.847"}+`} gebruikers
-                    </span>{" "}geüpgraded deze maand
-                  </p>
+                    {/* Pricing row */}
+                    <div className="flex items-baseline gap-1.5 mb-1">
+                      <span className="text-xl font-bold text-[var(--color-text)] font-heading">€9,99</span>
+                      <span className="text-xs text-[var(--color-muted)]">/maand</span>
+                      <span className="ml-1.5 text-[10px] font-semibold text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] px-2 py-0.5 rounded-full border border-[var(--ff-color-primary-200)]">
+                        Eerste maand gratis
+                      </span>
+                    </div>
+                    <p className="text-xs text-[var(--color-muted)] mb-4">
+                      Stop wanneer je wilt — geen verplichtingen
+                    </p>
 
-                  {/* Trust Signals */}
-                  <div className="mb-4">
+                    {/* Trust strip */}
                     <TrustSignals />
-                  </div>
 
-                  {/* CTA Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-2.5">
-                    <NavLink
-                      to={user ? "/dashboard" : "/registreren"}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                      aria-label={user ? "Ga naar je dashboard" : "Maak gratis account aan om outfits op te slaan"}
-                    >
-                      <ShoppingBag className="w-4 h-4" aria-hidden="true" />
-                      <span>{user ? "Ga naar mijn dashboard" : "Sla outfits op — gratis account"}</span>
-                      <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                    </NavLink>
+                    {/* Social proof */}
+                    <div className="flex items-center gap-2 mt-4 mb-4">
+                      <div className="flex -space-x-1.5" aria-hidden="true">
+                        {['#C4A882', '#B8956C', '#A6886A', '#8F7459'].map((c, i) => (
+                          <div
+                            key={i}
+                            className="w-6 h-6 rounded-full border-2 border-[var(--color-surface)]"
+                            style={{ backgroundColor: c }}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-xs text-[var(--color-muted)]">
+                        <span className="font-semibold text-[var(--color-text)]">
+                          {upgradesLoading ? "2.847+" : `${monthlyUpgradeCount?.toLocaleString("nl-NL") || "2.847"}+`}
+                        </span>{" "}gebruikers geüpgraded deze maand
+                      </p>
+                    </div>
 
-                    <NavLink
-                      to="/prijzen#premium"
-                      className="sm:flex-none flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] bg-transparent text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] transition-all border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                      aria-label="Upgrade naar Premium voor meer functies"
-                    >
-                      <Sparkles className="w-4 h-4" aria-hidden="true" />
-                      <span>Bekijk Premium</span>
-                    </NavLink>
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <NavLink
+                        to={user ? "/dashboard" : "/registreren"}
+                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                        aria-label={user ? "Ga naar je dashboard" : "Maak gratis account aan om outfits op te slaan"}
+                      >
+                        <span>{user ? "Ga naar mijn dashboard" : "Sla outfits op — gratis"}</span>
+                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                      </NavLink>
+
+                      <NavLink
+                        to="/prijzen#premium"
+                        className="sm:flex-none flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] bg-transparent text-[var(--color-text)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] transition-all border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                        aria-label="Bekijk alle premium functies"
+                      >
+                        Bekijk Premium
+                      </NavLink>
+                    </div>
                   </div>
                 </div>
               </div>
