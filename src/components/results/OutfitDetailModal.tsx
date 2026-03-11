@@ -39,10 +39,7 @@ function HeroImage({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false);
   if (failed) return null;
   return (
-    <div
-      className="rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)]"
-      style={{ aspectRatio: "4/3" }}
-    >
+    <div className="rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)] aspect-[4/3]">
       <img
         src={src}
         alt={alt}
@@ -197,7 +194,7 @@ export function OutfitDetailModal({
 
             {/* Color advice */}
             {colorProfile && (
-              <div className="rounded-xl bg-[var(--ff-color-primary-25)] border border-[var(--ff-color-primary-100)] px-4 py-3">
+              <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-1">
                   Kleuradvies
                 </p>
@@ -222,7 +219,7 @@ export function OutfitDetailModal({
 
             {/* Product list */}
             {products.length === 0 && (
-              <div className="rounded-xl border border-[var(--color-border)] px-4 py-5 bg-[var(--ff-color-primary-25)] text-center">
+              <div className="rounded-xl border border-[var(--color-border)] px-4 py-5 bg-[var(--ff-color-primary-50)] text-center">
                 <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-[var(--ff-color-primary-300)]" aria-hidden="true" />
                 <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Productlinks worden binnenkort geladen</p>
                 <p className="text-xs text-[var(--color-muted)] leading-relaxed">
@@ -354,31 +351,23 @@ export function OutfitDetailModal({
                     }
                     toast.success(`${shoppableProducts.length} items openen...`, { duration: 2500 });
                   }}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
-                  style={{
-                    background: "var(--ff-color-primary-700)",
-                    color: "#fff",
-                    boxShadow: "0 4px 16px rgba(122,97,74,0.3)",
-                  }}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] shadow-[0_4px_16px_rgba(122,97,74,0.20)] transition-all active:scale-[0.97]"
                   aria-label={`Shop ${shoppableProducts.length} items`}
                 >
                   <ShoppingBag className="w-4 h-4" />
                   Shop items
-                  <span
-                    className="px-1.5 py-0.5 rounded-full text-[10px] font-bold"
-                    style={{ background: "rgba(255,255,255,0.2)" }}
-                  >
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20">
                     {shoppableProducts.length}
                   </span>
                 </button>
               ) : (
                 <button
                   onClick={() => onToggleFav(id)}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
-                  style={{
-                    background: isFav ? "var(--ff-color-primary-700)" : "var(--ff-color-primary-100)",
-                    color: isFav ? "#fff" : "var(--ff-color-primary-700)",
-                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97] ${
+                    isFav
+                      ? "bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]"
+                      : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-200)]"
+                  }`}
                   aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
                 >
                   <Heart className="w-4 h-4" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
@@ -389,11 +378,11 @@ export function OutfitDetailModal({
               {hasShoppable && (
                 <button
                   onClick={() => onToggleFav(id)}
-                  className="w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-xl transition-all active:scale-[0.95]"
-                  style={{
-                    background: isFav ? "var(--ff-color-primary-700)" : "var(--ff-color-primary-100)",
-                    color: isFav ? "#fff" : "var(--ff-color-primary-700)",
-                  }}
+                  className={`w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-xl transition-all active:scale-[0.95] ${
+                    isFav
+                      ? "bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]"
+                      : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-200)]"
+                  }`}
                   aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
                 >
                   <Heart className="w-5 h-5" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
