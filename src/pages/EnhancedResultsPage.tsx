@@ -382,26 +382,26 @@ export default function EnhancedResultsPage() {
 
       <Breadcrumbs />
 
-      {/* ── HERO ── compact product-page hero, not a marketing banner */}
+      {/* ── HERO ── compact product-page hero */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative pt-6 pb-5 sm:pt-8 sm:pb-6 bg-gradient-to-b from-[var(--ff-color-primary-50)] to-[var(--color-bg)]"
+        className="relative pt-8 pb-6 sm:pt-10 sm:pb-8 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
       >
         <div className="ff-container">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {hasCompletedQuiz ? (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5">
                 {/* Kicker */}
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)]">
                   Persoonlijk Style Report
                 </p>
 
-                {/* H1 — product scale */}
-                <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight text-[var(--color-text)]">
+                {/* H1 — product scale, not marketing */}
+                <h1 className="font-heading text-xl sm:text-2xl font-semibold leading-tight tracking-tight text-[var(--color-text)]">
                   {archetypeName}
                 </h1>
 
-                {/* Stats row — compact inline meta */}
+                {/* Stats row */}
                 <div className="flex items-center gap-2 flex-wrap">
                   {archetypeDetectionResult && (
                     <BadgePill variant="success" icon={<Check className="w-2.5 h-2.5" strokeWidth={3} />}>
@@ -413,8 +413,8 @@ export default function EnhancedResultsPage() {
                   </span>
                 </div>
 
-                {/* CTA row */}
-                <div className="flex items-center gap-2 pt-1">
+                {/* CTA row — all same height */}
+                <div className="flex items-center gap-2 pt-0.5">
                   <PrimaryButton
                     size="sm"
                     icon={<ShoppingBag className="w-3.5 h-3.5" />}
@@ -431,18 +431,18 @@ export default function EnhancedResultsPage() {
                     Quiz opnieuw
                   </SecondaryButton>
 
-                  <IconButton label="Delen" onClick={sharePage}>
-                    <Share2 className="w-4 h-4 shrink-0" />
+                  <IconButton size="sm" label="Delen" onClick={sharePage}>
+                    <Share2 className="w-3.5 h-3.5 shrink-0" />
                   </IconButton>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-10">
-                <h1 className="font-heading text-2xl sm:text-3xl font-bold mb-3 text-[var(--color-text)] tracking-tight">Jouw stijl</h1>
-                <p className="text-sm text-[var(--color-muted)] mb-6 leading-relaxed max-w-sm mx-auto">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
+              <div className="py-10">
+                <h1 className="font-heading text-xl sm:text-2xl font-semibold mb-3 text-[var(--color-text)] tracking-tight">Jouw stijl</h1>
+                <p className="text-sm text-[var(--color-muted)] mb-6 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[40px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                 >
                   Start Style Quiz
                   <ArrowRight className="w-4 h-4" />
@@ -455,13 +455,12 @@ export default function EnhancedResultsPage() {
 
       {/* ── STICKY TAB BAR ── */}
       {hasCompletedQuiz && (
-        <div className="sticky top-0 z-40 bg-[var(--color-surface)]/95 backdrop-blur-md" style={{ boxShadow: '0 1px 0 rgba(30,35,51,0.06), 0 4px 16px rgba(30,35,51,0.04)' }}>
+        <div className="sticky top-0 z-40 bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)]">
           <div className="ff-container">
-            <div className="max-w-3xl mx-auto flex items-center justify-center py-2">
+            <div className="max-w-5xl mx-auto flex items-center py-0">
               <div
                 role="tablist"
-                className="relative flex items-center bg-[var(--color-bg)] rounded-full p-1 gap-0"
-                style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.07)' }}
+                className="flex items-center gap-0"
               >
                 {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
@@ -474,16 +473,15 @@ export default function EnhancedResultsPage() {
                         setActiveTab(tab.id);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`relative z-10 flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] ${
+                      className={`relative flex items-center gap-1.5 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-inset ${
                         isActive
-                          ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
-                          : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                          ? 'text-[var(--color-text)] border-b-2 border-[var(--ff-color-primary-600)]'
+                          : 'text-[var(--color-muted)] border-b-2 border-transparent hover:text-[var(--color-text)] hover:border-[var(--color-border)]'
                       }`}
-                      style={isActive ? { boxShadow: '0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04)' } : undefined}
                     >
                       {tab.label}
                       {tab.sub && (
-                        <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold transition-colors duration-300 ${
+                        <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold transition-colors duration-200 ${
                           isActive
                             ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]'
                             : 'bg-[var(--color-border)] text-[var(--color-muted)]'
@@ -1029,48 +1027,47 @@ export default function EnhancedResultsPage() {
                   />
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="ml-auto shrink-0 text-[10px] font-medium text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline"
+                    className="ml-auto shrink-0 text-xs font-medium text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] rounded"
                   >
                     Aanpassen
                   </button>
                 </div>
               )}
 
-              <ProductSectionHeader
-                title="Handpicked voor jou"
-                subtitle={`${displayOutfits.length} outfits · ${archetypeName}`}
-                className="mb-4"
-                actions={
-                  <div className="inline-flex items-center p-0.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.06)' }}>
-                    <button
-                      onClick={() => setGalleryMode('swipe')}
-                      aria-pressed={galleryMode === 'swipe'}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
-                        galleryMode === 'swipe'
-                          ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
-                          : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
-                      }`}
-                      aria-label="Swipe weergave"
-                    >
-                      <Layers className="w-3 h-3" aria-hidden="true" />
-                      <span>Swipe</span>
-                    </button>
-                    <button
-                      onClick={() => setGalleryMode('grid')}
-                      aria-pressed={galleryMode === 'grid'}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
-                        galleryMode === 'grid'
-                          ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
-                          : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
-                      }`}
-                      aria-label="Grid weergave"
-                    >
-                      <Grid3x3 className="w-3 h-3" aria-hidden="true" />
-                      <span>Grid</span>
-                    </button>
-                  </div>
-                }
-              />
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-base font-semibold text-[var(--color-text)] leading-tight">Handpicked voor jou</h2>
+                  <p className="text-xs text-[var(--color-muted)] mt-0.5">{displayOutfits.length} outfits · {archetypeName}</p>
+                </div>
+                <div className="inline-flex items-center p-0.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shrink-0" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}>
+                  <button
+                    onClick={() => setGalleryMode('swipe')}
+                    aria-pressed={galleryMode === 'swipe'}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
+                      galleryMode === 'swipe'
+                        ? 'bg-[var(--ff-color-primary-700)] text-white shadow-sm'
+                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                    }`}
+                    aria-label="Swipe weergave"
+                  >
+                    <Layers className="w-3 h-3" aria-hidden="true" />
+                    <span>Swipe</span>
+                  </button>
+                  <button
+                    onClick={() => setGalleryMode('grid')}
+                    aria-pressed={galleryMode === 'grid'}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
+                      galleryMode === 'grid'
+                        ? 'bg-[var(--ff-color-primary-700)] text-white shadow-sm'
+                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                    }`}
+                    aria-label="Grid weergave"
+                  >
+                    <Grid3x3 className="w-3 h-3" aria-hidden="true" />
+                    <span>Grid</span>
+                  </button>
+                </div>
+              </div>
               </div>
             </AnimatedSection>
 
