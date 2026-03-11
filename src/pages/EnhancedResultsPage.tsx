@@ -1030,14 +1030,14 @@ export default function EnhancedResultsPage() {
                               });
                               toggleFav(String(outfitId));
                             }}
-                            className={`w-8 h-8 min-w-[32px] min-h-[32px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-sm ${
+                            className={`w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-sm ${
                               favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
                                 ? 'bg-[var(--ff-color-danger-500)] text-white'
                                 : 'bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]'
                             }`}
                             aria-label={favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                           >
-                            <Heart className={`w-3 h-3 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-current' : ''}`} />
+                            <Heart className={`w-3.5 h-3.5 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-current' : ''}`} />
                           </button>
                         </div>
 
@@ -1068,8 +1068,7 @@ export default function EnhancedResultsPage() {
                       {/* Info */}
                       <div className="px-3 pt-2.5 pb-3">
                         {/* Occasion */}
-                        <div className="flex items-center gap-1 mb-1.5">
-                          <span className="text-[11px]">{outfitInfo.context.emoji}</span>
+                        <div className="mb-1.5">
                           <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wide">
                             {outfitInfo.context.label}
                           </span>
@@ -1197,7 +1196,7 @@ export default function EnhancedResultsPage() {
 
             {/* Upsell Block */}
             <AnimatedSection delay={0.6}>
-              <div className="mt-10 sm:mt-12 mb-6">
+              <div className="mt-10 sm:mt-12 mb-6 max-w-5xl mx-auto">
                 {/* Preview label */}
                 <div className="mb-3">
                   <BadgePill variant="success" icon={<Sparkles className="w-3 h-3" />}>

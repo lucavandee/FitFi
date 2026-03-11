@@ -73,13 +73,13 @@ export function ResultsOutfitCard({
           whileTap={{ scale: 0.92 }}
           onClick={onToggleFavorite}
           aria-label={isFavorite ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-          className={`absolute top-2.5 right-2.5 w-8 h-8 min-w-[32px] min-h-[32px] rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm transition-colors ${
+          className={`absolute top-2 right-2 w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm transition-colors ${
             isFavorite
               ? "bg-[var(--ff-color-danger-500)] text-white"
               : "bg-[var(--color-surface)]/85 text-[var(--color-text)] hover:bg-[var(--color-surface)]"
           }`}
         >
-          <Heart className={`w-3 h-3 ${isFavorite ? "fill-current" : ""}`} />
+          <Heart className={`w-3.5 h-3.5 ${isFavorite ? "fill-current" : ""}`} />
         </motion.button>
 
         {/* CTA overlay — decorative gradient + slim action bar, no heavy block */}
@@ -102,8 +102,7 @@ export function ResultsOutfitCard({
       {/* Info area */}
       <div className="px-3 pt-2.5 pb-3">
         {/* Occasion — leading meta, stays small */}
-        <div className="flex items-center gap-1 mb-1.5">
-          <span className="text-[11px] leading-none">{occasionContext.emoji}</span>
+        <div className="mb-1.5">
           <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wide leading-none">
             {occasionContext.label}
           </span>

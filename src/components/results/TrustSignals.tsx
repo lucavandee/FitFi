@@ -10,9 +10,9 @@ const trustSignals = [
 
 export function TrustSignals() {
   return (
-    <div className="flex items-center justify-between gap-2 py-3 border-y border-[var(--color-border)]">
+    <div className="flex items-center flex-wrap gap-x-5 gap-y-2 py-3 border-y border-[var(--color-border)]">
       {trustSignals.map((s, i) => (
-        <div key={i} className="flex items-center gap-1.5 min-w-0">
+        <div key={i} className="flex items-center gap-1.5">
           <span className="text-[var(--ff-color-primary-600)] shrink-0">{s.icon}</span>
           <span className="text-[11px] text-[var(--color-muted)] whitespace-nowrap font-medium">{s.label}</span>
         </div>
