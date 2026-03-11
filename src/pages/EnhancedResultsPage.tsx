@@ -41,8 +41,17 @@ import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdvi
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
 import { ShareModal } from "@/components/results/ShareModal";
+import { ResultsOutfitCard } from "@/components/results/ResultsOutfitCard";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  IconButton,
+  ProductSectionHeader,
+  MetaInlineRow,
+  BadgePill,
+} from "@/components/ui/primitives";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -417,36 +426,25 @@ export default function EnhancedResultsPage() {
 
                   {/* CTA row: 1. Bekijk outfits · 2. Quiz opnieuw · 3. Share */}
                   <div className="flex items-center gap-2">
-                    {/* 1. Primary: filled */}
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <PrimaryButton
+                      size="sm"
+                      icon={<ShoppingBag className="w-3.5 h-3.5" />}
                       onClick={() => setActiveTab('outfits')}
-                      className="inline-flex items-center gap-1.5 px-5 py-2 min-h-[40px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all"
-                      style={{ boxShadow: '0 2px 10px rgba(122,97,74,0.30)' }}
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
                       Bekijk outfits
-                    </motion.button>
+                    </PrimaryButton>
 
-                    {/* 2. Secondary: outline */}
-                    <NavLink
-                      to="/onboarding?step=redo"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] bg-transparent border border-[var(--color-border)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-all text-[var(--color-text)]"
+                    <SecondaryButton
+                      size="sm"
+                      icon={<RefreshCw className="w-3.5 h-3.5" />}
+                      onClick={() => navigate('/onboarding?step=redo')}
                     >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      <span>Quiz opnieuw</span>
-                    </NavLink>
+                      Quiz opnieuw
+                    </SecondaryButton>
 
-                    {/* 3. Tertiary: icon-only share */}
-                    <button
-                      type="button"
-                      onClick={sharePage}
-                      aria-label="Delen"
-                      className="inline-flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-[rgba(30,35,51,0.16)] bg-[rgba(255,255,255,0.72)] text-[var(--color-text)] transition-all duration-200 hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)] hover:border-[var(--ff-color-primary-400)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 shrink-0"
-                    >
-                      <Share2 className="w-4 h-4 shrink-0 text-current" />
-                    </button>
+                    <IconButton label="Delen" onClick={sharePage}>
+                      <Share2 className="w-4 h-4 shrink-0" />
+                    </IconButton>
                   </div>
                 </div>
               </>
@@ -1073,21 +1071,19 @@ export default function EnhancedResultsPage() {
             <AnimatedSection>
               {/* Quiz-anchor context strip */}
               {answers && (
-                <div className="mb-2 flex items-center gap-1.5 overflow-hidden">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)] opacity-50 shrink-0">Basis:</span>
-                  <div className="flex items-center gap-1 min-w-0 overflow-hidden flex-wrap">
-                    <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] shrink-0">
-                      {archetypeName}
-                    </span>
-                    <span className="text-[10px] text-[var(--color-muted)] truncate">
-                      {[
+                <div className="mb-2 flex items-center gap-2 overflow-hidden">
+                  <MetaInlineRow
+                    className="min-w-0 flex-1 overflow-hidden"
+                    items={[
+                      { label: archetypeName, pill: true },
+                      ...[
                         answers.fit,
                         ...(Array.isArray(answers.occasions) ? answers.occasions.slice(0, 1) : []),
-                        activeColorProfile?.season,
-                        answers.budgetRange?.max ? `€${answers.budgetRange.max}` : null,
-                      ].filter(Boolean).join(' · ')}
-                    </span>
-                  </div>
+                      ].filter(Boolean).map((v) => ({ label: v as string })),
+                      ...(activeColorProfile?.season ? [{ label: activeColorProfile.season, pill: true }] : []),
+                      ...(answers.budgetRange?.max ? [{ label: `€${answers.budgetRange.max}` }] : []),
+                    ]}
+                  />
                   <button
                     onClick={() => navigate('/onboarding')}
                     className="ml-auto shrink-0 text-[10px] font-medium text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors underline-offset-2 hover:underline"
@@ -1097,46 +1093,41 @@ export default function EnhancedResultsPage() {
                 </div>
               )}
 
-              <div className="flex items-end justify-between mb-4 gap-3">
-                <div>
-                  <h2 className="font-heading text-xl sm:text-2xl font-bold tracking-tight leading-tight">
-                    Handpicked <span className="text-[var(--ff-color-primary-600)]">voor jou</span>
-                  </h2>
-                  <p className="text-xs text-[var(--color-muted)] mt-0.5 font-normal">
-                    {displayOutfits.length} outfits · {archetypeName}
-                  </p>
-                </div>
-
-                {/* View Mode Toggle — uitlijning op baseline van header */}
-                <div className="inline-flex items-center p-0.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg flex-shrink-0" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <button
-                    onClick={() => setGalleryMode('swipe')}
-                    aria-pressed={galleryMode === 'swipe'}
-                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
-                      galleryMode === 'swipe'
-                        ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
-                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
-                    }`}
-                    aria-label="Swipe weergave"
-                  >
-                    <Layers className="w-3 h-3" aria-hidden="true" />
-                    <span>Swipe</span>
-                  </button>
-                  <button
-                    onClick={() => setGalleryMode('grid')}
-                    aria-pressed={galleryMode === 'grid'}
-                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
-                      galleryMode === 'grid'
-                        ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
-                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
-                    }`}
-                    aria-label="Grid weergave"
-                  >
-                    <Grid3x3 className="w-3 h-3" aria-hidden="true" />
-                    <span>Grid</span>
-                  </button>
-                </div>
-              </div>
+              <ProductSectionHeader
+                title="Handpicked voor jou"
+                subtitle={`${displayOutfits.length} outfits · ${archetypeName}`}
+                className="mb-4"
+                actions={
+                  <div className="inline-flex items-center p-0.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.06)' }}>
+                    <button
+                      onClick={() => setGalleryMode('swipe')}
+                      aria-pressed={galleryMode === 'swipe'}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
+                        galleryMode === 'swipe'
+                          ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
+                          : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                      }`}
+                      aria-label="Swipe weergave"
+                    >
+                      <Layers className="w-3 h-3" aria-hidden="true" />
+                      <span>Swipe</span>
+                    </button>
+                    <button
+                      onClick={() => setGalleryMode('grid')}
+                      aria-pressed={galleryMode === 'grid'}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1 ${
+                        galleryMode === 'grid'
+                          ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm'
+                          : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                      }`}
+                      aria-label="Grid weergave"
+                    >
+                      <Grid3x3 className="w-3 h-3" aria-hidden="true" />
+                      <span>Grid</span>
+                    </button>
+                  </div>
+                }
+              />
             </AnimatedSection>
 
             {outfitsLoading ? (
@@ -1329,12 +1320,12 @@ export default function EnhancedResultsPage() {
                 className="max-w-7xl mx-auto"
               />
             ) : (
-              <div className="grid gap-4 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-[1600px] mx-auto">
+              <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-[1600px] mx-auto">
                 {displayOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
-                  const getFirstProductImageGrid = (o: any) => {
+                  const getFirstProductImage = (o: any) => {
                     if (!Array.isArray(o?.products)) return null;
                     for (const p of o.products) {
                       const img = p?.imageUrl || p?.image_url || p?.image || null;
@@ -1344,159 +1335,77 @@ export default function EnhancedResultsPage() {
                   };
                   const outfitImage = ('image' in outfit && outfit.image)
                     || ('imageUrl' in outfit && outfit.imageUrl)
-                    || getFirstProductImageGrid(outfit)
+                    || getFirstProductImage(outfit)
                     || null;
+                  const matchScore = (outfit as any).matchScore ?? (outfit as any).match ?? null;
 
                   return (
-                    <AnimatedSection key={id} delay={idx * 0.05}>
-                      <motion.div
-                        whileHover={{ y: -2, boxShadow: "0 8px 24px rgba(30,35,51,0.10)" }}
-                        className="group relative bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[0_1px_3px_rgba(30,35,51,0.06),0_4px_16px_rgba(30,35,51,0.06)] transition-all duration-200"
-                      >
-                        {/* Image Container */}
-                        <div className="relative aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)]">
-                          {outfitImage ? (
-                            <img
-                              src={outfitImage}
-                              alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                              onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).style.display = 'none';
-                                track("product_image_fallback_shown", {
-                                  outfit_id: String(id),
-                                  outfit_index: idx,
-                                  archetype: archetypeName,
-                                  source: "grid",
-                                });
-                              }}
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
-                              <div className="text-center p-8">
-                                <Sparkles className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
-                                <p className="text-sm text-[var(--color-muted)] font-medium">Outfit {idx + 1}</p>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Heart - top right corner, subtle */}
-                          <div className="absolute top-3 right-3">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleFav(String(id));
-                                track("save_outfit_click", {
-                                  outfit_id: String(id),
-                                  outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
-                                  outfit_index: idx,
-                                  occasion: outfitInfo.context.label,
-                                  archetype: archetypeName,
-                                  action: isFav ? "unsave" : "save",
-                                  source: "grid",
-                                });
-                                if (!isFav) {
-                                  toast.success('Outfit opgeslagen!', {
-                                    duration: 3000,
-                                    position: 'top-center',
-                                  });
-                                  const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
-                                  if (!hasSeenHint) {
-                                    localStorage.setItem('ff_fav_hint_seen', 'true');
-                                    hintTimerRef.current = setTimeout(() => {
-                                      toast('Bewaarde outfits vind je terug in je Dashboard', {
-                                        duration: 5000,
-                                        position: 'top-center',
-                                      });
-                                    }, 1000);
-                                  }
-                                } else {
-                                  toast('Outfit verwijderd uit favorieten', {
-                                    duration: 2000,
-                                    position: 'top-center',
-                                  });
-                                }
-                              }}
-                              className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-md ${
-                                isFav
-                                  ? 'bg-[var(--ff-color-danger-500)] text-white'
-                                  : 'bg-[var(--color-surface)]/90 text-[var(--color-text)] hover:bg-[var(--color-surface)]'
-                              }`}
-                              aria-label={isFav ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-                            >
-                              <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
-                            </motion.button>
-                          </div>
-
-                          {/* Primary CTA - full width bottom bar */}
-                          <div className="absolute bottom-0 left-0 right-0">
-                            <motion.button
-                              whileHover={{ scale: 1.01 }}
-                              whileTap={{ scale: 0.99 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                track("outfit_card_click", {
-                                  outfit_id: String(id),
-                                  outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
-                                  outfit_index: idx,
-                                  occasion: outfitInfo.context.label,
-                                  archetype: archetypeName,
-                                  match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
-                                  shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
-                                  source: "grid",
-                                });
-                                setSelectedOutfit(outfit);
-                              }}
-                              className="w-full px-4 py-2.5 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white font-bold text-sm hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
-                            >
-                              <ShoppingBag className="w-4 h-4" />
-                              <span>Bekijk &amp; shop</span>
-                              {Array.isArray((outfit as any).products) && (outfit as any).products.length > 0 && (
-                                <span className="px-1.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">{(outfit as any).products.length}</span>
-                              )}
-                            </motion.button>
-                          </div>
-                        </div>
-
-                        {/* Info */}
-                        <div className="p-4">
-                          {/* Occasion Badge */}
-                          <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--ff-color-accent-100)] rounded-full mb-2">
-                            <span className="text-xs">{outfitInfo.context.emoji}</span>
-                            <span className="text-[10px] font-bold text-[var(--ff-color-accent-700)] uppercase tracking-wider">
-                              {outfitInfo.context.label}
-                            </span>
-                          </div>
-
-                          <h3 className="text-base font-bold mb-1 text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-600)] transition-colors">
-                            {'name' in outfit ? outfit.name : outfitInfo.title}
-                          </h3>
-                          <p className="text-sm text-[var(--color-muted)] line-clamp-2 mb-3">
-                            {('explanation' in outfit && outfit.explanation)
-                              ? (outfit.explanation as string)
-                              : outfitInfo.description}
-                          </p>
-                          {/* Quiz-anchor pills */}
-                          <div className="flex flex-wrap gap-1.5">
-                            {(() => {
-                              const ms = (outfit as any).matchScore ?? (outfit as any).match;
-                              return typeof ms === 'number' ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-50)] text-[var(--ff-color-success-700)] border border-[var(--ff-color-success-200)]">
-                                  <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                                  {Math.round(ms)}% match
-                                </span>
-                              ) : null;
-                            })()}
-                            {answers?.fit && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
-                                {answers.fit}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </motion.div>
+                    <AnimatedSection key={String(id)} delay={idx * 0.05}>
+                      <ResultsOutfitCard
+                        id={String(id)}
+                        index={idx}
+                        name={'name' in outfit ? (outfit as any).name : outfitInfo.title}
+                        description={
+                          ('explanation' in outfit && outfit.explanation)
+                            ? (outfit.explanation as string)
+                            : outfitInfo.description
+                        }
+                        imageUrl={outfitImage as string | null}
+                        imageAlt={'name' in outfit ? (outfit as any).name : `Outfit ${idx + 1}`}
+                        occasionContext={outfitInfo.context}
+                        matchScore={typeof matchScore === 'number' ? matchScore : null}
+                        fitLabel={answers?.fit ?? null}
+                        productCount={Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0}
+                        isFavorite={isFav}
+                        onSelect={(e) => {
+                          e.stopPropagation();
+                          track("outfit_card_click", {
+                            outfit_id: String(id),
+                            outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                            outfit_index: idx,
+                            occasion: outfitInfo.context.label,
+                            archetype: archetypeName,
+                            match_score: matchScore,
+                            shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
+                            source: "grid",
+                          });
+                          setSelectedOutfit(outfit);
+                        }}
+                        onToggleFavorite={(e) => {
+                          e.stopPropagation();
+                          toggleFav(String(id));
+                          track("save_outfit_click", {
+                            outfit_id: String(id),
+                            outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                            outfit_index: idx,
+                            occasion: outfitInfo.context.label,
+                            archetype: archetypeName,
+                            action: isFav ? "unsave" : "save",
+                            source: "grid",
+                          });
+                          if (!isFav) {
+                            toast.success('Outfit opgeslagen!', { duration: 3000, position: 'top-center' });
+                            const hasSeenHint = localStorage.getItem('ff_fav_hint_seen');
+                            if (!hasSeenHint) {
+                              localStorage.setItem('ff_fav_hint_seen', 'true');
+                              hintTimerRef.current = setTimeout(() => {
+                                toast('Bewaarde outfits vind je terug in je Dashboard', { duration: 5000, position: 'top-center' });
+                              }, 1000);
+                            }
+                          } else {
+                            toast('Outfit verwijderd uit favorieten', { duration: 2000, position: 'top-center' });
+                          }
+                        }}
+                        onImageError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                          track("product_image_fallback_shown", {
+                            outfit_id: String(id),
+                            outfit_index: idx,
+                            archetype: archetypeName,
+                            source: "grid",
+                          });
+                        }}
+                      />
                     </AnimatedSection>
                   );
                 })}
