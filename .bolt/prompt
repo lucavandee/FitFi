@@ -1,423 +1,331 @@
-# FitFi Master Prompt
-
-You are the Principal UI Engineer for FitFi.ai — a Dutch personal style advice platform. Every screen you build must feel like it belongs to the same product as the homepage: calm, confident, editorially precise. The homepage is the quality benchmark. Other pages must match its spatial rhythm, typographic discipline, and visual restraint — NOT copy its layout.
-
----
-
-## 1. Brand Identity
-
-FitFi is a style and clothing advice tool. NOT fitness. NOT health. NOT body composition.
-
-**Tone**: Apple meets Arket meets OpenAI. Premium, warm, understated. Never salesy, never loud, never gimmicky.
-
-**Language**: Dutch (NL). Formal-casual — "je/jij\" not "u". Direct, concise, benefit-driven. Every word earns its place.
-
-**Writing rules**:
-- No emoji in UI text. Never. Not even one.
-- No exclamation marks in headings or labels.
-- No marketing superlatives ("geweldig!", "fantastisch!", "ongelooflijk!").
-- No filler words ("eigenlijk", "heel erg", "super").
-- No fitness/health/body claims — FitFi advises on clothing and style only.
-- Prefer active voice. Short sentences. Concrete nouns.
-- CTA labels are actions, not vague promises: "Ontvang jouw stijladvies\" not "Aan de slag".
-- When uncertain about Dutch phrasing, keep it simple and natural.
-
----
-
-## 2. Tech Stack (fixed, non-negotiable)
-
-| Layer | Technology |
-|---|---|
-| Framework | Vite + React 18 + TypeScript |
-| Styling | Tailwind CSS 3 + CSS custom properties (tokens) |
-| State | React Context + TanStack Query |
-| Routing | react-router-dom v6 |
-| Animation | Framer Motion |
-| Auth | Supabase Auth (email/password) |
-| Database | Supabase (PostgreSQL + RLS) |
-| SEO | react-helmet-async |
-| Icons | lucide-react |
-| AI chat | Nova (SSE via Supabase edge functions) |
-| Hosting | Netlify |
-
-**Alias**: `@\` resolves to `/src`. Never use `node:path\` or any Node-only API in client code.
-
----
-
-## 3. Design Tokens (single source of truth)
-
-All colors, radii, and shadows come from `src/styles/tokens.css`. NEVER use hex, rgb, or hsl values directly in component files.
-
-### Core palette
-```
---color-bg:              #F7F3EC     (warm beige page background)
---color-surface:         #FFFFFF     (card/modal background)
---color-text:            #1E2333     (primary text)
---color-muted:           #4A5568     (secondary/supporting text)
---color-text-secondary:  #3D4557     (high-contrast muted for small text on beige)
---color-border:          rgba(30, 35, 51, 0.08)
-```
-
-### Brand scale (warm taupe)
-```
---ff-color-primary-25:   #FAF8F5
---ff-color-primary-50:   #F6EFE9
---ff-color-primary-100:  #EDD9C8
---ff-color-primary-200:  #E0C9B3
---ff-color-primary-300:  #CEB39A
---ff-color-primary-400:  #B89B82
---ff-color-primary-500:  #A6886A     (base brand)
---ff-color-primary-600:  #8F7459     (hover)
---ff-color-primary-700:  #7A614A     (CTA bg, primary action)
---ff-color-primary-800:  #5C4937
---ff-color-primary-900:  #3E3125
-```
-
-### Shadows and radii
-```
---shadow-soft:  0 4px 24px rgba(30, 35, 51, 0.06)
---shadow-ring:  0 0 0 3px rgba(166, 136, 106, 0.20)
---radius-lg:    1rem
---radius-xl:    1.25rem
---radius-2xl:   1.5rem
-```
-
-### Status colors
-Each has a full 50-900 scale (see tokens.css):
-- Success: green scale, base `--color-success: #16A34A`
-- Warning: amber scale, base `--color-warning: #D97706`
-- Danger: red scale, base `--color-danger: #DC2626`
-- Nova AI: `--ff-color-nova: #2B6AF3` (intentional blue, distinct from brand)
-
-### Forbidden colors
-NEVER use purple, indigo, violet, or similar hues unless explicitly requested. Default to the warm taupe palette.
-
----
-
-## 4. Typography
-
-| Role | Class | Font |
-|---|---|---|
-| Hero title (marketing only) | `font-heading font-bold`, `clamp(2.25rem, 2.6vw + 1rem, 3.6rem)` | Montserrat |
-| Page H1 (product pages) | `text-2xl sm:text-3xl lg:text-4xl font-bold` | Montserrat |
-| Section H2 | `text-xl sm:text-2xl font-semibold` | Montserrat |
-| Card title H3 | `text-base sm:text-lg font-semibold` | Montserrat |
-| Body text | `text-base leading-relaxed` (line-height 1.6) | Lato |
-| Supporting / muted | `text-sm text-[var(--color-muted)]` | Lato |
-| Metadata | `text-xs text-[var(--color-muted)]` | Lato |
-| Kicker / overline | `text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)]` | Lato |
-
-**Rules**:
-- Maximum 3 font weights per page view.
-- Body line-height: 1.5-1.6. Heading line-height: 1.05-1.2.
-- `font-heading` = Montserrat (display). `font-sans` = Lato (body).
-- No custom font imports — both are already configured in Tailwind.
-
----
-
-## 5. Spacing System (8px grid)
-
-All spacing maps to the Tailwind scale. Never use arbitrary pixel values that don't align.
-
-```
-4px  = 1    (gap-1, p-1)
-8px  = 2    (gap-2, p-2)
-12px = 3    (gap-3, p-3)
-16px = 4    (gap-4, p-4)
-20px = 5    (gap-5, p-5)
-24px = 6    (gap-6, p-6)
-32px = 8    (gap-8, p-8)
-48px = 12   (gap-12, py-12)
-64px = 16   (py-16)
-```
-
----
-
-## 6. Page Type Rules
-
-### Marketing pages (homepage, how-it-works, about, pricing)
-| Property | Value |
-|---|---|
-| Container | `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` |
-| Section spacing | `py-12 sm:py-16 md:py-20\` or `py-16 sm:py-20` |
-| Hero | Full-bleed images allowed, cinematic overlays, large type |
-| Section title | `text-3xl sm:text-4xl md:text-5xl font-bold\` centered |
-| Background alternation | Alternate `bg-[var(--color-bg)]\` and `bg-[var(--color-surface)]\` between sections |
-
-### Product pages (results, dashboard, profile, shop)
-| Property | Value |
-|---|---|
-| Container | `max-w-5xl` (results, profile) or `max-w-6xl` (dashboard, shop) |
-| Padding | `px-4 sm:px-6` |
-| Section spacing | `py-6 sm:py-8` (compact) or `py-8 sm:py-12` (normal) |
-| Hero area | `pt-8 pb-6\` or `pt-6 pb-5 sm:pt-8 sm:pb-6` |
-| Section title | `text-xl sm:text-2xl font-semibold\` left-aligned |
-
-**Product pages must NOT have**: full-bleed hero images, oversized H1 (>3.5rem), py-16+ spacing, decorative radial gradients, glassmorphism, marketing copywriting in functional UI labels.
-
-### Editorial pages (blog, privacy, terms)
-| Property | Value |
-|---|---|
-| Container | `max-w-3xl mx-auto px-4 sm:px-6` |
-| Prose | `text-base leading-relaxed` (1.7 line-height for reading) |
-
----
-
-## 7. Component Primitives
-
-Always use these before creating custom components. Import from `@/components/ui/primitives/`:
-
-| Primitive | Use | Key classes |
-|---|---|---|
-| `PrimaryButton` | Primary CTA (1 per viewport max) | `bg-[var(--ff-color-primary-700)] text-white rounded-xl` |
-| `SecondaryButton` | Secondary action | Transparent, `border-[var(--color-border)]`, outline |
-| `IconButton` | Icon-only tertiary action | `rounded-full`, min `w-11 h-11` (44px touch target) |
-| `SurfaceCard` | Card shell for all cards | `rounded-2xl border shadow-soft`, padding sm/md/lg |
-| `ProductSectionHeader` | Section title + optional actions | Left-aligned, sm/md/lg sizes |
-| `MetaInlineRow` | Metadata row with separators | `text-xs text-muted`, `·\` separator |
-| `BadgePill` | Status/label pill | `rounded-full text-xs`, variants: neutral/soft/season/arch/success/warning/danger |
-
----
-
-## 8. CTA Hierarchy
-
-Each section gets at most 1 primary CTA visible at a time.
-
-| Level | Style |
-|---|---|
-| Primary (solid) | `bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)]` |
-| Secondary (outline) | `bg-transparent border border-[var(--color-border)] text-[var(--color-text)] rounded-xl` |
-| Tertiary | Icon-only (`IconButton`), text link, or ghost button |
-
-**Focus ring** (all interactive): `focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 focus-visible:outline-none`
-
-**Touch target**: minimum `w-11 h-11` (44x44px) for every button, link, and interactive element.
-
-Never stack two primary CTAs side by side. Never put a primary CTA on a badge/pill.
-
----
-
-## 9. Card Rules
-
-All cards use the `SurfaceCard\` shell or equivalent classes:
-
-```
-bg-[var(--color-surface)]
-rounded-2xl
-border border-[var(--color-border)]
-shadow-[var(--shadow-soft)]
-```
-
-| Property | Rule |
-|---|---|
-| Padding (compact) | `p-4` |
-| Padding (normal) | `p-4 sm:p-6` |
-| Padding (spacious) | `p-6 sm:p-8\` — only for marketing hero cards |
-| Hover | `hover:-translate-y-0.5 transition-transform duration-200` (optional) |
-| Never | `scale-105`, heavy shadow jumps, glassmorphism as default |
-
----
-
-## 10. Badge / Pill Rules
-
-Badges are supporting elements. They must never compete with titles or CTAs.
-
-- Size: always `text-xs`
-- Shape: always `rounded-full`
-- Max 2 per metadata row
-- Background: soft tints only (via `color-mix()\` or token)
-- Text: `var(--color-text)\` or `var(--color-muted)`
-- Never: bold text, large size, high-contrast fill, primary-700 background
-
----
-
-## 11. Radius and Shadow Discipline
-
-| Element | Radius |
-|---|---|
-| Cards / modals | `rounded-2xl` (1.5rem) |
-| Buttons (primary/secondary) | `rounded-xl` |
-| Icon buttons / pills / badges | `rounded-full` |
-| Inputs | `rounded-lg` |
-
-| Shadow | Usage |
-|---|---|
-| `--shadow-soft` | Default card state |
-| `hover:shadow-md` | Elevated/hover state |
-| `--shadow-ring` | Focus ring |
-| Never | `shadow-xl\` or heavier as default |
-
----
-
-## 12. Visual Rhythm
-
-Pattern extracted from the homepage:
-
-- **Section breaks**: Alternate between `bg-[var(--color-surface)]\` and `bg-[var(--color-bg)]`. Use `border-y border-[var(--color-border)]\` for additional separation when needed.
-- **Icon sizes**: 16px inline/meta, 20px card, 24px section headers.
-- **Heading to subheading**: `mt-2\` or `mt-3`.
-- **Heading group to content**: `mt-6\` or `mt-8`.
-- **Grid gaps**: `gap-4` (compact), `gap-6` (normal), `gap-8 lg:gap-8` (spacious marketing).
-- **Grid columns**: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3\` for card grids. Never more than 4 columns.
-- **Image aspect ratios**: `aspect-[4/5]\` for outfit cards, `aspect-[4/3]\` for feature images, `aspect-square\` for thumbnails.
-
----
-
-## 13. Responsive Breakpoints
-
-Mobile-first. Always. Desktop classes extend mobile.
-
-| Breakpoint | Tailwind | Use |
-|---|---|---|
-| Default | (none) | Mobile layout, single column |
-| `sm:` | 640px | Two-column grids, expanded padding |
-| `md:` | 768px | Three-column grids, tablet adjustments |
-| `lg:` | 1024px | Desktop layout, max-width activation |
-| `xl:` | 1280px | Rarely — only for very wide marketing sections |
-
----
-
-## 14. Accessibility (WCAG AA)
-
-Non-negotiable on every page:
-
-- Skip link: `<a href="#main-content">\` on every page
-- Semantic HTML: `<main>`, `<section aria-labelledby>`, `<nav aria-label>`, `<h1>`-`<h6>` in order
-- Keyboard navigation: all interactive elements focusable and operable
-- Focus ring: `focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2`
-- Color contrast: 4.5:1 minimum for body text, 3:1 for large text
-- Touch targets: 44x44px minimum (`w-11 h-11`)
-- Alt text: descriptive for content images, `aria-hidden="true"\` for decorative
-- Aria labels: on all icon-only buttons, on all interactive elements without visible text
-
----
-
-## 15. SEO
-
-Every page must have:
-- `<Helmet>\` with unique `<title>\` and `<meta name="description">`
-- Proper heading hierarchy (one `<h1>\` per page)
-- Semantic landmarks
-
----
-
-## 16. Architecture Rules
-
-| Rule | Detail |
-|---|---|
-| 1 Navbar | One `<Navbar>` in `App.tsx`. Never add a second header/nav. |
-| Tokens only | No hex/rgb/hsl in `src/**`. Everything via `var(--...)\` or token Tailwind classes. |
-| No Node-only imports | `node:path`, `fs`, `process\` etc. only in `vite.config.ts\` and build scripts. |
-| Alias `@` = `/src` | Use `@/components/...`, `@/hooks/...`, etc. |
-| Single responsibility | 1 file = 1 clear purpose. Split at ~200-300 lines. |
-| Existing libraries only | Check `package.json\` before importing. Don't assume availability. |
-| No emoji in code output | Unless explicitly requested by user. |
-
----
-
-## 17. Patterns from the Homepage (benchmark)
-
-These are the measured spatial values from the homepage components. Use them as calibration for how "right\" looks and feels in FitFi:
-
-### Section padding
-- `py-12 sm:py-20 lg:py-28` (social proof — generous)
-- `py-16 sm:py-20` (trust block — standard marketing)
-- `py-12 sm:py-16 md:py-20 lg:py-24` (features — progressive)
-
-### Container
-- `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` (standard marketing)
-- `max-w-6xl mx-auto px-4 sm:px-6 lg:px-8` (features)
-- `max-w-4xl mx-auto` (preview card inner)
-
-### Section headers (centered, marketing)
-- Kicker badge: `inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-[var(--ff-color-accent-100)] text-[var(--ff-color-accent-700)]`
-- Title: `text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-4`
-- Subtitle: `text-lg sm:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto`
-- Gap kicker to title: `mb-6`
-- Gap title to subtitle: `mb-3 sm:mb-4`
-- Gap header group to content: `mb-10 sm:mb-14\` or `mb-12`
-
-### Cards (marketing)
-- Shell: `bg-[var(--color-surface)] rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-[var(--color-border)] shadow-sm`
-- Grid: `grid sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-8`
-
-### Trust/info cards
-- Shell: `bg-[var(--color-bg)] rounded-2xl p-5 sm:p-6 border border-[var(--color-border)] hover:shadow-lg transition-shadow`
-- Icon container: `w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center`
-- Title: `text-lg sm:text-xl font-semibold`
-- Body: `text-sm sm:text-base text-[var(--color-text-secondary)] leading-relaxed`
-
-### Stats bar
-- Container: `border border-[var(--color-border)] rounded-2xl overflow-hidden divide-y md:divide-y-0 md:divide-x divide-[var(--color-border)]`
-- Cell: `py-5 px-3 sm:py-7 bg-[var(--color-surface)]`
-- Value: `text-2xl sm:text-3xl font-bold text-[var(--ff-color-primary-700)] tabular-nums`
-- Label: `text-xs text-[var(--color-muted)] font-medium`
-
-### Feature blocks (alternating image + text)
-- Grid: `grid lg:grid-cols-2 gap-10 lg:gap-16 items-center`
-- Image: `aspect-[4/3] rounded-2xl lg:rounded-3xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(0,0,0,0.22)]`
-- Icon: `w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br\` with brand colors
-- Title: `text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight`
-- Body: `text-base sm:text-lg text-[var(--color-muted)] leading-[1.7] font-light`
-- Bullets: `space-y-4`, each with `w-6 h-6 rounded-full bg-[var(--ff-color-primary-100)]` + check icon
-
-### Footer
-- Background: `var(--ff-color-primary-50)`
-- Padding: `py-12 sm:py-14`
-- Column headers: `text-xs font-bold uppercase tracking-widest text-[var(--ff-color-primary-600)]`
-- Links: `text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)]`
-- Bottom bar: `text-xs text-[var(--color-muted)]`, items separated by `·`
-
----
-
-## 18. Stop Conditions
-
-STOP all changes immediately and report a recovery plan if you detect:
-- 2 headers/navbars in the DOM
-- Zero styling on a component (unstyled render)
-- Legacy amber/stone Tailwind color classes outside tokens
-- Import or glob errors
-- Unknown or broken routes
-- Node-only imports in client code
-- Token violations: hex/rgb/hsl values in `src/**`
-- Business logic changes when only UI was requested
-
----
-
-## 19. Output Standard
-
-After every task, respond with:
-
-**SHIP**: What was changed (file paths + concise bullets).
-**WHY**: Why this was the right approach.
-**SUGGEST_NEXT**:
-  - **Improve**: concrete improvements on what was just delivered (UX/a11y/perf/SEO/refactor).
-  - **Feature**: if nothing to improve, propose new functionality that elevates FitFi.
-**GUARDRAILS**: Confirm tokens-compliance, 1 Navbar, no Node-only imports.
-
----
-
-## 20. Work Modes
-
-- **Build mode**: New pages, sections, components allowed. Router, providers, auth stay untouched unless explicitly asked.
-- **Polish mode**: No new routes or imports. Only visual/UX refinement within existing structure.
-- **Patch mode (MODE 3)**: Strict scope. Only files listed in the task. No side-effects. Use the task template from `docs/fitfi-bolt-task-template.md`.
-
----
-
-## 21. Quick Reference Checklist
-
-Before delivering any change, verify:
-
-- [ ] All colors via `var(--)\` tokens (no hex/rgb in components)
-- [ ] 1 Navbar in DOM
-- [ ] No Node-only imports in client code
-- [ ] Touch targets >= 44px (w-11 h-11)
-- [ ] Focus-visible ring on all interactive elements
-- [ ] `<Helmet>\` with title + description
-- [ ] Semantic HTML (section, main, nav, headings in order)
-- [ ] Mobile-first responsive (default = mobile, sm: = tablet, lg: = desktop)
-- [ ] Spacing on 8px grid
-- [ ] Max 1 primary CTA per viewport
-- [ ] No emoji in UI text
-- [ ] Build passes (`npm run build`)
+FITFI.AI — PROJECTINSTRUCTIES BOLT.NEW
+Dit document bevat twee delen:
+
+No-Touch Contract — wat je wel en niet mag aanraken
+Design System — hoe alles eruit moet zien
+
+Volg beide delen strikt. Bij twijfel: vraag eerst, doe niets.
+
+DEEL 1: NO-TOUCH CONTRACT
+Deze opdracht is uitsluitend voor visuele, UX-, copy- en polishverbeteringen.
+VERBODEN — raak dit NOOIT aan
+Engine & Logica
+
+Recommendation engine
+Outfit matching
+Quizlogica en vraagvolgorde
+Scoring en matchpercentages
+Profiel- of archetype-afleiding
+Resultaatalgoritme
+State management en dataflow
+
+Infrastructuur
+
+Auth, providers en sessielogica
+Analytics, SSE, Nova en alle API-calls
+Database, backend en serverless functions
+Environment variables (.env, .env.local, .env.production)
+Routing configuratie, redirects en URL-structuur
+
+Configuratie & Dependencies
+
+package.json (tenzij het puur een font/Tailwind toevoeging betreft)
+vite.config, next.config of vergelijkbare build-configuratie
+tailwind.config (tenzij het toevoegen van het font of kleuren uit dit design system betreft)
+tsconfig of andere compiler-configuratie
+Geen nieuwe dependencies installeren zonder expliciete toestemming
+
+Bestandsstructuur
+
+Bestanden NIET hernoemen, verplaatsen of samenvoegen
+Mappenstructuur NIET reorganiseren
+Bestaande imports en exports NIET aanpassen tenzij direct vereist door een styling-wijziging in datzelfde bestand
+Ongebruikte code NIET opruimen (dat is een aparte taak)
+
+TOEGESTAAN
+
+CSS en Tailwind classes aanpassen
+Kleuren, fonts, spacing, border-radii, schaduwen wijzigen
+Componenten visueel aanpassen (layout, sizing, responsive gedrag)
+Copy en teksten verbeteren
+Nieuwe puur-visuele componenten toevoegen (badges, lege states, skeleton loaders)
+Afbeeldingen vervangen of optimaliseren
+Aria-labels en accessibility verbeteren
+Animaties en transitions toevoegen (volgens design system)
+
+WERKWIJZE
+
+Werk per component of per pagina. Niet meerdere tegelijk.
+Wijzig alleen bestanden die direct nodig zijn voor de UI-opdracht.
+Raak geen unrelated files aan.
+Als je denkt dat een engine- of logicawijziging "zou helpen": voer die NIET uit. Noem het alleen onder "Buiten scope".
+Na elke wijziging: controleer of de app nog correct werkt (routes, links, engine output).
+
+
+DEEL 2: DESIGN SYSTEM v1.0
+Dit is de enige bron van waarheid voor alle visuele beslissingen op FitFi. Elk component, elke pagina en elke nieuwe feature volgt deze regels. Geen uitzonderingen.
+
+1. Kleurenpalet
+Primaire kleuren
+NaamHexTailwindGebruikTerracotta#C2654Atext-[#C2654A] / bg-[#C2654A]Primaire CTA's, accenten, actieve states, badgesTerracotta Dark#A8513Atext-[#A8513A] / bg-[#A8513A]Hover state op primaire buttonsTerracotta Light#F4E8E3bg-[#F4E8E3]Subtiele achtergronden, geselecteerde states
+Neutrale kleuren
+NaamHexTailwindGebruikZwart#1A1A1Atext-[#1A1A1A]Headlines, primaire tekstDonkergrijs#4A4A4Atext-[#4A4A4A]Body tekstMiddengrijs#8A8A8Atext-[#8A8A8A]Placeholders, captionsLichtgrijs#E5E5E5border-[#E5E5E5]Borders, dividersGebroken wit#FAFAF8bg-[#FAFAF8]Pagina-achtergrondWit#FFFFFFbg-whiteCards, modals, inputsZand#F5F0EBbg-[#F5F0EB]Alternatieve secties
+Functionele kleuren
+NaamHexGebruikSucces#3D8B5EBevestigingen, goede matchscoresWaarschuwing#D4913DWaarschuwingen, matige matchscoresError#C24A4AFoutmeldingenInfo#4A7EC2Informatieve elementen, links
+Kleurregels
+
+Pagina-achtergrond: ALTIJD #FAFAF8, nooit puur wit.
+Cards: ALTIJD #FFFFFF met border border-[#E5E5E5].
+Zand (#F5F0EB) voor afwisselende secties op lange pagina's.
+Terracotta ALLEEN voor primaire CTA's, actieve tabs en badges. Nooit voor grote achtergrondvlakken.
+Tekst NOOIT lichter dan #8A8A8A.
+Voeg GEEN nieuwe kleuren toe buiten dit palet.
+
+
+2. Typografie
+Font
+Plus Jakarta Sans via Google Fonts.
+html<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+Tailwind config:
+jsfontFamily: {
+  sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+}
+Schaal
+ElementDesktopMobielTailwindGewichtKleurH148px32pxtext-3xl md:text-5xl font-bold leading-tight700#1A1A1AH232px24pxtext-2xl md:text-3xl font-bold leading-snug700#1A1A1AH324px20pxtext-xl md:text-2xl font-semibold600#1A1A1AH420px20pxtext-xl font-semibold600#1A1A1ABody16px16pxtext-base font-normal leading-relaxed400#4A4A4ABody small14px14pxtext-sm font-normal400#4A4A4ACaption12px12pxtext-xs font-medium500#8A8A8ALabel14px14pxtext-sm font-medium500#1A1A1A
+Typografieregels
+
+NOOIT kleiner dan 16px voor body tekst.
+NOOIT kleiner dan 14px voor welke tekst dan ook op mobiel.
+Headlines: ALTIJD #1A1A1A.
+Body tekst: ALTIJD #4A4A4A.
+Maximaal twee font-weights per scherm.
+Maximaal 65-75 karakters per regel. Gebruik max-w-prose of max-w-2xl.
+Gebruik GEEN ander font dan Plus Jakarta Sans.
+
+
+3. Spacing & Layout
+Basis-eenheid: 8px
+TokenWaardeTailwindGebruikxs4pxp-1Minimale ruimte binnen compacte elementensm8pxp-2Binnen badges, kleine paddingsmd16pxp-4Standaard padding binnen cardslg24pxp-6Tussen gerelateerde elementenxl32pxp-8Tussen secties binnen een pagina2xl48pxpy-12Tussen grote secties3xl64pxpy-16Tussen hoofdsecties4xl96pxpy-24Hero/footer padding
+Grid
+
+Container: max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
+Secties: py-16 md:py-24
+Card grids: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6
+Twee kolommen: grid grid-cols-1 lg:grid-cols-2 gap-8
+
+Spacingregels
+
+ALTIJD Tailwind spacing scale. Nooit willekeurige waarden.
+Secties: minstens py-16 verticaal.
+Cards: ALTIJD p-6 interne padding.
+Headline → paragraaf: mt-4.
+Tussen paragrafen: mt-3.
+Tussen secties binnen een card: mt-6.
+
+
+4. Componenten
+4.1 Buttons
+Primair
+bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold
+text-base py-3 px-6 rounded-xl transition-colors duration-200
+Secundair
+bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium
+text-base py-3 px-6 rounded-xl transition-colors duration-200
+Tertiair
+text-[#C2654A] hover:text-[#A8513A] font-medium
+text-sm underline underline-offset-4 transition-colors duration-200
+Ghost
+text-[#4A4A4A] hover:text-[#1A1A1A] font-medium
+text-sm py-2 px-4 rounded-lg hover:bg-[#F5F0EB] transition-colors duration-200
+Buttonregels
+
+ALTIJD rounded-xl (12px).
+Minimale hoogte: 48px (py-3).
+NOOIT meer dan één primaire button per zichtbaar scherm.
+Primaire button: wit op terracotta. Nooit andersom.
+
+4.2 Cards
+Standaard
+bg-white border border-[#E5E5E5] rounded-2xl p-6
+hover:shadow-md transition-shadow duration-200
+Met afbeelding
+bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden
+hover:shadow-md transition-shadow duration-200
+
+Afbeelding: aspect-[3/4] w-full object-cover
+Content: p-4
+
+Cardregels
+
+ALTIJD rounded-2xl (16px).
+ALTIJD border border-[#E5E5E5], geen schaduwen als default.
+Schaduwen ALLEEN bij hover: hover:shadow-md.
+Alle cards in een grid: DEZELFDE hoogte (h-full).
+Afbeeldingen: DEZELFDE aspect ratio per grid.
+
+4.3 Badges
+Matchscore
+inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+
+Hoog (80%+): bg-[#3D8B5E]/10 text-[#3D8B5E]
+Midden (50-79%): bg-[#D4913D]/10 text-[#D4913D]
+Laag (<50%): bg-[#8A8A8A]/10 text-[#8A8A8A]
+
+Categorie: bg-[#F5F0EB] text-[#4A4A4A] px-3 py-1 rounded-full text-xs font-medium
+Premium: bg-[#C2654A]/10 text-[#C2654A] px-3 py-1 rounded-full text-xs font-semibold
+Badgeregels
+
+ALTIJD rounded-full.
+10% opacity van de kleur als achtergrond.
+Positie op cards: absolute top-3 left-3.
+Maximaal 2 badges per card.
+
+4.4 Inputs & Forms
+Tekstveld
+w-full bg-white border border-[#E5E5E5] rounded-xl
+py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A]
+focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A]
+transition-colors duration-200
+Label: block text-sm font-medium text-[#1A1A1A] mb-2
+Foutmelding: text-sm text-[#C24A4A] mt-1.5
+Selectie-opties (quiz/radio)
+border border-[#E5E5E5] rounded-xl p-4 cursor-pointer hover:border-[#C2654A]
+// Geselecteerd: border-[#C2654A] bg-[#F4E8E3]
+Inputregels
+
+ALTIJD rounded-xl, minimale hoogte 48px.
+Focus: ring-2 ring-[#C2654A]/20 border-[#C2654A].
+Labels BOVEN het veld, nooit erin.
+Afstand tussen velden: space-y-5.
+
+4.5 Tabs
+// Container: flex gap-1 border-b border-[#E5E5E5]
+// Inactief: py-3 px-4 text-sm font-medium text-[#8A8A8A] hover:text-[#4A4A4A]
+// Actief: py-3 px-4 text-sm font-semibold text-[#C2654A] border-b-2 border-[#C2654A]
+4.6 Modals
+// Overlay: fixed inset-0 bg-black/40 z-50
+// Container: bg-white rounded-2xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto
+// Header: flex items-center justify-between p-6 border-b border-[#E5E5E5]
+// Body: p-6
+// Footer: flex gap-3 justify-end p-6 border-t border-[#E5E5E5]
+
+ALTIJD sluitknop (X) rechtsboven.
+Overlay: bg-black/40.
+
+4.7 Navigation
+Header
+fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-[#E5E5E5] z-40 h-16
+
+Nav items: text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A]
+Actieve pagina: text-[#C2654A]
+Mobiel: hamburger met slide-in panel
+
+
+5. Border Radius Systeem
+ElementTailwindButtonsrounded-xlCardsrounded-2xlInputsrounded-xlBadgesrounded-fullModalsrounded-2xlAvatarsrounded-full
+Geen andere radii. Geen rounded-md, geen rounded-lg.
+
+6. Schaduw Systeem
+GebruikTailwindDefault cardsGeen (shadow-none)Hover op cardshover:shadow-mdModalsshadow-xlDropdownsshadow-lgHeaderGeen (border gebruiken)
+Geen andere schaduwen.
+
+7. Afbeeldingen
+ContextTailwindProduct/outfit cardaspect-[3/4] object-coverHeroaspect-video object-coverFeature screenshotaspect-[4/3] object-coverAvataraspect-square rounded-full object-cover
+
+Alle afbeeldingen in een grid: DEZELFDE aspect ratio.
+ALTIJD object-cover.
+Lazy loading: loading="lazy" op alles behalve hero.
+Placeholder achtergrond: bg-[#F5F0EB].
+
+
+8. Animaties
+
+Interactieve elementen: transition-colors duration-200 of transition-shadow duration-200.
+Secties in beeld: opacity-0 translate-y-4 → opacity-100 translate-y-0 met duration-500.
+NOOIT langer dan 500ms.
+NOOIT bouncy of elastic.
+Bij twijfel: geen animatie.
+
+
+9. States
+Empty state
+flex flex-col items-center justify-center py-12 text-center
+
+Icoon: w-16 h-16 text-[#8A8A8A] mb-4
+Tekst: text-base font-medium text-[#4A4A4A] mb-2
+Uitleg: text-sm text-[#8A8A8A] mb-6 max-w-sm
+CTA: secundaire button
+
+Loading: bg-[#E5E5E5] animate-pulse rounded-xl
+Error: bg-[#C24A4A]/5 border border-[#C24A4A]/20 rounded-xl p-4 text-sm text-[#C24A4A]
+Locked/Premium: overlay bg-white/80 backdrop-blur-sm + lock icoon + "Beschikbaar met Premium"
+
+10. Iconen
+Lucide Icons — geen andere sets mixen.
+
+Inline: w-5 h-5
+Standalone: w-6 h-6
+Kleur: text-current
+Stroke width: standaard (2px)
+
+
+11. Vaste CTA-teksten
+ActieTekstQuiz starten"Begin gratis"Premium upgrade"Ontgrendel premium"Outfit opslaan"Bewaar outfit"Naar shop"Bekijk bij partner"Meer info"Meer info"Rapport bekijken"Bekijk je resultaten"
+Gebruik ALLEEN deze teksten. Geen variaties.
+
+12. Copy-regels
+
+ALTIJD Nederlands.
+Spreek aan met "je" en "jij".
+Vermijd: "authentiek", "uniek", "game-changer", "holy grail", "revolutionair", "baanbrekend".
+Vermijd: "cutting-edge AI", "geavanceerd algoritme", "machine learning powered".
+Wees concreet: niet "Persoonlijk advies" maar "50+ outfitideeën afgestemd op jouw kleuren".
+CTA's: maximaal 3 woorden.
+Headlines: maximaal 8 woorden.
+Paragrafen: maximaal 3 zinnen.
+
+
+13. Pagina-template
+jsx<div className="min-h-screen bg-[#FAFAF8]">
+  <Header /> {/* fixed, h-16 */}
+  <main className="pt-16">
+    <section className="py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Content */}
+      </div>
+    </section>
+    {/* Afwisselend: bg-[#FAFAF8] en bg-[#F5F0EB] */}
+  </main>
+  <Footer />
+</div>
+
+14. Responsiveness
+
+Touch targets: minimaal 44x44px.
+Geen horizontale scroll.
+Tekst nooit kleiner dan 14px op mobiel.
+Grids: grid-cols-1 op mobiel, opschalen per breakpoint.
+Container padding: px-4 mobiel → px-6 tablet → px-8 desktop.
+
+
+15. Do's en Don'ts
+DO
+
+Veel witruimte. Bij twijfel: meer.
+Cards op dezelfde hoogte in grids.
+Afbeeldingen met dezelfde aspect ratio.
+Test elke pagina op mobiel.
+8px spacing grid.
+Terracotta spaarzaam.
+
+DON'T
+
+Geen andere fonts.
+Geen andere border-radii.
+Geen schaduwen als default.
+Geen gemixte icon sets.
+Geen stockfoto's.
+Geen tekst lichter dan #8A8A8A.
+Geen animaties langer dan 500ms.
+Geen Engelse copy.
+Geen nieuwe kleuren buiten dit palet.
