@@ -232,117 +232,8 @@ export default function DashboardPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {/* ══ DARK HERO BANNER ══ */}
-      <section
-        className="relative overflow-hidden"
-        style={{
-          background: "linear-gradient(160deg, var(--ff-color-primary-900) 0%, var(--ff-color-primary-700) 100%)",
-          paddingTop: "clamp(2rem, 4vw, 3.5rem)",
-          paddingBottom: "clamp(2rem, 4vw, 3.5rem)",
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "url(/hero/hero-style-report-lg.webp)",
-            backgroundSize: "cover",
-            backgroundPosition: "center top",
-            opacity: 0.07,
-          }}
-        />
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-        <div className="ff-container relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-
-            {/* Left — greeting + identity */}
-            <div className="flex items-center gap-4 md:gap-5">
-              <div
-                className="w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0 select-none"
-                style={{
-                  background: "rgba(255,255,255,0.15)",
-                  boxShadow: "0 0 0 2px rgba(255,255,255,0.18), 0 8px 24px rgba(0,0,0,0.2)",
-                }}
-              >
-                {userInitial}
-              </div>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-white/40 mb-0.5">
-                  {greeting}
-                </p>
-                <h1 className="font-heading font-bold text-white leading-tight" style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)" }}>
-                  {userName || "Welkom terug"}
-                </h1>
-                {archetypeName && (
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[11px] text-white/80 font-semibold">
-                      {archetypeName}
-                    </span>
-                    {season && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/8 text-[11px] text-white/55 capitalize">
-                        {season}
-                      </span>
-                    )}
-                    {isPremium && (
-                      <span
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border"
-                        style={isFounder
-                          ? { background: "rgba(217,119,6,0.25)", color: "var(--ff-color-warning-200,#fde68a)", borderColor: "rgba(217,119,6,0.35)" }
-                          : { background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)", borderColor: "rgba(255,255,255,0.22)" }
-                        }
-                      >
-                        {isFounder ? <Star className="w-3 h-3" aria-hidden="true" /> : <Crown className="w-3 h-3" aria-hidden="true" />}
-                        {isFounder ? "Founder" : "Premium"}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right — color palette + quick actions */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:flex-col md:items-end">
-              {color?.palette && color.palette.length > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mr-1">Palet</span>
-                  {color.palette.slice(0, 7).map((hex: string, i: number) => (
-                    <div
-                      key={i}
-                      className="w-5 h-5 rounded-full flex-shrink-0 ring-1 ring-white/20"
-                      style={{ backgroundColor: hex }}
-                      aria-hidden="true"
-                    />
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => navigate("/results")}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]"
-                  style={{
-                    background: "rgba(255,255,255,0.96)",
-                    color: "var(--ff-color-primary-900)",
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
-                  }}
-                >
-                  <Sparkles className="w-4 h-4" aria-hidden="true" /> Outfits
-                </button>
-                <button
-                  onClick={() => navigate("/profile")}
-                  aria-label="Profielinstellingen"
-                  className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-xl border border-white/20 text-white/70 hover:bg-white/10 transition-colors flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.09)" }}
-                >
-                  <Settings className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ══ MAIN CONTENT — wide bento grid ══ */}
-      <section className="ff-section">
+      <section className="pt-8 pb-16">
         <div className="ff-container">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-6 lg:gap-8 xl:gap-10 items-start">
 
@@ -364,8 +255,9 @@ export default function DashboardPage() {
 
                   {/* Name + archetype */}
                   <div className="flex-1 min-w-0">
+                    <p className="text-sm text-[#8A8A8A] mb-0.5">{greeting}</p>
                     <h2 className="text-xl font-semibold text-[#1A1A1A] leading-tight truncate">
-                      {userName || greeting}
+                      {userName || "Welkom terug"}
                     </h2>
                     <p className="text-sm text-[#4A4A4A] mt-0.5">
                       {archetypeName ?? "Stijlprofiel nog niet bepaald"}
