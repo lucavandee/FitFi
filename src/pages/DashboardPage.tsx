@@ -349,110 +349,41 @@ export default function DashboardPage() {
             {/* ══ LEFT — main column ══ */}
             <div className="space-y-5">
 
-              {/* Identity hero card */}
+              {/* Profile card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.04 }}
-                className="relative rounded-3xl overflow-hidden"
-                style={{
-                  background: "linear-gradient(150deg, var(--ff-color-primary-800) 0%, var(--ff-color-primary-700) 40%, var(--ff-color-primary-500) 100%)",
-                  boxShadow: "0 16px 48px rgba(74,56,40,0.28), 0 2px 0 rgba(255,255,255,0.08) inset",
-                }}
+                className="bg-white border border-[#E5E5E5] rounded-2xl p-6"
               >
-                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-
-                <div className="relative p-6 sm:p-8">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">
-                          Jouw stijlprofiel
-                        </span>
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                            isPremium
-                              ? "bg-[rgba(253,230,138,0.18)] text-[rgba(253,230,138,0.9)] border-[rgba(253,230,138,0.25)]"
-                              : "bg-white/10 text-white/40 border-white/10"
-                          }`}
-                        >
-                          {isPremium
-                            ? <Star className="w-2.5 h-2.5" aria-hidden="true" />
-                            : <Lock className="w-2.5 h-2.5" aria-hidden="true" />}
-                          {isPremium ? "Premium" : "Gratis"}
-                        </span>
-                      </div>
-
-                      <h2
-                        className="font-heading font-bold text-white leading-[0.95] mb-2"
-                        style={{ fontSize: "clamp(2.2rem, 8vw, 3.8rem)", letterSpacing: "-0.03em" }}
-                      >
-                        {archetypeName ?? "Jouw stijl"}
-                      </h2>
-
-                      <p className="text-white/60 text-sm leading-snug mb-1">{tagline}</p>
-                      {tone && <p className="text-white/35 text-[12px] mb-4">{tone}</p>}
-
-                      <div className="flex flex-wrap items-center gap-2 mb-5">
-                        {season && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[11px] text-white/75 font-semibold capitalize">
-                            {season}
-                          </span>
-                        )}
-                        {color?.temperature && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 text-[11px] text-white/60 capitalize">
-                            {color.temperature}
-                          </span>
-                        )}
-                        {hasPhoto && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[rgba(22,163,74,0.22)] border border-[rgba(22,163,74,0.28)] text-[11px] text-[rgba(134,239,172,0.95)] font-semibold">
-                            <Check className="w-2.5 h-2.5" aria-hidden="true" /> Kleuranalyse
-                          </span>
-                        )}
-                      </div>
-
-                      {color?.palette && color.palette.length > 0 && (
-                        <div className="flex items-center gap-1.5 mb-6">
-                          <span className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mr-1">Palet</span>
-                          {color.palette.slice(0, 8).map((hex: string, i: number) => (
-                            <div
-                              key={i}
-                              className="w-[18px] h-[18px] rounded-full flex-shrink-0 ring-1 ring-white/15"
-                              style={{ backgroundColor: hex }}
-                              title={hex}
-                              aria-hidden="true"
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  {/* Avatar */}
+                  <div className="w-16 h-16 rounded-full bg-[#F5F0EB] flex items-center justify-center text-xl font-semibold text-[#C2654A] flex-shrink-0 select-none">
+                    {userInitial}
                   </div>
 
-                  <div className="flex gap-2.5">
-                    <button
-                      onClick={() => navigate("/results")}
-                      className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
-                      style={{
-                        background: "rgba(255,255,255,0.96)",
-                        color: "var(--ff-color-primary-800)",
-                        boxShadow: "0 2px 12px rgba(0,0,0,0.22)",
-                      }}
-                    >
-                      Bekijk volledige outfits <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                    </button>
-                    <button
-                      onClick={() => navigate("/onboarding")}
-                      aria-label="Quiz opnieuw starten"
-                      className="w-13 h-13 min-w-[52px] min-h-[52px] rounded-2xl flex items-center justify-center text-white/70 hover:bg-white/20 transition-colors border border-white/15"
-                      style={{ background: "rgba(255,255,255,0.10)" }}
-                    >
-                      <RefreshCw className="w-4 h-4" aria-hidden="true" />
-                    </button>
+                  {/* Name + archetype */}
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-xl font-semibold text-[#1A1A1A] leading-tight truncate">
+                      {userName || greeting}
+                    </h2>
+                    <p className="text-sm text-[#4A4A4A] mt-0.5">
+                      {archetypeName ?? "Stijlprofiel nog niet bepaald"}
+                      {season && <span className="text-[#8A8A8A]"> · {season}</span>}
+                    </p>
+                    {isPremium && (
+                      <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full bg-[#F4E8E3] text-[#C2654A] text-xs font-semibold">
+                        {isFounder ? <Star className="w-3 h-3" aria-hidden="true" /> : <Crown className="w-3 h-3" aria-hidden="true" />}
+                        {isFounder ? "Founder" : "Premium"}
+                      </span>
+                    )}
                   </div>
 
-                  {reportDate && (
-                    <p className="text-[10px] text-white/25 mt-3">Bijgewerkt {reportDate}</p>
-                  )}
+                  {/* Progress */}
+                  <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0.5 sm:text-right">
+                    <p className="text-2xl font-bold text-[#C2654A] leading-none">{donePct}%</p>
+                    <p className="text-xs text-[#8A8A8A]">profiel voltooid</p>
+                  </div>
                 </div>
               </motion.div>
 
