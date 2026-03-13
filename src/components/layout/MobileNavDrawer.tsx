@@ -84,77 +84,76 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
 
   return createPortal(
     <div className="fixed inset-0 z-[9999]" role="presentation" aria-hidden={!open}>
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backdropFilter: "saturate(180%) blur(6px)",
-          background: "color-mix(in oklab, var(--color-surface) 72%, transparent)"
-        }}
-      />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      {/* Panel */}
+      {/* Panel — slide in from right */}
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label="Mobiele navigatie"
-        className="absolute inset-x-0 top-0 mx-auto max-w-md w-full rounded-b-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl ff-animate-fade-in"
+        className="fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-[#FAFAF8] shadow-xl"
       >
-        <div className="flex items-center justify-between h-16 px-4">
-          <NavLink to="/" onClick={onClose} className="font-heading text-lg tracking-wide text-[var(--color-text)]">
-            FitFi
-          </NavLink>
+        {/* Close button */}
+        <div className="flex items-center justify-end h-16 px-4">
           <button
             ref={closeBtnRef}
             onClick={onClose}
             aria-label="Sluit menu"
-            className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] focus:outline-none"
-            style={{ boxShadow: "var(--shadow-ring)" }}
+            className="inline-flex items-center justify-center h-11 w-11 rounded-xl hover:bg-[#F5F0EB] transition-colors duration-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" aria-hidden="true" className="h-5 w-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1A1A1A"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
             </svg>
           </button>
         </div>
 
-        <nav aria-label="Mobiele hoofdmenu" className="px-4 pb-8 max-h-[calc(100dvh-4rem)] overflow-y-auto">
-          <ul className="flex flex-col" role="list">
-            {links.map((item) => (
-              <li key={item.to} role="listitem">
-                <NavLink
-                  to={item.to}
-                  onClick={onClose}
-                  className={({ isActive }) =>
-                    [
-                      "flex items-center px-4 py-3.5 rounded-xl text-base font-medium transition-colors",
-                      isActive
-                        ? "bg-[var(--ff-color-primary-700)] text-white"
-                        : "text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)]",
-                    ].join(" ")
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+        <nav aria-label="Mobiele hoofdmenu" className="flex flex-col py-8 px-6 space-y-1">
+          {links.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={onClose}
+              className={({ isActive }) =>
+                [
+                  "py-3 px-4 text-base rounded-xl transition-colors duration-200",
+                  isActive
+                    ? "font-semibold text-[#1A1A1A] bg-[#F5F0EB]"
+                    : "font-medium text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
+                ].join(" ")
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
 
-          <div className="mt-6 grid grid-cols-1 gap-3 pt-4 border-t border-[var(--color-border)]">
+          <div className="mt-6 pt-4 border-t border-[#E5E5E5] space-y-3">
             <NavLink
               to="/inloggen"
-              className="h-12 inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] text-[var(--color-text)] font-semibold text-sm hover:bg-[var(--ff-color-primary-50)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
               onClick={onClose}
+              className="block text-center text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] py-3 transition-colors duration-200"
             >
               Inloggen
             </NavLink>
             <NavLink
-              to="/prijzen"
-              className="h-12 inline-flex items-center justify-center rounded-xl bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white font-semibold text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
+              to="/registreren"
               onClick={onClose}
+              className="block bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
             >
-              Start gratis
+              Begin gratis
             </NavLink>
           </div>
         </nav>

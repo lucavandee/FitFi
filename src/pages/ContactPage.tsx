@@ -54,8 +54,12 @@ const INFO_CARDS = [
   },
 ];
 
-const inputClass =
-  "w-full bg-white border border-[#E5E5E5] rounded-xl py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200";
+const inputBase =
+  "w-full bg-white border rounded-xl py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 transition-colors duration-200";
+const inputOk =
+  `${inputBase} border-[#E5E5E5] focus:ring-[#C2654A]/20 focus:border-[#C2654A]`;
+const inputErr =
+  `${inputBase} border-[#C24A4A] focus:ring-[#C24A4A]/20 focus:border-[#C24A4A]`;
 
 function Field({
   id,
@@ -83,9 +87,9 @@ function Field({
         <p
           id={`err-${id}`}
           role="alert"
-          className="mt-2 text-xs text-[#C24A4A] flex items-center gap-2"
+          className="text-sm text-[#C24A4A] mt-1.5 flex items-center gap-1.5"
         >
-          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden />
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 text-[#C24A4A]" aria-hidden />
           {error}
         </p>
       )}
@@ -159,27 +163,26 @@ export default function ContactPage() {
       >
 
         {/* ── HERO ── */}
-        <section className="py-16 md:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F5F0EB] text-sm font-medium text-[#4A4A4A] mb-6">
-                <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />
-                Contact
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] leading-snug mb-4">
-                We horen graag van je
-              </h1>
-              <p className="text-base text-[#4A4A4A] leading-relaxed mt-4 max-w-lg mx-auto">
-                Vragen over stijl, partnerships of een idee?{" "}
-                <br className="hidden sm:block" />
-                We reageren binnen 24 uur op werkdagen.
-              </p>
+        <section className="bg-[#F5F0EB] pt-24 pb-16 md:pt-32 md:pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-sm font-medium text-[#4A4A4A] mb-6">
+              <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />
+              Contact
             </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] leading-snug">
+              We horen graag van je
+            </h1>
+            <p className="text-base text-[#4A4A4A] leading-relaxed mt-4 max-w-lg mx-auto">
+              Vragen over stijl, partnerships of een idee?{" "}
+              <br className="hidden sm:block" />
+              We reageren binnen 24 uur op werkdagen.
+            </p>
           </div>
         </section>
 
         {/* ── MAIN: form (left) + sidebar (right) ── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <section className="bg-[#FAFAF8] py-16 md:py-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
             {/* ── LEFT: form card ── */}
@@ -227,7 +230,7 @@ export default function ContactPage() {
                 )}
               </AnimatePresence>
 
-              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8">
+              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 shadow-sm">
                 <h2 className="text-xl font-semibold text-[#1A1A1A] mb-1">
                   Stuur een bericht
                 </h2>
@@ -253,7 +256,7 @@ export default function ContactPage() {
                         name="name"
                         type="text"
                         autoComplete="name"
-                        className={inputClass}
+                        className={touched.name && errors.name ? inputErr : inputOk}
                         placeholder="Jouw naam"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -276,7 +279,7 @@ export default function ContactPage() {
                         type="email"
                         autoComplete="email"
                         inputMode="email"
-                        className={inputClass}
+                        className={touched.email && errors.email ? inputErr : inputOk}
                         placeholder="je@email.nl"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -295,7 +298,7 @@ export default function ContactPage() {
                       <select
                         id="topic"
                         name="topic"
-                        className={`${inputClass} appearance-none pr-10`}
+                        className={`${inputOk} appearance-none pr-10`}
                         value={topic}
                         onChange={(e) => setTopic(e.target.value as Topic)}
                       >
@@ -330,7 +333,7 @@ export default function ContactPage() {
                       id="message"
                       name="message"
                       rows={5}
-                      className={`${inputClass} min-h-[140px] resize-y`}
+                      className={`${touched.message && errors.message ? inputErr : inputOk} min-h-[140px] resize-y`}
                       placeholder="Waar kunnen we je mee helpen?"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
@@ -351,7 +354,7 @@ export default function ContactPage() {
                       disabled={
                         formState === "submitting" || formState === "success"
                       }
-                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-8 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {formState === "submitting" ? (
                         <>
@@ -385,7 +388,7 @@ export default function ContactPage() {
                       )}
                     </button>
 
-                    <p className="text-sm text-[#8A8A8A] inline-flex items-center gap-1.5">
+                    <p className="text-sm text-[#8A8A8A] inline-flex items-center gap-1.5 ml-4">
                       <ShieldCheck
                         className="w-4 h-4 flex-shrink-0 text-[#3D8B5E]"
                         aria-hidden
@@ -393,7 +396,7 @@ export default function ContactPage() {
                       Veilig opgeslagen.{" "}
                       <Link
                         to="/privacy"
-                        className="underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200"
+                        className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-2 transition-colors duration-200"
                       >
                         Privacyverklaring
                       </Link>
@@ -409,8 +412,8 @@ export default function ContactPage() {
                 const Icon = card.icon;
 
                 const inner = (
-                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200">
-                    <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+                  <div className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200">
+                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center mb-3">
                       <Icon className="w-5 h-5 text-[#C2654A]" aria-hidden />
                     </div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">
@@ -454,6 +457,7 @@ export default function ContactPage() {
                 return <div key={i}>{inner}</div>;
               })}
             </aside>
+          </div>
           </div>
         </section>
 

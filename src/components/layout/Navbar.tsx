@@ -120,91 +120,106 @@ export default function Navbar() {
 
   return (
     <header
-      className={[
-        "sticky top-0 z-50 border-b border-[var(--color-border)]",
-        "backdrop-blur supports-[backdrop-filter]:bg-[color-mix(in oklab,var(--color-surface) 80%,transparent)]",
-        "bg-[var(--color-surface)]/90",
-      ].join(" ")}
+      className="fixed top-0 w-full bg-[#FAFAF8]/90 backdrop-blur-md border-b border-[#E5E5E5]/60 z-40"
       role="banner"
     >
       {/* Skip to content */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-xl focus:border focus:border-[var(--color-border)] focus:bg-[var(--color-surface)] focus:px-3 focus:py-2 focus:shadow-[var(--shadow-ring)]"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
       >
         Naar hoofdinhoud
       </a>
 
-      <div className="ff-container h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <a
           href="/"
-          className="inline-flex items-center rounded-xl px-2 py-2 min-h-[44px] focus-visible:shadow-[var(--shadow-ring)] transition-opacity hover:opacity-85"
+          className="flex-shrink-0 inline-flex items-center rounded-xl px-2 py-2 min-h-[44px] transition-opacity hover:opacity-85"
           aria-label="FitFi Home"
         >
           <Logo size="sm" variant="default" />
         </a>
 
-        {/* Desktop nav - Right aligned */}
-        <div className="hidden md:flex items-center gap-2 ml-auto">
-          <nav className="flex items-center gap-2" aria-label="Hoofdmenu">
-            {links.map((l) => (
-              <NavChip key={l.to} to={l.to} label={l.label} />
-            ))}
-          </nav>
+        {/* Desktop nav - Center */}
+        <nav className="hidden md:flex items-center gap-8" aria-label="Hoofdmenu">
+          {links.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              className={({ isActive }) =>
+                [
+                  "text-sm transition-colors duration-200",
+                  isActive
+                    ? "font-semibold text-[#1A1A1A]"
+                    : "font-medium text-[#4A4A4A] hover:text-[#1A1A1A]",
+                ].join(" ")
+              }
+            >
+              {l.label}
+            </NavLink>
+          ))}
+        </nav>
 
-          {/* CTA's */}
-          <div className="flex items-center gap-2">
-            {!isAuthed ? (
-              <>
-                <a href="/inloggen" className="inline-flex ff-btn ff-btn-secondary min-h-[44px] px-4" data-event="nav_login">
-                  Inloggen
-                </a>
-                {!isHome && (
-                  <a href="/registreren" className="inline-flex ff-btn ff-btn-primary min-h-[44px] px-4" data-event="nav_start_gratis">
-                    Stijladvies ontvangen
-                  </a>
-                )}
-              </>
-            ) : (
-              <>
+        {/* Desktop CTA's */}
+        <div className="hidden md:flex items-center gap-3">
+          {!isAuthed ? (
+            <>
+              <a
+                href="/inloggen"
+                className="text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] transition-colors duration-200"
+                data-event="nav_login"
+              >
+                Inloggen
+              </a>
+              {!isHome && (
                 <a
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 ff-btn ff-btn-primary min-h-[44px] px-4 relative"
-                  data-event="nav_dashboard"
+                  href="/registreren"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-2.5 px-5 rounded-xl transition-colors duration-200"
+                  data-event="nav_start_gratis"
                 >
-                  Dashboard
-                  {savedOutfitsCount > 0 && (
-                    <span className="flex items-center gap-1 px-2 py-0.5 bg-[var(--ff-color-primary-700)] text-white text-xs font-bold rounded-full">
-                      <Heart className="w-3 h-3 fill-white" />
-                      {savedOutfitsCount}
-                    </span>
-                  )}
+                  Begin gratis
                 </a>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="inline-flex ff-btn ff-btn-secondary min-h-[44px] px-4"
-                  data-event="nav_logout"
-                >
-                  Uitloggen
-                </button>
-                <div
-                  aria-hidden="true"
-                  className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[var(--overlay-accent-08a)] text-[var(--color-primary)] select-none"
-                >
-                  <span className="text-sm font-semibold">{userInitial}</span>
-                </div>
-              </>
-            )}
-          </div>
+              )}
+            </>
+          ) : (
+            <>
+              <a
+                href="/dashboard"
+                className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-2.5 px-5 rounded-xl transition-colors duration-200 inline-flex items-center gap-2"
+                data-event="nav_dashboard"
+              >
+                Dashboard
+                {savedOutfitsCount > 0 && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[#A8513A] text-white text-xs font-bold rounded-full">
+                    <Heart className="w-3 h-3 fill-white" />
+                    {savedOutfitsCount}
+                  </span>
+                )}
+              </a>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] transition-colors duration-200"
+                data-event="nav_logout"
+              >
+                Uitloggen
+              </button>
+              <div
+                aria-hidden="true"
+                className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-[#C2654A]/10 text-[#C2654A] select-none"
+              >
+                <span className="text-sm font-semibold">{userInitial}</span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle - 44px touch target */}
         <button
           ref={toggleRef}
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all group outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 hover:bg-[var(--ff-color-primary-50)]"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -217,15 +232,11 @@ export default function Navbar() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
+              stroke="#1A1A1A"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
-              style={{
-                stroke: 'var(--color-text)',
-                color: 'var(--color-text)'
-              }}
             >
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
@@ -237,15 +248,11 @@ export default function Navbar() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
+              stroke="#1A1A1A"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="group-hover:scale-110 transition-transform"
               aria-hidden="true"
-              style={{
-                stroke: 'var(--color-text)',
-                color: 'var(--color-text)'
-              }}
             >
               <path d="M4 12h16" />
               <path d="M4 6h16" />
@@ -256,84 +263,110 @@ export default function Navbar() {
       </div>
 
       {/* Mobile sheet */}
-      <div
-        ref={menuRef}
-        id="mobile-menu"
-        hidden={!open}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobiel navigatiemenu"
-        className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]"
-      >
-        <div className="ff-container py-4">
-          <ul className="flex flex-col gap-1">
-            {links.map((l) => (
-              <li key={l.to}>
+      {open && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            onClick={() => setOpen(false)}
+          />
+
+          {/* Slide-in panel */}
+          <div
+            ref={menuRef}
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobiel navigatiemenu"
+            className="fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-[#FAFAF8] shadow-xl z-50 md:hidden"
+          >
+            {/* Close button */}
+            <div className="flex items-center justify-end h-16 px-4">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Menu sluiten"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl hover:bg-[#F5F0EB] transition-colors duration-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#1A1A1A"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <nav className="flex flex-col py-8 px-6 space-y-1" aria-label="Mobiel hoofdmenu">
+              {links.map((l) => (
                 <NavLink
+                  key={l.to}
                   to={l.to}
+                  onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     [
-                      "block px-4 py-3 min-h-[44px] rounded-xl focus-visible:shadow-[var(--shadow-ring)] transition-colors font-medium",
+                      "py-3 px-4 text-base rounded-xl transition-colors duration-200",
                       isActive
-                        ? "bg-[color-mix(in oklab,var(--color-primary) 14%,transparent)] border border-[var(--color-primary)]"
-                        : "hover:bg-[color-mix(in oklab,var(--color-primary) 10%,transparent)] border border-transparent",
+                        ? "font-semibold text-[#1A1A1A] bg-[#F5F0EB]"
+                        : "font-medium text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
                     ].join(" ")
                   }
                 >
                   {l.label}
                 </NavLink>
-              </li>
-            ))}
-          </ul>
+              ))}
 
-          {/* Auth CTA's mobiel */}
-          {!isAuthed ? (
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <a href="/inloggen" className="ff-btn ff-btn-secondary min-h-[44px] w-full">Log in</a>
-              <a href="/registreren" className="ff-btn ff-btn-primary min-h-[44px] w-full">
-                {isHome ? "Start gratis" : "Stijladvies ontvangen"}
-              </a>
-            </div>
-          ) : (
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <a
-                href="/dashboard"
-                className="ff-btn ff-btn-primary min-h-[44px] w-full col-span-2 flex items-center justify-center gap-2"
-              >
-                Dashboard
-                {savedOutfitsCount > 0 && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[var(--ff-color-primary-700)] text-white text-xs font-bold rounded-full">
-                    <Heart className="w-3 h-3 fill-white" />
-                    {savedOutfitsCount}
-                  </span>
-                )}
-              </a>
-              <button onClick={handleLogout} className="ff-btn ff-btn-secondary min-h-[44px] w-full">Uitloggen</button>
-            </div>
-          )}
-        </div>
-      </div>
+              {/* Auth CTA's mobiel */}
+              {!isAuthed ? (
+                <div className="mt-6 pt-4 border-t border-[#E5E5E5] space-y-3">
+                  <a
+                    href="/inloggen"
+                    className="block text-center text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] py-3 transition-colors duration-200"
+                  >
+                    Inloggen
+                  </a>
+                  <a
+                    href="/registreren"
+                    className="block bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
+                  >
+                    Begin gratis
+                  </a>
+                </div>
+              ) : (
+                <div className="mt-6 pt-4 border-t border-[#E5E5E5] space-y-3">
+                  <a
+                    href="/dashboard"
+                    className="block bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
+                  >
+                    Dashboard
+                    {savedOutfitsCount > 0 && (
+                      <span className="inline-flex items-center gap-1 ml-2 px-2 py-0.5 bg-[#A8513A] text-white text-xs font-bold rounded-full">
+                        <Heart className="w-3 h-3 fill-white" />
+                        {savedOutfitsCount}
+                      </span>
+                    )}
+                  </a>
+                  <button
+                    onClick={() => { handleLogout(); setOpen(false); }}
+                    className="block w-full text-center text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] py-3 transition-colors duration-200"
+                  >
+                    Uitloggen
+                  </button>
+                </div>
+              )}
+            </nav>
+          </div>
+        </>
+      )}
     </header>
-  );
-}
-
-function NavChip({ to, label }: { to: string; label: string }) {
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        [
-          "inline-flex items-center rounded-full px-4 py-2 text-sm min-h-[44px]",
-          "outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2",
-          "transition-colors",
-          isActive
-            ? "bg-[color-mix(in oklab,var(--color-primary) 12%,transparent)] border border-[var(--color-primary)]"
-            : "hover:bg-[color-mix(in oklab,var(--color-primary) 10%,transparent)] border border-transparent",
-        ].join(" ")
-      }
-      aria-current={({ isActive }) => (isActive ? "page" : undefined) as any}
-    >
-      {label}
-    </NavLink>
   );
 }
