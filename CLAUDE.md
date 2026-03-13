@@ -268,3 +268,44 @@ Geen variaties.
 - Geen horizontale scroll
 - Tekst min 14px op mobiel
 - `grid-cols-1` op mobiel, opschalen per breakpoint
+
+- AANVULLING — voeg dit toe onderaan het bestaande CLAUDE.md bestand
+
+13. Pagina-opbouw (alle pagina's)
+Elke pagina op FitFi volgt deze visuele opbouw:
+Page header
+
+ALTIJD op zand-achtergrond: bg-[#F5F0EB] pt-24 pb-16 md:pt-32 md:pb-20
+Bevat: badge, headline (H1), subtitel
+Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#C2654A]
+Headline: text-2xl md:text-3xl font-bold text-[#1A1A1A] text-center
+Subtitel: text-base text-[#4A4A4A] text-center mt-4 max-w-lg mx-auto
+
+Content secties
+
+Afwisselend bg-[#FAFAF8] en bg-[#F5F0EB] voor visueel ritme
+Elke sectie: minimaal py-16 md:py-24
+Container: max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
+Smallere pagina's (contact, login): max-w-5xl
+
+Visuele gelaagdheid (van achter naar voren)
+
+bg-[#F5F0EB] — secties (warm, zand)
+bg-[#FAFAF8] — secties (gebroken wit)
+bg-white border border-[#E5E5E5] — cards en formulieren
+bg-[#F5F0EB] — accent-cards op witte achtergrond
+bg-white — inputs en interactieve elementen in cards
+
+Input-velden
+
+ALTIJD volle border rondom: border border-[#E5E5E5] rounded-xl
+NOOIT alleen een bottom-border
+ALTIJD terracotta focus ring: focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A]
+
+Formulier-cards
+
+bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 shadow-sm
+shadow-sm is toegestaan op formulier-cards voor extra diepte
+
+Principe
+De pagina moet altijd warmte uitstralen. Geen wit-op-wit. Gebruik de zand-achtergrond en visuele lagen om diepte te creëren. Als een pagina "kaal" voelt, ontbreken er lagen.
