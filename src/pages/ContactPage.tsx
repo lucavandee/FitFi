@@ -55,7 +55,7 @@ const INFO_CARDS = [
 ];
 
 const inputClass =
-  "w-full min-h-[52px] rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-4 text-base text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:border-[var(--ff-color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)]/25 transition-all";
+  "w-full bg-white border border-[#E5E5E5] rounded-xl py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200";
 
 function Field({
   id,
@@ -74,7 +74,7 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        className="block text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-2"
+        className="block text-xs font-semibold text-[#8A8A8A] uppercase tracking-wide mb-2"
       >
         {label}
       </label>
@@ -83,7 +83,7 @@ function Field({
         <p
           id={`err-${id}`}
           role="alert"
-          className="mt-2 text-xs text-[var(--ff-color-danger-600)] flex items-center gap-2"
+          className="mt-2 text-xs text-[#C24A4A] flex items-center gap-2"
         >
           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden />
           {error}
@@ -154,33 +154,22 @@ export default function ContactPage() {
       />
 
       <div
-        className="bg-[var(--color-bg)] text-[var(--color-text)]"
-        style={{ minHeight: 'calc(100vh - 64px)' }}
+        className="bg-[#FAFAF8] text-[#1A1A1A]"
+        style={{ minHeight: 'calc(100vh - 64px)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       >
 
         {/* ── HERO ── */}
-        <section
-          className="relative overflow-hidden pt-14 pb-16 md:pt-20 md:pb-20"
-          style={{
-            background: 'linear-gradient(180deg, var(--ff-color-primary-50) 0%, var(--color-bg) 100%)',
-          }}
-        >
-          <div className="ff-container">
+        <section className="py-16 md:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto text-center">
-              <div
-                className="inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm border border-[var(--ff-color-primary-200)] rounded-full text-xs font-semibold text-[var(--ff-color-primary-700)] mb-6 shadow-sm"
-                style={{ background: 'rgba(247,243,236,0.85)' }}
-              >
-                <MessageCircle className="w-3.5 h-3.5" aria-hidden />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F5F0EB] text-sm font-medium text-[#4A4A4A] mb-6">
+                <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />
                 Contact
               </div>
-              <h1
-                className="font-heading font-bold tracking-tight mb-4 text-[var(--color-text)]"
-                style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', lineHeight: 1.1 }}
-              >
+              <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] leading-snug mb-4">
                 We horen graag van je
               </h1>
-              <p className="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed">
+              <p className="text-base text-[#4A4A4A] leading-relaxed mt-4 max-w-lg mx-auto">
                 Vragen over stijl, partnerships of een idee?{" "}
                 <br className="hidden sm:block" />
                 We reageren binnen 24 uur op werkdagen.
@@ -190,11 +179,11 @@ export default function ContactPage() {
         </section>
 
         {/* ── MAIN: form (left) + sidebar (right) ── */}
-        <section className="ff-container pb-24">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_288px] gap-8 lg:gap-10 items-start">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
             {/* ── LEFT: form card ── */}
-            <div>
+            <div className="lg:col-span-2">
               <AnimatePresence>
                 {formState === "success" && (
                   <motion.div
@@ -205,14 +194,14 @@ export default function ContactPage() {
                     transition={{ duration: 0.22 }}
                     role="alert"
                     aria-live="polite"
-                    className="mb-5 rounded-2xl bg-[var(--ff-color-success-50)] border border-[var(--ff-color-success-200)] px-5 py-4 flex items-start gap-3"
+                    className="mb-5 rounded-2xl bg-[#3D8B5E]/10 border border-[#3D8B5E]/20 px-5 py-4 flex items-start gap-3"
                   >
-                    <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)] flex-shrink-0 mt-0.5" aria-hidden />
+                    <CheckCircle className="w-5 h-5 text-[#3D8B5E] flex-shrink-0 mt-0.5" aria-hidden />
                     <div>
-                      <p className="text-sm font-semibold text-[var(--ff-color-success-900)]">
+                      <p className="text-sm font-semibold text-[#1A1A1A]">
                         Bericht ontvangen!
                       </p>
-                      <p className="text-xs text-[var(--ff-color-success-700)] mt-0.5 leading-relaxed">
+                      <p className="text-xs text-[#4A4A4A] mt-0.5 leading-relaxed">
                         We reageren binnen 24 uur op werkdagen.
                       </p>
                     </div>
@@ -230,25 +219,19 @@ export default function ContactPage() {
                     transition={{ duration: 0.22 }}
                     role="alert"
                     aria-live="polite"
-                    className="mb-5 rounded-2xl bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)] px-5 py-4 flex items-start gap-3"
+                    className="mb-5 rounded-2xl bg-[#C24A4A]/10 border border-[#C24A4A]/20 px-5 py-4 flex items-start gap-3"
                   >
-                    <AlertCircle className="w-5 h-5 text-[var(--ff-color-danger-500)] flex-shrink-0 mt-0.5" aria-hidden />
-                    <p className="text-sm text-[var(--ff-color-danger-700)]">{errorMsg}</p>
+                    <AlertCircle className="w-5 h-5 text-[#C24A4A] flex-shrink-0 mt-0.5" aria-hidden />
+                    <p className="text-sm text-[#C24A4A]">{errorMsg}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div
-                className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 sm:p-8"
-                style={{ boxShadow: "0 4px 24px rgba(30,35,51,0.07)" }}
-              >
-                <h2
-                  className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-1"
-                  style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)' }}
-                >
+              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8">
+                <h2 className="text-xl font-semibold text-[#1A1A1A] mb-1">
                   Stuur een bericht
                 </h2>
-                <p className="text-sm text-[var(--color-muted)] mb-8 leading-relaxed">
+                <p className="text-sm text-[#8A8A8A] mt-1 mb-8 leading-relaxed">
                   Direct in ons systeem, geen e-mailapp nodig.
                 </p>
 
@@ -258,7 +241,7 @@ export default function ContactPage() {
                   noValidate
                   aria-label="Contactformulier"
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field
                       id="name"
                       label="Naam"
@@ -327,7 +310,7 @@ export default function ContactPage() {
                         aria-hidden
                       >
                         <svg
-                          className="w-4 h-4 text-[var(--color-muted)]"
+                          className="w-4 h-4 text-[#8A8A8A]"
                           viewBox="0 0 16 16"
                           fill="currentColor"
                         >
@@ -347,7 +330,7 @@ export default function ContactPage() {
                       id="message"
                       name="message"
                       rows={5}
-                      className={`${inputClass} resize-none h-auto`}
+                      className={`${inputClass} min-h-[140px] resize-y`}
                       placeholder="Waar kunnen we je mee helpen?"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
@@ -368,11 +351,7 @@ export default function ContactPage() {
                       disabled={
                         formState === "submitting" || formState === "success"
                       }
-                      className="inline-flex items-center justify-center gap-2 px-8 min-h-[52px] rounded-xl font-semibold text-sm shadow-sm transition-colors active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
-                      style={{
-                        background: 'var(--ff-color-primary-700)',
-                        color: 'var(--color-bg)',
-                      }}
+                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {formState === "submitting" ? (
                         <>
@@ -406,15 +385,15 @@ export default function ContactPage() {
                       )}
                     </button>
 
-                    <p className="text-xs text-[var(--color-muted)] flex items-center gap-2">
+                    <p className="text-sm text-[#8A8A8A] inline-flex items-center gap-1.5">
                       <ShieldCheck
-                        className="w-3.5 h-3.5 flex-shrink-0 text-[var(--ff-color-primary-600)]"
+                        className="w-4 h-4 flex-shrink-0 text-[#3D8B5E]"
                         aria-hidden
                       />
                       Veilig opgeslagen.{" "}
                       <Link
                         to="/privacy"
-                        className="underline underline-offset-2 hover:text-[var(--color-text)] transition-colors"
+                        className="underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200"
                       >
                         Privacyverklaring
                       </Link>
@@ -425,32 +404,27 @@ export default function ContactPage() {
             </div>
 
             {/* ── RIGHT: info sidebar ── */}
-            <aside aria-label="Contactinformatie" className="flex flex-col gap-3">
+            <aside aria-label="Contactinformatie" className="space-y-3">
               {INFO_CARDS.map((card, i) => {
                 const Icon = card.icon;
 
                 const inner = (
-                  <div
-                    className="flex items-start gap-4 p-5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] group hover:border-[var(--ff-color-primary-300)] transition-all"
-                    style={{ boxShadow: "0 1px 6px rgba(30,35,51,0.05)" }}
-                  >
-                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-100)] transition-colors">
-                      <Icon className="w-4.5 h-4.5 text-[var(--ff-color-primary-700)]" style={{ width: 18, height: 18 }} aria-hidden />
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200">
+                    <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+                      <Icon className="w-5 h-5 text-[#C2654A]" aria-hidden />
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[var(--color-text)] leading-snug">
-                        {card.title}
-                      </p>
-                      <p className="text-xs text-[var(--color-muted)] mt-0.5 leading-relaxed">
-                        {card.body}
-                      </p>
-                      {card.cta && (
-                        <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[var(--ff-color-primary-700)] group-hover:underline underline-offset-2">
-                          {card.cta}
-                          <ArrowRight className="w-3 h-3" aria-hidden />
-                        </span>
-                      )}
-                    </div>
+                    <p className="text-sm font-semibold text-[#1A1A1A]">
+                      {card.title}
+                    </p>
+                    <p className="text-xs text-[#8A8A8A] mt-0.5">
+                      {card.body}
+                    </p>
+                    {card.cta && (
+                      <span className="text-xs font-medium text-[#C2654A] hover:text-[#A8513A] mt-2 inline-flex items-center gap-1 transition-colors duration-200">
+                        {card.cta}
+                        <ArrowRight className="w-3 h-3" aria-hidden />
+                      </span>
+                    )}
                   </div>
                 );
 
@@ -459,7 +433,7 @@ export default function ContactPage() {
                     <Link
                       key={i}
                       to={card.href}
-                      className="focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 rounded-2xl"
+                      className="block focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 rounded-2xl"
                     >
                       {inner}
                     </Link>
@@ -471,7 +445,7 @@ export default function ContactPage() {
                       key={i}
                       href={card.href}
                       rel="noopener noreferrer"
-                      className="focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 rounded-2xl"
+                      className="block focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 rounded-2xl"
                     >
                       {inner}
                     </a>
