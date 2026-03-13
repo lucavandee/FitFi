@@ -443,88 +443,70 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.16 }}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+                className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-6 mb-6"
               >
-                {/* Saved looks */}
+                {/* Opgeslagen */}
                 <button
                   onClick={() => navigate("/results#saved")}
-                  className="group flex flex-col items-start p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] hover:border-[var(--ff-color-primary-200)] hover:bg-[var(--ff-color-primary-25)] text-left"
-                  style={{ boxShadow: "var(--shadow-soft)" }}
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mb-3">
-                    <Heart className="w-4 h-4 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
+                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+                    <Heart className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
                   </div>
-                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Opgeslagen</p>
-                  <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">
-                    {favCount > 0 ? `${favCount} look${favCount !== 1 ? "s" : ""}` : "Leeg"}
+                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
+                    Opgeslagen
+                  </h3>
+                  <p className="text-xs text-[#8A8A8A] mt-1">
+                    {favCount > 0 ? `${favCount} outfits` : "Nog geen outfits"}
                   </p>
                 </button>
 
-                {/* Photo */}
+                {/* Foto */}
                 <button
                   onClick={() => setShowPhotoModal(true)}
-                  className="group flex flex-col items-start p-4 rounded-2xl border transition-all active:scale-[0.97] text-left"
-                  style={{
-                    background: hasPhoto ? "var(--ff-color-success-50)" : "var(--color-surface)",
-                    borderColor: hasPhoto ? "var(--ff-color-success-200)" : "var(--color-border)",
-                    boxShadow: "var(--shadow-soft)",
-                  }}
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
                 >
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                    style={{ background: hasPhoto ? "var(--ff-color-success-100)" : "var(--ff-color-primary-50)" }}
-                  >
-                    <Camera
-                      className={`w-4 h-4 ${hasPhoto ? "text-[var(--ff-color-success-600)]" : "text-[var(--ff-color-primary-500)]"}`}
-                      aria-hidden="true"
-                    />
+                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+                    <Camera className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
                   </div>
-                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">
-                    {hasPhoto ? "Kleuranalyse" : "Foto"}
-                  </p>
-                  <p className={`text-[11px] mt-0.5 leading-tight ${hasPhoto ? "text-[var(--ff-color-success-700)]" : "text-[var(--color-muted)]"}`}>
-                    {hasPhoto ? "Actief" : "Toevoegen"}
+                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
+                    Foto
+                  </h3>
+                  <p className="text-xs text-[#8A8A8A] mt-1">
+                    {hasPhoto ? "Toegevoegd" : "Toevoegen voor kleuranalyse"}
                   </p>
                 </button>
 
-                {/* Profiel completion */}
+                {/* Profiel */}
                 <button
                   onClick={() => navigate("/profile")}
-                  className="group flex flex-col items-start p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] hover:border-[var(--ff-color-primary-200)] hover:bg-[var(--ff-color-primary-25)] text-left"
-                  style={{ boxShadow: "var(--shadow-soft)" }}
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
                 >
-                  <div className="relative w-9 h-9 flex-shrink-0 mb-3">
-                    <svg className="w-9 h-9 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
-                      <circle cx="18" cy="18" r="14" fill="none" stroke="var(--ff-color-primary-100)" strokeWidth="3" />
-                      <motion.circle
-                        cx="18" cy="18" r="14" fill="none"
-                        stroke="var(--ff-color-primary-600)" strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 14}
-                        initial={{ strokeDashoffset: 2 * Math.PI * 14 }}
-                        animate={{ strokeDashoffset: 2 * Math.PI * 14 * (1 - donePct / 100) }}
-                        transition={{ duration: 1.2, delay: 0.7, ease: "easeOut" }}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[9px] font-bold text-[var(--ff-color-primary-700)]" aria-label={`${donePct} procent compleet`}>{donePct}%</span>
-                    </div>
+                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+                    <User className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
                   </div>
-                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Profiel</p>
-                  <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">{donePct}% compleet</p>
+                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
+                    Profiel
+                  </h3>
+                  <p className="text-xs text-[#8A8A8A] mt-1">
+                    {donePct}% compleet
+                  </p>
                 </button>
 
-                {/* Shop link */}
+                {/* Winkel */}
                 <button
                   onClick={() => navigate("/shop")}
-                  className="group flex flex-col items-start p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all active:scale-[0.97] hover:border-[var(--ff-color-primary-200)] hover:bg-[var(--ff-color-primary-25)] text-left"
-                  style={{ boxShadow: "var(--shadow-soft)" }}
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mb-3">
-                    <ShoppingBag className="w-4 h-4 text-[var(--ff-color-primary-500)]" aria-hidden="true" />
+                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+                    <ShoppingBag className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
                   </div>
-                  <p className="text-sm font-bold text-[var(--color-text)] leading-tight">Winkel</p>
-                  <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-tight">Jouw stijl</p>
+                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
+                    Winkel
+                  </h3>
+                  <p className="text-xs text-[#8A8A8A] mt-1">
+                    Jouw stijl, direct shoppen
+                  </p>
                 </button>
               </motion.div>
 
