@@ -59,7 +59,7 @@ export default function Footer() {
             {/* Kolom 1: Merk */}
             <div className="col-span-2 md:col-span-1">
               <div className="mb-4">
-                <Logo size="sm" variant="dark" />
+                <Logo size="sm" variant="default" />
               </div>
               <p className="text-sm text-[#8A8A8A] leading-relaxed max-w-xs">
                 Stijladvies afgestemd op jou. Op basis van je kleuren, voorkeuren en levensstijl.

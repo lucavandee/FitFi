@@ -129,7 +129,7 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
               onClick={onClose}
               className={({ isActive }) =>
                 [
-                  "py-3 px-4 text-base rounded-xl transition-colors duration-200",
+                  "py-3 px-4 text-base rounded-xl border-0 shadow-none outline-none ring-0 transition-colors duration-200",
                   isActive
                     ? "font-semibold text-[#1A1A1A] bg-[#F5F0EB]"
                     : "font-medium text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
