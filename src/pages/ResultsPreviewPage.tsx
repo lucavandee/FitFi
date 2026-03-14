@@ -425,17 +425,17 @@ export default function ResultsPreviewPage() {
                   : 'Beantwoord een paar vragen en ontdek welke kleuren en outfits echt bij jou passen. Gratis.'}
               </p>
 
-              <div className="flex items-center justify-center gap-3 flex-wrap">
+              <div className="flex items-center justify-center gap-4 flex-wrap">
                 <NavLink
                   to="/onboarding"
-                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] py-4 px-9 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(194,101,74,0.2)]"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-4 px-12 rounded-full inline-flex items-center gap-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(194,101,74,0.2)]"
                 >
                   <span>Begin gratis</span>
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
                 <NavLink
                   to="/hoe-het-werkt"
-                  className="text-[15px] font-semibold py-4 px-8 rounded-full border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+                  className="text-base font-semibold py-4 px-10 rounded-full border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
                 >
                   Hoe het werkt
                 </NavLink>
