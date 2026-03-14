@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Chrome as Home, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
+import { House, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '@/context/UserContext';
 
@@ -14,7 +14,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    icon: Home,
+    icon: House,
     label: 'Home',
     path: '/',
   },
