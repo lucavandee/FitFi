@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Sparkles, CircleCheck as CheckCircle, Eye, Share2 } from "lucide-react";
+import { ArrowRight, Sparkles, Check, Info, Share2 } from "lucide-react";
+import { motion, useInView } from "framer-motion";
 import toast from "react-hot-toast";
 import { getSeedOutfits } from "@/lib/quiz/seeds";
+import { COLOR_PALETTES, groupColorsByCategory } from "@/data/colorPalettes";
 import type { ColorProfile } from "@/lib/quiz/types";
 
 const DEMO_COLOR_PROFILE: ColorProfile = {
@@ -22,6 +24,38 @@ const DEMO_COLOR_PROFILE: ColorProfile = {
 
 const DEMO_ARCHETYPE = "Smart Casual";
 
+function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.7, delay, ease: "easeOut" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function ScaleIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.98, y: 20 }}
+      animate={isInView ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.98, y: 20 }}
+      transition={{ duration: 0.7, delay, ease: "easeOut" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function ResultsPreviewPage() {
   const [searchParams] = useSearchParams();
   const userName = searchParams.get('name') || searchParams.get('naam');
@@ -30,6 +64,9 @@ export default function ResultsPreviewPage() {
   const seeds = React.useMemo(() => {
     return getSeedOutfits(DEMO_COLOR_PROFILE, DEMO_ARCHETYPE);
   }, []);
+
+  const seasonPalette = COLOR_PALETTES[DEMO_COLOR_PROFILE.season];
+  const groupedColors = seasonPalette ? groupColorsByCategory(seasonPalette.colors) : null;
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -59,305 +96,352 @@ export default function ResultsPreviewPage() {
     }
   };
 
+  const archetypeInitials = DEMO_ARCHETYPE.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+
+  const seasonLabel = DEMO_COLOR_PROFILE.season.charAt(0).toUpperCase() + DEMO_COLOR_PROFILE.season.slice(1);
+  const temperatureLabel = DEMO_COLOR_PROFILE.temperature.charAt(0).toUpperCase() + DEMO_COLOR_PROFILE.temperature.slice(1);
+  const contrastLabel = DEMO_COLOR_PROFILE.contrast.charAt(0).toUpperCase() + DEMO_COLOR_PROFILE.contrast.slice(1);
+  const chromaLabel = DEMO_COLOR_PROFILE.chroma.charAt(0).toUpperCase() + DEMO_COLOR_PROFILE.chroma.slice(1);
+
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)]">
+    <main className="bg-[#FAFAF8]">
       <Helmet>
         <title>{isPersonalized ? `${userName}'s Style Report – FitFi` : 'Voorbeeld Style Report – FitFi'}</title>
         <meta name="description" content="Bekijk een voorbeeld van je stijlprofiel met outfit-aanbevelingen." />
       </Helmet>
 
-      {/* Premium Preview Banner */}
-      <div className="sticky top-16 z-40 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
-        <div className="ff-container py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Eye className="w-5 h-5" strokeWidth={2.5} />
-              <p className="text-sm font-medium tracking-wide">
-                {isPersonalized
-                  ? `Hé ${userName}! Dit zou jouw Style Report zijn. Doe de quiz voor je resultaten.`
-                  : 'Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.'}
-              </p>
-            </div>
-            <NavLink
-              to="/onboarding"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base hover:bg-[var(--ff-color-neutral-50)] transition-colors duration-200"
-            >
-              <span>Start gratis quiz</span>
-              <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
-            </NavLink>
-          </div>
+      {/* 1. Sticky Preview Bar */}
+      <div className="fixed top-[72px] left-0 right-0 z-50 bg-[#1A1A1A] px-6 md:px-10 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[13px] text-white/70">
+          <Info className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+          <span className="hidden sm:inline">
+            {isPersonalized
+              ? `Hé ${userName}! Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.`
+              : 'Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.'}
+          </span>
+          <span className="sm:hidden">Voorbeeld rapport</span>
         </div>
+        <NavLink
+          to="/onboarding"
+          className="bg-[#C2654A] hover:bg-[#A8513A] text-white text-[13px] font-semibold py-2.5 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200 flex-shrink-0"
+        >
+          <span>Begin gratis</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </NavLink>
       </div>
 
-      {/* Premium Hero Section */}
-      <section className="ff-container py-16 md:py-20 lg:py-24">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-full text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] shadow-[0_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
-            <span className="tracking-wide">{isPersonalized ? `${userName}'s Style Report` : 'Voorbeeld Style Report'}</span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--ff-color-text)] leading-[1.1] tracking-tight">
-            {isPersonalized ? (
-              <>
-                Zo zou{' '}
-                <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                  jouw rapport
-                </span>{' '}
-                eruitzien, {userName}
-              </>
-            ) : (
-              <>
-                Jouw persoonlijke{" "}
-                <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                  Style Report
-                </span>
-              </>
-            )}
-          </h1>
-
-          <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
-            {isPersonalized
-              ? `${userName}, zo ziet jouw stijlanalyse eruit: kleuren en outfits die bij je passen.`
-              : 'Dit is hoe jouw rapport eruit ziet na het invullen van de quiz. Je stijl, kleuren en outfit-aanbevelingen.'}
-          </p>
-        </div>
-      </section>
-
-      {/* Ultra-Premium Style Profile Summary */}
-      <section className="ff-container pb-16 md:pb-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="relative bg-gradient-to-br from-[var(--color-surface)] via-[var(--color-surface)] to-[var(--color-bg)] backdrop-blur-xl border border-[var(--color-border)]/40 rounded-[32px] p-10 sm:p-12 lg:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-all duration-700 overflow-hidden">
-
-            {/* Subtle background pattern */}
-            <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]" />
+      {/* 2. Page Hero */}
+      <section className="bg-[#F5F0EB] pt-[180px] md:pt-[200px] pb-20 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-[#E5E5E5] text-xs font-semibold text-[#4A4A4A] mb-8">
+              <Sparkles className="w-3.5 h-3.5 text-[#C2654A]" />
+              <span>Voorbeeld rapport</span>
             </div>
+          </FadeIn>
 
-            {/* Content */}
-            <div className="relative z-10">
-              {/* Header with badge */}
-              <div className="mb-10 sm:mb-12">
-                <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-full text-xs font-bold text-[var(--ff-color-primary-700)] mb-4 shadow-sm">
-                  <Sparkles className="w-3.5 h-3.5" strokeWidth={2.5} />
-                  <span className="tracking-wide">JOUW STIJL</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-text)] tracking-tight leading-[1.1]">
-                  {isPersonalized ? `${userName}'s stijlprofiel` : 'Je stijlprofiel'}:{' '}
-                  <span className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] bg-clip-text text-transparent">
-                    {DEMO_ARCHETYPE}
-                  </span>
-                </h2>
-              </div>
+          <FadeIn delay={0.12}>
+            <h1 className="font-serif italic text-[48px] md:text-[56px] text-[#1A1A1A] leading-[1.08] mb-6 max-w-[600px] mx-auto">
+              Zo ziet jouw{" "}
+              <span className="font-sans font-bold text-[#C2654A] not-italic">stijlrapport</span>{" "}
+              eruit
+            </h1>
+          </FadeIn>
 
-              <div className="grid lg:grid-cols-2 gap-10 lg:gap-14">
-                {/* Ultra-Premium Color Profile with Visual Swatches */}
-                <div className="space-y-6">
-                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
-                    <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
-                    Kleurprofiel
-                  </h3>
-
-                  <div className="space-y-5">
-                    {/* Temperatuur */}
-                    <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Temperatuur</span>
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-orange-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
-                          Neutraal
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-3 flex-1 bg-gradient-to-r from-blue-400 via-slate-300 to-orange-400 rounded-full shadow-inner" />
-                      </div>
-                    </div>
-
-                    {/* Contrast */}
-                    <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Contrast</span>
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-200 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
-                          Medium
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-3 w-1/3 bg-gradient-to-r from-slate-200 to-slate-300 rounded-l-full shadow-inner" />
-                        <div className="h-3 w-1/3 bg-gradient-to-r from-slate-400 to-slate-500 shadow-inner" />
-                        <div className="h-3 w-1/3 bg-gradient-to-r from-slate-700 to-slate-900 rounded-r-full shadow-inner" />
-                      </div>
-                    </div>
-
-                    {/* Seizoen */}
-                    <div className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-[1.02]">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-[var(--color-muted)] tracking-wide">Seizoen</span>
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 text-[var(--ff-color-text)] text-sm font-bold rounded-full tracking-wide">
-                          Zomer
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-10 w-10 bg-gradient-to-br from-sky-200 to-blue-300 rounded-xl shadow-md" role="img" aria-label="Zomer (actief)" />
-                        <div className="h-10 w-10 bg-gradient-to-br from-amber-200 to-orange-300 rounded-xl opacity-30" role="img" aria-label="Herfst" />
-                        <div className="h-10 w-10 bg-gradient-to-br from-slate-200 to-blue-200 rounded-xl opacity-30" role="img" aria-label="Winter" />
-                        <div className="h-10 w-10 bg-gradient-to-br from-pink-200 to-green-200 rounded-xl opacity-30" role="img" aria-label="Lente" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Ultra-Premium Key Insights */}
-                <div className="space-y-6">
-                  <h3 className="text-xl sm:text-2xl font-bold text-[var(--ff-color-text)] tracking-tight flex items-center gap-3">
-                    <div className="w-1.5 h-8 bg-gradient-to-b from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" />
-                    Belangrijkste inzichten
-                  </h3>
-
-                  <ul className="space-y-4">
-                    {DEMO_COLOR_PROFILE.notes.map((note, i) => (
-                      <li
-                        key={i}
-                        className="group p-5 bg-[var(--color-surface)]/80 backdrop-blur-sm border border-[var(--color-border)] rounded-[20px] hover:bg-[var(--color-surface)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[var(--ff-color-primary-300)] transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-success-500)] to-[var(--ff-color-success-600)] flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
-                            <CheckCircle className="w-5 h-5 text-white" strokeWidth={2.5} fill="currentColor" />
-                          </div>
-                          <span className="text-[var(--color-text)] font-medium leading-relaxed tracking-wide flex-1 pt-1">
-                            {note}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Premium Outfit Recommendations */}
-      <section className="ff-container pb-20 md:pb-24">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16 space-y-6">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--ff-color-text)] tracking-tight leading-[1.1]">
-              Jouw outfit-aanbevelingen
-            </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] font-light leading-relaxed tracking-wide max-w-2xl mx-auto">
-              Deze looks zijn speciaal samengesteld voor jouw stijlprofiel
+          <FadeIn delay={0.24}>
+            <p className="text-[17px] text-[#4A4A4A] leading-[1.7] max-w-[440px] mx-auto">
+              Je stijl, kleuren en outfit-aanbevelingen. Persoonlijk samengesteld op basis van de quiz.
             </p>
-            <button
-              onClick={handleShare}
-              className="inline-flex items-center gap-2.5 px-5 py-3 min-h-[44px] bg-[var(--color-surface)] backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] text-[var(--color-text)] rounded-[18px] font-bold text-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all duration-500 hover:scale-105 hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
-            >
-              <Share2 className="w-4 h-4" strokeWidth={2.5} />
-              <span className="tracking-wide">Deel dit voorbeeld</span>
-            </button>
-          </div>
+          </FadeIn>
+        </div>
+      </section>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {seeds.slice(0, 6).map((outfit, idx) => (
-              <div
-                key={idx}
-                className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.2)] transition-all duration-700 hover:-translate-y-4 hover:scale-[1.02]"
-                style={{ animationDelay: `${idx * 100}ms` }}
-              >
-                {/* Premium Outfit Visual */}
-                <div className="aspect-[3/4] bg-[var(--ff-color-neutral-50,var(--color-bg))] p-8 relative overflow-hidden">
-                  {outfit.pieces && outfit.pieces.length > 0 ? (
-                    <div className="space-y-8 flex flex-col items-center justify-center h-full">
-                      {outfit.pieces.slice(0, 3).map((piece, pieceIdx) => (
-                        <div key={pieceIdx} className="flex flex-col items-center group/piece cursor-pointer">
+      {/* 3. Profielkaart */}
+      <div className="max-w-[900px] mx-auto px-6 -mt-10 relative z-10">
+        <ScaleIn>
+          <div className="bg-white border border-[#E5E5E5] rounded-[28px] p-10 md:p-12">
+            {/* Header */}
+            <div className="flex items-center gap-8 mb-10 pb-8 border-b border-[#E5E5E5]">
+              <div className="w-[72px] h-[72px] rounded-[20px] bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 text-2xl font-bold text-[#C2654A]">
+                {archetypeInitials}
+              </div>
+              <div>
+                <h2 className="font-serif italic text-[32px] text-[#1A1A1A] leading-[1.1]">
+                  {DEMO_ARCHETYPE}
+                </h2>
+                <p className="text-sm text-[#8A8A8A] mt-1">
+                  {seasonLabel} · Neutrale ondertoon · {contrastLabel} contrast
+                </p>
+                <div className="flex gap-2 mt-3 flex-wrap">
+                  {[DEMO_ARCHETYPE, seasonLabel, chromaLabel].map((tag) => (
+                    <span key={tag} className="px-3.5 py-1.5 rounded-full bg-[#F5F0EB] text-xs font-semibold text-[#4A4A4A]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Two columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {/* Left: Kleurprofiel */}
+              <div>
+                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-5">
+                  Kleurprofiel
+                </p>
+                <div>
+                  {[
+                    { label: "Temperatuur", value: temperatureLabel },
+                    { label: "Contrast", value: contrastLabel },
+                    { label: "Seizoen", value: seasonLabel },
+                    { label: "Chroma", value: chromaLabel },
+                  ].map((row, i, arr) => (
+                    <div
+                      key={row.label}
+                      className={`flex items-center justify-between py-4 ${i < arr.length - 1 ? 'border-b border-[#E5E5E5]/50' : ''}`}
+                    >
+                      <span className="text-sm text-[#4A4A4A]">{row.label}</span>
+                      <span className="text-sm font-semibold text-[#1A1A1A]">{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: Inzichten */}
+              <div>
+                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-5">
+                  Inzichten
+                </p>
+                <div>
+                  {DEMO_COLOR_PROFILE.notes.map((note, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-start gap-3 py-4 ${i < DEMO_COLOR_PROFILE.notes.length - 1 ? 'border-b border-[#E5E5E5]/50' : ''}`}
+                    >
+                      <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-[#C2654A]" />
+                      </div>
+                      <span className="text-sm text-[#4A4A4A] leading-[1.5]">{note}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScaleIn>
+      </div>
+
+      {/* 4. Kleurpalet sectie */}
+      <section className="py-20 bg-[#FAFAF8]">
+        <div className="max-w-[900px] mx-auto px-6">
+          <FadeIn>
+            <div className="bg-white border border-[#E5E5E5] rounded-[28px] p-10 md:p-12">
+              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">
+                Kleurpalet
+              </p>
+              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">
+                {seasonPalette?.season || seasonLabel}
+              </h3>
+              <p className="text-sm text-[#4A4A4A] mb-10">
+                {seasonPalette?.description || `Kleuren die passen bij het ${seasonLabel.toLowerCase()} seizoenstype.`}
+              </p>
+
+              {groupedColors && (
+                <>
+                  {/* Basis kleuren */}
+                  <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-4 mt-2">
+                      <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                      <span className="text-[13px] font-semibold text-[#1A1A1A]">Basis</span>
+                      <span className="text-[13px] text-[#8A8A8A]">Je dagelijkse kleuren</span>
+                    </div>
+                    <div className="flex gap-4 flex-wrap">
+                      {groupedColors.basis.map((swatch) => (
+                        <div key={swatch.hex} className="flex flex-col items-center gap-2">
                           <div
-                            className="w-24 h-24 rounded-[20px] shadow-[0_4px_16px_rgba(0,0,0,0.08)] border-4 border-white/90 transition-all duration-500 group-hover/piece:shadow-[0_8px_30px_rgba(0,0,0,0.16)] group-hover/piece:scale-110 group-hover/piece:rotate-3"
-                            style={{ backgroundColor: piece.color }}
+                            className="w-[72px] h-[72px] rounded-[18px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                            style={{ backgroundColor: swatch.hex }}
                           />
-                          <span className="text-xs font-semibold text-[var(--color-text)]/70 capitalize mt-2 opacity-0 group-hover/piece:opacity-100 transition-opacity duration-300 tracking-wide">
-                            {piece.label}
-                          </span>
+                          <span className="text-xs font-medium text-[#4A4A4A] text-center">{swatch.name}</span>
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-center space-y-4">
-                        <div className="w-24 h-24 mx-auto rounded-[20px] bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
-                          <Sparkles className="w-12 h-12 text-[var(--ff-color-primary-600)]" strokeWidth={2.5} />
+                  </div>
+
+                  {/* Accent kleuren */}
+                  <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-4 mt-2">
+                      <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                      <span className="text-[13px] font-semibold text-[#1A1A1A]">Accent</span>
+                      <span className="text-[13px] text-[#8A8A8A]">Voor kleur en persoonlijkheid</span>
+                    </div>
+                    <div className="flex gap-4 flex-wrap">
+                      {groupedColors.accent.map((swatch) => (
+                        <div key={swatch.hex} className="flex flex-col items-center gap-2">
+                          <div
+                            className="w-[72px] h-[72px] rounded-[18px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                            style={{ backgroundColor: swatch.hex }}
+                          />
+                          <span className="text-xs font-medium text-[#4A4A4A] text-center">{swatch.name}</span>
                         </div>
-                        <p className="text-sm font-semibold text-[var(--color-text)]/70 tracking-wide">
-                          {outfit.vibe || "Outfit"}
-                        </p>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Neutrale kleuren */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-4 mt-2">
+                      <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                      <span className="text-[13px] font-semibold text-[#1A1A1A]">Neutraal</span>
+                      <span className="text-[13px] text-[#8A8A8A]">Combineer met alles</span>
+                    </div>
+                    <div className="flex gap-4 flex-wrap">
+                      {groupedColors.neutraal.map((swatch) => (
+                        <div key={swatch.hex} className="flex flex-col items-center gap-2">
+                          <div
+                            className="w-[72px] h-[72px] rounded-[18px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                            style={{ backgroundColor: swatch.hex }}
+                          />
+                          <span className="text-xs font-medium text-[#4A4A4A] text-center">{swatch.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* 5. Outfit-aanbevelingen */}
+      <section className="py-20 bg-[#F5F0EB]">
+        <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <h2 className="font-serif italic text-[44px] text-[#1A1A1A] mb-3">
+                Outfit-aanbevelingen
+              </h2>
+              <p className="text-base text-[#4A4A4A]">
+                Deze looks zijn samengesteld voor jouw stijlprofiel
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {seeds.slice(0, 6).map((outfit, idx) => (
+              <FadeIn key={idx} delay={idx * 0.12}>
+                <div className="bg-white border border-[#E5E5E5] rounded-3xl overflow-hidden hover:border-[#C2654A] hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 group">
+                  {/* Image area */}
+                  <div className="aspect-[3/4] overflow-hidden relative">
+                    {outfit.pieces && outfit.pieces.length > 0 ? (
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4C5B5] to-[#C0B0A0] flex flex-col items-center justify-center gap-3 p-6">
+                        {outfit.pieces.slice(0, 3).map((piece, pieceIdx) => (
+                          <div key={pieceIdx} className="flex flex-col items-center">
+                            <div
+                              className="w-16 h-16 rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] border-2 border-white/80"
+                              style={{ backgroundColor: piece.color }}
+                            />
+                            <span className="text-[11px] font-medium text-white/80 capitalize mt-1.5">
+                              {piece.label}
+                            </span>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4C5B5] to-[#C0B0A0] flex flex-col items-center justify-center gap-3 p-6">
+                        <Sparkles className="w-10 h-10 text-white/60" />
+                        <p className="text-sm font-medium text-white/70">{outfit.vibe || "Outfit"}</p>
+                      </div>
+                    )}
 
-                  {/* Premium Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--ff-color-primary-600)]/15 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none" />
-                </div>
-
-                {/* Premium Outfit Info */}
-                <div className="p-6 sm:p-7 space-y-4">
-                  <h3 className="font-bold text-lg sm:text-xl text-[var(--ff-color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors duration-300 tracking-tight">
-                    {outfit.title || `Outfit ${idx + 1}`}
-                  </h3>
-                  <p className="text-sm sm:text-base text-[var(--color-muted)] line-clamp-2 font-light leading-relaxed">
-                    {outfit.notes || "Een stijlvolle combinatie die perfect past bij jouw profiel."}
-                  </p>
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2 text-sm text-[var(--ff-color-primary-600)] font-semibold">
-                      <Sparkles className="w-4 h-4" strokeWidth={2.5} />
-                      <span className="tracking-wide">{outfit.vibe || "Perfect match"}</span>
-                    </div>
+                    {/* Category badge */}
                     {outfit.tags && outfit.tags.length > 0 && (
-                      <span className="text-xs px-3 py-1.5 bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-full font-bold tracking-wide">
-                        {outfit.tags[0]}
-                      </span>
+                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[0.5px] uppercase text-[#1A1A1A]">
+                        {outfit.vibe}
+                      </div>
                     )}
                   </div>
+
+                  {/* Card info */}
+                  <div className="p-6">
+                    <h3 className="text-[15px] font-semibold text-[#1A1A1A] mb-1">
+                      {outfit.title || `Outfit ${idx + 1}`}
+                    </h3>
+                    <p className="text-[13px] text-[#8A8A8A] leading-[1.5] mb-3 line-clamp-2">
+                      {outfit.notes || "Een stijlvolle combinatie die past bij jouw profiel."}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#C2654A]">
+                        <div className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
+                          <Check className="w-2.5 h-2.5 text-[#C2654A]" />
+                        </div>
+                        <span>{outfit.vibe || "Match"}</span>
+                      </div>
+                      {outfit.tags && outfit.tags.length > 1 && (
+                        <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-[11px] font-medium text-[#4A4A4A]">
+                          {outfit.tags[1]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </FadeIn>
             ))}
+          </div>
+
+          {/* Share button */}
+          <div className="text-center mt-10">
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#E5E5E5] text-[13px] font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>Deel dit voorbeeld</span>
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Premium CTA Section */}
-      <section className="ff-container pb-24 md:pb-28">
-        <div className="max-w-3xl mx-auto bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-bg)] border border-[var(--color-border)] rounded-3xl p-10 md:p-14 lg:p-16 text-center shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-all duration-700">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-[var(--color-surface)] backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-[var(--ff-color-primary-700)] mb-8 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
-            <span className="tracking-wide">{isPersonalized ? `Klaar ${userName}?` : 'Maak het persoonlijk'}</span>
-          </div>
+      {/* 6. CTA sectie */}
+      <section className="py-28 bg-[#FAFAF8]">
+        <div className="max-w-[700px] mx-auto px-6">
+          <FadeIn>
+            <div className="bg-white border border-[#E5E5E5] rounded-[28px] p-12 md:p-16 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] text-[11px] font-semibold text-[#C2654A] mb-6">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{isPersonalized ? `Klaar ${userName}?` : 'Maak het persoonlijk'}</span>
+              </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-[var(--ff-color-text)] tracking-tight leading-[1.1]">
-            {isPersonalized
-              ? `${userName}, krijg jouw Style Report`
-              : 'Klaar voor jouw eigen rapport?'}
-          </h2>
+              <h2 className="font-serif italic text-[36px] md:text-[40px] text-[#1A1A1A] leading-[1.1] mb-5">
+                {isPersonalized
+                  ? `${userName}, klaar voor jouw rapport?`
+                  : 'Klaar voor jouw eigen rapport?'}
+              </h2>
 
-          <p className="text-base sm:text-lg lg:text-xl text-[var(--color-muted)] mb-10 font-light leading-relaxed tracking-wide max-w-2xl mx-auto">
-            {isPersonalized
-              ? `Start de quiz ${userName}, en zie welke outfits bij je passen. Gratis.`
-              : 'Beantwoord 10 snelle vragen en zie welke outfits bij je passen. Gratis.'}
-          </p>
+              <p className="text-base text-[#4A4A4A] mb-10 max-w-[400px] mx-auto leading-[1.7]">
+                {isPersonalized
+                  ? `Beantwoord een paar vragen en ontdek welke kleuren en outfits echt bij je passen, ${userName}. Gratis.`
+                  : 'Beantwoord een paar vragen en ontdek welke kleuren en outfits echt bij jou passen. Gratis.'}
+              </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <NavLink
-              to="/onboarding"
-              className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 sm:py-5 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-[18px] font-bold text-base sm:text-lg tracking-wide shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden"
-            >
-              <span className="relative z-10">Start gratis stijlquiz</span>
-              <ArrowRight className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-            </NavLink>
-
-            <NavLink
-              to="/hoe-het-werkt"
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 sm:py-5 border-2 border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] rounded-[18px] font-bold text-base sm:text-lg tracking-wide transition-all duration-500 hover:scale-[1.03] active:scale-[0.98]"
-            >
-              <span>Hoe het werkt</span>
-            </NavLink>
-          </div>
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <NavLink
+                  to="/onboarding"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] py-4 px-9 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(194,101,74,0.2)]"
+                >
+                  <span>Begin gratis</span>
+                  <ArrowRight className="w-4 h-4" />
+                </NavLink>
+                <NavLink
+                  to="/hoe-het-werkt"
+                  className="text-[15px] font-semibold py-4 px-8 rounded-full border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+                >
+                  Hoe het werkt
+                </NavLink>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </section>
     </main>
