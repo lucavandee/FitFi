@@ -82,22 +82,68 @@ function getOccasionLabel(occasion: string): string {
 }
 
 /**
- * Extract the occasion from an outfit (via occasion property or tags).
+ * Map Dutch occasion strings (from generated outfits) to English quiz occasion keys.
+ * Generated outfits use: "Werk", "Dagelijks", "Date", "Avond uit", "Weekend",
+ * "Smart Casual", "Relaxed", "Actief".
+ * Quiz answers use: "work", "casual", "formal", "date", "party", "sports", "travel".
+ */
+const OCCASION_ALIAS_TO_KEY: Record<string, string> = {
+  // Direct English matches
+  work: 'work',
+  casual: 'casual',
+  formal: 'formal',
+  date: 'date',
+  party: 'party',
+  sports: 'sports',
+  travel: 'travel',
+  // Dutch → English mappings (from generated outfits)
+  werk: 'work',
+  kantoor: 'work',
+  office: 'work',
+  dagelijks: 'casual',
+  weekend: 'casual',
+  relaxed: 'casual',
+  'smart casual': 'casual',
+  'avond uit': 'date',
+  'avondje uit': 'date',
+  evening: 'date',
+  feest: 'party',
+  uitgaan: 'party',
+  formeel: 'formal',
+  'formeel event': 'formal',
+  actief: 'sports',
+  sport: 'sports',
+  gym: 'sports',
+  reizen: 'travel',
+  'op reis': 'travel',
+};
+
+/**
+ * Extract the occasion from an outfit (via occasion property or tags),
+ * mapping Dutch and alias strings to the canonical English quiz occasion key.
  */
 function getOutfitOccasion(outfit: any, userOccasions: string[]): string | null {
+  const userOccLower = userOccasions.map(o => o.toLowerCase());
+
   // Check explicit occasion field
   if (outfit.occasion && typeof outfit.occasion === 'string') {
-    return outfit.occasion.toLowerCase();
+    const mapped = OCCASION_ALIAS_TO_KEY[outfit.occasion.toLowerCase()];
+    if (mapped && userOccLower.includes(mapped)) return mapped;
+    // Direct match fallback
+    const direct = outfit.occasion.toLowerCase();
+    if (userOccLower.includes(direct)) return direct;
   }
-  // Check tags for matching user occasions
+
+  // Check tags for matching user occasions (with alias mapping)
   if (Array.isArray(outfit.tags)) {
     for (const tag of outfit.tags) {
       const t = tag.toLowerCase();
-      if (userOccasions.some(o => o.toLowerCase() === t)) {
-        return t;
-      }
+      const mapped = OCCASION_ALIAS_TO_KEY[t];
+      if (mapped && userOccLower.includes(mapped)) return mapped;
+      if (userOccLower.includes(t)) return t;
     }
   }
+
   return null;
 }
 
