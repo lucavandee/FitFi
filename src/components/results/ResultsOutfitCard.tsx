@@ -62,7 +62,7 @@ export function ResultsOutfitCard({
         )}
 
         {/* Occasion badge */}
-        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm">
+        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm z-10">
           {occasionContext.label}
         </span>
 
@@ -74,7 +74,7 @@ export function ResultsOutfitCard({
             onToggleFavorite(e);
           }}
           aria-label={isFavorite ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:bg-white hover:scale-110 ${
+          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm z-10 transition-all duration-200 hover:bg-white hover:scale-110 ${
             isFavorite
               ? "text-[#C2654A]"
               : "text-[#8A8A8A] hover:text-[#C2654A]"
