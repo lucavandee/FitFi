@@ -110,14 +110,14 @@ export function StyleDNATooltip({
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   {/* DO */}
                   <div>
-                    <h5 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-1">
+                    <h5 className="font-semibold text-sm text-[#C2654A] mb-2 flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" />
                       Draag dit:
                     </h5>
                     <ul className="space-y-1.5">
                       {explanation.do.map((item, idx) => (
-                        <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
-                          <span className="text-green-500 mt-0.5">•</span>
+                        <li key={idx} className="text-sm text-[#4A4A4A] flex items-start gap-2">
+                          <span className="text-[#C2654A] mt-0.5">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -126,14 +126,14 @@ export function StyleDNATooltip({
 
                   {/* DON'T */}
                   <div>
-                    <h5 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-1">
+                    <h5 className="font-semibold text-sm text-[#C24A4A] mb-2 flex items-center gap-1">
                       <XCircle className="w-4 h-4" />
                       Vermijd dit:
                     </h5>
                     <ul className="space-y-1.5">
                       {explanation.dont.map((item, idx) => (
-                        <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
-                          <span className="text-red-500 mt-0.5">•</span>
+                        <li key={idx} className="text-sm text-[#4A4A4A] flex items-start gap-2">
+                          <span className="text-[#C24A4A] mt-0.5">•</span>
                           <span>{item}</span>
                         </li>
                       ))}

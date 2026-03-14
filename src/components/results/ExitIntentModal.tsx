@@ -108,15 +108,15 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 {/* Features */}
                 <ul className="space-y-2 text-left max-w-sm mx-auto mb-4">
                   <li className="flex items-center gap-2 text-sm text-[var(--color-text)]">
-                    <span className="text-[var(--ff-color-success-600)] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#C2654A] font-bold" aria-hidden="true">✓</span>
                     <span>50+ gepersonaliseerde outfits</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm text-[var(--color-text)]">
-                    <span className="text-[var(--ff-color-success-600)] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#C2654A] font-bold" aria-hidden="true">✓</span>
                     <span>AI styling assistent (Nova)</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm text-[var(--color-text)]">
-                    <span className="text-[var(--ff-color-success-600)] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#C2654A] font-bold" aria-hidden="true">✓</span>
                     <span>Onbeperkt outfits opslaan</span>
                   </li>
                 </ul>

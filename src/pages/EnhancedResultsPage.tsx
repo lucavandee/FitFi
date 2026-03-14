@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Check, Grid3x3, Layers, Palette } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Check, Grid3x3, Layers, Palette, Eye } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -360,7 +360,7 @@ export default function EnhancedResultsPage() {
   ];
 
   return (
-    <div className="bg-[var(--color-bg)] text-[var(--color-text)] relative" style={{ minHeight: 'calc(100vh - 64px)' }}>
+    <div className="bg-[#FAFAF8] text-[#1A1A1A] relative" style={{ minHeight: 'calc(100vh - 64px)' }}>
       <Helmet>
         <title>Jouw Style Report – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
@@ -387,79 +387,80 @@ export default function EnhancedResultsPage() {
         style={{
           opacity: heroOpacity,
           scale: heroScale,
-          background: 'linear-gradient(160deg, var(--ff-color-primary-50) 0%, var(--color-bg) 55%, var(--ff-color-primary-50) 100%)',
         }}
-        className="relative py-12 sm:py-16 border-b border-[var(--color-border)] overflow-hidden"
+        className="relative bg-[#F5F0EB] pt-44 md:pt-48 pb-12 overflow-hidden"
       >
-        <div className="ff-container">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto text-center">
             {hasCompletedQuiz ? (
-              <div className="flex flex-col gap-3">
-                {/* Kicker */}
-                <p className="text-xs sm:text-sm font-medium uppercase tracking-widest" style={{ color: 'var(--ff-color-primary-600)' }}>
-                  Persoonlijk Style Report
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                className="flex flex-col items-center gap-3"
+              >
+                {/* Eyebrow */}
+                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A] mb-4">
+                  Jouw stijlrapport
                 </p>
 
-                {/* H1 */}
+                {/* Style name — Instrument Serif italic */}
                 <h1
-                  className="font-heading font-bold tracking-tight text-[var(--color-text)]"
-                  style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', lineHeight: 1.1 }}
+                  className="font-serif italic text-[#1A1A1A] leading-[1.05] mb-3"
+                  style={{ fontSize: 'clamp(3rem, 5vw, 4rem)' }}
                 >
                   {archetypeName}
                 </h1>
 
-                {/* Stats row */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  {archetypeDetectionResult && (
-                    <BadgePill variant="success" icon={<Check className="w-2.5 h-2.5" strokeWidth={3} />}>
-                      {Math.round(archetypeDetectionResult.confidence * 100)}% match
-                    </BadgePill>
-                  )}
-                  <span className="text-sm text-[var(--color-muted)]">
-                    {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
-                  </span>
-                </div>
+                {/* Outfit count */}
+                <p className="text-base text-[#4A4A4A] mb-8">
+                  {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
+                </p>
 
-                {/* CTA row */}
-                <div className="flex items-center gap-2 pt-1">
-                  <PrimaryButton
-                    size="sm"
-                    icon={<ShoppingBag className="w-3.5 h-3.5" />}
+                {/* Action buttons */}
+                <div className="flex items-center gap-3">
+                  <button
                     onClick={() => setActiveTab('outfits')}
+                    className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                   >
+                    <Eye className="w-4 h-4 text-white" />
                     Bekijk outfits
-                  </PrimaryButton>
+                  </button>
 
-                  <SecondaryButton
-                    size="sm"
-                    icon={<RefreshCw className="w-3.5 h-3.5" />}
+                  <button
                     onClick={() => navigate('/onboarding?step=redo')}
+                    className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
                   >
+                    <RefreshCw className="w-4 h-4" />
                     Quiz opnieuw
-                  </SecondaryButton>
+                  </button>
 
-                  <IconButton size="sm" label="Delen" onClick={sharePage}>
-                    <Share2 className="w-3.5 h-3.5 shrink-0" />
-                  </IconButton>
+                  <button
+                    onClick={sharePage}
+                    className="w-10 h-10 rounded-full border border-[#E5E5E5] hover:border-[#C2654A] flex items-center justify-center transition-colors duration-200"
+                    aria-label="Delen"
+                  >
+                    <Share2 className="w-4 h-4 text-[#4A4A4A]" />
+                  </button>
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div className="py-4">
-                <p className="text-xs sm:text-sm font-medium uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
+              <div className="py-4 text-left">
+                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A] mb-4">
                   Style Report
                 </p>
                 <h1
-                  className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-3"
-                  style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', lineHeight: 1.1 }}
+                  className="font-serif italic text-[#1A1A1A] leading-[1.05] mb-3"
+                  style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)' }}
                 >
                   Jouw stijl
                 </h1>
-                <p className="text-sm text-[var(--color-muted)] mb-6 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
+                <p className="text-base text-[#4A4A4A] mb-8 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 >
-                  Start Style Quiz
+                  Begin gratis
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>
@@ -470,9 +471,8 @@ export default function EnhancedResultsPage() {
 
       {/* ── STICKY TAB BAR ── */}
       {hasCompletedQuiz && (
-        <div className="sticky top-0 z-40 bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)]">
-          <div className="ff-container">
-            <div className="max-w-5xl mx-auto flex items-center py-0">
+        <div className="sticky top-[72px] z-30 bg-white border-b border-[#E5E5E5]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-0">
               <div
                 role="tablist"
                 className="flex items-center gap-0"
@@ -488,18 +488,18 @@ export default function EnhancedResultsPage() {
                         setActiveTab(tab.id);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`relative flex items-center gap-1.5 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-inset ${
+                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
                         isActive
-                          ? 'text-[var(--color-text)] border-b-2 border-[var(--ff-color-primary-600)]'
-                          : 'text-[var(--color-muted)] border-b-2 border-transparent hover:text-[var(--color-text)] hover:border-[var(--color-border)]'
+                          ? 'font-semibold text-[#C2654A] border-[#C2654A]'
+                          : 'font-medium text-[#8A8A8A] border-transparent hover:text-[#4A4A4A]'
                       }`}
                     >
                       {tab.label}
                       {tab.sub && (
-                        <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold transition-colors duration-200 ${
+                        <span className={`ml-1.5 text-xs font-semibold px-2 py-0.5 rounded-full transition-colors duration-200 ${
                           isActive
-                            ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]'
-                            : 'bg-[var(--color-border)] text-[var(--color-muted)]'
+                            ? 'bg-[#F4E8E3] text-[#C2654A]'
+                            : 'bg-[#E5E5E5] text-[#8A8A8A]'
                         }`}>
                           {tab.sub}
                         </span>
@@ -508,7 +508,6 @@ export default function EnhancedResultsPage() {
                   );
                 })}
               </div>
-            </div>
           </div>
         </div>
       )}
@@ -583,37 +582,41 @@ export default function EnhancedResultsPage() {
       )}
 
       {hasCompletedQuiz && (
-        <section className="py-6 sm:py-8 border-t border-[var(--color-border)]">
-          <div className="ff-container">
+        <section className="py-6 sm:py-8 border-t border-[#E5E5E5]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-3">Verder verkennen</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-3">Verder verkennen</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   onClick={() => { setActiveTab('stijl-dna'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="flex items-center gap-3 p-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-left hover:border-[var(--ff-color-primary-300)] hover:shadow-md transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center justify-between cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center shrink-0 group-hover:bg-[var(--ff-color-primary-100)] transition-colors">
-                    <Palette className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#F5F0EB] flex items-center justify-center shrink-0">
+                      <Palette className="w-5 h-5 text-[#C2654A]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-[#1A1A1A]">Stijl DNA</p>
+                      <p className="text-sm text-[#8A8A8A]">Kleurprofiel, archetype &amp; tips</p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-sm text-[var(--color-text)]">Stijl DNA</p>
-                    <p className="text-xs text-[var(--color-muted)] mt-0.5">Kleurprofiel, archetype &amp; tips</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-[var(--color-muted)] shrink-0 group-hover:text-[var(--ff-color-primary-600)] transition-colors" />
+                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 group-hover:text-[#C2654A] transition-colors" />
                 </button>
 
                 <button
                   onClick={() => { setActiveTab('outfits'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="flex items-center gap-3 p-4 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-left hover:bg-[var(--ff-color-primary-600)] transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center justify-between cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
-                    <ShoppingBag className="w-4 h-4 text-white" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#F5F0EB] flex items-center justify-center shrink-0">
+                      <ShoppingBag className="w-5 h-5 text-[#C2654A]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-[#1A1A1A]">Outfits</p>
+                      <p className="text-sm text-[#8A8A8A]">{displayOutfits.length} looks voor jouw stijl</p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-sm">Outfits</p>
-                    <p className="text-xs opacity-70 mt-0.5">{displayOutfits.length} looks voor jouw stijl</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 opacity-50 shrink-0 group-hover:opacity-100 transition-opacity" />
+                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 group-hover:text-[#C2654A] transition-colors" />
                 </button>
               </div>
             </div>
@@ -745,20 +748,21 @@ export default function EnhancedResultsPage() {
                 </AnimatedSection>
               ) : (
                 <AnimatedSection delay={0.15}>
-                  <div className="flex items-center gap-4 p-4 sm:p-5 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)]" style={{ boxShadow: 'var(--shadow-soft)' }}>
-                    <div className="w-9 h-9 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center shrink-0">
-                      <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-0.5">Premium</p>
-                      <p className="text-sm font-semibold text-[var(--color-text)] leading-snug">Persoonlijk kleurenpalet op basis van jouw ondertoon</p>
-                      <p className="text-xs text-[var(--color-muted)] mt-0.5">
-                        {!answers?.photoUrl ? 'Upload een selfie en activeer Premium voor kleuradvies op maat.' : 'Activeer Premium voor jouw seizoensgebonden shopping-gids.'}
-                      </p>
+                  <div className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-5 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0">
+                        <Sparkles className="w-4 h-4 text-[#C2654A]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">Persoonlijk kleurenpalet op basis van jouw ondertoon</p>
+                        <p className="text-xs text-[#4A4A4A] mt-0.5">
+                          {!answers?.photoUrl ? 'Upload een selfie en activeer Premium voor kleuradvies op maat.' : 'Activeer Premium voor jouw seizoensgebonden shopping-gids.'}
+                        </p>
+                      </div>
                     </div>
                     <NavLink
                       to="/prijzen#premium"
-                      className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                      className="shrink-0 inline-flex items-center gap-1.5 px-6 py-3 bg-[#C2654A] hover:bg-[#A8513A] text-white rounded-xl font-semibold text-base transition-colors duration-200 whitespace-nowrap"
                     >
                       Bekijk Premium
                     </NavLink>
@@ -1211,109 +1215,58 @@ export default function EnhancedResultsPage() {
 
             {/* Upsell Block */}
             <AnimatedSection delay={0.6}>
-              <div className="mt-10 sm:mt-12 mb-6 max-w-5xl mx-auto">
-                {/* Preview label */}
-                <div className="mb-3">
-                  <BadgePill variant="success" icon={<Sparkles className="w-3 h-3" />}>
-                    Gratis preview: 9 van 50+ gepersonaliseerde outfits
-                  </BadgePill>
-                </div>
-
+              <div className="mt-10 sm:mt-12 mb-6 max-w-[800px] mx-auto">
                 {/* Upsell card */}
-                <div
-                  className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden"
-                  style={{ boxShadow: '0 2px 16px rgba(30,35,51,0.07), 0 1px 4px rgba(30,35,51,0.05)' }}
-                >
-                  {/* Card body */}
-                  <div className="p-5 sm:p-6">
-                    {/* Kicker */}
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
-                      Premium
-                    </p>
+                <div className="bg-white border border-[#E5E5E5] rounded-3xl p-10 md:p-12">
+                  {/* PREMIUM label */}
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                    Premium
+                  </p>
 
-                    {/* Headline */}
-                    <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text)] leading-snug mb-4">
-                      Jouw volledige stijlprofiel,<br className="hidden sm:block" /> onbeperkt toegankelijk
-                    </h3>
+                  {/* Headline */}
+                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                    Ontgrendel je volledige stijlprofiel
+                  </h3>
 
-                    {/* Feature checklist */}
-                    <ul className="space-y-2 mb-5">
-                      {getBenefitsForArchetype(archetypeName).map((benefit, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5">
-                          <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center shrink-0">
-                            <Check className="w-2.5 h-2.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} aria-hidden="true" />
-                          </span>
-                          <span className="text-sm text-[var(--color-text)] leading-snug">
-                            <span className="font-semibold">{benefit.value}</span>
-                            {benefit.value !== benefit.label && (
-                              <span className="text-[var(--color-muted)]"> — {benefit.label}</span>
-                            )}
-                          </span>
-                        </li>
-                      ))}
-                      <li className="flex items-start gap-2.5">
-                        <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center shrink-0">
-                          <Check className="w-2.5 h-2.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} aria-hidden="true" />
-                        </span>
-                        <span className="text-sm text-[var(--color-text)] leading-snug">
-                          <span className="font-semibold">Nova AI</span>
-                          <span className="text-[var(--color-muted)]"> — persoonlijke stylist, altijd beschikbaar</span>
-                        </span>
+                  {/* Features with terracotta dots */}
+                  <ul className="space-y-2.5 mb-6">
+                    {[
+                      'Onbeperkte outfitcombinaties',
+                      'Volledig kleurpalet met aanbevelingen',
+                      'Nova AI-assistent voor stijlvragen',
+                      'Smart learning dat je profiel verbetert',
+                    ].map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-3">
+                        <span className="w-2 h-2 rounded-full bg-[#C2654A] shrink-0" aria-hidden="true" />
+                        <span className="text-sm text-[#4A4A4A]">{feature}</span>
                       </li>
-                    </ul>
+                    ))}
+                  </ul>
 
-                    {/* Pricing row */}
-                    <div className="flex items-baseline gap-1.5 mb-1">
-                      <span className="text-xl font-bold text-[var(--color-text)] font-heading">€9,99</span>
-                      <span className="text-xs text-[var(--color-muted)]">/maand</span>
-                      <span className="ml-1.5 text-[10px] font-semibold text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] px-2 py-0.5 rounded-full border border-[var(--ff-color-primary-200)]">
-                        Eerste maand gratis
-                      </span>
-                    </div>
-                    <p className="text-xs text-[var(--color-muted)] mb-4">
-                      Stop wanneer je wilt — geen verplichtingen
-                    </p>
+                  {/* Price */}
+                  <div className="mb-1">
+                    <span className="text-2xl font-extrabold text-[#1A1A1A]">€9,99</span>
+                    <span className="text-sm text-[#4A4A4A] ml-1">/maand</span>
+                  </div>
+                  <p className="text-xs text-[#8A8A8A] mb-6">
+                    Maandelijks opzegbaar · 30 dagen geld-terug
+                  </p>
 
-                    {/* Trust strip */}
-                    <TrustSignals />
+                  {/* CTA Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <NavLink
+                      to="/prijzen#premium"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                    >
+                      Upgrade naar Premium →
+                    </NavLink>
 
-                    {/* Social proof */}
-                    <div className="flex items-center gap-2 mt-4 mb-4">
-                      <div className="flex -space-x-1.5" aria-hidden="true">
-                        {['#C4A882', '#B8956C', '#A6886A', '#8F7459'].map((c, i) => (
-                          <div
-                            key={i}
-                            className="w-6 h-6 rounded-full border-2 border-[var(--color-surface)]"
-                            style={{ backgroundColor: c }}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-xs text-[var(--color-muted)]">
-                        <span className="font-semibold text-[var(--color-text)]">
-                          {upgradesLoading ? "2.847+" : `${monthlyUpgradeCount?.toLocaleString("nl-NL") || "2.847"}+`}
-                        </span>{" "}gebruikers geüpgraded deze maand
-                      </p>
-                    </div>
-
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <NavLink
-                        to={user ? "/dashboard" : "/registreren"}
-                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                        aria-label={user ? "Ga naar je dashboard" : "Maak gratis account aan om outfits op te slaan"}
-                      >
-                        <span>{user ? "Ga naar mijn dashboard" : "Sla outfits op — gratis"}</span>
-                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                      </NavLink>
-
-                      <NavLink
-                        to="/prijzen#premium"
-                        className="sm:flex-none flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] bg-transparent text-[var(--color-text)] rounded-xl font-medium text-sm hover:bg-[var(--ff-color-primary-50)] transition-all border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                        aria-label="Bekijk alle premium functies"
-                      >
-                        Bekijk Premium
-                      </NavLink>
-                    </div>
+                    <NavLink
+                      to={user ? "/dashboard" : "/registreren"}
+                      className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-sm rounded-full transition-all duration-200"
+                    >
+                      Ga naar mijn dashboard →
+                    </NavLink>
                   </div>
                 </div>
               </div>

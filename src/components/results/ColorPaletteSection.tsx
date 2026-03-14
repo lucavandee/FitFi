@@ -37,7 +37,7 @@ export function ColorPaletteSection({ season, hasPhoto = false }: ColorPaletteSe
           aria-live="polite"
         >
           {hasPhoto
-            ? <CheckCircle className="w-3.5 h-3.5 text-[var(--ff-color-success-600)] shrink-0 mt-0.5" aria-hidden="true" />
+            ? <CheckCircle className="w-3.5 h-3.5 text-[#C2654A] shrink-0 mt-0.5" aria-hidden="true" />
             : <Info className="w-3.5 h-3.5 text-[var(--ff-color-primary-600)] shrink-0 mt-0.5" aria-hidden="true" />
           }
           <p className="text-xs text-[var(--color-muted)] leading-relaxed">
@@ -55,7 +55,7 @@ export function ColorPaletteSection({ season, hasPhoto = false }: ColorPaletteSe
         {/* Recommended Colors */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <CheckCircle className="w-4 h-4 text-[var(--ff-color-success-600)]" aria-hidden="true" />
+            <CheckCircle className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
             <p className="text-sm font-semibold text-[var(--color-text)]">Draag deze kleuren</p>
           </div>
           <div className="rounded-xl p-4 border border-[var(--color-border)]" style={{ background: 'var(--ff-color-primary-50)' }}>

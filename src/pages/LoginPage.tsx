@@ -1,12 +1,14 @@
 import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Seo from "@/components/seo/Seo";
-import { Eye, EyeOff, CircleCheck as CheckCircle2, Shield, Lock, ArrowRight, Loader as Loader2, FileText, Sparkles, Mail, Palette, Star } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Loader as Loader2, Palette, Shirt, Shield, AlertCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { SecurityLogger } from "@/services/security/securityLogger";
+import Logo from "@/components/ui/Logo";
 import {
   emailErrors,
   passwordErrors,
@@ -20,9 +22,9 @@ function isEmail(v: string) {
 }
 
 const TRUST_ITEMS = [
-  { icon: Shield, label: "GDPR-compliant", sub: "Je data blijft van jou" },
-  { icon: Lock, label: "256-bit encryptie", sub: "Veilig opgeslagen" },
-  { icon: Star, label: "2.400+ gebruikers", sub: "Actief in NL & BE" },
+  { icon: Palette, title: "Persoonlijk kleurpalet", desc: "Afgestemd op jouw kenmerken" },
+  { icon: Shirt, title: "50+ outfitcombinaties", desc: "Voor elke gelegenheid" },
+  { icon: Shield, title: "Veilig en privé", desc: "GDPR-compliant, data blijft van jou" },
 ];
 
 export default function LoginPage() {
@@ -130,313 +132,270 @@ export default function LoginPage() {
         noindex
       />
 
-      <div
-        className="w-full"
-        style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}
-      >
-        {/* ── Hero banner ── */}
-        <section
-          className="relative overflow-hidden"
-          style={{
-            background: "linear-gradient(160deg, var(--ff-color-primary-900) 0%, var(--ff-color-primary-700) 100%)",
-            paddingTop: "clamp(2.5rem, 6vw, 4.5rem)",
-            paddingBottom: "clamp(2.5rem, 6vw, 4.5rem)",
-          }}
+      <div className="min-h-screen bg-[#FAFAF8] grid grid-cols-1 lg:grid-cols-2">
+        {/* ── Left — Visual block (desktop only) ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="hidden lg:flex bg-[#F5F0EB] flex-col justify-center items-center p-16 relative overflow-hidden"
         >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: "url(/hero/hero-style-report-lg.webp)",
-              backgroundSize: "cover",
-              backgroundPosition: "center 25%",
-              opacity: 0.12,
-            }}
-          />
-          <div className="ff-container relative z-10 text-center">
-            <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase mb-5"
-              style={{
-                background: "rgba(247,243,236,0.12)",
-                color: "rgba(247,243,236,0.90)",
-                border: "1px solid rgba(247,243,236,0.20)",
-              }}
-            >
-              <Sparkles className="w-3 h-3" aria-hidden="true" />
-              Persoonlijk stijladvies
-            </span>
-            <h1
-              className="font-heading font-bold tracking-tight text-white mb-3"
-              style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", lineHeight: 1.08 }}
-            >
-              {comingFromResults ? "Log in om je outfits te zien" : "Welkom terug"}
-            </h1>
-            <p
-              className="text-base sm:text-lg font-light mb-0 max-w-lg mx-auto leading-relaxed"
-              style={{ color: "rgba(247,243,236,0.72)" }}
-            >
-              {comingFromResults
-                ? "Jouw outfits, combinaties en shoplinks wachten op je."
-                : "Jouw stijlprofiel en outfits wachten op je."}
+          <div className="max-w-[400px] w-full flex flex-col items-center">
+            <div className="mb-16">
+              <Logo size="lg" />
+            </div>
+
+            <h2 className="font-serif italic text-[44px] text-[#1A1A1A] leading-[1.1] text-center mb-6">
+              {comingFromResults ? "Je outfits wachten" : "Welkom terug"}
+            </h2>
+            <p className="text-base text-[#4A4A4A] text-center leading-[1.7] mb-12">
+              Jouw stijlprofiel en outfits wachten op je.
             </p>
-          </div>
-        </section>
 
-        {/* ── Form + trust grid ── */}
-        <section className="ff-section">
-          <div className="ff-container">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_460px] gap-8 lg:gap-12 xl:gap-16 items-start max-w-5xl mx-auto">
-
-              {/* Left — trust / context */}
-              <div className="order-2 lg:order-1">
-                {comingFromResults && (
-                  <div
-                    className="flex items-start gap-3.5 px-5 py-4 rounded-2xl mb-6"
-                    style={{
-                      background: "var(--ff-color-primary-50)",
-                      border: "1px solid var(--ff-color-primary-200)",
-                    }}
-                  >
-                    <FileText className="w-5 h-5 mt-0.5 flex-shrink-0 text-[var(--ff-color-primary-700)]" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] leading-snug mb-0.5">Je stijlrapport is klaar</p>
-                      <p className="text-xs text-[var(--ff-color-primary-700)]">Log in om je outfits, shoplinks en kleurprofiel te bekijken.</p>
-                    </div>
+            <div className="flex flex-col gap-5 w-full max-w-[320px]">
+              {TRUST_ITEMS.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-[#C2654A]" />
                   </div>
-                )}
-
-                <h2
-                  className="font-heading font-bold text-[var(--color-text)] tracking-tight mb-4"
-                  style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", lineHeight: 1.12 }}
-                >
-                  Wat je terugvindt
-                </h2>
-                <div className="space-y-4 mb-8">
-                  {[
-                    { icon: Palette, title: "Jouw kleurprofiel", desc: "Seizoen, temperatuur en aanbevolen kleuren op basis van jouw huidtoon." },
-                    { icon: Sparkles, title: "Gepersonaliseerde outfits", desc: "6–12 complete looks samengesteld op jouw stijltype en lichaamsvorm." },
-                    { icon: ArrowRight, title: "Directe shoplinks", desc: "Elk item direct shopbaar bij Nederlandse webshops." },
-                  ].map(({ icon: Icon, title, desc }) => (
-                    <div key={title} className="flex items-start gap-4">
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{
-                          background: "var(--ff-color-primary-100)",
-                          color: "var(--ff-color-primary-700)",
-                        }}
-                      >
-                        <Icon className="w-5 h-5" aria-hidden="true" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-[var(--color-text)] mb-0.5">{title}</p>
-                        <p className="text-sm text-[var(--color-muted)] leading-relaxed">{desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Trust row */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {TRUST_ITEMS.map(({ icon: Icon, label, sub }) => (
-                    <div
-                      key={label}
-                      className="flex flex-col items-center text-center gap-2 px-4 py-4 rounded-2xl border border-[var(--color-border)]"
-                      style={{ background: "var(--color-surface)" }}
-                    >
-                      <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center"
-                        style={{ background: "var(--ff-color-primary-100)", color: "var(--ff-color-primary-700)" }}
-                      >
-                        <Icon className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <p className="text-xs font-bold text-[var(--color-text)]">{label}</p>
-                      <p className="text-[11px] text-[var(--color-muted)] leading-snug">{sub}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right — form */}
-              <div className="order-1 lg:order-2">
-                <form
-                  onSubmit={onSubmit}
-                  noValidate
-                  aria-label="Inlogformulier"
-                  className="rounded-2xl border border-[var(--color-border)] p-6 sm:p-8 space-y-5"
-                  style={{
-                    background: "var(--color-surface)",
-                    boxShadow: "0 4px 32px rgba(30,35,51,0.08)",
-                  }}
-                >
                   <div>
-                    <h2 className="font-heading font-bold text-[var(--color-text)] text-xl mb-1">Inloggen</h2>
-                    <p className="text-sm text-[var(--color-muted)]">Of <NavLink to="/registreren" className="font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] underline underline-offset-2">maak een gratis account aan</NavLink></p>
+                    <p className="text-sm font-semibold text-[#1A1A1A]">{title}</p>
+                    <p className="text-xs text-[#8A8A8A]">{desc}</p>
                   </div>
-
-                  {serverError && (
-                    <div>
-                      <ErrorAlert error={serverError} />
-                      {isCredentialError && (
-                        <div className="mt-2 flex items-center gap-2 text-sm">
-                          <span className="text-[var(--color-muted)]">Wachtwoord vergeten?</span>
-                          <NavLink
-                            to="/wachtwoord-vergeten"
-                            className="font-semibold text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:text-[var(--ff-color-primary-600)]"
-                          >
-                            Stuur resetlink
-                          </NavLink>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <SocialLoginButtons
-                    mode="login"
-                    onSuccess={() => {
-                      toast.success("Welkom terug!");
-                      nav(fromPath || "/dashboard");
-                    }}
-                  />
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="login-email" className="block text-sm font-semibold text-[var(--color-text)]">
-                      E-mailadres
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
-                      <input
-                        id="login-email"
-                        type="email"
-                        autoComplete="email"
-                        inputMode="email"
-                        enterKeyHint="next"
-                        placeholder="jij@voorbeeld.nl"
-                        value={email}
-                        autoFocus
-                        onChange={(e) => setEmail(e.target.value)}
-                        onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                        aria-invalid={!!emailError}
-                        aria-describedby={emailError ? "login-email-error" : undefined}
-                        disabled={loading}
-                        className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:opacity-50 ${
-                          emailError
-                            ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
-                            : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
-                        }`}
-                      />
-                    </div>
-                    {touched.email && emailError && (
-                      <p id="login-email-error" role="alert" className="text-xs font-medium text-[var(--ff-color-danger-600)] flex items-center gap-1.5 mt-1">
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
-                        <InlineError error={emailError} />
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label htmlFor="login-password" className="block text-sm font-semibold text-[var(--color-text)]">
-                        Wachtwoord
-                      </label>
-                      <NavLink
-                        to="/wachtwoord-vergeten"
-                        className="inline-flex items-center min-h-[44px] px-2 text-xs font-medium text-[var(--ff-color-primary-700)] underline underline-offset-2 hover:text-[var(--ff-color-primary-600)] transition-colors"
-                      >
-                        Vergeten?
-                      </NavLink>
-                    </div>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" aria-hidden="true" />
-                      <input
-                        id="login-password"
-                        type={showPw ? "text" : "password"}
-                        autoComplete="current-password"
-                        enterKeyHint="done"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                        aria-invalid={!!pwError}
-                        aria-describedby={pwError ? "login-pw-error" : undefined}
-                        disabled={loading}
-                        className={`w-full pl-10 pr-12 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] placeholder:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
-                          pwError
-                            ? "border-[var(--ff-color-danger-500)] focus-visible:ring-[var(--ff-color-danger-200)]"
-                            : "border-[var(--color-border)] focus-visible:border-[var(--ff-color-primary-500)] focus-visible:ring-[var(--ff-color-primary-200)]"
-                        }`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPw(!showPw)}
-                        tabIndex={-1}
-                        className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-visible:outline-none"
-                        aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
-                      >
-                        {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    {touched.password && pwError && (
-                      <p id="login-pw-error" role="alert" className="text-xs font-medium text-[var(--ff-color-danger-600)] flex items-center gap-1.5 mt-1">
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
-                        <InlineError error={pwError} />
-                      </p>
-                    )}
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={!canSubmit}
-                    className="w-full flex items-center justify-center gap-2 py-3 px-6 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
-                    style={{
-                      background: "var(--ff-color-primary-700)",
-                      color: "var(--color-bg)",
-                      boxShadow: "0 8px 40px rgba(166,136,106,0.35)",
-                    }}
-                  >
-                    {loading ? (
-                      <><Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /><span>Bezig…</span></>
-                    ) : (
-                      <><span>Inloggen</span><ArrowRight className="w-5 h-5" aria-hidden="true" /></>
-                    )}
-                  </button>
-
-                  <NavLink
-                    to="/registreren"
-                    className="w-full flex items-center justify-center gap-2 py-3.5 min-h-[52px] rounded-xl font-semibold text-base border-2 border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
-                  >
-                    Maak gratis account aan
-                    <ArrowRight className="w-5 h-5" aria-hidden="true" />
-                  </NavLink>
-                </form>
-
-                <div className="mt-4 rounded-xl p-4" style={{ background: "var(--ff-color-primary-50)", border: "1px solid var(--ff-color-primary-200)" }}>
-                  <p className="text-sm font-semibold text-[var(--ff-color-primary-900)] mb-0.5 flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-                    Nog geen account nodig?
-                  </p>
-                  <p className="text-xs text-[var(--ff-color-primary-700)] mb-3">Doe de stijlquiz direct — geen registratie vereist.</p>
-                  <NavLink
-                    to="/onboarding"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white border border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-semibold text-sm hover:bg-[var(--ff-color-primary-100)] transition-colors"
-                  >
-                    Start de quiz zonder account
-                    <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                  </NavLink>
                 </div>
-
-                <div className="mt-3 text-center">
-                  <NavLink
-                    to="/contact"
-                    className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] underline transition-colors"
-                  >
-                    Hulp nodig bij inloggen?
-                  </NavLink>
-                </div>
-              </div>
-
+              ))}
             </div>
           </div>
-        </section>
 
+          {/* Decorative watermark */}
+          <span className="absolute bottom-8 right-8 font-serif italic text-[200px] text-[#E5E5E5]/30 leading-none select-none pointer-events-none">
+            Fi
+          </span>
+        </motion.div>
+
+        {/* ── Right — Form ── */}
+        <div className="flex flex-col justify-center items-center p-6 pt-32 md:p-16 min-h-screen lg:min-h-0">
+          <div className="w-full max-w-[420px]">
+            {/* Mobile logo */}
+            <div className="lg:hidden mb-12 text-center">
+              <Logo size="lg" />
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0 }}
+            >
+              <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Inloggen</h1>
+              <p className="text-sm text-[#4A4A4A] mb-10">
+                Of{" "}
+                <NavLink
+                  to="/registreren"
+                  className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200"
+                >
+                  maak een gratis account aan
+                </NavLink>
+              </p>
+            </motion.div>
+
+            <form onSubmit={onSubmit} noValidate aria-label="Inlogformulier">
+              {/* Global error */}
+              {serverError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-[#C24A4A]/5 border border-[#C24A4A]/20 rounded-2xl p-4 mb-6 text-sm text-[#C24A4A] flex items-center gap-3"
+                  role="alert"
+                >
+                  <AlertCircle className="w-5 h-5 text-[#C24A4A] flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold">{serverError.title}</p>
+                    {serverError.message && <p className="mt-0.5 opacity-90">{serverError.message}</p>}
+                  </div>
+                </motion.div>
+              )}
+              {serverError && isCredentialError && (
+                <div className="mb-6 flex items-center gap-2 text-sm">
+                  <span className="text-[#8A8A8A]">Wachtwoord vergeten?</span>
+                  <NavLink
+                    to="/wachtwoord-vergeten"
+                    className="font-semibold text-[#C2654A] underline underline-offset-2 hover:text-[#A8513A]"
+                  >
+                    Stuur resetlink
+                  </NavLink>
+                </div>
+              )}
+
+              <SocialLoginButtons
+                mode="login"
+                onSuccess={() => {
+                  toast.success("Welkom terug!");
+                  nav(fromPath || "/dashboard");
+                }}
+              />
+
+              <div className="space-y-5">
+                {/* Email field */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.08 }}
+                  className="space-y-2"
+                >
+                  <label htmlFor="login-email" className="block text-sm font-medium text-[#1A1A1A]">
+                    E-mailadres
+                  </label>
+                  <input
+                    id="login-email"
+                    type="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    enterKeyHint="next"
+                    placeholder="jij@voorbeeld.nl"
+                    value={email}
+                    autoFocus
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                    aria-invalid={!!emailError}
+                    aria-describedby={emailError ? "login-email-error" : undefined}
+                    disabled={loading}
+                    className={`w-full bg-white border rounded-2xl py-4 px-5 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-all duration-200 disabled:opacity-50 ${
+                      emailError
+                        ? "border-[#C24A4A] focus:ring-[#C24A4A]/20"
+                        : "border-[#E5E5E5]"
+                    }`}
+                  />
+                  {touched.email && emailError && (
+                    <p id="login-email-error" role="alert" className="text-sm text-[#C24A4A] mt-2 flex items-center gap-1.5">
+                      <AlertCircle className="w-3.5 h-3.5 text-[#C24A4A]" />
+                      <InlineError error={emailError} />
+                    </p>
+                  )}
+                </motion.div>
+
+                {/* Password field */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.16 }}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <label htmlFor="login-password" className="block text-sm font-medium text-[#1A1A1A]">
+                      Wachtwoord
+                    </label>
+                    <NavLink
+                      to="/wachtwoord-vergeten"
+                      className="text-sm font-medium text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+                    >
+                      Vergeten?
+                    </NavLink>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id="login-password"
+                      type={showPw ? "text" : "password"}
+                      autoComplete="current-password"
+                      enterKeyHint="done"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                      aria-invalid={!!pwError}
+                      aria-describedby={pwError ? "login-pw-error" : undefined}
+                      disabled={loading}
+                      className={`w-full bg-white border rounded-2xl py-4 px-5 pr-14 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-all duration-200 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
+                        pwError
+                          ? "border-[#C24A4A] focus:ring-[#C24A4A]/20"
+                          : "border-[#E5E5E5]"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPw(!showPw)}
+                      tabIndex={-1}
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-[#8A8A8A] hover:text-[#4A4A4A] transition-colors duration-200"
+                      aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
+                    >
+                      {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  {touched.password && pwError && (
+                    <p id="login-pw-error" role="alert" className="text-sm text-[#C24A4A] mt-2 flex items-center gap-1.5">
+                      <AlertCircle className="w-3.5 h-3.5 text-[#C24A4A]" />
+                      <InlineError error={pwError} />
+                    </p>
+                  )}
+                </motion.div>
+              </div>
+
+              {/* Submit button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.24 }}
+              >
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="w-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 mt-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /><span>Bezig...</span></>
+                  ) : (
+                    <><span>Inloggen</span><ArrowRight className="w-4 h-4" aria-hidden="true" /></>
+                  )}
+                </button>
+              </motion.div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-4 my-6">
+                <div className="flex-1 h-px bg-[#E5E5E5]" />
+                <span className="text-xs text-[#8A8A8A] font-medium">of</span>
+                <div className="flex-1 h-px bg-[#E5E5E5]" />
+              </div>
+
+              {/* Google login placeholder — SocialLoginButtons handles this */}
+              {/* Already rendered above, but keeping divider for visual flow */}
+            </form>
+
+            {/* Start quiz without account */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.32 }}
+              className="mt-10 pt-8 border-t border-[#E5E5E5]"
+            >
+              <div className="bg-[#F5F0EB] rounded-2xl p-6 text-center">
+                <p className="text-sm font-semibold text-[#1A1A1A] mb-1">Nog geen account nodig?</p>
+                <p className="text-xs text-[#8A8A8A] mb-4">Doe de stijlquiz direct, zonder registratie.</p>
+                <NavLink
+                  to="/onboarding"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+                >
+                  Start de quiz
+                  <ArrowRight className="w-4 h-4" />
+                </NavLink>
+              </div>
+            </motion.div>
+
+            {/* Help link */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-center mt-6"
+            >
+              <NavLink
+                to="/contact"
+                className="text-sm text-[#8A8A8A] hover:text-[#4A4A4A] transition-colors duration-200"
+              >
+                Hulp nodig bij inloggen?
+              </NavLink>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </>
   );
