@@ -33,30 +33,18 @@ export function ProfileConsistencyBanner({
     switch (analysis.level) {
       case 'high':
         return {
-          bg: 'bg-white',
-          border: 'border-[#E5E5E5]',
-          icon: <CheckCircle className="w-5 h-5 text-[#C2654A]" />,
+          icon: <CheckCircle className="w-4 h-4 text-[#C2654A]" />,
           iconBg: 'bg-[#F4E8E3]',
-          textColor: 'text-[#1A1A1A]',
-          mutedColor: 'text-[#4A4A4A]',
         };
       case 'medium':
         return {
-          bg: 'bg-white',
-          border: 'border-[#E5E5E5]',
-          icon: <Info className="w-5 h-5 text-[#C2654A]" />,
-          iconBg: 'bg-[#F4E8E3]',
-          textColor: 'text-[#1A1A1A]',
-          mutedColor: 'text-[#4A4A4A]',
+          icon: <Info className="w-4 h-4 text-[#D4913D]" />,
+          iconBg: 'bg-[#D4913D]/10',
         };
       case 'low':
         return {
-          bg: 'bg-white',
-          border: 'border-[#E5E5E5]',
-          icon: <AlertCircle className="w-5 h-5 text-[#D4913D]" />,
-          iconBg: 'bg-[#F4E8E3]',
-          textColor: 'text-[#1A1A1A]',
-          mutedColor: 'text-[#4A4A4A]',
+          icon: <AlertCircle className="w-4 h-4 text-[#D4913D]" />,
+          iconBg: 'bg-[#D4913D]/10',
         };
     }
   };
@@ -69,27 +57,27 @@ export function ProfileConsistencyBanner({
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className={`${style.bg} ${style.border} border rounded-2xl p-6 mb-6 relative overflow-hidden`}
+        className="bg-white border border-[#E5E5E5] rounded-2xl p-6 mb-6 relative overflow-hidden max-w-[800px] mx-auto"
       >
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 p-1 rounded-full hover:bg-[#F5F0EB] transition-colors"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-[#F5F0EB] flex items-center justify-center transition-colors"
           aria-label="Sluit banner"
         >
-          <X className="w-4 h-4 text-[#4A4A4A]" />
+          <X className="w-4 h-4 text-[#8A8A8A]" />
         </button>
 
         <div className="flex items-start gap-4 pr-8">
           {/* Icon */}
-          <div className={`${style.iconBg} rounded-xl p-2.5 flex-shrink-0`}>
+          <div className={`${style.iconBg} w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0`}>
             {style.icon}
           </div>
 
           {/* Content */}
           <div className="flex-1">
             {/* Title */}
-            <h3 className={`font-bold text-lg ${style.textColor} mb-2`}>
+            <h3 className="font-bold text-base text-[#1A1A1A] mb-2">
               {analysis.level === 'high' && (
                 analysis.topArchetypes.length > 0
                   ? `Consistent profiel — ${analysis.topArchetypes[0]?.name}`
@@ -108,7 +96,7 @@ export function ProfileConsistencyBanner({
             </h3>
 
             {/* Guidance text */}
-            <p className={`text-sm ${style.mutedColor} leading-relaxed mb-3`}>
+            <p className="text-sm text-[#4A4A4A] leading-relaxed mb-3">
               {analysis.guidance}
             </p>
 
@@ -133,15 +121,15 @@ export function ProfileConsistencyBanner({
 
             {/* Consistency score visual */}
             <div className="mb-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold text-[#1A1A1A]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-semibold text-[#1A1A1A]">
                   Profiel Consistentie
                 </span>
-                <span className="text-xs font-bold text-[#1A1A1A]">
+                <span className="text-sm font-bold text-[#1A1A1A]">
                   {analysis.score}%
                 </span>
               </div>
-              <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-[#E5E5E5] rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${analysis.score}%` }}

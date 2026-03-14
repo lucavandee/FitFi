@@ -89,77 +89,69 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden"
+      transition={{ duration: 0.6, delay: 0.2 }}
+      className="bg-white border border-[#E5E5E5] rounded-2xl p-8 mt-8"
     >
       {/* ── Header ── */}
-      <div className="px-5 pt-5 pb-4">
-        <div className="flex items-center justify-between gap-3 mb-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">
-            Op basis van jouw keuzes
-          </p>
-          <button
-            onClick={() => navigate('/onboarding')}
-            className="flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
-            aria-label="Pas antwoorden aan"
-          >
-            Pas aan <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
-        <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug">
-          Waarom dit rapport past bij{' '}
-          <span className="text-[var(--ff-color-primary-700)]">{archetypeName}</span>
-        </h3>
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A]">
+          Op basis van jouw keuzes
+        </p>
+        <button
+          onClick={() => navigate('/onboarding')}
+          className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+          aria-label="Pas antwoorden aan"
+        >
+          Pas aan <ArrowRight className="w-3.5 h-3.5" />
+        </button>
       </div>
-
-      {/* ── Divider ── */}
-      <div className="h-px bg-[var(--color-border)] mx-5" />
+      <h3 className="text-lg font-semibold text-[#1A1A1A] mb-8">
+        Waarom dit rapport past bij{' '}
+        <span className="text-[#C2654A]">{archetypeName}</span>
+      </h3>
 
       {/* ── Bullets ── */}
-      <ul className="px-5 py-4 space-y-0 divide-y divide-[var(--color-border)]">
+      <ul>
         {bullets.map((bullet, i) => (
           <motion.li
             key={i}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.15 + i * 0.07 }}
-            className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+            className="flex items-center justify-between py-4 border-b border-[#E5E5E5] last:border-none"
           >
-            <span className="w-5 h-5 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-              <Check className="w-2.5 h-2.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
-            </span>
-            <div className="flex-1 min-w-0 flex items-baseline justify-between gap-3">
-              <span className="text-sm font-semibold text-[var(--color-text)] flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
+                <Check className="w-3.5 h-3.5 text-[#C2654A]" strokeWidth={3} />
+              </div>
+              <span className="text-sm font-medium text-[#1A1A1A]">
                 {bullet.label}
               </span>
-              <span className="text-xs text-[var(--color-muted)] text-right leading-snug truncate">
-                {bullet.detail}
-              </span>
             </div>
+            <span className="text-sm text-[#8A8A8A] text-right leading-snug">
+              {bullet.detail}
+            </span>
           </motion.li>
         ))}
       </ul>
 
       {/* ── Photo upsell ── */}
       {!hasPhoto && (
-        <div className="mx-5 mb-5 mt-1 flex items-start gap-3 rounded-xl bg-[var(--ff-color-primary-25)] border border-[var(--ff-color-primary-100)] px-4 py-3">
-          <Camera className="w-4 h-4 text-[var(--ff-color-primary-500)] flex-shrink-0 mt-0.5" />
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-[var(--color-text)] mb-0.5">
-              Verfijn jouw kleuradvies
-            </p>
-            <p className="text-[11px] text-[var(--color-muted)] leading-relaxed">
-              Upload een selfie voor kleuranalyse op basis van jouw huidondertoon.{' '}
-              <button
-                onClick={() => navigate('/onboarding?step=photo')}
-                className="text-[var(--ff-color-primary-600)] font-semibold hover:underline"
-              >
-                Foto toevoegen →
-              </button>
+        <div className="bg-[#F5F0EB] rounded-xl p-4 mt-6 flex items-center gap-3">
+          <Camera className="w-5 h-5 text-[#C2654A] flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-[#4A4A4A]">
+              Upload een selfie voor kleuranalyse op basis van jouw huidondertoon.
             </p>
           </div>
+          <button
+            onClick={() => navigate('/onboarding?step=photo')}
+            className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] whitespace-nowrap transition-colors duration-200"
+          >
+            Foto toevoegen →
+          </button>
         </div>
       )}
     </motion.div>

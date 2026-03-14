@@ -133,26 +133,23 @@ export function PersonalizedAdviceSection({
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {sections.map((section) => (
         <div
           key={section.kicker}
-          className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden"
-          style={{ boxShadow: 'var(--shadow-soft)' }}
+          className="bg-[#F5F0EB] py-12 px-8 md:px-16 border-l-4 border-[#C2654A] rounded-r-2xl"
         >
-          <div className="px-5 sm:px-6 py-4 border-b border-[var(--color-border)]">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-0.5">{section.kicker}</p>
-            <h3 className="text-sm font-semibold text-[var(--color-text)]">{section.title}</h3>
-          </div>
-          <div className="divide-y divide-[var(--color-border)]">
+          <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">{section.kicker}</p>
+          <h3 className="text-xl font-bold text-[#1A1A1A] mb-6">{section.title}</h3>
+          <div className="space-y-5">
             {section.items.map((item, i) => (
-              <div key={i} className="px-5 sm:px-6 py-3 flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--ff-color-primary-600)]" aria-hidden="true" />
-                </span>
+              <div key={i} className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[var(--color-text)] leading-snug">{item.label}</p>
-                  <p className="text-xs text-[var(--color-muted)] mt-0.5 leading-relaxed">{item.detail}</p>
+                  <p className="text-sm font-semibold text-[#1A1A1A]">{item.label}</p>
+                  <p className="text-sm text-[#4A4A4A] mt-0.5">{item.detail}</p>
                 </div>
               </div>
             ))}

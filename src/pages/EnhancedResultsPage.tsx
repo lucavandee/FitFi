@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Check, Grid3x3, Layers, Palette, Eye } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Check, Grid3x3, Layers, Palette, Eye, Shirt } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -406,8 +406,7 @@ export default function EnhancedResultsPage() {
 
                 {/* Style name — Instrument Serif italic */}
                 <h1
-                  className="font-serif italic text-[#1A1A1A] leading-[1.05] mb-3"
-                  style={{ fontSize: 'clamp(3rem, 5vw, 4rem)' }}
+                  className="font-serif italic text-[56px] md:text-[64px] text-[#1A1A1A] leading-[1.05] tracking-[-1px] normal-case font-normal mb-3"
                 >
                   {archetypeName}
                 </h1>
@@ -488,7 +487,7 @@ export default function EnhancedResultsPage() {
                         setActiveTab(tab.id);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
+                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
                         isActive
                           ? 'font-semibold text-[#C2654A] border-[#C2654A]'
                           : 'font-medium text-[#8A8A8A] border-transparent hover:text-[#4A4A4A]'
@@ -586,37 +585,33 @@ export default function EnhancedResultsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-3">Verder verkennen</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 mb-8">
                 <button
                   onClick={() => { setActiveTab('stijl-dna'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center justify-between cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-[#F5F0EB] flex items-center justify-center shrink-0">
-                      <Palette className="w-5 h-5 text-[#C2654A]" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-base font-semibold text-[#1A1A1A]">Stijl DNA</p>
-                      <p className="text-sm text-[#8A8A8A]">Kleurprofiel, archetype &amp; tips</p>
-                    </div>
+                  <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F4E8E3] transition-colors duration-200">
+                    <Palette className="w-5 h-5 text-[#C2654A]" />
                   </div>
-                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 group-hover:text-[#C2654A] transition-colors" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-base font-semibold text-[#1A1A1A]">Stijl DNA</p>
+                    <p className="text-sm text-[#8A8A8A]">Kleurprofiel, archetype &amp; tips</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 ml-auto group-hover:text-[#C2654A] transition-colors duration-200" />
                 </button>
 
                 <button
                   onClick={() => { setActiveTab('outfits'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center justify-between cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-[#F5F0EB] flex items-center justify-center shrink-0">
-                      <ShoppingBag className="w-5 h-5 text-[#C2654A]" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-base font-semibold text-[#1A1A1A]">Outfits</p>
-                      <p className="text-sm text-[#8A8A8A]">{displayOutfits.length} looks voor jouw stijl</p>
-                    </div>
+                  <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F4E8E3] transition-colors duration-200">
+                    <Shirt className="w-5 h-5 text-[#C2654A]" />
                   </div>
-                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 group-hover:text-[#C2654A] transition-colors" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-base font-semibold text-[#1A1A1A]">Outfits</p>
+                    <p className="text-sm text-[#8A8A8A]">{displayOutfits.length} looks voor jouw stijl</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 ml-auto group-hover:text-[#C2654A] transition-colors duration-200" />
                 </button>
               </div>
             </div>
@@ -725,10 +720,10 @@ export default function EnhancedResultsPage() {
                       <ul className="space-y-3">
                         {activeColorProfile.notes && activeColorProfile.notes.map((note, i) => (
                           <li key={i} className="flex items-start gap-2.5">
-                            <span className="mt-0.5 w-4 h-4 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center shrink-0">
-                              <Check className="w-2.5 h-2.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} aria-hidden="true" />
-                            </span>
-                            <span className="text-sm text-[var(--color-text)] leading-snug">{note}</span>
+                            <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Check className="w-3 h-3 text-[#C2654A]" strokeWidth={3} aria-hidden="true" />
+                            </div>
+                            <span className="text-sm text-[#1A1A1A] leading-snug">{note}</span>
                           </li>
                         ))}
                       </ul>
