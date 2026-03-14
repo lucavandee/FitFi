@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Seo from '@/components/seo/Seo';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -7,7 +6,7 @@ import {
   Calendar,
   ArrowRight,
   Mail,
-  Filter,
+  SlidersHorizontal,
   X,
   ChevronDown,
   ChevronLeft,
@@ -17,13 +16,13 @@ import { getPublishedBlogPosts, transformBlogPostForUI, type UIBlogPost } from '
 
 function BlogCardSkeleton() {
   return (
-    <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden animate-pulse flex-shrink-0 w-[260px] sm:w-auto">
-      <div className="aspect-[16/9] bg-[var(--color-border)]" />
-      <div className="p-4 space-y-2">
-        <div className="h-4 bg-[var(--color-border)] rounded w-4/5" />
-        <div className="h-3 bg-[var(--color-border)] rounded w-2/3" />
-        <div className="h-3 bg-[var(--color-border)] rounded w-full" />
-        <div className="h-3 bg-[var(--color-border)] rounded w-3/4" />
+    <div className="bg-white rounded-2xl border border-[#E5E5E5] overflow-hidden animate-pulse h-full">
+      <div className="aspect-[16/10] bg-[#E5E5E5]" />
+      <div className="p-6 space-y-3">
+        <div className="h-4 bg-[#E5E5E5] rounded-full w-4/5" />
+        <div className="h-3 bg-[#E5E5E5] rounded-full w-2/3" />
+        <div className="h-3 bg-[#E5E5E5] rounded-full w-full" />
+        <div className="h-3 bg-[#E5E5E5] rounded-full w-3/4" />
       </div>
     </div>
   );
@@ -31,16 +30,25 @@ function BlogCardSkeleton() {
 
 type CardProps = {
   post: UIBlogPost;
+  style?: React.CSSProperties;
 };
 
-function BlogCard({ post }: CardProps) {
+function BlogCard({ post, style }: CardProps) {
+  const initials = post.author.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <article
-      className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lifted)] transition-shadow duration-200 flex flex-col group flex-shrink-0 w-[260px] sm:w-auto h-full"
+      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 group flex flex-col h-full"
+      style={style}
     >
       <a
         href={`/blog/${post.slug}`}
-        className="relative aspect-[16/9] bg-[var(--color-border)] overflow-hidden flex-shrink-0 block"
+        className="relative aspect-[16/10] overflow-hidden flex-shrink-0 block"
         tabIndex={-1}
         aria-hidden="true"
       >
@@ -51,48 +59,47 @@ function BlogCard({ post }: CardProps) {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 left-3">
-          <span
-            className="px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
-            style={{
-              background: 'rgba(255,255,255,0.92)',
-              backdropFilter: 'blur(4px)',
-              color: 'var(--ff-color-primary-700)',
-            }}
-          >
+          <span className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-[11px] font-semibold text-[#1A1A1A]">
             {post.category}
           </span>
         </div>
       </a>
 
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-bold text-sm sm:text-base leading-snug text-[var(--color-text)] mb-2 line-clamp-2 group-hover:text-[var(--ff-color-primary-700)] transition-colors">
+      <div className="p-6 flex flex-col flex-1">
+        <h3 className="text-lg font-bold text-[#1A1A1A] leading-snug mb-3 line-clamp-2 group-hover:text-[#C2654A] transition-colors duration-200">
           <a
             href={`/blog/${post.slug}`}
-            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded"
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 rounded"
           >
             {post.title}
           </a>
         </h3>
 
-        <div className="flex items-center gap-2 text-xs text-[var(--color-muted)] mb-2 min-w-0">
-          <img
-            src={post.author.avatar}
-            alt=""
-            aria-hidden="true"
-            className="w-5 h-5 rounded-full flex-shrink-0 object-cover"
-          />
-          <span className="truncate max-w-[80px]">{post.author.name}</span>
-          <span className="flex-shrink-0 opacity-40">·</span>
-          <span className="flex-shrink-0">{post.date}</span>
+        <div className="flex items-center gap-2.5 mb-3">
+          {post.author.avatar ? (
+            <img
+              src={post.author.avatar}
+              alt=""
+              aria-hidden="true"
+              className="w-6 h-6 rounded-full flex-shrink-0 object-cover"
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
+              <span className="text-[10px] font-bold text-[#C2654A]">{initials}</span>
+            </div>
+          )}
+          <span className="text-xs font-medium text-[#4A4A4A] truncate max-w-[80px]">{post.author.name}</span>
+          <span className="text-xs text-[#8A8A8A] opacity-60" aria-hidden="true">·</span>
+          <span className="text-xs text-[#8A8A8A] flex-shrink-0">{post.date}</span>
         </div>
 
-        <p className="text-xs sm:text-sm text-[var(--color-muted)] leading-relaxed line-clamp-2 flex-1 mb-3">
+        <p className="text-sm text-[#4A4A4A] leading-[1.6] line-clamp-2 mb-4 flex-1">
           {post.excerpt}
         </p>
 
         <div className="mt-auto">
-          <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ff-color-primary-700)]">
-            Lees meer <ArrowRight className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200">
+            Lees meer <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
       </div>
@@ -101,7 +108,6 @@ function BlogCard({ post }: CardProps) {
 }
 
 export default function BlogPage() {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -184,56 +190,61 @@ export default function BlogPage() {
         ogImage="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
       />
 
-      <div
-        className="bg-[var(--color-bg)] text-[var(--color-text)]"
-        style={{ minHeight: 'calc(100vh - 64px)' }}
-      >
+      <div className="min-h-screen bg-[#FAFAF8]">
 
-        {/* ── HERO ── */}
-        <section
-          className="relative overflow-hidden pt-44 pb-12 sm:pt-52 sm:pb-16 md:pb-20 border-b border-[var(--color-border)]"
-          style={{
-            background: 'linear-gradient(160deg, var(--ff-color-primary-50) 0%, var(--color-bg) 55%, var(--ff-color-primary-50) 100%)',
-          }}
-        >
-          <div className="ff-container">
-            <div className="max-w-3xl mx-auto text-center px-4 sm:px-6">
-              <p className="text-xs sm:text-sm font-medium uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>
-                Stijl & Mode
-              </p>
-              <h1
-                className="font-heading font-bold tracking-tight mb-4 text-[var(--color-text)]"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.1 }}
-              >
-                Inzichten voor jouw stijl
+        {/* ════════════════════════════════════════════════════
+            PAGE HERO
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className="max-w-3xl mx-auto text-center"
+              style={{
+                opacity: 0,
+                transform: 'translateY(40px)',
+                animation: 'revealUp 0.9s ease forwards',
+              }}
+            >
+              <div className="inline-flex items-center gap-2.5 mb-6">
+                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                  Stijl &amp; mode
+                </span>
+                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+              </div>
+
+              <h1 className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mb-6">
+                <span className="font-serif italic">Inzichten voor jouw </span>
+                <span className="font-sans font-bold">stijl</span>
               </h1>
-              <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-xl mx-auto leading-relaxed">
-                Praktische gidsen over silhouet, kleur en outfits — premium stijl, nuchtere uitleg.
+
+              <p className="text-lg text-[#4A4A4A] leading-[1.7] max-w-[520px] mx-auto">
+                Praktische gidsen over silhouet, kleur en outfits. Premium stijl, nuchtere uitleg.
               </p>
             </div>
           </div>
         </section>
 
-        {/* ── SEARCH + FILTER ── */}
-        <section className="ff-container py-6 sm:py-8">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-3">
-
-            <div className="flex gap-2">
+        {/* ════════════════════════════════════════════════════
+            ZOEKBALK + FILTERS
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8] py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-4 max-w-[880px] mx-auto">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A] pointer-events-none" />
                 <input
                   type="search"
                   placeholder="Zoek artikelen..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   aria-label="Zoek artikelen"
-                  className="w-full pl-11 pr-4 py-4 min-h-[52px] text-base rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-transparent transition-shadow shadow-[var(--shadow-soft)]"
-                  style={{ color: 'var(--color-text)' }}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white border border-[#E5E5E5] rounded-2xl text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200"
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
                     aria-label="Zoekopdracht wissen"
                   >
                     <X className="w-4 h-4" />
@@ -245,24 +256,16 @@ export default function BlogPage() {
                 onClick={() => setFiltersOpen((v) => !v)}
                 aria-expanded={filtersOpen}
                 aria-controls="filter-panel"
-                className={`relative flex items-center gap-2 px-4 min-h-[52px] rounded-xl border text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 flex-shrink-0 ${
+                className={`flex items-center gap-2 px-5 py-3.5 bg-white border rounded-2xl text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] transition-colors duration-200 flex-shrink-0 ${
                   filtersOpen || activeFiltersCount > 0
-                    ? 'border-[var(--ff-color-primary-700)]'
-                    : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]'
+                    ? 'border-[#C2654A] text-[#C2654A]'
+                    : 'border-[#E5E5E5]'
                 }`}
-                style={
-                  filtersOpen || activeFiltersCount > 0
-                    ? { background: 'var(--ff-color-primary-700)', color: 'var(--color-bg)' }
-                    : undefined
-                }
               >
-                <Filter className="w-4 h-4" />
+                <SlidersHorizontal className="w-4 h-4" />
                 <span className="hidden sm:inline">Filters</span>
                 {activeFiltersCount > 0 && (
-                  <span
-                    className="w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center"
-                    style={{ background: 'var(--color-bg)', color: 'var(--ff-color-primary-700)' }}
-                  >
+                  <span className="w-5 h-5 rounded-full bg-[#C2654A] text-white text-xs font-bold flex items-center justify-center">
                     {activeFiltersCount}
                   </span>
                 )}
@@ -273,15 +276,14 @@ export default function BlogPage() {
             {filtersOpen && (
               <div
                 id="filter-panel"
-                className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 shadow-[var(--shadow-soft)]"
+                className="max-w-[880px] mx-auto mt-3 bg-white border border-[#E5E5E5] rounded-2xl p-5"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">Categorie</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#8A8A8A]">Categorie</p>
                   {selectedCategory !== 'all' && (
                     <button
                       onClick={() => setSelectedCategory('all')}
-                      className="text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
-                      style={{ color: 'var(--ff-color-primary-700)' }}
+                      className="text-xs font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
                     >
                       Wis filter
                     </button>
@@ -293,12 +295,11 @@ export default function BlogPage() {
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
                       aria-pressed={selectedCategory === cat}
-                      className="px-4 py-2 rounded-full text-xs font-semibold border transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-1"
-                      style={
+                      className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
                         selectedCategory === cat
-                          ? { background: 'var(--ff-color-primary-700)', color: 'var(--color-bg)', borderColor: 'var(--ff-color-primary-700)' }
-                          : { background: 'var(--color-bg)', color: 'var(--color-text)', borderColor: 'var(--color-border)' }
-                      }
+                          ? 'bg-[#C2654A] text-white border-[#C2654A]'
+                          : 'bg-white text-[#1A1A1A] border-[#E5E5E5] hover:border-[#C2654A]'
+                      }`}
                     >
                       {cat === 'all' ? 'Alle artikelen' : cat}
                     </button>
@@ -308,116 +309,102 @@ export default function BlogPage() {
             )}
 
             {!filtersOpen && selectedCategory !== 'all' && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--color-muted)]">Filter:</span>
+              <div className="flex items-center gap-2 max-w-[880px] mx-auto mt-3">
+                <span className="text-xs text-[#8A8A8A]">Filter:</span>
                 <button
                   onClick={() => setSelectedCategory('all')}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold transition-colors"
-                  style={{
-                    background: 'var(--ff-color-primary-100)',
-                    color: 'var(--ff-color-primary-700)',
-                  }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F4E8E3] text-[#C2654A] transition-colors"
                 >
                   {selectedCategory}
                   <X className="w-3 h-3" />
                 </button>
               </div>
             )}
-
           </div>
         </section>
 
-        {/* ── FEATURED ARTICLE ── */}
+        {/* ════════════════════════════════════════════════════
+            UITGELICHT ARTIKEL
+        ════════════════════════════════════════════════════ */}
         {!loading && featuredPost && (
-          <section className="ff-container pb-8 sm:pb-10">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--ff-color-primary-600)' }}>Uitgelicht</p>
-
-              <article
-                className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-lifted)] group hover:shadow-[var(--shadow-elevated)] transition-shadow duration-200"
+          <section className="bg-[#FAFAF8] pb-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div
+                className="max-w-[1040px] mx-auto mb-16"
+                style={{
+                  opacity: 0,
+                  transform: 'translateY(40px)',
+                  animation: 'revealUp 0.9s ease 0.12s forwards',
+                }}
               >
-                <div className="relative h-52 sm:h-64 md:h-72 overflow-hidden">
-                  <img
-                    src={featuredPost.image}
-                    alt={featuredPost.title}
-                    loading="eager"
-                    fetchPriority="high"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: 'linear-gradient(to top, rgba(30,35,51,0.40) 0%, transparent 60%)' }}
-                  />
-                  <div className="absolute bottom-4 left-4">
-                    <span
-                      className="px-3 py-1 rounded-full text-xs font-bold shadow-sm"
-                      style={{ background: 'rgba(255,255,255,0.95)', color: 'var(--ff-color-primary-700)' }}
-                    >
-                      {featuredPost.category}
-                    </span>
-                  </div>
-                </div>
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-3">
+                  Uitgelicht
+                </p>
 
-                <div className="p-5 sm:p-7">
-                  <div className="flex items-center gap-3 text-xs text-[var(--color-muted)] mb-3">
-                    <div className="flex items-center gap-2">
-                      <img src={featuredPost.author.avatar} alt={featuredPost.author.name} className="w-6 h-6 rounded-full object-cover" />
-                      <span>{featuredPost.author.name}</span>
+                <article className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-shadow duration-300 group">
+                  <a href={`/blog/${featuredPost.slug}`} className="block relative w-full aspect-[21/9] overflow-hidden" tabIndex={-1} aria-hidden="true">
+                    <img
+                      src={featuredPost.image}
+                      alt={featuredPost.title}
+                      loading="eager"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(26,26,26,0.35) 0%, transparent 55%)' }} />
+                    <div className="absolute bottom-4 left-4">
+                      <span className="bg-white/90 backdrop-blur-sm rounded-full px-3.5 py-1.5 text-xs font-semibold text-[#1A1A1A]">
+                        {featuredPost.category}
+                      </span>
                     </div>
-                    <span aria-hidden="true">·</span>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>{featuredPost.date}</span>
-                    </div>
-                  </div>
+                  </a>
 
-                  <h2
-                    className="font-heading font-bold text-[var(--color-text)] mb-2 leading-snug group-hover:text-[var(--ff-color-primary-700)] transition-colors"
-                    style={{ fontSize: 'clamp(1.2rem, 3vw, 1.75rem)' }}
-                  >
+                  <div className="p-6 sm:p-8">
+                    <div className="flex items-center gap-3 text-xs text-[#8A8A8A] mb-4">
+                      <div className="flex items-center gap-2">
+                        <img src={featuredPost.author.avatar} alt={featuredPost.author.name} className="w-6 h-6 rounded-full object-cover" />
+                        <span className="text-[#4A4A4A] font-medium">{featuredPost.author.name}</span>
+                      </div>
+                      <span aria-hidden="true">·</span>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>{featuredPost.date}</span>
+                      </div>
+                    </div>
+
+                    <h2 className="text-2xl md:text-[28px] font-bold text-[#1A1A1A] leading-snug mb-3 group-hover:text-[#C2654A] transition-colors duration-200">
+                      <a href={`/blog/${featuredPost.slug}`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 rounded">
+                        {featuredPost.title}
+                      </a>
+                    </h2>
+
+                    <p className="text-base text-[#4A4A4A] leading-relaxed mb-6 line-clamp-3 max-w-2xl">
+                      {featuredPost.excerpt}
+                    </p>
+
                     <a
                       href={`/blog/${featuredPost.slug}`}
-                      className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] rounded"
+                      className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                     >
-                      {featuredPost.title}
+                      Lees artikel
+                      <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </a>
-                  </h2>
-
-                  <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed mb-5 line-clamp-3">
-                    {featuredPost.excerpt}
-                  </p>
-
-                  <a
-                    href={`/blog/${featuredPost.slug}`}
-                    className="inline-flex items-center gap-2 px-5 min-h-[44px] rounded-xl font-semibold text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                    style={{
-                      background: 'var(--ff-color-primary-700)',
-                      color: 'var(--color-bg)',
-                    }}
-                  >
-                    Lees artikel
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </a>
-                </div>
-              </article>
+                  </div>
+                </article>
+              </div>
             </div>
           </section>
         )}
 
-        {/* ── ARTIKEL GRID / CARROUSEL ── */}
-        <section className="ff-container pb-12 sm:pb-16">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        {/* ════════════════════════════════════════════════════
+            ARTIKEL GRID
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8] pb-16 md:pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div className="flex items-center justify-between mb-5">
-              <h2
-                className="font-heading font-bold text-[var(--color-text)]"
-                style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)' }}
-              >
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-bold text-[#1A1A1A]">
                 {searchTerm || selectedCategory !== 'all' ? 'Resultaten' : 'Alle artikelen'}
                 {!loading && (
-                  <span className="ml-2 text-xs font-normal text-[var(--color-muted)]">
-                    ({carouselPosts.length})
-                  </span>
+                  <span className="text-[#8A8A8A] font-normal ml-1">({carouselPosts.length})</span>
                 )}
               </h2>
 
@@ -426,14 +413,14 @@ export default function BlogPage() {
                   <button
                     onClick={() => scrollCarousel('left')}
                     aria-label="Vorige artikelen"
-                    className="w-11 h-11 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
+                    className="w-11 h-11 rounded-full border border-[#E5E5E5] bg-white flex items-center justify-center text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#C2654A] transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => scrollCarousel('right')}
                     aria-label="Volgende artikelen"
-                    className="w-11 h-11 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)]"
+                    className="w-11 h-11 rounded-full border border-[#E5E5E5] bg-white flex items-center justify-center text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#C2654A] transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -443,32 +430,30 @@ export default function BlogPage() {
 
             {loading ? (
               <>
-                <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:hidden scrollbar-hide snap-x snap-mandatory">
+                <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:hidden" style={{ scrollbarWidth: 'none' }}>
                   {[...Array(4)].map((_, i) => <BlogCardSkeleton key={i} />)}
                 </div>
-                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[...Array(6)].map((_, i) => <BlogCardSkeleton key={i} />)}
                 </div>
               </>
             ) : error ? (
               <div className="text-center py-16">
-                <p className="text-[var(--color-muted)] text-sm mb-4">{error}</p>
+                <p className="text-[#8A8A8A] text-sm mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-4 min-h-[44px] rounded-xl text-sm font-semibold transition-colors"
-                  style={{ background: 'var(--ff-color-primary-700)', color: 'var(--color-bg)' }}
+                  className="px-6 py-3 rounded-xl text-sm font-semibold bg-[#C2654A] text-white hover:bg-[#A8513A] transition-colors"
                 >
                   Probeer opnieuw
                 </button>
               </div>
             ) : carouselPosts.length === 0 ? (
               <div className="text-center py-16">
-                <p className="font-semibold text-[var(--color-text)] mb-1">Geen artikelen gevonden</p>
-                <p className="text-sm text-[var(--color-muted)] mb-4">Probeer een andere zoekterm of filter.</p>
+                <p className="font-semibold text-[#1A1A1A] mb-1">Geen artikelen gevonden</p>
+                <p className="text-sm text-[#8A8A8A] mb-4">Probeer een andere zoekterm of filter.</p>
                 <button
                   onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }}
-                  className="text-sm font-semibold hover:underline"
-                  style={{ color: 'var(--ff-color-primary-700)' }}
+                  className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
                 >
                   Alle artikelen tonen
                 </button>
@@ -477,22 +462,29 @@ export default function BlogPage() {
               <>
                 <div
                   ref={carouselRef}
-                  className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:hidden scrollbar-hide snap-x snap-mandatory"
+                  className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:hidden snap-x snap-mandatory"
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   role="list"
                   aria-label="Artikelen carrousel"
                 >
                   {carouselPosts.map((post) => (
-                    <div key={post.id} className="snap-start" role="listitem">
+                    <div key={post.id} className="snap-start flex-shrink-0 w-[280px]" role="listitem">
                       <BlogCard post={post} />
                     </div>
                   ))}
                 </div>
 
-                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:auto-rows-fr" role="list">
-                  {carouselPosts.map((post) => (
+                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:auto-rows-fr" role="list">
+                  {carouselPosts.map((post, i) => (
                     <div key={post.id} role="listitem">
-                      <BlogCard post={post} />
+                      <BlogCard
+                        post={post}
+                        style={{
+                          opacity: 0,
+                          transform: 'translateY(40px)',
+                          animation: `revealUp 0.9s ease ${0.06 * i}s forwards`,
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -502,81 +494,63 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* ── NEWSLETTER ── */}
-        <section className="ff-container pb-16 sm:pb-20">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <div
-              className="relative rounded-2xl p-8 sm:p-10 text-center overflow-hidden shadow-2xl"
-              style={{
-                background: 'linear-gradient(135deg, var(--ff-color-primary-600) 0%, var(--ff-color-primary-700) 100%)',
-              }}
-            >
-              <div
-                className="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-2xl pointer-events-none"
-                style={{ background: 'rgba(247,243,236,0.10)' }}
-                aria-hidden="true"
-              />
-              <div
-                className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full blur-2xl pointer-events-none"
-                style={{ background: 'rgba(247,243,236,0.10)' }}
-                aria-hidden="true"
-              />
-
-              <div className="relative">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ background: 'rgba(247,243,236,0.20)' }}
-                >
-                  <Mail className="w-6 h-6" style={{ color: 'rgba(247,243,236,0.95)' }} />
-                </div>
-                <h2
-                  className="font-heading font-bold mb-2"
-                  style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: 'rgba(247,243,236,0.98)' }}
-                >
-                  Blijf op de hoogte
-                </h2>
-                <p
-                  className="text-sm sm:text-base mb-6 max-w-sm mx-auto"
-                  style={{ color: 'rgba(247,243,236,0.80)' }}
-                >
-                  Nieuwste stijltips en mode-inzichten direct in je inbox.
-                </p>
-
-                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
-                  <label htmlFor="newsletter-email" className="sr-only">E-mailadres</label>
-                  <input
-                    id="newsletter-email"
-                    type="email"
-                    placeholder="Je e-mailadres"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                    className="flex-1 px-4 py-4 min-h-[52px] rounded-xl text-base focus:outline-none focus:ring-2 placeholder:text-[var(--color-muted)]"
-                    style={{
-                      background: 'var(--color-surface)',
-                      color: 'var(--color-text)',
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={!email}
-                    className="px-5 min-h-[52px] rounded-xl font-semibold text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
-                    style={{
-                      background: 'rgba(247,243,236,0.20)',
-                      color: 'rgba(247,243,236,0.95)',
-                      borderColor: 'rgba(247,243,236,0.30)',
-                    }}
-                  >
-                    {isSubscribed ? 'Aangemeld!' : 'Aanmelden'}
-                  </button>
-                </form>
-              </div>
+        {/* ════════════════════════════════════════════════════
+            NEWSLETTER
+        ════════════════════════════════════════════════════ */}
+        <section className="py-24 bg-[#FAFAF8]">
+          <div
+            className="max-w-[640px] mx-auto text-center px-6"
+            style={{
+              opacity: 0,
+              transform: 'translateY(40px)',
+              animation: 'revealUp 0.9s ease 0.1s forwards',
+            }}
+          >
+            <div className="w-14 h-14 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-6">
+              <Mail className="w-6 h-6 text-[#C2654A]" />
             </div>
+
+            <h3 className="font-serif italic text-3xl text-[#1A1A1A] mb-3">
+              Blijf op de hoogte
+            </h3>
+
+            <p className="text-base text-[#4A4A4A] mb-8">
+              Nieuwste stijltips en mode-inzichten direct in je inbox.
+            </p>
+
+            <form onSubmit={handleNewsletterSubmit} className="flex gap-3 max-w-[460px] mx-auto">
+              <label htmlFor="newsletter-email" className="sr-only">E-mailadres</label>
+              <input
+                id="newsletter-email"
+                type="email"
+                placeholder="Je e-mailadres"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                className="flex-1 bg-white border border-[#E5E5E5] rounded-full py-3.5 px-6 text-sm text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200"
+              />
+              <button
+                type="submit"
+                disabled={!email}
+                className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 px-8 rounded-full transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubscribed ? 'Aangemeld!' : 'Aanmelden'}
+              </button>
+            </form>
           </div>
         </section>
 
       </div>
+
+      <style>{`
+        @keyframes revealUp {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </>
   );
 }
