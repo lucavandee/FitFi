@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
+import { Chrome as Home, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '@/context/UserContext';
 
@@ -92,8 +92,8 @@ const MobileBottomNav: React.FC = () => {
       >
         {/* Backdrop blur container */}
         <div
-          className="bg-[var(--color-surface)]/96 backdrop-blur-xl border-t border-[var(--color-border)]"
-          style={{ boxShadow: "0 -4px 24px rgba(30,35,51,0.08)" }}
+          className="bg-white/96 backdrop-blur-xl border-t border-[#E5E5E5]"
+          style={{ boxShadow: "0 -4px 24px rgba(26,26,26,0.08)" }}
         >
           {/* safe area spacer for notched phones */}
           <div className="max-w-screen-sm mx-auto px-1" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
@@ -115,7 +115,7 @@ const MobileBottomNav: React.FC = () => {
                           <motion.div
                             layoutId="bottomNavIndicator"
                             className="absolute inset-1 rounded-xl"
-                            style={{ backgroundColor: "var(--ff-color-primary-50)" }}
+                            style={{ backgroundColor: "#F4E8E3" }}
                             initial={false}
                             transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                           />
@@ -125,16 +125,16 @@ const MobileBottomNav: React.FC = () => {
                           <Icon
                             className={`w-[22px] h-[22px] transition-colors ${
                               active
-                                ? 'text-[var(--ff-color-primary-700)]'
-                                : 'text-[var(--color-text)]/50 group-hover:text-[var(--color-text)]/80'
+                                ? 'text-[#C2654A]'
+                                : 'text-[#8A8A8A] group-hover:text-[#4A4A4A]'
                             }`}
                             strokeWidth={active ? 2.5 : 1.8}
                           />
                           <span
                             className={`text-[10px] font-semibold leading-none transition-colors ${
                               active
-                                ? 'text-[var(--ff-color-primary-700)]'
-                                : 'text-[var(--color-text)]/50 group-hover:text-[var(--color-text)]/80'
+                                ? 'text-[#C2654A]'
+                                : 'text-[#8A8A8A] group-hover:text-[#4A4A4A]'
                             }`}
                           >
                             {item.label}
