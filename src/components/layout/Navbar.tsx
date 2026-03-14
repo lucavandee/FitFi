@@ -8,7 +8,7 @@ const HOME_PATHS = ["/", ""];
 
 /**
  * Eén premium Navbar:
- * - Sticky + lichte blur
+ * - Floating pill design met blur
  * - Transparent op homepage hero, solid na scroll (>60px)
  * - Desktop: links + (Login/Start gratis) of (Dashboard/Uitloggen) bij auth
  * - Mobiel: sheet met dezelfde opties
@@ -138,157 +138,166 @@ export default function Navbar() {
   const isTransparent = isHome && !scrolled;
   const navTextClass = isTransparent
     ? "text-white/70 hover:text-white"
-    : "text-[#4A4A4A] hover:text-[#1A1A1A]";
+    : "text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80";
   const navActiveTextClass = isTransparent
     ? "text-white font-semibold"
-    : "text-[#1A1A1A] font-semibold";
+    : "text-[#1A1A1A] font-semibold bg-[#F5F0EB]";
   const hamburgerStroke = isTransparent ? "#FFFFFF" : "#1A1A1A";
 
   return (
     <header
-      className={[
-        "fixed top-0 w-full z-40 transition-all duration-300",
-        isTransparent
-          ? "bg-transparent"
-          : "bg-[#FAFAF8]/90 backdrop-blur-[24px] border-b border-[#E5E5E5]/60",
-      ].join(" ")}
+      className="fixed top-0 w-full z-[100]"
       role="banner"
     >
       {/* Skip to content */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[110] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
       >
         Naar hoofdinhoud
       </a>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <a
-          href="/"
-          className="flex-shrink-0 inline-flex items-center rounded-xl px-2 py-2 min-h-[44px] transition-opacity hover:opacity-85"
-          aria-label="FitFi Home"
+      {/* Outer container with padding around the pill */}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-4">
+        {/* The pill */}
+        <div
+          className={[
+            "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-300",
+            isTransparent
+              ? "bg-transparent border border-transparent shadow-none"
+              : "bg-white/85 backdrop-blur-[20px] border border-[#E5E5E5]/50 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:border-[#E5E5E5]/80",
+          ].join(" ")}
         >
-          <Logo size="sm" variant={isTransparent ? "light" : "default"} />
-        </a>
+          {/* Brand */}
+          <a
+            href="/"
+            className="flex-shrink-0 inline-flex items-center min-h-[44px] transition-opacity hover:opacity-85"
+            aria-label="FitFi Home"
+          >
+            <Logo size="sm" variant={isTransparent ? "light" : "default"} />
+          </a>
 
-        {/* Desktop nav - Center */}
-        <nav className="hidden md:flex items-center gap-8" aria-label="Hoofdmenu">
-          {links.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              className={({ isActive }) =>
-                [
-                  "text-sm border-0 bg-transparent rounded-none p-0 shadow-none outline-none ring-0 transition-colors duration-200",
-                  isActive ? navActiveTextClass : `font-medium ${navTextClass}`,
-                ].join(" ")
-              }
-            >
-              {l.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Desktop CTA's */}
-        <div className="hidden md:flex items-center gap-3">
-          {!isAuthed ? (
-            <>
-              <a
-                href="/inloggen"
-                className={`text-sm font-medium transition-colors duration-200 ${navTextClass}`}
-                data-event="nav_login"
+          {/* Desktop nav - Center */}
+          <nav className="hidden md:flex items-center gap-1 mx-auto" aria-label="Hoofdmenu">
+            {links.map((l) => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                className={({ isActive }) =>
+                  [
+                    "text-[13px] px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none outline-none ring-0",
+                    isActive ? navActiveTextClass : `font-medium ${navTextClass}`,
+                  ].join(" ")
+                }
               >
-                Inloggen
-              </a>
-              {!isHome && (
+                {l.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Desktop CTA's */}
+          <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+            {!isAuthed ? (
+              <>
+                <a
+                  href="/inloggen"
+                  className={[
+                    "text-[13px] font-medium px-[18px] py-2 rounded-full transition-all duration-200",
+                    isTransparent
+                      ? "text-white/70 hover:text-white hover:bg-white/10"
+                      : "text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
+                  ].join(" ")}
+                  data-event="nav_login"
+                >
+                  Inloggen
+                </a>
                 <a
                   href="/registreren"
-                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-2.5 px-5 rounded-xl transition-colors duration-200"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white text-[13px] font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
                   data-event="nav_start_gratis"
                 >
                   Begin gratis
                 </a>
-              )}
-            </>
-          ) : (
-            <>
-              <a
-                href="/dashboard"
-                className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-2.5 px-5 rounded-xl transition-colors duration-200 inline-flex items-center gap-2"
-                data-event="nav_dashboard"
-              >
-                Dashboard
-                {savedOutfitsCount > 0 && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[#A8513A] text-white text-xs font-bold rounded-full">
-                    <Heart className="w-3 h-3 fill-white" />
-                    {savedOutfitsCount}
-                  </span>
-                )}
-              </a>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className={`text-sm font-medium transition-colors duration-200 ${navTextClass}`}
-                data-event="nav_logout"
-              >
-                Uitloggen
-              </button>
-              <div
-                aria-hidden="true"
-                className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-[#C2654A]/10 text-[#C2654A] select-none"
-              >
-                <span className="text-sm font-semibold">{userInitial}</span>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/dashboard"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white text-[13px] font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2"
+                  data-event="nav_dashboard"
+                >
+                  Dashboard
+                  {savedOutfitsCount > 0 && (
+                    <span className="flex items-center gap-1 px-2 py-0.5 bg-[#A8513A] text-white text-xs font-bold rounded-full">
+                      <Heart className="w-3 h-3 fill-white" />
+                      {savedOutfitsCount}
+                    </span>
+                  )}
+                </a>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="text-[13px] font-medium text-[#8A8A8A] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
+                  data-event="nav_logout"
+                >
+                  Uitloggen
+                </button>
+                <div
+                  aria-hidden="true"
+                  className="w-[34px] h-[34px] rounded-[10px] bg-[#F4E8E3] flex items-center justify-center text-xs font-bold text-[#C2654A] cursor-pointer transition-all duration-200 hover:bg-[#C2654A] hover:text-white hover:scale-105 ml-1 select-none"
+                >
+                  <span>{userInitial}</span>
+                </div>
+              </>
+            )}
+          </div>
 
-        {/* Mobile toggle - 44px touch target */}
-        <button
-          ref={toggleRef}
-          type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
-          aria-label={open ? "Menu sluiten" : "Menu openen"}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={hamburgerStroke}
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={hamburgerStroke}
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M4 12h16" />
-              <path d="M4 6h16" />
-              <path d="M4 18h16" />
-            </svg>
-          )}
-        </button>
+          {/* Mobile toggle - 44px touch target */}
+          <button
+            ref={toggleRef}
+            type="button"
+            className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
+            aria-label={open ? "Menu sluiten" : "Menu openen"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={hamburgerStroke}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={hamburgerStroke}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 12h16" />
+                <path d="M4 6h16" />
+                <path d="M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile sheet */}
