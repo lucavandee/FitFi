@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import {
   Check,
-  Star,
-  Zap,
-  Crown,
+  X,
+  Shield,
+  Users,
+  CreditCard,
+  ArrowRight,
+  Plus,
   Loader as Loader2,
   CircleAlert as AlertCircle,
-  X,
-  Users,
-  TrendingUp,
-  Shield,
-  ArrowRight,
-  Minus,
-  Info,
-  ChevronDown,
-  Sparkles,
 } from "lucide-react";
 import { useStripeProducts } from "@/hooks/useStripeProducts";
 import { useCreateCheckout } from "@/hooks/useCreateCheckout";
@@ -24,70 +18,76 @@ import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 
-const FEATURE_ROWS: Array<{
+/* ─── Reveal hook ─────────────────────────────────────────────────────────── */
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, visible };
+}
+
+/* ─── Reveal wrapper ──────────────────────────────────────────────────────── */
+function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const { ref, visible } = useReveal();
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(40px)",
+        transition: `opacity 0.9s cubic-bezier(.22,1,.36,1) ${delay}s, transform 0.9s cubic-bezier(.22,1,.36,1) ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── Feature comparison rows ─────────────────────────────────────────────── */
+const COMPARISON_ROWS: Array<{
   label: string;
-  note?: string;
   free: string | boolean;
   premium: string | boolean;
-  founder: string | boolean;
 }> = [
-  { label: "Stijlprofiel analyse", free: true, premium: true, founder: true },
-  { label: "Outfit-combinaties", note: "Inclusief do's & don'ts per outfit", free: "3 outfits", premium: "Onbeperkt", founder: "Onbeperkt" },
-  { label: "Shoplinks", note: "Directe links naar webshops", free: true, premium: true, founder: true },
-  { label: "Stijladvies aanpasbaar", note: "Hermaak je rapport na nieuwe antwoorden", free: true, premium: true, founder: true },
-  { label: "Nova AI-assistent", note: "Chat 24/7 met je stijlcoach", free: false, premium: true, founder: true },
-  { label: "Kleuranalyse (foto)", note: "Alleen als je een foto uploadt of ondertoon deelt", free: false, premium: true, founder: true },
-  { label: "Shopping cheatsheet", note: "Uitgebreide kleuren- en combinatiegids op maat", free: false, premium: true, founder: true },
-  { label: "Smart learning", note: "Systeem leert van je feedback", free: false, premium: true, founder: true },
-  { label: "Founder badge & beta toegang", free: false, premium: false, founder: true },
-  { label: "Prioritaire support", free: false, premium: false, founder: true },
+  { label: "Stijlprofiel analyse", free: true, premium: true },
+  { label: "Gepersonaliseerde outfits", free: "3", premium: "Onbeperkt" },
+  { label: "Directe shoplinks", free: true, premium: true },
+  { label: "Rapport aanpasbaar", free: true, premium: true },
+  { label: "Kleuranalyse (foto)", free: false, premium: true },
+  { label: "Nova AI-assistent", free: false, premium: true },
+  { label: "Shopping cheatsheet", free: false, premium: true },
+  { label: "Smart learning", free: false, premium: true },
 ];
 
-function FeatureDot({ value }: { value: string | boolean }) {
-  if (value === false) {
-    return (
-      <div
-        className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 opacity-40"
-        style={{ background: "var(--color-border)" }}
-        aria-label="Niet inbegrepen"
-      >
-        <Minus className="w-3 h-3 text-[var(--color-muted)]" />
-      </div>
-    );
-  }
-  return (
-    <div
-      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-      style={{ background: "var(--ff-color-primary-100)" }}
-      aria-label={typeof value === "string" ? value : "Inbegrepen"}
-    >
-      <Check className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={3} />
-    </div>
-  );
-}
-
-function FeatureDotInverted({ value }: { value: string | boolean }) {
-  if (value === false) {
-    return (
-      <div
-        className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 opacity-40"
-        style={{ background: "rgba(247,243,236,0.10)" }}
-        aria-label="Niet inbegrepen"
-      >
-        <Minus className="w-3 h-3" style={{ color: "rgba(247,243,236,0.80)" }} />
-      </div>
-    );
-  }
-  return (
-    <div
-      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-      style={{ background: "rgba(247,243,236,0.20)" }}
-      aria-label="Inbegrepen"
-    >
-      <Check className="w-3.5 h-3.5" style={{ color: "rgba(247,243,236,0.95)" }} strokeWidth={3} />
-    </div>
-  );
-}
+/* ─── FAQ data ────────────────────────────────────────────────────────────── */
+const FAQ_ITEMS = [
+  {
+    q: "Wat blijft altijd beschikbaar met Free?",
+    a: "Je stijlprofiel, 3 gepersonaliseerde outfits, directe shoplinks en de mogelijkheid om je rapport aan te passen. Free is geen proefperiode — het blijft altijd beschikbaar.",
+  },
+  {
+    q: "Wat krijg ik met Premium precies?",
+    a: "Onbeperkte outfits voor alle gelegenheden, kleuranalyse op basis van je foto, de Nova AI-assistent voor persoonlijke stijlvragen, een shopping cheatsheet en smart learning dat je aanbevelingen steeds beter maakt.",
+  },
+  {
+    q: "Kan ik maandelijks opzeggen?",
+    a: "Ja, je kunt je Premium abonnement op elk moment opzeggen. Je houdt toegang tot het einde van je betaalperiode. Daarna ga je terug naar Free.",
+  },
+  {
+    q: "Hoe werkt de geld-terug-garantie?",
+    a: "Als je binnen 30 dagen na je eerste betaling niet tevreden bent, krijg je je geld volledig terug. Geen vragen, geen gedoe.",
+  },
+];
 
 export default function PricingPage() {
   const navigate = useNavigate();
@@ -96,7 +96,7 @@ export default function PricingPage() {
   const createCheckout = useCreateCheckout();
   const [checkingAuth, setCheckingAuth] = useState(false);
   const [showCancelBanner, setShowCancelBanner] = useState(false);
-  const [matrixOpen, setMatrixOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const founderProduct = products?.find((p) => p.interval === "one_time");
   const premiumProduct = products?.find((p) => p.interval === "month");
@@ -170,8 +170,6 @@ export default function PricingPage() {
   const founderPrice = isLoading
     ? "149"
     : Math.round(founderPriceNum).toString();
-  const breakEvenMonths =
-    premiumPriceNum > 0 ? Math.ceil(founderPriceNum / premiumPriceNum) : 15;
   const isPending = createCheckout.isPending || checkingAuth;
 
   return (
@@ -180,31 +178,23 @@ export default function PricingPage() {
         title="Prijzen — FitFi"
         description="Free geeft je 3 outfits en shoplinks. Met Premium krijg je onbeperkte outfits, kleuranalyse en een persoonlijke stylist. Vergelijk plannen en kies wat bij jou past."
         path="/prijzen"
-
         ogImage="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
       />
 
-      {/* FIX #1: geen <main> hier — app-shell beheert dit */}
-      <div className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <div className="bg-[#FAFAF8] text-[#1A1A1A]">
 
         {/* ── Checkout-geannuleerd banner ── */}
         {showCancelBanner && (
-          <div
-            className="border-b border-[var(--color-border)]"
-            style={{ background: "var(--ff-color-warning-50)" }}
-          >
-            <div className="ff-container py-3 sm:py-4">
+          <div className="border-b border-[#E5E5E5] bg-[#FFF8F0]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
               <div className="flex items-center justify-between max-w-4xl mx-auto gap-3">
                 <div className="flex items-center gap-3">
-                  <AlertCircle
-                    className="w-5 h-5 flex-shrink-0"
-                    style={{ color: "var(--ff-color-warning-600)" }}
-                  />
+                  <AlertCircle className="w-5 h-5 flex-shrink-0 text-[#D4913D]" />
                   <div>
-                    <p className="font-semibold text-[var(--color-text)] text-sm">
+                    <p className="font-semibold text-[#1A1A1A] text-sm">
                       Checkout geannuleerd
                     </p>
-                    <p className="text-xs text-[var(--color-muted)]">
+                    <p className="text-xs text-[#8A8A8A]">
                       Geen zorgen — je kunt altijd later upgraden.
                     </p>
                   </div>
@@ -217,16 +207,14 @@ export default function PricingPage() {
                         handleCheckout(premiumProduct.id);
                       }}
                       disabled={isPending}
-                      className="px-4 py-2 min-h-[44px] text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
-                      style={{ background: "var(--ff-color-primary-600)" }}
+                      className="px-4 py-2 min-h-[44px] bg-[#C2654A] text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap hover:bg-[#A8513A]"
                     >
                       Probeer opnieuw
                     </button>
                   )}
                   <button
                     onClick={handleCloseCancelBanner}
-                    className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors hover:bg-[var(--ff-color-primary-50)]"
-                    style={{ color: "var(--ff-color-warning-600)" }}
+                    className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors hover:bg-[#F4E8E3] text-[#D4913D]"
                     aria-label="Sluit melding"
                   >
                     <X className="w-4 h-4" />
@@ -237,258 +225,180 @@ export default function PricingPage() {
           </div>
         )}
 
-        {/* ── HERO ── */}
-        {/*
-          FIX #3: Geen `via-white` of `accent-50` tokens (bestaan niet).
-          Vervangen door goedgekeurde tokens: primary-50 → color-bg.
-        */}
-        <section
-          className="relative overflow-hidden py-14 sm:py-20"
-          style={{
-            background:
-              "linear-gradient(160deg, var(--ff-color-primary-50) 0%, var(--color-bg) 55%, var(--ff-color-primary-50) 100%)",
-          }}
-          aria-labelledby="pricing-heading"
-        >
-          <div className="ff-container relative">
-            <div className="max-w-3xl mx-auto text-center">
-              {/* Social-proof badge */}
-              <div
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
-                style={{ background: "var(--color-surface)" }}
-              >
-                <Users
-                  className="w-4 h-4 flex-shrink-0"
-                  style={{ color: "var(--ff-color-primary-600)" }}
-                  aria-hidden="true"
-                />
-                <span className="text-xs sm:text-sm font-medium">
-                  2.500+ gebruikers ontdekten hun stijl
+        {/* ════════════════════════════════════════════════════
+            1. PAGE HERO
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#F5F0EB] pt-40 pb-24 md:pt-48 md:pb-28 text-center" aria-labelledby="pricing-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Eyebrow */}
+            <Reveal>
+              <div className="flex items-center justify-center gap-3 mb-8">
+                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                  Prijzen
                 </span>
+                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
               </div>
+            </Reveal>
 
-              {/*
-                FIX #4: font-heading class + clamp() voor responsieve heading.
-                Geen arbitraire Tailwind-breakpoint font-sizes.
-              */}
+            {/* Headline */}
+            <Reveal delay={0.12}>
               <h1
                 id="pricing-heading"
-                className="font-heading font-bold tracking-tight mb-4 text-[var(--color-text)]"
-                style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", lineHeight: 1.1 }}
+                className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6"
               >
-                Jouw stijl, jouw keuze
+                <span className="font-serif italic">Jouw stijl, jouw </span>
+                <span className="font-sans font-bold" style={{ letterSpacing: "-2px" }}>keuze</span>
               </h1>
+            </Reveal>
 
-              <p className="text-base sm:text-lg text-[var(--color-muted)] mb-8 max-w-2xl mx-auto leading-relaxed">
-                Free blijft altijd bruikbaar. Met Premium krijg je kleuranalyse,
-                onbeperkte outfits en een persoonlijke stylist die vragen beantwoordt.
+            {/* Subtitle */}
+            <Reveal delay={0.24}>
+              <p className="text-lg text-[#4A4A4A] max-w-[480px] mx-auto mb-8">
+                Free blijft altijd bruikbaar. Premium geeft je het volledige plaatje met kleuranalyse, meer outfits en persoonlijk advies.
               </p>
+            </Reveal>
 
-              {/* Trust-checkmarks */}
-              <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-[var(--color-text)]">
+            {/* Trust pills */}
+            <Reveal delay={0.36}>
+              <div className="flex items-center justify-center gap-6 flex-wrap">
                 {[
-                  "30 dagen geld-terug-garantie",
-                  "Maandelijks opzegbaar",
-                  "Geen creditcard voor Free",
-                ].map((label) => (
-                  <div key={label} className="flex items-center gap-2">
-                    <Check
-                      className="w-4 h-4 flex-shrink-0"
-                      style={{ color: "var(--ff-color-success-600)" }}
-                      aria-hidden="true"
-                    />
+                  { icon: Shield, label: "30 dagen geld-terug-garantie" },
+                  { icon: Users, label: "Maandelijks opzegbaar" },
+                  { icon: CreditCard, label: "Geen creditcard voor Free" },
+                ].map(({ icon: Icon, label }) => (
+                  <div key={label} className="flex items-center gap-1.5 text-[13px] font-medium text-[#4A4A4A]">
+                    <Icon className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
                     <span>{label}</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* ── PRICING CARDS ── */}
-        <section className="py-10 sm:py-14" aria-labelledby="plans-heading">
+        {/* ════════════════════════════════════════════════════
+            2. PRICING CARDS
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8] py-20 pb-28" aria-labelledby="plans-heading">
           <h2 id="plans-heading" className="sr-only">Prijsplannen</h2>
-          <div className="ff-container">
-            <div className="max-w-2xl lg:max-w-5xl mx-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[880px] mx-auto">
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-
-                {/* ── Free Plan ── */}
-                <article
-                  className="rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)] flex flex-col"
-                  style={{ background: "var(--color-surface)" }}
-                >
-                  <div
-                    className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide self-start mb-4"
-                    style={{
-                      background: "var(--color-bg)",
-                      color: "var(--color-muted)",
-                    }}
-                  >
+              {/* ── Free Card ── */}
+              <Reveal>
+                <article className="bg-white border border-[#E5E5E5] rounded-[28px] p-12 hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full">
+                  {/* Badge */}
+                  <div className="bg-[#F5F0EB] text-[#4A4A4A] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Altijd gratis
                   </div>
-                  <h3
-                    className="font-heading font-bold mb-2 text-[var(--color-text)]"
-                    style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)" }}
-                  >
-                    Gratis
-                  </h3>
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span
-                      className="font-bold text-[var(--color-text)]"
-                      style={{ fontSize: "clamp(2.5rem, 5vw, 3rem)" }}
-                    >
-                      €0
-                    </span>
+
+                  {/* Name */}
+                  <h3 className="font-serif italic text-[32px] text-[#1A1A1A] mb-2">Free</h3>
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-[56px] font-extrabold text-[#1A1A1A] tracking-[-2px] leading-none">€0</span>
                   </div>
-                  <p className="text-sm text-[var(--color-muted)] mb-6">
-                    Voor altijd — geen creditcard
-                  </p>
 
-                  <ul className="space-y-3 flex-1 mb-6" role="list">
+                  {/* Note */}
+                  <p className="text-[13px] text-[#8A8A8A] mb-8">Voor altijd, geen creditcard nodig</p>
+
+                  {/* Divider */}
+                  <div className="w-full h-px bg-[#E5E5E5] mb-8" />
+
+                  {/* Label */}
+                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#8A8A8A] mb-4">Wat je krijgt</p>
+
+                  {/* Features */}
+                  <div className="flex flex-col gap-3.5 mb-10 flex-1">
                     {[
-                      { ok: true, label: "Stijlprofiel analyse" },
-                      { ok: true, label: "3 gepersonaliseerde outfits" },
-                      { ok: true, label: "Directe shoplinks" },
-                      { ok: true, label: "Rapport aanpasbaar" },
-                      { ok: false, label: "Nova AI-stylist" },
-                      { ok: false, label: "Kleuranalyse (foto)" },
-                    ].map(({ ok, label }) => (
-                      <li
-                        key={label}
-                        className={`flex items-center gap-3 ${ok ? "" : "opacity-40"}`}
-                      >
-                        <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{
-                            background: ok
-                              ? "var(--ff-color-primary-100)"
-                              : "var(--color-border)",
-                          }}
-                        >
-                          {ok ? (
-                            <Check
-                              className="w-3 h-3 text-[var(--ff-color-primary-700)]"
-                              strokeWidth={3}
-                            />
-                          ) : (
-                            <Minus className="w-3 h-3 text-[var(--color-muted)]" />
-                          )}
-                        </div>
-                        <span className="text-sm text-[var(--color-text)] leading-snug">
-                          {label}
-                        </span>
-                      </li>
+                      { included: true, label: "Stijlprofiel analyse" },
+                      { included: true, label: "3 gepersonaliseerde outfits" },
+                      { included: true, label: "Directe shoplinks" },
+                      { included: true, label: "Rapport aanpasbaar" },
+                      { included: false, label: "Kleuranalyse (foto)" },
+                      { included: false, label: "Nova AI-assistent" },
+                      { included: false, label: "Shopping cheatsheet" },
+                      { included: false, label: "Smart learning" },
+                    ].map(({ included, label }) => (
+                      <div key={label} className="flex items-start gap-3 text-sm">
+                        {included ? (
+                          <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-[#C2654A]" />
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <X className="w-2.5 h-2.5 text-[#E5E5E5]" />
+                          </div>
+                        )}
+                        <span className={included ? "text-[#1A1A1A]" : "text-[#E5E5E5]"}>{label}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
 
-                  {/* FIX #7/#9: py-4 (16px, on-grid) + min-h-[52px] secondary light-bg stijl */}
+                  {/* CTA */}
                   <NavLink
                     to="/onboarding"
-                    className="block text-center px-6 py-4 min-h-[52px] rounded-xl font-semibold text-sm border-2 border-[var(--ff-color-primary-600)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 active:scale-[0.98] flex items-center justify-center"
+                    className="w-full text-center py-4 rounded-full border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-300 block"
                     data-event="cta_start_free_pricing"
                   >
                     Start gratis
                   </NavLink>
                 </article>
+              </Reveal>
 
-                {/* ── Premium Plan ── */}
-                <article
-                  className="relative rounded-2xl p-6 shadow-2xl flex flex-col"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, var(--ff-color-primary-600) 0%, var(--ff-color-primary-700) 100%)",
-                  }}
-                >
-                  <div
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-4 self-start shadow-md"
-                    style={{
-                      background: "var(--ff-color-warning-600)",
-                      color: "rgba(247,243,236,0.96)",
-                    }}
-                  >
-                    <Star className="w-3 h-3 fill-current flex-shrink-0" aria-hidden="true" />
-                    MEEST GEKOZEN
+              {/* ── Premium Card ── */}
+              <Reveal delay={0.12}>
+                <article className="relative bg-white border-2 border-[#C2654A] rounded-[28px] p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
+                  {/* Badge */}
+                  <div className="bg-[#F4E8E3] text-[#C2654A] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                    Meest gekozen
                   </div>
 
-                  <h3
-                    className="font-heading font-bold mb-2"
-                    style={{
-                      fontSize: "clamp(1.3rem, 3vw, 1.6rem)",
-                      color: "rgba(247,243,236,0.96)",
-                    }}
-                  >
-                    {isLoading ? "Premium" : premiumProduct?.name || "Premium"}
-                  </h3>
+                  {/* Name */}
+                  <h3 className="font-serif italic text-[32px] text-[#1A1A1A] mb-2">Premium</h3>
 
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span
-                      className="font-bold"
-                      style={{
-                        fontSize: "clamp(2.5rem, 5vw, 3rem)",
-                        color: "rgba(247,243,236,0.96)",
-                      }}
-                    >
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-[56px] font-extrabold text-[#1A1A1A] tracking-[-2px] leading-none">
                       €{premiumPrice}
                     </span>
-                    <span
-                      className="text-base"
-                      style={{ color: "rgba(247,243,236,0.60)" }}
-                    >
-                      /maand
-                    </span>
+                    <span className="text-base text-[#8A8A8A] font-medium ml-1">/maand</span>
                   </div>
-                  <p
-                    className="text-xs mb-1"
-                    style={{ color: "rgba(247,243,236,0.55)" }}
-                  >
-                    ~€0,33 per dag
-                  </p>
-                  <p
-                    className="text-xs mb-6"
-                    style={{ color: "rgba(247,243,236,0.45)" }}
-                  >
-                    Maandelijks opzegbaar
-                  </p>
 
-                  <ul className="space-y-3 flex-1 mb-6" role="list">
-                    <li
-                      className="text-xs font-bold uppercase tracking-wider pb-1"
-                      style={{ color: "rgba(247,243,236,0.55)" }}
-                    >
-                      Alles van Free, plus:
-                    </li>
+                  {/* Note */}
+                  <p className="text-[13px] text-[#8A8A8A] mb-8">~€0,33 per dag · Maandelijks opzegbaar</p>
+
+                  {/* Divider */}
+                  <div className="w-full h-px bg-[#E5E5E5] mb-8" />
+
+                  {/* Label */}
+                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#8A8A8A] mb-4">Alles van Free, plus</p>
+
+                  {/* Features */}
+                  <div className="flex flex-col gap-3.5 mb-10 flex-1">
                     {[
                       "Onbeperkte outfits",
-                      "Nova AI-assistent",
                       "Kleuranalyse (foto)",
+                      "Nova AI-assistent",
                       "Shopping cheatsheet",
                       "Smart learning",
-                    ].map((title) => (
-                      <li key={title} className="flex items-center gap-3">
-                        <FeatureDotInverted value={true} />
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: "rgba(247,243,236,0.92)" }}
-                        >
-                          {title}
-                        </span>
-                      </li>
+                    ].map((label) => (
+                      <div key={label} className="flex items-start gap-3 text-sm">
+                        <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-[#C2654A]" />
+                        </div>
+                        <span className="text-[#1A1A1A]">{label}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
 
-                  {/* FIX #7/#9: py-4 + min-h-[56px] voor primaire knop op donkere achtergrond */}
+                  {/* CTA */}
                   <button
-                    onClick={() =>
-                      premiumProduct && handleCheckout(premiumProduct.id)
-                    }
+                    onClick={() => premiumProduct && handleCheckout(premiumProduct.id)}
                     disabled={isLoading || isPending}
-                    className="w-full px-6 py-4 min-h-[56px] rounded-xl font-bold text-sm transition-all focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] mb-2"
-                    style={{
-                      background: "rgba(247,243,236,0.96)",
-                      color: "var(--ff-color-primary-700)",
-                      focusRingColor: "rgba(247,243,236,0.80)",
-                    }}
+                    className="w-full text-center py-4 rounded-full bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     data-event="cta_start_premium_pricing"
                   >
                     {isLoading ? (
@@ -502,501 +412,254 @@ export default function PricingPage() {
                         <span>Bezig...</span>
                       </>
                     ) : (
-                      <>
-                        <span>Upgrade naar Premium</span>
-                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                      </>
+                      <span>Upgrade naar Premium →</span>
                     )}
                   </button>
-                  <p
-                    className="text-xs text-center"
-                    style={{ color: "rgba(247,243,236,0.45)" }}
-                  >
-                    30 dagen geld-terug-garantie
-                  </p>
+
+                  {/* Guarantee */}
+                  <div className="text-center text-[13px] text-[#8A8A8A] mt-2 flex items-center justify-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-[#8A8A8A]" aria-hidden="true" />
+                    <span>30 dagen geld-terug-garantie</span>
+                  </div>
                 </article>
+              </Reveal>
 
-                {/* ── Founder Plan ── */}
-                <article
-                  className="rounded-2xl p-6 shadow-2xl border flex flex-col"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, var(--ff-color-primary-900) 0%, var(--ff-color-primary-800) 100%)",
-                    borderColor: "rgba(217,119,6,0.20)",
-                  }}
-                >
-                  <div
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-4 self-start"
-                    style={{
-                      background: "rgba(217,119,6,0.18)",
-                      color: "var(--ff-color-warning-300)",
-                    }}
-                  >
-                    <Crown className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
-                    LIFETIME
-                  </div>
+            </div>
+          </div>
+        </section>
 
-                  <h3
-                    className="font-heading font-bold mb-2"
-                    style={{
-                      fontSize: "clamp(1.3rem, 3vw, 1.6rem)",
-                      color: "rgba(247,243,236,0.96)",
-                    }}
-                  >
-                    Founder
-                  </h3>
-
-                  <div className="flex items-baseline gap-3 mb-1">
-                    <span
-                      className="font-bold"
-                      style={{
-                        fontSize: "clamp(2.5rem, 5vw, 3rem)",
-                        color: "rgba(247,243,236,0.96)",
-                      }}
-                    >
-                      €{founderPrice}
-                    </span>
-                    <span
-                      className="line-through text-base"
-                      style={{ color: "rgba(247,243,236,0.32)" }}
-                    >
-                      €999
-                    </span>
-                  </div>
-                  <p
-                    className="text-xs mb-1"
-                    style={{ color: "rgba(247,243,236,0.45)" }}
-                  >
-                    Eenmalig · Lifetime toegang
+        {/* ════════════════════════════════════════════════════
+            3. FOUNDER MENTION
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="max-w-[880px] mx-auto mb-28 bg-[#F5F0EB] rounded-3xl p-10 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+                {/* Left */}
+                <div>
+                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1.5">Founder Lifetime</h3>
+                  <p className="text-sm text-[#4A4A4A] leading-[1.6] max-w-[420px]">
+                    Eenmalige betaling, levenslang Premium. Voor early adopters die FitFi mee willen bouwen. Inclusief beta-toegang, prioritaire support en invloed op de roadmap.
                   </p>
-                  <p
-                    className="text-xs font-semibold mb-6"
-                    style={{ color: "var(--ff-color-warning-400)" }}
-                  >
-                    Break-even: {breakEvenMonths} maanden
-                  </p>
-
-                  <ul className="space-y-3 flex-1 mb-6" role="list">
-                    <li
-                      className="text-xs font-bold uppercase tracking-wider pb-1"
-                      style={{ color: "rgba(217,119,6,0.70)" }}
-                    >
-                      Exclusief:
-                    </li>
-                    {[
-                      "Lifetime Premium toegang",
-                      "Founder badge",
-                      "Beta toegang",
-                      "Prioritaire support",
-                      "Invloed op roadmap",
-                    ].map((title) => (
-                      <li key={title} className="flex items-center gap-3">
-                        <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{ background: "rgba(217,119,6,0.20)" }}
-                        >
-                          <Check
-                            className="w-3 h-3"
-                            style={{ color: "var(--ff-color-warning-400)" }}
-                            strokeWidth={3}
-                          />
-                        </div>
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: "rgba(247,243,236,0.90)" }}
-                        >
-                          {title}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* FIX #7/#9: py-4 + min-h-[56px] */}
                   <button
-                    onClick={() =>
-                      founderProduct && handleCheckout(founderProduct.id)
-                    }
+                    onClick={() => founderProduct && handleCheckout(founderProduct.id)}
                     disabled={isLoading || isPending}
-                    className="w-full px-6 py-4 min-h-[56px] rounded-xl font-bold text-sm transition-all focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] mb-2"
-                    style={{
-                      background: "var(--ff-color-warning-500)",
-                      color: "var(--ff-color-primary-900)",
-                    }}
+                    className="text-[13px] font-semibold text-[#C2654A] hover:text-[#A8513A] mt-3 inline-flex items-center gap-2 transition-colors disabled:opacity-50"
                     data-event="cta_start_founder_pricing"
                   >
-                    {isLoading ? (
+                    {isPending ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                        <span>Laden...</span>
-                      </>
-                    ) : isPending ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                         <span>Bezig...</span>
                       </>
                     ) : (
-                      <>
-                        <span>Word Founder lid</span>
-                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                      </>
+                      <span>Meer info →</span>
                     )}
                   </button>
-                  <p
-                    className="text-xs text-center"
-                    style={{ color: "rgba(247,243,236,0.38)" }}
-                  >
-                    Beperkt beschikbaar · 30 dagen garantie
-                  </p>
-                </article>
+                </div>
 
+                {/* Right */}
+                <div className="text-center md:text-right flex-shrink-0">
+                  <div className="flex items-baseline gap-2 justify-center md:justify-end">
+                    <span className="text-4xl font-extrabold text-[#1A1A1A] tracking-[-1px]">€{founderPrice}</span>
+                    <span className="text-base text-[#8A8A8A] line-through ml-2">€999</span>
+                  </div>
+                  <p className="text-xs text-[#8A8A8A] mt-1">Eenmalig · Beperkt beschikbaar</p>
+                </div>
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* ── FEATURE MATRIX ── */}
-        <section
-          className="py-10 sm:py-14"
-          style={{ background: "rgba(255,255,255,0.40)" }}
-          aria-labelledby="matrix-heading"
-        >
-          <div className="ff-container">
-            <div className="max-w-2xl lg:max-w-5xl mx-auto">
-
-              <button
-                onClick={() => setMatrixOpen((v) => !v)}
-                className="w-full flex items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-soft)] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2"
-                style={{ background: "var(--color-surface)" }}
-                aria-expanded={matrixOpen}
-                aria-controls="feature-matrix"
-                id="matrix-heading"
-              >
-                <div className="text-left">
-                  <p className="font-bold text-base sm:text-lg text-[var(--color-text)]">
-                    Vergelijk alle features
-                  </p>
-                  <p className="text-sm text-[var(--color-muted)]">
-                    Free · Premium · Founder naast elkaar
-                  </p>
+        {/* ════════════════════════════════════════════════════
+            4. FEATURE COMPARISON TABLE
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#F5F0EB] py-28" aria-labelledby="compare-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <Reveal>
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                  <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                    Vergelijk
+                  </span>
+                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
                 </div>
-                <ChevronDown
-                  className={`w-5 h-5 text-[var(--color-muted)] flex-shrink-0 transition-transform duration-300 ${matrixOpen ? "rotate-180" : ""}`}
-                  aria-hidden="true"
-                />
-              </button>
-
-              {matrixOpen && (
-                <div
-                  id="feature-matrix"
-                  className="mt-3 rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-soft)]"
-                  style={{ background: "var(--color-surface)" }}
+              </Reveal>
+              <Reveal delay={0.12}>
+                <h2
+                  id="compare-heading"
+                  className="text-[32px] md:text-[48px] text-[#1A1A1A] leading-[1.05] mb-4"
                 >
-                  <div className="overflow-x-auto">
-                    <div className="min-w-[480px]">
-                      {/* Header */}
-                      <div
-                        className="grid grid-cols-4 border-b border-[var(--color-border)]"
-                        style={{ background: "var(--color-bg)" }}
-                      >
-                        <div className="col-span-1 p-3 sm:p-4 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wide">
-                          Feature
-                        </div>
-                        <div className="p-3 sm:p-4 text-center text-xs font-bold text-[var(--color-text)]">
-                          Gratis
-                        </div>
-                        <div
-                          className="p-3 sm:p-4 text-center text-xs font-bold"
-                          style={{
-                            color: "var(--ff-color-primary-600)",
-                            background: "var(--ff-color-primary-50)",
-                          }}
-                        >
-                          Premium
-                        </div>
-                        <div
-                          className="p-3 sm:p-4 text-center text-xs font-bold"
-                          style={{
-                            color: "var(--ff-color-warning-700)",
-                            background: "var(--ff-color-warning-50)",
-                          }}
-                        >
-                          Founder
-                        </div>
-                      </div>
+                  <span className="font-serif italic">Wat zit waar in?</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={0.24}>
+                <p className="text-base text-[#4A4A4A] max-w-lg mx-auto">
+                  Een helder overzicht van wat je krijgt per plan.
+                </p>
+              </Reveal>
+            </div>
 
-                      {/* Rows */}
-                      <div className="divide-y divide-[var(--color-border)]">
-                        {FEATURE_ROWS.map((row, i) => (
-                          <div
-                            key={row.label}
-                            className="grid grid-cols-4"
-                            style={
-                              i % 2 === 1
-                                ? { background: "rgba(0,0,0,0.02)" }
-                                : undefined
-                            }
-                          >
-                            <div className="col-span-1 p-3 sm:p-4 flex items-start gap-2">
-                              <span className="text-xs sm:text-sm text-[var(--color-text)] font-medium leading-snug">
-                                {row.label}
-                              </span>
-                              {/*
-                                FIX #11: tooltip bereikbaar via focus (tabIndex=0 + focus:block)
-                                zodat toetsenbord en touch-gebruikers het ook kunnen activeren.
-                              */}
-                              {row.note && (
-                                <span className="group relative flex-shrink-0 mt-0.5">
-                                  <button
-                                    type="button"
-                                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] rounded"
-                                    aria-label={`Toelichting: ${row.note}`}
-                                  >
-                                    <Info
-                                      className="w-3 h-3 text-[var(--color-muted)]"
-                                      aria-hidden="true"
-                                    />
-                                  </button>
-                                  <span
-                                    className="pointer-events-none absolute bottom-full left-0 mb-1 hidden group-hover:block group-focus-within:block text-xs rounded-lg px-3 py-2 w-52 shadow-xl z-10 leading-relaxed"
-                                    style={{
-                                      background: "var(--ff-color-primary-900)",
-                                      color: "rgba(247,243,236,0.92)",
-                                    }}
-                                    role="tooltip"
-                                  >
-                                    {row.note}
-                                  </span>
-                                </span>
-                              )}
-                            </div>
-                            <div className="p-3 sm:p-4 flex items-center justify-center">
-                              <FeatureDot value={row.free} />
-                            </div>
-                            <div
-                              className="p-3 sm:p-4 flex items-center justify-center"
-                              style={{ background: "rgba(122,97,74,0.04)" }}
-                            >
-                              <FeatureDot value={row.premium} />
-                            </div>
-                            <div
-                              className="p-3 sm:p-4 flex items-center justify-center"
-                              style={{ background: "rgba(217,119,6,0.04)" }}
-                            >
-                              <FeatureDot value={row.founder} />
-                            </div>
-                          </div>
-                        ))}
-
-                        {/* Price row */}
-                        <div
-                          className="grid grid-cols-4 border-t-2 border-[var(--color-border)] font-semibold"
-                          style={{ background: "var(--color-bg)" }}
-                        >
-                          <div className="col-span-1 p-3 sm:p-4 text-xs sm:text-sm">
-                            Prijs
-                          </div>
-                          <div className="p-3 sm:p-4 text-center text-xs sm:text-sm">
-                            €0
-                          </div>
-                          <div
-                            className="p-3 sm:p-4 text-center text-xs sm:text-sm"
-                            style={{ background: "rgba(122,97,74,0.05)" }}
-                          >
-                            €{premiumPrice}/mnd
-                          </div>
-                          <div
-                            className="p-3 sm:p-4 text-center text-xs sm:text-sm"
-                            style={{ background: "rgba(217,119,6,0.05)" }}
-                          >
-                            €{founderPrice}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Kleuranalyse disclaimer */}
-                  <div
-                    className="px-4 sm:px-5 py-4 border-t flex items-start gap-3"
-                    style={{
-                      background: "var(--ff-color-primary-50)",
-                      borderColor: "var(--ff-color-primary-200)",
-                    }}
-                  >
-                    <Info
-                      className="w-4 h-4 flex-shrink-0 mt-0.5"
-                      style={{ color: "var(--ff-color-primary-700)" }}
-                      aria-hidden="true"
-                    />
-                    <p
-                      className="text-xs sm:text-sm leading-relaxed"
-                      style={{ color: "var(--ff-color-primary-700)" }}
-                    >
-                      Kleuranalyse werkt uitsluitend als jij een foto uploadt of je
-                      ondertoon zelf deelt. We schatten dit nooit op eigen initiatief.
-                    </p>
-                  </div>
+            {/* Table */}
+            <Reveal delay={0.36}>
+              <div className="max-w-[880px] mx-auto bg-white rounded-3xl overflow-hidden border border-[#E5E5E5]">
+                {/* Header row */}
+                <div className="bg-[#FAFAF8] border-b border-[#E5E5E5] grid grid-cols-[1fr_80px_80px] md:grid-cols-[1fr_160px_160px] px-5 md:px-10 py-5">
+                  <div />
+                  <div className="text-xs font-bold uppercase tracking-[1px] text-[#8A8A8A] text-center">Free</div>
+                  <div className="text-xs font-bold uppercase tracking-[1px] text-[#C2654A] text-center">Premium</div>
                 </div>
-              )}
-            </div>
-          </div>
-        </section>
 
-        {/* ── TESTIMONIALS ── */}
-        <section className="py-10 sm:py-14" aria-labelledby="testimonials-heading">
-          <div className="ff-container">
-            <div className="max-w-2xl lg:max-w-5xl mx-auto">
-              {/*
-                FIX #5/#12: font-heading + clamp() + id voor aria-labelledby.
-              */}
-              <h2
-                id="testimonials-heading"
-                className="font-heading font-bold tracking-tight text-center mb-2 text-[var(--color-text)]"
-                style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)" }}
-              >
-                Wat gebruikers zeggen
-              </h2>
-              <p className="text-[var(--color-muted)] text-center mb-8 text-sm sm:text-base">
-                Echte ervaringen van echte gebruikers
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
-                {[
-                  {
-                    quote:
-                      "Binnen 10 minuten wist ik precies wat me staat. Geen eindeloos scrollen meer.",
-                    name: "Sophie M.",
-                    plan: "Premium gebruiker",
-                    initial: "S",
-                  },
-                  {
-                    quote:
-                      "Nova voelt als een echte stylist. Het leert mijn smaak en wordt telkens beter.",
-                    name: "Thomas V.",
-                    plan: "Founder lid",
-                    initial: "T",
-                  },
-                  {
-                    quote:
-                      "Ik bespaarde al 2x de kosten door geen verkeerde aankopen meer te doen.",
-                    name: "Lisa R.",
-                    plan: "Premium gebruiker",
-                    initial: "L",
-                  },
-                ].map(({ quote, name, plan, initial }) => (
-                  <article
-                    key={name}
-                    className="rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]"
-                    style={{ background: "var(--color-surface)" }}
+                {/* Content rows */}
+                {COMPARISON_ROWS.map((row, i) => (
+                  <div
+                    key={row.label}
+                    className={`grid grid-cols-[1fr_80px_80px] md:grid-cols-[1fr_160px_160px] px-5 md:px-10 py-4 ${
+                      i < COMPARISON_ROWS.length - 1 ? "border-b border-[#E5E5E5]/50" : ""
+                    }`}
                   >
-                    {/* FIX #8: gap-1 (4px, on-grid) ipv gap-0.5 (2px) */}
-                    <div
-                      className="flex items-center gap-1 mb-4"
-                      aria-label="5 van 5 sterren"
-                    >
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="w-4 h-4 flex-shrink-0"
-                          style={{
-                            color: "var(--ff-color-warning-600)",
-                            fill: "var(--ff-color-warning-600)",
-                          }}
-                          aria-hidden="true"
-                        />
-                      ))}
+                    <div className="text-[13px] md:text-sm font-medium text-[#1A1A1A]">{row.label}</div>
+                    <div className="flex items-center justify-center">
+                      {typeof row.free === "boolean" ? (
+                        row.free ? (
+                          <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center">
+                            <Check className="w-3 h-3 text-[#C2654A]" />
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-[#F5F0EB] flex items-center justify-center">
+                            <X className="w-2.5 h-2.5 text-[#E5E5E5]" />
+                          </div>
+                        )
+                      ) : (
+                        <span className="text-[13px] font-semibold text-[#1A1A1A] text-center">{row.free}</span>
+                      )}
                     </div>
-                    <blockquote className="text-[var(--color-text)] text-base font-light leading-relaxed mb-5">
-                      &ldquo;{quote}&rdquo;
-                    </blockquote>
-                    <footer className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                        style={{
-                          background: "var(--ff-color-primary-100)",
-                          color: "var(--ff-color-primary-700)",
-                        }}
-                      >
-                        {initial}
-                      </div>
-                      <div>
-                        <cite className="font-semibold text-sm text-[var(--color-text)] not-italic block">
-                          {name}
-                        </cite>
-                        <div className="text-xs text-[var(--color-muted)]">{plan}</div>
-                      </div>
-                    </footer>
-                  </article>
+                    <div className="flex items-center justify-center">
+                      {typeof row.premium === "boolean" ? (
+                        row.premium ? (
+                          <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center">
+                            <Check className="w-3 h-3 text-[#C2654A]" />
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-[#F5F0EB] flex items-center justify-center">
+                            <X className="w-2.5 h-2.5 text-[#E5E5E5]" />
+                          </div>
+                        )
+                      ) : (
+                        <span className="text-[13px] font-bold text-[#C2654A] text-center">{row.premium}</span>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* ── FAQ ── */}
-        <section
-          className="py-10 sm:py-14"
-          style={{ background: "rgba(255,255,255,0.30)" }}
-          aria-labelledby="faq-heading"
-        >
-          <div className="ff-container">
-            <div className="max-w-2xl mx-auto">
-              {/* FIX #5: font-heading + clamp() */}
-              <h2
-                id="faq-heading"
-                className="font-heading font-bold tracking-tight text-center mb-8 text-[var(--color-text)]"
-                style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)" }}
-              >
-                Veelgestelde vragen
-              </h2>
-              <div className="space-y-3">
-                {[
-                  {
-                    q: "Wat blijft altijd beschikbaar met Free?",
-                    a: "Je stijlprofiel, je 3 outfit-combinaties en alle shoplinks blijven altijd zichtbaar — ook als je nooit betaalt. Free is niet tijdelijk; het is een volwaardig startpunt.",
-                  },
-                  {
-                    q: "Wat krijg ik met Premium precies?",
-                    a: "Premium geeft je onbeperkte outfit-aanbevelingen, toegang tot de Nova AI-stylist (chat 24/7), een uitgebreide shopping cheatsheet en kleuranalyse op basis van een foto die jij uploadt.",
-                  },
-                  {
-                    q: "Hoe werkt kleurenadvies precies?",
-                    a: "Kleurenanalyse op basis van ondertoon is een Premium-feature en werkt alleen als jij een foto uploadt of je ondertoon zelf deelt. We schatten of claimen dit nooit op eigen initiatief.",
-                  },
-                  {
-                    q: "Is Premium maandelijks opzegbaar?",
-                    a: "Ja. Je kunt elke maand opzeggen zonder verborgen kosten. Stop wanneer je wilt — je Free-rapport blijft zichtbaar.",
-                  },
-                  {
-                    q: "Wat is het verschil tussen Premium en Founder?",
-                    a: `Premium is een maandelijks abonnement. Founder is een eenmalige betaling voor lifetime toegang plus exclusieve voordelen. Na ${breakEvenMonths} maanden is Founder goedkoper.`,
-                  },
-                  {
-                    q: "Is er een geld-terug-garantie?",
-                    a: "Ja, 30 dagen geld-terug-garantie voor alle betaalde plannen. Geen vragen gesteld.",
-                  },
-                ].map(({ q, a }) => (
-                  <details
-                    key={q}
-                    className="rounded-xl border border-[var(--color-border)] p-5 group"
-                    style={{ background: "var(--color-surface)" }}
-                  >
-                    <summary className="font-semibold text-sm sm:text-base cursor-pointer flex items-center justify-between gap-3 min-h-[44px] list-none text-[var(--color-text)]">
-                      <span className="leading-snug">{q}</span>
-                      <ChevronDown
-                        className="w-5 h-5 text-[var(--color-muted)] flex-shrink-0 transition-transform duration-200 group-open:rotate-180"
-                        aria-hidden="true"
-                      />
-                    </summary>
-                    <p className="mt-3 text-[var(--color-muted)] text-sm sm:text-base leading-relaxed">
-                      {a}
-                    </p>
-                  </details>
-                ))}
-              </div>
+        {/* ════════════════════════════════════════════════════
+            5. FAQ SECTION
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8] py-28" aria-labelledby="faq-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <Reveal>
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                  <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                    Veelgestelde vragen
+                  </span>
+                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                </div>
+              </Reveal>
+              <Reveal delay={0.12}>
+                <h2
+                  id="faq-heading"
+                  className="text-[32px] md:text-[48px] text-[#1A1A1A] leading-[1.05] mb-4"
+                >
+                  <span className="font-serif italic">Over prijzen en plannen</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={0.24}>
+                <p className="text-base text-[#4A4A4A] max-w-lg mx-auto">
+                  De meest gestelde vragen over onze plannen.
+                </p>
+              </Reveal>
             </div>
+
+            {/* FAQ list */}
+            <Reveal delay={0.36}>
+              <div className="max-w-[720px] mx-auto">
+                {FAQ_ITEMS.map((item, i) => {
+                  const isOpen = openFaq === i;
+                  return (
+                    <div
+                      key={item.q}
+                      className={`border-b border-[#E5E5E5] ${i === 0 ? "border-t border-[#E5E5E5]" : ""}`}
+                    >
+                      <button
+                        onClick={() => setOpenFaq(isOpen ? null : i)}
+                        className="flex justify-between items-center py-6 gap-4 w-full text-left cursor-pointer"
+                        aria-expanded={isOpen}
+                      >
+                        <span className="text-base font-semibold text-[#1A1A1A]">{item.q}</span>
+                        <div className={`w-8 h-8 rounded-full ${isOpen ? "bg-[#F4E8E3]" : "bg-[#F5F0EB]"} flex items-center justify-center flex-shrink-0 transition-colors`}>
+                          <Plus
+                            className={`w-4 h-4 text-[#C2654A] transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
+                          />
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <p className="text-[15px] text-[#4A4A4A] leading-[1.7] pb-6 max-w-[600px]">
+                          {item.a}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </Reveal>
           </div>
         </section>
+
+        {/* ════════════════════════════════════════════════════
+            6. CTA SECTION
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#F5F0EB] py-40 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <h2 className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6">
+                <span className="font-serif italic">Begin gratis, upgrade wanneer je wilt</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <p className="text-[17px] text-[#4A4A4A] mb-12 max-w-lg mx-auto">
+                Probeer FitFi zonder verplichtingen. Je betaalt pas als je meer wilt.
+              </p>
+            </Reveal>
+            <Reveal delay={0.24}>
+              <NavLink
+                to="/onboarding"
+                className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold py-4 px-8 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                data-event="cta_start_free_pricing"
+              >
+                Begin gratis
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </NavLink>
+              <p className="text-[13px] text-[#8A8A8A] mt-4">
+                Geen creditcard nodig · Altijd gratis te gebruiken
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════
+            7. FOOTER SEPARATOR
+        ════════════════════════════════════════════════════ */}
+        {/* Footer is rendered by the app shell. Add border-top separator since CTA is also sand-colored */}
+        <div className="h-px bg-[#E5E5E5]" />
 
       </div>
     </>
