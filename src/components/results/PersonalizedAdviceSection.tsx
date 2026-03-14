@@ -133,29 +133,33 @@ export function PersonalizedAdviceSection({
   ];
 
   return (
-    <div className="space-y-6">
-      {sections.map((section) => (
-        <div
-          key={section.kicker}
-          className="bg-[#F5F0EB] py-12 pl-8 md:pl-12 pr-8 md:pr-16 border-l-4 border-[#C2654A] rounded-r-2xl"
-        >
-          <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">{section.kicker}</p>
-          <h3 className="text-xl font-bold text-[#1A1A1A] mb-6">{section.title}</h3>
-          <div className="space-y-5">
-            {section.items.map((item, i) => (
-              <div key={i} className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#1A1A1A]">{item.label}</p>
-                  <p className="text-sm text-[#4A4A4A] mt-0.5">{item.detail}</p>
-                </div>
+    <div className="py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto space-y-4">
+          {sections.map((section) => (
+            <div
+              key={section.kicker}
+              className="bg-white border border-[#E5E5E5] rounded-2xl p-8"
+            >
+              <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">{section.kicker}</p>
+              <h3 className="text-xl font-bold text-[#1A1A1A] mb-6">{section.title}</h3>
+              <div className="space-y-5">
+                {section.items.map((item, i) => (
+                  <div key={i} className="flex items-start gap-4 py-4 border-b border-[#E5E5E5]/50 last:border-none last:pb-0 first:pt-0">
+                    <div className="w-8 h-8 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#1A1A1A]">{item.label}</p>
+                      <p className="text-sm text-[#4A4A4A] mt-1">{item.detail}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }
