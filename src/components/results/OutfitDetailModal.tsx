@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, X, ShoppingBag } from "lucide-react";
+import { Heart, X, ShoppingBag, ExternalLink } from "lucide-react";
 import type { ColorProfile } from "@/lib/quiz/types";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import useBodyScrollLock from "@/hooks/useBodyScrollLock";
@@ -39,14 +39,16 @@ function HeroImage({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false);
   if (failed) return null;
   return (
-    <div className="rounded-xl overflow-hidden bg-[var(--ff-color-primary-50)] aspect-[4/3]">
-      <img
-        src={src}
-        alt={alt}
-        className="w-full h-full object-cover"
-        loading="lazy"
-        onError={() => setFailed(true)}
-      />
+    <div className="px-6">
+      <div className="rounded-2xl overflow-hidden bg-[#F5F0EB]">
+        <img
+          src={src}
+          alt={alt}
+          className="w-full aspect-[4/3] object-cover"
+          loading="lazy"
+          onError={() => setFailed(true)}
+        />
+      </div>
     </div>
   );
 }
@@ -55,7 +57,7 @@ function ProductThumb({ src, alt, index }: { src: string | null; alt: string; in
   const [failed, setFailed] = useState(false);
   const showFallback = !src || failed;
   return (
-    <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--ff-color-primary-50)] flex items-center justify-center">
+    <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-[#F5F0EB] flex items-center justify-center">
       {!showFallback && (
         <img
           src={src!}
@@ -66,7 +68,7 @@ function ProductThumb({ src, alt, index }: { src: string | null; alt: string; in
         />
       )}
       {showFallback && (
-        <span className="text-sm font-bold text-[var(--ff-color-primary-300)]">
+        <span className="text-sm font-bold text-[#C2654A]/40">
           {index + 1}
         </span>
       )}
@@ -139,9 +141,9 @@ export function OutfitDetailModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.18 }}
+        transition={{ duration: 0.2 }}
         onClick={handleClose}
-        className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby="outfit-modal-title"
@@ -149,44 +151,47 @@ export function OutfitDetailModal({
         <motion.div
           key="panel"
           ref={panelRef}
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: "100%", opacity: 0 }}
-          transition={{ type: "spring", damping: 30, stiffness: 320 }}
+          initial={{ opacity: 0, scale: 0.95, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 8 }}
+          transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full sm:max-w-lg bg-[var(--color-surface)] rounded-t-3xl sm:rounded-2xl overflow-hidden flex flex-col"
-          style={{ maxHeight: "92dvh" }}
+          className="relative w-full max-w-[480px] bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-[0_32px_80px_rgba(0,0,0,0.15)]"
+          style={{ maxHeight: "90dvh" }}
         >
           {/* Drag handle — mobile only */}
           <div className="flex justify-center pt-3 pb-1 sm:hidden">
-            <div className="w-9 h-1 rounded-full bg-[var(--color-border)]" />
+            <div className="w-9 h-1 rounded-full bg-[#E5E5E5]" />
           </div>
 
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            aria-label="Sluit"
+            data-modal-close
+            className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-[#F5F0EB] hover:bg-[#E5E5E5] flex items-center justify-center transition-colors duration-200"
+          >
+            <X className="w-5 h-5 text-[#4A4A4A]" />
+          </button>
+
           {/* Header */}
-          <div className="flex items-start justify-between gap-3 px-5 pt-4 pb-3 sm:pt-5">
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--color-muted)] mb-0.5">
-                {archetypeName}
-              </p>
-              <h2
-                id="outfit-modal-title"
-                className="text-lg font-bold text-[var(--color-text)] leading-snug"
-              >
-                {outfitName}
-              </h2>
-            </div>
-            <button
-              onClick={handleClose}
-              aria-label="Sluit"
-              data-modal-close
-              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] flex-shrink-0 transition-colors"
+          <div className="px-6 pt-6 pb-4">
+            <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#8A8A8A] mb-1">
+              {archetypeName}
+            </p>
+            <h2
+              id="outfit-modal-title"
+              className="text-xl font-bold text-[#1A1A1A]"
             >
-              <X className="w-4 h-4" />
-            </button>
+              {outfitName}
+            </h2>
           </div>
 
           {/* Scrollable body */}
-          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-4 space-y-4">
+          <div
+            className="relative flex-1 overflow-y-auto"
+            style={{ scrollBehavior: 'smooth', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+          >
 
             {heroImage && (
               <HeroImage src={heroImage} alt={outfitName} />
@@ -194,17 +199,17 @@ export function OutfitDetailModal({
 
             {/* Color advice */}
             {colorProfile && (
-              <div className="rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-1">
+              <div className="mx-6 mt-5 mb-6 bg-[#F5F0EB] border border-[#E5E5E5] rounded-xl p-4">
+                <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C2654A] mb-1.5">
                   Kleuradvies
                 </p>
-                <p className="text-sm text-[var(--color-text)] leading-relaxed">
+                <p className="text-sm text-[#4A4A4A] leading-[1.5]">
                   {(() => {
                     const profileLabel = colorProfile.paletteName || colorProfile.season;
                     return profileLabel ? (
                       <>
                         Kleuren afgestemd op jouw kleurprofiel{" "}
-                        <span className="font-semibold text-[var(--ff-color-primary-700)]">
+                        <span className="font-semibold text-[#1A1A1A]">
                           {profileLabel}
                         </span>
                         .
@@ -217,30 +222,32 @@ export function OutfitDetailModal({
               </div>
             )}
 
-            {/* Product list */}
+            {/* Product list — empty state */}
             {products.length === 0 && (
-              <div className="rounded-xl border border-[var(--color-border)] px-4 py-5 bg-[var(--ff-color-primary-50)] text-center">
-                <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-[var(--ff-color-primary-300)]" aria-hidden="true" />
-                <p className="text-sm font-semibold text-[var(--color-text)] mb-1">Productlinks worden binnenkort geladen</p>
-                <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+              <div className="mx-6 mb-6 rounded-xl border border-[#E5E5E5] px-4 py-5 bg-[#F5F0EB] text-center">
+                <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-[#C2654A]/40" aria-hidden="true" />
+                <p className="text-sm font-semibold text-[#1A1A1A] mb-1">Productlinks worden binnenkort geladen</p>
+                <p className="text-xs text-[#8A8A8A] leading-relaxed">
                   Dit is een voorbeeld outfit op basis van jouw stijlprofiel. Maak een account aan voor directe shoplinks naar Nederlandse webshops.
                 </p>
               </div>
             )}
+
+            {/* Product list */}
             {products.length > 0 && (
               <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <p className="text-sm font-bold text-[var(--color-text)]">
+                <div className="px-6 flex items-center justify-between mb-4">
+                  <p className="text-sm font-semibold text-[#1A1A1A]">
                     Producten in dit outfit
                   </p>
                   {totalPrice > 0 && (
-                    <p className="text-sm font-semibold text-[var(--ff-color-primary-700)]">
+                    <p className="text-sm font-bold text-[#1A1A1A]">
                       €{totalPrice % 1 === 0 ? totalPrice.toFixed(0) : totalPrice.toFixed(2)} totaal
                     </p>
                   )}
                 </div>
 
-                <ul className="divide-y divide-[var(--color-border)] border border-[var(--color-border)] rounded-xl overflow-hidden">
+                <div>
                   {products.map((product: any, idx: number) => {
                     const img = getProductImage(product);
                     const url = resolveProductUrl(product);
@@ -251,9 +258,9 @@ export function OutfitDetailModal({
                       : parseFloat(String(product?.price ?? "")) || null;
 
                     return (
-                      <li
+                      <div
                         key={idx}
-                        className={`bg-[var(--color-surface)] ${url ? "cursor-pointer hover:bg-[var(--ff-color-primary-50)] transition-colors" : ""}`}
+                        className={`px-6 py-3.5 flex items-center gap-4 border-b border-[#E5E5E5]/50 last:border-none transition-colors duration-150 ${url ? "cursor-pointer hover:bg-[#FAFAF8]" : ""}`}
                         onClick={async () => {
                           if (!url) return;
                           shoppedRef.current = true;
@@ -276,119 +283,117 @@ export function OutfitDetailModal({
                           if (opened) toast.success(`${name} opent in nieuw tabblad`, { duration: 2000 });
                         }}
                       >
-                        <div className="flex items-center gap-3 px-3 py-3">
+                        <ProductThumb src={img} alt={name} index={idx} />
 
-                          <ProductThumb src={img} alt={name} index={idx} />
-
-                          <div className="flex-1 min-w-0">
-                            {brand && (
-                              <p className="text-[10px] text-[var(--color-muted)] truncate leading-tight mb-0.5">
-                                {brand}
-                              </p>
-                            )}
-                            <p className="text-sm font-semibold text-[var(--color-text)] truncate leading-tight">
-                              {name}
+                        <div className="flex-1 min-w-0">
+                          {brand && (
+                            <p className="text-[11px] font-medium text-[#8A8A8A] mb-0.5 truncate">
+                              {brand}
                             </p>
-                            {product?.itemReason && (
-                              <p className="text-[11px] text-[var(--ff-color-primary-600)] leading-snug mt-0.5 line-clamp-1">
-                                {product.itemReason}
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            {rawPrice != null && rawPrice > 0 && (
-                              <span className="text-sm font-bold text-[var(--ff-color-primary-700)]">
-                                €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
-                              </span>
-                            )}
-                            {url ? (
-                              <div
-                                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-200)] transition-colors"
-                                aria-label={`Shop ${name}`}
-                              >
-                                <ShoppingBag className="w-4 h-4" />
-                              </div>
-                            ) : null}
-                          </div>
+                          )}
+                          <p className="text-sm font-semibold text-[#1A1A1A] truncate">
+                            {name}
+                          </p>
+                          {product?.itemReason && (
+                            <p className="text-[11px] text-[#C2654A] mt-0.5 line-clamp-1">
+                              {product.itemReason}
+                            </p>
+                          )}
                         </div>
-                      </li>
+
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {rawPrice != null && rawPrice > 0 && (
+                            <span className="text-sm font-bold text-[#1A1A1A] mr-2">
+                              €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
+                            </span>
+                          )}
+                          {url ? (
+                            <div
+                              className="w-9 h-9 rounded-full bg-[#F5F0EB] hover:bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                              aria-label={`Shop ${name}`}
+                            >
+                              <ExternalLink className="w-4 h-4 text-[#C2654A]" />
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
                     );
                   })}
-                </ul>
+                </div>
               </div>
             )}
+
+            {/* Scroll fade indicator */}
+            <div className="bg-gradient-to-t from-white via-white/80 to-transparent h-20 sticky bottom-0 pointer-events-none" />
           </div>
 
           {/* Sticky footer */}
           <div
-            className="flex-shrink-0 px-5 pt-3 border-t border-[var(--color-border)] bg-[var(--color-surface)]"
-            style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}
+            className="sticky bottom-0 bg-white border-t border-[#E5E5E5] px-6 py-4 flex items-center gap-3"
+            style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
           >
-            <div className="flex gap-3">
-              {hasShoppable ? (
-                <button
-                  onClick={async () => {
-                    shoppedRef.current = true;
-                    track("shop_all_click", {
-                      outfit_id: id,
-                      outfit_title: outfitName,
-                      archetype: archetypeName,
-                      shoppable_product_count: shoppableProducts.length,
-                      source: "modal_footer",
-                    });
-                    for (let i = 0; i < shoppableProducts.length; i++) {
-                      const p = shoppableProducts[i];
-                      const name = p?.name || `Product ${i + 1}`;
-                      setTimeout(async () => {
-                        await openProductLink({
-                          product: { id: p?.id || `p-${i}`, name, retailer: p?.brand || p?.retailer || undefined, price: p?.price || undefined, ...p },
-                          outfitId: id,
-                          slot: i + 1,
-                          source: "outfit_detail_modal_shop_all",
-                        });
-                      }, i * 400);
-                    }
-                    toast.success(`${shoppableProducts.length} items openen...`, { duration: 2500 });
-                  }}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] shadow-[0_4px_16px_rgba(122,97,74,0.20)] transition-all active:scale-[0.97]"
-                  aria-label={`Shop ${shoppableProducts.length} items`}
-                >
-                  <ShoppingBag className="w-4 h-4" />
-                  Shop items
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20">
-                    {shoppableProducts.length}
-                  </span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => onToggleFav(id)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97] ${
-                    isFav
-                      ? "bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]"
-                      : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-200)]"
-                  }`}
-                  aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
-                >
-                  <Heart className="w-4 h-4" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
-                  {isFav ? "Opgeslagen" : "Bewaar outfit"}
-                </button>
-              )}
+            {hasShoppable ? (
+              <button
+                onClick={async () => {
+                  shoppedRef.current = true;
+                  track("shop_all_click", {
+                    outfit_id: id,
+                    outfit_title: outfitName,
+                    archetype: archetypeName,
+                    shoppable_product_count: shoppableProducts.length,
+                    source: "modal_footer",
+                  });
+                  for (let i = 0; i < shoppableProducts.length; i++) {
+                    const p = shoppableProducts[i];
+                    const name = p?.name || `Product ${i + 1}`;
+                    setTimeout(async () => {
+                      await openProductLink({
+                        product: { id: p?.id || `p-${i}`, name, retailer: p?.brand || p?.retailer || undefined, price: p?.price || undefined, ...p },
+                        outfitId: id,
+                        slot: i + 1,
+                        source: "outfit_detail_modal_shop_all",
+                      });
+                    }, i * 400);
+                  }
+                  toast.success(`${shoppableProducts.length} items openen...`, { duration: 2500 });
+                }}
+                className="flex-1 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 rounded-full text-center inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)]"
+                aria-label={`Shop ${shoppableProducts.length} items`}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                Shop items
+                <span className="bg-white/20 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
+                  {shoppableProducts.length}
+                </span>
+              </button>
+            ) : (
+              <button
+                onClick={() => onToggleFav(id)}
+                className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 ${
+                  isFav
+                    ? "bg-[#C2654A] text-white hover:bg-[#A8513A]"
+                    : "bg-[#F4E8E3] text-[#C2654A] hover:bg-[#F5F0EB]"
+                }`}
+                aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
+              >
+                <Heart className="w-4 h-4" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
+                {isFav ? "Opgeslagen" : "Bewaar outfit"}
+              </button>
+            )}
 
-              {hasShoppable && (
-                <button
-                  onClick={() => onToggleFav(id)}
-                  className={`w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-xl transition-all active:scale-[0.95] ${
-                    isFav
-                      ? "bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]"
-                      : "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-200)]"
-                  }`}
-                  aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
-                >
-                  <Heart className="w-5 h-5" fill={isFav ? "currentColor" : "none"} strokeWidth={isFav ? 0 : 2} />
-                </button>
-              )}
-            </div>
+            {hasShoppable && (
+              <button
+                onClick={() => onToggleFav(id)}
+                className={`w-12 h-12 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                  isFav
+                    ? "border-[#C2654A] text-[#C2654A]"
+                    : "border-[#E5E5E5] hover:border-[#C2654A] text-[#8A8A8A]"
+                }`}
+                aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
+              >
+                <Heart className={`w-5 h-5 ${isFav ? "fill-[#C2654A] text-[#C2654A]" : ""}`} strokeWidth={isFav ? 0 : 2} />
+              </button>
+            )}
           </div>
         </motion.div>
       </motion.div>
