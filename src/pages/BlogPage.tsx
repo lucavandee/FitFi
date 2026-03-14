@@ -65,7 +65,7 @@ function BlogCard({ post, style }: CardProps) {
         </div>
       </a>
 
-      <div className="p-6 flex flex-col flex-1">
+      <div className="p-7 flex flex-col flex-1">
         <h3 className="text-lg font-bold text-[#1A1A1A] leading-snug mb-3 line-clamp-2 group-hover:text-[#C2654A] transition-colors duration-200">
           <a
             href={`/blog/${post.slug}`}
@@ -228,7 +228,7 @@ export default function BlogPage() {
         {/* ════════════════════════════════════════════════════
             ZOEKBALK + FILTERS
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#FAFAF8] py-12">
+        <section className="bg-[#FAFAF8] py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 max-w-[880px] mx-auto">
               <div className="relative flex-1">
@@ -327,7 +327,7 @@ export default function BlogPage() {
             UITGELICHT ARTIKEL
         ════════════════════════════════════════════════════ */}
         {!loading && featuredPost && (
-          <section className="bg-[#FAFAF8] pb-12">
+          <section className="bg-[#FAFAF8] pb-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div
                 className="max-w-[1040px] mx-auto mb-16"
