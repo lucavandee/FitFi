@@ -111,7 +111,7 @@ export default function ResultsPreviewPage() {
       </Helmet>
 
       {/* 1. Sticky Preview Bar */}
-      <div className="fixed top-[72px] left-0 right-0 z-50 bg-[#1A1A1A] px-6 md:px-10 py-3 flex items-center justify-between">
+      <div className="fixed top-[80px] left-0 right-0 z-50 bg-[#1A1A1A] px-6 md:px-10 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-[13px] text-white/70">
           <Info className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
           <span className="hidden sm:inline">
