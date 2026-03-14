@@ -174,10 +174,10 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             PAGE HERO
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] pt-48 pb-28 md:pt-56 md:pb-32 text-center">
+        <section className="bg-[#F5F0EB] pt-36 pb-28 md:pt-44 md:pb-32 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="flex items-center justify-center gap-3 mt-16 mb-10">
                 <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
                 <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
                   Hoe het werkt
@@ -376,7 +376,7 @@ export default function HowItWorksPage() {
                 {compRows.map((row, i) => (
                   <div
                     key={i}
-                    className="grid grid-cols-[1fr_40px_1fr] items-center py-5 border-b border-[#E5E5E5] last:border-none"
+                    className={`grid grid-cols-[1fr_40px_1fr] items-center border-b border-[#E5E5E5] last:border-none ${row.highlight ? "pt-5 pb-10" : "py-5"}`}
                   >
                     <div className="text-[15px] text-[#8A8A8A] text-right pr-6">
                       {row.old}
@@ -480,7 +480,7 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             CTA
         ════════════════════════════════════════════════════ */}
-        <section className="py-40 bg-[#FAFAF8] text-center">
+        <section className="py-48 md:py-56 bg-[#FAFAF8] text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center">
