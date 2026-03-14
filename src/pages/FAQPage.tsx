@@ -260,7 +260,7 @@ export default function FAQPage() {
 
         {/* ── HERO ── */}
         <section
-          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] py-14 sm:py-20 md:py-28"
+          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] pt-40 pb-20 md:pt-48 md:pb-28"
           aria-labelledby="faq-hero-heading"
         >
           <div

@@ -191,7 +191,7 @@ export default function BlogPage() {
 
         {/* ── HERO ── */}
         <section
-          className="relative overflow-hidden py-12 sm:py-16 md:py-20 border-b border-[var(--color-border)]"
+          className="relative overflow-hidden pt-40 pb-16 md:pt-48 md:pb-20 border-b border-[var(--color-border)]"
           style={{
             background: 'linear-gradient(160deg, var(--ff-color-primary-50) 0%, var(--color-bg) 55%, var(--ff-color-primary-50) 100%)',
           }}
