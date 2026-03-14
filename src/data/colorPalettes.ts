@@ -214,8 +214,11 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#98B4AA', name: 'Mint sage', category: 'accent' },
       { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
       { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
+      { hex: '#D4B5B0', name: 'Poederroze', category: 'accent' },
+      { hex: '#B8C5D6', name: 'Licht lavendel', category: 'accent' },
       { hex: '#D5C7B8', name: 'Linen', category: 'neutraal' },
-      { hex: '#E8DCC4', name: 'Warm ivory', category: 'neutraal' },
+      { hex: '#EDE4D8', name: 'Parel', category: 'neutraal' },
+      { hex: '#F5EFE6', name: 'Schelp', category: 'neutraal' },
     ],
     doColors: COLOR_PALETTES.lente.doColors,
     dontColors: [
@@ -223,6 +226,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#C17767', name: 'Terracotta', description: 'Te sterk', category: 'accent' },
     ],
   },
+  // Default variant — identiek aan parent seizoen. Wijzig hier als de standaardvariant moet afwijken.
   'warm-lente': {
     season: 'Warm Lente',
     description: 'Warme, levendige lentetinten. Goud en terracotta als accent.',
@@ -243,8 +247,11 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
       { hex: '#B4926B', name: 'Warm sand', category: 'accent' },
       { hex: '#D48B6A', name: 'Warm koraal', category: 'accent' },
+      { hex: '#7BA05B', name: 'Appelgroen', category: 'accent' },
+      { hex: '#C2855A', name: 'Koper', category: 'accent' },
       { hex: '#F0EAD6', name: 'Eggshell', category: 'neutraal' },
       { hex: '#D5C7B8', name: 'Linen', category: 'neutraal' },
+      { hex: '#E8DCC4', name: 'Warm ivory', category: 'neutraal' },
     ],
     doColors: [
       { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
@@ -268,8 +275,12 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#A3B1C1', name: 'Zachte lavendel', category: 'accent' },
       { hex: '#C3B1C0', name: 'Dusty mauve', category: 'accent' },
       { hex: '#98B4AA', name: 'Mint', category: 'accent' },
+      { hex: '#C4B7C9', name: 'Poederpaars', category: 'accent' },
+      { hex: '#A8C8C8', name: 'Licht aqua', category: 'accent' },
+      { hex: '#B0C4DE', name: 'Hemelsblauw', category: 'accent' },
       { hex: '#BDC3C7', name: 'Silver', category: 'neutraal' },
-      { hex: '#D5D8DC', name: 'Pearl grey', category: 'neutraal' },
+      { hex: '#E8E6EA', name: 'IJsparel', category: 'neutraal' },
+      { hex: '#D9DDE1', name: 'Dauw', category: 'neutraal' },
     ],
     doColors: COLOR_PALETTES.zomer.doColors,
     dontColors: [
@@ -290,12 +301,16 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#7B8A8B', name: 'Eucalyptus', category: 'accent' },
       { hex: '#9BA3A8', name: 'Silver sage', category: 'accent' },
       { hex: '#A3B1C1', name: 'Zachte lavendel', category: 'accent' },
+      { hex: '#6E7B8B', name: 'Grafiet blauw', category: 'accent' },
+      { hex: '#8D7B8A', name: 'Gedempte mauve', category: 'accent' },
       { hex: '#BDC3C7', name: 'Silver', category: 'neutraal' },
       { hex: '#D5D8DC', name: 'Pearl grey', category: 'neutraal' },
+      { hex: '#E0E3E5', name: 'Mist', category: 'neutraal' },
     ],
     doColors: COLOR_PALETTES.zomer.doColors,
     dontColors: COLOR_PALETTES.zomer.dontColors,
   },
+  // Default variant — identiek aan parent seizoen. Wijzig hier als de standaardvariant moet afwijken.
   'zacht-zomer': {
     season: 'Zacht Zomer',
     description: 'Zachte, gedempte tinten met laag contrast. Serene harmonie.',
@@ -318,8 +333,11 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#A0826D', name: 'Toffee', category: 'accent' },
       { hex: '#AFA396', name: 'Taupe', category: 'accent' },
       { hex: '#8B6F47', name: 'Hazelnoot', category: 'accent' },
+      { hex: '#8B8B5E', name: 'Gedempte olijf', category: 'accent' },
+      { hex: '#B39387', name: 'Rozenhout', category: 'accent' },
       { hex: '#E8DDD3', name: 'Sand', category: 'neutraal' },
       { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' },
+      { hex: '#E0D5C8', name: 'Champagne', category: 'neutraal' },
     ],
     doColors: [
       { hex: '#D4A373', name: 'Camel', category: 'basis' },
@@ -332,6 +350,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#943126', name: 'Diep rood', description: 'Te sterk', category: 'accent' },
     ],
   },
+  // Default variant — identiek aan parent seizoen. Wijzig hier als de standaardvariant moet afwijken.
   'warm-herfst': {
     season: 'Warm Herfst',
     description: 'Warme, rijke herfsttinten. De klassieke herfstpalette.',
@@ -352,8 +371,11 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
       { hex: '#8B4513', name: 'Saddle brown', category: 'accent' },
       { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
+      { hex: '#556B2F', name: 'Donker olijf', category: 'accent' },
+      { hex: '#7B3F61', name: 'Pruim', category: 'accent' },
       { hex: '#AFA396', name: 'Taupe', category: 'neutraal' },
       { hex: '#E8DDD3', name: 'Sand', category: 'neutraal' },
+      { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' },
     ],
     doColors: [
       { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
@@ -368,7 +390,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
   // --- WINTER VARIANTEN ---
   'koel-winter': {
     season: 'Koel Winter',
-    description: 'Koele, heldere tinten met scherpe contrast. Ijzig en elegant.',
+    description: 'Koele, gedempte wintertinten met gematigd contrast. Ijzig en ingetogen.',
     colors: [
       { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
       { hex: '#1C2833', name: 'Navy', category: 'basis' },
@@ -378,8 +400,12 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#0E6655', name: 'Petrol', category: 'accent' },
       { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
       { hex: '#512E5F', name: 'Aubergine', category: 'accent' },
+      { hex: '#708090', name: 'Staalgrijs', category: 'accent' },
+      { hex: '#4682B4', name: 'IJsblauw', category: 'accent' },
+      { hex: '#7A6F8E', name: 'Koel lavendel', category: 'accent' },
       { hex: '#AAB7B8', name: 'Lichtgrijs', category: 'neutraal' },
       { hex: '#F8F9F9', name: 'Gebroken wit', category: 'neutraal' },
+      { hex: '#C8CDD0', name: 'Platina', category: 'neutraal' },
     ],
     doColors: [
       { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
@@ -402,8 +428,11 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#117A65', name: 'Bosgroen', category: 'accent' },
       { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
       { hex: '#512E5F', name: 'Aubergine', category: 'accent' },
+      { hex: '#154360', name: 'Sapphire', category: 'accent' },
+      { hex: '#2C3E50', name: 'Middernacht', category: 'accent' },
       { hex: '#95A5A6', name: 'Zilvergrijs', category: 'neutraal' },
       { hex: '#F8F9F9', name: 'Gebroken wit', category: 'neutraal' },
+      { hex: '#6C7A86', name: 'Leisteen', category: 'neutraal' },
     ],
     doColors: [
       { hex: '#000000', name: 'Zwart', category: 'basis' },
@@ -414,6 +443,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
     ],
     dontColors: COLOR_PALETTES.winter.dontColors,
   },
+  // Default variant — identiek aan parent seizoen. Wijzig hier als de standaardvariant moet afwijken.
   'helder-winter': {
     season: 'Helder Winter',
     description: 'Heldere, felle kleuren met hoog contrast. Levendig en opvallend.',
