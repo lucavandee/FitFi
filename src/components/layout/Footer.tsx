@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Instagram, Linkedin, Twitter, ArrowRight, Shield, Lock, MapPin } from "lucide-react";
+import { Instagram, Linkedin, Twitter, Shield, Lock, MapPin } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
 
@@ -36,22 +36,13 @@ export default function Footer() {
       {/* CTA strip — alleen voor uitgelogde bezoekers */}
       {!isAuthed && (
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-28 md:pt-36">
-          <div className="bg-white border border-[#E5E5E5] rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-24 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
-            <div>
-              <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5">
-                Ontdek jouw stijl
-              </p>
-              <p className="text-sm text-[#8A8A8A]">
-                Gratis. Twee minuten. Persoonlijk resultaat.
-              </p>
-            </div>
-            <a
-              href="/registreren"
-              className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 px-8 rounded-full inline-flex items-center gap-2 flex-shrink-0 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
-            >
-              Begin gratis
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </a>
+          <div className="bg-white border border-[#E5E5E5] rounded-3xl p-14 md:p-20 flex flex-col items-center text-center gap-3 mb-24 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+            <p className="font-serif italic text-[36px] md:text-[44px] text-[#1A1A1A] leading-[1.1]">
+              Ontdek jouw stijl
+            </p>
+            <p className="text-base text-[#8A8A8A] tracking-wide">
+              Gratis. Twee minuten. Persoonlijk resultaat.
+            </p>
           </div>
         </div>
       )}
