@@ -32,7 +32,7 @@ const FAQ_GENERAL: QA[] = [
 const FAQ_PRIVACY: QA[] = [
   {
     q: "Hoe gaan jullie met mijn gegevens om?",
-    a: "Wij bewaren alleen je quizantwoorden en outfitvoorkeuren. Geen doorverkoop, geen reclame-tracking. Je kunt je gegevens altijd laten verwijderen via contact@fitfi.ai.",
+    a: "Wij bewaren alleen je quizantwoorden en outfitvoorkeuren. Geen doorverkoop, geen reclame-tracking. Je kunt je gegevens altijd laten verwijderen via info@fitfi.ai.",
   },
   {
     q: "Moet ik foto's uploaden?",
@@ -70,7 +70,7 @@ const FAQ_PRODUCT: QA[] = [
   },
   {
     q: "Wat als ik hulp nodig heb?",
-    a: "Stuur een mail naar contact@fitfi.ai. Wij reageren binnen 24 uur en denken graag mee over je stijlvragen.",
+    a: "Stuur een mail naar info@fitfi.ai. Wij reageren binnen 24 uur en denken graag mee over je stijlvragen.",
   },
 ];
 

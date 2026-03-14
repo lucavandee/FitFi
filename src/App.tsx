@@ -63,7 +63,7 @@ const ORG_SCHEMA = {
   name: "FitFi",
   url: "https://fitfi.ai",
   logo: "https://fitfi.ai/icons/icon-512.png",
-  contactPoint: { "@type": "ContactPoint", email: "contact@fitfi.ai", contactType: "customer service" },
+  contactPoint: { "@type": "ContactPoint", email: "info@fitfi.ai", contactType: "customer service" },
 };
 
 const WEBSITE_SCHEMA = {

@@ -22,9 +22,9 @@ const INFO_CARDS = [
   {
     icon: Mail,
     title: "E-mail",
-    body: "contact@fitfi.ai",
+    body: "info@fitfi.ai",
     cta: "Stuur een mail",
-    href: "mailto:contact@fitfi.ai",
+    href: "mailto:info@fitfi.ai",
     internal: false,
   },
   {
@@ -151,7 +151,7 @@ export default function ContactPage() {
     } catch {
       setFormState("error");
       setErrorMsg(
-        "Er ging iets mis. Stuur ons een e-mail via contact@fitfi.ai."
+        "Er ging iets mis. Stuur ons een e-mail via info@fitfi.ai."
       );
     }
   }
