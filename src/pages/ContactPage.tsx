@@ -159,7 +159,7 @@ export default function ContactPage() {
 
       <div
         className="bg-[#FAFAF8] text-[#1A1A1A]"
-        style={{ minHeight: 'calc(100vh - 64px)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        style={{ minHeight: 'calc(100vh - 64px)' }}
       >
 
         {/* ── HERO ── */}
