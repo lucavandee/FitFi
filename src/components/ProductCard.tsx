@@ -168,9 +168,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <button
             onClick={handleClick}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
-            aria-label={`Shop bij partner (je verlaat FitFi)`}
+            aria-label={`Bekijk bij partner (je verlaat FitFi)`}
           >
-            Shop bij partner
+            Bekijk bij partner
             <ExternalLink className="w-3 h-3" />
           </button>
         </div>

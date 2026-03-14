@@ -364,7 +364,7 @@ export function OutfitDetailModal({
                 aria-label={`Shop ${shoppableProducts.length} items`}
               >
                 <ShoppingBag className="w-4 h-4" />
-                Shop items
+                Bekijk alle items
                 <span className="bg-white/20 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
                   {shoppableProducts.length}
                 </span>

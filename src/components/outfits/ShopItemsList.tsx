@@ -246,7 +246,7 @@ export function ShopItemsList({
                     ) : (
                       <>
                         <ShoppingBag className="w-4 h-4 mr-2" />
-                        Shop bij {product.retailer || 'winkel'}
+                        Bekijk bij partner
                         <ExternalLink className="w-3 h-3 ml-1" />
                       </>
                     )}
