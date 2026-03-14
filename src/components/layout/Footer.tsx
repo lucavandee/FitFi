@@ -33,26 +33,8 @@ export default function Footer() {
   return (
     <footer className="bg-[#F5F0EB]">
 
-      {/* CTA-band */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24 pb-12 md:pb-16">
-        <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto">
-          <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A]">
-            Klaar om je stijl te ontdekken?
-          </h3>
-          <p className="text-sm text-[#4A4A4A] mt-3 max-w-md mx-auto leading-relaxed">
-            Beantwoord een paar vragen en ontvang je persoonlijke stijlrapport. Gratis, in 2 minuten.
-          </p>
-          <a
-            href="/onboarding"
-            className="inline-block mt-6 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-8 rounded-xl transition-colors duration-200"
-          >
-            Begin gratis
-          </a>
-        </div>
-      </div>
-
       {/* Links */}
-      <div className="border-t border-[#E5E5E5]/60">
+      <div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
 
