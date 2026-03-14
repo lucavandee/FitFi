@@ -38,7 +38,7 @@ export default function Footer() {
         {!isAuthed ? (
           <div className="bg-white border border-[#E5E5E5] rounded-3xl p-9 md:p-11 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-[72px] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
             <div>
-              <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5">
+              <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5 no-underline" style={{ textDecoration: 'none' }}>
                 Ontdek jouw stijl
               </p>
               <p className="text-sm text-[#8A8A8A]">
@@ -56,7 +56,7 @@ export default function Footer() {
         ) : (
           <div className="bg-white border border-[#E5E5E5] rounded-3xl p-9 md:p-11 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-[72px] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
             <div>
-              <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5">
+              <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5 no-underline" style={{ textDecoration: 'none' }}>
                 Bekijk je stijlrapport
               </p>
               <p className="text-sm text-[#8A8A8A]">
