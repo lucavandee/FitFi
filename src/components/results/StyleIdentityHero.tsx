@@ -138,14 +138,14 @@ export function StyleIdentityHero({
           <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#8A8A8A] mb-4 px-1">
             Op basis van jouw quiz
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {insights.map((insight, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25 + idx * 0.07, duration: 0.3 }}
-                className="bg-white border border-[#E5E5E5] rounded-xl px-4 py-3.5 flex items-start gap-3"
+                className="bg-white border border-[#E5E5E5] rounded-xl px-5 py-4 flex items-start gap-3"
               >
                 <span
                   className="text-[#C2654A] text-[10px] mt-0.5 flex-shrink-0 font-bold"
@@ -153,7 +153,7 @@ export function StyleIdentityHero({
                 >
                   {INSIGHT_ICONS[idx] ?? '◆'}
                 </span>
-                <span className="text-sm text-[#4A4A4A] leading-[1.55]">{insight}</span>
+                <span className="text-sm text-[#4A4A4A] leading-[1.65]">{insight}</span>
               </motion.div>
             ))}
           </div>
