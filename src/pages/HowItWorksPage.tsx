@@ -480,14 +480,14 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             CTA
         ════════════════════════════════════════════════════ */}
-        <section className="py-40 bg-[#FAFAF8]">
+        <section className="py-[120px] md:py-[200px] bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center">
                 <h2 className="font-serif italic text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05]">
                   Klaar om te beginnen?
                 </h2>
-                <p className="text-base md:text-[17px] text-[#4A4A4A] mt-6 mb-10 md:mb-12">
+                <p className="text-base md:text-[17px] text-[#4A4A4A] mt-8 mb-14 md:mb-16">
                   Gratis. Twee minuten. Geen account nodig.
                 </p>
                 <Link
