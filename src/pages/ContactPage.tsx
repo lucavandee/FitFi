@@ -195,283 +195,258 @@ export default function ContactPage() {
         </section>
 
         {/* ── MAIN: form (left) + sidebar (right) ── */}
-        <section className="bg-[#FAFAF8] py-16 md:py-20">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <section className="bg-[#FAFAF8] py-20 md:py-28">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10 xl:gap-16 items-start">
 
-            {/* ── LEFT: form card ── */}
-            <div className="lg:col-span-2">
-              <AnimatePresence>
-                {formState === "success" && (
-                  <motion.div
-                    key="ok"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.22 }}
-                    role="alert"
-                    aria-live="polite"
-                    className="mb-5 rounded-2xl bg-[#3D8B5E]/10 border border-[#3D8B5E]/20 px-5 py-4 flex items-start gap-3"
-                  >
-                    <CheckCircle className="w-5 h-5 text-[#3D8B5E] flex-shrink-0 mt-0.5" aria-hidden />
-                    <div>
-                      <p className="text-sm font-semibold text-[#1A1A1A]">
-                        Bericht ontvangen!
-                      </p>
-                      <p className="text-xs text-[#4A4A4A] mt-0.5 leading-relaxed">
-                        We reageren binnen 24 uur op werkdagen.
-                      </p>
+              {/* ── LEFT: form card ── */}
+              <motion.div
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <AnimatePresence>
+                  {formState === "success" && (
+                    <motion.div
+                      key="ok"
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.22 }}
+                      role="alert"
+                      aria-live="polite"
+                      className="mb-6 rounded-2xl bg-[#3D8B5E]/10 border border-[#3D8B5E]/20 px-6 py-5 flex items-start gap-4"
+                    >
+                      <CheckCircle className="w-5 h-5 text-[#3D8B5E] flex-shrink-0 mt-0.5" aria-hidden />
+                      <div>
+                        <p className="text-sm font-semibold text-[#1A1A1A]">Bericht ontvangen!</p>
+                        <p className="text-xs text-[#4A4A4A] mt-0.5 leading-relaxed">
+                          We reageren binnen 24 uur op werkdagen.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {formState === "error" && (
+                    <motion.div
+                      key="err"
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.22 }}
+                      role="alert"
+                      aria-live="polite"
+                      className="mb-6 rounded-2xl bg-[#C24A4A]/10 border border-[#C24A4A]/20 px-6 py-5 flex items-start gap-4"
+                    >
+                      <AlertCircle className="w-5 h-5 text-[#C24A4A] flex-shrink-0 mt-0.5" aria-hidden />
+                      <p className="text-sm text-[#C24A4A]">{errorMsg}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="bg-white border border-[#E5E5E5] rounded-2xl shadow-sm overflow-hidden">
+                  {/* Form header strip */}
+                  <div className="px-8 pt-8 pb-6 border-b border-[#E5E5E5]">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-9 h-9 rounded-xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
+                        <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />
+                      </div>
+                      <h2 className="text-xl font-sans font-semibold text-[#1A1A1A]">
+                        Stuur een bericht
+                      </h2>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <AnimatePresence>
-                {formState === "error" && (
-                  <motion.div
-                    key="err"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.22 }}
-                    role="alert"
-                    aria-live="polite"
-                    className="mb-5 rounded-2xl bg-[#C24A4A]/10 border border-[#C24A4A]/20 px-5 py-4 flex items-start gap-3"
-                  >
-                    <AlertCircle className="w-5 h-5 text-[#C24A4A] flex-shrink-0 mt-0.5" aria-hidden />
-                    <p className="text-sm text-[#C24A4A]">{errorMsg}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 shadow-sm">
-                <h2 className="text-xl font-sans font-semibold text-[#1A1A1A] mb-1">
-                  Stuur een bericht
-                </h2>
-                <p className="text-sm text-[#8A8A8A] mt-1 mb-8 leading-relaxed">
-                  Direct in ons systeem, geen e-mailapp nodig.
-                </p>
-
-                <form
-                  className="space-y-5"
-                  onSubmit={handleSubmit}
-                  noValidate
-                  aria-label="Contactformulier"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field
-                      id="name"
-                      label="Naam"
-                      error={errors.name}
-                      touched={touched.name}
-                    >
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        autoComplete="name"
-                        className={touched.name && errors.name ? inputErr : inputOk}
-                        placeholder="Jouw naam"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        onBlur={() => touch("name")}
-                        aria-invalid={touched.name ? !!errors.name : undefined}
-                        aria-describedby={errors.name ? "err-name" : undefined}
-                        required
-                      />
-                    </Field>
-
-                    <Field
-                      id="email"
-                      label="E-mail"
-                      error={errors.email}
-                      touched={touched.email}
-                    >
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        inputMode="email"
-                        className={touched.email && errors.email ? inputErr : inputOk}
-                        placeholder="je@email.nl"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onBlur={() => touch("email")}
-                        aria-invalid={touched.email ? !!errors.email : undefined}
-                        aria-describedby={
-                          errors.email ? "err-email" : undefined
-                        }
-                        required
-                      />
-                    </Field>
+                    <p className="text-sm text-[#8A8A8A] leading-relaxed">
+                      Direct in ons systeem — geen e-mailapp nodig.
+                    </p>
                   </div>
 
-                  <Field id="topic" label="Onderwerp">
-                    <div className="relative">
-                      <select
-                        id="topic"
-                        name="topic"
-                        className={`${inputOk} appearance-none pr-10`}
-                        value={topic}
-                        onChange={(e) => setTopic(e.target.value as Topic)}
-                      >
-                        <option value="algemeen">Algemene vraag</option>
-                        <option value="pers">Pers & Media</option>
-                        <option value="partners">Partnership & Samenwerking</option>
-                        <option value="feedback">Feedback & Suggesties</option>
-                        <option value="bug">Bug of technisch probleem</option>
-                      </select>
-                      <div
-                        className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center"
-                        aria-hidden
-                      >
-                        <svg
-                          className="w-4 h-4 text-[#8A8A8A]"
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
+                  {/* Form body */}
+                  <form
+                    className="px-8 py-8 space-y-6"
+                    onSubmit={handleSubmit}
+                    noValidate
+                    aria-label="Contactformulier"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <Field id="name" label="Naam" error={errors.name} touched={touched.name}>
+                        <input
+                          id="name"
+                          name="name"
+                          type="text"
+                          autoComplete="name"
+                          className={touched.name && errors.name ? inputErr : inputOk}
+                          placeholder="Jouw naam"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          onBlur={() => touch("name")}
+                          aria-invalid={touched.name ? !!errors.name : undefined}
+                          aria-describedby={errors.name ? "err-name" : undefined}
+                          required
+                        />
+                      </Field>
+
+                      <Field id="email" label="E-mail" error={errors.email} touched={touched.email}>
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
+                          autoComplete="email"
+                          inputMode="email"
+                          className={touched.email && errors.email ? inputErr : inputOk}
+                          placeholder="je@email.nl"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onBlur={() => touch("email")}
+                          aria-invalid={touched.email ? !!errors.email : undefined}
+                          aria-describedby={errors.email ? "err-email" : undefined}
+                          required
+                        />
+                      </Field>
+                    </div>
+
+                    <Field id="topic" label="Onderwerp">
+                      <div className="relative">
+                        <select
+                          id="topic"
+                          name="topic"
+                          className={`${inputOk} appearance-none pr-10`}
+                          value={topic}
+                          onChange={(e) => setTopic(e.target.value as Topic)}
                         >
-                          <path d="M8 11L2 5h12z" />
-                        </svg>
+                          <option value="algemeen">Algemene vraag</option>
+                          <option value="pers">Pers & Media</option>
+                          <option value="partners">Partnership & Samenwerking</option>
+                          <option value="feedback">Feedback & Suggesties</option>
+                          <option value="bug">Bug of technisch probleem</option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center" aria-hidden>
+                          <svg className="w-4 h-4 text-[#8A8A8A]" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 11L2 5h12z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </Field>
+
+                    <Field id="message" label="Bericht" error={errors.message} touched={touched.message}>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows={6}
+                        className={`${touched.message && errors.message ? inputErr : inputOk} min-h-[160px] resize-y`}
+                        placeholder="Waar kunnen we je mee helpen?"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onBlur={() => touch("message")}
+                        aria-invalid={touched.message ? !!errors.message : undefined}
+                        aria-describedby={errors.message ? "err-message" : undefined}
+                        required
+                      />
+                    </Field>
+
+                    <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                      <button
+                        type="submit"
+                        disabled={formState === "submitting" || formState === "success"}
+                        className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-8 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {formState === "submitting" ? (
+                          <>
+                            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
+                              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" style={{ opacity: 0.25 }} />
+                              <path fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" style={{ opacity: 0.75 }} />
+                            </svg>
+                            Versturen…
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" aria-hidden />
+                            Verstuur bericht
+                          </>
+                        )}
+                      </button>
+
+                      <p className="text-sm text-[#8A8A8A] inline-flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 flex-shrink-0 text-[#3D8B5E]" aria-hidden />
+                        Veilig opgeslagen.{" "}
+                        <Link
+                          to="/privacy"
+                          className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-2 transition-colors duration-200"
+                        >
+                          Privacyverklaring
+                        </Link>
+                      </p>
+                    </div>
+                  </form>
+                </div>
+              </motion.div>
+
+              {/* ── RIGHT: info sidebar ── */}
+              <motion.aside
+                aria-label="Contactinformatie"
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="flex flex-col gap-4"
+              >
+                {INFO_CARDS.map((card, i) => {
+                  const Icon = card.icon;
+
+                  const inner = (
+                    <div className="group bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-md hover:border-[#C2654A]/40 transition-all duration-200">
+                      <div className="flex items-start gap-4">
+                        <div className="w-11 h-11 rounded-xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 group-hover:bg-[#C2654A]/15 transition-colors duration-200">
+                          <Icon className="w-5 h-5 text-[#C2654A]" aria-hidden />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">
+                            {card.title}
+                          </p>
+                          <p className="text-sm text-[#8A8A8A] mt-1 leading-relaxed">
+                            {card.body}
+                          </p>
+                          {card.cta && (
+                            <span className="text-sm font-medium text-[#C2654A] group-hover:text-[#A8513A] mt-2.5 inline-flex items-center gap-1.5 transition-colors duration-200">
+                              {card.cta}
+                              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" aria-hidden />
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </Field>
+                  );
 
-                  <Field
-                    id="message"
-                    label="Bericht"
-                    error={errors.message}
-                    touched={touched.message}
-                  >
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={5}
-                      className={`${touched.message && errors.message ? inputErr : inputOk} min-h-[140px] resize-y`}
-                      placeholder="Waar kunnen we je mee helpen?"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onBlur={() => touch("message")}
-                      aria-invalid={
-                        touched.message ? !!errors.message : undefined
-                      }
-                      aria-describedby={
-                        errors.message ? "err-message" : undefined
-                      }
-                      required
-                    />
-                  </Field>
-
-                  <div className="pt-1 flex flex-col sm:flex-row sm:items-center gap-4">
-                    <button
-                      type="submit"
-                      disabled={
-                        formState === "submitting" || formState === "success"
-                      }
-                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-8 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {formState === "submitting" ? (
-                        <>
-                          <svg
-                            className="w-4 h-4 animate-spin"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            aria-hidden
-                          >
-                            <circle
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                              style={{ opacity: 0.25 }}
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v8H4z"
-                              style={{ opacity: 0.75 }}
-                            />
-                          </svg>
-                          Versturen…
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" aria-hidden />
-                          Verstuur bericht
-                        </>
-                      )}
-                    </button>
-
-                    <p className="text-sm text-[#8A8A8A] inline-flex items-center gap-1.5 ml-4">
-                      <ShieldCheck
-                        className="w-4 h-4 flex-shrink-0 text-[#3D8B5E]"
-                        aria-hidden
-                      />
-                      Veilig opgeslagen.{" "}
-                      <Link
-                        to="/privacy"
-                        className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-2 transition-colors duration-200"
-                      >
-                        Privacyverklaring
+                  if (card.href && card.internal) {
+                    return (
+                      <Link key={i} to={card.href} className="block focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 rounded-2xl">
+                        {inner}
                       </Link>
-                    </p>
+                    );
+                  }
+                  if (card.href) {
+                    return (
+                      <a key={i} href={card.href} rel="noopener noreferrer" className="block focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 rounded-2xl">
+                        {inner}
+                      </a>
+                    );
+                  }
+                  return <div key={i}>{inner}</div>;
+                })}
+
+                {/* Response promise card */}
+                <div className="bg-[#F5F0EB] rounded-2xl p-6 border border-[#E5E5E5]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-[#3D8B5E]" aria-hidden="true" />
+                    <span className="text-xs font-semibold uppercase tracking-[2px] text-[#3D8B5E]">Onze belofte</span>
                   </div>
-                </form>
-              </div>
+                  <p className="text-sm text-[#4A4A4A] leading-relaxed">
+                    We lezen elk bericht persoonlijk. Geen chatbot, geen formuliermail.
+                  </p>
+                </div>
+              </motion.aside>
+
             </div>
-
-            {/* ── RIGHT: info sidebar ── */}
-            <aside aria-label="Contactinformatie" className="space-y-3">
-              {INFO_CARDS.map((card, i) => {
-                const Icon = card.icon;
-
-                const inner = (
-                  <div className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200">
-                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center mb-3">
-                      <Icon className="w-5 h-5 text-[#C2654A]" aria-hidden />
-                    </div>
-                    <p className="text-sm font-semibold text-[#1A1A1A]">
-                      {card.title}
-                    </p>
-                    <p className="text-xs text-[#8A8A8A] mt-0.5">
-                      {card.body}
-                    </p>
-                    {card.cta && (
-                      <span className="text-xs font-medium text-[#C2654A] hover:text-[#A8513A] mt-2 inline-flex items-center gap-1 transition-colors duration-200">
-                        {card.cta}
-                        <ArrowRight className="w-3 h-3" aria-hidden />
-                      </span>
-                    )}
-                  </div>
-                );
-
-                if (card.href && card.internal) {
-                  return (
-                    <Link
-                      key={i}
-                      to={card.href}
-                      className="block focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 rounded-2xl"
-                    >
-                      {inner}
-                    </Link>
-                  );
-                }
-                if (card.href) {
-                  return (
-                    <a
-                      key={i}
-                      href={card.href}
-                      rel="noopener noreferrer"
-                      className="block focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 rounded-2xl"
-                    >
-                      {inner}
-                    </a>
-                  );
-                }
-                return <div key={i}>{inner}</div>;
-              })}
-            </aside>
-          </div>
           </div>
         </section>
 
