@@ -336,6 +336,7 @@ export default function DashboardPage() {
                   {outfitsData.slice(0, 5).map((outfit, i) => {
                     const imgs = getOutfitImages(outfit);
                     const label = (outfit as any)?.occasion || (outfit as any)?.tags?.[0] || (outfit as any)?.name || `Look ${i + 1}`;
+                    const occasionTag = ((outfit as any)?.tags?.[0] || (outfit as any)?.occasion || label || "").toLowerCase();
                     const outfitCount = (outfit as any)?.products?.length ?? 0;
                     const coverImg = imgs[0] ?? null;
                     return (
@@ -344,7 +345,7 @@ export default function DashboardPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 + i * 0.06 }}
-                        onClick={() => navigate("/results")}
+                        onClick={() => navigate(`/results?occasion=${encodeURIComponent(occasionTag)}`)}
                         aria-label={`Bekijk outfit: ${label}`}
                         className="group text-left"
                       >

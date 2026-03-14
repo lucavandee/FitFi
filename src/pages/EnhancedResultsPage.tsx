@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal } from "lucide-react";
@@ -72,6 +72,8 @@ const AnimatedSection = ({ children, delay = 0 }: { children: React.ReactNode; d
 export default function EnhancedResultsPage() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const occasionFilter = searchParams.get('occasion')?.toLowerCase() || null;
   const { shouldShow: showExitIntent, dismiss: dismissExitIntent } = useExitIntent({
     enabled: !user,
     maxDisplays: 1,
@@ -270,7 +272,7 @@ export default function EnhancedResultsPage() {
     }
   }, [activeColorProfile, archetypeName]);
 
-  const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
+  const allOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
     try {
       if (realOutfits && Array.isArray(realOutfits) && realOutfits.length > 0) {
         return realOutfits;
@@ -283,6 +285,23 @@ export default function EnhancedResultsPage() {
       return [];
     }
   }, [realOutfits, seeds]);
+
+  // Filter outfits by occasion when ?occasion= param is set (from dashboard click)
+  const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
+    if (!occasionFilter || allOutfits.length === 0) return allOutfits;
+
+    const filtered = allOutfits.filter((outfit) => {
+      const tags = (outfit as any)?.tags as string[] | undefined;
+      const occasion = (outfit as any)?.occasion as string | undefined;
+      // Match against tags or occasion field (case-insensitive)
+      if (tags && tags.some(t => t.toLowerCase() === occasionFilter)) return true;
+      if (occasion && occasion.toLowerCase() === occasionFilter) return true;
+      return false;
+    });
+
+    // If filter matches nothing, show all outfits rather than an empty page
+    return filtered.length > 0 ? filtered : allOutfits;
+  }, [allOutfits, occasionFilter]);
 
   const [favs, setFavs] = React.useState<string[]>(() => {
     try {
@@ -300,21 +319,28 @@ export default function EnhancedResultsPage() {
   const outfitsLoadedTrackedRef = React.useRef(false);
   React.useEffect(() => {
     if (outfitsLoadedTrackedRef.current) return;
-    if (!outfitsLoading && displayOutfits.length > 0) {
+    if (!outfitsLoading && allOutfits.length > 0) {
       outfitsLoadedTrackedRef.current = true;
       track("results_outfits_loaded", {
         archetype: archetypeName,
-        outfit_count: displayOutfits.length,
+        outfit_count: allOutfits.length,
         source: realOutfits && realOutfits.length > 0 ? "realtime" : "seed",
         gallery_mode: galleryMode,
       });
     }
-  }, [outfitsLoading, displayOutfits.length]);
+  }, [outfitsLoading, allOutfits.length]);
 
   const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
 
   type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
-  const [activeTab, setActiveTab] = React.useState<ResultTab>('outfits');
+  const [activeTab, setActiveTab] = React.useState<ResultTab>(occasionFilter ? 'outfits' : 'outfits');
+
+  // Auto-switch to outfits tab and scroll when navigating with ?occasion= param
+  React.useEffect(() => {
+    if (occasionFilter) {
+      setActiveTab('outfits');
+    }
+  }, [occasionFilter]);
 
   React.useEffect(() => {
     function checkWidth() {
@@ -894,13 +920,26 @@ export default function EnhancedResultsPage() {
                     Jouw outfits
                   </p>
                   <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
-                    Handpicked voor jou
+                    {occasionFilter
+                      ? `${occasionFilter.charAt(0).toUpperCase() + occasionFilter.slice(1)}`
+                      : 'Handpicked voor jou'}
                   </h2>
                   <p className="text-sm text-[#8A8A8A] mt-2">
                     {displayOutfits.length} outfits · {archetypeName}
                   </p>
                 </div>
-                <div className="shrink-0 pt-1">
+                <div className="shrink-0 pt-1 flex items-center gap-2">
+                  {occasionFilter && (
+                    <button
+                      onClick={() => {
+                        searchParams.delete('occasion');
+                        setSearchParams(searchParams, { replace: true });
+                      }}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C2654A] text-sm font-medium text-white hover:bg-[#A8513A] transition-all duration-200 whitespace-nowrap"
+                    >
+                      Alle outfits
+                    </button>
+                  )}
                   <button
                     onClick={() => navigate('/onboarding')}
                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 whitespace-nowrap"

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { getFeed } from '@/services/DataRouter';
 import { fetchOutfits } from '@/services/data/dataService';
 import type { Outfit } from '@/services/data/types';
@@ -31,7 +30,8 @@ interface UseOutfitsResult {
 }
 
 /**
- * Hook for fetching outfits with filtering options
+ * Hook for fetching outfits with filtering options.
+ * Uses React Query for persistent cross-navigation caching.
  */
 export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
   const {
@@ -51,24 +51,27 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
     budget,
   } = options;
 
-  const [data, setData] = useState<Outfit[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
-  const [cached, setCached] = useState(false);
+  // Stable query key based on all parameters that affect results
+  const queryKey = [
+    'outfits',
+    archetype ?? '',
+    secondaryArchetype ?? '',
+    mixFactor ?? 0,
+    season ?? '',
+    limit ?? 9,
+    gender ?? '',
+    fit ?? '',
+    prints ?? '',
+    (goals || []).sort().join(','),
+    (materials || []).sort().join(','),
+    (occasions || []).sort().join(','),
+    budget?.min ?? '',
+    budget?.max ?? '',
+  ];
 
-  const loadOutfits = async () => {
-    if (!enabled) {
-      setLoading(false);
-      return;
-    }
-
-    let alive = true;
-
-    try {
-      setLoading(true);
-      setError(null);
-
+  const query = useQuery({
+    queryKey,
+    queryFn: async () => {
       const response = await fetchOutfits({
         archetype,
         secondaryArchetype,
@@ -85,52 +88,31 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
         budget,
       });
 
-      if (alive) {
-        setData(response.data);
-        setSource(response.source);
-        setCached(response.cached);
+      return {
+        data: response.data,
+        source: response.source,
+        cached: response.cached,
+        errors: response.errors,
+      };
+    },
+    enabled,
+    staleTime: 1000 * 60 * 10, // 10 min — outfits don't change often
+    gcTime: 1000 * 60 * 30,    // Keep in cache 30 min after unmount
+  });
 
-        if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
-          setError('Live data niet beschikbaar, fallback gebruikt');
-        }
-      }
-    } catch (err) {
-      if (alive) {
-        setError(err instanceof Error ? err.message : 'Onbekende fout');
-        setData([]);
-        setSource('fallback');
-        setCached(false);
-      }
-    } finally {
-      if (alive) {
-        setLoading(false);
-      }
-    }
-
-    return () => { alive = false; };
-  };
-
-  const prefsKey = [
-    fit ?? '',
-    prints ?? '',
-    (goals || []).join(','),
-    (materials || []).join(','),
-    (occasions || []).join(','),
-    budget?.max ?? '',
-  ].join('|');
-
-  useEffect(() => {
-    const cleanup = loadOutfits();
-    return () => cleanup.then(fn => fn?.());
-  }, [archetype, secondaryArchetype, season, limit, enabled, gender, prefsKey]);
+  const result = query.data;
 
   return {
-    data,
-    loading,
-    error,
-    source,
-    cached,
-    refetch: loadOutfits
+    data: result?.data ?? null,
+    loading: query.isLoading,
+    error: query.error
+      ? (query.error instanceof Error ? query.error.message : 'Onbekende fout')
+      : (result?.source === 'fallback' && result?.errors?.length
+        ? 'Live data niet beschikbaar, fallback gebruikt'
+        : null),
+    source: result?.source ?? 'fallback',
+    cached: result?.cached ?? false,
+    refetch: async () => { await query.refetch(); },
   };
 }
 
@@ -151,7 +133,7 @@ export function useInfiniteOutfits(options: {
         archetypes: options.archetypes,
         offset: pageParam
       });
-      
+
       return {
         outfits: feed,
         nextCursor: feed.length === (options.pageSize || 12) ? pageParam + feed.length : undefined
