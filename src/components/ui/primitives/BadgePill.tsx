@@ -26,9 +26,9 @@ const variantClasses: Record<Variant, string> = {
     "border-[color-mix(in_oklab,var(--color-text)_15%,var(--color-border))] " +
     "text-[var(--color-text)]",
   success:
-    "bg-[var(--ff-color-success-50)] " +
-    "border-[var(--ff-color-success-200)] " +
-    "text-[var(--ff-color-success-700)]",
+    "bg-[#F4E8E3] " +
+    "border-[#E5E5E5] " +
+    "text-[#C2654A]",
   warning:
     "bg-[var(--ff-color-warning-50)] " +
     "border-[var(--ff-color-warning-200)] " +

@@ -68,7 +68,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           />
           {outfit?.matchScore && (
             <div className="absolute top-2 left-2 z-10">
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--ff-color-success-600)] text-white leading-none">
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C2654A] text-white leading-none">
                 {Math.round(outfit.matchScore)}%
               </span>
             </div>
