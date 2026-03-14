@@ -163,21 +163,34 @@ export default function ContactPage() {
       >
 
         {/* ── HERO ── */}
-        <section className="bg-[#F5F0EB] pt-44 pb-12 md:pt-52 md:pb-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-sm font-medium text-[#4A4A4A] mb-6">
-              <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />
-              Contact
+        <section className="bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-24 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center gap-3 mb-10">
+              <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                Contact
+              </span>
+              <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
             </div>
-            <h1 className="text-[32px] md:text-[48px] text-[#1A1A1A] leading-[1.1]">
+
+            <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6">
               <span className="font-serif italic">We horen </span>
-              <span className="font-sans font-bold">graag van je</span>
+              <span className="font-sans font-bold" style={{ letterSpacing: "-2px" }}>graag van je</span>
             </h1>
-            <p className="text-base text-[#4A4A4A] leading-relaxed mt-4 max-w-lg mx-auto">
-              Vragen over stijl, partnerships of een idee?{" "}
-              <br className="hidden sm:block" />
+
+            <p className="text-[17px] text-[#4A4A4A] leading-[1.7] max-w-[480px] mx-auto mb-12 text-center">
+              Vragen over stijl, partnerships of een idee?
               We reageren binnen 24 uur op werkdagen.
             </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
+              {["Binnen 24 uur reactie", "Geen callcenter", "Direct antwoord"].map((tag) => (
+                <div key={tag} className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                  <span>{tag}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
