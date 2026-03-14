@@ -14,7 +14,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
-import { supabase } from "@/lib/supabaseClient";
 
 type Topic = "algemeen" | "pers" | "partners" | "feedback" | "bug";
 type FormState = "idle" | "submitting" | "success" | "error";
@@ -127,13 +126,22 @@ export default function ContactPage() {
     setFormState("submitting");
     setErrorMsg("");
     try {
-      const { error } = await supabase.from("contact_messages").insert({
-        name: name.trim(),
-        email: email.trim(),
-        topic,
-        message: message.trim(),
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-contact-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          topic,
+          message: message.trim(),
+        }),
       });
-      if (error) throw error;
+      if (!res.ok) throw new Error("edge function failed");
       setFormState("success");
       setName("");
       setEmail("");
