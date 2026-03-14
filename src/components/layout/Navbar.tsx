@@ -130,9 +130,8 @@ export default function Navbar() {
 
   const userInitial = user?.name?.[0]?.toUpperCase() || "U";
 
-  // Transparent at top on homepage, semi-transparent at top on other pages
+  // Transparent only on homepage hero (not yet scrolled); all other pages always solid
   const isTransparent = isHome && !scrolled;
-  const isSemiTransparent = !isHome && !scrolled;
   const navTextClass = isTransparent
     ? "text-white/70 hover:text-white"
     : "text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80";
@@ -162,8 +161,6 @@ export default function Navbar() {
             "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-500",
             isTransparent
               ? "bg-transparent border border-transparent shadow-none"
-              : isSemiTransparent
-              ? "bg-white/60 backdrop-blur-[16px] border border-[#E5E5E5]/30 shadow-none"
               : "bg-white/85 backdrop-blur-[20px] border border-[#E5E5E5]/50 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:border-[#E5E5E5]/80",
           ].join(" ")}
         >

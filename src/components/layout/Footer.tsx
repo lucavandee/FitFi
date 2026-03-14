@@ -33,9 +33,9 @@ export default function Footer() {
   return (
     <footer className="bg-[#F5F0EB] relative overflow-hidden">
 
-      {/* CTA strip */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-20">
-        {!isAuthed ? (
+      {/* CTA strip — alleen voor uitgelogde bezoekers */}
+      {!isAuthed && (
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-20">
           <div className="bg-white border border-[#E5E5E5] rounded-3xl p-9 md:p-11 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-[72px] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
             <div>
               <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5">
@@ -53,11 +53,11 @@ export default function Footer() {
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
-        ) : null}
-      </div>
+        </div>
+      )}
 
       {/* Footer grid */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2.5fr_1fr_1fr_1fr] gap-10 lg:gap-16">
+      <div className={`max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2.5fr_1fr_1fr_1fr] gap-10 lg:gap-16 ${isAuthed ? "pt-20" : ""}`}>
 
         {/* Kolom 1: Merk */}
         <div>
