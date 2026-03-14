@@ -194,15 +194,246 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
 };
 
 // ==========================================
+// P2.4: 12 SUB-SEIZOENSPALETTEN
+// Elke seizoen krijgt 3 varianten op basis van value, contrast en chroma.
+// Sub-paletten erven de basis van hun ouder-seizoen maar verschuiven accenten.
+// ==========================================
+
+export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
+  // --- LENTE VARIANTEN ---
+  'licht-lente': {
+    season: 'Licht Lente',
+    description: 'Zachte, lichte tinten met laag contrast. Pastel en subtiel.',
+    colors: [
+      { hex: '#FFF8DC', name: 'Crème', category: 'basis' },
+      { hex: '#F5F5DC', name: 'Beige', category: 'basis' },
+      { hex: '#F0EAD6', name: 'Eggshell', category: 'basis' },
+      { hex: '#E8DCC4', name: 'Warm ivory', category: 'basis' },
+      { hex: '#E5B299', name: 'Peach', category: 'accent' },
+      { hex: '#A3B899', name: 'Licht sage', category: 'accent' },
+      { hex: '#98B4AA', name: 'Mint sage', category: 'accent' },
+      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
+      { hex: '#D5C7B8', name: 'Linen', category: 'neutraal' },
+      { hex: '#E8DCC4', name: 'Warm ivory', category: 'neutraal' },
+    ],
+    doColors: COLOR_PALETTES.lente.doColors,
+    dontColors: [
+      ...COLOR_PALETTES.lente.dontColors,
+      { hex: '#C17767', name: 'Terracotta', description: 'Te sterk', category: 'accent' },
+    ],
+  },
+  'warm-lente': {
+    season: 'Warm Lente',
+    description: 'Warme, levendige lentetinten. Goud en terracotta als accent.',
+    colors: COLOR_PALETTES.lente.colors,
+    doColors: COLOR_PALETTES.lente.doColors,
+    dontColors: COLOR_PALETTES.lente.dontColors,
+  },
+  'helder-lente': {
+    season: 'Helder Lente',
+    description: 'Heldere, warme kleuren met hoger contrast. Levendig en fris.',
+    colors: [
+      { hex: '#FFF8DC', name: 'Crème', category: 'basis' },
+      { hex: '#5F7A61', name: 'Sage groen', category: 'basis' },
+      { hex: '#8B9D83', name: 'Warm groen', category: 'basis' },
+      { hex: '#F5F5DC', name: 'Beige', category: 'basis' },
+      { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
+      { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
+      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#B4926B', name: 'Warm sand', category: 'accent' },
+      { hex: '#D48B6A', name: 'Warm koraal', category: 'accent' },
+      { hex: '#F0EAD6', name: 'Eggshell', category: 'neutraal' },
+      { hex: '#D5C7B8', name: 'Linen', category: 'neutraal' },
+    ],
+    doColors: [
+      { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
+      { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
+      { hex: '#5F7A61', name: 'Sage groen', category: 'basis' },
+      { hex: '#FFF8DC', name: 'Crème', category: 'basis' },
+    ],
+    dontColors: COLOR_PALETTES.lente.dontColors,
+  },
+
+  // --- ZOMER VARIANTEN ---
+  'licht-zomer': {
+    season: 'Licht Zomer',
+    description: 'Ultra-zachte, lichte koele tinten. Etherisch en verfijnd.',
+    colors: [
+      { hex: '#FDFEFE', name: 'Soft white', category: 'basis' },
+      { hex: '#ECF0F1', name: 'Lichtgrijs', category: 'basis' },
+      { hex: '#E5E8E8', name: 'Cloud', category: 'basis' },
+      { hex: '#D5D8DC', name: 'Pearl grey', category: 'basis' },
+      { hex: '#85C1E2', name: 'Soft blauw', category: 'accent' },
+      { hex: '#A3B1C1', name: 'Zachte lavendel', category: 'accent' },
+      { hex: '#C3B1C0', name: 'Dusty mauve', category: 'accent' },
+      { hex: '#98B4AA', name: 'Mint', category: 'accent' },
+      { hex: '#BDC3C7', name: 'Silver', category: 'neutraal' },
+      { hex: '#D5D8DC', name: 'Pearl grey', category: 'neutraal' },
+    ],
+    doColors: COLOR_PALETTES.zomer.doColors,
+    dontColors: [
+      ...COLOR_PALETTES.zomer.dontColors,
+      { hex: '#4E342E', name: 'Chocolade', description: 'Te zwaar', category: 'basis' },
+    ],
+  },
+  'koel-zomer': {
+    season: 'Koel Zomer',
+    description: 'Koele, gedempte tinten met wat meer diepte. Koel en elegant.',
+    colors: [
+      { hex: '#FDFEFE', name: 'Soft white', category: 'basis' },
+      { hex: '#85929E', name: 'Grijs-blauw', category: 'basis' },
+      { hex: '#5D6D7E', name: 'Slate', category: 'basis' },
+      { hex: '#ECF0F1', name: 'Lichtgrijs', category: 'basis' },
+      { hex: '#AEB6BF', name: 'Duifgrijs', category: 'accent' },
+      { hex: '#85C1E2', name: 'Soft blauw', category: 'accent' },
+      { hex: '#7B8A8B', name: 'Eucalyptus', category: 'accent' },
+      { hex: '#9BA3A8', name: 'Silver sage', category: 'accent' },
+      { hex: '#A3B1C1', name: 'Zachte lavendel', category: 'accent' },
+      { hex: '#BDC3C7', name: 'Silver', category: 'neutraal' },
+      { hex: '#D5D8DC', name: 'Pearl grey', category: 'neutraal' },
+    ],
+    doColors: COLOR_PALETTES.zomer.doColors,
+    dontColors: COLOR_PALETTES.zomer.dontColors,
+  },
+  'zacht-zomer': {
+    season: 'Zacht Zomer',
+    description: 'Zachte, gedempte tinten met laag contrast. Serene harmonie.',
+    colors: COLOR_PALETTES.zomer.colors,
+    doColors: COLOR_PALETTES.zomer.doColors,
+    dontColors: COLOR_PALETTES.zomer.dontColors,
+  },
+
+  // --- HERFST VARIANTEN ---
+  'zacht-herfst': {
+    season: 'Zacht Herfst',
+    description: 'Gedempte, warme herfsttinten met laag contrast. Subtle en warm.',
+    colors: [
+      { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
+      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#E8DDD3', name: 'Sand', category: 'basis' },
+      { hex: '#C9B8A9', name: 'Greige', category: 'basis' },
+      { hex: '#9C7A5E', name: 'Warm taupe', category: 'accent' },
+      { hex: '#9C8170', name: 'Warm beige', category: 'accent' },
+      { hex: '#A0826D', name: 'Toffee', category: 'accent' },
+      { hex: '#AFA396', name: 'Taupe', category: 'accent' },
+      { hex: '#8B6F47', name: 'Hazelnoot', category: 'accent' },
+      { hex: '#E8DDD3', name: 'Sand', category: 'neutraal' },
+      { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' },
+    ],
+    doColors: [
+      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#9C7A5E', name: 'Warm taupe', category: 'accent' },
+      { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
+      { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' },
+    ],
+    dontColors: [
+      ...COLOR_PALETTES.herfst.dontColors,
+      { hex: '#943126', name: 'Diep rood', description: 'Te sterk', category: 'accent' },
+    ],
+  },
+  'warm-herfst': {
+    season: 'Warm Herfst',
+    description: 'Warme, rijke herfsttinten. De klassieke herfstpalette.',
+    colors: COLOR_PALETTES.herfst.colors,
+    doColors: COLOR_PALETTES.herfst.doColors,
+    dontColors: COLOR_PALETTES.herfst.dontColors,
+  },
+  'diep-herfst': {
+    season: 'Diep Herfst',
+    description: 'Diepe, warme herfsttinten met hoog contrast. Dramatisch en rijk.',
+    colors: [
+      { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
+      { hex: '#5D4037', name: 'Espresso', category: 'basis' },
+      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
+      { hex: '#A0785A', name: 'Cognac', category: 'accent' },
+      { hex: '#C17767', name: 'Terracotta', category: 'accent' },
+      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#8B4513', name: 'Saddle brown', category: 'accent' },
+      { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
+      { hex: '#AFA396', name: 'Taupe', category: 'neutraal' },
+      { hex: '#E8DDD3', name: 'Sand', category: 'neutraal' },
+    ],
+    doColors: [
+      { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
+      { hex: '#A0785A', name: 'Cognac', category: 'accent' },
+      { hex: '#C17767', name: 'Terracotta', category: 'accent' },
+      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
+    ],
+    dontColors: COLOR_PALETTES.herfst.dontColors,
+  },
+
+  // --- WINTER VARIANTEN ---
+  'koel-winter': {
+    season: 'Koel Winter',
+    description: 'Koele, heldere tinten met scherpe contrast. Ijzig en elegant.',
+    colors: [
+      { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
+      { hex: '#1C2833', name: 'Navy', category: 'basis' },
+      { hex: '#34495E', name: 'Donkerblauw', category: 'basis' },
+      { hex: '#95A5A6', name: 'Zilvergrijs', category: 'basis' },
+      { hex: '#154360', name: 'Sapphire', category: 'accent' },
+      { hex: '#0E6655', name: 'Petrol', category: 'accent' },
+      { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
+      { hex: '#512E5F', name: 'Aubergine', category: 'accent' },
+      { hex: '#AAB7B8', name: 'Lichtgrijs', category: 'neutraal' },
+      { hex: '#F8F9F9', name: 'Gebroken wit', category: 'neutraal' },
+    ],
+    doColors: [
+      { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
+      { hex: '#1C2833', name: 'Navy', category: 'basis' },
+      { hex: '#154360', name: 'Sapphire', category: 'accent' },
+      { hex: '#0E6655', name: 'Petrol', category: 'accent' },
+    ],
+    dontColors: COLOR_PALETTES.winter.dontColors,
+  },
+  'diep-winter': {
+    season: 'Diep Winter',
+    description: 'Donker en dramatisch met hoog contrast. Bold en krachtig.',
+    colors: [
+      { hex: '#000000', name: 'Zwart', category: 'basis' },
+      { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
+      { hex: '#1C2833', name: 'Navy', category: 'basis' },
+      { hex: '#34495E', name: 'Donkerblauw', category: 'basis' },
+      { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
+      { hex: '#943126', name: 'Diep rood', category: 'accent' },
+      { hex: '#117A65', name: 'Bosgroen', category: 'accent' },
+      { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
+      { hex: '#512E5F', name: 'Aubergine', category: 'accent' },
+      { hex: '#95A5A6', name: 'Zilvergrijs', category: 'neutraal' },
+      { hex: '#F8F9F9', name: 'Gebroken wit', category: 'neutraal' },
+    ],
+    doColors: [
+      { hex: '#000000', name: 'Zwart', category: 'basis' },
+      { hex: '#FFFFFF', name: 'Zuiver wit', category: 'basis' },
+      { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
+      { hex: '#943126', name: 'Diep rood', category: 'accent' },
+      { hex: '#1E8449', name: 'Smaragdgroen', category: 'accent' },
+    ],
+    dontColors: COLOR_PALETTES.winter.dontColors,
+  },
+  'helder-winter': {
+    season: 'Helder Winter',
+    description: 'Heldere, felle kleuren met hoog contrast. Levendig en opvallend.',
+    colors: COLOR_PALETTES.winter.colors,
+    doColors: COLOR_PALETTES.winter.doColors,
+    dontColors: COLOR_PALETTES.winter.dontColors,
+  },
+};
+
+// ==========================================
 // HELPER FUNCTIONS
 // ==========================================
 
 /**
- * Get color palette for a season
+ * Get color palette for a season or sub-season.
+ * Checks sub-season palettes first, then falls back to base season palettes.
  */
 export function getColorPalette(season: string): ColorPalette | null {
   const normalizedSeason = season.toLowerCase();
-  return COLOR_PALETTES[normalizedSeason] || null;
+  return SUB_SEASON_PALETTES[normalizedSeason] || COLOR_PALETTES[normalizedSeason] || null;
 }
 
 /**

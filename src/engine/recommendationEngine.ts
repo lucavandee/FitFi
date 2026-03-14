@@ -185,9 +185,11 @@ export function generateRecommendationsFromAnswers(
   // CRITICAL: Apply comprehensive filtering FIRST
   // budgetRange is a single number from the slider (e.g. 50); convert to {min, max}
   const budgetMax = answers.budget?.max ?? (typeof answers.budgetRange === 'number' ? answers.budgetRange : undefined);
+  // P3.1: sizes meegeven aan filter pipeline (soft filter)
   const filterCriteria: FilterCriteria = {
     gender: answers.gender,
     budget: budgetMax !== undefined ? { min: 0, max: budgetMax } : undefined,
+    sizes: answers.sizes,
   };
 
   const filterResult = filterProducts(products, filterCriteria);
@@ -226,10 +228,20 @@ export function generateRecommendationsFromAnswers(
 
   const shuffledProducts = shuffleProductsByCategory(reclassified);
 
+  // P3.6: genereer outfits per gelegenheid voor betere groepering.
+  // Als de gebruiker meerdere gelegenheden heeft gekozen, genereer minimaal 2 per gelegenheid.
+  const userOccasions = Array.isArray(answers.occasions) ? answers.occasions : [];
+  const outfitsPerOccasion = userOccasions.length > 0
+    ? Math.max(2, Math.ceil((count * 2) / userOccasions.length))
+    : Math.max(count * 2, 6);
+  const totalToGenerate = userOccasions.length > 0
+    ? outfitsPerOccasion * userOccasions.length
+    : Math.max(count * 2, 6);
+
   const rawOutfits = generateOutfits(
     primaryArchetype,
     shuffledProducts,
-    Math.max(count * 2, 6),
+    totalToGenerate,
     secondaryArchetype,
     mixFactor,
     {
@@ -256,6 +268,7 @@ export function generateRecommendationsFromAnswers(
     if (rawCount) swipeCount = parseInt(rawCount, 10) || 0;
   } catch {}
 
+  // P3.2: materiaalvoorkeur doorgeven aan ranking context
   const rankCtx: RankCtx = {
     primaryArchetype,
     secondaryArchetype,
@@ -266,6 +279,7 @@ export function generateRecommendationsFromAnswers(
     swipeEmbedding,
     swipeCount,
     recentOccasions: Array.isArray(answers.occasions) ? answers.occasions : [],
+    preferredMaterials: Array.isArray(answers.materials) ? answers.materials : [],
   };
 
   const ranked = rankOutfits(rawOutfits, rankCtx);

@@ -184,8 +184,10 @@ export function calculateMatchScore(input: OutfitMatchInput): MatchScoreBreakdow
 
   const finalScore = Math.round(weightedTotal * 100);
 
+  // P2.1 fix: ondergrens verlaagd van 70 naar 45 voor betere differentiatie.
+  // Oude range 70-98% maakte het verschil tussen goede en slechte matches onzichtbaar.
   return {
-    total: Math.max(70, Math.min(98, finalScore)),
+    total: Math.max(45, Math.min(98, finalScore)),
     archetype: Math.round(archetypeScore * 100),
     color: Math.round(colorScore * 100),
     style: Math.round(styleScore * 100),
@@ -194,16 +196,17 @@ export function calculateMatchScore(input: OutfitMatchInput): MatchScoreBreakdow
   };
 }
 
+// P2.1 fix: drempelwaarden aangepast aan nieuwe score range (45-98%)
 export function getMatchScoreInsight(breakdown: MatchScoreBreakdown): string {
   const { total, archetype, color } = breakdown;
 
-  if (total >= 95) return "Perfect match met jouw stijl!";
-  if (total >= 90) return "Uitstekende keuze voor jou";
-  if (total >= 85) return "Past goed bij je profiel";
-  if (total >= 80) return "Goede match";
+  if (total >= 90) return "Perfect match met jouw stijl!";
+  if (total >= 80) return "Uitstekende keuze voor jou";
+  if (total >= 70) return "Past goed bij je profiel";
+  if (total >= 60) return "Goede match";
 
-  if (color < 70) return "Overweeg andere kleuren";
-  if (archetype < 70) return "Niet helemaal jouw stijl";
+  if (color < 50) return "Overweeg andere kleuren";
+  if (archetype < 50) return "Niet helemaal jouw stijl";
 
   return "Experimentele keuze";
 }

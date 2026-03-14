@@ -16,6 +16,12 @@ export interface FilterCriteria {
   categories?: string[];
   brands?: string[];
   minRating?: number;
+  // P3.1: optionele size-filtering
+  sizes?: {
+    tops?: string;
+    bottoms?: string;
+    shoes?: string;
+  };
 }
 
 export interface FilterResult {
@@ -67,6 +73,19 @@ export function filterProducts(
   filtered = filterByBudget(filtered, criteria.budget, removed.budget);
   stats.afterBudget = filtered.length;
   console.log(`[ProductFiltering] After budget filter: ${filtered.length} products (removed ${stats.afterGender - stats.afterBudget})`);
+
+  // Step 2b (P3.1): Size-filtering — soft filter die alleen producten prefereert met juiste maat.
+  // Als dit de pool te klein maakt (< 10), wordt de filter gerelaxed.
+  if (criteria.sizes) {
+    const beforeSize = filtered.length;
+    const sizeFiltered = filterBySizes(filtered, criteria.sizes);
+    if (sizeFiltered.length >= 10) {
+      filtered = sizeFiltered;
+      console.log(`[ProductFiltering] After size filter: ${filtered.length} products (removed ${beforeSize - filtered.length})`);
+    } else {
+      console.log(`[ProductFiltering] Size filter would leave only ${sizeFiltered.length} products — skipping to maintain variety`);
+    }
+  }
 
   // Step 3: Validation (required fields)
   filtered = filterByValidation(filtered, removed.validation);
@@ -275,6 +294,27 @@ function filterByValidation(
     }
 
     return true;
+  });
+}
+
+/**
+ * P3.1: Filter products by user's sizes.
+ * Only keeps products that have at least one matching size from the user's profile.
+ * Products without size data are always included (benefit of the doubt).
+ */
+function filterBySizes(
+  products: Product[],
+  userSizes: { tops?: string; bottoms?: string; shoes?: string }
+): Product[] {
+  const sizeValues = Object.values(userSizes).filter(Boolean).map(s => s!.toLowerCase());
+  if (sizeValues.length === 0) return products;
+
+  return products.filter(product => {
+    // Products without size data pass through (no data ≠ wrong size)
+    if (!product.sizes || product.sizes.length === 0) return true;
+
+    const productSizes = product.sizes.map(s => s.toLowerCase());
+    return sizeValues.some(userSize => productSizes.includes(userSize));
   });
 }
 
