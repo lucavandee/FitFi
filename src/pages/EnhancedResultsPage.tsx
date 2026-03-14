@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal, Briefcase, Coffee, PartyPopper, Dumbbell, Plane } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal, Briefcase, Coffee, PartyPopper, Dumbbell, Plane, ShoppingBag, ExternalLink } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -44,6 +44,9 @@ import { ShareModal } from "@/components/results/ShareModal";
 import { ResultsOutfitCard } from "@/components/results/ResultsOutfitCard";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
+import OutfitCard from "@/components/outfits/OutfitCard";
+import { openProductLink } from "@/utils/affiliate";
+import { getColorPalette } from "@/data/colorPalettes";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -780,6 +783,110 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
+      {/* Top outfits voor jou */}
+      {hasCompletedQuiz && (
+        <section className="py-12 sm:py-16 bg-[#FAFAF8]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto">
+              <AnimatedSection>
+                <div className="text-center mb-8">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                    Jouw top outfits
+                  </p>
+                  <h2
+                    style={{
+                      fontFamily: "'Instrument Serif', Georgia, serif",
+                      fontStyle: "italic",
+                      fontSize: "clamp(28px, 5vw, 40px)",
+                      fontWeight: 400,
+                      color: "#1A1A1A",
+                      lineHeight: 1.15,
+                    }}
+                  >
+                    Direct aan de slag
+                  </h2>
+                </div>
+              </AnimatedSection>
+
+              {outfitsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="bg-white border border-[#E5E5E5] rounded-2xl p-5 animate-pulse">
+                      <div className="aspect-[4/5] rounded-xl bg-[#F5F0EB] mb-4" />
+                      <div className="h-4 bg-[#F5F0EB] rounded w-3/4 mb-2" />
+                      <div className="h-3 bg-[#F5F0EB] rounded w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              ) : displayOutfits.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[...displayOutfits]
+                      .sort((a, b) => {
+                        const scoreA = (a as any).matchScore ?? (a as any).match ?? (a as any).matchPercentage ?? 0;
+                        const scoreB = (b as any).matchScore ?? (b as any).match ?? (b as any).matchPercentage ?? 0;
+                        return scoreB - scoreA;
+                      })
+                      .slice(0, 3)
+                      .map((outfit, idx) => {
+                        const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
+                        const title = (outfit as any).name || (outfit as any).title || `Outfit ${idx + 1}`;
+                        const description = (outfit as any).explanation || (outfit as any).description || '';
+                        const imageUrl = (outfit as any).image || (outfit as any).imageUrl || '';
+                        const matchPct = (outfit as any).matchScore ?? (outfit as any).match ?? (outfit as any).matchPercentage;
+                        const products = Array.isArray((outfit as any).products)
+                          ? (outfit as any).products.map((p: any) => ({
+                              id: p.id || `p-${idx}`,
+                              name: p.name || p.title || 'Product',
+                              brand: p.brand,
+                              imageUrl: p.imageUrl || p.image_url || p.image || '',
+                              price: p.price,
+                              currency: p.currency || 'EUR',
+                              retailer: p.retailer,
+                              affiliateUrl: p.affiliateUrl || p.affiliate_url,
+                              productUrl: p.productUrl || p.product_url || p.url,
+                              category: p.category,
+                              color: p.color,
+                              colors: p.colors,
+                            }))
+                          : [];
+
+                        return (
+                          <AnimatedSection key={String(id)} delay={idx * 0.08}>
+                            <OutfitCard
+                              outfit={{
+                                id: String(id),
+                                title,
+                                description,
+                                imageUrl,
+                                matchPercentage: typeof matchPct === 'number' ? matchPct : undefined,
+                                archetype: archetypeName,
+                                tags: (outfit as any).tags,
+                                products,
+                              }}
+                            />
+                          </AnimatedSection>
+                        );
+                      })}
+                  </div>
+                  <div className="text-center mt-8">
+                    <button
+                      onClick={() => {
+                        setActiveTab('outfits');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="text-[#C2654A] hover:text-[#A8513A] font-semibold text-sm transition-colors duration-200"
+                    >
+                      Bekijk alle outfits →
+                    </button>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      )}
+
       {hasCompletedQuiz && (
         <section className="py-6 sm:py-8 border-t border-[#E5E5E5]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -979,6 +1086,148 @@ export default function EnhancedResultsPage() {
                   hasPhoto={!!answers?.photoUrl}
                 />
               </AnimatedSection>
+
+              {/* Shop in jouw kleuren */}
+              {(() => {
+                const palette = getColorPalette(activeColorProfile.subSeason || activeColorProfile.season);
+                const doColorHexes = palette?.doColors?.map(c => c.hex.toLowerCase()) || [];
+
+                if (doColorHexes.length === 0 || !displayOutfits.length) return null;
+
+                // Find products from top outfits that color-match doColors
+                const colorMatchProducts: Array<{
+                  product: any;
+                  outfitId: string;
+                  slot: number;
+                }> = [];
+
+                const topOutfits = [...displayOutfits]
+                  .sort((a, b) => {
+                    const sa = (a as any).matchScore ?? (a as any).match ?? 0;
+                    const sb = (b as any).matchScore ?? (b as any).match ?? 0;
+                    return sb - sa;
+                  })
+                  .slice(0, 6);
+
+                for (const outfit of topOutfits) {
+                  const products = (outfit as any).products;
+                  const outfitId = String((outfit as any).id || '');
+                  if (!Array.isArray(products)) continue;
+
+                  products.forEach((p: any, pIdx: number) => {
+                    if (colorMatchProducts.length >= 4) return;
+                    const productColors = [
+                      ...(Array.isArray(p.colors) ? p.colors : []),
+                      p.color,
+                    ].filter(Boolean).map((c: string) => c.toLowerCase());
+
+                    const hasColorMatch = productColors.some((pc: string) =>
+                      doColorHexes.some((dc) => {
+                        // Match exact hex or close enough by name
+                        if (pc === dc) return true;
+                        // Also check if color name matches any doColor name
+                        return false;
+                      })
+                    );
+
+                    // Also include if product has a url (we want to show shoplinks)
+                    const hasUrl = p.affiliateUrl || p.affiliate_url || p.productUrl || p.product_url || p.url;
+                    if ((hasColorMatch || productColors.length === 0) && hasUrl) {
+                      // Avoid duplicates
+                      if (!colorMatchProducts.some(cp => cp.product.id === p.id)) {
+                        colorMatchProducts.push({ product: p, outfitId, slot: pIdx + 1 });
+                      }
+                    }
+                  });
+                }
+
+                if (colorMatchProducts.length === 0) return null;
+
+                return (
+                  <AnimatedSection delay={0.28}>
+                    <div className="bg-[#F5F0EB] rounded-2xl p-6">
+                      <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                        Shop in jouw kleuren
+                      </p>
+                      <h3
+                        className="mb-5"
+                        style={{
+                          fontFamily: "'Instrument Serif', Georgia, serif",
+                          fontStyle: "italic",
+                          fontSize: "clamp(22px, 4vw, 28px)",
+                          fontWeight: 400,
+                          color: "#1A1A1A",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        Producten in jouw palet
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {colorMatchProducts.slice(0, 4).map(({ product, outfitId, slot }, idx) => {
+                          const name = product.name || product.title || `Product ${idx + 1}`;
+                          const brand = product.brand || product.retailer || null;
+                          const imageUrl = product.imageUrl || product.image_url || product.image || '';
+                          const rawPrice = typeof product.price === 'number'
+                            ? product.price
+                            : parseFloat(String(product.price ?? '')) || null;
+
+                          return (
+                            <div
+                              key={product.id || idx}
+                              className="bg-white border border-[#E5E5E5] rounded-xl p-4 flex items-center gap-4 hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                              onClick={async () => {
+                                await openProductLink({
+                                  product: {
+                                    id: product.id || `cp-${idx}`,
+                                    name,
+                                    retailer: brand || undefined,
+                                    price: rawPrice || undefined,
+                                    affiliateUrl: product.affiliateUrl || product.affiliate_url,
+                                    productUrl: product.productUrl || product.product_url || product.url,
+                                  },
+                                  outfitId,
+                                  slot,
+                                  source: 'shop_in_jouw_kleuren',
+                                });
+                              }}
+                            >
+                              {imageUrl ? (
+                                <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[#F5F0EB]">
+                                  <img
+                                    src={imageUrl}
+                                    alt={name}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-20 h-20 rounded-lg flex-shrink-0 bg-[#F5F0EB] flex items-center justify-center">
+                                  <ShoppingBag className="w-6 h-6 text-[#C2654A]/30" />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                {brand && (
+                                  <p className="text-[11px] font-medium text-[#8A8A8A] mb-0.5 truncate">{brand}</p>
+                                )}
+                                <p className="text-sm font-semibold text-[#1A1A1A] truncate">{name}</p>
+                                {rawPrice != null && rawPrice > 0 && (
+                                  <p className="text-sm font-bold text-[#1A1A1A] mt-1">
+                                    €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
+                                  </p>
+                                )}
+                                <p className="text-xs font-semibold text-[#C2654A] mt-1.5 inline-flex items-center gap-1">
+                                  Bekijk bij partner
+                                  <ExternalLink className="w-3 h-3" />
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </AnimatedSection>
+                );
+              })()}
 
               {user?.isPremium && (
                 <AnimatedSection delay={0.3}>
