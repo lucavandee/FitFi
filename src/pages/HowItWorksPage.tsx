@@ -128,11 +128,11 @@ function StepBadge({ num, label }: { num: string; label: string }) {
 /* ─── Step detail item ────────────────────────────────────────────────────── */
 function StepDetail({ title, sub }: { title: string; sub: string }) {
   return (
-    <div className="flex items-start gap-3.5">
-      <div className="w-2 h-2 rounded-full bg-[#C2654A] mt-[7px] flex-shrink-0" />
+    <div className="flex items-start gap-0">
+      <div className="w-2 h-2 rounded-full bg-[#C2654A] mt-[6px] flex-shrink-0 mr-3" />
       <div>
-        <p className="text-[15px] font-medium text-[#1A1A1A]">{title}</p>
-        <p className="text-[13px] text-[#8A8A8A] mt-0.5">{sub}</p>
+        <p className="text-[15px] font-semibold text-[#1A1A1A] leading-snug">{title}</p>
+        <p className="text-[13px] text-[#8A8A8A] mt-1">{sub}</p>
       </div>
     </div>
   );
@@ -177,32 +177,36 @@ export default function HowItWorksPage() {
         <section className="bg-[#F5F0EB] pt-40 pb-28 md:pt-48 md:pb-32 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <div className="inline-flex items-center gap-2.5 text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A] mb-8">
-                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
-                Hoe het werkt
-                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+              <div className="flex items-center justify-center gap-3 mb-8">
+                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                  Hoe het werkt
+                </span>
+                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
               </div>
             </Reveal>
 
             <Reveal delay={0.12}>
-              <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[700px] mx-auto mb-6">
+              <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6">
                 <span className="font-serif italic">Van vraag naar </span>
-                <span className="font-sans font-bold" style={{ letterSpacing: "-1px" }}>outfit</span>
+                <span className="font-sans font-bold" style={{ letterSpacing: "-2px" }}>outfit</span>
                 <span className="font-serif italic"> in drie stappen</span>
               </h1>
             </Reveal>
 
             <Reveal delay={0.24}>
-              <p className="text-lg text-[#4A4A4A] leading-[1.7] max-w-[520px] mx-auto mb-10">
-                Geen eindeloze vragenlijsten, geen vage tips. In twee minuten heb je een persoonlijk stijlrapport met kleuren, outfits en directe shoplinks.
+              <p className="text-[17px] text-[#4A4A4A] leading-[1.7] max-w-[480px] mx-auto mb-12 text-center">
+                Geen eindeloze vragenlijsten, geen vage tips. In twee
+                minuten heb je een persoonlijk stijlrapport met kleuren,
+                outfits en directe shoplinks.
               </p>
             </Reveal>
 
             <Reveal delay={0.36}>
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-[#4A4A4A]">
+              <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
                 {["2 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
-                  <div key={tag} className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#C2654A]" aria-hidden="true" />
+                  <div key={tag} className="flex items-center gap-2.5">
+                    <div className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
                     {tag}
                   </div>
                 ))}
@@ -479,23 +483,25 @@ export default function HowItWorksPage() {
         <section className="py-40 bg-[#FAFAF8] text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <h2 className="font-serif italic text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] mb-5">
-                Klaar om te beginnen?
-              </h2>
-              <p className="text-[17px] text-[#4A4A4A] mb-12 max-w-[400px] mx-auto">
-                Gratis. Twee minuten. Geen account nodig.
-              </p>
-              <Link
-                to="/onboarding"
-                className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[17px] py-5 px-12 rounded-full transition-all duration-300 hover:-translate-y-0.5"
-                style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
-              >
-                Begin gratis
-                <ArrowRight
-                  className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </Link>
+              <div className="text-center">
+                <h2 className="font-serif italic text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05]">
+                  Klaar om te beginnen?
+                </h2>
+                <p className="text-base md:text-[17px] text-[#4A4A4A] mt-6 mb-10 md:mb-12">
+                  Gratis. Twee minuten. Geen account nodig.
+                </p>
+                <Link
+                  to="/onboarding"
+                  className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                  style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
+                >
+                  Begin gratis
+                  <ArrowRight
+                    className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </div>
             </Reveal>
           </div>
         </section>
