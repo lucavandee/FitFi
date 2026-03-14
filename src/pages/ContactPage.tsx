@@ -163,7 +163,7 @@ export default function ContactPage() {
       >
 
         {/* ── HERO ── */}
-        <section className="bg-[#F5F0EB] pt-24 pb-16 md:pt-32 md:pb-20">
+        <section className="bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-sm font-medium text-[#4A4A4A] mb-6">
               <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />

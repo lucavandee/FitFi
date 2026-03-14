@@ -260,7 +260,7 @@ export default function FAQPage() {
 
         {/* ── HERO ── */}
         <section
-          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] py-14 sm:py-20 md:py-28"
+          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] pt-44 pb-16 sm:pt-52 sm:pb-20 md:pb-28"
           aria-labelledby="faq-hero-heading"
         >
           <div
@@ -475,7 +475,7 @@ export default function FAQPage() {
 
         {/* ── BOTTOM CTA ── */}
         <section
-          className="ff-section bg-[var(--ff-color-primary-50)]"
+          className="py-40 bg-[var(--ff-color-primary-50)]"
           aria-label="Start met FitFi"
         >
           <div className="ff-container text-center">

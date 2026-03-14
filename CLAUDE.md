@@ -309,3 +309,13 @@ shadow-sm is toegestaan op formulier-cards voor extra diepte
 
 Principe
 De pagina moet altijd warmte uitstralen. Geen wit-op-wit. Gebruik de zand-achtergrond en visuele lagen om diepte te creëren. Als een pagina "kaal" voelt, ontbreken er lagen.
+
+## 14. Header overlap preventie
+
+De fixed header is 72px hoog. Elke pagina-hero of page-header sectie die NIET een full-screen achtergrondafbeelding gebruikt, moet minimaal `pt-44 md:pt-52` (176px/208px) padding-top hebben. Dit voorkomt dat content achter de header verdwijnt.
+
+Uitzondering: de homepage hero (full-bleed afbeelding) regelt zijn eigen spacing via `min-h-screen` en flex positioning.
+
+## 15. CTA secties
+
+CTA-secties boven de footer hebben ALTIJD `py-40` (160px) verticale padding. Dit zorgt voor voldoende ademruimte. Een CTA moet voelen als een eigen blok, niet als een verlengstuk van de sectie erboven of de footer eronder.
