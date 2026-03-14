@@ -421,7 +421,18 @@ export default function EnhancedResultsPage() {
                 {/* Action buttons */}
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => setActiveTab('outfits')}
+                    onClick={() => {
+                      setActiveTab('outfits');
+                      // Scroll to tab bar so outfits content is immediately visible
+                      requestAnimationFrame(() => {
+                        const tabBar = document.querySelector('[role="tablist"]');
+                        if (tabBar) {
+                          const rect = tabBar.getBoundingClientRect();
+                          const scrollTop = window.scrollY + rect.top - 72; // 72px = fixed header height
+                          window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
+                        }
+                      });
+                    }}
                     className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                   >
                     <Eye className="w-4 h-4 text-white" />
@@ -1054,7 +1065,7 @@ export default function EnhancedResultsPage() {
                         )}
 
                         {/* Occasion badge */}
-                        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm">
+                        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm z-10">
                           {outfitInfo.context.label}
                         </span>
 
@@ -1075,7 +1086,7 @@ export default function EnhancedResultsPage() {
                             });
                             toggleFav(String(outfitId));
                           }}
-                          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:bg-white hover:scale-110 ${
+                          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm z-10 transition-all duration-200 hover:bg-white hover:scale-110 ${
                             favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
                               ? 'text-[#C2654A]'
                               : 'text-[#8A8A8A] hover:text-[#C2654A]'
