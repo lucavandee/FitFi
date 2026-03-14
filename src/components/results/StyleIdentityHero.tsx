@@ -84,26 +84,26 @@ export function StyleIdentityHero({
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
     >
       <div className="mb-5">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--ff-color-primary-500)] mb-2">
+        <p className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A] mb-3">
           Jouw stijlprofiel
         </p>
-        <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-[var(--color-text)] tracking-tight leading-tight mb-2">
+        <h2 className="font-serif italic text-[36px] text-[#1A1A1A] leading-[1.1] mb-3">
           {styleName}
         </h2>
-        <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-lg">
+        <p className="text-base text-[#4A4A4A] leading-[1.7] mb-5 max-w-lg">
           {description}
         </p>
       </div>
 
       {archetype.staples && archetype.staples.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-5">
+        <div className="inline-flex flex-wrap gap-2 mb-5">
           {archetype.staples.slice(0, 6).map((staple, idx) => (
             <motion.span
               key={idx}
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.08 + idx * 0.04 }}
-              className="px-2.5 py-1 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] text-[var(--ff-color-primary-700)] text-xs font-medium rounded-full capitalize"
+              className="px-3 py-1.5 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A] capitalize"
             >
               {staple}
             </motion.span>
@@ -112,15 +112,15 @@ export function StyleIdentityHero({
       )}
 
       {insights.length > 0 && (
-        <div className="border-t border-[var(--color-border)] pt-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-3">
+        <div className="border-t border-[#E5E5E5] pt-4">
+          <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">
             Op basis van jouw quiz
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {insights.map((insight, idx) => (
-              <div key={idx} className="flex items-start gap-2">
-                <span className="w-1 h-1 rounded-full bg-[var(--ff-color-primary-400)] mt-[7px] shrink-0" aria-hidden="true" />
-                <span className="text-sm text-[var(--color-muted)] leading-snug">{insight}</span>
+              <div key={idx} className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                <span className="text-sm text-[#4A4A4A]">{insight}</span>
               </div>
             ))}
           </div>
