@@ -1263,7 +1263,7 @@ export default function OnboardingFlowPage() {
               </button>
               <button
                 onClick={() => { setShowReviewModal(false); }}
-                className="w-full px-6 py-3 min-h-[48px] border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="w-full px-6 py-3 min-h-[48px] border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#C2654A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
               >
                 Terug naar vragen
               </button>
@@ -1318,7 +1318,7 @@ export default function OnboardingFlowPage() {
               </button>
               <button
                 onClick={handleSaveAndContinueLater}
-                className="w-full px-6 py-3 border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="w-full px-6 py-3 border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#C2654A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
               >
                 Opslaan en later verder
               </button>

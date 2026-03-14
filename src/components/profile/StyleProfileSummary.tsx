@@ -188,7 +188,7 @@ export function StyleProfileSummary({
         {onViewResults && (
           <button
             onClick={onViewResults}
-            className="flex-1 px-6 py-4 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200 flex items-center justify-center gap-2 group"
             aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
           >
             <Eye className="w-5 h-5" aria-hidden="true" />
@@ -205,7 +205,7 @@ export function StyleProfileSummary({
         {showReset && onReset && (
           <button
             onClick={onReset}
-            className="px-6 py-4 bg-white border-2 border-[var(--color-border)] rounded-xl font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--color-bg)] transition-all flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-white border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#C2654A] transition-colors duration-200 flex items-center justify-center gap-2"
             aria-label="Doe de quiz opnieuw om je stijlprofiel bij te werken"
           >
             <RefreshCw className="w-4 h-4" aria-hidden="true" />

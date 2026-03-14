@@ -207,14 +207,14 @@ export default function PricingPage() {
                         handleCheckout(premiumProduct.id);
                       }}
                       disabled={isPending}
-                      className="px-4 py-2 min-h-[44px] bg-[#C2654A] text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap hover:bg-[#A8513A]"
+                      className="px-6 py-3 min-h-[48px] bg-[#C2654A] text-white text-base font-semibold rounded-xl transition-colors disabled:opacity-50 whitespace-nowrap hover:bg-[#A8513A]"
                     >
                       Probeer opnieuw
                     </button>
                   )}
                   <button
                     onClick={handleCloseCancelBanner}
-                    className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors hover:bg-[#F4E8E3] text-[#D4913D]"
+                    className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl transition-colors hover:bg-[#F4E8E3] text-[#D4913D]"
                     aria-label="Sluit melding"
                   >
                     <X className="w-4 h-4" />

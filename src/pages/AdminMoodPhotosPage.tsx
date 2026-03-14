@@ -188,7 +188,7 @@ export default function AdminMoodPhotosPage() {
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 font-medium"
+            className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-5 h-5" />
             Nieuwe Foto
@@ -227,7 +227,7 @@ export default function AdminMoodPhotosPage() {
             <button
               onClick={loadPhotos}
               disabled={loading}
-              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Ververs
@@ -797,7 +797,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   placeholder="Type en druk Enter"
                   className="flex-1 px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] text-sm"
                 />
-                <button onClick={addTag} className="px-3 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)]">
+                <button onClick={addTag} className="px-3 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)]">
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
@@ -875,14 +875,14 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             <button
               onClick={onClose}
               disabled={uploading}
-              className="px-6 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
+              className="px-6 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
             >
               Annuleer
             </button>
             <button
               onClick={handleUpload}
               disabled={uploading || !canUpload}
-              className="px-6 py-2.5 text-white rounded-lg transition-all disabled:opacity-40 flex items-center gap-2 font-medium"
+              className="px-6 py-2.5 text-white rounded-xl transition-all disabled:opacity-40 flex items-center gap-2 font-medium"
               style={{ background: 'var(--ff-color-primary-700)' }}
             >
               {uploading ? (

@@ -441,7 +441,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
 
                     <button
                       onClick={analyzeWithAI}
-                      className="w-full py-2 rounded-lg border border-[var(--color-border)] text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-2 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] transition-colors flex items-center justify-center gap-2"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       Opnieuw analyseren
@@ -484,7 +484,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                         />
                         <button
                           onClick={addTag}
-                          className="px-3 py-2 rounded-lg text-white text-sm"
+                          className="px-3 py-2 rounded-xl text-white text-sm"
                           style={{ background: 'var(--ff-color-primary-700)' }}
                         >
                           <Plus className="w-4 h-4" />

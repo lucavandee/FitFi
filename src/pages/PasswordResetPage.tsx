@@ -160,7 +160,7 @@ export default function PasswordResetPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-6 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
                   style={{
                     background: "var(--ff-color-primary-700)",
                     color: "var(--color-bg)",

@@ -758,7 +758,7 @@ export default function EnhancedResultsPage() {
                     </div>
                     <NavLink
                       to="/prijzen#premium"
-                      className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] bg-[var(--ff-color-primary-700)] text-white rounded-lg font-semibold text-xs hover:bg-[var(--ff-color-primary-600)] transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                      className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
                     >
                       Bekijk Premium
                     </NavLink>

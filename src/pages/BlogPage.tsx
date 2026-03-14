@@ -382,7 +382,7 @@ export default function BlogPage() {
 
                     <a
                       href={`/blog/${featuredPost.slug}`}
-                      className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                      className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                     >
                       Lees artikel
                       <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -533,7 +533,7 @@ export default function BlogPage() {
               <button
                 type="submit"
                 disabled={!email}
-                className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 px-8 rounded-full transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubscribed ? 'Aangemeld!' : 'Aanmelden'}
               </button>

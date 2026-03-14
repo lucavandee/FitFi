@@ -250,14 +250,14 @@ export function ResultsFeedbackWidget({
                 <div className="flex gap-2">
                   <button
                     onClick={handleDismiss}
-                    className="flex-1 px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:bg-[var(--color-surface)] transition-colors text-sm font-medium"
+                    className="flex-1 px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:bg-[var(--color-surface)] transition-colors text-sm font-medium"
                   >
                     Overslaan
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2.5 bg-[var(--ff-color-primary-600)] text-white rounded-lg hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+                    className="flex-1 px-4 py-2.5 bg-[var(--ff-color-primary-600)] text-white rounded-xl hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
                   >
                     {isSubmitting ? (
                       <>

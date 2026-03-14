@@ -111,7 +111,7 @@ export function SwipeableOutfitGallery({
         <button
           onClick={moveToPrev}
           disabled={currentIndex === 0}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-bg)] transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Vorige outfit"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -120,7 +120,7 @@ export function SwipeableOutfitGallery({
 
         <button
           onClick={() => handleSwipeLeft()}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-bg)] transition-all active:scale-[0.98]"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200"
           aria-label="Sla over"
         >
           Sla over
@@ -128,7 +128,7 @@ export function SwipeableOutfitGallery({
 
         <button
           onClick={() => handleSwipeRight()}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg active:scale-[0.98]"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] transition-colors duration-200"
           aria-label="Bewaar outfit"
         >
           <Heart className="w-5 h-5" />
@@ -138,7 +138,7 @@ export function SwipeableOutfitGallery({
         <button
           onClick={moveToNext}
           disabled={currentIndex === outfits.length - 1}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-bg)] transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Volgende outfit"
         >
           Volgende
@@ -150,7 +150,7 @@ export function SwipeableOutfitGallery({
       <div className="md:hidden flex items-center justify-center gap-3 mt-6 px-4">
         <button
           onClick={() => handleSwipeLeft()}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold active:scale-[0.98]"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200"
           aria-label="Sla over"
         >
           Sla over

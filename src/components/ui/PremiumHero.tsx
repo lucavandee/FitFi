@@ -33,8 +33,8 @@ export default function PremiumHero({
           <p className="mt-3 text-text/80">{subtitle}</p>
 
           <div className="mt-6 flex flex-wrap gap-2">
-            <Link to={ctaLink} className="ff-btn ff-btn-primary h-10">{ctaText}</Link>
-            <Link to={secondaryCtaLink} className="ff-btn ff-btn-secondary h-10">{secondaryCtaText}</Link>
+            <Link to={ctaLink} className="ff-btn ff-btn-primary">{ctaText}</Link>
+            <Link to={secondaryCtaLink} className="ff-btn ff-btn-secondary">{secondaryCtaText}</Link>
           </div>
         </div>
       </div>

@@ -300,10 +300,7 @@ export function HeroV3() {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleStartClick}
-                className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all duration-200 hover:scale-[1.02] bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-[var(--color-bg)]"
-                style={{
-                  boxShadow: '0 8px 40px rgba(var(--ff-color-primary-500-rgb, 166,136,106),0.45)',
-                }}
+                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-[var(--color-bg)]"
                 aria-label="Ontvang jouw persoonlijk stijladvies"
               >
                 Ontvang jouw stijladvies
@@ -315,7 +312,7 @@ export function HeroV3() {
 
               <button
                 onClick={handleExampleClick}
-                className="inline-flex items-center gap-2 px-6 py-4 min-h-[56px] rounded-xl font-medium text-base transition-all duration-200 text-[var(--color-bg)]/90"
+                className="inline-flex items-center gap-2 px-6 py-3 min-h-[48px] rounded-xl font-medium text-base transition-colors duration-200 text-[var(--color-bg)]/90"
                 style={{
                   background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.10)',
                   border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.28)',

@@ -112,7 +112,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
               <button
                 onClick={handleSave}
                 disabled={isLoading}
-                className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-bold text-lg shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>

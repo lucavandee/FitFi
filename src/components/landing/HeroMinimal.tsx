@@ -48,7 +48,7 @@ export function HeroMinimal() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button
                 onClick={handleStartClick}
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-xl)] font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200"
               >
                 Begin gratis
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -57,7 +57,7 @@ export function HeroMinimal() {
               <NavLink
                 to="/hoe-het-werkt"
                 onClick={handleExampleClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-[var(--color-border)] hover:border-[var(--ff-color-primary-700)] text-[var(--color-text)] rounded-[var(--radius-xl)] font-semibold transition-all hover:scale-[1.02]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
               >
                 Bekijk voorbeeld
               </NavLink>

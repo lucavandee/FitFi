@@ -95,7 +95,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
         <p className="text-[var(--color-muted)] mb-6 max-w-md mx-auto">
           Begin met swipen en save je favoriete looks om een persoonlijke collectie op te bouwen
         </p>
-        <button className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-600)] transition-all shadow-lg hover:scale-105">
+        <button className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] transition-colors duration-200">
           Start met swipen
         </button>
       </motion.div>

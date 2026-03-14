@@ -454,7 +454,7 @@ export default function AdminAffiliateCampaignsPage() {
                       <button
                         onClick={() => handleSync(campaign)}
                         disabled={isSyncing || syncingId !== null}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--ff-color-primary-700)] text-white text-xs font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--ff-color-primary-700)] text-white text-xs font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
                       >
                         {isSyncing ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />

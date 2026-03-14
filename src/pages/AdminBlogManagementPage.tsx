@@ -177,21 +177,21 @@ export default function AdminBlogManagementPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
                 >
                   <Filter className="w-4 h-4" />
                   Filters
                 </button>
                 <button
                   onClick={() => navigate('/admin/blog/topics')}
-                  className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Topics
                 </button>
                 <button
                   onClick={() => navigate('/admin/blog/new')}
-                  className="px-4 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2"
                 >
                   <PlusCircle className="w-4 h-4" />
                   Nieuwe Post
@@ -275,7 +275,7 @@ export default function AdminBlogManagementPage() {
               </p>
               <button
                 onClick={() => navigate('/admin/blog/new')}
-                className="px-6 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                className="px-6 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors"
               >
                 Nieuwe Post Maken
               </button>
@@ -395,14 +395,14 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
           <div className="flex gap-2">
             <button
               onClick={onEdit}
-              className="px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-1 text-sm"
+              className="px-3 py-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-1 text-sm"
             >
               <Edit2 className="w-4 h-4" />
               Bewerk
             </button>
             <button
               onClick={onTogglePublish}
-              className={`px-3 py-1.5 rounded-lg border transition-colors flex items-center gap-1 text-sm ${
+              className={`px-3 py-1.5 rounded-xl border transition-colors flex items-center gap-1 text-sm ${
                 post.status === 'published'
                   ? 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)]'
                   : 'border-green-600 bg-green-600 text-white hover:bg-green-700'

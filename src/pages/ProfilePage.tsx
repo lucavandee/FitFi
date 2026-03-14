@@ -277,7 +277,7 @@ const ProfilePage: React.FC = () => {
           <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3">Log in om je profiel te bekijken</h1>
           <button
             onClick={() => navigate("/inloggen")}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold hover:opacity-90 transition-opacity"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base hover:opacity-90 transition-opacity"
             style={{ background: "var(--ff-color-primary-700)", color: "#fff" }}
           >
             Inloggen
@@ -719,7 +719,7 @@ const ProfilePage: React.FC = () => {
               >
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 min-h-[44px] rounded-2xl border border-[var(--color-border)] text-[var(--color-muted)] text-sm font-semibold hover:text-[var(--ff-color-danger-500,#ef4444)] hover:border-[var(--ff-color-danger-200,#fecaca)] hover:bg-[var(--ff-color-danger-50,#fef2f2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-danger-400,#f87171)]"
+                  className="w-full flex items-center justify-center gap-2.5 py-3 min-h-[48px] rounded-xl border border-[var(--color-border)] text-[var(--color-muted)] text-base font-semibold hover:text-[var(--ff-color-danger-500,#ef4444)] hover:border-[var(--ff-color-danger-200,#fecaca)] hover:bg-[var(--ff-color-danger-50,#fef2f2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-danger-400,#f87171)]"
                 >
                   <LogOut className="w-4 h-4" />
                   Uitloggen
