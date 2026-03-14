@@ -55,7 +55,7 @@ const INFO_CARDS = [
 ];
 
 const inputBase =
-  "w-full bg-white border rounded-xl py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 transition-colors duration-200";
+  "w-full bg-white border border-solid rounded-xl py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 transition-colors duration-200";
 const inputOk =
   `${inputBase} border-[#E5E5E5] focus:ring-[#C2654A]/20 focus:border-[#C2654A]`;
 const inputErr =
