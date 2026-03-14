@@ -33,30 +33,30 @@ export function ProfileConsistencyBanner({
     switch (analysis.level) {
       case 'high':
         return {
-          bg: 'bg-[var(--ff-color-primary-25,var(--ff-color-primary-50))]',
-          border: 'border-[var(--ff-color-primary-300)]',
-          icon: <CheckCircle className="w-5 h-5 text-[var(--ff-color-success-600)]" />,
-          iconBg: 'bg-[var(--ff-color-primary-100)]',
-          textColor: 'text-[var(--color-text)]',
-          mutedColor: 'text-[var(--color-muted)]',
+          bg: 'bg-white',
+          border: 'border-[#E5E5E5]',
+          icon: <CheckCircle className="w-5 h-5 text-[#C2654A]" />,
+          iconBg: 'bg-[#F4E8E3]',
+          textColor: 'text-[#1A1A1A]',
+          mutedColor: 'text-[#4A4A4A]',
         };
       case 'medium':
         return {
-          bg: 'bg-[var(--ff-color-primary-50)]',
-          border: 'border-[var(--ff-color-primary-200)]',
-          icon: <Info className="w-5 h-5 text-[var(--ff-color-primary-600)]" />,
-          iconBg: 'bg-[var(--ff-color-primary-100)]',
-          textColor: 'text-[var(--color-text)]',
-          mutedColor: 'text-[var(--color-muted)]',
+          bg: 'bg-white',
+          border: 'border-[#E5E5E5]',
+          icon: <Info className="w-5 h-5 text-[#C2654A]" />,
+          iconBg: 'bg-[#F4E8E3]',
+          textColor: 'text-[#1A1A1A]',
+          mutedColor: 'text-[#4A4A4A]',
         };
       case 'low':
         return {
-          bg: 'bg-[var(--ff-color-primary-50)]',
-          border: 'border-[var(--ff-color-warning-600)]',
-          icon: <AlertCircle className="w-5 h-5 text-[var(--ff-color-warning-600)]" />,
-          iconBg: 'bg-[var(--ff-color-primary-100)]',
-          textColor: 'text-[var(--color-text)]',
-          mutedColor: 'text-[var(--color-muted)]',
+          bg: 'bg-white',
+          border: 'border-[#E5E5E5]',
+          icon: <AlertCircle className="w-5 h-5 text-[#D4913D]" />,
+          iconBg: 'bg-[#F4E8E3]',
+          textColor: 'text-[#1A1A1A]',
+          mutedColor: 'text-[#4A4A4A]',
         };
     }
   };
@@ -69,15 +69,15 @@ export function ProfileConsistencyBanner({
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className={`${style.bg} ${style.border} border-2 rounded-2xl p-4 md:p-5 mb-6 relative overflow-hidden`}
+        className={`${style.bg} ${style.border} border rounded-2xl p-6 mb-6 relative overflow-hidden`}
       >
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 p-1 rounded-full hover:bg-white/50 transition-colors"
+          className="absolute top-3 right-3 p-1 rounded-full hover:bg-[#F5F0EB] transition-colors"
           aria-label="Sluit banner"
         >
-          <X className="w-4 h-4 text-gray-600" />
+          <X className="w-4 h-4 text-[#4A4A4A]" />
         </button>
 
         <div className="flex items-start gap-4 pr-8">
@@ -118,12 +118,12 @@ export function ProfileConsistencyBanner({
                 {analysis.topArchetypes.map((archetype, idx) => (
                   <div
                     key={idx}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/80 rounded-full border border-gray-200"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F4E8E3] rounded-full border border-[#E5E5E5]"
                   >
-                    <span className="text-xs font-semibold text-gray-900">
+                    <span className="text-xs font-semibold text-[#1A1A1A]">
                       {archetype.name}
                     </span>
-                    <span className="text-[10px] font-medium text-gray-600">
+                    <span className="text-[10px] font-medium text-[#4A4A4A]">
                       {archetype.score}%
                     </span>
                   </div>
@@ -134,19 +134,19 @@ export function ProfileConsistencyBanner({
             {/* Consistency score visual */}
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold text-gray-700">
+                <span className="text-xs font-semibold text-[#1A1A1A]">
                   Profiel Consistentie
                 </span>
-                <span className="text-xs font-bold text-gray-900">
+                <span className="text-xs font-bold text-[#1A1A1A]">
                   {analysis.score}%
                 </span>
               </div>
-              <div className="w-full h-2 bg-[var(--ff-color-primary-100)] rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${analysis.score}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full rounded-full bg-[var(--ff-color-primary-600)]"
+                  className="h-full rounded-full bg-[#C2654A]"
                 />
               </div>
             </div>
@@ -155,7 +155,7 @@ export function ProfileConsistencyBanner({
             {analysis.level === 'low' && onRetakeQuiz && (
               <button
                 onClick={onRetakeQuiz}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] hover:bg-[var(--ff-color-primary-50)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] rounded-xl font-semibold text-sm text-[var(--color-text)] transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#C2654A] rounded-full font-semibold text-sm text-[#1A1A1A] transition-all duration-200"
               >
                 <RefreshCcw className="w-4 h-4" />
                 <span>Quiz opnieuw doen</span>
@@ -163,8 +163,8 @@ export function ProfileConsistencyBanner({
             )}
 
             {analysis.level === 'medium' && (
-              <div className="p-3 bg-[var(--color-surface)] rounded-lg border border-[var(--ff-color-primary-200)]">
-                <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+              <div className="p-4 bg-[#F5F0EB] rounded-xl">
+                <p className="text-sm text-[#4A4A4A] leading-relaxed">
                   <strong>Tip:</strong> De outfits hieronder zijn gelabeld per stijl.
                   Gebruik de filters om alleen outfits van één stijlrichting te zien.
                 </p>
