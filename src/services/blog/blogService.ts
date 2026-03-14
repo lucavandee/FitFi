@@ -138,17 +138,40 @@ export async function getPublishedBlogPosts(
   pageOffset: number = 0,
   category?: string
 ): Promise<PublishedBlogPost[]> {
-  const { data, error } = await supabase.rpc('get_published_blog_posts', {
-    page_size: pageSize,
-    page_offset: pageOffset,
-    filter_category: category || null
-  });
-
-  if (error) {
-    throw new Error(`Failed to fetch published posts: ${error.message}`);
+  if (!supabase) {
+    throw new Error('Supabase client is not initialized');
   }
 
-  return data || [];
+  try {
+    const { data, error } = await supabase.rpc('get_published_blog_posts', {
+      page_size: pageSize,
+      page_offset: pageOffset,
+      filter_category: category || null
+    });
+
+    if (error) throw error;
+    return data || [];
+  } catch {
+    let query = supabase
+      .from('blog_posts')
+      .select('id, slug, title, excerpt, author_name, published_at, category, tags, featured_image_url, read_time_minutes, view_count, featured')
+      .eq('status', 'published')
+      .not('published_at', 'is', null)
+      .order('published_at', { ascending: false })
+      .range(pageOffset, pageOffset + pageSize - 1);
+
+    if (category) {
+      query = query.eq('category', category);
+    }
+
+    const { data, error: fallbackError } = await query;
+
+    if (fallbackError) {
+      throw new Error(`Failed to fetch published posts: ${fallbackError.message}`);
+    }
+
+    return (data || []) as PublishedBlogPost[];
+  }
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
