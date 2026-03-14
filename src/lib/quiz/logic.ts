@@ -14,6 +14,11 @@ function decideContrast(a: AnswerMap): ColorProfile["contrast"] {
 function decideChroma(a: AnswerMap): ColorProfile["chroma"] {
   if (a.prints === "statement" || a.materials === "glans") return "helder";
   if (a.prints === "effen" || a.materials === "mat") return "zacht";
+  // Subtiel prints tonen nog steeds kleur/patroon → niet volledig zacht
+  if (a.prints === "subtiel") return "helder";
+  // Tech materialen zijn typisch in heldere, synthetische kleuren
+  const mats = Array.isArray(a.materials) ? a.materials : [];
+  if (mats.some((m: string) => ['tech', 'nylon', 'polyester'].includes(m.toLowerCase()))) return "helder";
   return "zacht";
 }
 function decideSeason(
@@ -55,10 +60,11 @@ function decideSeason(
   if (contrast === "hoog") return "winter";                        // hoog contrast → winter
   if (contrast === "laag") return "zomer";                         // laag contrast → zomer (zacht)
 
-  // Medium value + medium contrast bij neutraal: chroma als tiebreaker
-  // Voorheen altijd herfst — nu lente als "neutraal midden" om seizoensspreiding te verbeteren
+  // Medium value + medium contrast bij neutraal: chroma als tiebreaker.
+  // Zomer is het meest gedempte/neutrale seizoen — default voor "geen sterke signalen".
+  // Helder chroma → lente (frisse, heldere kleuren passen bij lente).
   if (_chroma === "helder") return "lente";
-  return "lente";
+  return "zomer";
 }
 // P2.4 + P3.5: sub-seizoen selectie gebaseerd op value, contrast en chroma.
 // Brengt paletten van 4 → 12 voor betere personalisatie.
