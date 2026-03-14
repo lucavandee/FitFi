@@ -888,24 +888,24 @@ export default function EnhancedResultsPage() {
               <div className="max-w-5xl mx-auto">
 
               {/* Section header — consistent met Stijl DNA */}
-              <div className="flex items-start justify-between gap-4 mb-5">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#C2654A] mb-1.5">
+              <div className="flex items-start justify-between gap-6 mb-6">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#C2654A] mb-2">
                     Jouw outfits
                   </p>
-                  <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
                     Handpicked voor jou
                   </h2>
-                  <p className="text-sm text-[#8A8A8A] mt-1">
+                  <p className="text-sm text-[#8A8A8A] mt-2">
                     {displayOutfits.length} outfits · {archetypeName}
                   </p>
                 </div>
-                <div className="shrink-0 mt-1">
+                <div className="shrink-0 pt-1">
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 whitespace-nowrap"
                   >
-                    <SlidersHorizontal className="w-4 h-4" />
+                    <SlidersHorizontal className="w-4 h-4 shrink-0" />
                     Aanpassen
                   </button>
                 </div>
@@ -913,7 +913,7 @@ export default function EnhancedResultsPage() {
 
               {/* Filter tags */}
               {answers && (
-                <div className="flex items-center gap-2 flex-wrap mb-5">
+                <div className="flex items-center gap-2 flex-wrap mb-6">
                   {[
                     { label: archetypeName, active: true },
                     ...[
@@ -925,7 +925,7 @@ export default function EnhancedResultsPage() {
                   ].map((tag, i) => (
                     <span
                       key={i}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
                         tag.active
                           ? 'bg-[#C2654A] text-white'
                           : 'bg-white border border-[#E5E5E5] text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A]'
@@ -938,7 +938,7 @@ export default function EnhancedResultsPage() {
               )}
 
               {/* Swipe/Grid toggle */}
-              <div className="flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1 mb-6 w-fit">
+              <div className="flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1 mb-8 w-fit">
                 <button
                   onClick={() => setGalleryMode('swipe')}
                   aria-pressed={galleryMode === 'swipe'}
