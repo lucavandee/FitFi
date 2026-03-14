@@ -30,6 +30,13 @@ const SEASON_SUFFIX: Record<string, string> = {
   lente: 'Bright',
 };
 
+const INSIGHT_ICONS: Record<number, string> = {
+  0: '◆',
+  1: '◈',
+  2: '◉',
+  3: '◇',
+};
+
 function buildInsights(quizAnswers: Record<string, any>, swipeInsights?: StyleIdentityHeroProps['swipeInsights']): string[] {
   const out: string[] = [];
 
@@ -83,48 +90,74 @@ export function StyleIdentityHero({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
     >
-      <div className="mb-5">
-        <p className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A] mb-3">
+      {/* Hero identity block */}
+      <div className="bg-[#F5F0EB] rounded-2xl px-7 py-8 mb-6 relative overflow-hidden">
+        {/* Decorative background element */}
+        <div
+          className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-[0.06] pointer-events-none"
+          style={{ background: '#C2654A', transform: 'translate(30%, -30%)' }}
+          aria-hidden="true"
+        />
+
+        <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#C2654A] mb-3">
           Jouw stijlprofiel
         </p>
-        <h2 className="font-serif italic text-[36px] text-[#1A1A1A] leading-[1.1] mb-3">
+
+        <h2 className="font-serif italic text-[40px] sm:text-[44px] text-[#1A1A1A] leading-[1.1] mb-4 relative">
           {styleName}
         </h2>
-        <p className="text-base text-[#4A4A4A] leading-[1.7] mb-5 max-w-lg">
+
+        <p className="text-base text-[#4A4A4A] leading-[1.75] max-w-md mb-6">
           {description}
         </p>
-      </div>
 
-      {archetype.staples && archetype.staples.length > 0 && (
-        <div className="inline-flex flex-wrap gap-2 mb-5">
-          {archetype.staples.slice(0, 6).map((staple, idx) => (
-            <motion.span
-              key={idx}
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.08 + idx * 0.04 }}
-              className="px-3 py-1.5 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A] capitalize"
-            >
-              {staple}
-            </motion.span>
-          ))}
-        </div>
-      )}
-
-      {insights.length > 0 && (
-        <div className="border-t border-[#E5E5E5] pt-4">
-          <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">
-            Op basis van jouw quiz
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {insights.map((insight, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
-                <span className="text-sm text-[#4A4A4A]">{insight}</span>
-              </div>
+        {archetype.staples && archetype.staples.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {archetype.staples.slice(0, 6).map((staple, idx) => (
+              <motion.span
+                key={idx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 + idx * 0.05, duration: 0.25 }}
+                className="px-3.5 py-1.5 rounded-full bg-white border border-[#E5E5E5] text-xs font-medium text-[#4A4A4A] capitalize shadow-sm"
+              >
+                {staple}
+              </motion.span>
             ))}
           </div>
-        </div>
+        )}
+      </div>
+
+      {/* Insights grid */}
+      {insights.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.35 }}
+        >
+          <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#8A8A8A] mb-4 px-1">
+            Op basis van jouw quiz
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {insights.map((insight, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 + idx * 0.07, duration: 0.3 }}
+                className="bg-white border border-[#E5E5E5] rounded-xl px-4 py-3.5 flex items-start gap-3"
+              >
+                <span
+                  className="text-[#C2654A] text-[10px] mt-0.5 flex-shrink-0 font-bold"
+                  aria-hidden="true"
+                >
+                  {INSIGHT_ICONS[idx] ?? '◆'}
+                </span>
+                <span className="text-sm text-[#4A4A4A] leading-[1.55]">{insight}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       )}
     </motion.div>
   );
