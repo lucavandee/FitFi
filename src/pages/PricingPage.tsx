@@ -228,7 +228,7 @@ export default function PricingPage() {
         {/* ════════════════════════════════════════════════════
             1. PAGE HERO
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] pt-44 pb-24 md:pt-52 md:pb-28 text-center" aria-labelledby="pricing-heading">
+        <section className="bg-[#F5F0EB] pt-56 pb-24 md:pt-64 md:pb-28 text-center" aria-labelledby="pricing-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Eyebrow */}
             <Reveal>

@@ -174,10 +174,10 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             PAGE HERO
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] pt-40 pb-28 md:pt-52 md:pb-32 text-center">
+        <section className="bg-[#F5F0EB] pt-56 pb-28 md:pt-64 md:pb-32 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <div className="flex items-center justify-center gap-3 mt-20 mb-10">
+              <div className="flex items-center justify-center gap-3 mb-10">
                 <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
                 <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
                   Hoe het werkt
