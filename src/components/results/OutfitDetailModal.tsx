@@ -57,7 +57,7 @@ function ProductThumb({ src, alt, index }: { src: string | null; alt: string; in
   const [failed, setFailed] = useState(false);
   const showFallback = !src || failed;
   return (
-    <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-[#F5F0EB] flex items-center justify-center">
+    <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-[#F5F0EB] flex items-center justify-center">
       {!showFallback && (
         <img
           src={src!}
@@ -175,13 +175,13 @@ export function OutfitDetailModal({
           </button>
 
           {/* Header */}
-          <div className="px-6 pt-6 pb-4">
-            <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#8A8A8A] mb-1">
+          <div className="px-6 pt-7 pb-5">
+            <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#8A8A8A] mb-2">
               {archetypeName}
             </p>
             <h2
               id="outfit-modal-title"
-              className="text-xl font-bold text-[#1A1A1A]"
+              className="text-2xl font-bold text-[#1A1A1A]"
             >
               {outfitName}
             </h2>
@@ -199,7 +199,7 @@ export function OutfitDetailModal({
 
             {/* Color advice */}
             {colorProfile && (
-              <div className="mx-6 mt-5 mb-6 bg-[#F5F0EB] border border-[#E5E5E5] rounded-xl p-4">
+              <div className="mx-6 mt-6 mb-7 bg-[#F5F0EB] border border-[#E5E5E5] rounded-xl p-5">
                 <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C2654A] mb-1.5">
                   Kleuradvies
                 </p>
@@ -236,7 +236,7 @@ export function OutfitDetailModal({
             {/* Product list */}
             {products.length > 0 && (
               <div>
-                <div className="px-6 flex items-center justify-between mb-4">
+                <div className="px-6 flex items-center justify-between mb-5 pb-1 border-b border-[#E5E5E5]">
                   <p className="text-sm font-semibold text-[#1A1A1A]">
                     Producten in dit outfit
                   </p>
@@ -260,7 +260,7 @@ export function OutfitDetailModal({
                     return (
                       <div
                         key={idx}
-                        className={`px-6 py-3.5 flex items-center gap-4 border-b border-[#E5E5E5]/50 last:border-none transition-colors duration-150 ${url ? "cursor-pointer hover:bg-[#FAFAF8]" : ""}`}
+                        className={`px-6 py-4 flex items-center gap-4 border-b border-[#E5E5E5]/50 last:border-none transition-colors duration-150 ${url ? "cursor-pointer hover:bg-[#FAFAF8]" : ""}`}
                         onClick={async () => {
                           if (!url) return;
                           shoppedRef.current = true;
@@ -323,14 +323,17 @@ export function OutfitDetailModal({
               </div>
             )}
 
+            {/* Bottom spacing */}
+            <div className="h-4" />
+
             {/* Scroll fade indicator */}
             <div className="bg-gradient-to-t from-white via-white/80 to-transparent h-20 sticky bottom-0 pointer-events-none" />
           </div>
 
           {/* Sticky footer */}
           <div
-            className="sticky bottom-0 bg-white border-t border-[#E5E5E5] px-6 py-4 flex items-center gap-3"
-            style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
+            className="sticky bottom-0 bg-white border-t border-[#E5E5E5] px-6 pt-4 pb-5 flex items-center gap-3"
+            style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}
           >
             {hasShoppable ? (
               <button
@@ -357,7 +360,7 @@ export function OutfitDetailModal({
                   }
                   toast.success(`${shoppableProducts.length} items openen...`, { duration: 2500 });
                 }}
-                className="flex-1 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 rounded-full text-center inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)]"
+                className="flex-1 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-4 rounded-full text-center inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)]"
                 aria-label={`Shop ${shoppableProducts.length} items`}
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -384,14 +387,14 @@ export function OutfitDetailModal({
             {hasShoppable && (
               <button
                 onClick={() => onToggleFav(id)}
-                className={`w-12 h-12 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                className={`w-14 h-14 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
                   isFav
-                    ? "border-[#C2654A] text-[#C2654A]"
-                    : "border-[#E5E5E5] hover:border-[#C2654A] text-[#8A8A8A]"
+                    ? "border-[#C2654A] bg-[#F4E8E3]"
+                    : "border-[#E5E5E5] hover:border-[#C2654A] hover:bg-[#F4E8E3]"
                 }`}
                 aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
               >
-                <Heart className={`w-5 h-5 ${isFav ? "fill-[#C2654A] text-[#C2654A]" : ""}`} strokeWidth={isFav ? 0 : 2} />
+                <Heart className={`w-5 h-5 ${isFav ? "fill-[#C2654A] text-[#C2654A]" : "text-[#8A8A8A]"}`} strokeWidth={isFav ? 0 : 2} />
               </button>
             )}
           </div>
