@@ -160,7 +160,7 @@ export function EmailPreferences() {
               className={[
                 'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-                preferences[key] ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[#9CA3AF]',
+                preferences[key] ? 'bg-[#C2654A]' : 'bg-[#E5E5E5]',
                 savingKey === key ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
               ].join(' ')}
             >

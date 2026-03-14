@@ -78,7 +78,7 @@ export const CookieSettings: React.FC = () => {
             aria-label="Analytische cookies"
             className={[
               'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
-              prefs.analytics ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[#9CA3AF]',
+              prefs.analytics ? 'bg-[#C2654A]' : 'bg-[#E5E5E5]',
               isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
             ].join(' ')}
@@ -131,13 +131,13 @@ export const CookieSettings: React.FC = () => {
           <button
             onClick={() => setConfirmWithdraw(true)}
             disabled={isLoading || (!prefs.analytics && !prefs.marketing)}
-            className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-text)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+            className="flex-1 py-3 px-6 min-h-[44px] rounded-full border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C24A4A] hover:text-[#C24A4A] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C24A4A]/20"
           >
             Alles verwijderen
           </button>
           <button
             onClick={() => navigate('/cookies')}
-            className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] text-xs font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+            className="flex-1 py-3 px-6 min-h-[44px] rounded-full border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
           >
             Cookiebeleid
           </button>

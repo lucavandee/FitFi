@@ -144,22 +144,20 @@ export default function SavedOutfitHistory({ userId }: Props) {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] p-6 text-center"
-        style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06)" }}
+        className="bg-[#F5F0EB] rounded-2xl p-10 text-center"
       >
-        <div className="w-12 h-12 rounded-2xl bg-[var(--ff-color-primary-50)] flex items-center justify-center mx-auto mb-3">
-          <Heart className="w-5 h-5 text-[var(--ff-color-primary-400)]" />
+        <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center mx-auto mb-4">
+          <Heart className="w-6 h-6 text-[#C2654A]" />
         </div>
-        <p className="text-sm font-semibold text-[var(--color-text)] mb-1">
+        <p className="text-base font-semibold text-[#1A1A1A] mb-2">
           Nog geen opgeslagen outfits
         </p>
-        <p className="text-xs text-[var(--color-muted)] mb-4 leading-relaxed">
+        <p className="text-sm text-[#4A4A4A] mb-5 leading-relaxed">
           Bewaar outfits vanuit je stijlresultaten om ze hier terug te vinden.
         </p>
         <button
           onClick={() => navigate("/results")}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all hover:opacity-90"
-          style={{ background: "var(--ff-color-primary-700)", color: "#fff" }}
+          className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
         >
           <Sparkles className="w-3.5 h-3.5" />
           Bekijk outfits
