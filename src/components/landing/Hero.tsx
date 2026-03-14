@@ -18,14 +18,61 @@ export function Hero() {
   };
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-[var(--ff-color-bg)] via-[var(--ff-color-bg-subtle)] to-[var(--ff-color-accent-50)] overflow-hidden">
+
+      {/* ── MOBILE HERO IMAGE (hidden on lg+) ── */}
+      <div className="relative lg:hidden">
+        <div className="relative w-full" style={{ aspectRatio: '3/4' }}>
+          <img
+            src="/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
+            alt="FitFi stijl"
+            className="w-full h-full object-cover object-top"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/70 via-transparent to-transparent" />
+        </div>
+        <div className="px-6 py-8 bg-[#FAFAF8]">
+          <h1 className="text-3xl font-bold text-[#1A1A1A] leading-tight mb-3">
+            Wat is{' '}
+            <span className="text-[#C2654A]">jouw stijl?</span>
+          </h1>
+          <p className="text-base text-[#4A4A4A] leading-relaxed mb-6">
+            Vul een korte quiz in. Je krijgt een rapport met kleuren en outfits die bij je passen.
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleStartClick}
+              className="w-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              Begin gratis
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <NavLink
+              to="/results/preview"
+              className="w-full bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200 text-center"
+            >
+              Zie voorbeeldrapport
+            </NavLink>
+          </div>
+          {!user && (
+            <p className="text-sm text-[#8A8A8A] text-center mt-4">
+              Al een account?{' '}
+              <NavLink to="/inloggen" className="font-semibold text-[#C2654A] hover:text-[#A8513A] underline underline-offset-2 transition-colors">
+                Direct inloggen
+              </NavLink>
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* ── DESKTOP LAYOUT (hidden on mobile) ── */}
       {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden hidden lg:block">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-[var(--ff-color-primary-200)] to-[var(--ff-color-accent-200)] rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
         <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-[var(--ff-color-accent-200)] to-[var(--ff-color-secondary-200)] rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float-delayed"></div>
         <div className="absolute bottom-20 left-1/4 w-80 h-80 bg-gradient-to-r from-[var(--ff-color-secondary-200)] to-[var(--ff-color-primary-200)] rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float-slow"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <div className="relative hidden lg:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[80vh]">
           {/* Left Column - Content */}
           <div className="text-center lg:text-left space-y-8">
