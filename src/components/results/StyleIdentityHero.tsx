@@ -95,8 +95,7 @@ export function StyleIdentityHero({
 }: StyleIdentityHeroProps) {
   const archetype = ARCHETYPES[primaryArchetype];
   const subSeasonLabel = colorProfile.subSeason ? SUB_SEASON_DISPLAY[colorProfile.subSeason] : null;
-  const suffix = subSeasonLabel || SEASON_SUFFIX[colorProfile.season?.toLowerCase() ?? ''] || '';
-  const styleName = suffix ? `${archetype.label} · ${suffix}` : archetype.label;
+  const seasonLabel = subSeasonLabel || SEASON_SUFFIX[colorProfile.season?.toLowerCase() ?? ''] || '';
   const description = DESCRIPTIONS[primaryArchetype];
   const insights = buildInsights(quizAnswers, swipeInsights);
 
@@ -119,9 +118,14 @@ export function StyleIdentityHero({
           Jouw stijlprofiel
         </p>
 
-        <h2 className="font-serif italic text-[40px] sm:text-[44px] text-[#1A1A1A] leading-[1.1] mb-4 relative">
-          {styleName}
+        <h2 className="font-serif italic text-[40px] sm:text-[44px] text-[#1A1A1A] leading-[1.1] mb-1 relative">
+          {archetype.label}
         </h2>
+        {seasonLabel && (
+          <p className="text-sm text-[#8A8A8A] font-medium mb-4">
+            {seasonLabel}
+          </p>
+        )}
 
         <p className="text-base text-[#4A4A4A] leading-[1.75] max-w-md mb-6">
           {description}
