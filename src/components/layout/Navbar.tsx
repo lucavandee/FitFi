@@ -9,6 +9,7 @@ const HOME_PATHS = ["/", ""];
 /**
  * Eén premium Navbar:
  * - Sticky + lichte blur
+ * - Transparent op homepage hero, solid na scroll (>60px)
  * - Desktop: links + (Login/Start gratis) of (Dashboard/Uitloggen) bij auth
  * - Mobiel: sheet met dezelfde opties
  * - A11Y: skiplink, aria-expanded, ESC sluit, focus-ring via tokens
@@ -36,6 +37,7 @@ const links: Array<{ to: string; label: string }> = [
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const [savedOutfitsCount, setSavedOutfitsCount] = React.useState(0);
+  const [scrolled, setScrolled] = React.useState(false);
   const { pathname } = useLocation();
   const { user, logout } = useUser();
   const isAuthed = !!user;
@@ -44,6 +46,20 @@ export default function Navbar() {
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   useLockBody(open && !isOnboarding);
+
+  // Scroll listener for transparent → solid header on homepage
+  React.useEffect(() => {
+    if (!isHome) {
+      setScrolled(true); // Non-home pages always use solid header
+      return;
+    }
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 60);
+    };
+    handleScroll(); // Set initial state
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHome]);
 
   React.useEffect(() => {
     try {
@@ -118,9 +134,24 @@ export default function Navbar() {
 
   const userInitial = user?.name?.[0]?.toUpperCase() || "U";
 
+  // Transparent state: on homepage and not scrolled
+  const isTransparent = isHome && !scrolled;
+  const navTextClass = isTransparent
+    ? "text-white/70 hover:text-white"
+    : "text-[#4A4A4A] hover:text-[#1A1A1A]";
+  const navActiveTextClass = isTransparent
+    ? "text-white font-semibold"
+    : "text-[#1A1A1A] font-semibold";
+  const hamburgerStroke = isTransparent ? "#FFFFFF" : "#1A1A1A";
+
   return (
     <header
-      className="fixed top-0 w-full bg-[#FAFAF8]/90 backdrop-blur-md border-b border-[#E5E5E5]/60 z-40"
+      className={[
+        "fixed top-0 w-full z-40 transition-all duration-300",
+        isTransparent
+          ? "bg-transparent"
+          : "bg-[#FAFAF8]/90 backdrop-blur-[24px] border-b border-[#E5E5E5]/60",
+      ].join(" ")}
       role="banner"
     >
       {/* Skip to content */}
@@ -138,7 +169,7 @@ export default function Navbar() {
           className="flex-shrink-0 inline-flex items-center rounded-xl px-2 py-2 min-h-[44px] transition-opacity hover:opacity-85"
           aria-label="FitFi Home"
         >
-          <Logo size="sm" variant="default" />
+          <Logo size="sm" variant={isTransparent ? "light" : "default"} />
         </a>
 
         {/* Desktop nav - Center */}
@@ -150,9 +181,7 @@ export default function Navbar() {
               className={({ isActive }) =>
                 [
                   "text-sm border-0 bg-transparent rounded-none p-0 shadow-none outline-none ring-0 transition-colors duration-200",
-                  isActive
-                    ? "font-semibold text-[#1A1A1A]"
-                    : "font-medium text-[#4A4A4A] hover:text-[#1A1A1A]",
+                  isActive ? navActiveTextClass : `font-medium ${navTextClass}`,
                 ].join(" ")
               }
             >
@@ -167,7 +196,7 @@ export default function Navbar() {
             <>
               <a
                 href="/inloggen"
-                className="text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] transition-colors duration-200"
+                className={`text-sm font-medium transition-colors duration-200 ${navTextClass}`}
                 data-event="nav_login"
               >
                 Inloggen
@@ -200,7 +229,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="text-sm font-medium text-[#4A4A4A] hover:text-[#1A1A1A] transition-colors duration-200"
+                className={`text-sm font-medium transition-colors duration-200 ${navTextClass}`}
                 data-event="nav_logout"
               >
                 Uitloggen
@@ -219,7 +248,7 @@ export default function Navbar() {
         <button
           ref={toggleRef}
           type="button"
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -232,7 +261,7 @@ export default function Navbar() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#1A1A1A"
+              stroke={hamburgerStroke}
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -248,7 +277,7 @@ export default function Navbar() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#1A1A1A"
+              stroke={hamburgerStroke}
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"

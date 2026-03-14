@@ -133,6 +133,8 @@ export default {
         heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
         body: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"],
         sans: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"], // Default
+        serif: ["Instrument Serif", "Georgia", "serif"],
+        jakarta: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
       },
 
       fontSize: {
