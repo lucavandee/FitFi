@@ -706,7 +706,7 @@ const NovaChat: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Vraag Nova om styling advies..."
-                className="w-full px-5 py-4 pr-12 rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-sm sm:text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
+                className="w-full px-5 py-4 pr-12 rounded-xl border border-[#E5E5E5] bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] outline-none transition-all text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
                 disabled={isLoading}
               />
               {/* Animated gradient border on focus */}
@@ -733,7 +733,7 @@ const NovaChat: React.FC = () => {
             <motion.button
               type="button"
               onClick={handleAbort}
-              className="px-6 py-4 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-2xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base min-w-[110px] shadow-lg shadow-red-500/30 font-bold"
+              className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl transition-all flex items-center justify-center gap-2 text-base min-w-[110px] min-h-[48px] shadow-lg shadow-red-500/30 font-semibold"
               whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(239, 68, 68, 0.4)' }}
               whileTap={{ scale: 0.95 }}
             >
@@ -744,7 +744,7 @@ const NovaChat: React.FC = () => {
             <motion.button
               type="submit"
               disabled={!input.trim()}
-              className="relative px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-2xl transition-all flex items-center justify-center gap-2 text-sm sm:text-base min-w-[120px] shadow-xl shadow-blue-500/30 font-bold overflow-hidden group"
+              className="relative px-6 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-xl transition-all flex items-center justify-center gap-2 text-base min-w-[120px] min-h-[48px] shadow-xl shadow-blue-500/30 font-semibold overflow-hidden group"
               whileHover={input.trim() ? { scale: 1.05, boxShadow: '0 10px 40px rgba(59, 130, 246, 0.5)' } : {}}
               whileTap={input.trim() ? { scale: 0.95 } : {}}
             >

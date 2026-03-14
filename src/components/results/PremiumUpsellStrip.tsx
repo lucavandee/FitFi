@@ -31,10 +31,10 @@ const PremiumUpsellStrip: React.FC<Props> = ({ onCta, className }) => {
         </ul>
 
         <div className="res-upsell__ctas">
-          <button className="ff-btn ff-btn-primary h-10" onClick={handleClick} aria-label="Meer outfits zien met Premium">
+          <button className="ff-btn ff-btn-primary" onClick={handleClick} aria-label="Meer outfits zien met Premium">
             Meer outfits zien
           </button>
-          <a className="ff-btn ff-btn-secondary h-10" href="/prijzen">
+          <a className="ff-btn ff-btn-secondary" href="/prijzen">
             Bekijk pakketten
           </a>
         </div>

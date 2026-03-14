@@ -124,7 +124,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
 
                   <button
                     onClick={handleInteract}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-600)] text-white text-sm font-medium rounded-lg hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-600)] text-white text-sm font-medium rounded-xl hover:bg-[var(--ff-color-primary-700)] transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Chat met Nova

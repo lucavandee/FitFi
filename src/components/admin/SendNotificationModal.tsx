@@ -157,14 +157,14 @@ export default function SendNotificationModal({
           <button
             onClick={handleSend}
             disabled={loading || !input.title.trim() || !input.message.trim()}
-            className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
             {loading ? 'Versturen...' : 'Verstuur Notificatie'}
           </button>
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-colors font-medium"
+            className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:border-[var(--ff-color-primary-700)] transition-colors font-medium"
           >
             Annuleren
           </button>

@@ -51,13 +51,13 @@ export default function AdminBramsFruitPage() {
           <div className="flex gap-3 mt-6 justify-center">
             <button
               onClick={() => navigate('/inloggen')}
-              className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors"
+              className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors"
             >
               Inloggen
             </button>
             <button
               onClick={() => navigate('/')}
-              className="px-6 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-colors"
+              className="px-6 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:border-[var(--ff-color-primary-700)] transition-colors"
             >
               Terug naar home
             </button>
@@ -311,7 +311,7 @@ export default function AdminBramsFruitPage() {
             <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
               <button
                 onClick={() => navigate('/admin/preview/brams-fruit')}
-                className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-lg hover:bg-[var(--ff-color-primary-600)] transition-colors font-medium"
+                className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors font-medium"
               >
                 Preview Catalog
               </button>

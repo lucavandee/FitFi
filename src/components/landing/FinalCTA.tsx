@@ -50,7 +50,7 @@ export function FinalCTA() {
 
             <button
               onClick={handleClick}
-              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-8 sm:px-10 py-4 sm:py-5 lg:py-6 min-h-[56px] bg-[var(--color-surface)] hover:bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-xl sm:rounded-2xl font-bold text-lg sm:text-xl shadow-2xl transition-all hover:scale-105 hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)] mb-3 w-full sm:w-auto"
+              className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] hover:bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-base transition-colors duration-200 mb-3 w-full sm:w-auto"
             >
               Start gratis stijlquiz
               <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-1" aria-hidden="true" />

@@ -67,8 +67,8 @@ const ResultsPremium: React.FC = () => {
         </p>
 
         <div className="res-hero__cta">
-          <button className="btn btn-primary">Shop deze look</button>
-          <button className="btn btn-ghost">Nieuwe analyse</button>
+          <button className="ff-btn ff-btn-primary">Shop deze look</button>
+          <button className="ff-btn ff-btn-ghost">Nieuwe analyse</button>
         </div>
 
         <ul className="chips" aria-label="USP's">
@@ -206,7 +206,7 @@ const ResultsPremium: React.FC = () => {
         <div className="results__footer-content">
           <h2>Meer stijladvies nodig?</h2>
           <p>Ontdek onze AI-stylist Nova voor persoonlijke styling tips en outfit inspiratie.</p>
-          <button className="btn btn-primary">Probeer Nova gratis</button>
+          <button className="ff-btn ff-btn-primary">Probeer Nova gratis</button>
         </div>
       </footer>
     </main>

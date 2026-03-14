@@ -270,13 +270,13 @@ export default function AdminDaisyconImportPage() {
         <div className="border-b border-[var(--color-border)] p-4 flex gap-2">
           <button
             onClick={() => setActiveTab("paste")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === "paste" ? "bg-[var(--ff-color-primary-700)] text-white" : "text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-50)]"}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "paste" ? "bg-[var(--ff-color-primary-700)] text-white" : "text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-50)]"}`}
           >
             JSON plakken
           </button>
           <button
             onClick={() => setActiveTab("file")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === "file" ? "bg-[var(--ff-color-primary-700)] text-white" : "text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-50)]"}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "file" ? "bg-[var(--ff-color-primary-700)] text-white" : "text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-50)]"}`}
           >
             Bestand uploaden
           </button>

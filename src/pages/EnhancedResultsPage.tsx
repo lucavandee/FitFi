@@ -762,7 +762,7 @@ export default function EnhancedResultsPage() {
                     </div>
                     <NavLink
                       to="/prijzen#premium"
-                      className="shrink-0 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-xs py-2.5 px-5 rounded-full transition-all duration-200 whitespace-nowrap"
+                      className="shrink-0 inline-flex items-center gap-1.5 px-6 py-3 bg-[#C2654A] hover:bg-[#A8513A] text-white rounded-xl font-semibold text-base transition-colors duration-200 whitespace-nowrap"
                     >
                       Bekijk Premium
                     </NavLink>

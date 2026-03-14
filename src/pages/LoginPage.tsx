@@ -339,7 +339,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="w-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] mt-8 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 mt-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <><Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /><span>Bezig...</span></>

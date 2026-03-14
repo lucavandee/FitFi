@@ -89,7 +89,7 @@ export function OutfitFilters({
             onClick={() => setIsExpanded(!isExpanded)}
             aria-expanded={isExpanded}
             aria-controls="outfit-filter-panel"
-            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-lg font-semibold text-sm hover:bg-[var(--ff-color-primary-200)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1"
+            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-200)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1"
           >
             <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             Filters

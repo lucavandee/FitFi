@@ -372,7 +372,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                   </button>
                   <button
                     onClick={() => handleSwipe('right')}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] rounded-[var(--radius-lg)] hover:scale-105 transition-transform text-white shadow-lg"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
                   >
                     <Heart size={24} />
                     <span className="font-semibold">Love it!</span>

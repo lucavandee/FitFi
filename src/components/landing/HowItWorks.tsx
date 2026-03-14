@@ -92,7 +92,7 @@ const HowItWorks: React.FC = () => {
           </p>
           <a
             href="/stijlquiz"
-            className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+            className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
             style={{
               background: 'var(--ff-color-primary-700)',
               color: 'var(--color-bg)',

@@ -208,7 +208,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
         {/* CTA Button */}
         <NavLink
           to="/profile"
-          className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto group"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-base hover:from-purple-500 hover:to-pink-500 transition-colors duration-200 w-full sm:w-auto group"
         >
           <Target className="w-5 h-5" />
           Bekijk volledige stats

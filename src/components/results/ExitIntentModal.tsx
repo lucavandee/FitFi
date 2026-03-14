@@ -133,7 +133,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 <NavLink
                   to="/prijzen?promo=exit2free"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 px-8 py-4 min-h-[52px] bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-bold text-base hover:shadow-xl transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200"
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
                   Claim deze deal

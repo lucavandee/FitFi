@@ -37,8 +37,8 @@ export default function PremiumFooter() {
           <div className="space-y-2">
             <p className="font-medium">Start</p>
             <div className="flex gap-2">
-              <Link to="/hoe-het-werkt" className="ff-btn ff-btn-secondary h-10">Meer info</Link>
-              <Link to="/prijzen" className="ff-btn ff-btn-primary h-10">Start gratis</Link>
+              <Link to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Meer info</Link>
+              <Link to="/prijzen" className="ff-btn ff-btn-primary">Start gratis</Link>
             </div>
           </div>
         </div>

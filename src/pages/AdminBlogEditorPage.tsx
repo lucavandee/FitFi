@@ -187,7 +187,7 @@ export default function AdminBlogEditorPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
               >
                 <Eye className="w-4 h-4" />
                 {showPreview ? 'Editor' : 'Preview'}
@@ -195,7 +195,7 @@ export default function AdminBlogEditorPage() {
               <button
                 onClick={() => handleSave('draft')}
                 disabled={saving}
-                className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 {saving ? 'Opslaan...' : 'Opslaan als Draft'}
@@ -203,7 +203,7 @@ export default function AdminBlogEditorPage() {
               <button
                 onClick={() => handleSave('published')}
                 disabled={saving}
-                className="px-4 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 disabled:opacity-50"
               >
                 <Sparkles className="w-4 h-4" />
                 {saving ? 'Opslaan...' : 'Publiceren'}
@@ -491,7 +491,7 @@ export default function AdminBlogEditorPage() {
                       />
                       <button
                         onClick={handleAddTag}
-                        className="px-3 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] text-sm"
+                        className="px-3 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] text-sm"
                       >
                         +
                       </button>

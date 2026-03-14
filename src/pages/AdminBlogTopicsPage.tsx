@@ -125,7 +125,7 @@ export default function AdminBlogTopicsPage() {
               </div>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Nieuw Topic
@@ -233,7 +233,7 @@ export default function AdminBlogTopicsPage() {
               </p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-6 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                className="px-6 py-3 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors"
               >
                 Eerste Topic Toevoegen
               </button>
@@ -426,7 +426,7 @@ function AddTopicModal({ onClose, onSuccess }: any) {
               <button
                 type="button"
                 onClick={handleAddKeyword}
-                className="px-3 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] text-sm"
+                className="px-3 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] text-sm"
               >
                 +
               </button>
@@ -481,14 +481,14 @@ function AddTopicModal({ onClose, onSuccess }: any) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
+              className="flex-1 px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
             >
               Annuleren
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-2 rounded-lg bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
             >
               {saving ? 'Opslaan...' : 'Topic Toevoegen'}
             </button>

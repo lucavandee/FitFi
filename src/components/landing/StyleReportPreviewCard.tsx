@@ -77,7 +77,7 @@ export function StyleReportPreviewCard() {
                     </p>
                     <button
                       onClick={() => navigate('/results/preview')}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200"
                     >
                       Bekijk voorbeeld
                       <ArrowRight className="w-5 h-5" aria-hidden="true" />

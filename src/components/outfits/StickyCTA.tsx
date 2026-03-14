@@ -26,11 +26,11 @@ export default function StickyCTA({
         <div className="text-sm text-text/80">Klaar? Ga verder.</div>
         <div className="flex gap-2">
           {secondaryTo && secondaryLabel ? (
-            <NavLink to={secondaryTo} className="ff-btn ff-btn-secondary h-10">
+            <NavLink to={secondaryTo} className="ff-btn ff-btn-secondary">
               {secondaryLabel}
             </NavLink>
           ) : null}
-          <NavLink to={primaryTo} className="ff-btn ff-btn-primary h-10">
+          <NavLink to={primaryTo} className="ff-btn ff-btn-primary">
             {primaryLabel}
           </NavLink>
         </div>

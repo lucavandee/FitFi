@@ -23,7 +23,7 @@
 .ff-hero-sub{ color:var(--color-muted); font-size:clamp(1rem,.6vw + .84rem,1.12rem); max-width:60ch; }
 .ff-lede{ color:var(--color-text); opacity:.9; font-size:clamp(1rem,.45vw + .95rem,1.125rem); }
 
-.ff-btn{ display:inline-flex; align-items:center; justify-content:center; height:2.75rem; border-radius:var(--radius-xl); padding:0 1rem; font-weight:600; transition: all 0.2s ease; }
+.ff-btn{ display:inline-flex; align-items:center; justify-content:center; min-height:3rem; border-radius:var(--radius-xl); padding:0.75rem 1.5rem; font-weight:600; font-size:1rem; transition: all 0.2s ease; }
 .ff-btn-primary{ background:var(--ff-color-primary-700); color: var(--ff-cta-contrast); }
 .ff-btn-primary:hover{ background:var(--ff-color-primary-600); }
 .ff-btn-primary:focus-visible{ outline:3px solid var(--ff-color-primary-500); outline-offset:3px; }
