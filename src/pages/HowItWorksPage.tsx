@@ -174,7 +174,7 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             PAGE HERO
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] pt-56 pb-28 md:pt-64 md:pb-32 text-center">
+        <section className="bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-24 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="flex items-center justify-center gap-3 mb-10">

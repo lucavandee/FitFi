@@ -230,7 +230,7 @@ export default function FAQPage() {
 
         {/* ── HERO ── */}
         <section
-          className="bg-[#F5F0EB] pt-56 pb-16 md:pt-64 md:pb-20 text-center"
+          className="bg-[#F5F0EB] pt-44 pb-12 md:pt-52 md:pb-16 text-center"
           aria-labelledby="faq-hero-heading"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
