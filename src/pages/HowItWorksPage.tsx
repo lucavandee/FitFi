@@ -1,83 +1,145 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Check,
-  Sparkles,
-  Zap,
-  Clock,
-  Shield,
-  Brain,
-  Heart,
-  Shirt,
-  Users,
-  MessageCircle,
-  Plus,
-  Minus,
-  ArrowRight,
-  X,
-} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Clock, Zap, Heart, ArrowRight, Plus } from "lucide-react";
 
-const steps = [
-  {
-    id: 1,
-    label: "Stap 1",
-    icon: MessageCircle,
-    title: "Beantwoord 8 vragen",
-    description: "Over jouw lifestyle, voorkeuren en hoe je je wilt voelen. Geen foto's, geen gedoe.",
-    bullets: [
-      { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "Volledig privé" },
-      { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "Duurt 2 minuten" },
-      { icon: Clock, iconBg: "bg-[var(--ff-color-accent-100)]", iconColor: "text-[var(--ff-color-accent-700)]", label: "Start nu", muted: true },
-    ],
-  },
-  {
-    id: 2,
-    label: "Stap 2",
-    icon: Brain,
-    title: "Wij matchen outfits",
-    description: "We vinden kleurcombinaties die werken en stellen complete looks samen. Jij hoeft niks te doen.",
-    bullets: [
-      { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "12.000+ items" },
-      { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "Duurt 30 seconden" },
-      { icon: Zap, iconBg: "bg-[var(--ff-color-accent-100)]", iconColor: "text-[var(--ff-color-accent-700)]", label: "Automatisch", muted: true },
-    ],
-  },
-  {
-    id: 3,
-    label: "Stap 3",
-    icon: Shirt,
-    title: "Jij shopt direct",
-    description: "Complete looks, direct shopbaar. Plus: waarom elk item bij jou past.",
-    bullets: [
-      { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "6-12 outfits" },
-      { icon: Check, iconBg: "bg-[var(--ff-color-primary-100)]", iconColor: "text-[var(--ff-color-primary-700)]", label: "Directe shoplinks" },
-      { icon: Heart, iconBg: "bg-[var(--ff-color-danger-100)]", iconColor: "text-[var(--ff-color-danger-600)]", label: "Bewaar voor altijd", muted: true },
-    ],
-  },
-];
+/* ─── Reveal hook ─────────────────────────────────────────────────────────── */
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, visible };
+}
 
+/* ─── Reveal wrapper ──────────────────────────────────────────────────────── */
+function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const { ref, visible } = useReveal();
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(40px)",
+        transition: `opacity 0.9s cubic-bezier(.22,1,.36,1) ${delay}s, transform 0.9s cubic-bezier(.22,1,.36,1) ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── Data ────────────────────────────────────────────────────────────────── */
 const faqs = [
   {
     q: "Moet ik foto's uploaden?",
-    a: "Nee! De quiz werkt zonder foto's. Je beantwoordt 8 vragen over jouw stijl.",
+    a: "Nee, dat is optioneel. De quiz werkt volledig op basis van je antwoorden. Een foto kan de kleuranalyse preciezer maken, maar is niet nodig.",
+  },
+  {
+    q: "Werkt het voor mannen en vrouwen?",
+    a: "Ja. FitFi past de stijladviezen, outfits en winkelsuggesties aan op basis van je profiel.",
   },
   {
     q: "Wat als het niet klopt?",
-    a: "Je kunt de quiz opnieuw doen, gratis. Of chat met onze stijladviseur om je profiel bij te stellen.",
-  },
-  {
-    q: "Werkt het voor mannen én vrouwen?",
-    a: "Ja! We vragen je voorkeur en passen het assortiment daarop aan.",
+    a: "Je kunt de quiz opnieuw doen en je antwoorden aanpassen. Je rapport wordt direct bijgewerkt.",
   },
   {
     q: "Hoeveel kost FitFi?",
-    a: "De basis stijlquiz is gratis. Premium functies zoals opgeslagen outfits en Nova AI-chat zijn beschikbaar vanaf €9,99/maand.",
+    a: "Je kunt gratis starten en een basisrapport ontvangen. Voor het volledige kleurpalet en meer outfits is er een premium plan.",
   },
 ];
 
+const compRows = [
+  { old: "Uren zoeken in winkels", next: "2 minuten, direct resultaat", highlight: false },
+  { old: "€200+ aan spijt-aankopen per jaar", next: "Alleen items die bij je passen", highlight: false },
+  { old: "Kast vol \"draag ik nooit\"", next: "Outfits die je echt draagt", highlight: false },
+  { old: "Geen idee welke kleuren passen", next: "Persoonlijk kleurpalet op basis van jou", highlight: false },
+  { old: "Elke ochtend twijfelen", next: "Zelfverzekerd je deur uit", highlight: true },
+];
+
+/* ─── Step visual placeholders (warm gradients) ───────────────────────────── */
+function Step1Visual() {
+  return (
+    <div className="bg-[#E8DDD2] flex items-center justify-center p-12 lg:p-16 min-h-[600px]">
+      <div className="w-full max-w-[380px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
+        <img
+          src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
+          alt="FitFi stijlquiz — kleurtonen en stijlvoorkeuren"
+          className="w-full h-auto"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  );
+}
+
+function Step2Visual() {
+  return (
+    <div className="bg-[#D4C0AD] flex items-center justify-center p-12 lg:p-16 min-h-[600px]">
+      <div className="w-full max-w-[480px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
+        <img
+          src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
+          alt="FitFi stijlrapport — kleurprofiel en aanbevelingen"
+          className="w-full h-auto"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  );
+}
+
+function Step3Visual() {
+  return (
+    <div className="bg-[#C9BFB4] flex items-center justify-center p-12 lg:p-16 min-h-[600px]">
+      <div className="w-full max-w-[320px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
+        <img
+          src="/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp"
+          alt="FitFi outfit shoppen — directe shoplinks"
+          className="w-full h-auto"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Step badge ──────────────────────────────────────────────────────────── */
+function StepBadge({ num, label }: { num: string; label: string }) {
+  return (
+    <div className="inline-flex items-center gap-2.5 mb-6">
+      <div className="w-8 h-8 rounded-full border-2 border-[#C2654A] flex items-center justify-center text-sm font-extrabold text-[#C2654A]">
+        {num}
+      </div>
+      <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">{label}</span>
+    </div>
+  );
+}
+
+/* ─── Step detail item ────────────────────────────────────────────────────── */
+function StepDetail({ title, sub }: { title: string; sub: string }) {
+  return (
+    <div className="flex items-start gap-3.5">
+      <div className="w-2 h-2 rounded-full bg-[#C2654A] mt-[7px] flex-shrink-0" />
+      <div>
+        <p className="text-[15px] font-medium text-[#1A1A1A]">{title}</p>
+        <p className="text-[13px] text-[#8A8A8A] mt-0.5">{sub}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Page ────────────────────────────────────────────────────────────────── */
 export default function HowItWorksPage() {
-  const [activeStep, setActiveStep] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -89,375 +151,352 @@ export default function HowItWorksPage() {
         structuredData={{
           "@context": "https://schema.org",
           "@type": "HowTo",
-          "name": "Hoe FitFi werkt — stijladvies in 2 minuten",
-          "description": "In 2 minuten van quiz naar compleet stijladvies. Beantwoord 8 vragen, wij matchen outfits, jij shopt direct.",
-          "totalTime": "PT2M",
-          "step": [
-            { "@type": "HowToStep", "position": 1, "name": "Beantwoord 8 vragen", "text": "Over jouw lifestyle, voorkeuren en hoe je je wilt voelen. Geen foto's, geen gedoe. Duurt 2 minuten." },
-            { "@type": "HowToStep", "position": 2, "name": "Wij matchen outfits", "text": "We vinden kleurcombinaties die werken en stellen complete looks samen. Duurt 30 seconden." },
-            { "@type": "HowToStep", "position": 3, "name": "Jij shopt direct", "text": "Complete looks, direct shopbaar. Plus: waarom elk item bij jou past. 6-12 outfits met directe shoplinks." },
+          name: "Hoe FitFi werkt — stijladvies in 2 minuten",
+          description: "In 2 minuten van quiz naar compleet stijladvies. Beantwoord vragen, wij matchen outfits, jij shopt direct.",
+          totalTime: "PT2M",
+          step: [
+            { "@type": "HowToStep", position: 1, name: "Vertel ons over jouw stijl", text: "Een korte quiz over je voorkeuren, kleuren en levensstijl." },
+            { "@type": "HowToStep", position: 2, name: "Ontvang je persoonlijke rapport", text: "Direct na de quiz krijg je een volledig stijlrapport." },
+            { "@type": "HowToStep", position: 3, name: "Shop outfits die bij je passen", text: "Echte items die je direct kunt kopen." },
           ],
         }}
       />
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[var(--ff-color-primary-700)] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#C2654A] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
 
-      <main id="main-content" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+      <main id="main-content" className="bg-[#FAFAF8]">
 
-        {/* ── Hero ── */}
-        <section
-          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] py-14 sm:py-20 md:py-28"
-          aria-labelledby="hero-heading"
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            aria-hidden="true"
-            style={{
-              background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(166,136,106,0.10) 0%, transparent 70%)',
-            }}
-          />
-          <div className="ff-container relative z-10 text-center">
+        {/* ════════════════════════════════════════════════════
+            PAGE HERO
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#F5F0EB] pt-40 pb-28 md:pt-48 md:pb-32 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="inline-flex items-center gap-2.5 text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A] mb-8">
+                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+                Hoe het werkt
+                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+              </div>
+            </Reveal>
 
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-sm font-bold text-[var(--color-text)] shadow-[var(--shadow-soft)] mb-7"
-              role="status"
-              aria-label="2500 mensen gebruiken FitFi"
-            >
-              <Users className="w-4 h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-              2.500+ mensen gebruiken FitFi
-            </div>
+            <Reveal delay={0.12}>
+              <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[700px] mx-auto mb-6">
+                <span className="font-serif italic">Van vraag naar </span>
+                <span className="font-sans font-bold" style={{ letterSpacing: "-1px" }}>outfit</span>
+                <span className="font-serif italic"> in drie stappen</span>
+              </h1>
+            </Reveal>
 
-            <h1
-              id="hero-heading"
-              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-5"
-              style={{ fontSize: 'clamp(2.25rem, 5vw, 4rem)', lineHeight: 1.08 }}
-            >
-              Zo krijg je{" "}
-              <em
-                className="not-italic bg-clip-text text-transparent"
-                style={{ backgroundImage: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
-              >
-                outfits die passen
-              </em>
-            </h1>
-
-            <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] mb-10 max-w-xl mx-auto leading-relaxed font-light">
-              In 2 minuten van quiz naar compleet stijladvies. Zo shop je moeiteloos.
-            </p>
-
-            <div
-              className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-10"
-              role="list"
-              aria-label="Voordelen"
-            >
-              {[
-                { icon: Clock, bg: "bg-[var(--ff-color-primary-100)]", color: "text-[var(--ff-color-primary-700)]", label: "2 minuten" },
-                { icon: Shield, bg: "bg-[var(--ff-color-success-100)]", color: "text-[var(--ff-color-success-700)]", label: "Geen foto's nodig" },
-                { icon: Sparkles, bg: "bg-[var(--ff-color-accent-100)]", color: "text-[var(--ff-color-accent-700)]", label: "Direct resultaat" },
-              ].map(({ icon: Icon, bg, color, label }) => (
-                <div key={label} className="flex items-center gap-2.5" role="listitem">
-                  <div className={`w-9 h-9 ${bg} rounded-full flex items-center justify-center flex-shrink-0`} aria-hidden="true">
-                    <Icon className={`w-4 h-4 ${color}`} />
-                  </div>
-                  <span className="text-sm sm:text-base font-semibold text-[var(--color-text)]">{label}</span>
-                </div>
-              ))}
-            </div>
-
-            <a
-              href="/stijlquiz"
-              className="group inline-flex items-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
-              style={{
-                background: 'var(--ff-color-primary-700)',
-                color: 'var(--color-bg)',
-                boxShadow: '0 8px 40px rgba(166,136,106,0.45)',
-              }}
-            >
-              Ontvang jouw stijladvies
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-            </a>
-          </div>
-        </section>
-
-        {/* ── 3 Stappen ── */}
-        <section
-          className="ff-section bg-[var(--color-surface)]"
-          aria-labelledby="process-heading"
-        >
-          <div className="ff-container">
-
-            <div className="text-center mb-10 sm:mb-14">
-              <h2
-                id="process-heading"
-                className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-3"
-                style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.75rem)', lineHeight: 1.1 }}
-              >
-                3 stappen naar jouw stijl
-              </h2>
-              <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
-                Simpel, snel, resultaat
+            <Reveal delay={0.24}>
+              <p className="text-lg text-[#4A4A4A] leading-[1.7] max-w-[520px] mx-auto mb-10">
+                Geen eindeloze vragenlijsten, geen vage tips. In twee minuten heb je een persoonlijk stijlrapport met kleuren, outfits en directe shoplinks.
               </p>
-            </div>
+            </Reveal>
 
-            <div className="flex flex-col md:grid md:grid-cols-3 md:items-stretch gap-4 sm:gap-6 lg:gap-8 mb-10 sm:mb-14">
-              {steps.map((step) => (
-                <motion.div
-                  key={step.id}
-                  onClick={() => setActiveStep(step.id)}
-                  onHoverStart={() => setActiveStep(step.id)}
-                  className={`relative bg-[var(--color-surface)] rounded-2xl border-2 p-5 sm:p-7 transition-all duration-300 cursor-pointer flex flex-col ${
-                    activeStep === step.id
-                      ? "border-[var(--ff-color-primary-600)] shadow-xl"
-                      : "border-[var(--color-border)] shadow-[var(--shadow-soft)] hover:border-[var(--ff-color-primary-300)]"
-                  }`}
-                  aria-label={`${step.label}: ${step.title}`}
-                  aria-pressed={activeStep === step.id}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setActiveStep(step.id)}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="inline-flex items-center justify-center px-3 py-1 bg-[var(--ff-color-primary-600)] text-white rounded-full text-xs sm:text-sm font-bold shadow-sm flex-shrink-0">
-                      {step.label}
-                    </span>
+            <Reveal delay={0.36}>
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-[#4A4A4A]">
+                {["2 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
+                  <div key={tag} className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#C2654A]" aria-hidden="true" />
+                    {tag}
                   </div>
-
-                  <div className="flex-1 flex flex-col mb-0">
-                    <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm mb-4"
-                      style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
-                      aria-hidden="true"
-                    >
-                      <step.icon className="w-6 h-6 text-white" strokeWidth={2} />
-                    </div>
-                    <h3 className="font-heading font-bold text-lg mb-2 leading-tight text-[var(--color-text)]">{step.title}</h3>
-                    <p className="text-[var(--color-muted)] text-sm leading-relaxed flex-1">
-                      {step.description}
-                    </p>
-                  </div>
-
-                  <ul className="space-y-2 mt-4 pt-4 border-t border-[var(--color-border)]" role="list">
-                    {step.bullets.map((b, i) => (
-                      <li key={i} className="flex items-center gap-2.5">
-                        <div className={`w-5 h-5 ${b.iconBg} rounded-full flex items-center justify-center flex-shrink-0`} aria-hidden="true">
-                          <b.icon className={`w-3 h-3 ${b.iconColor}`} strokeWidth={3} />
-                        </div>
-                        <span className={`text-sm font-medium ${b.muted ? "text-[var(--color-muted)]" : "text-[var(--color-text)]"}`}>{b.label}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="text-center py-4">
-              <div className="inline-flex items-center gap-3 px-5 py-3 bg-[var(--ff-color-primary-50)] rounded-2xl border border-[var(--ff-color-primary-200)]">
-                <div className="w-9 h-9 bg-[var(--ff-color-primary-700)] rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                  <Clock className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-lg font-bold text-[var(--ff-color-primary-700)]">Totaal: 2 minuten</span>
+                ))}
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* ── Vergelijking ── */}
-        <section
-          className="ff-section bg-[var(--color-bg)]"
-          aria-labelledby="comparison-heading"
-        >
-          <div className="ff-container">
+        {/* ════════════════════════════════════════════════════
+            STAP 1 — quiz (visual left, content right)
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+            <Reveal className="relative overflow-hidden">
+              <Step1Visual />
+            </Reveal>
 
-            <div className="text-center mb-10 sm:mb-14">
-              <h2
-                id="comparison-heading"
-                className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-3"
-                style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.75rem)', lineHeight: 1.1 }}
-              >
-                Waarom FitFi beter is
+            <Reveal
+              className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#FAFAF8]"
+              delay={0.12}
+            >
+              <StepBadge num="1" label="Stap één" />
+              <h2 className="font-serif italic text-[28px] md:text-[44px] text-[#1A1A1A] leading-[1.1] mb-5">
+                Vertel ons over jouw stijl
               </h2>
-              <p className="text-base sm:text-lg text-[var(--color-muted)] font-light">
-                Vergelijk met de oude manier
+              <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
+                Een korte quiz over je voorkeuren, kleuren en levensstijl. Geen account nodig om te starten, geen foto's vereist.
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-3xl mx-auto">
-
-              <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 sm:p-7 shadow-[var(--shadow-soft)] flex flex-col">
-                <h3 className="font-heading font-bold text-lg sm:text-xl mb-5 text-center text-[var(--color-text)]">Trial &amp; Error</h3>
-                <ul className="space-y-3 flex-1" role="list">
-                  {[
-                    "3+ uur per winkelsessie",
-                    "€200+ foute aankopen/jaar",
-                    "Kast vol \"draag ik nooit\"",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[var(--ff-color-danger-100)] flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <X className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--ff-color-danger-600)]" strokeWidth={2.5} />
-                      </div>
-                      <span className="text-sm sm:text-base text-[var(--color-muted)] leading-snug">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="flex flex-col gap-4 mb-8">
+                <StepDetail
+                  title="Kies je kleurtonen en stijlvoorkeuren"
+                  sub="Van warm en minimalistisch tot koel en expressief"
+                />
+                <StepDetail
+                  title="Geef je budget en gelegenheden aan"
+                  sub="Werk, weekend, uitgaan — wij stemmen af"
+                />
+                <StepDetail
+                  title="Optioneel: upload een foto voor kleuranalyse"
+                  sub="Lokaal verwerkt, niet opgeslagen"
+                />
               </div>
-
-              <div
-                className="relative rounded-2xl border-2 border-[var(--ff-color-primary-400)] p-5 sm:p-7 shadow-xl flex flex-col"
-                style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-700), var(--ff-color-primary-900))' }}
-              >
-                <div
-                  className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-bold self-start"
-                  style={{ background: 'var(--ff-color-primary-500)', color: 'var(--color-bg)' }}
-                >
-                  BESTE KEUZE
-                </div>
-                <h3 className="font-heading font-bold text-lg sm:text-xl mb-5 text-white">FitFi</h3>
-                <ul className="space-y-3 flex-1" role="list">
-                  {[
-                    "2 minuten, direct resultaat",
-                    "Outfits die je draagt",
-                    "€9,99/maand (of gratis)",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <div
-                        className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                        style={{ background: 'rgba(255,255,255,0.20)' }}
-                        aria-hidden="true"
-                      >
-                        <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" strokeWidth={3} />
-                      </div>
-                      <span className="text-sm sm:text-base font-medium leading-snug text-white">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#C2654A] w-fit">
+                <Clock className="w-4 h-4" aria-hidden="true" />
+                ~2 minuten
               </div>
-            </div>
-
+            </Reveal>
           </div>
         </section>
 
-        {/* ── FAQ ── */}
-        <section
-          className="ff-section bg-[var(--color-surface)]"
-          aria-labelledby="faq-heading"
-        >
-          <div className="ff-container">
-
-            <div className="text-center mb-10 sm:mb-12">
-              <h2
-                id="faq-heading"
-                className="font-heading font-bold tracking-tight text-[var(--color-text)]"
-                style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.75rem)', lineHeight: 1.1 }}
-              >
-                Veelgestelde vragen
+        {/* ════════════════════════════════════════════════════
+            STAP 2 — rapport (content left, visual right) — gespiegeld
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#F5F0EB]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+            <Reveal
+              className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#F5F0EB] order-2 lg:order-1"
+              delay={0.12}
+            >
+              <StepBadge num="2" label="Stap twee" />
+              <h2 className="font-serif italic text-[28px] md:text-[44px] text-[#1A1A1A] leading-[1.1] mb-5">
+                Ontvang je persoonlijke rapport
               </h2>
-            </div>
+              <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
+                Direct na de quiz krijg je een volledig stijlrapport. Geen wachttijd, geen vage aanbevelingen — concreet en visueel.
+              </p>
+              <div className="flex flex-col gap-4 mb-8">
+                <StepDetail
+                  title="Jouw persoonlijke kleurpalet"
+                  sub="Welke tinten bij je passen en welke je beter kunt vermijden"
+                />
+                <StepDetail
+                  title="Stijlprofiel met uitleg"
+                  sub="Wat je seizoenstype, contrast en ondertoon betekenen"
+                />
+                <StepDetail
+                  title="Do's en don'ts per gelegenheid"
+                  sub="Concrete tips voor werk, weekend en uitgaan"
+                />
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-semibold text-[#C2654A] w-fit">
+                <Zap className="w-4 h-4" aria-hidden="true" />
+                Direct beschikbaar
+              </div>
+            </Reveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-4xl mx-auto">
-              {faqs.map((faq, idx) => {
-                const isOpen = openFaq === idx;
-                return (
+            <Reveal className="relative overflow-hidden order-1 lg:order-2">
+              <Step2Visual />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════
+            STAP 3 — shop (visual left, content right)
+        ════════════════════════════════════════════════════ */}
+        <section className="bg-[#FAFAF8]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+            <Reveal className="relative overflow-hidden">
+              <Step3Visual />
+            </Reveal>
+
+            <Reveal
+              className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#FAFAF8]"
+              delay={0.12}
+            >
+              <StepBadge num="3" label="Stap drie" />
+              <h2 className="font-serif italic text-[28px] md:text-[44px] text-[#1A1A1A] leading-[1.1] mb-5">
+                Shop outfits die bij je passen
+              </h2>
+              <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
+                Geen moodboards, maar echte items die je direct kunt kopen. Elke outfit is samengesteld op basis van jouw stijlprofiel.
+              </p>
+              <div className="flex flex-col gap-4 mb-8">
+                <StepDetail
+                  title="50+ outfitcombinaties per profiel"
+                  sub="Voor werk, weekend, date en avond uit"
+                />
+                <StepDetail
+                  title="Directe links naar webshops"
+                  sub="Klik door en bestel bij je favoriete winkels"
+                />
+                <StepDetail
+                  title="Matchscore per item"
+                  sub="Zie direct hoe goed elk kledingstuk bij jouw profiel past"
+                />
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#C2654A] w-fit">
+                <Heart className="w-4 h-4" aria-hidden="true" />
+                50+ looks
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════
+            VERGELIJKINGSTABEL
+        ════════════════════════════════════════════════════ */}
+        <section className="py-40 bg-[#FAFAF8]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="text-center max-w-[680px] mx-auto mb-20">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                  Vergelijk
+                </span>
+                <h2 className="font-serif italic text-[28px] md:text-[48px] text-[#1A1A1A] leading-[1.1] mt-4 mb-4">
+                  Waarom dit anders is
+                </h2>
+                <p className="text-base md:text-[17px] text-[#4A4A4A] leading-[1.7]">
+                  De meeste mensen kiezen kleding op gevoel. FitFi geeft je een systeem.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <div className="max-w-[800px] mx-auto">
+                {/* Header rij */}
+                <div className="grid grid-cols-[1fr_40px_1fr] items-center pb-4 mb-2 border-b-2 border-[#E5E5E5]">
+                  <div className="text-[13px] font-semibold text-[#8A8A8A] uppercase tracking-[1px] text-right pr-6">
+                    Zonder FitFi
+                  </div>
+                  <div />
+                  <div className="text-[13px] font-bold text-[#C2654A] uppercase tracking-[1px] text-left pl-6">
+                    Met FitFi
+                  </div>
+                </div>
+
+                {compRows.map((row, i) => (
                   <div
-                    key={idx}
-                    className={`bg-[var(--color-surface)] rounded-2xl border-2 transition-colors duration-200 shadow-[var(--shadow-soft)] ${
-                      isOpen
-                        ? "border-[var(--ff-color-primary-400)]"
-                        : "border-[var(--color-border)] hover:border-[var(--ff-color-primary-200)]"
-                    }`}
+                    key={i}
+                    className="grid grid-cols-[1fr_40px_1fr] items-center py-5 border-b border-[#E5E5E5] last:border-none"
                   >
-                    <button
-                      type="button"
-                      id={`faq-trigger-${idx}`}
-                      onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      className="w-full flex items-center justify-between gap-3 p-5 sm:p-6 min-h-[56px] text-left rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                      aria-expanded={isOpen}
-                      aria-controls={`faq-answer-${idx}`}
-                    >
-                      <span className="font-bold text-sm sm:text-base text-[var(--color-text)] leading-snug pr-2">
-                        {faq.q}
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center transition-colors"
-                      >
-                        {isOpen
-                          ? <Minus className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
-                          : <Plus className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
-                        }
-                      </span>
-                    </button>
+                    <div className="text-[15px] text-[#8A8A8A] text-right pr-6">
+                      {row.old}
+                    </div>
+                    <div className="text-[11px] font-bold text-[#E5E5E5] text-center">
+                      →
+                    </div>
+                    <div className={`text-[15px] font-semibold text-left pl-6 ${row.highlight ? "text-[#C2654A]" : "text-[#1A1A1A]"}`}>
+                      {row.next}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </section>
 
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          id={`faq-answer-${idx}`}
-                          role="region"
-                          aria-labelledby={`faq-trigger-${idx}`}
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.22, ease: "easeInOut" }}
-                          className="overflow-hidden"
+        {/* ════════════════════════════════════════════════════
+            FAQ MINI
+        ════════════════════════════════════════════════════ */}
+        <section className="py-28 bg-[#F5F0EB]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="text-center max-w-[680px] mx-auto mb-16">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                  Veelgestelde vragen
+                </span>
+                <h2 className="font-serif italic text-[28px] md:text-[48px] text-[#1A1A1A] leading-[1.1] mt-4 mb-4">
+                  Nog twijfels?
+                </h2>
+                <p className="text-base md:text-[17px] text-[#4A4A4A]">
+                  De vier meest gestelde vragen over FitFi.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[900px] mx-auto">
+                {faqs.map((faq, idx) => {
+                  const isOpen = openFaq === idx;
+                  return (
+                    <div
+                      key={idx}
+                      className="bg-white rounded-[20px] p-7 cursor-pointer transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)]"
+                      onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    >
+                      <div className="flex justify-between items-center gap-4">
+                        <span className="text-[15px] font-semibold text-[#1A1A1A]">
+                          {faq.q}
+                        </span>
+                        <div
+                          className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
+                            isOpen ? "bg-[#F4E8E3]" : "bg-[#F5F0EB]"
+                          }`}
+                          aria-hidden="true"
                         >
-                          <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0">
-                            <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed">
+                          <motion.div
+                            animate={{ rotate: isOpen ? 45 : 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Plus className="w-4 h-4 text-[#C2654A]" />
+                          </motion.div>
+                        </div>
+                      </div>
+
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                          >
+                            <p className="text-sm text-[#4A4A4A] leading-[1.7] mt-4">
                               {faq.a}
                             </p>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
-            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.24}>
+              <div className="text-center mt-10">
+                <Link
+                  to="/veelgestelde-vragen"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+                >
+                  Bekijk alle veelgestelde vragen
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* ── Sluitende CTA ── */}
-        <section className="ff-section bg-[var(--ff-color-primary-50)]" aria-label="Start met FitFi">
-          <div className="ff-container text-center">
-            <div
-              className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mx-auto mb-6 shadow-sm"
-              style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
-              aria-hidden="true"
-            >
-              <Sparkles className="w-7 h-7 text-white" />
-            </div>
-            <h2
-              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-4"
-              style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.5rem)', lineHeight: 1.1 }}
-            >
-              Klaar voor jouw stijladvies?
-            </h2>
-            <p className="text-base sm:text-lg text-[var(--color-muted)] mb-8 max-w-md mx-auto leading-relaxed font-light">
-              Gratis. 2 minuten. Geen foto's nodig.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href="/stijlquiz"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
-                style={{
-                  background: 'var(--ff-color-primary-700)',
-                  color: 'var(--color-bg)',
-                  boxShadow: '0 8px 40px rgba(166,136,106,0.45)',
-                }}
+        {/* ════════════════════════════════════════════════════
+            CTA
+        ════════════════════════════════════════════════════ */}
+        <section className="py-40 bg-[#FAFAF8] text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <h2 className="font-serif italic text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] mb-5">
+                Klaar om te beginnen?
+              </h2>
+              <p className="text-[17px] text-[#4A4A4A] mb-12 max-w-[400px] mx-auto">
+                Gratis. Twee minuten. Geen account nodig.
+              </p>
+              <Link
+                to="/onboarding"
+                className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[17px] py-5 px-12 rounded-full transition-all duration-300 hover:-translate-y-0.5"
+                style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
               >
-                Start gratis
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-              </a>
-              <a
-                href="/voorbeeld"
-                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 min-h-[52px] rounded-xl font-semibold text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)] transition-all"
-              >
-                Bekijk voorbeeld
-              </a>
-            </div>
+                Begin gratis
+                <ArrowRight
+                  className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
+              </Link>
+            </Reveal>
           </div>
         </section>
 
