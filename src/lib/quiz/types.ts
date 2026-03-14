@@ -18,30 +18,26 @@ export type QuizStep =
   | "photo"
   | "review";
 
+// P1.5 audit: velden gemarkeerd met hun status ten opzichte van de quiz.
+// Velden worden NIET verwijderd om backwards compatibility te behouden
+// met bestaande profielen in localStorage en Supabase.
 export type AnswerMap = {
+  // === Actief in quiz (quizSteps.ts) ===
   gender?: "male" | "female" | "non-binary" | "prefer-not-to-say";
-  goals?: string[];
+  stylePreferences?: string[];
+  neutrals?: "warm" | "koel" | "neutraal";
+  lightness?: "licht" | "medium" | "donker";
+  contrast?: "laag" | "medium" | "hoog";
   fit?: string;
-  bodytype?: string;
+  occasions?: string[];
+  goals?: string[];
+  prints?: string;
+  materials?: string | string[];
   sizes?: {
     tops?: string;
     bottoms?: string;
     shoes?: string;
   };
-  budget?: {
-    min: number;
-    max: number;
-  };
-  comfort?: string;
-  jewelry?: "goud" | "zilver" | "beide";
-  neutrals?: "warm" | "koel" | "neutraal";
-  lightness?: "licht" | "medium" | "donker";
-  contrast?: "laag" | "medium" | "hoog";
-  prints?: string;
-  materials?: string | string[];
-  occasions?: string[];
-  brands?: string[];
-  stylePreferences?: string[];
   photoDataUrl?: string | null;
   colorAnalysis?: {
     undertone: "warm" | "cool" | "neutral";
@@ -54,8 +50,26 @@ export type AnswerMap = {
     confidence: number;
     reasoning?: string;
   };
+
+  // === Niet in quiz, maar gebruikt door engine/services ===
+  budget?: { min: number; max: number }; // recommendationEngine leest dit
+  comfort?: string;                       // generateOutfits leest dit
+
+  // === Niet in quiz, niet actief in scoring — behouden voor legacy profielen ===
+  bodytype?: string;                      // niet gebruikt in scoring
+  jewelry?: "goud" | "zilver" | "beide";  // P1.3: verwijderd uit decideTemperature()
+  brands?: string[];                      // alleen in productFiltering, niet in scoring
+
   [key: string]: any;
 };
+
+// P2.4: subSeason toegevoegd voor 12 sub-seizoenspaletten (ipv 4).
+// Het veld is optioneel voor backwards compatibility met bestaande profielen.
+export type SubSeason =
+  | "licht-lente" | "warm-lente" | "helder-lente"
+  | "licht-zomer" | "koel-zomer" | "zacht-zomer"
+  | "zacht-herfst" | "warm-herfst" | "diep-herfst"
+  | "koel-winter" | "diep-winter" | "helder-winter";
 
 export type ColorProfile = {
   temperature: "warm" | "koel" | "neutraal";
@@ -63,6 +77,7 @@ export type ColorProfile = {
   contrast: "laag" | "medium" | "hoog";
   chroma: "zacht" | "helder" | "gedurfd" | "gemiddeld";
   season: "lente" | "zomer" | "herfst" | "winter";
+  subSeason?: SubSeason;
   paletteName: string;
   notes: string[];
 };

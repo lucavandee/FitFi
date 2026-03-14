@@ -20,6 +20,10 @@ export type RankCtx = {
   prints?: string;
   swipeEmbedding?: Record<string, number>;
   swipeCount?: number;
+  // P3.2: materiaalvoorkeur voor soft ranking bonus
+  preferredMaterials?: string[];
+  // P3.3: brand affinity voor zachte merkvoorkeur
+  brandAffinities?: Record<string, number>;
 };
 
 const GOAL_TAG_MAP: Record<string, string[]> = {
@@ -173,6 +177,62 @@ function scoreProductQuality(outfit: Outfit, ctx: RankCtx): { score: number; rea
   return { score: avg, reason };
 }
 
+// P3.2: materiaalvoorkeur als soft ranking bonus
+function scoreMaterialPreference(outfit: Outfit, ctx: RankCtx): { score: number; reason: string } {
+  if (!ctx.preferredMaterials || ctx.preferredMaterials.length === 0) {
+    return { score: 0.5, reason: 'no_material_pref' };
+  }
+  if (!outfit.products || outfit.products.length === 0) {
+    return { score: 0.5, reason: 'no_products' };
+  }
+
+  const prefs = ctx.preferredMaterials.map(m => m.toLowerCase());
+  let hits = 0;
+  let checked = 0;
+
+  for (const product of outfit.products) {
+    const mats = (product.materialTags || product.materials || []).map((m: string) => m.toLowerCase());
+    if (mats.length > 0) {
+      checked++;
+      if (prefs.some(p => mats.some((m: string) => m.includes(p) || p.includes(m)))) {
+        hits++;
+      }
+    }
+  }
+
+  if (checked === 0) return { score: 0.5, reason: 'no_material_data' };
+  const ratio = hits / checked;
+  return { score: 0.3 + ratio * 0.7, reason: ratio > 0.5 ? 'material_match' : 'material_partial' };
+}
+
+// P3.3: brand affinity als zachte ranking bonus
+function scoreBrandAffinity(outfit: Outfit, ctx: RankCtx): { score: number; reason: string } {
+  if (!ctx.brandAffinities || Object.keys(ctx.brandAffinities).length === 0) {
+    return { score: 0.5, reason: 'no_brand_data' };
+  }
+  if (!outfit.products || outfit.products.length === 0) {
+    return { score: 0.5, reason: 'no_products' };
+  }
+
+  let totalAffinity = 0;
+  let brandedProducts = 0;
+
+  for (const product of outfit.products) {
+    const brand = product.brand?.toLowerCase();
+    if (brand) {
+      brandedProducts++;
+      const affinity = ctx.brandAffinities[brand] ?? 0;
+      totalAffinity += affinity;
+    }
+  }
+
+  if (brandedProducts === 0) return { score: 0.5, reason: 'no_brands' };
+  const avgAffinity = totalAffinity / brandedProducts;
+  // Normalize: affinity scores are typically 0-1, map to 0.3-1.0
+  const score = 0.3 + Math.min(avgAffinity, 1) * 0.7;
+  return { score, reason: avgAffinity > 0.5 ? 'brand_preferred' : 'brand_neutral' };
+}
+
 function scoreOccasionRecency(outfit: Outfit, ctx: RankCtx): { score: number; reason: string } {
   if (!ctx.recentOccasions || ctx.recentOccasions.length === 0) {
     return { score: 0.5, reason: 'no_recency' };
@@ -184,14 +244,17 @@ function scoreOccasionRecency(outfit: Outfit, ctx: RankCtx): { score: number; re
 }
 
 export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
+  // P3.2 + P3.3: materiaalvoorkeur en brand affinity als ranking factoren
   const W = {
-    quality: 0.35,
-    archetype: 0.15,
+    quality: 0.33,
+    archetype: 0.14,
     season: 0.10,
-    goals: 0.15,
-    prints: 0.10,
+    goals: 0.14,
+    prints: 0.08,
     swipe: 0.10,
-    recency: 0.05,
+    material: 0.05,
+    brand: 0.04,
+    recency: 0.02,
   };
 
   return outfits
@@ -202,6 +265,8 @@ export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
       const goal = scoreGoalsMatch(outfit, ctx);
       const prnt = scorePrintsMatch(outfit, ctx);
       const swpe = scoreSwipeEmbedding(outfit, ctx);
+      const mat = scoreMaterialPreference(outfit, ctx);
+      const brd = scoreBrandAffinity(outfit, ctx);
       const rec = scoreOccasionRecency(outfit, ctx);
 
       const score =
@@ -211,9 +276,11 @@ export function rankOutfits(outfits: Outfit[], ctx: RankCtx): ScoredOutfit[] {
         W.goals * goal.score +
         W.prints * prnt.score +
         W.swipe * swpe.score +
+        W.material * mat.score +
+        W.brand * brd.score +
         W.recency * rec.score;
 
-      const reasons = [qual.reason, arch.reason, seas.reason, goal.reason, prnt.reason, swpe.reason, rec.reason];
+      const reasons = [qual.reason, arch.reason, seas.reason, goal.reason, prnt.reason, swpe.reason, mat.reason, brd.reason, rec.reason];
 
       return { outfit, score, reasons };
     })

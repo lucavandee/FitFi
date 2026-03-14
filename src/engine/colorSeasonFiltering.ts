@@ -1,113 +1,117 @@
 /**
  * Color Season Filtering Logic
  *
+ * P1.2 fix: Dit bestand leidt nu zijn kleurdata af van colorPalettes.ts (single source of truth).
+ * De string-gebaseerde lijsten worden automatisch gegenereerd uit de hex-gebaseerde paletten.
+ *
  * Filters products based on user's color season analysis (Spring/Summer/Autumn/Winter).
  * Prevents mismatches like "black leather jacket in Light Neutral outfit".
- *
- * Based on seasonal color analysis principles:
- * - Spring (Lente): Light, warm, bright colors
- * - Summer (Zomer): Light, cool, soft colors
- * - Autumn (Herfst): Deep, warm, muted colors
- * - Winter: Deep, cool, clear colors OR light, cool, high-contrast
  */
 
 import { Product } from './types';
 import { ColorProfile } from '@/context/UserContext';
+import { COLOR_PALETTES, type ColorSwatch } from '@/data/colorPalettes';
 
 /**
- * Color palettes for each season
- * Based on professional color analysis theory
+ * Derive string-based color names from the canonical hex-based palettes.
+ * This ensures colorSeasonFiltering and colorPalettes stay in sync.
+ */
+function deriveSeasonStrings(seasonKey: string): {
+  recommended: string[];
+  avoid: string[];
+  neutrals: string[];
+} {
+  const palette = COLOR_PALETTES[seasonKey];
+  if (!palette) return { recommended: [], avoid: [], neutrals: [] };
+
+  const toNames = (swatches: ColorSwatch[]) =>
+    swatches.map(s => s.name.toLowerCase());
+
+  return {
+    recommended: toNames(palette.doColors),
+    avoid: toNames(palette.dontColors),
+    neutrals: toNames(palette.colors.filter(c => c.category === 'neutraal')),
+  };
+}
+
+/**
+ * Color palettes for each season — derived from colorPalettes.ts (single source of truth)
+ * Extended with common string aliases for robust product-color matching.
  */
 export const COLOR_SEASON_PALETTES = {
-  // Spring (Lente): Light + Warm + Bright
   lente: {
+    ...deriveSeasonStrings('lente'),
+    // Uitgebreide aliassen voor robuuste product-matching
     recommended: [
+      ...deriveSeasonStrings('lente').recommended,
       'wit', 'beige', 'cream', 'ivory', 'sand', 'camel',
       'peach', 'coral', 'salmon', 'apricot',
-      'light blue', 'turquoise', 'aqua',
-      'mint', 'lime', 'apple green', 'grass green',
-      'buttercup yellow', 'warm yellow', 'gold',
-      'warm pink', 'rose pink',
-      'warm taupe', 'warm beige'
+      'mint', 'sage', 'warm taupe', 'warm beige',
+      'light blue', 'turquoise', 'warm yellow', 'gold',
+      'warm pink', 'rose pink'
     ],
     avoid: [
-      'zwart', 'black', // Pure black too harsh
-      'pure white', // Too stark
-      'charcoal', 'dark grey',
-      'burgundy', 'wine',
-      'navy', 'dark blue',
-      'forest green', 'dark green',
-      'purple', 'deep purple'
+      ...deriveSeasonStrings('lente').avoid,
+      'zwart', 'black', 'charcoal', 'dark grey',
+      'burgundy', 'wine', 'navy', 'dark blue',
+      'forest green', 'dark green', 'purple', 'deep purple'
     ],
-    neutrals: ['beige', 'camel', 'cream', 'warm grey', 'light brown']
   },
 
-  // Summer (Zomer): Light + Cool + Soft
   zomer: {
+    ...deriveSeasonStrings('zomer'),
     recommended: [
+      ...deriveSeasonStrings('zomer').recommended,
       'soft white', 'off-white', 'grey', 'light grey',
       'powder blue', 'sky blue', 'periwinkle',
       'lavender', 'lilac', 'soft purple',
       'rose pink', 'mauve', 'dusty rose',
       'mint', 'sage green', 'seafoam',
-      'soft yellow', 'lemon',
-      'cool taupe', 'dove grey',
-      'denim blue', 'chambray'
+      'cool taupe', 'dove grey', 'denim blue', 'chambray'
     ],
     avoid: [
-      'zwart', 'black', // Too harsh
-      'orange', 'rust',
-      'warm yellow', 'gold',
-      'olive green',
-      'tomato red',
-      'warm brown'
+      ...deriveSeasonStrings('zomer').avoid,
+      'orange', 'rust', 'warm yellow', 'gold',
+      'olive green', 'tomato red', 'warm brown'
     ],
-    neutrals: ['grey', 'light grey', 'cool taupe', 'soft white']
   },
 
-  // Autumn (Herfst): Deep + Warm + Muted
   herfst: {
+    ...deriveSeasonStrings('herfst'),
     recommended: [
+      ...deriveSeasonStrings('herfst').recommended,
       'rust', 'terracotta', 'brick red', 'burnt orange',
       'warm brown', 'chocolate', 'camel', 'cognac',
       'olive green', 'moss green', 'forest green',
-      'mustard', 'gold', 'amber',
-      'warm beige', 'khaki',
-      'burgundy', 'wine',
-      'teal', 'petrol blue'
+      'mustard', 'gold', 'amber', 'warm beige', 'khaki',
+      'burgundy', 'wine', 'teal', 'petrol blue'
     ],
     avoid: [
-      'pure white', // Too stark
-      'icy blue', 'pastel blue',
-      'pink', 'baby pink',
-      'lavender', 'purple',
+      ...deriveSeasonStrings('herfst').avoid,
+      'pure white', 'icy blue', 'pastel blue',
+      'pink', 'baby pink', 'lavender', 'purple',
       'grey', 'cool grey'
     ],
-    neutrals: ['brown', 'warm beige', 'camel', 'olive', 'cream']
   },
 
-  // Winter: Deep + Cool + Clear OR Light + Cool + High Contrast
   winter: {
+    ...deriveSeasonStrings('winter'),
     recommended: [
-      'zwart', 'black', // Winter CAN wear black!
-      'pure white', 'bright white',
+      ...deriveSeasonStrings('winter').recommended,
+      'zwart', 'black', 'pure white', 'bright white',
       'navy', 'royal blue', 'cobalt',
       'emerald green', 'pine green',
       'magenta', 'fuchsia', 'hot pink',
-      'ruby red', 'true red',
-      'purple', 'violet',
+      'ruby red', 'true red', 'purple', 'violet',
       'icy blue', 'icy pink', 'icy yellow',
-      'charcoal', 'dark grey',
-      'silver'
+      'charcoal', 'dark grey', 'silver'
     ],
     avoid: [
-      'orange', 'rust',
-      'warm yellow', 'gold',
-      'olive green',
-      'warm brown', 'camel',
+      ...deriveSeasonStrings('winter').avoid,
+      'orange', 'rust', 'warm yellow', 'gold',
+      'olive green', 'warm brown', 'camel',
       'peach', 'coral'
     ],
-    neutrals: ['black', 'white', 'charcoal', 'navy', 'grey']
   }
 };
 
