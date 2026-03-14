@@ -47,19 +47,15 @@ export default function Navbar() {
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   useLockBody(open && !isOnboarding);
 
-  // Scroll listener for transparent → solid header on homepage
+  // Scroll listener: transparent at top, frosted after scroll (all pages)
   React.useEffect(() => {
-    if (!isHome) {
-      setScrolled(true); // Non-home pages always use solid header
-      return;
-    }
     const handleScroll = () => {
-      setScrolled(window.scrollY > 60);
+      setScrolled(window.scrollY > 40);
     };
-    handleScroll(); // Set initial state
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHome]);
+  }, []);
 
   React.useEffect(() => {
     try {
@@ -134,8 +130,9 @@ export default function Navbar() {
 
   const userInitial = user?.name?.[0]?.toUpperCase() || "U";
 
-  // Transparent state: on homepage and not scrolled
+  // Transparent at top on homepage, semi-transparent at top on other pages
   const isTransparent = isHome && !scrolled;
+  const isSemiTransparent = !isHome && !scrolled;
   const navTextClass = isTransparent
     ? "text-white/70 hover:text-white"
     : "text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80";
@@ -162,9 +159,11 @@ export default function Navbar() {
         {/* The pill */}
         <div
           className={[
-            "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-300",
+            "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-500",
             isTransparent
               ? "bg-transparent border border-transparent shadow-none"
+              : isSemiTransparent
+              ? "bg-white/60 backdrop-blur-[16px] border border-[#E5E5E5]/30 shadow-none"
               : "bg-white/85 backdrop-blur-[20px] border border-[#E5E5E5]/50 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:border-[#E5E5E5]/80",
           ].join(" ")}
         >

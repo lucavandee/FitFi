@@ -53,25 +53,7 @@ export default function Footer() {
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
-        ) : (
-          <div className="bg-white border border-[#E5E5E5] rounded-3xl p-9 md:p-11 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-[72px] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
-            <div>
-              <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5">
-                Bekijk je stijlrapport
-              </p>
-              <p className="text-sm text-[#8A8A8A]">
-                Je persoonlijke resultaten staan klaar.
-              </p>
-            </div>
-            <a
-              href="/dashboard"
-              className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 px-8 rounded-full inline-flex items-center gap-2 flex-shrink-0 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
-            >
-              Bekijk je resultaten
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </a>
-          </div>
-        )}
+        ) : null}
       </div>
 
       {/* Footer grid */}
