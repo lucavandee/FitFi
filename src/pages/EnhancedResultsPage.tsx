@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, ShoppingBag, Heart, Zap, Check, Grid3x3, Layers, Palette, Eye, Shirt } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -36,7 +36,6 @@ import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/pr
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { generateOutfitDescription } from "@/engine/outfitContext";
 import TrendInsights from "@/components/premium/TrendInsights";
-import { TrustSignals } from "@/components/results/TrustSignals";
 import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
@@ -44,14 +43,6 @@ import { ShareModal } from "@/components/results/ShareModal";
 import { ResultsOutfitCard } from "@/components/results/ResultsOutfitCard";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
-import {
-  PrimaryButton,
-  SecondaryButton,
-  IconButton,
-  ProductSectionHeader,
-  MetaInlineRow,
-  BadgePill,
-} from "@/components/ui/primitives";
 
 function readJson<T>(key: string): T | null {
   try {
@@ -884,63 +875,73 @@ export default function EnhancedResultsPage() {
           <div className="ff-container">
             <AnimatedSection>
               <div className="max-w-5xl mx-auto">
-              {/* Quiz-anchor context strip */}
+              {/* Filter tags */}
               {answers && (
-                <div className="mb-2 flex items-center gap-2 overflow-hidden">
-                  <MetaInlineRow
-                    className="min-w-0 flex-1 overflow-hidden"
-                    items={[
-                      { label: archetypeName, pill: true },
-                      ...[
-                        answers.fit,
-                        ...(Array.isArray(answers.occasions) ? answers.occasions.slice(0, 1) : []),
-                      ].filter(Boolean).map((v) => ({ label: v as string })),
-                      ...(activeColorProfile?.season ? [{ label: activeColorProfile.season, pill: true }] : []),
-                      ...(answers.budgetRange?.max ? [{ label: `€${answers.budgetRange.max}` }] : []),
-                    ]}
-                  />
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  {[
+                    { label: archetypeName, active: true },
+                    ...[
+                      answers.fit,
+                      ...(Array.isArray(answers.occasions) ? answers.occasions.slice(0, 1) : []),
+                    ].filter(Boolean).map((v) => ({ label: v as string, active: false })),
+                    ...(activeColorProfile?.season ? [{ label: activeColorProfile.season, active: false }] : []),
+                    ...(answers.budgetRange?.max ? [{ label: `€${answers.budgetRange.max}`, active: false }] : []),
+                  ].map((tag, i) => (
+                    <span
+                      key={i}
+                      className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                        tag.active
+                          ? 'bg-[#C2654A] text-white'
+                          : 'bg-white border border-[#E5E5E5] text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A]'
+                      }`}
+                    >
+                      {tag.label}
+                    </span>
+                  ))}
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="ml-auto shrink-0 text-xs font-medium text-[#8A8A8A] hover:text-[#C2654A] transition-colors underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 rounded"
+                    className="ml-auto text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] inline-flex items-center gap-1.5 transition-colors duration-200"
                   >
+                    <SlidersHorizontal className="w-4 h-4" />
                     Aanpassen
                   </button>
                 </div>
               )}
 
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-base font-semibold text-[#1A1A1A] leading-tight">Handpicked voor jou</h2>
-                  <p className="text-xs text-[#8A8A8A] mt-0.5">{displayOutfits.length} outfits · {archetypeName}</p>
-                </div>
-                <div className="inline-flex items-center p-0.5 bg-white border border-[#E5E5E5] rounded-lg shrink-0" style={{ boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}>
-                  <button
-                    onClick={() => setGalleryMode('swipe')}
-                    aria-pressed={galleryMode === 'swipe'}
-                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-offset-1 ${
-                      galleryMode === 'swipe'
-                        ? 'bg-[#C2654A] text-white shadow-sm'
-                        : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
-                    }`}
-                    aria-label="Swipe weergave"
-                  >
-                    <Layers className="w-3 h-3" aria-hidden="true" />
-                    <span>Swipe</span>
-                  </button>
-                  <button
-                    onClick={() => setGalleryMode('grid')}
-                    aria-pressed={galleryMode === 'grid'}
-                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md font-medium text-[11px] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-offset-1 ${
-                      galleryMode === 'grid'
-                        ? 'bg-[#C2654A] text-white shadow-sm'
-                        : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
-                    }`}
-                    aria-label="Grid weergave"
-                  >
-                    <Grid3x3 className="w-3 h-3" aria-hidden="true" />
-                    <span>Grid</span>
-                  </button>
-                </div>
+              {/* Header */}
+              <div className="mb-2">
+                <h2 className="text-xl font-bold text-[#1A1A1A]">Handpicked voor jou</h2>
+                <p className="text-sm text-[#8A8A8A] mt-1">{displayOutfits.length} outfits · {archetypeName}</p>
+              </div>
+
+              {/* Swipe/Grid toggle */}
+              <div className="flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1 mb-6 w-fit">
+                <button
+                  onClick={() => setGalleryMode('swipe')}
+                  aria-pressed={galleryMode === 'swipe'}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                    galleryMode === 'swipe'
+                      ? 'bg-white text-[#1A1A1A] shadow-sm'
+                      : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                  }`}
+                  aria-label="Swipe weergave"
+                >
+                  <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Swipe</span>
+                </button>
+                <button
+                  onClick={() => setGalleryMode('grid')}
+                  aria-pressed={galleryMode === 'grid'}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                    galleryMode === 'grid'
+                      ? 'bg-white text-[#1A1A1A] shadow-sm'
+                      : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                  }`}
+                  aria-label="Grid weergave"
+                >
+                  <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Grid</span>
+                </button>
               </div>
               </div>
             </AnimatedSection>
@@ -958,13 +959,13 @@ export default function EnhancedResultsPage() {
                 </div>
               </div>
             ) : displayOutfits.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-4 text-center px-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#F4E8E3] flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-[#C2654A]" aria-hidden="true" />
+              <div className="text-center py-20 px-4">
+                <div className="w-16 h-16 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-6">
+                  <Shirt className="w-7 h-7 text-[#C2654A]" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-[#1A1A1A] mb-1">Geen outfits gevonden</p>
-                  <p className="text-sm text-[#8A8A8A] max-w-sm mx-auto leading-relaxed">
+                  <p className="text-lg font-semibold text-[#1A1A1A] mb-2">Geen outfits gevonden</p>
+                  <p className="text-sm text-[#4A4A4A] max-w-sm mx-auto leading-relaxed">
                     {(() => {
                       const budget = answers?.budget ?? answers?.budgetRange;
                       const gender = answers?.gender;
@@ -1009,14 +1010,29 @@ export default function EnhancedResultsPage() {
                     || null;
 
                   return (
-                    <div className="bg-white rounded-3xl border border-[#E5E5E5] overflow-hidden h-full" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                    <div
+                      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden h-full hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#C2654A] transition-all duration-300 cursor-pointer group"
+                      onClick={() => {
+                        track("outfit_card_click", {
+                          outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
+                          outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                          outfit_index: idx,
+                          occasion: outfitInfo.context.label,
+                          archetype: archetypeName,
+                          match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
+                          shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
+                          source: "swipe",
+                        });
+                        setSelectedOutfit(outfit);
+                      }}
+                    >
                       {/* Image Container */}
-                      <div className="relative aspect-[4/5] overflow-hidden bg-[#F5F0EB]">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0EB]">
                         {outfitImage ? (
                           <img
                             src={outfitImage}
                             alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                             loading="lazy"
                             onError={(e) => {
                               (e.currentTarget as HTMLImageElement).style.display = 'none';
@@ -1037,87 +1053,63 @@ export default function EnhancedResultsPage() {
                           </div>
                         )}
 
-                        {/* Favorite */}
-                        <div className="absolute top-2.5 right-2.5">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const outfitId = 'id' in outfit ? outfit.id : `seed-${idx}`;
-                              const isCurrentlyFav = favs.includes(String(outfitId));
-                              track("save_outfit_click", {
-                                outfit_id: String(outfitId),
-                                outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
-                                outfit_index: idx,
-                                occasion: outfitInfo.context.label,
-                                archetype: archetypeName,
-                                action: isCurrentlyFav ? "unsave" : "save",
-                                source: "swipe",
-                              });
-                              toggleFav(String(outfitId));
-                            }}
-                            className={`w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-sm ${
-                              favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
-                                ? 'bg-[#C24A4A] text-white'
-                                : 'bg-white/90 text-[#1A1A1A] hover:bg-white'
-                            }`}
-                            aria-label={favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-                          >
-                            <Heart className={`w-3.5 h-3.5 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-current' : ''}`} />
-                          </button>
-                        </div>
+                        {/* Occasion badge */}
+                        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm">
+                          {outfitInfo.context.label}
+                        </span>
 
-                        {/* CTA */}
-                        <div className="absolute inset-x-0 bottom-0 pointer-events-none h-16 bg-gradient-to-t from-[rgba(10,10,10,0.45)] to-transparent" />
+                        {/* Favorite */}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            track("outfit_card_click", {
-                              outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
+                            const outfitId = 'id' in outfit ? outfit.id : `seed-${idx}`;
+                            const isCurrentlyFav = favs.includes(String(outfitId));
+                            track("save_outfit_click", {
+                              outfit_id: String(outfitId),
                               outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
                               outfit_index: idx,
                               occasion: outfitInfo.context.label,
                               archetype: archetypeName,
-                              match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
-                              shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
+                              action: isCurrentlyFav ? "unsave" : "save",
                               source: "swipe",
                             });
-                            setSelectedOutfit(outfit);
+                            toggleFav(String(outfitId));
                           }}
-                          className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[36px] bg-[#C2654A]/95 text-white text-[11px] font-semibold hover:bg-[#A8513A] transition-colors"
+                          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:bg-white hover:scale-110 ${
+                            favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
+                              ? 'text-[#C2654A]'
+                              : 'text-[#8A8A8A] hover:text-[#C2654A]'
+                          }`}
+                          aria-label={favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                         >
-                          <ShoppingBag className="w-3 h-3" />
-                          Bekijk &amp; shop
+                          <Heart className={`w-4 h-4 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-[#C2654A]' : ''}`} />
                         </button>
                       </div>
 
                       {/* Info */}
-                      <div className="px-3 pt-2.5 pb-3">
-                        {/* Occasion */}
-                        <div className="mb-1.5">
-                          <span className="text-[10px] font-semibold text-[#8A8A8A] uppercase tracking-wide">
-                            {outfitInfo.context.label}
-                          </span>
-                        </div>
-
-                        <h3 className="text-sm font-semibold text-[#1A1A1A] leading-snug line-clamp-2 mb-1">
+                      <div className="p-5">
+                        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#C2654A] transition-colors duration-200">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
-                        <p className="text-[11px] text-[#8A8A8A] line-clamp-2 leading-normal mb-2">
+                        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-1 mb-3">
                           {('explanation' in outfit && outfit.explanation)
                             ? (outfit.explanation as string)
                             : outfitInfo.description}
                         </p>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex items-center gap-3">
                           {(() => {
                             const ms = (outfit as any).matchScore ?? (outfit as any).match;
                             return typeof ms === 'number' ? (
-                              <BadgePill variant="success" icon={<Check className="w-2.5 h-2.5" strokeWidth={3} />}>
-                                {Math.round(ms)}% match
-                              </BadgePill>
+                              <span className="inline-flex items-center gap-1.5">
+                                <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
+                                  <Check className="w-2.5 h-2.5 text-[#C2654A]" strokeWidth={3} />
+                                </span>
+                                <span className="text-sm font-semibold text-[#C2654A]">{Math.round(ms)}% match</span>
+                              </span>
                             ) : null;
                           })()}
                           {answers?.fit && (
-                            <BadgePill variant="arch">{answers.fit}</BadgePill>
+                            <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A]">{answers.fit}</span>
                           )}
                         </div>
                       </div>
@@ -1127,7 +1119,7 @@ export default function EnhancedResultsPage() {
                 className="max-w-5xl mx-auto"
               />
             ) : (
-              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
                 {displayOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
@@ -1145,9 +1137,11 @@ export default function EnhancedResultsPage() {
                     || getFirstProductImage(outfit)
                     || null;
                   const matchScore = (outfit as any).matchScore ?? (outfit as any).match ?? null;
+                  const rowIndex = Math.floor(idx / 3);
+                  const colIndex = idx % 3;
 
                   return (
-                    <AnimatedSection key={String(id)} delay={idx * 0.05}>
+                    <AnimatedSection key={String(id)} delay={rowIndex === 0 ? colIndex * 0.08 : 0.05}>
                       <ResultsOutfitCard
                         id={String(id)}
                         index={idx}
@@ -1221,57 +1215,52 @@ export default function EnhancedResultsPage() {
 
             {/* Upsell Block */}
             <AnimatedSection delay={0.6}>
-              <div className="mt-10 sm:mt-12 mb-6 max-w-[800px] mx-auto">
-                {/* Upsell card */}
-                <div className="bg-white border border-[#E5E5E5] rounded-3xl p-10 md:p-12">
-                  {/* PREMIUM label */}
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
-                    Premium
-                  </p>
+              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-10 max-w-[800px] mx-auto mt-12">
+                {/* PREMIUM label */}
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                  Premium
+                </p>
 
-                  {/* Headline */}
-                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
-                    Ontgrendel je volledige stijlprofiel
-                  </h3>
+                {/* Headline */}
+                <h3 className="text-2xl font-bold text-[#1A1A1A] mb-4">
+                  Ontgrendel je volledige garderobe
+                </h3>
 
-                  {/* Features with terracotta dots */}
-                  <ul className="space-y-2.5 mb-6">
-                    {[
-                      'Onbeperkte outfitcombinaties',
-                      'Volledig kleurpalet met aanbevelingen',
-                      'Nova AI-assistent voor stijlvragen',
-                      'Smart learning dat je profiel verbetert',
-                    ].map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-3">
-                        <span className="w-2 h-2 rounded-full bg-[#C2654A] shrink-0" aria-hidden="true" />
-                        <span className="text-sm text-[#4A4A4A]">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                {/* Features */}
+                <div className="flex flex-col gap-2.5 mb-6">
+                  {[
+                    'Alle 50+ outfitcombinaties',
+                    'Matchscores en stijluitleg per item',
+                    'Directe shoplinks naar webshops',
+                  ].map((feature, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] shrink-0" aria-hidden="true" />
+                      <span className="text-sm text-[#4A4A4A]">{feature}</span>
+                    </div>
+                  ))}
+                </div>
 
-                  {/* Price */}
-                  <div className="mb-1">
-                    <span className="text-2xl font-extrabold text-[#1A1A1A]">€9,99</span>
-                    <span className="text-sm text-[#4A4A4A] ml-1">/maand</span>
+                {/* Price + buttons */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6 pt-6 border-t border-[#E5E5E5]">
+                  <div>
+                    <div>
+                      <span className="text-2xl font-extrabold text-[#1A1A1A]">€9,99</span>
+                      <span className="text-base font-normal text-[#8A8A8A] ml-1">/maand</span>
+                    </div>
+                    <p className="text-xs text-[#8A8A8A]">Maandelijks opzegbaar</p>
                   </div>
-                  <p className="text-xs text-[#8A8A8A] mb-6">
-                    Maandelijks opzegbaar · 30 dagen geld-terug
-                  </p>
-
-                  {/* CTA Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex items-center gap-3 sm:ml-auto">
                     <NavLink
                       to="/prijzen#premium"
-                      className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full transition-all duration-200"
                     >
-                      Upgrade naar Premium →
+                      Ontgrendel premium →
                     </NavLink>
-
                     <NavLink
                       to={user ? "/dashboard" : "/registreren"}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-sm rounded-full transition-all duration-200"
+                      className="text-sm font-medium text-[#4A4A4A] hover:text-[#C2654A] transition-colors duration-200"
                     >
-                      Ga naar mijn dashboard →
+                      Ga naar dashboard
                     </NavLink>
                   </div>
                 </div>

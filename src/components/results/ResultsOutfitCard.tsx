@@ -1,7 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Heart, ShoppingBag, Check, Sparkles } from "lucide-react";
-import { SurfaceCard, BadgePill } from "@/components/ui/primitives";
+import { Heart, Check, Sparkles } from "lucide-react";
 
 interface OutfitContext {
   emoji: string;
@@ -34,104 +32,87 @@ export function ResultsOutfitCard({
   occasionContext,
   matchScore,
   fitLabel,
-  productCount,
   isFavorite,
   onSelect,
   onToggleFavorite,
   onImageError,
 }: ResultsOutfitCardProps) {
   return (
-    <SurfaceCard
-      as="article"
-      hover={false}
-      padding="none"
-      className="group overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(30,35,51,0.09)]"
+    <article
+      onClick={onSelect}
+      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#C2654A] transition-all duration-300 cursor-pointer group"
     >
-      {/* Image area — 4:5 ratio keeps the card proportionate without tower effect */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-[var(--ff-color-neutral-100)]">
+      {/* Image area — 3:4 ratio */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0EB]">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={imageAlt}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             loading="lazy"
             onError={onImageError}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-[#F4E8E3] to-[#F5F0EB] flex items-center justify-center">
             <div className="text-center p-4">
-              <Sparkles className="w-10 h-10 mx-auto mb-2 text-[var(--ff-color-primary-400)]" aria-hidden="true" />
-              <p className="text-[11px] text-[var(--color-muted)] font-medium">Outfit {index + 1}</p>
+              <Sparkles className="w-10 h-10 mx-auto mb-2 text-[#C2654A]" aria-hidden="true" />
+              <p className="text-xs text-[#8A8A8A] font-medium">Outfit {index + 1}</p>
             </div>
           </div>
         )}
 
-        {/* Favorite toggle — top right, smaller footprint */}
-        <motion.button
-          type="button"
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.92 }}
-          onClick={onToggleFavorite}
-          aria-label={isFavorite ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
-          className={`absolute top-2 right-2 w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm transition-colors ${
-            isFavorite
-              ? "bg-[var(--ff-color-danger-500)] text-white"
-              : "bg-[var(--color-surface)]/85 text-[var(--color-text)] hover:bg-[var(--color-surface)]"
-          }`}
-        >
-          <Heart className={`w-3.5 h-3.5 ${isFavorite ? "fill-current" : ""}`} />
-        </motion.button>
+        {/* Occasion badge */}
+        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm">
+          {occasionContext.label}
+        </span>
 
-        {/* CTA overlay — decorative gradient + slim action bar, no heavy block */}
-        <div className="absolute inset-x-0 bottom-0 pointer-events-none h-20 bg-gradient-to-t from-[rgba(10,10,10,0.45)] to-transparent" />
+        {/* Favorite toggle */}
         <button
           type="button"
-          onClick={onSelect}
-          className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[36px] bg-[var(--ff-color-primary-700)]/95 text-white text-[11px] font-semibold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.99] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-0"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite(e);
+          }}
+          aria-label={isFavorite ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
+          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:bg-white hover:scale-110 ${
+            isFavorite
+              ? "text-[#C2654A]"
+              : "text-[#8A8A8A] hover:text-[#C2654A]"
+          }`}
         >
-          <ShoppingBag className="w-3 h-3 shrink-0" />
-          <span>Bekijk &amp; shop</span>
-          {productCount > 0 && (
-            <span className="px-1.5 py-px bg-white/25 rounded-full text-[9px] font-bold leading-none">
-              {productCount}
-            </span>
-          )}
+          <Heart className={`w-4 h-4 ${isFavorite ? "fill-[#C2654A]" : ""}`} />
         </button>
       </div>
 
       {/* Info area */}
-      <div className="px-3 pt-2.5 pb-3">
-        {/* Occasion — leading meta, stays small */}
-        <div className="mb-1.5">
-          <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wide leading-none">
-            {occasionContext.label}
-          </span>
-        </div>
-
-        {/* Title — scannable anchor */}
-        <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug line-clamp-2 mb-1 group-hover:text-[var(--ff-color-primary-600)] transition-colors">
+      <div className="p-5">
+        {/* Title */}
+        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#C2654A] transition-colors duration-200">
           {name}
         </h3>
 
-        {/* Description — supporting, compact */}
-        <p className="text-[11px] text-[var(--color-muted)] line-clamp-2 leading-normal mb-2">
+        {/* Description — single line */}
+        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-1 mb-3">
           {description}
         </p>
 
-        {/* Meta pills — subordinate, only if data exists */}
+        {/* Match score + style badge */}
         {(typeof matchScore === "number" || fitLabel) && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex items-center gap-3">
             {typeof matchScore === "number" && (
-              <BadgePill variant="success" icon={<Check className="w-2.5 h-2.5" strokeWidth={3} />}>
-                {Math.round(matchScore)}% match
-              </BadgePill>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
+                  <Check className="w-2.5 h-2.5 text-[#C2654A]" strokeWidth={3} />
+                </span>
+                <span className="text-sm font-semibold text-[#C2654A]">{Math.round(matchScore)}% match</span>
+              </span>
             )}
             {fitLabel && (
-              <BadgePill variant="arch">{fitLabel}</BadgePill>
+              <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A]">{fitLabel}</span>
             )}
           </div>
         )}
       </div>
-    </SurfaceCard>
+    </article>
   );
 }
