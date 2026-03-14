@@ -163,8 +163,8 @@ export default function DashboardPage() {
   if (!hasReport) {
     return (
       <div
-        className="flex items-center justify-center px-6"
-        style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}
+        className="flex items-center justify-center px-6 bg-[#FAFAF8]"
+        style={{ minHeight: "calc(100vh - 64px)" }}
       >
         <Helmet><title>Dashboard – FitFi</title></Helmet>
         <motion.div
@@ -173,43 +173,41 @@ export default function DashboardPage() {
           transition={{ duration: 0.5 }}
           className="max-w-sm w-full text-center"
         >
-          <div className="w-16 h-16 rounded-2xl bg-[var(--ff-color-primary-100)] flex items-center justify-center mx-auto mb-7">
-            <Sparkles className="w-7 h-7 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+          <div className="w-16 h-16 rounded-2xl bg-[#F4E8E3] flex items-center justify-center mx-auto mb-7">
+            <Sparkles className="w-7 h-7 text-[#C2654A]" aria-hidden="true" />
           </div>
           {hasQuizInProgress ? (
             <>
-              <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
+              <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3 tracking-tight">
                 Quiz niet afgemaakt
               </h1>
-              <p className="text-[var(--color-muted)] text-sm mb-8 leading-relaxed">
+              <p className="text-[#8A8A8A] text-sm mb-8 leading-relaxed">
                 Je bent al bezig met de stijlquiz. Ga verder waar je gebleven was.
               </p>
               <button
                 onClick={() => navigate("/onboarding")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-2xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98] mb-3"
-                style={{ background: "var(--ff-color-primary-700)" }}
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-full font-bold text-sm bg-[#C2654A] hover:bg-[#A8513A] transition-colors active:scale-[0.98] mb-3"
               >
                 Verder gaan met quiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
               <button
                 onClick={() => navigate("/onboarding?step=redo")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-2xl font-semibold text-sm transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] text-[var(--color-muted)]"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-full font-semibold text-sm transition-all border border-[#E5E5E5] hover:border-[#C2654A] text-[#4A4A4A] hover:text-[#C2654A]"
               >
                 Opnieuw beginnen
               </button>
             </>
           ) : (
             <>
-              <h1 className="font-heading text-2xl font-bold text-[var(--color-text)] mb-3 tracking-tight">
+              <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3 tracking-tight">
                 Nog geen stijlprofiel
               </h1>
-              <p className="text-[var(--color-muted)] text-sm mb-8 leading-relaxed">
+              <p className="text-[#8A8A8A] text-sm mb-8 leading-relaxed">
                 Doe de quiz en ontdek jouw archetype, kleurpalet en gepersonaliseerde outfits.
               </p>
               <button
                 onClick={() => navigate("/onboarding")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-2xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
-                style={{ background: "var(--ff-color-primary-700)" }}
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-full font-bold text-sm bg-[#C2654A] hover:bg-[#A8513A] transition-colors active:scale-[0.98]"
               >
                 Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -221,7 +219,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}>
+    <div className="bg-[#FAFAF8] min-h-screen pt-24 md:pt-28 pb-16">
       <Helmet>
         <title>Dashboard – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijldashboard met outfits, kleurprofiel en stijladvies." />
@@ -231,50 +229,47 @@ export default function DashboardPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {/* ══ MAIN CONTENT — wide bento grid ══ */}
-      <section className="pt-8 pb-16">
-        <div className="ff-container">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-6 lg:gap-8 xl:gap-10 items-start">
+      {/* ══ MAIN CONTENT ══ */}
+      <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 items-start">
 
             {/* ══ LEFT — main column ══ */}
-            <div className="space-y-5">
+            <div>
 
               {/* Profile card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.04 }}
-                className="bg-white border border-[#E5E5E5] rounded-2xl p-6"
+                className="bg-white border border-[#E5E5E5] rounded-2xl p-8 flex items-center gap-6"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  {/* Avatar */}
-                  <div className="w-16 h-16 rounded-full bg-[#F5F0EB] flex items-center justify-center text-xl font-semibold text-[#C2654A] flex-shrink-0 select-none">
-                    {userInitial}
-                  </div>
+                {/* Avatar */}
+                <div className="w-16 h-16 rounded-2xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 text-xl font-bold text-[#C2654A] select-none">
+                  {userInitial}
+                </div>
 
-                  {/* Name + archetype */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#8A8A8A] mb-0.5">{greeting}</p>
-                    <h2 className="text-xl font-semibold text-[#1A1A1A] leading-tight truncate">
-                      {userName || "Welkom terug"}
-                    </h2>
-                    <p className="text-sm text-[#4A4A4A] mt-0.5">
-                      {archetypeName ?? "Stijlprofiel nog niet bepaald"}
-                      {season && <span className="text-[#8A8A8A]"> · {season}</span>}
-                    </p>
-                    {isPremium && (
-                      <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full bg-[#F4E8E3] text-[#C2654A] text-xs font-semibold">
-                        {isFounder ? <Star className="w-3 h-3" aria-hidden="true" /> : <Crown className="w-3 h-3" aria-hidden="true" />}
-                        {isFounder ? "Founder" : "Premium"}
-                      </span>
-                    )}
-                  </div>
+                {/* Name + archetype */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-[#8A8A8A] mb-0.5">{greeting}</p>
+                  <h2 className="text-xl font-bold text-[#1A1A1A] leading-tight truncate">
+                    {userName || "Welkom terug"}
+                  </h2>
+                  <p className="text-sm text-[#4A4A4A] mt-1">
+                    {archetypeName ?? "Stijlprofiel nog niet bepaald"}
+                    {season && <span className="text-[#8A8A8A]"> · {season}</span>}
+                  </p>
+                  {isPremium && (
+                    <span className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-[#F4E8E3] text-[#C2654A] text-xs font-semibold">
+                      {isFounder ? <Star className="w-3 h-3" aria-hidden="true" /> : <Crown className="w-3 h-3" aria-hidden="true" />}
+                      {isFounder ? "Founder" : "Premium"}
+                    </span>
+                  )}
+                </div>
 
-                  {/* Progress */}
-                  <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0.5 sm:text-right">
-                    <p className="text-2xl font-bold text-[#C2654A] leading-none">{donePct}%</p>
-                    <p className="text-xs text-[#8A8A8A]">profiel voltooid</p>
-                  </div>
+                {/* Progress */}
+                <div className="flex-shrink-0 text-right">
+                  <p className="text-2xl font-extrabold text-[#C2654A] leading-none">{donePct}%</p>
+                  <p className="text-xs text-[#8A8A8A] mt-0.5">profiel voltooid</p>
                 </div>
               </motion.div>
 
@@ -283,24 +278,24 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.10 }}
-                className="mt-8 mb-8"
               >
                 {/* Sectie-header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mt-10 mb-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-[#1A1A1A]">Jouw outfits</h3>
-                    <p className="text-sm text-[#8A8A8A] mt-0.5">Op maat voor {archetypeName ?? "jou"}</p>
+                    <h3 className="text-lg font-bold text-[#1A1A1A]">Jouw outfits</h3>
+                    <p className="text-sm text-[#8A8A8A]">Op maat voor {archetypeName ?? "jou"}</p>
                   </div>
                   <button
                     onClick={() => navigate("/results")}
-                    className="text-sm font-medium text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200 underline underline-offset-4"
+                    className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] inline-flex items-center gap-1.5 transition-colors duration-200"
                   >
                     Bekijk alles
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
 
                 {outfitsData && outfitsData.length > 0 ? (
-                  <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide lg:grid lg:grid-cols-5 lg:overflow-visible">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {outfitsData.slice(0, 5).map((outfit, i) => {
                       const imgs = getOutfitImages(outfit);
                       const label = (outfit as any)?.occasion || (outfit as any)?.tags?.[0] || (outfit as any)?.name || `Look ${i + 1}`;
@@ -311,19 +306,19 @@ export default function DashboardPage() {
                           key={i}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.32, delay: 0.12 + i * 0.055 }}
+                          transition={{ duration: 0.32, delay: 0.12 + i * 0.06 }}
                           onClick={() => navigate("/results")}
                           aria-label={`Bekijk outfit: ${label}`}
-                          className="flex-shrink-0 w-40 lg:w-auto group text-left"
+                          className="group text-left"
                         >
-                          <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-md hover:border-[#C2654A] transition-all duration-200">
+                          <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300">
                             <div className="aspect-[3/4] w-full overflow-hidden bg-[#F5F0EB]">
                               {coverImg ? (
                                 <img
                                   src={coverImg}
                                   alt={label}
                                   loading="lazy"
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                   onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                                 />
                               ) : (
@@ -332,8 +327,8 @@ export default function DashboardPage() {
                                 </div>
                               )}
                             </div>
-                            <div className="p-3 text-center">
-                              <p className="text-sm font-medium text-[#1A1A1A] truncate">{label}</p>
+                            <div className="p-4 text-center">
+                              <p className="text-sm font-semibold text-[#1A1A1A] capitalize truncate">{label}</p>
                               <p className="text-xs text-[#8A8A8A] mt-0.5">
                                 {outfitCount > 0 ? `${outfitCount} items` : "Bekijk outfit"}
                               </p>
@@ -351,103 +346,59 @@ export default function DashboardPage() {
                     </p>
                     <button
                       onClick={() => navigate("/results")}
-                      className="text-sm font-medium text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200 underline underline-offset-4"
+                      className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] inline-flex items-center gap-1.5 transition-colors duration-200"
                     >
                       Genereer nu
+                      <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 )}
               </motion.div>
 
-              {/* Quick action bento cards */}
+              {/* Quick action cards */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.16 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-6 mb-8"
+                className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8"
               >
-                {/* Opgeslagen */}
-                <button
-                  onClick={() => navigate("/results#saved")}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
-                    <Heart className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
-                    Opgeslagen
-                  </h3>
-                  <p className="text-xs text-[#8A8A8A] mt-1">
-                    {favCount > 0 ? `${favCount} outfits` : "Nog geen outfits"}
-                  </p>
-                </button>
-
-                {/* Foto */}
-                <button
-                  onClick={() => setShowPhotoModal(true)}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
-                    <Camera className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
-                    Foto
-                  </h3>
-                  <p className="text-xs text-[#8A8A8A] mt-1">
-                    {hasPhoto ? "Toegevoegd" : "Toevoegen voor kleuranalyse"}
-                  </p>
-                </button>
-
-                {/* Profiel */}
-                <button
-                  onClick={() => navigate("/profile")}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
-                    <User className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
-                    Profiel
-                  </h3>
-                  <p className="text-xs text-[#8A8A8A] mt-1">
-                    {donePct}% compleet
-                  </p>
-                </button>
-
-                {/* Winkel */}
-                <button
-                  onClick={() => navigate("/shop")}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-5 hover:shadow-md hover:border-[#C2654A] transition-all duration-200 group text-left"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
-                    <ShoppingBag className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#1A1A1A] group-hover:text-[#C2654A] transition-colors duration-200">
-                    Winkel
-                  </h3>
-                  <p className="text-xs text-[#8A8A8A] mt-1">
-                    Jouw stijl, direct shoppen
-                  </p>
-                </button>
+                {[
+                  { Icon: Heart, label: "Opgeslagen", sub: favCount > 0 ? `${favCount} outfits` : "Nog geen outfits", onClick: () => navigate("/results#saved") },
+                  { Icon: Camera, label: "Foto", sub: hasPhoto ? "Toegevoegd" : "Toevoegen voor kleuranalyse", onClick: () => setShowPhotoModal(true) },
+                  { Icon: User, label: "Profiel", sub: `${donePct}% compleet`, onClick: () => navigate("/profile") },
+                  { Icon: ShoppingBag, label: "Winkel", sub: "Jouw stijl, direct shoppen", onClick: () => navigate("/shop") },
+                ].map(({ Icon, label, sub, onClick }, i) => (
+                  <motion.button
+                    key={label}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, delay: 0.18 + i * 0.06 }}
+                    onClick={onClick}
+                    className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 cursor-pointer group text-left"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-[#F5F0EB] group-hover:bg-[#F4E8E3] flex items-center justify-center mb-4 transition-colors duration-200">
+                      <Icon className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-[#1A1A1A]">{label}</h3>
+                    <p className="text-xs text-[#8A8A8A] mt-1">{sub}</p>
+                  </motion.button>
+                ))}
               </motion.div>
 
             </div>{/* end left column */}
 
             {/* ══ RIGHT — sidebar panels ══ */}
-            <div className="flex flex-col gap-4 lg:sticky lg:top-6">
+            <div className="flex flex-col gap-4 lg:sticky lg:top-24">
 
               {/* Profile completion checklist */}
               <motion.div
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.38, delay: 0.12 }}
-                className="bg-white border border-[#E5E5E5] rounded-2xl p-5"
+                className="bg-white border border-[#E5E5E5] rounded-2xl p-6"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wide">Profiel</p>
-                    <p className="text-base font-semibold text-[#1A1A1A] mt-1">{donePct}% compleet</p>
-                  </div>
+                <div className="flex items-center justify-between mb-5">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A]">Profiel</p>
                   <div className="relative w-12 h-12 flex-shrink-0">
                     <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
                       <circle cx="24" cy="24" r="19" fill="none" stroke="#E5E5E5" strokeWidth="4" />
@@ -467,15 +418,17 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <p className="text-base font-bold text-[#1A1A1A] mb-4">{donePct}% compleet</p>
+
+                <div>
                   {steps.map((step, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    <div key={i} className="flex items-center gap-3 py-3 border-b border-[#E5E5E5]/50 last:border-none">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                         step.done
-                          ? "bg-[#3D8B5E]"
+                          ? "bg-[#F4E8E3]"
                           : "border-2 border-[#E5E5E5]"
                       }`}>
-                        {step.done && <Check className="w-3 h-3 text-white" aria-hidden="true" />}
+                        {step.done && <Check className="w-3.5 h-3.5 text-[#C2654A]" aria-hidden="true" />}
                       </div>
                       <span className={`text-sm leading-tight ${step.done ? "text-[#1A1A1A]" : "text-[#8A8A8A]"}`}>
                         {step.label}
@@ -494,12 +447,12 @@ export default function DashboardPage() {
                 >
                   <Link
                     to="/prijzen"
-                    className="group flex flex-col p-5 rounded-2xl bg-[#C2654A]"
+                    className="group flex flex-col p-6 rounded-2xl bg-[#C2654A]"
                   >
-                    <p className="text-xs font-semibold uppercase tracking-wide text-white/70">Upgrade</p>
-                    <h4 className="text-base font-semibold text-white mt-1">Ontgrendel Premium</h4>
+                    <p className="text-xs font-semibold uppercase tracking-[1.5px] text-white/70">Upgrade</p>
+                    <h4 className="text-base font-bold text-white mt-1">Ontgrendel Premium</h4>
                     <p className="text-sm text-white/80 mt-1">50+ outfits · AI kleuranalyse · persoonlijk advies</p>
-                    <span className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-white hover:text-white/90 transition-colors duration-200">
+                    <span className="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-white hover:text-white/90 transition-colors duration-200">
                       Bekijk opties
                       <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </span>
@@ -512,10 +465,10 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.38, delay: 0.22 }}
-                className="bg-white border border-[#E5E5E5] rounded-2xl p-5"
+                className="bg-white border border-[#E5E5E5] rounded-2xl p-6"
               >
-                <p className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wide mb-4">Snelkoppelingen</p>
-                <div className="space-y-1">
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">Snelkoppelingen</p>
+                <div>
                   {[
                     { Icon: Sparkles, label: "Stijlresultaten", sub: "Jouw outfits & advies", to: "/results" },
                     { Icon: RefreshCw, label: "Quiz herdoen", sub: "Profiel bijwerken", to: "/onboarding" },
@@ -525,16 +478,16 @@ export default function DashboardPage() {
                     <button
                       key={label}
                       onClick={() => navigate(to)}
-                      className="w-full flex items-center gap-3 py-2.5 px-2 rounded-xl hover:bg-[#F5F0EB] transition-colors duration-200 group text-left"
+                      className="w-full flex items-center gap-3 py-3.5 border-b border-[#E5E5E5]/50 last:border-none cursor-pointer group hover:bg-[#FAFAF8] -mx-3 px-3 rounded-xl transition-colors duration-150 text-left"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[#F5F0EB] group-hover:bg-[#E5E5E5] flex items-center justify-center flex-shrink-0 transition-colors duration-200">
+                      <div className="w-9 h-9 rounded-xl bg-[#F5F0EB] group-hover:bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 transition-colors duration-200">
                         <Icon className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#1A1A1A] leading-tight">{label}</p>
-                        <p className="text-xs text-[#8A8A8A] mt-0.5">{sub}</p>
+                        <p className="text-sm font-semibold text-[#1A1A1A] leading-tight">{label}</p>
+                        <p className="text-xs text-[#8A8A8A]">{sub}</p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-[#8A8A8A] group-hover:text-[#C2654A] transition-colors duration-200 flex-shrink-0" aria-hidden="true" />
+                      <ChevronRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#C2654A] transition-colors duration-200 flex-shrink-0 ml-auto" aria-hidden="true" />
                     </button>
                   ))}
                 </div>
@@ -545,23 +498,23 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.38, delay: 0.28 }}
-                className="bg-[#F5F0EB] rounded-2xl p-5"
+                className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-6"
               >
-                <p className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wide">Stijl tip</p>
-                <h4 className="text-base font-semibold text-[#1A1A1A] mt-2">
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">Stijl tip</p>
+                <h4 className="text-base font-bold text-[#1A1A1A] mb-2">
                   {archetypeName ? `Als ${archetypeName}` : "Jouw stijl"}
                 </h4>
-                <p className="text-sm text-[#4A4A4A] mt-1">{tone || tagline}</p>
-                <div className="flex gap-3 mt-4">
+                <p className="text-sm text-[#4A4A4A] leading-[1.6] mb-5">{tone || tagline}</p>
+                <div className="flex gap-3">
                   <button
                     onClick={() => navigate("/results")}
-                    className="flex-1 text-center py-2 px-3 bg-white border border-[#E5E5E5] rounded-xl text-sm font-medium text-[#1A1A1A] hover:border-[#C2654A] transition-colors duration-200"
+                    className="flex-1 py-2.5 rounded-full border border-[#E5E5E5] bg-white hover:border-[#C2654A] hover:text-[#C2654A] text-sm font-semibold text-[#1A1A1A] text-center transition-all duration-200"
                   >
                     Outfits zien
                   </button>
                   <button
                     onClick={() => navigate("/shop")}
-                    className="flex-1 text-center py-2 px-3 bg-white border border-[#E5E5E5] rounded-xl text-sm font-medium text-[#1A1A1A] hover:border-[#C2654A] transition-colors duration-200"
+                    className="flex-1 py-2.5 rounded-full border border-[#E5E5E5] bg-white hover:border-[#C2654A] hover:text-[#C2654A] text-sm font-semibold text-[#1A1A1A] text-center transition-all duration-200"
                   >
                     Shoppen
                   </button>
@@ -571,7 +524,6 @@ export default function DashboardPage() {
             </div>{/* end right column */}
           </div>
         </div>
-      </section>
 
       <PhotoUploadModal isOpen={showPhotoModal} onClose={() => setShowPhotoModal(false)} />
     </div>
