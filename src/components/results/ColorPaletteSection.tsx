@@ -5,13 +5,15 @@ import { useNavigate } from 'react-router-dom';
 
 interface ColorPaletteSectionProps {
   season: string;
+  subSeason?: string;
   hasPhoto?: boolean;
   isPremium?: boolean;
 }
 
-export function ColorPaletteSection({ season, hasPhoto = false }: ColorPaletteSectionProps) {
+export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: ColorPaletteSectionProps) {
   const navigate = useNavigate();
-  const palette = getColorPalette(season);
+  // Use sub-season palette when available, fall back to base season
+  const palette = getColorPalette(subSeason || season);
 
   if (!palette) return null;
 

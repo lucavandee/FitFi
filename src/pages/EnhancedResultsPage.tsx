@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal } from "lucide-react";
+import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal, Briefcase, Coffee, PartyPopper, Dumbbell, Plane } from "lucide-react";
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
@@ -27,6 +27,7 @@ import {
   formatStyleDNAValue,
   getSeasonDescription
 } from "@/config/terminologyMapping";
+import { SUB_SEASON_PALETTES } from "@/data/colorPalettes";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { SwipeableOutfitGallery } from "@/components/outfits/SwipeableOutfitGallery";
 import { useMonthlyUpgrades } from "@/hooks/useMonthlyUpgrades";
@@ -51,6 +52,53 @@ function readJson<T>(key: string): T | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Get display-friendly sub-season name from SUB_SEASON_PALETTES or fall back to base season.
+ */
+function getSeasonDisplayName(colorProfile: ColorProfile): string {
+  if (colorProfile.subSeason) {
+    const palette = SUB_SEASON_PALETTES[colorProfile.subSeason];
+    if (palette) return palette.season;
+  }
+  // Fallback: capitalize base season
+  const s = colorProfile.season;
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+}
+
+const OCCASION_LABELS: Record<string, string> = {
+  work: 'Kantoor',
+  casual: 'Casual',
+  date: 'Avondje uit',
+  party: 'Feest',
+  formal: 'Formeel',
+  sports: 'Sport',
+  travel: 'Op reis',
+};
+
+function getOccasionLabel(occasion: string): string {
+  return OCCASION_LABELS[occasion.toLowerCase()] || occasion.charAt(0).toUpperCase() + occasion.slice(1);
+}
+
+/**
+ * Extract the occasion from an outfit (via occasion property or tags).
+ */
+function getOutfitOccasion(outfit: any, userOccasions: string[]): string | null {
+  // Check explicit occasion field
+  if (outfit.occasion && typeof outfit.occasion === 'string') {
+    return outfit.occasion.toLowerCase();
+  }
+  // Check tags for matching user occasions
+  if (Array.isArray(outfit.tags)) {
+    for (const tag of outfit.tags) {
+      const t = tag.toLowerCase();
+      if (userOccasions.some(o => o.toLowerCase() === t)) {
+        return t;
+      }
+    }
+  }
+  return null;
 }
 
 const AnimatedSection = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
@@ -331,6 +379,73 @@ export default function EnhancedResultsPage() {
   }, [outfitsLoading, allOutfits.length]);
 
   const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
+
+  // Occasion grouping: check if outfits have occasion data
+  const userOccasions: string[] = React.useMemo(() => {
+    return Array.isArray(answers?.occasions) ? answers.occasions : [];
+  }, [answers?.occasions]);
+
+  const [activeOccasionTab, setActiveOccasionTab] = React.useState<string>('all');
+
+  const occasionGroupedOutfits = React.useMemo(() => {
+    if (userOccasions.length === 0 || displayOutfits.length === 0) return null;
+
+    const groups: Record<string, (Outfit | OutfitSeed)[]> = {};
+    const ungrouped: (Outfit | OutfitSeed)[] = [];
+
+    for (const outfit of displayOutfits) {
+      const occ = getOutfitOccasion(outfit, userOccasions);
+      if (occ) {
+        if (!groups[occ]) groups[occ] = [];
+        groups[occ].push(outfit);
+      } else {
+        ungrouped.push(outfit);
+      }
+    }
+
+    // Only use grouping if at least one outfit has an occasion
+    const hasGroupedOutfits = Object.keys(groups).length > 0;
+    if (!hasGroupedOutfits) return null;
+
+    // Distribute ungrouped outfits evenly across groups if needed
+    // or keep them in an "overig" group
+    if (ungrouped.length > 0) {
+      groups['overig'] = ungrouped;
+    }
+
+    return groups;
+  }, [displayOutfits, userOccasions]);
+
+  const occasionTabs = React.useMemo(() => {
+    if (!occasionGroupedOutfits) return null;
+    const tabs: { value: string; label: string; count: number }[] = [
+      { value: 'all', label: 'Alle', count: displayOutfits.length },
+    ];
+    for (const occ of userOccasions) {
+      const key = occ.toLowerCase();
+      if (occasionGroupedOutfits[key]) {
+        tabs.push({
+          value: key,
+          label: getOccasionLabel(key),
+          count: occasionGroupedOutfits[key].length,
+        });
+      }
+    }
+    if (occasionGroupedOutfits['overig']) {
+      tabs.push({
+        value: 'overig',
+        label: 'Overig',
+        count: occasionGroupedOutfits['overig'].length,
+      });
+    }
+    return tabs;
+  }, [occasionGroupedOutfits, userOccasions, displayOutfits.length]);
+
+  // Filtered outfits based on occasion tab selection
+  const occasionFilteredOutfits = React.useMemo(() => {
+    if (!occasionGroupedOutfits || activeOccasionTab === 'all') return displayOutfits;
+    return occasionGroupedOutfits[activeOccasionTab] || displayOutfits;
+  }, [occasionGroupedOutfits, activeOccasionTab, displayOutfits]);
 
   type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
   const [activeTab, setActiveTab] = React.useState<ResultTab>(occasionFilter ? 'outfits' : 'outfits');
@@ -740,7 +855,7 @@ export default function EnhancedResultsPage() {
                                 />
                               ))}
                             </div>
-                            <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('season', activeColorProfile.season)}</span>
+                            <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{getSeasonDisplayName(activeColorProfile)}</span>
                           </div>
                         </div>
                         <div className="flex items-center justify-between py-3 last:pb-0">
@@ -814,6 +929,7 @@ export default function EnhancedResultsPage() {
               <AnimatedSection delay={0.25}>
                 <ColorPaletteSection
                   season={activeColorProfile.season}
+                  subSeason={activeColorProfile.subSeason}
                   hasPhoto={!!answers?.photoUrl}
                 />
               </AnimatedSection>
@@ -871,7 +987,7 @@ export default function EnhancedResultsPage() {
                     <div className="flex items-start gap-4 px-5 sm:px-6 py-4">
                       <span className="w-6 h-6 rounded-full bg-[#A8513A] text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
                       <div>
-                        <p className="text-sm font-medium text-[#1A1A1A]">Kleuranalyse: {activeColorProfile.paletteName}</p>
+                        <p className="text-sm font-medium text-[#1A1A1A]">Kleuranalyse: {getSeasonDisplayName(activeColorProfile)} — {activeColorProfile.paletteName}</p>
                         <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">
                           {formatStyleDNAValue('temperature', activeColorProfile.temperature)} temperatuur · {formatStyleDNAValue('contrast', activeColorProfile.contrast)} contrast · {getSeasonDescription(activeColorProfile.season, activeColorProfile.contrast, activeColorProfile.temperature)}
                           {!answers?.photoUrl && ' · Gebaseerd op voorkeur, geen foto gebruikt'}
@@ -959,7 +1075,7 @@ export default function EnhancedResultsPage() {
                       answers.fit,
                       ...(Array.isArray(answers.occasions) ? answers.occasions.slice(0, 1) : []),
                     ].filter(Boolean).map((v) => ({ label: v as string, active: false })),
-                    ...(activeColorProfile?.season ? [{ label: activeColorProfile.season, active: false }] : []),
+                    ...(activeColorProfile?.season ? [{ label: getSeasonDisplayName(activeColorProfile), active: false }] : []),
                     ...(answers.budgetRange?.max ? [{ label: `€${answers.budgetRange.max}`, active: false }] : []),
                   ].map((tag, i) => (
                     <span
@@ -977,34 +1093,72 @@ export default function EnhancedResultsPage() {
               )}
 
               {/* Swipe/Grid toggle */}
-              <div className="flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1 mb-8 w-fit">
-                <button
-                  onClick={() => setGalleryMode('swipe')}
-                  aria-pressed={galleryMode === 'swipe'}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
-                    galleryMode === 'swipe'
-                      ? 'bg-white text-[#1A1A1A] shadow-sm'
-                      : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
-                  }`}
-                  aria-label="Swipe weergave"
-                >
-                  <Layers className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Swipe</span>
-                </button>
-                <button
-                  onClick={() => setGalleryMode('grid')}
-                  aria-pressed={galleryMode === 'grid'}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
-                    galleryMode === 'grid'
-                      ? 'bg-white text-[#1A1A1A] shadow-sm'
-                      : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
-                  }`}
-                  aria-label="Grid weergave"
-                >
-                  <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Grid</span>
-                </button>
+              <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
+                <div className="flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1 w-fit">
+                  <button
+                    onClick={() => setGalleryMode('swipe')}
+                    aria-pressed={galleryMode === 'swipe'}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                      galleryMode === 'swipe'
+                        ? 'bg-white text-[#1A1A1A] shadow-sm'
+                        : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                    }`}
+                    aria-label="Swipe weergave"
+                  >
+                    <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Swipe</span>
+                  </button>
+                  <button
+                    onClick={() => setGalleryMode('grid')}
+                    aria-pressed={galleryMode === 'grid'}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                      galleryMode === 'grid'
+                        ? 'bg-white text-[#1A1A1A] shadow-sm'
+                        : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                    }`}
+                    aria-label="Grid weergave"
+                  >
+                    <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Grid</span>
+                  </button>
+                </div>
               </div>
+
+              {/* Occasion tabs — only when outfits have occasion data */}
+              {occasionTabs && occasionTabs.length > 2 && (
+                <div className="mb-8 border-b border-[#E5E5E5]">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-4">
+                    Per gelegenheid
+                  </p>
+                  <div className="flex gap-0 overflow-x-auto" role="tablist" aria-label="Filter op gelegenheid">
+                    {occasionTabs.map((tab) => {
+                      const isActive = activeOccasionTab === tab.value;
+                      return (
+                        <button
+                          key={tab.value}
+                          role="tab"
+                          aria-selected={isActive}
+                          onClick={() => setActiveOccasionTab(tab.value)}
+                          className={`relative flex items-center gap-1.5 py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
+                            isActive
+                              ? 'font-semibold text-[#C2654A] border-[#C2654A]'
+                              : 'font-medium text-[#8A8A8A] border-transparent hover:text-[#4A4A4A]'
+                          }`}
+                        >
+                          {tab.label}
+                          <span className={`ml-1 text-xs font-semibold px-1.5 py-0.5 rounded-full transition-colors duration-200 ${
+                            isActive
+                              ? 'bg-[#F4E8E3] text-[#C2654A]'
+                              : 'bg-[#E5E5E5] text-[#8A8A8A]'
+                          }`}>
+                            {tab.count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               </div>
             </AnimatedSection>
 
@@ -1047,17 +1201,17 @@ export default function EnhancedResultsPage() {
               </div>
             ) : galleryMode === 'swipe' ? (
               <SwipeableOutfitGallery
-                outfits={displayOutfits as any[]}
+                outfits={occasionFilteredOutfits as any[]}
                 onLike={(outfit) => {
                   const id = 'id' in outfit ? outfit.id : outfit.toString();
                   toggleFav(String(id));
                 }}
                 onDislike={() => {}}
                 renderCard={(outfit) => {
-                  const idx = displayOutfits.findIndex(o => o === outfit);
+                  const idx = occasionFilteredOutfits.findIndex(o => o === outfit);
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
-                  const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
+                  const outfitInfo = generateOutfitDescription(archetypeName, idx, occasionFilteredOutfits.length);
                   const getFirstProductImage = (o: any) => {
                     if (!Array.isArray(o?.products)) return null;
                     for (const p of o.products) {
@@ -1182,10 +1336,10 @@ export default function EnhancedResultsPage() {
               />
             ) : (
               <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-                {displayOutfits.map((outfit, idx) => {
+                {occasionFilteredOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
-                  const outfitInfo = generateOutfitDescription(archetypeName, idx, displayOutfits.length);
+                  const outfitInfo = generateOutfitDescription(archetypeName, idx, occasionFilteredOutfits.length);
                   const getFirstProductImage = (o: any) => {
                     if (!Array.isArray(o?.products)) return null;
                     for (const p of o.products) {

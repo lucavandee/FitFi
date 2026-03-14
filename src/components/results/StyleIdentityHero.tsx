@@ -30,6 +30,21 @@ const SEASON_SUFFIX: Record<string, string> = {
   lente: 'Bright',
 };
 
+const SUB_SEASON_DISPLAY: Record<string, string> = {
+  'licht-lente': 'Licht Lente',
+  'warm-lente': 'Warm Lente',
+  'helder-lente': 'Helder Lente',
+  'licht-zomer': 'Licht Zomer',
+  'koel-zomer': 'Koel Zomer',
+  'zacht-zomer': 'Zacht Zomer',
+  'zacht-herfst': 'Zacht Herfst',
+  'warm-herfst': 'Warm Herfst',
+  'diep-herfst': 'Diep Herfst',
+  'koel-winter': 'Koel Winter',
+  'diep-winter': 'Diep Winter',
+  'helder-winter': 'Helder Winter',
+};
+
 const INSIGHT_ICONS: Record<number, string> = {
   0: '◆',
   1: '◈',
@@ -79,7 +94,8 @@ export function StyleIdentityHero({
   swipeInsights,
 }: StyleIdentityHeroProps) {
   const archetype = ARCHETYPES[primaryArchetype];
-  const suffix = SEASON_SUFFIX[colorProfile.season?.toLowerCase() ?? ''] ?? '';
+  const subSeasonLabel = colorProfile.subSeason ? SUB_SEASON_DISPLAY[colorProfile.subSeason] : null;
+  const suffix = subSeasonLabel || SEASON_SUFFIX[colorProfile.season?.toLowerCase() ?? ''] || '';
   const styleName = suffix ? `${archetype.label} · ${suffix}` : archetype.label;
   const description = DESCRIPTIONS[primaryArchetype];
   const insights = buildInsights(quizAnswers, swipeInsights);
