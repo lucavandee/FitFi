@@ -49,18 +49,18 @@ export function ShoppingGuidance({
 
       <div className="grid md:grid-cols-3 gap-6">
         {/* Must-Haves */}
-        <div className="bg-white rounded-2xl p-6 border border-green-200">
+        <div className="bg-white rounded-2xl p-6 border border-[#E5E5E5]">
           <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <h4 className="font-bold text-green-900">Zoek deze kleuren</h4>
+            <CheckCircle className="w-5 h-5 text-[#C2654A]" />
+            <h4 className="font-bold text-[#1A1A1A]">Zoek deze kleuren</h4>
           </div>
           <ul className="space-y-2">
             {guidance.musthaves.map((item, idx) => (
               <li
                 key={idx}
-                className="flex items-center gap-2 text-sm text-gray-700"
+                className="flex items-center gap-2 text-sm text-[#4A4A4A]"
               >
-                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
                 <span>{item}</span>
               </li>
             ))}
@@ -68,18 +68,18 @@ export function ShoppingGuidance({
         </div>
 
         {/* Avoid */}
-        <div className="bg-white rounded-2xl p-6 border border-red-200">
+        <div className="bg-white rounded-2xl p-6 border border-[#E5E5E5]">
           <div className="flex items-center gap-2 mb-4">
-            <XCircle className="w-5 h-5 text-red-600" />
-            <h4 className="font-bold text-red-900">Vermijd deze</h4>
+            <XCircle className="w-5 h-5 text-[#C24A4A]" />
+            <h4 className="font-bold text-[#1A1A1A]">Vermijd deze</h4>
           </div>
           <ul className="space-y-2">
             {guidance.avoid.map((item, idx) => (
               <li
                 key={idx}
-                className="flex items-center gap-2 text-sm text-gray-700"
+                className="flex items-center gap-2 text-sm text-[#4A4A4A]"
               >
-                <div className="w-2 h-2 rounded-full bg-red-500" />
+                <div className="w-2 h-2 rounded-full bg-[#C24A4A]" />
                 <span>{item}</span>
               </li>
             ))}
@@ -87,18 +87,18 @@ export function ShoppingGuidance({
         </div>
 
         {/* Styling Tips */}
-        <div className="bg-white rounded-2xl p-6 border border-amber-200">
+        <div className="bg-white rounded-2xl p-6 border border-[#E5E5E5]">
           <div className="flex items-center gap-2 mb-4">
-            <Lightbulb className="w-5 h-5 text-amber-600" />
-            <h4 className="font-bold text-amber-900">Styling Tips</h4>
+            <Lightbulb className="w-5 h-5 text-[#D4913D]" />
+            <h4 className="font-bold text-[#1A1A1A]">Styling Tips</h4>
           </div>
           <ul className="space-y-2">
             {guidance.styling_tips.map((tip, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2 text-sm text-gray-700"
+                className="flex items-start gap-2 text-sm text-[#4A4A4A]"
               >
-                <div className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-[#D4913D] mt-1.5 flex-shrink-0" />
                 <span>{tip}</span>
               </li>
             ))}

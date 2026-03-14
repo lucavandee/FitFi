@@ -68,8 +68,8 @@ export function ColorSwatchWithLabel({
                              recommendation === 'dont' ? X :
                              null;
 
-  const recommendationColor = recommendation === 'do' ? 'text-green-600 bg-green-100' :
-                              recommendation === 'dont' ? 'text-red-600 bg-red-100' :
+  const recommendationColor = recommendation === 'do' ? 'text-[#C2654A] bg-[#F4E8E3]' :
+                              recommendation === 'dont' ? 'text-[#C24A4A] bg-[#C24A4A]/10' :
                               '';
 
   return (

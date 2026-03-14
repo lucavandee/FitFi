@@ -186,9 +186,9 @@ export function ResultsFeedbackWidget({
                 <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => handleRating('very_helpful')}
-                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-green-50 hover:border-green-400 transition-all active:scale-95"
+                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[#F4E8E3] hover:border-[#C2654A] transition-all active:scale-95"
                   >
-                    <ThumbsUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
+                    <ThumbsUp className="w-6 h-6 sm:w-8 sm:h-8 text-[#C2654A]" />
                     <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">Ja, helemaal!</span>
                   </button>
 
@@ -215,7 +215,7 @@ export function ResultsFeedbackWidget({
               <>
                 <div className="flex items-center gap-2 p-3 bg-[var(--ff-color-primary-50)] rounded-lg border border-[var(--ff-color-primary-200)]">
                   {state === 'positive' ? (
-                    <ThumbsUp className="w-5 h-5 text-green-600 flex-shrink-0" />
+                    <ThumbsUp className="w-5 h-5 text-[#C2654A] flex-shrink-0" />
                   ) : (
                     <ThumbsDown className="w-5 h-5 text-red-600 flex-shrink-0" />
                   )}
@@ -277,8 +277,8 @@ export function ResultsFeedbackWidget({
 
             {state === 'submitted' && (
               <div className="text-center py-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <ThumbsUp className="w-8 h-8 text-green-600" />
+                <div className="w-16 h-16 bg-[#F4E8E3] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ThumbsUp className="w-8 h-8 text-[#C2654A]" />
                 </div>
                 <h4 className="text-lg font-semibold text-[var(--color-text)] mb-1">
                   Bedankt!
