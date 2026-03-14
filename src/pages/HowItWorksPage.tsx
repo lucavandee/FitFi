@@ -70,7 +70,7 @@ const compRows = [
 /* ─── Step visual placeholders (warm gradients) ───────────────────────────── */
 function Step1Visual() {
   return (
-    <div className="bg-[#E8DDD2] flex items-center justify-center p-12 lg:p-16 min-h-[600px]">
+    <div className="bg-[#E8DDD2] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
       <div className="w-full max-w-[380px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
@@ -85,7 +85,7 @@ function Step1Visual() {
 
 function Step2Visual() {
   return (
-    <div className="bg-[#D4C0AD] flex items-center justify-center p-12 lg:p-16 min-h-[600px]">
+    <div className="bg-[#D4C0AD] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
       <div className="w-full max-w-[480px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
@@ -100,7 +100,7 @@ function Step2Visual() {
 
 function Step3Visual() {
   return (
-    <div className="bg-[#C9BFB4] flex items-center justify-center p-12 lg:p-16 min-h-[600px]">
+    <div className="bg-[#C9BFB4] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
       <div className="w-full max-w-[320px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp"
@@ -174,10 +174,10 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             PAGE HERO
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] pt-36 pb-28 md:pt-44 md:pb-32 text-center">
+        <section className="bg-[#F5F0EB] pt-40 pb-28 md:pt-52 md:pb-32 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <div className="flex items-center justify-center gap-3 mt-16 mb-10">
+              <div className="flex items-center justify-center gap-3 mt-20 mb-10">
                 <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
                 <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
                   Hoe het werkt
@@ -219,7 +219,7 @@ export default function HowItWorksPage() {
             STAP 1 — quiz (visual left, content right)
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#FAFAF8]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <Reveal className="relative overflow-hidden">
               <Step1Visual />
             </Reveal>
@@ -261,7 +261,7 @@ export default function HowItWorksPage() {
             STAP 2 — rapport (content left, visual right) — gespiegeld
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#F5F0EB]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <Reveal
               className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#F5F0EB] order-2 lg:order-1"
               delay={0.12}
@@ -303,7 +303,7 @@ export default function HowItWorksPage() {
             STAP 3 — shop (visual left, content right)
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#FAFAF8]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <Reveal className="relative overflow-hidden">
               <Step3Visual />
             </Reveal>
@@ -480,7 +480,7 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             CTA
         ════════════════════════════════════════════════════ */}
-        <section className="py-48 md:py-56 bg-[#FAFAF8] text-center">
+        <section className="py-24 md:py-[160px] bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center">
