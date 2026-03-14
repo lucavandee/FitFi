@@ -627,28 +627,28 @@ export default function PricingPage() {
         {/* ════════════════════════════════════════════════════
             6. CTA SECTION
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] py-40 text-center">
+        <section className="bg-[#F5F0EB] py-[120px] md:py-[200px] text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <h2 className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6">
+              <h2 className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-8">
                 <span className="font-serif italic">Begin gratis, upgrade wanneer je wilt</span>
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
-              <p className="text-[17px] text-[#4A4A4A] mb-12 max-w-lg mx-auto">
+              <p className="text-[17px] text-[#4A4A4A] mb-14 md:mb-16 max-w-lg mx-auto">
                 Probeer FitFi zonder verplichtingen. Je betaalt pas als je meer wilt.
               </p>
             </Reveal>
             <Reveal delay={0.24}>
               <NavLink
                 to="/onboarding"
-                className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold py-4 px-8 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold py-5 px-12 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 data-event="cta_start_free_pricing"
               >
                 Begin gratis
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </NavLink>
-              <p className="text-[13px] text-[#8A8A8A] mt-4">
+              <p className="text-[13px] text-[#8A8A8A] mt-6">
                 Geen creditcard nodig · Altijd gratis te gebruiken
               </p>
             </Reveal>
