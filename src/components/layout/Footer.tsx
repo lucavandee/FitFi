@@ -35,8 +35,8 @@ export default function Footer() {
 
       {/* CTA strip — alleen voor uitgelogde bezoekers */}
       {!isAuthed && (
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-20">
-          <div className="bg-white border border-[#E5E5E5] rounded-3xl p-9 md:p-11 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-[72px] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-28 md:pt-36">
+          <div className="bg-white border border-[#E5E5E5] rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-24 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:border-[#C2654A]">
             <div>
               <p className="font-serif italic text-[28px] text-[#1A1A1A] leading-[1.15] mb-1.5">
                 Ontdek jouw stijl
