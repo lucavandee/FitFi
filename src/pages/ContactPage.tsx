@@ -169,8 +169,9 @@ export default function ContactPage() {
               <MessageCircle className="w-4 h-4 text-[#C2654A]" aria-hidden />
               Contact
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] leading-snug">
-              We horen graag van je
+            <h1 className="text-[32px] md:text-[48px] text-[#1A1A1A] leading-[1.1]">
+              <span className="font-serif italic">We horen </span>
+              <span className="font-sans font-bold">graag van je</span>
             </h1>
             <p className="text-base text-[#4A4A4A] leading-relaxed mt-4 max-w-lg mx-auto">
               Vragen over stijl, partnerships of een idee?{" "}
@@ -231,7 +232,7 @@ export default function ContactPage() {
               </AnimatePresence>
 
               <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 shadow-sm">
-                <h2 className="text-xl font-semibold text-[#1A1A1A] mb-1">
+                <h2 className="text-xl font-sans font-semibold text-[#1A1A1A] mb-1">
                   Stuur een bericht
                 </h2>
                 <p className="text-sm text-[#8A8A8A] mt-1 mb-8 leading-relaxed">
