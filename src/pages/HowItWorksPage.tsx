@@ -116,11 +116,11 @@ function Step3Visual() {
 /* ─── Step badge ──────────────────────────────────────────────────────────── */
 function StepBadge({ num, label }: { num: string; label: string }) {
   return (
-    <div className="inline-flex items-center gap-2.5 mb-6">
-      <div className="w-8 h-8 rounded-full border-2 border-[#C2654A] flex items-center justify-center text-sm font-extrabold text-[#C2654A]">
+    <div className="inline-flex items-center gap-3 mb-6">
+      <div className="w-8 h-8 rounded-full border-2 border-[#C2654A] flex items-center justify-center text-sm font-extrabold text-[#C2654A] flex-shrink-0">
         {num}
       </div>
-      <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">{label}</span>
+      <span className="text-xs font-semibold tracking-[3px] uppercase text-[#C2654A]">{label}</span>
     </div>
   );
 }
@@ -174,7 +174,7 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             PAGE HERO
         ════════════════════════════════════════════════════ */}
-        <section className="bg-[#F5F0EB] pt-40 pb-28 md:pt-48 md:pb-32 text-center">
+        <section className="bg-[#F5F0EB] pt-48 pb-28 md:pt-56 md:pb-32 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="flex items-center justify-center gap-3 mb-8">
@@ -205,9 +205,9 @@ export default function HowItWorksPage() {
             <Reveal delay={0.36}>
               <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
                 {["2 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
-                  <div key={tag} className="flex items-center gap-2.5">
-                    <div className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
-                    {tag}
+                  <div key={tag} className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                    <span>{tag}</span>
                   </div>
                 ))}
               </div>
@@ -344,7 +344,7 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             VERGELIJKINGSTABEL
         ════════════════════════════════════════════════════ */}
-        <section className="py-40 bg-[#FAFAF8]">
+        <section className="pt-28 pb-40 bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-20">
