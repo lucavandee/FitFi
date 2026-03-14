@@ -6,15 +6,9 @@ import {
   ShieldCheck,
   CreditCard,
   Plus,
-  Minus,
   Package,
   Search,
   X,
-  ArrowRight,
-  Sparkles,
-  Clock,
-  Users,
-  MessageCircle,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 
@@ -102,11 +96,20 @@ const FAQ_SCHEMA = {
 };
 
 const TRUST_STATS = [
-  { icon: Users,          label: "2.500+ gebruikers"    },
-  { icon: Clock,          label: "Reactie binnen 24 uur" },
-  { icon: ShieldCheck,    label: "GDPR-compliant"        },
-  { icon: MessageCircle,  label: "12 vragen beantwoord"  },
+  { label: "2.500+ gebruikers"    },
+  { label: "Reactie binnen 24 uur" },
+  { label: "GDPR-compliant"        },
+  { label: "12 vragen beantwoord"  },
 ];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, delay: i * 0.08, ease: "easeOut" },
+  }),
+};
 
 function Highlight({ text, term }: { text: string; term: string }) {
   if (!term.trim()) return <>{text}</>;
@@ -116,10 +119,7 @@ function Highlight({ text, term }: { text: string; term: string }) {
     <>
       {parts.map((p, i) =>
         p.toLowerCase() === term.toLowerCase() ? (
-          <mark
-            key={i}
-            className="bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-800)] rounded px-0.5 not-italic"
-          >
+          <mark key={i} className="bg-[#F4E8E3] text-[#C2654A] rounded px-0.5 not-italic">
             {p}
           </mark>
         ) : (
@@ -131,58 +131,36 @@ function Highlight({ text, term }: { text: string; term: string }) {
 }
 
 function AccordionItem({
-  item, id, index, isOpen, onToggle, highlight,
+  item, id, isOpen, onToggle, highlight,
 }: {
-  item: QA; id: string; index: number; isOpen: boolean;
+  item: QA; id: string; isOpen: boolean;
   onToggle: (id: string) => void; highlight: string;
 }) {
   return (
-    <motion.div
-      layout
-      className={[
-        "rounded-2xl border-2 transition-all duration-200 shadow-[var(--shadow-soft)]",
-        isOpen
-          ? "bg-[var(--color-surface)] border-[var(--ff-color-primary-400)]"
-          : "bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-200)]",
-      ].join(" ")}
-    >
+    <div className={`border-b border-[#E5E5E5]`}>
       <h3 className="m-0">
         <button
           onClick={() => onToggle(id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${id}`}
-          className="w-full min-h-[52px] flex items-center gap-3.5 px-4 sm:px-5 py-3.5 text-left rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+          className="w-full flex justify-between items-center py-6 gap-4 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 focus-visible:ring-offset-2 rounded"
         >
-          <span
-            className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0"
-            style={{
-              background: isOpen
-                ? 'var(--ff-color-primary-700)'
-                : 'var(--ff-color-primary-100)',
-              color: isOpen ? '#fff' : 'var(--ff-color-primary-700)',
-            }}
-            aria-hidden="true"
-          >
-            {index + 1}
-          </span>
-          <span
-            className={[
-              "flex-1 text-sm sm:text-[0.9375rem] leading-snug",
-              isOpen
-                ? "font-bold text-[var(--color-text)]"
-                : "font-semibold text-[var(--color-text)]",
-            ].join(" ")}
-          >
+          <span className="text-base font-semibold text-[#1A1A1A] flex-1 leading-snug">
             <Highlight text={item.q} term={highlight} />
           </span>
           <span
-            className="w-8 h-8 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0 transition-colors"
+            className={[
+              "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300",
+              isOpen ? "bg-[#F4E8E3]" : "bg-[#F5F0EB]",
+            ].join(" ")}
             aria-hidden="true"
           >
-            {isOpen
-              ? <Minus className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
-              : <Plus  className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)]" strokeWidth={2.5} />
-            }
+            <Plus
+              className={[
+                "w-4 h-4 text-[#C2654A] transition-transform duration-300",
+                isOpen ? "rotate-45" : "",
+              ].join(" ")}
+            />
           </span>
         </button>
       </h3>
@@ -198,17 +176,13 @@ function AccordionItem({
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0" style={{ paddingLeft: 'calc(1rem + 1.75rem + 0.875rem)' }}>
-              <div className="pt-3 border-t border-[var(--ff-color-primary-100)]">
-                <p className="m-0 text-sm leading-relaxed text-[var(--color-muted)]">
-                  <Highlight text={item.a} term={highlight} />
-                </p>
-              </div>
-            </div>
+            <p className="text-[15px] text-[#4A4A4A] leading-[1.7] pb-6 max-w-[600px]">
+              <Highlight text={item.a} term={highlight} />
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
@@ -247,95 +221,95 @@ export default function FAQPage() {
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[var(--ff-color-primary-700)] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#C2654A] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
 
-      <main
-        id="main-content"
-        className="bg-[var(--color-bg)] text-[var(--color-text)]"
-        style={{ minHeight: 'calc(100vh - 64px)' }}
-      >
+      <main id="main-content" className="bg-[#FAFAF8]">
 
         {/* ── HERO ── */}
         <section
-          className="relative overflow-hidden bg-[var(--ff-color-primary-50)] pt-56 pb-16 sm:pt-64 sm:pb-20 md:pb-28"
+          className="bg-[#F5F0EB] pt-56 pb-16 md:pt-64 md:pb-20 text-center"
           aria-labelledby="faq-hero-heading"
         >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            aria-hidden="true"
-            style={{
-              background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(166,136,106,0.10) 0%, transparent 70%)',
-            }}
-          />
-          <div className="ff-container relative z-10 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full text-sm font-bold text-[var(--color-text)] shadow-[var(--shadow-soft)] mb-7"
-              role="status"
-              aria-label="12 vragen beantwoord"
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+              className="inline-flex items-center gap-2.5 mb-8"
             >
-              <CircleHelp className="w-4 h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-              12 veelgestelde vragen beantwoord
-            </div>
+              <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                Veelgestelde vragen
+              </span>
+              <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+            </motion.div>
 
-            <h1
+            <motion.h1
               id="faq-hero-heading"
-              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-5"
-              style={{ fontSize: 'clamp(2.25rem, 5vw, 4rem)', lineHeight: 1.08 }}
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={1}
+              className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] max-w-[700px] mx-auto mb-6"
             >
-              Alles wat je wilt{" "}
-              <em
-                className="not-italic bg-clip-text text-transparent"
-                style={{ backgroundImage: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
-              >
-                weten
-              </em>
-            </h1>
+              <span className="font-serif italic">Alles wat je wilt </span>
+              <span className="font-sans font-bold">weten</span>
+            </motion.h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-[var(--color-muted)] mb-10 max-w-xl mx-auto leading-relaxed font-light">
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={2}
+              className="text-lg text-[#4A4A4A] leading-[1.7] max-w-[520px] mx-auto"
+            >
               Staat je vraag er niet bij?{" "}
-              <a
-                href="mailto:contact@fitfi.ai"
-                className="text-[var(--ff-color-primary-700)] font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity"
+              <Link
+                to="/contact"
+                className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200"
               >
                 Stuur ons een bericht
-              </a>{" "}
-              — wij reageren binnen 24 uur.
-            </p>
+              </Link>
+              , wij reageren binnen 24 uur.
+            </motion.p>
 
-            <div
-              className="flex flex-wrap items-center justify-center gap-4 sm:gap-6"
-              role="list"
-              aria-label="Kernwaarden"
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={3}
+              className="flex items-center justify-center gap-6 mt-8 flex-wrap"
             >
-              {TRUST_STATS.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-2.5" role="listitem">
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'var(--ff-color-primary-100)' }}
-                    aria-hidden="true"
-                  >
-                    <Icon className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-                  </div>
-                  <span className="text-sm sm:text-base font-semibold text-[var(--color-text)]">{label}</span>
+              {TRUST_STATS.map(({ label }) => (
+                <div key={label} className="flex items-center gap-2 text-sm font-medium text-[#4A4A4A]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                  {label}
                 </div>
               ))}
-            </div>
+            </motion.div>
 
           </div>
         </section>
 
         {/* ── FAQ CONTENT ── */}
-        <section className="ff-section bg-[var(--color-surface)]" aria-label="Veelgestelde vragen">
-          <div className="ff-container">
+        <section className="bg-[#FAFAF8] pt-16 pb-8" aria-label="Zoeken en filteren">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* Search */}
-            <div className="relative mb-8 max-w-lg mx-auto">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+              className="relative w-full max-w-[600px] mx-auto"
+            >
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none"
+                className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A] pointer-events-none"
                 aria-hidden="true"
               />
               <label htmlFor="faq-search" className="sr-only">Zoek in veelgestelde vragen</label>
@@ -346,28 +320,32 @@ export default function FAQPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoComplete="off"
-                className="w-full pr-11 py-3.5 min-h-[52px] text-sm rounded-xl border-2 border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-400)] transition-all"
+                className="w-full bg-white border border-[#E5E5E5] rounded-2xl py-3.5 px-5 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200"
                 style={{ paddingLeft: '3rem' }}
               />
               {search && (
                 <button
                   onClick={clearSearch}
                   aria-label="Zoekopdracht wissen"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-full text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               )}
-            </div>
+            </motion.div>
 
-            {/* Category tabs */}
+            {/* Category filters */}
             {!isSearching && (
-              <div
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={1}
                 role="tablist"
                 aria-label="FAQ categorieën"
-                className="flex flex-wrap justify-center gap-2.5 mb-10"
+                className="flex items-center justify-center gap-3 mt-8 mb-12 flex-wrap"
               >
-                {CATEGORIES.map(({ id, label, Icon }) => {
+                {CATEGORIES.map(({ id, label }) => {
                   const active = activeCat === id;
                   return (
                     <button
@@ -376,44 +354,26 @@ export default function FAQPage() {
                       aria-selected={active}
                       onClick={() => changeCat(id)}
                       className={[
-                        "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all duration-200",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2",
+                        "px-5 py-2.5 rounded-full border text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 focus-visible:ring-offset-2",
                         active
-                          ? "shadow-lg"
-                          : "bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--color-text)] shadow-[var(--shadow-soft)]",
+                          ? "border-[#C2654A] bg-[#C2654A] text-white font-semibold"
+                          : "border-[#E5E5E5] bg-white text-[#4A4A4A] font-medium hover:border-[#C2654A]",
                       ].join(" ")}
-                      style={
-                        active
-                          ? {
-                              background: 'linear-gradient(135deg, var(--ff-color-primary-700), var(--ff-color-primary-900))',
-                              borderColor: 'var(--ff-color-primary-600)',
-                              color: '#fff',
-                            }
-                          : undefined
-                      }
                     >
-                      <span
-                        className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={
-                          active
-                            ? { background: 'rgba(255,255,255,0.18)' }
-                            : { background: 'var(--ff-color-primary-100)' }
-                        }
-                        aria-hidden="true"
-                      >
-                        <Icon
-                          className="w-3.5 h-3.5"
-                          style={{ color: active ? '#fff' : 'var(--ff-color-primary-700)' }}
-                        />
-                      </span>
-                      <span>{label}</span>
+                      {label}
                     </button>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
 
-            {/* a11y live region */}
+          </div>
+        </section>
+
+        {/* ── ACCORDION ── */}
+        <section className="bg-[#FAFAF8] pb-24" aria-label="Veelgestelde vragen">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
             <div aria-live="polite" aria-atomic="true" className="sr-only">
               {isSearching && (
                 searchResults.length === 0
@@ -422,7 +382,6 @@ export default function FAQPage() {
               )}
             </div>
 
-            {/* Accordion */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={isSearching ? `s-${search}` : activeCat}
@@ -430,40 +389,42 @@ export default function FAQPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.18 }}
-                className="max-w-3xl mx-auto"
+                className="max-w-[720px] mx-auto"
               >
                 {displayItems.length === 0 ? (
                   <div className="py-16 text-center">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                      style={{ background: 'var(--ff-color-primary-100)' }}
-                    >
-                      <Search className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-6 h-6 text-[#8A8A8A]" />
                     </div>
-                    <p className="text-sm text-[var(--color-muted)] mb-4">
+                    <p className="text-sm text-[#4A4A4A] mb-4">
                       Geen vragen gevonden voor{" "}
-                      <strong className="text-[var(--color-text)]">"{search}"</strong>.
+                      <strong className="text-[#1A1A1A]">"{search}"</strong>.
                     </p>
                     <button
                       onClick={clearSearch}
-                      className="min-h-[44px] px-5 py-2 text-sm font-semibold rounded-xl border border-[var(--ff-color-primary-300)] hover:bg-[var(--ff-color-primary-50)] transition-all bg-transparent cursor-pointer"
-                      style={{ color: 'var(--ff-color-primary-700)' }}
+                      className="min-h-[44px] px-5 py-2 text-sm font-semibold rounded-xl border border-[#E5E5E5] text-[#C2654A] hover:border-[#C2654A] hover:bg-[#F4E8E3] transition-all bg-white cursor-pointer"
                     >
                       Toon alle vragen
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-2">
+                  <div className="border-t border-[#E5E5E5]">
                     {displayItems.map((item, i) => (
-                      <AccordionItem
+                      <motion.div
                         key={`${displayKey}-${i}`}
-                        item={item}
-                        id={`${displayKey}-${i}`}
-                        index={i}
-                        isOpen={openId === `${displayKey}-${i}`}
-                        onToggle={toggle}
-                        highlight={isSearching ? search : ""}
-                      />
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        custom={i * 0.5}
+                      >
+                        <AccordionItem
+                          item={item}
+                          id={`${displayKey}-${i}`}
+                          isOpen={openId === `${displayKey}-${i}`}
+                          onToggle={toggle}
+                          highlight={isSearching ? search : ""}
+                        />
+                      </motion.div>
                     ))}
                   </div>
                 )}
@@ -474,48 +435,53 @@ export default function FAQPage() {
         </section>
 
         {/* ── BOTTOM CTA ── */}
-        <section
-          className="py-40 bg-[var(--ff-color-primary-50)]"
-          aria-label="Start met FitFi"
-        >
-          <div className="ff-container text-center">
-            <div
-              className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mx-auto mb-6 shadow-sm"
-              style={{ background: 'linear-gradient(135deg, var(--ff-color-primary-600), var(--ff-color-primary-800))' }}
-              aria-hidden="true"
+        <section className="bg-[#F5F0EB] py-40 text-center" aria-label="Start met FitFi">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <motion.h2
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={0}
+              className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mb-6"
             >
-              <Sparkles className="w-7 h-7 text-white" />
-            </div>
-            <h2
-              className="font-heading font-bold tracking-tight text-[var(--color-text)] mb-4"
-              style={{ fontSize: 'clamp(1.75rem, 3vw + 0.75rem, 2.5rem)', lineHeight: 1.1 }}
+              <span className="font-serif italic">Klaar om te beginnen?</span>
+            </motion.h2>
+
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={1}
+              className="text-[17px] text-[#4A4A4A] mb-12"
             >
-              Klaar om te starten?
-            </h2>
-            <p className="text-base sm:text-lg text-[var(--color-muted)] mb-8 max-w-md mx-auto leading-relaxed font-light">
-              Ontdek gratis in minder dan 2 minuten welke stijl echt bij jou past.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              Gratis. Twee minuten. Geen account nodig.
+            </motion.p>
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={2}
+              className="flex items-center justify-center gap-4 flex-wrap"
+            >
               <Link
                 to="/onboarding"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 min-h-[56px] rounded-xl font-bold text-base transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
-                style={{
-                  background: 'var(--ff-color-primary-700)',
-                  color: 'var(--color-bg)',
-                  boxShadow: '0 8px 40px rgba(166,136,106,0.45)',
-                }}
+                className="inline-flex items-center justify-center px-10 py-4 rounded-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] transition-colors duration-200"
               >
-                Start gratis — 2 minuten
-                <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+                Begin gratis →
               </Link>
-              <a
-                href="mailto:contact@fitfi.ai"
-                className="w-full sm:w-auto inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-800)] hover:border-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-100)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
-                style={{ background: 'transparent' }}
+              <Link
+                to="/resultaten-voorbeeld"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
               >
-                Stel een vraag
-              </a>
-            </div>
+                Bekijk voorbeeld
+              </Link>
+            </motion.div>
+
           </div>
         </section>
 
