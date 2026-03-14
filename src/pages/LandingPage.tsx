@@ -190,14 +190,20 @@ export default function LandingPage() {
           aria-labelledby="hero-heading"
         >
           {/* Background image */}
-          <img
-            src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
-            alt="Stijlvol stel op een Amsterdams kanaal"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: "center 20%" }}
-            loading="eager"
-            fetchPriority="high"
-          />
+          <picture>
+            <source
+              media="(max-width: 1023px)"
+              srcSet="/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
+            />
+            <img
+              src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+              alt="Stijlvol stel op een Amsterdams kanaal"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: "center 20%" }}
+              loading="eager"
+              fetchPriority="high"
+            />
+          </picture>
 
           {/* Gradient overlays */}
           <div
