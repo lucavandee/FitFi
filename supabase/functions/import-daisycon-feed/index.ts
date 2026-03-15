@@ -178,6 +178,27 @@ function xmlGetAllWithAttrs(xml, tag) {
   return results;
 }
 
+/** Kids keyword regex for age_group and text fields — used at import time */
+const KIDS_AGE_GROUPS = /^(kids?|children|infant|toddler|baby|newborn|kinderen|peuter|kleuter)$/i;
+
+/** EU kids sizes (height in cm) */
+const EU_KIDS_SIZES = new Set([
+  '50','56','62','68','74','80','86','92','98','104','110','116',
+  '122','128','134','140','146','152','158','164','170','176',
+]);
+const ADULT_SIZE_RE = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|ONE SIZE)$/i;
+
+function isKidsProductAtImport(title, description, categoryPath, ageGroup, size, imageUrl) {
+  // 1. Explicit age_group (strongest signal)
+  if (ageGroup && KIDS_AGE_GROUPS.test(ageGroup.trim())) return true;
+  // 2. Already checked by isFashionProduct for keywords, but double-check size
+  const s = (size || "").trim();
+  if (s && /^\d{2,3}$/.test(s) && EU_KIDS_SIZES.has(s) && !ADULT_SIZE_RE.test(s)) return true;
+  // 3. Image URL path
+  if (imageUrl && /\/(kids|children|kinder|junior|boys|girls)\//.test(imageUrl)) return true;
+  return false;
+}
+
 function parseJsonProducts(parsed) {
   const items = Array.isArray(parsed) ? parsed : parsed?.products ?? parsed?.items ?? [];
   return items.map((p) => {
@@ -207,6 +228,7 @@ function parseJsonProducts(parsed) {
         size: p.size || "",
         keywords: p.keywords || p.tags || "",
         gender_target: p.gender || p.gender_target || p.target_group || "",
+        age_group: p.age_group || p.ageGroup || p.age || "",
         in_stock: String(p.in_stock ?? p.available ?? p.availability ?? "true"),
         currency: p.currency || "EUR",
         link: p.affiliate_link || p.deeplink || p.link || p.url || p.product_url || "",
@@ -253,6 +275,7 @@ function parseXmlFeed(xmlText) {
         size: xmlGetText(p, "size"),
         keywords: xmlGetText(p, "keywords"),
         gender_target: xmlGetText(p, "gender") || xmlGetText(p, "gender_target") || xmlGetText(p, "target_group"),
+        age_group: xmlGetText(p, "age_group") || xmlGetText(p, "ageGroup") || xmlGetText(p, "age") || "",
         in_stock: xmlGetText(p, "in_stock") || xmlGetText(p, "availability") || "true",
         currency: xmlGetText(p, "currency") || currency,
         link: xmlGetText(p, "affiliate_link") || xmlGetText(p, "deeplink") || xmlGetText(p, "link") || xmlGetText(p, "url"),
@@ -363,6 +386,12 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
         const allImages = getAllImages(info.images ?? []);
         const externalId = p.update_info?.daisycon_unique_id || info.sku || "";
 
+        // Detect kids products (even if they passed the keyword filter)
+        const kidsDetected = isKidsProductAtImport(
+          info.title || "", description, info.category_path ?? "",
+          info.age_group ?? "", info.size ?? "", imageUrl
+        );
+
         return {
           external_id: externalId,
           source: "daisycon",
@@ -385,6 +414,7 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
           sizes: info.size ? [info.size] : [],
           sku: info.sku || null,
           in_stock: info.in_stock !== "false" && info.in_stock !== "0" && info.in_stock !== "out_of_stock",
+          is_kids: kidsDetected,
           rating: null,
           review_count: 0,
           updated_at: new Date().toISOString(),

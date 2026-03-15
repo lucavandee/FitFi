@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { BramsFruitProduct, BramsFruitCSVRow } from './types';
+import { isKidsProduct } from '@/engine/kidsProductDetector';
 
 export async function importBramsFruitProducts(csvData: string): Promise<{
   success: boolean;
@@ -8,7 +9,25 @@ export async function importBramsFruitProducts(csvData: string): Promise<{
   errors: string[];
 }> {
   const rows = parseCSV(csvData);
-  const products = rows.map(transformCSVToProduct);
+  const allProducts = rows.map(transformCSVToProduct);
+
+  // Filter out kids products before importing
+  const products = allProducts.filter(product => {
+    const result = isKidsProduct({
+      name: product.product_name,
+      department: product.department,
+      category: product.category,
+      type: product.sub_category,
+      gender: product.gender,
+      sizes: product.size ? [product.size] : [],
+    });
+    if (result.isKids) {
+      console.log(`[BramsFruit Import] Skipping kids product: "${product.product_name}" — ${result.reason}`);
+    }
+    return !result.isKids;
+  });
+
+  console.log(`[BramsFruit Import] ${allProducts.length} total → ${products.length} adult products (${allProducts.length - products.length} kids filtered)`);
 
   let imported = 0;
   let failed = 0;
