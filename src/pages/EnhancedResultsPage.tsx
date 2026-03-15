@@ -44,6 +44,7 @@ import { ShareModal } from "@/components/results/ShareModal";
 import { ResultsOutfitCard } from "@/components/results/ResultsOutfitCard";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
+import { getArchetypeDisplayNL } from "@/utils/displayNames";
 import OutfitCard from "@/components/outfits/OutfitCard";
 import { openProductLink } from "@/utils/affiliate";
 import { getColorPalette } from "@/data/colorPalettes";
@@ -80,34 +81,6 @@ const OCCASION_LABELS: Record<string, string> = {
   travel: 'Op reis',
 };
 
-/** Dutch display names for archetype keys/labels */
-const ARCHETYPE_DISPLAY_NL: Record<string, string> = {
-  minimalist: 'Minimalistisch',
-  'clean minimal': 'Minimalistisch',
-  classic: 'Klassiek',
-  'classic soft': 'Klassiek',
-  'smart casual': 'Smart Casual',
-  smart_casual: 'Smart Casual',
-  streetwear: 'Streetwear',
-  athletic: 'Sportief',
-  'sporty sharp': 'Sportief',
-  'avant-garde': 'Avant-Garde',
-  'avant garde': 'Avant-Garde',
-  avant_garde: 'Avant-Garde',
-};
-
-/** Dutch display names for fit values */
-const FIT_DISPLAY_NL: Record<string, string> = {
-  slim: 'Slim fit',
-  relaxed: 'Relaxed fit',
-  regular: 'Regular fit',
-  oversized: 'Oversized',
-  tailored: 'Tailored fit',
-};
-
-function getArchetypeDisplayNL(name: string): string {
-  return ARCHETYPE_DISPLAY_NL[name.toLowerCase().trim()] || name;
-}
 
 function getOccasionLabel(occasion: string): string {
   return OCCASION_LABELS[occasion.toLowerCase()] || occasion.charAt(0).toUpperCase() + occasion.slice(1);
@@ -769,53 +742,12 @@ export default function EnhancedResultsPage() {
                 quizAnswers={answers ?? {}}
                 swipeInsights={swipeInsights}
               />
-              {answers && (
-                <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
-                  <QuizInputSummary
-                    answers={answers}
-                    archetypeName={archetypeName}
-                  />
-                </div>
-              )}
             </div>
           </div>
         </section>
       )}
 
-      {hasCompletedQuiz && answers && activeColorProfile && (
-        <PersonalizedAdviceSection
-          answers={answers}
-          archetypeName={archetypeName}
-          colorProfile={activeColorProfile}
-        />
-      )}
-
-      {hasCompletedQuiz && consistencyAnalysis && (
-        <section className="py-3">
-          <div className="ff-container">
-            <div className="max-w-5xl mx-auto">
-              <ProfileConsistencyBanner
-                analysis={consistencyAnalysis}
-                onRetakeQuiz={() => {
-                  try {
-                    localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
-                    localStorage.removeItem(LS_KEYS.ARCHETYPE);
-                    localStorage.removeItem(LS_KEYS.COLOR_PROFILE);
-                  } catch {}
-                  navigate('/onboarding');
-                }}
-                onDismiss={() => {
-                  try {
-                    sessionStorage.setItem('ff_consistency_banner_dismissed', 'true');
-                  } catch {}
-                }}
-              />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Top outfits voor jou */}
+      {/* Top outfits voor jou — direct na de hero */}
       {hasCompletedQuiz && (
         <section className="py-12 sm:py-16 bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -853,17 +785,25 @@ export default function EnhancedResultsPage() {
               ) : displayOutfits.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[...displayOutfits]
-                      .sort((a, b) => {
-                        const scoreA = (a as any).matchScore ?? (a as any).match ?? (a as any).matchPercentage ?? 0;
-                        const scoreB = (b as any).matchScore ?? (b as any).match ?? (b as any).matchPercentage ?? 0;
-                        return scoreB - scoreA;
-                      })
-                      .slice(0, 3)
-                      .map((outfit, idx) => {
+                    {(() => {
+                      const top3 = [...displayOutfits]
+                        .sort((a, b) => {
+                          const scoreA = (a as any).matchScore ?? (a as any).match ?? (a as any).matchPercentage ?? 0;
+                          const scoreB = (b as any).matchScore ?? (b as any).match ?? (b as any).matchPercentage ?? 0;
+                          return scoreB - scoreA;
+                        })
+                        .slice(0, 3);
+
+                      // Fix 3: hide match % if scores don't differentiate (< 5% spread)
+                      const scores = top3
+                        .map((o: any) => o.matchScore ?? o.match ?? o.matchPercentage)
+                        .filter((s: any): s is number => typeof s === 'number');
+                      const showMatchScore = scores.length >= 2 && (Math.max(...scores) - Math.min(...scores)) >= 5;
+
+                      return top3.map((outfit, idx) => {
                         const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                         const title = (outfit as any).name || (outfit as any).title || `Outfit ${idx + 1}`;
-                        const description = (outfit as any).explanation || (outfit as any).description || '';
+                        const rawDesc: string = (outfit as any).explanation || (outfit as any).description || '';
                         const imageUrl = (outfit as any).image || (outfit as any).imageUrl || '';
                         const matchPct = (outfit as any).matchScore ?? (outfit as any).match ?? (outfit as any).matchPercentage;
                         const products = Array.isArray((outfit as any).products)
@@ -883,15 +823,41 @@ export default function EnhancedResultsPage() {
                             }))
                           : [];
 
+                        // Fix 2: shorten description to human copy
+                        // Pattern: [occasion + kernkenmerk]. Mix van [brands].
+                        const outfitOcc = getOutfitOccasion(outfit, userOccasions);
+                        const occLabel = outfitOcc ? getOccasionLabel(outfitOcc) : '';
+                        const brands = products
+                          .map((p: any) => p.brand)
+                          .filter((b: any): b is string => !!b && b.trim().length > 0);
+                        const uniqueBrands = [...new Set(brands)].slice(0, 3);
+                        const fitLabel = answers?.fit ? (answers.fit === 'relaxed' ? 'relaxed fit' : answers.fit === 'slim' ? 'slim fit' : answers.fit) : '';
+
+                        let shortDesc: string;
+                        if (occLabel && fitLabel) {
+                          shortDesc = `${occLabel} look met ${fitLabel}.`;
+                        } else if (occLabel) {
+                          shortDesc = `${occLabel} look.`;
+                        } else if (rawDesc.length <= 100) {
+                          shortDesc = rawDesc;
+                        } else {
+                          // Truncate raw description to first sentence
+                          const firstSentence = rawDesc.split(/[.!—:;]/)[0]?.trim() || rawDesc;
+                          shortDesc = firstSentence.length <= 80 ? firstSentence + '.' : firstSentence.slice(0, 77) + '…';
+                        }
+                        if (uniqueBrands.length > 0) {
+                          shortDesc += ` Mix van ${uniqueBrands.join(', ')}.`;
+                        }
+
                         return (
                           <AnimatedSection key={String(id)} delay={idx * 0.08}>
                             <OutfitCard
                               outfit={{
                                 id: String(id),
                                 title,
-                                description,
+                                description: shortDesc,
                                 imageUrl,
-                                matchPercentage: typeof matchPct === 'number' ? matchPct : undefined,
+                                matchPercentage: showMatchScore && typeof matchPct === 'number' ? matchPct : undefined,
                                 archetype: archetypeName,
                                 tags: (outfit as any).tags,
                                 products,
@@ -899,7 +865,8 @@ export default function EnhancedResultsPage() {
                             />
                           </AnimatedSection>
                         );
-                      })}
+                      });
+                    })()}
                   </div>
                   <div className="text-center mt-8">
                     <button
@@ -984,7 +951,7 @@ export default function EnhancedResultsPage() {
                       Stijl DNA
                     </p>
                     <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">
-                      {archetypeName} · {activeColorProfile.paletteName}
+                      {archetypeDisplayNL} · {activeColorProfile.paletteName}
                     </h2>
                     <p className="text-sm text-[#8A8A8A] mt-1">
                       {answers?.photoUrl
@@ -1305,7 +1272,7 @@ export default function EnhancedResultsPage() {
                     <div className="flex items-start gap-4 px-5 sm:px-6 py-4">
                       <span className="w-6 h-6 rounded-full bg-[#C2654A] text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
                       <div>
-                        <p className="text-sm font-medium text-[#1A1A1A]">Stijltype: {archetypeName}</p>
+                        <p className="text-sm font-medium text-[#1A1A1A]">Stijltype: {archetypeDisplayNL}</p>
                         <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">
                           {[answers?.fit && `Pasvorm: ${answers.fit}`, answers?.occasions?.length && `Gelegenheden: ${(answers.occasions as string[]).join(', ')}`, answers?.goals?.length && `Doelen: ${(answers.goals as string[]).join(', ')}`].filter(Boolean).join(' · ') || 'Jouw quiz-antwoorden zijn verwerkt in dit profiel.'}
                         </p>
@@ -1326,7 +1293,7 @@ export default function EnhancedResultsPage() {
                       <div>
                         <p className="text-sm font-medium text-[#1A1A1A]">Intelligente matching</p>
                         <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">
-                          Kleurharmonie, stijlcompatibiliteit en gelegenheidscontext gecombineerd tot outfits die passen bij jouw {archetypeName.toLowerCase()} DNA.
+                          Kleurharmonie, stijlcompatibiliteit en gelegenheidscontext gecombineerd tot outfits die passen bij jouw {archetypeDisplayNL.toLowerCase()} DNA.
                         </p>
                       </div>
                     </div>
