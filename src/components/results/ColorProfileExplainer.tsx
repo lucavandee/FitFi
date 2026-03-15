@@ -38,14 +38,18 @@ function getSeasonName(colorProfile: ColorProfile): string {
   const p = colorProfile.paletteName?.toLowerCase() || '';
   const s = colorProfile.season?.toLowerCase() || '';
 
-  if (p.includes('light summer')) return 'Light Summer';
-  if (p.includes('light spring')) return 'Light Spring';
-  if (p.includes('deep winter')) return 'Deep Winter';
-  if (p.includes('deep autumn')) return 'Deep Autumn';
-  if (p.includes('soft summer')) return 'Soft Summer';
-  if (p.includes('soft autumn')) return 'Soft Autumn';
-  if (p.includes('clear winter')) return 'Clear Winter';
-  if (p.includes('clear spring')) return 'Clear Spring';
+  if (p.includes('light summer')) return 'Licht Zomer';
+  if (p.includes('light spring')) return 'Licht Lente';
+  if (p.includes('deep winter')) return 'Diep Winter';
+  if (p.includes('deep autumn')) return 'Diep Herfst';
+  if (p.includes('soft summer')) return 'Zacht Zomer';
+  if (p.includes('soft autumn')) return 'Zacht Herfst';
+  if (p.includes('clear winter')) return 'Helder Winter';
+  if (p.includes('clear spring')) return 'Helder Lente';
+  if (p.includes('warm spring')) return 'Warm Lente';
+  if (p.includes('warm autumn')) return 'Warm Herfst';
+  if (p.includes('cool summer')) return 'Koel Zomer';
+  if (p.includes('cool winter')) return 'Koel Winter';
 
   if (s.includes('winter')) return 'Winter';
   if (s.includes('summer') || s.includes('zomer')) return 'Zomer';
@@ -103,9 +107,6 @@ export function ColorProfileExplainer({
       <div className="px-5 sm:px-6 py-4 border-b border-[var(--color-border)]">
         <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-0.5">Kleurprofiel</p>
         <h3 className="text-sm font-semibold text-[var(--color-text)]">{seasonName}</h3>
-        <p className="text-xs text-[var(--color-muted)] mt-0.5">
-          Profiel betrouwbaarheid: {Math.round(confidence * 100)}% — {confidenceLabel}
-        </p>
       </div>
 
       <div className="p-5 sm:p-6 space-y-5">
