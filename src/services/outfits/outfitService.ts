@@ -34,7 +34,8 @@ class OutfitService {
       let query = client
         .from('products')
         .select('*')
-        .eq('in_stock', true);
+        .eq('in_stock', true)
+        .eq('is_kids', false);
 
       if (gender && gender !== 'unisex' && gender !== 'prefer-not-to-say') {
         query = query.or(`gender.eq.${gender},gender.eq.unisex`);
