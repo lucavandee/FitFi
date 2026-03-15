@@ -230,7 +230,10 @@ const NON_OUTFIT_NAME_PATTERNS = [
   'kunstnagel', 'press-on', 'parfum', 'make-up', 'mascara', 'lipstick',
   'foundation', 'concealer', 'serum', 'crème', 'shampoo',
   // Baby & kids specific
-  'romper', 'kruippak', 'slab',
+  'romper', 'kruippak', 'slab', 'babypak', 'boxpak', 'meegroeipakje',
+  'baby', 'babies', 'peuter', 'kleuter', 'dreumes', 'newborn', 'infant', 'toddler',
+  'kinder', 'kinderen', 'junior', 'kids',
+  'jongens', 'meisjes', 'boys', 'girls', 'child', 'children',
   // Accessories that are not outfit pieces
   'telefoonhoesje', 'phone case', 'sleutelhanger', 'keychain',
   'sticker', 'poster', 'puzzel',

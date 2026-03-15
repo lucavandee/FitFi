@@ -1,7 +1,7 @@
 const REJECT_NAME_PATTERNS: RegExp[] = [
   /romper/i, /romperjurk/i, /kruippak/i, /slab\b/i, /boxpak/i, /babypak/i,
-  /\bbaby\b/i, /\bpeuter\b/i, /\bkleuter\b/i, /\bnewborn\b/i, /\binfant\b/i,
-  /\bkinder\b/i, /\bjunior\b/i, /\bkids\b/i,
+  /\bbaby\b/i, /\bbabies\b/i, /\bpeuter\b/i, /\bkleuter\b/i, /\bnewborn\b/i, /\binfant\b/i,
+  /\bkinder\b/i, /\bkinderen\b/i, /\bjunior\b/i, /\bkids?\b/i, /\bdreumes\b/i, /\btoddler\b/i,
   /\bjongens\b/i, /\bmeisjes\b/i, /\bboys\b/i, /\bgirls\b/i, /\bchild\b/i, /\bchildren\b/i,
 
   /\d+-\d+Y\b/i,
@@ -82,7 +82,7 @@ export function isAdultClothingProduct(row: Record<string, any>): boolean {
   }
 
   const desc = (row.description || '');
-  if (/\b(baby|peuter|kleuter|newborn|infant|kinder)\b/i.test(desc)) return false;
+  if (/\b(baby|babies|peuter|kleuter|newborn|infant|kinder|kinderen|junior|kids?|dreumes|toddler|jongens|meisjes|boys|girls|child|children)\b/i.test(desc)) return false;
 
   return true;
 }
