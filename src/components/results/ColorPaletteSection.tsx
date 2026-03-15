@@ -78,7 +78,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-[var(--ff-color-primary-500)]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[var(--color-text)]">Basiskleuren</p>
-                  <p className="text-xs text-[var(--color-muted)]">— bouw je garderobe hierop</p>
+                  <p className="text-xs text-[var(--color-muted)]">— ~60% van je garderobe</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.basis} columns={6} />
               </div>
@@ -88,7 +88,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-[var(--ff-color-primary-400)]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[var(--color-text)]">Accentkleuren</p>
-                  <p className="text-xs text-[var(--color-muted)]">— mix met basis voor balans</p>
+                  <p className="text-xs text-[var(--color-muted)]">— ~30% voor balans</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.accent} columns={6} />
               </div>
@@ -98,7 +98,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-[var(--color-muted)]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[var(--color-text)]">Neutrale tinten</p>
-                  <p className="text-xs text-[var(--color-muted)]">— perfecte complementen</p>
+                  <p className="text-xs text-[var(--color-muted)]">— ~10% als complementen</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.neutraal} columns={6} />
               </div>
@@ -144,20 +144,10 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
           </div>
         )}
 
-        {/* Usage guide — condensed */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-[var(--color-border)]">
-          {[
-            { label: '60%', desc: 'Basis' },
-            { label: '30%', desc: 'Accent' },
-            { label: '10%', desc: 'Neutraal' },
-            { label: 'Test', desc: 'In natuurlijk licht' },
-          ].map((item) => (
-            <div key={item.label} className="text-center">
-              <p className="text-sm font-semibold text-[var(--ff-color-primary-700)]">{item.label}</p>
-              <p className="text-xs text-[var(--color-muted)] mt-0.5">{item.desc}</p>
-            </div>
-          ))}
-        </div>
+        {/* Usage tip */}
+        <p className="text-sm text-[var(--color-muted)] leading-relaxed pt-3 border-t border-[var(--color-border)]">
+          Test kleuren altijd in natuurlijk daglicht bij je gezicht voordat je koopt.
+        </p>
       </div>
     </div>
   );

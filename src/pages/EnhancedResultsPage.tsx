@@ -86,6 +86,23 @@ function getOccasionLabel(occasion: string): string {
   return OCCASION_LABELS[occasion.toLowerCase()] || occasion.charAt(0).toUpperCase() + occasion.slice(1);
 }
 
+const GOAL_LABELS_NL: Record<string, string> = {
+  minimal: 'minimalistisch',
+  timeless: 'tijdloos',
+  trendy: 'trendy',
+  express: 'expressief',
+  professional: 'professioneel',
+  comfort: 'comfort',
+};
+
+const FIT_LABELS_NL: Record<string, string> = {
+  slim: 'slim fit',
+  relaxed: 'relaxed fit',
+  regular: 'regular fit',
+  oversized: 'oversized',
+  tailored: 'tailored fit',
+};
+
 /**
  * Map Dutch occasion strings (from generated outfits) to English quiz occasion keys.
  * Generated outfits use: "Werk", "Dagelijks", "Date", "Avond uit", "Weekend",
@@ -945,33 +962,34 @@ export default function EnhancedResultsPage() {
 
               {/* Section header */}
               <AnimatedSection>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#C2654A] mb-1.5">
-                      Stijl DNA
-                    </p>
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">
-                      {archetypeDisplayNL} · {activeColorProfile.paletteName}
-                    </h2>
-                    <p className="text-sm text-[#8A8A8A] mt-1">
-                      {answers?.photoUrl
-                        ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
-                        : 'Op basis van jouw kleurvoorkeur uit de quiz'}
-                    </p>
-                  </div>
-                  <div className="shrink-0 mt-1">
-                    <StyleProfileConfidenceBadge
-                      dataSource={profileDataSource}
-                      confidence={profileConfidence}
-                    />
-                  </div>
+                <div>
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">
+                    Stijl DNA
+                  </p>
+                  <h2
+                    className="text-[#1A1A1A] tracking-tight"
+                    style={{
+                      fontFamily: "'Instrument Serif', Georgia, serif",
+                      fontStyle: "italic",
+                      fontSize: "clamp(24px, 5vw, 36px)",
+                      fontWeight: 400,
+                      lineHeight: 1.15,
+                    }}
+                  >
+                    {archetypeDisplayNL} · {getSeasonDisplayName(activeColorProfile)}
+                  </h2>
+                  <p className="text-sm text-[#8A8A8A] mt-2">
+                    {answers?.photoUrl
+                      ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
+                      : 'Op basis van jouw kleurvoorkeur uit de quiz'}
+                  </p>
                 </div>
               </AnimatedSection>
 
               {/* Color profile + insights — single unified card */}
               <AnimatedSection delay={0.1}>
-                <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#E5E5E5]">
+                <div className="bg-[#F5F0EB] rounded-2xl overflow-hidden">
+                  <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#E5E5E5]/50">
 
                     {/* Color profile column */}
                     <div className="p-5 sm:p-6">
@@ -1261,43 +1279,73 @@ export default function EnhancedResultsPage() {
                 </AnimatedSection>
               )}
 
-              {/* How your style was determined — condensed */}
+              {/* How your style was determined — narrative */}
               <AnimatedSection delay={0.4}>
-                <div className="bg-white rounded-2xl border border-[#E5E5E5] overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <div className="px-5 sm:px-6 py-4 border-b border-[#E5E5E5]">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A]">Methodologie</p>
-                    <h3 className="text-sm font-semibold text-[#1A1A1A] mt-0.5">Zo hebben we jouw stijl bepaald</h3>
+                <div className="bg-[#F5F0EB] rounded-2xl p-6 sm:p-8 space-y-5">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A]">Zo werkt het</p>
+
+                  {/* Step 1 — Style profile */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1.5">Jouw stijlprofiel</h4>
+                    <p className="text-sm text-[#4A4A4A] leading-relaxed">
+                      {(() => {
+                        const fitNL = answers?.fit ? (FIT_LABELS_NL[answers.fit] || answers.fit) : '';
+                        const occasionsNL = Array.isArray(answers?.occasions)
+                          ? (answers.occasions as string[]).map(o => getOccasionLabel(o).toLowerCase())
+                          : [];
+                        const goalsNL = Array.isArray(answers?.goals)
+                          ? (answers.goals as string[]).map(g => GOAL_LABELS_NL[g] || g)
+                          : [];
+
+                        const parts: string[] = [];
+                        if (fitNL) parts.push(`een voorkeur voor ${fitNL}`);
+                        if (occasionsNL.length > 0) parts.push(`gelegenheden als ${occasionsNL.slice(0, 3).join(', ')}`);
+                        if (goalsNL.length > 0) parts.push(`een ${goalsNL.slice(0, 2).join(' en ')} doel`);
+
+                        if (parts.length > 0) {
+                          return `Op basis van ${parts.join(', ')} — past het ${archetypeDisplayNL} profiel het beste bij jou.`;
+                        }
+                        return `Op basis van jouw quizantwoorden past het ${archetypeDisplayNL} profiel het beste bij jou.`;
+                      })()}
+                    </p>
                   </div>
-                  <div className="divide-y divide-[#E5E5E5]">
-                    <div className="flex items-start gap-4 px-5 sm:px-6 py-4">
-                      <span className="w-6 h-6 rounded-full bg-[#C2654A] text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                      <div>
-                        <p className="text-sm font-medium text-[#1A1A1A]">Stijltype: {archetypeDisplayNL}</p>
-                        <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">
-                          {[answers?.fit && `Pasvorm: ${answers.fit}`, answers?.occasions?.length && `Gelegenheden: ${(answers.occasions as string[]).join(', ')}`, answers?.goals?.length && `Doelen: ${(answers.goals as string[]).join(', ')}`].filter(Boolean).join(' · ') || 'Jouw quiz-antwoorden zijn verwerkt in dit profiel.'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4 px-5 sm:px-6 py-4">
-                      <span className="w-6 h-6 rounded-full bg-[#A8513A] text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-                      <div>
-                        <p className="text-sm font-medium text-[#1A1A1A]">Kleuranalyse: {getSeasonDisplayName(activeColorProfile)} — {activeColorProfile.paletteName}</p>
-                        <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">
-                          {formatStyleDNAValue('temperature', activeColorProfile.temperature)} temperatuur · {formatStyleDNAValue('contrast', activeColorProfile.contrast)} contrast · {getSeasonDescription(activeColorProfile.season, activeColorProfile.contrast, activeColorProfile.temperature)}
-                          {!answers?.photoUrl && ' · Gebaseerd op voorkeur, geen foto gebruikt'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4 px-5 sm:px-6 py-4">
-                      <span className="w-6 h-6 rounded-full bg-[#C2654A] text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-                      <div>
-                        <p className="text-sm font-medium text-[#1A1A1A]">Intelligente matching</p>
-                        <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">
-                          Kleurharmonie, stijlcompatibiliteit en gelegenheidscontext gecombineerd tot outfits die passen bij jouw {archetypeDisplayNL.toLowerCase()} DNA.
-                        </p>
-                      </div>
-                    </div>
+
+                  {/* Step 2 — Color analysis */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1.5">Jouw kleuranalyse</h4>
+                    <p className="text-sm text-[#4A4A4A] leading-relaxed">
+                      {(() => {
+                        const tempNL = formatStyleDNAValue('temperature', activeColorProfile.temperature).toLowerCase();
+                        const contrastNL = formatStyleDNAValue('contrast', activeColorProfile.contrast).toLowerCase();
+                        const seasonNL = getSeasonDisplayName(activeColorProfile);
+                        const photoNote = answers?.photoUrl
+                          ? 'Gebaseerd op je selfie en quizantwoorden.'
+                          : 'Gebaseerd op je quizantwoorden.';
+                        return `Je ${tempNL} ondertoon en ${contrastNL} contrast wijzen naar ${seasonNL} — zachte, lichte tinten die bij je passen. ${photoNote}`;
+                      })()}
+                    </p>
                   </div>
+
+                  {/* Step 3 — Outfit matching */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1.5">Jouw outfits</h4>
+                    <p className="text-sm text-[#4A4A4A] leading-relaxed">
+                      We combineerden kleurharmonie, stijl en gelegenheid om outfits samen te stellen die passen bij jouw {archetypeDisplayNL} · {getSeasonDisplayName(activeColorProfile)} profiel.
+                    </p>
+                  </div>
+
+                  {/* Subtle selfie hint when no photo */}
+                  {!answers?.photoUrl && (
+                    <p className="text-sm text-[#8A8A8A] pt-2 border-t border-[#E5E5E5]/60">
+                      Upload een selfie voor nog nauwkeuriger kleuradvies.{' '}
+                      <button
+                        onClick={() => navigate('/onboarding?step=photo')}
+                        className="font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
+                      >
+                        Foto toevoegen →
+                      </button>
+                    </p>
+                  )}
                 </div>
               </AnimatedSection>
 
