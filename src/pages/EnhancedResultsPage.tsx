@@ -80,6 +80,35 @@ const OCCASION_LABELS: Record<string, string> = {
   travel: 'Op reis',
 };
 
+/** Dutch display names for archetype keys/labels */
+const ARCHETYPE_DISPLAY_NL: Record<string, string> = {
+  minimalist: 'Minimalistisch',
+  'clean minimal': 'Minimalistisch',
+  classic: 'Klassiek',
+  'classic soft': 'Klassiek',
+  'smart casual': 'Smart Casual',
+  smart_casual: 'Smart Casual',
+  streetwear: 'Streetwear',
+  athletic: 'Sportief',
+  'sporty sharp': 'Sportief',
+  'avant-garde': 'Avant-Garde',
+  'avant garde': 'Avant-Garde',
+  avant_garde: 'Avant-Garde',
+};
+
+/** Dutch display names for fit values */
+const FIT_DISPLAY_NL: Record<string, string> = {
+  slim: 'Slim fit',
+  relaxed: 'Relaxed fit',
+  regular: 'Regular fit',
+  oversized: 'Oversized',
+  tailored: 'Tailored fit',
+};
+
+function getArchetypeDisplayNL(name: string): string {
+  return ARCHETYPE_DISPLAY_NL[name.toLowerCase().trim()] || name;
+}
+
 function getOccasionLabel(occasion: string): string {
   return OCCASION_LABELS[occasion.toLowerCase()] || occasion.charAt(0).toUpperCase() + occasion.slice(1);
 }
@@ -227,6 +256,9 @@ export default function EnhancedResultsPage() {
     }
     return "Smart Casual";
   }, [archetypeRaw]);
+
+  /** Dutch-friendly display name for the archetype */
+  const archetypeDisplayNL = React.useMemo(() => getArchetypeDisplayNL(archetypeName), [archetypeName]);
 
   const archetypeKey = React.useMemo((): ArchetypeKey => {
     const nameToKey: Record<string, ArchetypeKey> = {
@@ -537,7 +569,7 @@ export default function EnhancedResultsPage() {
   const tabs: { id: ResultTab; label: string; sub?: string }[] = [
     { id: 'overzicht', label: 'Overzicht' },
     { id: 'stijl-dna', label: 'Stijl DNA' },
-    { id: 'outfits', label: 'Outfits', sub: displayOutfits.length > 0 ? `${displayOutfits.length}` : undefined },
+    { id: 'outfits', label: 'Outfits' },
   ];
 
   return (
@@ -1319,113 +1351,78 @@ export default function EnhancedResultsPage() {
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2 }}
         >
-        <section id="outfits-section" className="py-8 sm:py-10">
+        <section id="outfits-section" className="pt-10 sm:pt-12 pb-8">
           <div className="ff-container">
             <AnimatedSection>
               <div className="max-w-5xl mx-auto">
 
-              {/* Section header — consistent met Stijl DNA */}
-              <div className="flex items-start justify-between gap-6 mb-6">
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#C2654A] mb-2">
-                    Jouw outfits
-                  </p>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
-                    {occasionFilter
-                      ? `${occasionFilter.charAt(0).toUpperCase() + occasionFilter.slice(1)}`
-                      : 'Handpicked voor jou'}
-                  </h2>
-                  <p className="text-sm text-[#8A8A8A] mt-2">
-                    {displayOutfits.length} outfits · {archetypeName}
-                  </p>
-                </div>
-                <div className="shrink-0 pt-1 flex items-center gap-2">
+              {/* Compact header: headline + toggle + Aanpassen */}
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <h2
+                  className="text-xl sm:text-2xl text-[#1A1A1A] tracking-tight"
+                  style={{
+                    fontFamily: "'Instrument Serif', Georgia, serif",
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                  }}
+                >
+                  {occasionFilter
+                    ? `${occasionFilter.charAt(0).toUpperCase() + occasionFilter.slice(1)}`
+                    : 'Handpicked voor jou'}
+                </h2>
+                <div className="shrink-0 flex items-center gap-3">
+                  {/* Swipe/Grid toggle — compact */}
+                  <div className="hidden sm:flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1">
+                    <button
+                      onClick={() => setGalleryMode('swipe')}
+                      aria-pressed={galleryMode === 'swipe'}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                        galleryMode === 'swipe'
+                          ? 'bg-white text-[#1A1A1A] shadow-sm'
+                          : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                      }`}
+                      aria-label="Swipe weergave"
+                    >
+                      <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={() => setGalleryMode('grid')}
+                      aria-pressed={galleryMode === 'grid'}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                        galleryMode === 'grid'
+                          ? 'bg-white text-[#1A1A1A] shadow-sm'
+                          : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                      }`}
+                      aria-label="Grid weergave"
+                    >
+                      <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
+                    </button>
+                  </div>
                   {occasionFilter && (
                     <button
                       onClick={() => {
                         searchParams.delete('occasion');
                         setSearchParams(searchParams, { replace: true });
                       }}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C2654A] text-sm font-medium text-white hover:bg-[#A8513A] transition-all duration-200 whitespace-nowrap"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C2654A] text-sm font-medium text-white hover:bg-[#A8513A] transition-all duration-200 whitespace-nowrap"
                     >
                       Alle outfits
                     </button>
                   )}
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 whitespace-nowrap"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 whitespace-nowrap"
                   >
                     <SlidersHorizontal className="w-4 h-4 shrink-0" />
-                    Aanpassen
+                    <span className="hidden sm:inline">Aanpassen</span>
                   </button>
                 </div>
               </div>
 
-              {/* Filter tags */}
-              {answers && (
-                <div className="flex items-center gap-2 flex-wrap mb-6">
-                  {[
-                    { label: archetypeName, active: true },
-                    ...[
-                      answers.fit,
-                      ...(Array.isArray(answers.occasions) ? answers.occasions.slice(0, 1) : []),
-                    ].filter(Boolean).map((v) => ({ label: v as string, active: false })),
-                    ...(activeColorProfile?.season ? [{ label: getSeasonDisplayName(activeColorProfile), active: false }] : []),
-                    ...(answers.budgetRange?.max ? [{ label: `€${answers.budgetRange.max}`, active: false }] : []),
-                  ].map((tag, i) => (
-                    <span
-                      key={i}
-                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                        tag.active
-                          ? 'bg-[#C2654A] text-white'
-                          : 'bg-white border border-[#E5E5E5] text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A]'
-                      }`}
-                    >
-                      {tag.label}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Swipe/Grid toggle */}
-              <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
-                <div className="flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1 w-fit">
-                  <button
-                    onClick={() => setGalleryMode('swipe')}
-                    aria-pressed={galleryMode === 'swipe'}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
-                      galleryMode === 'swipe'
-                        ? 'bg-white text-[#1A1A1A] shadow-sm'
-                        : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
-                    }`}
-                    aria-label="Swipe weergave"
-                  >
-                    <Layers className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>Swipe</span>
-                  </button>
-                  <button
-                    onClick={() => setGalleryMode('grid')}
-                    aria-pressed={galleryMode === 'grid'}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
-                      galleryMode === 'grid'
-                        ? 'bg-white text-[#1A1A1A] shadow-sm'
-                        : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
-                    }`}
-                    aria-label="Grid weergave"
-                  >
-                    <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>Grid</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Occasion tabs — only when outfits have occasion data */}
+              {/* Occasion tabs — inline, no label, no counts */}
               {occasionTabs && occasionTabs.length > 2 && (
-                <div className="mb-8 border-b border-[#E5E5E5]">
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-4">
-                    Per gelegenheid
-                  </p>
-                  <div className="flex gap-0 overflow-x-auto" role="tablist" aria-label="Filter op gelegenheid">
+                <div className="mt-4 mb-8 border-b border-[#E5E5E5]">
+                  <div className="flex gap-0 overflow-x-auto -mb-px" role="tablist" aria-label="Filter op gelegenheid">
                     {occasionTabs.map((tab) => {
                       const isActive = activeOccasionTab === tab.value;
                       return (
@@ -1434,26 +1431,25 @@ export default function EnhancedResultsPage() {
                           role="tab"
                           aria-selected={isActive}
                           onClick={() => setActiveOccasionTab(tab.value)}
-                          className={`relative flex items-center gap-1.5 py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
+                          className={`relative py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
                             isActive
                               ? 'font-semibold text-[#C2654A] border-[#C2654A]'
                               : 'font-medium text-[#8A8A8A] border-transparent hover:text-[#4A4A4A]'
                           }`}
                         >
                           {tab.label}
-                          <span className={`ml-1 text-xs font-semibold px-1.5 py-0.5 rounded-full transition-colors duration-200 ${
-                            isActive
-                              ? 'bg-[#F4E8E3] text-[#C2654A]'
-                              : 'bg-[#E5E5E5] text-[#8A8A8A]'
-                          }`}>
-                            {tab.count}
-                          </span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
               )}
+
+              {/* Spacer when no occasion tabs */}
+              {(!occasionTabs || occasionTabs.length <= 2) && (
+                <div className="mb-8" />
+              )}
+
               </div>
             </AnimatedSection>
 
