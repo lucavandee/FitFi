@@ -4,8 +4,8 @@ import { generateOutfitExplanation } from './explainOutfit';
 import { filterProductsByColorSeason } from './colorSeasonFiltering';
 import { calculateOutfitColorHarmony } from './colorHarmony';
 import { calculateProductFormality, OCCASION_RULES } from './occasionMatching';
-import { fusionScore, normalizeWeights } from './archetypeFusion';
-import type { ArchetypeKey } from '@/config/archetypes';
+import { fusionScore, normalizeWeights, scoreProductAgainstArchetype } from './archetypeFusion';
+import { type ArchetypeKey, ARCHETYPES } from '@/config/archetypes';
 import type { ArchetypeWeights, ProductLike } from '@/types/style';
 import type { ColorProfile } from '@/lib/quiz/types';
 import { enrichProduct, deriveAthleticIntent, type EnrichedSignals } from './productEnricher';
@@ -797,7 +797,7 @@ function generateOutfitForOccasion(
   const formalities = outfitProducts.map(p => enrichProduct(p).formality);
   const maxF = Math.max(...formalities);
   const minF = Math.min(...formalities);
-  if (maxF - minF > 0.5) {
+  if (maxF - minF > 0.3) {
     console.warn(`Outfit afgewezen: inconsistente formaliteit (spread ${(maxF - minF).toFixed(2)})`);
     return null;
   }
@@ -822,9 +822,54 @@ function generateOutfitForOccasion(
     return fusionScore(pl, outfitMix).totalScore;
   });
   const avgFusion = fusionScores.reduce((a, b) => a + b, 0) / fusionScores.length;
+
+  // Style coherence check: penalize outfits with clashing archetypes
+  const ALL_ARCHETYPE_KEYS: ArchetypeKey[] = Object.keys(ARCHETYPES) as ArchetypeKey[];
+  const itemPrimaryArchetypes = outfitProducts.map(p => {
+    const pl = toProductLike(p);
+    let bestKey: ArchetypeKey = 'SMART_CASUAL';
+    let bestScore = -1;
+    for (const k of ALL_ARCHETYPE_KEYS) {
+      const { score } = scoreProductAgainstArchetype(pl, k);
+      if (score > bestScore) { bestScore = score; bestKey = k; }
+    }
+    return bestKey;
+  });
+
+  // Find dominant archetype (most common among items)
+  const archetypeCounts = new Map<ArchetypeKey, number>();
+  for (const arch of itemPrimaryArchetypes) {
+    archetypeCounts.set(arch, (archetypeCounts.get(arch) ?? 0) + 1);
+  }
+  let dominantArchetype: ArchetypeKey = 'SMART_CASUAL';
+  let dominantCount = 0;
+  for (const [arch, count] of archetypeCounts) {
+    if (count > dominantCount) { dominantCount = count; dominantArchetype = arch; }
+  }
+
+  // Count items with a completely different primary archetype
+  const mismatchCount = itemPrimaryArchetypes.filter(a => a !== dominantArchetype).length;
+
+  // Calculate coherence multiplier
+  let coherenceMultiplier = 1.0;
+  const hasAthletic = itemPrimaryArchetypes.includes('ATHLETIC');
+  const hasClassic = itemPrimaryArchetypes.includes('CLASSIC');
+  if (hasAthletic && hasClassic) {
+    // Hard mismatch: athletic + classic → 50% penalty
+    coherenceMultiplier = 0.5;
+    console.warn(`Outfit score penalty: ATHLETIC + CLASSIC mismatch (-50%)`);
+  } else if (mismatchCount > 1) {
+    // More than 1 item has a different primary archetype → 30% penalty
+    coherenceMultiplier = 0.7;
+    console.warn(`Outfit score penalty: ${mismatchCount} items differ from dominant ${dominantArchetype} (-30%)`);
+  } else if (mismatchCount === 0) {
+    // All items share the same primary archetype → 10% bonus
+    coherenceMultiplier = 1.1;
+  }
+
   const outfitFormalityTarget = getOccasionFormalityTarget(occasion);
   const formalityAlignment = 1 - (formalities.reduce((sum, f) => sum + Math.abs(f - outfitFormalityTarget), 0) / formalities.length);
-  const rawMatch = avgFusion * 0.55 + colorHarmonyScore * 0.25 + formalityAlignment * 0.20;
+  const rawMatch = (avgFusion * 0.55 + colorHarmonyScore * 0.25 + formalityAlignment * 0.20) * coherenceMultiplier;
   const matchPercentage = Math.min(Math.round(rawMatch * 100), 98);
   
   // Generate tags based on archetypes and occasion
@@ -1096,7 +1141,7 @@ function getOccasionFormalityTarget(occasion: string): number {
   return 0.3;
 }
 
-function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 12): T | null {
+function weightedRandomPick<T extends { combined: number }>(items: T[], topN: number = 6): T | null {
   if (items.length === 0) return null;
   const candidates = items.slice(0, Math.min(topN, items.length));
   const maxScore = candidates[0]?.combined ?? 0;
