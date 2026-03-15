@@ -299,7 +299,6 @@ export class CalibrationService {
       .from('products')
       .select('id, name, brand, price, image_url, style, tags, gender, colors, dominant_colors')
       .eq('category', category)
-      .eq('is_kids', false)
       .limit(200); // Increased limit to account for client-side filtering
 
     // CRITICAL: Filter by gender FIRST (before brand preference)
@@ -918,7 +917,6 @@ export class CalibrationService {
       const { count, error } = await supabase
         .from('products')
         .select('*', { count: 'exact', head: true })
-        .eq('is_kids', false)
         .or(`gender.eq.${gender || 'male'},gender.eq.unisex`);
 
       if (error) {

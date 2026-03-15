@@ -171,8 +171,7 @@ class ProductCacheService {
       let query = client
         .from('products')
         .select('*')
-        .eq('in_stock', true)
-        .eq('is_kids', false);
+        .eq('in_stock', true);
 
       // Apply filters
       if (criteria.gender && criteria.gender !== 'unisex') {

@@ -884,7 +884,6 @@ export class AdaptiveOutfitGenerator {
         .from('products')
         .select('*')
         .eq('in_stock', true)
-        .eq('is_kids', false)
         .eq('category', cat);
 
       if (g && g !== 'unisex' && g !== 'prefer-not-to-say') {
