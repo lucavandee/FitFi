@@ -88,15 +88,15 @@ const NON_CLOTHING_REGEX = new RegExp(
     'tennisschoen', 'tennisrok', 'golfschoen', 'golfbroek',
     'wandelschoen', 'bergschoen', 'klimschoen',
     'cleat', 'crampon',
-    'baby', 'peuter', 'kleuter', 'newborn', 'infant',
-    'kinder', 'junior', 'kids',
+    'baby', 'babies', 'peuter', 'kleuter', 'newborn', 'infant',
+    'kinder', 'kinderen', 'junior', 'kids?', 'dreumes', 'toddler',
     'multipack',
   ].join('|') + ')', 'i'
 );
 
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic|in)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic|in)\b/i;
 
-const KIDS_CATEGORY_REGEX = /\b(meisjes|jongens|boys|girls|children|child)\b/i;
+const KIDS_CATEGORY_REGEX = /\b(meisjes|jongens|boys|girls|children|child|kids?|kinderen|kinder|junior|baby|babies|peuter|kleuter|dreumes|toddler|newborn|infant)\b/i;
 
 const TOP_PATTERNS = [
   't-shirt', 'shirt', 'overhemd', 'blouse', 'polo', 'trui', 'sweater',
@@ -146,7 +146,7 @@ export function classifyProduct(product: Product): { category: ProductCategory; 
     return { category: 'other' as ProductCategory, rejected: true, reason: `sport-footwear: "${product.name}"` };
   }
 
-  if (KIDS_CATEGORY_REGEX.test(name) || KIDS_CATEGORY_REGEX.test(dbCategory)) {
+  if (KIDS_CATEGORY_REGEX.test(name) || KIDS_CATEGORY_REGEX.test(dbCategory) || KIDS_CATEGORY_REGEX.test(type) || KIDS_CATEGORY_REGEX.test(desc)) {
     return { category: 'other' as ProductCategory, rejected: true, reason: `kids-category: "${product.name}"` };
   }
 

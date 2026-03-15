@@ -77,7 +77,13 @@ interface GenerationContext {
 const NON_CLOTHING_PATTERNS = [
   /kaars/i, /candle/i, /lamp/i, /vaas/i, /houder/i, /decor/i,
   /bedrok/i, /kussen/i, /plaid/i, /handdoek/i, /baddoek/i,
-  /meegroeipakje/i, /baby/i, /peuter/i, /kleuter/i, /romper/i,
+  /meegroeipakje/i, /romper/i,
+  // Kids clothing — comprehensive filter
+  /\bbaby\b/i, /\bbabies\b/i, /\bpeuter\b/i, /\bkleuter\b/i, /\bdreumes\b/i,
+  /\bnewborn\b/i, /\binfant\b/i, /\btoddler\b/i,
+  /\bkinder\b/i, /\bkinderen\b/i, /\bjunior\b/i, /\bkids?\b/i,
+  /\bjongens\b/i, /\bmeisjes\b/i, /\bboys\b/i, /\bgirls\b/i,
+  /\bchild\b/i, /\bchildren\b/i,
   /wanten/i, /handschoen/i, /bonnet/i, /haarbonnet/i,
   /pantoffel/i, /sloffen/i, /slippers/i, /flip.?flop/i,
   /oplaadba/i, /oplader/i, /telefoon/i, /hoesje/i,
