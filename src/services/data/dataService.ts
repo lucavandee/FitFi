@@ -46,8 +46,7 @@ export async function fetchProducts(_opts?: {
     let query = client
       .from('products')
       .select('*')
-      .eq('in_stock', true)
-      .eq('is_kids', false);
+      .eq('in_stock', true);
 
     if (_opts?.gender && _opts.gender !== 'unisex') {
       query = query.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
@@ -144,7 +143,6 @@ export async function fetchOutfits(_opts?: {
           .from("products")
           .select(selectFields)
           .eq("in_stock", true)
-          .eq("is_kids", false)
           .eq("category", cat);
 
         if (_opts?.gender && _opts.gender !== "unisex") {
@@ -164,7 +162,6 @@ export async function fetchOutfits(_opts?: {
         .from("products")
         .select(selectFields)
         .eq("in_stock", true)
-        .eq("is_kids", false)
         .limit(400);
       if (data && data.length >= 10) allRows = data;
     }

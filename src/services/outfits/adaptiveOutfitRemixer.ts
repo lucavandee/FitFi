@@ -120,8 +120,7 @@ export class AdaptiveOutfitRemixer {
     let query = supabase
       .from('products')
       .select('*')
-      .eq('in_stock', true)
-      .eq('is_kids', false);
+      .eq('in_stock', true);
 
     const g = userContext.gender;
     if (g && g !== 'unisex' && g !== 'prefer-not-to-say') {
