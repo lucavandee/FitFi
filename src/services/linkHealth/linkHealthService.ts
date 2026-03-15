@@ -60,6 +60,7 @@ async function loadBrokenLinks(): Promise<void> {
     const { data, error } = await client
       .from("products")
       .select("id")
+      .eq("is_kids", false)
       .in("link_status", ["broken", "unavailable"]);
 
     if (error) {

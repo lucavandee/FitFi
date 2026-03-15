@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior|kinder)\b/;
-const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|candle|kaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|vaas|spiegel|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast|voetbal|football|soccer|voetbalset|voetbalshirt|voetbalschoen|voetbalbroek|keepershandschoen|scheenbeschermer|shin\s?guard|rugby|hockey|handbal|basketbal|wielren|cycling|fietsbroek|fietsshirt|wielershirt|hardloop|running\s?shoe|trail\s?run|marathon|tennisschoen|tennisrok|golfschoen|golfbroek|wandelschoen|bergschoen|klimschoen|cleat|crampon|crossfit|spinning|sportbeha|sport\s?bh|skibroek|skipak|snowboard|skischoenen|skistok|wintersport|wetsuit|duik|snorkel|surfboard|multipack|hemd)\b/;
+const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|tafellamp|bureaulamp|staande\s?lamp|plafondlamp|wandlamp|candle|kaars|geurkaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|pantoffel|teenslip|vaas|vases|spiegel|mirrors|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast|voetbal|football|soccer|voetbalset|voetbalshirt|voetbalschoen|voetbalbroek|keepershandschoen|scheenbeschermer|shin\s?guard|rugby|hockey|handbal|basketbal|wielren|cycling|fietsbroek|fietsshirt|wielershirt|hardloop|running\s?shoe|trail\s?run|marathon|tennisschoen|tennisrok|golfschoen|golfbroek|wandelschoen|bergschoen|klimschoen|cleat|crampon|crossfit|spinning|sportbeha|sport\s?bh|skibroek|skipak|snowboard|skischoenen|skistok|wintersport|wetsuit|duik|snorkel|surfboard|multipack|hemd|dishware|glassware|bottles\s?and\s?pitchers|storage\s?and\s?baskets|table\s?lamps|clocks|trays|decorative\s?accessories|kitchen\s?accessories|desk\s?accessories|candle\s?holders|figurines|photo\s?frames|verkleedpak|verkleedset|kostuum(?!pantalon|gilet|broek|vest|jasje|colbert))\b/;
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic)\b/i;
 const SET_OF_REGEX = /\bset\s+van\s+\d/i;
 const MULTIPACK_REGEX = /\b\d+[- ]?(pack|stuks|set)\b/i;
@@ -191,9 +191,14 @@ const ADULT_SIZE_RE = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|ONE SIZE)$/i;
 function isKidsProductAtImport(title, description, categoryPath, ageGroup, size, imageUrl) {
   // 1. Explicit age_group (strongest signal)
   if (ageGroup && KIDS_AGE_GROUPS.test(ageGroup.trim())) return true;
-  // 2. Already checked by isFashionProduct for keywords, but double-check size
+  // 2. Size-based detection
   const s = (size || "").trim();
+  // 2a. Pure EU kids size (e.g. "110", "128")
   if (s && /^\d{2,3}$/.test(s) && EU_KIDS_SIZES.has(s) && !ADULT_SIZE_RE.test(s)) return true;
+  // 2b. Compound kids size with age indicator (e.g. "110/116 (4-6Y)", "86 (12-18M)", "104 (3-4Y)")
+  if (s && /\d+\s*\/?\s*\d*\s*\(\d+[-–]\d+\s*[YM]\)/i.test(s)) return true;
+  // 2c. Age-only size (e.g. "4-6Y", "12-18M")
+  if (s && /^\d{1,2}\s*[-–]\s*\d{1,2}\s*[YM]$/i.test(s)) return true;
   // 3. Image URL path
   if (imageUrl && /\/(kids|children|kinder|junior|boys|girls)\//.test(imageUrl)) return true;
   return false;
@@ -392,6 +397,9 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
           info.age_group ?? "", info.size ?? "", imageUrl
         );
 
+        // Skip products that couldn't be classified as fashion
+        if (category === "other") return null;
+
         return {
           external_id: externalId,
           source: "daisycon",
@@ -421,7 +429,7 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
           ...(campaignId ? { campaign_id: campaignId } : {}),
         };
       })
-      .filter((r) => r.external_id && r.name);
+      .filter((r) => r != null && r.external_id && r.name);
 
     if (rows.length === 0) {
       skipped += batch.length;
