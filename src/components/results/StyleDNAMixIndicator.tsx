@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ARCHETYPES, type ArchetypeKey } from "@/config/archetypes";
+import { getArchetypeDisplayNL } from "@/utils/displayNames";
 
 interface StyleMixItem {
   archetype: ArchetypeKey;
@@ -62,7 +63,7 @@ export function StyleDNAMixIndicator({ mixItems, confidence, className = "" }: S
             return (
               <div key={item.archetype} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
                 <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: BAR_COLORS[i] }} aria-hidden="true" />
-                <span className="text-sm text-[var(--color-text)] flex-1">{archetype.label}</span>
+                <span className="text-sm text-[var(--color-text)] flex-1">{getArchetypeDisplayNL(archetype.label)}</span>
                 <span className="text-sm font-semibold text-[var(--ff-color-primary-700)] tabular-nums">{Math.round(item.percentage)}%</span>
               </div>
             );

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Check, ArrowRight, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getArchetypeDisplayNL } from '@/utils/displayNames';
 
 interface QuizInputSummaryProps {
   answers: Record<string, any>;
@@ -109,7 +110,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
       </div>
       <h3 className="text-lg font-semibold text-[#1A1A1A] mb-8">
         Waarom dit rapport past bij{' '}
-        <span className="text-[#C2654A]">{archetypeName}</span>
+        <span className="text-[#C2654A]">{getArchetypeDisplayNL(archetypeName)}</span>
       </h3>
 
       {/* ── Bullets ── */}

@@ -7,6 +7,7 @@ import useBodyScrollLock from "@/hooks/useBodyScrollLock";
 import { openProductLink, resolveProductUrl } from "@/utils/affiliate";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
+import { getArchetypeDisplayNL } from "@/utils/displayNames";
 
 interface OutfitDetailModalProps {
   outfit: any | null;
@@ -177,7 +178,7 @@ export function OutfitDetailModal({
           {/* Header */}
           <div className="px-6 pt-7 pb-5">
             <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#8A8A8A] mb-2">
-              {archetypeName}
+              {getArchetypeDisplayNL(archetypeName)}
             </p>
             <h2
               id="outfit-modal-title"

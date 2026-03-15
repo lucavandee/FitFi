@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ARCHETYPES, type ArchetypeKey } from "@/config/archetypes";
+import { getArchetypeDisplayNL } from "@/utils/displayNames";
 
 interface ArchetypeScore {
   archetype: ArchetypeKey;
@@ -48,7 +49,7 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2 mb-1.5">
                     <span className={`text-sm font-semibold ${isPrimary ? 'text-[var(--ff-color-primary-800)]' : 'text-[var(--color-text)]'}`}>
-                      {archetype.label}
+                      {getArchetypeDisplayNL(archetype.label)}
                     </span>
                     <span className={`text-sm font-bold tabular-nums ${isPrimary ? 'text-[var(--ff-color-primary-700)]' : 'text-[var(--color-muted)]'}`}>
                       {Math.round(item.percentage)}%
