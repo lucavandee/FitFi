@@ -46,6 +46,7 @@ import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
 import { getArchetypeDisplayNL } from "@/utils/displayNames";
 import OutfitCard from "@/components/outfits/OutfitCard";
+import { OutfitPreviewCard } from "@/components/results/OutfitPreviewCard";
 import { openProductLink } from "@/utils/affiliate";
 import { getColorPalette } from "@/data/colorPalettes";
 
@@ -766,11 +767,11 @@ export default function EnhancedResultsPage() {
 
       {/* Top outfits voor jou — direct na de hero */}
       {hasCompletedQuiz && (
-        <section className="py-12 sm:py-16 bg-[#FAFAF8]">
+        <section className="pt-12 md:pt-16 pb-12 sm:pb-16 bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <AnimatedSection>
-                <div className="text-center mb-8">
+                <div className="text-center mb-10">
                   <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
                     Jouw top outfits
                   </p>
@@ -786,16 +787,21 @@ export default function EnhancedResultsPage() {
                   >
                     Direct aan de slag
                   </h2>
+                  <p className="text-base text-[#8A8A8A] mt-2">
+                    Outfits samengesteld op basis van jouw stijlprofiel
+                  </p>
                 </div>
               </AnimatedSection>
 
               {outfitsLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[0, 1, 2].map((i) => (
-                    <div key={i} className="bg-white border border-[#E5E5E5] rounded-2xl p-5 animate-pulse">
-                      <div className="aspect-[4/5] rounded-xl bg-[#F5F0EB] mb-4" />
-                      <div className="h-4 bg-[#F5F0EB] rounded w-3/4 mb-2" />
-                      <div className="h-3 bg-[#F5F0EB] rounded w-1/2" />
+                    <div key={i} className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden animate-pulse">
+                      <div className="aspect-[3/4] bg-[#F5F0EB]" />
+                      <div className="p-5">
+                        <div className="h-5 bg-[#F5F0EB] rounded w-3/4 mb-2" />
+                        <div className="h-3 bg-[#F5F0EB] rounded w-1/2" />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -811,74 +817,60 @@ export default function EnhancedResultsPage() {
                         })
                         .slice(0, 3);
 
-                      // Fix 3: hide match % if scores don't differentiate (< 5% spread)
-                      const scores = top3
-                        .map((o: any) => o.matchScore ?? o.match ?? o.matchPercentage)
-                        .filter((s: any): s is number => typeof s === 'number');
-                      const showMatchScore = scores.length >= 2 && (Math.max(...scores) - Math.min(...scores)) >= 5;
-
                       return top3.map((outfit, idx) => {
                         const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                         const title = (outfit as any).name || (outfit as any).title || `Outfit ${idx + 1}`;
-                        const rawDesc: string = (outfit as any).explanation || (outfit as any).description || '';
-                        const imageUrl = (outfit as any).image || (outfit as any).imageUrl || '';
-                        const matchPct = (outfit as any).matchScore ?? (outfit as any).match ?? (outfit as any).matchPercentage;
                         const products = Array.isArray((outfit as any).products)
-                          ? (outfit as any).products.map((p: any) => ({
-                              id: p.id || `p-${idx}`,
+                          ? (outfit as any).products.map((p: any, pIdx: number) => ({
+                              id: p.id || `p-${idx}-${pIdx}`,
                               name: p.name || p.title || 'Product',
                               brand: p.brand,
                               imageUrl: p.imageUrl || p.image_url || p.image || '',
-                              price: p.price,
-                              currency: p.currency || 'EUR',
-                              retailer: p.retailer,
-                              affiliateUrl: p.affiliateUrl || p.affiliate_url,
                               productUrl: p.productUrl || p.product_url || p.url,
-                              category: p.category,
-                              color: p.color,
-                              colors: p.colors,
+                              affiliateUrl: p.affiliateUrl || p.affiliate_url,
                             }))
                           : [];
 
-                        // Fix 2: shorten description to human copy
-                        // Pattern: [occasion + kernkenmerk]. Mix van [brands].
-                        const outfitOcc = getOutfitOccasion(outfit, userOccasions);
-                        const occLabel = outfitOcc ? getOccasionLabel(outfitOcc) : '';
+                        const pieces = Array.isArray((outfit as any).pieces)
+                          ? (outfit as any).pieces
+                          : [];
+
+                        // Build description: "Mix van brand1, brand2 en brand3"
                         const brands = products
                           .map((p: any) => p.brand)
                           .filter((b: any): b is string => !!b && b.trim().length > 0);
                         const uniqueBrands = [...new Set(brands)].slice(0, 3);
-                        const fitLabel = answers?.fit ? (answers.fit === 'relaxed' ? 'relaxed fit' : answers.fit === 'slim' ? 'slim fit' : answers.fit) : '';
-
-                        let shortDesc: string;
-                        if (occLabel && fitLabel) {
-                          shortDesc = `${occLabel} look met ${fitLabel}.`;
-                        } else if (occLabel) {
-                          shortDesc = `${occLabel} look.`;
-                        } else if (rawDesc.length <= 100) {
-                          shortDesc = rawDesc;
+                        let shortDesc = '';
+                        if (uniqueBrands.length >= 2) {
+                          const last = uniqueBrands.pop();
+                          shortDesc = `Mix van ${uniqueBrands.join(', ')} en ${last}`;
+                        } else if (uniqueBrands.length === 1) {
+                          shortDesc = `Van ${uniqueBrands[0]}`;
                         } else {
-                          // Truncate raw description to first sentence
-                          const firstSentence = rawDesc.split(/[.!—:;]/)[0]?.trim() || rawDesc;
-                          shortDesc = firstSentence.length <= 80 ? firstSentence + '.' : firstSentence.slice(0, 77) + '…';
+                          // Fallback to vibe for seed outfits
+                          shortDesc = (outfit as any).vibe || (outfit as any).notes || '';
                         }
-                        if (uniqueBrands.length > 0) {
-                          shortDesc += ` Mix van ${uniqueBrands.join(', ')}.`;
-                        }
+
+                        const hasShoppableProducts = products.some(
+                          (p: any) => p.productUrl || p.affiliateUrl
+                        );
 
                         return (
                           <AnimatedSection key={String(id)} delay={idx * 0.08}>
-                            <OutfitCard
-                              outfit={{
-                                id: String(id),
-                                title,
-                                description: shortDesc,
-                                imageUrl,
-                                matchPercentage: showMatchScore && typeof matchPct === 'number' ? matchPct : undefined,
-                                archetype: archetypeName,
-                                tags: (outfit as any).tags,
-                                products,
-                              }}
+                            <OutfitPreviewCard
+                              id={String(id)}
+                              title={title}
+                              description={shortDesc}
+                              products={products}
+                              pieces={pieces}
+                              onShopClick={
+                                hasShoppableProducts
+                                  ? () => {
+                                      setActiveTab('outfits');
+                                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }
+                                  : undefined
+                              }
                             />
                           </AnimatedSection>
                         );
@@ -891,9 +883,10 @@ export default function EnhancedResultsPage() {
                         setActiveTab('outfits');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className="text-[#C2654A] hover:text-[#A8513A] font-semibold text-sm transition-colors duration-200"
+                      className="text-[#C2654A] hover:text-[#A8513A] font-semibold text-sm inline-flex items-center gap-2 transition-colors duration-200"
                     >
-                      Bekijk alle outfits →
+                      Bekijk alle outfits
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 </>
