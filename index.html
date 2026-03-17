@@ -37,7 +37,21 @@
     <!-- Daisycon verification -->
     <meta name="ee766b42deed7db" content="4a91cb66c90ac80df32bb7517a55886a" />
 
-    <!-- GA4 is loaded programmatically after consent — see src/utils/analytics.ts -->
+    <!-- Google tag (gtag.js) — consent mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied',
+        'wait_for_update': 500
+      });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1PPLR2L3R"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-D1PPLR2L3R');
+    </script>
   </head>
   <body>
     <div id="root"></div>

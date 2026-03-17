@@ -7,44 +7,29 @@ declare global {
   }
 }
 
-const GA_ID = import.meta.env.VITE_GTAG_ID as string | undefined;
-
-let initialized = false;
-
-function loadGA() {
-  if (initialized || !GA_ID) return;
-  initialized = true;
-
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  document.head.appendChild(script);
-
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function (...args: unknown[]) {
-    (window.dataLayer as unknown[]).push(args);
-  };
-  window.gtag("js", new Date());
-  window.gtag("config", GA_ID, { anonymize_ip: true });
+function updateConsentState(granted: boolean) {
+  if (typeof window.gtag !== "function") return;
+  window.gtag("consent", "update", {
+    analytics_storage: granted ? "granted" : "denied",
+    ad_storage: "denied",
+  });
 }
 
 function canTrack(): boolean {
   try {
-    return !!GA_ID && getCookiePrefs().analytics && typeof window !== "undefined";
+    return getCookiePrefs().analytics && typeof window !== "undefined";
   } catch {
     return false;
   }
 }
 
 export function initAnalytics() {
-  if (canTrack()) {
-    loadGA();
-  }
+  updateConsentState(canTrack());
 
   try {
     window.addEventListener("storage", (e) => {
       if (e.key !== CONSENT_KEY) return;
-      if (canTrack()) loadGA();
+      updateConsentState(canTrack());
     });
   } catch {}
 }
