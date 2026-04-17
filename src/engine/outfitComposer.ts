@@ -1,6 +1,8 @@
 import { isAdultClothingProduct, classifyCategory } from './productFilter';
 import { matchesColorSeason } from './colorSeasonFiltering';
 import { deriveAthleticIntent as _deriveAthleticIntentFromEnricher } from './productEnricher';
+import { getCurrentSeason } from './helpers';
+import type { Season } from './types';
 
 export interface CleanProduct {
   id: string;
@@ -16,6 +18,7 @@ export interface CleanProduct {
   description: string;
   retailer: string;
   tags: string[];
+  seasons: Season[];
   athleticIntent?: number;
   subType?: string;
   itemReason?: string;
@@ -261,6 +264,59 @@ export interface UserPreferences {
   occasions?: string[];
   colorProfile?: { season?: string; temperature?: string; value?: string; contrast?: string };
   budget?: { min: number; max: number };
+  season?: Season;
+}
+
+// Keyword heuristics for detecting clearly season-bound items. These are
+// intentionally conservative — we only reject an item when its name or
+// description strongly signals a single season.
+const SEASON_ONLY_PATTERNS: Record<Season, RegExp[]> = {
+  winter: [
+    /winterjas/i, /winter coat/i, /\bpuffer\b/i, /down\s*jacket/i, /donsjack/i,
+    /parka/i, /teddy/i, /sherpa/i, /fleece(?!.*short)/i, /gevoerd/i,
+    /thermisch/i, /thermal/i, /coltrui/i, /turtleneck/i,
+  ],
+  summer: [
+    /\bshort(s)?\b/i, /korte broek/i, /zwembroek/i, /swim\s*short/i,
+    /bikini/i, /tankini/i, /zwempak/i, /\bsandaal\b/i, /\bsandal\b/i,
+    /\bslipper(s)?\b/i, /flip.?flop/i, /teenslipper/i, /linnen short/i,
+  ],
+  spring: [],
+  autumn: [],
+};
+
+function detectProductSeasons(
+  raw: Record<string, any>,
+  name: string,
+  description: string,
+): Season[] {
+  // Prefer explicit season data from the row when available.
+  const rawSeason = raw.season ?? raw.seasons;
+  if (Array.isArray(rawSeason)) {
+    const valid = rawSeason
+      .map(s => String(s).toLowerCase())
+      .filter((s): s is Season => s === 'spring' || s === 'summer' || s === 'autumn' || s === 'winter');
+    if (valid.length > 0) return valid;
+  } else if (typeof rawSeason === 'string' && rawSeason.trim() !== '') {
+    const s = rawSeason.toLowerCase();
+    if (s === 'spring' || s === 'summer' || s === 'autumn' || s === 'winter') {
+      return [s];
+    }
+  }
+
+  // Fall back to keyword-based inference.
+  const text = `${name} ${description}`.toLowerCase();
+  const inferred: Season[] = [];
+  (['winter', 'summer'] as Season[]).forEach(s => {
+    if (SEASON_ONLY_PATTERNS[s].some(r => r.test(text))) inferred.push(s);
+  });
+  return inferred;
+}
+
+function isProductInSeason(p: CleanProduct, season: Season): boolean {
+  // No explicit season tags → item is considered season-neutral.
+  if (!p.seasons || p.seasons.length === 0) return true;
+  return p.seasons.includes(season);
 }
 
 const OCCASION_QUIZ_TO_COMPOSER: Record<string, string> = {
@@ -295,13 +351,17 @@ export function composeOutfits(
   count: number,
   gender?: string,
   prefs?: UserPreferences,
+  season?: Season,
 ): ComposedOutfit[] {
+  const activeSeason: Season = season ?? prefs?.season ?? getCurrentSeason();
   const clean = rawRows.filter(isAdultClothingProduct);
 
   const products: CleanProduct[] = clean.map(r => {
+    const name = r.name || r.title || '';
+    const description = r.description || '';
     const base: CleanProduct = {
       id: r.id,
-      name: r.name || r.title || '',
+      name,
       brand: r.brand || '',
       price: typeof r.price === 'number' ? r.price : parseFloat(r.price) || 0,
       imageUrl: r.image_url || r.imageUrl || '',
@@ -310,14 +370,17 @@ export function composeOutfits(
       colors: Array.isArray(r.colors) ? r.colors : [],
       style: r.style || 'casual',
       gender: r.gender || 'unisex',
-      description: r.description || '',
+      description,
       retailer: r.retailer || '',
       tags: Array.isArray(r.tags) ? r.tags : [],
+      seasons: detectProductSeasons(r, name, description),
     };
     base.athleticIntent = deriveAthleticIntent(base);
     base.subType = classifySubType(base);
     return base;
-  }).filter(p => p.category !== 'other' && p.imageUrl && p.url);
+  })
+    .filter(p => p.category !== 'other' && p.imageUrl && p.url)
+    .filter(p => isProductInSeason(p, activeSeason));
 
   if (gender && gender !== 'unisex') {
     const genFiltered = products.filter(p => p.gender === gender || p.gender === 'unisex');
