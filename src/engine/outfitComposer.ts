@@ -496,25 +496,34 @@ function buildOutfit(
 ): ComposedOutfit | null {
   const selected: CleanProduct[] = [];
   const selectedBrands = new Set<string>();
+  // Track product IDs already placed in THIS outfit so the same product can
+  // never be selected twice (e.g. as both the top and the optional layer).
+  const selectedIds = new Set<string>();
   const itemCeiling = perItemCeiling(prefs?.budget);
 
+  const addSelected = (p: CleanProduct) => {
+    selected.push(p);
+    selectedBrands.add(p.brand.toLowerCase());
+    selectedIds.add(p.id);
+  };
+
   for (const cat of blueprint.required) {
-    let pool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id) && p.price >= blueprint.priceFloor);
+    let pool = (byCategory[cat] || []).filter(p =>
+      !usedIds.has(p.id) && !selectedIds.has(p.id) && p.price >= blueprint.priceFloor
+    );
     pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) {
-      let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
+      let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id) && !selectedIds.has(p.id));
       fallbackPool = budgetFilterPool(fallbackPool, itemCeiling);
       if (fallbackPool.length === 0) return null;
       const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
       if (!pick) return null;
-      selected.push(pick);
-      selectedBrands.add(pick.brand.toLowerCase());
+      addSelected(pick);
       continue;
     }
     const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (!pick) return null;
-    selected.push(pick);
-    selectedBrands.add(pick.brand.toLowerCase());
+    addSelected(pick);
   }
 
   const topId = selected.find(p => p.category === 'top')?.id || '';
@@ -522,13 +531,22 @@ function buildOutfit(
   const comboKey = `${topId}-${bottomId}`;
   if (usedCombos.has(comboKey)) {
     let altPool = (byCategory['bottom'] || [])
-      .filter(p => !usedIds.has(p.id) && p.id !== bottomId && p.price >= blueprint.priceFloor);
+      .filter(p =>
+        !usedIds.has(p.id)
+        && !selectedIds.has(p.id)
+        && p.id !== bottomId
+        && p.price >= blueprint.priceFloor
+      );
     altPool = budgetFilterPool(altPool, itemCeiling);
     const altBottom = altPool
       .sort((a, b) => scoreProduct(b, blueprint, archetype, selectedBrands, selected, prefs) - scoreProduct(a, blueprint, archetype, selectedBrands, selected, prefs))[0];
     if (altBottom) {
       const idx = selected.findIndex(p => p.category === 'bottom');
-      if (idx >= 0) selected[idx] = altBottom;
+      if (idx >= 0) {
+        selectedIds.delete(selected[idx].id);
+        selected[idx] = altBottom;
+        selectedIds.add(altBottom.id);
+      }
     }
   }
 
@@ -537,14 +555,13 @@ function buildOutfit(
 
   for (const cat of blueprint.optional) {
     let pool = (byCategory[cat] || []).filter(p =>
-      !usedIds.has(p.id) && p.price >= blueprint.priceFloor
+      !usedIds.has(p.id) && !selectedIds.has(p.id) && p.price >= blueprint.priceFloor
     );
     pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) continue;
     const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (pick) {
-      selected.push(pick);
-      selectedBrands.add(pick.brand.toLowerCase());
+      addSelected(pick);
     }
   }
 
@@ -559,6 +576,7 @@ function buildOutfit(
         const altPool = (byCategory[swapCat] || [])
           .filter(p =>
             !usedIds.has(p.id)
+            && !selectedIds.has(p.id)
             && p.id !== currentItem.id
             && (p.subType || p.category) !== (currentItem.subType || currentItem.category)
           );
@@ -566,7 +584,11 @@ function buildOutfit(
         const alt = pickBest(altPool, blueprint, archetype, seed + swapCat.length * 7, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
         if (alt) {
           const idx = selected.indexOf(currentItem);
-          if (idx >= 0) selected[idx] = alt;
+          if (idx >= 0) {
+            selectedIds.delete(currentItem.id);
+            selected[idx] = alt;
+            selectedIds.add(alt.id);
+          }
           break;
         }
       }
