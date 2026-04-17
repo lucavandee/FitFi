@@ -556,7 +556,11 @@ function generateOutfitForOccasion(
   const fallbackProducts: Product[] = [];
   const outfitBrands = new Set<string>(usedBrandsGlobal || []);
 
-  for (const category of outfitStructure.requiredCategories) {
+  // Iterate over a snapshot because a successful substitute (e.g. DRESS for TOP)
+  // mutates outfitStructure.requiredCategories to drop the categories it replaces.
+  const requiredCategoriesToProcess = [...outfitStructure.requiredCategories];
+
+  for (const category of requiredCategoriesToProcess) {
     if (selectedCategories.includes(category)) continue;
 
     const selectedProduct = selectProductForCategory(
@@ -594,6 +598,16 @@ function generateOutfitForOccasion(
         const substituteCategories = [ProductCategory.DRESS, ProductCategory.JUMPSUIT];
 
         for (const substituteCategory of substituteCategories) {
+          const replacedCategories = SUBSTITUTE_CATEGORIES[substituteCategory] || [];
+
+          // A DRESS/JUMPSUIT replaces both TOP and BOTTOM. If either of those
+          // already has a real product in the outfit, substituting would create
+          // a conflict (e.g. DRESS + TOP or DRESS + BOTTOM). Skip in that case.
+          const hasConflict = replacedCategories.some(rc =>
+            outfitProducts.some(p => getProductCategory(p) === rc)
+          );
+          if (hasConflict) continue;
+
           const substituteProduct = selectProductForCategory(
             productsByCategory,
             substituteCategory,
@@ -617,11 +631,15 @@ function generateOutfitForOccasion(
             outfitProducts.push(substituteProduct);
             selectedCategories.push(substituteCategory);
 
-            const replacedCategories = SUBSTITUTE_CATEGORIES[substituteCategory] || [];
             replacedCategories.forEach(replacedCategory => {
               if (!selectedCategories.includes(replacedCategory)) {
                 selectedCategories.push(replacedCategory);
               }
+              // Also drop the replaced category from requiredCategories so the
+              // completeness score reflects the effective required set and no
+              // other branch can try to fill it again.
+              const idx = outfitStructure.requiredCategories.indexOf(replacedCategory);
+              if (idx !== -1) outfitStructure.requiredCategories.splice(idx, 1);
             });
 
             console.log(`Used ${substituteCategory} as substitute for ${category}`);
