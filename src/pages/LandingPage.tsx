@@ -13,7 +13,6 @@ import {
   Lock,
   Info,
 } from "lucide-react";
-import { useUser } from "@/context/UserContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
 import { useTestimonials } from "@/hooks/useTestimonials";
@@ -53,7 +52,6 @@ const marqueeCSS = `
 `;
 
 export default function LandingPage() {
-  const { user } = useUser();
   const navigate = useNavigate();
 
   /* Preserve existing data-fetching */
@@ -76,7 +74,7 @@ export default function LandingPage() {
   const { testimonials } = useTestimonials();
 
   const handleStartClick = () => {
-    navigate(user ? "/onboarding" : "/registreren");
+    navigate("/onboarding");
   };
 
   const handleExampleClick = () => {
