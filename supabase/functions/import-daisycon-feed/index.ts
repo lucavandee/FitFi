@@ -2,7 +2,17 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders } from "../_shared/cors.ts";
 
 const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior|kinder)\b/;
-const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|tafellamp|bureaulamp|staande\s?lamp|plafondlamp|wandlamp|candle|kaars|geurkaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|sport\s?equipment|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|pantoffel|teenslip|vaas|vases|spiegel|mirrors|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast|voetbal|football|soccer|voetbalset|voetbalshirt|voetbalschoen|voetbalbroek|keepershandschoen|scheenbeschermer|shin\s?guard|rugby|hockey|handbal|basketbal|wielren|cycling|fietsbroek|fietsshirt|wielershirt|hardloop|running\s?shoe|trail\s?run|marathon|tennisschoen|tennisrok|golfschoen|golfbroek|wandelschoen|bergschoen|klimschoen|cleat|crampon|crossfit|spinning|sportbeha|sport\s?bh|skibroek|skipak|snowboard|skischoenen|skistok|wintersport|wetsuit|duik|snorkel|surfboard|multipack|hemd|dishware|glassware|bottles\s?and\s?pitchers|storage\s?and\s?baskets|table\s?lamps|clocks|trays|decorative\s?accessories|kitchen\s?accessories|desk\s?accessories|candle\s?holders|figurines|photo\s?frames|verkleedpak|verkleedset|kostuum(?!pantalon|gilet|broek|vest|jasje|colbert))\b/;
+
+// Non-fashion rejects (home/beauty/underwear/beddengoed/etc). Bewust zonder
+// sportartikelen — die staan hieronder in PURE_SPORT_KEYWORDS zodat we die
+// apart kunnen splitsen van athleisure.
+const EXCLUDED_PRODUCT_KEYWORDS = /\b(poster|muurposter|wall\s?art|wall\s?poster|canvas\s?print|home\s?decor|woonaccessoire|schilderij|fotolijst|cadeau|cadeauset|gift\s?set|phone\s?case|telefoonhoesje|sticker|laptop\s?sleeve|mugshot|mok|cup|pillow\s?case|kussenhoes|gordijn|curtain|tapijt|carpet|rug|bedding|dekbed|matras|mattress|lamp|tafellamp|bureaulamp|staande\s?lamp|plafondlamp|wandlamp|candle|kaars|geurkaars|parfum|perfume|beauty|skincare|makeup|cosmet|lipstick|mascara|nail|haar|hair\s?care|shampoo|conditioner|bodywash|douchegel|deodorant|sunscreen|zonnebrand|supplement|vitamin|nutrition|fiets|bike|toy|speelgoed|game|puzzle|book|boek|dvd|cd|electronics|laptop|tablet|phone|horloge\s?band|pyjama|nachthem|slaappak|badjas|ochtendjas|ondergoed|onderbroek|boxer|bh|bralette|lingerie|sok|sokken|panty|kousen|bikini|badpak|zwembroek|zwemshort|boardshort|slipper|badslip|teenslipper|flip-flop|pantoffel|teenslip|vaas|vases|spiegel|mirrors|knuffel|knuffeldier|romper|kruippak|slab|boxpak|babypak|luier|fopspeen|aankleedkussen|deken|beddengoed|kussensloop|aftershave|bodylotion|bronzer|kwast|multipack|hemd|dishware|glassware|bottles\s?and\s?pitchers|storage\s?and\s?baskets|table\s?lamps|clocks|trays|decorative\s?accessories|kitchen\s?accessories|desk\s?accessories|candle\s?holders|figurines|photo\s?frames|verkleedpak|verkleedset|kostuum(?!pantalon|gilet|broek|vest|jasje|colbert))\b/;
+
+// Alleen pure competitieve sportartikelen. Athleisure (joggers, sneakers,
+// hoodies, running shoes, fitness/crossfit/spinning wear) blijft er DOORHEEN
+// komen, zodat het ATHLETIC archetype producten krijgt.
+const PURE_SPORT_KEYWORDS = /\b(voetbal|football|soccer|voetbalset|voetbalshirt|voetbalschoen|voetbalbroek|keepershandschoen|scheenbeschermer|shin\s?guard|rugby|hockey|handbal|basketbal|wielren|fietsbroek|fietsshirt|wielershirt|trail\s?run|marathon|tennisschoen|tennisrok|golfschoen|golfbroek|wandelschoen|bergschoen|klimschoen|cleat|crampon|sportbeha|sport\s?bh|skibroek|skipak|snowboard|skischoenen|skistok|wintersport|wetsuit|duik|snorkel|surfboard|sport\s?equipment)\b/;
+
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic)\b/i;
 const SET_OF_REGEX = /\bset\s+van\s+\d/i;
 const MULTIPACK_REGEX = /\b\d+[- ]?(pack|stuks|set)\b/i;
@@ -11,6 +21,7 @@ function isFashionProduct(title, categoryPath, description = "") {
   const text = (title + " " + categoryPath + " " + description).toLowerCase();
   if (EXCLUDED_CATEGORY_KEYWORDS.test(text)) return false;
   if (EXCLUDED_PRODUCT_KEYWORDS.test(text)) return false;
+  if (PURE_SPORT_KEYWORDS.test(text)) return false;
   if (SPORT_FOOTWEAR_REGEX.test(title)) return false;
   if (SET_OF_REGEX.test(title)) return false;
   if (MULTIPACK_REGEX.test(title)) return false;
@@ -48,20 +59,34 @@ function inferGender(title, genderTarget, categoryPath) {
 function inferStyle(title, description, brand) {
   const text = (title + " " + description + " " + brand).toLowerCase();
 
-  const STREETWEAR_BRANDS = ["nike", "adidas", "puma", "new balance", "jordan", "stussy", "stüssy", "carhartt", "dickies", "vans", "converse", "supreme", "palace", "the new originals", "daily paper", "filling pieces", "off-white", "champion"];
-  const PREMIUM_BRANDS = ["ralph lauren", "tommy hilfiger", "hugo boss", "boss", "lacoste", "gant", "marc o'polo", "scotch & soda", "ted baker", "calvin klein", "michael kors"];
+  const STREETWEAR_BRANDS = ["stussy", "stüssy", "carhartt", "dickies", "vans", "converse", "supreme", "palace", "the new originals", "daily paper", "filling pieces", "off-white", "champion"];
+  const ATHLETIC_BRANDS = ["nike", "adidas", "puma", "new balance", "jordan", "asics", "reebok", "under armour", "on running", "hoka", "salomon", "the north face"];
+  const BUSINESS_BRANDS = ["suitsupply", "hugo boss", "boss", "ermenegildo zegna", "zegna", "brooks brothers", "canali", "corneliani", "paul smith", "hackett", "charles tyrwhitt", "thomas pink", "t.m.lewin", "olymp", "van laack"];
+  const PREMIUM_BRANDS = ["ralph lauren", "tommy hilfiger", "lacoste", "gant", "marc o'polo", "scotch & soda", "ted baker", "calvin klein", "michael kors"];
   const LUXURY_BRANDS = ["gucci", "prada", "balenciaga", "saint laurent", "burberry", "versace", "givenchy", "valentino", "fendi", "bottega veneta", "tom ford", "armani"];
   const MINIMALIST_BRANDS = ["cos", "arket", "uniqlo", "muji", "everlane", "filippa k", "theory", "jil sander", "apc", "acne studios"];
 
   const brandLower = (brand || "").toLowerCase();
 
+  // Brand hits that clearly signal formalwear lines get routed to BUSINESS
+  // even if the brand has casual lines too. Title must hint formal.
+  const formalTitleHit = /\b(pak|suit|colbert|blazer|pantalon|overhemd|dress shirt|tailored|single[- ]breasted|double[- ]breasted|tuxedo|smoking|stropdas|vlinderdas|oxford|derby|brogue|monk|gilet)\b/.test(text);
+
+  if (BUSINESS_BRANDS.some(b => brandLower.includes(b))) return "business";
+  if ((PREMIUM_BRANDS.some(b => brandLower.includes(b)) || brandLower.includes("tommy hilfiger") || brandLower.includes("ralph lauren")) && formalTitleHit) return "business";
   if (LUXURY_BRANDS.some(b => brandLower.includes(b))) return "luxury";
   if (MINIMALIST_BRANDS.some(b => brandLower.includes(b))) return "minimalist";
+  if (ATHLETIC_BRANDS.some(b => brandLower.includes(b))) {
+    if (/\b(jogger|jogging|track|hoodie|sweatpant|sweatshirt|tech|performance|training|running|run|tee|tank|fleece|mesh)\b/.test(text)) return "athletic";
+    return "streetwear";
+  }
   if (STREETWEAR_BRANDS.some(b => brandLower.includes(b))) return "streetwear";
   if (PREMIUM_BRANDS.some(b => brandLower.includes(b))) return "smart-casual";
 
+  if (formalTitleHit) return "business";
   if (/\b(hoodie|hooded|jogger|jogging|cargo|bomber|sneaker|graphic|graffiti|oversized|baggy|wide[- ]?leg|skate|hip[- ]?hop)\b/.test(text)) return "streetwear";
-  if (/\b(blazer|colbert|pantalon|overhemd|dress shirt|tailored|single-breasted|double-breasted|chino|oxford|derby|brogue|loafer)\b/.test(text)) return "smart-casual";
+  if (/\b(tech|performance|training|athleisure|track\s?pant|running|jog|gym|workout|fleece|mesh)\b/.test(text)) return "athletic";
+  if (/\b(chino|loafer)\b/.test(text)) return "smart-casual";
   if (/\b(effen|basic|clean|minimal|simpel|strak|monochroom)\b/.test(text)) return "minimalist";
   if (/\b(silk|zijde|satin|satijn|cashmere|kasjmier|elegant|luxe|premium|exclusive|high-end)\b/.test(text)) return "luxury";
   if (/\b(t-shirt|polo|jeans|spijkerbroek|sneakers|casual|relaxed|everyday|alledaags)\b/.test(text)) return "casual";

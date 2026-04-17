@@ -11,7 +11,8 @@ export const ARCHETYPE_TO_DUTCH: Record<ArchetypeKey, string> = {
   SMART_CASUAL: 'casual_chic',
   STREETWEAR: 'urban',
   ATHLETIC: 'sportief',
-  AVANT_GARDE: 'avant_garde'
+  AVANT_GARDE: 'avant_garde',
+  BUSINESS: 'zakelijk'
 };
 
 export const DUTCH_TO_ARCHETYPE: Record<string, ArchetypeKey> = {
@@ -20,7 +21,8 @@ export const DUTCH_TO_ARCHETYPE: Record<string, ArchetypeKey> = {
   casual_chic: 'SMART_CASUAL',
   urban: 'STREETWEAR',
   sportief: 'ATHLETIC',
-  avant_garde: 'AVANT_GARDE'
+  avant_garde: 'AVANT_GARDE',
+  zakelijk: 'BUSINESS'
 };
 
 /**

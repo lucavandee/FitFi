@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngine";
+import { runEngineV2 } from "@/engine/v2";
 import { generateNovaExplanation } from "@/engine/explainOutfit";
 import { filterByGender, getUserGender } from "@/services/products/genderFilter";
 import { reclassifyProducts } from "@/engine/productClassifier";
@@ -83,12 +84,30 @@ class OutfitService {
         return [];
       }
 
-      // Generate outfits - recommendationEngine handles ALL filtering
-      const outfits = generateRecommendationsFromAnswers(
-        quizAnswers,
-        products,
-        count
-      );
+      const useV2 = shouldUseEngineV2();
+      let outfits: Outfit[] = [];
+
+      if (useV2) {
+        try {
+          const result = runEngineV2(quizAnswers, products, {
+            count,
+            debug: true,
+          });
+          outfits = result.outfits;
+          console.log('[OutfitService] engine v2 stats', result.stats);
+        } catch (err) {
+          console.error('[OutfitService] engine v2 failed, falling back to v1', err);
+          outfits = [];
+        }
+      }
+
+      if (outfits.length === 0) {
+        outfits = generateRecommendationsFromAnswers(
+          quizAnswers,
+          products,
+          count
+        );
+      }
 
       if (outfits.length === 0) {
         console.warn('[OutfitService] No outfits generated - likely insufficient products after filtering');
@@ -171,6 +190,23 @@ class OutfitService {
     this.productsCache.clear();
     this.cacheTimestamps.clear();
   }
+}
+
+function shouldUseEngineV2(): boolean {
+  try {
+    const env = (import.meta as any).env ?? {};
+    const flag = env.VITE_ENGINE_V2 ?? env.VITE_USE_ENGINE_V2;
+    if (typeof flag === 'string') {
+      if (flag === '0' || flag.toLowerCase() === 'false') return false;
+    }
+    if (typeof window !== 'undefined') {
+      const override = window.localStorage?.getItem('ff_engine_v2');
+      if (override === '0' || override === 'false') return false;
+    }
+  } catch {
+    // ignore
+  }
+  return true;
 }
 
 export const outfitService = new OutfitService();

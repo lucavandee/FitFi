@@ -128,12 +128,14 @@ function scoreSwipeEmbedding(outfit: Outfit, ctx: RankCtx): { score: number; rea
 const ARCHETYPE_KEY_MAP: Record<string, ArchetypeKey> = {
   MINIMALIST: 'MINIMALIST', CLASSIC: 'CLASSIC', SMART_CASUAL: 'SMART_CASUAL',
   STREETWEAR: 'STREETWEAR', ATHLETIC: 'ATHLETIC', AVANT_GARDE: 'AVANT_GARDE',
+  BUSINESS: 'BUSINESS',
   minimalist: 'MINIMALIST', klassiek: 'CLASSIC', classic: 'CLASSIC',
   smart_casual: 'SMART_CASUAL', 'smart-casual': 'SMART_CASUAL', casual_chic: 'SMART_CASUAL',
   urban: 'STREETWEAR', streetstyle: 'STREETWEAR', streetwear: 'STREETWEAR',
   athletic: 'ATHLETIC', sporty: 'ATHLETIC',
   avant_garde: 'AVANT_GARDE', avantgarde: 'AVANT_GARDE', retro: 'AVANT_GARDE',
   bohemian: 'AVANT_GARDE', luxury: 'CLASSIC',
+  business: 'BUSINESS', zakelijk: 'BUSINESS', formal: 'BUSINESS', tailored: 'BUSINESS',
 };
 
 function resolveKey(raw: string): ArchetypeKey {

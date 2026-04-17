@@ -23,6 +23,7 @@ const DESCRIPTIONS: Record<ArchetypeKey, string> = {
   STREETWEAR: 'Expressieve urban looks met een sportieve edge.',
   ATHLETIC: 'Functionele outfits met een sportieve, moderne uitstraling.',
   AVANT_GARDE: 'Statement looks die conventie uitdagen.',
+  BUSINESS: 'Getailleerde looks voor kantoor en formele momenten.',
 };
 
 const SEASON_SUFFIX: Record<string, string> = {

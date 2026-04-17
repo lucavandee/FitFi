@@ -42,6 +42,8 @@ export function generateOutfitExplanation(
     'athletic': 'functionele sportswear met nadruk op performance en comfort',
     'avant_garde': 'conceptuele mode met onverwachte proporties en texturen',
     'AVANT_GARDE': 'conceptuele mode met onverwachte proporties en texturen',
+    'business': 'getailleerde looks voor kantoor en formele momenten',
+    'BUSINESS': 'getailleerde looks voor kantoor en formele momenten',
   };
 
   const occasionLabels: Record<string, string> = {
