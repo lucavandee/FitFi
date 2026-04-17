@@ -160,12 +160,15 @@ export async function fetchOutfits(_opts?: {
     let allRows: Record<string, any>[] = results.flat();
 
     if (allRows.length < 10) {
-      const { data } = await client
+      let fallbackQ = client
         .from("products")
         .select(selectFields)
         .eq("in_stock", true)
-        .eq("is_kids", false)
-        .limit(400);
+        .eq("is_kids", false);
+      if (_opts?.gender && _opts.gender !== "unisex") {
+        fallbackQ = fallbackQ.or(`gender.eq.${_opts.gender},gender.eq.unisex`);
+      }
+      const { data } = await fallbackQ.limit(400);
       if (data && data.length >= 10) allRows = data;
     }
 
