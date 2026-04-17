@@ -1,14 +1,15 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import Stripe from "npm:stripe@14.21.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey, stripe-signature",
-};
+import { buildCorsHeaders } from "../_shared/cors.ts";
 
 Deno.serve(async (req: Request) => {
+  // Stripe webhooks are server-to-server (no Origin header), but we still
+  // emit headers for the OPTIONS preflight that Stripe never sends — harmless.
+  const corsHeaders = buildCorsHeaders(req, {
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization, X-Client-Info, Apikey, stripe-signature",
+  });
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
