@@ -45,11 +45,16 @@ export function useRateLimit() {
 
         if (error) {
           console.error('Rate limit check error:', error);
-          // Fail open: allow request if rate limit check fails
+          // SECURITY: fail closed when the server rate-limit check itself
+          // errors. Failing open lets attackers DoS the rate-limit RPC and
+          // get unlimited request capacity. A short user-visible block is
+          // safer than silent bypass — the server side will enforce again
+          // on the actual call.
           return {
-            allowed: true,
-            remaining: config.maxRequests,
-            resetAt: null,
+            allowed: false,
+            remaining: 0,
+            resetAt: new Date(Date.now() + 60_000),
+            retryAfter: 60,
           };
         }
 
@@ -73,11 +78,13 @@ export function useRateLimit() {
         return newStatus;
       } catch (err) {
         console.error('Rate limit error:', err);
-        // Fail open: allow request on error
+        // SECURITY: fail closed (see above). Network/JS errors are not a
+        // free pass past the rate limit.
         return {
-          allowed: true,
-          remaining: config.maxRequests,
-          resetAt: null,
+          allowed: false,
+          remaining: 0,
+          resetAt: new Date(Date.now() + 60_000),
+          retryAfter: 60,
         };
       }
     },

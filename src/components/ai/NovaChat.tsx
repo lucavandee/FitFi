@@ -15,6 +15,7 @@ import NovaLoginPrompt from '@/components/auth/NovaLoginPrompt';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 import { generateNovaExplanation } from '@/engine/explainOutfit';
 import { RateLimitIndicator } from './RateLimitIndicator';
+import { sanitizeRichHtml } from '@/utils/sanitizeHtml';
 
 // Helper: verwijder JSON markers tijdens streaming
 function stripJSONMarkers(text: string): string {
@@ -571,7 +572,7 @@ const NovaChat: React.FC = () => {
               <div
                 className="nova-content"
                 dangerouslySetInnerHTML={{
-                  __html: mdLite(message.content)
+                  __html: sanitizeRichHtml(mdLite(message.content))
                 }}
               />
             )}

@@ -27,7 +27,7 @@ const DEFAULT_ITEMS: PressLogo[] = [
   { label: "Bright" },
 ];
 
-const PressLogoBelt: React.FC<Props> = ({ items = DEFAULT_ITEMS, className, useLogos = false }) => {
+const PressLogoBelt: React.FC<Props> = ({ items = DEFAULT_ITEMS, className, useLogos = true }) => {
   return (
     <div className={`pressbelt ${className ?? ""}`}>
       <span className="pressbelt-lead text-[var(--color-muted)]">Gezien in</span>

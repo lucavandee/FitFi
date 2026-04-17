@@ -12,6 +12,7 @@ import NovaLoginPrompt from '@/components/auth/NovaLoginPrompt';
 import { getUserTier, checkQuotaLimit, incrementUsage } from '@/utils/session';
 import track from '@/utils/telemetry';
 import toast from 'react-hot-toast';
+import { sanitizeRichHtml } from '@/utils/sanitizeHtml';
 
 function stripJSONMarkers(text: string): string {
   const START = '<<<FITFI_JSON>>>';
@@ -457,7 +458,7 @@ function DashboardNovaSectionInner() {
                   ) : (
                     <div
                       className="text-sm prose prose-sm max-w-none dark:prose-invert"
-                      dangerouslySetInnerHTML={{ __html: mdLite(message.content) }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(mdLite(message.content)) }}
                     />
                   )}
                 </div>
