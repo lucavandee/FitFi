@@ -45,8 +45,8 @@ function inferCategory(title, description, categoryPath) {
 
 function inferGender(title, genderTarget, categoryPath) {
   const g = (genderTarget + " " + categoryPath + " " + title).toLowerCase();
-  if (g.includes("female") || g.includes("women") || g.includes("vrouw") || g.includes("dames") || g.includes("girl")) return "female";
-  if (g.includes("male") || g.includes("men") || g.includes("man") || g.includes("heren") || g.includes("boy")) return "male";
+  if (/\b(female|women|woman|vrouw|dames|girl)\b/i.test(g)) return "female";
+  if (/\b(male|men|man|heren|boy)\b/i.test(g)) return "male";
   return "unisex";
 }
 
