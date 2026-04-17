@@ -173,7 +173,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
           Kleuranalyse via foto
         </h2>
         <p className="text-sm text-[var(--color-muted)] max-w-md mx-auto leading-relaxed">
-          Upload een foto van je outfit of jezelf — Nova analyseert welke kleuren het beste bij je passen. <strong className="text-[var(--color-text)]">Geen biometrische data, geen gezichtsherkenning.</strong>
+          Upload een foto van je outfit of jezelf — Nova analyseert welke kleuren het beste bij je passen. <strong className="text-[var(--color-text)]">Je foto helpt kleuren en stijl te matchen, meer niet. We slaan geen gezichtsdata op.</strong>
         </p>
       </div>
 
