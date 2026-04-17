@@ -500,6 +500,7 @@ function buildOutfit(
   // never be selected twice (e.g. as both the top and the optional layer).
   const selectedIds = new Set<string>();
   const itemCeiling = perItemCeiling(prefs?.budget);
+  const budgetMax = prefs?.budget && prefs.budget.max > 0 ? prefs.budget.max : Infinity;
 
   const addSelected = (p: CleanProduct) => {
     selected.push(p);
@@ -561,6 +562,9 @@ function buildOutfit(
     if (pool.length === 0) continue;
     const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (pick) {
+      // Reject the addition if it would push the outfit over the user's budget.
+      const projectedTotal = selected.reduce((s, p) => s + p.price, 0) + pick.price;
+      if (projectedTotal > budgetMax) continue;
       addSelected(pick);
     }
   }
@@ -598,6 +602,11 @@ function buildOutfit(
   for (const p of selected) usedIds.add(p.id);
 
   const totalPrice = selected.reduce((s, p) => s + p.price, 0);
+  // Final budget guard: the sum of all selected items must fit within the
+  // user's max budget. Items individually passing the per-item ceiling can
+  // still combine past the outfit total.
+  if (totalPrice > budgetMax) return null;
+
   const coverProduct = selected.find(p => p.category === 'outerwear')
     || selected.find(p => p.category === 'top')
     || selected[0];
