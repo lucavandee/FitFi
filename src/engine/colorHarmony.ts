@@ -77,25 +77,39 @@ function normalizeColor(color: string): string {
   return color.toLowerCase().trim();
 }
 
+// Split a color string on whitespace, underscore and hyphen so "navy_blue"
+// becomes ["navy", "blue"]. A substring check on the raw string would let
+// "navajo_white" falsely match "navy" (and "tank" match "tan"); matching
+// against tokens only — plus an exact-string fallback for entries that
+// legitimately contain separators such as "off-white" — prevents that.
+function colorTokens(color: string): string[] {
+  return normalizeColor(color).split(/[\s_-]+/).filter(Boolean);
+}
+
+function matchesColorTerm(color: string, term: string): boolean {
+  const c = normalizeColor(color);
+  const t = normalizeColor(term);
+  if (!t) return false;
+  if (c === t) return true;
+  return colorTokens(c).includes(t);
+}
+
 export function isNeutralColor(color: string): boolean {
-  const n = normalizeColor(color);
-  return COLOR_HARMONY_RULES.neutrals.some(x => n.includes(x) || x.includes(n));
+  return COLOR_HARMONY_RULES.neutrals.some(x => matchesColorTerm(color, x));
 }
 
 export function isWarmColor(color: string): boolean {
-  const n = normalizeColor(color);
-  return COLOR_HARMONY_RULES.warm.some(x => n.includes(x) || x.includes(n));
+  return COLOR_HARMONY_RULES.warm.some(x => matchesColorTerm(color, x));
 }
 
 export function isCoolColor(color: string): boolean {
-  const n = normalizeColor(color);
-  return COLOR_HARMONY_RULES.cool.some(x => n.includes(x) || x.includes(n));
+  return COLOR_HARMONY_RULES.cool.some(x => matchesColorTerm(color, x));
 }
 
 function checkMap(c1: string, c2: string, map: Record<string, string[]>): boolean {
   for (const [base, targets] of Object.entries(map)) {
-    if (c1.includes(base) && targets.some(t => c2.includes(t))) return true;
-    if (c2.includes(base) && targets.some(t => c1.includes(t))) return true;
+    if (matchesColorTerm(c1, base) && targets.some(t => matchesColorTerm(c2, t))) return true;
+    if (matchesColorTerm(c2, base) && targets.some(t => matchesColorTerm(c1, t))) return true;
   }
   return false;
 }
@@ -114,8 +128,8 @@ const TONAL_FAMILIES: string[][] = [
 
 function areTonal(c1: string, c2: string): boolean {
   for (const family of TONAL_FAMILIES) {
-    const c1InFamily = family.some(f => c1.includes(f) || f.includes(c1));
-    const c2InFamily = family.some(f => c2.includes(f) || f.includes(c2));
+    const c1InFamily = family.some(f => matchesColorTerm(c1, f));
+    const c2InFamily = family.some(f => matchesColorTerm(c2, f));
     if (c1InFamily && c2InFamily) return true;
   }
   return false;
@@ -129,10 +143,10 @@ export function calculateColorHarmonyScore(color1: string, color2: string): numb
 
   if (isNeutralColor(c1) || isNeutralColor(c2)) return 0.8;
 
-  if ((c1.includes('zwart') && c2.includes('wit')) ||
-      (c1.includes('wit') && c2.includes('zwart')) ||
-      (c1.includes('black') && c2.includes('white')) ||
-      (c1.includes('white') && c2.includes('black'))) {
+  if ((matchesColorTerm(c1, 'zwart') && matchesColorTerm(c2, 'wit')) ||
+      (matchesColorTerm(c1, 'wit') && matchesColorTerm(c2, 'zwart')) ||
+      (matchesColorTerm(c1, 'black') && matchesColorTerm(c2, 'white')) ||
+      (matchesColorTerm(c1, 'white') && matchesColorTerm(c2, 'black'))) {
     return 0.9;
   }
 
@@ -166,17 +180,15 @@ export function calculateOutfitColorHarmony(productColors: string[][]): number {
 }
 
 export function suggestComplementaryColors(color: string): string[] {
-  const n = normalizeColor(color);
   for (const [base, complements] of Object.entries(COLOR_HARMONY_RULES.complementary)) {
-    if (n.includes(base)) return complements;
+    if (matchesColorTerm(color, base)) return complements;
   }
   return COLOR_HARMONY_RULES.neutrals.slice(0, 5);
 }
 
 export function suggestAnalogousColors(color: string): string[] {
-  const n = normalizeColor(color);
   for (const [base, similar] of Object.entries(COLOR_HARMONY_RULES.analogous)) {
-    if (n.includes(base)) return similar;
+    if (matchesColorTerm(color, base)) return similar;
   }
   return COLOR_HARMONY_RULES.neutrals.slice(0, 5);
 }

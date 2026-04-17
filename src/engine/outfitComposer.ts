@@ -1,6 +1,8 @@
 import { isAdultClothingProduct, classifyCategory } from './productFilter';
 import { matchesColorSeason } from './colorSeasonFiltering';
 import { deriveAthleticIntent as _deriveAthleticIntentFromEnricher } from './productEnricher';
+import { getCurrentSeason } from './helpers';
+import type { Season } from './types';
 
 export interface CleanProduct {
   id: string;
@@ -16,6 +18,7 @@ export interface CleanProduct {
   description: string;
   retailer: string;
   tags: string[];
+  seasons: Season[];
   athleticIntent?: number;
   subType?: string;
   itemReason?: string;
@@ -261,6 +264,59 @@ export interface UserPreferences {
   occasions?: string[];
   colorProfile?: { season?: string; temperature?: string; value?: string; contrast?: string };
   budget?: { min: number; max: number };
+  season?: Season;
+}
+
+// Keyword heuristics for detecting clearly season-bound items. These are
+// intentionally conservative — we only reject an item when its name or
+// description strongly signals a single season.
+const SEASON_ONLY_PATTERNS: Record<Season, RegExp[]> = {
+  winter: [
+    /winterjas/i, /winter coat/i, /\bpuffer\b/i, /down\s*jacket/i, /donsjack/i,
+    /parka/i, /teddy/i, /sherpa/i, /fleece(?!.*short)/i, /gevoerd/i,
+    /thermisch/i, /thermal/i, /coltrui/i, /turtleneck/i,
+  ],
+  summer: [
+    /\bshort(s)?\b/i, /korte broek/i, /zwembroek/i, /swim\s*short/i,
+    /bikini/i, /tankini/i, /zwempak/i, /\bsandaal\b/i, /\bsandal\b/i,
+    /\bslipper(s)?\b/i, /flip.?flop/i, /teenslipper/i, /linnen short/i,
+  ],
+  spring: [],
+  autumn: [],
+};
+
+function detectProductSeasons(
+  raw: Record<string, any>,
+  name: string,
+  description: string,
+): Season[] {
+  // Prefer explicit season data from the row when available.
+  const rawSeason = raw.season ?? raw.seasons;
+  if (Array.isArray(rawSeason)) {
+    const valid = rawSeason
+      .map(s => String(s).toLowerCase())
+      .filter((s): s is Season => s === 'spring' || s === 'summer' || s === 'autumn' || s === 'winter');
+    if (valid.length > 0) return valid;
+  } else if (typeof rawSeason === 'string' && rawSeason.trim() !== '') {
+    const s = rawSeason.toLowerCase();
+    if (s === 'spring' || s === 'summer' || s === 'autumn' || s === 'winter') {
+      return [s];
+    }
+  }
+
+  // Fall back to keyword-based inference.
+  const text = `${name} ${description}`.toLowerCase();
+  const inferred: Season[] = [];
+  (['winter', 'summer'] as Season[]).forEach(s => {
+    if (SEASON_ONLY_PATTERNS[s].some(r => r.test(text))) inferred.push(s);
+  });
+  return inferred;
+}
+
+function isProductInSeason(p: CleanProduct, season: Season): boolean {
+  // No explicit season tags → item is considered season-neutral.
+  if (!p.seasons || p.seasons.length === 0) return true;
+  return p.seasons.includes(season);
 }
 
 const OCCASION_QUIZ_TO_COMPOSER: Record<string, string> = {
@@ -295,13 +351,17 @@ export function composeOutfits(
   count: number,
   gender?: string,
   prefs?: UserPreferences,
+  season?: Season,
 ): ComposedOutfit[] {
+  const activeSeason: Season = season ?? prefs?.season ?? getCurrentSeason();
   const clean = rawRows.filter(isAdultClothingProduct);
 
   const products: CleanProduct[] = clean.map(r => {
+    const name = r.name || r.title || '';
+    const description = r.description || '';
     const base: CleanProduct = {
       id: r.id,
-      name: r.name || r.title || '',
+      name,
       brand: r.brand || '',
       price: typeof r.price === 'number' ? r.price : parseFloat(r.price) || 0,
       imageUrl: r.image_url || r.imageUrl || '',
@@ -310,14 +370,17 @@ export function composeOutfits(
       colors: Array.isArray(r.colors) ? r.colors : [],
       style: r.style || 'casual',
       gender: r.gender || 'unisex',
-      description: r.description || '',
+      description,
       retailer: r.retailer || '',
       tags: Array.isArray(r.tags) ? r.tags : [],
+      seasons: detectProductSeasons(r, name, description),
     };
     base.athleticIntent = deriveAthleticIntent(base);
     base.subType = classifySubType(base);
     return base;
-  }).filter(p => p.category !== 'other' && p.imageUrl && p.url);
+  })
+    .filter(p => p.category !== 'other' && p.imageUrl && p.url)
+    .filter(p => isProductInSeason(p, activeSeason));
 
   if (gender && gender !== 'unisex') {
     const genFiltered = products.filter(p => p.gender === gender || p.gender === 'unisex');
@@ -433,25 +496,35 @@ function buildOutfit(
 ): ComposedOutfit | null {
   const selected: CleanProduct[] = [];
   const selectedBrands = new Set<string>();
+  // Track product IDs already placed in THIS outfit so the same product can
+  // never be selected twice (e.g. as both the top and the optional layer).
+  const selectedIds = new Set<string>();
   const itemCeiling = perItemCeiling(prefs?.budget);
+  const budgetMax = prefs?.budget && prefs.budget.max > 0 ? prefs.budget.max : Infinity;
+
+  const addSelected = (p: CleanProduct) => {
+    selected.push(p);
+    selectedBrands.add(p.brand.toLowerCase());
+    selectedIds.add(p.id);
+  };
 
   for (const cat of blueprint.required) {
-    let pool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id) && p.price >= blueprint.priceFloor);
+    let pool = (byCategory[cat] || []).filter(p =>
+      !usedIds.has(p.id) && !selectedIds.has(p.id) && p.price >= blueprint.priceFloor
+    );
     pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) {
-      let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id));
+      let fallbackPool = (byCategory[cat] || []).filter(p => !usedIds.has(p.id) && !selectedIds.has(p.id));
       fallbackPool = budgetFilterPool(fallbackPool, itemCeiling);
       if (fallbackPool.length === 0) return null;
       const pick = pickBest(fallbackPool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
       if (!pick) return null;
-      selected.push(pick);
-      selectedBrands.add(pick.brand.toLowerCase());
+      addSelected(pick);
       continue;
     }
     const pick = pickBest(pool, blueprint, archetype, seed + cat.length, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (!pick) return null;
-    selected.push(pick);
-    selectedBrands.add(pick.brand.toLowerCase());
+    addSelected(pick);
   }
 
   const topId = selected.find(p => p.category === 'top')?.id || '';
@@ -459,13 +532,22 @@ function buildOutfit(
   const comboKey = `${topId}-${bottomId}`;
   if (usedCombos.has(comboKey)) {
     let altPool = (byCategory['bottom'] || [])
-      .filter(p => !usedIds.has(p.id) && p.id !== bottomId && p.price >= blueprint.priceFloor);
+      .filter(p =>
+        !usedIds.has(p.id)
+        && !selectedIds.has(p.id)
+        && p.id !== bottomId
+        && p.price >= blueprint.priceFloor
+      );
     altPool = budgetFilterPool(altPool, itemCeiling);
     const altBottom = altPool
       .sort((a, b) => scoreProduct(b, blueprint, archetype, selectedBrands, selected, prefs) - scoreProduct(a, blueprint, archetype, selectedBrands, selected, prefs))[0];
     if (altBottom) {
       const idx = selected.findIndex(p => p.category === 'bottom');
-      if (idx >= 0) selected[idx] = altBottom;
+      if (idx >= 0) {
+        selectedIds.delete(selected[idx].id);
+        selected[idx] = altBottom;
+        selectedIds.add(altBottom.id);
+      }
     }
   }
 
@@ -474,14 +556,16 @@ function buildOutfit(
 
   for (const cat of blueprint.optional) {
     let pool = (byCategory[cat] || []).filter(p =>
-      !usedIds.has(p.id) && p.price >= blueprint.priceFloor
+      !usedIds.has(p.id) && !selectedIds.has(p.id) && p.price >= blueprint.priceFloor
     );
     pool = budgetFilterPool(pool, itemCeiling);
     if (pool.length === 0) continue;
     const pick = pickBest(pool, blueprint, archetype, seed + cat.length * 3, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
     if (pick) {
-      selected.push(pick);
-      selectedBrands.add(pick.brand.toLowerCase());
+      // Reject the addition if it would push the outfit over the user's budget.
+      const projectedTotal = selected.reduce((s, p) => s + p.price, 0) + pick.price;
+      if (projectedTotal > budgetMax) continue;
+      addSelected(pick);
     }
   }
 
@@ -496,6 +580,7 @@ function buildOutfit(
         const altPool = (byCategory[swapCat] || [])
           .filter(p =>
             !usedIds.has(p.id)
+            && !selectedIds.has(p.id)
             && p.id !== currentItem.id
             && (p.subType || p.category) !== (currentItem.subType || currentItem.category)
           );
@@ -503,7 +588,11 @@ function buildOutfit(
         const alt = pickBest(altPool, blueprint, archetype, seed + swapCat.length * 7, selectedBrands, selected, prefs, diversityTracker, isRepeatedOccasion);
         if (alt) {
           const idx = selected.indexOf(currentItem);
-          if (idx >= 0) selected[idx] = alt;
+          if (idx >= 0) {
+            selectedIds.delete(currentItem.id);
+            selected[idx] = alt;
+            selectedIds.add(alt.id);
+          }
           break;
         }
       }
@@ -513,6 +602,11 @@ function buildOutfit(
   for (const p of selected) usedIds.add(p.id);
 
   const totalPrice = selected.reduce((s, p) => s + p.price, 0);
+  // Final budget guard: the sum of all selected items must fit within the
+  // user's max budget. Items individually passing the per-item ceiling can
+  // still combine past the outfit total.
+  if (totalPrice > budgetMax) return null;
+
   const coverProduct = selected.find(p => p.category === 'outerwear')
     || selected.find(p => p.category === 'top')
     || selected[0];
