@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, ArrowRight, Sparkles } from 'lucide-react';
+import { X, Save, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 
@@ -13,17 +13,17 @@ interface SaveOutfitsModalProps {
 export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutfitsModalProps) {
   const navigate = useNavigate();
   const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = async () => {
-    setIsLoading(true);
-
+  const handleRegister = () => {
     if (user) {
       onClose();
       return;
     }
-
     navigate('/registreren?from=results&action=save');
+  };
+
+  const handleLogin = () => {
+    navigate('/inloggen?from=results&action=save');
   };
 
   if (!isOpen) return null;
@@ -110,36 +110,33 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
             {/* CTAs */}
             <div className="space-y-3">
               <button
-                onClick={handleSave}
-                disabled={isLoading}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleRegister}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#C2654A] hover:bg-[#A8513A] text-white rounded-xl font-semibold text-base transition-colors duration-200"
               >
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Even geduld...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-5 h-5" />
-                    Opslaan (gratis)
-                    <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
+                <Save className="w-5 h-5" />
+                Maak gratis account
+                <ArrowRight className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={handleLogin}
+                className="w-full px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
+              >
+                Heb je al een account? Log in
               </button>
 
               <button
                 onClick={onClose}
-                className="w-full px-8 py-3 text-[var(--color-muted)] hover:text-[var(--color-text)] font-medium transition-colors"
+                className="w-full px-8 py-2 text-[#8A8A8A] hover:text-[#1A1A1A] font-medium text-sm transition-colors"
               >
                 Nee, bedankt
               </button>
             </div>
 
             {/* Privacy note */}
-            <p className="text-xs text-center text-[var(--color-muted)] mt-6 flex items-center justify-center gap-2">
+            <p className="text-xs text-center text-[#8A8A8A] mt-6 flex items-center justify-center gap-2">
               <span className="text-[#C2654A]">🔒</span>
-              Gratis account • Geen betaalgegevens nodig • 
+              Gratis account • Geen betaalgegevens nodig
             </p>
           </div>
         </motion.div>
