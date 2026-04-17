@@ -1,10 +1,32 @@
 import type { FitfiTier } from '@/config/novaAccess';
 import { NOVA_ACCESS } from '@/config/novaAccess';
 
+/**
+ * SECURITY — client-side counters in this module are a UX hint, NOT an
+ * enforcement boundary. An attacker can trivially reset them with
+ * `localStorage.clear()` from DevTools and bypass any client-side quota check.
+ *
+ * The authoritative quota MUST be enforced server-side. The Nova edge
+ * function should:
+ *   1. Look up the caller's tier from `auth.uid()` / Supabase JWT (never
+ *      trust a tier passed from the client).
+ *   2. Increment a server-side counter (e.g. via the existing
+ *      `check_rate_limit` RPC, scoped per user_id + day/week).
+ *   3. Return `{ code: 'quota_exceeded' }` (already handled by NovaChat) when
+ *      the limit is reached, instead of relying on the client to refuse.
+ *
+ * Until that server-side enforcement is in place, treat the values returned
+ * by `checkQuotaLimit` / `getUsageStats` as advisory only.
+ */
 const TIER_KEY = 'fitfi_tier';
 const UID_KEY  = 'fitfi_uid';
 const USAGE_KEY_PREFIX = 'fitfi.nova.usage';
 
+/**
+ * SECURITY: returns the tier hint stored in localStorage. The client can set
+ * any value here, so the server MUST re-derive the real tier from the user's
+ * subscription record before honouring premium-gated requests.
+ */
 export function getUserTier(): FitfiTier {
   const v = (localStorage.getItem(TIER_KEY) || '').toLowerCase();
   if (v === 'member' || v === 'plus' || v === 'founder') return v as FitfiTier;
@@ -58,11 +80,16 @@ function setUsageCount(period: 'day' | 'week', userId: string, count: number): v
   }
 }
 
+/**
+ * UX-only quota check. Used to surface the QuotaModal before a request so
+ * the user sees feedback without a network round-trip. The server quota is
+ * authoritative — see the `quota_exceeded` SSE event in NovaChat.
+ */
 export function checkQuotaLimit(tier: FitfiTier, userId: string): boolean {
   const limits = NOVA_ACCESS.limits[tier];
   const dailyUsage = getUsageCount('day', userId);
   const weeklyUsage = getUsageCount('week', userId);
-  
+
   return dailyUsage < limits.perDay && weeklyUsage < limits.perWeek;
 }
 
