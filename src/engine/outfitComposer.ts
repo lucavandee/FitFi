@@ -321,9 +321,11 @@ export function composeOutfits(
 
   if (gender && gender !== 'unisex') {
     const genFiltered = products.filter(p => p.gender === gender || p.gender === 'unisex');
-    if (genFiltered.length > 30) {
+    if (genFiltered.length >= 3) {
       products.length = 0;
       products.push(...genFiltered);
+    } else {
+      return [];
     }
   }
 

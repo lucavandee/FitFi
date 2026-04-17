@@ -42,7 +42,7 @@ const REJECT_NAME_PATTERNS: RegExp[] = [
   /motorsport/i,
   /mini-thuis/i, /mini-uit/i, /thuistenue/i, /uittenue/i, /uitshirt/i, /thuisshirt/i,
 
-  /kaars/i, /candle/i, /\blamp\b/i, /\bvaas\b/i, /\bdecor\b/i,
+  /kaars/i, /candle/i, /lamp/i, /\bvaas\b/i, /\bdecor\b/i,
   /bedrok/i, /\bkussen\b/i, /\bplaid\b/i, /handdoek/i, /baddoek/i,
   /gordijn/i, /laken/i, /dekbed/i, /overtrek/i, /matras/i, /deken/i,
   /vloerkleed/i, /tapijt/i, /\bmok\b/i, /\bbord\b/i, /spiegel/i,
