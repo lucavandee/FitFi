@@ -103,7 +103,7 @@ export default function LandingPage() {
       name: "Tom B.",
       meta: "41 jaar · Rotterdam",
       quote:
-        "Sceptisch begonnen, maar de outfits passen echt bij mijn leven. In twee minuten klaar.",
+        "Sceptisch begonnen, maar de outfits passen echt bij mijn leven. Een paar minuten werk, direct resultaat.",
       initial: "T",
     },
   ];
@@ -124,7 +124,7 @@ export default function LandingPage() {
   /* Marquee items */
   const marqueeItems = [
     { bold: "2.400+", rest: "gebruikers" },
-    { bold: "~2 min", rest: "invultijd" },
+    { bold: "~5 min", rest: "invultijd" },
     { bold: "Gratis", rest: "geen creditcard" },
     { bold: "4.9/5", rest: "waardering" },
     { bold: "50+", rest: "outfitcombinaties" },
@@ -134,14 +134,14 @@ export default function LandingPage() {
   return (
     <>
       <Helmet>
-        <title>FitFi — Persoonlijk stijladvies in 2 minuten</title>
+        <title>FitFi — Persoonlijk stijladvies in een paar minuten</title>
         <meta
           name="description"
-          content="In 2 minuten een stijlrapport dat je écht helpt kiezen wat je aantrekt. Outfits voor werk, weekend en uitgaan + directe shoplinks. Gratis start."
+          content="Een stijlrapport dat je écht helpt kiezen wat je aantrekt. Outfits voor werk, weekend en uitgaan + directe shoplinks. Gratis start, in een paar minuten klaar."
         />
         <meta
           property="og:title"
-          content="FitFi — Persoonlijk stijladvies in 2 minuten"
+          content="FitFi — Persoonlijk stijladvies in een paar minuten"
         />
         <meta
           property="og:description"
@@ -158,7 +158,7 @@ export default function LandingPage() {
             "@type": "WebApplication",
             name: "FitFi",
             description:
-              "Persoonlijk stijladvies in 2 minuten. Ontdek outfits die bij je passen en shop ze direct.",
+              "Persoonlijk stijladvies in een paar minuten. Ontdek outfits die bij je passen en shop ze direct.",
             url: "https://fitfi.nl",
             applicationCategory: "LifestyleApplication",
             operatingSystem: "Web",
@@ -377,8 +377,8 @@ export default function LandingPage() {
                   num: "01",
                   icon: ClipboardCheck,
                   title: "Beantwoord de quiz",
-                  text: "Een korte quiz over je voorkeuren, levensstijl en kleuren. Duurt slechts twee minuten.",
-                  tag: "~2 minuten",
+                  text: "Een korte quiz over je voorkeuren, levensstijl en kleuren. Klaar in een paar minuten.",
+                  tag: "~5 minuten",
                   tagIcon: Clock,
                 },
                 {

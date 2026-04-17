@@ -22,7 +22,7 @@ const PLACEHOLDER_REVIEWS = [
   {
     name: 'Tom B.',
     meta: '41 jaar · Rotterdam',
-    quote: 'Sceptisch begonnen, maar de outfitcombinaties passen echt bij mijn leven. In 2 minuten klaar.',
+    quote: 'Sceptisch begonnen, maar de outfitcombinaties passen echt bij mijn leven. Een paar minuten werk, direct resultaat.',
   },
 ];
 
@@ -221,7 +221,7 @@ export function SocialProofV3() {
         {/* Stats bar */}
         <dl className="mt-14 sm:mt-20 grid grid-cols-2 md:grid-cols-4 max-w-5xl mx-auto border border-[var(--color-border)] rounded-2xl overflow-hidden divide-y md:divide-y-0 md:divide-x divide-[var(--color-border)]">
           <StatItem value="2.400+" label="Gebruikers" />
-          <StatItem value="~2 min" label="Gemiddelde tijd" />
+          <StatItem value="~5 min" label="Gemiddelde tijd" />
           <StatItem value="Gratis" label="Geen creditcard" />
           <StatItem value="4.9/5" label="Waardering" />
         </dl>
