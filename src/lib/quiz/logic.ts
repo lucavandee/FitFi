@@ -151,6 +151,7 @@ export function computeArchetype(a: AnswerMap): Archetype {
     STREETWEAR: 0,
     ATHLETIC: 0,
     AVANT_GARDE: 0,
+    BUSINESS: 0,
   };
 
   const stylePrefs = (a.stylePreferences || []).map((s: string) => s.toLowerCase());
@@ -185,6 +186,9 @@ export function computeArchetype(a: AnswerMap): Archetype {
     if (s.includes('androgyn')) {
       scores.MINIMALIST += 20;
     }
+    if (s === 'business' || s === 'formal' || s === 'formeel' || s === 'zakelijk' || s.includes('tailored')) {
+      scores.BUSINESS += 35;
+    }
   }
 
   if (a.fit) {
@@ -204,7 +208,9 @@ export function computeArchetype(a: AnswerMap): Archetype {
   const goals = (a.goals || []).map((g: string) => g.toLowerCase());
   for (const g of goals) {
     if (g.includes('sport') || g === 'sport') { scores.ATHLETIC += 20; }
-    if (g.includes('werk') || g.includes('office')) { scores.SMART_CASUAL += 15; scores.CLASSIC += 10; }
+    if (g.includes('werk') || g.includes('office') || g.includes('professional') || g.includes('professioneel')) {
+      scores.BUSINESS += 15; scores.SMART_CASUAL += 10; scores.CLASSIC += 8;
+    }
     if (g.includes('casual')) { scores.SMART_CASUAL += 10; scores.STREETWEAR += 8; }
     if (g.includes('avond')) { scores.CLASSIC += 10; scores.SMART_CASUAL += 8; }
   }
@@ -212,9 +218,9 @@ export function computeArchetype(a: AnswerMap): Archetype {
   // P1.1 fix: occasion strings nu exact gelijk aan quiz-output (work|casual|formal|date|travel|sport)
   const occasions = (a.occasions || []).map((o: string) => o.toLowerCase());
   for (const o of occasions) {
-    if (o === 'work') { scores.SMART_CASUAL += 12; scores.CLASSIC += 8; scores.MINIMALIST += 5; }
+    if (o === 'work') { scores.BUSINESS += 12; scores.SMART_CASUAL += 10; scores.CLASSIC += 8; scores.MINIMALIST += 5; }
     if (o === 'casual') { scores.SMART_CASUAL += 8; scores.STREETWEAR += 8; }
-    if (o === 'formal') { scores.CLASSIC += 15; scores.MINIMALIST += 8; }
+    if (o === 'formal') { scores.BUSINESS += 20; scores.CLASSIC += 10; scores.MINIMALIST += 5; }
     if (o === 'date') { scores.CLASSIC += 10; scores.SMART_CASUAL += 8; scores.MINIMALIST += 5; }
     if (o === 'travel') { scores.SMART_CASUAL += 10; scores.ATHLETIC += 5; }
     if (o === 'sport') { scores.ATHLETIC += 15; scores.STREETWEAR += 5; }
@@ -260,7 +266,7 @@ export function computeArchetype(a: AnswerMap): Archetype {
   }
 
   const modernKeys: Archetype[] = [
-    'MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'
+    'MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE', 'BUSINESS'
   ];
 
   const sorted = modernKeys

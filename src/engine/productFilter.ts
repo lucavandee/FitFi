@@ -21,14 +21,17 @@ const REJECT_NAME_PATTERNS: RegExp[] = [
   /pantoffel/i, /\bsloffen\b/i, /\bslippers?\b/i, /flip.?flop/i,
   /\bbadslip/i, /\bteenslipper/i,
 
-  /voetbal/i, /\bfootball\b/i, /\bsoccer\b/i, /\brugby\b/i, /\bhockey\b/i,
+  // Pure competitive sport gear only — athleisure (joggers, sneakers, hoodies,
+  // running shoes, gym wear) blijft door dit filter heen zodat het ATHLETIC
+  // archetype producten krijgt.
+  /voetbal/i, /\bfootball\b/i, /\bsoccer\b/i, /\brugby\b/i, /\bhockey\b/i, /\bhandbal\b/i, /\bbasketbal\b/i,
   /keepershandschoen/i, /scheenbeschermer/i,
-  /wielren/i, /\bcycling\b/i, /fietsbroek/i, /fietsshirt/i,
-  /\bhardloop/i, /\btrail\s*run/i, /\bmarathon\b/i,
-  /\bfitness\b/i, /\bcrossfit\b/i, /\bspinning\b/i, /\bsportbeha\b/i,
+  /wielren/i, /fietsbroek/i, /fietsshirt/i, /wielershirt/i,
+  /\btrail\s*run/i, /\bmarathon\b/i,
+  /\bsportbeha\b/i, /sport\s?bh/i,
   /\byoga\b/i, /\bpilates\b/i,
-  /skibroek/i, /skipak/i, /\bsnowboard/i, /skischoenen/i,
-  /\bwetsuit\b/i, /\bduik/i, /\bsnorkel/i,
+  /skibroek/i, /skipak/i, /\bsnowboard/i, /skischoenen/i, /\bskistok\b/i,
+  /\bwetsuit\b/i, /\bduik/i, /\bsnorkel/i, /\bsurfboard\b/i,
   /tennisschoen/i, /tennisrok/i, /golfschoen/i, /golfbroek/i,
   /wandelschoen/i, /bergschoen/i, /klimschoen/i,
   /\b(fg|ag|sg|mg|tf|ic)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic)\b/i,

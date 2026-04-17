@@ -14,7 +14,7 @@ interface MoodPhotoUploadModalProps {
 }
 
 const ARCHETYPE_KEYS: ArchetypeKey[] = [
-  'MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'
+  'MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE', 'BUSINESS'
 ];
 
 const DUTCH_COLOR_MAP: Record<string, string> = {

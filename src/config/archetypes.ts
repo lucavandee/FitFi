@@ -4,7 +4,8 @@ export type ArchetypeKey =
   | 'SMART_CASUAL'
   | 'STREETWEAR'
   | 'ATHLETIC'
-  | 'AVANT_GARDE';
+  | 'AVANT_GARDE'
+  | 'BUSINESS';
 
 export type ArchetypeDescriptor = {
   key: ArchetypeKey;
@@ -77,6 +78,16 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
     formality: 40,
     vibe: ['conceptual', 'edge', 'statement'],
     staples: ['asym trui', 'coated denim', 'chunky boot', 'drape coat'],
+  },
+  BUSINESS: {
+    key: 'BUSINESS',
+    label: 'Business',
+    paletteHints: ['navy', 'grijs', 'charcoal', 'wit', 'zwart', 'bordeaux', 'camel'],
+    silhouettes: ['tailored', 'slim', 'straight'],
+    materials: ['wol', 'katoen', 'zijde', 'leer', 'kasjmier', 'flanel'],
+    formality: 90,
+    vibe: ['professional', 'zakelijk', 'verzorgd'],
+    staples: ['pak', 'pantalon', 'wit overhemd', 'oxford', 'derby', 'stropdas', 'blazer'],
   },
 };
 

@@ -92,7 +92,8 @@ export type Archetype =
   | "SMART_CASUAL"
   | "STREETWEAR"
   | "ATHLETIC"
-  | "AVANT_GARDE";
+  | "AVANT_GARDE"
+  | "BUSINESS";
 
 export type QuizResult = {
   color: ColorProfile;

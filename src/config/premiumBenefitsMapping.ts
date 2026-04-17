@@ -36,6 +36,11 @@ export const PREMIUM_BENEFITS_BY_ARCHETYPE: Record<ArchetypeKey, PersonalizedBen
     { value: "AI", label: "Statement styling" },
     { value: "∞", label: "Opgeslagen looks" },
   ],
+  BUSINESS: [
+    { value: "50+", label: "Zakelijke & formele looks" },
+    { value: "AI", label: "Tailoring advies" },
+    { value: "∞", label: "Opgeslagen outfits" },
+  ],
 };
 
 export function getBenefitsForArchetype(archetype: string | null): PersonalizedBenefit[] {

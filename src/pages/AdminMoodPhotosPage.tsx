@@ -20,7 +20,7 @@ interface MoodPhoto {
   created_at: string;
 }
 
-const ARCHETYPES = ['MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'] as const;
+const ARCHETYPES = ['MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE', 'BUSINESS'] as const;
 
 const ARCHETYPE_LABELS: Record<string, string> = {
   MINIMALIST: 'Minimalist',
@@ -29,6 +29,7 @@ const ARCHETYPE_LABELS: Record<string, string> = {
   STREETWEAR: 'Streetwear',
   ATHLETIC: 'Athletic',
   AVANT_GARDE: 'Avant-Garde',
+  BUSINESS: 'Business',
 };
 
 const ARCHETYPE_COLORS: Record<string, string> = {
@@ -38,6 +39,7 @@ const ARCHETYPE_COLORS: Record<string, string> = {
   STREETWEAR: 'bg-red-50 text-red-700 border-red-200',
   ATHLETIC: 'bg-blue-50 text-blue-700 border-blue-200',
   AVANT_GARDE: 'bg-stone-100 text-stone-700 border-stone-300',
+  BUSINESS: 'bg-slate-100 text-slate-700 border-slate-300',
 };
 
 const COLOR_SWATCHES: Record<string, string> = {

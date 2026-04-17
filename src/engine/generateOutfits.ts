@@ -27,6 +27,7 @@ const ARCHETYPE_KEY_MAP: Record<string, ArchetypeKey> = {
   STREETWEAR: 'STREETWEAR',
   ATHLETIC: 'ATHLETIC',
   AVANT_GARDE: 'AVANT_GARDE',
+  BUSINESS: 'BUSINESS',
   // From old profile-mapping / generateOutfits internal keys (legacy)
   minimalist: 'MINIMALIST',
   klassiek: 'CLASSIC',
@@ -44,6 +45,10 @@ const ARCHETYPE_KEY_MAP: Record<string, ArchetypeKey> = {
   retro: 'AVANT_GARDE',
   bohemian: 'AVANT_GARDE',
   luxury: 'CLASSIC',
+  business: 'BUSINESS',
+  zakelijk: 'BUSINESS',
+  formal: 'BUSINESS',
+  tailored: 'BUSINESS',
 };
 
 function resolveArchetypeKey(raw: string): ArchetypeKey {
@@ -145,6 +150,8 @@ const archetypeOutfitStructures: Record<string, {
   'avant_garde': { ...BASE_STRUCTURE, description: 'Conceptuele look met statement pieces' },
   'AVANT_GARDE': { ...BASE_STRUCTURE, description: 'Conceptuele look met statement pieces' },
   'luxury': { ...BASE_STRUCTURE, requiredCategories: [ProductCategory.TOP, ProductCategory.BOTTOM, ProductCategory.FOOTWEAR, ProductCategory.ACCESSORY], minItems: 4, maxItems: 6, description: 'Exclusieve stukken van topkwaliteit' },
+  'BUSINESS': { ...BASE_STRUCTURE, requiredCategories: [ProductCategory.TOP, ProductCategory.BOTTOM, ProductCategory.FOOTWEAR], optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Getailleerde stukken voor kantoor en formele momenten' },
+  'business': { ...BASE_STRUCTURE, requiredCategories: [ProductCategory.TOP, ProductCategory.BOTTOM, ProductCategory.FOOTWEAR], optionalCategories: [ProductCategory.ACCESSORY, ProductCategory.OUTERWEAR], description: 'Getailleerde stukken voor kantoor en formele momenten' },
 };
 
 // Default structure for any archetype not explicitly defined
@@ -470,6 +477,8 @@ function getOccasionsForArchetype(archetype: string): string[] {
     'avant_garde': ['Avond uit', 'Date', 'Weekend', 'Dagelijks', 'Smart Casual'],
     'AVANT_GARDE': ['Avond uit', 'Date', 'Weekend', 'Dagelijks', 'Smart Casual'],
     'luxury': ['Avond uit', 'Smart Casual', 'Date', 'Werk', 'Weekend'],
+    'BUSINESS': ['Werk', 'Formeel', 'Smart Casual', 'Date', 'Dagelijks'],
+    'business': ['Werk', 'Formeel', 'Smart Casual', 'Date', 'Dagelijks'],
   };
 
   return occasionMap[archetype] || ['Dagelijks', 'Werk', 'Weekend', 'Date', 'Relaxed'];

@@ -16,7 +16,7 @@ import type {
 
 const QUIZ_STYLE_TO_ARCHETYPE: Record<string, ArchetypeWeights> = {
   minimalist: { MINIMALIST: 1.0 },
-  classic: { CLASSIC: 0.8, MINIMALIST: 0.2 },
+  classic: { CLASSIC: 0.7, BUSINESS: 0.2, MINIMALIST: 0.1 },
   streetwear: { STREETWEAR: 1.0 },
   'smart-casual': { SMART_CASUAL: 1.0 },
   smart_casual: { SMART_CASUAL: 1.0 },
@@ -27,9 +27,13 @@ const QUIZ_STYLE_TO_ARCHETYPE: Record<string, ArchetypeWeights> = {
   romantic: { CLASSIC: 0.6, SMART_CASUAL: 0.4 },
   edgy: { STREETWEAR: 0.5, AVANT_GARDE: 0.5 },
   androgynous: { MINIMALIST: 0.7, SMART_CASUAL: 0.3 },
-  luxury: { CLASSIC: 0.7, AVANT_GARDE: 0.3 },
+  luxury: { CLASSIC: 0.5, BUSINESS: 0.3, AVANT_GARDE: 0.2 },
   casual: { SMART_CASUAL: 0.7, STREETWEAR: 0.3 },
   vintage: { AVANT_GARDE: 0.5, CLASSIC: 0.5 },
+  business: { BUSINESS: 1.0 },
+  formal: { BUSINESS: 0.8, CLASSIC: 0.2 },
+  tailored: { BUSINESS: 0.7, CLASSIC: 0.3 },
+  zakelijk: { BUSINESS: 1.0 },
 };
 
 const MOODBOARD_ALIAS: Record<string, ArchetypeKey> = {
@@ -47,7 +51,12 @@ const MOODBOARD_ALIAS: Record<string, ArchetypeKey> = {
   'smart-casual': 'SMART_CASUAL',
   elevated: 'SMART_CASUAL',
   contemporary: 'SMART_CASUAL',
-  tailored: 'SMART_CASUAL',
+  tailored: 'BUSINESS',
+  business: 'BUSINESS',
+  formal: 'BUSINESS',
+  zakelijk: 'BUSINESS',
+  corporate: 'BUSINESS',
+  suited: 'BUSINESS',
   street_refined: 'STREETWEAR',
   streetwear: 'STREETWEAR',
   urban: 'STREETWEAR',
@@ -76,8 +85,8 @@ const DEFAULT_ARCHETYPES: ArchetypeWeights = {
 };
 
 const OCCASION_ARCHETYPE_BIAS: Record<OccasionKey, ArchetypeWeights> = {
-  work: { CLASSIC: 0.25, SMART_CASUAL: 0.2, MINIMALIST: 0.15 },
-  formal: { CLASSIC: 0.35, MINIMALIST: 0.1 },
+  work: { BUSINESS: 0.25, CLASSIC: 0.2, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
+  formal: { BUSINESS: 0.4, CLASSIC: 0.2, MINIMALIST: 0.05 },
   casual: { SMART_CASUAL: 0.15, STREETWEAR: 0.1 },
   date: { CLASSIC: 0.15, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
   travel: { SMART_CASUAL: 0.2, MINIMALIST: 0.15 },
@@ -145,7 +154,7 @@ function moodboardToArchetypes(
     const lower = rawKey.toLowerCase();
     const aliased = MOODBOARD_ALIAS[lower];
     const direct = (
-      ['MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE'] as ArchetypeKey[]
+      ['MINIMALIST', 'CLASSIC', 'SMART_CASUAL', 'STREETWEAR', 'ATHLETIC', 'AVANT_GARDE', 'BUSINESS'] as ArchetypeKey[]
     ).find((k) => k === rawKey || k.toLowerCase() === lower);
     const target: ArchetypeKey | undefined = direct ?? aliased;
     if (target) acc[target] = (acc[target] ?? 0) + val;

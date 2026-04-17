@@ -188,6 +188,18 @@ export class ArchetypeDetector {
         }
       }
 
+      // BUSINESS detection
+      if (descriptor.key === 'BUSINESS') {
+        if (styleKeywords.some(s => s === 'business' || s === 'formal' || s === 'formeel' || s === 'zakelijk' || s.includes('tailored') || s.includes('suit'))) {
+          score += 40;
+          reasons.push('Business/formal style preference');
+        }
+        if (styleKeywords.some(s => s.includes('klassiek') || s.includes('classic'))) {
+          score += 10;
+          reasons.push('Classic style (secondary) → Business');
+        }
+      }
+
       // SMART_CASUAL detection
       if (descriptor.key === 'SMART_CASUAL') {
         // Direct Smart Casual selection — strong signal, high score
@@ -215,6 +227,7 @@ export class ArchetypeDetector {
       if (fit === 'slim' || fit === 'tailored') {
         if (descriptor.key === 'MINIMALIST') { score += 20; reasons.push('Slim fit → Minimalist'); }
         if (descriptor.key === 'CLASSIC') { score += 18; reasons.push('Slim fit → Classic'); }
+        if (descriptor.key === 'BUSINESS') { score += 22; reasons.push('Tailored fit → Business'); }
         if (descriptor.key === 'SMART_CASUAL') { score += 10; reasons.push('Slim fit (secondary) → Smart Casual'); }
       }
 
@@ -250,8 +263,12 @@ export class ArchetypeDetector {
 
       // CLASSIC: professional, timeless goals
       if (goals.some(g => g.includes('professional') || g.includes('professioneel') || g.includes('werk') || g.includes('office'))) {
+        if (descriptor.key === 'BUSINESS') {
+          score += 25;
+          reasons.push('Professional/work goals → Business');
+        }
         if (descriptor.key === 'SMART_CASUAL' || descriptor.key === 'CLASSIC') {
-          score += 20;
+          score += 18;
           reasons.push('Professional/work goals');
         }
       }
@@ -293,6 +310,7 @@ export class ArchetypeDetector {
 
       if (matLower.some(m => m.includes('wol') || m.includes('wool') || m.includes('kasjmier') || m.includes('cashmere'))) {
         if (descriptor.key === 'CLASSIC') { score += 12; reasons.push('Wool/cashmere → Classic'); }
+        if (descriptor.key === 'BUSINESS') { score += 14; reasons.push('Wool/cashmere → Business'); }
         if (descriptor.key === 'MINIMALIST') { score += 10; reasons.push('Wool (secondary) → Minimalist'); }
       }
 
@@ -418,7 +436,7 @@ export class ArchetypeDetector {
 
     // CLASSIC detection from swipes
     if (descriptor.key === 'CLASSIC') {
-      const classicTags = ['classic', 'tailored', 'preppy', 'refined', 'smart', 'formal', 'elegant', 'chino', 'blazer', 'sophisticated', 'vintage', 'timeless'];
+      const classicTags = ['classic', 'preppy', 'refined', 'elegant', 'chino', 'sophisticated', 'vintage', 'timeless'];
       const matchCount = classicTags.reduce((sum, tag) => {
         return sum + (tagCounts[tag] || 0);
       }, 0);
@@ -426,6 +444,19 @@ export class ArchetypeDetector {
       if (matchCount > 0) {
         score += Math.min(matchCount * 15, 40);
         reasons.push(`Classic tags: ${matchCount}`);
+      }
+    }
+
+    // BUSINESS detection from swipes
+    if (descriptor.key === 'BUSINESS') {
+      const businessTags = ['business', 'formal', 'tailored', 'suit', 'zakelijk', 'blazer', 'pak', 'pantalon', 'oxford', 'derby', 'smart', 'corporate'];
+      const matchCount = businessTags.reduce((sum, tag) => {
+        return sum + (tagCounts[tag] || 0);
+      }, 0);
+
+      if (matchCount > 0) {
+        score += Math.min(matchCount * 15, 40);
+        reasons.push(`Business tags: ${matchCount}`);
       }
     }
 
