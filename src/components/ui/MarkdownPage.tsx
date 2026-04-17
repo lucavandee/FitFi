@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Download } from 'lucide-react';
 import Button from './Button';
 import LoadingFallback from './LoadingFallback';
+import { sanitizeRichHtml } from '@/utils/sanitizeHtml';
 
 interface MarkdownPageProps {
   title?: string;
@@ -148,9 +149,9 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
 
         {/* Content */}
         <div className="bg-white rounded-3xl shadow-sm p-8 md:p-12">
-          <div 
+          <div
             className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+            dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(renderMarkdown(content)) }}
           />
         </div>
       </div>
