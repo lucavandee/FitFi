@@ -106,7 +106,7 @@ function transformCSVToProduct(row: BramsFruitCSVRow): Omit<BramsFruitProduct, '
     product_name: row['Product Name'] || '',
     material_composition: row['Material Composition'] || null,
     barcode: row['Barcode'] || null,
-    gender: row['Gender'] || 'Male',
+    gender: row['Gender'] || 'unisex',
     color_family: row['Color Family'] || '',
     color: row['Color'] || '',
     size: row['Size'] || '',

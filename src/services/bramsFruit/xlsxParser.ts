@@ -335,7 +335,7 @@ function transformRowToProduct(
     product_name: getCell('Product Name'),
     material_composition: getCell('Material Composition') || null,
     barcode: getCell('Barcode') || null,
-    gender: getCell('Gender') || 'Male',
+    gender: getCell('Gender') || 'unisex',
     color_family: getCell('Color Family'),
     color: getCell('Color'),
     size: getCell('Size'),
