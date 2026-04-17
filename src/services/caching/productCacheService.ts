@@ -176,7 +176,7 @@ class ProductCacheService {
 
       // Apply filters
       if (criteria.gender && criteria.gender !== 'unisex') {
-        query = query.or(`gender.eq.${criteria.gender},gender.eq.unisex,gender.is.null`);
+        query = query.or(`gender.eq.${criteria.gender},gender.eq.unisex`);
       }
 
       if (criteria.budget?.max) {
