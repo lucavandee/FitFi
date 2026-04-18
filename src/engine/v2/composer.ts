@@ -25,6 +25,7 @@ const OCCASION_TARGET_FORMALITY: Record<OccasionKey, number> = {
   date: 0.6,
   travel: 0.4,
   sport: 0.15,
+  party: 0.35,
 };
 
 const OCCASION_WANTS_OUTERWEAR: Record<OccasionKey, number> = {
@@ -34,6 +35,7 @@ const OCCASION_WANTS_OUTERWEAR: Record<OccasionKey, number> = {
   date: 0.3,
   travel: 0.4,
   sport: 0.05,
+  party: 0.15,
 };
 
 const OCCASION_WANTS_ACCESSORY: Record<OccasionKey, number> = {
@@ -43,6 +45,7 @@ const OCCASION_WANTS_ACCESSORY: Record<OccasionKey, number> = {
   date: 0.25,
   travel: 0.1,
   sport: 0.0,
+  party: 0.3,
 };
 
 function seededRandom(seed: number): () => number {

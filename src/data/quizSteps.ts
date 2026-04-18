@@ -330,6 +330,11 @@ export const quizSteps: QuizStep[] = [
         value: 'sport',
         label: 'Sport & Actief',
         description: 'Gym, yoga, outdoor activiteiten'
+      },
+      {
+        value: 'party',
+        label: 'Uitgaan / Feest',
+        description: 'Stappen, festivals, feestjes'
       }
     ]
   },

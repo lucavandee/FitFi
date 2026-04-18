@@ -15,6 +15,7 @@ const WARM_COLORS = new Set([
   'crème',
   'creme',
   'aardetinten',
+  'olijf',
 ]);
 
 // Deep, desaturated tones that read as formal/zakelijk neutrals rather than
@@ -34,7 +35,6 @@ const COOL_COLORS = new Set([
   'kobalt',
   'mint',
   'sage',
-  'olijf',
   'paars',
   'lavendel',
 ]);

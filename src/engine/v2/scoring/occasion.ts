@@ -10,15 +10,17 @@ export const OCCASION_FORMALITY: Record<
   date: { target: 0.6, tolerance: 0.2 },
   travel: { target: 0.4, tolerance: 0.25 },
   sport: { target: 0.12, tolerance: 0.18 },
+  party: { target: 0.35, tolerance: 0.25 },
 };
 
 const OCCASION_KEYWORDS: Partial<Record<OccasionKey, string[]>> = {
   work: ['werk', 'kantoor', 'office', 'professional', 'blazer', 'overhemd', 'pantalon', 'mantelpak', 'mantelpakje', 'kokerrok', 'pencil skirt', 'blouse', 'pumps', 'blazerjurk', 'shirtdress'],
-  formal: ['formeel', 'formal', 'feest', 'galadiner', 'ceremonie', 'suit', 'pak', 'smoking', 'mantelpak'],
+  formal: ['formeel', 'formal', 'galadiner', 'ceremonie', 'suit', 'pak', 'smoking', 'mantelpak'],
   casual: ['casual', 'relaxed', 'weekend', 'dagelijks', 'jeans', 't-shirt', 'sneaker'],
-  date: ['date', 'uitgaan', 'diner', 'restaurant', 'night out', 'cocktail'],
+  date: ['date', 'diner', 'restaurant', 'night out', 'cocktail'],
   travel: ['travel', 'reizen', 'versatile', 'comfort', 'licht'],
   sport: ['sport', 'gym', 'training', 'running', 'tech', 'performance', 'stretch'],
+  party: ['party', 'feest', 'festival', 'uitgaan', 'club', 'stappen', 'night out', 'rave'],
 };
 
 export function scoreOccasion(

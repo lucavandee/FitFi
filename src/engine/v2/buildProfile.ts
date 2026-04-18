@@ -93,6 +93,7 @@ const OCCASION_ARCHETYPE_BIAS: Record<OccasionKey, ArchetypeWeights> = {
   date: { CLASSIC: 0.15, SMART_CASUAL: 0.15, MINIMALIST: 0.1, AVANT_GARDE: 0.1 },
   travel: { SMART_CASUAL: 0.2, MINIMALIST: 0.15 },
   sport: { ATHLETIC: 0.5 },
+  party: { SMART_CASUAL: 0.2, CLASSIC: 0.1 },
 };
 
 function normalizeWeights(weights: ArchetypeWeights): ArchetypeWeights {
@@ -231,6 +232,7 @@ function normalizeOccasions(raw: any): OccasionKey[] {
     'date',
     'travel',
     'sport',
+    'party',
   ];
   if (!Array.isArray(raw)) return [];
   const set = new Set<OccasionKey>();
@@ -241,6 +243,7 @@ function normalizeOccasions(raw: any): OccasionKey[] {
     else if (norm === 'formeel') set.add('formal');
     else if (norm === 'reizen') set.add('travel');
     else if (norm === 'gym' || norm === 'sport & actief') set.add('sport');
+    else if (norm === 'feest' || norm === 'uitgaan' || norm === 'festival' || norm === 'stappen') set.add('party');
   }
   return Array.from(set);
 }
