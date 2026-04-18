@@ -1,3 +1,4 @@
+import type { ArchetypeKey } from '@/config/archetypes';
 import type { Product } from './types';
 
 export interface EnrichedSignals {
@@ -133,8 +134,20 @@ function getBrandStyleHint(brand: string): { formality: number; silhouette: stri
   if (ATHLETIC_BRANDS.has(b)) return { formality: 0.10, silhouette: 'slim', archetype: 'athletic' };
   if (BUSINESS_BRANDS.has(b)) return { formality: 0.85, silhouette: 'tailored', archetype: 'business' };
   if (AVANT_GARDE_BRANDS.has(b)) return { formality: 0.40, silhouette: 'draped', archetype: 'avant_garde' };
-  if (CLASSIC_BRANDS.has(b)) return { formality: 0.65, silhouette: 'tailored' };
-  if (MINIMALIST_BRANDS.has(b)) return { formality: 0.55, silhouette: 'clean' };
+  if (CLASSIC_BRANDS.has(b)) return { formality: 0.65, silhouette: 'tailored', archetype: 'classic' };
+  if (MINIMALIST_BRANDS.has(b)) return { formality: 0.55, silhouette: 'clean', archetype: 'minimalist' };
+  return null;
+}
+
+export function getBrandArchetype(brand: string): ArchetypeKey | null {
+  const b = (brand || '').toLowerCase().trim();
+  if (!b) return null;
+  if (STREETWEAR_BRANDS.has(b)) return 'STREETWEAR';
+  if (ATHLETIC_BRANDS.has(b)) return 'ATHLETIC';
+  if (BUSINESS_BRANDS.has(b)) return 'BUSINESS';
+  if (AVANT_GARDE_BRANDS.has(b)) return 'AVANT_GARDE';
+  if (CLASSIC_BRANDS.has(b)) return 'CLASSIC';
+  if (MINIMALIST_BRANDS.has(b)) return 'MINIMALIST';
   return null;
 }
 

@@ -51,6 +51,21 @@ const SPREAD_THRESHOLDS_BY_ARCHETYPE: Partial<Record<ArchetypeKey, SpreadThresho
   },
 };
 
+interface HardMismatchThresholds {
+  primary: number;
+  secondary: number;
+}
+
+const DEFAULT_HARD_MISMATCH: HardMismatchThresholds = {
+  primary: 0.15,
+  secondary: 0.25,
+};
+
+const HARD_MISMATCH_BY_ARCHETYPE: Partial<Record<ArchetypeKey, HardMismatchThresholds>> = {
+  STREETWEAR: { primary: 0.25, secondary: 0.35 },
+  AVANT_GARDE: { primary: 0.25, secondary: 0.35 },
+};
+
 function spreadThresholdsFor(profile?: UserStyleProfile): SpreadThresholds {
   if (!profile) return DEFAULT_SPREAD_THRESHOLDS;
   return (
@@ -172,11 +187,13 @@ export function isHardMismatch(
   if (profile) {
     const primaryKey = profile.primaryArchetype;
     const secondaryKey = profile.secondaryArchetype;
+    const thresh =
+      HARD_MISMATCH_BY_ARCHETYPE[primaryKey] ?? DEFAULT_HARD_MISMATCH;
     for (const p of products) {
       const primaryFit = p.archetypeFit[primaryKey] ?? 0;
-      if (primaryFit >= 0.15) continue;
+      if (primaryFit >= thresh.primary) continue;
       const secondaryFit = secondaryKey ? (p.archetypeFit[secondaryKey] ?? 0) : 0;
-      if (secondaryFit < 0.25) return true;
+      if (secondaryFit < thresh.secondary) return true;
     }
   }
 

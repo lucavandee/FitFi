@@ -1,6 +1,6 @@
 import type { Product } from '../types';
 import { classifyProduct } from '../productClassifier';
-import { deriveAthleticIntent, enrichProduct, TEAM_SPORT_RE } from '../productEnricher';
+import { deriveAthleticIntent, enrichProduct, getBrandArchetype, TEAM_SPORT_RE } from '../productEnricher';
 import type {
   NormalizedCategory,
   ScoredProduct,
@@ -110,6 +110,7 @@ export function filterAndPrepare(
     unclassifiable: 0,
     team_sport: 0,
     athletic_mismatch: 0,
+    archetype_mismatch: 0,
   };
   const acceptsAthletic = profileAcceptsAthletic(profile);
   const byCategory: Record<NormalizedCategory, ScoredProduct[]> = {
@@ -163,6 +164,20 @@ export function filterAndPrepare(
     }
 
     const enriched = enrichProduct(product);
+
+    if (profile.primaryArchetype === 'STREETWEAR' && enriched.formality > 0.50) {
+      byReason.archetype_mismatch++;
+      continue;
+    }
+
+    if (profile.primaryArchetype === 'AVANT_GARDE') {
+      const productArchetype = getBrandArchetype(product.brand ?? '');
+      if (productArchetype === 'MINIMALIST' || productArchetype === 'CLASSIC') {
+        byReason.archetype_mismatch++;
+        continue;
+      }
+    }
+
     const scored: ScoredProduct = {
       product: { ...product, category: cat, formality: enriched.formality },
       category: cat,
@@ -200,7 +215,8 @@ export function filterAndPrepare(
     byReason.out_of_stock +
     byReason.unclassifiable +
     byReason.team_sport +
-    byReason.athletic_mismatch;
+    byReason.athletic_mismatch +
+    byReason.archetype_mismatch;
 
   return {
     candidates,
