@@ -244,6 +244,14 @@ function normalizeOccasions(raw: any): OccasionKey[] {
     else if (norm === 'reizen') set.add('travel');
     else if (norm === 'gym' || norm === 'sport & actief') set.add('sport');
     else if (norm === 'feest' || norm === 'uitgaan' || norm === 'festival' || norm === 'stappen') set.add('party');
+    else if (
+      norm === 'date night' ||
+      norm === 'date-night' ||
+      norm === 'avondje uit' ||
+      norm === 'diner' ||
+      norm === 'restaurant' ||
+      norm === 'romantisch'
+    ) set.add('date');
   }
   return Array.from(set);
 }
@@ -288,17 +296,46 @@ function normalizeBrands(raw: any): string[] {
   );
 }
 
+const PALETTE_BY_VALUE: Record<ValueKey, string[]> = {
+  donker: ['zwart', 'antraciet', 'navy', 'donkergroen', 'bordeaux', 'donkergrijs'],
+  licht: ['wit', 'crème', 'ivoor', 'ijsblauw', 'lichtgrijs', 'pastelroze'],
+  medium: ['grijs', 'navy', 'olijfgroen', 'camel', 'beige'],
+};
+
+const PALETTE_BY_TEMPERATURE: Record<TemperatureKey, string[]> = {
+  warm: ['beige', 'camel', 'olijfgroen', 'terracotta', 'bruin', 'roest'],
+  koel: ['grijs', 'navy', 'ijsblauw', 'donkergroen', 'wit', 'zwart'],
+  neutraal: ['zwart', 'wit', 'grijs', 'antraciet', 'beige'],
+};
+
+function derivePreferredColors(
+  temperature: TemperatureKey | null,
+  value: ValueKey | null,
+  neutralsArr: string[]
+): string[] {
+  const colors = new Set<string>();
+  if (value) for (const c of PALETTE_BY_VALUE[value]) colors.add(c);
+  if (temperature) for (const c of PALETTE_BY_TEMPERATURE[temperature]) colors.add(c);
+  // Explicit dark-neutral selection in the multiselect (covers 'donker'/'dark'
+  // labels sent from older quiz variants) guarantees a dark palette even
+  // without a lightness answer.
+  if (neutralsArr.includes('donker') || neutralsArr.includes('dark')) {
+    for (const c of PALETTE_BY_VALUE.donker) colors.add(c);
+  }
+  return Array.from(colors);
+}
+
 function buildColorPreference(answers: Record<string, any>): ColorPreference {
   const cp = answers.colorProfile ?? {};
   const ca = answers.colorAnalysis ?? {};
-  const temperature: TemperatureKey | null = (() => {
-    const rawNeutrals = answers.neutrals;
-    const neutralsArr: string[] = Array.isArray(rawNeutrals)
-      ? rawNeutrals
-      : typeof rawNeutrals === 'string' && rawNeutrals.length > 0
-      ? [rawNeutrals]
-      : [];
+  const rawNeutrals = answers.neutrals;
+  const neutralsArr: string[] = Array.isArray(rawNeutrals)
+    ? rawNeutrals.map((v) => String(v).toLowerCase().trim())
+    : typeof rawNeutrals === 'string' && rawNeutrals.length > 0
+    ? [rawNeutrals.toLowerCase().trim()]
+    : [];
 
+  const temperature: TemperatureKey | null = (() => {
     // 'mix' (explicit combination) or multiple distinct temperatures
     // → no single preference, don't penalize either temperature
     if (neutralsArr.includes('mix')) return null;
@@ -307,7 +344,9 @@ function buildColorPreference(answers: Record<string, any>): ColorPreference {
     );
     if (distinctTemps.size > 1) return null;
 
-    const singleTemp = neutralsArr[0];
+    const singleTemp = neutralsArr.find(
+      (v) => v === 'warm' || v === 'koel' || v === 'neutraal'
+    );
     const raw =
       cp.temperature ??
       singleTemp ??
@@ -351,13 +390,20 @@ function buildColorPreference(answers: Record<string, any>): ColorPreference {
       ? 'neutral'
       : null);
 
+  const analysisColors = Array.isArray(ca.best_colors) ? ca.best_colors : [];
+  const derived = derivePreferredColors(temperature, value, neutralsArr);
+  const preferredColors =
+    analysisColors.length > 0
+      ? Array.from(new Set([...analysisColors, ...derived]))
+      : derived;
+
   return {
     temperature,
     value,
     contrast,
     season,
     undertone,
-    preferredColors: Array.isArray(ca.best_colors) ? ca.best_colors : [],
+    preferredColors,
     avoidColors: Array.isArray(ca.avoid_colors) ? ca.avoid_colors : [],
   };
 }
