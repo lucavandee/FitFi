@@ -4,7 +4,9 @@ import type {
   OutfitCandidate,
   ScoredProduct,
   UserStyleProfile,
+  Season,
 } from './types';
+import type { ArchetypeKey } from '@/config/archetypes';
 import type { FilterResult } from './candidateFilter';
 import {
   coherenceMultiplier,
@@ -16,6 +18,7 @@ export interface ComposerOptions {
   perOccasion: number;
   poolSize: number;
   seed: number;
+  season?: Season;
 }
 
 const OCCASION_TARGET_FORMALITY: Record<OccasionKey, number> = {
@@ -29,13 +32,13 @@ const OCCASION_TARGET_FORMALITY: Record<OccasionKey, number> = {
 };
 
 const OCCASION_WANTS_OUTERWEAR: Record<OccasionKey, number> = {
-  work: 0.45,
+  work: 0.55,
   formal: 0.5,
   casual: 0.25,
   date: 0.4,
   travel: 0.4,
   sport: 0.05,
-  party: 0.2,
+  party: 0.4,
 };
 
 const OCCASION_WANTS_ACCESSORY: Record<OccasionKey, number> = {
@@ -47,6 +50,59 @@ const OCCASION_WANTS_ACCESSORY: Record<OccasionKey, number> = {
   sport: 0.0,
   party: 0.45,
 };
+
+const COOL_SEASONS: Season[] = ['autumn', 'winter'];
+
+function resolveOuterwearChance(
+  occasion: OccasionKey,
+  archetype: ArchetypeKey,
+  season: Season | undefined
+): number {
+  let chance = OCCASION_WANTS_OUTERWEAR[occasion];
+  if (occasion === 'casual' && season && COOL_SEASONS.includes(season)) {
+    chance = Math.max(chance, 0.45);
+  }
+  if (archetype === 'AVANT_GARDE') {
+    chance = Math.max(chance, 0.5);
+  }
+  return chance;
+}
+
+function resolveAccessoryChance(
+  occasion: OccasionKey,
+  archetype: ArchetypeKey
+): number {
+  let chance = OCCASION_WANTS_ACCESSORY[occasion];
+  if (archetype === 'STREETWEAR') {
+    if (occasion === 'party') chance = Math.max(chance, 0.65);
+    else if (occasion === 'casual') chance = Math.max(chance, 0.5);
+  }
+  if (archetype === 'CLASSIC' || archetype === 'SMART_CASUAL') {
+    if (occasion === 'work') chance = Math.max(chance, 0.55);
+    else if (occasion === 'date') chance = Math.max(chance, 0.6);
+  }
+  if (archetype === 'AVANT_GARDE') {
+    chance = Math.max(chance, 0.55);
+  }
+  return chance;
+}
+
+const FORMAL_OCCASIONS: OccasionKey[] = ['work', 'date', 'formal'];
+const DRESSED_ARCHETYPES: ArchetypeKey[] = [
+  'CLASSIC',
+  'SMART_CASUAL',
+  'BUSINESS',
+];
+
+function requiresAccessory(
+  occasion: OccasionKey,
+  archetype: ArchetypeKey
+): boolean {
+  return (
+    FORMAL_OCCASIONS.includes(occasion) &&
+    DRESSED_ARCHETYPES.includes(archetype)
+  );
+}
 
 function seededRandom(seed: number): () => number {
   let s = seed | 0;
@@ -320,11 +376,23 @@ function composeForOccasion(
   profile: UserStyleProfile,
   count: number,
   poolSize: number,
-  baseSeed: number
+  baseSeed: number,
+  season: Season | undefined
 ): OutfitCandidate[] {
   const targetFormality = OCCASION_TARGET_FORMALITY[occasion];
-  const wantOuterwear = OCCASION_WANTS_OUTERWEAR[occasion];
-  const wantAccessory = OCCASION_WANTS_ACCESSORY[occasion];
+  const wantOuterwear = resolveOuterwearChance(
+    occasion,
+    profile.primaryArchetype,
+    season
+  );
+  const wantAccessory = resolveAccessoryChance(
+    occasion,
+    profile.primaryArchetype
+  );
+  const mustHaveAccessory = requiresAccessory(
+    occasion,
+    profile.primaryArchetype
+  );
 
   const allowDress =
     profile.gender === 'female' ||
@@ -416,7 +484,11 @@ function composeForOccasion(
       picks.outerwear = pool[0];
     }
 
-    if (byCategory.accessory.length > 0 && accRand() < wantAccessory) {
+    const accessoryRoll = accRand();
+    const pickAccessory =
+      byCategory.accessory.length > 0 &&
+      (accessoryRoll < wantAccessory || mustHaveAccessory);
+    if (pickAccessory) {
       const pool = pickTopPool(
         byCategory.accessory,
         targetFormality,
@@ -490,7 +562,8 @@ export function composeOutfits(
       profile,
       options.perOccasion,
       options.poolSize,
-      options.seed
+      options.seed,
+      options.season
     );
   }
 
