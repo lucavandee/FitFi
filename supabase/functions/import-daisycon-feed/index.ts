@@ -52,8 +52,9 @@ function inferStyle(title, description, brand) {
   const ATHLETIC_BRANDS = ["nike", "adidas", "puma", "new balance", "jordan", "asics", "reebok", "under armour", "on running", "hoka", "salomon", "the north face"];
   const BUSINESS_BRANDS = ["suitsupply", "hugo boss", "boss", "massimo dutti", "ermenegildo zegna", "zegna", "brooks brothers", "canali", "corneliani", "paul smith", "hackett", "charles tyrwhitt", "thomas pink", "t.m.lewin", "olymp", "van laack", "max mara", "reiss", "the kooples", "claudie pierlot", "sandro"];
   const PREMIUM_BRANDS = ["ralph lauren", "tommy hilfiger", "lacoste", "gant", "marc o'polo", "scotch & soda", "ted baker", "calvin klein", "michael kors"];
-  const LUXURY_BRANDS = ["gucci", "prada", "balenciaga", "saint laurent", "burberry", "versace", "givenchy", "valentino", "fendi", "bottega veneta", "tom ford", "armani"];
-  const MINIMALIST_BRANDS = ["cos", "arket", "uniqlo", "muji", "everlane", "filippa k", "theory", "jil sander", "apc", "acne studios"];
+  const LUXURY_BRANDS = ["gucci", "prada", "saint laurent", "versace", "givenchy", "valentino", "fendi", "bottega veneta", "tom ford", "armani", "burberry"];
+  const AVANT_GARDE_BRANDS = ["rick owens", "yohji yamamoto", "comme des garcons", "comme des garçons", "cdg", "maison margiela", "margiela", "mm6", "raf simons", "ann demeulemeester", "dries van noten", "julius", "boris bidjan saberi", "carol christian poell", "undercover", "sacai", "issey miyake", "helmut lang", "vetements", "balenciaga", "acne studios", "our legacy", "lemaire"];
+  const MINIMALIST_BRANDS = ["cos", "arket", "uniqlo", "muji", "everlane", "filippa k", "theory", "jil sander", "apc"];
 
   const brandLower = (brand || "").toLowerCase();
 
@@ -63,6 +64,7 @@ function inferStyle(title, description, brand) {
 
   if (BUSINESS_BRANDS.some(b => brandLower.includes(b))) return "business";
   if ((PREMIUM_BRANDS.some(b => brandLower.includes(b)) || brandLower.includes("tommy hilfiger") || brandLower.includes("ralph lauren")) && formalTitleHit) return "business";
+  if (AVANT_GARDE_BRANDS.some(b => brandLower.includes(b))) return "avant-garde";
   if (LUXURY_BRANDS.some(b => brandLower.includes(b))) return "luxury";
   if (MINIMALIST_BRANDS.some(b => brandLower.includes(b))) return "minimalist";
   if (ATHLETIC_BRANDS.some(b => brandLower.includes(b))) {
