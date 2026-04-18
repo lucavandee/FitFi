@@ -49,11 +49,17 @@ function matchesGender(product: Product, gender: string): boolean {
   return false;
 }
 
-function matchesBudget(product: Product, profile: UserStyleProfile): boolean {
+function budgetCheck(
+  product: Product,
+  profile: UserStyleProfile
+): 'ok' | 'over_budget' | 'below_budget_min' {
   const price = product.price ?? 0;
-  if (price <= 0) return true;
+  if (price <= 0) return 'ok';
   const ceiling = profile.budget.perItemMax * 1.35;
-  return price <= ceiling;
+  if (price > ceiling) return 'over_budget';
+  const min = profile.budget.perItemMin;
+  if (min > 0 && price < min * 0.5) return 'below_budget_min';
+  return 'ok';
 }
 
 function isInStock(product: Product): boolean {
@@ -99,6 +105,7 @@ export function filterAndPrepare(
     non_clothing: 0,
     wrong_gender: 0,
     over_budget: 0,
+    below_budget_min: 0,
     out_of_stock: 0,
     unclassifiable: 0,
     team_sport: 0,
@@ -125,8 +132,9 @@ export function filterAndPrepare(
       byReason.wrong_gender++;
       continue;
     }
-    if (!matchesBudget(product, profile)) {
-      byReason.over_budget++;
+    const budgetStatus = budgetCheck(product, profile);
+    if (budgetStatus !== 'ok') {
+      byReason[budgetStatus]++;
       continue;
     }
 
@@ -188,6 +196,7 @@ export function filterAndPrepare(
     byReason.non_clothing +
     byReason.wrong_gender +
     byReason.over_budget +
+    byReason.below_budget_min +
     byReason.out_of_stock +
     byReason.unclassifiable +
     byReason.team_sport +

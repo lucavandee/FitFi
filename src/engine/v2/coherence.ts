@@ -42,6 +42,13 @@ const SPREAD_THRESHOLDS_BY_ARCHETYPE: Partial<Record<ArchetypeKey, SpreadThresho
     mismatchReason: 0.8,
     coherentReason: 0.7,
   },
+  MINIMALIST: {
+    hardPenalty: 0.55,
+    midPenalty: 0.45,
+    softPenalty: 0.35,
+    mismatchReason: 0.4,
+    coherentReason: 0.25,
+  },
 };
 
 function spreadThresholdsFor(profile?: UserStyleProfile): SpreadThresholds {

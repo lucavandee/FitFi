@@ -95,6 +95,24 @@ function pickTopPool(
   return shuffleSeeded(pool, rand);
 }
 
+function workFootwearFloor(profile: UserStyleProfile): number {
+  const relaxed =
+    profile.primaryArchetype === 'STREETWEAR' ||
+    profile.primaryArchetype === 'SMART_CASUAL';
+  return relaxed ? 0.15 : 0.35;
+}
+
+function filterFootwearForOccasion(
+  products: ScoredProduct[],
+  occasion: OccasionKey,
+  profile: UserStyleProfile
+): ScoredProduct[] {
+  if (occasion !== 'work') return products;
+  const floor = workFootwearFloor(profile);
+  const filtered = products.filter((p) => p.formality >= floor);
+  return filtered.length > 0 ? filtered : products;
+}
+
 function brandPenalty(products: ScoredProduct[]): number {
   const brands = products
     .map((p) => (p.product.brand || '').toLowerCase().trim())
@@ -252,8 +270,19 @@ function composeForOccasion(
       picks.bottom = bottomPool[0];
     }
 
-    if (byCategory.footwear.length > 0) {
-      const pool = pickTopPool(byCategory.footwear, targetFormality, poolSize, rand, occasion);
+    const footwearCandidates = filterFootwearForOccasion(
+      byCategory.footwear,
+      occasion,
+      profile
+    );
+    if (footwearCandidates.length > 0) {
+      const pool = pickTopPool(
+        footwearCandidates,
+        targetFormality,
+        poolSize,
+        rand,
+        occasion
+      );
       picks.footwear = pool[0];
     }
 
