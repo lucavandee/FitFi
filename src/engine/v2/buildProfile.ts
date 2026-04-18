@@ -166,14 +166,20 @@ function moodboardToArchetypes(
 
 function applyOccasionBias(
   weights: ArchetypeWeights,
-  occasions: OccasionKey[]
+  occasions: OccasionKey[],
+  goals: GoalKey[] = []
 ): ArchetypeWeights {
   if (occasions.length === 0) return weights;
+  const minimalGoal = goals.includes('minimal');
   let acc = { ...weights };
   for (const occ of occasions) {
     const bias = OCCASION_ARCHETYPE_BIAS[occ];
     if (!bias) continue;
-    acc = mergeWeights(acc, bias, 1);
+    const adjusted =
+      occ === 'work' && minimalGoal && typeof bias.BUSINESS === 'number'
+        ? { ...bias, BUSINESS: bias.BUSINESS * 0.5 }
+        : bias;
+    acc = mergeWeights(acc, adjusted, 1);
   }
   return normalizeWeights(acc);
 }
@@ -475,7 +481,7 @@ export function buildUserStyleProfile(
     ? blendWeights(quizBase, swipeArchetypes, swipeInfluence)
     : normalizeWeights(quizBase);
 
-  blended = applyOccasionBias(blended, occasions);
+  blended = applyOccasionBias(blended, occasions, goals);
   const { primary, secondary } = pickTopArchetypes(blended);
 
   return {
