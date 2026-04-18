@@ -1611,7 +1611,7 @@ export default function EnhancedResultsPage() {
                         <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#C2654A] transition-colors duration-200">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
-                        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-1 mb-3">
+                        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-2 mb-3">
                           {('explanation' in outfit && outfit.explanation)
                             ? (outfit.explanation as string)
                             : outfitInfo.description}

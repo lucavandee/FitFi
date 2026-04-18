@@ -74,10 +74,16 @@ const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
 };
 
 function primaryGoalAdjective(goals: GoalKey[]): string | null {
-  for (const key of ['timeless', 'professional', 'express', 'minimal'] as GoalKey[]) {
-    if (goals.includes(key)) return GOAL_ADJECTIVE[key] ?? null;
+  const priority: GoalKey[] = ['timeless', 'professional', 'express', 'minimal'];
+  const matched: string[] = [];
+  for (const key of priority) {
+    if (!goals.includes(key)) continue;
+    const adj = GOAL_ADJECTIVE[key];
+    if (adj) matched.push(adj);
+    if (matched.length === 2) break;
   }
-  return null;
+  if (matched.length === 0) return null;
+  return matched.join(' en ');
 }
 
 function matchedPreferredMaterial(
@@ -107,12 +113,12 @@ function buildExplanation(
   const goal = primaryGoalAdjective(profile.goals);
   if (goal) signals.push(`Afgestemd op je ${goal} stijl.`);
 
+  const material = matchedPreferredMaterial(candidate, profile);
+  if (material) signals.push(`Met je voorkeur voor ${material}.`);
+
   if (profile.color.temperature) {
     signals.push(TEMPERATURE_SENTENCE[profile.color.temperature]);
   }
-
-  const material = matchedPreferredMaterial(candidate, profile);
-  if (material) signals.push(`Met je voorkeur voor ${material}.`);
 
   if (candidate.coherence.completeness >= 1) {
     signals.push('Compleet van top tot schoen.');
@@ -127,7 +133,7 @@ function buildExplanation(
     return `Afgestemd op je ${primary}-voorkeur.`;
   }
 
-  return signals.slice(0, 2).join(' ');
+  return signals.slice(0, 3).join(' ');
 }
 
 function buildMatchPercentage(candidate: OutfitCandidate): number {

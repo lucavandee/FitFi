@@ -91,8 +91,8 @@ export function ResultsOutfitCard({
           {name}
         </h3>
 
-        {/* Description — single line */}
-        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-1 mb-3">
+        {/* Description — up to two lines */}
+        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-2 mb-3">
           {description}
         </p>
 
