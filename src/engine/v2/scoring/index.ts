@@ -79,7 +79,8 @@ export function computeProductScore(
     weights.prints * breakdown.prints +
     weights.quality * breakdown.quality;
 
-  const archetypePenalty = archetype.score < 0.2 ? 0.9 : 1;
+  const archetypePenalty =
+    archetype.score < 0.2 ? 0.6 : archetype.score < 0.35 ? 0.85 : 1;
   const occasionPenalty = occasionRes.score < 0.2 ? 0.85 : 1;
   const budgetPenalty = budget.score < 0.2 ? 0.8 : 1;
   const multiplier = archetypePenalty * occasionPenalty * budgetPenalty;
