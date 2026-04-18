@@ -1,20 +1,34 @@
-import type { Product, ProductCategory } from './types';
+// Shared product classification module — works in Deno (Supabase functions)
+// and is mirrored by src/engine/productClassifier.ts for client-side use.
+
+export type RawCategory =
+  | 'top'
+  | 'bottom'
+  | 'footwear'
+  | 'outerwear'
+  | 'dress'
+  | 'jumpsuit'
+  | 'accessory'
+  | 'underwear'
+  | 'other';
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
-export interface ClassificationResult {
-  category: ProductCategory | 'underwear' | 'other';
-  subcategory?: string;
+export interface RawClassificationResult {
+  category: RawCategory;
+  subcategory: string | undefined;
   confidence: ConfidenceLevel;
   signals: string[];
-  rejected?: boolean;
-  rejectReason?: string;
 }
 
 interface PatternEntry {
   regex: RegExp;
   subcategory: string;
   weight: 1 | 2 | 3; // 1=weak, 2=strong, 3=definitive
+}
+
+function buildText(...parts: string[]): string {
+  return parts.filter(Boolean).join(' ').toLowerCase();
 }
 
 // ─── FOOTWEAR ─────────────────────────────────────────────────────────────
@@ -50,6 +64,7 @@ const FOOTWEAR_RULES: PatternEntry[] = [
 ];
 
 // ─── UNDERWEAR ────────────────────────────────────────────────────────────
+// Usually filtered upstream, but tracked for logging
 const UNDERWEAR_RULES: PatternEntry[] = [
   { regex: /\bondergoed\b|\bunderwear\b/i, subcategory: 'ondergoed', weight: 3 },
   { regex: /\bonderbroek\b/i, subcategory: 'onderbroek', weight: 3 },
@@ -146,7 +161,7 @@ const OUTERWEAR_RULES: PatternEntry[] = [
 ];
 
 // ─── BOTTOM ───────────────────────────────────────────────────────────────
-// CRITICAL: \bshorts\b only — \bshort\b would incorrectly match "short sleeve"
+// CRITICAL: \bshorts\b only — never \bshort\b which would match "short sleeve"
 const BOTTOM_RULES: PatternEntry[] = [
   { regex: /\bbroek\b/i, subcategory: 'broek', weight: 3 },
   { regex: /\btrousers?\b/i, subcategory: 'broek', weight: 3 },
@@ -175,7 +190,7 @@ const BOTTOM_RULES: PatternEntry[] = [
 ];
 
 // ─── TOP ──────────────────────────────────────────────────────────────────
-// jersey, prematch, short sleeve → always TOP, never bottom
+// jersey, prematch, training shirt, short sleeve → all TOP, not bottom
 const TOP_RULES: PatternEntry[] = [
   { regex: /\bt-shirt\b|\btshirt\b/i, subcategory: 't-shirt', weight: 3 },
   { regex: /\boverhemd\b/i, subcategory: 'overhemd', weight: 3 },
@@ -196,31 +211,21 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\bbodysuit\b/i, subcategory: 'bodysuit', weight: 3 },
   { regex: /\bcrop[\s-]?top\b/i, subcategory: 'crop top', weight: 3 },
   { regex: /\btopje\b/i, subcategory: 'topje', weight: 3 },
+  // Sports tops — jersey and prematch are always shirts, not bottoms
   { regex: /\bjersey\b/i, subcategory: 'jersey', weight: 3 },
   { regex: /\bprematch\b|\bpre[\s-]?match\b/i, subcategory: 'prematch shirt', weight: 3 },
   { regex: /\btraining[\s-]?(top|shirt|jersey)\b/i, subcategory: 'training shirt', weight: 3 },
   { regex: /\bgame[\s-]?shirt\b|\bmatch[\s-]?shirt\b/i, subcategory: 'match shirt', weight: 3 },
-  // "short sleeve" = sleeve length, not shorts
+  // "Short sleeve" signals a TOP — it's sleeve length, not shorts
   { regex: /\bshort[\s-]?sleeve\b|\bkorte[\s-]?mouw\b/i, subcategory: 'short sleeve top', weight: 2 },
+  // Generic "shirt" comes after specific compound patterns
   { regex: /\bshirt\b/i, subcategory: 'shirt', weight: 2 },
   { regex: /\bvest\b/i, subcategory: 'vest', weight: 1 },
   { regex: /\btee\b/i, subcategory: 't-shirt', weight: 2 },
 ];
 
-// ─── REJECT PATTERNS ──────────────────────────────────────────────────────
-const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|bikini|badpak|zwembroek|zwemshort|zwemtop|boardshort|zwemset|pantoffel|sloffen|slippers?|flip[\s-]?flop|badslip|teenslipper|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer)\b/i;
-
-const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic|in)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic|in)\b/i;
-
-const KIDS_REGEX = /\b(baby|babies|peuter|kleuter|newborn|infant|kinder|kinderen|junior|kids?|dreumes|toddler|jongens|meisjes|boys|girls|child|children)\b/i;
-
-const MULTIPACK_REGEX = /\b(\d+)[- ]?(pack|stuks)\b/i;
-const SET_REGEX = /\bset\s+van\s+\d/i;
-
-// ─── CATEGORY RULES (ordered by priority) ─────────────────────────────────
-type ExtendedCategory = ProductCategory | 'underwear' | 'other';
-
-const ORDERED_RULES: Array<[string, PatternEntry[]]> = [
+// ─── CATEGORY RULES MAP (ordered by priority) ─────────────────────────────
+const ORDERED_RULES: Array<[RawCategory, PatternEntry[]]> = [
   ['footwear', FOOTWEAR_RULES],
   ['underwear', UNDERWEAR_RULES],
   ['accessory', ACCESSORY_RULES],
@@ -232,7 +237,7 @@ const ORDERED_RULES: Array<[string, PatternEntry[]]> = [
 ];
 
 interface MatchResult {
-  category: string;
+  category: RawCategory;
   subcategory: string;
   totalWeight: number;
   matchCount: number;
@@ -269,147 +274,60 @@ function determineConfidence(totalWeight: number, matchCount: number, fromName: 
 }
 
 /**
- * Classify a product by raw text fields. Returns category, subcategory,
- * confidence level, and matched signals for debugging.
+ * Classify a product using name, description, category path, and brand.
+ * Returns category, subcategory, confidence level, and matched signals.
  */
-export function classifyProductDetailed(
+export function classifyProductRaw(
   name: string,
-  description: string = '',
-  categoryPath: string = '',
+  description: string,
+  categoryPath: string,
   _brand: string = '',
-): ClassificationResult {
+): RawClassificationResult {
   const nameText = (name || '').toLowerCase();
   const descText = (description || '').toLowerCase();
   const catText = (categoryPath || '').toLowerCase();
-  const fullText = [nameText, descText, catText].filter(Boolean).join(' ');
-
-  // Reject checks
-  if (REJECT_REGEX.test(nameText)) {
-    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'non-clothing keyword' };
-  }
-  if (KIDS_REGEX.test(nameText)) {
-    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'kids product' };
-  }
-  if (SPORT_FOOTWEAR_REGEX.test(nameText)) {
-    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'sport footwear studs pattern' };
-  }
-  if (MULTIPACK_REGEX.test(nameText)) {
-    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'multipack' };
-  }
-  if (SET_REGEX.test(nameText)) {
-    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'set product' };
-  }
+  const fullText = buildText(nameText, descText, catText);
 
   const nameMatches: MatchResult[] = [];
   const fullMatches: MatchResult[] = [];
 
   for (const [category, rules] of ORDERED_RULES) {
     const nameScore = scoreText(nameText, rules);
-    if (nameScore) nameMatches.push({ category, ...nameScore });
-
+    if (nameScore) {
+      nameMatches.push({ category, ...nameScore });
+    }
     const fullScore = scoreText(fullText, rules);
-    if (fullScore) fullMatches.push({ category, ...fullScore });
+    if (fullScore) {
+      fullMatches.push({ category, ...fullScore });
+    }
   }
 
+  // Prefer name matches (more reliable) over full-text matches
   if (nameMatches.length > 0) {
+    // Pick the match with the highest total weight from the name
     const best = nameMatches.reduce((a, b) => (b.totalWeight > a.totalWeight ? b : a));
-    const confidence = determineConfidence(best.totalWeight, best.matchCount, true);
-    if (confidence === 'low') {
-      console.warn(`[classifier:low-confidence] "${name}" → ${best.category} (signals: ${best.signals.join(', ')})`);
-    }
     return {
-      category: best.category as ExtendedCategory,
+      category: best.category,
       subcategory: best.subcategory,
-      confidence,
+      confidence: determineConfidence(best.totalWeight, best.matchCount, true),
       signals: best.signals,
     };
   }
 
   if (fullMatches.length > 0) {
     const best = fullMatches.reduce((a, b) => (b.totalWeight > a.totalWeight ? b : a));
-    console.warn(`[classifier:low-confidence] "${name}" → ${best.category} (from description/category only)`);
     return {
-      category: best.category as ExtendedCategory,
+      category: best.category,
       subcategory: best.subcategory,
       confidence: 'low',
       signals: best.signals,
     };
   }
 
-  return { category: 'other', confidence: 'low', signals: [], rejected: true, rejectReason: 'unclassifiable' };
-}
-
-/**
- * Classify a Product object. Maintains the existing API used by the engine.
- */
-export function classifyProduct(product: Product): { category: ProductCategory; rejected: boolean; reason?: string } {
-  const name = product.name || '';
-  const desc = product.description || '';
-  const dbCategory = (product.category || '').toLowerCase();
-  const type = (product.type || '').toLowerCase();
-
-  const result = classifyProductDetailed(name, desc, type || dbCategory);
-
-  if (result.rejected) {
-    return { category: 'other' as ProductCategory, rejected: true, reason: result.rejectReason };
-  }
-
-  const cat = result.category;
-  // "underwear" is not a ProductCategory enum value — treat as rejected
-  if (cat === 'underwear' || cat === 'other') {
-    return { category: 'other' as ProductCategory, rejected: true, reason: `non-outfit category: ${cat}` };
-  }
-
-  return { category: cat as ProductCategory, rejected: false };
-}
-
-/**
- * Batch re-classify products. Used for backfill operations.
- */
-export function reclassifyProducts(products: Product[]): {
-  classified: Product[];
-  rejected: Product[];
-  stats: Record<string, number>;
-} {
-  const classified: Product[] = [];
-  const rejected: Product[] = [];
-  const stats: Record<string, number> = {
-    reclassified: 0, rejected: 0, kept: 0,
-    footwear_found: 0, bottom_found: 0, outerwear_found: 0,
-    top_found: 0, accessory_found: 0, dress_found: 0,
-    jumpsuit_found: 0, other_found: 0,
-    confidence_high: 0, confidence_medium: 0, confidence_low: 0,
+  return {
+    category: 'other',
+    subcategory: undefined,
+    confidence: 'low',
+    signals: [],
   };
-
-  for (const product of products) {
-    const result = classifyProduct(product);
-
-    if (result.rejected) {
-      rejected.push(product);
-      stats.rejected++;
-      stats.other_found++;
-      continue;
-    }
-
-    const originalCategory = (product.category || '').toLowerCase();
-    if (originalCategory !== result.category) stats.reclassified++;
-    else stats.kept++;
-
-    const key = `${result.category}_found`;
-    if (key in stats) stats[key]++;
-
-    classified.push({ ...product, category: result.category });
-  }
-
-  const detailed = products.map(p => classifyProductDetailed(p.name || '', p.description || ''));
-  for (const r of detailed) {
-    if (r.confidence === 'high') stats.confidence_high++;
-    else if (r.confidence === 'medium') stats.confidence_medium++;
-    else stats.confidence_low++;
-  }
-
-  console.log(`[ProductClassifier] ${products.length} products: ${classified.length} classified, ${rejected.length} rejected, ${stats.reclassified} reclassified`);
-  console.log(`[ProductClassifier] Confidence: high=${stats.confidence_high} medium=${stats.confidence_medium} low=${stats.confidence_low}`);
-
-  return { classified, rejected, stats };
 }

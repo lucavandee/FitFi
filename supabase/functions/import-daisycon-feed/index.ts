@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders } from "../_shared/cors.ts";
+import { classifyProductRaw } from "../_shared/productClassifier.ts";
 
 const EXCLUDED_CATEGORY_KEYWORDS = /\b(kids?|kind|kinderen|children|child|baby|babies|toddler|infant|meisjes?|jongens?|girls?|boys?|peuter|dreumes|newborn|junior|kinder)\b/;
 
@@ -28,25 +29,13 @@ function isFashionProduct(title, categoryPath, description = "") {
   return true;
 }
 
-function inferCategory(title, description, categoryPath) {
-  const text = (title + " " + description + " " + categoryPath).toLowerCase();
+function inferCategory(title, description, categoryPath, brand = "") {
+  const result = classifyProductRaw(title, description, categoryPath, brand);
+  return result.category === "underwear" ? "other" : result.category;
+}
 
-  if (/\b(sneaker|sneakers|shoe|shoes|boot|boots|trainer|trainers|footwear|loafer|loafers|schoen|schoenen|laars|laarzen|chelsea|oxford|derby|brogue|instapper|espadrille|veterschoen|enkellaars|kuitlaars|mocassin|pump|pumps|sandaal|sandal|sandalen|sloffen|pantoffel|pantoffels|muil|muilen)\b/.test(text)) return "footwear";
-
-  if (/\b(dress|jurk|maxijurk|minijurk|midijurk|avondjurk|cocktailjurk|zomerjurk|blazerjurk|hemdjurk|shirtjurk|wikkeljurk|mouwloze jurk|gebreide jurk|kanten jurk|tulen jurk|maxi-jurk|mini-jurk|midi-jurk)\b/.test(text)) return "dress";
-
-  if (/\b(jumpsuit|overall|playsuit)\b/.test(text)) return "jumpsuit";
-
-  if (/\b(jacket|jas|jack|puffer|pufferjack|anorak|coat|parka|windbreaker|bomber|blazer|mantel|trenchcoat|trench|overcoat|gilet|bodywarmer|donsjas|winterjas|regenjas|regenjack|tussenjas|softshell|hardshell|fleecejack|spijkerjack|overshirt|pilotenjack|gewatteerd|carcoat|car coat|cape|poncho|dufflecoat|peacoat|bouclé jas)\b/.test(text)) return "outerwear";
-
-  if (/\b(trouser|trousers|pant|pants|pantalon|cargo|shorts|short|jean|jeans|skirt|rok|broek|chino|jogger|joggingbroek|sweatpant|sweatpants|legging|tregging|culottes|bermuda)\b/.test(text)) return "bottom";
-
-  if (/\b(bag|bags|backpack|tote|rugzak|tas|handtas|schoudertas|crossbody|clutch|cap|hat|beanie|pet|hoed|bucket hat|scarf|sjaal|belt|riem|accessory|accessories|watch|horloge|jewelry|sieraden|ketting|armband|oorbel|ring|zonnebril|sunglasses|das|stropdas|vlinderdas|portemonnee|wallet|manchetknoop|broche|haarband|hoofdband|paraplu)\b/.test(text)) return "accessory";
-
-  if (/\b(hoodie|hooded|sweatshirt|crewneck|sweater|pullover|vest|cardigan|coltrui|turtleneck)\b/.test(text)) return "top";
-  if (/\b(t-shirt|tee|shirt|blouse|polo|poloshirt|longsleeve|tank|tanktop|overhemd|hemdje|knit|gebreid|trui|crop top|bodysuit|body|topje)\b/.test(text)) return "top";
-
-  return "other";
+function inferCategoryWithConfidence(title, description, categoryPath, brand = "") {
+  return classifyProductRaw(title, description, categoryPath, brand);
 }
 
 function inferGender(title, genderTarget, categoryPath) {
@@ -401,9 +390,13 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
       .map((p) => {
         const info = p.product_info;
         const description = stripHtml(info.description ?? "");
-        const category = inferCategory(info.title || "", description, info.category_path ?? "");
-        const gender = inferGender(info.title || "", info.gender_target ?? "", info.category_path ?? "");
         const brandName = info.brand?.trim() || programName;
+        const classResult = inferCategoryWithConfidence(info.title || "", description, info.category_path ?? "", brandName);
+        const category = classResult.category === "underwear" ? "other" : classResult.category;
+        if (classResult.confidence === "low") {
+          console.warn(`[classifier:low] "${info.title}" → ${category} (signals: ${classResult.signals.join(", ")})`);
+        }
+        const gender = inferGender(info.title || "", info.gender_target ?? "", info.category_path ?? "");
         const style = inferStyle(info.title || "", description, brandName);
         const tags = extractTags(info.title || "", description, category, info.keywords ?? "");
         const colors = extractColors(info.title || "", info.color_primary ?? "", description);
