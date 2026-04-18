@@ -1,11 +1,35 @@
 import type { Product } from '../types';
 import { classifyProduct } from '../productClassifier';
-import { deriveAthleticIntent, enrichProduct, getBrandArchetype, TEAM_SPORT_RE } from '../productEnricher';
+import { deriveAthleticIntent, enrichProduct, TEAM_SPORT_RE } from '../productEnricher';
 import type {
   NormalizedCategory,
   ScoredProduct,
   UserStyleProfile,
 } from './types';
+
+const PREPPY_BRANDS = new Set([
+  'tommy hilfiger',
+  'ralph lauren',
+  'polo ralph lauren',
+  'lacoste',
+  'gant',
+  'brooks brothers',
+]);
+
+const ATHLETIC_BRANDS = new Set([
+  'adidas',
+  'nike',
+  'puma',
+  'reebok',
+  'under armour',
+  'asics',
+  'new balance',
+  'fila',
+]);
+
+const STREETWEAR_OFF_FOOTWEAR_RE = /\b(desert\s*boot|loafer|loafers|oxford\s*shoe|oxfords|brogue|brogues|derby|derbies|monk\s*strap)\b/i;
+const GRAPHIC_PRINT_RE = /\b(graphic|graphic\s*print|bold\s*logo|big\s*logo|oversized\s*logo|print\s*tee|logo\s*tee|allover\s*print|all[-\s]?over\s*print)\b/i;
+const CONVERSE_CANVAS_RE = /\bconverse\b.*\b(canvas|chuck\s*taylor|all\s*star)\b|\b(canvas|chuck\s*taylor|all\s*star)\b.*\bconverse\b/i;
 
 const CATEGORY_ALIASES: Record<string, NormalizedCategory> = {
   top: 'top',
@@ -88,6 +112,57 @@ function profileAcceptsAthletic(profile: UserStyleProfile): boolean {
   );
 }
 
+type ArchetypeRejectReason =
+  | 'archetype_mismatch'
+  | 'brand_archetype_mismatch';
+
+function archetypeHardReject(
+  product: Product,
+  category: NormalizedCategory,
+  formality: number | undefined,
+  profile: UserStyleProfile
+): ArchetypeRejectReason | null {
+  const f = formality ?? 0.4;
+  const brand = (product.brand ?? '').toLowerCase().trim();
+  const name = product.name ?? '';
+  const desc = product.description ?? '';
+  const text = `${brand} ${name} ${desc}`;
+  const primary = profile.primaryArchetype;
+  const secondary = profile.secondaryArchetype;
+
+  if (primary === 'STREETWEAR') {
+    if (secondary !== 'CLASSIC' && secondary !== 'SMART_CASUAL') {
+      if (f > 0.45) return 'archetype_mismatch';
+    }
+    if (PREPPY_BRANDS.has(brand)) return 'brand_archetype_mismatch';
+    if (category === 'footwear' && STREETWEAR_OFF_FOOTWEAR_RE.test(text)) {
+      return 'archetype_mismatch';
+    }
+  }
+
+  if (primary === 'MINIMALIST') {
+    if (secondary !== 'ATHLETIC') {
+      if (ATHLETIC_BRANDS.has(brand)) return 'brand_archetype_mismatch';
+    }
+    if (GRAPHIC_PRINT_RE.test(text)) return 'archetype_mismatch';
+  }
+
+  if (primary === 'AVANT_GARDE') {
+    if (PREPPY_BRANDS.has(brand)) return 'brand_archetype_mismatch';
+    if (secondary !== 'CLASSIC' && secondary !== 'SMART_CASUAL') {
+      const productArchetype = (product as { styleArchetype?: string }).styleArchetype?.toLowerCase();
+      if (productArchetype === 'classic' || productArchetype === 'smart_casual' || productArchetype === 'smart-casual') {
+        return 'brand_archetype_mismatch';
+      }
+    }
+    if (category === 'footwear' && CONVERSE_CANVAS_RE.test(text)) {
+      return 'archetype_mismatch';
+    }
+  }
+
+  return null;
+}
+
 export interface FilterResult {
   candidates: ScoredProduct[];
   rejected: {
@@ -111,6 +186,7 @@ export function filterAndPrepare(
     team_sport: 0,
     athletic_mismatch: 0,
     archetype_mismatch: 0,
+    brand_archetype_mismatch: 0,
   };
   const acceptsAthletic = profileAcceptsAthletic(profile);
   const byCategory: Record<NormalizedCategory, ScoredProduct[]> = {
@@ -165,17 +241,15 @@ export function filterAndPrepare(
 
     const enriched = enrichProduct(product);
 
-    if (profile.primaryArchetype === 'STREETWEAR' && enriched.formality > 0.50) {
-      byReason.archetype_mismatch++;
+    const archetypeReject = archetypeHardReject(
+      product,
+      cat,
+      enriched.formality,
+      profile
+    );
+    if (archetypeReject) {
+      byReason[archetypeReject]++;
       continue;
-    }
-
-    if (profile.primaryArchetype === 'AVANT_GARDE') {
-      const productArchetype = getBrandArchetype(product.brand ?? '');
-      if (productArchetype === 'MINIMALIST' || productArchetype === 'CLASSIC') {
-        byReason.archetype_mismatch++;
-        continue;
-      }
     }
 
     const scored: ScoredProduct = {
@@ -207,16 +281,7 @@ export function filterAndPrepare(
     byCategory[cat].push(scored);
   }
 
-  const total =
-    byReason.non_clothing +
-    byReason.wrong_gender +
-    byReason.over_budget +
-    byReason.below_budget_min +
-    byReason.out_of_stock +
-    byReason.unclassifiable +
-    byReason.team_sport +
-    byReason.athletic_mismatch +
-    byReason.archetype_mismatch;
+  const total = Object.values(byReason).reduce((a, b) => a + b, 0);
 
   return {
     candidates,

@@ -62,8 +62,8 @@ const DEFAULT_HARD_MISMATCH: HardMismatchThresholds = {
 };
 
 const HARD_MISMATCH_BY_ARCHETYPE: Partial<Record<ArchetypeKey, HardMismatchThresholds>> = {
-  STREETWEAR: { primary: 0.25, secondary: 0.35 },
-  AVANT_GARDE: { primary: 0.25, secondary: 0.35 },
+  STREETWEAR: { primary: 0.3, secondary: 0.35 },
+  AVANT_GARDE: { primary: 0.3, secondary: 0.35 },
 };
 
 function spreadThresholdsFor(profile?: UserStyleProfile): SpreadThresholds {
