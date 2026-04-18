@@ -1,10 +1,15 @@
-import type { OutfitCandidate } from './types';
+import type { NormalizedCategory, OutfitCandidate } from './types';
 
 export interface DiversifyOptions {
   count: number;
   occasionBalance: boolean;
   excludeIds?: string[];
 }
+
+const OVERLAP_THRESHOLD_STRICT = 0.25;
+const OVERLAP_THRESHOLD_RELAXED = 0.5;
+const PER_SLOT_PENALTY = 0.2;
+const REUSE_PENALTY = 0.15;
 
 function productOverlap(a: OutfitCandidate, b: OutfitCandidate): number {
   const aIds = new Set(a.products.map((p) => p.product.id));
@@ -35,6 +40,35 @@ function colorSignature(candidate: OutfitCandidate): string {
   return Array.from(colors).sort().slice(0, 3).join(',');
 }
 
+function productIdByCategory(
+  candidate: OutfitCandidate,
+  category: NormalizedCategory
+): string | null {
+  const match = candidate.products.find((p) => p.category === category);
+  return match?.product.id ?? null;
+}
+
+function countUniqueProducts(candidates: OutfitCandidate[]): number {
+  const set = new Set<string>();
+  for (const c of candidates) {
+    for (const p of c.products) set.add(p.product.id);
+  }
+  return set.size;
+}
+
+function countUniqueByCategory(
+  candidates: OutfitCandidate[],
+  category: NormalizedCategory
+): number {
+  const set = new Set<string>();
+  for (const c of candidates) {
+    for (const p of c.products) {
+      if (p.category === category) set.add(p.product.id);
+    }
+  }
+  return set.size;
+}
+
 export function diversifyOutfits(
   candidates: OutfitCandidate[],
   options: DiversifyOptions
@@ -45,17 +79,25 @@ export function diversifyOutfits(
   );
   if (pool.length === 0) return [];
 
-  const sorted = [...pool].sort(
-    (a, b) => b.compositionScore - a.compositionScore
-  );
+  // If the pool has enough unique products, cap every product to a single outfit.
+  // Otherwise allow at most 2 appearances to avoid starving the result set.
+  const uniqueProductsInPool = countUniqueProducts(pool);
+  const MAX_APPEARANCES =
+    uniqueProductsInPool >= options.count * 3 ? 1 : 2;
+
+  // When there is enough shoe variety, enforce strict footwear uniqueness.
+  const footwearUniquesInPool = countUniqueByCategory(pool, 'footwear');
+  const STRICT_FOOTWEAR_UNIQUE = footwearUniquesInPool >= 3;
 
   const selected: OutfitCandidate[] = [];
   const seenArchetypeSignatures = new Map<string, number>();
   const seenColorSignatures = new Map<string, number>();
   const seenOccasions = new Map<string, number>();
   const productAppearances = new Map<string, number>();
-
-  const MAX_APPEARANCES = 2;
+  const usedProductIds = new Set<string>();
+  const usedFootwearIds = new Set<string>();
+  const usedBottomIds = new Set<string>();
+  const usedOuterwearIds = new Set<string>();
 
   const hasOverusedProduct = (cand: OutfitCandidate) =>
     cand.products.some(
@@ -68,44 +110,106 @@ export function diversifyOutfits(
         p.product.id,
         (productAppearances.get(p.product.id) ?? 0) + 1
       );
+      usedProductIds.add(p.product.id);
     }
+    const fw = productIdByCategory(cand, 'footwear');
+    if (fw) usedFootwearIds.add(fw);
+    const bt = productIdByCategory(cand, 'bottom');
+    if (bt) usedBottomIds.add(bt);
+    const ow = productIdByCategory(cand, 'outerwear');
+    if (ow) usedOuterwearIds.add(ow);
   };
 
-  for (const cand of sorted) {
-    if (selected.length >= options.count) break;
+  const effectiveScore = (cand: OutfitCandidate): number => {
+    let score = cand.compositionScore;
+    for (const p of cand.products) {
+      if (usedProductIds.has(p.product.id)) {
+        score -= REUSE_PENALTY;
+      }
+    }
+    const fw = productIdByCategory(cand, 'footwear');
+    if (fw && usedFootwearIds.has(fw)) score -= PER_SLOT_PENALTY;
+    const bt = productIdByCategory(cand, 'bottom');
+    if (bt && usedBottomIds.has(bt)) score -= PER_SLOT_PENALTY;
+    const ow = productIdByCategory(cand, 'outerwear');
+    if (ow && usedOuterwearIds.has(ow)) score -= PER_SLOT_PENALTY;
+    return score;
+  };
 
-    const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.34);
-    if (tooSimilar) continue;
+  const accept = (
+    cand: OutfitCandidate,
+    phase: 'strict' | 'relaxed'
+  ): boolean => {
+    const overlapCap =
+      phase === 'strict' ? OVERLAP_THRESHOLD_STRICT : OVERLAP_THRESHOLD_RELAXED;
+    const tooSimilar = selected.some(
+      (s) => productOverlap(s, cand) > overlapCap
+    );
+    if (tooSimilar) return false;
+    if (hasOverusedProduct(cand)) return false;
 
-    if (hasOverusedProduct(cand)) continue;
+    if (STRICT_FOOTWEAR_UNIQUE) {
+      const fw = productIdByCategory(cand, 'footwear');
+      if (fw && usedFootwearIds.has(fw)) return false;
+    }
 
-    const archSig = archetypeSignature(cand);
-    const colorSig = colorSignature(cand);
-    const archetypeCount = seenArchetypeSignatures.get(archSig) ?? 0;
-    const colorCount = seenColorSignatures.get(colorSig) ?? 0;
-    const occCount = seenOccasions.get(cand.occasion) ?? 0;
+    if (phase === 'strict') {
+      const archSig = archetypeSignature(cand);
+      const colorSig = colorSignature(cand);
+      const archetypeCount = seenArchetypeSignatures.get(archSig) ?? 0;
+      const colorCount = seenColorSignatures.get(colorSig) ?? 0;
+      const occCount = seenOccasions.get(cand.occasion) ?? 0;
+      if (archetypeCount >= 2) return false;
+      if (colorCount >= 2) return false;
+      if (options.occasionBalance && occCount >= 2) return false;
+    }
+    return true;
+  };
 
-    if (archetypeCount >= 2) continue;
-    if (colorCount >= 2) continue;
-    if (options.occasionBalance && occCount >= 2) continue;
+  const remaining = [...pool];
 
-    selected.push(cand);
-    seenArchetypeSignatures.set(archSig, archetypeCount + 1);
-    seenColorSignatures.set(colorSig, colorCount + 1);
-    seenOccasions.set(cand.occasion, occCount + 1);
-    registerProducts(cand);
+  const pickBest = (phase: 'strict' | 'relaxed'): OutfitCandidate | null => {
+    let best: OutfitCandidate | null = null;
+    let bestScore = -Infinity;
+    for (const cand of remaining) {
+      if (!accept(cand, phase)) continue;
+      const s = effectiveScore(cand);
+      if (s > bestScore) {
+        bestScore = s;
+        best = cand;
+      }
+    }
+    return best;
+  };
+
+  const commit = (pick: OutfitCandidate) => {
+    selected.push(pick);
+    const idx = remaining.indexOf(pick);
+    if (idx >= 0) remaining.splice(idx, 1);
+    const archSig = archetypeSignature(pick);
+    const colorSig = colorSignature(pick);
+    seenArchetypeSignatures.set(
+      archSig,
+      (seenArchetypeSignatures.get(archSig) ?? 0) + 1
+    );
+    seenColorSignatures.set(
+      colorSig,
+      (seenColorSignatures.get(colorSig) ?? 0) + 1
+    );
+    seenOccasions.set(pick.occasion, (seenOccasions.get(pick.occasion) ?? 0) + 1);
+    registerProducts(pick);
+  };
+
+  while (selected.length < options.count) {
+    const pick = pickBest('strict');
+    if (!pick) break;
+    commit(pick);
   }
 
-  if (selected.length < options.count) {
-    for (const cand of sorted) {
-      if (selected.length >= options.count) break;
-      if (selected.includes(cand)) continue;
-      if (hasOverusedProduct(cand)) continue;
-      const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.65);
-      if (tooSimilar) continue;
-      selected.push(cand);
-      registerProducts(cand);
-    }
+  while (selected.length < options.count) {
+    const pick = pickBest('relaxed');
+    if (!pick) break;
+    commit(pick);
   }
 
   return selected.slice(0, options.count);
