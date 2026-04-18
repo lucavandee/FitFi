@@ -1,6 +1,6 @@
 import type { Product } from '../types';
 import { classifyProduct } from '../productClassifier';
-import { enrichProduct } from '../productEnricher';
+import { deriveAthleticIntent, enrichProduct, TEAM_SPORT_RE } from '../productEnricher';
 import type {
   NormalizedCategory,
   ScoredProduct,
@@ -60,6 +60,28 @@ function isInStock(product: Product): boolean {
   return product.inStock !== false;
 }
 
+function isTeamSportKit(product: Product): boolean {
+  const text = `${product.brand ?? ''} ${product.name ?? ''} ${product.description ?? ''}`;
+  return TEAM_SPORT_RE.test(text);
+}
+
+function hasAthleticIntent(product: Product, category: string): boolean {
+  const intent = deriveAthleticIntent(
+    product.brand ?? '',
+    product.name ?? '',
+    product.description ?? '',
+    category
+  );
+  return intent >= 0.6;
+}
+
+function profileAcceptsAthletic(profile: UserStyleProfile): boolean {
+  return (
+    profile.primaryArchetype === 'ATHLETIC' ||
+    profile.secondaryArchetype === 'ATHLETIC'
+  );
+}
+
 export interface FilterResult {
   candidates: ScoredProduct[];
   rejected: {
@@ -79,7 +101,10 @@ export function filterAndPrepare(
     over_budget: 0,
     out_of_stock: 0,
     unclassifiable: 0,
+    team_sport: 0,
+    athletic_mismatch: 0,
   };
+  const acceptsAthletic = profileAcceptsAthletic(profile);
   const byCategory: Record<NormalizedCategory, ScoredProduct[]> = {
     top: [],
     bottom: [],
@@ -119,6 +144,16 @@ export function filterAndPrepare(
       continue;
     }
 
+    if (isTeamSportKit(product)) {
+      byReason.team_sport++;
+      continue;
+    }
+
+    if (!acceptsAthletic && hasAthleticIntent(product, cat)) {
+      byReason.athletic_mismatch++;
+      continue;
+    }
+
     const enriched = enrichProduct(product);
     const scored: ScoredProduct = {
       product: { ...product, category: cat, formality: enriched.formality },
@@ -153,7 +188,9 @@ export function filterAndPrepare(
     byReason.wrong_gender +
     byReason.over_budget +
     byReason.out_of_stock +
-    byReason.unclassifiable;
+    byReason.unclassifiable +
+    byReason.team_sport +
+    byReason.athletic_mismatch;
 
   return {
     candidates,

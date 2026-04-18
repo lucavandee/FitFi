@@ -1,6 +1,6 @@
 import { calculateOutfitColorHarmony } from '../colorHarmony';
 import type { ArchetypeKey } from '@/config/archetypes';
-import type { OutfitCandidate, ScoredProduct } from './types';
+import type { OutfitCandidate, ScoredProduct, UserStyleProfile } from './types';
 
 export interface CoherenceScores {
   colorHarmony: number;
@@ -100,11 +100,34 @@ export function coherenceMultiplier(scores: CoherenceScores): number {
   return harmonyMultiplier * formalityMultiplier * completenessPenalty;
 }
 
-export function isHardMismatch(products: ScoredProduct[]): boolean {
+export function isHardMismatch(
+  products: ScoredProduct[],
+  profile?: UserStyleProfile
+): boolean {
   const athleticCount = products.filter(
     (p) => (p.archetypeFit['ATHLETIC' as ArchetypeKey] ?? 0) > 0.6
   ).length;
   const formalCount = products.filter((p) => p.formality > 0.7).length;
   if (athleticCount > 0 && formalCount > 0) return true;
+
+  if (profile && athleticCount > 0) {
+    const profileAcceptsAthletic =
+      profile.primaryArchetype === 'ATHLETIC' ||
+      profile.secondaryArchetype === 'ATHLETIC';
+    if (!profileAcceptsAthletic) return true;
+  }
+
+  const archetypeTotals: Record<string, number> = {};
+  for (const p of products) {
+    for (const [key, score] of Object.entries(p.archetypeFit)) {
+      archetypeTotals[key] = (archetypeTotals[key] ?? 0) + (score ?? 0);
+    }
+  }
+  const sum = Object.values(archetypeTotals).reduce((a, b) => a + b, 0);
+  if (sum > 0) {
+    const top = Math.max(...Object.values(archetypeTotals));
+    if (top / sum < 0.35) return true;
+  }
+
   return false;
 }
