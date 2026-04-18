@@ -666,6 +666,7 @@ export function runEngineV2(
     perOccasion,
     poolSize,
     seed,
+    season,
   });
 
   const seenGlobalSignatures = new Set<string>();

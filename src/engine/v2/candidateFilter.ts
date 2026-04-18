@@ -75,11 +75,13 @@ function matchesGender(product: Product, gender: string): boolean {
 
 function budgetCheck(
   product: Product,
-  profile: UserStyleProfile
+  profile: UserStyleProfile,
+  category: NormalizedCategory | null
 ): 'ok' | 'over_budget' | 'below_budget_min' {
   const price = product.price ?? 0;
   if (price <= 0) return 'ok';
-  const ceiling = profile.budget.perItemMax * 1.35;
+  const ceilingMultiplier = category === 'outerwear' ? 1.6 : 1.35;
+  const ceiling = profile.budget.perItemMax * ceilingMultiplier;
   if (price > ceiling) return 'over_budget';
   const min = profile.budget.perItemMin;
   if (min > 0 && price < min * 0.75) return 'below_budget_min';
@@ -209,11 +211,6 @@ export function filterAndPrepare(
       byReason.wrong_gender++;
       continue;
     }
-    const budgetStatus = budgetCheck(product, profile);
-    if (budgetStatus !== 'ok') {
-      byReason[budgetStatus]++;
-      continue;
-    }
 
     const classification = classifyProduct(product);
     if (classification.rejected) {
@@ -226,6 +223,12 @@ export function filterAndPrepare(
       normalizeCategory(product.category);
     if (!cat) {
       byReason.unclassifiable++;
+      continue;
+    }
+
+    const budgetStatus = budgetCheck(product, profile, cat);
+    if (budgetStatus !== 'ok') {
+      byReason[budgetStatus]++;
       continue;
     }
 

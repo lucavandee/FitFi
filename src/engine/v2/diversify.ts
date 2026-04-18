@@ -35,6 +35,16 @@ function colorSignature(candidate: OutfitCandidate): string {
   return Array.from(colors).sort().slice(0, 3).join(',');
 }
 
+function uniqueOuterwearPoolSize(candidates: OutfitCandidate[]): number {
+  const ids = new Set<string>();
+  for (const cand of candidates) {
+    for (const p of cand.products) {
+      if (p.category === 'outerwear') ids.add(p.product.id);
+    }
+  }
+  return ids.size;
+}
+
 export function diversifyOutfits(
   candidates: OutfitCandidate[],
   options: DiversifyOptions
@@ -54,13 +64,28 @@ export function diversifyOutfits(
   const seenColorSignatures = new Map<string, number>();
   const seenOccasions = new Map<string, number>();
   const productAppearances = new Map<string, number>();
+  const usedAccessoryIds = new Set<string>();
+  const usedOuterwearIds = new Set<string>();
 
   const MAX_APPEARANCES = 2;
+  const outerwearPoolSize = uniqueOuterwearPoolSize(pool);
+  const enforceOuterwearUniqueness = outerwearPoolSize > 3;
 
   const hasOverusedProduct = (cand: OutfitCandidate) =>
     cand.products.some(
       (p) => (productAppearances.get(p.product.id) ?? 0) >= MAX_APPEARANCES
     );
+
+  const getAccessories = (cand: OutfitCandidate) =>
+    cand.products.filter((p) => p.category === 'accessory');
+  const getOuterwear = (cand: OutfitCandidate) =>
+    cand.products.filter((p) => p.category === 'outerwear');
+
+  const hasRepeatAccessory = (cand: OutfitCandidate) =>
+    getAccessories(cand).some((p) => usedAccessoryIds.has(p.product.id));
+  const hasRepeatOuterwear = (cand: OutfitCandidate) =>
+    enforceOuterwearUniqueness &&
+    getOuterwear(cand).some((p) => usedOuterwearIds.has(p.product.id));
 
   const registerProducts = (cand: OutfitCandidate) => {
     for (const p of cand.products) {
@@ -68,6 +93,12 @@ export function diversifyOutfits(
         p.product.id,
         (productAppearances.get(p.product.id) ?? 0) + 1
       );
+    }
+    for (const p of getAccessories(cand)) {
+      usedAccessoryIds.add(p.product.id);
+    }
+    for (const p of getOuterwear(cand)) {
+      usedOuterwearIds.add(p.product.id);
     }
   };
 
@@ -78,6 +109,8 @@ export function diversifyOutfits(
     if (tooSimilar) continue;
 
     if (hasOverusedProduct(cand)) continue;
+    if (hasRepeatAccessory(cand)) continue;
+    if (hasRepeatOuterwear(cand)) continue;
 
     const archSig = archetypeSignature(cand);
     const colorSig = colorSignature(cand);
@@ -101,6 +134,7 @@ export function diversifyOutfits(
       if (selected.length >= options.count) break;
       if (selected.includes(cand)) continue;
       if (hasOverusedProduct(cand)) continue;
+      if (hasRepeatOuterwear(cand)) continue;
       const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.65);
       if (tooSimilar) continue;
       selected.push(cand);
