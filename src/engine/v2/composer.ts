@@ -39,13 +39,13 @@ const OCCASION_WANTS_OUTERWEAR: Record<OccasionKey, number> = {
 };
 
 const OCCASION_WANTS_ACCESSORY: Record<OccasionKey, number> = {
-  work: 0.3,
-  formal: 0.4,
-  casual: 0.2,
-  date: 0.35,
-  travel: 0.15,
+  work: 0.5,
+  formal: 0.5,
+  casual: 0.35,
+  date: 0.55,
+  travel: 0.2,
   sport: 0.0,
-  party: 0.4,
+  party: 0.45,
 };
 
 function seededRandom(seed: number): () => number {
@@ -296,9 +296,10 @@ function composeForOccasion(
 
   for (let attempt = 0; attempt < maxAttempts && candidates.length < count; attempt++) {
     const rand = seededRandom(baseSeed + attempt * 31 + occasion.length);
-    // Independent stream for optional-item dice rolls so shuffle-call depth
-    // can't bias outerwear/accessory inclusion.
+    // Independent streams for optional-item dice rolls so shuffle-call depth
+    // (and a shared aux stream) can't correlate outerwear vs accessory inclusion.
     const auxRand = seededRandom(baseSeed * 7919 + attempt * 41 + occasion.length * 13 + 17);
+    const accRand = seededRandom(baseSeed * 6271 + attempt * 59 + occasion.length * 23 + 31);
 
     const useDress =
       allowDress &&
@@ -370,7 +371,7 @@ function composeForOccasion(
       picks.outerwear = pool[0];
     }
 
-    if (byCategory.accessory.length > 0 && auxRand() < wantAccessory) {
+    if (byCategory.accessory.length > 0 && accRand() < wantAccessory) {
       const pool = pickTopPool(
         byCategory.accessory,
         targetFormality,
