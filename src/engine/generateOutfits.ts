@@ -1,4 +1,9 @@
 import { Product, Outfit, Season, ProductCategory, OutfitGenerationOptions, Weather, CategoryRatio, VariationLevel } from './types';
+
+// Set true only for local debugging — never in production builds
+const _debug = false;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const _log = _debug ? console.log.bind(console) : (..._args: any[]) => {};
 import { generateOutfitTitle, generateOutfitDescription } from './generateOutfitDescriptions';
 import { generateOutfitExplanation } from './explainOutfit';
 import { filterProductsByColorSeason } from './colorSeasonFiltering';
@@ -264,20 +269,20 @@ function generateOutfits(
   const budgetPref = options?.budget;
   
   // Log archetype information
-  console.log("Generating outfits with archetypes:", 
+  _log("Generating outfits with archetypes:", 
     secondaryArchetype 
       ? `${primaryArchetype} (${Math.round((1-mixFactor)*100)}%) + ${secondaryArchetype} (${Math.round(mixFactor*100)}%)`
       : primaryArchetype
   );
-  console.log("Variation level:", variationLevel);
-  console.log("Enforce completion:", enforceCompletion);
-  console.log("Min completeness:", minCompleteness);
+  _log("Variation level:", variationLevel);
+  _log("Enforce completion:", enforceCompletion);
+  _log("Min completeness:", minCompleteness);
 
   // If secondary archetype is the same as primary or undefined, ignore it
   if (!secondaryArchetype || secondaryArchetype === primaryArchetype) {
     secondaryArchetype = undefined;
     mixFactor = 0;
-    console.log("Using 100% primary archetype:", primaryArchetype);
+    _log("Using 100% primary archetype:", primaryArchetype);
   }
 
   // Get current season or use preferred season if specified
@@ -285,17 +290,17 @@ function generateOutfits(
     ? preferredSeasons[0] 
     : getCurrentSeason()) as Season;
   
-  console.log("Active season:", currentSeason);
+  _log("Active season:", currentSeason);
   
   // Determine weather if not specified
   const activeWeather = weather ?? getTypicalWeatherForSeason(currentSeason);
-  console.log("Active weather:", activeWeather);
+  _log("Active weather:", activeWeather);
   
   // Filter products by season
   const seasonalProducts = products.filter(product => 
     !product.season || product.season.includes(currentSeason)
   );
-  console.log("Products suitable for season:", seasonalProducts.length);
+  _log("Products suitable for season:", seasonalProducts.length);
   
   // Further filter by weather if specified
   let weatherFilteredProducts = seasonalProducts;
@@ -303,7 +308,7 @@ function generateOutfits(
     weatherFilteredProducts = seasonalProducts.filter(product => 
       isProductSuitableForWeather(product, weather)
     );
-    console.log("Products suitable for weather:", weatherFilteredProducts.length);
+    _log("Products suitable for weather:", weatherFilteredProducts.length);
   }
   
   const basePoolBeforeColor = weatherFilteredProducts.length >= 4
@@ -323,7 +328,7 @@ function generateOutfits(
     const colorFiltered = filterProductsByColorSeason(basePoolBeforeColor, colorProfile, false);
     if (colorFiltered.length >= 4) {
       colorFilteredProducts = colorFiltered;
-      console.log(`[colorSeason] Filtered to ${colorFiltered.length} color-compatible products`);
+      _log(`[colorSeason] Filtered to ${colorFiltered.length} color-compatible products`);
     } else {
       console.warn(`[colorSeason] Too few color-compatible products (${colorFiltered.length}), using full pool`);
     }
@@ -345,7 +350,7 @@ function generateOutfits(
     });
     if (effeFiltered.length >= 4) {
       productsToUse = effeFiltered;
-      console.log(`[prints] Hard-filtered to ${effeFiltered.length} plain products`);
+      _log(`[prints] Hard-filtered to ${effeFiltered.length} plain products`);
     }
   } else if (printsPreference === 'statement') {
     // For statement preference, give printed products priority by moving them to the front
@@ -356,7 +361,7 @@ function generateOutfits(
       return (bHasPrint ? 1 : 0) - (aHasPrint ? 1 : 0);
     });
     productsToUse = printedFirst;
-    console.log(`[prints] Prioritised statement prints`);
+    _log(`[prints] Prioritised statement prints`);
   }
 
   // Materials: soft boost — sort preferred materials to the top of each category pool
@@ -371,7 +376,7 @@ function generateOutfits(
       };
       return getMatScore(b) - getMatScore(a);
     });
-    console.log(`[materials] Re-sorted pool to prefer: ${normPrefs.join(', ')}`);
+    _log(`[materials] Re-sorted pool to prefer: ${normPrefs.join(', ')}`);
   }
 
   // Define occasions based on archetype and preferred occasions
@@ -391,7 +396,7 @@ function generateOutfits(
         ...occasions.filter(occ => !validPreferredOccasions.includes(occ))
       ];
       
-      console.log("Using preferred occasions:", validPreferredOccasions);
+      _log("Using preferred occasions:", validPreferredOccasions);
     }
   }
   
@@ -454,8 +459,8 @@ function generateOutfits(
   }
 
   // Log generation attempts
-  console.log("Outfit generation attempts:", attemptsPerOccasion);
-  console.log("Generated outfits:", outfits.length);
+  _log("Outfit generation attempts:", attemptsPerOccasion);
+  _log("Generated outfits:", outfits.length);
 
   return outfits;
 }
@@ -509,9 +514,9 @@ function generateOutfitForOccasion(
   budgetPref?: { min: number; max: number },
 ): Outfit | null {
   // Log outfit generation
-  console.log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
-  console.log("Season:", season, "Weather:", weather);
-  console.log("Variation level:", variationLevel);
+  _log("Outfit op basis van:", primaryArchetype, secondaryArchetype ? "+" : "", secondaryArchetype || "");
+  _log("Season:", season, "Weather:", weather);
+  _log("Variation level:", variationLevel);
 
   // Get variation settings
   const variation = variationSettings[variationLevel];
@@ -520,7 +525,7 @@ function generateOutfitForOccasion(
   const productsByCategory = groupProductsByCategory(products);
   
   // Log available categories and counts
-  console.log("Beschikbare productcategorieën:", 
+  _log("Beschikbare productcategorieën:", 
     Object.entries(productsByCategory)
       .map(([category, prods]) => `${category}: ${prods.length}`)
       .join(', ')
@@ -555,7 +560,7 @@ function generateOutfitForOccasion(
     });
   }
   
-  console.log(`Using outfit structure for ${primaryArchetype} in ${season}:`, 
+  _log(`Using outfit structure for ${primaryArchetype} in ${season}:`, 
     `Required: [${outfitStructure.requiredCategories.join(', ')}], ` +
     `Optional: [${outfitStructure.optionalCategories.join(', ')}]`
   );
@@ -651,7 +656,7 @@ function generateOutfitForOccasion(
               if (idx !== -1) outfitStructure.requiredCategories.splice(idx, 1);
             });
 
-            console.log(`Used ${substituteCategory} as substitute for ${category}`);
+            _log(`Used ${substituteCategory} as substitute for ${category}`);
             break;
           }
         }
@@ -723,7 +728,7 @@ function generateOutfitForOccasion(
     // If we have fallback products and we're not enforcing completion, add them
     // NOTE: fallback products are only added if they are valid wearable items
     if (fallbackProducts.length > 0 && !enforceCompletion) {
-      console.log(`Adding ${fallbackProducts.length} fallback products to complete the outfit`);
+      _log(`Adding ${fallbackProducts.length} fallback products to complete the outfit`);
 
       for (const fallbackProduct of fallbackProducts) {
         if (outfitProducts.length >= outfitStructure.minItems) break;
@@ -833,10 +838,10 @@ function generateOutfitForOccasion(
   const categoryRatio = calculateCategoryRatio(outfitProducts);
   
   // Log the final outfit composition
-  console.log("Outfit samengesteld met types:", outfitProducts.map(p => p.type || p.category));
-  console.log("Outfit structure categories:", selectedCategories);
-  console.log("Outfit completeness:", completeness + "%");
-  console.log("Outfit category ratio:", categoryRatio);
+  _log("Outfit samengesteld met types:", outfitProducts.map(p => p.type || p.category));
+  _log("Outfit structure categories:", selectedCategories);
+  _log("Outfit completeness:", completeness + "%");
+  _log("Outfit category ratio:", categoryRatio);
   
   const primaryKey = resolveArchetypeKey(primaryArchetype);
   const outfitMix: ArchetypeWeights = { [primaryKey]: 1 - (mixFactor ?? 0) };
@@ -1327,7 +1332,7 @@ function selectProductForCategory(
   const picked = weightedRandomPick(scoredProducts);
 
   if (picked) {
-    console.log(`[Select] ${category} → "${picked.product.name}" score=${picked.combined.toFixed(2)} fusion=${picked.fusionScore.toFixed(2)}`);
+    _log(`[Select] ${category} → "${picked.product.name}" score=${picked.combined.toFixed(2)} fusion=${picked.fusionScore.toFixed(2)}`);
   }
 
   return picked?.product ?? null;

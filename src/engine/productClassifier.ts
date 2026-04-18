@@ -136,6 +136,7 @@ const OUTERWEAR_RULES: PatternEntry[] = [
   { regex: /\bpeacoat\b|\bpea[\s-]?coat\b/i, subcategory: 'peacoat', weight: 3 },
   { regex: /\bboucl[eé]?[\s-]?jas\b|\bboucle[\s-]?coat\b/i, subcategory: 'boucle jas', weight: 3 },
   { regex: /\bovershirt\b/i, subcategory: 'overshirt', weight: 3 },
+  { regex: /\bkostuum\b/i, subcategory: 'kostuum', weight: 3 },
   { regex: /\bblazer\b/i, subcategory: 'blazer', weight: 2 },
   { regex: /\bcolbert\b/i, subcategory: 'colbert', weight: 2 },
   { regex: /\bponcho\b|\bcape\b/i, subcategory: 'cape', weight: 2 },

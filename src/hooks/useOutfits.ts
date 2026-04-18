@@ -1,6 +1,7 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { getFeed } from '@/services/DataRouter';
 import { fetchOutfits } from '@/services/data/dataService';
+import { outfitService } from '@/services/outfits/outfitService';
 import type { Outfit } from '@/services/data/types';
 
 interface UseOutfitsOptions {
@@ -18,6 +19,8 @@ interface UseOutfitsOptions {
   colorProfile?: any;
   occasions?: string[];
   budget?: { min: number; max: number };
+  /** When provided, engine v2 is used via outfitService (moodboard-aware). */
+  answers?: Record<string, any>;
 }
 
 interface UseOutfitsResult {
@@ -49,11 +52,13 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
     colorProfile,
     occasions,
     budget,
+    answers,
   } = options;
 
   // Stable query key based on all parameters that affect results
   const queryKey = [
     'outfits',
+    answers ? 'v2' : 'v1',
     archetype ?? '',
     secondaryArchetype ?? '',
     mixFactor ?? 0,
@@ -72,6 +77,18 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
   const query = useQuery({
     queryKey,
     queryFn: async () => {
+      // Engine v2 path: use outfitService which reads moodboard data from localStorage
+      if (answers) {
+        const generated = await outfitService.generateOutfits(answers, limit ?? 9);
+        return {
+          data: generated as any as Outfit[],
+          source: 'supabase' as const,
+          cached: false,
+          errors: [] as string[],
+        };
+      }
+
+      // Legacy path: dataService → outfitComposer (v1)
       const response = await fetchOutfits({
         archetype,
         secondaryArchetype,

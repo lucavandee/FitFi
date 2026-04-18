@@ -382,6 +382,7 @@ export default function EnhancedResultsPage() {
     colorProfile: activeColorProfile,
     occasions: answers?.occasions,
     budget: parsedBudget,
+    answers: answers ?? undefined,
   });
 
   const seeds: OutfitSeed[] = React.useMemo(() => {

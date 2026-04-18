@@ -71,30 +71,45 @@ const SEED_OUTFITS: Record<string, Omit<OutfitSeed, "id">[]> = {
     { title: "Gallery Look", vibe: "Smart", notes: "Clean maar onconventioneel; een statement piece." },
     { title: "Night Creative", vibe: "Avond", notes: "Donkere basis met tactiele textuur." },
   ],
+  BUSINESS: [
+    { title: "Tailored Werk", vibe: "Kantoor", notes: "Strak colbert met nette pantalon; oxford schoenen." },
+    { title: "Smart Presentatie", vibe: "Meeting", notes: "Blazer met crisp overhemd; gepolijste loafers." },
+    { title: "Business Casual", vibe: "Kantoor casual", notes: "Chino met button-down; clean loafers of derby." },
+    { title: "Zakelijk Dinner", vibe: "Diner", notes: "Donker kostuum of smart blazer; verfijnde accessoires." },
+    { title: "Travel Professional", vibe: "Zakenreis", notes: "Kreukvrije pantalon met overhemd; derby schoenen." },
+    { title: "Power Casual", vibe: "Vrije dag", notes: "Smart chino met luxe knitwear; nette schoen." },
+  ],
 };
 
 function seasonText(c: ColorProfile): { palette: string; accentTip: string } {
   switch (c.season) {
-    case "lente":  return { palette: "licht-warme neutrals", accentTip: "lichte, warme accenten" };
-    case "zomer":  return { palette: "zacht-koele tonals", accentTip: "koele, zachte accenten" };
-    case "herfst": return { palette: "aards-warme neutrals", accentTip: "diepere, warme accenten" };
+    case "lente":
+    case "spring": return { palette: "licht-warme neutrals", accentTip: "lichte, warme accenten" };
+    case "zomer":
+    case "summer": return { palette: "zacht-koele tonals", accentTip: "koele, zachte accenten" };
+    case "herfst":
+    case "autumn": return { palette: "aards-warme neutrals", accentTip: "diepere, warme accenten" };
     case "winter": return { palette: "crispe koele neutrals", accentTip: "hoog contrast, koel accent" };
+    default:       return { palette: "neutrale tinten", accentTip: "zachte kleuraccenten" };
   }
 }
 
 function getSeasonalColors(c: ColorProfile): { base: string[]; accent: string[] } {
   switch (c.season) {
     case "lente":
+    case "spring":
       return {
         base: ["#E8DDD3", "#D4C4B0", "#F5F0E8", "#C9B8A0"],
         accent: ["#E8B4A0", "#D4A88C", "#F0C8B0"],
       };
     case "zomer":
+    case "summer":
       return {
         base: ["#E0E8F0", "#D0D8E0", "#C8D4DC", "#B8C8D4"],
         accent: ["#A8C4D8", "#98B8CC", "#B0D0E0"],
       };
     case "herfst":
+    case "autumn":
       return {
         base: ["#C8B8A0", "#B0A090", "#A89080", "#988070"],
         accent: ["#D4A080", "#C49070", "#B88860"],
@@ -103,6 +118,11 @@ function getSeasonalColors(c: ColorProfile): { base: string[]; accent: string[] 
       return {
         base: ["#F0F0F0", "#E0E0E0", "#D0D0D0", "#303030"],
         accent: ["#E0F0F8", "#D0E8F0", "#C0E0E8"],
+      };
+    default:
+      return {
+        base: ["#E8E0D8", "#D8D0C8", "#F0EBE4", "#C8C0B8"],
+        accent: ["#D4A88C", "#C8A080", "#E0B898"],
       };
   }
 }

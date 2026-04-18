@@ -116,7 +116,10 @@ class OutfitService {
 
       const outfitsWithExplanations = outfits.map((outfit) => ({
         ...outfit,
-        explanation: this.generateExplanation(outfit, quizAnswers),
+        // Preserve engine v2 explanations; only apply fallback template when empty
+        explanation: outfit.explanation?.trim()
+          ? outfit.explanation
+          : this.generateExplanation(outfit, quizAnswers),
       }));
 
       console.log(`[OutfitService] Successfully generated ${outfitsWithExplanations.length} outfits`);
