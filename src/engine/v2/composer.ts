@@ -155,7 +155,14 @@ function tryCompose(
 ): ScoredProduct[] | null {
   const items: ScoredProduct[] = [];
   const seenIds = new Set<string>();
-  const push = (p?: ScoredProduct) => {
+  const pushRequired = (p?: ScoredProduct) => {
+    if (!p) return false;
+    if (seenIds.has(p.product.id)) return false;
+    seenIds.add(p.product.id);
+    items.push(p);
+    return true;
+  };
+  const pushOptional = (p?: ScoredProduct) => {
     if (!p) return true;
     if (seenIds.has(p.product.id)) return false;
     seenIds.add(p.product.id);
@@ -164,14 +171,14 @@ function tryCompose(
   };
 
   if (picks.dress) {
-    if (!push(picks.dress)) return null;
+    if (!pushRequired(picks.dress)) return null;
   } else {
-    if (!push(picks.top)) return null;
-    if (!push(picks.bottom)) return null;
+    if (!pushRequired(picks.top)) return null;
+    if (!pushRequired(picks.bottom)) return null;
   }
-  if (!push(picks.footwear)) return null;
-  if (!push(picks.outerwear)) return null;
-  if (!push(picks.accessory)) return null;
+  if (!pushRequired(picks.footwear)) return null;
+  if (!pushOptional(picks.outerwear)) return null;
+  if (!pushOptional(picks.accessory)) return null;
 
   if (isHardMismatch(items)) return null;
   if (!withinTotalBudget(items, profile)) return null;
