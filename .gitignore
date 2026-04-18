@@ -173,6 +173,11 @@ coverage/
 playwright-report/
 test-results/
 
+# ...but do track the committed vitest unit tests
+!src/__tests__/
+!src/__tests__/**
+!vitest.config.ts
+
 # Development and debugging
 __trash_review/
 *_REPORT.md
