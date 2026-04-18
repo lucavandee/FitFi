@@ -6,7 +6,7 @@ export function scoreBrand(
 ): { score: number; reason: string } {
   const prefs = profile.preferredBrands;
   if (!prefs || prefs.length === 0) {
-    return { score: 0.6, reason: 'no_brand_pref' };
+    return { score: 1.0, reason: 'no_brand_pref' };
   }
 
   const brand = String(product.product.brand ?? '').toLowerCase().trim();
@@ -23,5 +23,5 @@ export function scoreBrand(
     }
   }
 
-  return { score: 0.85, reason: 'brand_neutral' };
+  return { score: 0.7, reason: 'brand_neutral' };
 }

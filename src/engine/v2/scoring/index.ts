@@ -22,15 +22,15 @@ export const BASE_WEIGHTS: ScoreBreakdown = {
   archetype: 0.22,
   color: 0.14,
   occasion: 0.12,
+  brand: 0.1,
   material: 0.09,
   budget: 0.08,
-  moodboard: 0.07,
   fit: 0.07,
   goals: 0.06,
-  brand: 0.05,
-  season: 0.05,
+  moodboard: 0.055,
+  season: 0.03,
   prints: 0.03,
-  quality: 0.02,
+  quality: 0.005,
 };
 
 export function computeProductScore(

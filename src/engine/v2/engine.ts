@@ -15,6 +15,7 @@ import { computeProductScore } from './scoring';
 import { composeOutfits } from './composer';
 import { diversifyOutfits } from './diversify';
 import { getCurrentSeason } from './scoring/season';
+import { MATERIAL_ALIAS } from './scoring/material';
 
 const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }> = {
   work: {
@@ -93,12 +94,15 @@ function matchedPreferredMaterial(
   const preferred = profile.materials.preferred.map((m) => m.toLowerCase());
   if (preferred.length === 0) return null;
   for (const pref of preferred) {
+    const aliases = MATERIAL_ALIAS[pref] ?? [pref];
     for (const p of candidate.products) {
       const tags = p.materialTags.map((t) => t.toLowerCase());
       const productMats = (p.product.materials ?? []).map((m: string) =>
         m.toLowerCase()
       );
-      if (tags.includes(pref) || productMats.includes(pref)) return pref;
+      if (aliases.some((a) => tags.includes(a) || productMats.includes(a))) {
+        return pref;
+      }
     }
   }
   return null;
