@@ -65,15 +65,20 @@ function shuffleSeeded<T>(items: T[], rand: () => number): T[] {
   return out;
 }
 
+function scoreFor(product: ScoredProduct, occasion: OccasionKey): number {
+  return product.scoreByOccasion?.[occasion] ?? product.score;
+}
+
 function rankForOccasion(
   products: ScoredProduct[],
-  targetFormality: number
+  targetFormality: number,
+  occasion: OccasionKey
 ): ScoredProduct[] {
   return [...products].sort((a, b) => {
     const aDist = Math.abs(a.formality - targetFormality);
     const bDist = Math.abs(b.formality - targetFormality);
-    const aScore = a.score - aDist * 0.25;
-    const bScore = b.score - bDist * 0.25;
+    const aScore = scoreFor(a, occasion) - aDist * 0.25;
+    const bScore = scoreFor(b, occasion) - bDist * 0.25;
     return bScore - aScore;
   });
 }
@@ -82,9 +87,10 @@ function pickTopPool(
   products: ScoredProduct[],
   targetFormality: number,
   poolSize: number,
-  rand: () => number
+  rand: () => number,
+  occasion: OccasionKey
 ): ScoredProduct[] {
-  const ranked = rankForOccasion(products, targetFormality);
+  const ranked = rankForOccasion(products, targetFormality, occasion);
   const pool = ranked.slice(0, Math.max(poolSize, 4));
   return shuffleSeeded(pool, rand);
 }
@@ -136,11 +142,13 @@ function assembleReasons(
 
 function scoreComposition(
   products: ScoredProduct[],
-  profile: UserStyleProfile
+  profile: UserStyleProfile,
+  occasion: OccasionKey
 ): { coherence: ReturnType<typeof evaluateCoherence>; score: number } {
   const coherence = evaluateCoherence(products, profile);
   const productAvg =
-    products.reduce((acc, p) => acc + p.score, 0) / Math.max(1, products.length);
+    products.reduce((acc, p) => acc + scoreFor(p, occasion), 0) /
+    Math.max(1, products.length);
   const baseScore = productAvg * 0.55 + coherence.combined * 0.45;
   const multiplier = coherenceMultiplier(coherence) * brandPenalty(products);
   return { coherence, score: Math.max(0, Math.min(1, baseScore * multiplier)) };
@@ -226,25 +234,26 @@ function composeForOccasion(
 
     let picks: Parameters<typeof tryCompose>[0] = {};
     if (useDress) {
-      const pool = pickTopPool(byCategory.dress, targetFormality, poolSize, rand);
+      const pool = pickTopPool(byCategory.dress, targetFormality, poolSize, rand, occasion);
       picks.dress = pool[0];
     } else if (useJumpsuit) {
-      const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand);
+      const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand, occasion);
       picks.dress = pool[0];
     } else {
-      const topPool = pickTopPool(byCategory.top, targetFormality, poolSize, rand);
+      const topPool = pickTopPool(byCategory.top, targetFormality, poolSize, rand, occasion);
       const bottomPool = pickTopPool(
         byCategory.bottom,
         targetFormality,
         poolSize,
-        rand
+        rand,
+        occasion
       );
       picks.top = topPool[0];
       picks.bottom = bottomPool[0];
     }
 
     if (byCategory.footwear.length > 0) {
-      const pool = pickTopPool(byCategory.footwear, targetFormality, poolSize, rand);
+      const pool = pickTopPool(byCategory.footwear, targetFormality, poolSize, rand, occasion);
       picks.footwear = pool[0];
     }
 
@@ -253,7 +262,8 @@ function composeForOccasion(
         byCategory.outerwear,
         targetFormality,
         Math.max(3, Math.floor(poolSize / 2)),
-        rand
+        rand,
+        occasion
       );
       picks.outerwear = pool[0];
     }
@@ -263,7 +273,8 @@ function composeForOccasion(
         byCategory.accessory,
         targetFormality,
         Math.max(3, Math.floor(poolSize / 2)),
-        rand
+        rand,
+        occasion
       );
       picks.accessory = pool[0];
     }
@@ -278,7 +289,7 @@ function composeForOccasion(
     if (seenSignatures.has(signature)) continue;
     seenSignatures.add(signature);
 
-    const { coherence, score } = scoreComposition(products, profile);
+    const { coherence, score } = scoreComposition(products, profile, occasion);
     if (score < 0.35) continue;
 
     candidates.push({

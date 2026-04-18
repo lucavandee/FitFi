@@ -242,10 +242,19 @@ export function runEngineV2(
     });
   }
 
-  const primaryOccasion: OccasionKey =
-    profile.occasions[0] ?? 'casual';
+  const scoringOccasions: OccasionKey[] =
+    profile.occasions.length > 0 ? profile.occasions : ['casual'];
+  const primaryOccasion: OccasionKey = scoringOccasions[0];
+
   for (const scored of filter.candidates) {
+    scored.scoreByOccasion = {};
+    for (const occ of scoringOccasions) {
+      if (occ === primaryOccasion) continue;
+      computeProductScore(scored, profile, occ, season);
+      scored.scoreByOccasion[occ] = scored.score;
+    }
     computeProductScore(scored, profile, primaryOccasion, season);
+    scored.scoreByOccasion[primaryOccasion] = scored.score;
   }
 
   Object.values(filter.byCategory).forEach((list) => {

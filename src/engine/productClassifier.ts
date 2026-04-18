@@ -177,7 +177,15 @@ const BOTTOM_RULES: PatternEntry[] = [
 
 // ─── TOP ──────────────────────────────────────────────────────────────────
 // jersey, prematch, short sleeve → always TOP, never bottom
+// "oxford" in a shirt-context (cotton/shirt/button/overhemd/blouse) is an
+// oxford shirt, not an oxford shoe — matched in either word order.
 const TOP_RULES: PatternEntry[] = [
+  {
+    regex:
+      /\b(?:shirt|cotton|button|overhemd|blouse)\b[\s\S]*\boxford\b|\boxford\b[\s\S]*\b(?:shirt|cotton|button|overhemd|blouse)\b/i,
+    subcategory: 'oxford shirt',
+    weight: 3,
+  },
   { regex: /\bt-shirt\b|\btshirt\b/i, subcategory: 't-shirt', weight: 3 },
   { regex: /\boverhemd\b/i, subcategory: 'overhemd', weight: 3 },
   { regex: /\bblouse\b/i, subcategory: 'blouse', weight: 3 },
@@ -304,7 +312,17 @@ export function classifyProductDetailed(
   const nameMatches: MatchResult[] = [];
   const fullMatches: MatchResult[] = [];
 
-  for (const [category, rules] of ORDERED_RULES) {
+  const hasShirtContext = /\b(?:shirt|cotton|button|overhemd|blouse)\b/i.test(
+    fullText
+  );
+  const activeRules: Array<[string, PatternEntry[]]> = ORDERED_RULES.map(
+    ([cat, rules]) =>
+      cat === 'footwear' && hasShirtContext
+        ? [cat, rules.filter((r) => r.subcategory !== 'oxfords')]
+        : [cat, rules]
+  );
+
+  for (const [category, rules] of activeRules) {
     const nameScore = scoreText(nameText, rules);
     if (nameScore) nameMatches.push({ category, ...nameScore });
 

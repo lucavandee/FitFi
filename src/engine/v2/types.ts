@@ -101,6 +101,7 @@ export interface ScoredProduct {
   product: Product;
   category: NormalizedCategory;
   score: number;
+  scoreByOccasion?: Partial<Record<OccasionKey, number>>;
   breakdown: ScoreBreakdown;
   reasons: string[];
   formality: number;
