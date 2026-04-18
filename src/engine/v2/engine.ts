@@ -205,10 +205,21 @@ export function runEngineV2(
   const perOccasion = Math.max(3, Math.ceil(count * 1.5));
   const poolSize = 14;
 
-  const { allCandidates, byOccasion } = composeOutfits(filter, profile, {
+  const { allCandidates: rawCandidates, byOccasion } = composeOutfits(filter, profile, {
     perOccasion,
     poolSize,
     seed,
+  });
+
+  const seenGlobalSignatures = new Set<string>();
+  const allCandidates = rawCandidates.filter((cand) => {
+    const signature = cand.products
+      .map((p) => p.product.id)
+      .sort()
+      .join('|');
+    if (seenGlobalSignatures.has(signature)) return false;
+    seenGlobalSignatures.add(signature);
+    return true;
   });
 
   const diversified = diversifyOutfits(allCandidates, {

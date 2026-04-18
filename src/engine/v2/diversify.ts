@@ -57,7 +57,7 @@ export function diversifyOutfits(
   for (const cand of sorted) {
     if (selected.length >= options.count) break;
 
-    const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.5);
+    const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.34);
     if (tooSimilar) continue;
 
     const archSig = archetypeSignature(cand);

@@ -20,10 +20,39 @@ const PRINT_MARKERS = [
   'zebra',
   'logo',
   'allover',
+  'stip',
+  'dot',
+  'polka',
 ];
 
-function hasPrint(product: ScoredProduct): boolean {
-  const text = [
+const SUBTLE_PRINT_MARKERS = [
+  'bloemen',
+  'floral',
+  'stip',
+  'dot',
+  'polka',
+  'streep',
+  'stripe',
+  'gestreept',
+  'ruit',
+  'check',
+  'tartan',
+];
+
+const LOUD_PRINT_MARKERS = [
+  'graphic',
+  'camo',
+  'animal',
+  'leopard',
+  'zebra',
+  'allover logo',
+  'allover-logo',
+  'all-over logo',
+  'allover print',
+];
+
+function productText(product: ScoredProduct): string {
+  return [
     product.product.name,
     product.product.description,
     ...(product.product.tags ?? []),
@@ -31,7 +60,10 @@ function hasPrint(product: ScoredProduct): boolean {
   ]
     .join(' ')
     .toLowerCase();
-  return PRINT_MARKERS.some((m) => text.includes(m));
+}
+
+function matchesAny(text: string, markers: string[]): boolean {
+  return markers.some((m) => text.includes(m));
 }
 
 export function scorePrints(
@@ -39,7 +71,8 @@ export function scorePrints(
   profile: UserStyleProfile
 ): { score: number; reason: string } {
   if (!profile.prints) return { score: 0.7, reason: 'no_prints_pref' };
-  const printed = hasPrint(product);
+  const text = productText(product);
+  const printed = matchesAny(text, PRINT_MARKERS);
 
   if (profile.prints === 'effen') {
     return printed
@@ -52,9 +85,16 @@ export function scorePrints(
       : { score: 0.55, reason: 'prints_statement_plain' };
   }
   if (profile.prints === 'subtiel') {
-    return printed
-      ? { score: 0.7, reason: 'prints_subtiel_busy' }
-      : { score: 0.9, reason: 'prints_subtiel_plain' };
+    if (!printed) {
+      return { score: 0.65, reason: 'prints_subtiel_plain' };
+    }
+    if (matchesAny(text, LOUD_PRINT_MARKERS)) {
+      return { score: 0.45, reason: 'prints_subtiel_too_loud' };
+    }
+    if (matchesAny(text, SUBTLE_PRINT_MARKERS)) {
+      return { score: 1.0, reason: 'prints_subtiel_whitelist_match' };
+    }
+    return { score: 0.95, reason: 'prints_subtiel_match' };
   }
   return { score: 0.75, reason: 'prints_gemengd' };
 }
