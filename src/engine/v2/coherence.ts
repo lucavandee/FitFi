@@ -169,5 +169,16 @@ export function isHardMismatch(
     if (!profileAcceptsAthletic) return true;
   }
 
+  if (profile) {
+    const primaryKey = profile.primaryArchetype;
+    const secondaryKey = profile.secondaryArchetype;
+    for (const p of products) {
+      const primaryFit = p.archetypeFit[primaryKey] ?? 0;
+      if (primaryFit >= 0.15) continue;
+      const secondaryFit = secondaryKey ? (p.archetypeFit[secondaryKey] ?? 0) : 0;
+      if (secondaryFit < 0.25) return true;
+    }
+  }
+
   return false;
 }

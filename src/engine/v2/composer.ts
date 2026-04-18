@@ -29,23 +29,23 @@ const OCCASION_TARGET_FORMALITY: Record<OccasionKey, number> = {
 };
 
 const OCCASION_WANTS_OUTERWEAR: Record<OccasionKey, number> = {
-  work: 0.35,
-  formal: 0.45,
-  casual: 0.2,
-  date: 0.3,
+  work: 0.45,
+  formal: 0.5,
+  casual: 0.25,
+  date: 0.4,
   travel: 0.4,
   sport: 0.05,
-  party: 0.15,
+  party: 0.2,
 };
 
 const OCCASION_WANTS_ACCESSORY: Record<OccasionKey, number> = {
-  work: 0.2,
-  formal: 0.3,
-  casual: 0.15,
-  date: 0.25,
-  travel: 0.1,
+  work: 0.3,
+  formal: 0.4,
+  casual: 0.2,
+  date: 0.35,
+  travel: 0.15,
   sport: 0.0,
-  party: 0.3,
+  party: 0.4,
 };
 
 function seededRandom(seed: number): () => number {
@@ -238,6 +238,9 @@ function composeForOccasion(
 
   for (let attempt = 0; attempt < maxAttempts && candidates.length < count; attempt++) {
     const rand = seededRandom(baseSeed + attempt * 31 + occasion.length);
+    // Independent stream for optional-item dice rolls so shuffle-call depth
+    // can't bias outerwear/accessory inclusion.
+    const auxRand = seededRandom(baseSeed * 7919 + attempt * 41 + occasion.length * 13 + 17);
 
     const useDress =
       allowDress &&
@@ -286,7 +289,7 @@ function composeForOccasion(
       picks.footwear = pool[0];
     }
 
-    if (byCategory.outerwear.length > 0 && rand() < wantOuterwear) {
+    if (byCategory.outerwear.length > 0 && auxRand() < wantOuterwear) {
       const pool = pickTopPool(
         byCategory.outerwear,
         targetFormality,
@@ -297,7 +300,7 @@ function composeForOccasion(
       picks.outerwear = pool[0];
     }
 
-    if (byCategory.accessory.length > 0 && rand() < wantAccessory) {
+    if (byCategory.accessory.length > 0 && auxRand() < wantAccessory) {
       const pool = pickTopPool(
         byCategory.accessory,
         targetFormality,

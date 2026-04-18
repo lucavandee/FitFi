@@ -58,7 +58,7 @@ function budgetCheck(
   const ceiling = profile.budget.perItemMax * 1.35;
   if (price > ceiling) return 'over_budget';
   const min = profile.budget.perItemMin;
-  if (min > 0 && price < min * 0.5) return 'below_budget_min';
+  if (min > 0 && price < min * 0.75) return 'below_budget_min';
   return 'ok';
 }
 

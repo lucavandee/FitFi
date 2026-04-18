@@ -15,8 +15,11 @@ export function scoreBudget(
   if (price > max * 1.15) return { score: 0.35, reason: 'over_budget' };
   if (price > max) return { score: 0.6, reason: 'slight_over_budget' };
 
-  if (min > 0 && price < min * 0.5) {
+  if (min > 0 && price < min * 0.75) {
     return { score: 0.55, reason: 'below_min_budget' };
+  }
+  if (min > 0 && price < min) {
+    return { score: 0.7, reason: 'near_min_budget' };
   }
 
   const target = (max + Math.max(min, max * 0.3)) / 2;
