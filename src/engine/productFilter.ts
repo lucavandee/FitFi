@@ -1,3 +1,5 @@
+import { classifyProductDetailed } from './productClassifier';
+
 const REJECT_NAME_PATTERNS: RegExp[] = [
   /romper/i, /romperjurk/i, /kruippak/i, /slab\b/i, /boxpak/i, /babypak/i,
   /\bbaby\b/i, /\bbabies\b/i, /\bpeuter\b/i, /\bkleuter\b/i, /\bnewborn\b/i, /\binfant\b/i,
@@ -90,72 +92,8 @@ export function isAdultClothingProduct(row: Record<string, any>): boolean {
   return true;
 }
 
-const CATEGORY_NAME_MAP: Record<string, RegExp[]> = {
-  footwear: [
-    /sneaker/i, /schoen/i, /\bshoe\b/i, /laars/i, /\bboot\b/i, /\bboots\b/i,
-    /chelsea/i, /loafer/i, /mocassin/i, /\bpump\b/i, /\bpumps\b/i,
-    /espadrille/i, /instapper/i, /slip-on/i, /oxford/i, /derby/i, /brogue/i,
-    /veterschoen/i, /enkellaars/i, /kuitlaars/i, /laarzen/i,
-  ],
-  bottom: [
-    /\bbroek\b/i, /\bjeans\b/i, /\bchino\b/i, /pantalon/i, /\bjogger\b/i,
-    /\bshort\b/i, /\bshorts\b/i, /\bcargo\b/i, /\blegging\b/i,
-    /\bdenim\b/i, /palazzo/i, /culottes/i, /bermuda/i, /korte broek/i,
-    /sweatpant/i, /trainingsbroek/i,
-  ],
-  outerwear: [
-    /\bjas\b/i, /\bjack\b/i, /\bjacket\b/i, /\bcoat\b/i, /\bblazer\b/i,
-    /\bparka\b/i, /\bbomber\b/i, /puffer/i, /donsjas/i, /winterjas/i,
-    /trenchcoat/i, /\btrench\b/i, /overcoat/i, /\bmantel\b/i,
-    /\bgilet\b/i, /bodywarmer/i, /windbreaker/i, /softshell/i,
-    /fleecejack/i, /gewatteerd/i, /tussenjas/i, /zomerjas/i,
-    /spijkerjack/i, /leren jas/i, /\bovershirt\b/i,
-  ],
-  dress: [
-    /\bjurk\b/i, /\bdress\b/i, /maxijurk/i, /minijurk/i, /midijurk/i,
-    /avondjurk/i, /cocktailjurk/i, /zomerjurk/i,
-  ],
-  accessory: [
-    /\btas\b/i, /\bbag\b/i, /rugzak/i, /\briem\b/i, /\bbelt\b/i,
-    /\bsjaal\b/i, /\bscarf\b/i, /zonnebril/i, /\bhorloge\b/i,
-    /\bketting\b/i, /\barmband\b/i, /\boorbel/i, /\bdas\b/i,
-    /\bstropdas\b/i, /\bvlinderdas\b/i, /portemonnee/i,
-    /\bmuts\b/i, /\bbeanie\b/i, /\bpet\b/i, /\bhoed\b/i,
-  ],
-  skirt: [
-    /\brok\b/i, /\bskirt\b/i, /minirok/i, /midirok/i, /maxirok/i,
-    /kokerrok/i, /plooirok/i,
-  ],
-  top: [
-    /t-shirt/i, /\bshirt\b/i, /overhemd/i, /blouse/i, /\bpolo\b/i,
-    /\btrui\b/i, /sweater/i, /hoodie/i, /\bvest\b/i, /cardigan/i,
-    /tanktop/i, /longsleeve/i, /crewneck/i, /sweatshirt/i,
-    /turtleneck/i, /coltrui/i, /pullover/i, /\bknit\b/i, /gebreid/i,
-    /poloshirt/i,
-  ],
-};
-
 export function classifyCategory(row: Record<string, any>): string {
-  const name = (row.name || '').toLowerCase();
-  const desc = (row.description || '').toLowerCase();
-  const text = `${name} ${desc}`;
-
-  for (const [cat, patterns] of Object.entries(CATEGORY_NAME_MAP)) {
-    for (const p of patterns) {
-      if (p.test(name)) return cat;
-    }
-  }
-
-  for (const [cat, patterns] of Object.entries(CATEGORY_NAME_MAP)) {
-    for (const p of patterns) {
-      if (p.test(text)) return cat;
-    }
-  }
-
-  const dbCat = (row.category || '').toLowerCase();
-  if (['top', 'bottom', 'footwear', 'outerwear', 'accessory', 'dress', 'skirt'].includes(dbCat)) {
-    return dbCat;
-  }
-
-  return 'other';
+  const result = classifyProductDetailed(row.name || '', row.description || '', row.category || '');
+  if (result.rejected || result.category === 'underwear') return 'other';
+  return result.category;
 }
