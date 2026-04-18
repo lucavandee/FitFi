@@ -18,6 +18,11 @@ export const getStyleOptionsForGender = (gender?: string) => {
         : 'Tijdloze elegantie, verfijnde stukken'
     },
     {
+      value: 'business',
+      label: 'Zakelijk / Business',
+      description: 'Pakken, blazers en nette kleding voor kantoor en formele momenten'
+    },
+    {
       value: 'streetwear',
       label: 'Urban/Streetwear',
       description: isMale
@@ -27,6 +32,16 @@ export const getStyleOptionsForGender = (gender?: string) => {
   ];
 
   const femaleOptions = [
+    {
+      value: 'smart-casual',
+      label: 'Smart Casual',
+      description: 'Verzorgd en relaxed: blazers, nette broeken, loafers'
+    },
+    {
+      value: 'casual',
+      label: 'Casual / Alledaags',
+      description: 'Comfortabele, ontspannen stijl voor dagelijks gebruik'
+    },
     {
       value: 'bohemian',
       label: 'Bohemien',
@@ -59,6 +74,16 @@ export const getStyleOptionsForGender = (gender?: string) => {
       value: 'rugged',
       label: 'Stoer/Rugged',
       description: 'Robuuste materialen, outdoor-geïnspireerd, mannelijk'
+    },
+    {
+      value: 'edgy',
+      label: 'Stoer (Edgy)',
+      description: 'Rock-geïnspireerd met leer, denim en statement-stukken'
+    },
+    {
+      value: 'avant-garde',
+      label: 'Experimenteel / Avant-garde',
+      description: 'Oversized silhouetten, donker palet, designer-merken'
     }
   ];
 
