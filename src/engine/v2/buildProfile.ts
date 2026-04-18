@@ -93,7 +93,7 @@ const OCCASION_ARCHETYPE_BIAS: Record<OccasionKey, ArchetypeWeights> = {
   date: { CLASSIC: 0.15, SMART_CASUAL: 0.15, MINIMALIST: 0.1, AVANT_GARDE: 0.1 },
   travel: { SMART_CASUAL: 0.2, MINIMALIST: 0.15 },
   sport: { ATHLETIC: 0.5 },
-  party: { SMART_CASUAL: 0.2, CLASSIC: 0.1 },
+  party: { STREETWEAR: 0.2, SMART_CASUAL: 0.15, AVANT_GARDE: 0.1, CLASSIC: 0.05 },
 };
 
 function normalizeWeights(weights: ArchetypeWeights): ArchetypeWeights {
