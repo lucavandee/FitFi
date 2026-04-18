@@ -23,5 +23,5 @@ export function scoreBrand(
     }
   }
 
-  return { score: 0.7, reason: 'brand_neutral' };
+  return { score: 0.55, reason: 'brand_neutral' };
 }
