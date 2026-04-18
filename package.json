@@ -15,7 +15,8 @@
     "preinstall": "node scripts/bolt-install.mjs",
     "typecheck": "tsc --noEmit --pretty",
     "build:strict": "npm run typecheck && vite build",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:smoke": "playwright test tests/visual/nova-sse-health.spec.ts --headed",
@@ -43,12 +44,16 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
     "terser": "^5.44.1",
     "typescript": "^5.9.2",
-    "vite": "^5.4.20"
+    "vite": "^5.4.20",
+    "vitest": "^2.1.9"
   }
 }
