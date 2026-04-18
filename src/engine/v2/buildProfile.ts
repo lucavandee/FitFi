@@ -26,6 +26,8 @@ const QUIZ_STYLE_TO_ARCHETYPE: Record<string, ArchetypeWeights> = {
   bohemian: { AVANT_GARDE: 0.4, SMART_CASUAL: 0.6 },
   romantic: { CLASSIC: 0.6, SMART_CASUAL: 0.4 },
   edgy: { STREETWEAR: 0.5, AVANT_GARDE: 0.5 },
+  'avant-garde': { AVANT_GARDE: 1.0 },
+  avant_garde: { AVANT_GARDE: 1.0 },
   androgynous: { MINIMALIST: 0.7, SMART_CASUAL: 0.3 },
   luxury: { CLASSIC: 0.5, BUSINESS: 0.3, AVANT_GARDE: 0.2 },
   casual: { SMART_CASUAL: 0.7, STREETWEAR: 0.3 },
