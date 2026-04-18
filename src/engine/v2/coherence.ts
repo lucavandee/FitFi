@@ -11,7 +11,49 @@ export interface CoherenceScores {
   reasons: string[];
 }
 
-export function evaluateCoherence(products: ScoredProduct[]): CoherenceScores {
+interface FormalityThresholds {
+  hardPenalty: number;
+  midPenalty: number;
+  softPenalty: number;
+  mismatchTag: number;
+  coherentTag: number;
+}
+
+function formalityThresholdsFor(
+  profile?: UserStyleProfile
+): FormalityThresholds {
+  const primary = profile?.primaryArchetype;
+  if (primary === 'AVANT_GARDE') {
+    return {
+      hardPenalty: 0.85,
+      midPenalty: 0.8,
+      softPenalty: 0.7,
+      mismatchTag: 0.7,
+      coherentTag: 0.35,
+    };
+  }
+  if (primary === 'SMART_CASUAL') {
+    return {
+      hardPenalty: 0.7,
+      midPenalty: 0.65,
+      softPenalty: 0.55,
+      mismatchTag: 0.55,
+      coherentTag: 0.3,
+    };
+  }
+  return {
+    hardPenalty: 0.55,
+    midPenalty: 0.4,
+    softPenalty: 0.25,
+    mismatchTag: 0.45,
+    coherentTag: 0.25,
+  };
+}
+
+export function evaluateCoherence(
+  products: ScoredProduct[],
+  profile?: UserStyleProfile
+): CoherenceScores {
   const reasons: string[] = [];
   if (products.length === 0) {
     return {
@@ -33,16 +75,17 @@ export function evaluateCoherence(products: ScoredProduct[]): CoherenceScores {
   if (colorHarmony > 0.8) reasons.push('color_harmony_strong');
   else if (colorHarmony < 0.45) reasons.push('color_harmony_weak');
 
+  const thresholds = formalityThresholdsFor(profile);
   const formalities = products.map((p) => p.formality);
   const minF = Math.min(...formalities);
   const maxF = Math.max(...formalities);
   const spread = maxF - minF;
   let formalitySpread = 1;
-  if (spread > 0.55) formalitySpread = 0.35;
-  else if (spread > 0.4) formalitySpread = 0.6;
-  else if (spread > 0.25) formalitySpread = 0.85;
-  if (spread < 0.25) reasons.push('formality_coherent');
-  if (spread > 0.45) reasons.push('formality_mismatch');
+  if (spread > thresholds.hardPenalty) formalitySpread = 0.35;
+  else if (spread > thresholds.midPenalty) formalitySpread = 0.6;
+  else if (spread > thresholds.softPenalty) formalitySpread = 0.85;
+  if (spread < thresholds.coherentTag) reasons.push('formality_coherent');
+  if (spread > thresholds.mismatchTag) reasons.push('formality_mismatch');
 
   const archetypeTotals: Record<string, number> = {};
   for (const p of products) {
