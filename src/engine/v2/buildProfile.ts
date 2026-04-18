@@ -89,7 +89,7 @@ const DEFAULT_ARCHETYPES: ArchetypeWeights = {
 const OCCASION_ARCHETYPE_BIAS: Record<OccasionKey, ArchetypeWeights> = {
   work: { BUSINESS: 0.25, CLASSIC: 0.2, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
   formal: { BUSINESS: 0.4, CLASSIC: 0.2, MINIMALIST: 0.05 },
-  casual: { SMART_CASUAL: 0.15, STREETWEAR: 0.1 },
+  casual: { SMART_CASUAL: 0.2, CLASSIC: 0.1 },
   date: { CLASSIC: 0.15, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
   travel: { SMART_CASUAL: 0.2, MINIMALIST: 0.15 },
   sport: { ATHLETIC: 0.5 },
