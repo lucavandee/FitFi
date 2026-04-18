@@ -116,8 +116,19 @@ const CLASSIC_BRANDS = new Set([
 
 const MINIMALIST_BRANDS = new Set([
   'cos', 'arket', 'uniqlo', 'muji', 'everlane', 'filippa k', 'theory',
-  'jil sander', 'a.p.c.', 'apc', 'acne studios', 'our legacy', 'norse projects',
-  'margaret howell', 'lemaire',
+  'jil sander', 'a.p.c.', 'apc', 'norse projects',
+  'margaret howell',
+]);
+
+const AVANT_GARDE_BRANDS = new Set([
+  'rick owens', 'rick owens drkshdw', 'yohji yamamoto',
+  'comme des garcons', 'comme des garçons', 'cdg',
+  'maison margiela', 'margiela', 'mm6',
+  'raf simons', 'ann demeulemeester', 'dries van noten',
+  'julius', 'boris bidjan saberi', 'carol christian poell',
+  'undercover', 'sacai', 'issey miyake', 'helmut lang',
+  'vetements', 'balenciaga',
+  'acne studios', 'our legacy', 'lemaire',
 ]);
 
 function getBrandStyleHint(brand: string): { formality: number; silhouette: string; archetype?: string } | null {
@@ -126,6 +137,7 @@ function getBrandStyleHint(brand: string): { formality: number; silhouette: stri
   if (ATHLETIC_BRANDS.has(b)) return { formality: 0.10, silhouette: 'slim', archetype: 'athletic' };
   if (BUSINESS_BRANDS.has(b)) return { formality: 0.85, silhouette: 'tailored', archetype: 'business' };
   if (CLASSIC_BRANDS.has(b)) return { formality: 0.65, silhouette: 'tailored' };
+  if (AVANT_GARDE_BRANDS.has(b)) return { formality: 0.40, silhouette: 'oversized', archetype: 'avant-garde' };
   if (MINIMALIST_BRANDS.has(b)) return { formality: 0.55, silhouette: 'clean' };
   return null;
 }
@@ -207,6 +219,11 @@ export function enrichProduct(product: Product): Product & { _signals: EnrichedS
     if (!formalityMatched && !brandHint) formality = Math.max(formality, 0.55);
   } else if (dbStyle === 'minimalist') {
     if (!silhouetteTags.includes('clean')) silhouetteTags.push('clean');
+  } else if (dbStyle === 'avant-garde') {
+    if (!silhouetteTags.includes('oversized') && !silhouetteTags.includes('draped')) {
+      silhouetteTags.push('oversized');
+    }
+    if (!formalityMatched && !brandHint) formality = 0.40;
   } else if (dbStyle === 'luxury') {
     if (!silhouetteTags.includes('tailored')) silhouetteTags.push('tailored');
     if (!formalityMatched && !brandHint) formality = Math.max(formality, 0.65);
