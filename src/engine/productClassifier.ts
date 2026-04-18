@@ -221,6 +221,10 @@ const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|bi
 
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic|in)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic|in)\b/i;
 
+// Baselayers / thermals are worn under clothing and should never surface in an
+// outfit (e.g. Uniqlo Heattech at €29 was slipping into tops at high min-budget).
+export const BASELAYER_RE = /heattech|baselayer|thermal|ondershirt|\bhemd\b/i;
+
 const KIDS_REGEX = /\b(baby|babies|peuter|kleuter|newborn|infant|kinder|kinderen|junior|kids?|dreumes|toddler|jongens|meisjes|boys|girls|child|children)\b/i;
 
 const MULTIPACK_REGEX = /\b(\d+)[- ]?(pack|stuks)\b/i;
@@ -301,6 +305,9 @@ export function classifyProductDetailed(
   }
   if (SPORT_FOOTWEAR_REGEX.test(nameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'sport footwear studs pattern' };
+  }
+  if (BASELAYER_RE.test(nameText) || BASELAYER_RE.test(descText)) {
+    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'baselayer/thermal — not outfit-visible' };
   }
   if (MULTIPACK_REGEX.test(nameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'multipack' };

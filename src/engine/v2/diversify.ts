@@ -53,12 +53,31 @@ export function diversifyOutfits(
   const seenArchetypeSignatures = new Map<string, number>();
   const seenColorSignatures = new Map<string, number>();
   const seenOccasions = new Map<string, number>();
+  const productAppearances = new Map<string, number>();
+
+  const MAX_APPEARANCES = 2;
+
+  const hasOverusedProduct = (cand: OutfitCandidate) =>
+    cand.products.some(
+      (p) => (productAppearances.get(p.product.id) ?? 0) >= MAX_APPEARANCES
+    );
+
+  const registerProducts = (cand: OutfitCandidate) => {
+    for (const p of cand.products) {
+      productAppearances.set(
+        p.product.id,
+        (productAppearances.get(p.product.id) ?? 0) + 1
+      );
+    }
+  };
 
   for (const cand of sorted) {
     if (selected.length >= options.count) break;
 
     const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.34);
     if (tooSimilar) continue;
+
+    if (hasOverusedProduct(cand)) continue;
 
     const archSig = archetypeSignature(cand);
     const colorSig = colorSignature(cand);
@@ -74,15 +93,18 @@ export function diversifyOutfits(
     seenArchetypeSignatures.set(archSig, archetypeCount + 1);
     seenColorSignatures.set(colorSig, colorCount + 1);
     seenOccasions.set(cand.occasion, occCount + 1);
+    registerProducts(cand);
   }
 
   if (selected.length < options.count) {
     for (const cand of sorted) {
       if (selected.length >= options.count) break;
       if (selected.includes(cand)) continue;
+      if (hasOverusedProduct(cand)) continue;
       const tooSimilar = selected.some((s) => productOverlap(s, cand) > 0.65);
       if (tooSimilar) continue;
       selected.push(cand);
+      registerProducts(cand);
     }
   }
 
