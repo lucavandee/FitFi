@@ -9,7 +9,7 @@ export type TemperatureKey = 'warm' | 'koel' | 'neutraal';
 export type ValueKey = 'licht' | 'medium' | 'donker';
 export type ContrastKey = 'laag' | 'medium' | 'hoog';
 export type ColorSeasonKey = 'lente' | 'zomer' | 'herfst' | 'winter';
-export type OccasionKey = 'work' | 'casual' | 'formal' | 'date' | 'travel' | 'sport';
+export type OccasionKey = 'work' | 'casual' | 'formal' | 'date' | 'travel' | 'sport' | 'party';
 export type GoalKey =
   | 'timeless'
   | 'trendy'
