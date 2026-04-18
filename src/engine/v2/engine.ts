@@ -5,6 +5,7 @@ import type {
   GoalKey,
   OccasionKey,
   OutfitCandidate,
+  ScoredProduct,
   Season,
   TemperatureKey,
   UserStyleProfile,
@@ -48,18 +49,25 @@ const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }>
   },
 };
 
-function buildOutfitTitle(
-  candidate: OutfitCandidate,
-  profile: UserStyleProfile
-): string {
-  const copy = OCCASION_COPY[candidate.occasion];
-  const archetype = profile.primaryArchetype.toLowerCase().replace('_', ' ');
-  return `${copy.title} · ${archetype}`;
-}
+const OCCASION_FRAMING: Record<OccasionKey, string[]> = {
+  work: ['voor kantoor', 'zakelijk maar comfortabel', 'office-ready'],
+  casual: ['voor je vrije dag', 'relaxed maar stijlvol'],
+  formal: ['voor een nette setting', 'ingetogen en verzorgd'],
+  date: ['voor een avond uit', 'verzorgd maar relaxed', 'date-ready'],
+  travel: ['voor onderweg', 'comfortabel maar verzorgd'],
+  sport: ['functioneel voor beweging', 'sportief en clean'],
+  party: ['voor een avond stappen', 'opvallend maar niet overdressed'],
+};
 
-function buildOutfitDescription(candidate: OutfitCandidate): string {
-  return OCCASION_COPY[candidate.occasion].description;
-}
+const ARCHETYPE_LABEL: Record<string, string> = {
+  MINIMALIST: 'minimal',
+  CLASSIC: 'classic',
+  SMART_CASUAL: 'smart casual',
+  STREETWEAR: 'street',
+  ATHLETIC: 'athletic',
+  AVANT_GARDE: 'avant-garde',
+  BUSINESS: 'tailored',
+};
 
 const GOAL_ADJECTIVE: Partial<Record<GoalKey, string>> = {
   timeless: 'tijdloze',
@@ -74,16 +82,75 @@ const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
   neutraal: 'Met een neutrale basis.',
 };
 
-function primaryGoalAdjective(goals: GoalKey[], index: number): string | null {
+const EXPLANATION_SIMILARITY_THRESHOLD = 0.6;
+
+function archetypeLabel(profile: UserStyleProfile): string {
+  return (
+    ARCHETYPE_LABEL[profile.primaryArchetype] ??
+    profile.primaryArchetype.toLowerCase().replace('_', ' ')
+  );
+}
+
+function capitalize(s: string): string {
+  return s.length ? s[0].toUpperCase() + s.slice(1) : s;
+}
+
+function rotate<T>(arr: T[], offset: number): T[] {
+  if (arr.length === 0) return arr;
+  const n = ((offset % arr.length) + arr.length) % arr.length;
+  return [...arr.slice(n), ...arr.slice(0, n)];
+}
+
+function contextualGoalAdjective(
+  occasion: OccasionKey,
+  goals: GoalKey[],
+  index: number
+): string {
+  if (occasion === 'work' && goals.includes('professional')) return 'professionele';
+  if (occasion === 'date') return 'verzorgde';
+  if (occasion === 'party' && goals.includes('express')) return 'expressieve';
+
   const priority: GoalKey[] = ['timeless', 'professional', 'express', 'minimal'];
-  const matched: string[] = [];
+  const pool: string[] = [];
   for (const key of priority) {
     if (!goals.includes(key)) continue;
     const adj = GOAL_ADJECTIVE[key];
-    if (adj) matched.push(adj);
+    if (adj) pool.push(adj);
   }
-  if (matched.length === 0) return null;
-  return matched[index % matched.length];
+  if (pool.length === 0) return 'tijdloze';
+  return pool[index % pool.length];
+}
+
+function heroItem(candidate: OutfitCandidate): ScoredProduct | null {
+  if (candidate.products.length === 0) return null;
+  return [...candidate.products].sort((a, b) => {
+    const pa = a.product.price ?? 0;
+    const pb = b.product.price ?? 0;
+    if (pb !== pa) return pb - pa;
+    return b.score - a.score;
+  })[0];
+}
+
+function heroItemWord(p: ScoredProduct | null): string | null {
+  if (!p) return null;
+  const type = (p.product.type || '').toLowerCase().trim();
+  if (type) return type.split(/\s+/)[0];
+  const name = (p.product.name || '').toLowerCase().trim();
+  if (!name) return null;
+  return name.split(/\s+/)[0];
+}
+
+function heroMaterialKey(candidate: OutfitCandidate): string | null {
+  const hero = heroItem(candidate);
+  if (!hero) return null;
+  const tags = new Set<string>([
+    ...hero.materialTags.map((m) => m.toLowerCase()),
+    ...(hero.product.materials ?? []).map((m: string) => m.toLowerCase()),
+  ]);
+  for (const [key, aliases] of Object.entries(MATERIAL_ALIAS)) {
+    if (aliases.some((a) => tags.has(a))) return key;
+  }
+  return null;
 }
 
 function matchedPreferredMaterial(
@@ -109,7 +176,7 @@ function matchedPreferredMaterial(
   return [...counts.entries()].sort(([, a], [, b]) => b - a)[0][0];
 }
 
-function dominantOutfitMaterial(candidate: OutfitCandidate): string | null {
+function dominantOutfitMaterialKey(candidate: OutfitCandidate): string | null {
   const counts = new Map<string, number>();
   for (const p of candidate.products) {
     const tags = new Set<string>([
@@ -125,14 +192,25 @@ function dominantOutfitMaterial(candidate: OutfitCandidate): string | null {
   }
   if (counts.size === 0) return null;
   const sorted = [...counts.entries()].sort(([, a], [, b]) => b - a);
-  const total = candidate.products.length;
+  const total = candidate.products.length || 1;
   const [top1, n1] = sorted[0];
-  if (sorted.length === 1 || n1 / total >= 0.6) return `Volledig in ${top1}`;
-  const [top2] = sorted[1];
-  return `Mix van ${top1} en ${top2}`;
+  if (sorted.length === 1 || n1 / total >= 0.6) return top1;
+  return null;
 }
 
-function outfitColorSignal(candidate: OutfitCandidate): string | null {
+function dominantOutfitColor(candidate: OutfitCandidate): string | null {
+  const counts = new Map<string, number>();
+  for (const p of candidate.products) {
+    for (const c of p.colorTags.slice(0, 2)) {
+      const key = c.toLowerCase();
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+  }
+  if (counts.size === 0) return null;
+  return [...counts.entries()].sort(([, a], [, b]) => b - a)[0][0];
+}
+
+function outfitColorPair(candidate: OutfitCandidate): string | null {
   const colors: string[] = [];
   for (const p of candidate.products) {
     const first = p.colorTags[0];
@@ -140,72 +218,222 @@ function outfitColorSignal(candidate: OutfitCandidate): string | null {
   }
   if (colors.length === 0) return null;
   const unique = Array.from(new Set(colors));
-  if (unique.length === 1) return `Monochroom ${unique[0]}`;
+  if (unique.length === 1) return `monochroom ${unique[0]}`;
   return `${unique[0]} met ${unique[1]}`;
 }
 
-function outfitLayeringSignal(candidate: OutfitCandidate): string | null {
-  const outer = candidate.products.find((p) => p.category === 'outerwear');
-  if (!outer) return null;
-  const source = (outer.product.type || outer.product.name || 'jas')
-    .toLowerCase()
-    .trim();
-  const label = source.split(/\s+/)[0] || 'jas';
-  return `Gelaagd met ${label}`;
-}
-
-function outfitSpecificSignal(
+function matchedPreferredBrands(
   candidate: OutfitCandidate,
-  index: number
-): string | null {
-  const options = [
-    dominantOutfitMaterial(candidate),
-    outfitColorSignal(candidate),
-    outfitLayeringSignal(candidate),
-  ].filter((s): s is string => s !== null);
-  if (options.length === 0) return null;
-  return `${options[index % options.length]}.`;
+  profile: UserStyleProfile
+): string[] {
+  const prefs = profile.preferredBrands.map((b) => b.toLowerCase()).filter(Boolean);
+  if (prefs.length === 0) return [];
+  const seen = new Set<string>();
+  const brands: string[] = [];
+  for (const p of candidate.products) {
+    const raw = (p.product.brand ?? '').trim();
+    if (!raw) continue;
+    const brand = raw.toLowerCase();
+    const matches = prefs.some(
+      (pref) => brand === pref || brand.includes(pref) || pref.includes(brand)
+    );
+    if (matches && !seen.has(brand)) {
+      seen.add(brand);
+      brands.push(raw);
+    }
+  }
+  return brands;
 }
 
-function buildExplanation(
+function tokenize(s: string): Set<string> {
+  return new Set(
+    s
+      .toLowerCase()
+      .replace(/[.,·—:;!?()]/g, ' ')
+      .split(/\s+/)
+      .filter((w) => w.length > 2)
+  );
+}
+
+function wordOverlapSimilarity(a: string, b: string): number {
+  const wa = tokenize(a);
+  const wb = tokenize(b);
+  if (wa.size === 0 || wb.size === 0) return 0;
+  let overlap = 0;
+  wa.forEach((w) => {
+    if (wb.has(w)) overlap++;
+  });
+  return overlap / Math.min(wa.size, wb.size);
+}
+
+interface TitleStrategy {
+  key: string;
+  suffix: string;
+}
+
+function buildTitleStrategies(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile
+): TitleStrategy[] {
+  const strategies: TitleStrategy[] = [];
+  const heroMat = heroMaterialKey(candidate);
+  const hasOuter = candidate.products.some((p) => p.category === 'outerwear');
+  const heroWord = heroItemWord(heroItem(candidate));
+  const color = dominantOutfitColor(candidate);
+  const archetype = archetypeLabel(profile);
+  const dominantMat = dominantOutfitMaterialKey(candidate);
+
+  if (heroMat && hasOuter) {
+    strategies.push({ key: 'hero-mat-layer', suffix: `${heroMat} layer` });
+  } else if (heroMat && heroWord) {
+    strategies.push({ key: 'hero-mat-item', suffix: `${heroMat} ${heroWord}` });
+  }
+  if (color) {
+    strategies.push({ key: 'color-archetype', suffix: `${color} ${archetype}` });
+  }
+  if (heroWord) {
+    strategies.push({
+      key: 'tonal-hero',
+      suffix: `${color ?? 'tonal'} ${heroWord}`,
+    });
+  }
+  if (dominantMat) {
+    strategies.push({ key: 'mat-archetype', suffix: `${dominantMat} ${archetype}` });
+  }
+  strategies.push({ key: 'archetype', suffix: archetype });
+  return strategies;
+}
+
+function buildUniqueTitle(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
-  index: number
+  index: number,
+  usedTitles: Set<string>
 ): string {
-  const signals: string[] = [];
-
-  const goal = primaryGoalAdjective(profile.goals, index);
-  if (goal) signals.push(`Afgestemd op je ${goal} stijl.`);
-
-  const outfitSignal = outfitSpecificSignal(candidate, index);
-  if (outfitSignal) signals.push(outfitSignal);
-
-  const material = matchedPreferredMaterial(candidate, profile);
-  if (
-    material &&
-    (!outfitSignal || !outfitSignal.toLowerCase().includes(material))
-  ) {
-    signals.push(`Met je voorkeur voor ${material}.`);
+  const prefix = OCCASION_COPY[candidate.occasion].title;
+  const strategies = buildTitleStrategies(candidate, profile);
+  const rotated = rotate(strategies, index);
+  for (const strat of rotated) {
+    if (!strat.suffix) continue;
+    const title = `${prefix} · ${strat.suffix}`;
+    if (!usedTitles.has(title)) return title;
   }
+  const base = rotated[0]?.suffix ?? archetypeLabel(profile);
+  return `${prefix} · ${base} ${index + 1}`;
+}
 
-  if (profile.color.temperature) {
-    signals.push(TEMPERATURE_SENTENCE[profile.color.temperature]);
+interface ExplanationState {
+  afgestemdUsed: boolean;
+}
+
+function buildUniqueExplanation(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile,
+  index: number,
+  prevExplanations: string[],
+  state: ExplanationState
+): string {
+  const framings = OCCASION_FRAMING[candidate.occasion] ?? [];
+  const framing = framings.length > 0 ? framings[index % framings.length] : null;
+  const adj = contextualGoalAdjective(candidate.occasion, profile.goals, index);
+  const hero = heroItem(candidate);
+  const heroWord = heroItemWord(hero);
+  const heroName = hero?.product.name?.trim() || null;
+  const prefMat = matchedPreferredMaterial(candidate, profile);
+  const outfitMat = dominantOutfitMaterialKey(candidate);
+  const color = dominantOutfitColor(candidate);
+  const colorPair = outfitColorPair(candidate);
+  const brands = matchedPreferredBrands(candidate, profile);
+
+  const openingTemplates: string[] = [];
+  if (!state.afgestemdUsed) {
+    openingTemplates.push(`Afgestemd op je ${adj} stijl.`);
   }
+  if (framing && heroWord) {
+    openingTemplates.push(
+      `${capitalize(framing)}, met een ${heroWord} als blikvanger.`
+    );
+  }
+  if (framing) {
+    openingTemplates.push(`${capitalize(framing)}: een ${adj} combinatie.`);
+    openingTemplates.push(`${capitalize(framing)}.`);
+  }
+  if (heroWord) {
+    openingTemplates.push(`De ${heroWord} draagt deze look.`);
+  }
+  openingTemplates.push(
+    `Een ${adj} silhouet voor ${candidate.occasion === 'work' ? 'je werkweek' : 'alledag'}.`
+  );
 
+  const bodyPool: string[] = [];
+  if (brands.length >= 2) {
+    bodyPool.push(
+      `Met stukken van je voorkeursmerken ${brands[0]} en ${brands[1]}.`
+    );
+  } else if (brands.length === 1) {
+    bodyPool.push(`${brands[0]} als voorkeursmerk in de mix.`);
+  }
+  if (heroName && heroName.length <= 45) {
+    bodyPool.push(`${heroName} geeft de toon aan.`);
+  }
+  if (prefMat) {
+    bodyPool.push(`Afgestemd op je voorkeur voor ${prefMat}.`);
+  } else if (outfitMat) {
+    bodyPool.push(`Volledig in ${outfitMat}.`);
+  }
+  if (color) {
+    bodyPool.push(`${capitalize(color)} als rode draad.`);
+  } else if (colorPair) {
+    bodyPool.push(`${capitalize(colorPair)}.`);
+  }
   if (candidate.coherence.completeness >= 1) {
-    signals.push('Compleet van top tot schoen.');
+    bodyPool.push('Compleet van top tot schoen.');
   }
-
   if (profile.moodboard.totalCount >= 10 && profile.moodboard.confidence > 0.5) {
-    signals.push('Gebaseerd op je moodboard-keuzes.');
+    bodyPool.push('Gebaseerd op je moodboard.');
+  }
+  if (profile.color.temperature) {
+    bodyPool.push(TEMPERATURE_SENTENCE[profile.color.temperature]);
   }
 
-  if (signals.length === 0) {
-    const primary = profile.primaryArchetype.toLowerCase().replace('_', ' ');
-    return `Afgestemd op je ${primary}-voorkeur.`;
+  const assemble = (opening: string, body: string[]): string => {
+    const opLower = opening.toLowerCase();
+    const matKey = prefMat ?? outfitMat;
+    const dedupBody: string[] = [];
+    for (const line of body) {
+      const lower = line.toLowerCase();
+      if (matKey && lower.includes(matKey) && opLower.includes(matKey)) continue;
+      if (color && lower.startsWith(capitalize(color).toLowerCase()) && opLower.includes(color)) continue;
+      dedupBody.push(line);
+      if (dedupBody.length >= 2) break;
+    }
+    return [opening, ...dedupBody].filter(Boolean).join(' ').trim();
+  };
+
+  const openingsRotated = rotate(openingTemplates, index);
+
+  for (const opening of openingsRotated) {
+    const maxShift = Math.max(1, bodyPool.length);
+    for (let shift = 0; shift < maxShift; shift++) {
+      const body = rotate(bodyPool, index + shift);
+      const text = assemble(opening, body);
+      const tooSimilar = prevExplanations.some(
+        (prev) => wordOverlapSimilarity(prev, text) > EXPLANATION_SIMILARITY_THRESHOLD
+      );
+      if (!tooSimilar) {
+        if (opening.startsWith('Afgestemd op je ')) state.afgestemdUsed = true;
+        return text;
+      }
+    }
   }
 
-  return signals.slice(0, 3).join(' ');
+  const fallbackOpening = openingsRotated[0] ?? `Een ${adj} combinatie.`;
+  if (fallbackOpening.startsWith('Afgestemd op je ')) state.afgestemdUsed = true;
+  return assemble(fallbackOpening, rotate(bodyPool, index));
+}
+
+function buildOutfitDescription(candidate: OutfitCandidate): string {
+  return OCCASION_COPY[candidate.occasion].description;
 }
 
 function buildMatchPercentage(candidate: OutfitCandidate): number {
@@ -265,7 +493,8 @@ function candidateToOutfit(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
   season: Season,
-  index: number
+  title: string,
+  explanation: string
 ): Outfit {
   const products: Product[] = candidate.products.map((p) => ({
     ...p.product,
@@ -284,7 +513,7 @@ function candidateToOutfit(
 
   return {
     id: candidate.id,
-    title: buildOutfitTitle(candidate, profile),
+    title,
     description: buildOutfitDescription(candidate),
     archetype: profile.primaryArchetype,
     secondaryArchetype: profile.secondaryArchetype ?? undefined,
@@ -299,7 +528,7 @@ function candidateToOutfit(
     ),
     matchPercentage: buildMatchPercentage(candidate),
     matchScore: buildMatchPercentage(candidate),
-    explanation: buildExplanation(candidate, profile, index),
+    explanation,
     season: seasonMap[season],
     structure: candidate.products.map((p) => p.category),
     categoryRatio: categoryRatio(candidate),
@@ -383,9 +612,23 @@ export function runEngineV2(
     excludeIds: Array.from(excludeIds),
   });
 
-  const outfits = diversified.map((c, i) =>
-    candidateToOutfit(c, profile, season, i)
-  );
+  const usedTitles = new Set<string>();
+  const prevExplanations: string[] = [];
+  const explanationState: ExplanationState = { afgestemdUsed: false };
+
+  const outfits = diversified.map((cand, i) => {
+    const title = buildUniqueTitle(cand, profile, i, usedTitles);
+    usedTitles.add(title);
+    const explanation = buildUniqueExplanation(
+      cand,
+      profile,
+      i,
+      prevExplanations,
+      explanationState
+    );
+    prevExplanations.push(explanation);
+    return candidateToOutfit(cand, profile, season, title, explanation);
+  });
 
   const occasionsCovered = Array.from(
     new Set(diversified.map((c) => c.occasion))
