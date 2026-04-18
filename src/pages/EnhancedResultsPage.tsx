@@ -217,9 +217,13 @@ export default function EnhancedResultsPage() {
     });
   }, []);
 
-  const color = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
-  const archetypeRaw = readJson<Archetype>(LS_KEYS.ARCHETYPE);
-  const answers = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
+  // Read localStorage snapshots once per mount so that every render downstream
+  // gets a stable reference. Without this, `readJson` returns a fresh object on
+  // every render, which causes effects that depend on `answers` (and
+  // `useOutfits` in v1 mode) to thrash.
+  const color = React.useMemo(() => readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE), []);
+  const archetypeRaw = React.useMemo(() => readJson<Archetype>(LS_KEYS.ARCHETYPE), []);
+  const answers = React.useMemo(() => readJson<any>(LS_KEYS.QUIZ_ANSWERS), []);
 
   const hasCompletedQuiz = !!answers;
 

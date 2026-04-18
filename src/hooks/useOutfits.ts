@@ -4,6 +4,22 @@ import { fetchOutfits } from '@/services/data/dataService';
 import { outfitService } from '@/services/outfits/outfitService';
 import type { Outfit } from '@/services/data/types';
 
+/**
+ * Deterministic string digest of a quiz-answers object, used as part of the
+ * React Query key. Stable JSON ordering ensures two calls with the same answer
+ * content produce the same key regardless of object reference or key order.
+ */
+function stableAnswersKey(answers: Record<string, any>): string {
+  try {
+    const keys = Object.keys(answers).sort();
+    const normalized: Record<string, any> = {};
+    for (const k of keys) normalized[k] = answers[k];
+    return JSON.stringify(normalized);
+  } catch {
+    return '';
+  }
+}
+
 interface UseOutfitsOptions {
   archetype?: string;
   secondaryArchetype?: string;
@@ -55,27 +71,37 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
     answers,
   } = options;
 
-  // Stable query key based on all parameters that affect results
-  const queryKey = [
-    'outfits',
-    answers ? 'v2' : 'v1',
-    archetype ?? '',
-    secondaryArchetype ?? '',
-    mixFactor ?? 0,
-    season ?? '',
-    limit ?? 9,
-    gender ?? '',
-    fit ?? '',
-    prints ?? '',
-    (goals || []).sort().join(','),
-    (materials || []).sort().join(','),
-    (occasions || []).sort().join(','),
-    budget?.min ?? '',
-    budget?.max ?? '',
-  ];
+  // Engine v2 reads moodboard/archetype/color from answers + localStorage itself,
+  // so the queryKey only needs a stable digest of answers + limit. Including
+  // archetype/secondaryArchetype/mixFactor/colorProfile here would cause
+  // unnecessary refetches when those resolve asynchronously on the results page.
+  const queryKey = answers
+    ? ([
+        'outfits',
+        'v2',
+        stableAnswersKey(answers),
+        limit ?? 9,
+      ] as const)
+    : ([
+        'outfits',
+        'v1',
+        archetype ?? '',
+        secondaryArchetype ?? '',
+        mixFactor ?? 0,
+        season ?? '',
+        limit ?? 9,
+        gender ?? '',
+        fit ?? '',
+        prints ?? '',
+        (goals || []).slice().sort().join(','),
+        (materials || []).slice().sort().join(','),
+        (occasions || []).slice().sort().join(','),
+        budget?.min ?? '',
+        budget?.max ?? '',
+      ] as const);
 
   const query = useQuery({
-    queryKey,
+    queryKey: queryKey as unknown as readonly unknown[],
     queryFn: async () => {
       // Engine v2 path: use outfitService which reads moodboard data from localStorage
       if (answers) {
@@ -113,8 +139,14 @@ export function useOutfits(options: UseOutfitsOptions = {}): UseOutfitsResult {
       };
     },
     enabled,
-    staleTime: 1000 * 60 * 10, // 10 min — outfits don't change often
-    gcTime: 1000 * 60 * 30,    // Keep in cache 30 min after unmount
+    // Outfits are deterministic per quiz answer set. Keep the result pinned for
+    // the lifetime of the session so async updates (archetype detection, color
+    // profile generation) don't trigger refetches.
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 30,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const result = query.data;
