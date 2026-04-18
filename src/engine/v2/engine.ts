@@ -39,6 +39,10 @@ const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }>
     title: 'Actief',
     description: 'Functioneel en sportief voor beweging en gym.',
   },
+  party: {
+    title: 'Uitgaan / Feest',
+    description: 'Expressief en comfortabel voor stappen, festivals of feestjes.',
+  },
 };
 
 function buildOutfitTitle(
