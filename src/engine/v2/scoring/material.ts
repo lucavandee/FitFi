@@ -1,6 +1,6 @@
 import type { ScoredProduct, UserStyleProfile } from '../types';
 
-const MATERIAL_ALIAS: Record<string, string[]> = {
+export const MATERIAL_ALIAS: Record<string, string[]> = {
   katoen: ['katoen', 'cotton'],
   wol: ['wol', 'wool', 'merino'],
   denim: ['denim', 'jeans'],
