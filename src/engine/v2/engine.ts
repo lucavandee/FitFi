@@ -2,6 +2,7 @@ import type { Outfit, Product } from '../types';
 import type {
   EngineOptions,
   EngineResult,
+  GoalKey,
   OccasionKey,
   OutfitCandidate,
   Season,
@@ -54,29 +55,62 @@ function buildOutfitDescription(candidate: OutfitCandidate): string {
   return OCCASION_COPY[candidate.occasion].description;
 }
 
+const GOAL_PHRASE: Partial<Record<GoalKey, string>> = {
+  timeless: 'tijdloze stukken',
+  professional: 'een professionele uitstraling',
+  express: 'een expressieve twist',
+};
+
+const GOAL_PRIORITY: GoalKey[] = ['timeless', 'professional', 'express'];
+
 function buildExplanation(
   candidate: OutfitCandidate,
   profile: UserStyleProfile
 ): string {
-  const parts: string[] = [];
-  const primary = profile.primaryArchetype.toLowerCase().replace('_', ' ');
-  parts.push(`Afgestemd op je ${primary}-voorkeur.`);
+  const archetype = profile.primaryArchetype.toLowerCase().replace('_', ' ');
+  const signals: string[] = [];
 
-  if (candidate.coherence.colorHarmony > 0.75) {
-    parts.push('De kleuren vallen rustig samen.');
-  } else if (candidate.coherence.colorHarmony > 0.55) {
-    parts.push('Een doordachte kleurcombinatie.');
+  const topGoal = GOAL_PRIORITY.find((g) => profile.goals.includes(g));
+  if (topGoal && GOAL_PHRASE[topGoal]) {
+    signals.push(GOAL_PHRASE[topGoal]!);
   }
 
-  if (candidate.coherence.completeness >= 1) {
-    parts.push('Compleet van top tot schoen.');
+  if (profile.materials.preferred.length > 0) {
+    const pref = profile.materials.preferred.map((m) => m.toLowerCase());
+    const outfitMaterials = new Set(
+      candidate.products.flatMap((p) => p.materialTags.map((m) => m.toLowerCase()))
+    );
+    const matched = pref.filter((m) => outfitMaterials.has(m));
+    if (matched.length > 0) {
+      signals.push(`je voorkeur voor ${matched.slice(0, 2).join(' en ')}`);
+    }
   }
 
-  if (profile.moodboard.totalCount >= 10 && profile.moodboard.confidence > 0.5) {
-    parts.push('Gebaseerd op je moodboard-keuzes.');
+  if (signals.length < 2) {
+    const temp = profile.color.temperature;
+    if (temp === 'koel') signals.push('koele tinten');
+    else if (temp === 'warm') signals.push('warme tinten');
+    else if (temp === 'neutraal') signals.push('een neutrale basis');
   }
 
-  return parts.join(' ');
+  const top = signals.slice(0, 2);
+  let main: string;
+  if (top.length === 0) {
+    main = `Afgestemd op je ${archetype}-stijl.`;
+  } else if (top.length === 1) {
+    main = `Afgestemd op je ${archetype}-stijl met ${top[0]}.`;
+  } else {
+    main = `Afgestemd op je ${archetype}-stijl met ${top[0]} en ${top[1]}.`;
+  }
+
+  if (top.length < 2 && candidate.coherence.completeness >= 1) {
+    return `${main} Compleet van top tot schoen.`;
+  }
+  if (top.length === 0 && candidate.coherence.colorHarmony > 0.75) {
+    return `${main} De kleuren vallen rustig samen.`;
+  }
+
+  return main;
 }
 
 function buildMatchPercentage(candidate: OutfitCandidate): number {
