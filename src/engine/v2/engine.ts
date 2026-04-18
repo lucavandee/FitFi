@@ -74,17 +74,16 @@ const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
   neutraal: 'Met een neutrale basis.',
 };
 
-function primaryGoalAdjective(goals: GoalKey[]): string | null {
+function primaryGoalAdjective(goals: GoalKey[], index: number): string | null {
   const priority: GoalKey[] = ['timeless', 'professional', 'express', 'minimal'];
   const matched: string[] = [];
   for (const key of priority) {
     if (!goals.includes(key)) continue;
     const adj = GOAL_ADJECTIVE[key];
     if (adj) matched.push(adj);
-    if (matched.length === 2) break;
   }
   if (matched.length === 0) return null;
-  return matched.join(' en ');
+  return matched[index % matched.length];
 }
 
 function matchedPreferredMaterial(
@@ -93,6 +92,7 @@ function matchedPreferredMaterial(
 ): string | null {
   const preferred = profile.materials.preferred.map((m) => m.toLowerCase());
   if (preferred.length === 0) return null;
+  const counts = new Map<string, number>();
   for (const pref of preferred) {
     const aliases = MATERIAL_ALIAS[pref] ?? [pref];
     for (const p of candidate.products) {
@@ -101,24 +101,92 @@ function matchedPreferredMaterial(
         m.toLowerCase()
       );
       if (aliases.some((a) => tags.includes(a) || productMats.includes(a))) {
-        return pref;
+        counts.set(pref, (counts.get(pref) ?? 0) + 1);
       }
     }
   }
-  return null;
+  if (counts.size === 0) return null;
+  return [...counts.entries()].sort(([, a], [, b]) => b - a)[0][0];
+}
+
+function dominantOutfitMaterial(candidate: OutfitCandidate): string | null {
+  const counts = new Map<string, number>();
+  for (const p of candidate.products) {
+    const tags = new Set<string>([
+      ...p.materialTags.map((m) => m.toLowerCase()),
+      ...(p.product.materials ?? []).map((m: string) => m.toLowerCase()),
+    ]);
+    for (const [key, aliases] of Object.entries(MATERIAL_ALIAS)) {
+      if (aliases.some((a) => tags.has(a))) {
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+        break;
+      }
+    }
+  }
+  if (counts.size === 0) return null;
+  const sorted = [...counts.entries()].sort(([, a], [, b]) => b - a);
+  const total = candidate.products.length;
+  const [top1, n1] = sorted[0];
+  if (sorted.length === 1 || n1 / total >= 0.6) return `Volledig in ${top1}`;
+  const [top2] = sorted[1];
+  return `Mix van ${top1} en ${top2}`;
+}
+
+function outfitColorSignal(candidate: OutfitCandidate): string | null {
+  const colors: string[] = [];
+  for (const p of candidate.products) {
+    const first = p.colorTags[0];
+    if (first) colors.push(first.toLowerCase());
+  }
+  if (colors.length === 0) return null;
+  const unique = Array.from(new Set(colors));
+  if (unique.length === 1) return `Monochroom ${unique[0]}`;
+  return `${unique[0]} met ${unique[1]}`;
+}
+
+function outfitLayeringSignal(candidate: OutfitCandidate): string | null {
+  const outer = candidate.products.find((p) => p.category === 'outerwear');
+  if (!outer) return null;
+  const source = (outer.product.type || outer.product.name || 'jas')
+    .toLowerCase()
+    .trim();
+  const label = source.split(/\s+/)[0] || 'jas';
+  return `Gelaagd met ${label}`;
+}
+
+function outfitSpecificSignal(
+  candidate: OutfitCandidate,
+  index: number
+): string | null {
+  const options = [
+    dominantOutfitMaterial(candidate),
+    outfitColorSignal(candidate),
+    outfitLayeringSignal(candidate),
+  ].filter((s): s is string => s !== null);
+  if (options.length === 0) return null;
+  return `${options[index % options.length]}.`;
 }
 
 function buildExplanation(
   candidate: OutfitCandidate,
-  profile: UserStyleProfile
+  profile: UserStyleProfile,
+  index: number
 ): string {
   const signals: string[] = [];
 
-  const goal = primaryGoalAdjective(profile.goals);
+  const goal = primaryGoalAdjective(profile.goals, index);
   if (goal) signals.push(`Afgestemd op je ${goal} stijl.`);
 
+  const outfitSignal = outfitSpecificSignal(candidate, index);
+  if (outfitSignal) signals.push(outfitSignal);
+
   const material = matchedPreferredMaterial(candidate, profile);
-  if (material) signals.push(`Met je voorkeur voor ${material}.`);
+  if (
+    material &&
+    (!outfitSignal || !outfitSignal.toLowerCase().includes(material))
+  ) {
+    signals.push(`Met je voorkeur voor ${material}.`);
+  }
 
   if (profile.color.temperature) {
     signals.push(TEMPERATURE_SENTENCE[profile.color.temperature]);
@@ -179,10 +247,25 @@ function categoryRatio(candidate: OutfitCandidate): {
   return ratio;
 }
 
+const TAG_ALLOW_PREFIXES = [
+  'color_harmony',
+  'style_',
+  'fit_',
+  'brand_match',
+  'occasion_',
+];
+const TAG_DENY_SUBSTRINGS = ['_weak', '_mismatch', '_penalty'];
+
+function isDisplayTag(reason: string): boolean {
+  if (TAG_DENY_SUBSTRINGS.some((s) => reason.includes(s))) return false;
+  return TAG_ALLOW_PREFIXES.some((p) => reason.startsWith(p));
+}
+
 function candidateToOutfit(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
-  season: Season
+  season: Season,
+  index: number
 ): Outfit {
   const products: Product[] = candidate.products.map((p) => ({
     ...p.product,
@@ -197,6 +280,8 @@ function candidateToOutfit(
     winter: 'winter',
   };
 
+  const displayReasons = candidate.reasons.filter(isDisplayTag).slice(0, 4);
+
   return {
     id: candidate.id,
     title: buildOutfitTitle(candidate, profile),
@@ -209,12 +294,12 @@ function candidateToOutfit(
       new Set([
         profile.primaryArchetype.toLowerCase(),
         candidate.occasion,
-        ...candidate.reasons.slice(0, 4),
+        ...displayReasons,
       ])
     ),
     matchPercentage: buildMatchPercentage(candidate),
     matchScore: buildMatchPercentage(candidate),
-    explanation: buildExplanation(candidate, profile),
+    explanation: buildExplanation(candidate, profile, index),
     season: seasonMap[season],
     structure: candidate.products.map((p) => p.category),
     categoryRatio: categoryRatio(candidate),
@@ -298,7 +383,9 @@ export function runEngineV2(
     excludeIds: Array.from(excludeIds),
   });
 
-  const outfits = diversified.map((c) => candidateToOutfit(c, profile, season));
+  const outfits = diversified.map((c, i) =>
+    candidateToOutfit(c, profile, season, i)
+  );
 
   const occasionsCovered = Array.from(
     new Set(diversified.map((c) => c.occasion))
