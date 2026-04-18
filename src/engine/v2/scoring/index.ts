@@ -16,16 +16,18 @@ import { scoreOccasion } from './occasion';
 import { scoreSeason } from './season';
 import { scoreMoodboard } from './moodboard';
 import { scoreQuality } from './quality';
+import { scoreBrand } from './brand';
 
 export const BASE_WEIGHTS: ScoreBreakdown = {
-  archetype: 0.23,
-  color: 0.15,
-  occasion: 0.13,
+  archetype: 0.22,
+  color: 0.14,
+  occasion: 0.12,
   material: 0.09,
-  budget: 0.09,
-  moodboard: 0.08,
+  budget: 0.08,
+  moodboard: 0.07,
   fit: 0.07,
   goals: 0.06,
+  brand: 0.05,
   season: 0.05,
   prints: 0.03,
   quality: 0.02,
@@ -50,6 +52,7 @@ export function computeProductScore(
   const season_ = scoreSeason(product, season);
   const prints = scorePrints(product, profile);
   const quality = scoreQuality(product);
+  const brand = scoreBrand(product, profile);
 
   const breakdown: ScoreBreakdown = {
     archetype: archetype.score,
@@ -63,6 +66,7 @@ export function computeProductScore(
     season: season_.score,
     prints: prints.score,
     quality: quality.score,
+    brand: brand.score,
   };
 
   const weights = BASE_WEIGHTS;
@@ -77,7 +81,8 @@ export function computeProductScore(
     weights.goals * breakdown.goals +
     weights.season * breakdown.season +
     weights.prints * breakdown.prints +
-    weights.quality * breakdown.quality;
+    weights.quality * breakdown.quality +
+    weights.brand * breakdown.brand;
 
   const archetypePenalty =
     archetype.score < 0.2 ? 0.6 : archetype.score < 0.35 ? 0.85 : 1;
@@ -99,5 +104,6 @@ export function computeProductScore(
     season_.reason,
     prints.reason,
     quality.reason,
+    brand.reason,
   ];
 }

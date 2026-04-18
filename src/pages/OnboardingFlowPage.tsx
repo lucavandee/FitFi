@@ -28,7 +28,10 @@ type QuizAnswers = {
   baseColors?: string;
   bodyType?: string;
   occasions?: string[];
+  neutrals?: string | string[];
+  budget?: { min: number; max: number };
   budgetRange?: number;
+  brandPreferences?: string[];
   sizes?: any;
   colorAnalysis?: any;
   photoUrl?: string;
@@ -266,6 +269,15 @@ export default function OnboardingFlowPage() {
     if (step.type === 'checkbox' || step.type === 'multiselect') {
       return Array.isArray(answer) && answer.length > 0;
     }
+    if (step.type === 'budget-range') {
+      return (
+        !!answer &&
+        typeof answer === 'object' &&
+        typeof (answer as any).min === 'number' &&
+        typeof (answer as any).max === 'number' &&
+        (answer as any).max >= (answer as any).min
+      );
+    }
     return answer !== undefined && answer !== null && answer !== '';
   };
 
@@ -277,6 +289,18 @@ export default function OnboardingFlowPage() {
     if (step.type === 'checkbox' || step.type === 'multiselect') {
       if (!Array.isArray(answer) || answer.length === 0) {
         return 'Selecteer minimaal één optie om verder te gaan';
+      }
+    } else if (step.type === 'budget-range') {
+      if (
+        !answer ||
+        typeof answer !== 'object' ||
+        typeof (answer as any).min !== 'number' ||
+        typeof (answer as any).max !== 'number'
+      ) {
+        return 'Vul een min en max budget in';
+      }
+      if ((answer as any).max < (answer as any).min) {
+        return 'Max moet groter of gelijk zijn aan min';
       }
     } else {
       if (answer === undefined || answer === null || answer === '') {
@@ -425,7 +449,11 @@ export default function OnboardingFlowPage() {
         photo_url: answers.photoUrl || null,
         quiz_answers: answers,
         sizes: answers.sizes || null,
-        budget_range: answers.budgetRange ? { min: 0, max: answers.budgetRange } : null,
+        budget_range: answers.budget
+          ? answers.budget
+          : answers.budgetRange
+          ? { min: 0, max: answers.budgetRange }
+          : null,
         preferred_occasions: answers.occasions || [],
         completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -788,7 +816,7 @@ export default function OnboardingFlowPage() {
               gender: answers.gender,
               archetype: answers.stylePreferences?.[0] || 'Casual',
               colors: answers.baseColors?.split(',') || [],
-              budgetRange: answers.budgetRange,
+              budgetRange: answers.budget?.max ?? answers.budgetRange,
               occasions: answers.occasions || [],
             }}
           />
@@ -984,7 +1012,95 @@ export default function OnboardingFlowPage() {
               </div>
             )}
 
-            {/* Slider / budget */}
+            {/* Budget range — min + max inputs */}
+            {step.type === 'budget-range' && (() => {
+              const rangeVal = (answers[step.field as keyof QuizAnswers] as { min?: number; max?: number } | undefined) || {};
+              const minVal = typeof rangeVal.min === 'number' ? rangeVal.min : (step.min ?? 0);
+              const maxVal = typeof rangeVal.max === 'number' ? rangeVal.max : 150;
+              const sliderMin = step.min ?? 0;
+              const sliderMax = step.max ?? 500;
+              const stepSize = step.step ?? 25;
+
+              const setRange = (next: { min: number; max: number }) => {
+                const safeMin = Math.max(sliderMin, Math.min(next.min, sliderMax));
+                const safeMax = Math.max(safeMin, Math.min(next.max, sliderMax));
+                handleAnswer(step.field, { min: safeMin, max: safeMax });
+                // Keep legacy field populated for backwards-compatible consumers
+                setAnswers(prev => {
+                  const updated = { ...prev, budget: { min: safeMin, max: safeMax }, budgetRange: safeMax };
+                  autosave(updated, currentStep, phase);
+                  return updated;
+                });
+              };
+
+              const tierLabel = maxVal < 75 ? 'Budget' : maxVal < 150 ? 'Middensegment' : 'Premium';
+
+              return (
+                <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px' }}>
+                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--ff-color-primary-600)', lineHeight: 1.1 }}>
+                      €{minVal} – €{maxVal}
+                    </div>
+                    <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text)', marginTop: '6px' }}>
+                      {tierLabel}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>Per kledingstuk</div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--color-text)', marginBottom: '6px' }}>Min</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)', pointerEvents: 'none' }}>€</span>
+                        <input
+                          type="number"
+                          min={sliderMin}
+                          max={sliderMax}
+                          step={stepSize}
+                          value={minVal}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value, 10);
+                            if (!isNaN(v)) setRange({ min: v, max: maxVal });
+                          }}
+                          style={{ width: '100%', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
+                          aria-label="Min budget"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--color-text)', marginBottom: '6px' }}>Max</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)', pointerEvents: 'none' }}>€</span>
+                        <input
+                          type="number"
+                          min={sliderMin}
+                          max={sliderMax}
+                          step={stepSize}
+                          value={maxVal}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value, 10);
+                            if (!isNaN(v)) setRange({ min: minVal, max: v });
+                          }}
+                          style={{ width: '100%', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
+                          aria-label="Max budget"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-muted)' }}>
+                    <span>€{sliderMin} Budget</span>
+                    <span>€75–150 Midden</span>
+                    <span>€{sliderMax}+ Premium</span>
+                  </div>
+                  {step.helperText && (
+                    <p style={{ marginTop: '12px', fontSize: '12px', color: 'var(--color-muted)', textAlign: 'center' }}>{step.helperText}</p>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Slider / budget (legacy) */}
             {step.type === 'slider' && (
               <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -1205,8 +1321,13 @@ export default function OnboardingFlowPage() {
                   } else if (typeof val === 'number') {
                     displayVal = s.field === 'budgetRange' ? `€${val} per kledingstuk` : String(val);
                   } else if (typeof val === 'object') {
-                    const entries = Object.entries(val as Record<string, string>).filter(([, v]) => v);
-                    displayVal = entries.length > 0 ? entries.map(([, v]) => v).join(' · ') : 'Ingevuld';
+                    if (s.field === 'budget' && typeof (val as any).max === 'number') {
+                      const b = val as { min?: number; max: number };
+                      displayVal = typeof b.min === 'number' ? `€${b.min} – €${b.max} per kledingstuk` : `€${b.max} per kledingstuk`;
+                    } else {
+                      const entries = Object.entries(val as Record<string, string>).filter(([, v]) => v);
+                      displayVal = entries.length > 0 ? entries.map(([, v]) => v).join(' · ') : 'Ingevuld';
+                    }
                   } else {
                     displayVal = String(val);
                   }

@@ -191,9 +191,9 @@ export const quizSteps: QuizStep[] = [
   {
     id: 3,
     title: 'Welke kleuren draag jij het liefst?',
-    description: 'Dit gaat over wat jij graag draagt — niet over je huidskleur of ondertoon.',
+    description: 'Dit gaat over wat jij graag draagt — niet over je huidskleur of ondertoon. Meerdere keuzes zijn prima.',
     field: 'neutrals',
-    type: 'radio',
+    type: 'multiselect',
     required: true,
     options: [
       {
@@ -210,6 +210,11 @@ export const quizSteps: QuizStep[] = [
         value: 'neutraal',
         label: 'Neutrale mix',
         description: 'Zwart, wit, grijs — ik combineer graag'
+      },
+      {
+        value: 'mix',
+        label: 'Mix van warm en koel',
+        description: 'Je combineert warme en koele kleuren'
       }
     ]
   },
@@ -450,18 +455,43 @@ export const quizSteps: QuizStep[] = [
   },
   {
     id: 11,
+    title: 'Welke merken spreken jou aan?',
+    description: 'Optioneel — kies merken die je leuk vindt. Dit helpt ons relevantere aanbevelingen te tonen.',
+    field: 'brandPreferences',
+    type: 'multiselect',
+    required: false,
+    options: [
+      { value: 'nike', label: 'Nike' },
+      { value: 'adidas', label: 'Adidas' },
+      { value: 'cos', label: 'COS' },
+      { value: 'arket', label: 'Arket' },
+      { value: 'zara', label: 'Zara' },
+      { value: 'h&m', label: 'H&M' },
+      { value: 'ralph lauren', label: 'Ralph Lauren' },
+      { value: 'tommy hilfiger', label: 'Tommy Hilfiger' },
+      { value: 'hugo boss', label: 'Hugo Boss' },
+      { value: 'massimo dutti', label: 'Massimo Dutti' },
+      { value: 'scotch & soda', label: 'Scotch & Soda' },
+      { value: 'carhartt wip', label: 'Carhartt WIP' },
+      { value: 'acne studios', label: 'Acne Studios' },
+      { value: 'our legacy', label: 'Our Legacy' }
+    ],
+    helperText: 'Je kunt deze stap overslaan als je geen voorkeur hebt'
+  },
+  {
+    id: 12,
     title: 'Wat is jouw budget per kledingstuk?',
-    description: 'We tonen producten die passen bij jouw keuze.',
-    field: 'budgetRange',
-    type: 'slider',
+    description: 'Geef aan binnen welke prijsklasse je zoekt. We tonen producten die passen bij jouw range.',
+    field: 'budget',
+    type: 'budget-range',
     required: true,
-    min: 25,
+    min: 0,
     max: 500,
     step: 25,
     helperText: '€25-75: Budget | €75-150: Middensegment | €150+: Premium'
   },
   {
-    id: 12,
+    id: 13,
     title: 'Wat zijn jouw maten?',
     description: 'Je kunt straks altijd terug en aanpassen.',
     field: 'sizes',
@@ -470,7 +500,7 @@ export const quizSteps: QuizStep[] = [
     helperText: 'Niet zeker? Kies wat je meestal draagt — je kunt dit later aanpassen'
   },
   {
-    id: 13,
+    id: 14,
     title: 'Upload een selfie voor kleurenanalyse',
     description: 'Optioneel. Foto in natuurlijk licht, geen filters. Je kunt deze stap altijd overslaan.',
     field: 'photoUrl',

@@ -69,6 +69,7 @@ export interface UserStyleProfile {
   budget: BudgetProfile;
   occasions: OccasionKey[];
   goals: GoalKey[];
+  preferredBrands: string[];
   sizes: {
     tops?: string;
     bottoms?: string;
@@ -95,6 +96,7 @@ export interface ScoreBreakdown {
   season: number;
   prints: number;
   quality: number;
+  brand: number;
 }
 
 export interface ScoredProduct {
