@@ -2,9 +2,11 @@ import type { Outfit, Product } from '../types';
 import type {
   EngineOptions,
   EngineResult,
+  GoalKey,
   OccasionKey,
   OutfitCandidate,
   Season,
+  TemperatureKey,
   UserStyleProfile,
 } from './types';
 import { buildUserStyleProfile } from './buildProfile';
@@ -54,29 +56,73 @@ function buildOutfitDescription(candidate: OutfitCandidate): string {
   return OCCASION_COPY[candidate.occasion].description;
 }
 
+const GOAL_ADJECTIVE: Partial<Record<GoalKey, string>> = {
+  timeless: 'tijdloze',
+  professional: 'professionele',
+  express: 'expressieve',
+};
+
+const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
+  koel: 'In je koele kleurpalet.',
+  warm: 'In je warme kleurpalet.',
+  neutraal: 'Met een neutrale basis.',
+};
+
+function primaryGoalAdjective(goals: GoalKey[]): string | null {
+  for (const key of ['timeless', 'professional', 'express'] as GoalKey[]) {
+    if (goals.includes(key)) return GOAL_ADJECTIVE[key] ?? null;
+  }
+  return null;
+}
+
+function matchedPreferredMaterial(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile
+): string | null {
+  const preferred = profile.materials.preferred.map((m) => m.toLowerCase());
+  if (preferred.length === 0) return null;
+  for (const pref of preferred) {
+    for (const p of candidate.products) {
+      const tags = p.materialTags.map((t) => t.toLowerCase());
+      const productMats = (p.product.materials ?? []).map((m: string) =>
+        m.toLowerCase()
+      );
+      if (tags.includes(pref) || productMats.includes(pref)) return pref;
+    }
+  }
+  return null;
+}
+
 function buildExplanation(
   candidate: OutfitCandidate,
   profile: UserStyleProfile
 ): string {
-  const parts: string[] = [];
-  const primary = profile.primaryArchetype.toLowerCase().replace('_', ' ');
-  parts.push(`Afgestemd op je ${primary}-voorkeur.`);
+  const signals: string[] = [];
 
-  if (candidate.coherence.colorHarmony > 0.75) {
-    parts.push('De kleuren vallen rustig samen.');
-  } else if (candidate.coherence.colorHarmony > 0.55) {
-    parts.push('Een doordachte kleurcombinatie.');
+  const goal = primaryGoalAdjective(profile.goals);
+  if (goal) signals.push(`Afgestemd op je ${goal} stijl.`);
+
+  if (profile.color.temperature) {
+    signals.push(TEMPERATURE_SENTENCE[profile.color.temperature]);
   }
 
+  const material = matchedPreferredMaterial(candidate, profile);
+  if (material) signals.push(`Met je voorkeur voor ${material}.`);
+
   if (candidate.coherence.completeness >= 1) {
-    parts.push('Compleet van top tot schoen.');
+    signals.push('Compleet van top tot schoen.');
   }
 
   if (profile.moodboard.totalCount >= 10 && profile.moodboard.confidence > 0.5) {
-    parts.push('Gebaseerd op je moodboard-keuzes.');
+    signals.push('Gebaseerd op je moodboard-keuzes.');
   }
 
-  return parts.join(' ');
+  if (signals.length === 0) {
+    const primary = profile.primaryArchetype.toLowerCase().replace('_', ' ');
+    return `Afgestemd op je ${primary}-voorkeur.`;
+  }
+
+  return signals.slice(0, 2).join(' ');
 }
 
 function buildMatchPercentage(candidate: OutfitCandidate): number {
