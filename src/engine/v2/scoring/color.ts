@@ -8,8 +8,6 @@ const WARM_COLORS = new Set([
   'koraal',
   'roest',
   'terracotta',
-  'bordeaux',
-  'wijn',
   'mosterd',
   'cognac',
   'camel',
@@ -17,6 +15,15 @@ const WARM_COLORS = new Set([
   'crème',
   'creme',
   'aardetinten',
+]);
+
+// Deep, desaturated tones that read as formal/zakelijk neutrals rather than
+// warm accents — treat as neutral for temperature matching so they don't get
+// a mismatch penalty against cool/neutral palettes.
+const DEEP_NEUTRAL_COLORS = new Set([
+  'bordeaux',
+  'burgundy',
+  'wijn',
 ]);
 
 const COOL_COLORS = new Set([
@@ -80,6 +87,7 @@ const SEASON_PALETTE: Record<string, string[]> = {
 
 function colorTemperature(tag: string): TemperatureKey {
   const key = tag.toLowerCase();
+  if (DEEP_NEUTRAL_COLORS.has(key)) return 'neutraal';
   if (WARM_COLORS.has(key)) return 'warm';
   if (COOL_COLORS.has(key)) return 'koel';
   return 'neutraal';
@@ -132,13 +140,28 @@ export function scoreColor(
 
   if (tags.length === 0) return { score: 0.5, reason: 'no_color_data' };
 
-  const hasAllNeutral = tags.every((t) => NEUTRAL_COLORS.has(t.toLowerCase()));
+  const hasAllNeutral = tags.every((t) => {
+    const k = t.toLowerCase();
+    return NEUTRAL_COLORS.has(k) || DEEP_NEUTRAL_COLORS.has(k);
+  });
   let temperatureScore = 0.7;
   if (profile.color.temperature) {
     if (hasAllNeutral) temperatureScore = 0.85;
     else {
       const productTemp = bestColorTemperature(tags);
-      temperatureScore = productTemp === profile.color.temperature ? 1.0 : 0.3;
+      if (productTemp === profile.color.temperature) {
+        temperatureScore = 1.0;
+      } else {
+        // Soften mismatch when product carries a cool/neutral anchor (e.g. navy + bordeaux)
+        const hasProfileTemp = tags.some((t) => colorTemperature(t) === profile.color.temperature);
+        const hasNeutralAnchor = tags.some((t) => {
+          const k = t.toLowerCase();
+          return NEUTRAL_COLORS.has(k) || DEEP_NEUTRAL_COLORS.has(k);
+        });
+        if (hasProfileTemp) temperatureScore = 0.75;
+        else if (hasNeutralAnchor) temperatureScore = 0.55;
+        else temperatureScore = 0.3;
+      }
     }
   }
 

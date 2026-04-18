@@ -50,7 +50,7 @@ function inferStyle(title, description, brand) {
 
   const STREETWEAR_BRANDS = ["stussy", "stüssy", "carhartt", "dickies", "vans", "converse", "supreme", "palace", "the new originals", "daily paper", "filling pieces", "off-white", "champion"];
   const ATHLETIC_BRANDS = ["nike", "adidas", "puma", "new balance", "jordan", "asics", "reebok", "under armour", "on running", "hoka", "salomon", "the north face"];
-  const BUSINESS_BRANDS = ["suitsupply", "hugo boss", "boss", "ermenegildo zegna", "zegna", "brooks brothers", "canali", "corneliani", "paul smith", "hackett", "charles tyrwhitt", "thomas pink", "t.m.lewin", "olymp", "van laack"];
+  const BUSINESS_BRANDS = ["suitsupply", "hugo boss", "boss", "massimo dutti", "ermenegildo zegna", "zegna", "brooks brothers", "canali", "corneliani", "paul smith", "hackett", "charles tyrwhitt", "thomas pink", "t.m.lewin", "olymp", "van laack", "max mara", "reiss", "the kooples", "claudie pierlot", "sandro"];
   const PREMIUM_BRANDS = ["ralph lauren", "tommy hilfiger", "lacoste", "gant", "marc o'polo", "scotch & soda", "ted baker", "calvin klein", "michael kors"];
   const LUXURY_BRANDS = ["gucci", "prada", "balenciaga", "saint laurent", "burberry", "versace", "givenchy", "valentino", "fendi", "bottega veneta", "tom ford", "armani"];
   const MINIMALIST_BRANDS = ["cos", "arket", "uniqlo", "muji", "everlane", "filippa k", "theory", "jil sander", "apc", "acne studios"];
@@ -59,7 +59,7 @@ function inferStyle(title, description, brand) {
 
   // Brand hits that clearly signal formalwear lines get routed to BUSINESS
   // even if the brand has casual lines too. Title must hint formal.
-  const formalTitleHit = /\b(pak|suit|colbert|blazer|pantalon|overhemd|dress shirt|tailored|single[- ]breasted|double[- ]breasted|tuxedo|smoking|stropdas|vlinderdas|oxford|derby|brogue|monk|gilet)\b/.test(text);
+  const formalTitleHit = /\b(pak|suit|colbert|blazer|pantalon|overhemd|dress shirt|tailored|single[- ]breasted|double[- ]breasted|tuxedo|smoking|stropdas|vlinderdas|oxford|derby|brogue|monk|gilet|mantelpak|mantelpakje|kokerrok|pencil[-\s]?skirt|blazerjurk|shirtdress|blouse|pumps)\b/.test(text);
 
   if (BUSINESS_BRANDS.some(b => brandLower.includes(b))) return "business";
   if ((PREMIUM_BRANDS.some(b => brandLower.includes(b)) || brandLower.includes("tommy hilfiger") || brandLower.includes("ralph lauren")) && formalTitleHit) return "business";

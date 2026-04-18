@@ -87,7 +87,10 @@ export const ARCHETYPES: Record<ArchetypeKey, ArchetypeDescriptor> = {
     materials: ['wol', 'katoen', 'zijde', 'leer', 'kasjmier', 'flanel'],
     formality: 90,
     vibe: ['professional', 'zakelijk', 'verzorgd'],
-    staples: ['pak', 'pantalon', 'wit overhemd', 'oxford', 'derby', 'stropdas', 'blazer'],
+    staples: [
+      'pak', 'pantalon', 'wit overhemd', 'oxford', 'derby', 'stropdas', 'blazer',
+      'mantelpak', 'mantelpakje', 'kokerrok', 'pencil skirt', 'blouse', 'pumps', 'blazerjurk', 'shirtdress',
+    ],
   },
 };
 
