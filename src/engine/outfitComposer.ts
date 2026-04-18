@@ -135,6 +135,7 @@ const ARCHETYPE_OCCASIONS: Record<string, string[]> = {
   STREETWEAR:   ['weekend', 'casual', 'relaxed', 'avond', 'date'],
   ATHLETIC:     ['sport', 'casual', 'weekend', 'relaxed'],
   AVANT_GARDE:  ['avond', 'date', 'casual', 'weekend', 'smart'],
+  BUSINESS:     ['werk', 'smart', 'avond', 'date', 'casual'],
 };
 
 const FORMALITY_KEYWORDS: Record<string, RegExp[]> = {
