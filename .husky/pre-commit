@@ -10,5 +10,14 @@ fi
 
 echo '✅ Geen Python headers gevonden in frontend code'
 
+# Run unit tests — fast gate voor de testable modules (engine/*)
+if [ -f "node_modules/.bin/vitest" ]; then
+  echo '🧪 Running vitest unit tests...'
+  if ! node_modules/.bin/vitest run --reporter=dot; then
+    echo '❌ Unit tests gefaald – commit geweigerd'
+    exit 1
+  fi
+fi
+
 # Run lint-staged
 npx lint-staged
