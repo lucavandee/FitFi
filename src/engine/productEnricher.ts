@@ -232,7 +232,7 @@ const PERF_BRAND_RE = /^(Nike|Adidas|Puma|Reebok|Asics|Under Armour|New Balance|
 const LIFESTYLE_LINE_RE = /\bOriginals\b|\bSportswear\b|\bLifestyle\b|\bClassics\b|\bRetro\b|\bHeritage\b/i;
 const PERF_NAME_RE = /\b(training|trainings|running|run\b|hardloop|performance|dri-?fit|cloudspun|dryelite|aeroready|climalite|climacool|techfit|compression|basislaag|baselayer|pro\s+tight|track\s*pant|track\s*jacket|sport\s*tight|gym|workout|hiit|hyrox)\b/i;
 const LIFESTYLE_NAME_RE = /\b(essentials?\b|graphic|print|logo|street|glam|wardrobe|fashion|jeans|oversized|relaxed\s+shirt|lifestyle|originals|classics|retro|vintage|heritage)\b/i;
-const TEAM_SPORT_RE = /\b(Marseille|Arsenal|Milan|Borussia|Barcelona|Bayern|Liverpool|Chelsea|Manchester|Dortmund|Ferrari|McLaren|Red\s*Bull|Racing|Motorsport|voetbal|football|soccer|rugby|hockey|thuisshirt|uitshirt|thuistenue|uittenue)\b/i;
+export const TEAM_SPORT_RE = /\b(Marseille|Arsenal|Milan|Borussia|Barcelona|Bayern|Liverpool|Chelsea|Manchester|Dortmund|Ferrari|McLaren|Red\s*Bull|Racing|Motorsport|voetbal|football|soccer|rugby|hockey|thuisshirt|uitshirt|thuistenue|uittenue)\b/i;
 
 /**
  * Returns a 0-1 score indicating how strongly a product signals athletic/performance use.

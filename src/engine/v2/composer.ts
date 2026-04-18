@@ -173,7 +173,7 @@ function tryCompose(
   if (!push(picks.outerwear)) return null;
   if (!push(picks.accessory)) return null;
 
-  if (isHardMismatch(items)) return null;
+  if (isHardMismatch(items, profile)) return null;
   if (!withinTotalBudget(items, profile)) return null;
   return items;
 }
