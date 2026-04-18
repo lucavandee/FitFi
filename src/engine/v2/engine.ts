@@ -64,6 +64,7 @@ const GOAL_ADJECTIVE: Partial<Record<GoalKey, string>> = {
   timeless: 'tijdloze',
   professional: 'professionele',
   express: 'expressieve',
+  minimal: 'minimalistische',
 };
 
 const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
@@ -73,7 +74,7 @@ const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
 };
 
 function primaryGoalAdjective(goals: GoalKey[]): string | null {
-  for (const key of ['timeless', 'professional', 'express'] as GoalKey[]) {
+  for (const key of ['timeless', 'professional', 'express', 'minimal'] as GoalKey[]) {
     if (goals.includes(key)) return GOAL_ADJECTIVE[key] ?? null;
   }
   return null;
