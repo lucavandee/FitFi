@@ -3,8 +3,10 @@ import type {
   EngineOptions,
   EngineResult,
   GoalKey,
+  NormalizedCategory,
   OccasionKey,
   OutfitCandidate,
+  ScoredProduct,
   Season,
   TemperatureKey,
   UserStyleProfile,
@@ -48,13 +50,117 @@ const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }>
   },
 };
 
-function buildOutfitTitle(
+const OCCASION_FRAMING: Record<OccasionKey, string> = {
+  work: 'Klaar voor kantoor of een meeting.',
+  casual: 'Perfect voor een ontspannen dag.',
+  formal: 'Ingetogen genoeg voor een nette setting.',
+  date: 'Met net dat beetje extra voor een avond uit.',
+  travel: 'Comfortabel onderweg zonder concessies.',
+  sport: 'Functioneel voor sport en beweging.',
+  party: 'Expressief voor een avond stappen.',
+};
+
+const TITLE_SIMILARITY_THRESHOLD = 0.6;
+
+interface SetContext {
+  usedTitles: string[];
+  archetypeLineUses: number;
+}
+
+function createSetContext(): SetContext {
+  return { usedTitles: [], archetypeLineUses: 0 };
+}
+
+function wordOverlapSimilarity(a: string, b: string): number {
+  const tokensA = new Set(
+    a
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean)
+  );
+  const tokensB = new Set(
+    b
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean)
+  );
+  if (tokensA.size === 0 || tokensB.size === 0) return 0;
+  let shared = 0;
+  tokensA.forEach((t) => {
+    if (tokensB.has(t)) shared++;
+  });
+  return shared / Math.max(tokensA.size, tokensB.size);
+}
+
+const HERO_CATEGORY_PRIORITY: NormalizedCategory[] = [
+  'outerwear',
+  'dress',
+  'jumpsuit',
+  'top',
+  'bottom',
+  'footwear',
+];
+
+function heroProduct(candidate: OutfitCandidate): ScoredProduct | null {
+  for (const cat of HERO_CATEGORY_PRIORITY) {
+    const matches = candidate.products.filter((p) => p.category === cat);
+    if (matches.length > 0) {
+      return [...matches].sort((a, b) => b.score - a.score)[0];
+    }
+  }
+  return candidate.products[0] ?? null;
+}
+
+function productShortLabel(p: ScoredProduct): string {
+  const source = (p.product.type || p.product.name || '').toLowerCase().trim();
+  const first = source.split(/\s+/)[0];
+  return first || 'stuk';
+}
+
+function titleVariants(
   candidate: OutfitCandidate,
   profile: UserStyleProfile
-): string {
+): string[] {
   const copy = OCCASION_COPY[candidate.occasion];
   const archetype = profile.primaryArchetype.toLowerCase().replace('_', ' ');
-  return `${copy.title} · ${archetype}`;
+  const variants = [`${copy.title} · ${archetype}`];
+
+  const hero = heroProduct(candidate);
+  if (hero) {
+    variants.push(`${copy.title} rond ${productShortLabel(hero)}`);
+  }
+
+  const color = outfitColorSignal(candidate);
+  if (color) variants.push(`${copy.title} · ${color.toLowerCase()}`);
+
+  const material = dominantOutfitMaterial(candidate);
+  if (material) variants.push(`${copy.title} · ${material.toLowerCase()}`);
+
+  return variants;
+}
+
+function buildOutfitTitle(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile,
+  index: number,
+  context: SetContext
+): string {
+  const variants = titleVariants(candidate, profile);
+
+  for (const variant of variants) {
+    const duplicate = context.usedTitles.some(
+      (prior) =>
+        wordOverlapSimilarity(prior, variant) >= TITLE_SIMILARITY_THRESHOLD
+    );
+    if (!duplicate) {
+      context.usedTitles.push(variant);
+      return variant;
+    }
+  }
+
+  const fallback = `${variants[0]} #${index + 1}`;
+  context.usedTitles.push(fallback);
+  return fallback;
 }
 
 function buildOutfitDescription(candidate: OutfitCandidate): string {
@@ -167,18 +273,59 @@ function outfitSpecificSignal(
   return `${options[index % options.length]}.`;
 }
 
+function heroCallout(hero: ScoredProduct): string {
+  return `Met de ${productShortLabel(hero)} als blikvanger.`;
+}
+
+function brandMention(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile
+): string | null {
+  const brands = candidate.products
+    .map((p) => (p.product.brand || '').trim())
+    .filter((b) => b.length > 0);
+  if (brands.length === 0) return null;
+
+  const preferred = profile.preferredBrands.map((b) => b.toLowerCase());
+  const preferredHit = brands.find((b) =>
+    preferred.some((pb) => pb && b.toLowerCase().includes(pb))
+  );
+  if (preferredHit) return `Van ${preferredHit}, een van je favoriete merken.`;
+
+  const unique = Array.from(new Set(brands));
+  if (unique.length === 1) return `Volledig ${unique[0]}.`;
+  if (unique.length === 2) return `Met ${unique[0]} en ${unique[1]}.`;
+  return null;
+}
+
 function buildExplanation(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
-  index: number
+  index: number,
+  context: SetContext
 ): string {
   const signals: string[] = [];
 
   const goal = primaryGoalAdjective(profile.goals, index);
-  if (goal) signals.push(`Afgestemd op je ${goal} stijl.`);
+  const canUseArchetypeLine = context.archetypeLineUses === 0 && goal !== null;
+  if (canUseArchetypeLine) {
+    signals.push(`Afgestemd op je ${goal} stijl.`);
+    context.archetypeLineUses += 1;
+  } else {
+    const framing = OCCASION_FRAMING[candidate.occasion];
+    if (framing) signals.push(framing);
+  }
+
+  const hero = heroProduct(candidate);
+  if (hero && !canUseArchetypeLine) {
+    signals.push(heroCallout(hero));
+  }
 
   const outfitSignal = outfitSpecificSignal(candidate, index);
   if (outfitSignal) signals.push(outfitSignal);
+
+  const brand = brandMention(candidate, profile);
+  if (brand) signals.push(brand);
 
   const material = matchedPreferredMaterial(candidate, profile);
   if (
@@ -265,7 +412,8 @@ function candidateToOutfit(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
   season: Season,
-  index: number
+  index: number,
+  context: SetContext
 ): Outfit {
   const products: Product[] = candidate.products.map((p) => ({
     ...p.product,
@@ -284,7 +432,7 @@ function candidateToOutfit(
 
   return {
     id: candidate.id,
-    title: buildOutfitTitle(candidate, profile),
+    title: buildOutfitTitle(candidate, profile, index, context),
     description: buildOutfitDescription(candidate),
     archetype: profile.primaryArchetype,
     secondaryArchetype: profile.secondaryArchetype ?? undefined,
@@ -299,7 +447,7 @@ function candidateToOutfit(
     ),
     matchPercentage: buildMatchPercentage(candidate),
     matchScore: buildMatchPercentage(candidate),
-    explanation: buildExplanation(candidate, profile, index),
+    explanation: buildExplanation(candidate, profile, index, context),
     season: seasonMap[season],
     structure: candidate.products.map((p) => p.category),
     categoryRatio: categoryRatio(candidate),
@@ -383,8 +531,9 @@ export function runEngineV2(
     excludeIds: Array.from(excludeIds),
   });
 
+  const context = createSetContext();
   const outfits = diversified.map((c, i) =>
-    candidateToOutfit(c, profile, season, i)
+    candidateToOutfit(c, profile, season, i, context)
   );
 
   const occasionsCovered = Array.from(
