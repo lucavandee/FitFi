@@ -16,10 +16,10 @@ import type {
 
 const QUIZ_STYLE_TO_ARCHETYPE: Record<string, ArchetypeWeights> = {
   minimalist: { MINIMALIST: 1.0 },
-  classic: { CLASSIC: 0.7, BUSINESS: 0.2, MINIMALIST: 0.1 },
+  classic: { CLASSIC: 1.0 },
   streetwear: { STREETWEAR: 1.0 },
-  'smart-casual': { SMART_CASUAL: 1.0 },
-  smart_casual: { SMART_CASUAL: 1.0 },
+  'smart-casual': { SMART_CASUAL: 0.7, CLASSIC: 0.3 },
+  smart_casual: { SMART_CASUAL: 0.7, CLASSIC: 0.3 },
   athletic: { ATHLETIC: 1.0 },
   sporty: { ATHLETIC: 1.0 },
   rugged: { SMART_CASUAL: 0.5, STREETWEAR: 0.5 },
@@ -87,12 +87,13 @@ const DEFAULT_ARCHETYPES: ArchetypeWeights = {
 };
 
 const OCCASION_ARCHETYPE_BIAS: Record<OccasionKey, ArchetypeWeights> = {
-  work: { BUSINESS: 0.25, CLASSIC: 0.2, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
+  work: { BUSINESS: 0.15, CLASSIC: 0.25, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
   formal: { BUSINESS: 0.4, CLASSIC: 0.2, MINIMALIST: 0.05 },
-  casual: { SMART_CASUAL: 0.2, CLASSIC: 0.1 },
-  date: { CLASSIC: 0.15, SMART_CASUAL: 0.15, MINIMALIST: 0.1 },
+  casual: { SMART_CASUAL: 0.2, CLASSIC: 0.1, AVANT_GARDE: 0.1, STREETWEAR: 0.1 },
+  date: { CLASSIC: 0.15, SMART_CASUAL: 0.15, MINIMALIST: 0.1, AVANT_GARDE: 0.1 },
   travel: { SMART_CASUAL: 0.2, MINIMALIST: 0.15 },
   sport: { ATHLETIC: 0.5 },
+  party: { AVANT_GARDE: 0.2, STREETWEAR: 0.15, SMART_CASUAL: 0.1 },
 };
 
 function normalizeWeights(weights: ArchetypeWeights): ArchetypeWeights {
@@ -231,6 +232,7 @@ function normalizeOccasions(raw: any): OccasionKey[] {
     'date',
     'travel',
     'sport',
+    'party',
   ];
   if (!Array.isArray(raw)) return [];
   const set = new Set<OccasionKey>();
@@ -241,6 +243,7 @@ function normalizeOccasions(raw: any): OccasionKey[] {
     else if (norm === 'formeel') set.add('formal');
     else if (norm === 'reizen') set.add('travel');
     else if (norm === 'gym' || norm === 'sport & actief') set.add('sport');
+    else if (norm === 'uitgaan' || norm === 'feest' || norm === 'feestje') set.add('party');
   }
   return Array.from(set);
 }

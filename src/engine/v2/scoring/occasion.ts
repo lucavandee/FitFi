@@ -10,6 +10,7 @@ export const OCCASION_FORMALITY: Record<
   date: { target: 0.6, tolerance: 0.2 },
   travel: { target: 0.4, tolerance: 0.25 },
   sport: { target: 0.12, tolerance: 0.18 },
+  party: { target: 0.35, tolerance: 0.25 },
 };
 
 const OCCASION_KEYWORDS: Partial<Record<OccasionKey, string[]>> = {
@@ -19,6 +20,7 @@ const OCCASION_KEYWORDS: Partial<Record<OccasionKey, string[]>> = {
   date: ['date', 'uitgaan', 'diner', 'restaurant', 'night out', 'cocktail'],
   travel: ['travel', 'reizen', 'versatile', 'comfort', 'licht'],
   sport: ['sport', 'gym', 'training', 'running', 'tech', 'performance', 'stretch'],
+  party: ['festival', 'feest', 'uitgaan', 'club', 'stappen', 'party'],
 };
 
 export function scoreOccasion(
