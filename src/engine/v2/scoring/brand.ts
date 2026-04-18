@@ -24,6 +24,17 @@ const NEGATIVE_BRANDS_BY_ARCHETYPE: Partial<Record<ArchetypeKey, Set<string>>> =
   ]),
 };
 
+const NEGATIVE_BRANDS: Set<string> = new Set([
+  'shein',
+  'temu',
+  'primark',
+  'boohoo',
+  'pretty little thing',
+  'prettylittlething',
+  'fashionnova',
+  'fashion nova',
+]);
+
 function isNegativeBrand(brand: string, primary: ArchetypeKey): boolean {
   const set = NEGATIVE_BRANDS_BY_ARCHETYPE[primary];
   if (!set) return false;
@@ -45,6 +56,11 @@ export function scoreBrand(
   }
 
   const prefs = profile.preferredBrands;
+
+  if (brand && NEGATIVE_BRANDS.has(brand)) {
+    return { score: 0.15, reason: `brand_negative(${brand})` };
+  }
+
   if (!prefs || prefs.length === 0) {
     return { score: 1.0, reason: 'no_brand_pref' };
   }
@@ -62,5 +78,6 @@ export function scoreBrand(
     }
   }
 
-  return { score: 0.55, reason: 'brand_neutral' };
+  const nonPreferredScore = prefs.length >= 3 ? 0.45 : 0.7;
+  return { score: nonPreferredScore, reason: 'brand_neutral' };
 }
