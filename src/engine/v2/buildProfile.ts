@@ -204,8 +204,8 @@ function parseBudget(answers: Record<string, any>): {
     const perItemMax = Math.max(15, explicit.max);
     const perItemMin =
       typeof explicit.min === 'number'
-        ? Math.max(0, explicit.min)
-        : perItemMax * 0.3;
+        ? Math.max(0, Math.min(explicit.min, perItemMax))
+        : 0;
     return {
       perItemMax,
       perItemMin,
@@ -217,11 +217,11 @@ function parseBudget(answers: Record<string, any>): {
   if (slider !== null && slider > 0) {
     return {
       perItemMax: slider,
-      perItemMin: slider * 0.3,
+      perItemMin: 0,
       totalMax: slider * 4,
     };
   }
-  return { perItemMax: 150, perItemMin: 45, totalMax: 600 };
+  return { perItemMax: 150, perItemMin: 0, totalMax: 600 };
 }
 
 function normalizeOccasions(raw: any): OccasionKey[] {
@@ -276,12 +276,42 @@ function normalizeMaterials(raw: any): { preferred: string[]; avoided: string[] 
   return { preferred, avoided: [] };
 }
 
+function normalizeBrands(raw: any): string[] {
+  if (!raw) return [];
+  const arr = Array.isArray(raw) ? raw : [raw];
+  return Array.from(
+    new Set(
+      arr
+        .map((b) => String(b).toLowerCase().trim())
+        .filter(Boolean)
+    )
+  );
+}
+
 function buildColorPreference(answers: Record<string, any>): ColorPreference {
   const cp = answers.colorProfile ?? {};
   const ca = answers.colorAnalysis ?? {};
   const temperature: TemperatureKey | null = (() => {
+    const rawNeutrals = answers.neutrals;
+    const neutralsArr: string[] = Array.isArray(rawNeutrals)
+      ? rawNeutrals
+      : typeof rawNeutrals === 'string' && rawNeutrals.length > 0
+      ? [rawNeutrals]
+      : [];
+
+    // 'mix' (explicit combination) or multiple distinct temperatures
+    // → no single preference, don't penalize either temperature
+    if (neutralsArr.includes('mix')) return null;
+    const distinctTemps = new Set(
+      neutralsArr.filter((v) => v === 'warm' || v === 'koel' || v === 'neutraal')
+    );
+    if (distinctTemps.size > 1) return null;
+
+    const singleTemp = neutralsArr[0];
     const raw =
-      cp.temperature ?? answers.neutrals ?? (ca.undertone === 'warm'
+      cp.temperature ??
+      singleTemp ??
+      (ca.undertone === 'warm'
         ? 'warm'
         : ca.undertone === 'cool'
         ? 'koel'
@@ -451,6 +481,7 @@ export function buildUserStyleProfile(
   const occasions = normalizeOccasions(answers.occasions);
   const goals = normalizeGoals(answers.goals);
   const materials = normalizeMaterials(answers.materials);
+  const preferredBrands = normalizeBrands(answers.brandPreferences);
   const fit = resolveFit(answers.fit);
   const prints = resolvePrints(answers.prints);
   const budget = parseBudget(answers);
@@ -494,6 +525,7 @@ export function buildUserStyleProfile(
     budget,
     occasions,
     goals,
+    preferredBrands,
     sizes:
       answers.sizes && typeof answers.sizes === 'object'
         ? {

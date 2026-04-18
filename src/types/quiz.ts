@@ -4,7 +4,10 @@ export interface QuizAnswers {
   baseColors: string;
   bodyType: string;
   occasions: string[];
-  budgetRange: number;
+  neutrals?: string | string[];
+  budget?: { min: number; max: number };
+  budgetRange?: number;
+  brandPreferences?: string[];
   sizes?: {
     tops?: string;
     bottoms?: string;
@@ -23,7 +26,7 @@ export interface QuizStep {
   title: string;
   description: string;
   field: keyof QuizAnswers;
-  type: 'checkbox' | 'radio' | 'select' | 'multiselect' | 'slider' | 'sizes' | 'photo';
+  type: 'checkbox' | 'radio' | 'select' | 'multiselect' | 'slider' | 'budget-range' | 'sizes' | 'photo';
   options?: Array<{
     value: string;
     label: string;

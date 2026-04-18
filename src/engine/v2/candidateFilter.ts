@@ -171,6 +171,7 @@ export function filterAndPrepare(
         season: 0,
         prints: 0,
         quality: 0,
+        brand: 0,
       },
       reasons: [],
       formality: enriched.formality,
