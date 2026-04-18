@@ -3,9 +3,9 @@ import type {
   EngineOptions,
   EngineResult,
   GoalKey,
-  NormalizedCategory,
   OccasionKey,
   OutfitCandidate,
+  ScoredProduct,
   Season,
   TemperatureKey,
   UserStyleProfile,
@@ -49,101 +49,49 @@ const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }>
   },
 };
 
-const GOAL_ADJECTIVE: Partial<Record<GoalKey, string>> = {
-  timeless: 'tijdloze',
-  professional: 'professionele',
-  express: 'expressieve',
-  minimal: 'minimalistische',
-};
-
-const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
-  koel: 'In je koele kleurpalet.',
-  warm: 'In je warme kleurpalet.',
-  neutraal: 'Met een neutrale basis.',
-};
-
-const COLOR_LABEL: Record<string, string> = {
-  zwart: 'Zwart',
-  wit: 'Wit',
-  grijs: 'Grijs',
-  navy: 'Navy',
-  camel: 'Camel',
-  denim: 'Denim',
-  contrast: 'Contrast',
-  aardetinten: 'Aardetint',
-  charcoal: 'Charcoal',
-  monochrome: 'Monochroom',
-  blauw: 'Blauw',
-  rood: 'Bordeaux',
-  groen: 'Olijf',
-  bruin: 'Bruin',
-  roze: 'Roze',
-  geel: 'Mosterd',
-  oranje: 'Oranje',
-};
-
-const KEY_PIECE_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
-  { pattern: /blazer|colbert/i, label: 'Blazer' },
-  { pattern: /trenchcoat|trench\b|mantel\b/i, label: 'Trench' },
-  { pattern: /puffer|donsjas/i, label: 'Puffer' },
-  { pattern: /parka/i, label: 'Parka' },
-  { pattern: /bomber/i, label: 'Bomber' },
-  { pattern: /overshirt/i, label: 'Overshirt' },
-  { pattern: /cardigan|vest\b/i, label: 'Cardigan' },
-  { pattern: /trui|sweater|pullover|gebreid|knit/i, label: 'Knit' },
-  { pattern: /overhemd|button-down|dress shirt/i, label: 'Overhemd' },
-  { pattern: /polo/i, label: 'Polo' },
-  { pattern: /hoodie/i, label: 'Hoodie' },
-  { pattern: /chino/i, label: 'Chino' },
-  { pattern: /pantalon/i, label: 'Pantalon' },
-  { pattern: /jeans|spijkerbroek/i, label: 'Jeans' },
-  { pattern: /jurk\b|dress\b/i, label: 'Jurk' },
-  { pattern: /jumpsuit/i, label: 'Jumpsuit' },
-  { pattern: /rok\b|skirt/i, label: 'Rok' },
-  { pattern: /oxford/i, label: 'Oxford' },
-  { pattern: /loafer/i, label: 'Loafers' },
-  { pattern: /chelsea/i, label: 'Chelsea' },
-];
-
-const MATERIAL_LABEL: Record<string, string> = {
-  wol: 'Wollen',
-  merino: 'Merino',
-  katoen: 'Katoenen',
-  linnen: 'Linnen',
-  denim: 'Denim',
-  leer: 'Leren',
-  zijde: 'Zijden',
-  kasjmier: 'Kasjmier',
-  fleece: 'Fleece',
-  tech: 'Tech',
-  canvas: 'Canvas',
-  ribstof: 'Ribstof',
-};
-
-interface DiversityContext {
-  usedTitles: Set<string>;
-  usedExplanationKeys: Set<string>;
-  finalizedExplanations: string[];
-}
-
-function capitalize(s: string): string {
-  if (!s) return s;
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function primaryGoalAdjective(goals: GoalKey[], index: number): string | null {
-  const priority: GoalKey[] = ['timeless', 'professional', 'express', 'minimal'];
-  const matched: string[] = [];
-  for (const key of priority) {
-    if (!goals.includes(key)) continue;
-    const adj = GOAL_ADJECTIVE[key];
-    if (adj) matched.push(adj);
+function heroItem(candidate: OutfitCandidate): ScoredProduct | null {
+  const priority: Record<string, number> = {
+    dress: 0,
+    outerwear: 1,
+    jumpsuit: 2,
+    top: 3,
+    bottom: 4,
+    footwear: 5,
+    accessory: 6,
+  };
+  let best: ScoredProduct | null = null;
+  let bestScore = -Infinity;
+  for (const p of candidate.products) {
+    const price = typeof p.product.price === 'number' ? p.product.price : 0;
+    const prio = priority[p.category] ?? 9;
+    const s = price * 10 + (10 - prio);
+    if (s > bestScore) {
+      bestScore = s;
+      best = p;
+    }
   }
-  if (matched.length === 0) return null;
-  return matched[index % matched.length];
+  return best;
 }
 
-function materialCounts(candidate: OutfitCandidate): Map<string, number> {
+function heroItemTypeWord(hero: ScoredProduct | null): string | null {
+  if (!hero) return null;
+  const source = (hero.product.type || hero.product.name || '').toLowerCase().trim();
+  if (!source) {
+    const catMap: Record<string, string> = {
+      top: 'top',
+      bottom: 'broek',
+      footwear: 'schoen',
+      outerwear: 'jas',
+      dress: 'jurk',
+      jumpsuit: 'jumpsuit',
+      accessory: 'accessoire',
+    };
+    return catMap[hero.category] ?? null;
+  }
+  return source.split(/\s+/)[0] || null;
+}
+
+function dominantMaterialKey(candidate: OutfitCandidate): string | null {
   const counts = new Map<string, number>();
   for (const p of candidate.products) {
     const tags = new Set<string>([
@@ -157,13 +105,128 @@ function materialCounts(candidate: OutfitCandidate): Map<string, number> {
       }
     }
   }
-  return counts;
-}
-
-function dominantMaterialKey(candidate: OutfitCandidate): string | null {
-  const counts = materialCounts(candidate);
   if (counts.size === 0) return null;
   return [...counts.entries()].sort(([, a], [, b]) => b - a)[0][0];
+}
+
+function heroMaterialKey(hero: ScoredProduct | null): string | null {
+  if (!hero) return null;
+  const tags = new Set<string>([
+    ...hero.materialTags.map((m) => m.toLowerCase()),
+    ...(hero.product.materials ?? []).map((m: string) => m.toLowerCase()),
+  ]);
+  for (const [key, aliases] of Object.entries(MATERIAL_ALIAS)) {
+    if (aliases.some((a) => tags.has(a))) return key;
+  }
+  return null;
+}
+
+function dominantColorWord(candidate: OutfitCandidate): string | null {
+  const counts = new Map<string, number>();
+  for (const p of candidate.products) {
+    const first = p.colorTags[0];
+    if (first) counts.set(first.toLowerCase(), (counts.get(first.toLowerCase()) ?? 0) + 1);
+  }
+  if (counts.size === 0) return null;
+  return [...counts.entries()].sort(([, a], [, b]) => b - a)[0][0];
+}
+
+function isMonochrome(candidate: OutfitCandidate): boolean {
+  const set = new Set<string>();
+  for (const p of candidate.products) {
+    const c = p.colorTags[0];
+    if (c) set.add(c.toLowerCase());
+  }
+  return set.size === 1 && candidate.products.length >= 2;
+}
+
+const ARCHETYPE_DESCRIPTOR: Record<string, string> = {
+  classic: 'tailored',
+  classic_italian: 'tailored',
+  italian_sprezzatura: 'sprezzatura',
+  modern_classic: 'refined',
+  minimalist: 'essential',
+  scandi_minimalist: 'clean',
+  japanese_minimal: 'pure',
+  streetwear: 'relaxed',
+  modern_street: 'casual',
+  athleisure: 'sporty',
+  smart_casual: 'smart',
+  business_casual: 'refined',
+  techwear: 'technical',
+  romantic: 'soft',
+  preppy: 'preppy',
+  bohemian: 'flowing',
+  gorpcore: 'outdoor',
+  rugged: 'rugged',
+  workwear: 'workwear',
+};
+
+function archetypeWord(profile: UserStyleProfile): string {
+  const key = profile.primaryArchetype.toLowerCase();
+  return ARCHETYPE_DESCRIPTOR[key] ?? key.replace('_', ' ');
+}
+
+function buildOutfitTitle(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile,
+  existing: Set<string>
+): string {
+  const base = OCCASION_COPY[candidate.occasion].title;
+  const hero = heroItem(candidate);
+  const heroType = heroItemTypeWord(hero);
+  const heroMat = heroMaterialKey(hero);
+  const dominantMat = dominantMaterialKey(candidate);
+  const dominantColor = dominantColorWord(candidate);
+  const archWord = archetypeWord(profile);
+  const mono = isMonochrome(candidate);
+
+  const variants: string[] = [];
+  if (heroMat && heroType) variants.push(`${base} · ${heroMat} ${heroType}`);
+  if (dominantColor && archWord) variants.push(`${base} · ${dominantColor} ${archWord}`);
+  if (mono && heroType) variants.push(`${base} · tonal ${heroType}`);
+  if (dominantMat && heroType && dominantMat !== heroMat) variants.push(`${base} · ${dominantMat} ${heroType}`);
+  if (dominantMat) variants.push(`${base} · ${dominantMat} focus`);
+  if (dominantColor) variants.push(`${base} · ${dominantColor} ${archWord}`);
+  if (heroType) variants.push(`${base} · ${archWord} ${heroType}`);
+  variants.push(`${base} · ${archWord}`);
+  variants.push(`${base} · ${profile.primaryArchetype.toLowerCase().replace('_', ' ')}`);
+
+  for (const v of variants) {
+    if (!existing.has(v)) return v;
+  }
+  let suffix = 2;
+  while (existing.has(`${variants[0]} ${suffix}`)) suffix++;
+  return `${variants[0]} ${suffix}`;
+}
+
+function buildOutfitDescription(candidate: OutfitCandidate): string {
+  return OCCASION_COPY[candidate.occasion].description;
+}
+
+const GOAL_ADJECTIVE: Partial<Record<GoalKey, string>> = {
+  timeless: 'tijdloze',
+  professional: 'professionele',
+  express: 'expressieve',
+  minimal: 'minimalistische',
+};
+
+const TEMPERATURE_SENTENCE: Record<TemperatureKey, string> = {
+  koel: 'In je koele kleurpalet.',
+  warm: 'In je warme kleurpalet.',
+  neutraal: 'Met een neutrale basis.',
+};
+
+function primaryGoalAdjective(goals: GoalKey[], index: number): string | null {
+  const priority: GoalKey[] = ['timeless', 'professional', 'express', 'minimal'];
+  const matched: string[] = [];
+  for (const key of priority) {
+    if (!goals.includes(key)) continue;
+    const adj = GOAL_ADJECTIVE[key];
+    if (adj) matched.push(adj);
+  }
+  if (matched.length === 0) return null;
+  return matched[index % matched.length];
 }
 
 function matchedPreferredMaterial(
@@ -190,7 +253,19 @@ function matchedPreferredMaterial(
 }
 
 function dominantOutfitMaterial(candidate: OutfitCandidate): string | null {
-  const counts = materialCounts(candidate);
+  const counts = new Map<string, number>();
+  for (const p of candidate.products) {
+    const tags = new Set<string>([
+      ...p.materialTags.map((m) => m.toLowerCase()),
+      ...(p.product.materials ?? []).map((m: string) => m.toLowerCase()),
+    ]);
+    for (const [key, aliases] of Object.entries(MATERIAL_ALIAS)) {
+      if (aliases.some((a) => tags.has(a))) {
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+        break;
+      }
+    }
+  }
   if (counts.size === 0) return null;
   const sorted = [...counts.entries()].sort(([, a], [, b]) => b - a);
   const total = candidate.products.length;
@@ -198,18 +273,6 @@ function dominantOutfitMaterial(candidate: OutfitCandidate): string | null {
   if (sorted.length === 1 || n1 / total >= 0.6) return `Volledig in ${top1}`;
   const [top2] = sorted[1];
   return `Mix van ${top1} en ${top2}`;
-}
-
-function dominantOutfitColorKey(candidate: OutfitCandidate): string | null {
-  const counts = new Map<string, number>();
-  for (const p of candidate.products) {
-    for (const tag of p.colorTags) {
-      const key = tag.toLowerCase();
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-  }
-  if (counts.size === 0) return null;
-  return [...counts.entries()].sort(([, a], [, b]) => b - a)[0][0];
 }
 
 function outfitColorSignal(candidate: OutfitCandidate): string | null {
@@ -247,266 +310,263 @@ function outfitSpecificSignal(
   return `${options[index % options.length]}.`;
 }
 
-function keyPieceLabel(candidate: OutfitCandidate): string | null {
-  const priority: NormalizedCategory[] = [
-    'outerwear',
-    'dress',
-    'jumpsuit',
-    'top',
-    'bottom',
-    'footwear',
-  ];
-  const items = [...candidate.products].sort((a, b) => {
-    const ia = priority.indexOf(a.category);
-    const ib = priority.indexOf(b.category);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
-  for (const p of items) {
-    const txt = `${p.product.type || ''} ${p.product.name || ''}`;
-    for (const { pattern, label } of KEY_PIECE_PATTERNS) {
-      if (pattern.test(txt)) return label;
-    }
-  }
-  return null;
-}
+const OCCASION_OPENINGS: Record<OccasionKey, string[]> = {
+  work: [
+    'Voor kantoor',
+    'Zakelijk maar comfortabel',
+    'Office-ready',
+    'Nette basis voor werk',
+  ],
+  casual: [
+    'Voor je vrije dag',
+    'Relaxed maar stijlvol',
+    'Laid-back essentials',
+    'Moeiteloos dagelijks',
+  ],
+  formal: [
+    'Voor een nette setting',
+    'Ingetogen formeel',
+    'Verzorgd en stijlvol',
+  ],
+  date: [
+    'Voor een avond uit',
+    'Verzorgd maar relaxed',
+    'Date-ready',
+    'Met een beetje extra',
+  ],
+  travel: [
+    'Voor onderweg',
+    'Travel-ready comfort',
+    'Soepel onderweg',
+  ],
+  sport: [
+    'Voor actieve momenten',
+    'Functioneel en sportief',
+  ],
+  party: [
+    'Voor een avond stappen',
+    'Opvallend maar niet overdressed',
+    'Uitgaan-klaar',
+  ],
+};
 
-function dominantOutfitBrand(candidate: OutfitCandidate): string | null {
-  const counts = new Map<string, number>();
-  for (const p of candidate.products) {
-    const brand = (p.product.brand || '').trim();
-    if (!brand) continue;
-    counts.set(brand, (counts.get(brand) ?? 0) + 1);
-  }
-  if (counts.size === 0) return null;
-  const sorted = [...counts.entries()].sort(([, a], [, b]) => b - a);
-  const [top, count] = sorted[0];
-  return count >= 2 ? top : null;
-}
+const OCCASION_GOAL_ADJECTIVE: Partial<Record<OccasionKey, GoalKey>> = {
+  work: 'professional',
+  date: 'express',
+  party: 'express',
+  formal: 'professional',
+};
 
-function buildOutfitTitle(
-  candidate: OutfitCandidate,
-  profile: UserStyleProfile,
-  index: number,
-  ctx: DiversityContext
+function occasionGoalAdjective(
+  occasion: OccasionKey,
+  goals: GoalKey[],
+  index: number
 ): string {
-  const base = OCCASION_COPY[candidate.occasion].title;
-  const options: string[] = [];
-
-  const colorKey = dominantOutfitColorKey(candidate);
-  if (colorKey) {
-    const label = COLOR_LABEL[colorKey] ?? capitalize(colorKey);
-    options.push(`${base} · ${label}`);
+  const preferred = OCCASION_GOAL_ADJECTIVE[occasion];
+  if (preferred && goals.includes(preferred)) {
+    const adj = GOAL_ADJECTIVE[preferred];
+    if (adj) return adj;
   }
-
-  const piece = keyPieceLabel(candidate);
-  if (piece) options.push(`${base} · ${piece}`);
-
-  const matKey = dominantMaterialKey(candidate);
-  if (matKey) {
-    const label = MATERIAL_LABEL[matKey] ?? capitalize(matKey);
-    options.push(`${base} · ${label}`);
-  }
-
-  const goal = primaryGoalAdjective(profile.goals, index);
-  if (goal) options.push(`${base} · ${capitalize(goal)}`);
-
-  if (options.length === 0) {
-    const archetype = profile.primaryArchetype.toLowerCase().replace(/_/g, ' ');
-    options.push(`${base} · ${capitalize(archetype)}`);
-  }
-
-  const offset = index % options.length;
-  for (let i = 0; i < options.length; i++) {
-    const title = options[(offset + i) % options.length];
-    if (!ctx.usedTitles.has(title)) {
-      ctx.usedTitles.add(title);
-      return title;
-    }
-  }
-
-  let variant = 2;
-  while (true) {
-    const fallback = `${base} · #${variant}`;
-    if (!ctx.usedTitles.has(fallback)) {
-      ctx.usedTitles.add(fallback);
-      return fallback;
-    }
-    variant++;
-  }
+  if (occasion === 'date') return 'verzorgde';
+  if (occasion === 'work') return 'professionele';
+  const fallback = primaryGoalAdjective(goals, index);
+  return fallback ?? 'tijdloze';
 }
 
-function buildOutfitDescription(candidate: OutfitCandidate): string {
-  return OCCASION_COPY[candidate.occasion].description;
+function countPreferredBrandMatches(
+  candidate: OutfitCandidate,
+  profile: UserStyleProfile
+): string[] {
+  const prefs = profile.preferredBrands.map((b) => b.toLowerCase().trim()).filter(Boolean);
+  if (prefs.length === 0) return [];
+  const hits: string[] = [];
+  for (const p of candidate.products) {
+    const brand = (p.product.brand ?? '').toLowerCase().trim();
+    if (!brand) continue;
+    if (prefs.some((pb) => brand === pb || brand.includes(pb) || pb.includes(brand))) {
+      hits.push(p.product.brand as string);
+    }
+  }
+  return Array.from(new Set(hits));
 }
 
-interface ExplanationFragment {
-  key: string;
+function heroCallout(hero: ScoredProduct | null): string | null {
+  if (!hero) return null;
+  const brand = (hero.product.brand ?? '').trim();
+  const type = heroItemTypeWord(hero);
+  if (!type) return null;
+  if (brand) return `Gebouwd rond de ${brand} ${type}.`;
+  return `Gebouwd rond de ${type}.`;
+}
+
+function wordTokens(text: string): string[] {
+  return text
+    .toLowerCase()
+    .replace(/[.,:;!?·()"'"]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+}
+
+function wordOverlapSimilarity(a: string, b: string): number {
+  const setA = new Set(wordTokens(a));
+  const setB = new Set(wordTokens(b));
+  if (setA.size === 0 || setB.size === 0) return 0;
+  let shared = 0;
+  for (const w of setA) if (setB.has(w)) shared++;
+  return shared / Math.min(setA.size, setB.size);
+}
+
+function firstSentence(text: string): string {
+  const m = text.match(/^[^.!?]*[.!?]?/);
+  return (m ? m[0] : text).trim();
+}
+
+interface BodyFragment {
+  id: string;
   text: string;
-  isGeneric: boolean;
 }
 
-function candidateFragments(
+function buildBodyFragments(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
   index: number
-): ExplanationFragment[] {
-  const fragments: ExplanationFragment[] = [];
+): BodyFragment[] {
+  const fragments: BodyFragment[] = [];
+  const hero = heroItem(candidate);
 
-  const goal = primaryGoalAdjective(profile.goals, index);
-  if (goal) {
+  const callout = heroCallout(hero);
+  if (callout) fragments.push({ id: 'hero', text: callout });
+
+  const brandMatches = countPreferredBrandMatches(candidate, profile);
+  if (brandMatches.length >= 2) {
+    const [x, y] = brandMatches;
     fragments.push({
-      key: `goal:${goal}`,
-      text: `Afgestemd op je ${goal} stijl.`,
-      isGeneric: false,
+      id: 'brands',
+      text: `Met stukken van je voorkeursmerken ${x} en ${y}.`,
     });
-  }
-
-  const outfitSignal = outfitSpecificSignal(candidate, index);
-  if (outfitSignal) {
+  } else if (brandMatches.length === 1) {
     fragments.push({
-      key: `outfit:${outfitSignal}`,
-      text: outfitSignal,
-      isGeneric: false,
-    });
-  }
-
-  const brand = dominantOutfitBrand(candidate);
-  if (brand) {
-    const preferred = new Set(
-      profile.preferredBrands.map((b) => b.toLowerCase().trim())
-    );
-    const brandLc = brand.toLowerCase();
-    const isPreferred =
-      preferred.has(brandLc) ||
-      [...preferred].some((p) => brandLc.includes(p) || p.includes(brandLc));
-    const text = isPreferred
-      ? `Met ${brand} als voorkeursmerk in de mix.`
-      : `Rond ${brand} opgebouwd.`;
-    fragments.push({ key: `brand:${brand}`, text, isGeneric: false });
-  }
-
-  const piece = keyPieceLabel(candidate);
-  if (piece) {
-    fragments.push({
-      key: `piece:${piece}`,
-      text: `Opgebouwd rond een ${piece.toLowerCase()}.`,
-      isGeneric: false,
+      id: 'brand',
+      text: `Met ${brandMatches[0]} uit je voorkeursmerken.`,
     });
   }
 
   const material = matchedPreferredMaterial(candidate, profile);
-  if (
-    material &&
-    (!outfitSignal || !outfitSignal.toLowerCase().includes(material))
-  ) {
-    fragments.push({
-      key: `prefmat:${material}`,
-      text: `Met je voorkeur voor ${material}.`,
-      isGeneric: false,
-    });
+  if (material) {
+    fragments.push({ id: 'material', text: `Met je voorkeur voor ${material}.` });
   }
 
+  const outfitSignal = outfitSpecificSignal(candidate, index);
+  if (outfitSignal) fragments.push({ id: 'outfit', text: outfitSignal });
+
   if (profile.color.temperature) {
-    fragments.push({
-      key: `temp:${profile.color.temperature}`,
-      text: TEMPERATURE_SENTENCE[profile.color.temperature],
-      isGeneric: true,
-    });
+    fragments.push({ id: 'temp', text: TEMPERATURE_SENTENCE[profile.color.temperature] });
   }
 
   if (candidate.coherence.completeness >= 1) {
-    fragments.push({
-      key: 'complete',
-      text: 'Compleet van top tot schoen.',
-      isGeneric: true,
-    });
+    fragments.push({ id: 'complete', text: 'Compleet van top tot schoen.' });
   }
 
   if (profile.moodboard.totalCount >= 10 && profile.moodboard.confidence > 0.5) {
-    fragments.push({
-      key: 'moodboard',
-      text: 'Gebaseerd op je moodboard-keuzes.',
-      isGeneric: true,
-    });
+    fragments.push({ id: 'moodboard', text: 'Gebaseerd op je moodboard-keuzes.' });
   }
 
   return fragments;
 }
 
-function pickFragments(
-  available: ExplanationFragment[],
-  seen: Set<string>,
-  max: number
-): ExplanationFragment[] {
-  const scored = available.map((frag, order) => ({
-    frag,
-    order,
-    seen: seen.has(frag.key) ? 1 : 0,
-    generic: frag.isGeneric ? 1 : 0,
-  }));
-  scored.sort(
-    (a, b) => a.seen - b.seen || a.generic - b.generic || a.order - b.order
-  );
-  return scored.slice(0, max).map((s) => s.frag);
-}
-
-function wordOverlapSimilarity(a: string, b: string): number {
-  const normalize = (s: string) =>
-    new Set(
-      s
-        .toLowerCase()
-        .replace(/[.,·#]/g, ' ')
-        .split(/\s+/)
-        .filter((w) => w.length > 2)
-    );
-  const wa = normalize(a);
-  const wb = normalize(b);
-  if (wa.size === 0 || wb.size === 0) return 0;
-  let shared = 0;
-  for (const w of wa) if (wb.has(w)) shared++;
-  return shared / Math.min(wa.size, wb.size);
-}
-
-function buildExplanation(
-  candidate: OutfitCandidate,
-  profile: UserStyleProfile,
-  index: number,
-  ctx: DiversityContext
+function composeExplanation(
+  opening: string,
+  goalAdj: string,
+  fragments: BodyFragment[],
+  includeGoalSentence: boolean
 ): string {
-  const all = candidateFragments(candidate, profile, index);
-  if (all.length === 0) {
-    const primary = profile.primaryArchetype.toLowerCase().replace(/_/g, ' ');
-    const text = `Afgestemd op je ${primary}-voorkeur.`;
-    ctx.finalizedExplanations.push(text);
-    return text;
+  const parts: string[] = [];
+  if (fragments.length > 0) {
+    parts.push(`${opening}: ${fragments[0].text}`);
+  } else {
+    parts.push(`${opening}.`);
   }
+  for (let i = 1; i < fragments.length && parts.length < 3; i++) {
+    parts.push(fragments[i].text);
+  }
+  if (includeGoalSentence && parts.length < 3) {
+    parts.push(`Een ${goalAdj} basis.`);
+  }
+  return parts.join(' ').replace(/\.\./g, '.');
+}
 
-  const SIM_THRESHOLD = 0.8;
-  let best: { text: string; picked: ExplanationFragment[]; worst: number } = {
-    text: '',
-    picked: [],
-    worst: 1,
-  };
+function buildExplanationSet(
+  candidates: OutfitCandidate[],
+  profile: UserStyleProfile
+): string[] {
+  const usedOpenings = new Set<string>();
+  const explanations: string[] = [];
+  let goalSentenceUsed = false;
 
-  for (let rotation = 0; rotation < all.length; rotation++) {
-    const rotated = all.slice(rotation).concat(all.slice(0, rotation));
-    const picked = pickFragments(rotated, ctx.usedExplanationKeys, 3);
-    if (picked.length === 0) continue;
-    const text = picked.map((p) => p.text).join(' ');
-    const worst = ctx.finalizedExplanations.reduce(
-      (acc, prev) => Math.max(acc, wordOverlapSimilarity(text, prev)),
-      0
-    );
-    if (worst < SIM_THRESHOLD) {
-      best = { text, picked, worst };
-      break;
+  const bodies = candidates.map((c, i) => buildBodyFragments(c, profile, i));
+  const openings: string[] = candidates.map((c, i) => {
+    const pool = OCCASION_OPENINGS[c.occasion] ?? ['Voor elke dag'];
+    for (let k = 0; k < pool.length; k++) {
+      const candidate = pool[(i + k) % pool.length];
+      if (!usedOpenings.has(candidate)) {
+        usedOpenings.add(candidate);
+        return candidate;
+      }
     }
-    if (worst < best.worst) best = { text, picked, worst };
+    return `${pool[0]} ${i + 1}`;
+  });
+
+  candidates.forEach((cand, i) => {
+    const goalAdj = occasionGoalAdjective(cand.occasion, profile.goals, i);
+    const includeGoal = !goalSentenceUsed && bodies[i].length < 2;
+    if (includeGoal) goalSentenceUsed = true;
+    const frags = [...bodies[i]];
+    const rotate = i % Math.max(1, frags.length || 1);
+    const rotated = frags.length > 1 ? [...frags.slice(rotate), ...frags.slice(0, rotate)] : frags;
+    const text = composeExplanation(openings[i], goalAdj, rotated, includeGoal);
+    explanations.push(text || `Een ${goalAdj} keuze.`);
+  });
+
+  const seenOpeningSentences = new Set<string>();
+  for (let i = 0; i < explanations.length; i++) {
+    const open = firstSentence(explanations[i]).toLowerCase();
+    if (seenOpeningSentences.has(open)) {
+      const pool = OCCASION_OPENINGS[candidates[i].occasion] ?? ['Voor elke dag'];
+      for (let k = 0; k < pool.length; k++) {
+        const alt = `${pool[(i + k + 1) % pool.length]} (${i + 1})`;
+        const goalAdj = occasionGoalAdjective(candidates[i].occasion, profile.goals, i);
+        const candidateText = composeExplanation(alt, goalAdj, bodies[i], false);
+        if (!seenOpeningSentences.has(firstSentence(candidateText).toLowerCase())) {
+          explanations[i] = candidateText;
+          break;
+        }
+      }
+    }
+    seenOpeningSentences.add(firstSentence(explanations[i]).toLowerCase());
   }
 
-  for (const p of best.picked) ctx.usedExplanationKeys.add(p.key);
-  ctx.finalizedExplanations.push(best.text);
-  return best.text;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    let changed = false;
+    for (let i = 0; i < explanations.length; i++) {
+      for (let j = i + 1; j < explanations.length; j++) {
+        if (wordOverlapSimilarity(explanations[i], explanations[j]) > 0.6) {
+          const frags = bodies[j];
+          if (frags.length <= 1) continue;
+          const rot = (j + attempt + 1) % frags.length;
+          const rotated = [...frags.slice(rot), ...frags.slice(0, rot)];
+          const goalAdj = occasionGoalAdjective(candidates[j].occasion, profile.goals, j);
+          const next = composeExplanation(openings[j], goalAdj, rotated, false);
+          if (next !== explanations[j]) {
+            explanations[j] = next;
+            changed = true;
+          }
+        }
+      }
+    }
+    if (!changed) break;
+  }
+
+  return explanations;
 }
 
 function buildMatchPercentage(candidate: OutfitCandidate): number {
@@ -566,8 +626,8 @@ function candidateToOutfit(
   candidate: OutfitCandidate,
   profile: UserStyleProfile,
   season: Season,
-  index: number,
-  ctx: DiversityContext
+  title: string,
+  explanation: string
 ): Outfit {
   const products: Product[] = candidate.products.map((p) => ({
     ...p.product,
@@ -586,7 +646,7 @@ function candidateToOutfit(
 
   return {
     id: candidate.id,
-    title: buildOutfitTitle(candidate, profile, index, ctx),
+    title,
     description: buildOutfitDescription(candidate),
     archetype: profile.primaryArchetype,
     secondaryArchetype: profile.secondaryArchetype ?? undefined,
@@ -601,7 +661,7 @@ function candidateToOutfit(
     ),
     matchPercentage: buildMatchPercentage(candidate),
     matchScore: buildMatchPercentage(candidate),
-    explanation: buildExplanation(candidate, profile, index, ctx),
+    explanation,
     season: seasonMap[season],
     structure: candidate.products.map((p) => p.category),
     categoryRatio: categoryRatio(candidate),
@@ -686,14 +746,16 @@ export function runEngineV2(
     excludeIds: Array.from(excludeIds),
   });
 
-  const ctx: DiversityContext = {
-    usedTitles: new Set(),
-    usedExplanationKeys: new Set(),
-    finalizedExplanations: [],
-  };
+  const explanations = buildExplanationSet(diversified, profile);
+  const usedTitles = new Set<string>();
+  const titles = diversified.map((c) => {
+    const t = buildOutfitTitle(c, profile, usedTitles);
+    usedTitles.add(t);
+    return t;
+  });
 
   const outfits = diversified.map((c, i) =>
-    candidateToOutfit(c, profile, season, i, ctx)
+    candidateToOutfit(c, profile, season, titles[i], explanations[i])
   );
 
   const occasionsCovered = Array.from(
