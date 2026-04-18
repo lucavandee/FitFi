@@ -13,8 +13,8 @@ export const OCCASION_FORMALITY: Record<
 };
 
 const OCCASION_KEYWORDS: Partial<Record<OccasionKey, string[]>> = {
-  work: ['werk', 'kantoor', 'office', 'professional', 'blazer', 'overhemd', 'pantalon'],
-  formal: ['formeel', 'formal', 'feest', 'galadiner', 'ceremonie', 'suit', 'pak', 'smoking'],
+  work: ['werk', 'kantoor', 'office', 'professional', 'blazer', 'overhemd', 'pantalon', 'mantelpak', 'mantelpakje', 'kokerrok', 'pencil skirt', 'blouse', 'pumps', 'blazerjurk', 'shirtdress'],
+  formal: ['formeel', 'formal', 'feest', 'galadiner', 'ceremonie', 'suit', 'pak', 'smoking', 'mantelpak'],
   casual: ['casual', 'relaxed', 'weekend', 'dagelijks', 'jeans', 't-shirt', 'sneaker'],
   date: ['date', 'uitgaan', 'diner', 'restaurant', 'night out', 'cocktail'],
   travel: ['travel', 'reizen', 'versatile', 'comfort', 'licht'],

@@ -396,6 +396,7 @@ function resolveFit(value: any): FitKey | null {
   ) {
     return norm;
   }
+  if (norm === 'tailored' || norm === 'fitted') return 'slim';
   return null;
 }
 

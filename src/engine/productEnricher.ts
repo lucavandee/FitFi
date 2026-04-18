@@ -61,9 +61,11 @@ const COLOR_MAP: Record<string, string[]> = {
 
 const FORMALITY_SIGNALS: { pattern: string[]; value: number }[] = [
   { pattern: ['colbert', 'blazer', 'double-breasted', 'single-breasted'], value: 0.85 },
-  { pattern: ['pak', 'suit', 'tuxedo', 'smoking'], value: 0.95 },
+  { pattern: ['pak', 'suit', 'tuxedo', 'smoking', 'mantelpak', 'mantelpakje'], value: 0.95 },
   { pattern: ['overhemd', 'dress shirt', 'button-down'], value: 0.70 },
   { pattern: ['pantalon', 'trousers', 'nette broek'], value: 0.70 },
+  { pattern: ['kokerrok', 'pencil skirt', 'pencil-skirt', 'nette rok', 'blazerjurk', 'shirtdress'], value: 0.70 },
+  { pattern: ['pumps', 'naaldhak', 'stiletto'], value: 0.75 },
   { pattern: ['oxford', 'derby', 'brogue', 'loafer', 'nette schoen'], value: 0.75 },
   { pattern: ['chino', 'chinopant'], value: 0.55 },
   { pattern: ['polo', 'poloshirt'], value: 0.55 },
@@ -98,11 +100,18 @@ const ATHLETIC_BRANDS = new Set([
   'fila', 'ellesse', 'kappa', 'umbro', 'diadora', 'under armour',
 ]);
 
+const BUSINESS_BRANDS = new Set([
+  'hugo boss', 'boss', 'massimo dutti', 'suitsupply', 'ermenegildo zegna', 'zegna',
+  'brooks brothers', 'canali', 'corneliani', 'paul smith', 'hackett',
+  'charles tyrwhitt', 'thomas pink', 't.m.lewin', 'olymp', 'van laack',
+  'max mara', 'reiss', 'the kooples', 'claudie pierlot', 'sandro',
+]);
+
 const CLASSIC_BRANDS = new Set([
-  'ralph lauren', 'polo ralph lauren', 'tommy hilfiger', 'hugo boss', 'boss',
+  'ralph lauren', 'polo ralph lauren', 'tommy hilfiger',
   'lacoste', 'gant', "marc o'polo", 'scotch & soda', 'ted baker',
-  'calvin klein', 'michael kors', 'brooks brothers', 'j.crew', 'massimo dutti',
-  'hackett', 'barbour', 'burberry',
+  'calvin klein', 'michael kors', 'j.crew',
+  'barbour', 'burberry',
 ]);
 
 const MINIMALIST_BRANDS = new Set([
@@ -115,6 +124,7 @@ function getBrandStyleHint(brand: string): { formality: number; silhouette: stri
   const b = (brand || '').toLowerCase();
   if (STREETWEAR_BRANDS.has(b)) return { formality: 0.15, silhouette: 'relaxed', archetype: 'streetwear' };
   if (ATHLETIC_BRANDS.has(b)) return { formality: 0.10, silhouette: 'slim', archetype: 'athletic' };
+  if (BUSINESS_BRANDS.has(b)) return { formality: 0.85, silhouette: 'tailored', archetype: 'business' };
   if (CLASSIC_BRANDS.has(b)) return { formality: 0.65, silhouette: 'tailored' };
   if (MINIMALIST_BRANDS.has(b)) return { formality: 0.55, silhouette: 'clean' };
   return null;
