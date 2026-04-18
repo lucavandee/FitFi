@@ -132,9 +132,10 @@ function assembleReasons(
 }
 
 function scoreComposition(
-  products: ScoredProduct[]
+  products: ScoredProduct[],
+  profile: UserStyleProfile
 ): { coherence: ReturnType<typeof evaluateCoherence>; score: number } {
-  const coherence = evaluateCoherence(products);
+  const coherence = evaluateCoherence(products, profile);
   const productAvg =
     products.reduce((acc, p) => acc + p.score, 0) / Math.max(1, products.length);
   const baseScore = productAvg * 0.55 + coherence.combined * 0.45;
@@ -274,7 +275,7 @@ function composeForOccasion(
     if (seenSignatures.has(signature)) continue;
     seenSignatures.add(signature);
 
-    const { coherence, score } = scoreComposition(products);
+    const { coherence, score } = scoreComposition(products, profile);
     if (score < 0.35) continue;
 
     candidates.push({
