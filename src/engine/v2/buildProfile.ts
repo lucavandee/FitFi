@@ -288,17 +288,91 @@ function normalizeBrands(raw: any): string[] {
   );
 }
 
+const PALETTE_BY_TEMPERATURE: Record<TemperatureKey, string[]> = {
+  warm: ['camel', 'cognac', 'terracotta', 'olijf', 'bruin', 'crème', 'roest'],
+  koel: ['navy', 'donkerblauw', 'grijs', 'wit', 'zwart', 'bordeaux', 'kobalt'],
+  neutraal: ['zwart', 'wit', 'grijs', 'beige', 'taupe', 'navy', 'crème'],
+};
+
+const PALETTE_BY_VALUE: Record<ValueKey, string[]> = {
+  donker: ['zwart', 'antraciet', 'navy', 'donkergroen', 'bordeaux', 'donkergrijs'],
+  licht: ['wit', 'crème', 'lichtblauw', 'lichtgrijs', 'beige', 'zandkleur'],
+  medium: ['grijs', 'navy', 'beige', 'camel', 'olijf', 'taupe'],
+};
+
+const PALETTE_BY_NEUTRAL: Record<string, string[]> = {
+  warm: ['camel', 'crème', 'bruin', 'cognac', 'beige'],
+  koel: ['grijs', 'wit', 'navy', 'zwart', 'lichtblauw'],
+  neutraal: ['zwart', 'wit', 'grijs', 'beige', 'taupe'],
+  zwart: ['zwart', 'antraciet', 'charcoal', 'grijs'],
+  wit: ['wit', 'crème', 'ivoor', 'lichtgrijs'],
+  grijs: ['grijs', 'antraciet', 'charcoal', 'zwart', 'wit'],
+  beige: ['beige', 'camel', 'taupe', 'crème', 'zand'],
+  navy: ['navy', 'donkerblauw', 'wit', 'grijs'],
+  bruin: ['bruin', 'camel', 'cognac', 'beige'],
+};
+
+function normalizeNeutralsList(raw: unknown): string[] {
+  if (!raw) return [];
+  const arr = Array.isArray(raw) ? raw : [raw];
+  return arr
+    .map((v) => (typeof v === 'string' ? v.toLowerCase().trim() : ''))
+    .filter(Boolean);
+}
+
+function derivePreferredColors(params: {
+  fromAnalysis: string[];
+  neutrals: string[];
+  temperature: TemperatureKey | null;
+  value: ValueKey | null;
+}): string[] {
+  const { fromAnalysis, neutrals, temperature, value } = params;
+  const out: string[] = [];
+  const push = (colors: string[] | undefined) => {
+    if (!colors) return;
+    for (const c of colors) {
+      const norm = String(c).toLowerCase().trim();
+      if (!norm) continue;
+      if (!out.includes(norm)) out.push(norm);
+    }
+  };
+
+  push(fromAnalysis);
+
+  if (value === 'donker') {
+    push(PALETTE_BY_VALUE.donker);
+  } else if (value === 'licht') {
+    push(PALETTE_BY_VALUE.licht);
+  }
+
+  if (out.length < 3) {
+    for (const n of neutrals) {
+      push(PALETTE_BY_NEUTRAL[n]);
+      if (out.length >= 6) break;
+    }
+  }
+
+  if (out.length < 3 && temperature) {
+    push(PALETTE_BY_TEMPERATURE[temperature]);
+  }
+
+  if (out.length < 3 && value === 'medium') {
+    push(PALETTE_BY_VALUE.medium);
+  }
+
+  if (out.length < 3) {
+    push(PALETTE_BY_TEMPERATURE.neutraal);
+  }
+
+  return out;
+}
+
 function buildColorPreference(answers: Record<string, any>): ColorPreference {
   const cp = answers.colorProfile ?? {};
   const ca = answers.colorAnalysis ?? {};
-  const temperature: TemperatureKey | null = (() => {
-    const rawNeutrals = answers.neutrals;
-    const neutralsArr: string[] = Array.isArray(rawNeutrals)
-      ? rawNeutrals
-      : typeof rawNeutrals === 'string' && rawNeutrals.length > 0
-      ? [rawNeutrals]
-      : [];
+  const neutralsArr = normalizeNeutralsList(answers.neutrals);
 
+  const temperature: TemperatureKey | null = (() => {
     // 'mix' (explicit combination) or multiple distinct temperatures
     // → no single preference, don't penalize either temperature
     if (neutralsArr.includes('mix')) return null;
@@ -307,7 +381,9 @@ function buildColorPreference(answers: Record<string, any>): ColorPreference {
     );
     if (distinctTemps.size > 1) return null;
 
-    const singleTemp = neutralsArr[0];
+    const singleTemp = neutralsArr.find(
+      (v) => v === 'warm' || v === 'koel' || v === 'neutraal'
+    );
     const raw =
       cp.temperature ??
       singleTemp ??
@@ -351,13 +427,20 @@ function buildColorPreference(answers: Record<string, any>): ColorPreference {
       ? 'neutral'
       : null);
 
+  const preferredColors = derivePreferredColors({
+    fromAnalysis: Array.isArray(ca.best_colors) ? ca.best_colors : [],
+    neutrals: neutralsArr,
+    temperature,
+    value,
+  });
+
   return {
     temperature,
     value,
     contrast,
     season,
     undertone,
-    preferredColors: Array.isArray(ca.best_colors) ? ca.best_colors : [],
+    preferredColors,
     avoidColors: Array.isArray(ca.avoid_colors) ? ca.avoid_colors : [],
   };
 }

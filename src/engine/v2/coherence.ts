@@ -6,6 +6,7 @@ export interface CoherenceScores {
   colorHarmony: number;
   formalitySpread: number;
   archetypeCoherence: number;
+  primaryArchetypeFit: number;
   completeness: number;
   combined: number;
   reasons: string[];
@@ -69,6 +70,7 @@ export function evaluateCoherence(
       colorHarmony: 0,
       formalitySpread: 0,
       archetypeCoherence: 0,
+      primaryArchetypeFit: 0,
       completeness: 0,
       combined: 0,
       reasons: ['empty_outfit'],
@@ -113,6 +115,15 @@ export function evaluateCoherence(
     if (archetypeCoherence > 0.45) reasons.push('archetype_coherent');
   }
 
+  let primaryArchetypeFit = 1;
+  if (profile) {
+    const primaryKey = profile.primaryArchetype;
+    const fits = products.map((p) => p.archetypeFit[primaryKey] ?? 0);
+    primaryArchetypeFit =
+      fits.reduce((a, b) => a + b, 0) / Math.max(1, fits.length);
+    if (primaryArchetypeFit < 0.4) reasons.push('primary_archetype_weak');
+  }
+
   const hasTop = products.some((p) => p.category === 'top' || p.category === 'dress' || p.category === 'jumpsuit');
   const hasBottom = products.some(
     (p) =>
@@ -136,6 +147,7 @@ export function evaluateCoherence(
     colorHarmony,
     formalitySpread,
     archetypeCoherence,
+    primaryArchetypeFit,
     completeness,
     combined,
     reasons,
@@ -149,7 +161,18 @@ export function coherenceMultiplier(scores: CoherenceScores): number {
     scores.formalitySpread < 0.5 ? 0.85 : scores.formalitySpread > 0.85 ? 1.05 : 1;
   const completenessPenalty =
     scores.completeness < 0.7 ? 0.75 : scores.completeness < 1 ? 0.95 : 1;
-  return harmonyMultiplier * formalityMultiplier * completenessPenalty;
+  const archetypeMultiplier =
+    scores.primaryArchetypeFit < 0.4
+      ? 0.6
+      : scores.primaryArchetypeFit < 0.55
+      ? 0.85
+      : 1;
+  return (
+    harmonyMultiplier *
+    formalityMultiplier *
+    completenessPenalty *
+    archetypeMultiplier
+  );
 }
 
 export function isHardMismatch(

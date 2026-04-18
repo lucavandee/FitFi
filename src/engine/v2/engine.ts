@@ -210,8 +210,8 @@ function buildExplanation(
 
 function buildMatchPercentage(candidate: OutfitCandidate): number {
   const raw = candidate.compositionScore;
-  const scaled = 30 + raw * 65;
-  return Math.round(Math.max(30, Math.min(98, scaled)));
+  const scaled = 20 + raw * 75;
+  return Math.round(Math.max(20, Math.min(95, scaled)));
 }
 
 function categoryRatio(candidate: OutfitCandidate): {
