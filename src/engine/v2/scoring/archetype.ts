@@ -10,7 +10,7 @@ function tokenScore(tokens: string[] | undefined, needles: string[]): number {
   for (const t of tokens) {
     if (needleSet.has(t.toLowerCase())) hits++;
   }
-  return Math.min(1, hits / Math.min(3, needles.length));
+  return Math.min(1, hits / Math.min(2, needles.length));
 }
 
 function formalityProximity(
