@@ -102,14 +102,72 @@ function workFootwearFloor(profile: UserStyleProfile): number {
   return relaxed ? 0.15 : 0.35;
 }
 
+function workBottomFloor(profile: UserStyleProfile): number {
+  const relaxed =
+    profile.primaryArchetype === 'STREETWEAR' ||
+    profile.primaryArchetype === 'SMART_CASUAL';
+  return relaxed ? 0.25 : 0.4;
+}
+
+const CASUAL_FOOTWEAR_CEILING = 0.7;
+
+const WORK_NEGATIVE_KEYWORDS = [
+  'flannel',
+  'geruit',
+  'check',
+  'plaid',
+  'field',
+  'outdoor',
+];
+
+function hasWorkNegativeKeyword(scored: ScoredProduct): boolean {
+  const p = scored.product;
+  const haystack = [p.name, p.description, p.type]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  if (!haystack) return false;
+  return WORK_NEGATIVE_KEYWORDS.some((kw) => haystack.includes(kw));
+}
+
 function filterFootwearForOccasion(
   products: ScoredProduct[],
   occasion: OccasionKey,
   profile: UserStyleProfile
 ): ScoredProduct[] {
+  if (occasion === 'work') {
+    const floor = workFootwearFloor(profile);
+    const filtered = products.filter((p) => p.formality >= floor);
+    return filtered.length > 0 ? filtered : products;
+  }
+  if (occasion === 'casual') {
+    const filtered = products.filter(
+      (p) => p.formality <= CASUAL_FOOTWEAR_CEILING
+    );
+    return filtered.length > 0 ? filtered : products;
+  }
+  return products;
+}
+
+function filterBottomsForOccasion(
+  products: ScoredProduct[],
+  occasion: OccasionKey,
+  profile: UserStyleProfile
+): ScoredProduct[] {
   if (occasion !== 'work') return products;
-  const floor = workFootwearFloor(profile);
-  const filtered = products.filter((p) => p.formality >= floor);
+  const floor = workBottomFloor(profile);
+  const filtered = products.filter(
+    (p) => p.formality >= floor && !hasWorkNegativeKeyword(p)
+  );
+  return filtered.length > 0 ? filtered : products;
+}
+
+function filterTopsForOccasion(
+  products: ScoredProduct[],
+  occasion: OccasionKey
+): ScoredProduct[] {
+  if (occasion !== 'work') return products;
+  const filtered = products.filter((p) => !hasWorkNegativeKeyword(p));
   return filtered.length > 0 ? filtered : products;
 }
 
@@ -261,9 +319,21 @@ function composeForOccasion(
       const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand, occasion);
       picks.dress = pool[0];
     } else {
-      const topPool = pickTopPool(byCategory.top, targetFormality, poolSize, rand, occasion);
-      const bottomPool = pickTopPool(
+      const topCandidates = filterTopsForOccasion(byCategory.top, occasion);
+      const bottomCandidates = filterBottomsForOccasion(
         byCategory.bottom,
+        occasion,
+        profile
+      );
+      const topPool = pickTopPool(
+        topCandidates,
+        targetFormality,
+        poolSize,
+        rand,
+        occasion
+      );
+      const bottomPool = pickTopPool(
+        bottomCandidates,
         targetFormality,
         poolSize,
         rand,
@@ -360,6 +430,7 @@ export function composeOutfits(
     date: [],
     travel: [],
     sport: [],
+    party: [],
   };
 
   const occasions: OccasionKey[] =
