@@ -162,17 +162,5 @@ export function isHardMismatch(
     if (!profileAcceptsAthletic) return true;
   }
 
-  const archetypeTotals: Record<string, number> = {};
-  for (const p of products) {
-    for (const [key, score] of Object.entries(p.archetypeFit)) {
-      archetypeTotals[key] = (archetypeTotals[key] ?? 0) + (score ?? 0);
-    }
-  }
-  const sum = Object.values(archetypeTotals).reduce((a, b) => a + b, 0);
-  if (sum > 0) {
-    const top = Math.max(...Object.values(archetypeTotals));
-    if (top / sum < 0.35) return true;
-  }
-
   return false;
 }
