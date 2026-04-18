@@ -191,23 +191,34 @@ function pickTopArchetypes(weights: ArchetypeWeights): {
 function parseBudget(answers: Record<string, any>): {
   perItemMax: number;
   perItemMin: number;
+  totalMax: number;
 } {
   const explicit =
     answers.budget && typeof answers.budget === 'object'
       ? answers.budget
       : null;
   if (explicit && typeof explicit.max === 'number') {
+    const perItemMax = Math.max(15, explicit.max);
+    const perItemMin =
+      typeof explicit.min === 'number'
+        ? Math.max(0, explicit.min)
+        : perItemMax * 0.3;
     return {
-      perItemMax: Math.max(15, explicit.max),
-      perItemMin: typeof explicit.min === 'number' ? Math.max(0, explicit.min) : 0,
+      perItemMax,
+      perItemMin,
+      totalMax: perItemMax * 4,
     };
   }
   const slider =
     typeof answers.budgetRange === 'number' ? answers.budgetRange : null;
   if (slider !== null && slider > 0) {
-    return { perItemMax: slider, perItemMin: 0 };
+    return {
+      perItemMax: slider,
+      perItemMin: slider * 0.3,
+      totalMax: slider * 4,
+    };
   }
-  return { perItemMax: 150, perItemMin: 0 };
+  return { perItemMax: 150, perItemMin: 45, totalMax: 600 };
 }
 
 function normalizeOccasions(raw: any): OccasionKey[] {
