@@ -83,16 +83,57 @@ function rankForOccasion(
   });
 }
 
+function buildPreferredBrandSet(profile: UserStyleProfile): Set<string> | null {
+  const prefs = profile.preferredBrands;
+  if (!prefs || prefs.length === 0) return null;
+  const set = new Set(
+    prefs.map((b) => b.toLowerCase().trim()).filter(Boolean)
+  );
+  return set.size > 0 ? set : null;
+}
+
+function isPreferredBrand(
+  product: ScoredProduct,
+  prefSet: Set<string>
+): boolean {
+  const brand = String(product.product.brand ?? '').toLowerCase().trim();
+  if (!brand) return false;
+  if (prefSet.has(brand)) return true;
+  for (const pref of prefSet) {
+    if (brand.includes(pref) || pref.includes(brand)) return true;
+  }
+  return false;
+}
+
 function pickTopPool(
   products: ScoredProduct[],
   targetFormality: number,
   poolSize: number,
   rand: () => number,
-  occasion: OccasionKey
+  occasion: OccasionKey,
+  profile: UserStyleProfile
 ): ScoredProduct[] {
   const ranked = rankForOccasion(products, targetFormality, occasion);
   const pool = ranked.slice(0, Math.max(poolSize, 4));
-  return shuffleSeeded(pool, rand);
+  const shuffled = shuffleSeeded(pool, rand);
+
+  const prefSet = buildPreferredBrandSet(profile);
+  if (!prefSet) return shuffled;
+
+  // Brand injection: if a preferred-brand item is in the top half of the
+  // ranked candidates for this slot, promote the best-ranked one to pool[0]
+  // so the composer actually picks it. Skips when no preferred items are
+  // competitive — we don't force bad matches.
+  const topHalfCount = Math.max(1, Math.ceil(ranked.length / 2));
+  const topHalf = ranked.slice(0, topHalfCount);
+  const bestPreferred = topHalf.find((p) => isPreferredBrand(p, prefSet));
+  if (!bestPreferred) return shuffled;
+
+  if (shuffled[0]?.product.id === bestPreferred.product.id) return shuffled;
+  const rest = shuffled.filter(
+    (p) => p.product.id !== bestPreferred.product.id
+  );
+  return [bestPreferred, ...rest];
 }
 
 function workFootwearFloor(profile: UserStyleProfile): number {
@@ -314,10 +355,10 @@ function composeForOccasion(
 
     let picks: Parameters<typeof tryCompose>[0] = {};
     if (useDress) {
-      const pool = pickTopPool(byCategory.dress, targetFormality, poolSize, rand, occasion);
+      const pool = pickTopPool(byCategory.dress, targetFormality, poolSize, rand, occasion, profile);
       picks.dress = pool[0];
     } else if (useJumpsuit) {
-      const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand, occasion);
+      const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand, occasion, profile);
       picks.dress = pool[0];
     } else {
       const topCandidates = filterTopsForOccasion(byCategory.top, occasion);
@@ -331,14 +372,16 @@ function composeForOccasion(
         targetFormality,
         poolSize,
         rand,
-        occasion
+        occasion,
+        profile
       );
       const bottomPool = pickTopPool(
         bottomCandidates,
         targetFormality,
         poolSize,
         rand,
-        occasion
+        occasion,
+        profile
       );
       picks.top = topPool[0];
       picks.bottom = bottomPool[0];
@@ -355,7 +398,8 @@ function composeForOccasion(
         targetFormality,
         poolSize,
         rand,
-        occasion
+        occasion,
+        profile
       );
       picks.footwear = pool[0];
     }
@@ -366,7 +410,8 @@ function composeForOccasion(
         targetFormality,
         Math.max(3, Math.floor(poolSize / 2)),
         rand,
-        occasion
+        occasion,
+        profile
       );
       picks.outerwear = pool[0];
     }
@@ -377,7 +422,8 @@ function composeForOccasion(
         targetFormality,
         Math.max(3, Math.floor(poolSize / 2)),
         rand,
-        occasion
+        occasion,
+        profile
       );
       picks.accessory = pool[0];
     }
