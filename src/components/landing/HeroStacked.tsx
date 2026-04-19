@@ -27,8 +27,8 @@ const HeroStacked: React.FC<Props> = ({
   lead = "Beantwoord 6 korte vragen en ontvang direct een persoonlijk stijlprofiel met outfits en shoplinks — privacy-first, .",
 }) => {
   return (
-    <section className="ff-section hero-stack-wrap alt-bg" aria-labelledby="hero-stack-title">
-      <div className="ff-container hero-stack">
+    <section className="py-16 md:py-24 hero-stack-wrap alt-bg" aria-labelledby="hero-stack-title">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 hero-stack">
         <header className="stack-head">
           <p className="stack-kicker">{kicker}</p>
           <h1 id="hero-stack-title" className="stack-title">{title}</h1>
