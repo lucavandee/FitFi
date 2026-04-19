@@ -2,8 +2,18 @@ import type { AnswerMap, ColorProfile, Archetype, QuizResult, SubSeason } from "
 
 // P1.3 fix: jewelry-vraag bestaat niet in de quiz, dus die check is verwijderd.
 // Temperature wordt nu uitsluitend bepaald door het neutrals-antwoord.
+// Handles legacy data where neutrals was stored as an array (multiselect) or 'mix'.
 function decideTemperature(a: AnswerMap): ColorProfile["temperature"] {
-  return a.neutrals ?? "neutraal";
+  const VALID: ColorProfile["temperature"][] = ["warm", "koel", "neutraal"];
+  const raw = a.neutrals;
+  if (Array.isArray(raw)) {
+    const first = raw.find((v: string) => VALID.includes(v as ColorProfile["temperature"]));
+    return (first as ColorProfile["temperature"]) ?? "neutraal";
+  }
+  if (VALID.includes(raw as ColorProfile["temperature"])) {
+    return raw as ColorProfile["temperature"];
+  }
+  return "neutraal";
 }
 function decideValue(a: AnswerMap): ColorProfile["value"] {
   return a.lightness ?? "medium";

@@ -182,7 +182,10 @@ export class StyleProfileGenerator {
       return null;
     }
 
-    const colorPref = answers.neutrals || answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
+    // Normalize neutrals: multiselect stored as array → take first element
+    const neutralsRaw = answers.neutrals;
+    const neutralsVal = Array.isArray(neutralsRaw) ? neutralsRaw[0] ?? null : (neutralsRaw ?? null);
+    const colorPref = neutralsVal || answers.baseColors || answers.colorPreference || answers.colors || answers.colorTemp;
     const lightness: string = answers.lightness || 'medium';
     const contrast: string = answers.contrast || 'medium';
 

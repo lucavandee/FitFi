@@ -191,9 +191,9 @@ export const quizSteps: QuizStep[] = [
   {
     id: 3,
     title: 'Welke kleuren draag jij het liefst?',
-    description: 'Dit gaat over wat jij graag draagt — niet over je huidskleur of ondertoon. Meerdere keuzes zijn prima.',
+    description: 'Dit gaat over wat jij graag draagt — niet over je huidskleur of ondertoon.',
     field: 'neutrals',
-    type: 'multiselect',
+    type: 'radio',
     required: true,
     options: [
       {
@@ -208,13 +208,8 @@ export const quizSteps: QuizStep[] = [
       },
       {
         value: 'neutraal',
-        label: 'Neutrale mix',
-        description: 'Zwart, wit, grijs — ik combineer graag'
-      },
-      {
-        value: 'mix',
-        label: 'Mix van warm en koel',
-        description: 'Je combineert warme en koele kleuren'
+        label: 'Neutraal / Mix',
+        description: 'Zwart, wit, grijs — of een combinatie van warm en koel'
       }
     ]
   },

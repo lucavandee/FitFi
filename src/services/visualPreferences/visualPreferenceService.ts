@@ -3,6 +3,7 @@ import { getSupabase } from '@/lib/supabase';
 export interface MoodPhoto {
   id: number;
   image_url: string;
+  gender?: string;
   mood_tags: string[];
   archetype_weights: Record<string, number>;
   dominant_colors: string[];
@@ -85,6 +86,15 @@ export class VisualPreferenceService {
 
     let photos = (data && data.length > 0) ? data : [];
 
+    if (photos.length === 0 && gendersToTry) {
+      // Try fetching only the exact gender (without unisex) before falling back to all
+      const exactGender = gendersToTry.filter(g => g !== 'unisex');
+      const { data: exactData, error: exactError } = await buildQuery(exactGender.length > 0 ? exactGender : null);
+      if (!exactError && exactData && exactData.length > 0) {
+        photos = exactData;
+      }
+    }
+
     if (photos.length === 0) {
       const { data: fallback, error: fallbackError } = await buildQuery(null);
       if (fallbackError) {
@@ -92,6 +102,18 @@ export class VisualPreferenceService {
         throw fallbackError;
       }
       photos = fallback || [];
+    }
+
+    // Client-side safety filter: when a specific gender was requested, strip photos
+    // that belong to the opposite gender (allow unisex and requested gender through)
+    if (gendersToTry && photos.length > 0) {
+      const filtered = photos.filter(
+        (p: MoodPhoto) => !p.gender || gendersToTry!.includes(p.gender)
+      );
+      // Only apply the client-side filter if it doesn't wipe out everything
+      if (filtered.length > 0) {
+        photos = filtered;
+      }
     }
 
     if (shuffle) {
