@@ -290,7 +290,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
   if (outfits.length === 0) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[#E5E5E5] mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-6">
           <Sparkles className="w-4 h-4 text-[#A8513A]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
             Outfit Calibratie
@@ -316,7 +316,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8" style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
       <div className="text-center mb-6 sm:mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--overlay-accent-08a)] border border-[#E5E5E5] mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-4">
           <Sparkles className="w-4 h-4 text-[#A8513A]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
             Outfit Calibratie

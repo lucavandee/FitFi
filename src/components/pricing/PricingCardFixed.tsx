@@ -148,7 +148,7 @@ export function PricingCardFixed({
       {recommended && (
         <a
           href="#features"
-          className="ff-link ff-link--muted block text-center mt-4"
+          className="text-[#8A8A8A] hover:text-[#C2654A] text-sm font-medium block text-center mt-4 transition-colors duration-200"
         >
           Bekijk alle features →
         </a>
