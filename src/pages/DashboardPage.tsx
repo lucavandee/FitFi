@@ -79,21 +79,22 @@ export default function DashboardPage() {
   const isPremium = ctxUser?.tier === "premium" || ctxUser?.tier === "founder" || !!ctxUser?.isPremium;
   const isFounder = ctxUser?.tier === "founder";
 
-  const { color, archetype, hasReport, hasPhoto, reportDate } = React.useMemo(() => {
+  const { color, archetype, gender, hasReport, hasPhoto, reportDate } = React.useMemo(() => {
     const c = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
     const a = readJson<Archetype>(LS_KEYS.ARCHETYPE);
-    const ans = readJson<{ photoUrl?: string }>(LS_KEYS.QUIZ_ANSWERS);
+    const ans = readJson<{ photoUrl?: string; gender?: string }>(LS_KEYS.QUIZ_ANSWERS);
     const ts = localStorage.getItem(LS_KEYS.RESULTS_TS);
     return {
       color: c,
       archetype: a,
+      gender: ans?.gender ?? undefined,
       hasReport: !!(a || c),
       hasPhoto: !!(ans?.photoUrl),
       reportDate: formatDate(ts),
     };
   }, []);
 
-  const { data: outfitsData } = useOutfits({ archetype: archetype?.name, limit: 6, enabled: hasReport });
+  const { data: outfitsData } = useOutfits({ archetype: archetype?.name, gender: gender as any, limit: 6, enabled: hasReport });
 
   React.useEffect(() => {
     const client = supabase();
