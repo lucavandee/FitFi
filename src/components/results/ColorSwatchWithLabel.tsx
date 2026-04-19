@@ -76,7 +76,7 @@ export function ColorSwatchWithLabel({
     <div className="flex flex-col items-center gap-2">
       {/* Color Swatch */}
       <motion.button
-        className={`${sizeClasses[size]} rounded-xl shadow-md relative overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:ring-offset-2 transition-all`}
+        className={`${sizeClasses[size]} rounded-xl shadow-md relative overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C2654A] focus:ring-offset-2 transition-all`}
         style={{ backgroundColor: swatch.hex }}
         whileHover={{ scale: 1.1, boxShadow: '0 8px 16px rgba(0,0,0,0.15)' }}
         whileTap={{ scale: 0.95 }}

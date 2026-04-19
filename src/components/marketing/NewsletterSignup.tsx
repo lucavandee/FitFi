@@ -53,22 +53,22 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
   };
 
   const isDark = variant === "dark";
-  const inputBg = isDark ? "bg-white/10" : "bg-[var(--color-surface)]";
-  const inputBorder = isDark ? "border-white/20" : "border-[var(--color-border)]";
-  const inputText = isDark ? "text-white placeholder:text-white/60" : "text-[var(--color-text)] placeholder:text-[var(--color-text)]/60";
-  const buttonBg = isDark ? "bg-white text-[var(--color-text)]" : "bg-[var(--ff-color-primary-700)] text-white";
-  const buttonHover = isDark ? "hover:bg-white/90" : "hover:bg-[var(--ff-color-primary-600)]";
+  const inputBg = isDark ? "bg-white/10" : "bg-[#FFFFFF]";
+  const inputBorder = isDark ? "border-white/20" : "border-[#E5E5E5]";
+  const inputText = isDark ? "text-white placeholder:text-white/60" : "text-[#1A1A1A] placeholder:text-[#1A1A1A]/60";
+  const buttonBg = isDark ? "bg-white text-[#1A1A1A]" : "bg-[#A8513A] text-white";
+  const buttonHover = isDark ? "hover:bg-white/90" : "hover:bg-[#C2654A]";
 
   return (
     <div className={className}>
       <div className="flex items-center gap-2 mb-3">
-        <Mail className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[var(--color-text)]/80"}`} aria-hidden />
-        <strong className={isDark ? "text-white" : "text-[var(--color-text)]"}>
+        <Mail className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#1A1A1A]/80"}`} aria-hidden />
+        <strong className={isDark ? "text-white" : "text-[#1A1A1A]"}>
           Blijf op de hoogte
         </strong>
       </div>
 
-      <p className={`text-sm mb-4 ${isDark ? "text-white/70" : "text-[var(--color-text)]/70"}`}>
+      <p className={`text-sm mb-4 ${isDark ? "text-white/70" : "text-[#1A1A1A]/70"}`}>
         Ontvang tips over stijl, nieuwe features en exclusieve aanbiedingen.
       </p>
 
@@ -92,7 +92,7 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
               className={`
                 flex-1 px-4 py-2.5 rounded-xl border
                 ${inputBg} ${inputBorder} ${inputText}
-                focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-transparent
+                focus:outline-none focus:ring-2 focus:ring-[#C2654A] focus:border-transparent
                 transition-all duration-200
                 disabled:opacity-50 disabled:cursor-not-allowed
               `}
@@ -115,13 +115,13 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
           </div>
 
           {status === "error" && (
-            <div className="flex items-center gap-2 text-sm text-[var(--ff-color-error-600)]">
+            <div className="flex items-center gap-2 text-sm text-[#C24A4A]">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <p>{message}</p>
             </div>
           )}
 
-          <p className={`text-xs ${isDark ? "text-white/50" : "text-[var(--color-text)]/50"}`}>
+          <p className={`text-xs ${isDark ? "text-white/50" : "text-[#1A1A1A]/50"}`}>
             We respecteren je privacy. Uitschrijven kan altijd.
           </p>
         </form>

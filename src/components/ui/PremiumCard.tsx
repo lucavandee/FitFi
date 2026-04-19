@@ -13,7 +13,7 @@ export default function PremiumCard({
   hover = false,
   glow = false 
 }: PremiumCardProps) {
-  const baseClasses = "ff-card p-6";
+  const baseClasses = "bg-white border border-[#E5E5E5] rounded-2xl p-6 p-6";
   const hoverClasses = hover ? "transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl" : "";
   const glowClasses = glow ? "ring-1 ring-[#67E8F9]/20 shadow-[0_0_30px_rgba(103,232,249,0.1)]" : "";
   

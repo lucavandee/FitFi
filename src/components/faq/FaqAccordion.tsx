@@ -24,7 +24,7 @@ const FaqAccordion: React.FC<Props> = ({ items, query = "", selectedTags = [] })
 
   if (filtered.length === 0) {
     return (
-      <div role="status" className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center shadow-[var(--shadow-soft)]">
+      <div role="status" className="rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 text-center shadow-sm">
         Geen resultaten. Pas je zoekterm of filters aan.
       </div>
     );
@@ -33,9 +33,9 @@ const FaqAccordion: React.FC<Props> = ({ items, query = "", selectedTags = [] })
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {filtered.map((f) => (
-        <details key={f.q} className="faq-item ff-card">
-          <summary className="faq-summary ff-card__title">{f.q}</summary>
-          <div className="faq-answer ff-card__body">{f.a}</div>
+        <details key={f.q} className="faq-item bg-white border border-[#E5E5E5] rounded-2xl p-6">
+          <summary className="faq-summary text-xl font-semibold text-[#1A1A1A] mb-4">{f.q}</summary>
+          <div className="faq-answer text-base text-[#4A4A4A]">{f.a}</div>
         </details>
       ))}
     </div>

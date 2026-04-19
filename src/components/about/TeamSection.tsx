@@ -38,8 +38,8 @@ const initials = (name: string) =>
 
 const TeamSection: React.FC = () => {
   return (
-    <section className="ff-section" aria-labelledby="team-title">
-      <div className="ff-container">
+    <section className="py-16 md:py-24" aria-labelledby="team-title">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="section-header">
           <p className="kicker">Team</p>
           <h2 id="team-title" className="section-title">Mensen achter FitFi</h2>

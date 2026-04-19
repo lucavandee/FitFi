@@ -163,7 +163,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
             <ul className="space-y-2">
               {challenge.rules.map((rule, i) => (
                 <li key={i} className="flex items-start space-x-2 text-sm text-gray-600">
-                  <div className="w-1.5 h-1.5 bg-[var(--ff-color-primary-500)] rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-1.5 h-1.5 bg-[#C2654A] rounded-full mt-2 flex-shrink-0"></div>
                   <span>{rule}</span>
                 </li>
               ))}
@@ -172,10 +172,10 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
         )}
 
         {/* Rewards */}
-        <div className="flex items-center justify-between mb-6 p-4 bg-[var(--ff-color-primary-500)]/10 rounded-2xl">
+        <div className="flex items-center justify-between mb-6 p-4 bg-[#C2654A]/10 rounded-2xl">
           <div className="flex items-center space-x-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--ff-color-primary-500)]">+{challenge.rewardPoints || 0}</div>
+              <div className="text-2xl font-bold text-[#C2654A]">+{challenge.rewardPoints || 0}</div>
               <div className="text-sm text-gray-600">Deelname punten</div>
             </div>
             
@@ -187,7 +187,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
             )}
           </div>
           
-          <Trophy className="w-8 h-8 text-[var(--ff-color-primary-500)]" />
+          <Trophy className="w-8 h-8 text-[#C2654A]" />
         </div>
       </div>
 
@@ -202,7 +202,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
               Beschrijving *
             </label>
             <textarea 
-              className="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] resize-none transition-colors" 
+              className="w-full border border-gray-200 rounded-2xl p-4 focus:ring-2 focus:ring-[#C2654A] focus:border-[#C2654A] resize-none transition-colors" 
               placeholder="Beschrijf je outfit, inspiratie, en hoe je de challenge regels hebt toegepast..." 
               value={content} 
               onChange={e => setContent(e.target.value)} 
@@ -223,7 +223,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
               <button
                 type="button"
                 onClick={() => setShowImageInput(!showImageInput)}
-                className="text-[var(--ff-color-primary-500)] hover:text-[var(--ff-color-primary-500)]/80 text-sm flex items-center space-x-1"
+                className="text-[#C2654A] hover:text-[#C2654A]/80 text-sm flex items-center space-x-1"
               >
                 <Image size={14} />
                 <span>{showImageInput ? 'Verberg' : 'Voeg toe'}</span>
@@ -233,7 +233,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
             {showImageInput && (
               <div className="space-y-2">
                 <input 
-                  className="w-full border border-gray-200 rounded-2xl p-3 focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors" 
+                  className="w-full border border-gray-200 rounded-2xl p-3 focus:ring-2 focus:ring-[#C2654A] focus:border-[#C2654A] transition-colors" 
                   placeholder="https://images.pexels.com/..." 
                   value={imageUrl} 
                   onChange={e => setImageUrl(e.target.value)}
@@ -263,7 +263,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
               <button
                 type="button"
                 onClick={() => setShowLinkInput(!showLinkInput)}
-                className="text-[var(--ff-color-primary-500)] hover:text-[var(--ff-color-primary-500)]/80 text-sm flex items-center space-x-1"
+                className="text-[#C2654A] hover:text-[#C2654A]/80 text-sm flex items-center space-x-1"
               >
                 <Link size={14} />
                 <span>{showLinkInput ? 'Verberg' : 'Voeg toe'}</span>
@@ -272,7 +272,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
             
             {showLinkInput && (
               <input 
-                className="w-full border border-gray-200 rounded-2xl p-3 focus:ring-2 focus:ring-[var(--ff-color-primary-500)] focus:border-[var(--ff-color-primary-500)] transition-colors" 
+                className="w-full border border-gray-200 rounded-2xl p-3 focus:ring-2 focus:ring-[#C2654A] focus:border-[#C2654A] transition-colors" 
                 placeholder="https://www.instagram.com/p/..." 
                 value={linkUrl} 
                 onChange={e => setLinkUrl(e.target.value)}
@@ -289,11 +289,11 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
               variant="primary"
               icon={busy ? undefined : <Send size={16} />}
               iconPosition="right"
-              className="bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#C2654A] hover:bg-[#C2654A]/90 text-[#1A1A1A] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {busy ? (
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-[var(--color-text)] border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin"></div>
                   <span>Versturen...</span>
                 </div>
               ) : (
@@ -305,7 +305,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
 
         {/* Login CTA for guests */}
         {!canSubmit && (
-          <div className="mt-4 p-4 bg-[var(--ff-color-primary-500)]/10 rounded-2xl text-center">
+          <div className="mt-4 p-4 bg-[#C2654A]/10 rounded-2xl text-center">
             <p className="text-sm text-gray-700 mb-3">
               Log in om deel te nemen aan challenges
             </p>
@@ -314,7 +314,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
               href="/inloggen"
               variant="primary"
               size="sm"
-              className="bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-500)]/90 text-[var(--color-text)]"
+              className="bg-[#C2654A] hover:bg-[#C2654A]/90 text-[#1A1A1A]"
             >
               Inloggen
             </Button>

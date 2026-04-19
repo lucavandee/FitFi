@@ -174,11 +174,11 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[var(--color-bg)] fixed inset-0">
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-6 py-4 shadow-xl">
+      <div className="h-screen flex items-center justify-center bg-[#FAFAF8] fixed inset-0">
+        <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl px-6 py-4 shadow-xl">
           <div className="flex items-center gap-3">
-            <Loader2 className="w-5 h-5 text-[var(--ff-color-primary-700)] animate-spin" />
-            <p className="text-sm font-medium text-[var(--color-text)]">Stijlbeelden laden...</p>
+            <Loader2 className="w-5 h-5 text-[#A8513A] animate-spin" />
+            <p className="text-sm font-medium text-[#1A1A1A]">Stijlbeelden laden...</p>
           </div>
         </div>
       </div>
@@ -188,8 +188,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   if (queue.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-[var(--color-muted)] mb-4">Geen stijlbeelden beschikbaar</p>
-        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="ff-btn ff-btn-primary">
+        <p className="text-[#8A8A8A] mb-4">Geen stijlbeelden beschikbaar</p>
+        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">
           Doorgaan
         </button>
       </div>
@@ -210,7 +210,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   return (
     <div
-      className="flex flex-col bg-[var(--color-bg)] overflow-hidden"
+      className="flex flex-col bg-[#FAFAF8] overflow-hidden"
       style={{ height: 'calc(100dvh - 56px)', minHeight: 0 }}
     >
       {storageDomain && (
@@ -236,22 +236,22 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       {/* ── MOBILE layout (< sm) ── */}
       <div className="sm:hidden flex flex-col h-full min-h-0">
         <div className="flex-shrink-0 px-4 pt-3 pb-2">
-          <h2 className="text-base font-bold text-[var(--color-text)] mb-0.5">
+          <h2 className="text-base font-bold text-[#1A1A1A] mb-0.5">
             Welke stijl spreekt je aan?
           </h2>
-          <p className="text-xs text-[var(--color-muted)] mb-2">
-            <strong className="text-[var(--color-text)]">Swipe</strong> door de foto's — hoe meer, hoe beter je resultaat
+          <p className="text-xs text-[#8A8A8A] mb-2">
+            <strong className="text-[#1A1A1A]">Swipe</strong> door de foto's — hoe meer, hoe beter je resultaat
           </p>
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]"
+                className="h-full bg-gradient-to-r from-[#C2654A] to-[#A8513A]"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               />
             </div>
-            <span className="text-xs text-[var(--color-muted)] flex-shrink-0 tabular-nums">
+            <span className="text-xs text-[#8A8A8A] flex-shrink-0 tabular-nums">
               {swipeCount}/{totalAvailable}
             </span>
           </div>
@@ -278,22 +278,22 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           {canComplete ? (
             <button
               onClick={handleFinishEarly}
-              className="w-full py-2.5 rounded-xl text-xs font-semibold text-[var(--ff-color-primary-700)] transition-all"
-              style={{ background: 'var(--ff-color-primary-50)', border: '1.5px solid var(--ff-color-primary-200)' }}
+              className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#A8513A] transition-all"
+              style={{ background: '#FAF5F2', border: '1.5px solid #F4E8E3' }}
             >
               Klaar — bekijk mijn stijlprofiel
             </button>
           ) : (
             <button
               onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
-              className="w-full py-2 rounded-xl text-xs font-medium text-[var(--color-muted)] transition-all flex items-center justify-center gap-1.5 hover:text-[var(--color-text)]"
+              className="w-full py-2 rounded-xl text-xs font-medium text-[#8A8A8A] transition-all flex items-center justify-center gap-1.5 hover:text-[#1A1A1A]"
               aria-label="Sla visuele stap over"
             >
               <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
               Sla deze stap over
             </button>
           )}
-          <p className="text-center text-xs text-[var(--color-muted)]">
+          <p className="text-center text-xs text-[#8A8A8A]">
             Tik op de knoppen of sleep de foto
           </p>
         </div>
@@ -320,51 +320,51 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
         <div
           className="w-[380px] lg:w-[420px] flex-shrink-0 flex flex-col justify-center px-8 lg:px-12 border-l"
-          style={{ borderColor: 'var(--color-border)' }}
+          style={{ borderColor: '#E5E5E5' }}
         >
           <div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 self-start"
             style={{
               background: 'var(--overlay-accent-08a)',
-              border: '1px solid var(--color-border)',
+              border: '1px solid #E5E5E5',
             }}
           >
-            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-            <span className="text-sm font-semibold text-[var(--color-text)]">Visuele Voorkeuren</span>
+            <Sparkles className="w-4 h-4 text-[#A8513A]" />
+            <span className="text-sm font-semibold text-[#1A1A1A]">Visuele Voorkeuren</span>
           </div>
 
           <h2
             className="font-heading font-bold tracking-tight mb-2"
-            style={{ fontSize: 'clamp(1.75rem, 2.5vw, 2.25rem)', lineHeight: 1.1, color: 'var(--color-text)' }}
+            style={{ fontSize: 'clamp(1.75rem, 2.5vw, 2.25rem)', lineHeight: 1.1, color: '#1A1A1A' }}
           >
             Welke stijl spreekt je aan?
           </h2>
 
-          <p className="text-sm text-[var(--color-muted)] mb-8">
-            <strong className="text-[var(--color-text)] font-semibold">Laatste stap!</strong> Swipe door de foto's — Nova leert van elke keuze en past de selectie aan.
+          <p className="text-sm text-[#8A8A8A] mb-8">
+            <strong className="text-[#1A1A1A] font-semibold">Laatste stap!</strong> Swipe door de foto's — Nova leert van elke keuze en past de selectie aan.
           </p>
 
           <div className="mb-10">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-[var(--color-text)]">{Math.round(progress)}% compleet</span>
+              <span className="text-sm font-semibold text-[#1A1A1A]">{Math.round(progress)}% compleet</span>
               <span
                 className="text-xs font-medium px-2.5 py-1 rounded-full"
-                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}
+                style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', color: '#8A8A8A' }}
               >
                 {swipeCount} / {totalAvailable}
               </span>
             </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-border)' }}>
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: '#E5E5E5' }}>
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-primary-700))' }}
+                style={{ background: 'linear-gradient(90deg, #C2654A, #A8513A)' }}
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
               />
             </div>
             {canComplete && (
-              <p className="text-xs text-[var(--ff-color-primary-700)] mt-1.5 font-medium">
+              <p className="text-xs text-[#A8513A] mt-1.5 font-medium">
                 Genoeg data verzameld — je kunt nu afronden of doorgaan voor nog betere resultaten
               </p>
             )}
@@ -374,7 +374,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             <button
               onClick={() => { const p = queue[currentIndex]; if (p) handleSwipe('left', 0); }}
               className="flex-1 group flex flex-col items-center gap-2 py-5 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              style={{ background: 'var(--color-surface)', border: '2px solid var(--color-border)' }}
+              style={{ background: '#FFFFFF', border: '2px solid #E5E5E5' }}
               aria-label="Niet mijn stijl"
             >
               <div
@@ -385,7 +385,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </div>
-              <span className="text-xs font-semibold text-[var(--color-muted)] group-hover:text-[var(--color-text)] transition-colors">
+              <span className="text-xs font-semibold text-[#8A8A8A] group-hover:text-[#1A1A1A] transition-colors">
                 Niet mijn stijl
               </span>
             </button>
@@ -418,8 +418,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               onClick={handleFinishEarly}
               className="w-full py-3 rounded-xl text-sm font-semibold mb-6 transition-all hover:opacity-90 active:scale-[0.98]"
               style={{
-                background: 'var(--ff-color-primary-700)',
-                color: 'var(--color-bg)',
+                background: '#A8513A',
+                color: '#FAFAF8',
               }}
             >
               Klaar — bekijk mijn stijlprofiel
@@ -427,8 +427,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           ) : (
             <button
               onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
-              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[var(--ff-color-primary-50)] text-[var(--color-muted)] hover:text-[var(--color-text)]"
-              style={{ border: '1px solid var(--color-border)' }}
+              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[#FAF5F2] text-[#8A8A8A] hover:text-[#1A1A1A]"
+              style={{ border: '1px solid #E5E5E5' }}
               aria-label="Sla visuele stap over"
             >
               <SkipForward className="w-4 h-4" aria-hidden="true" />
@@ -438,25 +438,25 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
           <div
             className="rounded-xl px-5 py-4"
-            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+            style={{ background: '#FFFFFF', border: '1px solid #E5E5E5' }}
           >
-            <p className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-3">Sneltoetsen</p>
+            <p className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wider mb-3">Sneltoetsen</p>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--color-muted)]">Niet mijn stijl</span>
-                <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}>←</kbd>
+                <span className="text-xs text-[#8A8A8A]">Niet mijn stijl</span>
+                <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>←</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--color-muted)]">Spreekt me aan</span>
+                <span className="text-xs text-[#8A8A8A]">Spreekt me aan</span>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}>→</kbd>
-                  <span className="text-[10px] text-[var(--color-muted)]">of</span>
-                  <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: 'var(--color-bg)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)' }}>Space</kbd>
+                  <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>→</kbd>
+                  <span className="text-[10px] text-[#8A8A8A]">of</span>
+                  <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>Space</kbd>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--color-muted)]">Sleep de foto</span>
-                <span className="text-xs text-[var(--color-muted)]">← →</span>
+                <span className="text-xs text-[#8A8A8A]">Sleep de foto</span>
+                <span className="text-xs text-[#8A8A8A]">← →</span>
               </div>
             </div>
           </div>

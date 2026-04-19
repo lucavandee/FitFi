@@ -141,7 +141,7 @@ export function ShopItemsList({
           {onClose && (
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors"
+              className="p-2 rounded-full hover:bg-[#FAFAF8] transition-colors"
               aria-label="Sluiten"
             >
               <X className="w-5 h-5" />
@@ -153,11 +153,11 @@ export function ShopItemsList({
       {/* Empty state */}
       {products.length === 0 && showEmpty && (
         <div className="text-center py-12">
-          <ShoppingBag className="w-12 h-12 mx-auto mb-4 text-[var(--color-text)]/40" />
-          <p className="text-lg font-medium text-[var(--color-text)]/70 mb-1">
+          <ShoppingBag className="w-12 h-12 mx-auto mb-4 text-[#1A1A1A]/40" />
+          <p className="text-lg font-medium text-[#1A1A1A]/70 mb-1">
             Geen items gevonden
           </p>
-          <p className="text-sm text-[var(--color-text)]/50">
+          <p className="text-sm text-[#1A1A1A]/50">
             Dit outfit bevat nog geen shopbare items
           </p>
         </div>
@@ -172,7 +172,7 @@ export function ShopItemsList({
         return (
           <motion.div
             key={product.id}
-            className="flex gap-4 p-4 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] hover:shadow-md transition-shadow"
+            className="flex gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:shadow-md transition-shadow"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
@@ -194,7 +194,7 @@ export function ShopItemsList({
             {/* Product Info */}
             <div className="flex-1 min-w-0">
               {product.brand && (
-                <p className="text-xs text-[var(--color-text)]/60 mb-1">
+                <p className="text-xs text-[#1A1A1A]/60 mb-1">
                   {product.brand}
                 </p>
               )}
@@ -210,12 +210,12 @@ export function ShopItemsList({
                   </span>
                 )}
                 {product.category && (
-                  <span className="text-xs text-[var(--color-text)]/50 capitalize">
+                  <span className="text-xs text-[#1A1A1A]/50 capitalize">
                     {product.category}
                   </span>
                 )}
                 {product.affiliateUrl && (
-                  <span className="text-[10px] font-medium text-[var(--color-text)]/40 border border-[var(--color-border)] rounded px-1 py-0.5 leading-none">
+                  <span className="text-[10px] font-medium text-[#1A1A1A]/40 border border-[#E5E5E5] rounded px-1 py-0.5 leading-none">
                     affiliate
                   </span>
                 )}
@@ -253,7 +253,7 @@ export function ShopItemsList({
                   </Button>
                 </ShopTooltip>
               ) : (
-                <div className="inline-flex items-center gap-2 px-3 py-2 bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)] rounded-lg text-xs">
+                <div className="inline-flex items-center gap-2 px-3 py-2 bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5] rounded-lg text-xs">
                   <AlertCircle className="w-3 h-3" />
                   <span>Binnenkort beschikbaar</span>
                 </div>
@@ -265,12 +265,12 @@ export function ShopItemsList({
 
       {/* Footer info */}
       {products.length > 0 && (
-        <div className="pt-4 mt-4 border-t border-[var(--color-border)] space-y-2">
-          <div className="flex items-center gap-2 text-xs text-[var(--color-text)]/60">
-            <Check className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+        <div className="pt-4 mt-4 border-t border-[#E5E5E5] space-y-2">
+          <div className="flex items-center gap-2 text-xs text-[#1A1A1A]/60">
+            <Check className="w-4 h-4 text-[#C2654A]" />
             <span>Alle links openen in een nieuw tabblad</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-[var(--color-text)]/60">
+          <div className="flex items-center gap-2 text-xs text-[#1A1A1A]/60">
             <Info className="w-4 h-4" />
             <span>
               Affiliate links.{' '}
@@ -296,7 +296,7 @@ export function ShopItemsList({
         onClick={onClose}
       >
         <motion.div
-          className="bg-[var(--color-bg)] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+          className="bg-[#FAFAF8] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

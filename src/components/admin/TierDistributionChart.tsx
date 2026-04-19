@@ -12,22 +12,22 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
     {
       label: 'Free',
       value: tiers.free,
-      color: 'var(--color-text-secondary)',
-      gradient: 'linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-text) 70%)',
+      color: '#8A8A8A',
+      gradient: 'linear-gradient(135deg, #8A8A8A 0%, #1A1A1A 70%)',
       icon: '👤',
     },
     {
       label: 'Premium',
       value: tiers.premium,
-      color: 'var(--ff-color-primary-600)',
-      gradient: 'linear-gradient(135deg, var(--ff-color-primary-600) 0%, var(--ff-color-primary-700) 100%)',
+      color: '#C2654A',
+      gradient: 'linear-gradient(135deg, #C2654A 0%, #A8513A 100%)',
       icon: '💎',
     },
     {
       label: 'Founder',
       value: tiers.founder,
-      color: 'var(--ff-color-accent-600)',
-      gradient: 'linear-gradient(135deg, var(--ff-color-accent-500) 0%, var(--ff-color-accent-600) 100%)',
+      color: '#C2654A',
+      gradient: 'linear-gradient(135deg, #C2654A 0%, #C2654A 100%)',
       icon: '⭐',
     },
   ];
@@ -36,12 +36,12 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
   const conversionRate = total > 0 ? (((tiers.premium + tiers.founder) / total) * 100).toFixed(1) : 0;
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6">
+    <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-[var(--color-text)]">💰 Tier Verdeling</h3>
+        <h3 className="text-lg font-semibold text-[#1A1A1A]">💰 Tier Verdeling</h3>
         <div className="text-right">
-          <div className="text-sm font-bold text-[var(--color-text)]">{conversionRate}%</div>
-          <div className="text-xs text-[var(--color-text-secondary)]">Conversion</div>
+          <div className="text-sm font-bold text-[#1A1A1A]">{conversionRate}%</div>
+          <div className="text-xs text-[#8A8A8A]">Conversion</div>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
         })}
       </div>
 
-      <div className="h-4 bg-[var(--color-bg)] rounded-full overflow-hidden flex">
+      <div className="h-4 bg-[#FAFAF8] rounded-full overflow-hidden flex">
         {data.map((tier, index) => {
           const percentage = total > 0 ? (tier.value / total) * 100 : 0;
           return (
@@ -91,16 +91,16 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
         })}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-[var(--color-border)] grid grid-cols-2 gap-4">
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
-          <div className="text-xs text-[var(--color-text-secondary)] mb-1">Geschatte MRR</div>
-          <div className="text-xl font-bold text-[var(--color-text)]">
+      <div className="mt-6 pt-6 border-t border-[#E5E5E5] grid grid-cols-2 gap-4">
+        <div className="bg-[#FAFAF8] rounded-lg p-3">
+          <div className="text-xs text-[#8A8A8A] mb-1">Geschatte MRR</div>
+          <div className="text-xl font-bold text-[#1A1A1A]">
             €{(tiers.premium * 9.99).toFixed(2)}
           </div>
         </div>
-        <div className="bg-[var(--color-bg)] rounded-lg p-3">
-          <div className="text-xs text-[var(--color-text-secondary)] mb-1">Lifetime Value</div>
-          <div className="text-xl font-bold text-[var(--color-text)]">
+        <div className="bg-[#FAFAF8] rounded-lg p-3">
+          <div className="text-xs text-[#8A8A8A] mb-1">Lifetime Value</div>
+          <div className="text-xl font-bold text-[#1A1A1A]">
             €{totalRevenue.toFixed(2)}
           </div>
         </div>

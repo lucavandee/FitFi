@@ -44,12 +44,12 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
   return (
     <BentoCard size="wide" className="relative overflow-hidden" disableAnimation>
       {/* Subtle gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-transparent opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] to-transparent opacity-30" />
 
       <div className="relative z-10 flex items-start gap-6">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center shadow-lg">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-lg">
             <User className="w-10 h-10 text-white" />
           </div>
           {level >= 5 && (
@@ -61,10 +61,10 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2 truncate">
+          <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2 truncate">
             {user.name || user.email.split('@')[0] || 'Jouw Profiel'}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[var(--color-muted)] mb-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[#8A8A8A] mb-4">
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4" />
               <span className="text-sm">{user.email}</span>
@@ -79,16 +79,16 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
 
           {/* XP Progress */}
           <div className="max-w-md">
-            <div className="flex items-center justify-between text-xs text-[var(--color-muted)] mb-2">
+            <div className="flex items-center justify-between text-xs text-[#8A8A8A] mb-2">
               <span className="font-semibold">Level {level}</span>
               <span>{xp} / {nextLevelXP} XP</span>
             </div>
-            <div className="h-2 bg-[var(--ff-color-neutral-200)] rounded-full overflow-hidden">
+            <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${xpProgress}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-full"
+                className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full"
               />
             </div>
           </div>
@@ -112,18 +112,18 @@ export function StyleSummaryWidget({ archetype, paletteName, primaryColors }: St
   return (
     <BentoCard size="large">
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center flex-shrink-0">
           <Palette className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-[var(--color-muted)] mb-1 uppercase tracking-wide font-medium">
+          <p className="text-xs text-[#8A8A8A] mb-1 uppercase tracking-wide font-medium">
             Jouw Stijl
           </p>
-          <h3 className="text-xl font-bold text-[var(--color-text)] truncate">
+          <h3 className="text-xl font-bold text-[#1A1A1A] truncate">
             {archetype || 'Nog niet ingevuld'}
           </h3>
           {paletteName && (
-            <p className="text-sm text-[var(--color-muted)] mt-1">{paletteName}</p>
+            <p className="text-sm text-[#8A8A8A] mt-1">{paletteName}</p>
           )}
         </div>
       </div>
@@ -131,7 +131,7 @@ export function StyleSummaryWidget({ archetype, paletteName, primaryColors }: St
       {/* Color swatches */}
       {primaryColors.length > 0 && (
         <div>
-          <p className="text-xs text-[var(--color-muted)] mb-2 font-medium">Kleuren</p>
+          <p className="text-xs text-[#8A8A8A] mb-2 font-medium">Kleuren</p>
           <div className="flex gap-2">
             {primaryColors.slice(0, 6).map((color, i) => (
               <div
@@ -146,7 +146,7 @@ export function StyleSummaryWidget({ archetype, paletteName, primaryColors }: St
 
       <NavLink
         to="/onboarding"
-        className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:bg-[var(--ff-color-neutral-200)] transition-colors"
+        className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F5F0EB] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:bg-[#E5E5E5] transition-colors"
       >
         <RefreshCw className="w-4 h-4" />
         Quiz opnieuw
@@ -180,13 +180,13 @@ export function QuickStatsWidget({ stats }: QuickStatsWidgetProps) {
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-[var(--color-muted)] mb-2">{stat.label}</p>
-              <p className="text-3xl font-bold text-[var(--color-text)] mb-1">{stat.value}</p>
+              <p className="text-sm text-[#8A8A8A] mb-2">{stat.label}</p>
+              <p className="text-3xl font-bold text-[#1A1A1A] mb-1">{stat.value}</p>
               {stat.subValue && (
-                <p className="text-xs text-[var(--color-muted)]">{stat.subValue}</p>
+                <p className="text-xs text-[#8A8A8A]">{stat.subValue}</p>
               )}
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)]">
+            <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
               <stat.icon className="w-5 h-5" />
             </div>
           </div>
@@ -211,7 +211,7 @@ interface ProfileQuickActionsProps {
 export function ProfileQuickActions({ actions }: ProfileQuickActionsProps) {
   return (
     <BentoCard size="large">
-      <h3 className="text-base font-bold text-[var(--color-text)] mb-4">
+      <h3 className="text-base font-bold text-[#1A1A1A] mb-4">
         Snelle acties
       </h3>
       <div className="space-y-2">
@@ -219,20 +219,20 @@ export function ProfileQuickActions({ actions }: ProfileQuickActionsProps) {
           <NavLink
             key={index}
             to={action.to}
-            className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--ff-color-neutral-100)] transition-colors group"
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-colors group"
           >
-            <div className="w-10 h-10 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)] group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
+            <div className="w-10 h-10 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#A8513A] group-hover:bg-[#F4E8E3] transition-colors">
               <action.icon className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--color-text)] mb-0.5">
+              <p className="text-sm font-semibold text-[#1A1A1A] mb-0.5">
                 {action.title}
               </p>
-              <p className="text-xs text-[var(--color-muted)]">
+              <p className="text-xs text-[#8A8A8A]">
                 {action.description}
               </p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--color-muted)] group-hover:text-[var(--color-text)] transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#8A8A8A] group-hover:text-[#1A1A1A] transition-colors" />
           </NavLink>
         ))}
       </div>
@@ -281,16 +281,16 @@ export function RecentActivityWidget({ activities }: RecentActivityWidgetProps) 
   return (
     <BentoCard size="large">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-bold text-[var(--color-text)]">
+        <h3 className="text-base font-bold text-[#1A1A1A]">
           Recente activiteit
         </h3>
-        <span className="text-xs text-[var(--color-muted)]">
+        <span className="text-xs text-[#8A8A8A]">
           {activities.length} acties
         </span>
       </div>
 
       {activities.length === 0 ? (
-        <p className="text-sm text-[var(--color-muted)] text-center py-8">
+        <p className="text-sm text-[#8A8A8A] text-center py-8">
           Nog geen activiteit
         </p>
       ) : (
@@ -302,14 +302,14 @@ export function RecentActivityWidget({ activities }: RecentActivityWidgetProps) 
 
             return (
               <div key={index} className="flex items-center gap-3 p-2 rounded-lg">
-                <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)]">
+                <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--color-text)]">
+                  <p className="text-sm font-medium text-[#1A1A1A]">
                     {getActivityLabel(activity.action_type)}
                   </p>
-                  <p className="text-xs text-[var(--color-muted)]">
+                  <p className="text-xs text-[#8A8A8A]">
                     {timeAgo}
                   </p>
                 </div>
@@ -329,13 +329,13 @@ export function SettingsWidget({ onLogout }: { onLogout: () => void }) {
   return (
     <BentoCard size="medium">
       <div className="flex flex-col items-center text-center py-4">
-        <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-neutral-100)] flex items-center justify-center mb-3">
-          <Settings className="w-6 h-6 text-[var(--color-text)]" />
+        <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
+          <Settings className="w-6 h-6 text-[#1A1A1A]" />
         </div>
-        <h3 className="text-sm font-bold text-[var(--color-text)] mb-1">
+        <h3 className="text-sm font-bold text-[#1A1A1A] mb-1">
           Account instellingen
         </h3>
-        <p className="text-xs text-[var(--color-muted)] mb-4">
+        <p className="text-xs text-[#8A8A8A] mb-4">
           Beheer je voorkeuren
         </p>
         <button

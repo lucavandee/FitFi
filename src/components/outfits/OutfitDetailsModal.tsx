@@ -163,7 +163,7 @@ export default function OutfitDetailsModal({
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
-          className="bg-[var(--color-surface)] rounded-[var(--radius-lg)] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+          className="bg-[#FFFFFF] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -171,11 +171,11 @@ export default function OutfitDetailsModal({
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+          <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5]">
             <div className="flex items-center gap-3">
               <h2 id={titleId} className="text-xl font-semibold">Outfit details</h2>
               {outfit.matchPercentage && outfit.matchPercentage > 80 && (
-                <div className="flex items-center gap-1 px-2 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-xs font-bold">
+                <div className="flex items-center gap-1 px-2 py-1 bg-[#A8513A] text-white rounded-full text-xs font-bold">
                   <Sparkles className="w-3 h-3" />
                   <span>{Math.round(outfit.matchPercentage)}%</span>
                 </div>
@@ -184,7 +184,7 @@ export default function OutfitDetailsModal({
             <button
               onClick={onClose}
               data-modal-close
-              className="p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors"
+              className="p-2 rounded-full hover:bg-[#FAFAF8] transition-colors"
               aria-label="Sluiten"
             >
               <X className="w-5 h-5" />
@@ -207,7 +207,7 @@ export default function OutfitDetailsModal({
 
                 <div>
                   <h3 className="text-2xl font-bold mb-2">{outfit.title}</h3>
-                  <p className="text-[var(--color-text)]/70 leading-relaxed mb-4">
+                  <p className="text-[#1A1A1A]/70 leading-relaxed mb-4">
                     {outfit.description}
                   </p>
 
@@ -217,7 +217,7 @@ export default function OutfitDetailsModal({
                       {outfit.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--ff-color-primary-50)] text-[var(--color-primary)] rounded-full text-xs font-medium"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#FAF5F2] text-[#C2654A] rounded-full text-xs font-medium"
                         >
                           <Tag className="w-3 h-3" />
                           {tag}
@@ -228,14 +228,14 @@ export default function OutfitDetailsModal({
 
                   {/* Explanation */}
                   {outfit.explanation && (
-                    <div className="p-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-xl">
+                    <div className="p-4 bg-[#FAF5F2] border border-[#F4E8E3] rounded-xl">
                       <div className="flex items-start gap-2 mb-2">
-                        <Info className="w-4 h-4 text-[var(--color-primary)] flex-shrink-0 mt-0.5" />
-                        <span className="text-sm font-medium text-[var(--color-primary)]">
+                        <Info className="w-4 h-4 text-[#C2654A] flex-shrink-0 mt-0.5" />
+                        <span className="text-sm font-medium text-[#C2654A]">
                           Waarom dit werkt:
                         </span>
                       </div>
-                      <p className="text-sm text-[var(--color-text)]/80 leading-relaxed">
+                      <p className="text-sm text-[#1A1A1A]/80 leading-relaxed">
                         {outfit.explanation}
                       </p>
                     </div>
@@ -243,23 +243,23 @@ export default function OutfitDetailsModal({
 
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-3 mt-4">
-                    <div className="p-3 bg-[var(--color-bg)] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[var(--color-primary)]">
+                    <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
+                      <div className="text-2xl font-bold text-[#C2654A]">
                         {outfit.products?.length || 0}
                       </div>
-                      <div className="text-xs text-[var(--color-text)]/60">Items</div>
+                      <div className="text-xs text-[#1A1A1A]/60">Items</div>
                     </div>
-                    <div className="p-3 bg-[var(--color-bg)] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[var(--color-primary)]">
+                    <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
+                      <div className="text-2xl font-bold text-[#C2654A]">
                         {Math.round(outfit.matchPercentage || 75)}%
                       </div>
-                      <div className="text-xs text-[var(--color-text)]/60">Match</div>
+                      <div className="text-xs text-[#1A1A1A]/60">Match</div>
                     </div>
-                    <div className="p-3 bg-[var(--color-bg)] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[var(--color-primary)]">
+                    <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
+                      <div className="text-2xl font-bold text-[#C2654A]">
                         €{totalPrice.toFixed(0)}
                       </div>
-                      <div className="text-xs text-[var(--color-text)]/60">Totaal</div>
+                      <div className="text-xs text-[#1A1A1A]/60">Totaal</div>
                     </div>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export default function OutfitDetailsModal({
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold">Items in dit outfit</h4>
-                  <span className="text-sm text-[var(--color-text)]/60">
+                  <span className="text-sm text-[#1A1A1A]/60">
                     {availableProducts.length} van {outfit.products?.length || 0} beschikbaar
                   </span>
                 </div>
@@ -284,8 +284,8 @@ export default function OutfitDetailsModal({
                         <motion.div
                           key={product.id}
                           className={cn(
-                            'p-3 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]',
-                            'hover:border-[var(--ff-color-primary-300)] transition-all',
+                            'p-3 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]',
+                            'hover:border-[#D4856E] transition-all',
                             hasUrl && 'cursor-pointer'
                           )}
                           onClick={() => hasUrl && setSelectedProduct(product)}
@@ -294,7 +294,7 @@ export default function OutfitDetailsModal({
                           transition={{ delay: idx * 0.05 }}
                         >
                           <div className="flex gap-3">
-                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-[var(--color-surface)] flex-shrink-0">
+                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#FFFFFF] flex-shrink-0">
                               <LazyImage
                                 src={product.imageUrl}
                                 alt={product.name}
@@ -307,7 +307,7 @@ export default function OutfitDetailsModal({
                               <div className="flex items-start justify-between gap-2 mb-1">
                                 <div className="flex-1 min-w-0">
                                   {product.brand && (
-                                    <p className="text-xs text-[var(--color-text)]/60 mb-0.5">
+                                    <p className="text-xs text-[#1A1A1A]/60 mb-0.5">
                                       {product.brand}
                                     </p>
                                   )}
@@ -316,14 +316,14 @@ export default function OutfitDetailsModal({
                                   </h5>
                                 </div>
                                 {product.price && (
-                                  <span className="text-lg font-bold text-[var(--color-primary)] flex-shrink-0">
+                                  <span className="text-lg font-bold text-[#C2654A] flex-shrink-0">
                                     €{product.price.toFixed(2)}
                                   </span>
                                 )}
                               </div>
 
                               {product.inStock === false && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)] mb-1">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5] mb-1">
                                   Niet beschikbaar
                                 </span>
                               )}
@@ -335,7 +335,7 @@ export default function OutfitDetailsModal({
                                     handleShopClick(product);
                                   }}
                                   disabled={isOpening}
-                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[#A8513A] hover:text-[#C2654A] transition-colors disabled:opacity-50"
                                   aria-label={`Shop ${product.name}`}
                                 >
                                   <ExternalLink className="w-3 h-3" />
@@ -348,7 +348,7 @@ export default function OutfitDetailsModal({
                       );
                     })
                   ) : (
-                    <div className="text-center py-8 text-[var(--color-text)]/60">
+                    <div className="text-center py-8 text-[#1A1A1A]/60">
                       Geen items beschikbaar
                     </div>
                   )}
@@ -356,14 +356,14 @@ export default function OutfitDetailsModal({
 
                 {/* Sizing Info */}
                 {outfit.products && outfit.products.some(p => p.sizes) && (
-                  <div className="p-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)] rounded-xl">
+                  <div className="p-4 bg-[#FAF5F2] border border-[#FAF5F2] rounded-xl">
                     <div className="flex items-start gap-2 mb-1">
-                      <TrendingUp className="w-4 h-4 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
-                      <span className="text-sm font-medium text-[var(--ff-color-primary-700)]">
+                      <TrendingUp className="w-4 h-4 text-[#A8513A] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm font-medium text-[#A8513A]">
                         Maat-informatie
                       </span>
                     </div>
-                    <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                    <p className="text-xs text-[#8A8A8A] leading-relaxed">
                       Klik op een item voor beschikbare maten
                     </p>
                   </div>
@@ -373,13 +373,13 @@ export default function OutfitDetailsModal({
           </div>
 
           {/* Footer Actions */}
-          <div className="p-4 border-t border-[var(--color-border)] bg-[var(--color-bg)]/50">
+          <div className="p-4 border-t border-[#E5E5E5] bg-[#FAFAF8]/50">
             <div className="flex items-center justify-between gap-4">
               <div className="flex-1">
-                <div className="text-sm text-[var(--color-text)]/60 mb-1">
+                <div className="text-sm text-[#1A1A1A]/60 mb-1">
                   Totaalprijs
                 </div>
-                <div className="text-2xl font-bold text-[var(--color-primary)]">
+                <div className="text-2xl font-bold text-[#C2654A]">
                   €{totalPrice.toFixed(2)}
                 </div>
               </div>
@@ -410,7 +410,7 @@ export default function OutfitDetailsModal({
               </div>
             </div>
 
-            <p className="text-xs text-[var(--color-text)]/60 text-center mt-3 flex items-center justify-center gap-1">
+            <p className="text-xs text-[#1A1A1A]/60 text-center mt-3 flex items-center justify-center gap-1">
               <Info size={12} />
               Items openen in aparte tabbladen bij de retailer
             </p>
@@ -489,7 +489,7 @@ export default function OutfitDetailsModal({
                   </div>
 
                   {selectedProduct.price && (
-                    <div className="text-2xl font-bold text-[var(--ff-color-primary-700)]">
+                    <div className="text-2xl font-bold text-[#A8513A]">
                       €{selectedProduct.price.toFixed(2)}
                     </div>
                   )}

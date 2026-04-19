@@ -28,7 +28,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Klassiek',
     description: 'Tijdloze elegantie en verfijnde stukken',
     emoji: '👔',
-    color: 'var(--ff-color-primary-600)',
+    color: '#C2654A',
     tagline: 'Tijdloos & verfijnd',
     traits: ['Preppy', 'Verzorgd', 'Professioneel']
   },
@@ -36,7 +36,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Smart Casual',
     description: 'Relaxed maar verzorgd en gepolijst',
     emoji: '✨',
-    color: 'var(--ff-color-accent-600)',
+    color: '#C2654A',
     tagline: 'Relaxed & gepolijst',
     traits: ['Toegankelijk', 'Veelzijdig', 'Modern']
   },
@@ -44,7 +44,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Urban',
     description: 'Moderne, expressieve streetstyle',
     emoji: '🎨',
-    color: 'var(--ff-color-primary-500)',
+    color: '#C2654A',
     tagline: 'Expressief & urban',
     traits: ['Bold', 'Creatief', 'Trendy']
   },
@@ -52,7 +52,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Athletic',
     description: 'Sportief, functioneel en comfortabel',
     emoji: '⚡',
-    color: 'var(--ff-color-accent-700)',
+    color: '#A8513A',
     tagline: 'Actief & functioneel',
     traits: ['Performance', 'Comfort', 'Clean']
   },
@@ -60,7 +60,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Minimalistisch',
     description: 'Clean lijnen en neutrale elegantie',
     emoji: '◼️',
-    color: 'var(--color-text)',
+    color: '#1A1A1A',
     tagline: 'Clean & architectural',
     traits: ['Tijdloos', 'Neutraal', 'Kwaliteit']
   },
@@ -68,7 +68,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Luxury',
     description: 'Premium kwaliteit en verfijning',
     emoji: '💎',
-    color: 'var(--ff-color-primary-700)',
+    color: '#A8513A',
     tagline: 'Premium & exclusief',
     traits: ['Hoogwaardig', 'Verfijnd', 'Statement']
   },
@@ -76,7 +76,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Streetstyle',
     description: 'Bold, urban en vol karakter',
     emoji: '🔥',
-    color: 'var(--ff-color-accent-600)',
+    color: '#C2654A',
     tagline: 'Bold & karaktervol',
     traits: ['Expressief', 'Uniek', 'Statement']
   },
@@ -84,7 +84,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Retro',
     description: 'Vintage-geïnspireerde stijl',
     emoji: '🕰️',
-    color: 'var(--ff-color-primary-500)',
+    color: '#C2654A',
     tagline: 'Vintage & nostalgisch',
     traits: ['Nostalgisch', 'Karaktervol', 'Uniek']
   }
@@ -173,24 +173,24 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         <div className="sm:hidden">
           <button
             onClick={() => setCollapsed(c => !c)}
-            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl text-left"
+            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl text-left"
             aria-expanded={!collapsed}
           >
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-xl flex-shrink-0">{config.emoji}</span>
               <div className="min-w-0">
-                <span className="text-xs text-[var(--color-muted)]">Jouw stijlprofiel</span>
-                <p className="text-sm font-bold text-[var(--color-text)] truncate">{config.label} · {confidence}% match</p>
+                <span className="text-xs text-[#8A8A8A]">Jouw stijlprofiel</span>
+                <p className="text-sm font-bold text-[#1A1A1A] truncate">{config.label} · {confidence}% match</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-[var(--color-muted)] flex-shrink-0 transition-transform ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
+            <ChevronDown className={`w-4 h-4 text-[#8A8A8A] flex-shrink-0 transition-transform ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
           </button>
           {!collapsed && (
-            <div className="mt-1 p-4 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl">
-              <p className="text-sm text-[var(--color-muted)] mb-2">{config.description}</p>
+            <div className="mt-1 p-4 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl">
+              <p className="text-sm text-[#8A8A8A] mb-2">{config.description}</p>
               <div className="flex flex-wrap gap-1.5">
                 {config.traits.map(trait => (
-                  <span key={trait} className="inline-block px-2 py-0.5 bg-white/70 rounded-md text-xs font-medium text-[var(--color-text)]">{trait}</span>
+                  <span key={trait} className="inline-block px-2 py-0.5 bg-white/70 rounded-md text-xs font-medium text-[#1A1A1A]">{trait}</span>
                 ))}
               </div>
             </div>
@@ -198,11 +198,11 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         </div>
 
         {/* Desktop: full card */}
-        <div className="hidden sm:block bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl overflow-hidden relative shadow-lg">
+        <div className="hidden sm:block bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#F4E8E3] rounded-2xl overflow-hidden relative shadow-lg">
 
           {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-20"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--ff-color-primary-200)] rounded-full blur-3xl opacity-20"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4E8E3] rounded-full blur-3xl opacity-20"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#F4E8E3] rounded-full blur-3xl opacity-20"></div>
 
           {/* Main Preview Card */}
           <div className="relative p-4 sm:p-6">
@@ -230,7 +230,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                       initial={{ scale: 0 }}
                       animate={{ scale: [0, 1.2, 0] }}
                       transition={{ duration: 0.6 }}
-                      className="absolute inset-0 bg-[var(--ff-color-accent-400)] rounded-xl opacity-30"
+                      className="absolute inset-0 bg-[#D4856E] rounded-xl opacity-30"
                     />
                   )}
                 </motion.div>
@@ -239,8 +239,8 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-4 h-4 text-[var(--ff-color-accent-600)] flex-shrink-0" />
-                  <span className="text-xs sm:text-sm font-medium text-[var(--color-muted)]">
+                  <Sparkles className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium text-[#8A8A8A]">
                     Jouw stijlprofiel
                   </span>
                 </div>
@@ -253,13 +253,13 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
                     transition={{ duration: 0.3 }}
-                    className="text-lg sm:text-xl font-bold text-[var(--color-text)] mb-1"
+                    className="text-lg sm:text-xl font-bold text-[#1A1A1A] mb-1"
                   >
                     {config.label}
                   </motion.h3>
                 </AnimatePresence>
 
-                <p className="text-sm text-[var(--color-muted)] mb-1">
+                <p className="text-sm text-[#8A8A8A] mb-1">
                   {config.description}
                 </p>
 
@@ -271,7 +271,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="inline-block px-2 py-0.5 bg-white/60 rounded-md text-xs font-medium text-[var(--color-text)]"
+                      className="inline-block px-2 py-0.5 bg-white/60 rounded-md text-xs font-medium text-[#1A1A1A]"
                     >
                       {trait}
                     </motion.span>
@@ -289,15 +289,15 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm"
                   >
                     <TrendingUp className="w-3.5 h-3.5 text-green-600" />
-                    <span className="text-xs font-semibold text-[var(--color-text)]">
+                    <span className="text-xs font-semibold text-[#1A1A1A]">
                       {confidence}% match
                     </span>
                   </motion.div>
 
                   {/* Progress Badge */}
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
-                    <Award className="w-3.5 h-3.5 text-[var(--ff-color-accent-600)]" />
-                    <span className="text-xs font-semibold text-[var(--color-text)]">
+                    <Award className="w-3.5 h-3.5 text-[#C2654A]" />
+                    <span className="text-xs font-semibold text-[#1A1A1A]">
                       {progress}% compleet
                     </span>
                   </div>
@@ -305,7 +305,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                   {/* Info button */}
                   <button
                     onClick={() => setShowComparison(!showComparison)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/60 hover:bg-white rounded-lg transition-colors text-xs font-medium text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/60 hover:bg-white rounded-lg transition-colors text-xs font-medium text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
                     aria-label="Bekijk alle archetypes"
                   >
                     <Info className="w-3.5 h-3.5" />
@@ -320,7 +320,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
-                    className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full"
+                    className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full"
                   />
                 </div>
               </div>
@@ -335,11 +335,11 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="border-t border-[var(--ff-color-primary-200)] bg-white/40 backdrop-blur-sm overflow-hidden"
+                className="border-t border-[#F4E8E3] bg-white/40 backdrop-blur-sm overflow-hidden"
               >
                 <div className="p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-bold text-[var(--color-text)]">
+                    <h4 className="text-sm font-bold text-[#1A1A1A]">
                       Jouw top 3 stijlmatches
                     </h4>
                     <button
@@ -347,7 +347,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                       className="p-1 hover:bg-white/60 rounded-lg transition-colors"
                       aria-label="Sluit vergelijking"
                     >
-                      <X className="w-4 h-4 text-[var(--color-muted)]" />
+                      <X className="w-4 h-4 text-[#8A8A8A]" />
                     </button>
                   </div>
 
@@ -367,8 +367,8 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                         {/* Rank Badge */}
                         <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
                           index === 0
-                            ? 'bg-gradient-to-br from-[var(--ff-color-accent-500)] to-[var(--ff-color-accent-600)] text-white shadow-md'
-                            : 'bg-[var(--color-bg)] text-[var(--color-muted)]'
+                            ? 'bg-gradient-to-br from-[#C2654A] to-[#C2654A] text-white shadow-md'
+                            : 'bg-[#FAFAF8] text-[#8A8A8A]'
                         }`}>
                           #{index + 1}
                         </div>
@@ -381,33 +381,33 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-[var(--color-text)]">
+                            <span className="font-semibold text-sm text-[#1A1A1A]">
                               {item.label}
                             </span>
                             {item.archetype === archetype && (
-                              <span className="text-xs font-medium text-[var(--ff-color-accent-600)]">
+                              <span className="text-xs font-medium text-[#C2654A]">
                                 (jouw profiel)
                               </span>
                             )}
                           </div>
 
                           {/* Score bar */}
-                          <div className="mt-1.5 h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                          <div className="mt-1.5 h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${item.score}%` }}
                               transition={{ duration: 0.6, delay: index * 0.1 }}
                               className={`h-full rounded-full ${
                                 item.archetype === archetype
-                                  ? 'bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]'
-                                  : 'bg-[var(--color-muted)]'
+                                  ? 'bg-gradient-to-r from-[#C2654A] to-[#C2654A]'
+                                  : 'bg-[#8A8A8A]'
                               }`}
                             />
                           </div>
                         </div>
 
                         {/* Score */}
-                        <div className="flex-shrink-0 text-sm font-bold text-[var(--color-text)]">
+                        <div className="flex-shrink-0 text-sm font-bold text-[#1A1A1A]">
                           {item.score}%
                         </div>
                       </motion.div>
@@ -415,7 +415,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                   </div>
 
                   {/* Helper text */}
-                  <p className="mt-4 text-xs text-[var(--color-muted)] text-center">
+                  <p className="mt-4 text-xs text-[#8A8A8A] text-center">
                     💡 Deze scores passen zich aan op basis van je antwoorden
                   </p>
                 </div>
@@ -429,9 +429,9 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="px-4 sm:px-6 py-3 border-t border-[var(--ff-color-primary-200)] bg-white/30"
+              className="px-4 sm:px-6 py-3 border-t border-[#F4E8E3] bg-white/30"
             >
-              <p className="text-xs text-[var(--color-muted)] text-center">
+              <p className="text-xs text-[#8A8A8A] text-center">
                 💡 Dit profiel past zich aan terwijl je verder gaat met de quiz
               </p>
             </motion.div>

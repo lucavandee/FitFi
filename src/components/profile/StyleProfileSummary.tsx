@@ -89,16 +89,16 @@ export function StyleProfileSummary({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-[var(--ff-color-primary-25)] to-[var(--ff-color-accent-25)] border-2 border-[var(--ff-color-primary-100)] rounded-2xl p-6 sm:p-8 shadow-lg"
+      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#FAF5F2] rounded-2xl p-6 sm:p-8 shadow-lg"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Palette className="w-6 h-6 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-            <h3 className="text-lg font-bold text-[var(--color-text)]">Jouw Stijlprofiel</h3>
+            <Palette className="w-6 h-6 text-[#C2654A]" aria-hidden="true" />
+            <h3 className="text-lg font-bold text-[#1A1A1A]">Jouw Stijlprofiel</h3>
           </div>
-          <p className="text-sm text-[var(--color-muted)]">
+          <p className="text-sm text-[#8A8A8A]">
             Gebaseerd op je quiz antwoorden
           </p>
         </div>
@@ -114,13 +114,13 @@ export function StyleProfileSummary({
 
       {/* Archetype */}
       <div className="mb-6">
-        <p className="text-sm text-[var(--color-muted)] mb-2">Stijl Archetype</p>
-        <p className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
+        <p className="text-sm text-[#8A8A8A] mb-2">Stijl Archetype</p>
+        <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-2">
           {archetype || 'Niet beschikbaar'}
         </p>
         {season && (
-          <p className="text-sm text-[var(--color-text)] flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+          <p className="text-sm text-[#1A1A1A] flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
             {season} kleurenseizoen
           </p>
         )}
@@ -129,7 +129,7 @@ export function StyleProfileSummary({
       {/* Colors */}
       {primaryColors.length > 0 && (
         <div className="mb-6">
-          <p className="text-sm text-[var(--color-muted)] mb-3">Jouw Perfecte Kleuren</p>
+          <p className="text-sm text-[#8A8A8A] mb-3">Jouw Perfecte Kleuren</p>
           <div className="flex gap-2 flex-wrap" role="list" aria-label="Je persoonlijke kleurenpalet">
             {primaryColors.slice(0, 8).map((color, i) => (
               <div
@@ -150,19 +150,19 @@ export function StyleProfileSummary({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           {createdAt && (
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[var(--color-muted)]" aria-hidden="true" />
+              <Calendar className="w-4 h-4 text-[#8A8A8A]" aria-hidden="true" />
               <div>
-                <p className="text-xs text-[var(--color-muted)]">Aangemaakt</p>
-                <p className="font-medium text-[var(--color-text)]">{formatDate(createdAt)}</p>
+                <p className="text-xs text-[#8A8A8A]">Aangemaakt</p>
+                <p className="font-medium text-[#1A1A1A]">{formatDate(createdAt)}</p>
               </div>
             </div>
           )}
           {updatedAt && updatedAt !== createdAt && (
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[var(--color-muted)]" aria-hidden="true" />
+              <TrendingUp className="w-4 h-4 text-[#8A8A8A]" aria-hidden="true" />
               <div>
-                <p className="text-xs text-[var(--color-muted)]">Bijgewerkt</p>
-                <p className="font-medium text-[var(--color-text)]">{formatDate(updatedAt)}</p>
+                <p className="text-xs text-[#8A8A8A]">Bijgewerkt</p>
+                <p className="font-medium text-[#1A1A1A]">{formatDate(updatedAt)}</p>
               </div>
             </div>
           )}
@@ -188,7 +188,7 @@ export function StyleProfileSummary({
         {onViewResults && (
           <button
             onClick={onViewResults}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200 flex items-center justify-center gap-2 group"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white rounded-xl font-semibold text-base transition-colors duration-200 flex items-center justify-center gap-2 group"
             aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
           >
             <Eye className="w-5 h-5" aria-hidden="true" />
@@ -215,7 +215,7 @@ export function StyleProfileSummary({
       </div>
 
       {/* Frequency Hint */}
-      <p className="text-xs text-center text-[var(--color-muted)] mt-4">
+      <p className="text-xs text-center text-[#8A8A8A] mt-4">
         💡 Tip: Update je profiel elke 3-6 maanden als je stijl evolueert
       </p>
     </motion.div>

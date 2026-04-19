@@ -24,7 +24,7 @@ export default function PremiumButton({
   const variantClasses = {
     primary: "ff-cta",
     ghost: "ff-ghost",
-    danger: "bg-[var(--ff-color-danger-500)] hover:bg-[var(--ff-color-danger-600)] text-white border border-[var(--ff-color-danger-500)] rounded-xl"
+    danger: "bg-[#C24A4A] hover:bg-[#C24A4A] text-white border border-[#C24A4A] rounded-xl"
   };
   
   // WCAG AAA: minimum 44px touch targets

@@ -9,16 +9,16 @@ interface StyleDNAVisualizerProps {
 }
 
 const STYLE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
-  minimal: { label: 'Minimaal', emoji: '⚪', color: 'var(--ff-color-neutral-300)' },
-  classic: { label: 'Klassiek', emoji: '👔', color: 'var(--color-text)' },
-  romantic: { label: 'Romantisch', emoji: '🌸', color: 'var(--ff-color-primary-300)' },
-  bohemian: { label: 'Bohemian', emoji: '🌿', color: 'var(--ff-color-beige-600)' },
-  bold: { label: 'Bold', emoji: '⚡', color: 'var(--ff-color-danger-400)' },
-  urban: { label: 'Urban', emoji: '🏙️', color: 'var(--ff-color-neutral-600)' },
-  sporty: { label: 'Sportief', emoji: '⚽', color: 'var(--ff-color-turquoise)' },
-  refined: { label: 'Verfijnd', emoji: '✨', color: 'var(--ff-color-beige-700)' },
-  relaxed: { label: 'Relaxed', emoji: '😌', color: 'var(--ff-color-accent-400)' },
-  professional: { label: 'Professioneel', emoji: '💼', color: 'var(--ff-color-neutral-700)' },
+  minimal: { label: 'Minimaal', emoji: '⚪', color: '#D4D4D4' },
+  classic: { label: 'Klassiek', emoji: '👔', color: '#1A1A1A' },
+  romantic: { label: 'Romantisch', emoji: '🌸', color: '#D4856E' },
+  bohemian: { label: 'Bohemian', emoji: '🌿', color: '#A07040' },
+  bold: { label: 'Bold', emoji: '⚡', color: '#E07070' },
+  urban: { label: 'Urban', emoji: '🏙️', color: '#6A6A6A' },
+  sporty: { label: 'Sportief', emoji: '⚽', color: '#2DD4BF' },
+  refined: { label: 'Verfijnd', emoji: '✨', color: '#7A5C30' },
+  relaxed: { label: 'Relaxed', emoji: '😌', color: '#D4856E' },
+  professional: { label: 'Professioneel', emoji: '💼', color: '#4A4A4A' },
 };
 
 export function StyleDNAVisualizer({
@@ -46,7 +46,7 @@ export function StyleDNAVisualizer({
         className="mb-6 px-4"
       >
         <motion.div
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-soft)]"
+          className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4 shadow-sm"
           layoutId="style-dna-card"
         >
           <div className="flex items-center justify-between mb-4">
@@ -55,20 +55,20 @@ export function StyleDNAVisualizer({
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               >
-                <Sparkles className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                <Sparkles className="w-4 h-4 text-[#A8513A]" />
               </motion.div>
-              <h3 className="text-sm font-semibold text-[var(--color-text)]">
+              <h3 className="text-sm font-semibold text-[#1A1A1A]">
                 Je Stijl DNA
               </h3>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[var(--color-muted)]">
+            <div className="flex items-center gap-1 text-xs text-[#8A8A8A]">
               <TrendingUp className="w-3 h-3" />
               <span>{swipeCount}/{totalSwipes}</span>
             </div>
           </div>
 
           {sortedStyles.length === 0 ? (
-            <p className="text-xs text-[var(--color-muted)] text-center py-2">
+            <p className="text-xs text-[#8A8A8A] text-center py-2">
               Swipe om je stijlprofiel te ontdekken...
             </p>
           ) : (
@@ -77,7 +77,7 @@ export function StyleDNAVisualizer({
                 const style = STYLE_LABELS[styleKey] || {
                   label: styleKey,
                   emoji: '🎨',
-                  color: 'var(--ff-color-neutral-500)'
+                  color: '#8A8A8A'
                 };
                 const percentage = Math.round(score);
                 const isTop = index === 0;
@@ -94,7 +94,7 @@ export function StyleDNAVisualizer({
                       <div className="flex items-center gap-2">
                         <span className="text-sm">{style.emoji}</span>
                         <span className={`text-xs font-medium ${
-                          isTop ? 'text-[var(--ff-color-primary-700)]' : 'text-[var(--color-text)]'
+                          isTop ? 'text-[#A8513A]' : 'text-[#1A1A1A]'
                         }`}>
                           {style.label}
                         </span>
@@ -102,7 +102,7 @@ export function StyleDNAVisualizer({
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="text-[10px] px-1.5 py-0.5 bg-[var(--ff-color-primary-700)] text-white rounded-full"
+                            className="text-[10px] px-1.5 py-0.5 bg-[#A8513A] text-white rounded-full"
                           >
                             Top
                           </motion.span>
@@ -112,13 +112,13 @@ export function StyleDNAVisualizer({
                         key={percentage}
                         initial={{ scale: 1.2, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="text-xs font-semibold text-[var(--color-muted)]"
+                        className="text-xs font-semibold text-[#8A8A8A]"
                       >
                         {percentage}%
                       </motion.span>
                     </div>
 
-                    <div className="h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
@@ -126,7 +126,7 @@ export function StyleDNAVisualizer({
                         className="h-full rounded-full"
                         style={{
                           backgroundColor: isTop
-                            ? 'var(--ff-color-primary-700)'
+                            ? '#A8513A'
                             : style.color,
                           opacity: isTop ? 1 : 0.7
                         }}
@@ -143,28 +143,28 @@ export function StyleDNAVisualizer({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="mt-4 pt-3 border-t border-[var(--color-border)]"
+              className="mt-4 pt-3 border-t border-[#E5E5E5]"
             >
-              <p className="text-xs text-[var(--color-muted)] text-center">
+              <p className="text-xs text-[#8A8A8A] text-center">
                 {swipeCount < 7 ? (
                   <>
                     Je {STYLE_LABELS[topStyle[0]]?.label.toLowerCase() || topStyle[0]} stijl komt naar voren!
-                    <span className="font-medium text-[var(--color-text)]"> Swipe door voor meer precisie.</span>
+                    <span className="font-medium text-[#1A1A1A]"> Swipe door voor meer precisie.</span>
                   </>
                 ) : (
                   <>
-                    <span className="font-medium text-[var(--ff-color-primary-700)]">Perfect!</span> Je stijlprofiel is helder.
+                    <span className="font-medium text-[#A8513A]">Perfect!</span> Je stijlprofiel is helder.
                   </>
                 )}
               </p>
             </motion.div>
           )}
 
-          <div className="mt-3 h-1 bg-[var(--color-bg)] rounded-full overflow-hidden">
+          <div className="mt-3 h-1 bg-[#FAFAF8] rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent}%` }}
-              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)]"
+              className="h-full bg-gradient-to-r from-[#A8513A] to-[#C2654A]"
               transition={{ duration: 0.3 }}
             />
           </div>

@@ -30,15 +30,15 @@ export function ShoppingGuidance({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-2xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl"
+      className="bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] rounded-2xl border-2 border-[#F4E8E3] p-8 shadow-xl"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center">
           <ShoppingBag className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h3 className="text-2xl font-bold text-[var(--color-text)]">
+          <h3 className="text-2xl font-bold text-[#1A1A1A]">
             Jouw Shopping Cheat Sheet
           </h3>
           <p className="text-sm text-gray-600">
@@ -107,8 +107,8 @@ export function ShoppingGuidance({
       </div>
 
       {/* Pro Tip */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] rounded-xl">
-        <p className="text-sm text-[var(--ff-color-primary-800)] leading-relaxed">
+      <div className="mt-6 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-xl">
+        <p className="text-sm text-[#8A3D28] leading-relaxed">
           <strong>Pro tip:</strong> Screenshot deze sectie en bewaar hem in je telefoon.
           Zo heb je altijd je persoonlijke kleurgids bij de hand tijdens het shoppen!
         </p>

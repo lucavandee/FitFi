@@ -67,13 +67,13 @@ export function EmbeddingAnalytics() {
     return (
       <div className="p-8">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-[var(--color-bg)] rounded w-1/3" />
+          <div className="h-8 bg-[#FAFAF8] rounded w-1/3" />
           <div className="grid grid-cols-3 gap-4">
-            <div className="h-32 bg-[var(--color-bg)] rounded" />
-            <div className="h-32 bg-[var(--color-bg)] rounded" />
-            <div className="h-32 bg-[var(--color-bg)] rounded" />
+            <div className="h-32 bg-[#FAFAF8] rounded" />
+            <div className="h-32 bg-[#FAFAF8] rounded" />
+            <div className="h-32 bg-[#FAFAF8] rounded" />
           </div>
-          <div className="h-96 bg-[var(--color-bg)] rounded" />
+          <div className="h-96 bg-[#FAFAF8] rounded" />
         </div>
       </div>
     );
@@ -83,16 +83,16 @@ export function EmbeddingAnalytics() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+          <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
             Embedding Analytics
           </h1>
-          <p className="text-[var(--color-muted)]">
+          <p className="text-[#8A8A8A]">
             Inzicht in style profiles en archetype distributie
           </p>
         </div>
         <button
           onClick={loadAnalytics}
-          className="ff-btn ff-btn-secondary inline-flex items-center gap-2"
+          className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Ververs
@@ -124,10 +124,10 @@ export function EmbeddingAnalytics() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6"
+          className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6"
         >
-          <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+          <h3 className="text-lg font-semibold text-[#1A1A1A] mb-6 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[#A8513A]" />
             Top 10 Archetypes
           </h3>
 
@@ -135,21 +135,21 @@ export function EmbeddingAnalytics() {
             {archetypes.map((item, index) => (
               <div key={item.archetype}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[var(--color-text)]">
+                  <span className="text-sm font-medium text-[#1A1A1A]">
                     {item.archetype.replace(/_/g, ' ')}
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-[var(--color-muted)]">
+                    <span className="text-xs text-[#8A8A8A]">
                       {item.user_count} users
                     </span>
-                    <span className="text-sm font-semibold text-[var(--ff-color-primary-700)]">
+                    <span className="text-sm font-semibold text-[#A8513A]">
                       {Math.round(item.avg_score)}
                     </span>
                   </div>
                 </div>
-                <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                <div className="h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[var(--ff-color-primary-600)] rounded-full"
+                    className="h-full bg-[#C2654A] rounded-full"
                     style={{
                       width: `${Math.min(100, (item.user_count / archetypes[0].user_count) * 100)}%`
                     }}
@@ -164,10 +164,10 @@ export function EmbeddingAnalytics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6"
+          className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6"
         >
-          <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+          <h3 className="text-lg font-semibold text-[#1A1A1A] mb-6 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-[#A8513A]" />
             Preference Stabiliteit
           </h3>
 
@@ -176,18 +176,18 @@ export function EmbeddingAnalytics() {
               <div key={item.category}>
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <div className="text-sm font-medium text-[var(--color-text)]">
+                    <div className="text-sm font-medium text-[#1A1A1A]">
                       {item.category}
                     </div>
-                    <div className="text-xs text-[var(--color-muted)] mt-1">
+                    <div className="text-xs text-[#8A8A8A] mt-1">
                       {item.user_count} gebruikers ({item.percentage}%)
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[var(--ff-color-primary-700)]">
+                  <div className="text-2xl font-bold text-[#A8513A]">
                     {item.percentage}%
                   </div>
                 </div>
-                <div className="h-3 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                <div className="h-3 bg-[#FAFAF8] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${getStabilityColor(item.category)}`}
                     style={{ width: `${item.percentage}%` }}
@@ -197,8 +197,8 @@ export function EmbeddingAnalytics() {
             ))}
           </div>
 
-          <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
-            <p className="text-xs text-[var(--color-muted)]">
+          <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
+            <p className="text-xs text-[#8A8A8A]">
               <strong>Very Stable (≥90%):</strong> Preferences blijven consistent<br />
               <strong>Moderately Stable (70-90%):</strong> Kleine veranderingen<br />
               <strong>Volatile (&lt;70%):</strong> Significante stijl evolutie
@@ -231,12 +231,12 @@ function StatCard({
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6"
+      className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm text-[var(--color-muted)] mb-2">{label}</p>
-          <p className="text-3xl font-bold text-[var(--color-text)]">{value}</p>
+          <p className="text-sm text-[#8A8A8A] mb-2">{label}</p>
+          <p className="text-3xl font-bold text-[#1A1A1A]">{value}</p>
         </div>
         <div className={`p-3 rounded-xl border ${colorClasses[color]}`}>
           <Icon className="w-6 h-6" />
@@ -255,6 +255,6 @@ function getStabilityColor(category: string): string {
     case 'Volatile':
       return 'bg-red-500';
     default:
-      return 'bg-[var(--color-muted)]';
+      return 'bg-[#8A8A8A]';
   }
 }

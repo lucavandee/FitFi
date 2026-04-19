@@ -29,8 +29,8 @@ const items: Item[] = [
 
 const Timeline: React.FC = () => {
   return (
-    <section className="ff-section" aria-labelledby="timeline-title">
-      <div className="ff-container">
+    <section className="py-16 md:py-24" aria-labelledby="timeline-title">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="section-header">
           <p className="kicker">Roadmap</p>
           <h2 id="timeline-title" className="section-title">Stap voor stap, </h2>

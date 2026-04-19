@@ -29,8 +29,8 @@ const item = {
 const OutfitGrid: React.FC<{ outfits: Outfit[] }> = ({ outfits }) => {
   if (!outfits?.length) return null;
   return (
-    <section aria-labelledby="outfits-title" className="ff-section bg-gradient-to-b from-white to-blue-50/30">
-      <div className="ff-container">
+    <section aria-labelledby="outfits-title" className="py-16 md:py-24 bg-gradient-to-b from-white to-blue-50/30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2
           id="outfits-title"
           className="text-3xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent"

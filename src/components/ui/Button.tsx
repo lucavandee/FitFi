@@ -33,17 +33,17 @@ type ButtonAsComponent = BaseProps & {
 type Props = ButtonAsButton | ButtonAsLink | ButtonAsComponent;
 
 function classes(variant: Variant, size: Size, extra?: string) {
-  const base = "ff-btn";
+  const base = "inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C2654A]";
   const v =
     variant === "primary"
-      ? "ff-btn-primary"
+      ? "bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold rounded-xl"
       : variant === "secondary"
-      ? "ff-btn-secondary"
+      ? "bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] rounded-xl"
       : variant === "ghost"
-      ? "ff-btn-ghost"
-      : "ff-btn-quiet";
+      ? "bg-transparent border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] rounded-xl"
+      : "text-[#4A4A4A] hover:text-[#1A1A1A]";
   // WCAG AAA: minimum 44px touch targets (h-11 = 44px)
-  const s = size === "sm" ? "h-11 px-4" : size === "lg" ? "h-14 px-6" : "h-12 px-5";
+  const s = size === "sm" ? "h-11 px-4 text-sm" : size === "lg" ? "h-14 px-6 text-base" : "h-12 px-5 text-base";
   return [base, v, s, extra].filter(Boolean).join(" ");
 }
 
@@ -75,7 +75,7 @@ function Button({
     return (
       <button
         type="button"
-        className={`${cls} relative inline-flex items-center justify-center gap-2`}
+        className={cls}
         disabled={loading || rest.disabled}
         {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
       >
@@ -89,7 +89,7 @@ function Button({
     return (
       <a
         href={href}
-        className={`${cls} relative inline-flex items-center justify-center gap-2 ${loading ? 'pointer-events-none' : ''}`}
+        className={`${cls} ${loading ? 'pointer-events-none' : ''}`}
         {...linkProps}
       >
         {content}
@@ -100,7 +100,7 @@ function Button({
   const Component = as;
   return (
     <Component
-      className={`${cls} relative inline-flex items-center justify-center gap-2`}
+      className={cls}
       {...rest}
     >
       {content}

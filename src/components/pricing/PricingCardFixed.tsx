@@ -13,8 +13,8 @@
  *   → User confusion, no clear choice
  *
  * AFTER (✅ Correct):
- *   Recommended: <button className="ff-btn--primary">Start gratis</button>
- *   Others: <button className="ff-btn--secondary">Kies dit plan</button>
+ *   Recommended: <button className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold py-3 px-6 rounded-xl">Start gratis</button>
+ *   Others: <button className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium py-3 px-6 rounded-xl">Kies dit plan</button>
  *   → Clear visual hierarchy, obvious best choice
  */
 
@@ -58,14 +58,14 @@ export function PricingCardFixed({
       className={`
         relative p-8 rounded-2xl transition-all
         ${recommended
-          ? 'border-4 border-[var(--ff-color-primary-500)] shadow-xl scale-105 bg-gradient-to-br from-[var(--ff-color-primary-25)] to-white'
-          : 'border-2 border-[var(--color-border)] bg-white hover:border-[var(--ff-color-primary-200)] hover:shadow-lg'
+          ? 'border-4 border-[#C2654A] shadow-xl scale-105 bg-gradient-to-br from-[#FAF5F2] to-white'
+          : 'border-2 border-[#E5E5E5] bg-white hover:border-[#F4E8E3] hover:shadow-lg'
         }
       `}
     >
       {/* Recommended Badge */}
       {recommended && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
           <Star className="w-4 h-4 fill-white" aria-hidden="true" />
           Aanbevolen
         </div>
@@ -79,20 +79,20 @@ export function PricingCardFixed({
       )}
 
       {/* Plan Name */}
-      <h3 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+      <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">
         {name}
       </h3>
 
       {/* Price */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
-          <span className="text-5xl font-bold text-[var(--color-text)]">
+          <span className="text-5xl font-bold text-[#1A1A1A]">
             €{price}
           </span>
-          <span className="text-lg text-[var(--color-muted)]">/maand</span>
+          <span className="text-lg text-[#8A8A8A]">/maand</span>
         </div>
         {price === 0 && (
-          <p className="text-sm text-[var(--color-muted)] mt-1">
+          <p className="text-sm text-[#8A8A8A] mt-1">
             Altijd gratis
           </p>
         )}
@@ -106,7 +106,7 @@ export function PricingCardFixed({
               className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5"
               aria-hidden="true"
             />
-            <span className="text-[var(--color-text)]">{feature}</span>
+            <span className="text-[#1A1A1A]">{feature}</span>
           </li>
         ))}
       </ul>
@@ -117,7 +117,7 @@ export function PricingCardFixed({
         <button
           onClick={onSelect}
           disabled={active}
-          className="ff-btn ff-btn--primary ff-btn--xl w-full group"
+          className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl w-full group"
           aria-label={`Selecteer ${name} plan - Aanbevolen optie`}
         >
           {active ? (
@@ -137,7 +137,7 @@ export function PricingCardFixed({
         <button
           onClick={onSelect}
           disabled={active}
-          className="ff-btn ff-btn--secondary ff-btn--lg w-full"
+          className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl w-full"
           aria-label={`Selecteer ${name} plan`}
         >
           {active ? 'Huidig plan' : 'Kies dit plan'}

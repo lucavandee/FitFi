@@ -105,7 +105,7 @@ export default function AdminBlogManagementPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text-muted)]">Laden...</p>
+          <p className="text-[#8A8A8A]">Laden...</p>
         </div>
       </div>
     );
@@ -117,14 +117,14 @@ export default function AdminBlogManagementPage() {
         <title>Blog Beheer - Admin - FitFi</title>
       </Helmet>
 
-      <div className="min-h-screen bg-[var(--color-bg)]">
+      <div className="min-h-screen bg-[#FAFAF8]">
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
               Blog Beheer
             </h1>
-            <p className="text-[var(--color-text-muted)]">
+            <p className="text-[#8A8A8A]">
               Beheer AI-gegenereerde en handmatige blog content
             </p>
           </div>
@@ -160,17 +160,17 @@ export default function AdminBlogManagementPage() {
           )}
 
           {/* Actions Bar */}
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4 mb-6">
+          <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4 mb-6">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
                 <input
                   type="text"
                   placeholder="Zoek posts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-700)]"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
                 />
               </div>
 
@@ -178,21 +178,21 @@ export default function AdminBlogManagementPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:bg-[#FAFAF8] transition-colors flex items-center gap-2"
                 >
                   <Filter className="w-4 h-4" />
                   Filters
                 </button>
                 <button
                   onClick={() => navigate('/admin/blog/topics')}
-                  className="px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:bg-[#FAFAF8] transition-colors flex items-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Topics
                 </button>
                 <button
                   onClick={() => navigate('/admin/blog/new')}
-                  className="px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors flex items-center gap-2"
                 >
                   <PlusCircle className="w-4 h-4" />
                   Nieuwe Post
@@ -202,15 +202,15 @@ export default function AdminBlogManagementPage() {
 
             {/* Filters Panel */}
             {showFilters && (
-              <div className="mt-4 pt-4 border-t border-[var(--color-border)] grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="mt-4 pt-4 border-t border-[#E5E5E5] grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                     Status
                   </label>
                   <select
                     value={filters.status || 'all'}
                     onChange={(e) => setFilters({ ...filters, status: e.target.value === 'all' ? undefined : e.target.value as any })}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
                   >
                     <option value="all">Alle statussen</option>
                     <option value="draft">Draft</option>
@@ -221,7 +221,7 @@ export default function AdminBlogManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                     Type
                   </label>
                   <select
@@ -230,7 +230,7 @@ export default function AdminBlogManagementPage() {
                       const val = e.target.value;
                       setFilters({ ...filters, ai_generated: val === 'all' ? undefined : val === 'ai' });
                     }}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
                   >
                     <option value="all">Alle types</option>
                     <option value="ai">AI Gegenereerd</option>
@@ -239,7 +239,7 @@ export default function AdminBlogManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                     Featured
                   </label>
                   <select
@@ -248,7 +248,7 @@ export default function AdminBlogManagementPage() {
                       const val = e.target.value;
                       setFilters({ ...filters, featured: val === 'all' ? undefined : val === 'yes' });
                     }}
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
                   >
                     <option value="all">Alle posts</option>
                     <option value="yes">Featured</option>
@@ -263,20 +263,20 @@ export default function AdminBlogManagementPage() {
           {loading ? (
             <div className="text-center py-12">
               <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-[var(--color-text-muted)]">Posts laden...</p>
+              <p className="text-[#8A8A8A]">Posts laden...</p>
             </div>
           ) : filteredPosts.length === 0 ? (
-            <div className="text-center py-12 bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)]">
-              <FileText className="w-16 h-16 mx-auto mb-4 text-[var(--color-text-muted)]" />
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+            <div className="text-center py-12 bg-[#FFFFFF] rounded-lg border border-[#E5E5E5]">
+              <FileText className="w-16 h-16 mx-auto mb-4 text-[#8A8A8A]" />
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                 Geen posts gevonden
               </h3>
-              <p className="text-[var(--color-text-muted)] mb-4">
+              <p className="text-[#8A8A8A] mb-4">
                 {searchQuery ? 'Probeer een andere zoekopdracht' : 'Begin met het maken van je eerste blog post'}
               </p>
               <button
                 onClick={() => navigate('/admin/blog/new')}
-                className="px-6 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                className="px-6 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors"
               >
                 Nieuwe Post Maken
               </button>
@@ -309,14 +309,14 @@ function MetricCard({ icon: Icon, label, value, color }: any) {
   };
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4">
+    <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4">
       <div className="flex items-center gap-3">
         <div className={`p-2 rounded-lg bg-opacity-10 ${colorClasses[color]}`}>
           <Icon className="w-6 h-6" />
         </div>
         <div>
-          <p className="text-sm text-[var(--color-text-muted)]">{label}</p>
-          <p className="text-2xl font-bold text-[var(--color-text)]">{value}</p>
+          <p className="text-sm text-[#8A8A8A]">{label}</p>
+          <p className="text-2xl font-bold text-[#1A1A1A]">{value}</p>
         </div>
       </div>
     </div>
@@ -339,7 +339,7 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
   };
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4 hover:shadow-md transition-shadow">
+    <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4 hover:shadow-md transition-shadow">
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Image */}
         {post.featured_image_url && (
@@ -356,10 +356,10 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-4 mb-2">
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-1">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">
                 {post.title}
               </h3>
-              <p className="text-sm text-[var(--color-text-muted)] line-clamp-2">
+              <p className="text-sm text-[#8A8A8A] line-clamp-2">
                 {post.excerpt}
               </p>
             </div>
@@ -382,7 +382,7 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
           </div>
 
           {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--color-text-muted)] mb-3">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#8A8A8A] mb-3">
             <span className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
               {post.read_time_minutes} min
@@ -396,7 +396,7 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
           <div className="flex gap-2">
             <button
               onClick={onEdit}
-              className="px-3 py-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors flex items-center gap-1 text-sm"
+              className="px-3 py-1.5 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:bg-[#FAFAF8] transition-colors flex items-center gap-1 text-sm"
             >
               <Edit2 className="w-4 h-4" />
               Bewerk
@@ -405,7 +405,7 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
               onClick={onTogglePublish}
               className={`px-3 py-1.5 rounded-xl border transition-colors flex items-center gap-1 text-sm ${
                 post.status === 'published'
-                  ? 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)]'
+                  ? 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:bg-[#FAFAF8]'
                   : 'border-green-600 bg-green-600 text-white hover:bg-green-700'
               }`}
             >

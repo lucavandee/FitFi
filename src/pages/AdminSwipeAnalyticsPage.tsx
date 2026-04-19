@@ -52,7 +52,7 @@ export default function AdminSwipeAnalyticsPage() {
 
   if (adminLoading || globalLoading || photoLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-gray-600">Laden...</p>
@@ -63,7 +63,7 @@ export default function AdminSwipeAnalyticsPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-2">Geen toegang</h1>
           <p className="text-gray-600">Je hebt geen admin rechten</p>
@@ -77,16 +77,16 @@ export default function AdminSwipeAnalyticsPage() {
   const worstPhotos = sortedPhotos.slice(-10).reverse();
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] py-12">
+    <main className="min-h-screen bg-[#FAFAF8] py-12">
       <Helmet>
         <title>Swipe Analytics — Admin — FitFi</title>
       </Helmet>
 
-      <div className="ff-container max-w-7xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <BarChart3 className="inline-block w-10 h-10 mr-3 text-[var(--ff-color-primary-600)]" />
+            <BarChart3 className="inline-block w-10 h-10 mr-3 text-[#C2654A]" />
             Swipe Analytics
           </h1>
           <p className="text-xl text-gray-600">
@@ -97,42 +97,42 @@ export default function AdminSwipeAnalyticsPage() {
         {/* Global Stats */}
         {globalStats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-lg">
+            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
                 <Eye className="w-8 h-8 text-blue-600" />
                 <span className="text-sm font-medium text-gray-500">Total Swipes</span>
               </div>
-              <div className="text-3xl font-bold text-[var(--color-text)]">
+              <div className="text-3xl font-bold text-[#1A1A1A]">
                 {globalStats.total_swipes?.toLocaleString() || 0}
               </div>
             </div>
 
-            <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-lg">
+            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
                 <Users className="w-8 h-8 text-green-600" />
                 <span className="text-sm font-medium text-gray-500">Unique Users</span>
               </div>
-              <div className="text-3xl font-bold text-[var(--color-text)]">
+              <div className="text-3xl font-bold text-[#1A1A1A]">
                 {globalStats.total_users?.toLocaleString() || 0}
               </div>
             </div>
 
-            <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-lg">
+            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
                 <TrendingUp className="w-8 h-8 text-purple-600" />
                 <span className="text-sm font-medium text-gray-500">Avg Swipes/User</span>
               </div>
-              <div className="text-3xl font-bold text-[var(--color-text)]">
+              <div className="text-3xl font-bold text-[#1A1A1A]">
                 {globalStats.avg_swipes_per_user?.toFixed(1) || 0}
               </div>
             </div>
 
-            <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-lg">
+            <div className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
                 <Percent className="w-8 h-8 text-pink-600" />
                 <span className="text-sm font-medium text-gray-500">Avg Like Rate</span>
               </div>
-              <div className="text-3xl font-bold text-[var(--color-text)]">
+              <div className="text-3xl font-bold text-[#1A1A1A]">
                 {globalStats.avg_like_rate?.toFixed(0) || 0}%
               </div>
             </div>
@@ -141,9 +141,9 @@ export default function AdminSwipeAnalyticsPage() {
 
         {/* Gender Distribution */}
         {globalStats && (
-          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-8 shadow-lg mb-12">
+          <div className="bg-white rounded-2xl border border-[#E5E5E5] p-8 shadow-lg mb-12">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <ImageIcon className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+              <ImageIcon className="w-6 h-6 text-[#C2654A]" />
               Photo Distribution
             </h2>
             <div className="grid grid-cols-2 gap-6">
@@ -173,7 +173,7 @@ export default function AdminSwipeAnalyticsPage() {
             {topPhotos.map((photo, idx) => (
               <div
                 key={photo.photo_id}
-                className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-lg hover:shadow-xl transition-all"
+                className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-lg hover:shadow-xl transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
@@ -187,7 +187,7 @@ export default function AdminSwipeAnalyticsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl font-bold text-[var(--ff-color-primary-600)]">
+                      <span className="text-2xl font-bold text-[#C2654A]">
                         #{idx + 1}
                       </span>
                       <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
@@ -249,7 +249,7 @@ export default function AdminSwipeAnalyticsPage() {
             {worstPhotos.map((photo, idx) => (
               <div
                 key={photo.photo_id}
-                className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6 shadow-lg hover:shadow-xl transition-all"
+                className="bg-white rounded-2xl border border-[#E5E5E5] p-6 shadow-lg hover:shadow-xl transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
@@ -316,23 +316,23 @@ export default function AdminSwipeAnalyticsPage() {
         </div>
 
         {/* Recommendations */}
-        <div className="mt-12 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl p-8 border border-[var(--ff-color-primary-200)]">
+        <div className="mt-12 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-8 border border-[#F4E8E3]">
           <h3 className="text-xl font-bold mb-4">💡 Recommendations</h3>
           <ul className="space-y-2 text-gray-700">
             <li className="flex items-start gap-2">
-              <span className="text-[var(--ff-color-primary-600)] font-bold">•</span>
+              <span className="text-[#C2654A] font-bold">•</span>
               <span>Consider replacing photos with {'<'}30% like rate</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[var(--ff-color-primary-600)] font-bold">•</span>
+              <span className="text-[#C2654A] font-bold">•</span>
               <span>Top performing photos show clear style direction - add similar content</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[var(--ff-color-primary-600)] font-bold">•</span>
+              <span className="text-[#C2654A] font-bold">•</span>
               <span>Monitor unique users count to ensure diverse feedback</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[var(--ff-color-primary-600)] font-bold">•</span>
+              <span className="text-[#C2654A] font-bold">•</span>
               <span>Aim for 50%+ like rate across all photos for optimal recommendation quality</span>
             </li>
           </ul>

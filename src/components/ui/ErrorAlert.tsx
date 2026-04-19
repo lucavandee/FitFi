@@ -133,7 +133,7 @@ export function ErrorAlert({
                 flex-shrink-0 rounded-lg p-1.5
                 hover:bg-black/5 active:scale-95
                 transition-all outline-none
-                focus-visible:shadow-[var(--ff-shadow-ring)]
+                focus-visible:shadow-sm
                 ${styles.icon}
               `}
               aria-label="Sluiten"
@@ -254,7 +254,7 @@ export function ToastError({ error, onDismiss, duration = 5000 }: ToastErrorProp
               flex-shrink-0 rounded-lg p-1.5
               hover:bg-black/5 active:scale-95
               transition-all outline-none
-              focus-visible:shadow-[var(--ff-shadow-ring)]
+              focus-visible:shadow-sm
               ${styles.icon}
             `}
             aria-label="Sluiten"

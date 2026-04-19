@@ -30,7 +30,7 @@ export const ChallengeSnapshot: React.FC = () => {
           <h4 className="font-medium text-gray-900 mb-2">Geen open challenges</h4>
           <p className="text-sm text-gray-600 mb-4">Ontdek tribes en vind jouw perfecte challenge.</p>
           <a
-            className="inline-block bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-600)] text-white px-4 py-2 rounded-xl font-medium transition-colors"
+            className="inline-block bg-[#C2654A] hover:bg-[#C2654A] text-white px-4 py-2 rounded-xl font-medium transition-colors"
             href={routeTo("tribe", {})}
           >
             Ontdek Tribes →
@@ -50,7 +50,7 @@ export const ChallengeSnapshot: React.FC = () => {
         <div className="text-center py-4">
           <p className="text-sm text-gray-600 mb-3">Challenge wordt geladen...</p>
           <a
-            className="inline-block text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] font-medium"
+            className="inline-block text-[#C2654A] hover:text-[#A8513A] font-medium"
             href={`/tribes/${best.tribeId}?challengeId=${best.challengeId}`}
           >
             Open challenge →
@@ -81,7 +81,7 @@ export const ChallengeSnapshot: React.FC = () => {
             {(ch.status ?? "open").toUpperCase()}
           </span>
           {ch.rewardPoints && (
-            <span className="px-2 py-1 bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-full text-xs font-medium">
+            <span className="px-2 py-1 bg-[#FAF5F2] text-[#A8513A] rounded-full text-xs font-medium">
               +{ch.rewardPoints} XP
             </span>
           )}
@@ -103,7 +103,7 @@ export const ChallengeSnapshot: React.FC = () => {
           </div>
           
           <a
-            className="inline-flex items-center bg-[var(--ff-color-primary-500)] hover:bg-[var(--ff-color-primary-600)] text-white px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
+            className="inline-flex items-center bg-[#C2654A] hover:bg-[#C2654A] text-white px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
             href={challengeUrl}
           >
             Doe mee →

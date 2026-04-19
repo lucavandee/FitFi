@@ -50,7 +50,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--ff-color-primary-600)]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C2654A]"></div>
       </div>
     );
   }
@@ -58,9 +58,9 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
   if (savedOutfits.length === 0) {
     return (
       <div className="text-center py-12">
-        <Heart className="w-12 h-12 text-[var(--color-text)]/30 mx-auto mb-4" />
+        <Heart className="w-12 h-12 text-[#1A1A1A]/30 mx-auto mb-4" />
         <h3 className="text-lg font-semibold mb-2">Nog geen opgeslagen outfits</h3>
-        <p className="text-[var(--color-text)]/70 mb-6">
+        <p className="text-[#1A1A1A]/70 mb-6">
           Begin met het opslaan van je favoriete looks om ze hier terug te vinden
         </p>
         <Button as={NavLink} to="/results" variant="primary">
@@ -75,7 +75,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">
           Mijn opgeslagen looks
-          <span className="ml-2 text-sm font-normal text-[var(--color-text)]/60">
+          <span className="ml-2 text-sm font-normal text-[#1A1A1A]/60">
             ({savedOutfits.length})
           </span>
         </h2>
@@ -93,7 +93,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
           return (
             <article
               key={saved.id}
-              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="grid grid-cols-2 gap-1 p-1">
                 {images.map((img, idx) => (
@@ -111,7 +111,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
                 <h3 className="font-semibold text-lg mb-2">
                   {outfit.name || 'Outfit'}
                 </h3>
-                <p className="text-sm text-[var(--color-text)]/70 mb-4 line-clamp-2">
+                <p className="text-sm text-[#1A1A1A]/70 mb-4 line-clamp-2">
                   {outfit.description || outfit.explanation || ''}
                 </p>
 
@@ -122,7 +122,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
                         <button
                           key={idx}
                           onClick={() => setSelectedProduct(product)}
-                          className="flex items-center gap-1 px-2 py-1.5 bg-[var(--color-bg)] hover:bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] rounded text-xs transition-all"
+                          className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#FAF5F2] border border-[#E5E5E5] rounded text-xs transition-all"
                         >
                           <ShoppingBag className="w-3 h-3 flex-shrink-0" />
                           <span className="truncate">{product.name}</span>

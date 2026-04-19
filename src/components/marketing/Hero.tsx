@@ -15,7 +15,7 @@ export default function Hero() {
         <div>
           <span className="ff-tag">AI-styling • Uitleg bij elke look</span>
           <h1 className="mt-4">Jouw persoonlijke stylist — aangedreven door AI</h1>
-          <p className="mt-4 text-[var(--fitfi-muted)] text-[16px] leading-7">
+          <p className="mt-4 text-[#8A8A8A] text-[16px] leading-7">
             Wij vertalen je smaak naar outfits voor jou. Slim, betaalbaar en direct shopbaar —
             inclusief korte uitleg waarom het werkt.
           </p>
@@ -23,16 +23,16 @@ export default function Hero() {
             <Button size="lg">Doe de stijlscan</Button>
             <a href="#previews" className="ff-ghost">Bekijk voorbeelden</a>
           </div>
-          <div className="mt-6 flex items-center gap-3 text-[13px] text-[var(--fitfi-muted)]">
+          <div className="mt-6 flex items-center gap-3 text-[13px] text-[#8A8A8A]">
             <span className="ff-chip">Capsule-denkend</span>
             <span className="ff-chip">Budgetvriendelijk</span>
             <span className="ff-chip">Uitleg per outfit</span>
           </div>
         </div>
 
-        <div className="ff-card p-3">
+        <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 p-3">
           <div className="aspect-[4/3] w-full rounded-[14px] overflow-hidden border border-white/10 ff-grad" />
-          <div className="px-3 pb-3 pt-2 text-sm text-[var(--fitfi-muted)]">
+          <div className="px-3 pb-3 pt-2 text-sm text-[#8A8A8A]">
             Live preview van een outfit
           </div>
         </div>

@@ -20,9 +20,9 @@ export const ReadingProgress: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-1 bg-[var(--color-border)] z-50">
+    <div className="fixed top-0 left-0 w-full h-1 bg-[#E5E5E5] z-50">
       <div
-        className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-150 ease-out"
+        className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] transition-all duration-150 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

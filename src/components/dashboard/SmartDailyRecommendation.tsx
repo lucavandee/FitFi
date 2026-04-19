@@ -99,14 +99,14 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
   };
 
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-soft)]">
+    <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 shadow-sm">
       <div className="flex items-center gap-3 mb-4">
         {getTimeIcon()}
         <div>
-          <h3 className="font-display text-lg font-semibold text-[var(--color-text)]">
+          <h3 className="font-display text-lg font-semibold text-[#1A1A1A]">
             {getTimeGreeting()}
           </h3>
-          <p className="text-sm text-[var(--color-text-muted)]">
+          <p className="text-sm text-[#8A8A8A]">
             Nova stelt voor om dit te dragen
           </p>
         </div>
@@ -116,15 +116,15 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
         <OutfitCard outfit={recommendation.outfit} compact />
       </div>
 
-      <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+      <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
         <Calendar className="w-4 h-4" />
         <span>{getContextMessage()}</span>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-        <div className="flex items-center justify-between text-xs text-[var(--color-text-muted)]">
+      <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
+        <div className="flex items-center justify-between text-xs text-[#8A8A8A]">
           <span>Match score</span>
-          <span className="font-semibold text-[var(--color-primary)]">
+          <span className="font-semibold text-[#C2654A]">
             {Math.round(recommendation.score)}%
           </span>
         </div>

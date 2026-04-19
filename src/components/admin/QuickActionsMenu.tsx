@@ -17,7 +17,7 @@ export default function QuickActionsMenu({ actions }: QuickActionsMenuProps) {
         <button
           key={action.id}
           onClick={action.onClick}
-          className="group relative p-6 rounded-xl overflow-hidden border border-[var(--color-border)] hover:border-transparent transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          className="group relative p-6 rounded-xl overflow-hidden border border-[#E5E5E5] hover:border-transparent transition-all duration-300 hover:scale-105 hover:shadow-2xl"
           style={{
             background: `linear-gradient(135deg, ${action.gradient})`,
           }}

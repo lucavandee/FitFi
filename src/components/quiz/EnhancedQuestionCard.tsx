@@ -133,7 +133,7 @@ export function EnhancedQuestionCard({
       <div className="text-center">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
           {title}
-          {required && <span className="text-[var(--ff-color-accent-600)] ml-2">*</span>}
+          {required && <span className="text-[#C2654A] ml-2">*</span>}
         </h2>
 
         {/* Validation Status */}
@@ -173,7 +173,7 @@ export function EnhancedQuestionCard({
 
         {/* Description */}
         {description && (
-          <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-[#8A8A8A] max-w-2xl mx-auto leading-relaxed">
             {description}
           </p>
         )}
@@ -183,7 +183,7 @@ export function EnhancedQuestionCard({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-2 mt-3 text-sm text-[var(--color-muted)]"
+            className="flex items-center justify-center gap-2 mt-3 text-sm text-[#8A8A8A]"
           >
             <Info className="w-4 h-4" aria-hidden="true" />
             <span>{validation.suggestion}</span>
@@ -199,8 +199,8 @@ export function EnhancedQuestionCard({
             {/* Selection Counter */}
             {Array.isArray(value) && value.length > 0 && (
               <div className="text-center mb-3">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-50)] rounded-full text-sm font-medium text-[var(--ff-color-primary-700)]">
-                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[var(--ff-color-primary-600)] text-white text-xs font-bold">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#FAF5F2] rounded-full text-sm font-medium text-[#A8513A]">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#C2654A] text-white text-xs font-bold">
                     {value.length}
                   </span>
                   {value.length === 1 ? '1 optie' : `${value.length} opties`} geselecteerd
@@ -216,10 +216,10 @@ export function EnhancedQuestionCard({
                     key={option.value}
                     ref={index === 0 ? firstInputRef : null}
                     onClick={() => handleMultiSelect(option.value)}
-                    className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)] ${
+                    className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-sm focus-visible:border-[#C2654A] ${
                       isSelected
-                        ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] shadow-sm'
-                        : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:shadow-sm'
+                        ? 'border-[#C2654A] bg-[#FAF5F2] shadow-sm'
+                        : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E] hover:shadow-sm'
                     }`}
                     aria-pressed={isSelected}
                   >
@@ -227,8 +227,8 @@ export function EnhancedQuestionCard({
                       <div
                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
                           isSelected
-                            ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-600)]'
-                            : 'border-[var(--color-border)]'
+                            ? 'border-[#C2654A] bg-[#C2654A]'
+                            : 'border-[#E5E5E5]'
                         }`}
                       >
                         {isSelected && (
@@ -246,7 +246,7 @@ export function EnhancedQuestionCard({
                           {option.label}
                         </div>
                         {option.description && (
-                          <div className="text-xs sm:text-sm text-[var(--color-muted)]">
+                          <div className="text-xs sm:text-sm text-[#8A8A8A]">
                             {option.description}
                           </div>
                         )}
@@ -269,10 +269,10 @@ export function EnhancedQuestionCard({
                   key={option.value}
                   ref={index === 0 ? firstInputRef : null}
                   onClick={() => handleSingleSelect(option.value)}
-                  className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)] ${
+                  className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-sm focus-visible:border-[#C2654A] ${
                     isSelected
-                      ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] shadow-sm'
-                      : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)] hover:shadow-sm'
+                      ? 'border-[#C2654A] bg-[#FAF5F2] shadow-sm'
+                      : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E] hover:shadow-sm'
                   }`}
                   aria-pressed={isSelected}
                 >
@@ -280,8 +280,8 @@ export function EnhancedQuestionCard({
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
                         isSelected
-                          ? 'border-[var(--ff-color-primary-600)]'
-                          : 'border-[var(--color-border)]'
+                          ? 'border-[#C2654A]'
+                          : 'border-[#E5E5E5]'
                       }`}
                     >
                       {isSelected && (
@@ -289,7 +289,7 @@ export function EnhancedQuestionCard({
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                          className="w-2.5 h-2.5 rounded-full bg-[var(--ff-color-primary-600)]"
+                          className="w-2.5 h-2.5 rounded-full bg-[#C2654A]"
                         />
                       )}
                     </div>
@@ -298,7 +298,7 @@ export function EnhancedQuestionCard({
                         {option.label}
                       </div>
                       {option.description && (
-                        <div className="text-xs sm:text-sm text-[var(--color-muted)]">
+                        <div className="text-xs sm:text-sm text-[#8A8A8A]">
                           {option.description}
                         </div>
                       )}
@@ -312,19 +312,19 @@ export function EnhancedQuestionCard({
 
         {/* Slider */}
         {type === 'slider' && (
-          <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6">
+          <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] p-6">
             <div className="text-center mb-6">
-              <div className="text-5xl font-bold text-[var(--ff-color-primary-600)] mb-2">
+              <div className="text-5xl font-bold text-[#C2654A] mb-2">
                 €{value || min || 50}
               </div>
-              <div className="text-sm font-medium text-[var(--color-text)] mb-1">
+              <div className="text-sm font-medium text-[#1A1A1A] mb-1">
                 {(value || min || 50) < 75
                   ? 'Budget'
                   : (value || min || 50) < 150
                   ? 'Middensegment'
                   : 'Premium'}
               </div>
-              <div className="text-xs text-[var(--color-muted)]">Per kledingstuk</div>
+              <div className="text-xs text-[#8A8A8A]">Per kledingstuk</div>
             </div>
 
             {/* Plus/Minus Controls */}
@@ -337,7 +337,7 @@ export function EnhancedQuestionCard({
                   const newVal = Math.max(min || 0, currentVal - (step || 5));
                   onChange(field, newVal);
                 }}
-                className="w-12 h-12 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)]"
+                className="w-12 h-12 rounded-full bg-[#FFFFFF] border-2 border-[#D4856E] text-[#A8513A] font-bold text-xl flex items-center justify-center hover:bg-[#FAF5F2] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-sm focus-visible:border-[#C2654A]"
                 aria-label="Verlaag budget"
               >
                 −
@@ -353,7 +353,7 @@ export function EnhancedQuestionCard({
                   setTouched(true);
                   onChange(field, parseInt(e.target.value));
                 }}
-                className="flex-1 h-2 bg-[var(--color-bg)] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--ff-color-primary-600)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[var(--ff-color-primary-600)] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-focus-ring-color)]"
+                className="flex-1 h-2 bg-[#FAFAF8] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#C2654A] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#C2654A] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md outline-none focus-visible:ring-4 focus-visible:ring-[#C2654A]"
                 aria-label="Selecteer budget"
               />
 
@@ -365,7 +365,7 @@ export function EnhancedQuestionCard({
                   const newVal = Math.min(max || 500, currentVal + (step || 5));
                   onChange(field, newVal);
                 }}
-                className="w-12 h-12 rounded-full bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-300)] text-[var(--ff-color-primary-700)] font-bold text-xl flex items-center justify-center hover:bg-[var(--ff-color-primary-50)] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:border-[var(--ff-focus-ring-color)]"
+                className="w-12 h-12 rounded-full bg-[#FFFFFF] border-2 border-[#D4856E] text-[#A8513A] font-bold text-xl flex items-center justify-center hover:bg-[#FAF5F2] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-sm focus-visible:border-[#C2654A]"
                 aria-label="Verhoog budget"
               >
                 +

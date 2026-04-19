@@ -213,10 +213,10 @@ export function BulkImageUploader() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={`
-          border-2 border-dashed rounded-[var(--radius-2xl)] p-12 text-center transition-all
+          border-2 border-dashed rounded-2xl p-12 text-center transition-all
           ${isDragging
-            ? 'border-[var(--ff-color-primary-700)] bg-[var(--ff-color-primary-50)]'
-            : 'border-[var(--color-border)] bg-[var(--color-surface)]'
+            ? 'border-[#A8513A] bg-[#FAF5F2]'
+            : 'border-[#E5E5E5] bg-[#FFFFFF]'
           }
         `}
       >
@@ -230,14 +230,14 @@ export function BulkImageUploader() {
         />
 
         <label htmlFor="file-input" className="cursor-pointer">
-          <Upload className="w-12 h-12 mx-auto mb-4 text-[var(--color-muted)]" />
-          <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+          <Upload className="w-12 h-12 mx-auto mb-4 text-[#8A8A8A]" />
+          <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
             Sleep afbeeldingen hierheen
           </h3>
-          <p className="text-sm text-[var(--color-muted)] mb-4">
+          <p className="text-sm text-[#8A8A8A] mb-4">
             of klik om bestanden te selecteren
           </p>
-          <p className="text-xs text-[var(--color-muted)]">
+          <p className="text-xs text-[#8A8A8A]">
             Bestandsnaam = SKU (bijv. BF-12345.jpg, XL22-0001.png)
           </p>
         </label>
@@ -245,22 +245,22 @@ export function BulkImageUploader() {
 
       {files.length > 0 && (
         <>
-          <div className="grid grid-cols-4 gap-4 p-4 bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)]">
+          <div className="grid grid-cols-4 gap-4 p-4 bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5]">
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--color-text)]">{stats.total}</div>
-              <div className="text-xs text-[var(--color-muted)]">Totaal</div>
+              <div className="text-2xl font-bold text-[#1A1A1A]">{stats.total}</div>
+              <div className="text-xs text-[#8A8A8A]">Totaal</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--ff-color-primary-700)]">{stats.pending}</div>
-              <div className="text-xs text-[var(--color-muted)]">Wachtend</div>
+              <div className="text-2xl font-bold text-[#A8513A]">{stats.pending}</div>
+              <div className="text-xs text-[#8A8A8A]">Wachtend</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{stats.success}</div>
-              <div className="text-xs text-[var(--color-muted)]">Gelukt</div>
+              <div className="text-xs text-[#8A8A8A]">Gelukt</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">{stats.error}</div>
-              <div className="text-xs text-[var(--color-muted)]">Fout</div>
+              <div className="text-xs text-[#8A8A8A]">Fout</div>
             </div>
           </div>
 
@@ -268,7 +268,7 @@ export function BulkImageUploader() {
             <button
               onClick={handleUploadAll}
               disabled={isProcessing || stats.pending === 0}
-              className="flex-1 py-3 px-6 bg-[var(--ff-color-primary-700)] text-white rounded-[var(--radius-xl)] font-semibold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-6 bg-[#A8513A] text-white rounded-2xl font-semibold hover:bg-[#C2654A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>
@@ -286,7 +286,7 @@ export function BulkImageUploader() {
             {stats.success > 0 && (
               <button
                 onClick={clearCompleted}
-                className="py-3 px-6 bg-green-50 text-green-700 rounded-[var(--radius-xl)] font-medium hover:bg-green-100 transition-colors"
+                className="py-3 px-6 bg-green-50 text-green-700 rounded-2xl font-medium hover:bg-green-100 transition-colors"
               >
                 Wis gelukte
               </button>
@@ -294,7 +294,7 @@ export function BulkImageUploader() {
 
             <button
               onClick={clearAll}
-              className="py-3 px-6 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] rounded-[var(--radius-xl)] font-medium hover:bg-[var(--color-bg)] transition-colors"
+              className="py-3 px-6 bg-[#FFFFFF] border border-[#E5E5E5] text-[#1A1A1A] rounded-2xl font-medium hover:bg-[#FAFAF8] transition-colors"
             >
               Wis alles
             </button>
@@ -305,11 +305,11 @@ export function BulkImageUploader() {
               <div
                 key={index}
                 className={`
-                  p-4 rounded-[var(--radius-xl)] border transition-all
+                  p-4 rounded-2xl border transition-all
                   ${file.status === 'success' ? 'bg-green-50 border-green-200' :
                     file.status === 'error' ? 'bg-red-50 border-red-200' :
                     file.status === 'uploading' ? 'bg-blue-50 border-blue-200' :
-                    'bg-[var(--color-surface)] border-[var(--color-border)]'
+                    'bg-[#FFFFFF] border-[#E5E5E5]'
                   }
                 `}
               >
@@ -318,21 +318,21 @@ export function BulkImageUploader() {
                     {file.status === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
                     {file.status === 'error' && <XCircle className="w-5 h-5 text-red-600" />}
                     {file.status === 'uploading' && <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />}
-                    {file.status === 'pending' && <AlertCircle className="w-5 h-5 text-[var(--color-muted)]" />}
+                    {file.status === 'pending' && <AlertCircle className="w-5 h-5 text-[#8A8A8A]" />}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-[var(--color-text)] truncate">
+                      <span className="font-medium text-[#1A1A1A] truncate">
                         {file.file.name}
                       </span>
-                      <span className="px-2 py-0.5 text-xs font-mono bg-white rounded border border-[var(--color-border)]">
+                      <span className="px-2 py-0.5 text-xs font-mono bg-white rounded border border-[#E5E5E5]">
                         {file.sku}
                       </span>
                     </div>
 
                     {file.matchedProduct && (
-                      <div className="text-sm text-[var(--color-muted)] truncate">
+                      <div className="text-sm text-[#8A8A8A] truncate">
                         → {file.matchedProduct.name}
                       </div>
                     )}
@@ -350,7 +350,7 @@ export function BulkImageUploader() {
                     )}
                   </div>
 
-                  <div className="text-xs text-[var(--color-muted)] flex-shrink-0">
+                  <div className="text-xs text-[#8A8A8A] flex-shrink-0">
                     {(file.file.size / 1024).toFixed(1)} KB
                   </div>
                 </div>

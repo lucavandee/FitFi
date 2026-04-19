@@ -30,8 +30,8 @@ const PageHeroStacked: React.FC<Props> = ({
   onSecondary,
 }) => {
   return (
-    <section className="ff-section pagehero-wrap alt-bg" aria-labelledby="pagehero-title">
-      <div className="ff-container pagehero">
+    <section className="py-16 md:py-24 pagehero-wrap alt-bg" aria-labelledby="pagehero-title">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pagehero">
         <header className="pagehero-head">
           <p className="pagehero-kicker">{kicker}</p>
           <h1 id="pagehero-title" className="pagehero-title">{title}</h1>

@@ -225,13 +225,13 @@ export function StackSwipeableCards<T>({
   if (visibleCards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-16 h-16 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center mb-4">
-          <Sparkles className="w-8 h-8 text-[var(--ff-color-primary-700)]" />
+        <div className="w-16 h-16 rounded-full bg-[#FAF5F2] flex items-center justify-center mb-4">
+          <Sparkles className="w-8 h-8 text-[#A8513A]" />
         </div>
-        <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+        <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
           Geen items meer
         </h3>
-        <p className="text-sm text-[var(--color-muted)]">
+        <p className="text-sm text-[#8A8A8A]">
           Je hebt alle items bekeken!
         </p>
       </div>
@@ -316,7 +316,7 @@ export function HorizontalSwipeListItem({
   };
 
   return (
-    <div className="relative overflow-hidden bg-[var(--color-surface)] rounded-xl">
+    <div className="relative overflow-hidden bg-[#FFFFFF] rounded-xl">
       {/* Left action background */}
       <motion.div
         className="absolute left-0 top-0 bottom-0 w-20 flex items-center justify-end pr-4"
@@ -340,7 +340,7 @@ export function HorizontalSwipeListItem({
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
         style={{ x }}
-        className="relative bg-[var(--color-surface)]"
+        className="relative bg-[#FFFFFF]"
       >
         {children}
       </motion.div>

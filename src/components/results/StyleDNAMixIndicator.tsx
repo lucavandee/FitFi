@@ -14,10 +14,10 @@ interface StyleDNAMixIndicatorProps {
 }
 
 const BAR_COLORS = [
-  'var(--ff-color-primary-700)',
-  'var(--ff-color-primary-500)',
-  'var(--ff-color-primary-400)',
-  'var(--ff-color-primary-300)',
+  '#A8513A',
+  '#C2654A',
+  '#D4856E',
+  '#D4856E',
 ];
 
 export function StyleDNAMixIndicator({ mixItems, confidence, className = "" }: StyleDNAMixIndicatorProps) {
@@ -30,10 +30,10 @@ export function StyleDNAMixIndicator({ mixItems, confidence, className = "" }: S
     confidence >= 0.5  ? 'Gemiddeld' : 'Veelzijdig';
 
   return (
-    <div className={`bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden ${className}`} style={{ boxShadow: 'var(--shadow-soft)' }}>
-      <div className="px-5 sm:px-6 py-4 border-b border-[var(--color-border)]">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-0.5">Stijl DNA</p>
-        <h3 className="text-sm font-semibold text-[var(--color-text)]">Samenstelling</h3>
+    <div className={`bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] overflow-hidden ${className}`} style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
+      <div className="px-5 sm:px-6 py-4 border-b border-[#E5E5E5]">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-0.5">Stijl DNA</p>
+        <h3 className="text-sm font-semibold text-[#1A1A1A]">Samenstelling</h3>
       </div>
 
       <div className="p-5 sm:p-6">
@@ -57,27 +57,27 @@ export function StyleDNAMixIndicator({ mixItems, confidence, className = "" }: S
         </div>
 
         {/* Legend */}
-        <div className="divide-y divide-[var(--color-border)]">
+        <div className="divide-y divide-[#E5E5E5]">
           {sorted.map((item, i) => {
             const archetype = ARCHETYPES[item.archetype];
             return (
               <div key={item.archetype} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
                 <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: BAR_COLORS[i] }} aria-hidden="true" />
-                <span className="text-sm text-[var(--color-text)] flex-1">{getArchetypeDisplayNL(archetype.label)}</span>
-                <span className="text-sm font-semibold text-[var(--ff-color-primary-700)] tabular-nums">{Math.round(item.percentage)}%</span>
+                <span className="text-sm text-[#1A1A1A] flex-1">{getArchetypeDisplayNL(archetype.label)}</span>
+                <span className="text-sm font-semibold text-[#A8513A] tabular-nums">{Math.round(item.percentage)}%</span>
               </div>
             );
           })}
         </div>
 
         {/* Confidence footer */}
-        <div className="mt-4 pt-4 border-t border-[var(--color-border)] flex items-center justify-between">
+        <div className="mt-4 pt-4 border-t border-[#E5E5E5] flex items-center justify-between">
           <div>
-            <p className="text-xs text-[var(--color-muted)]">Profiel betrouwbaarheid</p>
-            <p className="text-xs font-semibold text-[var(--color-text)] mt-0.5">{confidenceLabel}</p>
+            <p className="text-xs text-[#8A8A8A]">Profiel betrouwbaarheid</p>
+            <p className="text-xs font-semibold text-[#1A1A1A] mt-0.5">{confidenceLabel}</p>
           </div>
           <div className="text-right">
-            <p className="text-lg font-bold text-[var(--ff-color-primary-700)] tabular-nums">{Math.round(confidence * 100)}%</p>
+            <p className="text-lg font-bold text-[#A8513A] tabular-nums">{Math.round(confidence * 100)}%</p>
           </div>
         </div>
       </div>

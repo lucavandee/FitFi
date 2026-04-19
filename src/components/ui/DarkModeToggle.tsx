@@ -34,8 +34,8 @@ export default function DarkModeToggle() {
       onClick={toggle}
       aria-pressed={dark}
       aria-label="Wissel kleurmodus"
-      className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]"
-      style={{ boxShadow: "var(--shadow-ring)" }}
+      className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-[#E5E5E5] bg-[#FFFFFF]"
+      style={{ boxShadow: "0 0 0 3px rgba(194,101,74,0.2)" }}
     >
       {dark ? <Sun className="h-5 w-5" aria-hidden="true" /> : <Moon className="h-5 w-5" aria-hidden="true" />}
     </button>

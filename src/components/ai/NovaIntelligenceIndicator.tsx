@@ -67,18 +67,18 @@ export function NovaIntelligenceIndicator({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="mb-4 p-4 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] dark:from-[var(--ff-color-primary-900)]/20 dark:to-[var(--ff-color-accent-900)]/20 rounded-xl border border-[var(--ff-color-primary-200)] dark:border-[var(--ff-color-primary-800)]"
+      className="mb-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/20 dark:to-[#5A2010]/20 rounded-xl border border-[#F4E8E3] dark:border-[#8A3D28]"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center">
           <Brain className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-sm font-bold text-[var(--color-text)]">
+          <h3 className="text-sm font-bold text-[#1A1A1A]">
             Nova Intelligence Active
           </h3>
-          <p className="text-xs text-[var(--color-text-muted)]">
+          <p className="text-xs text-[#8A8A8A]">
             {activeCount} data bron{activeCount !== 1 ? "nen" : ""} geladen
           </p>
         </div>
@@ -88,8 +88,8 @@ export function NovaIntelligenceIndicator({
               key={i}
               className={`w-1.5 h-1.5 rounded-full transition-all ${
                 i < activeCount
-                  ? "bg-[var(--ff-color-primary-600)]"
-                  : "bg-[var(--color-border)]"
+                  ? "bg-[#C2654A]"
+                  : "bg-[#E5E5E5]"
               }`}
             />
           ))}
@@ -111,7 +111,7 @@ export function NovaIntelligenceIndicator({
                 ${
                   indicator.active
                     ? `${indicator.bgColor} ${indicator.color}`
-                    : "bg-[var(--color-bg)] text-[var(--color-text-muted)] opacity-50"
+                    : "bg-[#FAFAF8] text-[#8A8A8A] opacity-50"
                 }
               `}
             >
@@ -139,9 +139,9 @@ export function NovaIntelligenceIndicator({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-3 pt-3 border-t border-[var(--ff-color-primary-200)] dark:border-[var(--ff-color-primary-800)]"
+        className="mt-3 pt-3 border-t border-[#F4E8E3] dark:border-[#8A3D28]"
       >
-        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+        <p className="text-xs text-[#8A8A8A] leading-relaxed">
           Nova gebruikt deze data om je nog beter te helpen. Hoe meer je interacteert, hoe slimmer de adviezen worden.
         </p>
       </motion.div>

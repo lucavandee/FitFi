@@ -42,14 +42,14 @@ export function ProductSectionHeader({
       <div className={twMerge("flex flex-col gap-1", align === "center" ? "items-center" : "")}>
         <Heading
           className={twMerge(
-            "font-semibold leading-tight text-[var(--color-text)]",
+            "font-semibold leading-tight text-[#1A1A1A]",
             titleSizeClasses[size]
           )}
         >
           {title}
         </Heading>
         {subtitle && (
-          <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-prose">
+          <p className="text-sm text-[#8A8A8A] leading-relaxed max-w-prose">
             {subtitle}
           </p>
         )}

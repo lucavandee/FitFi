@@ -11,7 +11,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const Block: React.FC<{ className?: string }> = ({ className = "" }) =>
-  <div aria-hidden className={`animate-pulse rounded-[var(--radius-lg)] bg-[color-mix(in_oklab,_var(--color-surface)_60%,_var(--color-border))] ${className}`} />;
+  <div aria-hidden className={`animate-pulse rounded-2xl bg-[color-mix(in_oklab,_white_60%,_#E5E5E5)] ${className}`} />;
 
 interface ResultsSkeletonProps {
   /** Number of outfit cards to show */
@@ -20,9 +20,9 @@ interface ResultsSkeletonProps {
 
 export function ResultsSkeleton({ outfitCount = 6 }: ResultsSkeletonProps) {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[#FAFAF8]">
       {/* Hero Skeleton - Matches actual hero dimensions */}
-      <div className="ff-container py-12 sm:py-16 md:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
         <div className="text-center mb-12">
           {/* Badge */}
           <div className="inline-flex items-center justify-center mb-6">
@@ -60,8 +60,8 @@ export function ResultsSkeleton({ outfitCount = 6 }: ResultsSkeletonProps) {
       </div>
 
       {/* Profile Section */}
-      <div className="bg-[var(--color-surface)] border-y border-[var(--color-border)] py-12 sm:py-16">
-        <div className="ff-container">
+      <div className="bg-white border-y border-[#E5E5E5] py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
             {/* Archetype */}
             <div className="space-y-6">
@@ -97,7 +97,7 @@ export function ResultsSkeleton({ outfitCount = 6 }: ResultsSkeletonProps) {
       </div>
 
       {/* Outfit Grid */}
-      <div className="ff-container py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="mb-8">
           <Block className="h-10 w-64 mb-6" />
           <div className="flex items-center justify-between mb-6">
@@ -126,7 +126,7 @@ function OutfitCardSkeleton({ delay = 0 }: { delay?: number }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, delay }}
-      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden shadow-sm"
+      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-sm"
     >
       {/* Image - 4:5 aspect ratio */}
       <Block className="aspect-[4/5]" />

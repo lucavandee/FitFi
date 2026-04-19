@@ -71,13 +71,13 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
   return (
     <nav
       aria-label="Breadcrumb"
-      className={`ff-container py-4 ${className}`}
+      className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 ${className}`}
     >
       <ol className="flex items-center flex-wrap gap-2 text-sm">
         <li>
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-[var(--color-text)]/70 hover:text-[var(--color-text)] transition-colors rounded-lg px-2 py-1 hover:bg-[var(--color-surface)]"
+            className="inline-flex items-center gap-1.5 text-[#1A1A1A]/70 hover:text-[#1A1A1A] transition-colors rounded-lg px-2 py-1 hover:bg-[#FFFFFF]"
             aria-label="Home"
           >
             <Home className="h-4 w-4" aria-hidden />
@@ -91,12 +91,12 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
           return (
             <React.Fragment key={crumb.path}>
               <li aria-hidden="true">
-                <ChevronRight className="h-4 w-4 text-[var(--color-text)]/40" />
+                <ChevronRight className="h-4 w-4 text-[#1A1A1A]/40" />
               </li>
               <li>
                 {isLast ? (
                   <span
-                    className="text-[var(--color-text)] font-medium px-2 py-1"
+                    className="text-[#1A1A1A] font-medium px-2 py-1"
                     aria-current="page"
                   >
                     {crumb.label}
@@ -104,7 +104,7 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
                 ) : (
                   <Link
                     to={crumb.path}
-                    className="text-[var(--color-text)]/70 hover:text-[var(--color-text)] transition-colors rounded-lg px-2 py-1 hover:bg-[var(--color-surface)]"
+                    className="text-[#1A1A1A]/70 hover:text-[#1A1A1A] transition-colors rounded-lg px-2 py-1 hover:bg-[#FFFFFF]"
                   >
                     {crumb.label}
                   </Link>

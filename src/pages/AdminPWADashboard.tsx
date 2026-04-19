@@ -204,10 +204,10 @@ export default function AdminPWADashboard() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+          <p className="text-[#1A1A1A]">Admin verificatie...</p>
         </div>
       </div>
     );
@@ -215,15 +215,15 @@ export default function AdminPWADashboard() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
         <div className="max-w-2xl text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[var(--ff-color-primary-100)] flex items-center justify-center">
-            <XCircle className="w-10 h-10 text-[var(--ff-color-primary-600)]" />
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#FAF5F2] flex items-center justify-center">
+            <XCircle className="w-10 h-10 text-[#C2654A]" />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-3">
+          <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">
             Geen toegang
           </h1>
-          <p className="text-[var(--color-muted)] mb-6">
+          <p className="text-[#8A8A8A] mb-6">
             Je hebt geen admin rechten om deze pagina te bekijken.
           </p>
 
@@ -236,8 +236,8 @@ export default function AdminPWADashboard() {
             </div>
           )}
 
-          <div className="bg-[var(--ff-color-primary-50)] border border-[var(--color-border)] rounded-lg p-4 text-left text-sm text-[var(--color-muted)] mb-6">
-            <p className="font-medium text-[var(--color-text)] mb-2">Voor developers:</p>
+          <div className="bg-[#FAF5F2] border border-[#E5E5E5] rounded-lg p-4 text-left text-sm text-[#8A8A8A] mb-6">
+            <p className="font-medium text-[#1A1A1A] mb-2">Voor developers:</p>
             <p className="mb-2">Je bent ingelogd als: <strong>{user?.email || 'onbekend'}</strong></p>
             <p className="mb-2">Voer dit SQL script uit in Supabase SQL Editor:</p>
             <pre className="mt-2 p-2 bg-white/50 rounded text-xs overflow-x-auto">
@@ -251,7 +251,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           </div>
           <a
             href="/"
-            className="ff-btn ff-btn-primary inline-flex items-center gap-2"
+            className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
           >
             Terug naar home
           </a>
@@ -262,13 +262,13 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] p-6">
+      <div className="min-h-screen bg-[#FAFAF8] p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-10 bg-[var(--ff-color-primary-100)] rounded w-1/3" />
+            <div className="h-10 bg-[#FAF5F2] rounded w-1/3" />
             <div className="grid gap-6 md:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-32 bg-[var(--ff-color-primary-100)] rounded-xl" />
+                <div key={i} className="h-32 bg-[#FAF5F2] rounded-xl" />
               ))}
             </div>
           </div>
@@ -278,18 +278,18 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] p-6">
+    <div className="min-h-screen bg-[#FAFAF8] p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--color-text)]">PWA Dashboard</h1>
-            <p className="text-[var(--color-muted)] mt-1">
+            <h1 className="text-3xl font-bold text-[#1A1A1A]">PWA Dashboard</h1>
+            <p className="text-[#8A8A8A] mt-1">
               Monitor push notifications en app installaties
             </p>
           </div>
           <button
             onClick={loadStats}
-            className="ff-btn ff-btn-secondary flex items-center gap-2"
+            className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl flex items-center gap-2"
           >
             <Activity className="w-4 h-4" />
             Ververs
@@ -328,11 +328,11 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] p-6"
+          className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <BarChart3 className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-            <h2 className="text-xl font-heading text-[var(--color-text)]">
+            <BarChart3 className="w-6 h-6 text-[#C2654A]" />
+            <h2 className="text-xl font-heading text-[#1A1A1A]">
               Performance per Categorie
             </h2>
           </div>
@@ -343,26 +343,26 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
               return (
                 <div
                   key={type}
-                  className="p-4 rounded-lg bg-[var(--ff-color-primary-50)] border border-[var(--color-border)]"
+                  className="p-4 rounded-lg bg-[#FAF5F2] border border-[#E5E5E5]"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-[var(--color-text)] capitalize">
+                    <span className="font-medium text-[#1A1A1A] capitalize">
                       {type.replace(/_/g, ' ')}
                     </span>
-                    <span className="text-sm text-[var(--color-muted)]">
+                    <span className="text-sm text-[#8A8A8A]">
                       {data.sent} verzonden
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <div className="h-2 bg-[var(--color-border)] rounded-full overflow-hidden">
+                      <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]"
+                          className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
                           style={{ width: `${clickRate}%` }}
                         />
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-[var(--ff-color-primary-700)]">
+                    <span className="text-sm font-medium text-[#A8513A]">
                       {clickRate.toFixed(1)}%
                     </span>
                   </div>
@@ -377,37 +377,37 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] p-6"
+          className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <Send className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
-            <h2 className="text-xl font-heading text-[var(--color-text)]">
+            <Send className="w-6 h-6 text-[#C2654A]" />
+            <h2 className="text-xl font-heading text-[#1A1A1A]">
               Test Notificatie Versturen
             </h2>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                 Titel
               </label>
               <input
                 type="text"
                 value={notification.title}
                 onChange={(e) => setNotification({ ...notification, title: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]"
+                className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 placeholder="Nieuwe outfit suggestie!"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                 Bericht
               </label>
               <textarea
                 value={notification.body}
                 onChange={(e) => setNotification({ ...notification, body: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]"
+                className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 rows={3}
                 placeholder="We hebben 3 nieuwe outfits gevonden die bij je stijl passen."
               />
@@ -415,13 +415,13 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                   Type
                 </label>
                 <select
                   value={notification.type}
                   onChange={(e) => setNotification({ ...notification, type: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]"
+                  className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 >
                   <option value="outfit_suggestions">Outfit Suggestions</option>
                   <option value="style_tips">Style Tips</option>
@@ -432,14 +432,14 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                   URL
                 </label>
                 <input
                   type="text"
                   value={notification.url}
                   onChange={(e) => setNotification({ ...notification, url: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-500)]"
+                  className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                   placeholder="/dashboard"
                 />
               </div>
@@ -448,7 +448,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
             <button
               onClick={handleSendTestNotification}
               disabled={sendLoading}
-              className="ff-btn ff-btn-primary w-full flex items-center justify-center gap-2"
+              className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl w-full flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
               {sendLoading ? 'Bezig...' : 'Verstuur Test Notificatie'}
@@ -461,29 +461,29 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] overflow-hidden"
+          className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] overflow-hidden"
         >
-          <div className="p-6 border-b border-[var(--color-border)]">
-            <h2 className="text-xl font-heading text-[var(--color-text)]">
+          <div className="p-6 border-b border-[#E5E5E5]">
+            <h2 className="text-xl font-heading text-[#1A1A1A]">
               Recente Notificaties
             </h2>
           </div>
 
-          <div className="divide-y divide-[var(--color-border)]">
+          <div className="divide-y divide-[#E5E5E5]">
             {recentNotifications.map((log) => (
-              <div key={log.id} className="p-4 hover:bg-[var(--ff-color-primary-50)] transition-colors">
+              <div key={log.id} className="p-4 hover:bg-[#FAF5F2] transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-medium text-[var(--color-text)]">{log.title}</h3>
+                      <h3 className="font-medium text-[#1A1A1A]">{log.title}</h3>
                       {log.clicked ? (
                         <CheckCircle className="w-4 h-4 text-green-600" />
                       ) : (
-                        <XCircle className="w-4 h-4 text-[var(--color-muted)]" />
+                        <XCircle className="w-4 h-4 text-[#8A8A8A]" />
                       )}
                     </div>
-                    <p className="text-sm text-[var(--color-muted)] mb-2">{log.body}</p>
-                    <div className="flex items-center gap-4 text-xs text-[var(--color-muted)]">
+                    <p className="text-sm text-[#8A8A8A] mb-2">{log.body}</p>
+                    <div className="flex items-center gap-4 text-xs text-[#8A8A8A]">
                       <span className="capitalize">{log.notification_type.replace(/_/g, ' ')}</span>
                       <span>{new Date(log.sent_at).toLocaleString('nl-NL')}</span>
                       {log.clicked && log.clicked_at && (
@@ -498,7 +498,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
             ))}
 
             {recentNotifications.length === 0 && (
-              <div className="p-8 text-center text-[var(--color-muted)]">
+              <div className="p-8 text-center text-[#8A8A8A]">
                 Nog geen notificaties verzonden
               </div>
             )}
@@ -518,8 +518,8 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
   const colorClasses = {
-    primary: 'from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)]',
-    accent: 'from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-700)]',
+    primary: 'from-[#C2654A] to-[#A8513A]',
+    accent: 'from-[#C2654A] to-[#A8513A]',
   };
 
   return (
@@ -527,15 +527,15 @@ function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -4 }}
-      className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] p-6"
+      className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6"
     >
       <div className="flex items-start justify-between mb-4">
         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center`}>
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
-      <div className="text-3xl font-bold text-[var(--color-text)] mb-1">{value}</div>
-      <div className="text-sm text-[var(--color-muted)]">{label}</div>
+      <div className="text-3xl font-bold text-[#1A1A1A] mb-1">{value}</div>
+      <div className="text-sm text-[#8A8A8A]">{label}</div>
     </motion.div>
   );
 }

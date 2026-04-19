@@ -55,7 +55,7 @@ const ResultsPremium: React.FC = () => {
   ];
 
   return (
-    <main className="ff-results ff-container">
+    <main className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <section className="res-hero">
         <p className="eyebrow">Onze aanbeveling</p>
         <h1 className="res-hero__title">
@@ -67,8 +67,8 @@ const ResultsPremium: React.FC = () => {
         </p>
 
         <div className="res-hero__cta">
-          <button className="ff-btn ff-btn-primary">Shop deze look</button>
-          <button className="ff-btn ff-btn-ghost">Nieuwe analyse</button>
+          <button className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">Shop deze look</button>
+          <button className="bg-transparent border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">Nieuwe analyse</button>
         </div>
 
         <ul className="chips" aria-label="USP's">
@@ -206,7 +206,7 @@ const ResultsPremium: React.FC = () => {
         <div className="results__footer-content">
           <h2>Meer stijladvies nodig?</h2>
           <p>Ontdek onze AI-stylist Nova voor persoonlijke styling tips en outfit inspiratie.</p>
-          <button className="ff-btn ff-btn-primary">Probeer Nova gratis</button>
+          <button className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">Probeer Nova gratis</button>
         </div>
       </footer>
     </main>

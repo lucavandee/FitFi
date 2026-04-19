@@ -31,14 +31,14 @@ export default function QuestionCard<T extends string>({
   return (
     <div
       className={[
-        "rounded-2xl sm:rounded-[var(--radius-2xl)] border border-[var(--color-border)]",
-        "bg-[var(--color-surface)] shadow-[var(--shadow-soft)]",
+        "rounded-2xl sm:rounded-2xl border border-[#E5E5E5]",
+        "bg-[#FFFFFF] shadow-sm",
         "pt-6 sm:pt-7 pb-5 sm:pb-6 px-4 sm:px-5 lg:px-6",
       ].join(" ")}
       aria-labelledby={`${name}-title`}
     >
       <h2 id={`${name}-title`} className="text-base sm:text-lg font-semibold break-words">{title}</h2>
-      {help ? <p className="mt-1 text-sm text-[var(--color-text)]/70 break-words">{help}</p> : null}
+      {help ? <p className="mt-1 text-sm text-[#1A1A1A]/70 break-words">{help}</p> : null}
 
       <div className="mt-5 sm:mt-4 grid gap-3 sm:gap-3 sm:grid-cols-2">
         {choices.map((c) => (
@@ -48,10 +48,10 @@ export default function QuestionCard<T extends string>({
             aria-pressed={isActive(c.value)}
             onClick={() => toggle(c.value)}
             className={[
-              "text-left rounded-xl sm:rounded-[var(--radius-xl)] border px-4 py-3.5 min-h-[56px] sm:min-h-[52px] transition-all",
+              "text-left rounded-xl sm:rounded-2xl border px-4 py-3.5 min-h-[56px] sm:min-h-[52px] transition-all",
               isActive(c.value)
-                ? "border-[var(--ff-color-primary-600)] bg-[color-mix(in oklab,var(--ff-color-primary-700) 8%,transparent)] shadow-md"
-                : "border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--ff-color-primary-400)] hover:shadow-sm active:scale-[0.98]",
+                ? "border-[#C2654A] bg-[color-mix(in oklab,#A8513A 8%,transparent)] shadow-md"
+                : "border-[#E5E5E5] bg-[#FAFAF8] hover:border-[#D4856E] hover:shadow-sm active:scale-[0.98]",
             ].join(" ")}
           >
             <div className="text-sm sm:text-base font-medium break-words">{c.label}</div>

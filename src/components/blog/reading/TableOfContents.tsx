@@ -59,7 +59,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   return (
     <nav
       className={`
-        bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] p-6
+        bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-2xl p-6
         ${isSticky ? 'md:sticky md:top-24' : ''}
       `}
     >
@@ -68,14 +68,14 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-controls="toc-list"
-        className="md:hidden w-full flex items-center justify-between text-[var(--color-text)] font-bold mb-4"
+        className="md:hidden w-full flex items-center justify-between text-[#1A1A1A] font-bold mb-4"
       >
         <span>Inhoud</span>
         {isOpen ? <ChevronUp className="w-5 h-5" aria-hidden="true" /> : <ChevronDown className="w-5 h-5" aria-hidden="true" />}
       </button>
 
       {/* Desktop title */}
-      <p className="hidden md:block text-[var(--color-text)] font-bold mb-4">
+      <p className="hidden md:block text-[#1A1A1A] font-bold mb-4">
         In dit artikel
       </p>
 
@@ -88,8 +88,8 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
               className={`
                 w-full text-left px-3 py-2 rounded-lg transition-colors text-sm leading-snug
                 ${activeId === item.id
-                  ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] font-medium'
-                  : 'text-[var(--color-muted)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--color-text)]'
+                  ? 'bg-[#FAF5F2] text-[#A8513A] font-medium'
+                  : 'text-[#8A8A8A] hover:bg-[#FAF5F2] hover:text-[#1A1A1A]'
                 }
                 ${item.level === 3 ? 'pl-6' : ''}
               `}

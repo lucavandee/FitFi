@@ -40,36 +40,36 @@ export default function AccessibilityTestPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <div className="min-h-screen bg-[var(--color-bg)] py-12">
-        <div className="ff-container max-w-4xl">
+      <div className="min-h-screen bg-[#FAFAF8] py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
             <a
               href="/dashboard"
-              className="inline-flex items-center gap-2 text-[var(--color-muted)] hover:text-[var(--color-text)] mb-4 ff-focus"
+              className="inline-flex items-center gap-2 text-[#8A8A8A] hover:text-[#1A1A1A] mb-4 focus-visible:outline-2 focus-visible:outline-[#C2654A]"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar Dashboard
             </a>
 
-            <h1 className="ff-h1 mb-3">Accessibility Test</h1>
-            <p className="ff-body-lg text-[var(--color-muted)]">
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight text-[#1A1A1A] mb-3">Accessibility Test</h1>
+            <p className="text-lg font-normal leading-relaxed text-[#8A8A8A]">
               WCAG 2.1 Level AA Compliance Demo
             </p>
           </div>
 
           {/* Test Instructions */}
-          <div className="ff-card mb-8 p-6 border-l-4 border-[var(--ff-focus-ring-color)]">
-            <h2 className="ff-h3 mb-3">Test Instructions</h2>
-            <ol className="space-y-2 ff-body">
+          <div className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6 border-l-4 border-[#C2654A]">
+            <h2 className="text-xl md:text-2xl font-semibold text-[#1A1A1A] mb-3">Test Instructions</h2>
+            <ol className="space-y-2 text-base font-normal leading-relaxed text-[#4A4A4A]">
               <li>
-                <strong>1. Keyboard Test:</strong> Press <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Tab</kbd> repeatedly to navigate through all elements
+                <strong>1. Keyboard Test:</strong> Press <kbd className="px-2 py-1 bg-[#E5E5E5] rounded">Tab</kbd> repeatedly to navigate through all elements
               </li>
               <li>
                 <strong>2. Focus Visibility:</strong> Verify every element shows a clear blue focus ring
               </li>
               <li>
-                <strong>3. Activation:</strong> Press <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Enter</kbd> or <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Space</kbd> on focused elements
+                <strong>3. Activation:</strong> Press <kbd className="px-2 py-1 bg-[#E5E5E5] rounded">Enter</kbd> or <kbd className="px-2 py-1 bg-[#E5E5E5] rounded">Space</kbd> on focused elements
               </li>
               <li>
                 <strong>4. Contrast:</strong> Check all text is clearly readable
@@ -78,23 +78,23 @@ export default function AccessibilityTestPage() {
           </div>
 
           {/* 1. Focus State Examples */}
-          <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">1. Focus States (WCAG 2.4.7)</h2>
+          <section className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6">
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A] mb-6">1. Focus States (WCAG 2.4.7)</h2>
 
             <div className="space-y-6">
               {/* Standard Focus */}
               <div>
-                <h3 className="ff-h4 mb-3">Standard Focus (Light Backgrounds)</h3>
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3">Standard Focus (Light Backgrounds)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`ff-btn ff-btn--primary`}
+                    className={`bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl`}
                     onClick={() => addResult('Primary button clicked')}
                   >
                     Primary Button
                   </button>
 
                   <button
-                    className={`ff-btn ff-btn--secondary`}
+                    className={`bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`}
                     onClick={() => addResult('Secondary button clicked')}
                   >
                     Secondary Button
@@ -114,40 +114,40 @@ export default function AccessibilityTestPage() {
                   <div
                     role="button"
                     tabIndex={0}
-                    className={`px-4 py-2 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl cursor-pointer ${FOCUS_CLASSES.standard}`}
+                    className={`px-4 py-2 bg-white border-2 border-[#E5E5E5] rounded-xl cursor-pointer ${FOCUS_CLASSES.standard}`}
                     onClick={() => addResult('Custom div button clicked')}
                     onKeyDown={makeKeyboardClickable(() => addResult('Custom div button activated via keyboard'))}
                   >
                     Custom Div Button
                   </div>
                 </div>
-                <p className="text-sm text-[var(--color-muted)] mt-2">
+                <p className="text-sm text-[#8A8A8A] mt-2">
                   ✅ Focus ring: <strong>3px solid blue (#2563EB)</strong> — 8.2:1 contrast ratio
                 </p>
               </div>
 
               {/* Brand Focus */}
               <div>
-                <h3 className="ff-h4 mb-3">Brand Focus (Optional)</h3>
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3">Brand Focus (Optional)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl ${FOCUS_CLASSES.brand}`}
+                    className={`px-6 py-3 bg-[#A8513A] text-white rounded-xl ${FOCUS_CLASSES.brand}`}
                     onClick={() => addResult('Brand focus button clicked')}
                   >
                     Brand Color Focus
                   </button>
                 </div>
-                <p className="text-sm text-[var(--color-muted)] mt-2">
+                <p className="text-sm text-[#8A8A8A] mt-2">
                   ⚠️ Brand focus: <strong>3px solid brown (#7A614A)</strong> — Only use on light backgrounds
                 </p>
               </div>
 
               {/* Dark Background Focus */}
-              <div className="bg-[var(--ff-color-neutral-900)] p-6 rounded-2xl">
-                <h3 className="ff-h4 mb-3 text-white">Dark Background Focus</h3>
+              <div className="bg-[#1A1A1A] p-6 rounded-2xl">
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3 text-white">Dark Background Focus</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`ff-btn ff-btn--ghost`}
+                    className={`bg-transparent border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`}
                     onClick={() => addResult('Ghost button clicked')}
                   >
                     Ghost Button
@@ -171,16 +171,16 @@ export default function AccessibilityTestPage() {
 
               {/* Strong Focus */}
               <div>
-                <h3 className="ff-h4 mb-3">Strong Focus (Critical CTAs)</h3>
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3">Strong Focus (Critical CTAs)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`ff-btn ff-btn--primary ${FOCUS_CLASSES.strong}`}
+                    className={`bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl ${FOCUS_CLASSES.strong}`}
                     onClick={() => addResult('Strong focus CTA clicked')}
                   >
                     Critical Action
                   </button>
                 </div>
-                <p className="text-sm text-[var(--color-muted)] mt-2">
+                <p className="text-sm text-[#8A8A8A] mt-2">
                   ✅ Focus ring: <strong>4px solid blue</strong> — Extra visible for important actions
                 </p>
               </div>
@@ -188,8 +188,8 @@ export default function AccessibilityTestPage() {
           </section>
 
           {/* 2. Form Focus States */}
-          <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">2. Form Focus States (WCAG 2.4.7)</h2>
+          <section className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6">
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A] mb-6">2. Form Focus States (WCAG 2.4.7)</h2>
 
             <form
               className="space-y-4"
@@ -200,41 +200,41 @@ export default function AccessibilityTestPage() {
             >
               {/* Text Input */}
               <div>
-                <label htmlFor="test-email" className="block ff-body font-semibold mb-2">
+                <label htmlFor="test-email" className="block text-base font-normal leading-relaxed text-[#4A4A4A] font-semibold mb-2">
                   Email Address
                 </label>
                 <input
                   id="test-email"
                   type="email"
-                  className={`w-full px-4 py-3 border-2 border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] text-[var(--color-text)] transition-all outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]`}
+                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#C2654A] focus-visible:ring-2 focus-visible:ring-[#C2654A]/20`}
                   placeholder="naam@voorbeeld.nl"
                 />
-                <p className="text-sm text-[var(--color-muted)] mt-1">
+                <p className="text-sm text-[#8A8A8A] mt-1">
                   ✅ Focus: Blue border + subtle shadow
                 </p>
               </div>
 
               {/* Textarea */}
               <div>
-                <label htmlFor="test-message" className="block ff-body font-semibold mb-2">
+                <label htmlFor="test-message" className="block text-base font-normal leading-relaxed text-[#4A4A4A] font-semibold mb-2">
                   Message
                 </label>
                 <textarea
                   id="test-message"
                   rows={4}
-                  className={`w-full px-4 py-3 border-2 border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] text-[var(--color-text)] transition-all outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]`}
+                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#C2654A] focus-visible:ring-2 focus-visible:ring-[#C2654A]/20`}
                   placeholder="Type your message..."
                 />
               </div>
 
               {/* Select */}
               <div>
-                <label htmlFor="test-select" className="block ff-body font-semibold mb-2">
+                <label htmlFor="test-select" className="block text-base font-normal leading-relaxed text-[#4A4A4A] font-semibold mb-2">
                   Select Option
                 </label>
                 <select
                   id="test-select"
-                  className={`w-full px-4 py-3 border-2 border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] text-[var(--color-text)] transition-all outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]`}
+                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#C2654A] focus-visible:ring-2 focus-visible:ring-[#C2654A]/20`}
                 >
                   <option>Option 1</option>
                   <option>Option 2</option>
@@ -247,23 +247,23 @@ export default function AccessibilityTestPage() {
                 <input
                   id="test-checkbox"
                   type="checkbox"
-                  className={`mt-1 w-5 h-5 border-2 border-[var(--color-border)] rounded transition-all outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:ring-2 focus-visible:ring-[var(--ff-focus-ring-color)]`}
+                  className={`mt-1 w-5 h-5 border-2 border-[#E5E5E5] rounded transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-2 focus-visible:ring-[#C2654A]`}
                 />
-                <label htmlFor="test-checkbox" className="ff-body">
+                <label htmlFor="test-checkbox" className="text-base font-normal leading-relaxed text-[#4A4A4A]">
                   I agree to the terms and conditions
                 </label>
               </div>
 
               {/* Submit */}
-              <button type="submit" className="ff-btn ff-btn--primary">
+              <button type="submit" className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">
                 Submit Form
               </button>
             </form>
           </section>
 
           {/* 3. Contrast Ratios */}
-          <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">3. Color Contrast (WCAG 1.4.3)</h2>
+          <section className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6">
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A] mb-6">3. Color Contrast (WCAG 1.4.3)</h2>
 
             <div className="space-y-4">
               {[
@@ -275,23 +275,23 @@ export default function AccessibilityTestPage() {
               ].map(({ fg, bg, label, type }) => {
                 const result = checkWCAGCompliance(fg, bg, type);
                 return (
-                  <div key={label} className="flex items-center justify-between p-4 bg-[var(--ff-color-neutral-50)] rounded-xl">
+                  <div key={label} className="flex items-center justify-between p-4 bg-[#FAFAF8] rounded-xl">
                     <div className="flex items-center gap-4">
                       <div className="flex gap-2">
                         <div
-                          className="w-12 h-12 rounded border-2 border-[var(--color-border)]"
+                          className="w-12 h-12 rounded border-2 border-[#E5E5E5]"
                           style={{ backgroundColor: fg }}
                           aria-label={`Foreground color: ${fg}`}
                         />
                         <div
-                          className="w-12 h-12 rounded border-2 border-[var(--color-border)]"
+                          className="w-12 h-12 rounded border-2 border-[#E5E5E5]"
                           style={{ backgroundColor: bg }}
                           aria-label={`Background color: ${bg}`}
                         />
                       </div>
                       <div>
                         <p className="font-semibold">{label}</p>
-                        <p className="text-sm text-[var(--color-muted)]">
+                        <p className="text-sm text-[#8A8A8A]">
                           {fg} on {bg}
                         </p>
                       </div>
@@ -330,12 +330,12 @@ export default function AccessibilityTestPage() {
           </section>
 
           {/* 4. Keyboard Navigation */}
-          <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">4. Keyboard Navigation (WCAG 2.1.1)</h2>
+          <section className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6">
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A] mb-6">4. Keyboard Navigation (WCAG 2.1.1)</h2>
 
             <div className="space-y-4">
               <div>
-                <h3 className="ff-h4 mb-3">Arrow Key Navigation</h3>
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3">Arrow Key Navigation</h3>
                 <div
                   role="listbox"
                   aria-label="Test listbox"
@@ -351,7 +351,7 @@ export default function AccessibilityTestPage() {
                       role="option"
                       tabIndex={0}
                       aria-selected={false}
-                      className={`px-4 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl cursor-pointer ${FOCUS_CLASSES.standard}`}
+                      className={`px-4 py-3 bg-white border-2 border-[#E5E5E5] rounded-xl cursor-pointer ${FOCUS_CLASSES.standard}`}
                       onClick={() => addResult(`Selected: ${option}`)}
                       onKeyDown={makeKeyboardClickable(() => addResult(`Keyboard selected: ${option}`))}
                     >
@@ -359,7 +359,7 @@ export default function AccessibilityTestPage() {
                     </div>
                   ))}
                 </div>
-                <p className="text-sm text-[var(--color-muted)] mt-2">
+                <p className="text-sm text-[#8A8A8A] mt-2">
                   ✅ Try: Tab to focus, Arrow keys to navigate, Enter to select
                 </p>
               </div>
@@ -367,12 +367,12 @@ export default function AccessibilityTestPage() {
           </section>
 
           {/* 5. Screen Reader Test */}
-          <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">5. Screen Reader Test (WCAG 4.1.2)</h2>
+          <section className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6">
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A] mb-6">5. Screen Reader Test (WCAG 4.1.2)</h2>
 
             <div className="space-y-4">
               <button
-                className="ff-btn ff-btn--secondary"
+                className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl"
                 onClick={() => {
                   announceToScreenReader('This message is announced to screen readers!');
                   addResult('Screen reader announcement triggered');
@@ -382,7 +382,7 @@ export default function AccessibilityTestPage() {
                 Test Screen Reader Announcement
               </button>
 
-              <div className="p-4 bg-[var(--ff-color-warning-50)] border-l-4 border-[var(--color-warning)] rounded">
+              <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
                 <p className="text-sm">
                   <AlertCircle className="inline w-4 h-4 mr-2" />
                   <strong>Test with real screen reader:</strong> Enable VoiceOver (Mac), NVDA (Windows), or TalkBack (Android) to test announcements.
@@ -393,8 +393,8 @@ export default function AccessibilityTestPage() {
 
           {/* Test Results Log */}
           {testResults.length > 0 && (
-            <section className="ff-card p-6">
-              <h2 className="ff-h2 mb-4">Test Results Log</h2>
+            <section className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
+              <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A] mb-4">Test Results Log</h2>
               <div
                 role="log"
                 aria-live="polite"
@@ -404,7 +404,7 @@ export default function AccessibilityTestPage() {
                 {testResults.map((result, i) => (
                   <div
                     key={i}
-                    className="px-3 py-2 bg-[var(--ff-color-neutral-100)] rounded text-sm"
+                    className="px-3 py-2 bg-[#F5F0EB] rounded text-sm"
                   >
                     <Check className="inline w-4 h-4 text-green-600 mr-2" />
                     {result}
@@ -412,7 +412,7 @@ export default function AccessibilityTestPage() {
                 ))}
               </div>
               <button
-                className="ff-btn ff-btn--secondary mt-4"
+                className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl mt-4"
                 onClick={() => setTestResults([])}
               >
                 Clear Log
@@ -421,8 +421,8 @@ export default function AccessibilityTestPage() {
           )}
 
           {/* Summary */}
-          <div className="ff-card p-6 bg-green-50 border-2 border-green-500">
-            <h2 className="ff-h2 mb-3 text-green-900">WCAG 2.1 AA Compliance ✅</h2>
+          <div className="bg-green-50 border-2 border-green-500 rounded-2xl p-6">
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-green-900 mb-3">WCAG 2.1 AA Compliance ✅</h2>
             <div className="space-y-2 text-sm">
               <p className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />

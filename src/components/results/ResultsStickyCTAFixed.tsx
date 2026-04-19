@@ -53,13 +53,13 @@ export function ResultsStickyCTAFixed({
           aria-label="Hoofd acties"
         >
           {/* Mobile-optimized sticky CTA bar */}
-          <div className="bg-[var(--color-surface)]/95 backdrop-blur-lg border-t-2 border-[var(--color-border)] shadow-2xl">
+          <div className="bg-white/95 backdrop-blur-lg border-t-2 border-[#E5E5E5] shadow-2xl">
             <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
               <div className="flex items-center gap-3">
                 {/* ✅ PRIMARY CTA - The main goal (shop) */}
                 <button
                   onClick={onShopClick}
-                  className="ff-btn ff-btn--primary ff-btn--lg flex-1 sm:flex-initial sm:min-w-[280px]"
+                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl flex-1 sm:flex-initial sm:min-w-[280px]"
                   aria-label={`Shop je favoriete items uit ${savedCount} opgeslagen outfits`}
                 >
                   <ShoppingBag className="w-5 h-5" aria-hidden="true" />
@@ -74,12 +74,12 @@ export function ResultsStickyCTAFixed({
                 {/* Saved Count Badge (info only, not a CTA) */}
                 {savedCount > 0 && (
                   <div
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-danger-50)] rounded-xl border-2 border-[var(--ff-color-danger-200)]"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#FEF2F2] rounded-xl border-2 border-[#FECACA]"
                     role="status"
                     aria-live="polite"
                   >
-                    <Heart className="w-5 h-5 text-[var(--ff-color-danger-600)] fill-[var(--ff-color-danger-600)]" aria-hidden="true" />
-                    <span className="text-sm font-semibold text-[var(--ff-color-danger-900,var(--color-text))]">
+                    <Heart className="w-5 h-5 text-[#C24A4A] fill-[#C24A4A]" aria-hidden="true" />
+                    <span className="text-sm font-semibold text-[#7F1D1D]">
                       {savedCount} opgeslagen
                     </span>
                   </div>
@@ -89,9 +89,9 @@ export function ResultsStickyCTAFixed({
           </div>
 
           {/* Helper Text (desktop only) */}
-          <div className="hidden sm:block bg-[var(--ff-color-primary-50)] border-t border-[var(--ff-color-primary-100)]">
+          <div className="hidden sm:block bg-[#FAF5F2] border-t border-[#FAF5F2]">
             <div className="max-w-7xl mx-auto px-4 py-2">
-              <p className="text-xs text-[var(--color-muted)] text-center">
+              <p className="text-xs text-[#8A8A8A] text-center">
                 Tip: Bewaar je favoriete outfits met het hart-icoon op elke outfit card
               </p>
             </div>

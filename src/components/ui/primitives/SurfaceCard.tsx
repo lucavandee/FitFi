@@ -25,10 +25,10 @@ export function SurfaceCard({
   ...props
 }: SurfaceCardProps) {
   const base =
-    "bg-[var(--color-surface)] " +
+    "bg-[#FFFFFF] " +
     "rounded-2xl " +
-    "border border-[var(--color-border)] " +
-    "shadow-[var(--shadow-soft)]";
+    "border border-[#E5E5E5] " +
+    "shadow-sm";
 
   const hoverClasses = hover
     ? "transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"

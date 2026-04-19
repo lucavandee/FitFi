@@ -21,8 +21,8 @@ const faqs = [
 
 const PricingFaqTeaser: React.FC = () => {
   return (
-    <section className="ff-section bg-[var(--color-bg)]">
-      <div className="ff-container">
+    <section className="py-16 md:py-24 bg-[#FAFAF8]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="section-header">
           <p className="kicker">FAQ</p>
           <h2 className="section-title">Veelgestelde vragen</h2>
@@ -30,9 +30,9 @@ const PricingFaqTeaser: React.FC = () => {
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {faqs.map((f) => (
-            <details key={f.q} className="ff-card">
-              <summary className="ff-card__title">{f.q}</summary>
-              <div className="ff-card__body">{f.a}</div>
+            <details key={f.q} className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
+              <summary className="text-xl font-semibold text-[#1A1A1A] mb-4">{f.q}</summary>
+              <div className="text-base text-[#4A4A4A]">{f.a}</div>
             </details>
           ))}
         </div>

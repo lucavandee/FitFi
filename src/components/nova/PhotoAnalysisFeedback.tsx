@@ -28,15 +28,15 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4"
+        className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-4"
       >
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-[var(--ff-color-primary-700)] uppercase tracking-wide">
+              <span className="text-xs font-bold text-[#A8513A] uppercase tracking-wide">
                 Nova Analyse
               </span>
               <div
@@ -45,7 +45,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                 {analysis.match_score}%
               </div>
             </div>
-            <p className="text-sm text-[var(--color-text)] leading-relaxed">{analysis.feedback}</p>
+            <p className="text-sm text-[#1A1A1A] leading-relaxed">{analysis.feedback}</p>
           </div>
         </div>
       </motion.div>
@@ -56,18 +56,18 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[var(--color-surface)] border-2 border-[var(--ff-color-primary-200)] dark:border-[var(--ff-color-primary-800)] rounded-2xl overflow-hidden shadow-lg"
+      className="bg-[#FFFFFF] border-2 border-[#F4E8E3] dark:border-[#8A3D28] rounded-2xl overflow-hidden shadow-lg"
     >
       {/* Header with Score */}
-      <div className="bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] dark:from-[var(--ff-color-primary-900)]/30 dark:to-[var(--ff-color-accent-900)]/30 p-6 border-b border-[var(--color-border)]">
+      <div className="bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/30 dark:to-[#5A2010]/30 p-6 border-b border-[#E5E5E5]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[var(--color-text)]">Nova Analyse</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">
+              <h3 className="text-lg font-bold text-[#1A1A1A]">Nova Analyse</h3>
+              <p className="text-sm text-[#8A8A8A]">
                 {new Date(analysis.created_at).toLocaleDateString("nl-NL")}
               </p>
             </div>
@@ -80,7 +80,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
             >
               {analysis.match_score}
             </div>
-            <div className="text-xs text-[var(--color-text-muted)] mt-1">Match Score</div>
+            <div className="text-xs text-[#8A8A8A] mt-1">Match Score</div>
           </div>
         </div>
       </div>
@@ -88,18 +88,18 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       {/* Feedback */}
       <div className="p-6 space-y-6">
         <div>
-          <h4 className="text-sm font-bold text-[var(--color-text)] mb-2 flex items-center gap-2">
-            <Check className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+          <h4 className="text-sm font-bold text-[#1A1A1A] mb-2 flex items-center gap-2">
+            <Check className="w-4 h-4 text-[#A8513A]" />
             Nova's Feedback
           </h4>
-          <p className="text-base text-[var(--color-text)] leading-relaxed">{analysis.feedback}</p>
+          <p className="text-base text-[#1A1A1A] leading-relaxed">{analysis.feedback}</p>
         </div>
 
         {/* Detected Items */}
         {analysis.detected_items && analysis.detected_items.length > 0 && (
           <div>
-            <h4 className="text-sm font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+            <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#A8513A]" />
               Gedetecteerde Items
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -109,7 +109,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.05 }}
-                  className="px-3 py-1.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text)]"
+                  className="px-3 py-1.5 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm text-[#1A1A1A]"
                 >
                   {item}
                 </motion.span>
@@ -121,8 +121,8 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         {/* Detected Colors */}
         {analysis.detected_colors && analysis.detected_colors.length > 0 && (
           <div>
-            <h4 className="text-sm font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <Palette className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+            <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
+              <Palette className="w-4 h-4 text-[#A8513A]" />
               Gedetecteerde Kleuren
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -132,7 +132,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.05 }}
-                  className="px-3 py-1.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text)] capitalize"
+                  className="px-3 py-1.5 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm text-[#1A1A1A] capitalize"
                 >
                   {color}
                 </motion.span>
@@ -144,8 +144,8 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         {/* Suggestions */}
         {analysis.suggestions && analysis.suggestions.length > 0 && (
           <div>
-            <h4 className="text-sm font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+            <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-[#A8513A]" />
               Verbeterpunten
             </h4>
             <div className="space-y-3">
@@ -155,12 +155,12 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="flex items-start gap-3 bg-[var(--ff-color-primary-50)] dark:bg-[var(--ff-color-primary-900)]/20 border border-[var(--ff-color-primary-200)] dark:border-[var(--ff-color-primary-800)] rounded-lg p-3"
+                  className="flex items-start gap-3 bg-[#FAF5F2] dark:bg-[#5A2010]/20 border border-[#F4E8E3] dark:border-[#8A3D28] rounded-lg p-3"
                 >
-                  <div className="flex-shrink-0 w-6 h-6 bg-[var(--ff-color-primary-600)] text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#C2654A] text-white rounded-full flex items-center justify-center text-xs font-bold">
                     {i + 1}
                   </div>
-                  <p className="text-sm text-[var(--color-text)] leading-relaxed flex-1">
+                  <p className="text-sm text-[#1A1A1A] leading-relaxed flex-1">
                     {suggestion}
                   </p>
                 </motion.div>
@@ -171,7 +171,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       </div>
 
       {/* Bottom Accent */}
-      <div className="h-1 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]" />
+      <div className="h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A]" />
     </motion.div>
   );
 }

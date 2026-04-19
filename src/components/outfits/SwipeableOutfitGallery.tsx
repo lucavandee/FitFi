@@ -61,11 +61,11 @@ export function SwipeableOutfitGallery({
     return (
       <div className={`text-center py-12 ${className}`}>
         <div className="max-w-md mx-auto">
-          <Heart className="w-16 h-16 mx-auto mb-4 text-[var(--ff-color-primary-600)]" />
-          <h3 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-2">
+          <Heart className="w-16 h-16 mx-auto mb-4 text-[#C2654A]" />
+          <h3 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-2">
             Je hebt alle outfits gezien!
           </h3>
-          <p className="text-[var(--color-muted)]">
+          <p className="text-[#8A8A8A]">
             Je hebt {likedOutfits.size} outfit{likedOutfits.size !== 1 ? 's' : ''} opgeslagen.
           </p>
         </div>
@@ -77,17 +77,17 @@ export function SwipeableOutfitGallery({
     <div className={`relative ${className}`}>
       {/* Instructies voor mobile */}
       <div className="md:hidden text-center mb-4 px-4">
-        <p className="text-sm text-[var(--color-muted)]">
+        <p className="text-sm text-[#8A8A8A]">
           👈 Swipe links om over te slaan • Swipe rechts om op te slaan 👉
         </p>
       </div>
 
       {/* Progress indicator */}
       <div className="flex items-center justify-between mb-4 px-4">
-        <span className="text-sm font-medium text-[var(--color-text)]">
+        <span className="text-sm font-medium text-[#1A1A1A]">
           {currentIndex + 1} / {outfits.length}
         </span>
-        <span className="text-sm text-[var(--color-muted)]">
+        <span className="text-sm text-[#8A8A8A]">
           {likedOutfits.size} opgeslagen
         </span>
       </div>
@@ -111,7 +111,7 @@ export function SwipeableOutfitGallery({
         <button
           onClick={moveToPrev}
           disabled={currentIndex === 0}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[#FFFFFF] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Vorige outfit"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -120,7 +120,7 @@ export function SwipeableOutfitGallery({
 
         <button
           onClick={() => handleSwipeLeft()}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[#FFFFFF] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200"
           aria-label="Sla over"
         >
           Sla over
@@ -128,7 +128,7 @@ export function SwipeableOutfitGallery({
 
         <button
           onClick={() => handleSwipeRight()}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-base hover:bg-[var(--ff-color-primary-600)] transition-colors duration-200"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[#A8513A] text-white rounded-xl font-semibold text-base hover:bg-[#C2654A] transition-colors duration-200"
           aria-label="Bewaar outfit"
         >
           <Heart className="w-5 h-5" />
@@ -138,7 +138,7 @@ export function SwipeableOutfitGallery({
         <button
           onClick={moveToNext}
           disabled={currentIndex === outfits.length - 1}
-          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-6 py-3 min-h-[48px] bg-[#FFFFFF] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Volgende outfit"
         >
           Volgende
@@ -150,7 +150,7 @@ export function SwipeableOutfitGallery({
       <div className="md:hidden flex items-center justify-center gap-3 mt-6 px-4">
         <button
           onClick={() => handleSwipeLeft()}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[var(--color-surface)] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[#FFFFFF] border border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-medium text-base hover:border-[#C2654A] transition-colors duration-200"
           aria-label="Sla over"
         >
           Sla over
@@ -158,7 +158,7 @@ export function SwipeableOutfitGallery({
 
         <button
           onClick={() => handleSwipeRight()}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold shadow-lg active:scale-[0.98]"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[#A8513A] text-white rounded-xl font-semibold shadow-lg active:scale-[0.98]"
           aria-label="Bewaar outfit"
         >
           <Heart className="w-5 h-5" />

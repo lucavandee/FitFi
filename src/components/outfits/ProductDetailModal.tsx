@@ -90,14 +90,14 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
       onClick={onClose}
     >
       <div
-        className="bg-[var(--color-surface)] rounded-[var(--radius-lg)] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-[#FFFFFF] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+        <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5]">
           <h2 className="text-xl font-semibold">Product details</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors"
+            className="p-2 rounded-full hover:bg-[#FAFAF8] transition-colors"
             aria-label="Sluiten"
           >
             <X className="w-5 h-5" />
@@ -119,7 +119,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
             <div className="flex flex-col">
               {product.brand && (
-                <p className="text-sm text-[var(--color-text)]/60 mb-2">{product.brand}</p>
+                <p className="text-sm text-[#1A1A1A]/60 mb-2">{product.brand}</p>
               )}
               <h3 className="text-2xl font-bold mb-4">{product.name}</h3>
 
@@ -134,20 +134,20 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
               <div className="space-y-3 mb-6">
                 {product.category && (
-                  <div className="flex justify-between py-2 border-b border-[var(--color-border)]">
-                    <span className="text-[var(--color-text)]/70">Categorie</span>
+                  <div className="flex justify-between py-2 border-b border-[#E5E5E5]">
+                    <span className="text-[#1A1A1A]/70">Categorie</span>
                     <span className="font-medium">{product.category}</span>
                   </div>
                 )}
                 {product.color && (
-                  <div className="flex justify-between py-2 border-b border-[var(--color-border)]">
-                    <span className="text-[var(--color-text)]/70">Kleur</span>
+                  <div className="flex justify-between py-2 border-b border-[#E5E5E5]">
+                    <span className="text-[#1A1A1A]/70">Kleur</span>
                     <span className="font-medium">{product.color}</span>
                   </div>
                 )}
                 {product.retailer && (
-                  <div className="flex justify-between py-2 border-b border-[var(--color-border)]">
-                    <span className="text-[var(--color-text)]/70">Winkel</span>
+                  <div className="flex justify-between py-2 border-b border-[#E5E5E5]">
+                    <span className="text-[#1A1A1A]/70">Winkel</span>
                     <span className="font-medium capitalize">{product.retailer}</span>
                   </div>
                 )}
@@ -189,10 +189,10 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                 )}
 
                 <div className="space-y-2">
-                  <p className="text-xs text-[var(--color-text)]/60 text-center">
+                  <p className="text-xs text-[#1A1A1A]/60 text-center">
                     Je wordt doorgestuurd naar de website van de retailer
                   </p>
-                  <p className="flex items-center justify-center gap-1 text-xs text-[var(--color-text)]/60">
+                  <p className="flex items-center justify-center gap-1 text-xs text-[#1A1A1A]/60">
                     <Info size={12} className="flex-shrink-0" />
                     <span>
                       Affiliate link.{' '}

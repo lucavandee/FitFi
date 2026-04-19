@@ -67,7 +67,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         loading="lazy"
       />
       {isLoading && (
-        <div className="absolute inset-0 bg-[var(--color-surface)] animate-pulse" />
+        <div className="absolute inset-0 bg-[#FFFFFF] animate-pulse" />
       )}
     </div>
   );

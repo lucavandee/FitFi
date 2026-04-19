@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         <meta name="description" content="Privacyverklaring van FitFi. Transparant over hoe we omgaan met je gegevens." />
       </Helmet>
 
-      <main className="min-h-screen bg-[var(--color-bg)]">
+      <main className="min-h-screen bg-[#FAFAF8]">
         <SectionHeader
           eyebrow="PRIVACY"
           title="Privacy in gewoon Nederlands"

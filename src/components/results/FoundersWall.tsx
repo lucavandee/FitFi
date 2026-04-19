@@ -14,14 +14,14 @@ const FoundersWall: React.FC = () => {
   };
 
   return (
-    <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-bg)] p-5 shadow-[var(--shadow-soft)]">
+    <div className="rounded-2xl border border-[#E5E5E5] bg-[#FAFAF8] p-5 shadow-sm">
       <div className="flex items-start gap-3 mb-3">
-        <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-[#C2654A] flex items-center justify-center">
           <Unlock className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h3 className="text-lg font-medium text-[var(--color-text)]">Founders-toegang</h3>
-          <p className="text-[var(--color-text)]/70 text-sm">
+          <h3 className="text-lg font-medium text-[#1A1A1A]">Founders-toegang</h3>
+          <p className="text-[#1A1A1A]/70 text-sm">
             Extra outfits & challenges. Gratis voor vroege gebruikers.
           </p>
         </div>
@@ -46,7 +46,7 @@ const FoundersWall: React.FC = () => {
           placeholder="jij@voorbeeld.nl"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] px-4 py-3 outline-none focus:ring-2 focus:ring-[#C2654A]"
         />
         <Button
           type="submit"
@@ -59,7 +59,7 @@ const FoundersWall: React.FC = () => {
       </form>
 
       {!valid && email.length > 0 ? (
-        <p className="mt-2 text-xs text-[var(--color-text)]/70">Voer een geldig e-mailadres in.</p>
+        <p className="mt-2 text-xs text-[#1A1A1A]/70">Voer een geldig e-mailadres in.</p>
       ) : null}
     </div>
   );

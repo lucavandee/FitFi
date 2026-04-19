@@ -122,19 +122,19 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-[var(--color-surface)] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
+          className="relative bg-[#FFFFFF] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
+          <div className="flex items-center justify-between p-6 border-b border-[#E5E5E5]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
                 <Camera className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[var(--color-text)]">
+                <h2 className="text-lg font-bold text-[#1A1A1A]">
                   Outfit Analyse
                 </h2>
-                <p className="text-sm text-[var(--color-text-muted)]">
+                <p className="text-sm text-[#8A8A8A]">
                   Nova analyseert je outfit
                 </p>
               </div>
@@ -142,7 +142,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
             <button
               onClick={handleClose}
               disabled={isAnalyzing}
-              className="w-8 h-8 rounded-lg hover:bg-[var(--color-bg)] flex items-center justify-center transition-colors disabled:opacity-50"
+              className="w-8 h-8 rounded-lg hover:bg-[#FAFAF8] flex items-center justify-center transition-colors disabled:opacity-50"
             >
               <X className="w-5 h-5" />
             </button>
@@ -154,18 +154,18 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
               // Upload Area
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-[var(--color-border)] rounded-xl p-8 text-center cursor-pointer hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] dark:hover:bg-[var(--ff-color-primary-900)]/10 transition-all"
+                className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-8 text-center cursor-pointer hover:border-[#D4856E] hover:bg-[#FAF5F2] dark:hover:bg-[#5A2010]/10 transition-all"
               >
-                <div className="w-16 h-16 mx-auto mb-4 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#FAF5F2] text-[#A8513A] rounded-full flex items-center justify-center">
                   <Upload className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+                <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                   Upload Outfit Foto
                 </h3>
-                <p className="text-sm text-[var(--color-text-muted)] mb-4">
+                <p className="text-sm text-[#8A8A8A] mb-4">
                   Sleep een foto of klik om te selecteren
                 </p>
-                <p className="text-xs text-[var(--color-text-muted)]">
+                <p className="text-xs text-[#8A8A8A]">
                   PNG, JPG tot 10MB
                 </p>
                 <input
@@ -200,11 +200,11 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
                 </div>
 
                 {/* Info Box */}
-                <div className="bg-[var(--ff-color-primary-50)] dark:bg-[var(--ff-color-primary-900)]/20 border border-[var(--ff-color-primary-200)] dark:border-[var(--ff-color-primary-800)] rounded-xl p-4">
+                <div className="bg-[#FAF5F2] dark:bg-[#5A2010]/20 border border-[#F4E8E3] dark:border-[#8A3D28] rounded-xl p-4">
                   <div className="flex items-start gap-3">
-                    <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
+                    <Sparkles className="w-5 h-5 text-[#A8513A] flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm text-[var(--color-text)] leading-relaxed">
+                      <p className="text-sm text-[#1A1A1A] leading-relaxed">
                         {context ? (
                           <>
                             Nova gaat deze outfit analyseren op basis van jouw{" "}
@@ -225,7 +225,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
                   whileTap={{ scale: isAnalyzing ? 1 : 0.98 }}
                   onClick={handleAnalyze}
                   disabled={isAnalyzing}
-                  className="w-full py-3 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-gradient-to-r from-[#A8513A] to-[#A8513A] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isAnalyzing ? (
                     <>
@@ -244,7 +244,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
           </div>
 
           {/* Bottom Accent */}
-          <div className="h-1 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]" />
+          <div className="h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A]" />
         </motion.div>
       </div>
     </AnimatePresence>

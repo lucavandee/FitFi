@@ -17,11 +17,11 @@ export default function BillingPage() {
         <link rel="canonical" href={canonicalUrl('/account/billing')} />
       </Helmet>
 
-      <div className="ff-container max-w-2xl py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl py-8 sm:py-12">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Terug
@@ -33,11 +33,11 @@ export default function BillingPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <p className="text-sm text-[var(--color-muted)] mb-1">Accountinstellingen</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-2">
+          <p className="text-sm text-[#8A8A8A] mb-1">Accountinstellingen</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight mb-2">
             Abonnement & facturatie
           </h1>
-          <p className="text-sm text-[var(--color-muted)]">
+          <p className="text-sm text-[#8A8A8A]">
             Beheer je abonnement. Bekijk en download je facturen.
             Je kunt altijd opzeggen — zonder gedoe.
           </p>
@@ -60,18 +60,18 @@ export default function BillingPage() {
           transition={{ delay: 0.2 }}
           className="space-y-3"
         >
-          <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-xs text-[var(--color-muted)]">
+          <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-white border border-[#E5E5E5] text-xs text-[#8A8A8A]">
             <Shield className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <p>
-              Betalingen verlopen veilig via <strong className="text-[var(--color-text)]">Stripe</strong>.
+              Betalingen verlopen veilig via <strong className="text-[#1A1A1A]">Stripe</strong>.
               FitFi slaat geen betaalgegevens op. Facturen en betalingen vind je in de Stripe-portal.
             </p>
           </div>
-          <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-xs text-[var(--color-muted)]">
+          <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-white border border-[#E5E5E5] text-xs text-[#8A8A8A]">
             <HelpCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <p>
               Vragen over je abonnement?{' '}
-              <a href="/contact" className="underline text-[var(--ff-color-primary-600)] hover:no-underline">
+              <a href="/contact" className="underline text-[#C2654A] hover:no-underline">
                 Neem contact op
               </a>{' '}
               — we helpen je graag verder.

@@ -159,9 +159,9 @@ export function ResultsFeedbackWidget({
         transition={{ type: 'spring', damping: 20, stiffness: 300 }}
         className={`fixed bottom-4 right-4 z-50 max-w-md w-full mx-4 sm:mx-0 ${className}`}
       >
-        <div className="bg-white rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl border border-[#E5E5E5] overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] px-4 py-3 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#C2654A] to-[#C2654A] px-4 py-3 flex items-center justify-between">
             <h3 className="text-white font-semibold text-sm sm:text-base flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Hoe vind je je Style Report?
@@ -179,33 +179,33 @@ export function ResultsFeedbackWidget({
           <div className="p-4 sm:p-6 space-y-4">
             {state === 'initial' && (
               <>
-                <p className="text-[var(--color-text)] text-sm sm:text-base">
+                <p className="text-[#1A1A1A] text-sm sm:text-base">
                   Herken je jezelf in dit advies?
                 </p>
 
                 <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => handleRating('very_helpful')}
-                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[#F4E8E3] hover:border-[#C2654A] transition-all active:scale-95"
+                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl hover:bg-[#F4E8E3] hover:border-[#C2654A] transition-all active:scale-95"
                   >
                     <ThumbsUp className="w-6 h-6 sm:w-8 sm:h-8 text-[#C2654A]" />
-                    <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">Ja, helemaal!</span>
+                    <span className="text-xs sm:text-sm font-medium text-[#1A1A1A]">Ja, helemaal!</span>
                   </button>
 
                   <button
                     onClick={() => handleRating('helpful')}
-                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-blue-50 hover:border-blue-400 transition-all active:scale-95"
+                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl hover:bg-blue-50 hover:border-blue-400 transition-all active:scale-95"
                   >
                     <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
-                    <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">Grotendeels</span>
+                    <span className="text-xs sm:text-sm font-medium text-[#1A1A1A]">Grotendeels</span>
                   </button>
 
                   <button
                     onClick={() => handleRating('not_helpful')}
-                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl hover:bg-red-50 hover:border-red-400 transition-all active:scale-95"
+                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl hover:bg-red-50 hover:border-red-400 transition-all active:scale-95"
                   >
                     <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
-                    <span className="text-xs sm:text-sm font-medium text-[var(--color-text)]">Niet echt</span>
+                    <span className="text-xs sm:text-sm font-medium text-[#1A1A1A]">Niet echt</span>
                   </button>
                 </div>
               </>
@@ -213,13 +213,13 @@ export function ResultsFeedbackWidget({
 
             {(state === 'positive' || state === 'negative') && (
               <>
-                <div className="flex items-center gap-2 p-3 bg-[var(--ff-color-primary-50)] rounded-lg border border-[var(--ff-color-primary-200)]">
+                <div className="flex items-center gap-2 p-3 bg-[#FAF5F2] rounded-lg border border-[#F4E8E3]">
                   {state === 'positive' ? (
                     <ThumbsUp className="w-5 h-5 text-[#C2654A] flex-shrink-0" />
                   ) : (
                     <ThumbsDown className="w-5 h-5 text-red-600 flex-shrink-0" />
                   )}
-                  <p className="text-sm text-[var(--color-text)]">
+                  <p className="text-sm text-[#1A1A1A]">
                     {state === 'positive'
                       ? 'Fijn om te horen! 🎉'
                       : 'Bedankt voor je feedback. Hoe kunnen we beter worden?'}
@@ -227,7 +227,7 @@ export function ResultsFeedbackWidget({
                 </div>
 
                 <div>
-                  <label htmlFor="feedback-text" className="block text-sm font-medium text-[var(--color-text)] mb-2">
+                  <label htmlFor="feedback-text" className="block text-sm font-medium text-[#1A1A1A] mb-2">
                     Wil je nog iets toevoegen? (optioneel)
                   </label>
                   <textarea
@@ -240,9 +240,9 @@ export function ResultsFeedbackWidget({
                     }
                     rows={3}
                     maxLength={500}
-                    className="w-full px-3 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] focus:border-transparent resize-none text-sm"
+                    className="w-full px-3 py-2 border border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C2654A] focus:border-transparent resize-none text-sm"
                   />
-                  <p className="text-xs text-[var(--color-muted)] mt-1">
+                  <p className="text-xs text-[#8A8A8A] mt-1">
                     {feedbackText.length}/500 tekens
                   </p>
                 </div>
@@ -250,14 +250,14 @@ export function ResultsFeedbackWidget({
                 <div className="flex gap-2">
                   <button
                     onClick={handleDismiss}
-                    className="flex-1 px-4 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:bg-[var(--color-surface)] transition-colors text-sm font-medium"
+                    className="flex-1 px-4 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl hover:bg-[#FFFFFF] transition-colors text-sm font-medium"
                   >
                     Overslaan
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2.5 bg-[var(--ff-color-primary-600)] text-white rounded-xl hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+                    className="flex-1 px-4 py-2.5 bg-[#C2654A] text-white rounded-xl hover:bg-[#A8513A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
                   >
                     {isSubmitting ? (
                       <>
@@ -280,10 +280,10 @@ export function ResultsFeedbackWidget({
                 <div className="w-16 h-16 bg-[#F4E8E3] rounded-full flex items-center justify-center mx-auto mb-3">
                   <ThumbsUp className="w-8 h-8 text-[#C2654A]" />
                 </div>
-                <h4 className="text-lg font-semibold text-[var(--color-text)] mb-1">
+                <h4 className="text-lg font-semibold text-[#1A1A1A] mb-1">
                   Bedankt!
                 </h4>
-                <p className="text-sm text-[var(--color-muted)]">
+                <p className="text-sm text-[#8A8A8A]">
                   Je feedback helpt ons om FitFi nog beter te maken.
                 </p>
               </div>

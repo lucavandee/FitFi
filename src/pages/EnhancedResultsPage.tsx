@@ -758,7 +758,7 @@ export default function EnhancedResultsPage() {
 
       {hasCompletedQuiz && activeColorProfile && (
         <section className="py-8 sm:py-10">
-          <div className="ff-container">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <StyleIdentityHero
                 primaryArchetype={archetypeKey}
@@ -956,7 +956,7 @@ export default function EnhancedResultsPage() {
 
       {color && (
         <section className="py-8 sm:py-10">
-          <div className="ff-container">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto space-y-6">
 
               {/* Section header */}
@@ -1366,7 +1366,7 @@ export default function EnhancedResultsPage() {
           transition={{ duration: 0.2 }}
         >
         <section id="outfits-section" className="pt-10 sm:pt-12 pb-8">
-          <div className="ff-container">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <AnimatedSection>
               <div className="max-w-5xl mx-auto">
 

@@ -20,49 +20,49 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Klassiek',
     description: 'Tijdloze elegantie en verfijnde stukken',
     emoji: '👔',
-    color: 'var(--ff-color-primary-600)'
+    color: '#C2654A'
   },
   'casual_chic': {
     label: 'Smart Casual',
     description: 'Relaxed maar verzorgd en gepolijst',
     emoji: '✨',
-    color: 'var(--ff-color-accent-600)'
+    color: '#C2654A'
   },
   'urban': {
     label: 'Urban/Streetwear',
     description: 'Moderne, expressieve streetstyle',
     emoji: '🎨',
-    color: 'var(--ff-color-primary-500)'
+    color: '#C2654A'
   },
   'sportief': {
     label: 'Athletic',
     description: 'Sportief, functioneel en comfortabel',
     emoji: '⚡',
-    color: 'var(--ff-color-accent-700)'
+    color: '#A8513A'
   },
   'minimalistisch': {
     label: 'Minimalistisch',
     description: 'Clean lijnen en neutrale elegantie',
     emoji: '◼️',
-    color: 'var(--color-text)'
+    color: '#1A1A1A'
   },
   'luxury': {
     label: 'Luxury',
     description: 'Premium kwaliteit en verfijning',
     emoji: '💎',
-    color: 'var(--ff-color-primary-700)'
+    color: '#A8513A'
   },
   'streetstyle': {
     label: 'Streetstyle',
     description: 'Bold, urban en vol karakter',
     emoji: '🔥',
-    color: 'var(--ff-color-accent-600)'
+    color: '#C2654A'
   },
   'retro': {
     label: 'Retro',
     description: 'Vintage-geïnspireerde stijl',
     emoji: '🕰️',
-    color: 'var(--ff-color-primary-500)'
+    color: '#C2654A'
   }
 };
 
@@ -139,62 +139,62 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
         <div className="sm:hidden">
           <button
             onClick={() => setCollapsed(c => !c)}
-            className="w-full flex items-center justify-between gap-3 px-3 py-2.5 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl text-left"
+            className="w-full flex items-center justify-between gap-3 px-3 py-2.5 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl text-left"
             aria-expanded={!collapsed}
           >
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-lg flex-shrink-0">{config.emoji}</span>
               <div className="min-w-0">
-                <span className="text-xs text-[var(--color-muted)]">Jouw stijlprofiel</span>
-                <p className="text-sm font-bold text-[var(--color-text)] truncate">{config.label} · {confidence}%</p>
+                <span className="text-xs text-[#8A8A8A]">Jouw stijlprofiel</span>
+                <p className="text-sm font-bold text-[#1A1A1A] truncate">{config.label} · {confidence}%</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-[var(--color-muted)] flex-shrink-0 transition-transform duration-200 ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
+            <ChevronDown className={`w-4 h-4 text-[#8A8A8A] flex-shrink-0 transition-transform duration-200 ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
           </button>
           {!collapsed && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-1 p-3 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border border-[var(--ff-color-primary-200)] rounded-xl overflow-hidden"
+              className="mt-1 p-3 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl overflow-hidden"
             >
-              <p className="text-sm text-[var(--color-muted)] mb-2">{config.description}</p>
+              <p className="text-sm text-[#8A8A8A] mb-2">{config.description}</p>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 px-2 py-1 bg-white rounded-md shadow-sm">
                   <TrendingUp className="w-3 h-3 text-green-600" />
                   <span className="text-xs font-semibold">{confidence}% match</span>
                 </div>
                 <div className="flex-1 h-1.5 bg-white/60 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full" style={{ width: `${progress}%` }} />
+                  <div className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full" style={{ width: `${progress}%` }} />
                 </div>
-                <span className="text-xs text-[var(--color-muted)]">{progress}%</span>
+                <span className="text-xs text-[#8A8A8A]">{progress}%</span>
               </div>
             </motion.div>
           )}
         </div>
 
         {/* Desktop: full card */}
-        <div className="hidden sm:block bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl p-4 sm:p-6 shadow-lg overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-20"></div>
+        <div className="hidden sm:block bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#F4E8E3] rounded-2xl p-4 sm:p-6 shadow-lg overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[#F4E8E3] rounded-full blur-3xl opacity-20"></div>
           <div className="relative flex items-start gap-4">
             <div className="flex-shrink-0 w-14 h-14 bg-white rounded-xl shadow-md flex items-center justify-center text-3xl">
               {config.emoji}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="w-4 h-4 text-[var(--ff-color-accent-600)] flex-shrink-0" />
-                <span className="text-sm font-medium text-[var(--color-muted)]">Jouw stijlprofiel</span>
+                <Sparkles className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+                <span className="text-sm font-medium text-[#8A8A8A]">Jouw stijlprofiel</span>
               </div>
-              <h3 className="text-xl font-bold text-[var(--color-text)] mb-1">{config.label}</h3>
-              <p className="text-sm text-[var(--color-muted)] mb-3">{config.description}</p>
+              <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">{config.label}</h3>
+              <p className="text-sm text-[#8A8A8A] mb-3">{config.description}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
                   <TrendingUp className="w-3.5 h-3.5 text-green-600" />
-                  <span className="text-xs font-semibold text-[var(--color-text)]">{confidence}% match</span>
+                  <span className="text-xs font-semibold text-[#1A1A1A]">{confidence}% match</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
-                  <Award className="w-3.5 h-3.5 text-[var(--ff-color-accent-600)]" />
-                  <span className="text-xs font-semibold text-[var(--color-text)]">{progress}% compleet</span>
+                  <Award className="w-3.5 h-3.5 text-[#C2654A]" />
+                  <span className="text-xs font-semibold text-[#1A1A1A]">{progress}% compleet</span>
                 </div>
               </div>
               <div className="mt-3 h-1.5 bg-white/50 rounded-full overflow-hidden">
@@ -202,13 +202,13 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full"
+                  className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full"
                 />
               </div>
             </div>
           </div>
-          <div className="mt-3 pt-3 border-t border-[var(--ff-color-primary-200)]">
-            <p className="text-xs text-[var(--color-muted)] text-center">
+          <div className="mt-3 pt-3 border-t border-[#F4E8E3]">
+            <p className="text-xs text-[#8A8A8A] text-center">
               Dit profiel past zich aan terwijl je verder gaat met de quiz
             </p>
           </div>

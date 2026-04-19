@@ -33,7 +33,7 @@ export default function ConversationControls({ hasHistory, onClear, onRefresh }:
   if (!hasHistory) return null;
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--color-border)]">
+    <div className="flex items-center gap-2 px-4 py-2 border-b border-[#E5E5E5]">
       <div className="flex items-center gap-1.5 text-sm text-gray-600">
         <History className="w-4 h-4" />
         <span>Gesprek wordt opgeslagen</span>
@@ -41,7 +41,7 @@ export default function ConversationControls({ hasHistory, onClear, onRefresh }:
       <div className="flex-1" />
       <button
         onClick={handleClear}
-        className="flex items-center gap-1.5 px-2 py-1 text-sm text-gray-600 hover:text-[var(--color-text)] transition-colors"
+        className="flex items-center gap-1.5 px-2 py-1 text-sm text-gray-600 hover:text-[#1A1A1A] transition-colors"
         title="Gesprek wissen"
       >
         <Trash2 className="w-4 h-4" />

@@ -35,12 +35,12 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
       className="flex flex-col items-center justify-center gap-4"
     >
       <div
-        className={`${spinnerSizes[size]} border-[var(--color-border)] border-t-[var(--ff-color-primary-600)] rounded-full animate-spin`}
+        className={`${spinnerSizes[size]} border-[#E5E5E5] border-t-[#C2654A] rounded-full animate-spin`}
         aria-hidden="true"
       />
       <div className="text-center space-y-1">
-        <p className={`${textSizes[size]} text-[var(--color-text)] font-medium`}>{message}</p>
-        {hint && <p className="text-sm text-[var(--color-muted)]">{hint}</p>}
+        <p className={`${textSizes[size]} text-[#1A1A1A] font-medium`}>{message}</p>
+        {hint && <p className="text-sm text-[#8A8A8A]">{hint}</p>}
       </div>
     </div>
   );
@@ -48,7 +48,7 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   if (fullScreen) {
     return (
       <div
-        className={`fixed inset-0 bg-[var(--color-bg)]/90 backdrop-blur-sm flex items-center justify-center z-50 ${className}`}
+        className={`fixed inset-0 bg-[#FAFAF8]/90 backdrop-blur-sm flex items-center justify-center z-50 ${className}`}
       >
         {content}
       </div>

@@ -89,16 +89,16 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
         >
           <div className="relative">
             {/* Speech bubble tail */}
-            <div className="absolute -bottom-2 right-8 w-4 h-4 bg-[var(--color-surface)] transform rotate-45 border-r border-b border-[var(--color-border)]" />
+            <div className="absolute -bottom-2 right-8 w-4 h-4 bg-[#FFFFFF] transform rotate-45 border-r border-b border-[#E5E5E5]" />
 
             {/* Bubble content */}
-            <div className="relative bg-[var(--color-surface)] rounded-2xl shadow-2xl border border-[var(--color-border)] p-4">
+            <div className="relative bg-[#FFFFFF] rounded-2xl shadow-2xl border border-[#E5E5E5] p-4">
               <button
                 onClick={handleDismiss}
-                className="absolute top-2 right-2 p-1 rounded-full hover:bg-[var(--color-bg)] transition-colors"
+                className="absolute top-2 right-2 p-1 rounded-full hover:bg-[#FAFAF8] transition-colors"
                 aria-label="Dismiss"
               >
-                <X className="w-4 h-4 text-[var(--color-text-secondary)]" />
+                <X className="w-4 h-4 text-[#8A8A8A]" />
               </button>
 
               <div className="flex items-start gap-3 pr-6">
@@ -112,19 +112,19 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
                     repeat: Infinity,
                     repeatDelay: 3
                   }}
-                  className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center"
+                  className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center"
                 >
                   <Sparkles className="w-5 h-5 text-white" />
                 </motion.div>
 
                 <div className="flex-1 pt-1">
-                  <p className="text-sm text-[var(--color-text)] leading-relaxed mb-3">
+                  <p className="text-sm text-[#1A1A1A] leading-relaxed mb-3">
                     {message}
                   </p>
 
                   <button
                     onClick={handleInteract}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--ff-color-primary-600)] text-white text-sm font-medium rounded-xl hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#C2654A] text-white text-sm font-medium rounded-xl hover:bg-[#A8513A] transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Chat met Nova

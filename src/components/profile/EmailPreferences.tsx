@@ -118,10 +118,10 @@ export function EmailPreferences() {
         {[1, 2, 3, 4].map(i => (
           <div key={i} className="flex items-center justify-between py-2">
             <div className="space-y-1.5">
-              <div className="h-3.5 w-28 bg-[var(--color-border)] rounded animate-pulse" />
-              <div className="h-2.5 w-44 bg-[var(--color-border)] rounded animate-pulse opacity-60" />
+              <div className="h-3.5 w-28 bg-[#E5E5E5] rounded animate-pulse" />
+              <div className="h-2.5 w-44 bg-[#E5E5E5] rounded animate-pulse opacity-60" />
             </div>
-            <div className="h-6 w-10 bg-[var(--color-border)] rounded-full animate-pulse" />
+            <div className="h-6 w-10 bg-[#E5E5E5] rounded-full animate-pulse" />
           </div>
         ))}
       </div>
@@ -132,24 +132,24 @@ export function EmailPreferences() {
 
   return (
     <div>
-      <div className="px-5 pt-4 pb-2 border-b border-[var(--color-border)]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+      <div className="px-5 pt-4 pb-2 border-b border-[#E5E5E5]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8A8A8A]">
           E-mailvoorkeuren
         </p>
-        <p className="text-xs text-[var(--color-muted)] mt-0.5">
+        <p className="text-xs text-[#8A8A8A] mt-0.5">
           Kies welke emails je wilt ontvangen
         </p>
       </div>
 
-      <div className="divide-y divide-[var(--color-border)]">
+      <div className="divide-y divide-[#E5E5E5]">
         {PREFERENCE_ROWS.map(({ key, label, description }) => (
           <div
             key={key}
-            className="flex items-center justify-between px-5 py-3 min-h-[44px] hover:bg-[var(--color-bg)] transition-colors"
+            className="flex items-center justify-between px-5 py-3 min-h-[44px] hover:bg-[#FAFAF8] transition-colors"
           >
             <div className="min-w-0 pr-4">
-              <p className="text-sm font-medium text-[var(--color-text)] leading-snug">{label}</p>
-              <p className="text-xs text-[var(--color-muted)] mt-0.5 leading-snug">{description}</p>
+              <p className="text-sm font-medium text-[#1A1A1A] leading-snug">{label}</p>
+              <p className="text-xs text-[#8A8A8A] mt-0.5 leading-snug">{description}</p>
             </div>
             <button
               role="switch"
@@ -159,7 +159,7 @@ export function EmailPreferences() {
               onClick={() => updatePreference(key, !preferences[key])}
               className={[
                 'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
                 preferences[key] ? 'bg-[#C2654A]' : 'bg-[#E5E5E5]',
                 savingKey === key ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
               ].join(' ')}
@@ -173,8 +173,8 @@ export function EmailPreferences() {
         ))}
       </div>
 
-      <div className="px-5 py-3 border-t border-[var(--color-border)]">
-        <p className="text-[11px] text-[var(--color-muted)] leading-relaxed">
+      <div className="px-5 py-3 border-t border-[#E5E5E5]">
+        <p className="text-[11px] text-[#8A8A8A] leading-relaxed">
           Account- en transactie-emails ontvang je altijd.
         </p>
       </div>

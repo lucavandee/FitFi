@@ -288,28 +288,28 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-[var(--color-surface)] rounded-2xl w-full max-h-[92vh] overflow-hidden flex flex-col"
+        className="bg-[#FFFFFF] rounded-2xl w-full max-h-[92vh] overflow-hidden flex flex-col"
         style={{ maxWidth: phase === 'review' ? '56rem' : '32rem' }}
       >
-        <div className="p-5 border-b border-[var(--color-border)] flex justify-between items-center shrink-0">
+        <div className="p-5 border-b border-[#E5E5E5] flex justify-between items-center shrink-0">
           <div className="flex items-center gap-3">
             {phase === 'review' && (
               <button
                 onClick={() => setPhase('select')}
-                className="p-1.5 rounded-lg hover:bg-[var(--color-bg)] transition-colors"
+                className="p-1.5 rounded-lg hover:bg-[#FAFAF8] transition-colors"
               >
-                <ArrowLeft className="w-4 h-4 text-[var(--color-muted)]" />
+                <ArrowLeft className="w-4 h-4 text-[#8A8A8A]" />
               </button>
             )}
-            <h2 className="text-lg font-bold text-[var(--color-text)]">
+            <h2 className="text-lg font-bold text-[#1A1A1A]">
               {phase === 'select' && 'Nieuwe Mood Photo'}
               {phase === 'analyzing' && 'AI Analyse...'}
               {phase === 'review' && 'Review Metadata'}
               {phase === 'saving' && 'Opslaan...'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors">
-            <X className="w-5 h-5 text-[var(--color-muted)]" />
+          <button onClick={onClose} className="p-2 hover:bg-[#FAFAF8] rounded-lg transition-colors">
+            <X className="w-5 h-5 text-[#8A8A8A]" />
           </button>
         </div>
 
@@ -326,17 +326,17 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 className="p-6 space-y-5"
               >
                 <label className="block cursor-pointer">
-                  <div className="border-2 border-dashed border-[var(--color-border)] rounded-xl p-6 text-center hover:border-[var(--ff-color-primary-500)] transition-colors">
+                  <div className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-6 text-center hover:border-[#C2654A] transition-colors">
                     {previewUrl ? (
                       <div className="space-y-3">
                         <img src={previewUrl} alt="Preview" className="w-full max-h-80 object-contain rounded-lg mx-auto" />
-                        <p className="text-sm text-[var(--color-muted)]">Klik om te wijzigen</p>
+                        <p className="text-sm text-[#8A8A8A]">Klik om te wijzigen</p>
                       </div>
                     ) : (
                       <>
-                        <Upload className="w-10 h-10 mx-auto mb-3 text-[var(--color-muted)]" />
-                        <p className="font-medium text-[var(--color-text)] mb-1">Sleep of klik om foto te uploaden</p>
-                        <p className="text-sm text-[var(--color-muted)]">JPEG, PNG of WebP (max 10MB)</p>
+                        <Upload className="w-10 h-10 mx-auto mb-3 text-[#8A8A8A]" />
+                        <p className="font-medium text-[#1A1A1A] mb-1">Sleep of klik om foto te uploaden</p>
+                        <p className="text-sm text-[#8A8A8A]">JPEG, PNG of WebP (max 10MB)</p>
                       </>
                     )}
                   </div>
@@ -345,24 +345,24 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Gender</label>
+                    <label className="block text-sm font-medium text-[#1A1A1A] mb-1.5">Gender</label>
                     <select
                       value={gender}
                       onChange={(e) => setGender(e.target.value as 'male' | 'female')}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-sm"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] text-sm"
                     >
                       <option value="female">Female</option>
                       <option value="male">Male</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Volgorde</label>
+                    <label className="block text-sm font-medium text-[#1A1A1A] mb-1.5">Volgorde</label>
                     <input
                       type="number"
                       value={displayOrder}
                       onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 1)}
                       min="1"
-                      className="w-full px-3 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-sm"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] text-sm"
                     />
                   </div>
                 </div>
@@ -371,7 +371,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                   onClick={analyzeWithAI}
                   disabled={!selectedFile}
                   className="w-full py-3.5 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2.5 disabled:opacity-40"
-                  style={{ background: 'var(--ff-color-primary-700)' }}
+                  style={{ background: '#A8513A' }}
                 >
                   <Sparkles className="w-5 h-5" />
                   Analyseer met AI
@@ -416,7 +416,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 <div className="grid lg:grid-cols-[280px_1fr] gap-6">
                   {/* Left: Image + Confidence */}
                   <div className="space-y-4">
-                    <div className="rounded-xl overflow-hidden border border-[var(--color-border)]">
+                    <div className="rounded-xl overflow-hidden border border-[#E5E5E5]">
                       {previewUrl && (
                         <img src={previewUrl} alt="Preview" className="w-full aspect-[3/4] object-cover" />
                       )}
@@ -426,22 +426,22 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                       <div
                         className="px-3 py-1.5 rounded-full text-xs font-semibold"
                         style={{
-                          background: aiConfidence >= 0.8 ? 'var(--ff-color-success-600)' : aiConfidence >= 0.6 ? '#D97706' : 'var(--ff-color-danger-500)',
+                          background: aiConfidence >= 0.8 ? '#3D8B5E' : aiConfidence >= 0.6 ? '#D97706' : '#C24A4A',
                           color: 'white'
                         }}
                       >
                         {Math.round(aiConfidence * 100)}% confidence
                       </div>
-                      <span className="text-xs text-[var(--color-muted)]">{gender}</span>
+                      <span className="text-xs text-[#8A8A8A]">{gender}</span>
                     </div>
 
                     {aiReasoning && (
-                      <p className="text-xs text-[var(--color-muted)] italic leading-relaxed">{aiReasoning}</p>
+                      <p className="text-xs text-[#8A8A8A] italic leading-relaxed">{aiReasoning}</p>
                     )}
 
                     <button
                       onClick={analyzeWithAI}
-                      className="w-full py-2 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--ff-color-primary-500)] transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#C2654A] transition-colors flex items-center justify-center gap-2"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       Opnieuw analyseren
@@ -454,7 +454,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                     {/* Section: Mood Tags */}
                     <section>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide">Mood Tags</h3>
+                        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Mood Tags</h3>
                         <span className={`text-xs font-medium ${moodTags.length >= 3 ? 'text-green-600' : 'text-red-500'}`}>
                           {moodTags.length} tags
                         </span>
@@ -464,7 +464,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                           <span
                             key={tag}
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-                            style={{ background: 'var(--ff-color-primary-50)', color: 'var(--ff-color-primary-700)' }}
+                            style={{ background: '#FAF5F2', color: '#A8513A' }}
                           >
                             {tag}
                             <button onClick={() => removeTag(tag)} className="hover:text-red-600 ml-0.5">
@@ -480,12 +480,12 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                           onChange={(e) => setTagInput(e.target.value)}
                           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
                           placeholder="Nieuwe tag..."
-                          className="flex-1 px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-sm"
+                          className="flex-1 px-3 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] text-sm"
                         />
                         <button
                           onClick={addTag}
                           className="px-3 py-2 rounded-xl text-white text-sm"
-                          style={{ background: 'var(--ff-color-primary-700)' }}
+                          style={{ background: '#A8513A' }}
                         >
                           <Plus className="w-4 h-4" />
                         </button>
@@ -495,7 +495,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                     {/* Section: Archetype Weights */}
                     <section>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide">Archetype Verdeling</h3>
+                        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Archetype Verdeling</h3>
                         <span className={`text-xs font-mono font-semibold ${isValidWeightSum ? 'text-green-600' : 'text-red-500'}`}>
                           {Math.round(weightSum * 100)}%
                         </span>
@@ -506,14 +506,14 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                           return (
                             <div key={key} className="space-y-1">
                               <div className="flex justify-between items-center">
-                                <label className="text-xs font-medium text-[var(--color-text)]">
+                                <label className="text-xs font-medium text-[#1A1A1A]">
                                   {ARCHETYPES[key].label}
                                 </label>
-                                <span className="text-xs font-mono text-[var(--color-muted)] w-10 text-right">
+                                <span className="text-xs font-mono text-[#8A8A8A] w-10 text-right">
                                   {pct}%
                                 </span>
                               </div>
-                              <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-bg)' }}>
+                              <div className="relative h-2 rounded-full overflow-hidden" style={{ background: '#FAFAF8' }}>
                                 <div
                                   className="absolute inset-y-0 left-0 rounded-full transition-all duration-150"
                                   style={{
@@ -555,7 +555,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                         {ARCHETYPE_KEYS.filter(k => (archetypeWeights[k] || 0) > 0.02).map((key) => (
                           <div key={key} className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full" style={{ background: ARCHETYPE_COLORS[key] }} />
-                            <span className="text-[10px] text-[var(--color-muted)]">{ARCHETYPES[key].label}</span>
+                            <span className="text-[10px] text-[#8A8A8A]">{ARCHETYPES[key].label}</span>
                           </div>
                         ))}
                       </div>
@@ -564,7 +564,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                     {/* Section: Dominant Colors */}
                     <section>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide">Kleuren</h3>
+                        <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide">Kleuren</h3>
                         <span className={`text-xs font-medium ${dominantColors.length > 0 ? 'text-green-600' : 'text-red-500'}`}>
                           {dominantColors.length}/4
                         </span>
@@ -579,15 +579,15 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                               onClick={() => toggleColor(name)}
                               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium transition-all border ${
                                 isSelected
-                                  ? 'border-[var(--ff-color-primary-700)] bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] ring-1 ring-[var(--ff-color-primary-300)]'
-                                  : 'border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] text-[var(--color-muted)]'
+                                  ? 'border-[#A8513A] bg-[#FAF5F2] text-[#A8513A] ring-1 ring-[#D4856E]'
+                                  : 'border-[#E5E5E5] hover:border-[#D4856E] text-[#8A8A8A]'
                               }`}
                             >
                               <span
                                 className="w-3.5 h-3.5 rounded-full shrink-0"
                                 style={{
                                   backgroundColor: hex,
-                                  border: isLight ? '1px solid var(--color-border)' : 'none'
+                                  border: isLight ? '1px solid #E5E5E5' : 'none'
                                 }}
                               />
                               {name}
@@ -600,22 +600,22 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
 
                     {/* Section: Style Attributes */}
                     <section>
-                      <h3 className="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide mb-3">Stijl Attributen</h3>
+                      <h3 className="text-sm font-semibold text-[#1A1A1A] uppercase tracking-wide mb-3">Stijl Attributen</h3>
                       <div className="space-y-4">
                         <div>
                           <div className="flex justify-between items-center mb-1.5">
-                            <label className="text-xs font-medium text-[var(--color-text)]">Formaliteit</label>
-                            <span className="text-xs text-[var(--color-muted)]">
+                            <label className="text-xs font-medium text-[#1A1A1A]">Formaliteit</label>
+                            <span className="text-xs text-[#8A8A8A]">
                               {formalityLabel} ({Math.round(styleAttributes.formality * 100)}%)
                             </span>
                           </div>
                           <div className="relative">
-                            <div className="h-2 rounded-full" style={{ background: 'var(--color-bg)' }}>
+                            <div className="h-2 rounded-full" style={{ background: '#FAFAF8' }}>
                               <div
                                 className="h-full rounded-full transition-all"
                                 style={{
                                   width: `${styleAttributes.formality * 100}%`,
-                                  background: 'var(--ff-color-primary-700)'
+                                  background: '#A8513A'
                                 }}
                               />
                             </div>
@@ -629,25 +629,25 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                             />
                           </div>
                           <div className="flex justify-between mt-1">
-                            <span className="text-[10px] text-[var(--color-muted)]">Athleisure</span>
-                            <span className="text-[10px] text-[var(--color-muted)]">Black Tie</span>
+                            <span className="text-[10px] text-[#8A8A8A]">Athleisure</span>
+                            <span className="text-[10px] text-[#8A8A8A]">Black Tie</span>
                           </div>
                         </div>
 
                         <div>
                           <div className="flex justify-between items-center mb-1.5">
-                            <label className="text-xs font-medium text-[var(--color-text)]">Boldness</label>
-                            <span className="text-xs text-[var(--color-muted)]">
+                            <label className="text-xs font-medium text-[#1A1A1A]">Boldness</label>
+                            <span className="text-xs text-[#8A8A8A]">
                               {boldnessLabel} ({Math.round(styleAttributes.boldness * 100)}%)
                             </span>
                           </div>
                           <div className="relative">
-                            <div className="h-2 rounded-full" style={{ background: 'var(--color-bg)' }}>
+                            <div className="h-2 rounded-full" style={{ background: '#FAFAF8' }}>
                               <div
                                 className="h-full rounded-full transition-all"
                                 style={{
                                   width: `${styleAttributes.boldness * 100}%`,
-                                  background: 'var(--ff-color-primary-700)'
+                                  background: '#A8513A'
                                 }}
                               />
                             </div>
@@ -661,8 +661,8 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                             />
                           </div>
                           <div className="flex justify-between mt-1">
-                            <span className="text-[10px] text-[var(--color-muted)]">Neutraal</span>
-                            <span className="text-[10px] text-[var(--color-muted)]">Statement</span>
+                            <span className="text-[10px] text-[#8A8A8A]">Neutraal</span>
+                            <span className="text-[10px] text-[#8A8A8A]">Statement</span>
                           </div>
                         </div>
                       </div>
@@ -682,9 +682,9 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 exit={{ opacity: 0 }}
                 className="p-12 text-center"
               >
-                <div className="animate-spin w-10 h-10 border-3 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
-                <p className="font-medium text-[var(--color-text)]">Foto opslaan met metadata...</p>
-                <p className="text-sm text-[var(--color-muted)] mt-1">WebP conversie + upload + database</p>
+                <div className="animate-spin w-10 h-10 border-3 border-[#A8513A] border-t-transparent rounded-full mx-auto mb-4" />
+                <p className="font-medium text-[#1A1A1A]">Foto opslaan met metadata...</p>
+                <p className="text-sm text-[#8A8A8A] mt-1">WebP conversie + upload + database</p>
               </motion.div>
             )}
 
@@ -693,15 +693,15 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
 
         {/* Footer */}
         {phase === 'review' && (
-          <div className="p-5 border-t border-[var(--color-border)] flex justify-between items-center shrink-0">
-            <div className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
+          <div className="p-5 border-t border-[#E5E5E5] flex justify-between items-center shrink-0">
+            <div className="flex items-center gap-2 text-xs text-[#8A8A8A]">
               <Info className="w-3.5 h-3.5" />
               <span>Pas metadata aan voor opslaan</span>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-medium hover:bg-[var(--color-bg)] transition-colors"
+                className="px-5 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-medium hover:bg-[#FAFAF8] transition-colors"
               >
                 Annuleer
               </button>
@@ -709,7 +709,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 onClick={handleUpload}
                 disabled={moodTags.length < 3 || !isValidWeightSum || dominantColors.length === 0}
                 className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-40 flex items-center gap-2"
-                style={{ background: 'var(--ff-color-primary-700)' }}
+                style={{ background: '#A8513A' }}
               >
                 <Check className="w-4 h-4" />
                 Opslaan

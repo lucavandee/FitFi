@@ -29,33 +29,33 @@ export function GamificationDashboardMini() {
   return (
     <div className="space-y-4">
       {/* XP Progress Card */}
-      <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl border-2 border-[var(--ff-color-primary-200)] p-6 shadow-lg">
+      <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl border-2 border-[#F4E8E3] p-6 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center shadow-md">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-md">
               <span className="text-2xl">{levelInfo.current.icon}</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[var(--color-text)]">
+              <h3 className="text-lg font-bold text-[#1A1A1A]">
                 {levelInfo.current.name}
               </h3>
-              <p className="text-sm text-[var(--color-muted)]">
+              <p className="text-sm text-[#8A8A8A]">
                 Level {stats.current_level}
               </p>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-[var(--ff-color-primary-700)]">
+            <div className="text-2xl font-bold text-[#A8513A]">
               {stats.total_xp}
             </div>
-            <div className="text-xs text-[var(--color-muted)]">XP</div>
+            <div className="text-xs text-[#8A8A8A]">XP</div>
           </div>
         </div>
 
         {/* Progress Bar */}
         {levelInfo.next && (
           <div>
-            <div className="flex items-center justify-between text-xs text-[var(--color-muted)] mb-2">
+            <div className="flex items-center justify-between text-xs text-[#8A8A8A] mb-2">
               <span>Tot volgend level</span>
               <span className="font-semibold">
                 {levelInfo.xpToNext} XP
@@ -63,13 +63,13 @@ export function GamificationDashboardMini() {
             </div>
             <div className="h-3 bg-white/50 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]"
+                className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
                 initial={{ width: 0 }}
                 animate={{ width: `${levelInfo.progress}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}
               />
             </div>
-            <div className="mt-2 text-xs text-[var(--color-muted)] text-center">
+            <div className="mt-2 text-xs text-[#8A8A8A] text-center">
               Volgend: {levelInfo.next.name} {levelInfo.next.icon}
             </div>
           </div>
@@ -106,9 +106,9 @@ export function GamificationDashboardMini() {
 
       {/* Recent Achievements */}
       {achievements && achievements.length > 0 && (
-        <div className="bg-white rounded-2xl border-2 border-[var(--color-border)] p-4 shadow-md">
-          <h4 className="text-sm font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-[var(--ff-color-accent-600)]" />
+        <div className="bg-white rounded-2xl border-2 border-[#E5E5E5] p-4 shadow-md">
+          <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-[#C2654A]" />
             Recente Achievements
           </h4>
           <div className="space-y-2">
@@ -117,14 +117,14 @@ export function GamificationDashboardMini() {
                 key={achievement.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3 p-2 bg-[var(--ff-color-primary-50)] rounded-lg"
+                className="flex items-center gap-3 p-2 bg-[#FAF5F2] rounded-lg"
               >
                 <span className="text-2xl">{achievement.achievement_icon}</span>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-[var(--color-text)] truncate">
+                  <div className="text-sm font-semibold text-[#1A1A1A] truncate">
                     {achievement.achievement_name}
                   </div>
-                  <div className="text-xs text-[var(--color-muted)]">
+                  <div className="text-xs text-[#8A8A8A]">
                     {new Date(achievement.unlocked_at).toLocaleDateString('nl-NL')}
                   </div>
                 </div>
@@ -149,14 +149,14 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border-2 border-[var(--color-border)] p-4 shadow-md">
+    <div className="bg-white rounded-xl border-2 border-[#E5E5E5] p-4 shadow-md">
       <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center text-white mb-3 shadow-md`}>
         {icon}
       </div>
-      <div className="text-2xl font-bold text-[var(--color-text)] mb-1">
+      <div className="text-2xl font-bold text-[#1A1A1A] mb-1">
         {value}
       </div>
-      <div className="text-xs text-[var(--color-muted)] font-medium">
+      <div className="text-xs text-[#8A8A8A] font-medium">
         {label}
       </div>
     </div>

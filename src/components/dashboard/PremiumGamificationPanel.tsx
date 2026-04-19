@@ -103,10 +103,10 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               <Trophy className="w-8 h-8" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-[var(--color-text)]">
+              <h2 className="text-3xl font-bold text-[#1A1A1A]">
                 Jouw <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Progressie</span>
               </h2>
-              <p className="text-[var(--color-muted)]">
+              <p className="text-[#8A8A8A]">
                 Verdien XP, behaal badges en zie je stijl groeien
               </p>
             </div>
@@ -123,7 +123,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
                 cy="100"
                 r="80"
                 fill="none"
-                stroke="var(--color-border)"
+                stroke="#E5E5E5"
                 strokeWidth="12"
                 opacity="0.2"
               />
@@ -145,8 +145,8 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               />
               <defs>
                 <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="var(--ff-color-primary-600)" />
-                  <stop offset="100%" stopColor="var(--ff-color-accent-500)" />
+                  <stop offset="0%" stopColor="#C2654A" />
+                  <stop offset="100%" stopColor="#C2654A" />
                 </linearGradient>
               </defs>
             </svg>
@@ -154,10 +154,10 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
             {/* Center content */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <Crown className="w-8 h-8 text-purple-600 dark:text-purple-400 mb-1" />
-              <div className="text-4xl font-bold text-[var(--color-text)]">
+              <div className="text-4xl font-bold text-[#1A1A1A]">
                 {stats?.current_level || 1}
               </div>
-              <div className="text-sm text-[var(--color-muted)] font-medium">
+              <div className="text-sm text-[#8A8A8A] font-medium">
                 Level
               </div>
             </div>
@@ -166,7 +166,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
 
         {/* XP Progress Bar */}
         <div className="mb-6 text-center">
-          <div className="flex items-center justify-between text-sm text-[var(--color-muted)] mb-2">
+          <div className="flex items-center justify-between text-sm text-[#8A8A8A] mb-2">
             <span>{currentLevelXP.toLocaleString()} XP</span>
             <span>{xpToNextLevel.toLocaleString()} XP</span>
           </div>
@@ -178,7 +178,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               transition={{ duration: 1, ease: "easeOut" }}
             />
           </div>
-          <p className="text-xs text-[var(--color-muted)] mt-2">
+          <p className="text-xs text-[#8A8A8A] mt-2">
             {(xpToNextLevel - currentLevelXP).toLocaleString()} XP tot level {(stats?.current_level || 1) + 1}
           </p>
         </div>
@@ -246,11 +246,11 @@ function StatBubble({
     >
       <div className={`flex items-center gap-2 mb-2 ${iconColorClass}`}>
         {icon}
-        <span className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">
+        <span className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wide">
           {label}
         </span>
       </div>
-      <div className="text-2xl font-bold text-[var(--color-text)]">
+      <div className="text-2xl font-bold text-[#1A1A1A]">
         {value}
       </div>
     </motion.div>

@@ -33,7 +33,7 @@ const PricingCard: React.FC<{
         </div>
 
         <div className="pricing-title-row">
-          <Icon size={18} className="text-[var(--color-text)]" aria-hidden />
+          <Icon size={18} className="text-[#1A1A1A]" aria-hidden />
           <h3 className="pricing-title">{title}</h3>
         </div>
 

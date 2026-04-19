@@ -148,7 +148,7 @@ export default function PremiumOutfitCard({
                   />
                   {hasUrl && (
                     <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/30 transition-colors flex items-center justify-center">
-                      <div className="opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 text-[var(--ff-color-primary-700)] text-xs font-semibold">
+                      <div className="opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 text-[#A8513A] text-xs font-semibold">
                         <ShoppingBag className="w-3.5 h-3.5" />
                         Shop
                         <ExternalLink className="w-3 h-3" />

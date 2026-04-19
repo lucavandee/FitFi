@@ -45,10 +45,10 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.06 }}
-      className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden group"
+      className="rounded-2xl bg-[#FFFFFF] border border-[#E5E5E5] overflow-hidden group"
       style={{ boxShadow: "0 1px 4px rgba(30,35,51,0.06)" }}
     >
-      <div className="grid grid-cols-4 gap-px bg-[var(--color-border)]">
+      <div className="grid grid-cols-4 gap-px bg-[#E5E5E5]">
         {displayItems.map((item: any, idx: number) => {
           const hasUrl = !!resolveProductUrl(item);
           return (
@@ -57,7 +57,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
               type="button"
               onClick={() => handleShopItem(item, idx)}
               disabled={!hasUrl}
-              className={`relative aspect-square bg-[var(--color-surface)] ${hasUrl ? "cursor-pointer" : ""}`}
+              className={`relative aspect-square bg-[#FFFFFF] ${hasUrl ? "cursor-pointer" : ""}`}
             >
               <ImageWithFallback
                 src={item.image_url || item.imageUrl || item.image}
@@ -77,9 +77,9 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
           Array.from({ length: 4 - displayItems.length }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="aspect-square bg-[var(--ff-color-primary-50)] flex items-center justify-center"
+              className="aspect-square bg-[#FAF5F2] flex items-center justify-center"
             >
-              <ShoppingBag className="w-4 h-4 text-[var(--color-muted)] opacity-30" />
+              <ShoppingBag className="w-4 h-4 text-[#8A8A8A] opacity-30" />
             </div>
           ))}
       </div>
@@ -87,10 +87,10 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
       <div className="p-3.5">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-[var(--color-text)] truncate leading-tight">
+            <p className="text-sm font-semibold text-[#1A1A1A] truncate leading-tight">
               {outfit.name || outfit.occasion || "Outfit"}
             </p>
-            <p className="text-[11px] text-[var(--color-muted)] mt-0.5">
+            <p className="text-[11px] text-[#8A8A8A] mt-0.5">
               {items.length} items
               {outfit.occasion ? ` \u00b7 ${outfit.occasion}` : ""}
               {` \u00b7 ${dateStr}`}
@@ -98,7 +98,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
           </div>
           <button
             onClick={() => navigate("/results")}
-            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--ff-color-primary-50)] flex items-center justify-center text-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-100)] transition-colors"
+            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#C2654A] hover:bg-[#FAF5F2] transition-colors"
             aria-label="Bekijk outfit"
           >
             <ChevronRight className="w-4 h-4" />
@@ -123,15 +123,15 @@ export default function SavedOutfitHistory({ userId }: Props) {
     return (
       <div className="space-y-3">
         {[0, 1].map((i) => (
-          <div key={i} className="rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden animate-pulse">
+          <div key={i} className="rounded-2xl bg-[#FFFFFF] border border-[#E5E5E5] overflow-hidden animate-pulse">
             <div className="grid grid-cols-4 gap-px">
               {[0, 1, 2, 3].map((j) => (
-                <div key={j} className="aspect-square bg-[var(--ff-color-primary-50)]" />
+                <div key={j} className="aspect-square bg-[#FAF5F2]" />
               ))}
             </div>
             <div className="p-3.5">
-              <div className="h-4 bg-[var(--ff-color-primary-50)] rounded w-32 mb-1.5" />
-              <div className="h-3 bg-[var(--ff-color-primary-50)] rounded w-24" />
+              <div className="h-4 bg-[#FAF5F2] rounded w-32 mb-1.5" />
+              <div className="h-3 bg-[#FAF5F2] rounded w-24" />
             </div>
           </div>
         ))}
@@ -174,7 +174,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
       {savedOutfits.length > 6 && (
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full py-3 rounded-xl border border-[var(--color-border)] text-sm font-semibold text-[var(--color-muted)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--ff-color-primary-700)] transition-colors"
+          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#8A8A8A] hover:border-[#D4856E] hover:text-[#A8513A] transition-colors"
         >
           Bekijk alle {savedOutfits.length} outfits
         </button>

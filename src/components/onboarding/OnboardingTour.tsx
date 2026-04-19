@@ -145,7 +145,7 @@ export function OnboardingTour() {
             height: targetPosition.height + 16,
           }}
         >
-          <div className="w-full h-full rounded-2xl border-4 border-[var(--ff-color-primary-500)] shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] animate-pulse" />
+          <div className="w-full h-full rounded-2xl border-4 border-[#C2654A] shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] animate-pulse" />
         </motion.div>
       )}
 
@@ -163,9 +163,9 @@ export function OnboardingTour() {
               : getCardPosition(step.position, targetPosition)
           } max-w-md w-[90vw] sm:w-96`}
         >
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-[var(--color-border)] p-6 relative overflow-hidden">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-[#E5E5E5] p-6 relative overflow-hidden">
             {/* Decorative gradient */}
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[var(--ff-color-primary-500)]/20 to-[var(--ff-color-accent-500)]/20 blur-3xl" />
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[#C2654A]/20 to-[#C2654A]/20 blur-3xl" />
 
             {/* Close button */}
             <button
@@ -179,17 +179,17 @@ export function OnboardingTour() {
             {/* Content */}
             <div className="relative">
               {/* Icon */}
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center text-white mb-4 shadow-lg">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center text-white mb-4 shadow-lg">
                 {step.icon}
               </div>
 
               {/* Title */}
-              <h3 className="text-2xl font-bold text-[var(--color-text)] mb-3">
+              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
                 {step.title}
               </h3>
 
               {/* Description */}
-              <p className="text-[var(--color-muted)] mb-6 leading-relaxed">
+              <p className="text-[#8A8A8A] mb-6 leading-relaxed">
                 {step.description}
               </p>
 
@@ -201,7 +201,7 @@ export function OnboardingTour() {
                     onClick={() => setCurrentStep(index)}
                     className={`h-2 rounded-full transition-all ${
                       index === currentStep
-                        ? 'w-8 bg-[var(--ff-color-primary-600)]'
+                        ? 'w-8 bg-[#C2654A]'
                         : 'w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600'
                     }`}
                     aria-label={`Ga naar stap ${index + 1}`}
@@ -214,7 +214,7 @@ export function OnboardingTour() {
                 {!isFirstStep && (
                   <button
                     onClick={handlePrev}
-                    className="flex-1 px-4 py-3 rounded-xl border-2 border-[var(--color-border)] text-[var(--color-text)] font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-3 rounded-xl border-2 border-[#E5E5E5] text-[#1A1A1A] font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     Vorige
@@ -225,7 +225,7 @@ export function OnboardingTour() {
                   onClick={handleNext}
                   className={`${
                     isFirstStep ? 'flex-1' : 'flex-[2]'
-                  } px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-700)] text-white font-semibold hover:from-[var(--ff-color-primary-600)] hover:to-[var(--ff-color-accent-600)] transition-all flex items-center justify-center gap-2 shadow-lg`}
+                  } px-4 py-3 rounded-xl bg-gradient-to-r from-[#A8513A] to-[#A8513A] text-white font-semibold hover:from-[#C2654A] hover:to-[#C2654A] transition-all flex items-center justify-center gap-2 shadow-lg`}
                 >
                   {isLastStep ? 'Start met FitFi' : 'Volgende'}
                   <ArrowRight className="w-4 h-4" />
@@ -236,7 +236,7 @@ export function OnboardingTour() {
               {!isLastStep && (
                 <button
                   onClick={handleSkip}
-                  className="w-full mt-3 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+                  className="w-full mt-3 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
                 >
                   Overslaan
                 </button>

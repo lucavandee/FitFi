@@ -116,13 +116,13 @@ export default function NotificationSettings() {
 
   if (loading) {
     return (
-      <div className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] p-6">
+      <div className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-[var(--ff-color-primary-100)] rounded w-1/3" />
-          <div className="h-4 bg-[var(--ff-color-primary-100)] rounded w-2/3" />
+          <div className="h-6 bg-[#FAF5F2] rounded w-1/3" />
+          <div className="h-4 bg-[#FAF5F2] rounded w-2/3" />
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-[var(--ff-color-primary-100)] rounded" />
+              <div key={i} className="h-16 bg-[#FAF5F2] rounded" />
             ))}
           </div>
         </div>
@@ -132,16 +132,16 @@ export default function NotificationSettings() {
 
   if (!isSupported) {
     return (
-      <div className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] p-6">
+      <div className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center">
-            <BellOff className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+          <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center">
+            <BellOff className="w-6 h-6 text-[#C2654A]" />
           </div>
           <div>
-            <h3 className="font-heading text-lg text-[var(--color-text)] mb-1">
+            <h3 className="font-heading text-lg text-[#1A1A1A] mb-1">
               Notificaties niet beschikbaar
             </h3>
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-[#8A8A8A]">
               Je browser ondersteunt geen push notificaties. Probeer een moderne browser zoals
               Chrome, Firefox of Edge.
             </p>
@@ -157,28 +157,28 @@ export default function NotificationSettings() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-[var(--radius-2xl)] bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] shadow-[var(--shadow-lifted)] border-2 border-[var(--color-border)] p-6"
+        className="rounded-2xl bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] shadow-md border-2 border-[#E5E5E5] p-6"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div
               className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                 isEnabled
-                  ? 'bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]'
-                  : 'bg-[var(--ff-color-primary-100)]'
+                  ? 'bg-gradient-to-br from-[#C2654A] to-[#C2654A]'
+                  : 'bg-[#FAF5F2]'
               }`}
             >
               {isEnabled ? (
                 <Bell className="w-6 h-6 text-white" />
               ) : (
-                <BellOff className="w-6 h-6 text-[var(--ff-color-primary-600)]" />
+                <BellOff className="w-6 h-6 text-[#C2654A]" />
               )}
             </div>
             <div>
-              <h3 className="font-heading text-lg text-[var(--color-text)] mb-1">
+              <h3 className="font-heading text-lg text-[#1A1A1A] mb-1">
                 Push Notificaties
               </h3>
-              <p className="text-sm text-[var(--color-muted)]">
+              <p className="text-sm text-[#8A8A8A]">
                 {isEnabled
                   ? 'Je ontvangt notificaties op basis van je voorkeuren'
                   : 'Schakel notificaties in om op de hoogte te blijven'}
@@ -188,7 +188,7 @@ export default function NotificationSettings() {
           <button
             onClick={handleToggleNotifications}
             className={`relative w-14 h-8 rounded-full transition-colors ${
-              isEnabled ? 'bg-[var(--ff-color-primary-600)]' : 'bg-[var(--color-border)]'
+              isEnabled ? 'bg-[#C2654A]' : 'bg-[#E5E5E5]'
             }`}
           >
             <motion.div
@@ -206,32 +206,32 @@ export default function NotificationSettings() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-[var(--radius-2xl)] bg-white/80 backdrop-blur-sm shadow-[var(--shadow-lifted)] border border-[var(--color-border)] overflow-hidden"
+          className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] overflow-hidden"
         >
-          <div className="p-6 border-b border-[var(--color-border)]">
-            <h4 className="font-heading text-[var(--color-text)]">Notificatie voorkeuren</h4>
-            <p className="text-sm text-[var(--color-muted)] mt-1">
+          <div className="p-6 border-b border-[#E5E5E5]">
+            <h4 className="font-heading text-[#1A1A1A]">Notificatie voorkeuren</h4>
+            <p className="text-sm text-[#8A8A8A] mt-1">
               Kies welke notificaties je wilt ontvangen
             </p>
           </div>
 
-          <div className="divide-y divide-[var(--color-border)]">
+          <div className="divide-y divide-[#E5E5E5]">
             {notificationTypes.map((type, index) => (
               <motion.div
                 key={type.key}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.15 + index * 0.05 }}
-                className="p-6 hover:bg-[var(--ff-color-primary-50)] transition-colors"
+                className="p-6 hover:bg-[#FAF5F2] transition-colors"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="w-10 h-10 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center flex-shrink-0">
-                      <type.icon className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+                    <div className="w-10 h-10 rounded-lg bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+                      <type.icon className="w-5 h-5 text-[#C2654A]" />
                     </div>
                     <div className="flex-1">
-                      <h5 className="font-medium text-[var(--color-text)] mb-1">{type.label}</h5>
-                      <p className="text-sm text-[var(--color-muted)]">{type.description}</p>
+                      <h5 className="font-medium text-[#1A1A1A] mb-1">{type.label}</h5>
+                      <p className="text-sm text-[#8A8A8A]">{type.description}</p>
                     </div>
                   </div>
                   <button
@@ -240,8 +240,8 @@ export default function NotificationSettings() {
                     }
                     className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${
                       preferences[type.key]
-                        ? 'bg-[var(--ff-color-primary-600)]'
-                        : 'bg-[var(--color-border)]'
+                        ? 'bg-[#C2654A]'
+                        : 'bg-[#E5E5E5]'
                     }`}
                   >
                     <motion.div

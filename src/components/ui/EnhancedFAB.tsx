@@ -50,7 +50,7 @@ interface EnhancedFABProps {
 export function EnhancedFAB({
   actions,
   primaryIcon: PrimaryIcon = Plus,
-  primaryColor = 'var(--ff-color-primary-700)',
+  primaryColor = '#A8513A',
   position = 'bottom-right',
   offset = {}
 }: EnhancedFABProps) {
@@ -119,12 +119,12 @@ export function EnhancedFAB({
               >
                 {/* Label */}
                 <motion.div
-                  className="px-3 py-2 bg-[var(--color-surface)] rounded-lg shadow-lg border border-[var(--color-border)] whitespace-nowrap"
+                  className="px-3 py-2 bg-[#FFFFFF] rounded-lg shadow-lg border border-[#E5E5E5] whitespace-nowrap"
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 + 0.1 }}
                 >
-                  <span className="text-sm font-medium text-[var(--color-text)]">
+                  <span className="text-sm font-medium text-[#1A1A1A]">
                     {action.label}
                   </span>
                 </motion.div>
@@ -197,7 +197,7 @@ export function SimpleFAB({
   icon: Icon,
   onClick,
   label,
-  color = 'var(--ff-color-primary-700)',
+  color = '#A8513A',
   position = 'bottom-right'
 }: SimpleFABProps) {
   const [showLabel, setShowLabel] = useState(false);
@@ -236,9 +236,9 @@ export function SimpleFAB({
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
-              className="px-3 py-2 bg-[var(--color-surface)] rounded-lg shadow-lg border border-[var(--color-border)] whitespace-nowrap"
+              className="px-3 py-2 bg-[#FFFFFF] rounded-lg shadow-lg border border-[#E5E5E5] whitespace-nowrap"
             >
-              <span className="text-sm font-medium text-[var(--color-text)]">
+              <span className="text-sm font-medium text-[#1A1A1A]">
                 {label}
               </span>
             </motion.div>
@@ -276,7 +276,7 @@ export function ExtendedFAB({
   icon: Icon,
   label,
   onClick,
-  color = 'var(--ff-color-primary-700)',
+  color = '#A8513A',
   position = 'bottom-right'
 }: ExtendedFABProps) {
   const handleClick = () => {
@@ -357,7 +357,7 @@ export function MultiFAB({
           }}
           className="min-w-[48px] min-h-[48px] rounded-full shadow-lg flex items-center justify-center"
           style={{
-            backgroundColor: action.bgColor || 'var(--ff-color-primary-700)'
+            backgroundColor: action.bgColor || '#A8513A'
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
