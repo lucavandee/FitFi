@@ -83,7 +83,7 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999]" role="presentation" aria-hidden={!open}>
+    <div className="fixed inset-0 z-[60]" role="presentation" aria-hidden={!open}>
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 

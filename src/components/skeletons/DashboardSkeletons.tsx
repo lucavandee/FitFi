@@ -11,7 +11,7 @@ export function GamificationWidgetSkeleton() {
   return (
     <div className="space-y-6">
       {/* Main XP Card Skeleton */}
-      <div className="bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-3xl p-8 shadow-xl border-2 border-gray-200 dark:border-gray-700">
+      <div className="bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-8 shadow-xl border-2 border-gray-200 dark:border-gray-700">
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className={`w-16 h-16 rounded-2xl ${shimmerBase}`} />
@@ -48,7 +48,7 @@ export function GamificationWidgetSkeleton() {
       </div>
 
       {/* Achievements skeleton */}
-      <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-xl border-2 border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl border-2 border-gray-200 dark:border-gray-700">
         <div className={`w-48 h-6 rounded mb-4 ${shimmerBase}`} />
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
@@ -92,7 +92,7 @@ export function OutfitCardSkeleton() {
 
 export function RefineStyleSkeleton() {
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-6 shadow-xl border-2 border-purple-200 dark:border-purple-800">
+    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 shadow-xl border-2 border-purple-200 dark:border-purple-800">
       <div className="flex items-center justify-between mb-4">
         <div className="space-y-2">
           <div className={`w-48 h-6 rounded ${shimmerBase}`} />

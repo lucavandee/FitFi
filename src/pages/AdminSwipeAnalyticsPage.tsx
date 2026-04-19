@@ -1,4 +1,5 @@
 import React from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { Helmet } from 'react-helmet-async';
 import { TrendingUp, TrendingDown, Heart, X, Eye, Users, Image as ImageIcon, BarChart3, Percent } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -53,7 +54,7 @@ export default function AdminSwipeAnalyticsPage() {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[var(--ff-color-primary-600)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-gray-600">Laden...</p>
         </div>
       </div>

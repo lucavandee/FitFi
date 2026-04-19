@@ -71,7 +71,7 @@ const compRows = [
 function Step1Visual() {
   return (
     <div className="bg-[#E8DDD2] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
-      <div className="w-full max-w-[380px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
+      <div className="w-full max-w-[380px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
           alt="FitFi stijlquiz — kleurtonen en stijlvoorkeuren"
@@ -86,7 +86,7 @@ function Step1Visual() {
 function Step2Visual() {
   return (
     <div className="bg-[#D4C0AD] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
-      <div className="w-full max-w-[480px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
+      <div className="w-full max-w-[480px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
           alt="FitFi stijlrapport — kleurprofiel en aanbevelingen"
@@ -101,7 +101,7 @@ function Step2Visual() {
 function Step3Visual() {
   return (
     <div className="bg-[#C9BFB4] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
-      <div className="w-full max-w-[320px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
+      <div className="w-full max-w-[320px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp"
           alt="FitFi outfit shoppen — directe shoplinks"
@@ -420,7 +420,7 @@ export default function HowItWorksPage() {
                   return (
                     <div
                       key={idx}
-                      className="bg-white rounded-[20px] p-7 cursor-pointer transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)]"
+                      className="bg-white rounded-2xl p-7 cursor-pointer transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)]"
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
                     >
                       <div className="flex justify-between items-center gap-4">
@@ -492,7 +492,7 @@ export default function HowItWorksPage() {
                 </p>
                 <Link
                   to="/onboarding"
-                  className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                   style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
                 >
                   Begin gratis

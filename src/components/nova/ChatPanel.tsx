@@ -46,7 +46,7 @@ export default function ChatPanel() {
 
   return (
     <div
-      className="fixed inset-0 z-[9998] flex items-end justify-end p-2 sm:p-4 md:p-6 pointer-events-none"
+      className="fixed inset-0 z-[56] flex items-end justify-end p-2 sm:p-4 md:p-6 pointer-events-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}

@@ -146,7 +146,7 @@ export function PremiumHeaderCard({
     : null;
 
   const headerContent = (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-600)] shadow-2xl">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-600)] shadow-2xl">
       {/* Subtle pattern overlay - NO backdrop-blur */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div

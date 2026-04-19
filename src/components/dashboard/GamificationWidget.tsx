@@ -40,7 +40,7 @@ export function GamificationWidget() {
   if (!user || isLoading) {
     return (
       <div className="space-y-6">
-        <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-3xl p-8 shadow-xl border-2 border-[var(--color-border)] animate-pulse">
+        <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl p-8 shadow-xl border-2 border-[var(--color-border)] animate-pulse">
           <div className="h-20 bg-white/50 rounded-xl mb-4"></div>
           <div className="h-3 bg-white/50 rounded-full"></div>
         </div>
@@ -55,7 +55,7 @@ export function GamificationWidget() {
   return (
     <div className="space-y-6">
       {/* Main XP Card - Premium Design */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-3xl p-8 shadow-2xl border-2 border-white/50 hover-lift">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-2xl p-8 shadow-2xl border-2 border-white/50 hover-lift">
         {/* Decorative blobs */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-[var(--ff-color-primary-300)] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
         <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[var(--ff-color-accent-300)] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
@@ -156,7 +156,7 @@ export function GamificationWidget() {
 
       {/* Recent Achievements - Carousel Style */}
       {achievements && achievements.length > 0 && (
-        <div className="bg-white dark:bg-[var(--color-surface)] rounded-3xl p-6 shadow-xl border-2 border-[var(--color-border)] hover-lift">
+        <div className="bg-white dark:bg-[var(--color-surface)] rounded-2xl p-6 shadow-xl border-2 border-[var(--color-border)] hover-lift">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-lg font-bold text-[var(--color-text)] flex items-center gap-2">
               <Award className="w-5 h-5 text-[var(--ff-color-accent-600)]" />
@@ -214,7 +214,7 @@ export function GamificationWidget() {
       />
 
       {/* Next Milestones Preview */}
-      <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] dark:from-[var(--ff-color-primary-900/20)] dark:to-[var(--ff-color-accent-900/20)] rounded-3xl p-6 shadow-xl border-2 border-[var(--color-border)]">
+      <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] dark:from-[var(--ff-color-primary-900/20)] dark:to-[var(--ff-color-accent-900/20)] rounded-2xl p-6 shadow-xl border-2 border-[var(--color-border)]">
         <h4 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-[var(--ff-color-accent-600)]" />
           Komende Milestones

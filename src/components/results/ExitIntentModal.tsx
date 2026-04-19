@@ -36,7 +36,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999] flex items-end sm:items-center justify-center sm:p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-end sm:items-center justify-center sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby={headingId}
@@ -47,7 +47,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 320 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-[var(--color-surface)] rounded-t-3xl sm:rounded-3xl p-8 sm:p-10 max-w-2xl w-full shadow-2xl relative overflow-y-auto"
+            className="bg-[var(--color-surface)] rounded-t-2xl sm:rounded-2xl p-8 sm:p-10 max-w-2xl w-full shadow-2xl relative overflow-y-auto"
             style={{ maxHeight: "92dvh" }}
           >
             {/* Drag handle – mobile only */}

@@ -205,7 +205,7 @@ export function ResultsRevealSequence({
                 className="relative"
               >
                 <motion.div
-                  className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] opacity-20 blur-xl"
+                  className="absolute -inset-4 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] opacity-20 blur-xl"
                   animate={{
                     scale: [1, 1.1, 1],
                     opacity: [0.2, 0.3, 0.2]
@@ -215,7 +215,7 @@ export function ResultsRevealSequence({
                     repeat: Infinity
                   }}
                 />
-                <div className="relative bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white px-12 py-8 rounded-3xl shadow-2xl">
+                <div className="relative bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white px-12 py-8 rounded-2xl shadow-2xl">
                   <Sparkles className="w-8 h-8 mx-auto mb-4" />
                   <h1 className="text-4xl md:text-5xl font-bold tracking-tight uppercase">
                     {archetype}
@@ -246,7 +246,7 @@ export function ResultsRevealSequence({
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="max-w-md w-full bg-[var(--color-surface)] rounded-3xl shadow-2xl p-8 border border-[var(--color-border)]"
+              className="max-w-md w-full bg-[var(--color-surface)] rounded-2xl shadow-2xl p-8 border border-[var(--color-border)]"
             >
               <div className="text-center space-y-6">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full flex items-center justify-center">

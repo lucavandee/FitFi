@@ -456,14 +456,14 @@ export default function DisclosurePage() {
             >
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] transition-colors duration-200"
+                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] transition-colors duration-200"
               >
                 Stel een vraag
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <Link
                 to="/veelgestelde-vragen"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
               >
                 Bekijk FAQ
               </Link>

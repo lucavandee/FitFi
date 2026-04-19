@@ -30,7 +30,7 @@ export function ShoppingGuidance({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-3xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl"
+      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] rounded-2xl border-2 border-[var(--ff-color-primary-200)] p-8 shadow-xl"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">

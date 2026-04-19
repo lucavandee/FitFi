@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { useNavigate } from 'react-router-dom';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/lib/supabaseClient';
@@ -22,7 +23,7 @@ export default function AdminZalandoImportPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[var(--color-text)]">Admin verificatie...</p>
         </div>
       </div>
@@ -260,7 +261,7 @@ export default function AdminZalandoImportPage() {
 
             {importing && (
               <div className="mt-4 text-center">
-                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+                <Spinner size="md" className="mx-auto" />
                 <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
                   Importeren...
                 </p>

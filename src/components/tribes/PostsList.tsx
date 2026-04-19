@@ -23,7 +23,7 @@ export const PostsList: React.FC<PostsListProps> = ({
     return (
       <div className={`space-y-4 ${className}`}>
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white rounded-3xl p-6 animate-pulse">
+          <div key={i} className="bg-white rounded-2xl p-6 animate-pulse">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
               <div className="space-y-2">
@@ -89,7 +89,7 @@ export const PostsList: React.FC<PostsListProps> = ({
       {posts.map((post) => (
         <article 
           key={stableKey(post)}
-          className="bg-white rounded-3xl shadow-sm p-6 hover:shadow-md transition-shadow animate-fade-in"
+          className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow animate-fade-in"
         >
           {/* Post Header */}
           <div className="flex items-center justify-between mb-4">

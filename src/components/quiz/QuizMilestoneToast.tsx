@@ -64,7 +64,7 @@ export function QuizMilestoneToast({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -50, scale: 0.9 }}
           transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-          className="fixed top-20 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-md px-4"
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-[75] w-full max-w-md px-4"
         >
           <div className={`
             bg-gradient-to-r ${getGradient()}

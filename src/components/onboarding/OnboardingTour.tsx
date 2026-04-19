@@ -128,7 +128,7 @@ export function OnboardingTour() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998]"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[68]"
         onClick={handleSkip}
       />
 
@@ -137,7 +137,7 @@ export function OnboardingTour() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed z-[9999] pointer-events-none"
+          className="fixed z-[69] pointer-events-none"
           style={{
             top: targetPosition.top - 8,
             left: targetPosition.left - 8,
@@ -157,13 +157,13 @@ export function OnboardingTour() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className={`fixed z-[10000] ${
+          className={`fixed z-[70] ${
             isCenterStep
               ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
               : getCardPosition(step.position, targetPosition)
           } max-w-md w-[90vw] sm:w-96`}
         >
-          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border-2 border-[var(--color-border)] p-6 relative overflow-hidden">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-[var(--color-border)] p-6 relative overflow-hidden">
             {/* Decorative gradient */}
             <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[var(--ff-color-primary-500)]/20 to-[var(--ff-color-accent-500)]/20 blur-3xl" />
 

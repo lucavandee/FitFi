@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowRight, Share2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -94,7 +95,7 @@ export default function BlogPostPage() {
     return (
       <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[var(--ff-color-primary-600)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[var(--color-muted)]">Artikel laden...</p>
         </div>
       </main>

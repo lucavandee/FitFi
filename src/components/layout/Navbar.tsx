@@ -142,13 +142,13 @@ export default function Navbar() {
 
   return (
     <header
-      className="fixed top-0 w-full z-[100]"
+      className="fixed top-0 w-full z-50"
       role="banner"
     >
       {/* Skip to content */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[110] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[55] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
       >
         Naar hoofdinhoud
       </a>

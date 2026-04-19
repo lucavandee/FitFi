@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -103,7 +104,7 @@ export default function AdminBlogManagementPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--ff-color-primary-700)] mx-auto mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[var(--color-text-muted)]">Laden...</p>
         </div>
       </div>
@@ -261,7 +262,7 @@ export default function AdminBlogManagementPage() {
           {/* Posts List */}
           {loading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--ff-color-primary-700)] mx-auto mb-4" />
+              <Spinner size="lg" className="mx-auto mb-4" />
               <p className="text-[var(--color-text-muted)]">Posts laden...</p>
             </div>
           ) : filteredPosts.length === 0 ? (

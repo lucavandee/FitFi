@@ -74,7 +74,7 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ className = '' }) => 
         
         <div className="relative max-w-4xl mx-auto">
           {/* Main Carousel */}
-          <div className="relative overflow-hidden rounded-3xl bg-white shadow-xl">
+          <div className="relative overflow-hidden rounded-2xl bg-white shadow-xl">
             <div 
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}

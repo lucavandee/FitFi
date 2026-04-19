@@ -347,7 +347,7 @@ function DashboardNovaSectionInner() {
     <section className="py-12">
       <div className="ff-container max-w-5xl">
         <motion.div
-          className="bg-[var(--color-surface)] rounded-3xl shadow-[var(--shadow-soft)] border border-[var(--color-border)] overflow-hidden"
+          className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)] overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

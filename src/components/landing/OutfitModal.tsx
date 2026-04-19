@@ -52,7 +52,7 @@ export function OutfitModal({ isOpen, onClose, title, completeImage, products }:
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-[var(--color-surface)] rounded-2xl sm:rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl pointer-events-auto"
+              className="bg-[var(--color-surface)] rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { motion } from 'framer-motion';
 import { TriangleAlert as AlertTriangle, Eye, EyeOff, Trash2, Filter, RefreshCw, Upload, Plus, X, Sparkles, Check, FileSliders as Sliders, Palette, Zap } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
@@ -150,7 +151,7 @@ export default function AdminMoodPhotosPage() {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+          <Spinner size="md" className="mx-auto mb-4" />
           <p className="text-[var(--color-muted)]">Admin verificatie...</p>
         </div>
       </div>
@@ -239,7 +240,7 @@ export default function AdminMoodPhotosPage() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin w-8 h-8 border-2 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+            <Spinner size="md" className="mx-auto mb-4" />
             <p className="text-[var(--color-muted)]">Laden...</p>
           </div>
         ) : photos.length === 0 ? (

@@ -72,7 +72,7 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
       />
       
       {/* Share Modal */}
-      <div className={`relative bg-white rounded-3xl shadow-2xl max-w-md w-full transform transition-all duration-300 ${
+      <div className={`relative bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 ${
         isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
       }`}>
         {/* Close Button */}

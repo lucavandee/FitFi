@@ -75,7 +75,7 @@ export function OutfitShowcaseV3() {
           {outfits.map((outfit) => (
             <div
               key={outfit.id}
-              className="group relative overflow-hidden rounded-3xl cursor-pointer shadow-2xl"
+              className="group relative overflow-hidden rounded-2xl cursor-pointer shadow-2xl"
               onMouseEnter={() => setHoveredId(outfit.id)}
               onMouseLeave={() => setHoveredId(null)}
             >

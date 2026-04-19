@@ -86,7 +86,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[62]"
             onClick={handleSkip}
           />
         )}
@@ -101,9 +101,9 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ type: 'spring', duration: 0.5 }}
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[101] w-full max-w-md mx-4"
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[63] w-full max-w-md mx-4"
           >
-            <div className="bg-[var(--color-surface)] rounded-3xl shadow-2xl border border-[var(--color-border)] p-8 relative">
+            <div className="bg-[var(--color-surface)] rounded-2xl shadow-2xl border border-[var(--color-border)] p-8 relative">
               {/* Close button */}
               <button
                 onClick={handleSkip}
@@ -178,7 +178,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
 
       {/* Spotlight highlights */}
       {currentStep.highlight && (
-        <div className="fixed inset-0 z-[99] pointer-events-none">
+        <div className="fixed inset-0 z-[61] pointer-events-none">
           {/* This would spotlight specific elements - simplified for now */}
         </div>
       )}

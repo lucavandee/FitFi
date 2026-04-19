@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -89,7 +90,7 @@ export default function AdminAuditPage() {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[var(--color-text)]">Admin verificatie...</p>
         </div>
       </div>
@@ -163,7 +164,7 @@ export default function AdminAuditPage() {
         {/* Audit Logs */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin w-12 h-12 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+            <Spinner size="lg" className="mx-auto mb-4" />
             <p className="text-[var(--color-muted)]">Audit logs laden...</p>
           </div>
         ) : logs.length === 0 ? (

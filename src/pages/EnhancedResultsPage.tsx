@@ -1,4 +1,5 @@
 import React from "react";
+import Spinner from "@/components/ui/Spinner";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
@@ -1472,7 +1473,7 @@ export default function EnhancedResultsPage() {
                 aria-live="polite"
                 className="flex flex-col items-center justify-center py-16 gap-4"
               >
-                <div className="w-10 h-10 border-[3px] border-[#E5E5E5] border-t-[#C2654A] rounded-full animate-spin" aria-hidden="true" />
+                <Spinner size="md" />
                 <div className="text-center">
                   <p className="text-sm font-medium text-[#1A1A1A]">Outfits worden samengesteld…</p>
                   <p className="text-xs text-[#8A8A8A] mt-1">We selecteren outfits die passen bij jouw stijl en kleurprofiel.</p>

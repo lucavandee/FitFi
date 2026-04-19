@@ -88,7 +88,7 @@ export const PostComposer: React.FC<Props> = ({
   const canSubmit = (content.trim() || imageUrl.trim()) && status === 'authenticated' && !busy;
 
   return (
-    <div className={`bg-white rounded-3xl shadow-sm p-6 ${className}`}>
+    <div className={`bg-white rounded-2xl shadow-sm p-6 ${className}`}>
       <form onSubmit={onSubmit}>
         <div className="flex items-start space-x-4">
           {/* User Avatar */}
