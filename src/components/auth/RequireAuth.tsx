@@ -17,7 +17,7 @@ export default function RequireAuth({ children }: { children: React.ReactElement
 
   if (status === 'loading' && !timedOut) {
     return (
-      <div className="flex items-center justify-center bg-[var(--color-bg)]" style={{ minHeight: 'calc(100vh - 64px)' }}>
+      <div className="flex items-center justify-center bg-[var(--color-bg)]" style={{ minHeight: 'calc(100vh - 72px)' }}>
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--ff-color-primary-600)]" aria-hidden="true" />
           <p className="mt-3 text-sm text-[var(--color-muted)]">Laden...</p>

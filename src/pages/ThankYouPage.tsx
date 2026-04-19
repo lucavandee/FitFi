@@ -69,10 +69,10 @@ const ThankYouPage: React.FC = () => {
             </p>
             <div className="flex flex-col gap-2 text-sm">
               <a
-                href="mailto:info@fitfi.nl"
+                href="mailto:info@fitfi.ai"
                 className="text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors"
               >
-                info@fitfi.nl
+                info@fitfi.ai
               </a>
             </div>
           </div>

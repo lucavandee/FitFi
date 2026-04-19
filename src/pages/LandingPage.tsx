@@ -157,7 +157,7 @@ export default function LandingPage() {
             name: "FitFi",
             description:
               "Persoonlijk stijladvies in een paar minuten. Ontdek outfits die bij je passen en shop ze direct.",
-            url: "https://fitfi.nl",
+            url: "https://fitfi.ai",
             applicationCategory: "LifestyleApplication",
             operatingSystem: "Web",
             offers: {

@@ -165,7 +165,7 @@ export default function DashboardPage() {
     return (
       <div
         className="flex items-center justify-center px-6 bg-[#FAFAF8]"
-        style={{ minHeight: "calc(100vh - 64px)" }}
+        style={{ minHeight: "calc(100vh - 72px)" }}
       >
         <Helmet><title>Dashboard – FitFi</title></Helmet>
         <motion.div
@@ -223,7 +223,7 @@ export default function DashboardPage() {
   const progressCircumference = 2 * Math.PI * progressRadius;
 
   return (
-    <div className="bg-[#FAFAF8] min-h-screen pt-24 md:pt-28 pb-16">
+    <div className="bg-[#FAFAF8] min-h-screen pt-44 md:pt-52 pb-16">
       <Helmet>
         <title>Dashboard – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijldashboard met outfits, kleurprofiel en stijladvies." />

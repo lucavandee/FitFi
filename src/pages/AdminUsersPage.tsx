@@ -186,7 +186,7 @@ export default function AdminUsersPage() {
 
   if (authLoading) {
     return (
-      <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 64px)' }}>
+      <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 72px)' }}>
         <div className="animate-spin w-10 h-10 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full" />
       </div>
     );
@@ -194,7 +194,7 @@ export default function AdminUsersPage() {
 
   if (!isAdmin) {
     return (
-      <div className="flex items-center justify-center p-6" style={{ minHeight: 'calc(100vh - 64px)' }}>
+      <div className="flex items-center justify-center p-6" style={{ minHeight: 'calc(100vh - 72px)' }}>
         <div className="text-center">
           <XCircle className="w-16 h-16 text-[var(--color-muted)] mx-auto mb-4" />
           <h1 className="text-xl font-bold text-[var(--color-text)] mb-2">Geen toegang</h1>
@@ -205,7 +205,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="bg-[var(--color-bg)]" style={{ minHeight: 'calc(100vh - 64px)' }}>
+    <div className="bg-[var(--color-bg)]" style={{ minHeight: 'calc(100vh - 72px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Page header */}

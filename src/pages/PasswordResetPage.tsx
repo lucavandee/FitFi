@@ -66,7 +66,7 @@ export default function PasswordResetPage() {
 
       <div
         className="w-full flex items-center justify-center px-4"
-        style={{ minHeight: "calc(100vh - 64px)", background: "var(--color-bg)" }}
+        style={{ minHeight: "calc(100vh - 72px)", background: "var(--color-bg)" }}
       >
         <div className="w-full max-w-[420px] py-10">
 

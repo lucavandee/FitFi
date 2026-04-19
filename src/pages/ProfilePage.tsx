@@ -263,7 +263,7 @@ const ProfilePage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="bg-[#FAFAF8] flex items-center justify-center px-6" style={{ minHeight: "calc(100vh - 64px)" }}>
+      <div className="bg-[#FAFAF8] flex items-center justify-center px-6" style={{ minHeight: "calc(100vh - 72px)" }}>
         <Helmet><title>Profiel – FitFi</title></Helmet>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -286,7 +286,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="bg-[#FAFAF8]" style={{ minHeight: "calc(100vh - 64px)" }}>
+    <div className="bg-[#FAFAF8]" style={{ minHeight: "calc(100vh - 72px)" }}>
       <Helmet>
         <title>Profiel – FitFi</title>
         <meta name="description" content="Beheer je persoonlijke gegevens en stijlprofiel." />

@@ -23,7 +23,7 @@ export function HeroMinimal() {
 
   return (
     <section className="relative bg-[var(--color-bg)] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 lg:pt-32 lg:pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 pb-16 lg:pt-52 lg:pb-24">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Left Column - Content */}

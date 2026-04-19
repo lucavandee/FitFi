@@ -569,7 +569,7 @@ export default function EnhancedResultsPage() {
   ];
 
   return (
-    <div className="bg-[#FAFAF8] text-[#1A1A1A] relative" style={{ minHeight: 'calc(100vh - 64px)' }}>
+    <div className="bg-[#FAFAF8] text-[#1A1A1A] relative" style={{ minHeight: 'calc(100vh - 72px)' }}>
       <Helmet>
         <title>Jouw Style Report – FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
