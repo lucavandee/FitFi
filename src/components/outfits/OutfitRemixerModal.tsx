@@ -276,7 +276,7 @@ export default function OutfitRemixerModal({
 
               {loading && (
                 <div className="text-center py-8">
-                  <div className="inline-block w-8 h-8 border-4 border-[#E5E5E5] border-t-[#A8513A] rounded-full animate-spin" />
+                  <Spinner size="md" className="mx-auto" />
                   <p className="text-sm text-[#8A8A8A] mt-2">
                     Suggesties laden...
                   </p>
@@ -355,7 +355,7 @@ export default function OutfitRemixerModal({
                           >
                             {swapping && selectedSuggestion === suggestion ? (
                               <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                <Spinner size="sm" />
                                 Swappen...
                               </>
                             ) : (

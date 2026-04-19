@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { getBramsFruitProductGroups, getBramsFruitCategories } from '@/services/bramsFruit/productService';
 import { BramsFruitProductGroup } from '@/services/bramsFruit/types';
 import { ProductImage } from '@/components/ui/ProductImage';
@@ -64,7 +65,7 @@ export default function BramsFruitCatalogPage() {
       <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <Spinner size="lg" className="mx-auto" />
             <p className="mt-4 text-[#8A8A8A]">Producten laden...</p>
           </div>
         </div>

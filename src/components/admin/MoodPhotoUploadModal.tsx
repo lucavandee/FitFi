@@ -396,7 +396,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                     className="absolute inset-0 flex flex-col items-center justify-center"
                     style={{ background: 'linear-gradient(to bottom, rgba(62,49,37,0.75), rgba(62,49,37,0.90))' }}
                   >
-                    <div className="animate-spin w-10 h-10 border-3 border-white/80 border-t-transparent rounded-full mb-4" />
+                    <Spinner size="md" className="mb-4" />
                     <p className="text-white font-semibold text-lg">AI analyseert outfit...</p>
                     <p className="text-white/60 text-sm mt-1">Archetype, kleuren & stijl detectie</p>
                   </div>
@@ -682,7 +682,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 exit={{ opacity: 0 }}
                 className="p-12 text-center"
               >
-                <div className="animate-spin w-10 h-10 border-3 border-[#A8513A] border-t-transparent rounded-full mx-auto mb-4" />
+                <Spinner size="md" className="mx-auto mb-4" />
                 <p className="font-medium text-[#1A1A1A]">Foto opslaan met metadata...</p>
                 <p className="text-sm text-[#8A8A8A] mt-1">WebP conversie + upload + database</p>
               </motion.div>

@@ -207,7 +207,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-16 h-16 border-4 border-[#A8513A] border-t-transparent rounded-full animate-spin mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[#1A1A1A] font-medium">Genereer je perfecte outfits...</p>
           <p className="text-sm text-[#8A8A8A] mt-2">
             Onze AI leert jouw stijl kennen

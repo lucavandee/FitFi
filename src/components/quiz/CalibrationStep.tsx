@@ -279,7 +279,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     return (
       <div className="flex items-center justify-center min-h-[240px] py-16">
         <div className="text-center">
-          <div className="inline-block w-12 h-12 border-4 border-[#E5E5E5] border-t-[#A8513A] rounded-full animate-spin" />
+          <Spinner size="lg" className="mx-auto" />
           <p className="mt-4 text-[#8A8A8A]">Outfits voorbereiden...</p>
         </div>
       </div>
@@ -419,7 +419,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           >
             {applying ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <Spinner size="sm" />
                 Style DNA wordt gegenereerd...
               </>
             ) : (
