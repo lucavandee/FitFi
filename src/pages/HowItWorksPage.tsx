@@ -344,7 +344,7 @@ export default function HowItWorksPage() {
         {/* ════════════════════════════════════════════════════
             VERGELIJKINGSTABEL
         ════════════════════════════════════════════════════ */}
-        <section className="pt-28 pb-40 bg-[#FAFAF8]">
+        <section className="pt-44 md:pt-52 pb-40 bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-20">

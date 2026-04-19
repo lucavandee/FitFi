@@ -72,7 +72,6 @@ export const PostComposer: React.FC<Props> = ({
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "Posten mislukt";
       toast.error(errorMessage);
-      console.error('[PostComposer] Post creation failed:', e);
     } finally {
       setBusy(false);
     }

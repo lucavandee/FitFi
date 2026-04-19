@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { NavLink } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { savedOutfitsService } from '@/services/outfits/savedOutfitsService';
@@ -34,7 +35,6 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
       const outfits = await savedOutfitsService.getSavedOutfits(userId);
       setSavedOutfits(outfits);
     } catch (error) {
-      console.error('[SavedOutfitsGallery] Error loading:', error);
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +50,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--ff-color-primary-600)]"></div>
+        <Spinner size="md" />
       </div>
     );
   }
@@ -100,7 +100,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
                   <div key={idx} className="aspect-square relative">
                     <SmartImage
                       src={img}
-                      alt=""
+                      alt={`${outfit.name || 'Outfit'} - afbeelding ${idx + 1}`}
                       className="w-full h-full object-cover rounded"
                     />
                   </div>

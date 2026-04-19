@@ -33,7 +33,6 @@ export default function AdminAuditPage() {
     if (authLoading) return;
 
     if (!isAdmin) {
-      console.error('[AdminAudit] Access denied - user is not admin');
       return;
     }
 
@@ -55,18 +54,15 @@ export default function AdminAuditPage() {
       if (error) {
         if (error.code === '42P01') {
           // Table doesn't exist
-          console.warn('[AdminAudit] user_activity_log table does not exist yet');
           setLogs([]);
           return;
         }
-        console.error('[AdminAudit] Error loading audit logs:', error);
         toast.error('Kon audit logs niet laden');
         return;
       }
 
       setLogs(data || []);
     } catch (error) {
-      console.error('[AdminAudit] Exception:', error);
       toast.error('Fout bij laden audit logs');
     } finally {
       setLoading(false);

@@ -70,7 +70,7 @@ export function FeatureBlocksV3() {
             <div className={`relative ${feature.reversed ? 'lg:col-start-2' : ''}`}>
 
               {/* Main gradient block */}
-              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.visualGradient}`}></div>
 
                 {/* Pattern overlay */}
@@ -86,7 +86,7 @@ export function FeatureBlocksV3() {
                 </div>
 
                 {/* Floating stats card */}
-                <div className="absolute -bottom-8 -right-8 bg-white rounded-3xl shadow-2xl p-8 border-2 border-[#E5E5E5]">
+                <div className="absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-2xl p-8 border-2 border-[#E5E5E5]">
                   <div className="flex gap-10">
                     {feature.stats.map((stat, idx) => (
                       <div key={idx}>
@@ -106,7 +106,7 @@ export function FeatureBlocksV3() {
             {/* Content */}
             <div className={feature.reversed ? 'lg:col-start-1 lg:row-start-1' : ''}>
               {/* Icon badge */}
-              <div className={`inline-flex w-20 h-20 bg-gradient-to-br ${feature.iconBg} rounded-3xl items-center justify-center mb-8 shadow-xl`}>
+              <div className={`inline-flex w-20 h-20 bg-gradient-to-br ${feature.iconBg} rounded-2xl items-center justify-center mb-8 shadow-xl`}>
                 <feature.icon className="w-10 h-10 text-white" strokeWidth={2} />
               </div>
 

@@ -72,7 +72,6 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
         icon: '🛍️',
       });
     } catch (error) {
-      console.error('Error opening shop link:', error);
       toast.error('Kon shoplink niet openen', {
         description: 'Probeer het opnieuw of gebruik de directe link.',
       });

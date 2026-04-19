@@ -80,7 +80,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
               <SmartImage
                 className="w-full h-full object-cover aspect-square"
                 src={src}
-                alt=""
+                alt={`${title} - kledingstuk ${i + 2}`}
                 loading="lazy"
                 decoding="async"
               />

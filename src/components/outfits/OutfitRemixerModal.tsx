@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Sparkles, TrendingUp, TrendingDown, RefreshCw, CheckCircle } from 'lucide-react';
 import { AdaptiveOutfitRemixer, type RemixedOutfit, type SwapSuggestion } from '@/services/outfits/adaptiveOutfitRemixer';
@@ -46,7 +47,6 @@ export default function OutfitRemixerModal({
       );
       setSuggestions(sug);
     } catch (error) {
-      console.error('[OutfitRemixer] Error loading suggestions:', error);
       toast.error('Kon geen suggesties laden');
     } finally {
       setLoading(false);
@@ -94,7 +94,6 @@ export default function OutfitRemixerModal({
         loadSuggestions();
       }, 500);
     } catch (error) {
-      console.error('[OutfitRemixer] Error swapping item:', error);
       toast.error('Kon item niet swappen');
     } finally {
       setSwapping(false);
@@ -129,7 +128,6 @@ export default function OutfitRemixerModal({
 
       loadSuggestions();
     } catch (error) {
-      console.error('[OutfitRemixer] Error optimizing outfit:', error);
       toast.error('Kon outfit niet optimaliseren');
     } finally {
       setSwapping(false);
@@ -276,7 +274,7 @@ export default function OutfitRemixerModal({
 
               {loading && (
                 <div className="text-center py-8">
-                  <div className="inline-block w-8 h-8 border-4 border-[var(--color-border)] border-t-[var(--ff-color-primary-700)] rounded-full animate-spin" />
+                  <Spinner size="md" className="mx-auto" />
                   <p className="text-sm text-[var(--color-text-secondary)] mt-2">
                     Suggesties laden...
                   </p>
@@ -355,7 +353,7 @@ export default function OutfitRemixerModal({
                           >
                             {swapping && selectedSuggestion === suggestion ? (
                               <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                <Spinner size="sm" />
                                 Swappen...
                               </>
                             ) : (

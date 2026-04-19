@@ -51,7 +51,6 @@ export function ImagePreloader({ imageUrls, currentIndex, lookahead = 2 }: Image
       };
 
       img.onerror = (err) => {
-        console.warn(`⚠️ Failed to preload image ${i} ahead:`, imageUrl, err);
       };
     }
 

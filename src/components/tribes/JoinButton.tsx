@@ -77,7 +77,6 @@ export const JoinButton: React.FC<Props> = ({
         });
       }
       
-      console.error('[JoinButton] Action failed:', e);
     } finally {
       setBusy(false);
     }

@@ -65,7 +65,6 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       setQueue(initial);
       setLoading(false);
     } catch (err) {
-      console.error('Failed to load mood photos:', err);
       setLoading(false);
     }
   };
@@ -121,7 +120,6 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       }
       onSwipe?.(currentPhoto.id as unknown as string, direction);
     } catch (err) {
-      console.warn('Failed to save swipe:', err);
     }
 
     const isLastInQueue = newSwipeCount >= queue.length;

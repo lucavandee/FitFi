@@ -56,7 +56,6 @@ export default function SaveButton({ outfit, userId, className = '' }: SaveButto
         }
       }
     } catch (error) {
-      console.error('[SaveButton] Error:', error);
       toast.error('Er ging iets mis');
     } finally {
       setIsLoading(false);
@@ -70,7 +69,7 @@ export default function SaveButton({ outfit, userId, className = '' }: SaveButto
       className={`
         inline-flex items-center justify-center
         w-10 h-10
-        rounded-full
+        rounded-xl
         transition-all duration-200
         ${isSaved
           ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]'

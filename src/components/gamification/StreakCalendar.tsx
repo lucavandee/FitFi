@@ -65,7 +65,6 @@ export function StreakCalendar({
         toast.error('Check-in mislukt, probeer opnieuw');
       }
     } catch (err) {
-      console.error('Error during check-in:', err);
       toast.error('Check-in mislukt');
     } finally {
       setIsChecking(false);

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Spinner } from '@/components/ui/Spinner';
 import { Plus, Calendar, Image, FileText, Award, X } from "lucide-react";
 import type { TribeChallenge } from "@/services/data/types";
 import Button from "../ui/Button";
@@ -101,7 +102,6 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
       
       toast.success("Challenge succesvol aangemaakt! 🎯");
     } catch (error) {
-      console.error("Challenge creation failed:", error);
       toast.error("Challenge aanmaken mislukt. Probeer opnieuw.");
     } finally {
       setBusy(false);
@@ -326,7 +326,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
           >
             {busy ? (
               <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-[var(--color-text)] border-t-transparent rounded-full animate-spin"></div>
+                <Spinner size="sm" />
                 <span>Aanmaken...</span>
               </div>
             ) : (

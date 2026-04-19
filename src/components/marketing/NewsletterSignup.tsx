@@ -46,7 +46,6 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
         setEmail("");
       }
     } catch (error) {
-      console.error("Newsletter signup error:", error);
       setStatus("error");
       setMessage("Er ging iets mis. Probeer het opnieuw.");
     }

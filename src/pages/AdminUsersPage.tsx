@@ -106,7 +106,6 @@ export default function AdminUsersPage() {
 
     const { data, error } = await sb.rpc('get_admin_users');
     if (error) {
-      console.error('get_admin_users error:', error);
       toast.error('Kon gebruikers niet laden: ' + (error.message || 'onbekende fout'));
     } else {
       setUsers(data || []);

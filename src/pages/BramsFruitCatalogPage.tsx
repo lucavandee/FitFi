@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { getBramsFruitProductGroups, getBramsFruitCategories } from '@/services/bramsFruit/productService';
 import { BramsFruitProductGroup } from '@/services/bramsFruit/types';
 import { ProductImage } from '@/components/ui/ProductImage';
@@ -12,7 +13,6 @@ export default function BramsFruitCatalogPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('[BramsFruit] Component mounted');
     loadData();
   }, []);
 
@@ -21,19 +21,15 @@ export default function BramsFruitCatalogPage() {
     setError(null);
 
     try {
-      console.log('[BramsFruit] Fetching products...');
       const [productsData, categoriesData] = await Promise.all([
         getBramsFruitProductGroups(),
         getBramsFruitCategories(),
       ]);
 
-      console.log('[BramsFruit] Loaded products:', productsData.length);
-      console.log('[BramsFruit] Categories:', categoriesData.categories);
 
       setGroups(productsData);
       setCategories(['all', ...categoriesData.categories]);
     } catch (err) {
-      console.error('[BramsFruit] Error loading data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load products');
     } finally {
       setLoading(false);
@@ -64,7 +60,7 @@ export default function BramsFruitCatalogPage() {
       <div className="min-h-screen bg-[var(--color-bg)] py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <Spinner size="lg" className="mx-auto" />
             <p className="mt-4 text-[var(--color-text-secondary)]">Producten laden...</p>
           </div>
         </div>

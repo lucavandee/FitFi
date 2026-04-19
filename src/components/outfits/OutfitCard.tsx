@@ -269,7 +269,6 @@ export default function OutfitCard({
 
       toast.success('Nova heeft deze outfit uitgelegd!');
     } catch (error) {
-      console.error('Error explaining outfit:', error);
       
       // Track explanation failure
       track('explanation_failed', { 

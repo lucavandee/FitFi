@@ -28,7 +28,6 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
       setProfile(lockedProfile);
       setInfluence(influenceData);
     } catch (err) {
-      console.error('Failed to load embedding data:', err);
     } finally {
       setLoading(false);
     }

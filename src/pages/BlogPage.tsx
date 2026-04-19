@@ -54,7 +54,7 @@ function BlogCard({ post, style }: CardProps) {
       >
         <img
           src={post.image}
-          alt=""
+          alt={post.title}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />

@@ -44,7 +44,6 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       });
     } catch (err) {
       toast.error('Kon outfit niet opslaan');
-      console.error(err);
     }
   };
 
@@ -393,7 +392,6 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         onClose={() => setShowRemixer(false)}
         outfit={adaptiveOutfit}
         onOutfitUpdated={(remixed) => {
-          console.log('Outfit remixed:', remixed);
           // Optionally update the outfit display here
         }}
       />

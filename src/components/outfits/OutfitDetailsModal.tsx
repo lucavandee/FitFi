@@ -114,7 +114,6 @@ export default function OutfitDetailsModal({
         onShopProduct(product);
       }
     } catch (error) {
-      console.error('Error opening shop link:', error);
       toast.error('Kon shoplink niet openen');
     } finally {
       setOpeningProductId(null);

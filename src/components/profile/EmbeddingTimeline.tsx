@@ -50,7 +50,6 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
         setSelectedVersion(data[data.length - 1].version);
       }
     } catch (err) {
-      console.error('Failed to load timeline:', err);
     } finally {
       setLoading(false);
     }
@@ -71,7 +70,6 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
       if (error) throw error;
       setComparison(data || []);
     } catch (err) {
-      console.error('Failed to load comparison:', err);
     }
   };
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Spinner } from '@/components/ui/Spinner';
 import type { TribeChallenge } from "@/services/data/types";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { Send, Image, Link, X, Trophy, Clock, Users, Star } from 'lucide-react';
@@ -54,7 +55,6 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
           // Note: userId would need to be passed as prop for XP award
           // For now, we show the enhanced toast without XP
         } catch (xpError) {
-          console.warn('[ChallengeDetail] XP award failed:', xpError);
         }
       }
       
@@ -75,7 +75,6 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
         duration: 3000
       });
     } catch (error) {
-      console.error('Submission error:', error);
       alert("Inzending mislukt, probeer opnieuw.");
     } finally { 
       setBusy(false); 
@@ -293,7 +292,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
             >
               {busy ? (
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-[var(--color-text)] border-t-transparent rounded-full animate-spin"></div>
+                  <Spinner size="sm" />
                   <span>Versturen...</span>
                 </div>
               ) : (

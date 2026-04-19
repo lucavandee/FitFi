@@ -60,7 +60,6 @@ export function RefineStyleWidget() {
         }
       }
     } catch (err) {
-      console.error('Failed to load refine style status:', err);
     } finally {
       setLoading(false);
     }

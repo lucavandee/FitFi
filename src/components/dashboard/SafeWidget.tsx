@@ -25,7 +25,6 @@ const SafeWidget: React.FC<SafeWidgetProps> = ({ name, children, className = '' 
       });
     }
     
-    console.error(`[SafeWidget] ${name} widget error:`, error, errorInfo);
   };
 
   const fallback = (

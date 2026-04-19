@@ -75,7 +75,6 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
           ]);
         }
       } catch (e) {
-        console.error("[NovaChatProvider] Failed to load context:", e);
       } finally {
         setContextLoading(false);
       }
@@ -111,13 +110,11 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
         const { data: { session } } = await sb.auth.getSession();
 
         if (!session?.user) {
-          console.error('⛔ [NovaChatProvider] No active Supabase session - cannot send message');
           setError('Je moet ingelogd zijn om Nova te gebruiken. Log opnieuw in.');
           return;
         }
 
       } catch (authError) {
-        console.error('❌ [NovaChatProvider] Session check failed:', authError);
         setError('Authenticatie mislukt. Log opnieuw in.');
         return;
       }

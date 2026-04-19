@@ -63,7 +63,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
       setMetrics(mockMetrics);
       setLastRefresh(new Date());
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
       setError('Kon dashboard data niet laden');
       
       track('analytics_dashboard_error', {

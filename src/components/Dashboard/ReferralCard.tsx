@@ -38,7 +38,6 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
         setTimeout(() => el.remove(), 300);
       }, 1600);
     } catch (error) {
-      console.warn('Share failed:', error);
       // Error feedback
       const el = document.createElement("div");
       el.textContent = "Share mislukt, probeer opnieuw";
@@ -66,7 +65,7 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
         <div className="text-xl font-semibold tabular-nums">{count}/{goal} referrals</div>
         <button
           onClick={share}
-          className="px-4 py-2 rounded-full bg-[var(--ff-color-primary-500)] text-white hover:bg-[var(--ff-color-primary-600)] transition-all btn-animate"
+          className="px-4 py-2 rounded-xl bg-[var(--ff-color-primary-500)] text-white hover:bg-[var(--ff-color-primary-600)] transition-all btn-animate"
         >
           Deel invite
         </button>

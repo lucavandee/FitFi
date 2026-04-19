@@ -53,7 +53,6 @@ export default function AdminTestimonialsPage() {
       setTestimonials(data);
     } catch (error) {
       toast.error('Fout bij laden testimonials');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -73,7 +72,6 @@ export default function AdminTestimonialsPage() {
       loadTestimonials();
     } catch (error) {
       toast.error('Fout bij opslaan');
-      console.error(error);
     }
   };
 
@@ -101,7 +99,6 @@ export default function AdminTestimonialsPage() {
       loadTestimonials();
     } catch (error) {
       toast.error('Fout bij verwijderen');
-      console.error(error);
     }
   };
 
@@ -112,7 +109,6 @@ export default function AdminTestimonialsPage() {
       loadTestimonials();
     } catch (error) {
       toast.error('Fout bij wijzigen status');
-      console.error(error);
     }
   };
 

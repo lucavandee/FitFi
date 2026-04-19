@@ -104,14 +104,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
         setConfidence(Math.max(60, calculatedConfidence)); // Min 60% to avoid looking uncertain
         setShowPreview(true);
 
-        console.log('[ArchetypePreview] Calculated:', {
-          archetype: profile.dominantArchetype,
-          confidence: calculatedConfidence,
-          scores: profile.archetypeScores,
-          occasions
-        });
       } catch (error) {
-        console.warn('[ArchetypePreview] Failed to calculate archetype:', error);
       }
     };
 
