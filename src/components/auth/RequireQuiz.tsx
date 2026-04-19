@@ -16,8 +16,15 @@ export function RequireQuiz({ children }: { children: React.ReactElement }) {
       const archetype = localStorage.getItem(LS_KEYS.ARCHETYPE);
 
       if (quizCompleted === "1" && quizAnswers && archetype) {
-        setStatus('has_quiz');
-        return;
+        try {
+          const parsed = JSON.parse(quizAnswers);
+          if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+            setStatus('has_quiz');
+            return;
+          }
+        } catch {
+          // invalid JSON — fall through to Supabase restore
+        }
       }
 
       if (user?.id) {

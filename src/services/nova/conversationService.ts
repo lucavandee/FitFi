@@ -139,7 +139,7 @@ class ConversationService {
   private getQuizContext(): Record<string, any> {
     try {
       const quizAnswers = localStorage.getItem('ff_quiz_answers');
-      const archetype = localStorage.getItem('ff_archetype');
+      const archetype = localStorage.getItem('ff_style_archetype');
       const colorProfile = localStorage.getItem('ff_color_profile');
 
       return {

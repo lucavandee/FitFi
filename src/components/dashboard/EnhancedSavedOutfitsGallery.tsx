@@ -5,11 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { NovaMatchBadge } from "@/components/outfits/NovaMatchBadge";
 import { calculateMatchScore } from "@/services/outfits/matchScoreCalculator";
-
-const LS_KEYS = {
-  ARCHETYPE: 'ff_archetype',
-  COLOR_PROFILE: 'ff_color_profile'
-};
+import { LS_KEYS } from "@/lib/quiz/types";
 
 function readJson<T>(key: string): T | null {
   try {
