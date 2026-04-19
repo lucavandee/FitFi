@@ -12,15 +12,22 @@ export async function migrateQuizToDatabase(): Promise<{ success: boolean; error
     // Get quiz data from localStorage
     const quizAnswersStr = localStorage.getItem('ff_quiz_answers') || localStorage.getItem('fitfi.quiz.answers');
     const colorProfileStr = localStorage.getItem('ff_color_profile');
-    const archetypeStr = localStorage.getItem('ff_archetype');
+    const archetypeStr = localStorage.getItem('ff_style_archetype') || localStorage.getItem('ff_archetype');
 
     if (!quizAnswersStr) {
       return { success: false, error: 'No quiz data found in localStorage' };
     }
 
-    const quizAnswers = JSON.parse(quizAnswersStr);
-    const colorProfile = colorProfileStr ? JSON.parse(colorProfileStr) : null;
-    const archetype = archetypeStr ? JSON.parse(archetypeStr) : quizAnswers.archetype;
+    let quizAnswers: Record<string, any>;
+    let colorProfile: Record<string, any> | null;
+    let archetype: unknown;
+    try {
+      quizAnswers = JSON.parse(quizAnswersStr);
+      colorProfile = colorProfileStr ? JSON.parse(colorProfileStr) : null;
+      archetype = archetypeStr ? JSON.parse(archetypeStr) : quizAnswers.archetype;
+    } catch {
+      return { success: false, error: 'Failed to parse quiz data from localStorage' };
+    }
 
     console.log('📦 [Migration] Found quiz data in localStorage:', {
       gender: quizAnswers.gender,

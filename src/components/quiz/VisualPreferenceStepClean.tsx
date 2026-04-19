@@ -152,6 +152,20 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     }, 100);
   };
 
+  const persistSwipeData = (count: number) => {
+    try {
+      localStorage.setItem('ff_swipe_count', String(count));
+      const pattern = analyzerRef.current.getPattern();
+      localStorage.setItem('ff_swipe_pattern', JSON.stringify({
+        likeRate: pattern.likeRate,
+        dominantColors: pattern.dominantColors,
+        preferredStyles: pattern.preferredStyles,
+        topArchetypes: pattern.topArchetypes,
+        confidence: pattern.confidence,
+      }));
+    } catch {}
+  };
+
   const handleFinishEarly = () => {
     if (canComplete) {
       setShowCelebration(true);
@@ -175,7 +189,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     return (
       <div className="text-center py-12">
         <p className="text-[var(--color-muted)] mb-4">Geen stijlbeelden beschikbaar</p>
-        <button onClick={onComplete} className="ff-btn ff-btn-primary">
+        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="ff-btn ff-btn-primary">
           Doorgaan
         </button>
       </div>
@@ -214,6 +228,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
         isVisible={showCelebration}
         onComplete={() => {
           setShowCelebration(false);
+          persistSwipeData(swipeCount);
           onComplete();
         }}
       />
@@ -270,7 +285,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           ) : (
             <button
-              onClick={onComplete}
+              onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
               className="w-full py-2 rounded-xl text-xs font-medium text-[var(--color-muted)] transition-all flex items-center justify-center gap-1.5 hover:text-[var(--color-text)]"
               aria-label="Sla visuele stap over"
             >
@@ -411,7 +426,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           ) : (
             <button
-              onClick={onComplete}
+              onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
               className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[var(--ff-color-primary-50)] text-[var(--color-muted)] hover:text-[var(--color-text)]"
               style={{ border: '1px solid var(--color-border)' }}
               aria-label="Sla visuele stap over"

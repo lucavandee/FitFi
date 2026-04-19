@@ -14,14 +14,6 @@ export function filterByGender(
 
 export function getUserGender(): Gender {
   try {
-    const styleProfileStr = localStorage.getItem('ff_style_profile');
-    if (styleProfileStr) {
-      const profile = JSON.parse(styleProfileStr);
-      if (profile.gender === 'male' || profile.gender === 'female') {
-        return profile.gender;
-      }
-    }
-
     const quizAnswersStr = localStorage.getItem('ff_quiz_answers');
     if (quizAnswersStr) {
       const answers = JSON.parse(quizAnswersStr);

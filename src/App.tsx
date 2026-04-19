@@ -184,7 +184,7 @@ function AppShell() {
                 <Route path="/dashboard" element={<RequireAuth><RequireQuiz><WithSeo.Dashboard /></RequireQuiz></RequireAuth>} />
                 <Route path="/profile" element={<RequireAuth><WithSeo.Profile /></RequireAuth>} />
                 <Route path="/account/billing" element={<RequireAuth><WithSeo.Billing /></RequireAuth>} />
-                <Route path="/results" element={<RequireQuiz><WithSeo.Results /></RequireQuiz>} />
+                <Route path="/results" element={<RequireAuth><RequireQuiz><WithSeo.Results /></RequireQuiz></RequireAuth>} />
                 <Route path="/results/preview" element={<WithSeo.ResultsPreview />} />
 
                 {/* Admin */}
