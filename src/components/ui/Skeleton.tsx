@@ -5,7 +5,7 @@ type Props = { className?: string; rounded?: number };
 export default function Skeleton({ className = "", rounded = 12 }: Props) {
   return (
     <div
-      className={`bg-[var(--color-surface)] dark:bg-gray-800 relative overflow-hidden ${className}`}
+      className={`bg-[#FFFFFF] dark:bg-gray-800 relative overflow-hidden ${className}`}
       style={{ borderRadius: rounded }}
       aria-busy="true"
       aria-label="Aan het laden..."

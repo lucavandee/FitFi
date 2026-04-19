@@ -108,14 +108,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <article
       className={cn(
-        'rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden',
-        'hover:shadow-[var(--shadow-soft)] transition-shadow',
+        'rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] overflow-hidden',
+        'hover:shadow-sm transition-shadow',
         className
       )}
       aria-label={`${title} van ${brand}`}
     >
       {/* Product image */}
-      <div className="aspect-[3/4] overflow-hidden bg-[var(--ff-color-neutral-100)] relative">
+      <div className="aspect-[3/4] overflow-hidden bg-[#F5F0EB] relative">
         <SmartImage
           src={imageUrl}
           alt={`${title} van ${brand}`}
@@ -136,8 +136,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           className={cn(
             'absolute top-2.5 right-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm',
             saved
-              ? 'bg-[var(--ff-color-primary-700)] text-white'
-              : 'bg-white/90 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)]'
+              ? 'bg-[#A8513A] text-white'
+              : 'bg-white/90 text-[#8A8A8A] hover:text-[#A8513A]'
           )}
         >
           {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
@@ -146,28 +146,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Info */}
       <div className="p-3.5">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-muted)] mb-0.5">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-0.5">
           {brand}
         </p>
-        <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug line-clamp-2 mb-2">
+        <h3 className="text-sm font-semibold text-[#1A1A1A] leading-snug line-clamp-2 mb-2">
           {title}
         </h3>
 
         {/* Reason line */}
         {reason && (
-          <p className="text-xs text-[var(--color-muted)] italic mb-2.5 line-clamp-2">
+          <p className="text-xs text-[#8A8A8A] italic mb-2.5 line-clamp-2">
             {reason}
           </p>
         )}
 
         {/* Price + primary CTA */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-base font-bold text-[var(--color-text)]">
+          <span className="text-base font-bold text-[#1A1A1A]">
             €{price.toFixed(2)}
           </span>
           <button
             onClick={handleClick}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
             aria-label={`Bekijk bij partner (je verlaat FitFi)`}
           >
             Bekijk bij partner
@@ -177,13 +177,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Feedback row */}
         {(onFeedbackMore || onFeedbackLess) && feedbackGiven === null && (
-          <div className="flex items-center gap-2 pt-2.5 border-t border-[var(--color-border)]">
-            <span className="text-[10px] text-[var(--color-muted)] mr-auto">Niet jouw smaak? Geef feedback.</span>
+          <div className="flex items-center gap-2 pt-2.5 border-t border-[#E5E5E5]">
+            <span className="text-[10px] text-[#8A8A8A] mr-auto">Niet jouw smaak? Geef feedback.</span>
             <button
               onClick={handleFeedbackMore}
               aria-label="Meer zoals dit"
               title="Meer zoals dit"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[#8A8A8A] hover:text-[#A8513A] hover:bg-[#FAF5F2] transition-colors"
             >
               <ThumbsUp className="w-3.5 h-3.5" />
               Meer zoals dit
@@ -192,7 +192,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={handleFeedbackLess}
               aria-label="Minder zoals dit"
               title="Minder zoals dit"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-error-600)] hover:bg-[var(--ff-color-error-50)] transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[#8A8A8A] hover:text-[#C24A4A] hover:bg-[#FEF2F2] transition-colors"
             >
               <ThumbsDown className="w-3.5 h-3.5" />
               Minder zoals dit
@@ -201,15 +201,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {feedbackGiven !== null && (
-          <div className="pt-2.5 border-t border-[var(--color-border)]">
-            <p className="text-[10px] text-[var(--color-muted)] text-center">
+          <div className="pt-2.5 border-t border-[#E5E5E5]">
+            <p className="text-[10px] text-[#8A8A8A] text-center">
               {feedbackGiven === 'more' ? 'Bedankt — we tonen meer hiervan.' : 'Begrepen — we leren van je.'}
             </p>
           </div>
         )}
 
         {/* Affiliate disclosure */}
-        <p className="mt-2.5 text-[10px] text-[var(--color-muted)] leading-relaxed">
+        <p className="mt-2.5 text-[10px] text-[#8A8A8A] leading-relaxed">
           Koop bij partner (je verlaat FitFi) ·{' '}
           <a
             href="/disclosure"

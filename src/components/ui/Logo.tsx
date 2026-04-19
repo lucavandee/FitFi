@@ -29,15 +29,15 @@ const Logo: React.FC<LogoProps> = ({
   const ink =
     variant === "light" ? "#FFFFFF"
     : variant === "dark"  ? "#1E2333"
-    : "var(--color-text)";
+    : "#1A1A1A";
 
   const inky =
     variant === "light" ? "rgba(255,255,255,0.55)"
-    : "var(--ff-color-primary-600)";
+    : "#C2654A";
 
   const diamond =
     variant === "light" ? "rgba(255,255,255,0.85)"
-    : "var(--ff-color-primary-500)";
+    : "#C2654A";
 
   const W = Math.round(102 * s);
   const H = Math.round(26 * s);

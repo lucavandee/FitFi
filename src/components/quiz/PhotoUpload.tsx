@@ -166,36 +166,36 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       <div className="text-center">
         <div
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3 text-xs font-semibold"
-          style={{ background: "var(--overlay-accent-08a)", border: "1px solid var(--color-border)", color: "var(--ff-color-primary-700)" }}
+          style={{ background: "var(--overlay-accent-08a)", border: "1px solid #E5E5E5", color: "#A8513A" }}
         >
           <span>Optionele stap</span>
         </div>
-        <h2 className="text-xl font-bold text-[var(--color-text)] mb-1">
+        <h2 className="text-xl font-bold text-[#1A1A1A] mb-1">
           Kleuranalyse via foto
         </h2>
-        <p className="text-sm text-[var(--color-muted)] max-w-md mx-auto leading-relaxed">
-          Upload een foto van je outfit of jezelf — Nova analyseert welke kleuren het beste bij je passen. <strong className="text-[var(--color-text)]">Je foto helpt kleuren en stijl te matchen, meer niet. We slaan geen gezichtsdata op.</strong>
+        <p className="text-sm text-[#8A8A8A] max-w-md mx-auto leading-relaxed">
+          Upload een foto van je outfit of jezelf — Nova analyseert welke kleuren het beste bij je passen. <strong className="text-[#1A1A1A]">Je foto helpt kleuren en stijl te matchen, meer niet. We slaan geen gezichtsdata op.</strong>
         </p>
       </div>
 
       {/* What kind of photo — example card */}
       <div
-        className="rounded-2xl border border-[var(--color-border)] overflow-hidden"
-        style={{ background: "var(--color-surface)" }}
+        className="rounded-2xl border border-[#E5E5E5] overflow-hidden"
+        style={{ background: "#FFFFFF" }}
       >
         <button
           type="button"
           onClick={() => setShowTips(p => !p)}
-          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-[var(--color-text)] hover:bg-[var(--ff-color-primary-50)] transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors"
         >
           <span className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+            <Info className="w-4 h-4 text-[#A8513A]" />
             Wat voor foto werkt het best?
           </span>
           <motion.span
             animate={{ rotate: showTips ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="text-[var(--color-muted)]"
+            className="text-[#8A8A8A]"
           >
             ▾
           </motion.span>
@@ -210,21 +210,21 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               transition={{ duration: 0.25 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-4 border-t border-[var(--color-border)]">
+              <div className="px-4 pb-4 border-t border-[#E5E5E5]">
                 <div className="flex gap-4 mt-4">
                   {/* Illustration */}
                   <div
                     className="flex-shrink-0 w-24 h-32 rounded-xl flex flex-col items-center justify-center gap-1"
-                    style={{ background: "var(--color-bg)", border: "2px dashed var(--color-border)" }}
+                    style={{ background: "#FAFAF8", border: "2px dashed #E5E5E5" }}
                   >
-                    <ImageIcon className="w-8 h-8 text-[var(--color-muted)]" />
-                    <span className="text-[10px] text-center text-[var(--color-muted)] leading-tight px-1">schouder tot heup</span>
+                    <ImageIcon className="w-8 h-8 text-[#8A8A8A]" />
+                    <span className="text-[10px] text-center text-[#8A8A8A] leading-tight px-1">schouder tot heup</span>
                   </div>
                   {/* Tips list */}
                   <ul className="flex-1 space-y-2 pt-1">
                     {PHOTO_TIPS.map((tip, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text)]">
-                        <span className="mt-0.5 w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "var(--ff-color-primary-700)" }}>
+                      <li key={i} className="flex items-start gap-2 text-sm text-[#1A1A1A]">
+                        <span className="mt-0.5 w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#A8513A" }}>
                           {i + 1}
                         </span>
                         {tip}
@@ -248,7 +248,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.2 }}
             className="relative rounded-2xl overflow-hidden"
-            style={{ border: "2px solid var(--color-border)" }}
+            style={{ border: "2px solid #E5E5E5" }}
           >
             <img
               src={value}
@@ -306,8 +306,8 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               onDrop={onDrop}
               className="relative rounded-2xl transition-all duration-200 cursor-pointer"
               style={{
-                border: `2px dashed ${isDragging ? "var(--ff-color-primary-600)" : "var(--color-border)"}`,
-                background: isDragging ? "var(--ff-color-primary-50)" : "var(--color-bg)",
+                border: `2px dashed ${isDragging ? "#C2654A" : "#E5E5E5"}`,
+                background: isDragging ? "#FAF5F2" : "#FAFAF8",
                 minHeight: "180px",
               }}
               onClick={() => inputRef.current?.click()}
@@ -320,17 +320,17 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-200"
                   style={{
-                    background: isDragging ? "var(--ff-color-primary-100)" : "var(--color-surface)",
-                    border: "1px solid var(--color-border)",
+                    background: isDragging ? "#FAF5F2" : "#FFFFFF",
+                    border: "1px solid #E5E5E5",
                     transform: isDragging ? "scale(1.08)" : "scale(1)",
                   }}
                 >
-                  <Upload className="w-7 h-7 text-[var(--ff-color-primary-700)]" />
+                  <Upload className="w-7 h-7 text-[#A8513A]" />
                 </div>
-                <p className="text-sm font-semibold text-[var(--color-text)] mb-1">
+                <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Sleep hier een foto naartoe
                 </p>
-                <p className="text-xs text-[var(--color-muted)]">
+                <p className="text-xs text-[#8A8A8A]">
                   of klik om te bladeren · JPG, PNG, WEBP · max. 5 MB
                 </p>
               </div>
@@ -341,15 +341,15 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] active:scale-[0.98] transition-all min-h-[48px]"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] active:scale-[0.98] transition-all min-h-[48px]"
               >
-                <ImageIcon className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                <ImageIcon className="w-4 h-4 text-[#A8513A]" />
                 Uit galerij
               </button>
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 bg-[var(--ff-color-primary-700)] border-[var(--ff-color-primary-700)] text-sm font-semibold text-white hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all min-h-[48px]"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 bg-[#A8513A] border-[#A8513A] text-sm font-semibold text-white hover:bg-[#C2654A] active:scale-[0.98] transition-all min-h-[48px]"
               >
                 <Camera className="w-4 h-4" />
                 Maak foto
@@ -424,13 +424,13 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       {/* Privacy notice */}
       <div
         className="rounded-xl px-4 py-3 flex items-start gap-3"
-        style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}
+        style={{ background: "#FFFFFF", border: "1px solid #E5E5E5" }}
       >
         <Shield className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-        <div className="text-xs text-[var(--color-muted)] leading-relaxed">
-          <span className="font-semibold text-[var(--color-text)]">Hoe we jouw foto verwerken: </span>
+        <div className="text-xs text-[#8A8A8A] leading-relaxed">
+          <span className="font-semibold text-[#1A1A1A]">Hoe we jouw foto verwerken: </span>
           De foto wordt alleen gebruikt voor kleuranalyse van kleding. Er vindt geen gezichtsherkenning of biometrische verwerking plaats. Na analyse wordt de foto direct van onze servers verwijderd. Meer info in ons{" "}
-          <a href="/privacy" className="underline hover:text-[var(--color-text)] transition-colors">
+          <a href="/privacy" className="underline hover:text-[#1A1A1A] transition-colors">
             privacybeleid
           </a>
           .

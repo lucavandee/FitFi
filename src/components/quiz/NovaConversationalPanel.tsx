@@ -209,30 +209,30 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="fixed bottom-6 right-6 z-50 w-96 h-[600px] flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-elevated)] overflow-hidden"
+        className="fixed bottom-6 right-6 z-50 w-96 h-[600px] flex flex-col bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl shadow-lg overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)] bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-accent)]/5">
+        <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5] bg-gradient-to-r from-[#C2654A]/5 to-[#C2654A]/5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="font-semibold text-sm">Nova</div>
-              <div className="text-xs text-[var(--color-text)]/60">AI Styling Assistent</div>
+              <div className="text-xs text-[#1A1A1A]/60">AI Styling Assistent</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={onToggleExpand}
-              className="p-2 hover:bg-[var(--color-bg)] rounded-[var(--radius-md)] transition-colors"
+              className="p-2 hover:bg-[#FAFAF8] rounded-2xl transition-colors"
               title="Minimize"
             >
               <Minimize2 className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--color-bg)] rounded-[var(--radius-md)] transition-colors"
+              className="p-2 hover:bg-[#FAFAF8] rounded-2xl transition-colors"
               title="Close"
             >
               <X className="w-4 h-4" />
@@ -250,10 +250,10 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] rounded-[var(--radius-lg)] px-4 py-2 ${
+                className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                   msg.role === 'user'
-                    ? 'bg-[var(--color-primary)] text-white'
-                    : 'bg-[var(--color-bg)] text-[var(--color-text)]'
+                    ? 'bg-[#C2654A] text-white'
+                    : 'bg-[#FAFAF8] text-[#1A1A1A]'
                 }`}
               >
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -262,8 +262,8 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-[var(--color-bg)] rounded-[var(--radius-lg)] px-4 py-2">
-                <Loader2 className="w-4 h-4 animate-spin text-[var(--color-primary)]" />
+              <div className="bg-[#FAFAF8] rounded-2xl px-4 py-2">
+                <Loader2 className="w-4 h-4 animate-spin text-[#C2654A]" />
               </div>
             </div>
           )}
@@ -271,7 +271,7 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-[var(--color-border)]">
+        <div className="p-4 border-t border-[#E5E5E5]">
           <div className="flex items-end gap-2">
             <input
               ref={inputRef}
@@ -281,17 +281,17 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
               onKeyPress={handleKeyPress}
               placeholder="Stel me een vraag..."
               disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#C2654A] disabled:opacity-50"
             />
             <button
               onClick={sendMessage}
               disabled={!input.trim() || isLoading}
-              className="p-2 bg-[var(--color-primary)] text-white rounded-[var(--radius-lg)] hover:bg-[var(--color-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 bg-[#C2654A] text-white rounded-2xl hover:bg-[#C2654A]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-5 h-5" />
             </button>
           </div>
-          <p className="text-xs text-[var(--color-text)]/50 mt-2">
+          <p className="text-xs text-[#1A1A1A]/50 mt-2">
             Tip: Vraag me om uitleg, advies, of hulp bij keuzes
           </p>
         </div>

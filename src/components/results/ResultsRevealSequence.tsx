@@ -79,7 +79,7 @@ export function ResultsRevealSequence({
   }, [stage, onComplete]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-b from-[var(--color-bg)] to-[var(--ff-color-primary-50)]">
+    <div className="fixed inset-0 z-50 bg-gradient-to-b from-[#FAFAF8] to-[#FAF5F2]">
       <AnimatePresence mode="wait">
         {stage === 'loading' && (
           <motion.div
@@ -97,7 +97,7 @@ export function ResultsRevealSequence({
               >
                 <div className="relative w-32 h-32 mx-auto mb-8">
                   <motion.div
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] opacity-20"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] opacity-20"
                     animate={{
                       scale: [1, 1.2, 1],
                       rotate: [0, 180, 360]
@@ -109,7 +109,7 @@ export function ResultsRevealSequence({
                     }}
                   />
                   <motion.div
-                    className="absolute inset-4 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] opacity-40"
+                    className="absolute inset-4 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] opacity-40"
                     animate={{
                       scale: [1, 1.1, 1],
                       rotate: [360, 180, 0]
@@ -120,7 +120,7 @@ export function ResultsRevealSequence({
                       ease: "linear"
                     }}
                   />
-                  <div className="absolute inset-8 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center">
+                  <div className="absolute inset-8 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center">
                     <Sparkles className="w-8 h-8 text-white" />
                   </div>
                 </div>
@@ -128,16 +128,16 @@ export function ResultsRevealSequence({
 
               <div className="space-y-4">
                 <motion.h2
-                  className="text-2xl font-bold text-[var(--color-text)]"
+                  className="text-2xl font-bold text-[#1A1A1A]"
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
                   Je Style DNA wordt gegenereerd...
                 </motion.h2>
 
-                <div className="relative h-3 bg-[var(--color-surface)] rounded-full overflow-hidden border border-[var(--color-border)]">
+                <div className="relative h-3 bg-[#FFFFFF] rounded-full overflow-hidden border border-[#E5E5E5]">
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]"
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.3 }}
@@ -145,7 +145,7 @@ export function ResultsRevealSequence({
                 </div>
 
                 <motion.p
-                  className="text-sm text-[var(--color-text-secondary)]"
+                  className="text-sm text-[#8A8A8A]"
                   key={loadingStep}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -154,7 +154,7 @@ export function ResultsRevealSequence({
                   {loadingSteps[loadingStep]}
                 </motion.p>
 
-                <div className="pt-4 text-xs text-[var(--color-text-secondary)] space-y-1">
+                <div className="pt-4 text-xs text-[#8A8A8A] space-y-1">
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: progress > 25 ? 1 : 0 }}
@@ -193,7 +193,7 @@ export function ResultsRevealSequence({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                <p className="text-xl text-[var(--color-text-secondary)] mb-4">
+                <p className="text-xl text-[#8A8A8A] mb-4">
                   Jouw perfecte stijl is...
                 </p>
               </motion.div>
@@ -205,7 +205,7 @@ export function ResultsRevealSequence({
                 className="relative"
               >
                 <motion.div
-                  className="absolute -inset-4 rounded-2xl bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] opacity-20 blur-xl"
+                  className="absolute -inset-4 rounded-2xl bg-gradient-to-r from-[#C2654A] to-[#C2654A] opacity-20 blur-xl"
                   animate={{
                     scale: [1, 1.1, 1],
                     opacity: [0.2, 0.3, 0.2]
@@ -215,7 +215,7 @@ export function ResultsRevealSequence({
                     repeat: Infinity
                   }}
                 />
-                <div className="relative bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white px-12 py-8 rounded-2xl shadow-2xl">
+                <div className="relative bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white px-12 py-8 rounded-2xl shadow-2xl">
                   <Sparkles className="w-8 h-8 mx-auto mb-4" />
                   <h1 className="text-4xl md:text-5xl font-bold tracking-tight uppercase">
                     {archetype}
@@ -227,7 +227,7 @@ export function ResultsRevealSequence({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.5, duration: 0.5 }}
-                className="text-lg text-[var(--color-text-secondary)] max-w-md mx-auto"
+                className="text-lg text-[#8A8A8A] max-w-md mx-auto"
               >
                 {archetypeDescription}
               </motion.p>
@@ -246,18 +246,18 @@ export function ResultsRevealSequence({
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="max-w-md w-full bg-[var(--color-surface)] rounded-2xl shadow-2xl p-8 border border-[var(--color-border)]"
+              className="max-w-md w-full bg-[#FFFFFF] rounded-2xl shadow-2xl p-8 border border-[#E5E5E5]"
             >
               <div className="text-center space-y-6">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
                   <Sparkles className="w-10 h-10 text-white" />
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">
                     {archetype}
                   </h2>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
+                  <p className="text-sm text-[#8A8A8A]">
                     Jouw unieke stijlprofiel
                   </p>
                 </div>
@@ -265,14 +265,14 @@ export function ResultsRevealSequence({
                 {colorProfile && (
                   <div className="space-y-3 text-left">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[var(--color-text-secondary)]">Kleurtemperatuur</span>
-                      <span className="font-semibold text-[var(--color-text)] capitalize">
+                      <span className="text-[#8A8A8A]">Kleurtemperatuur</span>
+                      <span className="font-semibold text-[#1A1A1A] capitalize">
                         {colorProfile.temperature}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[var(--color-text-secondary)]">Kleurpalet</span>
-                      <span className="font-semibold text-[var(--color-text)]">
+                      <span className="text-[#8A8A8A]">Kleurpalet</span>
+                      <span className="font-semibold text-[#1A1A1A]">
                         {colorProfile.paletteName}
                       </span>
                     </div>
@@ -288,7 +288,7 @@ export function ResultsRevealSequence({
                         navigator.share({ text, url: window.location.origin });
                       }
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#C2654A] text-white rounded-xl font-semibold hover:bg-[#A8513A] transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
                     Delen
@@ -298,7 +298,7 @@ export function ResultsRevealSequence({
                       track('results_view_outfits_clicked', { archetype });
                       onComplete();
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl font-semibold hover:bg-[var(--ff-color-primary-50)] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl font-semibold hover:bg-[#FAF5F2] transition-colors"
                   >
                     Bekijk Outfits
                   </button>

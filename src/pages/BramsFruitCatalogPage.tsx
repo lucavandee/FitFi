@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Spinner } from '@/components/ui/Spinner';
 import { getBramsFruitProductGroups, getBramsFruitCategories } from '@/services/bramsFruit/productService';
 import { BramsFruitProductGroup } from '@/services/bramsFruit/types';
 import { ProductImage } from '@/components/ui/ProductImage';
@@ -13,6 +12,7 @@ export default function BramsFruitCatalogPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('[BramsFruit] Component mounted');
     loadData();
   }, []);
 
@@ -21,15 +21,19 @@ export default function BramsFruitCatalogPage() {
     setError(null);
 
     try {
+      console.log('[BramsFruit] Fetching products...');
       const [productsData, categoriesData] = await Promise.all([
         getBramsFruitProductGroups(),
         getBramsFruitCategories(),
       ]);
 
+      console.log('[BramsFruit] Loaded products:', productsData.length);
+      console.log('[BramsFruit] Categories:', categoriesData.categories);
 
       setGroups(productsData);
       setCategories(['all', ...categoriesData.categories]);
     } catch (err) {
+      console.error('[BramsFruit] Error loading data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load products');
     } finally {
       setLoading(false);
@@ -57,11 +61,11 @@ export default function BramsFruitCatalogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] py-12">
+      <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
-            <Spinner size="lg" className="mx-auto" />
-            <p className="mt-4 text-[var(--color-text-secondary)]">Producten laden...</p>
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <p className="mt-4 text-[#8A8A8A]">Producten laden...</p>
           </div>
         </div>
       </div>
@@ -70,14 +74,14 @@ export default function BramsFruitCatalogPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] py-12">
+      <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
             <div className="text-red-500 text-xl mb-4">Fout bij het laden van producten</div>
-            <p className="text-[var(--color-text-secondary)] mb-6">{error}</p>
+            <p className="text-[#8A8A8A] mb-6">{error}</p>
             <button
               onClick={() => loadData()}
-              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors"
+              className="px-4 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors"
             >
               Opnieuw proberen
             </button>
@@ -88,13 +92,13 @@ export default function BramsFruitCatalogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12">
+    <div className="min-h-screen bg-[#FAFAF8] py-12">
       <div className="max-w-7xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">
+          <h1 className="text-3xl font-bold text-[#1A1A1A]">
             Brams Fruit Collectie
           </h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">
+          <p className="mt-2 text-[#8A8A8A]">
             Premium menswear met een rustige uitstraling
           </p>
         </div>
@@ -106,8 +110,8 @@ export default function BramsFruitCatalogPage() {
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedCategory === category
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:bg-[var(--color-bg)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:bg-[#FAFAF8]'
               }`}
             >
               {category === 'all' ? 'Alles' : category}
@@ -119,9 +123,9 @@ export default function BramsFruitCatalogPage() {
           {filteredGroups.map(group => (
             <div
               key={group.style_code}
-              className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <div className="aspect-square bg-[var(--color-bg)] relative">
+              <div className="aspect-square bg-[#FAFAF8] relative">
                 <ProductImage
                   src={getImageUrl(group.image_url)}
                   alt={group.product_name}
@@ -135,28 +139,28 @@ export default function BramsFruitCatalogPage() {
               </div>
 
               <div className="p-4">
-                <p className="text-xs text-[var(--color-text-secondary)] mb-1">
+                <p className="text-xs text-[#8A8A8A] mb-1">
                   {group.category} · {group.sub_category}
                 </p>
-                <h3 className="font-semibold text-[var(--color-text)] mb-2 line-clamp-2">
+                <h3 className="font-semibold text-[#1A1A1A] mb-2 line-clamp-2">
                   {group.product_name}
                 </h3>
 
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-[var(--color-text-secondary)]">
+                  <span className="text-sm text-[#8A8A8A]">
                     {group.colors.length} {group.colors.length === 1 ? 'kleur' : 'kleuren'}
                   </span>
-                  <span className="text-sm text-[var(--color-text-secondary)]">
+                  <span className="text-sm text-[#8A8A8A]">
                     {group.sizes.length} maten
                   </span>
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-[var(--color-text)]">
+                  <span className="text-lg font-bold text-[#1A1A1A]">
                     €{group.price_range.min.toFixed(2)}
                   </span>
                   {group.price_range.min !== group.price_range.max && (
-                    <span className="text-sm text-[var(--color-text-secondary)]">
+                    <span className="text-sm text-[#8A8A8A]">
                       - €{group.price_range.max.toFixed(2)}
                     </span>
                   )}
@@ -168,7 +172,7 @@ export default function BramsFruitCatalogPage() {
 
         {filteredGroups.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-[var(--color-text-secondary)]">
+            <p className="text-[#8A8A8A]">
               Geen producten gevonden in deze categorie.
             </p>
           </div>

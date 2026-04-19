@@ -152,10 +152,10 @@ export default function AdminDashboardPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+          <p className="text-[#1A1A1A]">Admin verificatie...</p>
         </div>
       </div>
     );
@@ -184,13 +184,13 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[#FAFAF8]">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+          <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-[var(--color-muted)]">
+          <p className="text-[#8A8A8A]">
             Welkom terug, {user?.name || 'Admin'} • Beheer alle FitFi systemen
           </p>
         </div>
@@ -250,7 +250,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+              <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">
                 Admin Modules
               </h2>
             </div>
@@ -270,10 +270,10 @@ export default function AdminDashboardPage() {
                     <button
                       onClick={() => !isDisabled && navigate(module.route)}
                       disabled={isDisabled}
-                      className={`w-full bg-[var(--color-surface)] rounded-xl p-6 border border-[var(--color-border)] text-left transition-all ${
+                      className={`w-full bg-[#FFFFFF] rounded-xl p-6 border border-[#E5E5E5] text-left transition-all ${
                         isDisabled
                           ? 'opacity-50 cursor-not-allowed'
-                          : 'hover:border-[var(--ff-color-primary-700)] hover:shadow-lg cursor-pointer'
+                          : 'hover:border-[#A8513A] hover:shadow-lg cursor-pointer'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -285,7 +285,7 @@ export default function AdminDashboardPage() {
                         {(module.badge || module.status) && (
                           <div className="flex gap-2">
                             {module.badge && (
-                              <span className="px-2 py-1 bg-[var(--ff-color-primary-700)] text-white rounded text-xs font-medium">
+                              <span className="px-2 py-1 bg-[#A8513A] text-white rounded text-xs font-medium">
                                 {module.badge}
                               </span>
                             )}
@@ -294,15 +294,15 @@ export default function AdminDashboardPage() {
                         )}
                       </div>
 
-                      <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+                      <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                         {module.title}
                       </h3>
-                      <p className="text-sm text-[var(--color-muted)] mb-4">
+                      <p className="text-sm text-[#8A8A8A] mb-4">
                         {module.description}
                       </p>
 
                       {!isDisabled && (
-                        <div className="flex items-center text-[var(--ff-color-primary-700)] text-sm font-medium">
+                        <div className="flex items-center text-[#A8513A] text-sm font-medium">
                           Open module
                           <ArrowRight className="w-4 h-4 ml-1" />
                         </div>
@@ -313,11 +313,11 @@ export default function AdminDashboardPage() {
               })}
             </div>
 
-            <div className="mt-8 bg-[var(--color-surface)] rounded-xl p-6 border border-[var(--color-border)]">
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-4">
+            <div className="mt-8 bg-[#FFFFFF] rounded-xl p-6 border border-[#E5E5E5]">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-4">
                 Quick Tips
               </h3>
-              <ul className="space-y-2 text-sm text-[var(--color-muted)]">
+              <ul className="space-y-2 text-sm text-[#8A8A8A]">
                 <li>• <strong>Mood Photos:</strong> Upload en beheer visual preference photos voor de quiz</li>
                 <li>• <strong>PWA & Push:</strong> Monitor app installaties en verstuur push notificaties naar gebruikers</li>
                 <li>• <strong>Gebruikers Tab:</strong> Sommige modules hebben tabs in dit dashboard (gebruik navbar om te wisselen)</li>

@@ -22,7 +22,7 @@ export default function AdminBramsFruitPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+          <p className="text-[#1A1A1A]">Admin verificatie...</p>
         </div>
       </div>
     );
@@ -32,33 +32,33 @@ export default function AdminBramsFruitPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-2xl font-bold text-[var(--color-text)]">Geen toegang</h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">Geen toegang</h1>
+          <p className="mt-2 text-[#8A8A8A]">
             Je hebt admin rechten nodig om deze pagina te bekijken.
           </p>
           {user ? (
-            <p className="mt-4 text-sm text-[var(--color-text-secondary)] bg-[var(--color-surface)] p-4 rounded-lg border border-[var(--color-border)]">
-              Ingelogd als: <strong className="text-[var(--color-text)]">{user.email}</strong>
+            <p className="mt-4 text-sm text-[#8A8A8A] bg-[#FFFFFF] p-4 rounded-lg border border-[#E5E5E5]">
+              Ingelogd als: <strong className="text-[#1A1A1A]">{user.email}</strong>
               <br />
               <span className="text-xs">
                 Admin toegang vereist een @fitfi.ai email of admin in je email.
               </span>
             </p>
           ) : (
-            <p className="mt-4 text-sm text-[var(--color-text-secondary)]">
+            <p className="mt-4 text-sm text-[#8A8A8A]">
               Log eerst in om toegang te krijgen.
             </p>
           )}
           <div className="flex gap-3 mt-6 justify-center">
             <button
               onClick={() => navigate('/inloggen')}
-              className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors"
+              className="px-6 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors"
             >
               Inloggen
             </button>
             <button
               onClick={() => navigate('/')}
-              className="px-6 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:border-[var(--ff-color-primary-700)] transition-colors"
+              className="px-6 py-2 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl hover:border-[#A8513A] transition-colors"
             >
               Terug naar home
             </button>
@@ -150,24 +150,24 @@ export default function AdminBramsFruitPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12">
+    <div className="min-h-screen bg-[#FAFAF8] py-12">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">
+          <h1 className="text-3xl font-bold text-[#1A1A1A]">
             Brams Fruit Admin
           </h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">
+          <p className="mt-2 text-[#8A8A8A]">
             Manage product catalog and images
           </p>
         </div>
 
         <div className="space-y-6">
           {/* File Import */}
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+          <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-6">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">
               Import Products from Spreadsheet
             </h2>
-            <p className="text-sm text-[var(--color-text-secondary)] mb-4">
+            <p className="text-sm text-[#8A8A8A] mb-4">
               Upload the Brams Fruit product spreadsheet (.XLSX or .CSV). Excel files will automatically extract embedded images!
             </p>
 
@@ -177,12 +177,12 @@ export default function AdminBramsFruitPage() {
                 accept=".csv,.xlsx,.xls"
                 onChange={handleFileImport}
                 disabled={importing}
-                className="block w-full text-sm text-[var(--color-text)]
+                className="block w-full text-sm text-[#1A1A1A]
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
-                  file:bg-[var(--ff-color-primary-700)] file:text-white
-                  hover:file:bg-[var(--ff-color-primary-600)]
+                  file:bg-[#A8513A] file:text-white
+                  hover:file:bg-[#C2654A]
                   file:cursor-pointer file:transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               />
@@ -191,26 +191,26 @@ export default function AdminBramsFruitPage() {
             {importing && (
               <div className="mt-4 text-center">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                <p className="mt-2 text-sm text-[#8A8A8A]">
                   Importing products...
                 </p>
               </div>
             )}
 
             {importResult && (
-              <div className="mt-4 p-4 rounded-lg bg-[var(--color-bg)]">
+              <div className="mt-4 p-4 rounded-lg bg-[#FAFAF8]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-[var(--color-text)]">
+                  <span className="text-sm font-medium text-[#1A1A1A]">
                     Imported: {importResult.imported}
                   </span>
-                  <span className="text-sm font-medium text-[var(--color-text)]">
+                  <span className="text-sm font-medium text-[#1A1A1A]">
                     Failed: {importResult.failed}
                   </span>
                 </div>
 
                 {importResult.errors.length > 0 && (
                   <details className="mt-3">
-                    <summary className="text-sm font-medium text-[var(--color-text)] cursor-pointer">
+                    <summary className="text-sm font-medium text-[#1A1A1A] cursor-pointer">
                       View Errors ({importResult.errors.length})
                     </summary>
                     <div className="mt-2 max-h-40 overflow-y-auto">
@@ -227,20 +227,20 @@ export default function AdminBramsFruitPage() {
           </div>
 
           {/* Image Upload */}
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
+          <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h2 className="text-xl font-semibold text-[var(--color-text)]">
+                <h2 className="text-xl font-semibold text-[#1A1A1A]">
                   Upload Product Images
                 </h2>
-                <p className="text-sm text-[var(--color-text-secondary)] mt-2">
+                <p className="text-sm text-[#8A8A8A] mt-2">
                   Upload product images. File names should match the style code (e.g., "900-Black.jpg").
                   Multiple files can be selected at once.
                 </p>
               </div>
               <button
                 onClick={() => navigate('/admin/images')}
-                className="flex-shrink-0 px-4 py-2 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
+                className="flex-shrink-0 px-4 py-2 bg-gradient-to-r from-[#A8513A] to-[#C2654A] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
               >
                 → Nieuwe Image Manager
               </button>
@@ -266,12 +266,12 @@ export default function AdminBramsFruitPage() {
                 multiple
                 onChange={handleImageUpload}
                 disabled={uploading}
-                className="block w-full text-sm text-[var(--color-text)]
+                className="block w-full text-sm text-[#1A1A1A]
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
-                  file:bg-[var(--ff-color-primary-700)] file:text-white
-                  hover:file:bg-[var(--ff-color-primary-600)]
+                  file:bg-[#A8513A] file:text-white
+                  hover:file:bg-[#C2654A]
                   file:cursor-pointer file:transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               />
@@ -280,7 +280,7 @@ export default function AdminBramsFruitPage() {
             {uploading && (
               <div className="mt-4 text-center">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                <p className="mt-2 text-sm text-[#8A8A8A]">
                   Uploading images...
                 </p>
               </div>
@@ -288,33 +288,33 @@ export default function AdminBramsFruitPage() {
           </div>
 
           {/* Instructions */}
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+          <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-6">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">
               Instructions
             </h2>
-            <div className="space-y-3 text-sm text-[var(--color-text-secondary)]">
+            <div className="space-y-3 text-sm text-[#8A8A8A]">
               <div>
-                <strong className="text-[var(--color-text)]">Step 1: Import Spreadsheet</strong>
+                <strong className="text-[#1A1A1A]">Step 1: Import Spreadsheet</strong>
                 <p>Upload the product spreadsheet (.XLSX or .CSV). Excel files automatically extract embedded images!</p>
               </div>
               <div>
-                <strong className="text-[var(--color-text)]">Step 2: Upload Additional Images (Optional)</strong>
+                <strong className="text-[#1A1A1A]">Step 2: Upload Additional Images (Optional)</strong>
                 <p>If using CSV or need to update images, upload them separately. Name them using the style code (e.g., "900.jpg", "919-Green.jpg").</p>
               </div>
               <div>
-                <strong className="text-[var(--color-text)]">Step 3: Verify</strong>
+                <strong className="text-[#1A1A1A]">Step 3: Verify</strong>
                 <p>Check the products are displaying correctly in the preview catalog.</p>
               </div>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
+            <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
               <button
                 onClick={() => navigate('/admin/preview/brams-fruit')}
-                className="px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors font-medium"
+                className="px-6 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors font-medium"
               >
                 Preview Catalog
               </button>
-              <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+              <p className="mt-2 text-xs text-[#8A8A8A]">
                 View all Brams Fruit products as they appear in the unified catalog
               </p>
             </div>

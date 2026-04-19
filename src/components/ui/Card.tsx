@@ -17,8 +17,8 @@ function cn(...cls: Array<string | false | null | undefined>) {
 }
 
 const base =
-  "bg-[color:var(--color-surface)] border border-[color:var(--color-border)] " +
-  "rounded-[var(--radius-lg)] shadow-[var(--shadow-soft)]";
+  "bg-[color:#FFFFFF] border border-[color:#E5E5E5] " +
+  "rounded-2xl shadow-sm";
 
 const Card: React.FC<CardProps> = ({ as = "article", className, ...props }) => {
   const Comp = as as unknown as React.ElementType;

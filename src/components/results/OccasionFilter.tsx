@@ -69,13 +69,13 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
   return (
     <div className={`space-y-3 ${className}`}>
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-[var(--color-text)]">
+        <h3 className="text-sm font-medium text-[#1A1A1A]">
           Filter op gelegenheid
         </h3>
         {value !== 'all' && (
           <button
             onClick={() => onChange('all')}
-            className="text-xs text-[var(--ff-color-primary-600)] hover:underline min-h-[44px] px-3"
+            className="text-xs text-[#C2654A] hover:underline min-h-[44px] px-3"
           >
             Reset filter
           </button>
@@ -96,8 +96,8 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
                 flex items-center gap-2
                 ${
                   isActive
-                    ? 'bg-[var(--ff-color-primary-700)] text-white shadow-lg'
-                    : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]'
+                    ? 'bg-[#A8513A] text-white shadow-lg'
+                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]'
                 }
               `}
               whileHover={{ scale: 1.05 }}
@@ -110,7 +110,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
 
               {isActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-xl bg-[var(--ff-color-primary-700)]/10 pointer-events-none"
+                  className="absolute inset-0 rounded-xl bg-[#A8513A]/10 pointer-events-none"
                   layoutId="occasion-active"
                   transition={{ type: 'spring', damping: 20, stiffness: 300 }}
                 />
@@ -124,7 +124,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-[var(--color-text)]/60"
+          className="text-xs text-[#1A1A1A]/60"
         >
           {OCCASIONS.find(o => o.value === value)?.description}
         </motion.p>

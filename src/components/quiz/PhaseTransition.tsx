@@ -16,7 +16,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-[var(--color-bg)] flex items-start justify-center px-4 py-6 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-[#FAFAF8] flex items-start justify-center px-4 py-6 overflow-y-auto"
     >
       <motion.div
         initial={{ scale: 0.9, y: 20 }}
@@ -29,7 +29,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 150 }}
-          className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center mb-6 sm:mb-8 shadow-[var(--shadow-elevated)]"
+          className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center mb-6 sm:mb-8 shadow-lg"
         >
           <content.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
         </motion.div>
@@ -39,7 +39,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 bg-gradient-to-r from-[#C2654A] to-[#C2654A] bg-clip-text text-transparent"
         >
           {content.title}
         </motion.h1>
@@ -49,7 +49,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="text-base sm:text-lg text-center text-[var(--color-text)]/70 mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto"
+          className="text-base sm:text-lg text-center text-[#1A1A1A]/70 mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto"
         >
           {content.description}
         </motion.p>
@@ -59,9 +59,9 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-4 sm:p-6 mb-6 sm:mb-8"
+          className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8"
         >
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)]/50 mb-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-[#1A1A1A]/50 mb-4">
             Wat te verwachten
           </h3>
           <div className="space-y-3">
@@ -73,8 +73,8 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
                 transition={{ delay: 0.6 + idx * 0.1 }}
                 className="flex items-start gap-3"
               >
-                <CheckCircle className="w-5 h-5 text-[var(--color-primary)] flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--color-text)]/80">{exp}</p>
+                <CheckCircle className="w-5 h-5 text-[#C2654A] flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[#1A1A1A]/80">{exp}</p>
               </motion.div>
             ))}
           </div>
@@ -85,15 +85,15 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="bg-gradient-to-r from-[var(--color-primary)]/10 to-[var(--color-accent)]/10 border border-[var(--color-primary)]/20 rounded-[var(--radius-2xl)] p-4 mb-6 sm:mb-8"
+          className="bg-gradient-to-r from-[#C2654A]/10 to-[#C2654A]/10 border border-[#C2654A]/20 rounded-2xl p-4 mb-6 sm:mb-8"
         >
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--color-text)] mb-1">Nova's tip</p>
-              <p className="text-sm text-[var(--color-text)]/70">{content.novaTip}</p>
+              <p className="text-sm font-medium text-[#1A1A1A] mb-1">Nova's tip</p>
+              <p className="text-sm text-[#1A1A1A]/70">{content.novaTip}</p>
             </div>
           </div>
         </motion.div>
@@ -107,7 +107,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           whileTap={{ scale: 0.98 }}
           onClick={onContinue}
           style={{ paddingBottom: 'max(1rem, calc(1rem + env(safe-area-inset-bottom, 0px)))' }}
-          className="w-full pt-4 px-6 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white rounded-[var(--radius-2xl)] font-semibold text-base sm:text-lg shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-soft)] transition-shadow flex items-center justify-center gap-2"
+          className="w-full pt-4 px-6 bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white rounded-2xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-sm transition-shadow flex items-center justify-center gap-2"
         >
           {content.ctaText}
           <ArrowRight className="w-5 h-5" />
@@ -118,7 +118,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="text-center text-sm text-[var(--color-text)]/50 mt-4"
+          className="text-center text-sm text-[#1A1A1A]/50 mt-4"
         >
           Dit duurt ongeveer {content.timeEstimate}
         </motion.p>

@@ -112,7 +112,7 @@ export function ProfileNavigationBreadcrumbs() {
               {/* Separator */}
               {index > 0 && (
                 <ChevronRight
-                  className="w-4 h-4 text-[var(--color-muted)]"
+                  className="w-4 h-4 text-[#8A8A8A]"
                   aria-hidden="true"
                 />
               )}
@@ -120,7 +120,7 @@ export function ProfileNavigationBreadcrumbs() {
               {/* Breadcrumb Link or Current */}
               {isLast || crumb.current ? (
                 <span
-                  className="font-medium text-[var(--color-text)]"
+                  className="font-medium text-[#1A1A1A]"
                   aria-current="page"
                 >
                   {/* Show shortLabel on mobile, full label on desktop */}
@@ -130,7 +130,7 @@ export function ProfileNavigationBreadcrumbs() {
               ) : (
                 <Link
                   to={crumb.path}
-                  className="flex items-center gap-1 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                  className="flex items-center gap-1 text-[#8A8A8A] hover:text-[#C2654A] transition-colors"
                 >
                   {isHome && (
                     <Home className="w-4 h-4" aria-hidden="true" />

@@ -65,29 +65,29 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--ff-color-primary-200)] rounded-2xl p-6 sm:p-8 mb-8 shadow-lg relative overflow-hidden"
+      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#F4E8E3] rounded-2xl p-6 sm:p-8 mb-8 shadow-lg relative overflow-hidden"
     >
       {/* Decorative background */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--ff-color-accent-200)] rounded-full blur-3xl opacity-30"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4E8E3] rounded-full blur-3xl opacity-30"></div>
 
       <button
         onClick={onDismiss}
         className="absolute top-3 right-3 p-2 hover:bg-white/50 rounded-full transition-colors"
         aria-label="Sluiten"
       >
-        <X className="w-4 h-4 text-[var(--color-muted)]" />
+        <X className="w-4 h-4 text-[#8A8A8A]" />
       </button>
 
       <div className="relative">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-[var(--ff-color-primary-600)] rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+          <div className="w-12 h-12 bg-[#C2654A] rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
             <Save className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-[var(--color-text)]">
+            <h3 className="text-xl font-bold text-[#1A1A1A]">
               Sla je voortgang op
             </h3>
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-[#8A8A8A]">
               Ontvang je persoonlijke resultaten per email
             </p>
           </div>
@@ -95,13 +95,13 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-muted)]" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="je@email.com"
-              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)] transition-all"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#8A8A8A] outline-none focus-visible:border-[#C2654A] focus-visible:shadow-sm transition-all"
               disabled={isSubmitting}
               required
             />
@@ -111,7 +111,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-white rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#A8513A] hover:bg-[#C2654A] text-white rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>
@@ -128,7 +128,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
             <button
               type="button"
               onClick={onDismiss}
-              className="px-6 py-3.5 text-[var(--color-muted)] hover:text-[var(--color-text)] font-medium transition-colors"
+              className="px-6 py-3.5 text-[#8A8A8A] hover:text-[#1A1A1A] font-medium transition-colors"
             >
               Later
             </button>
@@ -136,14 +136,14 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
         </form>
 
         {/* Enhanced Privacy Guarantees */}
-        <div className="mt-4 pt-4 border-t border-[var(--ff-color-primary-200)]">
+        <div className="mt-4 pt-4 border-t border-[#F4E8E3]">
           <div className="flex items-start gap-2 mb-2">
             <Lock className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-            <p className="text-xs font-semibold text-[var(--color-text)]">
+            <p className="text-xs font-semibold text-[#1A1A1A]">
               Jouw email is veilig bij ons
             </p>
           </div>
-          <ul className="space-y-1 text-xs text-[var(--color-muted)]">
+          <ul className="space-y-1 text-xs text-[#8A8A8A]">
             <li className="flex items-start gap-1.5">
               <span className="text-green-600 mt-0.5">✓</span>
               <span>Geen spam, alleen je Style Report</span>

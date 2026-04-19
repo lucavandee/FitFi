@@ -95,15 +95,15 @@ export function BentoCard({
     <div
       onClick={onClick}
       className={`
-        bg-[var(--color-surface)]
+        bg-[#FFFFFF]
         rounded-2xl
         p-6
-        border border-[var(--color-border)]
+        border border-[#E5E5E5]
         shadow-sm
         hover:shadow-md
         transition-shadow duration-200
         ${sizeClasses[size]}
-        ${onClick ? 'cursor-pointer hover:border-[var(--ff-color-primary-500)]' : ''}
+        ${onClick ? 'cursor-pointer hover:border-[#C2654A]' : ''}
         ${className}
       `}
       style={{
@@ -159,15 +159,15 @@ export function BentoStatCard({
     <BentoCard size="small" delay={delay} disableAnimation={disableAnimation}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-[var(--color-muted)] mb-2">{label}</p>
-          <p className="text-3xl font-bold text-[var(--color-text)]">{value}</p>
+          <p className="text-sm text-[#8A8A8A] mb-2">{label}</p>
+          <p className="text-3xl font-bold text-[#1A1A1A]">{value}</p>
           {trend && (
             <p className={`text-xs mt-2 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
               {trend.isPositive ? '↗' : '↘'} {trend.value}%
             </p>
           )}
         </div>
-        <div className="w-10 h-10 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)]">
+        <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
           {icon}
         </div>
       </div>
@@ -204,18 +204,18 @@ export function BentoActionCard({
   return (
     <BentoCard size={size} delay={delay} disableAnimation={disableAnimation}>
       <div className="flex flex-col h-full">
-        <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)] mb-4">
+        <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#A8513A] mb-4">
           {icon}
         </div>
-        <h3 className="text-lg font-bold text-[var(--color-text)] mb-2">
+        <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
           {title}
         </h3>
-        <p className="text-sm text-[var(--color-muted)] mb-4 flex-1">
+        <p className="text-sm text-[#8A8A8A] mb-4 flex-1">
           {description}
         </p>
         <button
           onClick={action.onClick}
-          className="w-full px-4 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors"
+          className="w-full px-4 py-2.5 bg-[#A8513A] text-white rounded-xl font-semibold text-sm hover:bg-[#C2654A] transition-colors"
         >
           {action.label}
         </button>
@@ -252,15 +252,15 @@ export function BentoHeroCard({
   return (
     <BentoCard size="hero" delay={delay} className="relative overflow-hidden" disableAnimation={disableAnimation}>
       {/* Subtle gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] to-transparent opacity-50" />
 
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex-1">
-          <p className="text-sm text-[var(--color-muted)] mb-2">{greeting}</p>
-          <h1 className="text-4xl font-bold text-[var(--color-text)] mb-3">
+          <p className="text-sm text-[#8A8A8A] mb-2">{greeting}</p>
+          <h1 className="text-4xl font-bold text-[#1A1A1A] mb-3">
             {userName}
           </h1>
-          <p className="text-base text-[var(--color-muted)] mb-6">
+          <p className="text-base text-[#8A8A8A] mb-6">
             {subtitle}
           </p>
         </div>
@@ -273,8 +273,8 @@ export function BentoHeroCard({
               className={`
                 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all
                 ${action.variant === 'primary'
-                  ? 'bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]'
-                  : 'bg-[var(--ff-color-neutral-100)] text-[var(--color-text)] hover:bg-[var(--ff-color-neutral-200)]'
+                  ? 'bg-[#A8513A] text-white hover:bg-[#C2654A]'
+                  : 'bg-[#F5F0EB] text-[#1A1A1A] hover:bg-[#E5E5E5]'
                 }
               `}
             >
@@ -313,7 +313,7 @@ export function BentoListCard({
 }: BentoListCardProps) {
   return (
     <BentoCard size={size} delay={delay} disableAnimation={disableAnimation}>
-      <h3 className="text-lg font-bold text-[var(--color-text)] mb-4">
+      <h3 className="text-lg font-bold text-[#1A1A1A] mb-4">
         {title}
       </h3>
       <div className="space-y-3">
@@ -321,17 +321,17 @@ export function BentoListCard({
           <button
             key={index}
             onClick={item.onClick}
-            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--ff-color-neutral-100)] transition-colors"
+            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-colors"
           >
-            <div className="w-8 h-8 rounded-lg bg-[var(--ff-color-primary-100)] flex items-center justify-center text-[var(--ff-color-primary-700)]">
+            <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
               {item.icon}
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-[var(--color-text)]">
+              <p className="text-sm font-medium text-[#1A1A1A]">
                 {item.label}
               </p>
             </div>
-            <span className="text-xs text-[var(--color-muted)]">
+            <span className="text-xs text-[#8A8A8A]">
               {item.value}
             </span>
           </button>

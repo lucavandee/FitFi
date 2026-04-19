@@ -100,7 +100,7 @@ export function NovaOnboardingGuide({
       <motion.button
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
         onClick={() => setIsMinimized(false)}
       >
         <Sparkles className="w-6 h-6 text-white" />
@@ -116,21 +116,21 @@ export function NovaOnboardingGuide({
         exit={{ y: 100, opacity: 0 }}
         className="fixed bottom-6 right-6 z-50 max-w-xs"
       >
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-elevated)] p-4">
+        <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl shadow-lg p-4">
           {/* Header */}
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
                 <div className="font-semibold text-sm">Nova</div>
-                <div className="text-xs text-[var(--color-text)]/60">AI Styling Assistent</div>
+                <div className="text-xs text-[#1A1A1A]/60">AI Styling Assistent</div>
               </div>
             </div>
             <button
               onClick={() => setIsMinimized(true)}
-              className="text-[var(--color-text)]/40 hover:text-[var(--color-text)] transition-colors"
+              className="text-[#1A1A1A]/40 hover:text-[#1A1A1A] transition-colors"
             >
               <ChevronUp className="w-4 h-4" />
             </button>
@@ -141,21 +141,21 @@ export function NovaOnboardingGuide({
             key={currentMessage}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-sm text-[var(--color-text)]/80 leading-relaxed"
+            className="text-sm text-[#1A1A1A]/80 leading-relaxed"
           >
             {currentMessage}
           </motion.p>
 
           {/* Progress indicator */}
           {phase === 'questions' && (
-            <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
-              <div className="flex items-center justify-between text-xs text-[var(--color-text)]/60 mb-1">
+            <div className="mt-3 pt-3 border-t border-[#E5E5E5]">
+              <div className="flex items-center justify-between text-xs text-[#1A1A1A]/60 mb-1">
                 <span>Voortgang</span>
                 <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
               </div>
-              <div className="h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]"
+                  className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
                   initial={{ width: 0 }}
                   animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -168,10 +168,10 @@ export function NovaOnboardingGuide({
           {onOpenChat && (
             <button
               onClick={onOpenChat}
-              className={`mt-3 w-full text-xs py-2 px-3 rounded-[var(--radius-lg)] border transition-colors ${
+              className={`mt-3 w-full text-xs py-2 px-3 rounded-2xl border transition-colors ${
                 showProactiveTrigger
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium animate-pulse'
-                  : 'border-[var(--color-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 text-[var(--color-text)]/70 hover:text-[var(--color-text)]'
+                  ? 'border-[#C2654A] bg-[#C2654A]/10 text-[#C2654A] font-medium animate-pulse'
+                  : 'border-[#E5E5E5] hover:border-[#C2654A] hover:bg-[#C2654A]/5 text-[#1A1A1A]/70 hover:text-[#1A1A1A]'
               }`}
             >
               {showProactiveTrigger ? '✨ Ik heb een tip voor je!' : '💬 Stel me een vraag'}

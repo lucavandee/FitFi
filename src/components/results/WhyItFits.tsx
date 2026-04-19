@@ -11,7 +11,7 @@ const WhyItFits: React.FC<Props> = ({ bullets }) => {
         {bullets.map((b, i) => (
           <li key={i} className="flex items-start gap-2">
             <span aria-hidden className="mt-2 inline-block h-2 w-2 rounded-full"
-              style={{ background: "color-mix(in oklab, var(--ff-color-primary-700) 60%, var(--color-accent))" }} />
+              style={{ background: "color-mix(in oklab, #A8513A 60%, #C2654A)" }} />
             <span>{b}</span>
           </li>
         ))}

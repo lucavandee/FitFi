@@ -57,50 +57,50 @@ export default class ErrorBoundary extends Component<Props, State> {
         <div
           role="alert"
           aria-live="assertive"
-          className="min-h-[60vh] flex items-center justify-center ff-container px-4"
+          className="min-h-[60vh] flex items-center justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 px-4"
         >
           <div className="max-w-md w-full text-center">
             <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5 ${
               kind === "network"
-                ? "bg-[var(--ff-color-warning-50)] border border-[var(--ff-color-warning-200)]"
+                ? "bg-[#FFFBEB] border border-[#FDE68A]"
                 : kind === "server"
-                ? "bg-[var(--ff-color-danger-50)] border border-[var(--ff-color-danger-200)]"
-                : "bg-[var(--color-surface)] border border-[var(--color-border)]"
+                ? "bg-[#FEF2F2] border border-[#FECACA]"
+                : "bg-white border border-[#E5E5E5]"
             }`}>
               <Icon
                 className={`w-6 h-6 ${
                   kind === "network"
-                    ? "text-[var(--ff-color-warning-600)]"
+                    ? "text-[#D4913D]"
                     : kind === "server"
-                    ? "text-[var(--ff-color-danger-600)]"
-                    : "text-[var(--color-muted)]"
+                    ? "text-[#C24A4A]"
+                    : "text-[#8A8A8A]"
                 }`}
                 aria-hidden="true"
               />
             </div>
 
-            <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">{title}</h2>
-            <p className="text-sm text-[var(--color-muted)] mb-1">{body}</p>
-            <p className="text-xs text-[var(--color-muted)] mb-6">{hint}</p>
+            <h2 className="text-xl font-bold text-[#1A1A1A] mb-2">{title}</h2>
+            <p className="text-sm text-[#8A8A8A] mb-1">{body}</p>
+            <p className="text-xs text-[#8A8A8A] mb-6">{hint}</p>
 
             <div className="flex flex-wrap gap-2.5 justify-center">
               <button
                 onClick={this.handleRetry}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--ff-color-primary-700)] text-white text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#A8513A] text-white text-sm font-bold hover:bg-[#C2654A] transition-colors"
               >
                 <RefreshCw className="w-4 h-4" aria-hidden="true" />
                 Probeer opnieuw
               </button>
               <button
                 onClick={() => window.history.back()}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--color-border)] text-[var(--color-text)] text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-[#1A1A1A] text-sm font-semibold hover:border-[#D4856E] transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 Terug
               </button>
               <a
                 href="/"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--color-border)] text-[var(--color-text)] text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-[#1A1A1A] text-sm font-semibold hover:border-[#D4856E] transition-colors"
               >
                 <Home className="w-4 h-4" aria-hidden="true" />
                 Naar start
@@ -108,9 +108,9 @@ export default class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {this.state.retryCount > 1 && (
-              <p className="mt-5 text-xs text-[var(--color-muted)]">
+              <p className="mt-5 text-xs text-[#8A8A8A]">
                 Blijft het fout gaan?{" "}
-                <a href="/contact" className="underline hover:text-[var(--color-text)] transition-colors">
+                <a href="/contact" className="underline hover:text-[#1A1A1A] transition-colors">
                   Neem contact op
                 </a>
               </p>

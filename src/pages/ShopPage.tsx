@@ -164,12 +164,12 @@ export default function ShopPage() {
         <link rel="canonical" href={canonicalUrl('/shop')} />
       </Helmet>
 
-      <div className="ff-container min-h-screen py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen py-8 sm:py-12">
 
         {/* Back to rapport */}
         <button
           onClick={() => navigate('/results')}
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Terug naar rapport
@@ -181,13 +181,13 @@ export default function ShopPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-5"
         >
-          <p className="text-sm text-[var(--color-muted)] mb-1">Jouw stijlwinkel</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] tracking-tight mb-2">
+          <p className="text-sm text-[#8A8A8A] mb-1">Jouw stijlwinkel</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight mb-2">
             {archetype
               ? `Aanbevolen voor jouw ${archetype} stijl`
               : 'Aanbevolen items'}
           </h1>
-          <p className="text-sm text-[var(--color-muted)] max-w-2xl">
+          <p className="text-sm text-[#8A8A8A] max-w-2xl">
             {archetype
               ? `Deze items passen bij jouw ${archetype} stijl.`
               : 'Gecureerde kleding en accessoires afgestemd op jouw persoonlijke stijl.'}
@@ -200,22 +200,22 @@ export default function ShopPage() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
-            className="flex flex-wrap items-center gap-2 mb-6 px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl text-sm"
+            className="flex flex-wrap items-center gap-2 mb-6 px-4 py-3 bg-white border border-[#E5E5E5] rounded-xl text-sm"
           >
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-muted)]">Gefilterd op:</span>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#8A8A8A]">Gefilterd op:</span>
             {quizGender !== 'unisex' && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#A8513A]">
                 {quizGender === 'male' ? 'Heren' : 'Dames'}
               </span>
             )}
             {quizBudgetMax && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)]">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#A8513A]">
                 Tot €{quizBudgetMax}
               </span>
             )}
             <button
               onClick={() => navigate('/onboarding')}
-              className="ml-auto text-[11px] font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+              className="ml-auto text-[11px] font-semibold text-[#8A8A8A] hover:text-[#C2654A] transition-colors"
             >
               Aanpassen →
             </button>
@@ -227,11 +227,11 @@ export default function ShopPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] mb-8 text-xs text-[var(--color-muted)]"
+          className="flex items-start gap-3 px-4 py-3 rounded-xl bg-white border border-[#E5E5E5] mb-8 text-xs text-[#8A8A8A]"
         >
-          <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[var(--color-muted)]" />
+          <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#8A8A8A]" />
           <p>
-            Transparantie: sommige links zijn <strong className="font-semibold text-[var(--color-text)]">affiliate links</strong>.
+            Transparantie: sommige links zijn <strong className="font-semibold text-[#1A1A1A]">affiliate links</strong>.
             Als je via FitFi shopt, kan FitFi een kleine commissie ontvangen — zonder extra kosten voor jou.{' '}
             <a href="/affiliate-disclosure" className="underline hover:no-underline">
               Meer informatie
@@ -254,8 +254,8 @@ export default function ShopPage() {
               onClick={() => setFilters((f) => ({ ...f, category: cat.value || undefined }))}
               className={`px-3.5 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 (filters.category || '') === cat.value
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E]'
               }`}
               aria-pressed={(filters.category || '') === cat.value}
             >
@@ -274,22 +274,22 @@ export default function ShopPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8A8A] pointer-events-none" />
               <input
                 type="search"
                 placeholder="Zoek op product of merk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[var(--color-border)] focus:border-[var(--ff-color-primary-400)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-400)]/20 bg-[var(--color-surface)] text-[var(--color-text)] text-sm placeholder:text-[var(--color-muted)]"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#D4856E] focus:outline-none focus:ring-2 focus:ring-[#D4856E]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#8A8A8A]"
                 aria-label="Zoek producten"
               />
               {searchQuery && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[var(--color-bg)] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#FAFAF8] transition-colors"
                   aria-label="Wis zoekopdracht"
                 >
-                  <X className="w-3.5 h-3.5 text-[var(--color-muted)]" />
+                  <X className="w-3.5 h-3.5 text-[#8A8A8A]" />
                 </button>
               )}
             </div>
@@ -299,7 +299,7 @@ export default function ShopPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="appearance-none w-full sm:w-auto pl-3.5 pr-9 py-2.5 rounded-xl border border-[var(--color-border)] focus:border-[var(--ff-color-primary-400)] focus:outline-none bg-[var(--color-surface)] text-[var(--color-text)] text-sm cursor-pointer"
+                className="appearance-none w-full sm:w-auto pl-3.5 pr-9 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#D4856E] focus:outline-none bg-white text-[#1A1A1A] text-sm cursor-pointer"
                 aria-label="Sorteer producten"
               >
                 <option value="relevance">Relevantie</option>
@@ -307,30 +307,30 @@ export default function ShopPage() {
                 <option value="price-desc">Prijs: hoog → laag</option>
                 <option value="newest">Nieuwste eerst</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8A8A] pointer-events-none" />
             </div>
 
             {/* Mobile filter button */}
             <button
               onClick={() => setShowFilters(true)}
-              className="sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-semibold text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] transition-colors"
+              className="sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] hover:border-[#D4856E] transition-colors"
               aria-label="Toon merkfilters"
               aria-expanded={showFilters}
             >
               <Filter className="w-4 h-4" />
               Filter
               {activeFilterCount > 0 && (
-                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-[var(--ff-color-primary-700)] text-white text-[10px] font-bold">
+                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-[#A8513A] text-white text-[10px] font-bold">
                   {activeFilterCount}
                 </span>
               )}
             </button>
 
             {/* View toggle */}
-            <div className="hidden sm:flex items-center gap-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-1">
+            <div className="hidden sm:flex items-center gap-1 bg-white border border-[#E5E5E5] rounded-xl p-1">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[var(--ff-color-primary-700)] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+                className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[#A8513A] text-white' : 'text-[#8A8A8A] hover:text-[#1A1A1A]'}`}
                 aria-label="Grid weergave"
                 aria-pressed={viewMode === 'grid'}
               >
@@ -338,7 +338,7 @@ export default function ShopPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[var(--ff-color-primary-700)] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+                className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[#A8513A] text-white' : 'text-[#8A8A8A] hover:text-[#1A1A1A]'}`}
                 aria-label="Lijst weergave"
                 aria-pressed={viewMode === 'list'}
               >
@@ -349,16 +349,16 @@ export default function ShopPage() {
 
           {/* Active filters + result count */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-[var(--color-muted)]">
+            <span className="text-sm text-[#8A8A8A]">
               {isLoading ? 'Laden…' : (
-                <><strong className="text-[var(--color-text)]">{filteredProducts.length}</strong> {filteredProducts.length === 1 ? 'item' : 'items'}</>
+                <><strong className="text-[#1A1A1A]">{filteredProducts.length}</strong> {filteredProducts.length === 1 ? 'item' : 'items'}</>
               )}
             </span>
             {filters.brands.map((brand) => (
               <button
                 key={brand}
                 onClick={() => toggleBrandFilter(brand)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-xs font-semibold hover:bg-[var(--ff-color-primary-200)] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FAF5F2] text-[#A8513A] rounded-full text-xs font-semibold hover:bg-[#F4E8E3] transition-colors"
                 aria-label={`Verwijder filter: ${brand}`}
               >
                 {brand}
@@ -368,7 +368,7 @@ export default function ShopPage() {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="text-xs text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] underline transition-colors"
+                className="text-xs text-[#8A8A8A] hover:text-[#C2654A] underline transition-colors"
               >
                 Wis filters
               </button>
@@ -380,16 +380,16 @@ export default function ShopPage() {
         <div className="flex gap-8">
           {/* Sidebar filters (desktop) */}
           <aside className="hidden lg:block w-56 flex-shrink-0">
-            <div className="sticky top-8 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5">
+            <div className="sticky top-8 bg-white rounded-xl border border-[#E5E5E5] p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-[var(--color-text)] flex items-center gap-2">
+                <h2 className="text-sm font-bold text-[#1A1A1A] flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4" />
                   Merken
                 </h2>
                 {filters.brands.length > 0 && (
                   <button
                     onClick={() => setFilters((f) => ({ ...f, brands: [] }))}
-                    className="text-xs text-[var(--ff-color-primary-600)] hover:underline"
+                    className="text-xs text-[#C2654A] hover:underline"
                   >
                     Wis
                   </button>
@@ -402,9 +402,9 @@ export default function ShopPage() {
                       type="checkbox"
                       checked={filters.brands.includes(brand)}
                       onChange={() => toggleBrandFilter(brand)}
-                      className="w-4 h-4 rounded border-2 border-[var(--color-border)] text-[var(--ff-color-primary-600)] cursor-pointer focus:ring-2 focus:ring-[var(--ff-color-primary-400)]/20"
+                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#C2654A] cursor-pointer focus:ring-2 focus:ring-[#D4856E]/20"
                     />
-                    <span className="text-sm text-[var(--color-text)] group-hover:text-[var(--ff-color-primary-700)] transition-colors">
+                    <span className="text-sm text-[#1A1A1A] group-hover:text-[#A8513A] transition-colors">
                       {brand}
                     </span>
                   </label>
@@ -429,34 +429,34 @@ export default function ShopPage() {
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', damping: 28, stiffness: 260 }}
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-[var(--color-surface)] rounded-t-3xl w-full max-h-[80vh] overflow-y-auto p-6 shadow-2xl"
+                  className="bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto p-6 shadow-2xl"
                 >
                   <div className="flex items-center justify-between mb-5">
-                    <h2 className="text-lg font-bold text-[var(--color-text)]">Merkfilter</h2>
+                    <h2 className="text-lg font-bold text-[#1A1A1A]">Merkfilter</h2>
                     <button
                       onClick={() => setShowFilters(false)}
-                      className="p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors"
+                      className="p-2 rounded-full hover:bg-[#FAFAF8] transition-colors"
                       aria-label="Sluit filters"
                     >
-                      <X className="w-5 h-5 text-[var(--color-muted)]" />
+                      <X className="w-5 h-5 text-[#8A8A8A]" />
                     </button>
                   </div>
                   <div className="space-y-1.5 mb-6">
                     {availableBrands.map((brand) => (
-                      <label key={brand} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-bg)] transition-colors cursor-pointer">
+                      <label key={brand} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#FAFAF8] transition-colors cursor-pointer">
                         <input
                           type="checkbox"
                           checked={filters.brands.includes(brand)}
                           onChange={() => toggleBrandFilter(brand)}
-                          className="w-5 h-5 rounded border-2 border-[var(--color-border)] text-[var(--ff-color-primary-600)] cursor-pointer"
+                          className="w-5 h-5 rounded border-2 border-[#E5E5E5] text-[#C2654A] cursor-pointer"
                         />
-                        <span className="text-sm text-[var(--color-text)]">{brand}</span>
+                        <span className="text-sm text-[#1A1A1A]">{brand}</span>
                       </label>
                     ))}
                   </div>
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="w-full py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold text-sm hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                    className="w-full py-3.5 bg-[#A8513A] text-white rounded-xl font-bold text-sm hover:bg-[#C2654A] transition-colors"
                   >
                     Toon {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
                   </button>
@@ -484,18 +484,18 @@ export default function ShopPage() {
                 className="text-center py-16"
                 role="alert"
               >
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--ff-color-error-100)] flex items-center justify-center">
-                  <X className="w-6 h-6 text-[var(--ff-color-error-600)]" />
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#FEF2F2] flex items-center justify-center">
+                  <X className="w-6 h-6 text-[#C24A4A]" />
                 </div>
-                <h3 className="text-lg font-bold text-[var(--color-text)] mb-2">
+                <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
                   Items konden niet worden geladen
                 </h3>
-                <p className="text-sm text-[var(--color-muted)] mb-5">
+                <p className="text-sm text-[#8A8A8A] mb-5">
                   Probeer het later opnieuw.
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                  className="px-5 py-2.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
                 >
                   Opnieuw proberen
                 </button>
@@ -509,13 +509,13 @@ export default function ShopPage() {
                 className="text-center py-16"
                 role="status"
               >
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center">
-                  <ShoppingBag className="w-6 h-6 text-[var(--color-muted)]" />
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-white border border-[#E5E5E5] flex items-center justify-center">
+                  <ShoppingBag className="w-6 h-6 text-[#8A8A8A]" />
                 </div>
-                <h3 className="text-lg font-bold text-[var(--color-text)] mb-2">
+                <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
                   Geen items gevonden
                 </h3>
-                <p className="text-sm text-[var(--color-muted)] mb-5 max-w-sm mx-auto">
+                <p className="text-sm text-[#8A8A8A] mb-5 max-w-sm mx-auto">
                   {searchQuery
                     ? `Geen resultaten voor "${searchQuery}".`
                     : 'Probeer minder filters.'}
@@ -525,7 +525,7 @@ export default function ShopPage() {
                     {searchQuery && (
                       <button
                         onClick={clearSearch}
-                        className="px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+                        className="px-5 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
                       >
                         Wis zoekopdracht
                       </button>
@@ -533,7 +533,7 @@ export default function ShopPage() {
                     {hasActiveFilters && (
                       <button
                         onClick={clearFilters}
-                        className="px-5 py-2.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                        className="px-5 py-2.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
                       >
                         Wis filters
                       </button>
@@ -599,7 +599,7 @@ export default function ShopPage() {
           >
             <button
               onClick={() => navigate('/results')}
-              className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar rapport

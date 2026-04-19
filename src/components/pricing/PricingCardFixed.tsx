@@ -13,8 +13,8 @@
  *   → User confusion, no clear choice
  *
  * AFTER (✅ Correct):
- *   Recommended: <button className="...primary">Start gratis</button>
- *   Others: <button className="...secondary">Kies dit plan</button>
+ *   Recommended: <button className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold py-3 px-6 rounded-xl">Start gratis</button>
+ *   Others: <button className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium py-3 px-6 rounded-xl">Kies dit plan</button>
  *   → Clear visual hierarchy, obvious best choice
  */
 
@@ -58,14 +58,14 @@ export function PricingCardFixed({
       className={`
         relative p-8 rounded-2xl transition-all
         ${recommended
-          ? 'border-4 border-[#C2654A] shadow-xl scale-105 bg-[#FAF5F2]'
+          ? 'border-4 border-[#C2654A] shadow-xl scale-105 bg-gradient-to-br from-[#FAF5F2] to-white'
           : 'border-2 border-[#E5E5E5] bg-white hover:border-[#F4E8E3] hover:shadow-lg'
         }
       `}
     >
       {/* Recommended Badge */}
       {recommended && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-[#C2654A] text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
           <Star className="w-4 h-4 fill-white" aria-hidden="true" />
           Aanbevolen
         </div>
@@ -111,12 +111,13 @@ export function PricingCardFixed({
         ))}
       </ul>
 
-      {/* CTA - Hierarchy based on recommended status */}
+      {/* ✅ FIXED CTA - Hierarchy based on recommended status */}
       {recommended ? (
+        // PRIMARY CTA - Only for recommended plan
         <button
           onClick={onSelect}
           disabled={active}
-          className="w-full group inline-flex items-center justify-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 disabled:opacity-60"
+          className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl w-full group"
           aria-label={`Selecteer ${name} plan - Aanbevolen optie`}
         >
           {active ? (
@@ -132,10 +133,11 @@ export function PricingCardFixed({
           )}
         </button>
       ) : (
+        // SECONDARY CTA - For all other plans
         <button
           onClick={onSelect}
           disabled={active}
-          className="w-full bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200 disabled:opacity-60"
+          className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl w-full"
           aria-label={`Selecteer ${name} plan`}
         >
           {active ? 'Huidig plan' : 'Kies dit plan'}
@@ -146,7 +148,7 @@ export function PricingCardFixed({
       {recommended && (
         <a
           href="#features"
-          className="block text-center mt-4 text-sm text-[#8A8A8A] hover:text-[#C2654A] transition-colors duration-200"
+          className="ff-link ff-link--muted block text-center mt-4"
         >
           Bekijk alle features →
         </a>

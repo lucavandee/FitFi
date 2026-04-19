@@ -35,17 +35,17 @@ const PREMIUM_FEATURES = [
 
 function FeatureRow({ label, included }: { label: string; included: boolean }) {
   return (
-    <li className="flex items-center gap-3 py-2.5 border-b border-[var(--color-border)] last:border-0">
+    <li className="flex items-center gap-3 py-2.5 border-b border-[#E5E5E5] last:border-0">
       {included ? (
-        <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
+        <CheckCircle className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
       ) : (
-        <Lock className="w-4 h-4 text-[var(--color-muted)] flex-shrink-0" />
+        <Lock className="w-4 h-4 text-[#8A8A8A] flex-shrink-0" />
       )}
-      <span className={cn('text-sm', included ? 'text-[var(--color-text)]' : 'text-[var(--color-muted)]')}>
+      <span className={cn('text-sm', included ? 'text-[#1A1A1A]' : 'text-[#8A8A8A]')}>
         {label}
       </span>
       {!included && (
-        <span className="ml-auto text-[10px] font-bold uppercase tracking-wide text-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] px-2 py-0.5 rounded-full">
+        <span className="ml-auto text-[10px] font-bold uppercase tracking-wide text-[#C2654A] bg-[#FAF5F2] px-2 py-0.5 rounded-full">
           Premium
         </span>
       )}
@@ -55,13 +55,13 @@ function FeatureRow({ label, included }: { label: string; included: boolean }) {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    active: { label: 'Actief', cls: 'bg-[var(--ff-color-success-100)] text-[var(--ff-color-success-700)]' },
-    trialing: { label: 'Trial', cls: 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]' },
-    canceled: { label: 'Geannuleerd', cls: 'bg-[var(--color-surface)] text-[var(--color-muted)] border border-[var(--color-border)]' },
-    past_due: { label: 'Betaling achterstallig', cls: 'bg-[var(--ff-color-error-100)] text-[var(--ff-color-error-700)]' },
-    incomplete: { label: 'Incompleet', cls: 'bg-[var(--ff-color-warning-100)] text-[var(--ff-color-warning-700)]' },
+    active: { label: 'Actief', cls: 'bg-[#ECFDF5] text-[#0A6E40]' },
+    trialing: { label: 'Trial', cls: 'bg-[#FAF5F2] text-[#A8513A]' },
+    canceled: { label: 'Geannuleerd', cls: 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5]' },
+    past_due: { label: 'Betaling achterstallig', cls: 'bg-[#FEF2F2] text-[#B91C1C]' },
+    incomplete: { label: 'Incompleet', cls: 'bg-[#FEFCE8] text-[#B06020]' },
   };
-  const badge = map[status] ?? { label: status, cls: 'bg-[var(--color-surface)] text-[var(--color-muted)]' };
+  const badge = map[status] ?? { label: status, cls: 'bg-[#FFFFFF] text-[#8A8A8A]' };
   return (
     <span className={cn('inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold', badge.cls)}>
       {status === 'active' && <CheckCircle className="w-3 h-3" />}
@@ -120,27 +120,27 @@ export default function SubscriptionManager() {
 
   if (isLoading) {
     return (
-      <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 animate-pulse">
-        <div className="h-6 w-48 bg-[var(--color-border)] rounded mb-4" />
-        <div className="h-4 w-full bg-[var(--color-border)] rounded mb-2" />
-        <div className="h-4 w-3/4 bg-[var(--color-border)] rounded" />
+      <section className="rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 animate-pulse">
+        <div className="h-6 w-48 bg-[#E5E5E5] rounded mb-4" />
+        <div className="h-4 w-full bg-[#E5E5E5] rounded mb-2" />
+        <div className="h-4 w-3/4 bg-[#E5E5E5] rounded" />
       </section>
     );
   }
 
   return (
-    <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <section className="rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-[#E5E5E5] flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {isPremium ? (
-            <Crown className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+            <Crown className="w-5 h-5 text-[#C2654A]" />
           ) : (
-            <CreditCard className="w-5 h-5 text-[var(--color-muted)]" />
+            <CreditCard className="w-5 h-5 text-[#8A8A8A]" />
           )}
           <div>
-            <h2 className="text-base font-bold text-[var(--color-text)]">Abonnement & facturatie</h2>
-            <p className="text-xs text-[var(--color-muted)]">Beheer je abonnement. Bekijk en download je facturen.</p>
+            <h2 className="text-base font-bold text-[#1A1A1A]">Abonnement & facturatie</h2>
+            <p className="text-xs text-[#8A8A8A]">Beheer je abonnement. Bekijk en download je facturen.</p>
           </div>
         </div>
         {isPremium && <StatusBadge status={activeSubscription!.status} />}
@@ -152,39 +152,39 @@ export default function SubscriptionManager() {
         {!isPremium && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {/* Current plan */}
-            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-4 mb-5">
+            <div className="rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] p-4 mb-5">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-bold text-[var(--color-text)]">Huidig plan: Gratis</p>
-                <span className="text-xs text-[var(--color-muted)] bg-[var(--color-surface)] border border-[var(--color-border)] px-2.5 py-1 rounded-full font-semibold">
+                <p className="text-sm font-bold text-[#1A1A1A]">Huidig plan: Gratis</p>
+                <span className="text-xs text-[#8A8A8A] bg-[#FFFFFF] border border-[#E5E5E5] px-2.5 py-1 rounded-full font-semibold">
                   Gratis voor altijd
                 </span>
               </div>
-              <p className="text-xs text-[var(--color-muted)]">
+              <p className="text-xs text-[#8A8A8A]">
                 Je gratis rapport blijft altijd beschikbaar — ook als je niet upgradet. Je kunt altijd opzeggen.
               </p>
             </div>
 
             {/* Feature matrix */}
-            <div className="rounded-xl border border-[var(--color-border)] overflow-hidden mb-5">
-              <div className="grid grid-cols-2 divide-x divide-[var(--color-border)]">
-                <div className="px-4 py-3 bg-[var(--color-bg)]">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">Gratis</p>
+            <div className="rounded-xl border border-[#E5E5E5] overflow-hidden mb-5">
+              <div className="grid grid-cols-2 divide-x divide-[#E5E5E5]">
+                <div className="px-4 py-3 bg-[#FAFAF8]">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#8A8A8A]">Gratis</p>
                 </div>
-                <div className="px-4 py-3 bg-[var(--ff-color-primary-700)]">
+                <div className="px-4 py-3 bg-[#A8513A]">
                   <p className="text-xs font-bold uppercase tracking-wide text-white">Premium — €9,99 / mnd</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 divide-x divide-[var(--color-border)]">
+              <div className="grid grid-cols-2 divide-x divide-[#E5E5E5]">
                 <ul className="px-4 py-2">
                   {FREE_FEATURES.map((f) => (
                     <FeatureRow key={f.label} label={f.label} included={f.included} />
                   ))}
                 </ul>
-                <ul className="px-4 py-2 bg-[var(--ff-color-primary-50)]">
+                <ul className="px-4 py-2 bg-[#FAF5F2]">
                   {PREMIUM_FEATURES.map((f) => (
-                    <li key={f.label} className="flex items-center gap-2.5 py-2.5 border-b border-[var(--ff-color-primary-100)] last:border-0">
-                      <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
-                      <span className="text-sm text-[var(--color-text)]">{f.label}</span>
+                    <li key={f.label} className="flex items-center gap-2.5 py-2.5 border-b border-[#FAF5F2] last:border-0">
+                      <CheckCircle className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+                      <span className="text-sm text-[#1A1A1A]">{f.label}</span>
                     </li>
                   ))}
                 </ul>
@@ -192,11 +192,11 @@ export default function SubscriptionManager() {
             </div>
 
             {/* Color analysis note */}
-            <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] mb-5 text-xs text-[var(--color-muted)]">
+            <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[#FFFFFF] border border-[#E5E5E5] mb-5 text-xs text-[#8A8A8A]">
               <Camera className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p>
                 Premium geeft extra advies — maar kleuranalyse werkt alleen{' '}
-                <strong className="text-[var(--color-text)]">met een foto</strong>. Je kleurtype kan niet automatisch worden bepaald zonder selfie.
+                <strong className="text-[#1A1A1A]">met een foto</strong>. Je kleurtype kan niet automatisch worden bepaald zonder selfie.
               </p>
             </div>
 
@@ -204,14 +204,14 @@ export default function SubscriptionManager() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => navigate('/prijzen')}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
               >
                 <Sparkles className="w-4 h-4" />
                 Upgrade
               </button>
               <button
                 onClick={() => navigate('/resultaten')}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
                 Bekijk Premium-voorbeeld
@@ -224,17 +224,17 @@ export default function SubscriptionManager() {
         {isPremium && activeSubscription && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
             {/* Plan card */}
-            <div className="rounded-xl border border-[var(--ff-color-primary-200)] bg-[var(--ff-color-primary-50)] p-5">
+            <div className="rounded-xl border border-[#F4E8E3] bg-[#FAF5F2] p-5">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <p className="text-xs text-[var(--ff-color-primary-600)] font-bold uppercase tracking-wide mb-1">
+                  <p className="text-xs text-[#C2654A] font-bold uppercase tracking-wide mb-1">
                     {isLifetime ? 'Founder plan' : 'Premium plan'}
                   </p>
-                  <h3 className="text-xl font-bold text-[var(--color-text)]">
+                  <h3 className="text-xl font-bold text-[#1A1A1A]">
                     {activeSubscription.stripe_products?.name || 'Premium'}
                   </h3>
                   {activeSubscription.stripe_products?.description && (
-                    <p className="text-sm text-[var(--color-muted)] mt-1">
+                    <p className="text-sm text-[#8A8A8A] mt-1">
                       {activeSubscription.stripe_products.description}
                     </p>
                   )}
@@ -244,35 +244,35 @@ export default function SubscriptionManager() {
               {/* Plan details grid */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-xs text-[var(--color-muted)] mb-1">Prijs</p>
-                  <p className="font-bold text-[var(--color-text)]">
+                  <p className="text-xs text-[#8A8A8A] mb-1">Prijs</p>
+                  <p className="font-bold text-[#1A1A1A]">
                     €{activeSubscription.stripe_products?.price ?? '—'}
                     {!isLifetime && ` / ${activeSubscription.stripe_products?.interval === 'month' ? 'maand' : 'jaar'}`}
                     {isLifetime && ' (eenmalig)'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--color-muted)] mb-1">
+                  <p className="text-xs text-[#8A8A8A] mb-1">
                     <Calendar className="w-3 h-3 inline mr-1" />
                     {activeSubscription.cancel_at_period_end ? 'Verloopt op' : isLifetime ? 'Toegang' : 'Vernieuwt op'}
                   </p>
-                  <p className="font-bold text-[var(--color-text)]">
+                  <p className="font-bold text-[#1A1A1A]">
                     {isLifetime ? 'Lifetime' : formatDate(activeSubscription.current_period_end)}
                   </p>
                 </div>
               </div>
               {!isLifetime && !activeSubscription.cancel_at_period_end && (
-                <p className="mt-3 text-xs text-[var(--color-muted)]">Je kunt altijd opzeggen — Premium blijft actief tot het einde van de betaalperiode.</p>
+                <p className="mt-3 text-xs text-[#8A8A8A]">Je kunt altijd opzeggen — Premium blijft actief tot het einde van de betaalperiode.</p>
               )}
             </div>
 
             {/* Cancellation warning */}
             {activeSubscription.cancel_at_period_end && (
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-[var(--ff-color-warning-50)] border border-[var(--ff-color-warning-200)]">
-                <AlertCircle className="w-4 h-4 text-[var(--ff-color-warning-600)] mt-0.5 flex-shrink-0" />
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-[#FFFBEB] border border-[#FDE68A]">
+                <AlertCircle className="w-4 h-4 text-[#D4913D] mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-[var(--color-text)]">Opzegging gepland</p>
-                  <p className="text-xs text-[var(--color-muted)] mt-0.5">
+                  <p className="text-sm font-semibold text-[#1A1A1A]">Opzegging gepland</p>
+                  <p className="text-xs text-[#8A8A8A] mt-0.5">
                     Je abonnement is geannuleerd en blijft actief tot{' '}
                     <strong>{formatDate(activeSubscription.current_period_end)}</strong>.
                     Je gratis rapport blijft daarna beschikbaar.
@@ -283,12 +283,12 @@ export default function SubscriptionManager() {
 
             {/* Included features */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)] mb-3">Inbegrepen in jouw plan</p>
-              <ul className="rounded-xl border border-[var(--color-border)] overflow-hidden divide-y divide-[var(--color-border)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-[#8A8A8A] mb-3">Inbegrepen in jouw plan</p>
+              <ul className="rounded-xl border border-[#E5E5E5] overflow-hidden divide-y divide-[#E5E5E5]">
                 {PREMIUM_FEATURES.map((f) => (
-                  <li key={f.label} className="flex items-center gap-3 px-4 py-3 bg-[var(--color-bg)]">
-                    <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" />
-                    <span className="text-sm text-[var(--color-text)]">{f.label}</span>
+                  <li key={f.label} className="flex items-center gap-3 px-4 py-3 bg-[#FAFAF8]">
+                    <CheckCircle className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+                    <span className="text-sm text-[#1A1A1A]">{f.label}</span>
                   </li>
                 ))}
               </ul>
@@ -301,7 +301,7 @@ export default function SubscriptionManager() {
                   <button
                     onClick={handleManageSubscription}
                     disabled={processingPortal}
-                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl text-sm font-bold hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors disabled:opacity-50"
                   >
                     {processingPortal ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Bezig...</>
@@ -312,13 +312,13 @@ export default function SubscriptionManager() {
                   <button
                     onClick={handleManageSubscription}
                     disabled={processingPortal}
-                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl text-sm font-semibold hover:border-[var(--ff-color-primary-400)] transition-colors disabled:opacity-50"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors disabled:opacity-50"
                   >
                     <ExternalLink className="w-4 h-4" />
                     Download factuur
                   </button>
                 </div>
-                <p className="text-xs text-[var(--color-muted)] text-center">
+                <p className="text-xs text-[#8A8A8A] text-center">
                   Facturen en wijzig betaalmethode vind je in de Stripe-portal (opent nieuw venster).
                 </p>
               </div>
@@ -329,7 +329,7 @@ export default function SubscriptionManager() {
               <div>
                 <button
                   onClick={() => setShowCancelInfo((v) => !v)}
-                  className="text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] underline transition-colors flex items-center gap-1"
+                  className="text-xs text-[#8A8A8A] hover:text-[#1A1A1A] underline transition-colors flex items-center gap-1"
                 >
                   <Info className="w-3 h-3" />
                   Informatie over opzeggen
@@ -343,14 +343,14 @@ export default function SubscriptionManager() {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-3 p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] text-xs text-[var(--color-muted)] space-y-2">
+                      <div className="mt-3 p-4 rounded-xl bg-[#FAFAF8] border border-[#E5E5E5] text-xs text-[#8A8A8A] space-y-2">
                         <p>Je kunt op elk moment opzeggen. Na opzegging blijft Premium actief tot het einde van de betaalperiode.</p>
                         <p>Je gratis rapport en stijlprofiel blijven daarna altijd beschikbaar.</p>
-                        <p>Opzeggen doe je via de Stripe-portal (knop hierboven). Heb je vragen? <a href="/contact" className="underline text-[var(--ff-color-primary-600)]">Neem contact op.</a></p>
+                        <p>Opzeggen doe je via de Stripe-portal (knop hierboven). Heb je vragen? <a href="/contact" className="underline text-[#C2654A]">Neem contact op.</a></p>
                         <button
                           onClick={handleManageSubscription}
                           disabled={processingPortal}
-                          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-border)] text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--ff-color-error-600)] hover:border-[var(--ff-color-error-300)] transition-colors disabled:opacity-50"
+                          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E5E5E5] text-xs font-semibold text-[#8A8A8A] hover:text-[#C24A4A] hover:border-[#FCA5A5] transition-colors disabled:opacity-50"
                         >
                           {processingPortal ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
                           Annuleer abonnement
@@ -366,15 +366,15 @@ export default function SubscriptionManager() {
 
         {/* Past due warning */}
         {activeSubscription?.status === 'past_due' && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-[var(--ff-color-error-50)] border border-[var(--ff-color-error-200)]">
-            <AlertCircle className="w-4 h-4 text-[var(--ff-color-error-600)] mt-0.5 flex-shrink-0" />
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-[#FEF2F2] border border-[#FECACA]">
+            <AlertCircle className="w-4 h-4 text-[#C24A4A] mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-[var(--color-text)]">Betaling achterstallig</p>
-              <p className="text-xs text-[var(--color-muted)] mt-0.5">Werk je betalingsgegevens bij om toegang te behouden.</p>
+              <p className="text-sm font-semibold text-[#1A1A1A]">Betaling achterstallig</p>
+              <p className="text-xs text-[#8A8A8A] mt-0.5">Werk je betalingsgegevens bij om toegang te behouden.</p>
               <button
                 onClick={handleManageSubscription}
                 disabled={processingPortal}
-                className="mt-2 text-xs font-semibold text-[var(--ff-color-error-600)] underline"
+                className="mt-2 text-xs font-semibold text-[#C24A4A] underline"
               >
                 Wijzig betaalmethode
               </button>
@@ -384,9 +384,9 @@ export default function SubscriptionManager() {
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-3 border-t border-[var(--color-border)] bg-[var(--color-bg)]">
-        <p className="text-xs text-[var(--color-muted)]">
-          Vragen? <a href="/contact" className="text-[var(--ff-color-primary-600)] hover:underline">Neem contact op</a> · Betalingen verlopen veilig via Stripe
+      <div className="px-6 py-3 border-t border-[#E5E5E5] bg-[#FAFAF8]">
+        <p className="text-xs text-[#8A8A8A]">
+          Vragen? <a href="/contact" className="text-[#C2654A] hover:underline">Neem contact op</a> · Betalingen verlopen veilig via Stripe
         </p>
       </div>
     </section>

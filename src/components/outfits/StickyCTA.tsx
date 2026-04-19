@@ -26,11 +26,11 @@ export default function StickyCTA({
         <div className="text-sm text-text/80">Klaar? Ga verder.</div>
         <div className="flex gap-2">
           {secondaryTo && secondaryLabel ? (
-            <NavLink to={secondaryTo} className="ff-btn ff-btn-secondary">
+            <NavLink to={secondaryTo} className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">
               {secondaryLabel}
             </NavLink>
           ) : null}
-          <NavLink to={primaryTo} className="ff-btn ff-btn-primary">
+          <NavLink to={primaryTo} className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">
             {primaryLabel}
           </NavLink>
         </div>

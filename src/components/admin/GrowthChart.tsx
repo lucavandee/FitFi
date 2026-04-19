@@ -11,14 +11,14 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
   const maxValue = Math.max(data.last_7d, data.last_30d, data.last_90d);
 
   const bars = [
-    { label: '7 dagen', value: data.last_7d, color: 'var(--ff-color-primary-600)' },
-    { label: '30 dagen', value: data.last_30d, color: 'var(--ff-color-primary-700)' },
-    { label: '90 dagen', value: data.last_90d, color: 'var(--ff-color-primary-800)' },
+    { label: '7 dagen', value: data.last_7d, color: '#C2654A' },
+    { label: '30 dagen', value: data.last_30d, color: '#A8513A' },
+    { label: '90 dagen', value: data.last_90d, color: '#8A3D28' },
   ];
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6">
-      <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6">
+    <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] p-6">
+      <h3 className="text-lg font-semibold text-[#1A1A1A] mb-6">
         📈 Groei Overzicht
       </h3>
 
@@ -30,19 +30,19 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
           return (
             <div key={bar.label}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-[var(--color-text)]">
+                <span className="text-sm font-medium text-[#1A1A1A]">
                   {bar.label}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[var(--color-text)]">
+                  <span className="text-sm font-bold text-[#1A1A1A]">
                     {bar.value}
                   </span>
-                  <span className="text-xs text-[var(--color-text-secondary)]">
+                  <span className="text-xs text-[#8A8A8A]">
                     ({growthRate}%)
                   </span>
                 </div>
               </div>
-              <div className="h-3 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div className="h-3 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden"
                   style={{
@@ -58,19 +58,19 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
         })}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
+      <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-[var(--color-text)]">{data.last_7d}</div>
-            <div className="text-xs text-[var(--color-text-secondary)]">Deze week</div>
+            <div className="text-2xl font-bold text-[#1A1A1A]">{data.last_7d}</div>
+            <div className="text-xs text-[#8A8A8A]">Deze week</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-[var(--color-text)]">{data.last_30d}</div>
-            <div className="text-xs text-[var(--color-text-secondary)]">Deze maand</div>
+            <div className="text-2xl font-bold text-[#1A1A1A]">{data.last_30d}</div>
+            <div className="text-xs text-[#8A8A8A]">Deze maand</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-[var(--color-text)]">{data.last_90d}</div>
-            <div className="text-xs text-[var(--color-text-secondary)]">Dit kwartaal</div>
+            <div className="text-2xl font-bold text-[#1A1A1A]">{data.last_90d}</div>
+            <div className="text-xs text-[#8A8A8A]">Dit kwartaal</div>
           </div>
         </div>
       </div>

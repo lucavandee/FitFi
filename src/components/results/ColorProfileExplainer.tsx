@@ -101,12 +101,12 @@ export function ColorProfileExplainer({
 
   return (
     <div
-      className={`bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden ${className}`}
-      style={{ boxShadow: 'var(--shadow-soft)' }}
+      className={`bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] overflow-hidden ${className}`}
+      style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}
     >
-      <div className="px-5 sm:px-6 py-4 border-b border-[var(--color-border)]">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-0.5">Kleurprofiel</p>
-        <h3 className="text-sm font-semibold text-[var(--color-text)]">{seasonName}</h3>
+      <div className="px-5 sm:px-6 py-4 border-b border-[#E5E5E5]">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-0.5">Kleurprofiel</p>
+        <h3 className="text-sm font-semibold text-[#1A1A1A]">{seasonName}</h3>
       </div>
 
       <div className="p-5 sm:p-6 space-y-5">
@@ -115,21 +115,21 @@ export function ColorProfileExplainer({
           {attributes.map((attr) => (
             <div
               key={attr.label}
-              className="text-center py-3 px-2 rounded-xl border border-[var(--color-border)]"
-              style={{ background: 'var(--ff-color-primary-25)' }}
+              className="text-center py-3 px-2 rounded-xl border border-[#E5E5E5]"
+              style={{ background: '#FAF5F2' }}
             >
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-1">{attr.label}</p>
-              <p className="text-sm font-semibold text-[var(--ff-color-primary-700)]">{attr.value}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-1">{attr.label}</p>
+              <p className="text-sm font-semibold text-[#A8513A]">{attr.value}</p>
             </div>
           ))}
         </div>
 
         {/* Tips */}
-        <div className="divide-y divide-[var(--color-border)]">
+        <div className="divide-y divide-[#E5E5E5]">
           {tips.map((tip, i) => (
             <div key={i} className="flex items-start gap-3 py-2.5 first:pt-0 last:pb-0">
-              <span className="w-1 h-1 rounded-full bg-[var(--ff-color-primary-400)] mt-[7px] shrink-0" aria-hidden="true" />
-              <p className="text-sm text-[var(--color-muted)] leading-snug">{tip}</p>
+              <span className="w-1 h-1 rounded-full bg-[#D4856E] mt-[7px] shrink-0" aria-hidden="true" />
+              <p className="text-sm text-[#8A8A8A] leading-snug">{tip}</p>
             </div>
           ))}
         </div>

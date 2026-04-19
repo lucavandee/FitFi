@@ -43,8 +43,8 @@ export default function AdminImageManagerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
-        <div className="text-[var(--color-muted)]">Laden...</div>
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+        <div className="text-[#8A8A8A]">Laden...</div>
       </div>
     );
   }
@@ -54,18 +54,18 @@ export default function AdminImageManagerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12">
+    <div className="min-h-screen bg-[#FAFAF8] py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-[var(--radius-xl)] bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#A8513A] to-[#C2654A] flex items-center justify-center">
               <Image className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-[var(--color-text)]">
+              <h1 className="text-3xl font-bold text-[#1A1A1A]">
                 Afbeeldingen Beheer
               </h1>
-              <p className="text-[var(--color-muted)]">
+              <p className="text-[#8A8A8A]">
                 Upload product afbeeldingen in bulk
               </p>
             </div>
@@ -73,16 +73,16 @@ export default function AdminImageManagerPage() {
 
           {stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-xl)] p-4">
-                <div className="text-2xl font-bold text-[var(--color-text)]">
+              <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4">
+                <div className="text-2xl font-bold text-[#1A1A1A]">
                   {stats.totalProducts}
                 </div>
-                <div className="text-sm text-[var(--color-muted)]">
+                <div className="text-sm text-[#8A8A8A]">
                   Totaal producten
                 </div>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-[var(--radius-xl)] p-4">
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
                 <div className="text-2xl font-bold text-green-700">
                   {stats.withImages}
                 </div>
@@ -91,7 +91,7 @@ export default function AdminImageManagerPage() {
                 </div>
               </div>
 
-              <div className="bg-red-50 border border-red-200 rounded-[var(--radius-xl)] p-4">
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
                 <div className="text-2xl font-bold text-red-700">
                   {stats.withoutImages}
                 </div>
@@ -100,7 +100,7 @@ export default function AdminImageManagerPage() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-[var(--radius-xl)] p-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
                 <div className="text-2xl font-bold text-blue-700">
                   {Math.round((stats.withImages / stats.totalProducts) * 100)}%
                 </div>
@@ -111,7 +111,7 @@ export default function AdminImageManagerPage() {
             </div>
           )}
 
-          <div className="bg-blue-50 border border-blue-200 rounded-[var(--radius-xl)] p-4 flex items-start gap-3">
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-blue-900">
               <p className="font-semibold mb-1">Bestandsnaam conventies:</p>
@@ -124,14 +124,14 @@ export default function AdminImageManagerPage() {
           </div>
         </div>
 
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-8">
+        <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-8">
           <BulkImageUploader />
         </div>
 
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/admin')}
-            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+            className="text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
           >
             ← Terug naar Admin Dashboard
           </button>

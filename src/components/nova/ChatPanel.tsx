@@ -61,10 +61,10 @@ export default function ChatPanel() {
           pointer-events-auto
           w-full max-w-[95vw] sm:max-w-md
           h-[90vh] sm:h-[600px] sm:max-h-[80vh]
-          bg-[var(--color-surface)]
-          border border-[var(--color-border)]
-          rounded-2xl sm:rounded-[var(--radius-2xl)]
-          shadow-[var(--shadow-soft)]
+          bg-[#FFFFFF]
+          border border-[#E5E5E5]
+          rounded-2xl sm:rounded-2xl
+          shadow-sm
           flex flex-col
           overflow-hidden
         "
@@ -76,7 +76,7 @@ export default function ChatPanel() {
       >
         {/* Swipe handle - only on mobile */}
         {isMobile && (
-          <div className="flex justify-center py-2 border-b border-[var(--color-border)]">
+          <div className="flex justify-center py-2 border-b border-[#E5E5E5]">
             <div className="flex flex-col items-center gap-1">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
               <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -85,7 +85,7 @@ export default function ChatPanel() {
         )}
 
         {/* Header */}
-        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-[var(--color-border)]">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-[#E5E5E5]">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#2B6AF3] flex items-center justify-center">
               <svg width="16" height="16" viewBox="0 0 24 24" className="text-white sm:w-5 sm:h-5">
@@ -96,8 +96,8 @@ export default function ChatPanel() {
               </svg>
             </div>
             <div>
-              <h2 id={titleId} className="font-semibold text-sm sm:text-base text-[var(--color-text)]">Nova</h2>
-              <p className="text-xs text-[var(--color-muted)] hidden sm:block">
+              <h2 id={titleId} className="font-semibold text-sm sm:text-base text-[#1A1A1A]">Nova</h2>
+              <p className="text-xs text-[#8A8A8A] hidden sm:block">
                 {sending ? "Aan het typen..." : "Je persoonlijke style assistent"}
               </p>
             </div>
@@ -140,7 +140,7 @@ export default function ChatPanel() {
                   ${
                     msg.role === "user"
                       ? "bg-[#2B6AF3] text-white"
-                      : "bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)]"
+                      : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5]"
                   }
                 `}
               >
@@ -159,7 +159,7 @@ export default function ChatPanel() {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSubmit} className="p-3 sm:p-4 border-t border-[var(--color-border)]">
+        <form onSubmit={handleSubmit} className="p-3 sm:p-4 border-t border-[#E5E5E5]">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
             <div className="flex-1">
               <textarea
@@ -176,16 +176,16 @@ export default function ChatPanel() {
                 rows={1}
                 className="
                   w-full resize-none
-                  bg-[var(--color-bg)]
-                  border border-[var(--color-border)]
+                  bg-[#FAFAF8]
+                  border border-[#E5E5E5]
                   rounded-xl
                   px-3 sm:px-4 py-2 sm:py-3
                   text-xs sm:text-sm
-                  text-[var(--color-text)]
-                  placeholder:text-[var(--color-muted)]
+                  text-[#1A1A1A]
+                  placeholder:text-[#8A8A8A]
                   focus:outline-none
                   focus:ring-2
-                  focus:ring-[var(--ff-color-nova-ring)]
+                  focus:ring-[#818CF8]
                   disabled:opacity-50
                   disabled:cursor-not-allowed
                 "
@@ -206,7 +206,7 @@ export default function ChatPanel() {
               )}
             </Button>
           </div>
-          <p className="text-xs text-[var(--color-muted)] mt-2 hidden sm:block">
+          <p className="text-xs text-[#8A8A8A] mt-2 hidden sm:block">
             Tip: Gebruik Enter om te versturen, Shift+Enter voor een nieuwe regel
           </p>
         </form>

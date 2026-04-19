@@ -27,7 +27,7 @@ export function showXPNotification({
             className={`max-w-md w-full ${
               leveledUp
                 ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500'
-                : 'bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]'
+                : 'bg-gradient-to-br from-[#C2654A] to-[#C2654A]'
             } text-white rounded-2xl shadow-2xl p-4`}
           >
             <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export function XPFloatingBadge({ xp }: { xp: number }) {
         transform: 'translate(-50%, -50%)',
       }}
     >
-      <div className="bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white font-bold px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
+      <div className="bg-gradient-to-br from-[#C2654A] to-[#C2654A] text-white font-bold px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
         <Sparkles className="w-4 h-4" />
         <span>+{xp} XP</span>
       </div>

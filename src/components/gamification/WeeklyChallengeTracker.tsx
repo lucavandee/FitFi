@@ -88,10 +88,10 @@ export function WeeklyChallengeTracker() {
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-[var(--color-surface)] rounded-2xl p-6 shadow-lg border-2 border-[var(--color-border)]">
+      <div className="bg-white dark:bg-[#FFFFFF] rounded-2xl p-6 shadow-lg border-2 border-[#E5E5E5]">
         <div className="animate-pulse space-y-3">
-          <div className="h-6 bg-[var(--color-bg)] rounded w-2/3" />
-          <div className="h-20 bg-[var(--color-bg)] rounded" />
+          <div className="h-6 bg-[#FAFAF8] rounded w-2/3" />
+          <div className="h-20 bg-[#FAFAF8] rounded" />
         </div>
       </div>
     );
@@ -105,22 +105,22 @@ export function WeeklyChallengeTracker() {
   const today = new Date().getDay();
 
   return (
-    <div className="bg-white dark:bg-[var(--color-surface)] rounded-2xl p-6 shadow-lg border-2 border-[var(--color-border)] relative overflow-hidden">
+    <div className="bg-white dark:bg-[#FFFFFF] rounded-2xl p-6 shadow-lg border-2 border-[#E5E5E5] relative overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="text-lg font-bold text-[var(--color-text)] flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+          <h4 className="text-lg font-bold text-[#1A1A1A] flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-[#C2654A]" />
             Weekly Outfit Challenge
           </h4>
-          <p className="text-sm text-[var(--color-muted)] mt-1">
+          <p className="text-sm text-[#8A8A8A] mt-1">
             Voltooi dagelijkse stijl-uitdagingen
           </p>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-[var(--color-text)]">
+          <div className="text-2xl font-bold text-[#1A1A1A]">
             {completedCount}/{totalChallenges}
           </div>
-          <p className="text-xs text-[var(--color-muted)]">
+          <p className="text-xs text-[#8A8A8A]">
             {isWeekComplete ? 'Week compleet!' : 'dagen voltooid'}
           </p>
         </div>
@@ -128,15 +128,15 @@ export function WeeklyChallengeTracker() {
 
       {/* Progress Bar */}
       <div className="mb-6">
-        <div className="h-3 bg-[var(--color-bg)] rounded-full overflow-hidden">
+        <div className="h-3 bg-[#FAFAF8] rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progressPercentage}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className={`h-full rounded-full ${
               isWeekComplete
-                ? 'bg-gradient-to-r from-[var(--ff-color-accent-600)] to-[var(--ff-color-accent-700)]'
-                : 'bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]'
+                ? 'bg-gradient-to-r from-[#C2654A] to-[#A8513A]'
+                : 'bg-gradient-to-r from-[#C2654A] to-[#C2654A]'
             }`}
           />
         </div>
@@ -146,15 +146,15 @@ export function WeeklyChallengeTracker() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-4 p-4 bg-gradient-to-r from-[var(--ff-color-accent-50)] to-[var(--ff-color-primary-50)] border-2 border-[var(--ff-color-accent-400)] rounded-xl"
+          className="mb-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#D4856E] rounded-xl"
         >
           <div className="flex items-center gap-3">
-            <Trophy className="w-6 h-6 text-[var(--ff-color-accent-600)] flex-shrink-0" />
+            <Trophy className="w-6 h-6 text-[#C2654A] flex-shrink-0" />
             <div>
-              <p className="font-bold text-[var(--color-text)] mb-1">
+              <p className="font-bold text-[#1A1A1A] mb-1">
                 Geweldig! Week voltooid 🎉
               </p>
-              <p className="text-sm text-[var(--color-muted)]">
+              <p className="text-sm text-[#8A8A8A]">
                 Je hebt alle 7 dagelijkse uitdagingen voltooid en +200 bonus XP verdiend!
               </p>
             </div>
@@ -177,13 +177,13 @@ export function WeeklyChallengeTracker() {
       </div>
 
       {/* Bonus Info */}
-      <div className="mt-4 pt-4 border-t border-[var(--color-border)] flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2 text-[var(--color-muted)]">
+      <div className="mt-4 pt-4 border-t border-[#E5E5E5] flex items-center justify-between text-sm">
+        <div className="flex items-center gap-2 text-[#8A8A8A]">
           <Sparkles className="w-4 h-4" />
           <span>Voltooibonus: +200 XP</span>
         </div>
         {!isWeekComplete && (
-          <div className="flex items-center gap-2 text-[var(--ff-color-primary-600)] font-semibold">
+          <div className="flex items-center gap-2 text-[#C2654A] font-semibold">
             <Flame className="w-4 h-4" />
             <span>{totalChallenges - completedCount} nog te gaan!</span>
           </div>
@@ -217,11 +217,11 @@ function ChallengeDay({
       transition={{ delay }}
       className={`
         relative p-4 rounded-xl border-2 transition-all
-        ${isToday ? 'ring-2 ring-[var(--ff-color-primary-500)] ring-offset-2' : ''}
+        ${isToday ? 'ring-2 ring-[#C2654A] ring-offset-2' : ''}
         ${
           challenge.is_completed
-            ? 'bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-[var(--ff-color-primary-300)]'
-            : 'bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]'
+            ? 'bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-[#D4856E]'
+            : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#D4856E]'
         }
       `}
     >
@@ -232,8 +232,8 @@ function ChallengeDay({
               w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-md
               ${
                 challenge.is_completed
-                  ? 'bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-600)]'
-                  : 'bg-[var(--color-bg)]'
+                  ? 'bg-gradient-to-br from-[#C2654A] to-[#C2654A]'
+                  : 'bg-[#FAFAF8]'
               }
             `}
           >
@@ -243,19 +243,19 @@ function ChallengeDay({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h5 className="font-bold text-[var(--color-text)] text-sm">
+            <h5 className="font-bold text-[#1A1A1A] text-sm">
               {dayNames[challenge.day_of_week]}
             </h5>
             {isToday && (
-              <span className="px-2 py-0.5 bg-[var(--ff-color-primary-600)] text-white text-xs font-semibold rounded-full">
+              <span className="px-2 py-0.5 bg-[#C2654A] text-white text-xs font-semibold rounded-full">
                 Vandaag
               </span>
             )}
           </div>
-          <p className="text-sm font-semibold text-[var(--color-text)] mb-1">
+          <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
             {challenge.theme_name}
           </p>
-          <p className="text-xs text-[var(--color-muted)] line-clamp-2">
+          <p className="text-xs text-[#8A8A8A] line-clamp-2">
             {challenge.theme_description}
           </p>
         </div>
@@ -263,8 +263,8 @@ function ChallengeDay({
         <div className="flex-shrink-0">
           {challenge.is_completed ? (
             <div className="flex flex-col items-center gap-1">
-              <CheckCircle2 className="w-8 h-8 text-[var(--ff-color-accent-600)]" />
-              <span className="text-xs font-semibold text-[var(--ff-color-accent-700)]">
+              <CheckCircle2 className="w-8 h-8 text-[#C2654A]" />
+              <span className="text-xs font-semibold text-[#A8513A]">
                 +{challenge.xp_reward} XP
               </span>
             </div>
@@ -272,19 +272,19 @@ function ChallengeDay({
             <button
               onClick={onComplete}
               disabled={isCompleting}
-              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-[var(--ff-color-primary-100)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-[#FAF5F2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isCompleting ? (
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 >
-                  <Circle className="w-8 h-8 text-[var(--color-muted)]" />
+                  <Circle className="w-8 h-8 text-[#8A8A8A]" />
                 </motion.div>
               ) : (
                 <>
-                  <Circle className="w-8 h-8 text-[var(--color-muted)]" />
-                  <span className="text-xs font-semibold text-[var(--ff-color-primary-600)]">
+                  <Circle className="w-8 h-8 text-[#8A8A8A]" />
+                  <span className="text-xs font-semibold text-[#C2654A]">
                     +{challenge.xp_reward} XP
                   </span>
                 </>

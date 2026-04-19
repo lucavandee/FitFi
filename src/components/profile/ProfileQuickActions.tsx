@@ -99,8 +99,8 @@ export function ProfileQuickActions({
     <div className="space-y-4">
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-[var(--color-text)]">Snelle Acties</h3>
-        <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
+        <h3 className="text-lg font-bold text-[#1A1A1A]">Snelle Acties</h3>
+        <Sparkles className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
       </div>
 
       {/* Action Cards */}
@@ -121,8 +121,8 @@ export function ProfileQuickActions({
               className={`
                 relative p-4 rounded-xl border-2 text-left transition-all group
                 ${isPrimary
-                  ? 'bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] border-transparent text-white shadow-lg hover:shadow-xl'
-                  : 'bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)] hover:shadow-md'
+                  ? 'bg-gradient-to-br from-[#C2654A] to-[#C2654A] border-transparent text-white shadow-lg hover:shadow-xl'
+                  : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#D4856E] hover:shadow-md'
                 }
               `}
               aria-label={`${action.label}: ${action.description}`}
@@ -139,14 +139,14 @@ export function ProfileQuickActions({
                 className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
                   isPrimary
                     ? 'bg-white/20'
-                    : 'bg-[var(--ff-color-primary-100)]'
+                    : 'bg-[#FAF5F2]'
                 }`}
               >
                 <Icon
                   className={`w-5 h-5 ${
                     isPrimary
                       ? 'text-white'
-                      : 'text-[var(--ff-color-primary-600)]'
+                      : 'text-[#C2654A]'
                   }`}
                   aria-hidden="true"
                 />
@@ -156,20 +156,20 @@ export function ProfileQuickActions({
               <div className="mb-3">
                 <p
                   className={`font-bold mb-1 flex items-center gap-2 ${
-                    isPrimary ? 'text-white' : 'text-[var(--color-text)]'
+                    isPrimary ? 'text-white' : 'text-[#1A1A1A]'
                   }`}
                 >
                   {action.label}
                   <ArrowRight
                     className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${
-                      isPrimary ? 'text-white' : 'text-[var(--ff-color-primary-600)]'
+                      isPrimary ? 'text-white' : 'text-[#C2654A]'
                     }`}
                     aria-hidden="true"
                   />
                 </p>
                 <p
                   className={`text-sm ${
-                    isPrimary ? 'text-white/80' : 'text-[var(--color-muted)]'
+                    isPrimary ? 'text-white/80' : 'text-[#8A8A8A]'
                   }`}
                 >
                   {action.description}
@@ -181,8 +181,8 @@ export function ProfileQuickActions({
       </div>
 
       {/* Divider */}
-      <div className="border-t border-[var(--color-border)] pt-4 mt-6">
-        <h4 className="text-sm font-semibold text-[var(--color-text)] mb-3 flex items-center gap-2">
+      <div className="border-t border-[#E5E5E5] pt-4 mt-6">
+        <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
           <Settings className="w-4 h-4" aria-hidden="true" />
           Instellingen
         </h4>
@@ -191,26 +191,26 @@ export function ProfileQuickActions({
         <div className="grid grid-cols-1 gap-2">
           <button
             onClick={() => navigate('/profile#email-preferences')}
-            className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--color-bg)] transition-colors text-left"
+            className="flex items-center justify-between p-3 rounded-lg hover:bg-[#FAFAF8] transition-colors text-left"
             aria-label="Pas je email voorkeuren aan"
           >
             <div>
-              <p className="text-sm font-medium text-[var(--color-text)]">Email voorkeuren</p>
-              <p className="text-xs text-[var(--color-muted)]">Beheer meldingen en nieuwsbrieven</p>
+              <p className="text-sm font-medium text-[#1A1A1A]">Email voorkeuren</p>
+              <p className="text-xs text-[#8A8A8A]">Beheer meldingen en nieuwsbrieven</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" aria-hidden="true" />
+            <ArrowRight className="w-4 h-4 text-[#8A8A8A]" aria-hidden="true" />
           </button>
 
           <button
             onClick={() => navigate('/profile#privacy')}
-            className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--color-bg)] transition-colors text-left"
+            className="flex items-center justify-between p-3 rounded-lg hover:bg-[#FAFAF8] transition-colors text-left"
             aria-label="Bekijk privacy instellingen"
           >
             <div>
-              <p className="text-sm font-medium text-[var(--color-text)]">Privacy & cookies</p>
-              <p className="text-xs text-[var(--color-muted)]">Beheer je privacy voorkeuren</p>
+              <p className="text-sm font-medium text-[#1A1A1A]">Privacy & cookies</p>
+              <p className="text-xs text-[#8A8A8A]">Beheer je privacy voorkeuren</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" aria-hidden="true" />
+            <ArrowRight className="w-4 h-4 text-[#8A8A8A]" aria-hidden="true" />
           </button>
         </div>
       </div>

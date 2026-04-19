@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function PremiumFooter() {
   return (
     <footer className="border-t border-white/10 bg-[#0A0F1E]/80 backdrop-blur-sm">
-      <div className="ff-container py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -37,8 +37,8 @@ export default function PremiumFooter() {
           <div className="space-y-2">
             <p className="font-medium">Start</p>
             <div className="flex gap-2">
-              <Link to="/hoe-het-werkt" className="ff-btn ff-btn-secondary">Meer info</Link>
-              <Link to="/prijzen" className="ff-btn ff-btn-primary">Start gratis</Link>
+              <Link to="/hoe-het-werkt" className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">Meer info</Link>
+              <Link to="/prijzen" className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">Start gratis</Link>
             </div>
           </div>
         </div>

@@ -41,22 +41,22 @@ export default function SendNotificationModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--color-surface)] rounded-lg max-w-2xl w-full p-6 border border-[var(--color-border)] max-h-[90vh] overflow-y-auto">
-        <h3 className="text-2xl font-bold text-[var(--color-text)] mb-6">
+      <div className="bg-[#FFFFFF] rounded-lg max-w-2xl w-full p-6 border border-[#E5E5E5] max-h-[90vh] overflow-y-auto">
+        <h3 className="text-2xl font-bold text-[#1A1A1A] mb-6">
           📨 Notificatie Versturen
         </h3>
 
         {preselectedUserName && (
-          <div className="mb-4 p-3 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)]">
-            <span className="text-sm text-[var(--color-text-secondary)]">Ontvanger: </span>
-            <span className="text-sm font-medium text-[var(--color-text)]">{preselectedUserName}</span>
+          <div className="mb-4 p-3 bg-[#FAFAF8] rounded-lg border border-[#E5E5E5]">
+            <span className="text-sm text-[#8A8A8A]">Ontvanger: </span>
+            <span className="text-sm font-medium text-[#1A1A1A]">{preselectedUserName}</span>
           </div>
         )}
 
         <div className="space-y-4">
           {!preselectedUserId && (
             <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                 Doelgroep
               </label>
               <select
@@ -67,7 +67,7 @@ export default function SendNotificationModal({
                     targetTier: e.target.value === 'all' ? undefined : (e.target.value as any),
                   })
                 }
-                className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
               >
                 <option value="all">Alle gebruikers</option>
                 <option value="free">Alleen Free users</option>
@@ -78,7 +78,7 @@ export default function SendNotificationModal({
           )}
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Type
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -88,8 +88,8 @@ export default function SendNotificationModal({
                   onClick={() => setInput({ ...input, type })}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                     input.type === type
-                      ? 'bg-[var(--ff-color-primary-700)] text-white'
-                      : 'bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-700)]'
+                      ? 'bg-[#A8513A] text-white'
+                      : 'bg-[#FAFAF8] border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A8513A]'
                   }`}
                 >
                   {type}
@@ -99,7 +99,7 @@ export default function SendNotificationModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Titel *
             </label>
             <input
@@ -107,12 +107,12 @@ export default function SendNotificationModal({
               value={input.title}
               onChange={(e) => setInput({ ...input, title: e.target.value })}
               placeholder="Bijvoorbeeld: Nieuwe premium features!"
-              className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+              className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Bericht *
             </label>
             <textarea
@@ -120,13 +120,13 @@ export default function SendNotificationModal({
               onChange={(e) => setInput({ ...input, message: e.target.value })}
               placeholder="Bijvoorbeeld: We hebben nieuwe outfit-suggesties toegevoegd. Bekijk ze in je dashboard."
               rows={4}
-              className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+              className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                 CTA Label (optioneel)
               </label>
               <input
@@ -134,12 +134,12 @@ export default function SendNotificationModal({
                 value={input.actionLabel || ''}
                 onChange={(e) => setInput({ ...input, actionLabel: e.target.value })}
                 placeholder="Bijvoorbeeld: Bekijk nu"
-                className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                 CTA URL (optioneel)
               </label>
               <input
@@ -147,7 +147,7 @@ export default function SendNotificationModal({
                 value={input.actionUrl || ''}
                 onChange={(e) => setInput({ ...input, actionUrl: e.target.value })}
                 placeholder="/dashboard"
-                className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
               />
             </div>
           </div>
@@ -157,14 +157,14 @@ export default function SendNotificationModal({
           <button
             onClick={handleSend}
             disabled={loading || !input.title.trim() || !input.message.trim()}
-            className="flex-1 px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="flex-1 px-6 py-3 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
             {loading ? 'Versturen...' : 'Verstuur Notificatie'}
           </button>
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:border-[var(--ff-color-primary-700)] transition-colors font-medium"
+            className="px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl hover:border-[#A8513A] transition-colors font-medium"
           >
             Annuleren
           </button>

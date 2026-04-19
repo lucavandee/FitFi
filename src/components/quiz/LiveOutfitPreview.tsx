@@ -66,7 +66,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
         className="mt-6 px-4"
       >
         <motion.div
-          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-soft)]"
+          className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4 shadow-sm"
           layoutId="outfit-preview-card"
         >
           <div className="flex items-center gap-2 mb-4">
@@ -74,9 +74,9 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
             >
-              <Eye className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+              <Eye className="w-4 h-4 text-[#A8513A]" />
             </motion.div>
-            <h3 className="text-sm font-semibold text-[var(--color-text)]">
+            <h3 className="text-sm font-semibold text-[#1A1A1A]">
               Jouw Stijl Preview
             </h3>
             <motion.span
@@ -94,13 +94,13 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
               transition={{ delay: 0.5, type: 'spring' }}
               onClick={handleSave}
               disabled={isSaving || isSaved}
-              className="ml-auto p-2 rounded-lg hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ml-auto p-2 rounded-lg hover:bg-[#FAFAF8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title={isSaved ? 'Opgeslagen!' : 'Preview opslaan'}
             >
               {isSaved ? (
-                <BookmarkCheck className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
+                <BookmarkCheck className="w-4 h-4 text-[#A8513A]" />
               ) : (
-                <Bookmark className="w-4 h-4 text-[var(--color-muted)] hover:text-[var(--ff-color-primary-700)]" />
+                <Bookmark className="w-4 h-4 text-[#8A8A8A] hover:text-[#A8513A]" />
               )}
             </motion.button>
           </div>
@@ -109,7 +109,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-xs text-[var(--color-muted)] mb-4"
+            className="text-xs text-[#8A8A8A] mb-4"
           >
             {outfit.styleDescription}
           </motion.p>
@@ -128,26 +128,26 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-4 pt-3 border-t border-[var(--color-border)]"
+            className="mt-4 pt-3 border-t border-[#E5E5E5]"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[var(--color-muted)]">
+              <span className="text-[#8A8A8A]">
                 Confidence
               </span>
               <div className="flex items-center gap-2">
-                <div className="w-20 h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                <div className="w-20 h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${outfit.confidence * 100}%` }}
                     transition={{ duration: 0.8, delay: 0.6 }}
-                    className="h-full bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)]"
+                    className="h-full bg-gradient-to-r from-[#A8513A] to-[#C2654A]"
                   />
                 </div>
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.8 }}
-                  className="text-[var(--color-text)] font-medium"
+                  className="text-[#1A1A1A] font-medium"
                 >
                   {Math.round(outfit.confidence * 100)}%
                 </motion.span>
@@ -159,7 +159,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.7 }}
-            className="mt-3 flex items-center justify-center gap-1.5 text-xs text-[var(--color-muted)]"
+            className="mt-3 flex items-center justify-center gap-1.5 text-xs text-[#8A8A8A]"
           >
             <Sparkles className="w-3 h-3" />
             <span>Blijf swipen voor betere matches!</span>
@@ -195,7 +195,7 @@ function OutfitItemCard({ item, delay }: OutfitItemCardProps) {
       }}
       className="relative"
     >
-      <div className="aspect-[3/4] bg-[var(--color-bg)] rounded-lg overflow-hidden border border-[var(--color-border)] relative">
+      <div className="aspect-[3/4] bg-[#FAFAF8] rounded-lg overflow-hidden border border-[#E5E5E5] relative">
         <motion.div
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.9 }}
@@ -237,7 +237,7 @@ function OutfitItemCard({ item, delay }: OutfitItemCardProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: delay + 0.5 }}
-        className="text-[10px] text-[var(--color-muted)] text-center mt-1"
+        className="text-[10px] text-[#8A8A8A] text-center mt-1"
       >
         {categoryLabels[item.category]}
       </motion.p>

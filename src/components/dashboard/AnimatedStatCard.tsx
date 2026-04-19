@@ -46,10 +46,10 @@ export function AnimatedStatCard({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ scale: 1.02, y: -4 }}
-      className="group relative bg-[var(--color-surface)] rounded-2xl p-6 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-md)] transition-all border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] overflow-hidden"
+      className="group relative bg-[#FFFFFF] rounded-2xl p-6 shadow-sm hover:shadow-sm transition-all border-2 border-[#E5E5E5] hover:border-[#D4856E] overflow-hidden"
     >
       {/* Gradient background on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
       <div className="relative">
         {/* Icon & Value Row */}
@@ -61,10 +61,10 @@ export function AnimatedStatCard({
           </div>
 
           <div className="text-right">
-            <div className="text-3xl font-bold text-[var(--color-text)] tabular-nums">
+            <div className="text-3xl font-bold text-[#1A1A1A] tabular-nums">
               {displayValue.toLocaleString()}
               {suffix && (
-                <span className="text-xl text-[var(--color-text-muted)] ml-1">
+                <span className="text-xl text-[#8A8A8A] ml-1">
                   {suffix}
                 </span>
               )}
@@ -73,7 +73,7 @@ export function AnimatedStatCard({
         </div>
 
         {/* Label */}
-        <h3 className="text-sm font-semibold text-[var(--color-text)] mb-2">
+        <h3 className="text-sm font-semibold text-[#1A1A1A] mb-2">
           {label}
         </h3>
 
@@ -99,7 +99,7 @@ export function AnimatedStatCard({
               )}
               {Math.abs(trend.value)}%
             </div>
-            <span className="text-xs text-[var(--color-text-muted)]">
+            <span className="text-xs text-[#8A8A8A]">
               {trend.label}
             </span>
           </motion.div>
@@ -117,7 +117,7 @@ export function AnimatedStatCard({
       </div>
 
       {/* Hover glow effect */}
-      <div className="absolute -inset-px bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-accent-500)] rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity" />
+      <div className="absolute -inset-px bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity" />
     </motion.div>
   );
 }

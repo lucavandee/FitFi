@@ -69,22 +69,22 @@ const PageHero: React.FC<Props> = ({
       style={{
         // Warme, premium tokens-gradient (geen hex)
         background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-accent) 10%, transparent) 0%, transparent 60%), linear-gradient(180deg, color-mix(in oklab, var(--color-surface) 98%, white) 0%, color-mix(in oklab, var(--color-surface) 100%, white) 100%)",
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, #C2654A 10%, transparent) 0%, transparent 60%), linear-gradient(180deg, color-mix(in oklab, white 98%, white) 0%, color-mix(in oklab, white 100%, white) 100%)",
         opacity: ready ? 1 : 0,
         transition: "opacity 360ms ease",
       }}
     >
       {/* BELANGRIJK: identieke container als elders → perfecte uitlijning met header/homepage */}
-      <div className="ff-container">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header
-          className={[alignCls, "rounded-[var(--radius-lg)] ff-animate-fade-in"].join(" ")}
+          className={[alignCls, "rounded-2xl ff-animate-fade-in"].join(" ")}
           aria-labelledby={headingId}
           aria-describedby={subtitle ? subId : undefined}
         >
           {eyebrow && (
             <div
               id={eyebrowId}
-              className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-[var(--color-muted)] text-[0.8rem] tracking-widest uppercase"
+              className="inline-flex items-center rounded-full border border-[#E5E5E5] bg-white px-3 py-1 text-[#8A8A8A] text-[0.8rem] tracking-widest uppercase"
               aria-label="Eyebrow"
             >
               {eyebrow}
@@ -94,7 +94,7 @@ const PageHero: React.FC<Props> = ({
           <HeadingTag
             id={headingId}
             className={[
-              "font-heading font-semibold leading-[1.06] text-[var(--color-text)]",
+              "font-heading font-semibold leading-[1.06] text-[#1A1A1A]",
               titleSize,
               "mt-3"
             ].join(" ")}
@@ -105,13 +105,13 @@ const PageHero: React.FC<Props> = ({
           <div
             aria-hidden
             className={[
-              "mt-4 h-px w-24 bg-[var(--color-border)]",
+              "mt-4 h-px w-24 bg-[#E5E5E5]",
               align === "center" ? "mx-auto" : "mx-0",
             ].join(" ")}
           />
 
           {subtitle && (
-            <p id={subId} className="mt-5 max-w-3xl text-[var(--color-text)]/80">
+            <p id={subId} className="mt-5 max-w-3xl text-[#1A1A1A]/80">
               {subtitle}
             </p>
           )}
@@ -126,8 +126,8 @@ const PageHero: React.FC<Props> = ({
               {ctas.map((cta, i) => {
                 const cls =
                   cta.variant === "secondary"
-                    ? "ff-btn ff-btn-secondary"
-                    : "ff-btn ff-btn-primary";
+                    ? "bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl"
+                    : "bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl";
                 return isExternal(cta.to) ? (
                   <a
                     key={i}

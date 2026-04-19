@@ -35,11 +35,11 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
 
   if (loading) {
     return (
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6">
+      <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-[var(--color-bg)] rounded w-1/3" />
-          <div className="h-20 bg-[var(--color-bg)] rounded" />
-          <div className="h-4 bg-[var(--color-bg)] rounded w-2/3" />
+          <div className="h-6 bg-[#FAFAF8] rounded w-1/3" />
+          <div className="h-20 bg-[#FAFAF8] rounded" />
+          <div className="h-4 bg-[#FAFAF8] rounded w-2/3" />
         </div>
       </div>
     );
@@ -47,9 +47,9 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
 
   if (!profile || !profile.locked_embedding) {
     return (
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6 text-center">
-        <Sparkles className="w-12 h-12 mx-auto text-[var(--color-muted)] mb-3" />
-        <p className="text-[var(--color-muted)]">
+      <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 text-center">
+        <Sparkles className="w-12 h-12 mx-auto text-[#8A8A8A] mb-3" />
+        <p className="text-[#8A8A8A]">
           Voltooi de stijlquiz om je profiel te vullen
         </p>
       </div>
@@ -69,24 +69,24 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6"
+        className="bg-white border border-[#E5E5E5] rounded-2xl p-6"
       >
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
-              <h3 className="text-xl font-semibold text-[var(--color-text)]">
+              <Sparkles className="w-5 h-5 text-[#A8513A]" />
+              <h3 className="text-xl font-semibold text-[#1A1A1A]">
                 Jouw Stijlprofiel
               </h3>
             </div>
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-[#8A8A8A]">
               Versie {profile.embedding_version} • {summary}
             </p>
           </div>
 
           <button
             onClick={() => setShowDetails(!showDetails)}
-            className="text-sm text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors flex items-center gap-1"
+            className="text-sm text-[#A8513A] hover:text-[#C2654A] transition-colors flex items-center gap-1"
           >
             <Info className="w-4 h-4" />
             {showDetails ? 'Verberg' : 'Details'}
@@ -109,9 +109,9 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="border-t border-[var(--color-border)] pt-4 space-y-3"
+            className="border-t border-[#E5E5E5] pt-4 space-y-3"
           >
-            <div className="text-sm font-medium text-[var(--color-text)] mb-2">
+            <div className="text-sm font-medium text-[#1A1A1A] mb-2">
               Hoe is dit profiel opgebouwd?
             </div>
 
@@ -131,7 +131,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
               color="green"
             />
 
-            <div className="flex items-center gap-2 text-xs text-[var(--color-muted)] mt-3">
+            <div className="flex items-center gap-2 text-xs text-[#8A8A8A] mt-3">
               <Clock className="w-3.5 h-3.5" />
               Vastgelegd op {lockedDate.toLocaleDateString('nl-NL', {
                 day: 'numeric',
@@ -146,7 +146,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-[var(--radius-lg)]"
+            className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl"
           >
             <div className="flex items-start gap-3">
               <TrendingUp className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -160,7 +160,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
                 {onRecalibrate && (
                   <button
                     onClick={onRecalibrate}
-                    className="ff-btn ff-btn-primary text-sm py-2 px-4 inline-flex items-center gap-2"
+                    className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl text-sm py-2 px-4 inline-flex items-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Opnieuw calibreren
@@ -190,32 +190,32 @@ function ArchetypeBar({
   const capitalizedFirst = formatted.charAt(0).toUpperCase() + formatted.slice(1);
 
   const rankColors: Record<number, string> = {
-    1: 'bg-[var(--ff-color-primary-700)]',
-    2: 'bg-[var(--ff-color-primary-500)]',
-    3: 'bg-[var(--ff-color-primary-400)]'
+    1: 'bg-[#A8513A]',
+    2: 'bg-[#C2654A]',
+    3: 'bg-[#D4856E]'
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <div className={`w-6 h-6 rounded-full ${rankColors[rank] || 'bg-[var(--color-muted)]'} text-white text-xs font-semibold flex items-center justify-center`}>
+          <div className={`w-6 h-6 rounded-full ${rankColors[rank] || 'bg-[#8A8A8A]'} text-white text-xs font-semibold flex items-center justify-center`}>
             {rank}
           </div>
-          <span className="text-sm font-medium text-[var(--color-text)]">
+          <span className="text-sm font-medium text-[#1A1A1A]">
             {capitalizedFirst}
           </span>
         </div>
-        <span className="text-sm font-semibold text-[var(--ff-color-primary-700)]">
+        <span className="text-sm font-semibold text-[#A8513A]">
           {percentage}%
         </span>
       </div>
-      <div className="h-2.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+      <div className="h-2.5 bg-[#FAFAF8] rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className={`h-full ${rankColors[rank] || 'bg-[var(--color-muted)]'} rounded-full`}
+          className={`h-full ${rankColors[rank] || 'bg-[#8A8A8A]'} rounded-full`}
         />
       </div>
     </div>
@@ -240,10 +240,10 @@ function InfluenceBar({
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs text-[var(--color-muted)]">{label}</span>
-        <span className="text-xs font-medium text-[var(--color-text)]">{percentage}%</span>
+        <span className="text-xs text-[#8A8A8A]">{label}</span>
+        <span className="text-xs font-medium text-[#1A1A1A]">{percentage}%</span>
       </div>
-      <div className="h-1.5 bg-[var(--color-bg)] rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
         <div
           className={`h-full ${colorClasses[color]} rounded-full`}
           style={{ width: `${percentage}%` }}

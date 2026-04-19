@@ -89,64 +89,64 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
         role="dialog"
         aria-modal="true"
         aria-labelledby={headingId}
-        className="bg-[var(--color-surface)] rounded-2xl max-w-lg w-full p-5 sm:p-8 max-h-[90dvh] overflow-y-auto shadow-2xl border border-[var(--color-border)] relative"
+        className="bg-[#FFFFFF] rounded-2xl max-w-lg w-full p-5 sm:p-8 max-h-[90dvh] overflow-y-auto shadow-2xl border border-[#E5E5E5] relative"
       >
         <button
           onClick={onClose}
           disabled={isResetting}
-          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#FAFAF8] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]"
           aria-label="Sluiten"
         >
-          <X className="w-5 h-5 text-[var(--color-muted)]" />
+          <X className="w-5 h-5 text-[#8A8A8A]" />
         </button>
 
-        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--ff-color-accent-100)] mb-6 mx-auto">
-          <AlertTriangle className="w-8 h-8 text-[var(--ff-color-accent-700)]" />
+        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#FAF5F2] mb-6 mx-auto">
+          <AlertTriangle className="w-8 h-8 text-[#A8513A]" />
         </div>
 
-        <h2 id={headingId} className="text-2xl font-bold text-[var(--color-text)] text-center mb-3">
+        <h2 id={headingId} className="text-2xl font-bold text-[#1A1A1A] text-center mb-3">
           Quiz opnieuw doen?
         </h2>
 
-        <p className="text-[var(--color-muted)] text-center mb-4 leading-relaxed">
+        <p className="text-[#8A8A8A] text-center mb-4 leading-relaxed">
           Je huidige profiel wordt <strong>gearchiveerd</strong> (niet verwijderd) en je kunt de quiz opnieuw doen.
         </p>
 
         {currentArchetype && (
-          <div className="bg-[var(--ff-color-primary-50)] dark:bg-[var(--ff-color-primary-900)] rounded-xl p-3 mb-4 text-center border border-[var(--ff-color-primary-200)]">
-            <p className="text-sm text-[var(--ff-color-primary-700)] dark:text-[var(--ff-color-primary-300)]">
+          <div className="bg-[#FAF5F2] dark:bg-[#5A2010] rounded-xl p-3 mb-4 text-center border border-[#F4E8E3]">
+            <p className="text-sm text-[#A8513A] dark:text-[#D4856E]">
               Huidig archetype: <strong>{currentArchetype}</strong>
             </p>
           </div>
         )}
 
-        <div className="bg-[var(--color-bg)] rounded-xl p-4 mb-6 border border-[var(--color-border)]">
-          <h3 className="font-semibold text-sm text-[var(--color-text)] mb-2">Wat blijft behouden:</h3>
-          <ul className="space-y-1 text-sm text-[var(--color-muted)]">
+        <div className="bg-[#FAFAF8] rounded-xl p-4 mb-6 border border-[#E5E5E5]">
+          <h3 className="font-semibold text-sm text-[#1A1A1A] mb-2">Wat blijft behouden:</h3>
+          <ul className="space-y-1 text-sm text-[#8A8A8A]">
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+              <CheckCircle className="w-4 h-4 text-[#C2654A]" />
               Je oude profiel (gearchiveerd voor vergelijking)
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+              <CheckCircle className="w-4 h-4 text-[#C2654A]" />
               Account, email, subscription en tier
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-[var(--ff-color-primary-600)]" />
+              <CheckCircle className="w-4 h-4 text-[#C2654A]" />
               Gamification voortgang en achievements
             </li>
           </ul>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">
-            Waarom wil je de quiz opnieuw doen? <span className="text-[var(--color-muted)]">(helpt ons)</span>
+          <label className="block text-sm font-semibold text-[#1A1A1A] mb-2">
+            Waarom wil je de quiz opnieuw doen? <span className="text-[#8A8A8A]">(helpt ons)</span>
           </label>
           <select
             value={selectedReason}
             onChange={(e) => setSelectedReason(e.target.value)}
             disabled={isResetting}
-            className="w-full px-4 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] focus:outline-none focus:border-[var(--ff-color-primary-500)] transition-colors disabled:opacity-50"
+            className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] focus:outline-none focus:border-[#C2654A] transition-colors disabled:opacity-50"
           >
             <option value="">-- Selecteer een reden --</option>
             {RESET_REASONS.map(reason => (
@@ -165,13 +165,13 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
               onChange={(e) => setCustomReason(e.target.value)}
               disabled={isResetting}
               placeholder="Typ je reden hier..."
-              className="w-full px-4 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--ff-color-primary-500)] transition-colors disabled:opacity-50"
+              className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#C2654A] transition-colors disabled:opacity-50"
             />
           </div>
         )}
 
         <div className="mb-6">
-          <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+          <label className="block text-sm font-semibold text-[#1A1A1A] mb-2">
             Type <strong>"RESET"</strong> om te bevestigen:
           </label>
           <input
@@ -180,7 +180,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
             onChange={(e) => setConfirmText(e.target.value)}
             disabled={isResetting}
             placeholder="RESET"
-            className="w-full px-4 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--ff-color-primary-500)] transition-colors disabled:opacity-50"
+            className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#C2654A] transition-colors disabled:opacity-50"
           />
         </div>
 
@@ -188,14 +188,14 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <button
             onClick={onClose}
             disabled={isResetting}
-            className="flex-1 px-6 py-3 min-h-[44px] bg-[var(--color-bg)] text-[var(--color-text)] rounded-xl font-semibold hover:bg-[var(--color-surface)] transition-all border border-[var(--color-border)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-2"
+            className="flex-1 px-6 py-3 min-h-[44px] bg-[#FAFAF8] text-[#1A1A1A] rounded-xl font-semibold hover:bg-[#FFFFFF] transition-all border border-[#E5E5E5] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2"
           >
             Annuleren
           </button>
           <button
             onClick={handleReset}
             disabled={isResetting || confirmText.toLowerCase() !== 'reset'}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[var(--ff-color-accent-700)] text-white rounded-xl font-semibold hover:bg-[var(--ff-color-accent-600)] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-accent-500)] focus-visible:ring-offset-2"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#A8513A] text-white rounded-xl font-semibold hover:bg-[#C2654A] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2"
           >
             {isResetting ? (
               <>

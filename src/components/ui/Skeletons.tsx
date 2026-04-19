@@ -15,7 +15,7 @@ export function SkeletonText({ className = '', lines = 1 }: { className?: string
 
 export function SkeletonCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-white rounded-2xl border-2 border-[var(--color-border)] p-6 ${className}`}>
+    <div className={`bg-white rounded-2xl border-2 border-[#E5E5E5] p-6 ${className}`}>
       <div className="skeleton h-48 mb-4 rounded-xl" />
       <div className="skeleton h-6 w-3/4 mb-2" />
       <div className="skeleton h-4 w-full mb-2" />
@@ -26,7 +26,7 @@ export function SkeletonCard({ className = '' }: { className?: string }) {
 
 export function SkeletonOutfit({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-white rounded-2xl border-2 border-[var(--color-border)] overflow-hidden ${className}`}>
+    <div className={`bg-white rounded-2xl border-2 border-[#E5E5E5] overflow-hidden ${className}`}>
       <div className="aspect-[3/4] skeleton" />
       <div className="p-4 space-y-3">
         <div className="skeleton h-6 w-3/4" />
@@ -42,7 +42,7 @@ export function SkeletonOutfit({ className = '' }: { className?: string }) {
 
 export function SkeletonProfile({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-white rounded-2xl border-2 border-[var(--color-border)] p-6 ${className}`}>
+    <div className={`bg-white rounded-2xl border-2 border-[#E5E5E5] p-6 ${className}`}>
       <div className="flex items-center gap-4 mb-6">
         <div className="skeleton h-16 w-16 rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-2">
@@ -108,8 +108,8 @@ export function SkeletonGrid({ count = 6, columns = 3, className = '' }: { count
 
 export function SkeletonPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12">
-      <div className="ff-container max-w-6xl">
+    <div className="min-h-screen bg-[#FAFAF8] py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <div className="skeleton h-12 w-64 mb-8" />
         <div className="skeleton h-6 w-96 mb-12" />
         <SkeletonGrid count={6} columns={3} />

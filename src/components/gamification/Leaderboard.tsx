@@ -122,7 +122,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-gray-900 flex items-center">
-          <Trophy className="w-5 h-5 text-[var(--ff-color-primary-500)] mr-2" />
+          <Trophy className="w-5 h-5 text-[#C2654A] mr-2" />
           Leaderboard - {getTypeTitle()}
         </h3>
         
@@ -137,7 +137,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
           <div
             key={entry.id}
             className={`flex items-center space-x-4 p-3 rounded-xl border transition-all hover:shadow-sm ${getRankColor(entry.rank)} ${
-              entry.isCurrentUser ? 'ring-2 ring-[var(--ff-color-primary-500)]' : ''
+              entry.isCurrentUser ? 'ring-2 ring-[#C2654A]' : ''
             }`}
             style={{ animationDelay: `${index * 0.05}s` }}
           >
@@ -151,7 +151,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               <div className="font-medium text-gray-900">
                 {entry.name}
                 {entry.isCurrentUser && (
-                  <span className="ml-2 text-xs bg-[var(--ff-color-primary-500)] text-white px-2 py-1 rounded-full">
+                  <span className="ml-2 text-xs bg-[#C2654A] text-white px-2 py-1 rounded-full">
                     Jij
                   </span>
                 )}
@@ -171,9 +171,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       {/* Current User Position (if not in top) */}
       {showCurrentUser && currentUserRank && currentUserRank > limit && (
         <div className="mt-6 pt-4 border-t border-gray-200">
-          <div className="flex items-center space-x-4 p-3 rounded-xl bg-[var(--ff-color-primary-500)]/10 border border-[var(--ff-color-primary-500)]/20">
+          <div className="flex items-center space-x-4 p-3 rounded-xl bg-[#C2654A]/10 border border-[#C2654A]/20">
             <div className="w-8 h-8 flex items-center justify-center">
-              <span className="text-sm font-bold text-[var(--ff-color-primary-500)]">#{currentUserRank}</span>
+              <span className="text-sm font-bold text-[#C2654A]">#{currentUserRank}</span>
             </div>
             
             <div className="flex-1">
@@ -181,7 +181,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               <div className="text-sm text-gray-600">Blijf challenges doen om hoger te komen!</div>
             </div>
             
-            <TrendingUp className="w-5 h-5 text-[var(--ff-color-primary-500)]" />
+            <TrendingUp className="w-5 h-5 text-[#C2654A]" />
           </div>
         </div>
       )}

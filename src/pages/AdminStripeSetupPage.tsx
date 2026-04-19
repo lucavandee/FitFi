@@ -52,12 +52,12 @@ export default function AdminStripeSetupPage() {
   const hasAllPriceIds = products?.every(p => p.stripe_price_id);
 
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen py-10 sm:py-14 md:py-20">
+    <main className="bg-[#FAFAF8] text-[#1A1A1A] min-h-screen py-10 sm:py-14 md:py-20">
       <Helmet>
         <title>Stripe Setup - Admin</title>
       </Helmet>
 
-      <div className="ff-container max-w-4xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <header className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Stripe Configuratie</h1>
           <p className="text-lg text-gray-600">
@@ -67,7 +67,7 @@ export default function AdminStripeSetupPage() {
 
         {/* Status Banner */}
         {hasAllPriceIds ? (
-          <div className="bg-green-50 border border-green-200 rounded-[var(--radius-xl)] p-6 mb-8 flex items-start gap-4">
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex items-start gap-4">
             <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-green-900 mb-1">Stripe is geconfigureerd</h3>
@@ -77,7 +77,7 @@ export default function AdminStripeSetupPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-amber-50 border border-amber-200 rounded-[var(--radius-xl)] p-6 mb-8 flex items-start gap-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 flex items-start gap-4">
             <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-amber-900 mb-1">Configuratie vereist</h3>
@@ -89,13 +89,13 @@ export default function AdminStripeSetupPage() {
         )}
 
         {/* Setup Steps */}
-        <section className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-xl)] p-8 mb-8 shadow-[var(--shadow-soft)]">
+        <section className="bg-white border border-[#E5E5E5] rounded-2xl p-8 mb-8 shadow-sm">
           <h2 className="text-2xl font-bold mb-6">Setup Stappen</h2>
 
           <div className="space-y-6">
             {/* Step 1 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-[var(--ff-color-primary-600)] text-white rounded-full flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-[#C2654A] text-white rounded-full flex items-center justify-center font-bold">
                 1
               </div>
               <div className="flex-1">
@@ -107,12 +107,12 @@ export default function AdminStripeSetupPage() {
                   href="https://dashboard.stripe.com/test/apikeys"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] font-semibold"
+                  className="inline-flex items-center gap-2 text-sm text-[#C2654A] hover:text-[#A8513A] font-semibold"
                 >
                   Ga naar Stripe API Keys
                   <ExternalLink className="w-4 h-4" />
                 </a>
-                <div className="mt-3 p-3 bg-gray-50 rounded-[var(--radius-lg)] border border-gray-200">
+                <div className="mt-3 p-3 bg-gray-50 rounded-2xl border border-gray-200">
                   <p className="text-xs font-semibold text-gray-700 mb-1">In Supabase Functions:</p>
                   <code className="text-xs text-gray-800 font-mono">
                     Secret name: STRIPE_SECRET_KEY
@@ -123,7 +123,7 @@ export default function AdminStripeSetupPage() {
 
             {/* Step 2 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-[var(--ff-color-primary-600)] text-white rounded-full flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-[#C2654A] text-white rounded-full flex items-center justify-center font-bold">
                 2
               </div>
               <div className="flex-1">
@@ -133,7 +133,7 @@ export default function AdminStripeSetupPage() {
                 </p>
 
                 {products?.map((product, idx) => (
-                  <div key={product.id} className="mb-4 p-4 bg-gray-50 rounded-[var(--radius-lg)] border border-gray-200">
+                  <div key={product.id} className="mb-4 p-4 bg-gray-50 rounded-2xl border border-gray-200">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <p className="font-bold text-gray-900">{product.name}</p>
@@ -172,7 +172,7 @@ export default function AdminStripeSetupPage() {
                             placeholder="price_xxxxxxxxxxxxx"
                             value={priceIds[product.id] || ''}
                             onChange={(e) => setPriceIds({ ...priceIds, [product.id]: e.target.value })}
-                            className="flex-1 px-3 py-1 text-xs bg-white border border-gray-300 rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] font-mono"
+                            className="flex-1 px-3 py-1 text-xs bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A] font-mono"
                           />
                         )}
                       </div>
@@ -181,7 +181,7 @@ export default function AdminStripeSetupPage() {
                         <button
                           onClick={() => handleSave(product.id, priceIds[product.id])}
                           disabled={saving}
-                          className="flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] text-sm font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors disabled:opacity-50"
+                          className="flex items-center gap-2 px-4 py-2 bg-[#C2654A] text-white rounded-2xl text-sm font-semibold hover:bg-[#A8513A] transition-colors disabled:opacity-50"
                         >
                           <Save className="w-4 h-4" />
                           Opslaan
@@ -195,7 +195,7 @@ export default function AdminStripeSetupPage() {
                   href="https://dashboard.stripe.com/test/products"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] font-semibold mt-2"
+                  className="inline-flex items-center gap-2 text-sm text-[#C2654A] hover:text-[#A8513A] font-semibold mt-2"
                 >
                   Ga naar Stripe Products
                   <ExternalLink className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function AdminStripeSetupPage() {
 
             {/* Step 3 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-[var(--ff-color-primary-600)] text-white rounded-full flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-[#C2654A] text-white rounded-full flex items-center justify-center font-bold">
                 3
               </div>
               <div className="flex-1">
@@ -213,7 +213,7 @@ export default function AdminStripeSetupPage() {
                 <p className="text-sm text-gray-600 mb-3">
                   Ga naar de prijzen pagina en test de checkout met een Stripe test card.
                 </p>
-                <div className="p-3 bg-gray-50 rounded-[var(--radius-lg)] border border-gray-200">
+                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-200">
                   <p className="text-xs font-semibold text-gray-700 mb-2">Test Card:</p>
                   <code className="text-xs text-gray-800 font-mono block">
                     Nummer: 4242 4242 4242 4242<br />
@@ -227,7 +227,7 @@ export default function AdminStripeSetupPage() {
         </section>
 
         {/* Help Section */}
-        <section className="bg-blue-50 border border-blue-200 rounded-[var(--radius-xl)] p-6">
+        <section className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
           <h3 className="font-bold text-blue-900 mb-2">Hulp nodig?</h3>
           <p className="text-sm text-blue-700 mb-3">
             Lees de volledige setup guide voor gedetailleerde instructies.

@@ -51,9 +51,9 @@ const ResultsQuizGate: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30"
     >
-      <div className="w-full max-w-lg rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-          <h2 className="text-lg font-medium text-[var(--color-text)]">Even afstemmen</h2>
+      <div className="w-full max-w-lg rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] shadow-sm">
+        <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5]">
+          <h2 className="text-lg font-medium text-[#1A1A1A]">Even afstemmen</h2>
           <button
             aria-label="Sluiten"
             className="opacity-70 hover:opacity-100"
@@ -64,15 +64,15 @@ const ResultsQuizGate: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         <div className="p-4">
-          <p className="mb-3 text-[var(--color-text)]/80">{current.title}</p>
+          <p className="mb-3 text-[#1A1A1A]/80">{current.title}</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {current.options.map((opt) => (
               <button
                 key={opt}
                 onClick={() => select(opt)}
                 aria-pressed={answers[current.key] === opt}
-                className={`px-3 py-2 rounded-xl border border-[var(--color-border)] ${
-                  answers[current.key] === opt ? "ring-2 ring-[var(--color-primary)]" : ""
+                className={`px-3 py-2 rounded-xl border border-[#E5E5E5] ${
+                  answers[current.key] === opt ? "ring-2 ring-[#C2654A]" : ""
                 }`}
               >
                 {opt}

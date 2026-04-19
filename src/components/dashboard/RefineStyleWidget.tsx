@@ -83,9 +83,9 @@ export function RefineStyleWidget() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] border border-[var(--color-border)] shadow-[var(--shadow-soft)]"
+      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] border border-[#E5E5E5] shadow-sm"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)]/40 via-transparent to-[var(--ff-color-accent-100)]/30 opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2]/40 via-transparent to-[#FAF5F2]/30 opacity-60" />
 
       <div className="relative p-6">
         <div className="flex items-start gap-4">
@@ -93,7 +93,7 @@ export function RefineStyleWidget() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-            className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)] flex items-center justify-center shadow-lg"
+            className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-lg"
           >
             <Sparkles className="w-7 h-7 text-white" />
           </motion.div>
@@ -103,7 +103,7 @@ export function RefineStyleWidget() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 }}
-              className="text-xl font-bold text-[var(--color-text)] mb-1.5"
+              className="text-xl font-bold text-[#1A1A1A] mb-1.5"
             >
               {skipped ? 'Verfijn je stijl' : 'Voltooi je stijlprofiel'}
             </motion.h3>
@@ -112,7 +112,7 @@ export function RefineStyleWidget() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-[var(--color-muted)] text-sm leading-relaxed mb-5"
+              className="text-[#8A8A8A] text-sm leading-relaxed mb-5"
             >
               {skipped
                 ? 'Swipe door 10 outfits en laat Nova je stijl leren kennen voor betere aanbevelingen.'
@@ -126,7 +126,7 @@ export function RefineStyleWidget() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
               onClick={handleRefineStyle}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-primary-700)] text-white rounded-xl font-semibold hover:from-[var(--ff-color-primary-700)] hover:to-[var(--ff-color-primary-800)] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#C2654A] to-[#A8513A] text-white rounded-xl font-semibold hover:from-[#A8513A] hover:to-[#8A3D28] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm"
             >
               <span>{isPartiallyComplete ? 'Verder gaan' : 'Start nu'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -137,15 +137,15 @@ export function RefineStyleWidget() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 transition={{ delay: 0.3 }}
-                className="mt-5 pt-4 border-t border-[var(--color-border)]"
+                className="mt-5 pt-4 border-t border-[#E5E5E5]"
               >
-                <div className="flex items-center justify-between text-xs font-medium text-[var(--color-text)] mb-2">
+                <div className="flex items-center justify-between text-xs font-medium text-[#1A1A1A] mb-2">
                   <span>Voortgang</span>
-                  <span className="text-[var(--ff-color-primary-700)]">{swipeCount}/10</span>
+                  <span className="text-[#A8513A]">{swipeCount}/10</span>
                 </div>
-                <div className="h-2 bg-[var(--ff-color-primary-100)] rounded-full overflow-hidden shadow-inner">
+                <div className="h-2 bg-[#FAF5F2] rounded-full overflow-hidden shadow-inner">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-600)] rounded-full"
+                    className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${(swipeCount / 10) * 100}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}

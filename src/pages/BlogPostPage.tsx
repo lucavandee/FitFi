@@ -157,7 +157,7 @@ export default function BlogPostPage() {
 
       <main className="bg-[#FAFAF8] text-[#1A1A1A] pb-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-[#F5F0EB] py-12 md:py-16 border-b border-[#E5E5E5]">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] py-12 md:py-16 border-b border-[#E5E5E5]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}
             <div className="mb-6" aria-label="Breadcrumb">
@@ -225,7 +225,7 @@ export default function BlogPostPage() {
                 <TLDRSection points={tldrPoints} />
 
                 {/* End CTA */}
-                <div className="bg-[#A8513A] rounded-xl p-8 md:p-12 text-center my-12 text-white">
+                <div className="bg-[#A8513A] rounded-2xl p-8 md:p-12 text-center my-12 text-white">
                   <h2 className="text-3xl font-bold mb-4">
                     Ontdek jouw perfecte stijl
                   </h2>
@@ -235,7 +235,7 @@ export default function BlogPostPage() {
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/onboarding')}
-                    className="bg-white text-[#A8513A] hover:bg-[#FDF9F7]"
+                    className="bg-white text-[#A8513A] hover:bg-[#FAF5F2]"
                   >
                     Start gratis quiz
                     <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
@@ -256,7 +256,7 @@ export default function BlogPostPage() {
                         <Link
                           key={related.id}
                           to={`/blog/${related.slug}`}
-                          className="group bg-white border border-[#E5E5E5] rounded-xl overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
+                          className="group bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
                         >
                           <div className="aspect-[16/9] overflow-hidden">
                             <img

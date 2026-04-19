@@ -23,8 +23,8 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
   };
 
   return (
-    <div className="bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 my-8">
-      <h3 className="font-bold text-[var(--color-text)] text-lg mb-4">
+    <div className="bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-2xl p-6 my-8">
+      <h3 className="font-bold text-[#1A1A1A] text-lg mb-4">
         {title}
       </h3>
       <div className="space-y-3">
@@ -32,17 +32,17 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
           <button
             key={idx}
             onClick={() => toggleItem(idx)}
-            className="w-full flex items-start gap-3 text-left group hover:bg-[var(--ff-color-primary-50)] p-3 rounded-lg transition-colors"
+            className="w-full flex items-start gap-3 text-left group hover:bg-[#FAF5F2] p-3 rounded-lg transition-colors"
           >
             {checked.has(idx) ? (
-              <CheckSquare className="w-5 h-5 flex-shrink-0 text-[var(--ff-color-primary-600)] mt-0.5" />
+              <CheckSquare className="w-5 h-5 flex-shrink-0 text-[#C2654A] mt-0.5" />
             ) : (
-              <Square className="w-5 h-5 flex-shrink-0 text-[var(--color-muted)] group-hover:text-[var(--ff-color-primary-600)] mt-0.5" />
+              <Square className="w-5 h-5 flex-shrink-0 text-[#8A8A8A] group-hover:text-[#C2654A] mt-0.5" />
             )}
             <span className={`leading-relaxed ${
               checked.has(idx)
-                ? 'text-[var(--color-muted)] line-through'
-                : 'text-[var(--color-text)]'
+                ? 'text-[#8A8A8A] line-through'
+                : 'text-[#1A1A1A]'
             }`}>
               {item}
             </span>
@@ -50,7 +50,7 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
         ))}
       </div>
       {checked.size > 0 && (
-        <p className="mt-4 text-sm text-[var(--color-muted)] text-center">
+        <p className="mt-4 text-sm text-[#8A8A8A] text-center">
           {checked.size} van {items.length} afgevinkt
         </p>
       )}

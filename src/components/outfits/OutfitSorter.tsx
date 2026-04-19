@@ -67,10 +67,10 @@ export default function OutfitSorter({
       {/* Header with Count + Sort */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-[var(--color-text)]">
+          <h3 className="text-lg font-semibold text-[#1A1A1A]">
             Jouw outfits
           </h3>
-          <p className="text-sm text-[var(--color-text)]/60">
+          <p className="text-sm text-[#1A1A1A]/60">
             {visibleCount} van {totalCount} outfits
           </p>
         </div>
@@ -80,10 +80,10 @@ export default function OutfitSorter({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all',
-            'hover:border-[var(--color-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--color-primary)]/20',
+            'hover:border-[#C2654A] focus:outline-none focus:ring-4 focus:ring-[#C2654A]/20',
             isOpen
-              ? 'border-[var(--color-primary)] bg-[var(--ff-color-primary-50)]'
-              : 'border-[var(--color-border)] bg-[var(--color-surface)]'
+              ? 'border-[#C2654A] bg-[#FAF5F2]'
+              : 'border-[#E5E5E5] bg-[#FFFFFF]'
           )}
         >
           <ArrowUpDown className="w-4 h-4" />
@@ -95,7 +95,7 @@ export default function OutfitSorter({
       {/* Sort Dropdown Menu */}
       {isOpen && (
         <motion.div
-          className="absolute right-0 top-full mt-2 z-50 bg-[var(--color-surface)] rounded-xl border-2 border-[var(--color-border)] shadow-lg overflow-hidden min-w-[280px]"
+          className="absolute right-0 top-full mt-2 z-50 bg-[#FFFFFF] rounded-xl border-2 border-[#E5E5E5] shadow-lg overflow-hidden min-w-[280px]"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
@@ -114,14 +114,14 @@ export default function OutfitSorter({
                   className={cn(
                     'w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-left transition-all',
                     isActive
-                      ? 'bg-[var(--ff-color-primary-100)] text-[var(--color-primary)]'
-                      : 'hover:bg-[var(--color-bg)] text-[var(--color-text)]'
+                      ? 'bg-[#FAF5F2] text-[#C2654A]'
+                      : 'hover:bg-[#FAFAF8] text-[#1A1A1A]'
                   )}
                 >
                   <div
                     className={cn(
                       'mt-0.5 flex-shrink-0',
-                      isActive ? 'text-[var(--color-primary)]' : 'text-[var(--color-text)]/60'
+                      isActive ? 'text-[#C2654A]' : 'text-[#1A1A1A]/60'
                     )}
                   >
                     {option.icon}
@@ -130,7 +130,7 @@ export default function OutfitSorter({
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <span className="text-sm font-medium">{option.label}</span>
                       {isActive && (
-                        <span className="text-xs font-bold bg-[var(--color-primary)] text-white px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-bold bg-[#C2654A] text-white px-2 py-0.5 rounded-full">
                           Actief
                         </span>
                       )}
@@ -143,8 +143,8 @@ export default function OutfitSorter({
           </div>
 
           {/* Footer Info */}
-          <div className="px-4 py-3 bg-[var(--color-bg)] border-t border-[var(--color-border)]">
-            <p className="text-xs text-[var(--color-text)]/60 leading-relaxed">
+          <div className="px-4 py-3 bg-[#FAFAF8] border-t border-[#E5E5E5]">
+            <p className="text-xs text-[#1A1A1A]/60 leading-relaxed">
               Standaard worden de meest relevante outfits eerst getoond op basis van je stijlprofiel en voork euren
             </p>
           </div>

@@ -73,9 +73,9 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
 
   if (remixableCategories.length === 0) {
     return (
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 text-center">
-        <Shirt className="w-12 h-12 mx-auto mb-3 text-[var(--color-text-muted)]" />
-        <p className="text-sm text-[var(--color-text-muted)]">
+      <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 text-center">
+        <Shirt className="w-12 h-12 mx-auto mb-3 text-[#8A8A8A]" />
+        <p className="text-sm text-[#8A8A8A]">
           Geen alternatieven beschikbaar voor dit outfit
         </p>
       </div>
@@ -85,14 +85,14 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
   return (
     <div className="space-y-4">
       {/* Category Selector */}
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4">
+      <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <RefreshCw className="w-5 h-5 text-[var(--color-primary)]" />
-          <h3 className="font-display font-semibold text-[var(--color-text)]">
+          <RefreshCw className="w-5 h-5 text-[#C2654A]" />
+          <h3 className="font-display font-semibold text-[#1A1A1A]">
             Remix dit outfit
           </h3>
         </div>
-        <p className="text-sm text-[var(--color-text-muted)] mb-4">
+        <p className="text-sm text-[#8A8A8A] mb-4">
           Kies een item om te vervangen en zie direct alternatieve combinaties
         </p>
 
@@ -114,7 +114,7 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
       {/* Remix Results */}
       {selectedCategory && (
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+          <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
             <TrendingUp className="w-4 h-4" />
             <span>
               {remixes.length} {remixes.length === 1 ? 'alternatief' : 'alternatieven'} gevonden
@@ -122,8 +122,8 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
           </div>
 
           {remixes.length === 0 ? (
-            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 text-center">
-              <p className="text-sm text-[var(--color-text-muted)]">
+            <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 text-center">
+              <p className="text-sm text-[#8A8A8A]">
                 Geen goede alternatieven gevonden voor {getCategoryLabel(selectedCategory).toLowerCase()}
               </p>
             </div>
@@ -136,7 +136,7 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
                     compact
                   />
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-xs text-[var(--color-text-muted)]">
+                    <span className="text-xs text-[#8A8A8A]">
                       Match: {Math.round(remix.matchScore)}%
                     </span>
                     {onSelectRemix && (

@@ -12,10 +12,10 @@ export const TipCallout: React.FC<TipCalloutProps> = ({
 }) => {
   const styles = {
     tip: {
-      bg: 'bg-[var(--ff-color-primary-50)]',
-      border: 'border-[var(--ff-color-primary-200)]',
-      icon: 'text-[var(--ff-color-primary-600)]',
-      text: 'text-[var(--color-text)]'
+      bg: 'bg-[#FAF5F2]',
+      border: 'border-[#F4E8E3]',
+      icon: 'text-[#C2654A]',
+      text: 'text-[#1A1A1A]'
     },
     warning: {
       bg: 'bg-amber-50',
@@ -34,7 +34,7 @@ export const TipCallout: React.FC<TipCalloutProps> = ({
   const style = styles[variant];
 
   return (
-    <div className={`${style.bg} border-2 ${style.border} rounded-[var(--radius-lg)] p-6 my-8`}>
+    <div className={`${style.bg} border-2 ${style.border} rounded-2xl p-6 my-8`}>
       <div className="flex gap-4">
         <Lightbulb className={`flex-shrink-0 w-6 h-6 ${style.icon}`} />
         <div className={`flex-1 ${style.text} leading-relaxed`}>

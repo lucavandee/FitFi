@@ -75,10 +75,10 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
 
   if (loading) {
     return (
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6">
+      <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-[var(--color-bg)] rounded w-1/3" />
-          <div className="h-40 bg-[var(--color-bg)] rounded" />
+          <div className="h-6 bg-[#FAFAF8] rounded w-1/3" />
+          <div className="h-40 bg-[#FAFAF8] rounded" />
         </div>
       </div>
     );
@@ -86,9 +86,9 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
 
   if (timeline.length === 0) {
     return (
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6 text-center">
-        <GitBranch className="w-12 h-12 mx-auto text-[var(--color-muted)] mb-3" />
-        <p className="text-[var(--color-muted)]">
+      <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 text-center">
+        <GitBranch className="w-12 h-12 mx-auto text-[#8A8A8A] mb-3" />
+        <p className="text-[#8A8A8A]">
           Nog geen embedding geschiedenis beschikbaar
         </p>
       </div>
@@ -99,9 +99,9 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6">
-        <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6 flex items-center gap-2">
-          <GitBranch className="w-5 h-5 text-[var(--ff-color-primary-700)]" />
+      <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6">
+        <h3 className="text-xl font-semibold text-[#1A1A1A] mb-6 flex items-center gap-2">
+          <GitBranch className="w-5 h-5 text-[#A8513A]" />
           Stijl Evolutie
         </h3>
 
@@ -130,15 +130,15 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-t border-[var(--color-border)] pt-6"
+            className="border-t border-[#E5E5E5] pt-6"
           >
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-semibold text-[var(--color-text)]">
+              <h4 className="text-sm font-semibold text-[#1A1A1A]">
                 Vergelijking: v{compareVersion} → v{selectedVersion}
               </h4>
               <button
                 onClick={() => setCompareVersion(null)}
-                className="text-xs text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                className="text-xs text-[#8A8A8A] hover:text-[#1A1A1A]"
               >
                 Sluit
               </button>
@@ -152,7 +152,7 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
                 ))}
 
               {comparison.every(c => c.change_type === 'stable') && (
-                <p className="text-sm text-[var(--color-muted)] text-center py-4">
+                <p className="text-sm text-[#8A8A8A] text-center py-4">
                   Geen significante veranderingen tussen deze versies
                 </p>
               )}
@@ -168,9 +168,9 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-2xl)] p-6"
+            className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6"
           >
-            <h4 className="text-sm font-semibold text-[var(--color-text)] mb-4">
+            <h4 className="text-sm font-semibold text-[#1A1A1A] mb-4">
               Versie {selectedSnapshot.version} Details
             </h4>
 
@@ -181,16 +181,16 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
                 .map(([archetype, score]) => (
                   <div key={archetype}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm text-[var(--color-text)]">
+                      <span className="text-sm text-[#1A1A1A]">
                         {archetype.replace(/_/g, ' ')}
                       </span>
-                      <span className="text-sm font-semibold text-[var(--ff-color-primary-700)]">
+                      <span className="text-sm font-semibold text-[#A8513A]">
                         {Math.round(score)}
                       </span>
                     </div>
-                    <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[var(--ff-color-primary-600)] rounded-full"
+                        className="h-full bg-[#C2654A] rounded-full"
                         style={{ width: `${score}%` }}
                       />
                     </div>
@@ -199,8 +199,8 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
             </div>
 
             {selectedSnapshot.changes && Object.keys(selectedSnapshot.changes).length > 0 && (
-              <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
-                <p className="text-xs font-semibold text-[var(--color-text)] mb-3">
+              <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
+                <p className="text-xs font-semibold text-[#1A1A1A] mb-3">
                   Veranderingen sinds vorige versie:
                 </p>
                 <div className="space-y-2">
@@ -209,7 +209,7 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
                       key={archetype}
                       className="flex items-center justify-between text-xs"
                     >
-                      <span className="text-[var(--color-muted)]">
+                      <span className="text-[#8A8A8A]">
                         {archetype.replace(/_/g, ' ')}
                       </span>
                       <span className={`flex items-center gap-1 font-medium ${
@@ -260,28 +260,28 @@ function TimelineItem({
 
   return (
     <div
-      className={`p-4 border rounded-[var(--radius-lg)] transition-all cursor-pointer ${
+      className={`p-4 border rounded-2xl transition-all cursor-pointer ${
         isSelected
-          ? 'border-[var(--ff-color-primary-600)] bg-[var(--overlay-accent-08a)]'
+          ? 'border-[#C2654A] bg-[var(--overlay-accent-08a)]'
           : isCompare
           ? 'border-amber-500 bg-amber-50'
-          : 'border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]'
+          : 'border-[#E5E5E5] hover:border-[#D4856E]'
       }`}
       onClick={onSelect}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-[var(--color-text)]">
+            <span className="text-sm font-semibold text-[#1A1A1A]">
               Versie {snapshot.version}
             </span>
             {isLatest && (
-              <span className="px-2 py-0.5 text-xs font-medium bg-[var(--ff-color-primary-700)] text-white rounded-full">
+              <span className="px-2 py-0.5 text-xs font-medium bg-[#A8513A] text-white rounded-full">
                 Huidig
               </span>
             )}
           </div>
-          <p className="text-xs text-[var(--color-muted)]">
+          <p className="text-xs text-[#8A8A8A]">
             {triggerLabels[snapshot.snapshot_trigger] || snapshot.snapshot_trigger} •{' '}
             {date.toLocaleDateString('nl-NL', {
               day: 'numeric',
@@ -299,7 +299,7 @@ function TimelineItem({
           className={`text-xs px-2 py-1 rounded transition-colors ${
             isCompare
               ? 'bg-amber-500 text-white'
-              : 'text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)]'
+              : 'text-[#8A8A8A] hover:text-[#C2654A]'
           }`}
         >
           {isCompare ? 'Vergelijk aan' : 'Vergelijk'}
@@ -321,7 +321,7 @@ function ChangeRow({ change }: { change: any }) {
       case 'decreased':
         return <TrendingDown className="w-4 h-4 text-red-600" />;
       default:
-        return <ArrowRight className="w-4 h-4 text-[var(--color-muted)]" />;
+        return <ArrowRight className="w-4 h-4 text-[#8A8A8A]" />;
     }
   };
 
@@ -341,21 +341,21 @@ function ChangeRow({ change }: { change: any }) {
   };
 
   return (
-    <div className="flex items-center justify-between py-2 px-3 bg-[var(--color-bg)] rounded-lg">
+    <div className="flex items-center justify-between py-2 px-3 bg-[#FAFAF8] rounded-lg">
       <div className="flex items-center gap-2">
         {getIcon()}
-        <span className="text-sm text-[var(--color-text)]">
+        <span className="text-sm text-[#1A1A1A]">
           {change.archetype.replace(/_/g, ' ')}
         </span>
       </div>
       <div className="flex items-center gap-3 text-xs">
         {change.change_type !== 'new' && change.change_type !== 'removed' && (
           <>
-            <span className="text-[var(--color-muted)]">
+            <span className="text-[#8A8A8A]">
               {Math.round(change.v1_score)}
             </span>
-            <ArrowRight className="w-3 h-3 text-[var(--color-muted)]" />
-            <span className="font-semibold text-[var(--color-text)]">
+            <ArrowRight className="w-3 h-3 text-[#8A8A8A]" />
+            <span className="font-semibold text-[#1A1A1A]">
               {Math.round(change.v2_score)}
             </span>
           </>
@@ -365,7 +365,7 @@ function ChangeRow({ change }: { change: any }) {
             ? 'text-green-600'
             : change.change_type === 'removed' || change.change_type === 'decreased'
             ? 'text-red-600'
-            : 'text-[var(--color-muted)]'
+            : 'text-[#8A8A8A]'
         }`}>
           {getLabel()}
         </span>

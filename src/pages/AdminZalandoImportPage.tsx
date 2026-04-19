@@ -24,7 +24,7 @@ export default function AdminZalandoImportPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text)]">Admin verificatie...</p>
+          <p className="text-[#1A1A1A]">Admin verificatie...</p>
         </div>
       </div>
     );
@@ -34,13 +34,13 @@ export default function AdminZalandoImportPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-2xl font-bold text-[var(--color-text)]">Geen toegang</h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">Geen toegang</h1>
+          <p className="mt-2 text-[#8A8A8A]">
             Je hebt admin rechten nodig om deze pagina te bekijken.
           </p>
           <button
             onClick={() => navigate('/admin')}
-            className="mt-6 px-6 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors"
+            className="mt-6 px-6 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors"
           >
             Terug naar Admin Dashboard
           </button>
@@ -208,36 +208,36 @@ export default function AdminZalandoImportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12">
+    <div className="min-h-screen bg-[#FAFAF8] py-12">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-8">
           <button
             onClick={() => navigate('/admin')}
-            className="mb-4 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+            className="mb-4 text-sm text-[#8A8A8A] hover:text-[#1A1A1A]"
           >
             ← Terug naar Admin Dashboard
           </button>
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">
+          <h1 className="text-3xl font-bold text-[#1A1A1A]">
             Zalando Product Import
           </h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">
+          <p className="mt-2 text-[#8A8A8A]">
             Import producten via CSV naar de unified catalog
           </p>
         </div>
 
         <div className="space-y-6">
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+          <div className="bg-white rounded-lg border border-[#E5E5E5] p-6">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">
               CSV Upload
             </h2>
 
-            <div className="mb-4 p-4 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)]">
-              <h3 className="font-medium text-[var(--color-text)] mb-2">Verwachte kolommen:</h3>
-              <div className="text-sm text-[var(--color-text-secondary)] space-y-1">
+            <div className="mb-4 p-4 bg-[#FAFAF8] rounded-lg border border-[#E5E5E5]">
+              <h3 className="font-medium text-[#1A1A1A] mb-2">Verwachte kolommen:</h3>
+              <div className="text-sm text-[#8A8A8A] space-y-1">
                 <div><strong>Verplicht:</strong> name, price, image_url, category, gender</div>
                 <div><strong>Optioneel:</strong> description, original_price, brand, retailer, type, tags, colors, sizes, product_url, affiliate_url, in_stock, rating, review_count</div>
                 <div className="mt-2 text-xs">
-                  <strong>Let op:</strong> Arrays (tags, colors, sizes) scheiden met <code className="bg-[var(--color-surface)] px-1 rounded">|</code> bijv. <code className="bg-[var(--color-surface)] px-1 rounded">casual|premium|sustainable</code>
+                  <strong>Let op:</strong> Arrays (tags, colors, sizes) scheiden met <code className="bg-white px-1 rounded">|</code> bijv. <code className="bg-white px-1 rounded">casual|premium|sustainable</code>
                 </div>
               </div>
             </div>
@@ -248,12 +248,12 @@ export default function AdminZalandoImportPage() {
                 accept=".csv"
                 onChange={handleCSVImport}
                 disabled={importing}
-                className="block w-full text-sm text-[var(--color-text)]
+                className="block w-full text-sm text-[#1A1A1A]
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
-                  file:bg-[var(--ff-color-primary-700)] file:text-white
-                  hover:file:bg-[var(--ff-color-primary-600)]
+                  file:bg-[#A8513A] file:text-white
+                  hover:file:bg-[#C2654A]
                   file:cursor-pointer file:transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               />
@@ -262,37 +262,37 @@ export default function AdminZalandoImportPage() {
             {importing && (
               <div className="mt-4 text-center">
                 <Spinner size="md" className="mx-auto" />
-                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                <p className="mt-2 text-sm text-[#8A8A8A]">
                   Importeren...
                 </p>
               </div>
             )}
 
             {stats && (
-              <div className="mt-4 p-4 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]">
-                <h3 className="font-medium text-[var(--color-text)] mb-3">Import Resultaat</h3>
+              <div className="mt-4 p-4 rounded-lg bg-[#FAFAF8] border border-[#E5E5E5]">
+                <h3 className="font-medium text-[#1A1A1A] mb-3">Import Resultaat</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-[var(--color-text-secondary)]">Totaal:</span>
-                    <span className="ml-2 font-medium text-[var(--color-text)]">{stats.total}</span>
+                    <span className="text-[#8A8A8A]">Totaal:</span>
+                    <span className="ml-2 font-medium text-[#1A1A1A]">{stats.total}</span>
                   </div>
                   <div>
-                    <span className="text-[var(--color-text-secondary)]">Geïmporteerd:</span>
+                    <span className="text-[#8A8A8A]">Geïmporteerd:</span>
                     <span className="ml-2 font-medium text-green-600">{stats.imported}</span>
                   </div>
                   <div>
-                    <span className="text-[var(--color-text-secondary)]">Bijgewerkt:</span>
+                    <span className="text-[#8A8A8A]">Bijgewerkt:</span>
                     <span className="ml-2 font-medium text-blue-600">{stats.updated}</span>
                   </div>
                   <div>
-                    <span className="text-[var(--color-text-secondary)]">Overgeslagen:</span>
+                    <span className="text-[#8A8A8A]">Overgeslagen:</span>
                     <span className="ml-2 font-medium text-orange-600">{stats.skipped}</span>
                   </div>
                 </div>
 
                 {stats.errors.length > 0 && (
                   <details className="mt-4">
-                    <summary className="text-sm font-medium text-[var(--color-text)] cursor-pointer">
+                    <summary className="text-sm font-medium text-[#1A1A1A] cursor-pointer">
                       Fouten weergeven ({stats.errors.length})
                     </summary>
                     <div className="mt-2 max-h-60 overflow-y-auto space-y-1">
@@ -308,11 +308,11 @@ export default function AdminZalandoImportPage() {
             )}
           </div>
 
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+          <div className="bg-white rounded-lg border border-[#E5E5E5] p-6">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">
               CSV Template
             </h2>
-            <p className="text-sm text-[var(--color-text-secondary)] mb-4">
+            <p className="text-sm text-[#8A8A8A] mb-4">
               Download eenvoorbeeld CSV met de juiste kolommen:
             </p>
             <button
@@ -331,17 +331,17 @@ export default function AdminZalandoImportPage() {
 
                 toast.success('Template gedownload');
               }}
-              className="px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-lg hover:border-[var(--ff-color-primary-700)] transition-colors text-sm"
+              className="px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] text-[#1A1A1A] rounded-lg hover:border-[#A8513A] transition-colors text-sm"
             >
               Download Template CSV
             </button>
           </div>
 
-          <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-text)] mb-4">
+          <div className="bg-white rounded-lg border border-[#E5E5E5] p-6">
+            <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">
               Tips
             </h2>
-            <ul className="space-y-2 text-sm text-[var(--color-text-secondary)]">
+            <ul className="space-y-2 text-sm text-[#8A8A8A]">
               <li>• Gebruik UTF-8 encoding voor het CSV bestand</li>
               <li>• Kolommen met komma's of aanhalingstekens moeten tussen quotes staan</li>
               <li>• Arrays (tags, colors, sizes) scheiden met | (pipe)</li>

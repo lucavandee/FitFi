@@ -82,7 +82,7 @@ export function OutfitZoomModal({
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative w-full max-w-6xl bg-[var(--color-surface)] rounded-2xl shadow-2xl overflow-hidden"
+                className="relative w-full max-w-6xl bg-[#FFFFFF] rounded-2xl shadow-2xl overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}
@@ -96,7 +96,7 @@ export function OutfitZoomModal({
                 <div className="grid md:grid-cols-2 gap-6 p-6">
                   {/* Left: Outfit Visual */}
                   <div className="relative">
-                    <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] border-2 border-[var(--color-border)] overflow-hidden">
+                    <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#E5E5E5] overflow-hidden">
                       {/* Product Grid */}
                       <div className="absolute inset-0 p-4 flex items-center justify-center">
                         <div className="w-full h-full flex flex-col gap-2">
@@ -105,7 +105,7 @@ export function OutfitZoomModal({
                               key={i}
                               className="flex-1 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm flex items-center justify-center"
                             >
-                              <span className="text-sm text-[var(--color-text-muted)] font-medium">
+                              <span className="text-sm text-[#8A8A8A] font-medium">
                                 {product.category || "Product"}
                               </span>
                             </div>
@@ -137,7 +137,7 @@ export function OutfitZoomModal({
                   <div className="flex flex-col">
                     {/* Header */}
                     <div className="mb-6">
-                      <h2 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+                      <h2 className="text-3xl font-bold text-[#1A1A1A] mb-2">
                         {outfit.name || `Outfit #${outfit.id.substring(0, 8)}`}
                       </h2>
 
@@ -147,7 +147,7 @@ export function OutfitZoomModal({
                           {outfit.style_tags.map((tag, i) => (
                             <span
                               key={i}
-                              className="px-3 py-1 bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full text-sm font-semibold"
+                              className="px-3 py-1 bg-[#FAF5F2] text-[#A8513A] rounded-full text-sm font-semibold"
                             >
                               {tag}
                             </span>
@@ -155,21 +155,21 @@ export function OutfitZoomModal({
                         </div>
                       )}
 
-                      <p className="text-[var(--color-text-muted)]">
+                      <p className="text-[#8A8A8A]">
                         {outfit.products.length} items · {matchScore}% match met jouw stijl
                       </p>
                     </div>
 
                     {/* Explanation */}
                     {outfit.explanation && (
-                      <div className="mb-6 p-4 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-xl">
+                      <div className="mb-6 p-4 bg-[#FAF5F2] border border-[#F4E8E3] rounded-xl">
                         <div className="flex items-start gap-3">
-                          <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)] flex-shrink-0 mt-0.5" />
+                          <Sparkles className="w-5 h-5 text-[#C2654A] flex-shrink-0 mt-0.5" />
                           <div>
-                            <h3 className="font-semibold text-[var(--ff-color-primary-900)] mb-1">
+                            <h3 className="font-semibold text-[#5A2010] mb-1">
                               Waarom deze combinatie?
                             </h3>
-                            <p className="text-sm text-[var(--ff-color-primary-800)] leading-relaxed">
+                            <p className="text-sm text-[#8A3D28] leading-relaxed">
                               {outfit.explanation}
                             </p>
                           </div>
@@ -180,10 +180,10 @@ export function OutfitZoomModal({
                     {/* Products List - Shoppable */}
                     <div className="flex-1 overflow-y-auto mb-6">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-[var(--color-text)]">
+                        <h3 className="font-semibold text-[#1A1A1A]">
                           Items in deze outfit
                         </h3>
-                        <span className="text-xs text-[var(--color-text-muted)] flex items-center gap-1">
+                        <span className="text-xs text-[#8A8A8A] flex items-center gap-1">
                           <ShoppingBag className="w-3 h-3" />
                           Klik om te shoppen
                         </span>
@@ -197,8 +197,8 @@ export function OutfitZoomModal({
                               key={i}
                               whileHover={hasShopUrl ? { scale: 1.02, x: 4 } : {}}
                               className={`
-                                flex items-center gap-3 p-3 bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] transition-all
-                                ${hasShopUrl ? "hover:border-[var(--ff-color-primary-400)] hover:shadow-md cursor-pointer" : ""}
+                                flex items-center gap-3 p-3 bg-[#FAFAF8] rounded-lg border border-[#E5E5E5] transition-all
+                                ${hasShopUrl ? "hover:border-[#D4856E] hover:shadow-md cursor-pointer" : ""}
                               `}
                               onClick={async () => {
                                 if (!hasShopUrl) return;
@@ -213,17 +213,17 @@ export function OutfitZoomModal({
                                 }
                               }}
                             >
-                              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[var(--ff-color-primary-100)] to-[var(--ff-color-primary-50)] flex items-center justify-center flex-shrink-0">
-                                <span className="text-2xl font-bold text-[var(--ff-color-primary-300)]">{i + 1}</span>
+                              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+                                <span className="text-2xl font-bold text-[#D4856E]">{i + 1}</span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-medium text-[var(--color-text)] truncate">
+                                <h4 className="font-medium text-[#1A1A1A] truncate">
                                   {product.name || product.category || "Product"}
                                 </h4>
-                                <p className="text-sm text-[var(--color-muted)] truncate">
+                                <p className="text-sm text-[#8A8A8A] truncate">
                                   {product.brand || product.retailer || ""}
                                   {product.price && (
-                                    <span className="ml-2 font-semibold text-[var(--ff-color-primary-700)]">
+                                    <span className="ml-2 font-semibold text-[#A8513A]">
                                       €{typeof product.price === "number" ? product.price.toFixed(2) : product.price}
                                     </span>
                                   )}
@@ -233,12 +233,12 @@ export function OutfitZoomModal({
                                 <motion.div
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
-                                  className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--ff-color-primary-600)] text-white flex items-center justify-center hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                                  className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#C2654A] text-white flex items-center justify-center hover:bg-[#A8513A] transition-colors"
                                 >
                                   <ShoppingBag className="w-5 h-5" />
                                 </motion.div>
                               ) : (
-                                <div className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)] text-xs rounded-lg">
+                                <div className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5] text-xs rounded-lg">
                                   <AlertCircle className="w-3 h-3" />
                                   Binnenkort
                                 </div>
@@ -250,13 +250,13 @@ export function OutfitZoomModal({
                     </div>
 
                     {/* Helper Text */}
-                    <div className="text-xs text-[var(--color-text-muted)] text-center mb-3 flex items-center justify-center gap-2">
+                    <div className="text-xs text-[#8A8A8A] text-center mb-3 flex items-center justify-center gap-2">
                       <Heart className="w-3 h-3" />
                       Opgeslagen outfits vind je terug in je Dashboard
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 pt-4 border-t border-[var(--color-border)]">
+                    <div className="flex gap-3 pt-4 border-t border-[#E5E5E5]">
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -272,7 +272,7 @@ export function OutfitZoomModal({
                                     <NavLink
                                       to="/dashboard"
                                       onClick={() => toast.dismiss(t.id)}
-                                      className="text-sm text-[var(--ff-color-primary-600)] hover:underline"
+                                      className="text-sm text-[#C2654A] hover:underline"
                                     >
                                       Bekijk in Dashboard →
                                     </NavLink>
@@ -282,9 +282,9 @@ export function OutfitZoomModal({
                               {
                                 duration: 5000,
                                 style: {
-                                  background: "var(--color-surface)",
-                                  color: "var(--color-text)",
-                                  border: "1px solid var(--color-border)",
+                                  background: "#FFFFFF",
+                                  color: "#1A1A1A",
+                                  border: "1px solid #E5E5E5",
                                 },
                               }
                             );
@@ -295,7 +295,7 @@ export function OutfitZoomModal({
                           ${
                             isSaved
                               ? "bg-pink-500 text-white hover:bg-pink-600"
-                              : "bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)]"
+                              : "bg-[#A8513A] text-white hover:bg-[#C2654A]"
                           }
                         `}
                       >
@@ -307,7 +307,7 @@ export function OutfitZoomModal({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onShare}
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-text)] rounded-xl font-semibold hover:border-[var(--ff-color-primary-300)] transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-semibold hover:border-[#D4856E] transition-all"
                       >
                         <Share2 className="w-5 h-5" />
                         Delen

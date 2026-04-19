@@ -21,12 +21,12 @@ export default function ColorPalettePreview() {
         className="group relative"
       >
         <div
-          className="w-12 h-12 rounded-full shadow-[var(--shadow-sm)] border-2 border-white transition-transform duration-200 group-hover:scale-110 group-hover:shadow-[var(--shadow-md)]"
+          className="w-12 h-12 rounded-full shadow-sm border-2 border-white transition-transform duration-200 group-hover:scale-110 group-hover:shadow-sm"
           style={{ backgroundColor: color.hex }}
           aria-label={color.name}
         />
         <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-          <span className="text-xs font-medium bg-[var(--color-surface)] text-[var(--color-text)] px-2 py-1 rounded-md shadow-[var(--shadow-md)] border border-[var(--color-border)]">
+          <span className="text-xs font-medium bg-[#FFFFFF] text-[#1A1A1A] px-2 py-1 rounded-md shadow-sm border border-[#E5E5E5]">
             {color.name}
           </span>
         </div>
@@ -35,9 +35,9 @@ export default function ColorPalettePreview() {
   };
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-lg)] overflow-hidden">
+    <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] p-6 text-white">
+      <div className="bg-gradient-to-r from-[#A8513A] to-[#C2654A] p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
             <Palette className="w-5 h-5" />
@@ -50,7 +50,7 @@ export default function ColorPalettePreview() {
       </div>
 
       {/* Season Selector */}
-      <div className="p-6 border-b border-[var(--color-border)]">
+      <div className="p-6 border-b border-[#E5E5E5]">
         <div className="flex gap-2 flex-wrap">
           {seasons.map((season) => (
             <button
@@ -58,8 +58,8 @@ export default function ColorPalettePreview() {
               onClick={() => setSelectedSeason(season.key)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 selectedSeason === season.key
-                  ? 'bg-gradient-to-r ' + season.gradient + ' text-white shadow-[var(--shadow-md)]'
-                  : 'bg-[var(--color-bg)] text-[var(--color-text-secondary)] hover:bg-[var(--ff-color-primary-50)] hover:text-[var(--ff-color-primary-700)] border border-[var(--color-border)]'
+                  ? 'bg-gradient-to-r ' + season.gradient + ' text-white shadow-sm'
+                  : 'bg-[#FAFAF8] text-[#8A8A8A] hover:bg-[#FAF5F2] hover:text-[#A8513A] border border-[#E5E5E5]'
               }`}
             >
               {season.label}
@@ -71,7 +71,7 @@ export default function ColorPalettePreview() {
       {/* Color Preview */}
       <div className="p-6">
         <div className="mb-6">
-          <p className="text-sm text-[var(--color-text-secondary)] mb-4">
+          <p className="text-sm text-[#8A8A8A] mb-4">
             {palette.description}
           </p>
         </div>
@@ -79,8 +79,8 @@ export default function ColorPalettePreview() {
         {/* Do Colors - Recommended */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-[var(--ff-color-success-600)]" />
-            <h4 className="text-sm font-semibold text-[var(--color-text)]">
+            <Sparkles className="w-4 h-4 text-[#3D8B5E]" />
+            <h4 className="text-sm font-semibold text-[#1A1A1A]">
               Aanbevolen kleuren
             </h4>
           </div>
@@ -91,23 +91,23 @@ export default function ColorPalettePreview() {
 
         {/* Trend Highlights */}
         {selectedSeason === 'herfst' && (
-          <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-transparent rounded-[var(--radius-lg)] p-4 border border-[var(--ff-color-primary-200)] mb-6">
+          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-700)] flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#C2654A] to-[#A8513A] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h5 className="text-sm font-semibold text-[var(--color-text)] mb-1">
+                <h5 className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Trending in 2025
                 </h5>
-                <p className="text-xs text-[var(--color-text-secondary)] mb-2">
+                <p className="text-xs text-[#8A8A8A] mb-2">
                   Herfst is HET seizoen voor quiet luxury. Camel, Cognac, Terracotta en Sage domineren de runways.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[var(--ff-color-primary-700)] font-medium border border-[var(--ff-color-primary-200)]">
+                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[#A8513A] font-medium border border-[#F4E8E3]">
                     Quiet Luxury
                   </span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[var(--ff-color-primary-700)] font-medium border border-[var(--ff-color-primary-200)]">
+                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[#A8513A] font-medium border border-[#F4E8E3]">
                     Earthy Tones
                   </span>
                 </div>
@@ -117,16 +117,16 @@ export default function ColorPalettePreview() {
         )}
 
         {selectedSeason === 'zomer' && (
-          <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-transparent rounded-[var(--radius-lg)] p-4 border border-[var(--ff-color-primary-200)] mb-6">
+          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[var(--ff-color-primary-500)] to-[var(--ff-color-primary-700)] flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#C2654A] to-[#A8513A] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h5 className="text-sm font-semibold text-[var(--color-text)] mb-1">
+                <h5 className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Soft Sophistication
                 </h5>
-                <p className="text-xs text-[var(--color-text-secondary)]">
+                <p className="text-xs text-[#8A8A8A]">
                   Gedempte pastels en grijs-tinten blijven populair voor elegant minimalism.
                 </p>
               </div>
@@ -135,17 +135,17 @@ export default function ColorPalettePreview() {
         )}
 
         {/* CTA */}
-        <div className="bg-[var(--color-bg)] rounded-[var(--radius-md)] p-4 border border-[var(--color-border)]">
+        <div className="bg-[#FAFAF8] rounded-2xl p-4 border border-[#E5E5E5]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-[var(--color-text)] mb-1">
+              <p className="text-sm font-medium text-[#1A1A1A] mb-1">
                 Ontdek jouw perfecte kleuren
               </p>
-              <p className="text-xs text-[var(--color-text-secondary)]">
+              <p className="text-xs text-[#8A8A8A]">
                 Krijg AI-analyse + persoonlijk kleurenpalet
               </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
+            <ChevronRight className="w-5 h-5 text-[#C2654A]" />
           </div>
         </div>
       </div>

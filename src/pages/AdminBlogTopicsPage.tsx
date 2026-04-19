@@ -92,7 +92,7 @@ export default function AdminBlogTopicsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text-muted)]">Laden...</p>
+          <p className="text-[#8A8A8A]">Laden...</p>
         </div>
       </div>
     );
@@ -104,29 +104,29 @@ export default function AdminBlogTopicsPage() {
         <title>Blog Topics - Admin - FitFi</title>
       </Helmet>
 
-      <div className="min-h-screen bg-[var(--color-bg)]">
+      <div className="min-h-screen bg-[#FAFAF8]">
         <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
             <button
               onClick={() => navigate('/admin/blog')}
-              className="flex items-center gap-2 text-[var(--color-text-muted)] hover:text-[var(--color-text)] mb-4"
+              className="flex items-center gap-2 text-[#8A8A8A] hover:text-[#1A1A1A] mb-4"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar blog overzicht
             </button>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+                <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
                   Blog Topics
                 </h1>
-                <p className="text-[var(--color-text-muted)]">
+                <p className="text-[#8A8A8A]">
                   Beheer ideeën voor toekomstige blog content
                 </p>
               </div>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Nieuw Topic
@@ -136,38 +136,38 @@ export default function AdminBlogTopicsPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4">
+            <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-yellow-100">
                   <Clock className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--color-text-muted)]">Pending</p>
-                  <p className="text-2xl font-bold text-[var(--color-text)]">{stats.pending}</p>
+                  <p className="text-sm text-[#8A8A8A]">Pending</p>
+                  <p className="text-2xl font-bold text-[#1A1A1A]">{stats.pending}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4">
+            <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-blue-100">
                   <TrendingUp className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--color-text-muted)]">In Progress</p>
-                  <p className="text-2xl font-bold text-[var(--color-text)]">{stats.in_progress}</p>
+                  <p className="text-sm text-[#8A8A8A]">In Progress</p>
+                  <p className="text-2xl font-bold text-[#1A1A1A]">{stats.in_progress}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4">
+            <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-green-100">
                   <CheckCircle className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--color-text-muted)]">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--color-text)]">{stats.completed}</p>
+                  <p className="text-sm text-[#8A8A8A]">Completed</p>
+                  <p className="text-2xl font-bold text-[#1A1A1A]">{stats.completed}</p>
                 </div>
               </div>
             </div>
@@ -179,8 +179,8 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'all'
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
               Alles
@@ -189,8 +189,8 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('pending')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'pending'
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
               Pending
@@ -199,8 +199,8 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('in_progress')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'in_progress'
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
               In Progress
@@ -209,8 +209,8 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('completed')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'completed'
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
               Completed
@@ -221,20 +221,20 @@ export default function AdminBlogTopicsPage() {
           {loading ? (
             <div className="text-center py-12">
               <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-[var(--color-text-muted)]">Topics laden...</p>
+              <p className="text-[#8A8A8A]">Topics laden...</p>
             </div>
           ) : filteredTopics.length === 0 ? (
-            <div className="text-center py-12 bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)]">
-              <Lightbulb className="w-16 h-16 mx-auto mb-4 text-[var(--color-text-muted)]" />
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+            <div className="text-center py-12 bg-[#FFFFFF] rounded-lg border border-[#E5E5E5]">
+              <Lightbulb className="w-16 h-16 mx-auto mb-4 text-[#8A8A8A]" />
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                 Geen topics gevonden
               </h3>
-              <p className="text-[var(--color-text-muted)] mb-4">
+              <p className="text-[#8A8A8A] mb-4">
                 Begin met het toevoegen van topic ideeën voor toekomstige posts
               </p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-6 py-3 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors"
+                className="px-6 py-3 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors"
               >
                 Eerste Topic Toevoegen
               </button>
@@ -279,19 +279,19 @@ function TopicCard({ topic, onDelete, onStatusChange }: any) {
   const priorityStars = '★'.repeat(topic.priority_score) + '☆'.repeat(10 - topic.priority_score);
 
   return (
-    <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] p-4 hover:shadow-md transition-shadow">
+    <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
               {config.label}
             </span>
-            <span className="text-sm text-[var(--color-text-muted)]" title={`Prioriteit: ${topic.priority_score}/10`}>
+            <span className="text-sm text-[#8A8A8A]" title={`Prioriteit: ${topic.priority_score}/10`}>
               {priorityStars}
             </span>
           </div>
 
-          <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+          <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
             {topic.topic}
           </h3>
 
@@ -299,14 +299,14 @@ function TopicCard({ topic, onDelete, onStatusChange }: any) {
             {topic.suggested_keywords.map((keyword, i) => (
               <span
                 key={i}
-                className="px-2 py-1 rounded-full bg-[var(--color-bg)] text-[var(--color-text)] text-xs"
+                className="px-2 py-1 rounded-full bg-[#FAFAF8] text-[#1A1A1A] text-xs"
               >
                 {keyword}
               </span>
             ))}
           </div>
 
-          <p className="text-sm text-[var(--color-text-muted)]">
+          <p className="text-sm text-[#8A8A8A]">
             Doelgroep: {topic.target_audience}
           </p>
         </div>
@@ -391,15 +391,15 @@ function AddTopicModal({ onClose, onSuccess }: any) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] max-w-lg w-full p-6">
-        <h2 className="text-2xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
+      <div className="bg-[#FFFFFF] rounded-lg border border-[#E5E5E5] max-w-lg w-full p-6">
+        <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4 flex items-center gap-2">
           <Sparkles className="w-6 h-6" />
           Nieuw Blog Topic
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Topic Idee *
             </label>
             <textarea
@@ -407,12 +407,12 @@ function AddTopicModal({ onClose, onSuccess }: any) {
               onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
               placeholder="Bijv: De beste kleuren voor het herfstseizoen 2024"
               rows={3}
-              className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder-[var(--color-text-muted)]"
+              className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Keywords voor SEO
             </label>
             <div className="flex gap-2 mb-2">
@@ -422,12 +422,12 @@ function AddTopicModal({ onClose, onSuccess }: any) {
                 onChange={(e) => setFormData({ ...formData, keywordInput: e.target.value })}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddKeyword())}
                 placeholder="Bijv: herfst kleuren, seizoenstrends"
-                className="flex-1 px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-sm"
+                className="flex-1 px-3 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] text-sm"
               />
               <button
                 type="button"
                 onClick={handleAddKeyword}
-                className="px-3 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] text-sm"
+                className="px-3 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] text-sm"
               >
                 +
               </button>
@@ -436,13 +436,13 @@ function AddTopicModal({ onClose, onSuccess }: any) {
               {formData.keywords.map(keyword => (
                 <span
                   key={keyword}
-                  className="px-3 py-1 rounded-full bg-[var(--color-bg)] text-[var(--color-text)] text-sm flex items-center gap-2"
+                  className="px-3 py-1 rounded-full bg-[#FAFAF8] text-[#1A1A1A] text-sm flex items-center gap-2"
                 >
                   {keyword}
                   <button
                     type="button"
                     onClick={() => handleRemoveKeyword(keyword)}
-                    className="text-[var(--color-text-muted)] hover:text-red-600"
+                    className="text-[#8A8A8A] hover:text-red-600"
                   >
                     ×
                   </button>
@@ -452,7 +452,7 @@ function AddTopicModal({ onClose, onSuccess }: any) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Doelgroep
             </label>
             <input
@@ -460,12 +460,12 @@ function AddTopicModal({ onClose, onSuccess }: any) {
               value={formData.targetAudience}
               onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value })}
               placeholder="Bijv: vrouwen 25-40, stijlbewuste professionals"
-              className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+              className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
               Prioriteit: {formData.priorityScore}/10
             </label>
             <input
@@ -482,14 +482,14 @@ function AddTopicModal({ onClose, onSuccess }: any) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
+              className="flex-1 px-4 py-2 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:bg-[#FAFAF8] transition-colors"
             >
               Annuleren
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-2 rounded-xl bg-[var(--ff-color-primary-700)] text-white hover:bg-[var(--ff-color-primary-600)] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors disabled:opacity-50"
             >
               {saving ? 'Opslaan...' : 'Topic Toevoegen'}
             </button>

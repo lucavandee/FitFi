@@ -15,18 +15,18 @@ export const DashboardInsights: React.FC<DashboardInsightsProps> = ({
   if (insights.length === 0) return null;
 
   return (
-    <section className="py-12 bg-[var(--color-bg)]">
-      <div className="ff-container">
+    <section className="py-12 bg-[#FAFAF8]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 fade-in-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-full text-sm font-bold text-purple-700 dark:text-purple-400 mb-4 border border-purple-200 dark:border-purple-800">
               <Sparkles className="w-4 h-4" />
               NOVA AI INSIGHTS
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text)] mb-4">
+            <h2 className="text-4xl md:text-5xl font-black text-[#1A1A1A] mb-4">
               Slim advies, speciaal voor jou
             </h2>
-            <p className="text-lg text-[var(--color-text-muted)] max-w-2xl mx-auto">
+            <p className="text-lg text-[#8A8A8A] max-w-2xl mx-auto">
               Styling tips op basis van jouw profiel
             </p>
           </div>

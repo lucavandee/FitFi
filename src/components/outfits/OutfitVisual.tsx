@@ -86,19 +86,19 @@ const PIECE_ICONS = {
 
 export default function OutfitVisual({ pieces, className = "" }: OutfitVisualProps) {
   return (
-    <div className={`bg-[var(--color-bg)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-6 ${className}`}>
+    <div className={`bg-[#FAFAF8] rounded-2xl border border-[#E5E5E5] p-6 ${className}`}>
       <div className="space-y-6">
         {pieces.map((piece, idx) => {
           const Icon = PIECE_ICONS[piece.type];
           return (
             <div key={idx} className="flex items-center gap-4">
-              <div className="w-20 h-20 flex-shrink-0 text-[var(--color-text)]/60">
+              <div className="w-20 h-20 flex-shrink-0 text-[#1A1A1A]/60">
                 <Icon color={piece.color} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1">
                   <div
-                    className="w-8 h-8 rounded-full border-2 border-[var(--color-border)] flex-shrink-0"
+                    className="w-8 h-8 rounded-full border-2 border-[#E5E5E5] flex-shrink-0"
                     style={{ backgroundColor: piece.color }}
                     aria-label={`Color: ${piece.color}`}
                   />
@@ -118,13 +118,13 @@ export default function OutfitVisual({ pieces, className = "" }: OutfitVisualPro
 
 export function OutfitVisualCompact({ pieces, className = "" }: OutfitVisualProps) {
   return (
-    <div className={`aspect-[3/4] bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] p-8 flex flex-col justify-center ${className}`}>
+    <div className={`aspect-[3/4] bg-gradient-to-br from-[#FAFAF8] to-[#FFFFFF] rounded-2xl border border-[#E5E5E5] p-8 flex flex-col justify-center ${className}`}>
       <div className="space-y-8">
         {pieces.slice(0, 3).map((piece, idx) => {
           const Icon = PIECE_ICONS[piece.type];
           return (
             <div key={idx} className="flex flex-col items-center">
-              <div className="w-24 h-24 mb-3 text-[var(--color-text)]/40">
+              <div className="w-24 h-24 mb-3 text-[#1A1A1A]/40">
                 <Icon color={piece.color} />
               </div>
               <div

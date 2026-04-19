@@ -318,7 +318,7 @@ export default function OutfitCard({
 
   return (
     <motion.div
-      className="group relative rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)] hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[var(--ff-color-primary-500)] overflow-hidden"
+      className="group relative rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[#C2654A] overflow-hidden"
       data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
@@ -336,7 +336,7 @@ export default function OutfitCard({
       {/* Subtle hover overlay */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'var(--ff-color-primary-50)' }}
+        style={{ background: '#FAF5F2' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 0.4 : 0 }}
         transition={{ duration: 0.3 }}
@@ -346,7 +346,7 @@ export default function OutfitCard({
       {outfit.matchPercentage && outfit.matchPercentage > 80 && (
         <motion.div
           className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 rounded-full shadow-md text-sm font-bold text-white"
-          style={{ background: 'var(--ff-color-primary-700)' }}
+          style={{ background: '#A8513A' }}
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 15, delay: 0.2 }}
@@ -366,7 +366,7 @@ export default function OutfitCard({
       <div className="relative rounded-xl overflow-hidden mb-4">
         <motion.div
           className="relative overflow-hidden rounded-xl aspect-[4/5] shadow-inner"
-          style={{ background: 'var(--ff-color-primary-50)' }}
+          style={{ background: '#FAF5F2' }}
           whileHover={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
@@ -391,13 +391,13 @@ export default function OutfitCard({
         <div>
           <h3
             id={titleId}
-            className="text-base font-semibold text-[var(--color-text)] leading-tight"
+            className="text-base font-semibold text-[#1A1A1A] leading-tight"
           >
             {outfit.title}
           </h3>
           <p
             id={descId}
-            className="mt-1 text-sm text-[var(--color-muted)] leading-relaxed"
+            className="mt-1 text-sm text-[#8A8A8A] leading-relaxed"
           >
             {outfit.description}
           </p>
@@ -406,7 +406,7 @@ export default function OutfitCard({
         {/* Match Score + tags */}
         <div className="flex flex-wrap items-center gap-2">
           <span
-            className="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text)] bg-[var(--color-surface)]"
+            className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs font-medium text-[#1A1A1A] bg-[#FFFFFF]"
             role="status"
             aria-label={`Match: ${Math.round(outfit.matchPercentage || 75)} procent`}
           >
@@ -414,14 +414,14 @@ export default function OutfitCard({
           </span>
           {outfit.currentSeasonLabel && (
             <span
-              className="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs text-[var(--color-muted)] bg-[var(--color-surface)]"
+              className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs text-[#8A8A8A] bg-[#FFFFFF]"
             >
               {outfit.currentSeasonLabel}
             </span>
           )}
           {outfit.dominantColorName && (
             <span
-              className="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 text-xs text-[var(--color-muted)] bg-[var(--color-surface)]"
+              className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs text-[#8A8A8A] bg-[#FFFFFF]"
             >
               {outfit.dominantColorName}
             </span>
@@ -429,7 +429,7 @@ export default function OutfitCard({
           <RequireAuth cta="Inloggen voor uitleg">
             <button
               onClick={() => setShowExplanationModal(true)}
-              className="flex items-center gap-1 text-xs text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] transition-colors ml-auto"
+              className="flex items-center gap-1 text-xs text-[#A8513A] hover:text-[#C2654A] transition-colors ml-auto"
               aria-label="Waarom deze match?"
             >
               <HelpCircle size={13} />
@@ -440,15 +440,15 @@ export default function OutfitCard({
 
         {/* Explanation */}
         {showExplanation && explanation && (
-          <div className="mt-2 p-3 rounded-xl border border-[var(--ff-color-primary-200)]" style={{ background: 'var(--ff-color-primary-50)' }}>
+          <div className="mt-2 p-3 rounded-xl border border-[#F4E8E3]" style={{ background: '#FAF5F2' }}>
             <div className="flex items-start gap-2 mb-1.5">
-              <MessageCircle className="w-3.5 h-3.5 text-[var(--ff-color-primary-700)] flex-shrink-0 mt-0.5" />
-              <span className="text-xs font-semibold text-[var(--ff-color-primary-700)]">Nova's uitleg:</span>
+              <MessageCircle className="w-3.5 h-3.5 text-[#A8513A] flex-shrink-0 mt-0.5" />
+              <span className="text-xs font-semibold text-[#A8513A]">Nova's uitleg:</span>
             </div>
-            <p className="text-xs text-[var(--color-text)] leading-relaxed">{explanation}</p>
+            <p className="text-xs text-[#1A1A1A] leading-relaxed">{explanation}</p>
             <button
               onClick={() => setShowExplanation(false)}
-              className="mt-2 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+              className="mt-2 text-xs text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
             >
               Verberg uitleg
             </button>
@@ -462,25 +462,25 @@ export default function OutfitCard({
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowExplanationModal(false)}
             />
-            <div className="relative rounded-2xl shadow-2xl max-w-md w-full p-6" style={{ background: 'var(--color-surface)' }}>
+            <div className="relative rounded-2xl shadow-2xl max-w-md w-full p-6" style={{ background: '#FFFFFF' }}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-semibold text-[var(--color-text)]">Waarom deze match?</h3>
+                <h3 className="text-base font-semibold text-[#1A1A1A]">Waarom deze match?</h3>
                 <button
                   onClick={() => setShowExplanationModal(false)}
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:opacity-70"
-                  style={{ background: 'var(--ff-color-primary-100)' }}
+                  style={{ background: '#FAF5F2' }}
                 >
-                  <X size={15} className="text-[var(--ff-color-primary-700)]" />
+                  <X size={15} className="text-[#A8513A]" />
                 </button>
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-xl p-4" style={{ background: 'var(--ff-color-primary-50)', border: '1px solid var(--ff-color-primary-200)' }}>
+                <div className="rounded-xl p-4" style={{ background: '#FAF5F2', border: '1px solid #F4E8E3' }}>
                   <div className="flex items-center gap-2 mb-2">
-                    <MessageCircle className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-                    <span className="text-sm font-semibold text-[var(--ff-color-primary-700)]">Nova's analyse:</span>
+                    <MessageCircle className="w-4 h-4 text-[#A8513A]" />
+                    <span className="text-sm font-semibold text-[#A8513A]">Nova's analyse:</span>
                   </div>
-                  <p className="text-sm text-[var(--color-text)] leading-relaxed">
+                  <p className="text-sm text-[#1A1A1A] leading-relaxed">
                     {generateNovaExplanation(
                       {
                         id: outfit.id,
@@ -514,7 +514,7 @@ export default function OutfitCard({
                   <button
                     onClick={() => setShowExplanationModal(false)}
                     className="px-6 py-2.5 rounded-xl font-semibold text-sm text-white transition-colors hover:opacity-90"
-                    style={{ background: 'var(--ff-color-primary-700)' }}
+                    style={{ background: '#A8513A' }}
                   >
                     Begrepen
                   </button>
@@ -540,11 +540,11 @@ export default function OutfitCard({
               className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 overflow-hidden ${
                 saveOutfit.isSuccess || saved
                   ? 'text-white'
-                  : 'text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)]'
+                  : 'text-[#A8513A] hover:bg-[#FAF5F2]'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
-                borderColor: 'var(--ff-color-primary-600)',
-                background: saveOutfit.isSuccess || saved ? 'var(--ff-color-primary-700)' : undefined,
+                borderColor: '#C2654A',
+                background: saveOutfit.isSuccess || saved ? '#A8513A' : undefined,
               }}
               whileHover={!saveOutfit.isPending ? { scale: 1.02, y: -1 } : {}}
               whileTap={!saveOutfit.isPending ? { scale: 0.97 } : {}}
@@ -567,7 +567,7 @@ export default function OutfitCard({
               title="Voeg vergelijkbare outfits toe aan je feed"
               onClick={handleMoreLikeThis}
               disabled={isProcessing.like}
-              className={`px-4 py-2.5 border-2 border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-400)] hover:bg-[var(--ff-color-primary-50)] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.like ? { scale: 1.02, y: -1 } : {}}
@@ -588,7 +588,7 @@ export default function OutfitCard({
               title="Verberg dit type outfit uit je feed"
               onClick={handleDislike}
               disabled={isProcessing.dislike}
-              className={`px-4 py-2.5 border-2 border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-danger-500)] hover:text-[var(--ff-color-danger-600)] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#8A8A8A] hover:border-[#C24A4A] hover:text-[#C24A4A] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.dislike ? { scale: 1.02, y: -1 } : {}}
@@ -609,7 +609,7 @@ export default function OutfitCard({
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`px-4 py-2.5 border-2 border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--ff-color-primary-400)] hover:text-[var(--ff-color-primary-700)] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#8A8A8A] hover:border-[#D4856E] hover:text-[#A8513A] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.explain ? { scale: 1.02, y: -1 } : {}}
@@ -629,7 +629,7 @@ export default function OutfitCard({
               title="Bekijk en shop alle items uit dit outfit"
               onClick={handleShopClick}
               className="col-span-2 px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 text-white"
-              style={{ borderColor: 'var(--ff-color-primary-700)', background: 'var(--ff-color-primary-700)' }}
+              style={{ borderColor: '#A8513A', background: '#A8513A' }}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.97 }}
             >

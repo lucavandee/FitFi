@@ -111,7 +111,7 @@ export function ProcessingOverlay({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="bg-[var(--color-surface)] rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
+          className="bg-[#FFFFFF] rounded-2xl p-8 max-w-md w-full text-center shadow-2xl"
         >
           {/* Animated Icon */}
           <div className="relative w-20 h-20 mx-auto mb-6">
@@ -119,9 +119,9 @@ export function ProcessingOverlay({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] via-[var(--ff-color-accent-600)] to-[var(--ff-color-primary-600)] opacity-20"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#C2654A] via-[#C2654A] to-[#C2654A] opacity-20"
               style={{
-                background: 'conic-gradient(from 0deg, var(--ff-color-primary-600), var(--ff-color-accent-600), var(--ff-color-primary-600))'
+                background: 'conic-gradient(from 0deg, #C2654A, #C2654A, #C2654A)'
               }}
             />
 
@@ -132,33 +132,33 @@ export function ProcessingOverlay({
                 rotate: [0, 5, -5, 0]
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-2 rounded-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center text-white"
+              className="absolute inset-2 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center text-white"
             >
               {showSteps && currentStep ? currentStep.icon : <Sparkles className="w-8 h-8" />}
             </motion.div>
           </div>
 
           {/* Main Message */}
-          <h3 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-2">
+          <h3 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-2">
             {message || (showSteps && currentStep ? currentStep.label : 'Je Style DNA wordt gegenereerd...')}
           </h3>
 
-          <p className="text-sm text-[var(--color-muted)] mb-6">
+          <p className="text-sm text-[#8A8A8A] mb-6">
             Dit duurt nog een paar seconden
           </p>
 
           {/* Progress Bar */}
           {showSteps && (
             <div className="mb-6">
-              <div className="h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div className="h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]"
+                  className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
                 />
               </div>
-              <div className="mt-2 text-xs font-medium text-[var(--ff-color-primary-600)]">
+              <div className="mt-2 text-xs font-medium text-[#C2654A]">
                 {Math.round(progress)}% voltooid
               </div>
             </div>
@@ -186,8 +186,8 @@ export function ProcessingOverlay({
                         isCompleted
                           ? 'bg-green-100 text-green-600'
                           : isCurrent
-                          ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-600)]'
-                          : 'bg-[var(--color-bg)] text-[var(--color-muted)]'
+                          ? 'bg-[#FAF5F2] text-[#C2654A]'
+                          : 'bg-[#FAFAF8] text-[#8A8A8A]'
                       }`}
                     >
                       {isCompleted ? (
@@ -199,8 +199,8 @@ export function ProcessingOverlay({
                     <span
                       className={`text-sm font-medium ${
                         isCurrent || isCompleted
-                          ? 'text-[var(--color-text)]'
-                          : 'text-[var(--color-muted)]'
+                          ? 'text-[#1A1A1A]'
+                          : 'text-[#8A8A8A]'
                       }`}
                     >
                       {step.label}
@@ -212,8 +212,8 @@ export function ProcessingOverlay({
           )}
 
           {/* Reassurance Message */}
-          <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
-            <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+          <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
+            <p className="text-xs text-[#8A8A8A] leading-relaxed">
               We analyseren je voorkeuren om een persoonlijk stijlprofiel samen te stellen.
               Je resultaten worden veilig opgeslagen.
             </p>

@@ -60,7 +60,7 @@ export const MatchFeedbackWidget: React.FC<MatchFeedbackWidgetProps> = ({
 
   if (hasSubmitted && compact) {
     return (
-      <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+      <div className="flex items-center gap-2 text-xs text-[#8A8A8A]">
         <CheckCircle className="w-4 h-4 text-green-500" />
         <span>Feedback gegeven</span>
       </div>
@@ -69,7 +69,7 @@ export const MatchFeedbackWidget: React.FC<MatchFeedbackWidgetProps> = ({
 
   if (hasSubmitted) {
     return (
-      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-[var(--radius-md)] p-4">
+      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4">
         <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
           <CheckCircle className="w-5 h-5" />
           <span className="font-semibold">Bedankt voor je feedback!</span>
@@ -82,12 +82,12 @@ export const MatchFeedbackWidget: React.FC<MatchFeedbackWidgetProps> = ({
   }
 
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-4">
+    <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4">
       <div className="mb-3">
-        <p className="text-sm font-semibold text-[var(--color-text)] mb-1">
+        <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
           Hoe accuraat was deze match score?
         </p>
-        <p className="text-xs text-[var(--color-text-muted)]">
+        <p className="text-xs text-[#8A8A8A]">
           We toonden: {shownScore}%
         </p>
       </div>
@@ -118,7 +118,7 @@ export const MatchFeedbackWidget: React.FC<MatchFeedbackWidgetProps> = ({
       {!showTextInput && !compact && (
         <button
           onClick={() => setShowTextInput(true)}
-          className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors mb-3"
+          className="flex items-center gap-2 text-xs text-[#8A8A8A] hover:text-[#C2654A] transition-colors mb-3"
         >
           <MessageSquare className="w-4 h-4" />
           <span>Voeg opmerking toe (optioneel)</span>
@@ -130,7 +130,7 @@ export const MatchFeedbackWidget: React.FC<MatchFeedbackWidgetProps> = ({
           value={feedbackText}
           onChange={(e) => setFeedbackText(e.target.value)}
           placeholder="Waarom vond je deze match score accuraat of niet?"
-          className="w-full px-3 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] text-sm resize-none mb-3 bg-[var(--color-bg)] text-[var(--color-text)]"
+          className="w-full px-3 py-2 border border-[#E5E5E5] rounded-2xl text-sm resize-none mb-3 bg-[#FAFAF8] text-[#1A1A1A]"
           rows={3}
         />
       )}

@@ -82,20 +82,20 @@ export function OutfitFilters({
   return (
     <div className="space-y-3">
       {/* Filter Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl">
         {/* Left: Filter Toggle & Count */}
         <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             aria-expanded={isExpanded}
             aria-controls="outfit-filter-panel"
-            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-xl font-semibold text-sm hover:bg-[var(--ff-color-primary-200)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1"
+            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[#FAF5F2] text-[#A8513A] rounded-xl font-semibold text-sm hover:bg-[#F4E8E3] transition-colors focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-1"
           >
             <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             Filters
             {hasActiveFilters && (
               <span
-                className="ml-0.5 w-5 h-5 rounded-full bg-[var(--ff-color-primary-600)] text-white text-xs flex items-center justify-center"
+                className="ml-0.5 w-5 h-5 rounded-full bg-[#C2654A] text-white text-xs flex items-center justify-center"
                 aria-label={`${activeCount} actieve filters`}
               >
                 {activeCount}
@@ -103,8 +103,8 @@ export function OutfitFilters({
             )}
           </button>
 
-          <p className="text-sm text-[var(--color-muted)]">
-            <span className="font-semibold text-[var(--color-text)]">
+          <p className="text-sm text-[#8A8A8A]">
+            <span className="font-semibold text-[#1A1A1A]">
               {filteredCount}
             </span>{" "}
             van {totalCount} outfits
@@ -113,7 +113,7 @@ export function OutfitFilters({
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] font-medium flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1 rounded"
+              className="text-sm text-[#C2654A] hover:text-[#A8513A] font-medium flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-1 rounded"
               aria-label="Wis alle actieve filters"
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -134,7 +134,7 @@ export function OutfitFilters({
                 sortBy: e.target.value as FilterOptions["sortBy"],
               })
             }
-            className="px-3 py-2 min-h-[40px] bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-sm font-medium text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)]"
+            className="px-3 py-2 min-h-[40px] bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm font-medium text-[#1A1A1A] hover:border-[#D4856E] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.id} value={option.id}>
@@ -145,16 +145,16 @@ export function OutfitFilters({
 
           {/* View Mode Toggle */}
           <div
-            className="flex items-center gap-1 p-1 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg"
+            className="flex items-center gap-1 p-1 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg"
             role="group"
             aria-label="Weergavemodus"
           >
             <button
               onClick={() => onChange({ ...filters, viewMode: "grid-2" })}
-              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] ${
+              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#C2654A] ${
                 filters.viewMode === "grid-2"
-                  ? "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"
-                  : "text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                  ? "bg-[#FAF5F2] text-[#A8513A]"
+                  : "text-[#8A8A8A] hover:text-[#1A1A1A]"
               }`}
               aria-label="2 kolommen"
               aria-pressed={filters.viewMode === "grid-2"}
@@ -163,10 +163,10 @@ export function OutfitFilters({
             </button>
             <button
               onClick={() => onChange({ ...filters, viewMode: "grid-3" })}
-              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] ${
+              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#C2654A] ${
                 filters.viewMode === "grid-3"
-                  ? "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"
-                  : "text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                  ? "bg-[#FAF5F2] text-[#A8513A]"
+                  : "text-[#8A8A8A] hover:text-[#1A1A1A]"
               }`}
               aria-label="3 kolommen"
               aria-pressed={filters.viewMode === "grid-3"}
@@ -177,10 +177,10 @@ export function OutfitFilters({
             </button>
             <button
               onClick={() => onChange({ ...filters, viewMode: "list" })}
-              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] ${
+              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#C2654A] ${
                 filters.viewMode === "list"
-                  ? "bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]"
-                  : "text-[var(--color-muted)] hover:text-[var(--color-text)]"
+                  ? "bg-[#FAF5F2] text-[#A8513A]"
+                  : "text-[#8A8A8A] hover:text-[#1A1A1A]"
               }`}
               aria-label="Lijstweergave"
               aria-pressed={filters.viewMode === "list"}
@@ -202,10 +202,10 @@ export function OutfitFilters({
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="p-4 sm:p-6 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl space-y-5">
+            <div className="p-4 sm:p-6 bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl space-y-5">
               {/* Categories */}
               <fieldset>
-                <legend className="text-sm font-semibold text-[var(--color-text)] mb-3">
+                <legend className="text-sm font-semibold text-[#1A1A1A] mb-3">
                   Categorie
                 </legend>
                 <div className="flex flex-wrap gap-2">
@@ -214,10 +214,10 @@ export function OutfitFilters({
                       key={category.id}
                       onClick={() => toggleCategory(category.id)}
                       aria-pressed={filters.categories.includes(category.id)}
-                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1 ${
+                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-1 ${
                         filters.categories.includes(category.id)
-                          ? "bg-[var(--ff-color-primary-700)] text-white"
-                          : "bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]"
+                          ? "bg-[#A8513A] text-white"
+                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]"
                       }`}
                     >
                       {category.label}
@@ -228,7 +228,7 @@ export function OutfitFilters({
 
               {/* Seasons */}
               <fieldset>
-                <legend className="text-sm font-semibold text-[var(--color-text)] mb-3">
+                <legend className="text-sm font-semibold text-[#1A1A1A] mb-3">
                   Seizoen
                 </legend>
                 <div className="flex flex-wrap gap-2">
@@ -237,10 +237,10 @@ export function OutfitFilters({
                       key={season.id}
                       onClick={() => toggleSeason(season.id)}
                       aria-pressed={filters.seasons.includes(season.id)}
-                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-500)] focus-visible:ring-offset-1 ${
+                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-1 ${
                         filters.seasons.includes(season.id)
-                          ? "bg-[var(--ff-color-primary-700)] text-white"
-                          : "bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-400)]"
+                          ? "bg-[#A8513A] text-white"
+                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]"
                       }`}
                     >
                       {season.label}

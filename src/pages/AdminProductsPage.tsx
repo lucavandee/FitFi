@@ -153,17 +153,17 @@ export default function AdminProductsPage() {
   };
 
   return (
-    <main className="bg-[var(--color-bg)] text-[var(--color-text)] min-h-screen py-10 sm:py-14 md:py-20">
+    <main className="bg-[#FAFAF8] text-[#1A1A1A] min-h-screen py-10 sm:py-14 md:py-20">
       <Helmet>
         <title>Product Management - Admin</title>
       </Helmet>
 
-      <div className="ff-container max-w-6xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <header className="mb-8 flex items-center justify-between">
           <h1 className="text-4xl font-bold">Stripe Producten</h1>
           <button
             onClick={handleCreate}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#C2654A] text-white rounded-2xl font-semibold hover:bg-[#A8513A] transition-colors"
           >
             <Plus className="w-4 h-4" />
             Nieuw Product
@@ -171,7 +171,7 @@ export default function AdminProductsPage() {
         </header>
 
         {(showCreateForm || editingId) && (
-          <section className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-xl)] p-6 mb-8 shadow-[var(--shadow-soft)]">
+          <section className="bg-white border border-[#E5E5E5] rounded-2xl p-6 mb-8 shadow-sm">
             <h2 className="text-2xl font-bold mb-6">
               {editingId ? 'Product bewerken' : 'Nieuw product'}
             </h2>
@@ -183,7 +183,7 @@ export default function AdminProductsPage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 />
               </div>
 
@@ -194,7 +194,7 @@ export default function AdminProductsPage() {
                   step="0.01"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 />
               </div>
 
@@ -205,7 +205,7 @@ export default function AdminProductsPage() {
                   value={formData.stripe_product_id}
                   onChange={(e) => setFormData({ ...formData, stripe_product_id: e.target.value })}
                   placeholder="prod_xxxxx"
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] font-mono text-sm"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A] font-mono text-sm"
                 />
               </div>
 
@@ -216,7 +216,7 @@ export default function AdminProductsPage() {
                   value={formData.stripe_price_id}
                   onChange={(e) => setFormData({ ...formData, stripe_price_id: e.target.value })}
                   placeholder="price_xxxxx"
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] font-mono text-sm"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A] font-mono text-sm"
                 />
               </div>
 
@@ -225,7 +225,7 @@ export default function AdminProductsPage() {
                 <select
                   value={formData.interval}
                   onChange={(e) => setFormData({ ...formData, interval: e.target.value })}
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 >
                   <option value="month">Maandelijks</option>
                   <option value="year">Jaarlijks</option>
@@ -260,7 +260,7 @@ export default function AdminProductsPage() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={2}
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)]"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
                 />
               </div>
 
@@ -273,7 +273,7 @@ export default function AdminProductsPage() {
                   onChange={(e) => setFormData({ ...formData, features: e.target.value })}
                   rows={6}
                   placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
-                  className="w-full px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-lg)] focus:outline-none focus:ring-2 focus:ring-[var(--ff-color-primary-600)] font-mono text-sm"
+                  className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#C2654A] font-mono text-sm"
                 />
               </div>
             </div>
@@ -281,14 +281,14 @@ export default function AdminProductsPage() {
             <div className="flex gap-4 mt-6">
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-6 py-2 bg-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] font-semibold hover:bg-[var(--ff-color-primary-700)] transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-[#C2654A] text-white rounded-2xl font-semibold hover:bg-[#A8513A] transition-colors"
               >
                 <Save className="w-4 h-4" />
                 Opslaan
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-2 px-6 py-2 bg-gray-200 text-gray-700 rounded-[var(--radius-lg)] font-semibold hover:bg-gray-300 transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-gray-200 text-gray-700 rounded-2xl font-semibold hover:bg-gray-300 transition-colors"
               >
                 <X className="w-4 h-4" />
                 Annuleren
@@ -306,14 +306,14 @@ export default function AdminProductsPage() {
             products.map((product) => (
               <article
                 key={product.id}
-                className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-xl)] p-6 shadow-[var(--shadow-soft)]"
+                className="bg-white border border-[#E5E5E5] rounded-2xl p-6 shadow-sm"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-bold">{product.name}</h3>
                       {product.is_featured && (
-                        <span className="px-2 py-1 text-xs font-bold bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] rounded-full">
+                        <span className="px-2 py-1 text-xs font-bold bg-[#FAF5F2] text-[#A8513A] rounded-full">
                           Featured
                         </span>
                       )}
@@ -335,7 +335,7 @@ export default function AdminProductsPage() {
                       <ul className="space-y-1">
                         {product.features.map((feature: string, idx: number) => (
                           <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
-                            <span className="text-[var(--ff-color-primary-600)]">•</span>
+                            <span className="text-[#C2654A]">•</span>
                             {feature}
                           </li>
                         ))}
@@ -346,7 +346,7 @@ export default function AdminProductsPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(product)}
-                      className="p-2 text-gray-600 hover:text-[var(--ff-color-primary-600)] transition-colors"
+                      className="p-2 text-gray-600 hover:text-[#C2654A] transition-colors"
                       title="Bewerken"
                     >
                       <Edit2 className="w-5 h-5" />

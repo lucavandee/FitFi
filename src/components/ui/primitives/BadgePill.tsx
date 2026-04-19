@@ -12,31 +12,31 @@ interface BadgePillProps {
 
 const variantClasses: Record<Variant, string> = {
   neutral:
-    "bg-[color-mix(in_oklab,var(--color-surface)_92%,white)] " +
-    "border-[var(--color-border)] text-[var(--color-text)]",
+    "bg-[color-mix(in_oklab,#FFFFFF_92%,white)] " +
+    "border-[#E5E5E5] text-[#1A1A1A]",
   soft:
-    "bg-[color-mix(in_oklab,var(--color-accent)_12%,white)] " +
-    "border-[var(--color-border)] text-[var(--color-text)]",
+    "bg-[color-mix(in_oklab,#C2654A_12%,white)] " +
+    "border-[#E5E5E5] text-[#1A1A1A]",
   season:
-    "bg-[color-mix(in_oklab,var(--color-accent)_15%,white)] " +
-    "border-[color-mix(in_oklab,var(--color-accent)_25%,var(--color-border))] " +
-    "text-[var(--color-text)]",
+    "bg-[color-mix(in_oklab,#C2654A_15%,white)] " +
+    "border-[color-mix(in_oklab,#C2654A_25%,#E5E5E5)] " +
+    "text-[#1A1A1A]",
   arch:
-    "bg-[color-mix(in_oklab,var(--color-text)_8%,white)] " +
-    "border-[color-mix(in_oklab,var(--color-text)_15%,var(--color-border))] " +
-    "text-[var(--color-text)]",
+    "bg-[color-mix(in_oklab,#1A1A1A_8%,white)] " +
+    "border-[color-mix(in_oklab,#1A1A1A_15%,#E5E5E5)] " +
+    "text-[#1A1A1A]",
   success:
     "bg-[#F4E8E3] " +
     "border-[#E5E5E5] " +
     "text-[#C2654A]",
   warning:
-    "bg-[var(--ff-color-warning-50)] " +
-    "border-[var(--ff-color-warning-200)] " +
-    "text-[var(--ff-color-warning-700)]",
+    "bg-[#FFFBEB] " +
+    "border-[#FDE68A] " +
+    "text-[#B06020]",
   danger:
-    "bg-[var(--ff-color-danger-50)] " +
-    "border-[var(--ff-color-danger-200)] " +
-    "text-[var(--ff-color-danger-700)]",
+    "bg-[#FEF2F2] " +
+    "border-[#FECACA] " +
+    "text-[#9A2020]",
 };
 
 export function BadgePill({

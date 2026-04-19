@@ -24,13 +24,13 @@ export function IconButton({
   const base =
     "inline-flex items-center justify-center rounded-full shrink-0 " +
     "border border-[rgba(30,35,51,0.16)] bg-[rgba(255,255,255,0.72)] " +
-    "text-[var(--color-text)] " +
+    "text-[#1A1A1A] " +
     "transition-all duration-200 " +
-    "hover:bg-[var(--ff-color-primary-50)] " +
-    "hover:text-[var(--ff-color-primary-700)] " +
-    "hover:border-[var(--ff-color-primary-400)] " +
+    "hover:bg-[#FAF5F2] " +
+    "hover:text-[#A8513A] " +
+    "hover:border-[#D4856E] " +
     "focus-visible:outline-none focus-visible:ring-2 " +
-    "focus-visible:ring-[var(--ff-color-primary-600)] focus-visible:ring-offset-2 " +
+    "focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 " +
     "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
 
   return (

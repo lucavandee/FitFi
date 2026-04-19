@@ -39,20 +39,20 @@ const SectionHeader: React.FC<Props> = ({
   return (
     <header
       className={[
-        "ff-section-header rounded-[var(--radius-lg)] px-6",
+        "py-16 md:py-24-header rounded-2xl px-6",
         padY,
         align === "center" ? "text-center" : "text-left",
-        "bg-[var(--color-surface)]",
+        "bg-white",
       ].join(" ") + (className ? " " + className : "")}
       style={{
         // Subtiele warme achtergrond (geen hex; tokens-first)
         background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, var(--color-surface) 92%, var(--ff-color-primary-700) 8%), var(--color-surface))",
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, white 92%, #A8513A 8%), white)",
       }}
     >
       {eyebrow && (
         <div
-          className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/70 backdrop-blur px-3 py-1 text-xs font-medium tracking-widest uppercase text-gray-600"
+          className="inline-flex items-center rounded-full border border-[#E5E5E5] bg-white/70 backdrop-blur px-3 py-1 text-xs font-medium tracking-widest uppercase text-gray-600"
           aria-label={eyebrow}
         >
           {eyebrow}
@@ -61,7 +61,7 @@ const SectionHeader: React.FC<Props> = ({
 
       <HeadingTag
         className={[
-          "mt-4 font-montserrat leading-tight text-[var(--color-text)]",
+          "mt-4 font-montserrat leading-tight text-[#1A1A1A]",
           titleSize,
         ].join(" ")}
       >
@@ -72,7 +72,7 @@ const SectionHeader: React.FC<Props> = ({
         className={
           "mt-3 h-px w-24 " +
           (align === "center" ? "mx-auto" : "mx-0") +
-          " bg-[var(--color-border)]"
+          " bg-[#E5E5E5]"
         }
       />
 

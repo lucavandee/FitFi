@@ -103,7 +103,7 @@ export function BottomSheet({
           {/* Sheet */}
           <motion.div
             ref={sheetRef}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface)] rounded-t-3xl shadow-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#FFFFFF] rounded-t-3xl shadow-2xl"
             style={{
               maxHeight,
               y
@@ -124,14 +124,14 @@ export function BottomSheet({
             {/* Handle */}
             {showHandle && (
               <div className="flex justify-center pt-3 pb-2">
-                <div className="w-10 h-1 bg-[var(--color-border)] rounded-full" />
+                <div className="w-10 h-1 bg-[#E5E5E5] rounded-full" />
               </div>
             )}
 
             {/* Header */}
             {title && (
-              <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
-                <h2 className="text-lg font-semibold text-[var(--color-text)]">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E5E5]">
+                <h2 className="text-lg font-semibold text-[#1A1A1A]">
                   {title}
                 </h2>
                 <button
@@ -139,10 +139,10 @@ export function BottomSheet({
                     haptics.tap();
                     onClose();
                   }}
-                  className="w-8 h-8 rounded-full bg-[var(--ff-color-neutral-100)] flex items-center justify-center hover:bg-[var(--ff-color-neutral-200)] transition-colors"
+                  className="w-8 h-8 rounded-full bg-[#F5F0EB] flex items-center justify-center hover:bg-[#E5E5E5] transition-colors"
                   aria-label="Sluit"
                 >
-                  <X className="w-5 h-5 text-[var(--color-muted)]" />
+                  <X className="w-5 h-5 text-[#8A8A8A]" />
                 </button>
               </div>
             )}
@@ -218,7 +218,7 @@ export function SnapBottomSheet({
 
           {/* Sheet */}
           <motion.div
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface)] rounded-t-3xl shadow-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#FFFFFF] rounded-t-3xl shadow-2xl"
             style={{
               height: snapPoints[currentSnapIndex],
               y
@@ -238,13 +238,13 @@ export function SnapBottomSheet({
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-[var(--color-border)] rounded-full" />
+              <div className="w-10 h-1 bg-[#E5E5E5] rounded-full" />
             </div>
 
             {/* Header */}
             {title && (
-              <div className="px-4 py-3 border-b border-[var(--color-border)]">
-                <h2 className="text-lg font-semibold text-[var(--color-text)]">
+              <div className="px-4 py-3 border-b border-[#E5E5E5]">
+                <h2 className="text-lg font-semibold text-[#1A1A1A]">
                   {title}
                 </h2>
               </div>
@@ -307,7 +307,7 @@ export function ActionSheet({
               'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors',
               action.variant === 'destructive'
                 ? 'text-red-600 hover:bg-red-50 active:bg-red-100'
-                : 'text-[var(--color-text)] hover:bg-[var(--ff-color-neutral-100)] active:bg-[var(--ff-color-neutral-200)]',
+                : 'text-[#1A1A1A] hover:bg-[#F5F0EB] active:bg-[#E5E5E5]',
               action.disabled && 'opacity-50 cursor-not-allowed'
             ].join(' ')}
           >
@@ -326,7 +326,7 @@ export function ActionSheet({
             haptics.tap();
             onClose();
           }}
-          className="w-full mt-2 px-4 py-3 rounded-xl text-center font-semibold text-[var(--color-text)] bg-[var(--ff-color-neutral-100)] hover:bg-[var(--ff-color-neutral-200)] transition-colors"
+          className="w-full mt-2 px-4 py-3 rounded-xl text-center font-semibold text-[#1A1A1A] bg-[#F5F0EB] hover:bg-[#E5E5E5] transition-colors"
         >
           {cancelLabel}
         </button>

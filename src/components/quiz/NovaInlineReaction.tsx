@@ -54,27 +54,27 @@ export function NovaInlineReaction({ field, value, allAnswers, onComplete }: Nov
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -20, scale: 0.9 }}
         transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-        className="mt-6 p-4 bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-accent)]/5 border border-[var(--color-primary)]/20 rounded-[var(--radius-2xl)]"
+        className="mt-6 p-4 bg-gradient-to-r from-[#C2654A]/5 to-[#C2654A]/5 border border-[#C2654A]/20 rounded-2xl"
       >
         <div className="flex items-start gap-3">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center"
+            className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center"
           >
             <Icon className="w-5 h-5 text-white" />
           </motion.div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-semibold text-[var(--color-text)]">Nova</span>
-              <Sparkles className="w-3 h-3 text-[var(--color-primary)]" />
+              <span className="text-sm font-semibold text-[#1A1A1A]">Nova</span>
+              <Sparkles className="w-3 h-3 text-[#C2654A]" />
             </div>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-sm text-[var(--color-text)]/80 leading-relaxed"
+              className="text-sm text-[#1A1A1A]/80 leading-relaxed"
             >
               {reaction.message}
             </motion.p>

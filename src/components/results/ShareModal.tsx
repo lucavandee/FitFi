@@ -32,23 +32,23 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-[var(--color-surface)] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"
+            className="bg-[#FFFFFF] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"
           >
-            <div className="relative p-8 pb-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)]">
+            <div className="relative p-8 pb-6 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2]">
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--color-surface)]/50 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#FFFFFF]/50 transition-colors"
                 aria-label="Sluit modal"
               >
-                <X className="w-5 h-5 text-[var(--color-muted)]" />
+                <X className="w-5 h-5 text-[#8A8A8A]" />
               </button>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] flex items-center justify-center mb-4 shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center mb-4 shadow-lg">
                 <Share2 className="w-8 h-8 text-white" />
               </div>
-              <h3 id="share-modal-title" className="text-3xl font-bold text-[var(--color-text)] mb-2">
+              <h3 id="share-modal-title" className="text-3xl font-bold text-[#1A1A1A] mb-2">
                 Deel je Style Report
               </h3>
-              <p className="text-base text-[var(--color-muted)]">
+              <p className="text-base text-[#8A8A8A]">
                 Laat anderen zien wat jouw unieke stijl is
               </p>
             </div>
@@ -59,14 +59,14 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                   navigator.clipboard.writeText(getUrl());
                   toast.success("Link gekopieerd!", { icon: "📋", duration: 2000 });
                 }}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#D4856E] hover:bg-[#FFFFFF] transition-all text-left group"
               >
-                <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
-                  <Download className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+                <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
+                  <Download className="w-6 h-6 text-[#A8513A]" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-[var(--color-text)]">Kopieer link</p>
-                  <p className="text-sm text-[var(--color-muted)]">Deel via WhatsApp, email of social media</p>
+                  <p className="font-semibold text-[#1A1A1A]">Kopieer link</p>
+                  <p className="text-sm text-[#8A8A8A]">Deel via WhatsApp, email of social media</p>
                 </div>
               </button>
 
@@ -77,14 +77,14 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
                   window.open(twitterUrl, "_blank", "noopener,noreferrer");
                 }}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:bg-[var(--color-surface)] transition-all text-left group"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#D4856E] hover:bg-[#FFFFFF] transition-all text-left group"
               >
-                <div className="w-12 h-12 rounded-xl bg-[var(--ff-color-primary-100)] flex items-center justify-center group-hover:bg-[var(--ff-color-primary-200)] transition-colors">
-                  <Share2 className="w-6 h-6 text-[var(--ff-color-primary-700)]" />
+                <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
+                  <Share2 className="w-6 h-6 text-[#A8513A]" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-[var(--color-text)]">Deel op Twitter</p>
-                  <p className="text-sm text-[var(--color-muted)]">Tweet je stijlrapport</p>
+                  <p className="font-semibold text-[#1A1A1A]">Deel op Twitter</p>
+                  <p className="text-sm text-[#8A8A8A]">Tweet je stijlrapport</p>
                 </div>
               </button>
             </div>
@@ -92,7 +92,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
             <div className="px-6 pb-6">
               <button
                 onClick={onClose}
-                className="w-full px-6 py-4 bg-[var(--ff-color-primary-600)] text-white rounded-2xl font-bold text-base hover:bg-[var(--ff-color-primary-700)] transition-all shadow-lg active:scale-[0.98]"
+                className="w-full px-6 py-4 bg-[#C2654A] text-white rounded-2xl font-bold text-base hover:bg-[#A8513A] transition-all shadow-lg active:scale-[0.98]"
               >
                 Sluiten
               </button>

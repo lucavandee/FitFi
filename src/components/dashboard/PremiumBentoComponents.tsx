@@ -62,7 +62,7 @@ export function PremiumStatCard({
     gold: 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white',
     purple: 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white',
     pink: 'bg-gradient-to-br from-pink-500 to-rose-600 text-white',
-    neutral: 'bg-gradient-to-br from-[var(--ff-color-neutral-300)] to-[var(--ff-color-neutral-400)] dark:from-gray-700 dark:to-slate-700 text-gray-900 dark:text-white',
+    neutral: 'bg-gradient-to-br from-[#D4D4D4] to-[#A0A0A0] dark:from-gray-700 dark:to-slate-700 text-gray-900 dark:text-white',
   };
 
   const content = (
@@ -146,7 +146,7 @@ export function PremiumHeaderCard({
     : null;
 
   const headerContent = (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--ff-color-primary-600)] via-[var(--ff-color-primary-700)] to-[var(--ff-color-accent-600)] shadow-2xl">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#C2654A] via-[#A8513A] to-[#C2654A] shadow-2xl">
       {/* Subtle pattern overlay - NO backdrop-blur */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div
@@ -261,18 +261,18 @@ export function PremiumActionCard({
   const isMobile = useMobile();
 
   const content = (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-[var(--color-bg)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] transition-all group cursor-pointer">
+    <div className="flex items-center gap-4 p-4 rounded-xl bg-[#FAFAF8] border-2 border-[#E5E5E5] hover:border-[#D4856E] transition-all group cursor-pointer">
       <div
         className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white flex-shrink-0 shadow-lg ${!isMobile && 'group-hover:scale-110'} transition-transform`}
       >
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-[var(--color-text)] flex items-center gap-2">
+        <div className="font-semibold text-[#1A1A1A] flex items-center gap-2">
           {title}
-          <ChevronRight className={`w-4 h-4 text-[var(--color-muted)] ${!isMobile && 'group-hover:translate-x-1'} transition-transform`} />
+          <ChevronRight className={`w-4 h-4 text-[#8A8A8A] ${!isMobile && 'group-hover:translate-x-1'} transition-transform`} />
         </div>
-        <div className="text-sm text-[var(--color-muted)] truncate">
+        <div className="text-sm text-[#8A8A8A] truncate">
           {description}
         </div>
       </div>
@@ -306,12 +306,12 @@ export function PremiumCard({
   const isMobile = useMobile();
 
   const cardContent = (
-    <div className="bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-[var(--color-border)]">
-        <div className="text-[var(--ff-color-primary-600)]">
+    <div className="bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-[#E5E5E5]">
+        <div className="text-[#C2654A]">
           {icon}
         </div>
-        <h2 className="text-xl font-bold text-[var(--color-text)]">
+        <h2 className="text-xl font-bold text-[#1A1A1A]">
           {title}
         </h2>
       </div>
@@ -359,8 +359,8 @@ export function PremiumTabButton({
       onClick={onClick}
       className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
         isActive
-          ? 'bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white shadow-lg'
-          : 'bg-[var(--color-surface)] text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]'
+          ? 'bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white shadow-lg'
+          : 'bg-[#FFFFFF] text-[#1A1A1A] border-2 border-[#E5E5E5] hover:border-[#D4856E]'
       }`}
     >
       <Icon className="w-4 h-4" />

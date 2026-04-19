@@ -38,7 +38,7 @@ export function StyleDNATooltip({
         {/* Trigger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] transition-colors font-medium"
+          className="inline-flex items-center gap-1.5 text-sm text-[#C2654A] hover:text-[#A8513A] transition-colors font-medium"
           aria-label="Meer informatie"
         >
           <HelpCircle className="w-4 h-4" />
@@ -55,12 +55,12 @@ export function StyleDNATooltip({
               transition={{ duration: 0.3 }}
               className="overflow-hidden mt-4"
             >
-              <div className="bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl p-6 border-2 border-[var(--ff-color-primary-200)] shadow-lg">
+              <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-6 border-2 border-[#F4E8E3] shadow-lg">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[var(--ff-color-primary-600)]" />
-                    <h4 className="font-bold text-lg text-[var(--color-text)]">
+                    <Sparkles className="w-5 h-5 text-[#C2654A]" />
+                    <h4 className="font-bold text-lg text-[#1A1A1A]">
                       {explanation.label}
                     </h4>
                   </div>
@@ -75,7 +75,7 @@ export function StyleDNATooltip({
 
                 {/* Betekent (What it means) */}
                 <div className="mb-4">
-                  <p className="text-[var(--color-text)] leading-relaxed">
+                  <p className="text-[#1A1A1A] leading-relaxed">
                     {explanation.betekent}
                   </p>
                 </div>
@@ -142,11 +142,11 @@ export function StyleDNATooltip({
                 </div>
 
                 {/* Why (Educational) */}
-                <div className="p-4 bg-gradient-to-r from-[var(--ff-color-primary-100)] to-[var(--ff-color-accent-100)] rounded-lg">
-                  <h5 className="font-semibold text-sm text-[var(--ff-color-primary-800)] mb-1">
+                <div className="p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-lg">
+                  <h5 className="font-semibold text-sm text-[#8A3D28] mb-1">
                     Waarom is dit belangrijk?
                   </h5>
-                  <p className="text-sm text-[var(--ff-color-primary-700)] leading-relaxed">
+                  <p className="text-sm text-[#A8513A] leading-relaxed">
                     {explanation.why}
                   </p>
                 </div>
@@ -177,7 +177,7 @@ export function StyleDNAQuickTip({
 
   return (
     <div className="group relative inline-block">
-      <HelpCircle className="w-4 h-4 text-gray-400 hover:text-[var(--ff-color-primary-600)] transition-colors cursor-help" />
+      <HelpCircle className="w-4 h-4 text-gray-400 hover:text-[#C2654A] transition-colors cursor-help" />
 
       {/* Tooltip on hover */}
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">

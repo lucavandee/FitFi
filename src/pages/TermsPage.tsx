@@ -24,7 +24,7 @@ const TOC: TocItem[] = [
 
 export default function TermsPage() {
   return (
-    <main id="main" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+    <main id="main" className="bg-[#FAFAF8] text-[#1A1A1A]">
       <Helmet>
         <title>Gebruiksvoorwaarden — FitFi</title>
         <meta name="description" content="Heldere, premium en privacy-first gebruiksvoorwaarden van FitFi." />
@@ -46,10 +46,10 @@ export default function TermsPage() {
         ]}
       />
 
-      <section className="ff-container py-8 sm:py-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="grid gap-8 md:grid-cols-[260px,1fr]">
-          <aside className="h-max rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-soft)]">
-            <h2 className="font-heading text-sm tracking-wide text-[var(--color-text)]/70">Inhoud</h2>
+          <aside className="h-max rounded-2xl border border-[#E5E5E5] bg-white p-4 shadow-sm">
+            <h2 className="font-heading text-sm tracking-wide text-[#1A1A1A]/70">Inhoud</h2>
             <nav className="mt-3">
               <ol className="space-y-2 text-sm">
                 {TOC.map((t) => (
@@ -111,13 +111,13 @@ export default function TermsPage() {
               { id: "contact", title: "13. Contact", body:
                 <p>Vragen? Ga naar <NavLink to="/contact" className="underline hover:no-underline">/contact</NavLink> of bekijk de <NavLink to="/veelgestelde-vragen" className="underline hover:no-underline">FAQ</NavLink>.</p> },
             ].map((s) => (
-              <section key={s.id} id={s.id} className="mt-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
+              <section key={s.id} id={s.id} className="mt-6 rounded-2xl border border-[#E5E5E5] bg-white p-6 shadow-sm">
                 <h2>{s.title}</h2>
                 {s.body}
               </section>
             ))}
 
-            <p className="mt-8 text-sm text-[var(--color-text)]/60">
+            <p className="mt-8 text-sm text-[#1A1A1A]/60">
               Dit is een compact, helder document. Het vervangt geen individueel juridisch advies.
             </p>
           </article>

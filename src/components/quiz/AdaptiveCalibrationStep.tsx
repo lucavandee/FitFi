@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Heart, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { adaptiveOutfitGenerator, type AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
@@ -46,6 +45,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
 
       track('calibration:started', { session_id: newSessionId });
     } catch (error) {
+      console.error('[AdaptiveCalibration] Init error:', error);
       toast.error('Kon calibratie niet starten');
     }
   };
@@ -94,6 +94,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
         exploration_rate: newExplorationRate
       });
     } catch (error) {
+      console.error('[AdaptiveCalibration] Generation error:', error);
       toast.error('Fout bij genereren outfits');
     } finally {
       setLoading(false);
@@ -197,17 +198,18 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
         }
       }
     } catch (error) {
+      console.error('[AdaptiveCalibration] Swipe error:', error);
       toast.error('Kon swipe niet opslaan');
     }
   };
 
   if (loading && outfits.length === 0) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
-          <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-text)] font-medium">Genereer je perfecte outfits...</p>
-          <p className="text-sm text-[var(--color-text-secondary)] mt-2">
+          <div className="inline-block w-16 h-16 border-4 border-[#A8513A] border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-[#1A1A1A] font-medium">Genereer je perfecte outfits...</p>
+          <p className="text-sm text-[#8A8A8A] mt-2">
             Onze AI leert jouw stijl kennen
           </p>
         </div>
@@ -218,28 +220,28 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
   const currentOutfit = outfits[currentIndex];
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-8">
-      <div className="ff-container max-w-4xl">
+    <div className="min-h-screen bg-[#FAFAF8] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-2xl font-bold text-[var(--color-text)]">
+              <h2 className="text-2xl font-bold text-[#1A1A1A]">
                 Stijl Calibratie
               </h2>
-              <p className="text-[var(--color-text-secondary)] mt-1">
+              <p className="text-[#8A8A8A] mt-1">
                 Swipe om je voorkeuren te verfijnen
               </p>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)] rounded-[var(--radius-lg)] border border-[var(--color-border)]">
-              <Sparkles size={18} className="text-[var(--ff-color-primary-700)]" />
-              <span className="font-bold text-[var(--color-text)]">{swipeCount}</span>
-              <span className="text-sm text-[var(--color-text-secondary)]">/ 9 swipes</span>
+            <div className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5]">
+              <Sparkles size={18} className="text-[#A8513A]" />
+              <span className="font-bold text-[#1A1A1A]">{swipeCount}</span>
+              <span className="text-sm text-[#8A8A8A]">/ 9 swipes</span>
             </div>
           </div>
 
-          <div className="w-full bg-[var(--color-bg-subtle)] rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-[#F5F0EB] rounded-full h-2 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)]"
+              className="h-full bg-gradient-to-r from-[#A8513A] to-[#C2654A]"
               initial={{ width: 0 }}
               animate={{ width: `${(swipeCount / 9) * 100}%` }}
               transition={{ duration: 0.3 }}
@@ -250,13 +252,13 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 px-4 py-3 bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-200)] rounded-[var(--radius-lg)]"
+              className="mt-4 px-4 py-3 bg-[#FAF5F2] border border-[#F4E8E3] rounded-2xl"
             >
               <div className="flex items-start gap-3">
-                <TrendingUp size={20} className="text-[var(--ff-color-primary-700)] mt-0.5" />
+                <TrendingUp size={20} className="text-[#A8513A] mt-0.5" />
                 <div>
-                  <p className="font-semibold text-[var(--color-text)]">Leerproces actief</p>
-                  <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+                  <p className="font-semibold text-[#1A1A1A]">Leerproces actief</p>
+                  <p className="text-sm text-[#8A8A8A] mt-1">
                     We verfijnen outfits op basis van je swipes. Outfits worden persoonlijker!
                   </p>
                 </div>
@@ -273,7 +275,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-xl)] overflow-hidden shadow-[var(--shadow-soft)]"
+              className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl overflow-hidden shadow-sm"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -281,17 +283,17 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                     {currentOutfit.badges?.map((badge) => (
                       <span
                         key={badge}
-                        className="px-3 py-1 text-xs font-semibold bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] rounded-full"
+                        className="px-3 py-1 text-xs font-semibold bg-[#FAF5F2] text-[#A8513A] rounded-full"
                       >
                         {badge}
                       </span>
                     ))}
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-[var(--color-text)]">
+                    <p className="text-2xl font-bold text-[#1A1A1A]">
                       €{currentOutfit.price_breakdown.total}
                     </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">
+                    <p className="text-xs text-[#8A8A8A]">
                       {currentOutfit.price_breakdown.tier}
                     </p>
                   </div>
@@ -299,7 +301,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   {currentOutfit.products.map((product, idx) => (
-                    <div key={idx} className="relative aspect-square rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-bg-subtle)]">
+                    <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden bg-[#F5F0EB]">
                       <img
                         src={product.image_url}
                         alt={product.name}
@@ -315,12 +317,12 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                 </div>
 
                 <div className="mb-6">
-                  <p className="text-[var(--color-text)] mb-4">{currentOutfit.explanation}</p>
+                  <p className="text-[#1A1A1A] mb-4">{currentOutfit.explanation}</p>
 
                   {currentOutfit.nova_insight && (
-                    <div className="flex items-start gap-3 p-4 bg-[var(--ff-color-primary-50)] rounded-[var(--radius-lg)]">
-                      <Sparkles size={18} className="text-[var(--ff-color-primary-700)] mt-0.5" />
-                      <p className="text-sm text-[var(--color-text)]">
+                    <div className="flex items-start gap-3 p-4 bg-[#FAF5F2] rounded-2xl">
+                      <Sparkles size={18} className="text-[#A8513A] mt-0.5" />
+                      <p className="text-sm text-[#1A1A1A]">
                         {currentOutfit.nova_insight}
                       </p>
                     </div>
@@ -329,48 +331,48 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
 
                 <div className="grid grid-cols-5 gap-3 mb-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--color-text)]">
+                    <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.style_match * 100)}
                     </div>
-                    <div className="text-xs text-[var(--color-text-secondary)]">Stijl</div>
+                    <div className="text-xs text-[#8A8A8A]">Stijl</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--color-text)]">
+                    <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.color_harmony * 100)}
                     </div>
-                    <div className="text-xs text-[var(--color-text-secondary)]">Kleur</div>
+                    <div className="text-xs text-[#8A8A8A]">Kleur</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--color-text)]">
+                    <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.price_optimization * 100)}
                     </div>
-                    <div className="text-xs text-[var(--color-text-secondary)]">Prijs</div>
+                    <div className="text-xs text-[#8A8A8A]">Prijs</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--color-text)]">
+                    <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.occasion_fit * 100)}
                     </div>
-                    <div className="text-xs text-[var(--color-text-secondary)]">Occasion</div>
+                    <div className="text-xs text-[#8A8A8A]">Occasion</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--ff-color-primary-700)]">
+                    <div className="text-2xl font-bold text-[#A8513A]">
                       {Math.round(currentOutfit.score.overall * 100)}
                     </div>
-                    <div className="text-xs text-[var(--color-text-secondary)]">Overall</div>
+                    <div className="text-xs text-[#8A8A8A]">Overall</div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => handleSwipe('left')}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] hover:border-red-400 hover:bg-red-50 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-2xl hover:border-red-400 hover:bg-red-50 transition-colors"
                   >
                     <X size={24} className="text-red-500" />
-                    <span className="font-semibold text-[var(--color-text)]">Niet mijn stijl</span>
+                    <span className="font-semibold text-[#1A1A1A]">Niet mijn stijl</span>
                   </button>
                   <button
                     onClick={() => handleSwipe('right')}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#A8513A] to-[#C2654A] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
                   >
                     <Heart size={24} />
                     <span className="font-semibold">Love it!</span>

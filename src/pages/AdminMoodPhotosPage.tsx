@@ -149,10 +149,10 @@ export default function AdminMoodPhotosPage() {
 
   if (authLoading || !user) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="md" className="mx-auto mb-4" />
-          <p className="text-[var(--color-muted)]">Admin verificatie...</p>
+          <p className="text-[#8A8A8A]">Admin verificatie...</p>
         </div>
       </div>
     );
@@ -160,11 +160,11 @@ export default function AdminMoodPhotosPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">Geen Toegang</h1>
-          <p className="text-[var(--color-muted)]">
+          <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Geen Toegang</h1>
+          <p className="text-[#8A8A8A]">
             Je hebt admin rechten nodig. Ingelogd als: {user.email}
           </p>
         </div>
@@ -178,20 +178,20 @@ export default function AdminMoodPhotosPage() {
   const femaleCount = photos.filter(p => p.gender === 'female').length;
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12 px-4">
+    <div className="min-h-screen bg-[#FAFAF8] py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+            <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
               Mood Photos Beheer
             </h1>
-            <p className="text-[var(--color-muted)]">
+            <p className="text-[#8A8A8A]">
               Upload en beheer foto's voor het swipe-systeem met AI-gestuurde metadata
             </p>
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 font-medium"
+            className="px-6 py-3 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-5 h-5" />
             Nieuwe Foto
@@ -201,18 +201,18 @@ export default function AdminMoodPhotosPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <StatCard label="Totaal" value={photos.length} />
           <StatCard label="Actief" value={activeCount} color="text-green-600" />
-          <StatCard label="Verrijkt" value={enrichedCount} color="text-[var(--ff-color-primary-700)]" />
+          <StatCard label="Verrijkt" value={enrichedCount} color="text-[#A8513A]" />
           <StatCard label="Male" value={maleCount} color="text-blue-600" />
           <StatCard label="Female" value={femaleCount} color="text-pink-600" />
         </div>
 
-        <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)] mb-6">
+        <div className="bg-[#FFFFFF] rounded-lg p-4 border border-[#E5E5E5] mb-6">
           <div className="flex flex-wrap gap-4 items-center">
-            <Filter className="w-5 h-5 text-[var(--color-muted)]" />
+            <Filter className="w-5 h-5 text-[#8A8A8A]" />
             <select
               value={filterGender}
               onChange={(e) => setFilterGender(e.target.value as typeof filterGender)}
-              className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+              className="px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
             >
               <option value="all">Alle Genders</option>
               <option value="male">Male</option>
@@ -221,7 +221,7 @@ export default function AdminMoodPhotosPage() {
             <select
               value={filterActive}
               onChange={(e) => setFilterActive(e.target.value as typeof filterActive)}
-              className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+              className="px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
             >
               <option value="all">Alle Status</option>
               <option value="active">Actief</option>
@@ -230,7 +230,7 @@ export default function AdminMoodPhotosPage() {
             <button
               onClick={loadPhotos}
               disabled={loading}
-              className="px-4 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)] transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Ververs
@@ -241,11 +241,11 @@ export default function AdminMoodPhotosPage() {
         {loading ? (
           <div className="text-center py-12">
             <Spinner size="md" className="mx-auto mb-4" />
-            <p className="text-[var(--color-muted)]">Laden...</p>
+            <p className="text-[#8A8A8A]">Laden...</p>
           </div>
         ) : photos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[var(--color-muted)]">Geen foto's gevonden</p>
+            <p className="text-[#8A8A8A]">Geen foto's gevonden</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -271,10 +271,10 @@ export default function AdminMoodPhotosPage() {
   );
 }
 
-function StatCard({ label, value, color = 'text-[var(--color-text)]' }: { label: string; value: number; color?: string }) {
+function StatCard({ label, value, color = 'text-[#1A1A1A]' }: { label: string; value: number; color?: string }) {
   return (
-    <div className="bg-[var(--color-surface)] rounded-lg p-4 border border-[var(--color-border)]">
-      <div className="text-sm text-[var(--color-muted)] mb-1">{label}</div>
+    <div className="bg-[#FFFFFF] rounded-lg p-4 border border-[#E5E5E5]">
+      <div className="text-sm text-[#8A8A8A] mb-1">{label}</div>
       <div className={`text-2xl font-bold ${color}`}>{value}</div>
     </div>
   );
@@ -295,11 +295,11 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-[var(--color-surface)] rounded-lg border-2 overflow-hidden ${
+      className={`bg-[#FFFFFF] rounded-lg border-2 overflow-hidden ${
         photo.active ? 'border-green-500/40' : 'border-red-500/40'
       }`}
     >
-      <div className="relative aspect-[3/4] bg-[var(--color-bg)]">
+      <div className="relative aspect-[3/4] bg-[#FAFAF8]">
         {!imageError ? (
           <img
             src={photo.image_url}
@@ -310,7 +310,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <AlertTriangle className="w-8 h-8 text-[var(--color-muted)]" />
+            <AlertTriangle className="w-8 h-8 text-[#8A8A8A]" />
           </div>
         )}
         {!photo.active && (
@@ -332,7 +332,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
           }`}>
             {photo.gender}
           </span>
-          <span className="text-xs text-[var(--color-muted)]">#{photo.id}</span>
+          <span className="text-xs text-[#8A8A8A]">#{photo.id}</span>
         </div>
 
         {topArchetype && (
@@ -340,7 +340,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
             <span className={`text-xs px-2 py-1 rounded border font-medium ${ARCHETYPE_COLORS[topArchetype[0]] || 'bg-gray-100 text-gray-700'}`}>
               {ARCHETYPE_LABELS[topArchetype[0]] || topArchetype[0]}
             </span>
-            <span className="text-xs text-[var(--color-muted)]">
+            <span className="text-xs text-[#8A8A8A]">
               {Math.round(topArchetype[1] * 100)}%
             </span>
           </div>
@@ -351,10 +351,10 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
             {photo.dominant_colors.map((color, i) => (
               <div key={i} className="flex items-center gap-1">
                 <div
-                  className="w-3 h-3 rounded-full border border-[var(--color-border)]"
+                  className="w-3 h-3 rounded-full border border-[#E5E5E5]"
                   style={{ backgroundColor: COLOR_SWATCHES[color] || '#ccc' }}
                 />
-                <span className="text-xs text-[var(--color-muted)]">{color}</span>
+                <span className="text-xs text-[#8A8A8A]">{color}</span>
               </div>
             ))}
           </div>
@@ -362,12 +362,12 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
 
         <div className="flex flex-wrap gap-1">
           {photo.mood_tags?.slice(0, 4).map((tag, i) => (
-            <span key={i} className="text-xs px-2 py-0.5 bg-[var(--color-bg)] text-[var(--color-muted)] rounded">
+            <span key={i} className="text-xs px-2 py-0.5 bg-[#FAFAF8] text-[#8A8A8A] rounded">
               {tag}
             </span>
           ))}
           {photo.mood_tags?.length > 4 && (
-            <span className="text-xs text-[var(--color-muted)]">+{photo.mood_tags.length - 4}</span>
+            <span className="text-xs text-[#8A8A8A]">+{photo.mood_tags.length - 4}</span>
           )}
         </div>
 
@@ -603,14 +603,14 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-[var(--color-surface)] rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-[#FFFFFF] rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
       >
-        <div className="p-6 border-b border-[var(--color-border)] flex justify-between items-center sticky top-0 bg-[var(--color-surface)] z-10">
+        <div className="p-6 border-b border-[#E5E5E5] flex justify-between items-center sticky top-0 bg-[#FFFFFF] z-10">
           <div>
-            <h2 className="text-xl font-bold text-[var(--color-text)]">Nieuwe Mood Photo</h2>
-            <p className="text-sm text-[var(--color-muted)]">Upload een foto en laat AI alle metadata genereren</p>
+            <h2 className="text-xl font-bold text-[#1A1A1A]">Nieuwe Mood Photo</h2>
+            <p className="text-sm text-[#8A8A8A]">Upload een foto en laat AI alle metadata genereren</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-[#FAFAF8] rounded-lg transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -620,21 +620,21 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
           <div className="grid md:grid-cols-[300px_1fr] gap-6 mb-8">
             <div>
               <label className="block w-full cursor-pointer">
-                <div className="border-2 border-dashed border-[var(--color-border)] rounded-xl overflow-hidden hover:border-[var(--ff-color-primary-700)] transition-colors aspect-[3/4]">
+                <div className="border-2 border-dashed border-[#E5E5E5] rounded-xl overflow-hidden hover:border-[#A8513A] transition-colors aspect-[3/4]">
                   {previewUrl ? (
                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                      <Upload className="w-10 h-10 mb-3 text-[var(--color-muted)]" />
-                      <p className="text-sm font-medium text-[var(--color-text)] mb-1">Klik om te uploaden</p>
-                      <p className="text-xs text-[var(--color-muted)]">JPEG, PNG of WebP (max 5MB)</p>
+                      <Upload className="w-10 h-10 mb-3 text-[#8A8A8A]" />
+                      <p className="text-sm font-medium text-[#1A1A1A] mb-1">Klik om te uploaden</p>
+                      <p className="text-xs text-[#8A8A8A]">JPEG, PNG of WebP (max 5MB)</p>
                     </div>
                   )}
                 </div>
                 <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" onChange={handleFileSelect} className="hidden" />
               </label>
               {selectedFile && (
-                <p className="text-xs text-[var(--color-muted)] mt-2 text-center">
+                <p className="text-xs text-[#8A8A8A] mt-2 text-center">
                   {selectedFile.name} ({(selectedFile.size / 1024).toFixed(0)} KB)
                 </p>
               )}
@@ -643,24 +643,24 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Gender</label>
+                  <label className="block text-sm font-medium text-[#1A1A1A] mb-1.5">Gender</label>
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value as 'male' | 'female')}
-                    className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Volgorde</label>
+                  <label className="block text-sm font-medium text-[#1A1A1A] mb-1.5">Volgorde</label>
                   <input
                     type="number"
                     value={displayOrder}
                     onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 1)}
                     min="1"
-                    className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A]"
                   />
                 </div>
               </div>
@@ -669,7 +669,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                 onClick={analyzeWithAI}
                 disabled={analyzing || !selectedFile}
                 className="w-full py-3.5 rounded-xl font-semibold text-white transition-all disabled:opacity-40 flex items-center justify-center gap-2.5"
-                style={{ background: 'var(--ff-color-primary-700)' }}
+                style={{ background: '#A8513A' }}
               >
                 {analyzing ? (
                   <>
@@ -690,19 +690,19 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               </button>
 
               {analyzed && aiReasoning && (
-                <div className="p-3 bg-[var(--ff-color-primary-50)] rounded-lg border border-[var(--ff-color-primary-200)]">
+                <div className="p-3 bg-[#FAF5F2] rounded-lg border border-[#F4E8E3]">
                   <div className="flex items-center gap-2 mb-1">
-                    <Zap className="w-4 h-4 text-[var(--ff-color-primary-700)]" />
-                    <span className="text-xs font-medium text-[var(--ff-color-primary-700)]">
+                    <Zap className="w-4 h-4 text-[#A8513A]" />
+                    <span className="text-xs font-medium text-[#A8513A]">
                       AI Analyse (confidence: {Math.round(aiConfidence * 100)}%)
                     </span>
                   </div>
-                  <p className="text-sm text-[var(--color-text)]">{aiReasoning}</p>
+                  <p className="text-sm text-[#1A1A1A]">{aiReasoning}</p>
                 </div>
               )}
 
               {!analyzed && !analyzing && selectedFile && (
-                <p className="text-sm text-[var(--color-muted)] text-center">
+                <p className="text-sm text-[#8A8A8A] text-center">
                   Klik op "Analyseer met AI" om automatisch alle metadata in te vullen
                 </p>
               )}
@@ -712,11 +712,11 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
           {/* Step 2: All metadata (visible after analysis or manually) */}
           <div className="space-y-6">
             {/* Archetype Weights */}
-            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+            <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-[var(--color-muted)]" />
-                  <h3 className="font-semibold text-[var(--color-text)]">Archetype Gewichten</h3>
+                  <Sliders className="w-4 h-4 text-[#8A8A8A]" />
+                  <h3 className="font-semibold text-[#1A1A1A]">Archetype Gewichten</h3>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`text-xs font-medium px-2 py-1 rounded ${
@@ -725,7 +725,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                     Som: {weightSum.toFixed(2)}
                   </span>
                   {!isWeightValid && Object.keys(archetypeWeights).length > 0 && (
-                    <button onClick={normalizeWeights} className="text-xs text-[var(--ff-color-primary-700)] hover:underline font-medium">
+                    <button onClick={normalizeWeights} className="text-xs text-[#A8513A] hover:underline font-medium">
                       Normaliseer
                     </button>
                   )}
@@ -745,9 +745,9 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                         max="100"
                         value={Math.round(value * 100)}
                         onChange={(e) => updateWeight(arch, parseInt(e.target.value) / 100)}
-                        className="flex-1 h-1.5 accent-[var(--ff-color-primary-700)]"
+                        className="flex-1 h-1.5 accent-[#A8513A]"
                       />
-                      <span className="text-xs font-mono text-[var(--color-muted)] w-8 text-right">
+                      <span className="text-xs font-mono text-[#8A8A8A] w-8 text-right">
                         {Math.round(value * 100)}
                       </span>
                     </div>
@@ -757,11 +757,11 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             </div>
 
             {/* Dominant Colors */}
-            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+            <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
               <div className="flex items-center gap-2 mb-4">
-                <Palette className="w-4 h-4 text-[var(--color-muted)]" />
-                <h3 className="font-semibold text-[var(--color-text)]">Dominante Kleuren</h3>
-                <span className="text-xs text-[var(--color-muted)]">(selecteer 1-3)</span>
+                <Palette className="w-4 h-4 text-[#8A8A8A]" />
+                <h3 className="font-semibold text-[#1A1A1A]">Dominante Kleuren</h3>
+                <span className="text-xs text-[#8A8A8A]">(selecteer 1-3)</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(COLOR_SWATCHES).map(([name, hex]) => {
@@ -772,8 +772,8 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                       onClick={() => toggleColor(name)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
                         selected
-                          ? 'border-[var(--ff-color-primary-700)] bg-[var(--ff-color-primary-50)] text-[var(--ff-color-primary-700)] ring-1 ring-[var(--ff-color-primary-700)]'
-                          : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--ff-color-primary-300)]'
+                          ? 'border-[#A8513A] bg-[#FAF5F2] text-[#A8513A] ring-1 ring-[#A8513A]'
+                          : 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:border-[#D4856E]'
                       }`}
                     >
                       <div className="w-3 h-3 rounded-full border border-black/10" style={{ backgroundColor: hex }} />
@@ -786,10 +786,10 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             </div>
 
             {/* Mood Tags */}
-            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
+            <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
               <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-semibold text-[var(--color-text)]">Mood Tags</h3>
-                <span className="text-xs text-[var(--color-muted)]">(min 3, max 8)</span>
+                <h3 className="font-semibold text-[#1A1A1A]">Mood Tags</h3>
+                <span className="text-xs text-[#8A8A8A]">(min 3, max 8)</span>
               </div>
               <div className="flex gap-2 mb-3">
                 <input
@@ -798,15 +798,15 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
                   placeholder="Type en druk Enter"
-                  className="flex-1 px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] text-sm"
+                  className="flex-1 px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] text-sm"
                 />
-                <button onClick={addTag} className="px-3 py-2 bg-[var(--ff-color-primary-700)] text-white rounded-xl hover:bg-[var(--ff-color-primary-600)]">
+                <button onClick={addTag} className="px-3 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A]">
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {moodTags.map(tag => (
-                  <span key={tag} className="px-3 py-1 bg-[var(--ff-color-primary-700)] text-white rounded-full text-xs font-medium flex items-center gap-1.5">
+                  <span key={tag} className="px-3 py-1 bg-[#A8513A] text-white rounded-full text-xs font-medium flex items-center gap-1.5">
                     {tag}
                     <button onClick={() => setMoodTags(moodTags.filter(t => t !== tag))} className="hover:text-red-200">
                       <X className="w-3 h-3" />
@@ -814,45 +814,45 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   </span>
                 ))}
                 {moodTags.length === 0 && (
-                  <span className="text-xs text-[var(--color-muted)]">Nog geen tags - analyseer met AI of voeg handmatig toe</span>
+                  <span className="text-xs text-[#8A8A8A]">Nog geen tags - analyseer met AI of voeg handmatig toe</span>
                 )}
               </div>
             </div>
 
             {/* Style Attributes */}
-            <div className="p-5 bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)]">
-              <h3 className="font-semibold text-[var(--color-text)] mb-4">Stijlkenmerken</h3>
+            <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
+              <h3 className="font-semibold text-[#1A1A1A] mb-4">Stijlkenmerken</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-[var(--color-text)]">Formaliteit</label>
-                    <span className="text-xs font-mono text-[var(--color-muted)]">{formality.toFixed(2)}</span>
+                    <label className="text-sm font-medium text-[#1A1A1A]">Formaliteit</label>
+                    <span className="text-xs font-mono text-[#8A8A8A]">{formality.toFixed(2)}</span>
                   </div>
                   <input
                     type="range"
                     min="0" max="100"
                     value={Math.round(formality * 100)}
                     onChange={(e) => setFormality(parseInt(e.target.value) / 100)}
-                    className="w-full h-2 accent-[var(--ff-color-primary-700)]"
+                    className="w-full h-2 accent-[#A8513A]"
                   />
-                  <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
+                  <div className="flex justify-between text-xs text-[#8A8A8A] mt-1">
                     <span>Sportief</span>
                     <span>Black tie</span>
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-[var(--color-text)]">Gedurfdheid</label>
-                    <span className="text-xs font-mono text-[var(--color-muted)]">{boldness.toFixed(2)}</span>
+                    <label className="text-sm font-medium text-[#1A1A1A]">Gedurfdheid</label>
+                    <span className="text-xs font-mono text-[#8A8A8A]">{boldness.toFixed(2)}</span>
                   </div>
                   <input
                     type="range"
                     min="0" max="100"
                     value={Math.round(boldness * 100)}
                     onChange={(e) => setBoldness(parseInt(e.target.value) / 100)}
-                    className="w-full h-2 accent-[var(--ff-color-primary-700)]"
+                    className="w-full h-2 accent-[#A8513A]"
                   />
-                  <div className="flex justify-between text-xs text-[var(--color-muted)] mt-1">
+                  <div className="flex justify-between text-xs text-[#8A8A8A] mt-1">
                     <span>Subtiel</span>
                     <span>Statement</span>
                   </div>
@@ -863,8 +863,8 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-[var(--color-border)] flex items-center justify-between sticky bottom-0 bg-[var(--color-surface)]">
-          <div className="text-xs text-[var(--color-muted)] space-y-0.5">
+        <div className="p-6 border-t border-[#E5E5E5] flex items-center justify-between sticky bottom-0 bg-[#FFFFFF]">
+          <div className="text-xs text-[#8A8A8A] space-y-0.5">
             {!canUpload && (
               <div className="space-y-0.5">
                 {moodTags.length < 3 && <p>- Minimaal 3 mood tags nodig</p>}
@@ -878,7 +878,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             <button
               onClick={onClose}
               disabled={uploading}
-              className="px-6 py-2.5 border border-[var(--color-border)] text-[var(--color-text)] rounded-xl hover:bg-[var(--color-bg)] transition-colors disabled:opacity-50"
+              className="px-6 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl hover:bg-[#FAFAF8] transition-colors disabled:opacity-50"
             >
               Annuleer
             </button>
@@ -886,7 +886,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               onClick={handleUpload}
               disabled={uploading || !canUpload}
               className="px-6 py-2.5 text-white rounded-xl transition-all disabled:opacity-40 flex items-center gap-2 font-medium"
-              style={{ background: 'var(--ff-color-primary-700)' }}
+              style={{ background: '#A8513A' }}
             >
               {uploading ? (
                 <>

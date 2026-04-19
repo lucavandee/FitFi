@@ -1,7 +1,6 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { LS_KEYS } from "@/lib/quiz/types";
-import { Spinner } from "@/components/ui/Spinner";
 import { profileSyncService } from "@/services/data/profileSyncService";
 import { useUser } from "@/context/UserContext";
 
@@ -46,10 +45,10 @@ export function RequireQuiz({ children }: { children: React.ReactElement }) {
 
   if (status === 'checking') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAF8]">
         <div className="text-center">
-          <Spinner size="lg" className="mb-4" />
-          <p className="text-[var(--color-muted)]">Je stijlprofiel wordt geladen...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-2 border-[#E5E5E5] border-t-[#A8513A] mb-4" aria-hidden="true" />
+          <p className="text-[#8A8A8A]">Je stijlprofiel wordt geladen...</p>
         </div>
       </div>
     );

@@ -342,15 +342,15 @@ function DashboardNovaSectionInner() {
 
   return (
     <section className="py-12">
-      <div className="ff-container max-w-5xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
         <motion.div
-          className="bg-[var(--color-surface)] rounded-2xl shadow-[var(--shadow-soft)] border border-[var(--color-border)] overflow-hidden"
+          className="bg-white rounded-2xl shadow-sm border border-[#E5E5E5] overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           {/* Header with Context Switcher */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-b border-[var(--color-border)] px-6 py-4">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-b border-[#E5E5E5] px-6 py-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <motion.div
@@ -360,8 +360,8 @@ function DashboardNovaSectionInner() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </motion.div>
                 <div>
-                  <h2 className="text-xl font-bold text-[var(--color-text)]">Chat met Nova</h2>
-                  <p className="text-sm text-[var(--color-text-muted)]">Je persoonlijke AI-stylist</p>
+                  <h2 className="text-xl font-bold text-[#1A1A1A]">Chat met Nova</h2>
+                  <p className="text-sm text-[#8A8A8A]">Je persoonlijke AI-stylist</p>
                 </div>
               </div>
 
@@ -378,7 +378,7 @@ function DashboardNovaSectionInner() {
                         'px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 transition-all',
                         isActive
                           ? `bg-gradient-to-r ${mode.color} text-white shadow-lg`
-                          : 'bg-white dark:bg-gray-800 text-[var(--color-text)] border border-[var(--color-border)] hover:border-blue-300'
+                          : 'bg-white dark:bg-gray-800 text-[#1A1A1A] border border-[#E5E5E5] hover:border-blue-300'
                       ].join(' ')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -400,7 +400,7 @@ function DashboardNovaSectionInner() {
                     <motion.button
                       key={idx}
                       onClick={() => handleSuggestionClick(chip)}
-                      className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-[var(--color-border)] rounded-full text-xs font-medium text-[var(--color-text)] hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all flex items-center gap-1.5"
+                      className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-[#E5E5E5] rounded-full text-xs font-medium text-[#1A1A1A] hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all flex items-center gap-1.5"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -435,7 +435,7 @@ function DashboardNovaSectionInner() {
                     'max-w-[85%] rounded-2xl px-4 py-3 shadow-md',
                     message.role === 'user'
                       ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-[var(--color-text)] border border-[var(--color-border)]'
+                      : 'bg-white dark:bg-gray-800 text-[#1A1A1A] border border-[#E5E5E5]'
                   ].join(' ')}
                 >
                   {message.role === 'assistant' && (
@@ -471,7 +471,7 @@ function DashboardNovaSectionInner() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-white dark:bg-gray-800 border border-[var(--color-border)] shadow-md">
+                  <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-white dark:bg-gray-800 border border-[#E5E5E5] shadow-md">
                     <div className="flex items-center gap-2 mb-2">
                       <motion.div
                         className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
@@ -482,7 +482,7 @@ function DashboardNovaSectionInner() {
                       </motion.div>
                       <span className="text-xs font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
                       <motion.span
-                        className="text-xs text-[var(--color-text-muted)]"
+                        className="text-xs text-[#8A8A8A]"
                         animate={{ opacity: [0.5, 1, 0.5] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       >
@@ -506,7 +506,7 @@ function DashboardNovaSectionInner() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-[var(--color-border)] bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 p-4">
+          <div className="border-t border-[#E5E5E5] bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 p-4">
             <form onSubmit={handleSubmit} className="flex gap-3">
               <div className="flex-1 relative">
                 <input
@@ -515,7 +515,7 @@ function DashboardNovaSectionInner() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Vraag Nova om styling advies..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[var(--color-border)] bg-white dark:bg-gray-800 text-[var(--color-text)] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder:text-[var(--color-text-muted)]"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white dark:bg-gray-800 text-[#1A1A1A] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder:text-[#8A8A8A]"
                   disabled={isLoading}
                 />
                 {input && (
@@ -526,7 +526,7 @@ function DashboardNovaSectionInner() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <X className="w-4 h-4 text-[var(--color-text-muted)]" />
+                    <X className="w-4 h-4 text-[#8A8A8A]" />
                   </motion.button>
                 )}
               </div>

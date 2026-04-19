@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Sparkles, TrendingUp, TrendingDown, RefreshCw, CheckCircle } from 'lucide-react';
 import { AdaptiveOutfitRemixer, type RemixedOutfit, type SwapSuggestion } from '@/services/outfits/adaptiveOutfitRemixer';
@@ -47,6 +46,7 @@ export default function OutfitRemixerModal({
       );
       setSuggestions(sug);
     } catch (error) {
+      console.error('[OutfitRemixer] Error loading suggestions:', error);
       toast.error('Kon geen suggesties laden');
     } finally {
       setLoading(false);
@@ -94,6 +94,7 @@ export default function OutfitRemixerModal({
         loadSuggestions();
       }, 500);
     } catch (error) {
+      console.error('[OutfitRemixer] Error swapping item:', error);
       toast.error('Kon item niet swappen');
     } finally {
       setSwapping(false);
@@ -128,6 +129,7 @@ export default function OutfitRemixerModal({
 
       loadSuggestions();
     } catch (error) {
+      console.error('[OutfitRemixer] Error optimizing outfit:', error);
       toast.error('Kon outfit niet optimaliseren');
     } finally {
       setSwapping(false);
@@ -155,45 +157,45 @@ export default function OutfitRemixerModal({
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-lg)] max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+          className="bg-[#FFFFFF] rounded-2xl shadow-sm max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
+          <div className="flex items-center justify-between p-6 border-b border-[#E5E5E5]">
             <div>
-              <h2 className="text-2xl font-bold text-[var(--color-text)] flex items-center gap-2">
-                <RefreshCw size={24} className="text-[var(--ff-color-primary-700)]" />
+              <h2 className="text-2xl font-bold text-[#1A1A1A] flex items-center gap-2">
+                <RefreshCw size={24} className="text-[#A8513A]" />
                 Outfit Remixer
               </h2>
-              <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+              <p className="text-sm text-[#8A8A8A] mt-1">
                 Swap items om je outfit te perfectioneren
               </p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--color-bg-subtle)] rounded-[var(--radius-lg)] transition-colors"
+              className="p-2 hover:bg-[#F5F0EB] rounded-2xl transition-colors"
             >
-              <X size={24} className="text-[var(--color-text-muted)]" />
+              <X size={24} className="text-[#8A8A8A]" />
             </button>
           </div>
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Current Outfit Stats */}
-            <div className="bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-100)] border border-[var(--ff-color-primary-200)] rounded-[var(--radius-xl)] p-4">
+            <div className="bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-[var(--ff-color-primary-700)] mb-1">
+                  <p className="text-sm font-semibold text-[#A8513A] mb-1">
                     Huidige Score
                   </p>
-                  <p className="text-3xl font-bold text-[var(--color-text)]">
+                  <p className="text-3xl font-bold text-[#1A1A1A]">
                     {Math.round(currentOutfit.score.overall * 100)}
-                    <span className="text-lg text-[var(--color-text-secondary)]">/100</span>
+                    <span className="text-lg text-[#8A8A8A]">/100</span>
                   </p>
                 </div>
 
                 {swapHistory.length > 0 && (
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-[var(--ff-color-primary-700)] mb-1">
+                    <p className="text-sm font-semibold text-[#A8513A] mb-1">
                       Verbetering
                     </p>
                     <div className="flex items-center gap-2">
@@ -212,7 +214,7 @@ export default function OutfitRemixerModal({
                           </p>
                         </>
                       ) : (
-                        <p className="text-2xl font-bold text-[var(--color-text-muted)]">±0</p>
+                        <p className="text-2xl font-bold text-[#8A8A8A]">±0</p>
                       )}
                     </div>
                   </div>
@@ -220,8 +222,8 @@ export default function OutfitRemixerModal({
               </div>
 
               {swapHistory.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-[var(--ff-color-primary-200)]">
-                  <p className="text-sm text-[var(--color-text-secondary)]">
+                <div className="mt-4 pt-4 border-t border-[#F4E8E3]">
+                  <p className="text-sm text-[#8A8A8A]">
                     {swapHistory.length} {swapHistory.length === 1 ? 'swap' : 'swaps'} gedaan in deze sessie
                   </p>
                 </div>
@@ -230,14 +232,14 @@ export default function OutfitRemixerModal({
 
             {/* Current Outfit Preview */}
             <div>
-              <h3 className="text-lg font-semibold text-[var(--color-text)] mb-3">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
                 Huidige Outfit
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 {currentOutfit.products.map((product, idx) => (
                   <div
                     key={product.id}
-                    className="relative aspect-square rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-bg-subtle)] border border-[var(--color-border)]"
+                    className="relative aspect-square rounded-2xl overflow-hidden bg-[#F5F0EB] border border-[#E5E5E5]"
                   >
                     <img
                       src={product.image_url}
@@ -258,14 +260,14 @@ export default function OutfitRemixerModal({
             {/* Suggestions */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-[var(--color-text)] flex items-center gap-2">
-                  <Sparkles size={18} className="text-[var(--ff-color-primary-700)]" />
+                <h3 className="text-lg font-semibold text-[#1A1A1A] flex items-center gap-2">
+                  <Sparkles size={18} className="text-[#A8513A]" />
                   Aanbevolen Swaps
                 </h3>
                 <button
                   onClick={handleOptimize}
                   disabled={swapping || loading || suggestions.length === 0}
-                  className="text-sm font-semibold text-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  className="text-sm font-semibold text-[#A8513A] hover:text-[#C2654A] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                 >
                   <RefreshCw size={14} />
                   Auto-optimaliseren
@@ -274,20 +276,20 @@ export default function OutfitRemixerModal({
 
               {loading && (
                 <div className="text-center py-8">
-                  <Spinner size="md" className="mx-auto" />
-                  <p className="text-sm text-[var(--color-text-secondary)] mt-2">
+                  <div className="inline-block w-8 h-8 border-4 border-[#E5E5E5] border-t-[#A8513A] rounded-full animate-spin" />
+                  <p className="text-sm text-[#8A8A8A] mt-2">
                     Suggesties laden...
                   </p>
                 </div>
               )}
 
               {!loading && suggestions.length === 0 && (
-                <div className="text-center py-8 bg-[var(--color-bg-subtle)] rounded-[var(--radius-xl)]">
+                <div className="text-center py-8 bg-[#F5F0EB] rounded-2xl">
                   <CheckCircle size={32} className="text-green-600 mx-auto mb-2" />
-                  <p className="font-semibold text-[var(--color-text)]">
+                  <p className="font-semibold text-[#1A1A1A]">
                     Outfit is geoptimaliseerd!
                   </p>
-                  <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+                  <p className="text-sm text-[#8A8A8A] mt-1">
                     Geen significante verbeteringen meer mogelijk
                   </p>
                 </div>
@@ -301,11 +303,11 @@ export default function OutfitRemixerModal({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[var(--radius-xl)] p-4 hover:border-[var(--ff-color-primary-300)] transition-colors"
+                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#D4856E] transition-colors"
                     >
                       <div className="flex items-start gap-4">
                         {/* Product Image */}
-                        <div className="w-20 h-20 rounded-[var(--radius-lg)] overflow-hidden bg-white flex-shrink-0">
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white flex-shrink-0">
                           <img
                             src={suggestion.suggested_product.image_url}
                             alt={suggestion.suggested_product.name}
@@ -317,13 +319,13 @@ export default function OutfitRemixerModal({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-semibold text-[var(--ff-color-primary-700)] uppercase mb-1">
+                              <p className="text-xs font-semibold text-[#A8513A] uppercase mb-1">
                                 {suggestion.category}
                               </p>
-                              <p className="font-semibold text-[var(--color-text)] truncate">
+                              <p className="font-semibold text-[#1A1A1A] truncate">
                                 {suggestion.suggested_product.name}
                               </p>
-                              <p className="text-sm text-[var(--color-text-secondary)]">
+                              <p className="text-sm text-[#8A8A8A]">
                                 €{suggestion.suggested_product.price}
                               </p>
                             </div>
@@ -336,24 +338,24 @@ export default function OutfitRemixerModal({
                                   +{Math.round(suggestion.expected_score_improvement * 100)}
                                 </span>
                               </div>
-                              <p className="text-xs text-[var(--color-text-muted)]">
+                              <p className="text-xs text-[#8A8A8A]">
                                 score
                               </p>
                             </div>
                           </div>
 
-                          <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+                          <p className="text-sm text-[#8A8A8A] mb-3">
                             {suggestion.reason}
                           </p>
 
                           <button
                             onClick={() => handleSwap(suggestion)}
                             disabled={swapping}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-600)] text-white rounded-[var(--radius-lg)] hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#A8513A] to-[#C2654A] text-white rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
                           >
                             {swapping && selectedSuggestion === suggestion ? (
                               <>
-                                <Spinner size="sm" />
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                 Swappen...
                               </>
                             ) : (
@@ -374,14 +376,14 @@ export default function OutfitRemixerModal({
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
+          <div className="p-6 border-t border-[#E5E5E5] bg-[#F5F0EB]">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-[var(--color-text-secondary)]">
+              <p className="text-sm text-[#8A8A8A]">
                 Swaps worden opgeslagen om je toekomstige aanbevelingen te verbeteren
               </p>
               <button
                 onClick={onClose}
-                className="px-6 py-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] hover:bg-[var(--color-bg-subtle)] transition-colors font-semibold"
+                className="px-6 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl hover:bg-[#F5F0EB] transition-colors font-semibold"
               >
                 Sluiten
               </button>

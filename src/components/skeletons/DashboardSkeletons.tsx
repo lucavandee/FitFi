@@ -159,14 +159,14 @@ export function DashboardPageSkeleton() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero skeleton */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 py-12">
-        <div className="ff-container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`w-64 h-10 rounded mb-4 ${shimmerBase}`} />
           <div className={`w-96 h-6 rounded ${shimmerBase}`} />
         </div>
       </div>
 
       {/* Content skeleton */}
-      <div className="ff-container py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-12">
           {/* Stats grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

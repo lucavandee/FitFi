@@ -23,10 +23,10 @@ export default function BramsFruitCatalogPageSimple() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] py-12">
+      <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-          <p className="mt-4 text-[var(--color-text-secondary)]">Producten laden...</p>
+          <p className="mt-4 text-[#8A8A8A]">Producten laden...</p>
         </div>
       </div>
     );
@@ -34,25 +34,25 @@ export default function BramsFruitCatalogPageSimple() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] py-12">
+      <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-3xl font-bold text-red-500 mb-4">Fout!</h1>
-          <p className="text-[var(--color-text-secondary)]">{error}</p>
+          <p className="text-[#8A8A8A]">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-12">
+    <div className="min-h-screen bg-[#FAFAF8] py-12">
       <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-[var(--color-text)] mb-4">
+        <h1 className="text-3xl font-bold text-[#1A1A1A] mb-4">
           Brams Fruit Collectie
         </h1>
-        <p className="text-[var(--color-text-secondary)] mb-4">
+        <p className="text-[#8A8A8A] mb-4">
           Test pagina - als je dit ziet werkt de route!
         </p>
-        <p className="text-[var(--color-text)] text-xl">
+        <p className="text-[#1A1A1A] text-xl">
           ✅ Found {count} product groups
         </p>
       </div>

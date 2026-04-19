@@ -254,9 +254,9 @@ export default function OutfitGrid({
             disabled={isLoading}
             className={cn(
               'inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold',
-              'bg-[var(--color-primary)] text-white',
+              'bg-[#C2654A] text-white',
               'hover:shadow-lg hover:scale-105',
-              'focus:outline-none focus:ring-4 focus:ring-[var(--color-primary)]/20',
+              'focus:outline-none focus:ring-4 focus:ring-[#C2654A]/20',
               'transition-all duration-200',
               isLoading && 'opacity-50 cursor-not-allowed'
             )}
@@ -276,7 +276,7 @@ export default function OutfitGrid({
             )}
           </button>
 
-          <p className="mt-3 text-sm text-[var(--color-text)]/60">
+          <p className="mt-3 text-sm text-[#1A1A1A]/60">
             {visibleCount} van {sortedOutfits.length} outfits getoond
           </p>
         </motion.div>
@@ -290,10 +290,10 @@ export default function OutfitGrid({
           animate={{ opacity: 1 }}
         >
           <div className="mb-4 text-4xl sm:text-5xl md:text-6xl">🎨</div>
-          <h3 className="text-xl font-semibold mb-2 text-[var(--color-text)]">
+          <h3 className="text-xl font-semibold mb-2 text-[#1A1A1A]">
             Geen outfits gevonden
           </h3>
-          <p className="text-[var(--color-text)]/60">
+          <p className="text-[#1A1A1A]/60">
             Probeer andere filter- of sorteercriteria
           </p>
         </motion.div>
@@ -306,7 +306,7 @@ export default function OutfitGrid({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ff-color-primary-50)] text-[var(--color-primary)] rounded-full text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FAF5F2] text-[#C2654A] rounded-full text-sm font-medium">
             <Sparkles className="w-4 h-4" />
             <span>Je hebt alle {sortedOutfits.length} outfits bekeken!</span>
           </div>

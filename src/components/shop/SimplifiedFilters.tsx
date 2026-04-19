@@ -136,10 +136,10 @@ export function SimplifiedFilters({
     const isExpanded = expandedSection === id;
 
     return (
-      <div className="border-b border-[var(--color-border)] last:border-0">
+      <div className="border-b border-[#E5E5E5] last:border-0">
         <button
           onClick={() => setExpandedSection(isExpanded ? null : id)}
-          className="w-full flex items-center justify-between py-4 px-1 text-left font-semibold text-[var(--color-text)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+          className="w-full flex items-center justify-between py-4 px-1 text-left font-semibold text-[#1A1A1A] hover:text-[#C2654A] transition-colors"
         >
           <span>{title}</span>
           <ChevronRight
@@ -168,17 +168,17 @@ export function SimplifiedFilters({
   const content = (
     <div className="space-y-2">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 pb-4 border-b border-[var(--color-border)]">
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#E5E5E5]">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5 text-[var(--ff-color-primary-600)]" aria-hidden="true" />
-          <h3 className="font-bold text-lg text-[var(--color-text)]">Filters</h3>
+          <SlidersHorizontal className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
+          <h3 className="font-bold text-lg text-[#1A1A1A]">Filters</h3>
         </div>
 
         <div className="flex items-center gap-2">
           {hasActiveFilters && (
             <button
               onClick={clearAll}
-              className="text-sm text-[var(--ff-color-primary-600)] hover:text-[var(--ff-color-primary-700)] font-medium"
+              className="text-sm text-[#C2654A] hover:text-[#A8513A] font-medium"
             >
               Wis alles
             </button>
@@ -186,7 +186,7 @@ export function SimplifiedFilters({
           {mobile && onClose && (
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition-colors"
+              className="p-2 hover:bg-[#FAFAF8] rounded-lg transition-colors"
               aria-label="Sluit filters"
             >
               <X className="w-5 h-5" aria-hidden="true" />
@@ -197,8 +197,8 @@ export function SimplifiedFilters({
 
       {/* Active Filters Breadcrumb */}
       {hasActiveFilters && (
-        <div className="mb-4 p-3 bg-[var(--ff-color-primary-50)] rounded-xl">
-          <p className="text-xs font-medium text-[var(--ff-color-primary-700)] mb-2">
+        <div className="mb-4 p-3 bg-[#FAF5F2] rounded-xl">
+          <p className="text-xs font-medium text-[#A8513A] mb-2">
             Actieve filters:
           </p>
           <div className="flex flex-wrap gap-2">
@@ -232,7 +232,7 @@ export function SimplifiedFilters({
 
       {/* Category Filter - Always visible, no expand */}
       <div className="mb-6">
-        <h4 className="font-semibold text-sm text-[var(--color-text)] mb-3">Categorie</h4>
+        <h4 className="font-semibold text-sm text-[#1A1A1A] mb-3">Categorie</h4>
         <div className="grid grid-cols-2 gap-2">
           {QUICK_CATEGORIES.map((cat) => {
             const isSelected = filters.category === cat.id;
@@ -242,8 +242,8 @@ export function SimplifiedFilters({
                 onClick={() => toggleCategory(cat.id)}
                 className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)]'
-                    : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--ff-color-primary-300)]'
+                    ? 'border-[#C2654A] bg-[#FAF5F2]'
+                    : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E]'
                 }`}
               >
                 <span className="text-2xl" role="img" aria-label={cat.label}>
@@ -255,7 +255,7 @@ export function SimplifiedFilters({
                   </span>
                 </div>
                 {isSelected && (
-                  <Check className="w-4 h-4 text-[var(--ff-color-primary-600)] flex-shrink-0" aria-hidden="true" />
+                  <Check className="w-4 h-4 text-[#C2654A] flex-shrink-0" aria-hidden="true" />
                 )}
               </button>
             );
@@ -275,8 +275,8 @@ export function SimplifiedFilters({
                 onClick={() => setPriceRange(range.min, range.max)}
                 className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
                   isSelected
-                    ? 'border-[var(--ff-color-primary-600)] bg-[var(--ff-color-primary-50)] font-semibold'
-                    : 'border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)]'
+                    ? 'border-[#C2654A] bg-[#FAF5F2] font-semibold'
+                    : 'border-[#E5E5E5] hover:border-[#D4856E]'
                 }`}
               >
                 <span className="text-sm">{range.label}</span>
@@ -295,13 +295,13 @@ export function SimplifiedFilters({
               return (
                 <label
                   key={style}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--color-bg)] cursor-pointer"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAFAF8] cursor-pointer"
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleStyle(style)}
-                    className="w-4 h-4 rounded border-[var(--color-border)] text-[var(--ff-color-primary-600)] focus:ring-[var(--ff-color-primary-400)]"
+                    className="w-4 h-4 rounded border-[#E5E5E5] text-[#C2654A] focus:ring-[#D4856E]"
                   />
                   <span className="text-sm">{style}</span>
                 </label>
@@ -323,8 +323,8 @@ export function SimplifiedFilters({
                   onClick={() => toggleColor(color)}
                   className={`aspect-square rounded-lg border-2 transition-all ${
                     isSelected
-                      ? 'border-[var(--ff-color-primary-600)] scale-110'
-                      : 'border-[var(--color-border)] hover:scale-105'
+                      ? 'border-[#C2654A] scale-110'
+                      : 'border-[#E5E5E5] hover:scale-105'
                   }`}
                   style={{ backgroundColor: color }}
                   aria-label={color}
@@ -350,7 +350,7 @@ export function SimplifiedFilters({
         animate={{ x: 0 }}
         exit={{ x: '-100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="fixed inset-y-0 left-0 z-50 w-full max-w-sm bg-[var(--color-surface)] shadow-2xl overflow-y-auto"
+        className="fixed inset-y-0 left-0 z-50 w-full max-w-sm bg-[#FFFFFF] shadow-2xl overflow-y-auto"
       >
         <div className="p-6">{content}</div>
       </motion.div>
@@ -359,7 +359,7 @@ export function SimplifiedFilters({
 
   // Desktop sidebar
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
+    <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6">
       {content}
     </div>
   );

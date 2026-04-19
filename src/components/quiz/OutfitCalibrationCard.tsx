@@ -95,22 +95,22 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     const occasionMap: Record<string, { icon: React.ComponentType<any>; bgClass: string; borderClass: string; title: string; subtitle: string }> = {
       work: {
         icon: Briefcase,
-        bgClass: 'bg-[var(--ff-color-primary-25)]',
-        borderClass: 'border-[var(--ff-color-primary-200)]',
+        bgClass: 'bg-[#FAF5F2]',
+        borderClass: 'border-[#F4E8E3]',
         title: 'Kantoor',
         subtitle: 'Zakelijke meeting of werkdag'
       },
       casual: {
         icon: Coffee,
-        bgClass: 'bg-[var(--ff-color-primary-25)]',
-        borderClass: 'border-[var(--ff-color-primary-200)]',
+        bgClass: 'bg-[#FAF5F2]',
+        borderClass: 'border-[#F4E8E3]',
         title: 'Casual dag uit',
         subtitle: 'Lunch, koffie, boodschappen'
       },
       evening: {
         icon: Moon,
-        bgClass: 'bg-[var(--ff-color-primary-50)]',
-        borderClass: 'border-[var(--ff-color-primary-200)]',
+        bgClass: 'bg-[#FAF5F2]',
+        borderClass: 'border-[#F4E8E3]',
         title: 'Avondje uit',
         subtitle: 'Restaurant, borrel of diner'
       }
@@ -125,20 +125,20 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-      className={`bg-[var(--color-surface)] border ${borderClass} rounded-2xl overflow-hidden transition-all duration-300`}
+      className={`bg-[#FFFFFF] border ${borderClass} rounded-2xl overflow-hidden transition-all duration-300`}
       style={{ boxShadow: '0 2px 12px rgba(74,56,40,0.08), 0 1px 3px rgba(74,56,40,0.06)' }}
     >
       {/* Header with Icon */}
       <div className={`${bgClass} px-4 py-4 border-b ${borderClass}`}>
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
-            <OccasionIcon className="w-5 h-5 sm:w-7 sm:h-7 text-[var(--color-text)]" strokeWidth={1.5} />
+            <OccasionIcon className="w-5 h-5 sm:w-7 sm:h-7 text-[#1A1A1A]" strokeWidth={1.5} />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-base sm:text-xl font-bold text-[var(--color-text)] mb-0.5 truncate">
+            <h3 className="text-base sm:text-xl font-bold text-[#1A1A1A] mb-0.5 truncate">
               {title}
             </h3>
-            <p className="text-xs sm:text-sm text-[var(--color-text)]/70 truncate">
+            <p className="text-xs sm:text-sm text-[#1A1A1A]/70 truncate">
               {subtitle}
             </p>
           </div>
@@ -147,17 +147,17 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             disabled={isSaving || disabled}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="w-11 h-11 rounded-full bg-white border-2 border-[var(--color-border)] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0 shadow-sm"
+            className="w-11 h-11 rounded-full bg-white border-2 border-[#E5E5E5] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0 shadow-sm"
             title="Bewaar outfit"
           >
-            <Heart className="w-5 h-5 text-[var(--color-muted)] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
+            <Heart className="w-5 h-5 text-[#8A8A8A] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
           </motion.button>
         </div>
       </div>
 
       <div className="flex flex-col">
         {/* Product Images Grid */}
-        <div className="relative bg-[var(--color-bg)] p-4">
+        <div className="relative bg-[#FAFAF8] p-4">
           <div className="grid grid-cols-2 gap-3">
             {outfit.items.top && (
               <motion.div
@@ -222,8 +222,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         <div className="space-y-4 p-4 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
-              <div className="text-sm font-medium text-[var(--color-muted)] mb-1">Totaalprijs</div>
-              <div className="text-2xl font-bold text-[var(--color-text)]">
+              <div className="text-sm font-medium text-[#8A8A8A] mb-1">Totaalprijs</div>
+              <div className="text-2xl font-bold text-[#1A1A1A]">
                 €{formattedTotal}
               </div>
             </div>
@@ -265,31 +265,31 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             )}
           </div>
 
-          <div className="pt-4 border-t border-[var(--color-border)] space-y-3">
+          <div className="pt-4 border-t border-[#E5E5E5] space-y-3">
             <div>
-              <p className="text-sm font-medium text-[var(--ff-color-primary-700)] mb-2">
+              <p className="text-sm font-medium text-[#A8513A] mb-2">
                 Waarom dit bij je past:
               </p>
-              <p className="text-sm text-[var(--color-text)] leading-relaxed">
+              <p className="text-sm text-[#1A1A1A] leading-relaxed">
                 {outfit.explanation}
               </p>
             </div>
 
             {outfit.colorHarmony && outfit.colorHarmony.harmony !== 'acceptable' && (
-              <div className="p-3 rounded-xl bg-[var(--ff-color-primary-50)] border border-[var(--ff-color-primary-100)]">
+              <div className="p-3 rounded-xl bg-[#FAF5F2] border border-[#FAF5F2]">
                 <div className="flex items-start gap-2">
-                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)]">
+                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#FAF5F2] text-[#A8513A]">
                     {outfit.colorHarmony.score}/100
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs text-[var(--color-text)] leading-relaxed">
+                    <p className="text-xs text-[#1A1A1A] leading-relaxed">
                       {outfit.colorHarmony.explanation}
                     </p>
                     {outfit.colorHarmony.tips && outfit.colorHarmony.tips.length > 0 && (
                       <ul className="mt-2 space-y-1">
                         {outfit.colorHarmony.tips.map((tip, idx) => (
-                          <li key={idx} className="text-xs text-[var(--color-muted)] flex items-start gap-1">
-                            <span className="text-[var(--ff-color-primary-700)]">•</span>
+                          <li key={idx} className="text-xs text-[#8A8A8A] flex items-start gap-1">
+                            <span className="text-[#A8513A]">•</span>
                             {tip}
                           </li>
                         ))}
@@ -314,8 +314,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden ${
                 selectedFeedback === 'spot_on'
-                  ? 'bg-[var(--ff-color-primary-700)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-500)] hover:text-[var(--ff-color-primary-700)]'
+                  ? 'bg-[#A8513A] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#C2654A] hover:text-[#A8513A]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               style={selectedFeedback === 'spot_on' ? { boxShadow: '0 4px 14px rgba(74,56,40,0.25)' } : {}}
             >
@@ -343,8 +343,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
-                  ? 'bg-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] border border-[var(--ff-color-primary-200)]'
-                  : 'bg-[var(--color-surface)] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--ff-color-primary-300)] hover:text-[var(--ff-color-primary-600)]'
+                  ? 'bg-[#FAF5F2] text-[#A8513A] border border-[#F4E8E3]'
+                  : 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5] hover:border-[#D4856E] hover:text-[#C2654A]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" strokeWidth={2.5} />
@@ -363,8 +363,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'not_for_me'
-                  ? 'bg-[var(--color-bg)] text-[var(--color-muted)] border border-[var(--color-border)]'
-                  : 'bg-[var(--color-surface)] text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-border)]'
+                  ? 'bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5]'
+                  : 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5] hover:border-[#E5E5E5]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <X className="w-4 h-4" strokeWidth={2.5} />
@@ -377,7 +377,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               disabled={disabled}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-primary-100)] text-[var(--ff-color-primary-700)] border border-[var(--ff-color-primary-200)] hover:from-[var(--ff-color-primary-100)] hover:to-[var(--ff-color-primary-200)] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#A8513A] border border-[#F4E8E3] hover:from-[#FAF5F2] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <Sparkles className="w-4 h-4" />
               Smart Remix
@@ -420,18 +420,18 @@ function OutfitItem({ name, brand, price, category, onSwap, isSwapping, disabled
       className="flex items-start justify-between gap-3 text-sm group"
     >
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-[var(--color-text)] truncate">{name}</div>
-        <div className="text-[var(--color-muted)] text-xs mt-0.5">{brand}</div>
+        <div className="font-medium text-[#1A1A1A] truncate">{name}</div>
+        <div className="text-[#8A8A8A] text-xs mt-0.5">{brand}</div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <div className="text-[var(--color-text)] font-medium">€{formattedPrice.toFixed(2)}</div>
+        <div className="text-[#1A1A1A] font-medium">€{formattedPrice.toFixed(2)}</div>
         {onSwap && category && (
           <motion.button
             onClick={() => !disabled && !isSwapping && onSwap(category)}
             disabled={disabled || isSwapping}
             whileHover={!disabled && !isSwapping ? { scale: 1.1 } : {}}
             whileTap={!disabled && !isSwapping ? { scale: 0.9 } : {}}
-            className="w-7 h-7 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center hover:border-[var(--ff-color-primary-700)] hover:text-[var(--ff-color-primary-700)] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
+            className="w-7 h-7 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center hover:border-[#A8513A] hover:text-[#A8513A] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
             title="Vervang dit item"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSwapping ? 'animate-spin' : ''}`} />

@@ -10,7 +10,7 @@ export const DosDonts: React.FC<DosDontsProps> = ({ dos, donts }) => {
   return (
     <div className="grid md:grid-cols-2 gap-6 my-8">
       {/* Do's */}
-      <div className="bg-emerald-50 border-2 border-emerald-200 rounded-[var(--radius-lg)] p-6">
+      <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-6">
         <h3 className="font-bold text-emerald-900 mb-4 flex items-center gap-2">
           <Check className="w-5 h-5" />
           Do
@@ -26,7 +26,7 @@ export const DosDonts: React.FC<DosDontsProps> = ({ dos, donts }) => {
       </div>
 
       {/* Don'ts */}
-      <div className="bg-red-50 border-2 border-red-200 rounded-[var(--radius-lg)] p-6">
+      <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6">
         <h3 className="font-bold text-red-900 mb-4 flex items-center gap-2">
           <X className="w-5 h-5" />
           Don't

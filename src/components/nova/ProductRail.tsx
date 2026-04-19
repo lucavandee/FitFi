@@ -12,11 +12,11 @@ interface ProductRailProps {
 
 function ProductSkeleton() {
   return (
-    <div className="flex-shrink-0 w-48 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-hidden animate-pulse">
-      <div className="aspect-[3/4] bg-[var(--ff-color-primary-50)]" />
+    <div className="flex-shrink-0 w-48 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] overflow-hidden animate-pulse">
+      <div className="aspect-[3/4] bg-[#FAF5F2]" />
       <div className="p-2">
-        <div className="h-4 bg-[var(--ff-color-primary-50)] rounded w-32 mb-1" />
-        <div className="h-3 bg-[var(--ff-color-primary-50)] rounded w-24" />
+        <div className="h-4 bg-[#FAF5F2] rounded w-32 mb-1" />
+        <div className="h-3 bg-[#FAF5F2] rounded w-24" />
       </div>
     </div>
   );
@@ -56,23 +56,23 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       type="button"
       onClick={handleClick}
       disabled={!hasUrl}
-      className={`flex-shrink-0 w-48 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-hidden text-left transition-all ${
-        hasUrl ? "cursor-pointer hover:shadow-[var(--shadow-soft)] hover:-translate-y-0.5" : "opacity-60 cursor-default"
+      className={`flex-shrink-0 w-48 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] overflow-hidden text-left transition-all ${
+        hasUrl ? "cursor-pointer hover:shadow-sm hover:-translate-y-0.5" : "opacity-60 cursor-default"
       }`}
     >
       <ImageWithFallback src={(product as any).image_url || product.imageUrl || (product as any).image} alt={title} ratio="portrait" />
       <div className="p-2">
-        <div className="text-sm font-medium text-[var(--color-text)] line-clamp-2">{title}</div>
+        <div className="text-sm font-medium text-[#1A1A1A] line-clamp-2">{title}</div>
         <div className="mt-1 flex items-center justify-between">
-          <div className="text-[13px] text-[var(--color-muted)]">{brand}</div>
+          <div className="text-[13px] text-[#8A8A8A]">{brand}</div>
           {price != null && price > 0 && (
-            <div className="text-[13px] font-semibold text-[var(--ff-color-primary-700)]">
+            <div className="text-[13px] font-semibold text-[#A8513A]">
               €{price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}
             </div>
           )}
         </div>
         {hasUrl && (
-          <div className="mt-2 flex items-center gap-2 text-[12px] text-[var(--ff-color-primary-600)]">
+          <div className="mt-2 flex items-center gap-2 text-[12px] text-[#C2654A]">
             <ShoppingBag size={14} />
             <span>Shop nu</span>
             <ExternalLink size={14} className="ml-auto opacity-70" />
@@ -98,8 +98,8 @@ export default function ProductRail({ items, loading }: ProductRailProps) {
   return (
     <div className="mt-3">
       <div className="flex items-center gap-2 mb-3">
-        <ShoppingBag size={16} className="text-[var(--ff-color-primary-600)]" />
-        <span className="text-sm font-medium text-[var(--color-text)]">
+        <ShoppingBag size={16} className="text-[#C2654A]" />
+        <span className="text-sm font-medium text-[#1A1A1A]">
           Shoppable look ({items.length} items)
         </span>
       </div>

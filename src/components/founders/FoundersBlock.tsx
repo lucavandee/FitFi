@@ -40,17 +40,17 @@ export const FoundersBlock: React.FC = () => {
   const tier = resolveTier(refCount);
 
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-6 bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
+    <div className="rounded-2xl border border-[#E5E5E5] p-6 bg-[#FFFFFF] shadow-sm">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h3 className="font-montserrat text-xl text-[var(--color-text)]">Founders</h3>
+          <h3 className="font-montserrat text-xl text-[#1A1A1A]">Founders</h3>
           <p className="text-sm text-gray-600">Nodig vrienden uit en verdien extra voordelen</p>
         </div>
         <FoundersTierBadge tier={tier} />
       </div>
 
       <div className="mt-4 grid gap-3">
-        <div className="text-sm text-[var(--color-text)]/80 break-all">{inviteUrl}</div>
+        <div className="text-sm text-[#1A1A1A]/80 break-all">{inviteUrl}</div>
         <button
           className="ff-cta px-4 py-2 rounded-2xl"
           onClick={async () => {
