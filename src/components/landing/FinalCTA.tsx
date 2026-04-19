@@ -27,7 +27,7 @@ export function FinalCTA() {
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)] rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] p-8 sm:p-10 md:p-14 lg:p-16 text-center shadow-2xl border border-[var(--ff-color-primary-600)] overflow-hidden">
+        <div className="bg-gradient-to-br from-[var(--ff-color-primary-700)] to-[var(--ff-color-primary-500)] rounded-2xl p-8 sm:p-10 md:p-14 lg:p-16 text-center shadow-2xl border border-[var(--ff-color-primary-600)] overflow-hidden">
 
           <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl opacity-10" aria-hidden="true"></div>
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl opacity-10" aria-hidden="true"></div>

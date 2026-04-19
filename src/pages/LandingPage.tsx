@@ -397,7 +397,7 @@ export default function LandingPage() {
                 },
               ].map((step, i) => (
                 <Reveal key={step.num} delay={i * 0.12}>
-                  <div className="bg-white border border-[#E5E5E5] rounded-3xl p-8 md:p-12 relative overflow-hidden group transition-all duration-200 hover:border-[#C2654A] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] h-full flex flex-col">
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-12 relative overflow-hidden group transition-all duration-200 hover:border-[#C2654A] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] h-full flex flex-col">
                     {/* Big number */}
                     <span
                       className="font-serif italic text-[72px] text-[#F5F0EB] absolute -top-3 right-5 select-none pointer-events-none"
@@ -570,7 +570,7 @@ export default function LandingPage() {
                 },
               ].map((card, i) => (
                 <Reveal key={card.title} delay={i * 0.12}>
-                  <div className="bg-[#F5F0EB] rounded-3xl p-8 md:p-10 h-full">
+                  <div className="bg-[#F5F0EB] rounded-2xl p-8 md:p-10 h-full">
                     <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mb-6">
                       <card.icon className="w-[22px] h-[22px] text-[#C2654A]" />
                     </div>
@@ -612,7 +612,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {reviews.map((review, i) => (
                 <Reveal key={i} delay={i * 0.12}>
-                  <article className="bg-white rounded-3xl p-8 md:p-10 pt-8 md:pt-10 h-full flex flex-col">
+                  <article className="bg-white rounded-2xl p-8 md:p-10 pt-8 md:pt-10 h-full flex flex-col">
                     {/* Quote mark */}
                     <span
                       className="font-serif text-[72px] text-[#F4E8E3] leading-[0.6] mb-4 select-none"

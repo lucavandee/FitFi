@@ -71,17 +71,17 @@ export function AchievementToast({ achievement, onClose }: AchievementToastProps
           damping: 20,
           stiffness: 300,
         }}
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] max-w-md w-[90vw] sm:w-96"
+        className="fixed top-6 left-1/2 -translate-x-1/2 z-[75] max-w-md w-[90vw] sm:w-96"
       >
         <div className="relative">
           {/* Glow effect */}
           <div
-            className="absolute inset-0 rounded-3xl blur-2xl opacity-60 animate-pulse"
+            className="absolute inset-0 rounded-2xl blur-2xl opacity-60 animate-pulse"
             style={{ background: config.glow }}
           />
 
           {/* Main card */}
-          <div className="relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border-2 border-white/20 overflow-hidden">
+          <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-white/20 overflow-hidden">
             {/* Animated background */}
             <div className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-10`} />
 
@@ -181,14 +181,14 @@ export function LevelUpToast({ level, levelName, levelIcon, onClose }: LevelUpTo
         damping: 15,
         stiffness: 300,
       }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] max-w-md w-[90vw] sm:w-96"
+      className="fixed top-6 left-1/2 -translate-x-1/2 z-[75] max-w-md w-[90vw] sm:w-96"
     >
       <div className="relative">
         {/* Epic glow */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-yellow-400 to-orange-500 blur-3xl opacity-60 animate-pulse" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 blur-3xl opacity-60 animate-pulse" />
 
         {/* Main card */}
-        <div className="relative bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-3xl shadow-2xl border-2 border-yellow-400/50 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl shadow-2xl border-2 border-yellow-400/50 overflow-hidden">
           {/* Rays animation */}
           <div className="absolute inset-0 overflow-hidden">
             {[...Array(12)].map((_, i) => (
@@ -273,7 +273,7 @@ export function XPToast({ amount, reason, onClose }: XPToastProps) {
       initial={{ opacity: 0, x: 100, scale: 0.8 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 50, scale: 0.9 }}
-      className="fixed bottom-24 right-6 z-[9999]"
+      className="fixed bottom-24 right-6 z-[75]"
     >
       <div className="bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20">
         <Zap className="w-5 h-5 flex-shrink-0 animate-pulse" />

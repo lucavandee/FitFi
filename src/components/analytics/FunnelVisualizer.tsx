@@ -32,7 +32,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
   };
 
   return (
-    <div className={`bg-white rounded-3xl shadow-sm p-6 ${className}`}>
+    <div className={`bg-white rounded-2xl shadow-sm p-6 ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-medium text-gray-900 capitalize">
           {funnelName} Funnel Visualization

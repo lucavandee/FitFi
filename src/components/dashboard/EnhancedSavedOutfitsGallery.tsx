@@ -82,7 +82,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface)] border-2 border-dashed border-[var(--color-border)] rounded-3xl p-12 text-center"
+        className="bg-[var(--color-surface)] border-2 border-dashed border-[var(--color-border)] rounded-2xl p-12 text-center"
       >
         <Heart className="w-16 h-16 mx-auto text-[var(--color-muted)] mb-4 opacity-50" />
         <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">

@@ -73,7 +73,7 @@ export function StyleAnalysisTransition({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-[var(--ff-color-primary-900)] via-[var(--ff-color-primary-800)] to-[var(--ff-color-primary-700)]"
+        className="fixed inset-0 z-[70] flex items-center justify-center bg-gradient-to-br from-[var(--ff-color-primary-900)] via-[var(--ff-color-primary-800)] to-[var(--ff-color-primary-700)]"
         style={{ pointerEvents: 'none' }}
       >
         <div className="max-w-md mx-auto px-6 text-center">

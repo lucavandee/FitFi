@@ -140,7 +140,7 @@ export default function NovaLoginPrompt({
       />
       
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl animate-scale-in">
+      <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl animate-scale-in">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">

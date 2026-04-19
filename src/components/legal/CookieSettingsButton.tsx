@@ -10,7 +10,7 @@ export default function CookieSettingsButton({ className = '' }: { className?: s
     <>
       <button onClick={() => setOpen(true)} className={className}>Cookie-instellingen</button>
       {open && (
-        <div className="fixed inset-0 z-[95] bg-black/30" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[53] bg-black/30" onClick={() => setOpen(false)}>
           <div className="absolute inset-x-0 bottom-0 p-4" onClick={(e)=>e.stopPropagation()}>
             <CookieBanner />
           </div>

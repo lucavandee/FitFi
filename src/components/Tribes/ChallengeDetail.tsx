@@ -102,7 +102,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
   const timeRemaining = getTimeRemaining();
 
   return (
-    <div className={`bg-white rounded-3xl shadow-sm p-6 ${className}`}>
+    <div className={`bg-white rounded-2xl shadow-sm p-6 ${className}`}>
       {/* Challenge Header */}
       <div className="mb-6">
         {challenge.image && (

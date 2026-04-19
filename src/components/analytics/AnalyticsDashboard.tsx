@@ -106,7 +106,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
 
   if (error) {
     return (
-      <div className="bg-white rounded-3xl shadow-sm p-8 text-center">
+      <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <AlertCircle className="w-8 h-8 text-red-600" />
         </div>
@@ -206,7 +206,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
 
       {/* Top Pages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-3xl shadow-sm p-6">
+        <div className="bg-white rounded-2xl shadow-sm p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-6">Top Pagina's</h3>
           <div className="space-y-4">
             {metrics.topPages.map((page, index) => (
@@ -230,7 +230,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className = '' 
         </div>
 
         {/* Recent Events */}
-        <div className="bg-white rounded-3xl shadow-sm p-6">
+        <div className="bg-white rounded-2xl shadow-sm p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-6">Event Trends</h3>
           <div className="space-y-4">
             {metrics.recentEvents.map((event) => (

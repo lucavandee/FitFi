@@ -15,7 +15,7 @@ export default function NovaLauncher() {
       onClick={onClick}
       aria-label={isOpen ? "Sluit Nova" : "Open Nova"}
       className="
-        fixed z-[9999]
+        fixed z-[55]
         right-4 md:right-6
         bottom-[max(1rem,env(safe-area-inset-bottom))]
         inline-flex items-center gap-2

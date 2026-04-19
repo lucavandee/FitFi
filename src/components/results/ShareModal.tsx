@@ -32,7 +32,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-[var(--color-surface)] rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
+            className="bg-[var(--color-surface)] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"
           >
             <div className="relative p-8 pb-6 bg-gradient-to-br from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)]">
               <button

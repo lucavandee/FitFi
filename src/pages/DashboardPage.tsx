@@ -187,13 +187,13 @@ export default function DashboardPage() {
               </p>
               <button
                 onClick={() => navigate("/onboarding")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-full font-bold text-sm bg-[#C2654A] hover:bg-[#A8513A] transition-colors active:scale-[0.98] mb-3"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-xl font-bold text-sm bg-[#C2654A] hover:bg-[#A8513A] transition-colors active:scale-[0.98] mb-3"
               >
                 Verder gaan met quiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
               <button
                 onClick={() => navigate("/onboarding?step=redo")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-full font-semibold text-sm transition-all border border-[#E5E5E5] hover:border-[#C2654A] text-[#4A4A4A] hover:text-[#C2654A]"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-xl font-semibold text-sm transition-all border border-[#E5E5E5] hover:border-[#C2654A] text-[#4A4A4A] hover:text-[#C2654A]"
               >
                 Opnieuw beginnen
               </button>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
               </p>
               <button
                 onClick={() => navigate("/onboarding")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-full font-bold text-sm bg-[#C2654A] hover:bg-[#A8513A] transition-colors active:scale-[0.98]"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-xl font-bold text-sm bg-[#C2654A] hover:bg-[#A8513A] transition-colors active:scale-[0.98]"
               >
                 Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="relative rounded-[28px] overflow-hidden min-h-[280px] flex items-end mb-8"
+          className="relative rounded-2xl overflow-hidden min-h-[280px] flex items-end mb-8"
         >
           {/* Background image */}
           <img
@@ -289,14 +289,14 @@ export default function DashboardPage() {
             <div className="flex gap-3 flex-shrink-0 w-full md:w-auto">
               <button
                 onClick={() => navigate("/results")}
-                className="inline-flex items-center justify-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 px-7 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)] flex-1 md:flex-none"
+                className="inline-flex items-center justify-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3.5 px-7 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)] flex-1 md:flex-none"
               >
                 <Eye className="w-4 h-4" aria-hidden="true" />
                 Bekijk je resultaten
               </button>
               <button
                 onClick={() => navigate("/shop")}
-                className="inline-flex items-center justify-center gap-2 bg-white/12 backdrop-blur-sm text-white font-semibold text-sm py-3.5 px-7 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 flex-1 md:flex-none"
+                className="inline-flex items-center justify-center gap-2 bg-white/12 backdrop-blur-sm text-white font-semibold text-sm py-3.5 px-7 rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-200 flex-1 md:flex-none"
               >
                 <ShoppingBag className="w-4 h-4" aria-hidden="true" />
                 Shop outfits
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                         aria-label={`Bekijk outfit: ${label}`}
                         className="group text-left"
                       >
-                        <div className="bg-white border border-[#E5E5E5] rounded-[20px] overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#C2654A] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+                        <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#C2654A] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
                           <div className="aspect-[3/4] overflow-hidden bg-[#F5F0EB]">
                             {coverImg ? (
                               <img
@@ -408,7 +408,7 @@ export default function DashboardPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.06 }}
                   onClick={onClick}
-                  className="bg-white border border-[#E5E5E5] rounded-[20px] p-7 cursor-pointer group relative overflow-hidden transition-all duration-300 hover:border-[#C2654A] hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] text-left"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-7 cursor-pointer group relative overflow-hidden transition-all duration-300 hover:border-[#C2654A] hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] text-left"
                 >
                   <div className="w-12 h-12 rounded-[14px] bg-[#F5F0EB] group-hover:bg-[#F4E8E3] flex items-center justify-center mb-4 transition-colors duration-200">
                     <Icon className="w-[22px] h-[22px] text-[#C2654A]" aria-hidden="true" />
@@ -430,7 +430,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white border border-[#E5E5E5] rounded-[20px] p-7"
+              className="bg-white border border-[#E5E5E5] rounded-2xl p-7"
             >
               <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">Profiel</p>
 
@@ -482,7 +482,7 @@ export default function DashboardPage() {
               >
                 <Link
                   to="/prijzen"
-                  className="group flex flex-col p-7 rounded-[20px] bg-[#C2654A]"
+                  className="group flex flex-col p-7 rounded-2xl bg-[#C2654A]"
                 >
                   <p className="text-xs font-semibold uppercase tracking-[1.5px] text-white/70">Upgrade</p>
                   <h4 className="text-base font-bold text-white mt-1">Ontgrendel Premium</h4>
@@ -500,7 +500,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.36 }}
-              className="bg-white border border-[#E5E5E5] rounded-[20px] p-7"
+              className="bg-white border border-[#E5E5E5] rounded-2xl p-7"
             >
               <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">Snelkoppelingen</p>
               <div>
@@ -533,7 +533,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.44 }}
-              className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-[20px] p-7"
+              className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-7"
             >
               <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">Stijl tip</p>
               <h4 className="text-[15px] font-bold text-[#1A1A1A] mb-2">
@@ -543,13 +543,13 @@ export default function DashboardPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate("/results")}
-                  className="flex-1 py-2.5 rounded-full border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 cursor-pointer"
                 >
                   Outfits zien
                 </button>
                 <button
                   onClick={() => navigate("/shop")}
-                  className="flex-1 py-2.5 rounded-full border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 cursor-pointer"
                 >
                   Shoppen
                 </button>

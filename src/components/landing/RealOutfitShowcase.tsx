@@ -183,7 +183,7 @@ export function RealOutfitShowcase() {
           {outfits.map((outfit) => (
             <div
               key={outfit.id}
-              className="group relative overflow-hidden rounded-3xl cursor-pointer
+              className="group relative overflow-hidden rounded-2xl cursor-pointer
                          shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.2)]
                          transition-all duration-700 md:hover:-translate-y-4 md:hover:scale-[1.02]
                          min-w-[76vw] sm:min-w-[56vw] md:min-w-0 flex-shrink-0 md:flex-shrink snap-center
@@ -215,7 +215,7 @@ export function RealOutfitShowcase() {
                   {outfit.items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-[20px] bg-white/80 backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)] overflow-hidden group/item transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.16)] hover:scale-[1.03]"
+                      className="relative aspect-square rounded-2xl bg-white/80 backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)] overflow-hidden group/item transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.16)] hover:scale-[1.03]"
                     >
                       <div className="absolute inset-0 p-6 sm:p-8">
                         {item.image ? (
@@ -231,7 +231,7 @@ export function RealOutfitShowcase() {
                       </div>
 
                       {/* Premium label overlay met glassmorphism */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover/item:opacity-100 transition-all duration-500 flex items-end p-4 sm:p-5 rounded-[20px]">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover/item:opacity-100 transition-all duration-500 flex items-end p-4 sm:p-5 rounded-2xl">
                         <p className="text-white text-xs sm:text-sm font-semibold line-clamp-2 tracking-wide">
                           {item.label}
                         </p>

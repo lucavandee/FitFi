@@ -148,7 +148,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
         )}
 
         {/* Content */}
-        <div className="bg-white rounded-3xl shadow-sm p-8 md:p-12">
+        <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12">
           <div
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(renderMarkdown(content)) }}

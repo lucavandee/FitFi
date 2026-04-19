@@ -48,7 +48,7 @@ export default function StickyCTA({
       aria-label="Snelle actie"
     >
       <div className="mx-auto max-w-5xl px-4 pb-4">
-        <div className="rounded-3xl border bg-white/80 p-4 shadow-xl backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/70">
+        <div className="rounded-2xl border bg-white/80 p-4 shadow-xl backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/70">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{sublabel ?? "Boost je stijl met FitFi"}</p>

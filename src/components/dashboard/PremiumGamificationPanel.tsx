@@ -69,7 +69,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-8 shadow-xl border-2 border-purple-200 dark:border-purple-800 animate-pulse">
+      <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8 shadow-xl border-2 border-purple-200 dark:border-purple-800 animate-pulse">
         <div className="h-8 w-48 bg-purple-200 dark:bg-purple-800 rounded mb-6" />
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
@@ -89,7 +89,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="relative bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-8 shadow-xl border-2 border-purple-200 dark:border-purple-800 overflow-hidden"
+      className="relative bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8 shadow-xl border-2 border-purple-200 dark:border-purple-800 overflow-hidden"
     >
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl" />

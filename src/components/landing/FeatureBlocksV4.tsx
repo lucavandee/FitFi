@@ -46,7 +46,7 @@ export function FeatureBlocksV4() {
           >
             {/* Visual */}
             <div className={feature.reversed ? 'lg:col-start-2' : ''}>
-              <div className="aspect-[4/3] rounded-2xl lg:rounded-3xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(0,0,0,0.22)]">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(0,0,0,0.22)]">
                 <SmartImage
                   src={feature.imageSrc}
                   alt={feature.imageAlt}

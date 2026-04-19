@@ -157,7 +157,7 @@ export function OutfitDetailModal({
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
           transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-[480px] bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-[0_32px_80px_rgba(0,0,0,0.15)]"
+          className="relative w-full max-w-[480px] bg-white rounded-t-2xl sm:rounded-2xl overflow-hidden flex flex-col shadow-[0_32px_80px_rgba(0,0,0,0.15)]"
           style={{ maxHeight: "90dvh" }}
         >
           {/* Drag handle — mobile only */}

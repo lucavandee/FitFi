@@ -220,7 +220,7 @@ export function ToastError({ error, onDismiss, duration = 5000 }: ToastErrorProp
         exit={{ opacity: 0, x: 100, scale: 0.9 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className={`
-          fixed top-20 right-4 z-[9999] max-w-sm w-full
+          fixed top-20 right-4 z-[75] max-w-sm w-full
           rounded-xl border-2 p-4 shadow-xl
           ${styles.bg} ${styles.border}
         `}

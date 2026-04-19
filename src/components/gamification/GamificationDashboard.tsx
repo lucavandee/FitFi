@@ -124,7 +124,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
 
             {/* Recent Badges */}
             {earnedBadges.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm p-6">
+              <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="flex items-center space-x-2 mb-4">
                   <Gift className="w-5 h-5 text-[var(--ff-color-primary-500)]" />
                   <h3 className="text-lg font-bold text-gray-900">Jouw Badges</h3>

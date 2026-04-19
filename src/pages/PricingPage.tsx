@@ -287,7 +287,7 @@ export default function PricingPage() {
 
               {/* ── Free Card ── */}
               <Reveal>
-                <article className="bg-white border border-[#E5E5E5] rounded-[28px] p-12 hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full">
+                <article className="bg-white border border-[#E5E5E5] rounded-2xl p-12 hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full">
                   {/* Badge */}
                   <div className="bg-[#F5F0EB] text-[#4A4A4A] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Altijd gratis
@@ -340,7 +340,7 @@ export default function PricingPage() {
                   {/* CTA */}
                   <NavLink
                     to="/onboarding"
-                    className="w-full text-center py-4 rounded-full border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-300 block"
+                    className="w-full text-center py-4 rounded-xl border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-300 block"
                     data-event="cta_start_free_pricing"
                   >
                     Start gratis
@@ -350,7 +350,7 @@ export default function PricingPage() {
 
               {/* ── Premium Card ── */}
               <Reveal delay={0.12}>
-                <article className="relative bg-white border-2 border-[#C2654A] rounded-[28px] p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
+                <article className="relative bg-white border-2 border-[#C2654A] rounded-2xl p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
                   {/* Badge */}
                   <div className="bg-[#F4E8E3] text-[#C2654A] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Meest gekozen
@@ -398,7 +398,7 @@ export default function PricingPage() {
                   <button
                     onClick={() => premiumProduct && handleCheckout(premiumProduct.id)}
                     disabled={isLoading || isPending}
-                    className="w-full text-center py-4 rounded-full bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full text-center py-4 rounded-xl bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     data-event="cta_start_premium_pricing"
                   >
                     {isLoading ? (
@@ -434,7 +434,7 @@ export default function PricingPage() {
         <section className="bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <div className="max-w-[880px] mx-auto mb-28 bg-[#F5F0EB] rounded-3xl p-10 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="max-w-[880px] mx-auto mb-28 bg-[#F5F0EB] rounded-2xl p-10 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
                 {/* Left */}
                 <div>
                   <h3 className="text-xl font-bold text-[#1A1A1A] mb-1.5">Founder Lifetime</h3>
@@ -504,7 +504,7 @@ export default function PricingPage() {
 
             {/* Table */}
             <Reveal delay={0.36}>
-              <div className="max-w-[880px] mx-auto bg-white rounded-3xl overflow-hidden border border-[#E5E5E5]">
+              <div className="max-w-[880px] mx-auto bg-white rounded-2xl overflow-hidden border border-[#E5E5E5]">
                 {/* Header row */}
                 <div className="bg-[#FAFAF8] border-b border-[#E5E5E5] grid grid-cols-[1fr_80px_80px] md:grid-cols-[1fr_160px_160px] px-5 md:px-10 py-5">
                   <div />
@@ -642,7 +642,7 @@ export default function PricingPage() {
             <Reveal delay={0.24}>
               <NavLink
                 to="/onboarding"
-                className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold py-5 px-12 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold py-5 px-12 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 data-event="cta_start_free_pricing"
               >
                 Begin gratis

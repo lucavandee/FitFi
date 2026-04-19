@@ -71,7 +71,7 @@ const Features: React.FC = () => {
             return (
               <div
                 key={index}
-                className="group relative bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 hover:-translate-y-2 transition-all duration-300 hover:shadow-xl hover:border-[var(--ff-color-primary-200)]"
+                className="group relative bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-2xl p-6 sm:p-8 lg:p-10 hover:-translate-y-2 transition-all duration-300 hover:shadow-xl hover:border-[var(--ff-color-primary-200)]"
               >
                 {/* Icon with gradient background - Consistent with design system */}
                 <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-r ${feature.gradient} mb-6 shadow-lg hover:shadow-xl transition-shadow duration-300`}>
@@ -88,7 +88,7 @@ const Features: React.FC = () => {
                 </p>
 
                 {/* Hover effect overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl lg:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--ff-color-primary-50)] to-[var(--ff-color-accent-50)] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
             );
           })}

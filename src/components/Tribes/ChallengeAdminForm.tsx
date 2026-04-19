@@ -109,7 +109,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
   };
 
   return (
-    <div className={`bg-white rounded-3xl shadow-sm border border-gray-200 p-6 ${className}`}>
+    <div className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-6 ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-[var(--ff-color-primary-500)] to-blue-500 rounded-full flex items-center justify-center">

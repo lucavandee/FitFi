@@ -40,7 +40,7 @@ export default function CookieBanner() {
       role="dialog"
       aria-modal="true"
       aria-label="Cookievoorkeuren"
-      className="fixed inset-x-0 bottom-0 z-[9000] p-3 sm:p-4"
+      className="fixed inset-x-0 bottom-0 z-[54] p-3 sm:p-4"
     >
       <div className="mx-auto max-w-2xl rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl overflow-hidden">
 

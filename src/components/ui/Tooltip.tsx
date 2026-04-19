@@ -329,7 +329,7 @@ export function Tooltip({
               id={tooltipId}
               role="tooltip"
               className={cn(
-                'fixed z-[9999] rounded-lg border font-medium pointer-events-none',
+                'fixed z-[65] rounded-lg border font-medium pointer-events-none',
                 SIZE_VARIANTS[size],
                 THEME_VARIANTS[theme],
                 className

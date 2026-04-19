@@ -25,7 +25,7 @@ export function StyleReportPreviewCard() {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
+          <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-border)]">
 
             <div className="relative">
               <div className="p-8 sm:p-12">

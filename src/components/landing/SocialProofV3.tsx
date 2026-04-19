@@ -40,7 +40,7 @@ function TestimonialCard({ review, gradient }: { review: ReviewItem; gradient: s
   const rating = review.rating ?? 5;
   return (
     <article
-      className="bg-[var(--color-surface)] rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-[var(--color-border)] shadow-sm h-full flex flex-col"
+      className="bg-[var(--color-surface)] rounded-2xl p-6 sm:p-8 border border-[var(--color-border)] shadow-sm h-full flex flex-col"
       aria-label={`Gebruikerservaring van ${review.name}`}
     >
       <div className="flex gap-1 mb-4 sm:mb-5" role="img" aria-label={`${rating} van 5 sterren`}>

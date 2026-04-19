@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import Spinner from '@/components/ui/Spinner';
 import { motion } from 'framer-motion';
 import { Users, Search, Shield, CircleCheck as CheckCircle, Circle as XCircle, Crown, Download, RefreshCw, ChevronUp, ChevronDown, ArrowLeft, Filter, MoveVertical as MoreVertical } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -187,7 +188,7 @@ export default function AdminUsersPage() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 64px)' }}>
-        <div className="animate-spin w-10 h-10 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full" />
+        <Spinner size="md" />
       </div>
     );
   }

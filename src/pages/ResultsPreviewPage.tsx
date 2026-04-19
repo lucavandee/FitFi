@@ -159,10 +159,10 @@ export default function ResultsPreviewPage() {
       {/* 3. Profielkaart */}
       <div className="max-w-[900px] mx-auto px-6 -mt-10 relative z-10">
         <ScaleIn>
-          <div className="bg-white border border-[#E5E5E5] rounded-[28px] p-10 md:p-12">
+          <div className="bg-white border border-[#E5E5E5] rounded-2xl p-10 md:p-12">
             {/* Header */}
             <div className="flex items-center gap-8 mb-10 pb-8 border-b border-[#E5E5E5]">
-              <div className="w-[72px] h-[72px] rounded-[20px] bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 text-2xl font-bold text-[#C2654A]">
+              <div className="w-[72px] h-[72px] rounded-2xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 text-2xl font-bold text-[#C2654A]">
                 {archetypeInitials}
               </div>
               <div>
@@ -235,7 +235,7 @@ export default function ResultsPreviewPage() {
       <section className="py-20 bg-[#FAFAF8]">
         <div className="max-w-[900px] mx-auto px-6">
           <FadeIn>
-            <div className="bg-white border border-[#E5E5E5] rounded-[28px] p-10 md:p-12">
+            <div className="bg-white border border-[#E5E5E5] rounded-2xl p-10 md:p-12">
               <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">
                 Kleurpalet
               </p>
@@ -407,7 +407,7 @@ export default function ResultsPreviewPage() {
       <section className="py-28 bg-[#FAFAF8]">
         <div className="max-w-[700px] mx-auto px-6">
           <FadeIn>
-            <div className="bg-white border border-[#E5E5E5] rounded-[28px] p-12 md:p-16 text-center">
+            <div className="bg-white border border-[#E5E5E5] rounded-2xl p-12 md:p-16 text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] text-[11px] font-semibold text-[#C2654A] mb-6">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{isPersonalized ? `Klaar ${userName}?` : 'Maak het persoonlijk'}</span>

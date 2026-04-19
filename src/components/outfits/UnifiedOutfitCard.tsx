@@ -174,7 +174,7 @@ export default function UnifiedOutfitCard({
   return (
     <motion.div
       className={cn(
-        'group relative rounded-3xl border-2 p-5 shadow-lg hover:shadow-2xl transition-all',
+        'group relative rounded-2xl border-2 p-5 shadow-lg hover:shadow-2xl transition-all',
         'focus-within:ring-4 focus-within:ring-[var(--shadow-ring)] focus-within:border-[var(--color-primary)]',
         'overflow-hidden',
         currentTheme.container,
