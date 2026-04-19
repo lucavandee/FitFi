@@ -58,7 +58,6 @@ export default function AdminPWADashboard() {
           user_metadata: session.user.user_metadata,
           isAdminFromJWT: session.user.app_metadata?.is_admin,
         };
-        console.log('[AdminPWA] JWT Debug Info:', jwtInfo);
         setJwtData(jwtInfo);
       }
     };
@@ -69,14 +68,10 @@ export default function AdminPWADashboard() {
     if (authLoading) return;
 
     if (!isAdmin) {
-      console.error('[AdminPWA] Access denied - user is not admin');
-      console.error('[AdminPWA] User object:', user);
-      console.error('[AdminPWA] JWT data:', jwtData);
       // Don't redirect - show access denied message instead
       return;
     }
 
-    console.log('[AdminPWA] Admin verified, loading dashboard...');
     loadStats();
     loadRecentNotifications();
   }, [isAdmin, authLoading, navigate, user, jwtData]);
@@ -139,7 +134,6 @@ export default function AdminPWADashboard() {
         category_stats: categoryStats,
       });
     } catch (error) {
-      console.error('Failed to load PWA stats:', error);
       toast.error('Kon PWA statistieken niet laden');
     } finally {
       setLoading(false);
@@ -157,7 +151,6 @@ export default function AdminPWADashboard() {
       if (error) throw error;
       setRecentNotifications(data || []);
     } catch (error) {
-      console.error('Failed to load recent notifications:', error);
     }
   };
 
@@ -195,7 +188,6 @@ export default function AdminPWADashboard() {
       loadStats();
       loadRecentNotifications();
     } catch (error) {
-      console.error('Failed to send notification:', error);
       toast.error('Kon notificatie niet verzenden');
     } finally {
       setSendLoading(false);

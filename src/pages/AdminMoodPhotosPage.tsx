@@ -673,7 +673,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               >
                 {analyzing ? (
                   <>
-                    <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                    <Spinner size="sm" className="border-white border-t-transparent" />
                     AI analyseert de foto...
                   </>
                 ) : analyzed ? (
@@ -890,7 +890,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             >
               {uploading ? (
                 <>
-                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                  <Spinner size="sm" />
                   Uploaden...
                 </>
               ) : (

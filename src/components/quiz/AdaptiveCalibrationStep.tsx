@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Heart, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { adaptiveOutfitGenerator, type AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
@@ -45,7 +46,6 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
 
       track('calibration:started', { session_id: newSessionId });
     } catch (error) {
-      console.error('[AdaptiveCalibration] Init error:', error);
       toast.error('Kon calibratie niet starten');
     }
   };
@@ -94,7 +94,6 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
         exploration_rate: newExplorationRate
       });
     } catch (error) {
-      console.error('[AdaptiveCalibration] Generation error:', error);
       toast.error('Fout bij genereren outfits');
     } finally {
       setLoading(false);
@@ -198,7 +197,6 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
         }
       }
     } catch (error) {
-      console.error('[AdaptiveCalibration] Swipe error:', error);
       toast.error('Kon swipe niet opslaan');
     }
   };
@@ -207,7 +205,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-16 h-16 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full animate-spin mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[var(--color-text)] font-medium">Genereer je perfecte outfits...</p>
           <p className="text-sm text-[var(--color-text-secondary)] mt-2">
             Onze AI leert jouw stijl kennen

@@ -7,19 +7,15 @@ export default function BramsFruitCatalogPageSimple() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('[BramsFruit Simple] Component mounted');
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
-      console.log('[BramsFruit Simple] Fetching products...');
       const products = await getBramsFruitProductGroups();
-      console.log('[BramsFruit Simple] Got products:', products.length);
       setCount(products.length);
       setLoading(false);
     } catch (err) {
-      console.error('[BramsFruit Simple] Error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
       setLoading(false);
     }

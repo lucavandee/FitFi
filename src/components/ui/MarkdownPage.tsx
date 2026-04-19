@@ -50,7 +50,6 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
         const text = await response.text();
         setContent(text);
       } catch (error) {
-        console.error('Error loading markdown:', error);
         setError('Er is een fout opgetreden bij het laden van de content. Neem contact op voor meer informatie.');
       } finally {
         setIsLoading(false);

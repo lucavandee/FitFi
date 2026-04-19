@@ -331,7 +331,7 @@ export default function ResultsPreviewPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {seeds.slice(0, 6).map((outfit, idx) => (
               <FadeIn key={idx} delay={idx * 0.12}>
-                <div className="bg-white border border-[#E5E5E5] rounded-3xl overflow-hidden hover:border-[#C2654A] hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 group">
+                <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:border-[#C2654A] hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 group">
                   {/* Image area */}
                   <div className="aspect-[3/4] overflow-hidden relative">
                     {outfit.pieces && outfit.pieces.length > 0 ? (

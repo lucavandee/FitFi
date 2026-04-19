@@ -36,7 +36,7 @@ export default function AccessibilityTestPage() {
   return (
     <>
       <Helmet>
-        <title>Accessibility Test | FitFi</title>
+        <title>Toegankelijkheidstest | FitFi</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -52,52 +52,52 @@ export default function AccessibilityTestPage() {
               Terug naar Dashboard
             </a>
 
-            <h1 className="ff-h1 mb-3">Accessibility Test</h1>
+            <h1 className="ff-h1 mb-3">Toegankelijkheidstest</h1>
             <p className="ff-body-lg text-[var(--color-muted)]">
-              WCAG 2.1 Level AA Compliance Demo
+              WCAG 2.1 Niveau AA Conformiteitsdemo
             </p>
           </div>
 
           {/* Test Instructions */}
           <div className="ff-card mb-8 p-6 border-l-4 border-[var(--ff-focus-ring-color)]">
-            <h2 className="ff-h3 mb-3">Test Instructions</h2>
+            <h2 className="ff-h3 mb-3">Testinstructies</h2>
             <ol className="space-y-2 ff-body">
               <li>
-                <strong>1. Keyboard Test:</strong> Press <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Tab</kbd> repeatedly to navigate through all elements
+                <strong>1. Toetsenbordtest:</strong> Druk herhaaldelijk op <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Tab</kbd> om door alle elementen te navigeren
               </li>
               <li>
-                <strong>2. Focus Visibility:</strong> Verify every element shows a clear blue focus ring
+                <strong>2. Focuszichtbaarheid:</strong> Controleer of elk element een duidelijke blauwe focusring toont
               </li>
               <li>
-                <strong>3. Activation:</strong> Press <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Enter</kbd> or <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Space</kbd> on focused elements
+                <strong>3. Activering:</strong> Druk op <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Enter</kbd> of <kbd className="px-2 py-1 bg-[var(--ff-color-neutral-200)] rounded">Spatie</kbd> op gefocuste elementen
               </li>
               <li>
-                <strong>4. Contrast:</strong> Check all text is clearly readable
+                <strong>4. Contrast:</strong> Controleer of alle tekst duidelijk leesbaar is
               </li>
             </ol>
           </div>
 
           {/* 1. Focus State Examples */}
           <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">1. Focus States (WCAG 2.4.7)</h2>
+            <h2 className="ff-h2 mb-6">1. Focusstatussen (WCAG 2.4.7)</h2>
 
             <div className="space-y-6">
               {/* Standard Focus */}
               <div>
-                <h3 className="ff-h4 mb-3">Standard Focus (Light Backgrounds)</h3>
+                <h3 className="ff-h4 mb-3">Standaard focus (lichte achtergronden)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
                     className={`ff-btn ff-btn--primary`}
-                    onClick={() => addResult('Primary button clicked')}
+                    onClick={() => addResult('Primaire knop geklikt')}
                   >
-                    Primary Button
+                    Primaire knop
                   </button>
 
                   <button
                     className={`ff-btn ff-btn--secondary`}
-                    onClick={() => addResult('Secondary button clicked')}
+                    onClick={() => addResult('Secundaire knop geklikt')}
                   >
-                    Secondary Button
+                    Secundaire knop
                   </button>
 
                   <a
@@ -105,52 +105,52 @@ export default function AccessibilityTestPage() {
                     className="ff-link"
                     onClick={(e) => {
                       e.preventDefault();
-                      addResult('Link clicked');
+                      addResult('Link geklikt');
                     }}
                   >
-                    Standard Link
+                    Standaard link
                   </a>
 
                   <div
                     role="button"
                     tabIndex={0}
                     className={`px-4 py-2 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl cursor-pointer ${FOCUS_CLASSES.standard}`}
-                    onClick={() => addResult('Custom div button clicked')}
-                    onKeyDown={makeKeyboardClickable(() => addResult('Custom div button activated via keyboard'))}
+                    onClick={() => addResult('Aangepaste div-knop geklikt')}
+                    onKeyDown={makeKeyboardClickable(() => addResult('Aangepaste div-knop geactiveerd via toetsenbord'))}
                   >
-                    Custom Div Button
+                    Aangepaste div-knop
                   </div>
                 </div>
                 <p className="text-sm text-[var(--color-muted)] mt-2">
-                  ✅ Focus ring: <strong>3px solid blue (#2563EB)</strong> — 8.2:1 contrast ratio
+                  ✅ Focusring: <strong>3px solid blauw (#2563EB)</strong> — contrastverhouding 8,2:1
                 </p>
               </div>
 
               {/* Brand Focus */}
               <div>
-                <h3 className="ff-h4 mb-3">Brand Focus (Optional)</h3>
+                <h3 className="ff-h4 mb-3">Merkfocus (optioneel)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
                     className={`px-6 py-3 bg-[var(--ff-color-primary-700)] text-white rounded-xl ${FOCUS_CLASSES.brand}`}
-                    onClick={() => addResult('Brand focus button clicked')}
+                    onClick={() => addResult('Merkfocusknop geklikt')}
                   >
-                    Brand Color Focus
+                    Merkkleur focus
                   </button>
                 </div>
                 <p className="text-sm text-[var(--color-muted)] mt-2">
-                  ⚠️ Brand focus: <strong>3px solid brown (#7A614A)</strong> — Only use on light backgrounds
+                  ⚠️ Merkfocus: <strong>3px solid bruin (#7A614A)</strong> — Alleen op lichte achtergronden gebruiken
                 </p>
               </div>
 
               {/* Dark Background Focus */}
               <div className="bg-[var(--ff-color-neutral-900)] p-6 rounded-2xl">
-                <h3 className="ff-h4 mb-3 text-white">Dark Background Focus</h3>
+                <h3 className="ff-h4 mb-3 text-white">Donkere achtergrond focus</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
                     className={`ff-btn ff-btn--ghost`}
-                    onClick={() => addResult('Ghost button clicked')}
+                    onClick={() => addResult('Transparante knop geklikt')}
                   >
-                    Ghost Button
+                    Transparante knop
                   </button>
 
                   <a
@@ -158,30 +158,30 @@ export default function AccessibilityTestPage() {
                     className={`px-4 py-2 text-white border-2 border-white/40 rounded-xl ${FOCUS_CLASSES.dark}`}
                     onClick={(e) => {
                       e.preventDefault();
-                      addResult('Dark background link clicked');
+                      addResult('Link op donkere achtergrond geklikt');
                     }}
                   >
-                    Dark BG Link
+                    Link op donkere achtergrond
                   </a>
                 </div>
                 <p className="text-sm text-white/70 mt-2">
-                  ✅ Focus ring: <strong>3px solid light blue (#3B82F6)</strong> — High contrast on dark
+                  ✅ Focusring: <strong>3px solid lichtblauw (#3B82F6)</strong> — Hoog contrast op donker
                 </p>
               </div>
 
               {/* Strong Focus */}
               <div>
-                <h3 className="ff-h4 mb-3">Strong Focus (Critical CTAs)</h3>
+                <h3 className="ff-h4 mb-3">Sterke focus (kritieke CTA's)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
                     className={`ff-btn ff-btn--primary ${FOCUS_CLASSES.strong}`}
-                    onClick={() => addResult('Strong focus CTA clicked')}
+                    onClick={() => addResult('Sterke focus CTA geklikt')}
                   >
-                    Critical Action
+                    Kritieke actie
                   </button>
                 </div>
                 <p className="text-sm text-[var(--color-muted)] mt-2">
-                  ✅ Focus ring: <strong>4px solid blue</strong> — Extra visible for important actions
+                  ✅ Focusring: <strong>4px solid blauw</strong> — Extra zichtbaar voor belangrijke acties
                 </p>
               </div>
             </div>
@@ -189,19 +189,19 @@ export default function AccessibilityTestPage() {
 
           {/* 2. Form Focus States */}
           <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">2. Form Focus States (WCAG 2.4.7)</h2>
+            <h2 className="ff-h2 mb-6">2. Formulier focusstatussen (WCAG 2.4.7)</h2>
 
             <form
               className="space-y-4"
               onSubmit={(e) => {
                 e.preventDefault();
-                addResult('Form submitted successfully!');
+                addResult('Formulier succesvol verzonden!');
               }}
             >
               {/* Text Input */}
               <div>
                 <label htmlFor="test-email" className="block ff-body font-semibold mb-2">
-                  Email Address
+                  E-mailadres
                 </label>
                 <input
                   id="test-email"
@@ -210,35 +210,35 @@ export default function AccessibilityTestPage() {
                   placeholder="naam@voorbeeld.nl"
                 />
                 <p className="text-sm text-[var(--color-muted)] mt-1">
-                  ✅ Focus: Blue border + subtle shadow
+                  ✅ Focus: Blauwe rand + subtiele schaduw
                 </p>
               </div>
 
               {/* Textarea */}
               <div>
                 <label htmlFor="test-message" className="block ff-body font-semibold mb-2">
-                  Message
+                  Bericht
                 </label>
                 <textarea
                   id="test-message"
                   rows={4}
                   className={`w-full px-4 py-3 border-2 border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] text-[var(--color-text)] transition-all outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]`}
-                  placeholder="Type your message..."
+                  placeholder="Typ je bericht..."
                 />
               </div>
 
               {/* Select */}
               <div>
                 <label htmlFor="test-select" className="block ff-body font-semibold mb-2">
-                  Select Option
+                  Selecteer optie
                 </label>
                 <select
                   id="test-select"
                   className={`w-full px-4 py-3 border-2 border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] text-[var(--color-text)] transition-all outline-none focus-visible:border-[var(--ff-focus-ring-color)] focus-visible:shadow-[var(--ff-shadow-ring)]`}
                 >
-                  <option>Option 1</option>
-                  <option>Option 2</option>
-                  <option>Option 3</option>
+                  <option>Optie 1</option>
+                  <option>Optie 2</option>
+                  <option>Optie 3</option>
                 </select>
               </div>
 
@@ -250,20 +250,20 @@ export default function AccessibilityTestPage() {
                   className={`mt-1 w-5 h-5 border-2 border-[var(--color-border)] rounded transition-all outline-none focus-visible:shadow-[var(--ff-shadow-ring)] focus-visible:ring-2 focus-visible:ring-[var(--ff-focus-ring-color)]`}
                 />
                 <label htmlFor="test-checkbox" className="ff-body">
-                  I agree to the terms and conditions
+                  Ik ga akkoord met de algemene voorwaarden
                 </label>
               </div>
 
               {/* Submit */}
               <button type="submit" className="ff-btn ff-btn--primary">
-                Submit Form
+                Formulier versturen
               </button>
             </form>
           </section>
 
           {/* 3. Contrast Ratios */}
           <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">3. Color Contrast (WCAG 1.4.3)</h2>
+            <h2 className="ff-h2 mb-6">3. Kleurcontrast (WCAG 1.4.3)</h2>
 
             <div className="space-y-4">
               {[
@@ -302,12 +302,12 @@ export default function AccessibilityTestPage() {
                         {result.passAA ? (
                           <>
                             <Check className="w-4 h-4" />
-                            WCAG AA Pass
+                            WCAG AA Geslaagd
                           </>
                         ) : (
                           <>
                             <X className="w-4 h-4" />
-                            WCAG AA Fail
+                            WCAG AA Mislukt
                           </>
                         )}
                       </p>
@@ -319,48 +319,48 @@ export default function AccessibilityTestPage() {
 
             <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
               <p className="text-sm">
-                <strong>WCAG Requirements:</strong>
+                <strong>WCAG-vereisten:</strong>
               </p>
               <ul className="text-sm space-y-1 mt-2">
-                <li>• Normal text: ≥ 4.5:1</li>
-                <li>• Large text (18pt+ or 14pt+ bold): ≥ 3:1</li>
-                <li>• UI components: ≥ 3:1</li>
+                <li>• Normale tekst: ≥ 4,5:1</li>
+                <li>• Grote tekst (18pt+ of 14pt+ vet): ≥ 3:1</li>
+                <li>• UI-componenten: ≥ 3:1</li>
               </ul>
             </div>
           </section>
 
           {/* 4. Keyboard Navigation */}
           <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">4. Keyboard Navigation (WCAG 2.1.1)</h2>
+            <h2 className="ff-h2 mb-6">4. Toetsenbordnavigatie (WCAG 2.1.1)</h2>
 
             <div className="space-y-4">
               <div>
-                <h3 className="ff-h4 mb-3">Arrow Key Navigation</h3>
+                <h3 className="ff-h4 mb-3">Pijltoetsnavigatie</h3>
                 <div
                   role="listbox"
-                  aria-label="Test listbox"
+                  aria-label="Testlijst"
                   className="space-y-2"
                   onKeyDown={createKeyboardNavHandler({
-                    onArrowDown: () => addResult('Arrow Down pressed'),
-                    onArrowUp: () => addResult('Arrow Up pressed'),
+                    onArrowDown: () => addResult('Pijl omlaag ingedrukt'),
+                    onArrowUp: () => addResult('Pijl omhoog ingedrukt'),
                   })}
                 >
-                  {['Option 1', 'Option 2', 'Option 3'].map((option) => (
+                  {['Optie 1', 'Optie 2', 'Optie 3'].map((option) => (
                     <div
                       key={option}
                       role="option"
                       tabIndex={0}
                       aria-selected={false}
                       className={`px-4 py-3 bg-[var(--color-surface)] border-2 border-[var(--color-border)] rounded-xl cursor-pointer ${FOCUS_CLASSES.standard}`}
-                      onClick={() => addResult(`Selected: ${option}`)}
-                      onKeyDown={makeKeyboardClickable(() => addResult(`Keyboard selected: ${option}`))}
+                      onClick={() => addResult(`Geselecteerd: ${option}`)}
+                      onKeyDown={makeKeyboardClickable(() => addResult(`Toetsenbord geselecteerd: ${option}`))}
                     >
                       {option}
                     </div>
                   ))}
                 </div>
                 <p className="text-sm text-[var(--color-muted)] mt-2">
-                  ✅ Try: Tab to focus, Arrow keys to navigate, Enter to select
+                  ✅ Probeer: Tab om te focussen, pijltoetsen om te navigeren, Enter om te selecteren
                 </p>
               </div>
             </div>
@@ -368,24 +368,24 @@ export default function AccessibilityTestPage() {
 
           {/* 5. Screen Reader Test */}
           <section className="ff-card mb-8 p-6">
-            <h2 className="ff-h2 mb-6">5. Screen Reader Test (WCAG 4.1.2)</h2>
+            <h2 className="ff-h2 mb-6">5. Schermlezertest (WCAG 4.1.2)</h2>
 
             <div className="space-y-4">
               <button
                 className="ff-btn ff-btn--secondary"
                 onClick={() => {
-                  announceToScreenReader('This message is announced to screen readers!');
-                  addResult('Screen reader announcement triggered');
+                  announceToScreenReader('Dit bericht wordt aangekondigd door schermlezers!');
+                  addResult('Schermlezermededeling geactiveerd');
                 }}
-                aria-label="Test screen reader announcement"
+                aria-label="Test schermlezermededeling"
               >
-                Test Screen Reader Announcement
+                Test schermlezermededeling
               </button>
 
               <div className="p-4 bg-[var(--ff-color-warning-50)] border-l-4 border-[var(--color-warning)] rounded">
                 <p className="text-sm">
                   <AlertCircle className="inline w-4 h-4 mr-2" />
-                  <strong>Test with real screen reader:</strong> Enable VoiceOver (Mac), NVDA (Windows), or TalkBack (Android) to test announcements.
+                  <strong>Test met echte schermlezer:</strong> Schakel VoiceOver (Mac), NVDA (Windows) of TalkBack (Android) in om mededelingen te testen.
                 </p>
               </div>
             </div>
@@ -394,7 +394,7 @@ export default function AccessibilityTestPage() {
           {/* Test Results Log */}
           {testResults.length > 0 && (
             <section className="ff-card p-6">
-              <h2 className="ff-h2 mb-4">Test Results Log</h2>
+              <h2 className="ff-h2 mb-4">Testresultaten</h2>
               <div
                 role="log"
                 aria-live="polite"
@@ -415,40 +415,40 @@ export default function AccessibilityTestPage() {
                 className="ff-btn ff-btn--secondary mt-4"
                 onClick={() => setTestResults([])}
               >
-                Clear Log
+                Log wissen
               </button>
             </section>
           )}
 
           {/* Summary */}
           <div className="ff-card p-6 bg-green-50 border-2 border-green-500">
-            <h2 className="ff-h2 mb-3 text-green-900">WCAG 2.1 AA Compliance ✅</h2>
+            <h2 className="ff-h2 mb-3 text-green-900">WCAG 2.1 AA Conformiteit ✅</h2>
             <div className="space-y-2 text-sm">
               <p className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <strong>2.1.1 Keyboard:</strong> All functionality available via keyboard
+                <strong>2.1.1 Toetsenbord:</strong> Alle functionaliteit beschikbaar via toetsenbord
               </p>
               <p className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <strong>2.4.7 Focus Visible:</strong> Focus indicators have ≥ 3:1 contrast
+                <strong>2.4.7 Focus zichtbaar:</strong> Focusindicatoren hebben ≥ 3:1 contrast
               </p>
               <p className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <strong>1.4.3 Contrast (Minimum):</strong> Text contrast ≥ 4.5:1
+                <strong>1.4.3 Contrast (minimum):</strong> Tekstcontrast ≥ 4,5:1
               </p>
               <p className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <strong>1.4.11 Non-text Contrast:</strong> UI components ≥ 3:1
+                <strong>1.4.11 Niet-tekstcontrast:</strong> UI-componenten ≥ 3:1
               </p>
               <p className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <strong>4.1.2 Name, Role, Value:</strong> ARIA labels present
+                <strong>4.1.2 Naam, rol, waarde:</strong> ARIA-labels aanwezig
               </p>
             </div>
 
             <div className="mt-4 pt-4 border-t border-green-300">
               <p className="text-sm font-semibold text-green-900">
-                Legal Compliance: EAA (June 2025) ✅ | ADA ✅ | Section 508 ✅
+                Wettelijke conformiteit: EAA (juni 2025) ✅ | ADA ✅ | Section 508 ✅
               </p>
             </div>
           </div>

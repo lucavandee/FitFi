@@ -175,7 +175,6 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
             }
           },
           onError: (e) => {
-            console.error('Nova error:', e);
             setMessages(prev => [...prev, {
               role: 'assistant',
               content: 'Sorry, ik kon je vraag niet verwerken. Probeer het opnieuw of ga verder met de quiz.',
@@ -186,7 +185,6 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
         }
       );
     } catch (error) {
-      console.error('Failed to send message:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Er ging iets mis. Probeer het opnieuw.',

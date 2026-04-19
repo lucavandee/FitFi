@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { motion } from 'framer-motion';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
 import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
@@ -52,13 +53,11 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             const age = Date.now() - timestamp;
 
             if (age < CACHE_DURATION_MS && cachedOutfits.length === 3) {
-              console.log('✅ Using cached calibration outfits');
               setOutfits(cachedOutfits);
               setLoading(false);
               return;
             }
           } catch (parseErr) {
-            console.warn('Failed to parse cached outfits, regenerating...');
           }
         }
       }
@@ -67,7 +66,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
       if (USE_ADAPTIVE_SYSTEM) {
         // Use new adaptive system
-        console.log('🚀 Using ADAPTIVE outfit generation system');
         setIsAdaptive(true);
 
         generatedOutfits = await CalibrationBridge.generateAdaptiveCalibrationOutfits(
@@ -76,7 +74,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           quizData
         );
 
-        console.log(`✅ Generated ${generatedOutfits.length} adaptive outfits`);
       } else {
         // Use legacy system
         const embedding = await VisualPreferenceService.getVisualEmbeddingFromProfile(
@@ -85,7 +82,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         );
 
         if (!embedding || Object.keys(embedding).length === 0) {
-          console.warn('No visual preferences found, using defaults');
           const defaultEmbedding = {
             minimal: 70,
             classic: 60,
@@ -112,15 +108,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             outfits: generatedOutfits,
             timestamp: Date.now()
           }));
-          console.log('✅ Cached calibration outfits');
         } catch (cacheErr) {
-          console.warn('Failed to cache outfits:', cacheErr);
         }
       }
 
       setOutfits(generatedOutfits);
     } catch (err) {
-      console.error('Failed to load calibration outfits:', err);
     } finally {
       setLoading(false);
     }
@@ -171,14 +164,11 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
               timestamp: parsed.timestamp
             }));
           } catch (e) {
-            console.warn('Failed to update cache:', e);
           }
         }
 
-        console.log(`✅ Swapped ${category} in outfit ${outfitId}:`, newItem.name);
       }
     } catch (err) {
-      console.error('Failed to swap item:', err);
     } finally {
       setSwappingState(null);
     }
@@ -207,7 +197,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           feedbackType,
           outfit
         );
-        console.log(`✅ Recorded adaptive feedback: ${feedbackType}`);
       } else {
         // Use legacy feedback recording
         await CalibrationService.recordFeedback({
@@ -222,7 +211,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         });
       }
     } catch (err) {
-      console.error('Failed to record feedback:', err);
     }
   };
 
@@ -241,14 +229,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
       // Clear cache after successful completion
       sessionStorage.removeItem(OUTFIT_CACHE_KEY);
-      console.log('✅ Cleared calibration cache after completion');
 
       // Short delay for UI feedback
       setTimeout(() => {
         onComplete();
       }, 1500);
     } catch (err) {
-      console.error('Failed to apply calibration:', err);
       setApplying(false);
     }
   };
@@ -279,7 +265,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     return (
       <div className="flex items-center justify-center min-h-[240px] py-16">
         <div className="text-center">
-          <div className="inline-block w-12 h-12 border-4 border-[var(--color-border)] border-t-[var(--ff-color-primary-700)] rounded-full animate-spin" />
+          <Spinner size="lg" className="mx-auto" />
           <p className="mt-4 text-[var(--color-muted)]">Outfits voorbereiden...</p>
         </div>
       </div>
@@ -419,7 +405,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           >
             {applying ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <Spinner size="sm" />
                 Style DNA wordt gegenereerd...
               </>
             ) : (

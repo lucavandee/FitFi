@@ -87,7 +87,6 @@ export function PullToRefresh({
       try {
         await onRefresh();
       } catch (error) {
-        console.error('[PullToRefresh] Refresh failed:', error);
         haptics.error();
       } finally {
         setIsRefreshing(false);

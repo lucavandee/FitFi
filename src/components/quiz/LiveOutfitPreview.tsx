@@ -42,7 +42,6 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
         toast.error('Kon preview niet opslaan');
       }
     } catch (err) {
-      console.error('Error saving preview:', err);
       toast.error('Er ging iets mis');
     } finally {
       setIsSaving(false);

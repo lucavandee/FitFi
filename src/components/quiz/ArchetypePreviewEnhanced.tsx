@@ -144,7 +144,6 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         setAllScores(scores);
 
       } catch (error) {
-        console.warn('[ArchetypePreview] Failed to calculate archetype:', error);
       }
     };
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Sparkles, Plus, ArrowLeft, RotateCcw, Check, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -396,7 +397,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                     className="absolute inset-0 flex flex-col items-center justify-center"
                     style={{ background: 'linear-gradient(to bottom, rgba(62,49,37,0.75), rgba(62,49,37,0.90))' }}
                   >
-                    <div className="animate-spin w-10 h-10 border-3 border-white/80 border-t-transparent rounded-full mb-4" />
+                    <Spinner size="md" className="mb-4" />
                     <p className="text-white font-semibold text-lg">AI analyseert outfit...</p>
                     <p className="text-white/60 text-sm mt-1">Archetype, kleuren & stijl detectie</p>
                   </div>
@@ -682,7 +683,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 exit={{ opacity: 0 }}
                 className="p-12 text-center"
               >
-                <div className="animate-spin w-10 h-10 border-3 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full mx-auto mb-4" />
+                <Spinner size="md" className="mx-auto mb-4" />
                 <p className="font-medium text-[var(--color-text)]">Foto opslaan met metadata...</p>
                 <p className="text-sm text-[var(--color-muted)] mt-1">WebP conversie + upload + database</p>
               </motion.div>

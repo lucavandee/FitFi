@@ -32,7 +32,6 @@ export function WeeklyChallengeTracker() {
       });
 
       if (error) {
-        console.error('Error fetching weekly progress:', error);
         return [];
       }
 
@@ -81,7 +80,6 @@ export function WeeklyChallengeTracker() {
         toast.error('Challenge voltooien mislukt');
       }
     } catch (err) {
-      console.error('Error completing challenge:', err);
       toast.error('Er ging iets mis');
     } finally {
       setCompletingDay(null);

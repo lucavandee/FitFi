@@ -166,7 +166,7 @@ export function HeroV3() {
             {/* Primary */}
             <button
               onClick={handleStartClick}
-              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-500)] text-[var(--color-bg)]"
+              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-500)] text-[var(--color-bg)]"
               style={{
                 boxShadow: '0 4px 24px rgba(var(--ff-color-primary-500-rgb, 166,136,106),0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
                 letterSpacing: '0.01em',

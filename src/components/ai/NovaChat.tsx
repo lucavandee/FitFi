@@ -153,14 +153,12 @@ const NovaChat: React.FC = () => {
       const { data: { session } } = await sb.auth.getSession();
 
       if (!session?.user) {
-        console.warn('⛔ [NovaChat] No Supabase session on init - showing login prompt');
         setLoginPromptReason('auth');
         setLoginPromptOpen(true);
         setIsInitialized(true);
         return;
       }
     } catch (authError) {
-      console.error('❌ [NovaChat] Session check failed on init:', authError);
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
       setIsInitialized(true);
@@ -169,7 +167,6 @@ const NovaChat: React.FC = () => {
 
     // CHECK: Is user logged in? (backup check)
     if (!user || !user.id || user.id === 'anon') {
-      console.warn('⛔ [NovaChat] Context user invalid on init - showing login prompt');
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
       setIsInitialized(true); // Mark as initialized to prevent retry loop
@@ -197,7 +194,6 @@ const NovaChat: React.FC = () => {
         user_id: user?.id
       });
     } catch (error) {
-      console.warn('[NovaChat] Initialization failed:', error);
 
       // Fallback greeting
       setMessages([{
@@ -224,18 +220,12 @@ const NovaChat: React.FC = () => {
       const { data: { session } } = await sb.auth.getSession();
 
       if (!session?.user) {
-        console.warn('⛔ [NovaChat] No active Supabase session - showing login prompt');
         setLoginPromptReason('auth');
         setLoginPromptOpen(true);
         return;
       }
 
-      console.log('✅ [NovaChat] Active session confirmed:', {
-        userId: session.user.id.substring(0, 8) + '...',
-        hasSession: true
-      });
     } catch (authError) {
-      console.error('❌ [NovaChat] Session check failed:', authError);
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
       return;
@@ -243,8 +233,6 @@ const NovaChat: React.FC = () => {
 
     // PROACTIVE: Check auth from context (backup check)
     if (!user || !user.id || user.id === 'anon') {
-      console.warn('⛔ [NovaChat] Context user invalid - showing login prompt');
-      console.log('📋 [NovaChat] User state:', user);
       setLoginPromptReason('auth');
       setLoginPromptOpen(true);
       return;
@@ -253,14 +241,11 @@ const NovaChat: React.FC = () => {
     // PROACTIVE: Check quiz completion BEFORE sending request
     const quizAnswersStr = localStorage.getItem('ff_quiz_answers');
     if (!quizAnswersStr) {
-      console.warn('⛔ [NovaChat] Quiz not completed - showing quiz prompt');
-      console.log('📋 [NovaChat] localStorage keys:', Object.keys(localStorage));
       setLoginPromptReason('quiz');
       setLoginPromptOpen(true);
       return;
     }
 
-    console.log('✅ [NovaChat] Proactive checks passed - sending to backend');
 
     // Check quota before making request
     const tier = getUserTier();
@@ -385,13 +370,6 @@ const NovaChat: React.FC = () => {
         let showPrompt = false;
 
         // DEBUG: Log complete error for troubleshooting
-        console.error('🔴 [NovaChat] Error caught:', {
-          message: errorMsg,
-          error: e,
-          response: e?.response,
-          data: e?.data,
-          stack: e?.stack
-        });
 
         // Check if this is an auth/access error from the backend
         if (e?.response || e?.data) {
@@ -505,7 +483,6 @@ const NovaChat: React.FC = () => {
         user_id: user?.id
       });
     } catch (error) {
-      console.warn('Copy failed:', error);
       toast.error('Kopiëren mislukt');
     }
   };

@@ -25,7 +25,6 @@ export default function NovaTierBadge({ className = '' }: NovaTierBadgeProps) {
           .rpc('can_use_nova', { p_user_id: user!.id });
 
         if (error) {
-          console.warn('[NovaTierBadge] Error fetching usage:', error);
           setLoading(false);
           return;
         }
@@ -39,7 +38,6 @@ export default function NovaTierBadge({ className = '' }: NovaTierBadgeProps) {
           });
         }
       } catch (e) {
-        console.error('[NovaTierBadge] Failed to fetch usage:', e);
       } finally {
         setLoading(false);
       }

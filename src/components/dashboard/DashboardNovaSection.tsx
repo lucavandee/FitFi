@@ -97,7 +97,6 @@ function DashboardNovaSectionInner() {
           .maybeSingle();
 
         if (error) {
-          console.warn('[Nova] Failed to load conversation:', error);
           return;
         }
 
@@ -112,7 +111,6 @@ function DashboardNovaSectionInner() {
           return;
         }
       } catch (err) {
-        console.warn('[Nova] Error loading conversation:', err);
       }
 
       // Default greeting
@@ -152,7 +150,6 @@ function DashboardNovaSectionInner() {
           onConflict: 'user_id'
         });
       } catch (err) {
-        console.warn('[Nova] Failed to save conversation:', err);
       }
     };
 

@@ -71,7 +71,6 @@ export default class CrashGate extends React.Component<React.PropsWithChildren, 
   }
 
   componentDidCatch(error: Error) {
-    console.error("[CrashGate]", error);
   }
 
   private handleRetry = () => {

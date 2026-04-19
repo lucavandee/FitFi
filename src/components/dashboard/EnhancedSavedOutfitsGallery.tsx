@@ -49,7 +49,6 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
         .order("created_at", { ascending: sortMode === "oldest" });
 
       if (error) {
-        console.error("Error fetching saved outfits:", error);
         return [];
       }
 

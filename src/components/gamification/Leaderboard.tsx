@@ -64,7 +64,6 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         entries_shown: limit
       });
     } catch (error) {
-      console.error('Error loading leaderboard:', error);
     } finally {
       setIsLoading(false);
     }

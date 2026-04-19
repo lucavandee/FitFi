@@ -57,7 +57,6 @@ export function EmbeddingAnalytics() {
         setStats(statsData[0]);
       }
     } catch (err) {
-      console.error('Failed to load analytics:', err);
     } finally {
       setLoading(false);
     }

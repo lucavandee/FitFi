@@ -54,7 +54,6 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
       localStorage.setItem('ff_email_captured', email);
       onEmailSaved(email);
     } catch (error) {
-      console.error('Email save error:', error);
       toast.error('Even geduld, probeer het opnieuw');
     } finally {
       setIsSubmitting(false);

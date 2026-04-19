@@ -104,7 +104,6 @@ export default function AdminBramsFruitPage() {
       setImportResult(result);
     } catch (err) {
       toast.error('Failed to import file');
-      console.error(err);
     } finally {
       setImporting(false);
     }
@@ -145,7 +144,6 @@ export default function AdminBramsFruitPage() {
       }
     } catch (err) {
       toast.error('Failed to upload images');
-      console.error(err);
     } finally {
       setUploading(false);
     }

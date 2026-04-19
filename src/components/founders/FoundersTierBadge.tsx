@@ -10,7 +10,6 @@ function getIcon(name?: string) {
   const Icon = ICONS[name];
   if (!Icon) {
     if (typeof window !== 'undefined') {
-      console.warn('[FoundersTierBadge] Unknown icon:', name);
     }
     return Gift;
   }

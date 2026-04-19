@@ -51,7 +51,6 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
           });
         }
       } catch (error) {
-        console.error("Error fetching gamification stats:", error);
         setStats({
           total_xp: 0,
           current_level: 1,

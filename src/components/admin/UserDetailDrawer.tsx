@@ -180,7 +180,7 @@ export default function UserDetailDrawer({ userId, onClose, onUserUpdated }: Use
             <div className="flex-1 overflow-y-auto">
               {loading ? (
                 <div className="flex items-center justify-center h-40">
-                  <div className="animate-spin w-8 h-8 border-4 border-[var(--ff-color-primary-700)] border-t-transparent rounded-full" />
+                  <Spinner size="md" />
                 </div>
               ) : detail ? (
                 <div className="p-6 space-y-6">

@@ -47,7 +47,6 @@ export default class GlobalErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: any, info: any) {
-    console.error("[GlobalErrorBoundary]", error, info?.componentStack);
   }
 
   private handleRetry = () => {

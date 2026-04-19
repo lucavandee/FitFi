@@ -9,7 +9,6 @@ export default function ProfileSyncInitializer() {
         await profileSyncService.checkAndSync();
       } catch (error) {
         if (import.meta.env.DEV) {
-          console.error('[ProfileSyncInitializer] Failed to initialize sync:', error);
         }
       }
     };

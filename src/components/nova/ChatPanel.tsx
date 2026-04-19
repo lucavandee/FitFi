@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef } from "react";
+import { Spinner } from '@/components/ui/Spinner';
 import { X, Send, RotateCcw, ChevronDown } from "lucide-react";
 import { useNovaChat } from "./NovaChatProvider";
 import Button from "@/components/ui/Button";
@@ -199,7 +200,7 @@ export default function ChatPanel() {
               className="h-10 sm:h-11 px-4 w-full sm:w-auto"
             >
               {sending ? (
-                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                <Spinner size="sm" className="border-white/20 border-t-white" />
               ) : (
                 <Send className="w-4 h-4" />
               )}

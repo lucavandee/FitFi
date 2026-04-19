@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThumbsUp, ThumbsDown, MessageSquare, X, Send, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -61,7 +62,6 @@ export function ResultsFeedbackWidget({
 
       return () => clearTimeout(timer);
     } catch (error) {
-      console.warn('Could not check feedback status:', error);
     }
   }, []);
 
@@ -100,7 +100,6 @@ export function ResultsFeedbackWidget({
         });
 
         if (error) {
-          console.error('Could not save feedback to database:', error);
           // Continue anyway - not critical
         }
       }
@@ -117,7 +116,6 @@ export function ResultsFeedbackWidget({
       try {
         localStorage.setItem('fitfi_results_feedback_given', Date.now().toString());
       } catch (e) {
-        console.warn('Could not save feedback status:', e);
       }
 
       setState('submitted');
@@ -129,7 +127,6 @@ export function ResultsFeedbackWidget({
       }, 2000);
 
     } catch (error) {
-      console.error('Error submitting feedback:', error);
       toast.error('Feedback kon niet worden verzonden. Probeer het opnieuw.');
     } finally {
       setIsSubmitting(false);
@@ -261,7 +258,7 @@ export function ResultsFeedbackWidget({
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <Spinner size="sm" />
                         <span>Verzenden...</span>
                       </>
                     ) : (

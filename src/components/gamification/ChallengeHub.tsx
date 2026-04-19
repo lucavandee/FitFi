@@ -79,7 +79,6 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
       
       setChallenges(mockChallenges);
     } catch (error) {
-      console.error('Error loading challenges:', error);
     } finally {
       setIsLoadingChallenges(false);
     }
@@ -106,7 +105,6 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
       });
       
     } catch (error) {
-      console.error('Error completing challenge:', error);
     }
   };
 

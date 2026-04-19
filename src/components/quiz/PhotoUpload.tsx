@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
+import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Upload, AlertCircle, CheckCircle, Loader2, Shield, X, Info, ImageIcon } from "lucide-react";
+import { Camera, Upload, AlertCircle, CheckCircle, Shield, X, Info, ImageIcon } from "lucide-react";
 
 interface ColorAnalysis {
   undertone: "warm" | "cool" | "neutral";
@@ -258,7 +259,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
             {/* Busy overlay */}
             {isBusy && (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-3">
-                <Loader2 className="w-10 h-10 text-white animate-spin" />
+                <Spinner size="md" />
                 <p className="text-white font-semibold text-sm">
                   {uploading ? "Foto uploaden..." : "Kleuren analyseren..."}
                 </p>
