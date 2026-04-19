@@ -45,8 +45,8 @@ export const GradientTextLine: React.FC<Props> = ({ text, accents, className }) 
         const hardStyle = needsHardGradient
           ? {
               backgroundImage: isSoft
-                ? 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-300) 100%)'
-                : 'linear-gradient(90deg, var(--ff-grad-midnight) 0%, var(--ff-sky-500) 100%)',
+                ? 'linear-gradient(90deg, #C2654A 0%, #D4856E 100%)'
+                : 'linear-gradient(90deg, #C2654A 0%, #A8513A 100%)',
             }
           : undefined;
 

@@ -39,7 +39,7 @@ export function HeroV3() {
           MOBILE  (< sm)  —  Cinematic full-viewport hero
       ═══════════════════════════════════════════════ */}
       <div
-        className="sm:hidden relative w-full overflow-hidden bg-[var(--ff-color-primary-900)]"
+        className="sm:hidden relative w-full overflow-hidden bg-[#1A1A1A]"
         style={{ height: '100svh', minHeight: '640px' }}
       >
         {/* ── Full-bleed foto ── */}
@@ -58,7 +58,7 @@ export function HeroV3() {
           style={{
             height: '30%',
             background:
-              'linear-gradient(to bottom, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.62) 0%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.18) 60%, transparent 100%)',
+              'linear-gradient(to bottom, rgba(26,26,26,0.62) 0%, rgba(26,26,26,0.18) 60%, transparent 100%)',
           }}
           aria-hidden="true"
         />
@@ -69,7 +69,7 @@ export function HeroV3() {
           style={{
             height: '72%',
             background:
-              'linear-gradient(to bottom, transparent 0%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.50) 30%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.82) 58%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.96) 78%, var(--ff-color-primary-900) 100%)',
+              'linear-gradient(to bottom, transparent 0%, rgba(26,26,26,0.50) 30%, rgba(26,26,26,0.82) 58%, rgba(26,26,26,0.96) 78%, #1A1A1A 100%)',
           }}
           aria-hidden="true"
         />
@@ -79,7 +79,7 @@ export function HeroV3() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse at center, transparent 50%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.30) 100%)',
+              'radial-gradient(ellipse at center, transparent 50%, rgba(26,26,26,0.30) 100%)',
           }}
           aria-hidden="true"
         />
@@ -88,18 +88,18 @@ export function HeroV3() {
         <div
           className="absolute top-5 left-4 z-20 inline-flex items-center gap-2 px-3.5 py-2 rounded-full"
           style={{
-            background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.15)',
+            background: 'rgba(250,248,245,0.15)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.25)',
+            border: '1px solid rgba(250,248,245,0.25)',
             boxShadow: '0 2px 16px rgba(0,0,0,0.18)',
           }}
         >
           <Sparkles
-            className="w-3 h-3 text-[var(--ff-color-primary-200)]"
+            className="w-3 h-3 text-[#F4E8E3]"
             aria-hidden="true"
           />
-          <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--color-bg)]">
+          <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#FAFAF8]">
             AI Stijladvies
           </span>
         </div>
@@ -112,16 +112,16 @@ export function HeroV3() {
             <div
               className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full"
               style={{
-                background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.10)',
-                border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.16)',
+                background: 'rgba(250,248,245,0.10)',
+                border: '1px solid rgba(250,248,245,0.16)',
               }}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[var(--ff-color-primary-300)]"
+                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[#D4856E]"
                 aria-hidden="true"
               />
               <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'rgba(237,217,200,0.70)' }}>
-                <span className="text-[var(--ff-color-primary-200)] font-bold">{todayCount}</span>
+                <span className="text-[#F4E8E3] font-bold">{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </span>
             </div>
@@ -130,7 +130,7 @@ export function HeroV3() {
           {/* Heading */}
           <h1
             id="hero-heading"
-            className="font-heading font-bold tracking-tight mb-3 text-[var(--color-bg)]"
+            className="font-heading font-bold tracking-tight mb-3 text-white"
             style={{
               fontSize: 'clamp(2.5rem, 10.5vw, 3.1rem)',
               lineHeight: 1.04,
@@ -138,7 +138,7 @@ export function HeroV3() {
             }}
           >
             Outfits die{' '}
-            <em className="not-italic text-[var(--ff-cta-400)]">bij jou</em>
+            <em className="not-italic text-[#D4856E]">bij jou</em>
             <br />
             passen
           </h1>
@@ -156,7 +156,7 @@ export function HeroV3() {
             className="mb-6"
             style={{
               height: '1px',
-              background: 'linear-gradient(to right, rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18) 0%, transparent 80%)',
+              background: 'linear-gradient(to right, rgba(250,248,245,0.18) 0%, transparent 80%)',
             }}
             aria-hidden="true"
           />
@@ -166,9 +166,9 @@ export function HeroV3() {
             {/* Primary */}
             <button
               onClick={handleStartClick}
-              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[var(--ff-color-primary-600)] hover:bg-[var(--ff-color-primary-500)] text-[var(--color-bg)]"
+              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[#C2654A] hover:bg-[#A8513A] text-white"
               style={{
-                boxShadow: '0 4px 24px rgba(var(--ff-color-primary-500-rgb, 166,136,106),0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
+                boxShadow: '0 4px 24px rgba(194,101,74,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
                 letterSpacing: '0.01em',
               }}
               aria-label="Ontvang jouw persoonlijk stijladvies"
@@ -189,8 +189,8 @@ export function HeroV3() {
                 className="flex-1 inline-flex items-center justify-center min-h-[46px] rounded-[13px] font-medium text-[13px] tracking-wide transition-all duration-200 active:scale-[0.98]"
                 style={{
                   color: 'rgba(247,243,236,0.86)',
-                  background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.08)',
-                  border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18)',
+                  background: 'rgba(250,248,245,0.08)',
+                  border: '1px solid rgba(250,248,245,0.18)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
@@ -203,8 +203,8 @@ export function HeroV3() {
                 className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 min-h-[46px] rounded-[13px] text-[12px] font-semibold"
                 style={{
                   color: 'rgba(247,243,236,0.62)',
-                  background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.08)',
-                  border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18)',
+                  background: 'rgba(250,248,245,0.08)',
+                  border: '1px solid rgba(250,248,245,0.18)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
@@ -217,7 +217,7 @@ export function HeroV3() {
                 >
                   <path
                     d="M2.5 6l2.5 2.5 4.5-5"
-                    stroke="var(--ff-cta-400)"
+                    stroke="#D4856E"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -235,7 +235,7 @@ export function HeroV3() {
           Full-bleed editorial hero
       ═══════════════════════════════════════════════ */}
       <div
-        className="hidden sm:block relative w-full overflow-hidden bg-[var(--ff-color-primary-800)]"
+        className="hidden sm:block relative w-full overflow-hidden bg-[#1A1A1A]"
         style={{ minHeight: 'min(92vh, 820px)' }}
       >
         {/* ── Full-bleed foto ── */}
@@ -252,14 +252,14 @@ export function HeroV3() {
             className="absolute inset-0"
             style={{
               background:
-                'linear-gradient(100deg, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.82) 0%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.55) 38%, rgba(var(--ff-color-primary-900-rgb, 62,49,37),0.08) 65%, transparent 100%)',
+                'linear-gradient(100deg, rgba(26,26,26,0.82) 0%, rgba(26,26,26,0.55) 38%, rgba(26,26,26,0.08) 65%, transparent 100%)',
             }}
           />
           {/* Onderste fade naar website-achtergrond */}
           <div
             className="absolute bottom-0 inset-x-0 h-40"
             style={{
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.18) 100%)',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(250,248,245,0.18) 100%)',
             }}
           />
         </div>
@@ -273,7 +273,7 @@ export function HeroV3() {
 
             {/* Badge */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[var(--color-bg)] text-[var(--ff-color-primary-700)]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[#FAFAF8] text-[#C2654A]"
             >
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
               Persoonlijk AI-stijladvies
@@ -281,11 +281,11 @@ export function HeroV3() {
 
             <h1
               id="hero-heading"
-              className="font-heading font-bold leading-[1.05] tracking-tight mb-5 text-[var(--color-bg)]"
+              className="font-heading font-bold leading-[1.05] tracking-tight mb-5 text-white"
               style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)' }}
             >
               Outfits die{' '}
-              <em className="not-italic text-[var(--ff-color-primary-300)]">
+              <em className="not-italic text-[#D4856E]">
                 bij jou passen
               </em>
             </h1>
@@ -300,7 +300,7 @@ export function HeroV3() {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleStartClick}
-                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-600)] text-[var(--color-bg)]"
+                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[#C2654A] hover:bg-[#A8513A] text-white"
                 aria-label="Ontvang jouw persoonlijk stijladvies"
               >
                 Ontvang jouw stijladvies
@@ -312,10 +312,10 @@ export function HeroV3() {
 
               <button
                 onClick={handleExampleClick}
-                className="inline-flex items-center gap-2 px-6 py-3 min-h-[48px] rounded-xl font-medium text-base transition-colors duration-200 text-[var(--color-bg)]/90"
+                className="inline-flex items-center gap-2 px-6 py-3 min-h-[48px] rounded-xl font-medium text-base transition-colors duration-200 text-white/90"
                 style={{
-                  background: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.10)',
-                  border: '1px solid rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.28)',
+                  background: 'rgba(250,248,245,0.10)',
+                  border: '1px solid rgba(250,248,245,0.28)',
                 }}
                 aria-label="Bekijk voorbeeld rapport"
               >
@@ -326,10 +326,10 @@ export function HeroV3() {
             {todayCount !== undefined && todayCount > 0 && (
               <p className="mt-5 text-sm flex items-center gap-2" style={{ color: 'rgba(247,243,236,0.60)' }}>
                 <span
-                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[var(--ff-color-primary-300)]"
+                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[#D4856E]"
                   aria-hidden="true"
                 />
-                <span className="text-[var(--ff-color-primary-300)] font-semibold">{todayCount}</span>
+                <span className="text-[#D4856E] font-semibold">{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </p>
             )}
@@ -343,7 +343,7 @@ export function HeroV3() {
         >
           <div
             className="w-6 h-10 rounded-full border-2 flex items-start justify-center pt-2"
-            style={{ borderColor: 'rgba(var(--ff-color-beige-50-rgb, 250,248,245),0.30)' }}
+            style={{ borderColor: 'rgba(250,248,245,0.30)' }}
           >
             <div
               className="w-1 h-2 rounded-full" style={{ background: 'rgba(247,243,236,0.55)' }}

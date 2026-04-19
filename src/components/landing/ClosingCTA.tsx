@@ -9,14 +9,12 @@ export function ClosingCTA() {
 
   return (
     <section
-      className="ff-section border-t border-[var(--color-border)]"
-      style={{ background: 'var(--ff-color-primary-900)' }}
+      className="py-16 md:py-24 border-t border-[#E5E5E5] bg-[#1A1A1A]"
     >
-      <div className="ff-container">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <p
-            className="text-xs font-bold uppercase tracking-widest mb-4"
-            style={{ color: 'var(--ff-color-primary-300)' }}
+            className="text-xs font-bold uppercase tracking-widest mb-4 text-[#D4856E]"
           >
             Gratis starten
           </p>
@@ -36,11 +34,9 @@ export function ClosingCTA() {
             <Link
               to={href}
               data-event="cta_start_free_closing"
-              className="group inline-flex items-center justify-center gap-2.5 px-7 min-h-[52px] rounded-xl text-base font-bold transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-900)] active:scale-[0.98]"
+              className="group inline-flex items-center justify-center gap-2.5 px-7 min-h-[52px] rounded-xl text-base font-bold transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A] active:scale-[0.98] bg-[#C2654A] hover:bg-[#A8513A] text-white"
               style={{
-                background: 'var(--ff-color-primary-600)',
-                color: '#fff',
-                boxShadow: '0 4px 24px rgba(166,136,106,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
+                boxShadow: '0 4px 24px rgba(194,101,74,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
               }}
             >
               Start gratis — 2 minuten
@@ -48,7 +44,7 @@ export function ClosingCTA() {
             </Link>
             <Link
               to="/hoe-het-werkt"
-              className="inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-color-primary-900)]"
+              className="inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A]"
               style={{
                 background: 'rgba(250,248,245,0.08)',
                 border: '1px solid rgba(250,248,245,0.15)',
