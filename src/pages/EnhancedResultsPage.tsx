@@ -1566,7 +1566,7 @@ export default function EnhancedResultsPage() {
                             }}
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-[#F4E8E3] to-[#F5F0EB] flex items-center justify-center">
+                          <div className="w-full h-full bg-[#F5F0EB] flex items-center justify-center">
                             <div className="text-center p-6">
                               <Sparkles className="w-12 h-12 mx-auto mb-3 text-[#C2654A]" aria-hidden="true" />
                               <p className="text-xs text-[#8A8A8A] font-medium">Outfit {idx + 1}</p>

@@ -5,12 +5,12 @@ type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
 };
 
 const CATEGORY_GRADIENTS: Record<string, string> = {
-  top: "linear-gradient(135deg, var(--ff-color-beige-50) 0%, var(--ff-color-beige-200) 100%)",
-  bottom: "linear-gradient(135deg, var(--ff-color-beige-300) 0%, var(--ff-color-beige-400) 100%)",
-  footwear: "linear-gradient(135deg, var(--ff-color-beige-500) 0%, var(--ff-color-beige-700) 100%)",
-  outerwear: "linear-gradient(135deg, var(--ff-color-beige-200) 0%, var(--ff-color-beige-300) 100%)",
-  accessory: "linear-gradient(135deg, var(--ff-color-beige-50) 0%, var(--ff-color-beige-200) 100%)",
-  default: "linear-gradient(135deg, var(--ff-color-beige-50) 0%, var(--ff-color-beige-300) 100%)"
+  top: "#F5F0EB",
+  bottom: "#EDE5DC",
+  footwear: "#E5DDD4",
+  outerwear: "#EDE5DC",
+  accessory: "#F5F0EB",
+  default: "#F5F0EB"
 };
 
 function getCategoryFromUrl(src?: string): string {

@@ -19,22 +19,15 @@ export default function PremiumHero({
   secondaryCtaLink = "/hoe-het-werkt"
 }: PremiumHeroProps) {
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden ff-hero-card">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--ff-color-primary-100)]/40 via-transparent to-[var(--ff-color-accent-100)]/20"></div>
-
-      {/* Floating elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--ff-color-primary-200)]/40 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-10 right-12 w-40 h-40 bg-[var(--ff-color-accent-200)]/40 rounded-full blur-3xl"></div>
-
-      <div className="relative ff-container">
+    <section className="relative py-20 md:py-32 overflow-hidden bg-[#F5F0EB]">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <h1 className="font-heading text-3xl md:text-5xl ff-text-balance">{title}</h1>
-          <p className="mt-3 text-text/80">{subtitle}</p>
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight text-[#1A1A1A]">{title}</h1>
+          <p className="mt-3 text-base text-[#4A4A4A] leading-relaxed">{subtitle}</p>
 
           <div className="mt-6 flex flex-wrap gap-2">
-            <Link to={ctaLink} className="ff-btn ff-btn-primary">{ctaText}</Link>
-            <Link to={secondaryCtaLink} className="ff-btn ff-btn-secondary">{secondaryCtaText}</Link>
+            <Link to={ctaLink} className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200">{ctaText}</Link>
+            <Link to={secondaryCtaLink} className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200">{secondaryCtaText}</Link>
           </div>
         </div>
       </div>

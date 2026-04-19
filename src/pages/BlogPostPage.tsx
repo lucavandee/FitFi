@@ -93,10 +93,10 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <main className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[var(--color-muted)]">Artikel laden...</p>
+          <p className="text-[#8A8A8A]">Artikel laden...</p>
         </div>
       </main>
     );
@@ -104,11 +104,11 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <main className="ff-container py-16 text-center">
-        <h1 className="text-3xl font-bold text-[var(--color-text)] mb-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <h1 className="text-3xl font-bold text-[#1A1A1A] mb-4">
           Artikel niet gevonden
         </h1>
-        <p className="text-[var(--color-muted)] mb-8">
+        <p className="text-[#8A8A8A] mb-8">
           We konden dit artikel niet vinden.
         </p>
         <Button variant="primary" onClick={() => navigate('/blog')}>
@@ -155,29 +155,29 @@ export default function BlogPostPage() {
 
       <ReadingProgress />
 
-      <main className="bg-[var(--color-bg)] text-[var(--color-text)] pb-16">
+      <main className="bg-[#FAFAF8] text-[#1A1A1A] pb-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[var(--ff-color-primary-50)] via-white to-[var(--ff-color-accent-50)] py-12 md:py-16 border-b border-[var(--color-border)]">
-          <div className="ff-container">
+        <section className="relative overflow-hidden bg-[#F5F0EB] py-12 md:py-16 border-b border-[#E5E5E5]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}
             <div className="mb-6" aria-label="Breadcrumb">
               <Link
                 to="/blog"
-                className="text-sm text-[var(--color-muted)] hover:text-[var(--ff-color-primary-600)] transition-colors"
+                className="text-sm text-[#8A8A8A] hover:text-[#C2654A] transition-colors"
               >
                 Blog
               </Link>
-              <span className="mx-2 text-[var(--color-muted)]" aria-hidden="true">/</span>
-              <span className="text-sm font-medium text-[var(--ff-color-primary-600)]">
+              <span className="mx-2 text-[#8A8A8A]" aria-hidden="true">/</span>
+              <span className="text-sm font-medium text-[#C2654A]">
                 {post.category}
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight mb-6 max-w-4xl">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-tight mb-6 max-w-4xl">
               {post.title}
             </h1>
 
-            <p className="text-xl md:text-2xl text-[var(--color-muted)] leading-relaxed mb-8 max-w-3xl">
+            <p className="text-xl md:text-2xl text-[#8A8A8A] leading-relaxed mb-8 max-w-3xl">
               {post.excerpt}
             </p>
 
@@ -208,7 +208,7 @@ export default function BlogPostPage() {
         </section>
 
         {/* Main Content Area */}
-        <div className="ff-container pt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
           <div className="blog-layout-wrapper">
             {/* Sidebar: TOC (sticky on desktop) */}
             {headings.length > 0 && (
@@ -225,7 +225,7 @@ export default function BlogPostPage() {
                 <TLDRSection points={tldrPoints} />
 
                 {/* End CTA */}
-                <div className="bg-[var(--ff-color-primary-700)] rounded-[var(--radius-lg)] p-8 md:p-12 text-center my-12 text-white">
+                <div className="bg-[#A8513A] rounded-xl p-8 md:p-12 text-center my-12 text-white">
                   <h2 className="text-3xl font-bold mb-4">
                     Ontdek jouw perfecte stijl
                   </h2>
@@ -235,7 +235,7 @@ export default function BlogPostPage() {
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/onboarding')}
-                    className="bg-[var(--color-surface)] text-[var(--ff-color-primary-700)] hover:bg-[var(--ff-color-primary-50)]"
+                    className="bg-white text-[#A8513A] hover:bg-[#FDF9F7]"
                   >
                     Start gratis quiz
                     <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
@@ -245,7 +245,7 @@ export default function BlogPostPage() {
                 {/* Related Articles */}
                 {relatedPosts.length > 0 && (
                   <div className="mt-12 sm:mt-16">
-                    <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)] mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-4 sm:mb-6">
                       Gerelateerde artikelen
                     </h2>
                     <div
@@ -256,7 +256,7 @@ export default function BlogPostPage() {
                         <Link
                           key={related.id}
                           to={`/blog/${related.slug}`}
-                          className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden hover:shadow-[var(--shadow-lifted)] transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
+                          className="group bg-white border border-[#E5E5E5] rounded-xl overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 w-[220px] sm:w-auto snap-start"
                         >
                           <div className="aspect-[16/9] overflow-hidden">
                             <img
@@ -267,13 +267,13 @@ export default function BlogPostPage() {
                             />
                           </div>
                           <div className="p-4">
-                            <span className="text-xs text-[var(--ff-color-primary-600)] font-medium mb-1.5 block">
+                            <span className="text-xs text-[#C2654A] font-medium mb-1.5 block">
                               {related.category}
                             </span>
-                            <h3 className="font-bold text-sm text-[var(--color-text)] mb-1.5 line-clamp-2 group-hover:text-[var(--ff-color-primary-600)] transition-colors leading-snug">
+                            <h3 className="font-bold text-sm text-[#1A1A1A] mb-1.5 line-clamp-2 group-hover:text-[#C2654A] transition-colors leading-snug">
                               {related.title}
                             </h3>
-                            <p className="text-xs text-[var(--color-muted)] line-clamp-2 leading-relaxed">
+                            <p className="text-xs text-[#8A8A8A] line-clamp-2 leading-relaxed">
                               {related.excerpt}
                             </p>
                           </div>

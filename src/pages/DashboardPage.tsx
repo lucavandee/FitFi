@@ -253,7 +253,7 @@ export default function DashboardPage() {
             }}
           />
           {/* Fallback gradient (visible if image fails) */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#D4C5B5] via-[#C0AA95] to-[#8B7B6B] -z-10" />
+          <div className="absolute inset-0 bg-[#F5F0EB] -z-10" />
 
           {/* Overlay */}
           <div

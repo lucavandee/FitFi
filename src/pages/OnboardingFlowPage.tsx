@@ -717,7 +717,7 @@ export default function OnboardingFlowPage() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-          className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]"
+          className="min-h-screen bg-[#FAFAF8] text-[#1A1A1A]"
         >
           <Helmet>
             <title>Jouw Visuele Voorkeuren – FitFi</title>
@@ -728,23 +728,23 @@ export default function OnboardingFlowPage() {
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)] backdrop-blur-sm"
+            className="sticky top-0 z-50 bg-white border-b border-[#E5E5E5] backdrop-blur-sm"
           >
-            <div className="ff-container py-3 sm:py-4">
+            <div className="max-w-[720px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs sm:text-sm font-medium">Visuele Voorkeuren</span>
                 <motion.span
                   key={progress}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-xs sm:text-sm text-[var(--color-muted)]"
+                  className="text-xs sm:text-sm text-[#8A8A8A]"
                 >
                   {Math.round(progress)}% compleet
                 </motion.span>
               </div>
-              <div className="h-2 sm:h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div className="h-2 sm:h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)]"
+                  className="h-full bg-[#C2654A]"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -774,7 +774,7 @@ export default function OnboardingFlowPage() {
   if (phase === 'calibration') {
     return (
       <>
-        <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] relative">
+        <main className="min-h-screen bg-[#FAFAF8] text-[#1A1A1A] relative">
           <Helmet>
             <title>Verfijn Je Profiel – FitFi</title>
             <meta name="description" content="Rate outfits om je aanbevelingen te perfectioneren" />
@@ -783,25 +783,25 @@ export default function OnboardingFlowPage() {
           {/* Loading Overlay */}
           {isSubmitting && (
             <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center">
-              <div className="bg-[var(--color-surface)] rounded-[var(--radius-2xl)] p-8 max-w-md text-center shadow-[var(--shadow-elevated)]">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center animate-pulse">
+              <div className="bg-white rounded-2xl p-8 max-w-md text-center shadow-xl">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#C2654A] flex items-center justify-center animate-pulse">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Je Style DNA wordt gegenereerd...</h3>
-                <p className="text-sm text-[var(--color-text)]/70">Dit duurt nog een paar seconden</p>
+                <p className="text-sm text-[#1A1A1A]/70">Dit duurt nog een paar seconden</p>
               </div>
             </div>
           )}
 
-          <div className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)]">
-            <div className="ff-container py-3 sm:py-4">
+          <div className="sticky top-0 z-50 bg-white border-b border-[#E5E5E5]">
+            <div className="max-w-[720px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs sm:text-sm font-medium">Outfit Calibratie</span>
-                <span className="text-xs sm:text-sm text-[var(--color-muted)] tabular-nums">{Math.round(progress)}% compleet</span>
+                <span className="text-xs sm:text-sm text-[#8A8A8A] tabular-nums">{Math.round(progress)}% compleet</span>
               </div>
-              <div className="h-2 sm:h-2 bg-[var(--color-bg)] rounded-full overflow-hidden">
+              <div className="h-2 sm:h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[var(--ff-color-primary-600)] to-[var(--ff-color-accent-600)] transition-all duration-500 ease-out"
+                  className="h-full bg-[#C2654A] transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -837,12 +837,12 @@ export default function OnboardingFlowPage() {
   // Null check: if step is not available, show loading
   if (!step && phase === 'questions') {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#C2654A] flex items-center justify-center animate-pulse">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <p className="text-[var(--color-text)]">Quiz wordt geladen...</p>
+          <p className="text-[#1A1A1A]">Quiz wordt geladen...</p>
         </div>
       </div>
     );
@@ -851,33 +851,33 @@ export default function OnboardingFlowPage() {
   return (
     <>
       {/* Fullscreen quiz shell — geen Navbar, geen Footer */}
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', minHeight: '-webkit-fill-available', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', minHeight: '-webkit-fill-available', backgroundColor: '#FAFAF8', color: '#1A1A1A', overflow: 'hidden' }}>
         <Helmet>
           <title>Start je Style Report – FitFi</title>
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
         {/* ── HEADER BAR ── */}
-        <div style={{ flexShrink: 0, backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
+        <div style={{ flexShrink: 0, backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E5E5', boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
           <div style={{ maxWidth: '720px', margin: '0 auto', padding: '10px 16px 0', boxSizing: 'border-box' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text)' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#1A1A1A' }}>
                 Stap {currentStep + 1} van {quizSteps.length}
               </span>
               <button
                 onClick={handleCancel}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-muted)' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px', border: 'none', background: 'none', cursor: 'pointer', color: '#8A8A8A' }}
                 aria-label="Stop de quiz"
               >
                 <X style={{ width: '18px', height: '18px' }} />
               </button>
             </div>
-            <div style={{ height: '3px', backgroundColor: 'var(--color-bg)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0' }}>
+            <div style={{ height: '3px', backgroundColor: '#FAFAF8', borderRadius: '99px', overflow: 'hidden', marginBottom: '0' }}>
               <div
                 style={{
                   height: '100%',
                   width: `${progress}%`,
-                  background: 'linear-gradient(90deg, var(--ff-color-primary-600), var(--ff-color-accent-600))',
+                  background: '#C2654A',
                   borderRadius: '99px',
                   transition: 'width 0.4s ease',
                 }}
@@ -899,21 +899,21 @@ export default function OnboardingFlowPage() {
             <AnimatedQuestionTransition questionKey={currentStep} direction="forward">
               <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                 {currentStep === 0 && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', backgroundColor: 'var(--ff-color-accent-50)', borderRadius: '99px', fontSize: '12px', fontWeight: 500, color: 'var(--ff-color-accent-700)', marginBottom: '16px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', backgroundColor: '#FAF5F2', borderRadius: '99px', fontSize: '12px', fontWeight: 500, color: '#A8513A', marginBottom: '16px' }}>
                     <Clock style={{ width: '12px', height: '12px' }} />
                     Minder dan 2 minuten
                   </div>
                 )}
-                <h1 style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 700, lineHeight: 1.25, marginBottom: '10px', color: 'var(--color-text)' }}>
+                <h1 style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 700, lineHeight: 1.25, marginBottom: '10px', color: '#1A1A1A' }}>
                   {step.title}
                 </h1>
                 {step.description && (
-                  <p style={{ fontSize: '15px', color: 'var(--color-muted)', lineHeight: 1.6, maxWidth: '480px', margin: '0 auto' }}>
+                  <p style={{ fontSize: '15px', color: '#8A8A8A', lineHeight: 1.6, maxWidth: '480px', margin: '0 auto' }}>
                     {step.description}
                   </p>
                 )}
                 {step.field === 'stylePreferences' && (
-                  <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--ff-color-primary-600)', fontWeight: 500 }}>
+                  <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#C2654A', fontWeight: 500 }}>
                     <CheckCircle style={{ width: '14px', height: '14px' }} />
                     Kies 2–3 stijlen
                   </div>
@@ -936,8 +936,8 @@ export default function OnboardingFlowPage() {
                         display: 'flex', alignItems: 'flex-start', gap: '12px',
                         padding: '14px 16px', minHeight: '64px',
                         borderRadius: '14px',
-                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
-                        backgroundColor: isSelected ? 'var(--ff-color-primary-50)' : 'var(--color-surface)',
+                        border: `2px solid ${isSelected ? '#C2654A' : '#E5E5E5'}`,
+                        backgroundColor: isSelected ? '#FDF9F7' : '#FFFFFF',
                         cursor: 'pointer', textAlign: 'left',
                         transition: 'border-color 0.15s, background-color 0.15s',
                       }}
@@ -945,17 +945,17 @@ export default function OnboardingFlowPage() {
                       <div style={{
                         width: '20px', height: '20px', flexShrink: 0, marginTop: '1px',
                         borderRadius: '6px',
-                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
-                        backgroundColor: isSelected ? 'var(--ff-color-primary-600)' : 'transparent',
+                        border: `2px solid ${isSelected ? '#C2654A' : '#E5E5E5'}`,
+                        backgroundColor: isSelected ? '#C2654A' : 'transparent',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s',
                       }}>
                         {isSelected && <CheckCircle style={{ width: '13px', height: '13px', color: 'white' }} />}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--color-text)', lineHeight: 1.3 }}>{option.label}</div>
+                        <div style={{ fontWeight: 600, fontSize: '15px', color: '#1A1A1A', lineHeight: 1.3 }}>{option.label}</div>
                         {option.description && (
-                          <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
+                          <div style={{ fontSize: '12px', color: '#8A8A8A', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
                         )}
                       </div>
                     </button>
@@ -979,8 +979,8 @@ export default function OnboardingFlowPage() {
                         display: 'flex', alignItems: 'center', gap: '12px',
                         padding: '14px 16px', minHeight: '64px',
                         borderRadius: '14px',
-                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
-                        backgroundColor: isSelected ? 'var(--ff-color-primary-50)' : 'var(--color-surface)',
+                        border: `2px solid ${isSelected ? '#C2654A' : '#E5E5E5'}`,
+                        backgroundColor: isSelected ? '#FDF9F7' : '#FFFFFF',
                         cursor: 'pointer', textAlign: 'left', width: '100%',
                         transition: 'border-color 0.15s, background-color 0.15s',
                       }}
@@ -988,21 +988,21 @@ export default function OnboardingFlowPage() {
                       <div style={{
                         width: '20px', height: '20px', flexShrink: 0,
                         borderRadius: '50%',
-                        border: `2px solid ${isSelected ? 'var(--ff-color-primary-600)' : 'var(--color-border)'}`,
-                        backgroundColor: isSelected ? 'var(--ff-color-primary-600)' : 'transparent',
+                        border: `2px solid ${isSelected ? '#C2654A' : '#E5E5E5'}`,
+                        backgroundColor: isSelected ? '#C2654A' : 'transparent',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s',
                       }}>
                         {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'white' }} />}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--color-text)', lineHeight: 1.3 }}>{option.label}</div>
+                        <div style={{ fontWeight: 600, fontSize: '15px', color: '#1A1A1A', lineHeight: 1.3 }}>{option.label}</div>
                         {option.description && (
-                          <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
+                          <div style={{ fontSize: '12px', color: '#8A8A8A', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
                         )}
                       </div>
                       {isSelected && (
-                        <svg style={{ width: '18px', height: '18px', flexShrink: 0, color: 'var(--ff-color-primary-600)' }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <svg style={{ width: '18px', height: '18px', flexShrink: 0, color: '#C2654A' }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
                         </svg>
                       )}
@@ -1036,22 +1036,22 @@ export default function OnboardingFlowPage() {
               const tierLabel = maxVal < 75 ? 'Budget' : maxVal < 150 ? 'Middensegment' : 'Premium';
 
               return (
-                <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px' }}>
+                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E5E5', padding: '20px' }}>
                   <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--ff-color-primary-600)', lineHeight: 1.1 }}>
+                    <div style={{ fontSize: '36px', fontWeight: 700, color: '#C2654A', lineHeight: 1.1 }}>
                       €{minVal} – €{maxVal}
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text)', marginTop: '6px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
                       {tierLabel}
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>Per kledingstuk</div>
+                    <div style={{ fontSize: '12px', color: '#8A8A8A', marginTop: '2px' }}>Per kledingstuk</div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--color-text)', marginBottom: '6px' }}>Min</label>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>Min</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)', pointerEvents: 'none' }}>€</span>
+                        <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#8A8A8A', pointerEvents: 'none' }}>€</span>
                         <input
                           type="number"
                           min={sliderMin}
@@ -1062,15 +1062,15 @@ export default function OnboardingFlowPage() {
                             const v = parseInt(e.target.value, 10);
                             if (!isNaN(v)) setRange({ min: v, max: maxVal });
                           }}
-                          style={{ width: '100%', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
+                          style={{ width: '100%', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid #E5E5E5', backgroundColor: '#FAFAF8', color: '#1A1A1A', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
                           aria-label="Min budget"
                         />
                       </div>
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--color-text)', marginBottom: '6px' }}>Max</label>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>Max</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)', pointerEvents: 'none' }}>€</span>
+                        <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#8A8A8A', pointerEvents: 'none' }}>€</span>
                         <input
                           type="number"
                           min={sliderMin}
@@ -1081,20 +1081,20 @@ export default function OnboardingFlowPage() {
                             const v = parseInt(e.target.value, 10);
                             if (!isNaN(v)) setRange({ min: minVal, max: v });
                           }}
-                          style={{ width: '100%', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
+                          style={{ width: '100%', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid #E5E5E5', backgroundColor: '#FAFAF8', color: '#1A1A1A', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
                           aria-label="Max budget"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-muted)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#8A8A8A' }}>
                     <span>€{sliderMin} Budget</span>
                     <span>€75–150 Midden</span>
                     <span>€{sliderMax}+ Premium</span>
                   </div>
                   {step.helperText && (
-                    <p style={{ marginTop: '12px', fontSize: '12px', color: 'var(--color-muted)', textAlign: 'center' }}>{step.helperText}</p>
+                    <p style={{ marginTop: '12px', fontSize: '12px', color: '#8A8A8A', textAlign: 'center' }}>{step.helperText}</p>
                   )}
                 </div>
               );
@@ -1102,24 +1102,24 @@ export default function OnboardingFlowPage() {
 
             {/* Slider / budget (legacy) */}
             {step.type === 'slider' && (
-              <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E5E5', padding: '20px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '48px', fontWeight: 700, color: 'var(--ff-color-primary-600)', lineHeight: 1 }}>
+                  <div style={{ fontSize: '48px', fontWeight: 700, color: '#C2654A', lineHeight: 1 }}>
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text)', marginTop: '6px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
                     {(answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 75 ? 'Budget' : (answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 150 ? 'Middensegment' : 'Premium'}
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--color-muted)', marginTop: '2px' }}>Per kledingstuk</div>
+                  <div style={{ fontSize: '12px', color: '#8A8A8A', marginTop: '2px' }}>Per kledingstuk</div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
                     <button
                       type="button"
                       onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.max(step.min || 0, v - (step.step || 5))); }}
-                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--ff-color-primary-300)', backgroundColor: 'var(--color-surface)', color: 'var(--ff-color-primary-700)', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #D4856E', backgroundColor: '#FFFFFF', color: '#A8513A', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verlaag budget"
                     >−</button>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)', pointerEvents: 'none' }}>€</span>
+                      <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#8A8A8A', pointerEvents: 'none' }}>€</span>
                       <input
                         type="number"
                         min={step.min || 0}
@@ -1127,14 +1127,14 @@ export default function OnboardingFlowPage() {
                         step={step.step || 1}
                         value={answers[step.field as keyof QuizAnswers] as number || step.min || 50}
                         onChange={(e) => { const v = parseInt(e.target.value); if (!isNaN(v) && v >= (step.min || 0) && v <= (step.max || 100)) handleAnswer(step.field, v); }}
-                        style={{ width: '96px', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
+                        style={{ width: '96px', paddingLeft: '24px', paddingRight: '8px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '12px', border: '2px solid #E5E5E5', backgroundColor: '#FAFAF8', color: '#1A1A1A', textAlign: 'center', fontWeight: 700, fontSize: '16px' }}
                         aria-label="Budget invoeren"
                       />
                     </div>
                     <button
                       type="button"
                       onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.min(step.max || 100, v + (step.step || 5))); }}
-                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--ff-color-primary-600)', backgroundColor: 'var(--ff-color-primary-600)', color: 'white', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #C2654A', backgroundColor: '#C2654A', color: 'white', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verhoog budget"
                     >+</button>
                   </div>
@@ -1146,9 +1146,9 @@ export default function OnboardingFlowPage() {
                   step={step.step || 1}
                   value={answers[step.field as keyof QuizAnswers] as number || step.min || 50}
                   onChange={(e) => handleAnswer(step.field, parseInt(e.target.value))}
-                  style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--ff-color-primary-600)' }}
+                  style={{ width: '100%', cursor: 'pointer', accentColor: '#C2654A' }}
                 />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: 'var(--color-muted)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: '#8A8A8A' }}>
                   <span>€{step.min || 0} Budget</span>
                   <span>€75–150 Midden</span>
                   <span>€{step.max || 100}+ Premium</span>
@@ -1158,26 +1158,26 @@ export default function OnboardingFlowPage() {
 
             {/* Sizes */}
             {step.type === 'sizes' && (
-              <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E5E5', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {getSizeFieldsForGender(answers.gender).map((field) => (
                   <div key={field.name}>
-                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--color-text)', marginBottom: '6px' }}>{field.label}</label>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>{field.label}</label>
                     <div style={{ position: 'relative' }}>
                       <select
                         value={((answers.sizes as any) || {})[field.name] || ""}
                         onChange={(e) => { const s = (answers.sizes as any) || {}; handleAnswer('sizes', { ...s, [field.name]: e.target.value }); }}
-                        style={{ width: '100%', padding: '12px 40px 12px 14px', minHeight: '52px', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', fontSize: '15px', appearance: 'none', cursor: 'pointer' }}
+                        style={{ width: '100%', padding: '12px 40px 12px 14px', minHeight: '52px', borderRadius: '12px', border: '2px solid #E5E5E5', backgroundColor: '#FAFAF8', color: '#1A1A1A', fontSize: '15px', appearance: 'none', cursor: 'pointer' }}
                       >
                         <option value="">Weet ik niet / Sla over</option>
                         {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                       </select>
-                      <div style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--color-muted)' }}>
+                      <div style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#8A8A8A' }}>
                         <svg style={{ width: '16px', height: '16px' }} viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
                       </div>
                     </div>
                   </div>
                 ))}
-                <p style={{ fontSize: '12px', color: 'var(--color-muted)' }}>{step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}</p>
+                <p style={{ fontSize: '12px', color: '#8A8A8A' }}>{step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}</p>
               </div>
             )}
 
@@ -1196,15 +1196,15 @@ export default function OnboardingFlowPage() {
         {/* ── BOTTOM BAR ── altijd volledig zichtbaar */}
         <div style={{
           flexShrink: 0,
-          backgroundColor: 'var(--color-surface)',
-          borderTop: '1px solid var(--color-border)',
+          backgroundColor: '#FFFFFF',
+          borderTop: '1px solid #E5E5E5',
           boxShadow: '0 -2px 12px rgba(0,0,0,0.07)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}>
           <div style={{ maxWidth: '600px', margin: '0 auto', padding: '10px 16px 12px', boxSizing: 'border-box' }}>
 
             {step?.required && !canProceed() && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '8px', fontSize: '12px', color: 'var(--color-muted)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '8px', fontSize: '12px', color: '#8A8A8A' }}>
                 <AlertCircle style={{ width: '13px', height: '13px', flexShrink: 0 }} aria-hidden="true" />
                 <span>{attemptedNext ? getValidationError() : 'Selecteer een optie om door te gaan'}</span>
               </div>
@@ -1218,8 +1218,8 @@ export default function OnboardingFlowPage() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   width: '48px', height: '48px', flexShrink: 0,
                   borderRadius: '12px',
-                  border: '2px solid var(--color-border)',
-                  backgroundColor: 'var(--color-surface)',
+                  border: '2px solid #E5E5E5',
+                  backgroundColor: '#FFFFFF',
                   cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
                   opacity: currentStep === 0 ? 0.25 : 1,
                   transition: 'opacity 0.15s',
@@ -1237,7 +1237,7 @@ export default function OnboardingFlowPage() {
                   flex: 1, height: '48px', minWidth: 0,
                   borderRadius: '12px',
                   border: 'none',
-                  backgroundColor: canProceed() || !step?.required ? 'var(--ff-color-primary-700)' : 'var(--ff-color-primary-300)',
+                  backgroundColor: canProceed() || !step?.required ? '#A8513A' : '#D4856E',
                   color: 'white',
                   fontSize: '15px', fontWeight: 700,
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -1257,14 +1257,14 @@ export default function OnboardingFlowPage() {
               {step && !step.required && (
                 <button
                   onClick={handleSkip}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#8A8A8A', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
                 >
                   Overslaan
                 </button>
               )}
               <button
                 onClick={handleSaveAndContinueLater}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--color-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: '#8A8A8A', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
               >
                 <Clock style={{ width: '11px', height: '11px' }} />
                 Opslaan en later verder
@@ -1286,25 +1286,25 @@ export default function OnboardingFlowPage() {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-            className="bg-[var(--color-surface)] rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md p-5 sm:p-8 max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md p-5 sm:p-8 max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto"
             role="dialog"
             aria-labelledby="review-modal-title"
           >
             <div className="flex items-start justify-between mb-5">
               <div>
-                <h3 id="review-modal-title" className="text-xl font-bold text-[var(--color-text)]">
+                <h3 id="review-modal-title" className="text-xl font-bold text-[#1A1A1A]">
                   Laatste stap: check je keuzes.
                 </h3>
-                <p className="text-sm text-[var(--color-muted)] mt-0.5">
+                <p className="text-sm text-[#8A8A8A] mt-0.5">
                   Je kunt altijd terug en aanpassen.
                 </p>
               </div>
               <button
                 onClick={() => setShowReviewModal(false)}
-                className="p-2 hover:bg-[var(--ff-color-primary-50)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
                 aria-label="Sluit overzicht"
               >
-                <X className="w-5 h-5 text-[var(--color-muted)]" />
+                <X className="w-5 h-5 text-[#8A8A8A]" />
               </button>
             </div>
 
@@ -1336,31 +1336,31 @@ export default function OnboardingFlowPage() {
                   <li key={s.id}>
                     <button
                       onClick={() => { setShowReviewModal(false); setCurrentStep(idx); }}
-                      className="text-left w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-[var(--ff-color-primary-50)] transition-colors group"
+                      className="text-left w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-[#FDF9F7] transition-colors group"
                       aria-label={`Ga naar vraag ${idx + 1}: ${s.title}`}
                     >
                       <span className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
                         hasValue
-                          ? 'bg-[var(--ff-color-primary-600)] text-white'
+                          ? 'bg-[#C2654A] text-white'
                           : s.required
-                          ? 'bg-[var(--ff-color-danger-100)] text-[var(--ff-color-danger-600)]'
-                          : 'bg-[var(--ff-color-neutral-200)] text-[var(--color-muted)]'
+                          ? 'bg-red-50 text-[#C24A4A]'
+                          : 'bg-[#E5E5E5] text-[#8A8A8A]'
                       }`}>
                         {hasValue ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-[var(--color-text)] leading-tight truncate">{s.title}</p>
+                        <p className="text-sm font-semibold text-[#1A1A1A] leading-tight truncate">{s.title}</p>
                         <p className={`text-xs mt-0.5 truncate ${
                           hasValue
-                            ? 'text-[var(--color-muted)]'
+                            ? 'text-[#8A8A8A]'
                             : s.required
-                            ? 'text-[var(--ff-color-danger-600)] font-medium'
-                            : 'text-[var(--color-muted)]'
+                            ? 'text-[#C24A4A] font-medium'
+                            : 'text-[#8A8A8A]'
                         }`}>
                           {hasValue ? displayVal : s.required ? 'Vereist — klik om in te vullen' : 'Overgeslagen'}
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-[var(--color-border)] group-hover:text-[var(--ff-color-primary-500)] transition-colors flex-shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#C2654A] transition-colors flex-shrink-0" />
                     </button>
                   </li>
                 );
@@ -1368,7 +1368,7 @@ export default function OnboardingFlowPage() {
             </ul>
 
             {quizSteps.some(s => s.required && !answers[s.field as keyof QuizAnswers]) && (
-              <p className="flex items-center gap-2 text-xs font-medium text-[var(--ff-color-danger-600)] mb-3 px-1">
+              <p className="flex items-center gap-2 text-xs font-medium text-[#C24A4A] mb-3 px-1">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <span>Vul de gemarkeerde vragen in om door te gaan</span>
               </p>
@@ -1377,7 +1377,7 @@ export default function OnboardingFlowPage() {
               <button
                 onClick={handleConfirmProceed}
                 disabled={quizSteps.some(s => s.required && !answers[s.field as keyof QuizAnswers])}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[#A8513A] text-white rounded-xl font-bold hover:bg-[#C2654A] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4856E] focus-visible:ring-offset-2"
               >
                 <span>Maak mijn rapport</span>
                 <ArrowRight className="w-5 h-5" />
@@ -1399,32 +1399,32 @@ export default function OnboardingFlowPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[var(--color-surface)] rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
             role="dialog"
             aria-labelledby="cancel-modal-title"
             aria-describedby="cancel-modal-desc"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[var(--ff-color-accent-50)] flex items-center justify-center flex-shrink-0">
-                  <AlertCircle className="w-6 h-6 text-[var(--ff-color-accent-600)]" aria-hidden="true" />
+                <div className="w-12 h-12 rounded-full bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-[#C2654A]" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 id="cancel-modal-title" className="text-xl font-bold text-[var(--color-text)]">Even stoppen?</h3>
-                  <p className="text-sm text-[var(--color-muted)]">Je bent bijna klaar met de quiz</p>
+                  <h3 id="cancel-modal-title" className="text-xl font-bold text-[#1A1A1A]">Even stoppen?</h3>
+                  <p className="text-sm text-[#8A8A8A]">Je bent bijna klaar met de quiz</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="p-2 hover:bg-[var(--ff-color-primary-50)] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-color-primary-400)]"
+                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
                 aria-label="Sluit modal"
               >
-                <X className="w-5 h-5 text-[var(--color-muted)]" aria-hidden="true" />
+                <X className="w-5 h-5 text-[#8A8A8A]" aria-hidden="true" />
               </button>
             </div>
 
             <div className="space-y-3 mb-6">
-              <p id="cancel-modal-desc" className="text-[var(--color-text)]">
+              <p id="cancel-modal-desc" className="text-[#1A1A1A]">
                 Wat wil je doen?
               </p>
             </div>
@@ -1432,7 +1432,7 @@ export default function OnboardingFlowPage() {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[var(--ff-color-primary-700)] text-white rounded-xl font-bold hover:bg-[var(--ff-color-primary-600)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ff-color-primary-400)] focus-visible:ring-offset-2"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[#A8513A] text-white rounded-xl font-bold hover:bg-[#C2654A] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4856E] focus-visible:ring-offset-2"
                 autoFocus
               >
                 Doorgaan met quiz
@@ -1445,7 +1445,7 @@ export default function OnboardingFlowPage() {
               </button>
               <button
                 onClick={confirmCancel}
-                className="w-full px-6 py-3 text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors underline underline-offset-2"
+                className="w-full px-6 py-3 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors underline underline-offset-2"
               >
                 Alles wissen en stoppen
               </button>
