@@ -86,11 +86,15 @@ export class VisualPreferenceService {
 
     let photos = (data && data.length > 0) ? data : [];
 
-    // Client-side safety filter: always apply when a specific gender was requested.
-    // Showing 0 photos is better than showing photos for the wrong gender.
-    if (gendersToTry && photos.length > 0) {
+    // Hard gender filter: always strip photos belonging to the opposite gender.
+    // Computed independently of gendersToTry so any future fallback paths can't bypass it.
+    let allowedGenders: string[] | null = null;
+    if (gender === 'male') allowedGenders = ['male', 'unisex'];
+    else if (gender === 'female') allowedGenders = ['female', 'unisex'];
+
+    if (allowedGenders && photos.length > 0) {
       photos = photos.filter(
-        (p: MoodPhoto) => !p.gender || gendersToTry!.includes(p.gender)
+        (p: MoodPhoto) => !p.gender || allowedGenders!.includes(p.gender)
       );
     }
 
