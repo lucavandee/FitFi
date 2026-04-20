@@ -1105,7 +1105,7 @@ export default function EnhancedResultsPage() {
 
               {/* Shop in jouw kleuren */}
               {(() => {
-                const palette = getColorPalette(activeColorProfile.subSeason || activeColorProfile.season);
+                const palette = getColorPalette(activeColorProfile.subSeason || activeColorProfile.season || 'zomer');
                 const doColorHexes = palette?.doColors?.map(c => c.hex.toLowerCase()) || [];
 
                 if (doColorHexes.length === 0 || !displayOutfits.length) return null;
