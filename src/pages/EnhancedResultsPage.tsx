@@ -205,6 +205,25 @@ export default function EnhancedResultsPage() {
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 300], [1, 0.95]);
 
+  // Read localStorage snapshots once per mount so that every render downstream
+  // gets a stable reference. Without this, `readJson` returns a fresh object on
+  // every render, which causes effects that depend on `answers` (and
+  // `useOutfits` in v1 mode) to thrash.
+  const color = React.useMemo(() => readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE), []);
+  const archetypeRaw = React.useMemo(() => readJson<Archetype>(LS_KEYS.ARCHETYPE), []);
+  const answers = React.useMemo(() => readJson<any>(LS_KEYS.QUIZ_ANSWERS), []);
+
+  const hasCompletedQuiz = !!answers;
+
+  const archetypeName = React.useMemo(() => {
+    if (!archetypeRaw) return "Smart Casual";
+    if (typeof archetypeRaw === 'string') return archetypeRaw;
+    if (archetypeRaw && typeof archetypeRaw === 'object' && 'name' in archetypeRaw) {
+      return archetypeRaw.name;
+    }
+    return "Smart Casual";
+  }, [archetypeRaw]);
+
   React.useEffect(() => {
     try {
       const existing = localStorage.getItem(LS_KEYS.RESULTS_TS);
@@ -217,16 +236,6 @@ export default function EnhancedResultsPage() {
       archetype: archetypeName,
     });
   }, []);
-
-  // Read localStorage snapshots once per mount so that every render downstream
-  // gets a stable reference. Without this, `readJson` returns a fresh object on
-  // every render, which causes effects that depend on `answers` (and
-  // `useOutfits` in v1 mode) to thrash.
-  const color = React.useMemo(() => readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE), []);
-  const archetypeRaw = React.useMemo(() => readJson<Archetype>(LS_KEYS.ARCHETYPE), []);
-  const answers = React.useMemo(() => readJson<any>(LS_KEYS.QUIZ_ANSWERS), []);
-
-  const hasCompletedQuiz = !!answers;
 
   const [consistencyAnalysis, setConsistencyAnalysis] = React.useState<ConsistencyAnalysis | null>(null);
 
@@ -243,15 +252,6 @@ export default function EnhancedResultsPage() {
       dismissExitIntent();
     }
   }, [showExitIntent, user, dismissExitIntent]);
-
-  const archetypeName = React.useMemo(() => {
-    if (!archetypeRaw) return "Smart Casual";
-    if (typeof archetypeRaw === 'string') return archetypeRaw;
-    if (archetypeRaw && typeof archetypeRaw === 'object' && 'name' in archetypeRaw) {
-      return archetypeRaw.name;
-    }
-    return "Smart Casual";
-  }, [archetypeRaw]);
 
   /** Dutch-friendly display name for the archetype */
   const archetypeDisplayNL = React.useMemo(() => getArchetypeDisplayNL(archetypeName), [archetypeName]);

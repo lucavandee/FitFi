@@ -105,15 +105,13 @@ export class VisualPreferenceService {
     }
 
     // Client-side safety filter: when a specific gender was requested, strip photos
-    // that belong to the opposite gender (allow unisex and requested gender through)
+    // that belong to the opposite gender (allow unisex and requested gender through).
+    // Always apply this filter — showing 0 photos is better than showing wrong-gender photos.
     if (gendersToTry && photos.length > 0) {
       const filtered = photos.filter(
         (p: MoodPhoto) => !p.gender || gendersToTry!.includes(p.gender)
       );
-      // Only apply the client-side filter if it doesn't wipe out everything
-      if (filtered.length > 0) {
-        photos = filtered;
-      }
+      photos = filtered;
     }
 
     if (shuffle) {
