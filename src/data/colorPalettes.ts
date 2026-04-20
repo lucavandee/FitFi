@@ -461,7 +461,8 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
  * Get color palette for a season or sub-season.
  * Checks sub-season palettes first, then falls back to base season palettes.
  */
-export function getColorPalette(season: string): ColorPalette | null {
+export function getColorPalette(season: string | undefined | null): ColorPalette | null {
+  if (!season) return null;
   const normalizedSeason = season.toLowerCase();
   return SUB_SEASON_PALETTES[normalizedSeason] || COLOR_PALETTES[normalizedSeason] || null;
 }
