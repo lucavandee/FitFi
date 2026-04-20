@@ -1254,10 +1254,10 @@ export default function EnhancedResultsPage() {
                 </AnimatedSection>
               )}
 
-              {archetypeDetectionResult && archetypeDetectionResult.scores.length > 0 && (
+              {archetypeDetectionResult && (archetypeDetectionResult.scores?.length ?? 0) > 0 && (
                 <AnimatedSection delay={0.3}>
                   <StyleDNAMixIndicator
-                    mixItems={archetypeDetectionResult.scores.map(s => ({
+                    mixItems={(archetypeDetectionResult.scores ?? []).map(s => ({
                       archetype: s.archetype as ArchetypeKey,
                       percentage: s.score
                     }))}
@@ -1266,10 +1266,10 @@ export default function EnhancedResultsPage() {
                 </AnimatedSection>
               )}
 
-              {archetypeDetectionResult && archetypeDetectionResult.scores.length > 0 && (
+              {archetypeDetectionResult && (archetypeDetectionResult.scores?.length ?? 0) > 0 && (
                 <AnimatedSection delay={0.35}>
                   <ArchetypeBreakdown
-                    archetypeScores={archetypeDetectionResult.scores.map(s => ({
+                    archetypeScores={(archetypeDetectionResult.scores ?? []).map(s => ({
                       archetype: s.archetype as ArchetypeKey,
                       percentage: s.score
                     }))}
