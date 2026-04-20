@@ -60,6 +60,24 @@ function readJson<T>(key: string): T | null {
   }
 }
 
+class SectionErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback ?? (
+        <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 text-center text-sm text-[#8A8A8A]">
+          Dit onderdeel kon niet worden geladen.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /**
  * Get display-friendly sub-season name from SUB_SEASON_PALETTES or fall back to base season.
  */
@@ -755,6 +773,7 @@ export default function EnhancedResultsPage() {
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2 }}
         >
+        <SectionErrorBoundary>
 
       {hasCompletedQuiz && activeColorProfile && (
         <section className="py-8 sm:py-10">
@@ -941,6 +960,7 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
+        </SectionErrorBoundary>
         </motion.div>
       )}
 
@@ -953,6 +973,7 @@ export default function EnhancedResultsPage() {
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2 }}
         >
+        <SectionErrorBoundary>
 
       {color && (
         <section className="py-8 sm:py-10">
@@ -1353,6 +1374,7 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
+        </SectionErrorBoundary>
         </motion.div>
       )}
 
@@ -1365,6 +1387,7 @@ export default function EnhancedResultsPage() {
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2 }}
         >
+        <SectionErrorBoundary>
         <section id="outfits-section" className="pt-10 sm:pt-12 pb-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <AnimatedSection>
@@ -1789,6 +1812,7 @@ export default function EnhancedResultsPage() {
             </AnimatedSection>
           </div>
         </section>
+        </SectionErrorBoundary>
         </motion.div>
       )}
 

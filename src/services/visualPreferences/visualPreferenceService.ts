@@ -86,32 +86,12 @@ export class VisualPreferenceService {
 
     let photos = (data && data.length > 0) ? data : [];
 
-    if (photos.length === 0 && gendersToTry) {
-      // Try fetching only the exact gender (without unisex) before falling back to all
-      const exactGender = gendersToTry.filter(g => g !== 'unisex');
-      const { data: exactData, error: exactError } = await buildQuery(exactGender.length > 0 ? exactGender : null);
-      if (!exactError && exactData && exactData.length > 0) {
-        photos = exactData;
-      }
-    }
-
-    if (photos.length === 0) {
-      const { data: fallback, error: fallbackError } = await buildQuery(null);
-      if (fallbackError) {
-        console.error('Failed to fetch fallback mood photos:', fallbackError);
-        throw fallbackError;
-      }
-      photos = fallback || [];
-    }
-
-    // Client-side safety filter: when a specific gender was requested, strip photos
-    // that belong to the opposite gender (allow unisex and requested gender through).
-    // Always apply this filter — showing 0 photos is better than showing wrong-gender photos.
+    // Client-side safety filter: always apply when a specific gender was requested.
+    // Showing 0 photos is better than showing photos for the wrong gender.
     if (gendersToTry && photos.length > 0) {
-      const filtered = photos.filter(
+      photos = photos.filter(
         (p: MoodPhoto) => !p.gender || gendersToTry!.includes(p.gender)
       );
-      photos = filtered;
     }
 
     if (shuffle) {
