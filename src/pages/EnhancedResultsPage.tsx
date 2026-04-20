@@ -215,11 +215,11 @@ export default function EnhancedResultsPage() {
 
   const hasCompletedQuiz = !!answers;
 
-  const archetypeName = React.useMemo(() => {
+  const archetypeName = React.useMemo((): string => {
     if (!archetypeRaw) return "Smart Casual";
-    if (typeof archetypeRaw === 'string') return archetypeRaw;
+    if (typeof archetypeRaw === 'string') return archetypeRaw || "Smart Casual";
     if (archetypeRaw && typeof archetypeRaw === 'object' && 'name' in archetypeRaw) {
-      return archetypeRaw.name;
+      return (archetypeRaw as { name?: string }).name || "Smart Casual";
     }
     return "Smart Casual";
   }, [archetypeRaw]);
