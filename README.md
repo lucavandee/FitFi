@@ -77,6 +77,5 @@ Production builds run on Netlify. Vite produces a static site; runtime work happ
 - [`CLAUDE.md`](CLAUDE.md) — Conventions for AI-assisted edits.
 - [`docs/FITFI_DEV_REFERENCE.md`](docs/FITFI_DEV_REFERENCE.md) — UI development reference.
 - [`docs/DESIGN_SYSTEM_QUICK_REFERENCE.md`](docs/DESIGN_SYSTEM_QUICK_REFERENCE.md) — Design tokens and component classes.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — End-to-end pipeline, signals, what runs client-side vs in edge functions, trade-offs.
 - [`docs/TERMINOLOGY_CONSISTENCY_GUIDE.md`](docs/TERMINOLOGY_CONSISTENCY_GUIDE.md) — Terminology conventions across marketing and product surfaces.
-
-A full architecture write-up will live at [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (in progress).
