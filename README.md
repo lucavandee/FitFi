@@ -79,3 +79,7 @@ Production builds run on Netlify. Vite produces a static site; runtime work happ
 - [`docs/DESIGN_SYSTEM_QUICK_REFERENCE.md`](docs/DESIGN_SYSTEM_QUICK_REFERENCE.md) — Design tokens and component classes.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — End-to-end pipeline, signals, what runs client-side vs in edge functions, trade-offs.
 - [`docs/TERMINOLOGY_CONSISTENCY_GUIDE.md`](docs/TERMINOLOGY_CONSISTENCY_GUIDE.md) — Terminology conventions across marketing and product surfaces.
+
+## Related
+
+- [**fitfi-recommender-langgraph**](https://github.com/lucavandee/fitfi-recommender-langgraph) — Python LangGraph port of this repo's recommendation pipeline, with an eval suite. Built as a framework-learning exercise; not a replacement for the production engine.
