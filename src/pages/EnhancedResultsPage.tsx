@@ -12,6 +12,7 @@ import { useOutfits } from "@/hooks/useOutfits";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
 import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
+import { ResultsFeedbackWidget } from "@/components/results/ResultsFeedbackWidget";
 import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileConfidenceBadge";
 import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
 import { ColorPaletteSection } from "@/components/results/ColorPaletteSection";
@@ -1832,6 +1833,14 @@ export default function EnhancedResultsPage() {
 
       {/* Exit Intent Discount Modal */}
       <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
+
+      {/* Feedback widget — meet of het stijlprofiel herkenbaar is */}
+      {hasCompletedQuiz && (
+        <ResultsFeedbackWidget
+          archetype={archetypeName}
+          colorProfile={activeColorProfile}
+        />
+      )}
 
       {/* Mobile bottom padding */}
       <div className="h-16 sm:hidden" aria-hidden="true" />
