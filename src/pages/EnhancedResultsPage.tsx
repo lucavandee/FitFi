@@ -12,6 +12,7 @@ import { useOutfits } from "@/hooks/useOutfits";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
 import { SaveOutfitsModal } from "@/components/results/SaveOutfitsModal";
+import { ResultsFeedbackWidget } from "@/components/results/ResultsFeedbackWidget";
 import { StyleProfileConfidenceBadge } from "@/components/results/StyleProfileConfidenceBadge";
 import { ShoppingGuidance } from "@/components/results/ShoppingGuidance";
 import { ColorPaletteSection } from "@/components/results/ColorPaletteSection";
@@ -20,7 +21,6 @@ import { StyleDNAMixIndicator } from "@/components/results/StyleDNAMixIndicator"
 import { ArchetypeBreakdown } from "@/components/results/ArchetypeBreakdown";
 import { ArchetypeDetector } from "@/services/styleProfile/archetypeDetector";
 import { ColorProfileExplainer } from "@/components/results/ColorProfileExplainer";
-import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightExtractor";
 import type { ArchetypeKey } from "@/config/archetypes";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
@@ -298,10 +298,6 @@ export default function EnhancedResultsPage() {
 
     return nameToKey[raw] || 'SMART_CASUAL';
   }, [archetypeName]);
-
-  const swipeInsights = React.useMemo(() => {
-    return getMockSwipeInsights();
-  }, []);
 
   const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
   const [profileDataSource, setProfileDataSource] = React.useState<'photo_analysis' | 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback'>('fallback');
@@ -783,7 +779,6 @@ export default function EnhancedResultsPage() {
                 primaryArchetype={archetypeKey}
                 colorProfile={activeColorProfile}
                 quizAnswers={answers ?? {}}
-                swipeInsights={swipeInsights}
               />
             </div>
           </div>
@@ -1838,6 +1833,14 @@ export default function EnhancedResultsPage() {
 
       {/* Exit Intent Discount Modal */}
       <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
+
+      {/* Feedback widget — meet of het stijlprofiel herkenbaar is */}
+      {hasCompletedQuiz && (
+        <ResultsFeedbackWidget
+          archetype={archetypeName}
+          colorProfile={activeColorProfile}
+        />
+      )}
 
       {/* Mobile bottom padding */}
       <div className="h-16 sm:hidden" aria-hidden="true" />

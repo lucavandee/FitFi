@@ -59,7 +59,7 @@ export function OutfitZoomModal({
 
   if (!outfit) return null;
 
-  const matchScore = outfit.match_score || Math.floor(75 + Math.random() * 20);
+  const matchScore = typeof outfit.match_score === "number" ? Math.round(outfit.match_score) : null;
 
   return (
     <AnimatePresence>
@@ -114,9 +114,11 @@ export function OutfitZoomModal({
                       </div>
 
                       {/* Match Badge */}
-                      <div className="absolute top-4 left-4">
-                        <StyleDNAMatchBadge score={matchScore} size="lg" />
-                      </div>
+                      {matchScore !== null && (
+                        <div className="absolute top-4 left-4">
+                          <StyleDNAMatchBadge score={matchScore} size="lg" />
+                        </div>
+                      )}
 
                       {/* Color Dots */}
                       {outfit.color_harmony && (
@@ -156,7 +158,8 @@ export function OutfitZoomModal({
                       )}
 
                       <p className="text-[#8A8A8A]">
-                        {outfit.products.length} items · {matchScore}% match met jouw stijl
+                        {outfit.products.length} items
+                        {matchScore !== null ? ` · ${matchScore}% match met jouw stijl` : ""}
                       </p>
                     </div>
 

@@ -70,6 +70,45 @@ async function submit(userId: string): Promise<QuizSubmission> {
 }
 
 /**
+ * Compat-laag voor src/hooks/useQuizAnswers.ts. Geeft submissions terug in de
+ * QuizSubmission-vorm uit src/types/quiz.ts (user_id/completed_at/...).
+ */
+async function getUserAnswers(userId: string): Promise<QuizSubmission | null> {
+  const stored = safeRead<Record<string, any> | null>(LS_SUB(userId), null);
+  if (!stored || !stored.answers) return null;
+  const createdAt = stored.created_at ?? stored.createdAt ?? new Date().toISOString();
+  return {
+    id: stored.id ?? `local-${userId}`,
+    user_id: stored.user_id ?? stored.userId ?? userId,
+    answers: stored.answers as QuizAnswers,
+    completed_at: stored.completed_at ?? stored.createdAt ?? createdAt,
+    created_at: createdAt,
+    updated_at: stored.updated_at ?? createdAt,
+  };
+}
+
+async function submitAnswers(userId: string, answers: QuizAnswers): Promise<boolean> {
+  await setAnswers(userId, answers);
+  const now = new Date().toISOString();
+  const submission: QuizSubmission = {
+    id: crypto.randomUUID(),
+    user_id: userId,
+    answers,
+    completed_at: now,
+    created_at: now,
+    updated_at: now,
+  };
+  safeWrite(LS_SUB(userId), submission);
+  return true;
+}
+
+async function resetQuiz(userId: string): Promise<boolean> {
+  await clearAnswers(userId);
+  safeWrite(LS_SUB(userId), null);
+  return true;
+}
+
+/**
  * Named export verwacht door: src/hooks/useQuizAnswers.ts
  * We bieden meerdere method-aliases om compatibel te zijn met oudere aanroepen.
  */
@@ -87,6 +126,11 @@ export const quizService = {
   // submit + steps
   submit,
   getSteps: getQuizSteps,
+
+  // compat met useQuizAnswers
+  getUserAnswers,
+  submitAnswers,
+  resetQuiz,
 };
 
 // (optioneel) ook default export voor bredere compatibiliteit
