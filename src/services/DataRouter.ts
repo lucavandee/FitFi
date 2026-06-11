@@ -61,8 +61,20 @@ export async function getOutfitRecommendations(_userId?: string, opts?: { limit?
   }
 }
 
-function getFallbackOutfits(): Outfit[] {
-  const prods = [];
+async function getFallbackOutfits(): Promise<Outfit[]> {
+  const { data } = await fetchProducts({ limit: 12 });
+  const prods = (data || []).map((p) => ({
+    id: p.id,
+    title: p.title || p.name || "Product",
+    name: p.name ?? p.title,
+    brand: p.brand,
+    price: p.price,
+    imageUrl: p.imageUrl || p.image,
+    url: p.url,
+    retailer: p.retailer,
+    category: p.category,
+    tags: p.tags,
+  })) as Product[];
   const chunks: Product[][] = [prods.slice(0, 4), prods.slice(4, 8), prods.slice(8, 12)];
   return chunks
     .filter((c) => c.length > 0)
