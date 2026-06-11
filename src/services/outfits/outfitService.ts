@@ -4,6 +4,7 @@ import { runEngineV2 } from "@/engine/v2";
 import { generateNovaExplanation } from "@/engine/explainOutfit";
 import { filterByGender, getUserGender } from "@/services/products/genderFilter";
 import { reclassifyProducts } from "@/engine/productClassifier";
+import { dedupeProductVariants } from "./dedupeProductVariants";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
@@ -54,7 +55,7 @@ class OutfitService {
         return [];
       }
 
-      const rawProducts = data.map(this.mapDatabaseProduct);
+      const rawProducts = dedupeProductVariants(data.map(this.mapDatabaseProduct));
 
       const { classified: products } = reclassifyProducts(rawProducts);
 
