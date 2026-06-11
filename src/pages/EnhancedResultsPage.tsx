@@ -20,7 +20,6 @@ import { StyleDNAMixIndicator } from "@/components/results/StyleDNAMixIndicator"
 import { ArchetypeBreakdown } from "@/components/results/ArchetypeBreakdown";
 import { ArchetypeDetector } from "@/services/styleProfile/archetypeDetector";
 import { ColorProfileExplainer } from "@/components/results/ColorProfileExplainer";
-import { getMockSwipeInsights } from "@/services/visualPreferences/swipeInsightExtractor";
 import type { ArchetypeKey } from "@/config/archetypes";
 import type { Outfit } from "@/services/data/types";
 import { useFadeInOnVisible } from "@/hooks/useFadeInOnVisible";
@@ -298,10 +297,6 @@ export default function EnhancedResultsPage() {
 
     return nameToKey[raw] || 'SMART_CASUAL';
   }, [archetypeName]);
-
-  const swipeInsights = React.useMemo(() => {
-    return getMockSwipeInsights();
-  }, []);
 
   const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
   const [profileDataSource, setProfileDataSource] = React.useState<'photo_analysis' | 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback'>('fallback');
@@ -783,7 +778,6 @@ export default function EnhancedResultsPage() {
                 primaryArchetype={archetypeKey}
                 colorProfile={activeColorProfile}
                 quizAnswers={answers ?? {}}
-                swipeInsights={swipeInsights}
               />
             </div>
           </div>
