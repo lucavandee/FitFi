@@ -39,7 +39,7 @@
   <h1>Help FitFi beter worden</h1>
   <p class="sub">Je hebt net de stijlquiz gedaan. Hieronder zie je twee outfit-sets. Geef per outfit je eerlijke eerste reactie; er is geen goed of fout. Dit duurt &plusmn;6 minuten.</p>
 
-  <form name="conciergetest" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/conciergetest.html?bedankt=1" id="ctform">
+  <form name="conciergetest" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/conciergetest.html" id="ctform">
     <input type="hidden" name="form-name" value="conciergetest">
     <p class="hidden"><label>Niet invullen: <input name="bot-field"></label></p>
 
@@ -108,11 +108,31 @@
     document.getElementById('sets-ve').classList.toggle('hidden', b !== 'vrouw-expressief');
   }
   radios.forEach(function (r) { r.addEventListener('change', kies); });
-  if (new URLSearchParams(location.search).get('bedankt')) {
+
+  function toonBedankt() {
     document.getElementById('ctform').classList.add('hidden');
     document.querySelector('p.sub').classList.add('hidden');
     document.getElementById('bedankt').classList.remove('hidden');
+    window.scrollTo({ top: 0 });
   }
+
+  var form = document.getElementById('ctform');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var body = new URLSearchParams(new FormData(form)).toString();
+    fetch('/conciergetest.html', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body
+    }).then(function (res) {
+      if (res.ok) { toonBedankt(); }
+      else { alert('Versturen is niet gelukt (status ' + res.status + '). Probeer het nog eens.'); }
+    }).catch(function () {
+      alert('Versturen is niet gelukt door een netwerkfout. Probeer het nog eens.');
+    });
+  });
+
+  if (new URLSearchParams(location.search).get('bedankt')) { toonBedankt(); }
 })();
 </script>
 </body>
