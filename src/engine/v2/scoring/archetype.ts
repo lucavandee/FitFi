@@ -1,5 +1,6 @@
 import { ARCHETYPES, type ArchetypeKey } from '@/config/archetypes';
 import type { ArchetypeWeights, ScoredProduct, UserStyleProfile } from '../types';
+import { readLlmTags } from './llmTags';
 
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 
@@ -33,11 +34,17 @@ export function scoreProductArchetype(
   const silhouette = tokenScore(product.silhouetteTags, a.silhouettes);
   const formality = formalityProximity(product.formality, a.formality);
 
-  const score = clamp01(
+  let score = clamp01(
     0.30 * silhouette + 0.25 * material + 0.20 * color + 0.25 * formality
   );
 
   const signals: string[] = [];
+  // Directe archetype-toekenning uit de LLM-tagging (style-kolom) weegt mee
+  const llm = readLlmTags(product.product as { tags?: string[]; styleTags?: string[] });
+  if (llm.archetypes.has(archetypeKey)) {
+    score = clamp01(score + 0.25);
+    signals.push(`${a.label}:llm-tag`);
+  }
   if (color > 0.2) signals.push(`${a.label}:kleur`);
   if (material > 0.2) signals.push(`${a.label}:materiaal`);
   if (silhouette > 0.2) signals.push(`${a.label}:silhouet`);
