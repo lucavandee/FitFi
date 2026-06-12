@@ -583,7 +583,7 @@ export default function OnboardingFlowPage() {
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
       localStorage.removeItem('ff_quiz_step');
       localStorage.setItem('ff_session_id', sessionId);
-      if (user?.id) clearProgressFromSupabase(user.id);
+      if (userId) clearProgressFromSupabase(userId);
 
       // client and userId already declared above
       let syncSuccess = false;
