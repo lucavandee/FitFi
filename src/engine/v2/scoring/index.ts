@@ -17,6 +17,7 @@ import { scoreSeason } from './season';
 import { scoreMoodboard } from './moodboard';
 import { scoreQuality } from './quality';
 import { scoreBrand } from './brand';
+import { readLlmTags } from './llmTags';
 
 export const BASE_WEIGHTS: ScoreBreakdown = {
   archetype: 0.22,
@@ -88,9 +89,15 @@ export function computeProductScore(
     archetype.score < 0.2 ? 0.6 : archetype.score < 0.35 ? 0.85 : 1;
   const occasionPenalty = occasionRes.score < 0.2 ? 0.85 : 1;
   const budgetPenalty = budget.score < 0.2 ? 0.8 : 1;
-  const multiplier = archetypePenalty * occasionPenalty * budgetPenalty;
+  // Fan-merch (clubshirts, F1-merch) hoort vrijwel nooit in een outfit;
+  // penalty in plaats van harde uitsluiting zolang de catalogus dun is.
+  const llm = readLlmTags(product.product as { tags?: string[]; styleTags?: string[] });
+  const fanMerchPenalty = llm.fanMerch && occasion !== 'sport' ? 0.85 : 1;
+  const multiplier =
+    archetypePenalty * occasionPenalty * budgetPenalty * fanMerchPenalty;
 
   product.score = Math.max(0, Math.min(1, weightedSum * multiplier));
+  if (fanMerchPenalty < 1) product.reasons.push('fan_merch_penalty');
   product.breakdown = breakdown;
   product.reasons = [
     archetype.reason,

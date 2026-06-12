@@ -1,4 +1,5 @@
 import type { OccasionKey, ScoredProduct } from '../types';
+import { readLlmTags } from './llmTags';
 
 export const OCCASION_FORMALITY: Record<
   OccasionKey,
@@ -27,8 +28,12 @@ export function scoreOccasion(
   product: ScoredProduct,
   occasion: OccasionKey
 ): { score: number; reason: string } {
+  const llm = readLlmTags(product.product as { tags?: string[]; styleTags?: string[] });
+
   const { target, tolerance } = OCCASION_FORMALITY[occasion];
-  const formalityDistance = Math.abs(product.formality - target);
+  // LLM-formality (mens-achtig oordeel per product) verslaat de keyword-gok
+  const effectiveFormality = llm.formality01 ?? product.formality;
+  const formalityDistance = Math.abs(effectiveFormality - target);
 
   let formalityScore: number;
   if (formalityDistance <= tolerance) {
@@ -44,7 +49,13 @@ export function scoreOccasion(
   const text = `${product.product.name ?? ''} ${product.product.description ?? ''}`.toLowerCase();
   const keywordHit = keywords.some((k) => text.includes(k));
 
-  const combined = formalityScore * 0.85 + (keywordHit ? 0.15 : 0);
+  // Met occ-tags weegt het directe gelegenheid-oordeel mee en daalt het
+  // gewicht van de formality-benadering; zonder tags blijft de oude formule.
+  const combined = llm.hasOccasionTags
+    ? formalityScore * 0.6 +
+      (keywordHit ? 0.15 : 0) +
+      (llm.occasions.has(occasion) ? 0.3 : -0.2)
+    : formalityScore * 0.85 + (keywordHit ? 0.15 : 0);
 
   return {
     score: Math.max(0, Math.min(1, combined)),
