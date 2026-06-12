@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
 import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Spinner } from '@/components/ui/Spinner';
 import { useUser } from '@/context/UserContext';
 import { CalibrationService } from '@/services/visualPreferences/calibrationService';
 import { CalibrationBridge } from '@/services/calibration/calibrationBridge';
