@@ -69,6 +69,46 @@ De classifier-audit gaf een mildere uitkomst dan de logruis suggereert: 3 eendui
 3. **Wel doorzetten:** embeddings als **audit-instrument** op de catalogus (duplicaten en verkeerde labels opsporen), niet als ranking-signaal. Dat is waar ze in deze PoC aantoonbaar waarde leverden.
 4. **Parkeren:** de visuele coherentie-blend in de engine. Code blijft staan, flag standaard uit.
 
+## Vervolg: wat de embeddings blootlegden in de classifier
+
+De datakwaliteitsvondst uit punt 4 bleek geen datafout maar een codefout, en die
+bleek een hele familie te hebben. Drie commits, alle gemeten op 2.674 echte
+productnamen:
+
+1. **Dress shirt.** `/\bdress\b/` (gewicht 3) versloeg `/\bshirt\b/` (gewicht 2).
+   20 herenoverhemden stonden als jurk. Blast radius: exact 20 producten wijzigen,
+   van de 155 jurken breekt er nul. Migratie `20260804203000` corrigeert de
+   bestaande rijen (de anon-key heeft alleen leesrechten, dus die stap is
+   handmatig).
+2. **Enkelvoud "short" en "tight".** Nederlandse retail schrijft "short", niet
+   "shorts". Matchte nergens op, dus besliste de beschrijving: "trek je favoriete
+   PUMA-sneakers erbij aan" maakte er footwear van, en de stofnaam "Single jersey"
+   maakte van een dameslegging een top. Een keepersshort werd underwear via
+   "sokken" in de kit-tekst, en underwear wordt bij import herschreven naar
+   'other', dus het product verdween volledig uit outfits.
+3. **Gesloten samenstellingen.** `\b` kan niet binnen een samenstelling matchen,
+   dus bomberjack, schipperstrui, sportschoenen, balletsneakers, golfpoloshirt,
+   boxershorts, sportbh en trainingsbeha matchten nergens op.
+
+**De grondoorzaak achter alle drie:** matcht de productnaam op geen enkele regel,
+dan valt de classifier terug op naam + beschrijving, en bepaalt marketingtekst de
+categorie. Dat aandeel is teruggebracht van 223 producten (8,3%) naar 133 (5,0%).
+
+**Openstaande architectuurvraag voor Luc:** die fallback op de beschrijving is
+structureel onbetrouwbaar. Een alternatief is terugvallen op 'other' met een
+expliciete review-vlag, zodat een onbekend product zichtbaar onbekend is in plaats
+van stilzwijgend verkeerd. Dat is een productbeslissing, geen bugfix.
+
+**Losse observaties, niet aangeraakt:**
+- De test "classifies a prematch shirt as TOP" faalt op `main` en blijft falen: hij
+  verwacht `top`, maar `prematch` staat in `REJECT_REGEX` omdat FitFi voetbaltenues
+  uit outfits weert. Test en rejectlijst spreken elkaar tegen.
+- De classifier zegt op 225 producten `accessory` waar de database `top` zegt, en
+  op 91 producten `other` waar de database `top` zegt. Bestaande discrepantie,
+  groot genoeg voor een eigen onderzoek.
+- De `.gitignore`-regel `__tests__/` zorgt ervoor dat nieuwe testbestanden
+  stilzwijgend niet worden gecommit; ze moeten met `git add -f` toegevoegd worden.
+
 ## Artefacten
 
 Scripts in `scripts/visual-embeddings/`: `fetch-catalog.mjs`, `embed_products.py`, `eval.ts`, `quality-probe.ts`, `dupe-audit.ts`, `data-quality-audit.ts`, `classifier-audit.ts`, `neighbour-sample.ts`, `demo.mjs`. Output (embeddings, HTML-demo's) staat in `out/` en is gitignored.
