@@ -340,3 +340,44 @@ describe('BOTTOM Dutch retail nouns', () => {
     expect(cat('Nike Korte Broek Heren')).toBe('bottom');
   });
 });
+
+// ─── Nederlandse gesloten samenstellingen ──────────────────────────────────
+// \b kan niet binnen een samenstelling matchen, dus "bomberjack",
+// "schipperstrui" en "sportschoenen" matchten op geen enkele regel. Die
+// producten vielen terug op de beschrijving, waar marketingtekst de categorie
+// bepaalde. Gevonden 2026-08-04; naam-only zonder match ging van 8,3% naar 5,0%.
+describe('Dutch closed compounds', () => {
+  it('classifies compound footwear', () => {
+    expect(cat('PUMA Anzarun Lite sportschoenen, Zwart/Wit, Maat 40')).toBe('footwear');
+    expect(cat('PUMA Speedcat Lovelace balletsneakers voor Dames')).toBe('footwear');
+  });
+
+  it('classifies compound outerwear', () => {
+    expect(cat('PUMA T7 uniseks bomberjack, Zwart, Maat XL')).toBe('outerwear');
+    expect(cat('PUMA Class Relaxed Pinnacle trainingsjack voor Heren')).toBe('outerwear');
+  });
+
+  it('classifies compound tops', () => {
+    expect(cat('Barbour | Heren | Barbour Schipperstrui Donkerblauw')).toBe('top');
+    expect(cat('PUMA Pure 3.0 golfpoloshirt voor Heren, Zwart')).toBe('top');
+    expect(cat('Caroline Tensen Cecilia Tuniek Roze / Multi')).toBe('top');
+  });
+
+  it('classifies compound underwear', () => {
+    expect(cat('Bjorn Borg | Heren | Boxershorts Multicolor')).toBe('underwear');
+    expect(cat('PUMA 4KEEPS sportbh voor Dames, Zwart, Maat XS')).toBe('underwear');
+    expect(cat('PUMA CLOUDSPUN trainingsbeha voor Dames, Maat S')).toBe('underwear');
+  });
+
+  it('keeps handschoenen out of footwear', () => {
+    // Zonder de uitsluiting matcht "handschoenen" op \bschoen(en)\b, en
+    // footwear staat vóór accessory in ORDERED_RULES en wint elk gelijkspel.
+    expect(cat('Nike Handschoenen Zwart')).toBe('accessory');
+    expect(cat('The North Face Gloves Black')).toBe('accessory');
+  });
+
+  it('keeps jacket and overshirt in outerwear', () => {
+    expect(cat('Acne Studios Jacket Men color Blue')).toBe('outerwear');
+    expect(cat('Alter Ego | Heren | Overshirt Bruin')).toBe('outerwear');
+  });
+});

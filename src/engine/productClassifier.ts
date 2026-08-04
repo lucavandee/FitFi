@@ -20,9 +20,9 @@ interface PatternEntry {
 // ─── FOOTWEAR ─────────────────────────────────────────────────────────────
 // "boot" is FOOTWEAR, not outerwear — checked first to avoid false positives
 const FOOTWEAR_RULES: PatternEntry[] = [
-  { regex: /\bsneaker(s)?\b/i, subcategory: 'sneakers', weight: 3 },
+  { regex: /\b[a-z]*sneaker(s)?\b/i, subcategory: 'sneakers', weight: 3 },
   { regex: /\btrainer(s)?\b/i, subcategory: 'trainers', weight: 3 },
-  { regex: /\bschoen(en)?\b/i, subcategory: 'schoenen', weight: 3 },
+  { regex: /\b(?!handschoen)[a-z]*schoen(en)?\b/i, subcategory: 'schoenen', weight: 3 },
   { regex: /\bschoeisel\b/i, subcategory: 'schoeisel', weight: 2 },
   { regex: /\bshoe(s)?\b/i, subcategory: 'shoes', weight: 3 },
   { regex: /\blaars\b|\blaarzen\b/i, subcategory: 'laarzen', weight: 3 },
@@ -53,8 +53,9 @@ const FOOTWEAR_RULES: PatternEntry[] = [
 const UNDERWEAR_RULES: PatternEntry[] = [
   { regex: /\bondergoed\b|\bunderwear\b/i, subcategory: 'ondergoed', weight: 3 },
   { regex: /\bonderbroek\b/i, subcategory: 'onderbroek', weight: 3 },
+  { regex: /\bboxershorts?\b/i, subcategory: 'boxershort', weight: 3 },
   { regex: /\bboxer(s)?\b(?!\s*short)/i, subcategory: 'boxer', weight: 2 },
-  { regex: /\bbh\b|\bbra\b|\bbralette\b/i, subcategory: 'bh', weight: 3 },
+  { regex: /\b[a-z]*bh\b|\bbra\b|\bbralette\b|\b[a-z]*beha\b/i, subcategory: 'bh', weight: 3 },
   { regex: /\blingerie\b/i, subcategory: 'lingerie', weight: 3 },
   { regex: /\bsokken\b|\bsock(s)?\b/i, subcategory: 'sokken', weight: 3 },
   { regex: /\bkousen\b|\bpanty\b|\bstocking(s)?\b/i, subcategory: 'kousen', weight: 3 },
@@ -86,6 +87,11 @@ const ACCESSORY_RULES: PatternEntry[] = [
   { regex: /\bmanchetknoop\b|\bcufflink(s)?\b/i, subcategory: 'manchetknopen', weight: 3 },
   { regex: /\bbroche\b|\bbrooch(es)?\b/i, subcategory: 'broche', weight: 3 },
   { regex: /\bhaarband\b|\bheadband\b/i, subcategory: 'haarband', weight: 3 },
+  // Handschoenen hadden geen enkele regel en vielen dus door naar de
+  // beschrijving. De footwear-regel sluit ze expliciet uit, anders zou
+  // "handschoenen" op \bschoen(en)\b matchen en footwear winnen (die staat
+  // eerder in ORDERED_RULES en wint elk gelijkspel).
+  { regex: /\bhandschoen(en)?\b|\bglove(s)?\b/i, subcategory: 'handschoenen', weight: 3 },
   { regex: /\bparaplu\b|\bumbrella\b/i, subcategory: 'paraplu', weight: 3 },
   { regex: /\bsieraden\b|\bjewelry\b|\bjewellery\b/i, subcategory: 'sieraden', weight: 2 },
   { regex: /\baccessoire(s)?\b|\baccessory\b|\baccessories\b/i, subcategory: 'accessoire', weight: 2 },
@@ -151,7 +157,7 @@ const OUTERWEAR_RULES: PatternEntry[] = [
   { regex: /\bcolbert\b/i, subcategory: 'colbert', weight: 2 },
   { regex: /\bponcho\b|\bcape\b/i, subcategory: 'cape', weight: 2 },
   { regex: /\bjas\b/i, subcategory: 'jas', weight: 2 },
-  { regex: /\bjack\b/i, subcategory: 'jack', weight: 2 },
+  { regex: /\b[a-z]*jack\b/i, subcategory: 'jack', weight: 2 },
   { regex: /\bcoat\b/i, subcategory: 'coat', weight: 2 },
   { regex: /\btrench\b/i, subcategory: 'trench', weight: 2 },
 ];
@@ -227,7 +233,8 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\blongsleeve\b|\blong[\s-]?sleeve\b|\blange[\s-]?mouw\b/i, subcategory: 'longsleeve', weight: 3 },
   { regex: /\btanktop\b|\btank[\s-]?top\b/i, subcategory: 'tanktop', weight: 3 },
   { regex: /\bknit\b|\bgebreid\b/i, subcategory: 'gebreid', weight: 2 },
-  { regex: /\btrui\b/i, subcategory: 'trui', weight: 3 },
+  { regex: /\b[a-z]*trui\b/i, subcategory: 'trui', weight: 3 },
+  { regex: /\b[a-z]*tuniek\b|\btunic\b/i, subcategory: 'tuniek', weight: 3 },
   { regex: /\bbodysuit\b/i, subcategory: 'bodysuit', weight: 3 },
   { regex: /\bcrop[\s-]?top\b/i, subcategory: 'crop top', weight: 3 },
   { regex: /\btopje\b/i, subcategory: 'topje', weight: 3 },
@@ -237,7 +244,7 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\bgame[\s-]?shirt\b|\bmatch[\s-]?shirt\b/i, subcategory: 'match shirt', weight: 3 },
   // "short sleeve" = sleeve length, not shorts
   { regex: /\bshort[\s-]?sleeve\b|\bkorte[\s-]?mouw\b/i, subcategory: 'short sleeve top', weight: 2 },
-  { regex: /\bshirt\b/i, subcategory: 'shirt', weight: 2 },
+  { regex: /\b[a-z]*shirt\b/i, subcategory: 'shirt', weight: 2 },
   { regex: /\bvest\b/i, subcategory: 'vest', weight: 1 },
   { regex: /\btee\b/i, subcategory: 't-shirt', weight: 2 },
 ];
