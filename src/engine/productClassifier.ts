@@ -166,6 +166,22 @@ const BOTTOM_RULES: PatternEntry[] = [
   { regex: /\bchinos?\b/i, subcategory: 'chino', weight: 3 },
   { regex: /\bcargo[\s-]?(pant|broek|trouser|short)?\b/i, subcategory: 'cargo', weight: 2 },
   { regex: /\bshorts\b|\bkorte[\s-]?broek\b/i, subcategory: 'shorts', weight: 3 },
+  // Nederlandse retail gebruikt het enkelvoud ("PUMA CLRT relaxte uniseks
+  // short") en gesloten samenstellingen ("keepersshort", "trainingsshort").
+  // Zonder deze regel matcht de naam nergens op, valt de classifier terug op
+  // de beschrijving, en bepaalt marketingtekst ("trek je favoriete PUMA-
+  // sneakers erbij aan") de categorie: een short werd zo footwear.
+  // De lookahead houdt de oorspronkelijke bescherming tegen "short sleeve"
+  // en tegen "short" als bijvoeglijk naamwoord voor een ander kledingstuk.
+  {
+    regex: /\b[a-z]*short\b(?!\s*(?:sleeve|sleeved|mouw|jacket|coat|jas|trench|dress|jurk|boot|sock))/i,
+    subcategory: 'shorts',
+    weight: 3,
+  },
+  // "tight" is het Nederlandse retailwoord voor een sportlegging. Zonder deze
+  // regel besliste de stofnaam "Single jersey" in de beschrijving, waardoor
+  // een dameslegging als top werd geclassificeerd.
+  { regex: /\btights?\b/i, subcategory: 'legging', weight: 3 },
   { regex: /\bbermuda\b/i, subcategory: 'bermuda', weight: 3 },
   { regex: /\bleggings?\b/i, subcategory: 'legging', weight: 3 },
   { regex: /\btreggings?\b/i, subcategory: 'tregging', weight: 3 },

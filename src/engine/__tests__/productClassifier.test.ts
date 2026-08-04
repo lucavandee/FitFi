@@ -307,3 +307,36 @@ describe('DRESS false friends', () => {
     expect(cat('Wrap Dress Groen')).toBe('dress');
   });
 });
+
+// ─── BOTTOM: Nederlandse retailwoorden ─────────────────────────────────────
+// Gevonden in de red-team audit van 2026-08-04. Als de NAAM nergens op matcht,
+// valt de classifier terug op de beschrijving en bepaalt marketingtekst de
+// categorie: "trek je favoriete PUMA-sneakers erbij aan" maakte van een short
+// een schoen, en de stofnaam "Single jersey" maakte van een legging een top.
+describe('BOTTOM Dutch retail nouns', () => {
+  it('classifies singular "short" as bottom', () => {
+    expect(cat('PUMA CLRT relaxte uniseks short, Zwart, Maat L')).toBe('bottom');
+    expect(cat('PUMA Scuderia Ferrari PM1 short voor Heren, Rood, Maat 4XL')).toBe('bottom');
+  });
+
+  it('classifies closed compounds ending in short as bottom', () => {
+    expect(cat('PUMA Borussia Dortmund 25/26 keepersshort voor Heren')).toBe('bottom');
+    expect(cat('PUMA trainingsshort voor Dames, Zwart')).toBe('bottom');
+  });
+
+  it('classifies "tight" as bottom', () => {
+    expect(cat('PUMA Essentials Poly tight voor Dames, Zwart, Maat L')).toBe('bottom');
+    expect(cat('Nike Pro Tights Dames')).toBe('bottom');
+  });
+
+  it('keeps the deliberate guard: short as adjective is not a bottom', () => {
+    expect(cat('Nike Short Sleeve Training Shirt')).toBe('top');
+    expect(cat('COS Overhemd met korte mouw')).toBe('top');
+    expect(cat('Boss Short Trench Coat')).toBe('outerwear');
+  });
+
+  it('still classifies plural shorts as bottom', () => {
+    expect(cat('Adidas Training Shorts Zwart')).toBe('bottom');
+    expect(cat('Nike Korte Broek Heren')).toBe('bottom');
+  });
+});
