@@ -22,6 +22,19 @@ import { dedupeProductVariants } from "../../src/services/outfits/dedupeProductV
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
 
+// De classifier logt per product een low-confidence regel; die ruis verbergt
+// de eval-uitkomst. Tellen in plaats van printen.
+const classifierNotes: string[] = [];
+const realLog = console.log;
+console.log = (...args: unknown[]) => {
+  const first = typeof args[0] === "string" ? args[0] : "";
+  if (first.startsWith("[classifier:") || first.startsWith("[engine/v2]")) {
+    classifierNotes.push(first);
+    return;
+  }
+  realLog(...args);
+};
+
 const rawCatalog = JSON.parse(
   readFileSync(
     join(root, "src/engine/v2/__tests__/fixtures/catalog-tagged-2026-06-11.json"),
@@ -164,6 +177,11 @@ if (cohCells > 0) {
 }
 
 // Near-duplicates
+console.log(`\n=== Classifier-signaal ===`);
+console.log(
+  `${classifierNotes.length} low-confidence classificaties tijdens de runs (zie eval-log voor detail).`
+);
+
 console.log(`\n=== Near-duplicates (cosine > 0.97) ===`);
 const ids = covered;
 const byId = new Map(

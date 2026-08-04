@@ -42,6 +42,16 @@ Afgewezen: (a) hosted embedding-API's (vendor-rent, geen fashion-tuning, data de
 
 Productie-integratie (pgvector-tabel, frontend, embedding-refresh bij feedimport), foto-naar-outfit upload-flow, virtual try-on. Volgt alleen na een positieve PoC-uitkomst.
 
+## Bevindingen tijdens uitvoering (2026-08-04)
+
+Drie dingen bleken anders dan de spec aannam:
+
+1. **De live catalogus is veel groter dan gedacht: 85.000+ producten.** Een volledige uitlees loopt in een Postgres statement-timeout, zowel met offset- als met keyset-paginatie. Voor de PoC is daarom gericht opgehaald: (a) exact de 1000 ids uit de golden fixture (`--ids-from`), (b) een gespreide steekproef van 1675 producten via category- en gender-filters. Beide queries lopen wel binnen de timeout.
+2. **De golden fixture is sterk scheef.** Van de 1000 producten zijn er 996 van Puma en 749 uit categorie footwear. Alle 1000 hebben een geldige `image_url`. Dit betekent dat de fixture prima werkt om te bewaken dat de golden floors niet breken, maar zwak is om visuele coherentie op te meten: de onderlinge visuele variatie is klein. Conclusies over coherentie-winst moeten met die beperking worden gelezen.
+3. **De live catalogus is wél divers** (Adidas Originals, Acne Studios, Alberta Ferretti, Marc Jacobs, H&M, 7 For All Mankind). De diverse steekproef dient daarom als beoordelingsset voor "meer zoals dit" en duplicaat-detectie.
+
+Verder is een niet-gerelateerd probleem zichtbaar geworden: **de golden baseline op `main` is niet deterministisch.** De engine seedt de compositie op kloktijd (`Date.now()` per 5 minuten), waardoor de haalbaarheidsmatrix afhankelijk van het moment van draaien wel of niet faalt (gemeten op `main`: 3 falende cellen). Daarom is `EngineOptions.seed` toegevoegd: optioneel, backwards-compatible, en gebruikt door de eval en de nieuwe tests. Het aanpassen van de floors zelf hoort in een aparte PR.
+
 ### Risico's
 
 - Fixture (2026-06-11) vs. live catalogus kunnen uiteenlopen; dekkingsgraad onder ~70% maakt de engine-eval zwak. Eval rapporteert dekking expliciet.

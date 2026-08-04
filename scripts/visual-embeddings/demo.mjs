@@ -12,11 +12,19 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const catalog = JSON.parse(
-  readFileSync(join(here, "out", "catalog-images.json"), "utf8")
-);
+
+// --catalog / --embeddings / --out om een andere set te tonen dan de default
+function arg(name, fallback) {
+  const i = process.argv.indexOf(`--${name}`);
+  return i === -1 ? fallback : process.argv[i + 1];
+}
+const catalogFile = arg("catalog", "catalog-images.json");
+const embeddingsFile = arg("embeddings", "product-embeddings.json");
+const outFile = arg("out", "demo.html");
+
+const catalog = JSON.parse(readFileSync(join(here, "out", catalogFile), "utf8"));
 const embeddings = JSON.parse(
-  readFileSync(join(here, "out", "product-embeddings.json"), "utf8")
+  readFileSync(join(here, "out", embeddingsFile), "utf8")
 );
 
 const byId = new Map(catalog.map((p) => [String(p.id), p]));
@@ -41,13 +49,15 @@ function neighbors(id, k = 5) {
     .slice(0, k);
 }
 
-// 8 gespreide voorbeelden: per categorie de eerste met embedding
+// Gespreide voorbeelden: per categorie twee, verspreid over de lijst zodat
+// het niet alleen de eerste rijen van één merk zijn.
 const categories = ["top", "bottom", "footwear", "outerwear", "dress", "accessory"];
 const samples = [];
 for (const cat of categories) {
   const hits = ids.filter((id) => byId.get(id).category === cat);
-  samples.push(...hits.slice(0, 2));
-  if (samples.length >= 8) break;
+  if (hits.length === 0) continue;
+  samples.push(hits[0]);
+  if (hits.length > 3) samples.push(hits[Math.floor(hits.length / 2)]);
 }
 
 function card(p, sim = null) {
@@ -93,5 +103,5 @@ ${rows}
 <h2>Near-duplicates (cosine &gt; 0.97): ${dupes.length} paren</h2>
 ${dupeRows}`;
 
-writeFileSync(join(here, "out", "demo.html"), html);
-console.log(`Demo: scripts/visual-embeddings/out/demo.html (${ids.length} producten, ${dupes.length} duplicaat-paren)`);
+writeFileSync(join(here, "out", outFile), html);
+console.log(`Demo: scripts/visual-embeddings/out/${outFile} (${ids.length} producten, ${dupes.length} duplicaat-paren)`);

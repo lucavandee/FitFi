@@ -38,21 +38,51 @@ if (!url || !key) {
   process.exit(1);
 }
 
-const PAGE = 1000;
+const SELECT = "id,name,brand,category,gender,image_url,in_stock";
 const products = [];
-for (let offset = 0; ; offset += PAGE) {
-  const res = await fetch(
-    `${url}/rest/v1/products?select=id,name,brand,category,gender,image_url,in_stock&order=id&limit=${PAGE}&offset=${offset}`,
-    { headers: { apikey: key, authorization: `Bearer ${key}` } }
-  );
+
+async function get(query) {
+  const res = await fetch(`${url}/rest/v1/products?${query}`, {
+    headers: { apikey: key, authorization: `Bearer ${key}` },
+  });
   if (!res.ok) {
     console.error(`Supabase gaf ${res.status}: ${await res.text()}`);
     process.exit(1);
   }
-  const page = await res.json();
-  products.push(...page);
-  console.log(`Opgehaald: ${products.length} producten...`);
-  if (page.length < PAGE) break;
+  return res.json();
+}
+
+// --ids-from <json>: haal alleen de producten op waarvan het id in het
+// opgegeven bestand voorkomt (array van objecten met id, of array van ids).
+// Zonder deze vlag wordt de hele tabel doorlopen met keyset-paginatie;
+// offset-paginatie loopt op deze tabel (80k+ rijen) in een statement timeout.
+const idsFromIdx = process.argv.indexOf("--ids-from");
+if (idsFromIdx !== -1) {
+  const raw = JSON.parse(readFileSync(process.argv[idsFromIdx + 1], "utf8"));
+  const ids = [...new Set(raw.map((r) => String(r.id ?? r)))];
+  console.log(`Gericht ophalen: ${ids.length} ids`);
+  const CHUNK = 100;
+  for (let i = 0; i < ids.length; i += CHUNK) {
+    const chunk = ids.slice(i, i + CHUNK);
+    products.push(
+      ...(await get(`select=${SELECT}&id=in.(${chunk.join(",")})`))
+    );
+    if (i % 500 === 0) console.log(`  ${products.length}/${ids.length}...`);
+  }
+} else {
+  const PAGE = 1000;
+  let cursor = null;
+  for (;;) {
+    const after = cursor ? `&id=gt.${cursor}` : "";
+    const page = await get(`select=${SELECT}&order=id.asc&limit=${PAGE}${after}`);
+    if (page.length === 0) break;
+    products.push(...page);
+    cursor = page[page.length - 1].id;
+    if (products.length % 5000 < PAGE) {
+      console.log(`Opgehaald: ${products.length} producten...`);
+    }
+    if (page.length < PAGE) break;
+  }
 }
 
 const withImage = products.filter(
