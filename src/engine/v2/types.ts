@@ -133,6 +133,21 @@ export interface EngineOptions {
   season?: Season;
   excludeIds?: string[];
   debug?: boolean;
+  /**
+   * Visuele beeld-embeddings per product-id (FashionCLIP, zie
+   * scripts/visual-embeddings/). Alleen wanneer meegegeven wordt visuele
+   * coherentie in de outfit-ranking geblend; zonder deze optie is de
+   * engine-output identiek aan voorheen.
+   */
+  visualEmbeddings?: Record<string, number[]>;
+  /** Blend-gewicht voor visuele coherentie (default 0.15). */
+  visualWeight?: number;
+  /**
+   * Vaste seed voor de outfit-compositie. Zonder deze optie geldt het
+   * bestaande gedrag (tijdgebonden seed per 5 minuten). Nodig voor
+   * deterministische evals en reproduceerbare tests.
+   */
+  seed?: number;
 }
 
 export interface EngineResult {

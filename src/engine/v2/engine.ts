@@ -15,6 +15,7 @@ import { filterAndPrepare } from './candidateFilter';
 import { computeProductScore } from './scoring';
 import { composeOutfits } from './composer';
 import { diversifyOutfits } from './diversify';
+import { applyVisualCoherence } from './scoring/visualCoherence';
 import { getCurrentSeason } from './scoring/season';
 import { MATERIAL_ALIAS } from './scoring/material';
 
@@ -718,7 +719,7 @@ export function runEngineV2(
     list.sort((a, b) => b.score - a.score);
   });
 
-  const seed = Math.floor(Date.now() / (1000 * 60 * 5));
+  const seed = options.seed ?? Math.floor(Date.now() / (1000 * 60 * 5));
   const perOccasion = Math.max(3, Math.ceil(count * 1.5));
   const poolSize = 14;
 
@@ -739,6 +740,14 @@ export function runEngineV2(
     seenGlobalSignatures.add(signature);
     return true;
   });
+
+  if (options.visualEmbeddings) {
+    applyVisualCoherence(
+      allCandidates,
+      options.visualEmbeddings,
+      options.visualWeight ?? 0.15
+    );
+  }
 
   const diversified = diversifyOutfits(allCandidates, {
     count,
