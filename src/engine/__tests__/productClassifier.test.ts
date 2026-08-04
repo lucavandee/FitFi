@@ -270,3 +270,40 @@ describe('Confidence scoring', () => {
     expect(['high', 'medium']).toContain(c);
   });
 });
+
+// ─── DRESS: valse vriendjes ────────────────────────────────────────────────
+// Regressietest voor de bug die 20 herenoverhemden in de jurk-categorie zette
+// (OLYMP, Profuomo, Xacus in de live catalogus, augustus 2026). Het generieke
+// /\bdress\b/ scoorde gewicht 3 en versloeg het generieke /\bshirt\b/ (2).
+describe('DRESS false friends', () => {
+  it('classifies a mens dress shirt as top, not dress', () => {
+    expect(cat('OLYMP | Heren | Luxor 24/7 Modern Fit Dress Shirt Blauw')).toBe('top');
+    expect(cat('Profuomo | Heren | Dress Shirt Blauw')).toBe('top');
+    expect(cat('Xacus | Heren | Linnen Dress Shirt Blauw')).toBe('top');
+  });
+
+  it('does not classify dress shoes as dress', () => {
+    expect(cat('Van Bommel Dress Shoes Zwart')).not.toBe('dress');
+  });
+
+  it('does not classify dress pants as dress', () => {
+    expect(cat('Hugo Boss Dress Pants Grijs')).not.toBe('dress');
+  });
+
+  it('still classifies a real dress as dress', () => {
+    expect(cat('Alberta Ferretti Dress Woman color Black')).toBe('dress');
+    expect(cat('H & M - Mesh jurk met borduursel - Wit')).toBe('dress');
+    expect(cat('Adidas Originals Dress Woman color Black')).toBe('dress');
+  });
+
+  it('keeps shirt dress and shirtjurk as dress', () => {
+    expect(cat('Zara Shirt Dress Beige')).toBe('dress');
+    expect(cat('Only Shirtjurk Zwart')).toBe('dress');
+  });
+
+  it('keeps other dress subtypes as dress', () => {
+    expect(cat('Maxi Dress Bloemenprint')).toBe('dress');
+    expect(cat('Cocktail Dress Zwart')).toBe('dress');
+    expect(cat('Wrap Dress Groen')).toBe('dress');
+  });
+});

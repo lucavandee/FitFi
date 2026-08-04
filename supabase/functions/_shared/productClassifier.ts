@@ -109,7 +109,17 @@ const ACCESSORY_RULES: PatternEntry[] = [
 // ─── DRESS ────────────────────────────────────────────────────────────────
 const DRESS_RULES: PatternEntry[] = [
   { regex: /\bjurk\b/i, subcategory: 'jurk', weight: 3 },
-  { regex: /\bdress\b/i, subcategory: 'dress', weight: 3 },
+  // "dress" is een vals vriendje in herenmode ("dress shirt", "dress shoes",
+  // "dress pants") en in verkleedkleding ("fancy dress"). Zonder deze
+  // uitsluiting wint dress (gewicht 3) van het generieke shirt (gewicht 2) en
+  // belandt een herenoverhemd in de jurk-categorie.
+  // Let op: "shirt dress" en "shirtjurk" blijven jurken, want daar staat
+  // "dress" ACHTER het zelfstandig naamwoord en grijpt de lookahead niet.
+  {
+    regex: /\bdress\b(?!\s*(?:shirt|shoes?|boots?|pants?|trousers?|socks?|code))/i,
+    subcategory: 'dress',
+    weight: 3,
+  },
   { regex: /\bmaxijurk\b|\bmaxi[\s-]?jurk\b|\bmaxi[\s-]?dress\b/i, subcategory: 'maxijurk', weight: 3 },
   { regex: /\bminijurk\b|\bmini[\s-]?jurk\b|\bmini[\s-]?dress\b/i, subcategory: 'minijurk', weight: 3 },
   { regex: /\bmidijurk\b|\bmidi[\s-]?jurk\b|\bmidi[\s-]?dress\b/i, subcategory: 'midijurk', weight: 3 },
