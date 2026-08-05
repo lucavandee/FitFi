@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import type { Config } from 'dompurify';
 
 /**
  * Defense-in-depth HTML sanitization for any value that ends up inside
@@ -8,7 +9,7 @@ import DOMPurify from 'dompurify';
  * reach the DOM if the renderer regresses or a new tag is whitelisted.
  */
 
-const RICH_TEXT_CONFIG: DOMPurify.Config = {
+const RICH_TEXT_CONFIG: Config = {
   ALLOWED_TAGS: [
     'a',
     'br',

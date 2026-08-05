@@ -13,7 +13,14 @@ export async function convertAllMoodPhotosToWebP() {
   console.log('🚀 Starting batch WebP conversion...\n');
 
   try {
-    const session = await supabase.auth.getSession();
+    // supabase is een factory-functie die null teruggeeft als de client
+    // niet geconfigureerd is; niet een client-object.
+    const client = supabase();
+    if (!client) {
+      console.error('❌ Supabase niet geconfigureerd');
+      return { error: 'Supabase niet geconfigureerd' };
+    }
+    const session = await client.auth.getSession();
 
     if (!session.data.session?.access_token) {
       console.error('❌ Not logged in');
