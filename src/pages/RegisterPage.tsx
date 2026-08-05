@@ -340,6 +340,7 @@ const RegisterPage: React.FC = () => {
                     <div
                       role="checkbox"
                       aria-checked={accepted}
+                      aria-label="Ik ga akkoord met de algemene voorwaarden en het privacybeleid"
                       tabIndex={0}
                       onClick={() => setAccepted(!accepted)}
                       onKeyDown={(e) => (e.key === " " || e.key === "Enter") && setAccepted(!accepted)}

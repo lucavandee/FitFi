@@ -3,6 +3,7 @@ import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from '
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { haptics } from '@/utils/haptics';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -46,7 +47,10 @@ export function BottomSheet({
   snapPoints = [0.5, 0.85],
   initialSnap = 0.85
 }: BottomSheetProps) {
-  const sheetRef = useRef<HTMLDivElement>(null);
+  // useFocusTrap levert zelf de container-ref: die houdt Tab binnen de sheet en
+  // zet de focus bij sluiten terug op het element dat hem opende. De hook
+  // bestond al in de codebase maar werd hier niet gebruikt.
+  const sheetRef = useFocusTrap(isOpen) as React.RefObject<HTMLDivElement>;
   const y = useMotionValue(0);
   const [currentSnap, setCurrentSnap] = React.useState(initialSnap);
 
@@ -103,6 +107,20 @@ export function BottomSheet({
           {/* Sheet */}
           <motion.div
             ref={sheetRef}
+            // Zonder dialogrol, aria-modal en Escape kon een toetsenbord- of
+            // schermlezergebruiker de sheet niet als modaal herkennen en niet
+            // sluiten. De focus-trap komt uit de bestaande hook (useFocusTrap),
+            // die er al was maar hier niet werd gebruikt.
+            role="dialog"
+            aria-modal="true"
+            aria-label={title || 'Dialoogvenster'}
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                onClose();
+              }
+            }}
             className="fixed bottom-0 left-0 right-0 z-50 bg-[#FFFFFF] rounded-t-3xl shadow-2xl"
             style={{
               maxHeight,

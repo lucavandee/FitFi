@@ -126,7 +126,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
           imgClassName="hover:scale-105 transition-transform duration-300 cursor-pointer"
           onClick={handleClick}
-          loading="lazy"
         />
 
         {/* Save button (overlay, top-right) */}
