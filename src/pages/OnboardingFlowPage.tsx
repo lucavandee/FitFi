@@ -213,6 +213,27 @@ export default function OnboardingFlowPage() {
 
   const step = getCurrentStep();
 
+  // De budget-stap toont fallbackwaarden (min uit de stap, max 150) zolang er
+  // niets is ingevuld, maar sloeg die niet op. De validatie zag dan undefined
+  // en weigerde met "Vul een min en max budget in", terwijl er wel degelijk
+  // bedragen op het scherm stonden. Wie de voorgevulde waarde accepteerde,
+  // liep vast. Hier leggen we vast wat de gebruiker ziet, zodat scherm en
+  // opgeslagen antwoord niet uit elkaar lopen.
+  useEffect(() => {
+    if (phase !== 'questions' || step?.type !== 'budget-range') return;
+    const field = step.field as keyof QuizAnswers;
+    const current = answers[field] as { min?: number; max?: number } | undefined;
+    if (typeof current?.min === 'number' && typeof current?.max === 'number') return;
+    const seededMin = typeof current?.min === 'number' ? current.min : (step.min ?? 0);
+    const seededMax = typeof current?.max === 'number' ? current.max : 150;
+    setAnswers((prev) => ({
+      ...prev,
+      [field]: { min: seededMin, max: seededMax },
+      budget: { min: seededMin, max: seededMax },
+      budgetRange: seededMax,
+    }));
+  }, [phase, step?.type, step?.field, currentStep]);
+
   const getProgress = () => {
     if (phase === 'questions') return Math.round(((currentStep + 1) / quizSteps.length) * 100);
     if (phase === 'swipes') return 100;
