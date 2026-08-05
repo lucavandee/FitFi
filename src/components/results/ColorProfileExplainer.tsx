@@ -116,7 +116,7 @@ export function ColorProfileExplainer({
             <div
               key={attr.label}
               className="text-center py-3 px-2 rounded-xl border border-[#E5E5E5]"
-              style={{ background: '#FAF5F2' }}
+              style={{ background: '#F5F0EB' }}
             >
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-1">{attr.label}</p>
               <p className="text-sm font-semibold text-[#9A503B]">{attr.value}</p>
@@ -128,7 +128,7 @@ export function ColorProfileExplainer({
         <div className="divide-y divide-[#E5E5E5]">
           {tips.map((tip, i) => (
             <div key={i} className="flex items-start gap-3 py-2.5 first:pt-0 last:pb-0">
-              <span className="w-1 h-1 rounded-full bg-[#D4856E] mt-[7px] shrink-0" aria-hidden="true" />
+              <span className="w-1 h-1 rounded-full bg-[#B55E45] mt-[7px] shrink-0" aria-hidden="true" />
               <p className="text-sm text-[#6E6E6E] leading-snug">{tip}</p>
             </div>
           ))}

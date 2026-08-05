@@ -58,7 +58,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
           </button>
 
           {/* Decorative gradient */}
-          <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-br from-[#D4856E] via-[#D4856E] to-[#D4856E] opacity-10"></div>
+          <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-br from-[#B55E45] via-[#B55E45] to-[#B55E45] opacity-10"></div>
 
           {/* Content */}
           <div className="relative p-8 sm:p-10">
@@ -80,7 +80,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
             </p>
 
             {/* Benefits list */}
-            <div className="space-y-3 mb-8 bg-[#FAF5F2] rounded-2xl p-6">
+            <div className="space-y-3 mb-8 bg-[#F5F0EB] rounded-2xl p-6">
               <div className="flex items-start gap-3">
                 <div className="w-5 h-5 bg-[#B55E45] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">

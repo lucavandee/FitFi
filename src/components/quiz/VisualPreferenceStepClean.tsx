@@ -277,7 +277,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             <button
               onClick={handleFinishEarly}
               className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#9A503B] transition-all"
-              style={{ background: '#FAF5F2', border: '1.5px solid #F4E8E3' }}
+              style={{ background: '#F5F0EB', border: '1.5px solid #F4E8E3' }}
             >
               Klaar — bekijk mijn stijlprofiel
             </button>
@@ -425,7 +425,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           ) : (
             <button
               onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
-              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[#FAF5F2] text-[#6E6E6E] hover:text-[#1A1A1A]"
+              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[#F5F0EB] text-[#6E6E6E] hover:text-[#1A1A1A]"
               style={{ border: '1px solid #E5E5E5' }}
               aria-label="Sla visuele stap over"
             >

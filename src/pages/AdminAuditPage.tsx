@@ -97,7 +97,7 @@ export default function AdminAuditPage() {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
         <div className="max-w-md text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#FAF5F2] flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#F5F0EB] flex items-center justify-center">
             <XCircle className="w-10 h-10 text-[#B55E45]" />
           </div>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">
@@ -191,7 +191,7 @@ export default function AdminAuditPage() {
                         {log.action}
                       </span>
                       {log.resource_type && (
-                        <span className="px-2 py-0.5 bg-[#FAF5F2] text-[#9A503B] text-xs rounded-full">
+                        <span className="px-2 py-0.5 bg-[#F5F0EB] text-[#9A503B] text-xs rounded-full">
                           {log.resource_type}
                         </span>
                       )}

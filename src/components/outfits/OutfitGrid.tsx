@@ -306,7 +306,7 @@ export default function OutfitGrid({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FAF5F2] text-[#B55E45] rounded-full text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] text-[#B55E45] rounded-full text-sm font-medium">
             <Sparkles className="w-4 h-4" />
             <span>Je hebt alle {sortedOutfits.length} outfits bekeken!</span>
           </div>

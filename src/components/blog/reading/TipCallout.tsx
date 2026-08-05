@@ -12,7 +12,7 @@ export const TipCallout: React.FC<TipCalloutProps> = ({
 }) => {
   const styles = {
     tip: {
-      bg: 'bg-[#FAF5F2]',
+      bg: 'bg-[#F5F0EB]',
       border: 'border-[#F4E8E3]',
       icon: 'text-[#B55E45]',
       text: 'text-[#1A1A1A]'

@@ -80,7 +80,7 @@ export default function InstallPrompt() {
           {/* Close button */}
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 p-2 rounded-lg hover:bg-[#FAF5F2] transition-colors"
+            className="absolute top-3 right-3 p-2 rounded-lg hover:bg-[#F5F0EB] transition-colors"
             aria-label="Sluiten"
           >
             <X className="w-4 h-4 text-[#6E6E6E]" />

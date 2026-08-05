@@ -336,7 +336,7 @@ export default function OutfitCard({
       {/* Subtle hover overlay */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: '#FAF5F2' }}
+        style={{ background: '#F5F0EB' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 0.4 : 0 }}
         transition={{ duration: 0.3 }}
@@ -366,7 +366,7 @@ export default function OutfitCard({
       <div className="relative rounded-xl overflow-hidden mb-4">
         <motion.div
           className="relative overflow-hidden rounded-xl aspect-[4/5] shadow-inner"
-          style={{ background: '#FAF5F2' }}
+          style={{ background: '#F5F0EB' }}
           whileHover={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
@@ -440,7 +440,7 @@ export default function OutfitCard({
 
         {/* Explanation */}
         {showExplanation && explanation && (
-          <div className="mt-2 p-3 rounded-xl border border-[#F4E8E3]" style={{ background: '#FAF5F2' }}>
+          <div className="mt-2 p-3 rounded-xl border border-[#F4E8E3]" style={{ background: '#F5F0EB' }}>
             <div className="flex items-start gap-2 mb-1.5">
               <MessageCircle className="w-3.5 h-3.5 text-[#9A503B] flex-shrink-0 mt-0.5" />
               <span className="text-xs font-semibold text-[#9A503B]">Nova's uitleg:</span>
@@ -468,14 +468,14 @@ export default function OutfitCard({
                 <button
                   onClick={() => setShowExplanationModal(false)}
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:opacity-70"
-                  style={{ background: '#FAF5F2' }}
+                  style={{ background: '#F5F0EB' }}
                 >
                   <X size={15} className="text-[#9A503B]" />
                 </button>
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-xl p-4" style={{ background: '#FAF5F2', border: '1px solid #F4E8E3' }}>
+                <div className="rounded-xl p-4" style={{ background: '#F5F0EB', border: '1px solid #F4E8E3' }}>
                   <div className="flex items-center gap-2 mb-2">
                     <MessageCircle className="w-4 h-4 text-[#9A503B]" />
                     <span className="text-sm font-semibold text-[#9A503B]">Nova's analyse:</span>
@@ -540,7 +540,7 @@ export default function OutfitCard({
               className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 overflow-hidden ${
                 saveOutfit.isSuccess || saved
                   ? 'text-white'
-                  : 'text-[#9A503B] hover:bg-[#FAF5F2]'
+                  : 'text-[#9A503B] hover:bg-[#F5F0EB]'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
                 borderColor: '#B55E45',
@@ -567,7 +567,7 @@ export default function OutfitCard({
               title="Voeg vergelijkbare outfits toe aan je feed"
               onClick={handleMoreLikeThis}
               disabled={isProcessing.like}
-              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45] hover:bg-[#F5F0EB] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.like ? { scale: 1.02, y: -1 } : {}}
@@ -609,7 +609,7 @@ export default function OutfitCard({
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#6E6E6E] hover:border-[#D4856E] hover:text-[#9A503B] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#6E6E6E] hover:border-[#B55E45] hover:text-[#9A503B] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.explain ? { scale: 1.02, y: -1 } : {}}

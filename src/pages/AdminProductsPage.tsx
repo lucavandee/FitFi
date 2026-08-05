@@ -313,7 +313,7 @@ export default function AdminProductsPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-bold">{product.name}</h3>
                       {product.is_featured && (
-                        <span className="px-2 py-1 text-xs font-bold bg-[#FAF5F2] text-[#9A503B] rounded-full">
+                        <span className="px-2 py-1 text-xs font-bold bg-[#F5F0EB] text-[#9A503B] rounded-full">
                           Featured
                         </span>
                       )}

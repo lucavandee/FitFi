@@ -20,7 +20,7 @@ export const BlogItemCard: React.FC<BlogItemCardProps> = ({
   return (
     <div className="bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-2xl p-6 hover:shadow-md transition-shadow">
       {image && (
-        <div className="aspect-square bg-[#FAF5F2] rounded-lg mb-4 overflow-hidden">
+        <div className="aspect-square bg-[#F5F0EB] rounded-lg mb-4 overflow-hidden">
           <img
             src={image}
             alt={name}
@@ -30,7 +30,7 @@ export const BlogItemCard: React.FC<BlogItemCardProps> = ({
       )}
 
       <div className="flex items-start gap-3 mb-3">
-        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FAF5F2] text-[#9A503B] flex items-center justify-center text-sm font-bold">
+        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#F5F0EB] text-[#9A503B] flex items-center justify-center text-sm font-bold">
           {number}
         </span>
         <div className="flex-1">
@@ -53,7 +53,7 @@ export const BlogItemCard: React.FC<BlogItemCardProps> = ({
         {combinesWith.map((item, idx) => (
           <span
             key={idx}
-            className="px-3 py-1 bg-[#FAF5F2] text-[#9A503B] rounded-full text-xs font-medium"
+            className="px-3 py-1 bg-[#F5F0EB] text-[#9A503B] rounded-full text-xs font-medium"
           >
             {item}
           </span>

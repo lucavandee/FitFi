@@ -138,10 +138,10 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
       >
         <div className="relative w-full h-full rounded-2xl overflow-hidden border border-[#E5E5E5] shadow-sm bg-[#FFFFFF] transition-shadow hover:shadow-sm">
           {!imgLoaded && !imgError && (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] via-[#FAF5F2] to-[#F4E8E3] animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] via-[#F5F0EB] to-[#F4E8E3] animate-pulse" />
           )}
           {imgError && (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] via-[#FAF5F2] to-[#F4E8E3]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] via-[#F5F0EB] to-[#F4E8E3]" />
           )}
           <img
             src={imageUrl}

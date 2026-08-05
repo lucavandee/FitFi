@@ -192,7 +192,7 @@ function ArchetypeBar({
   const rankColors: Record<number, string> = {
     1: 'bg-[#9A503B]',
     2: 'bg-[#B55E45]',
-    3: 'bg-[#D4856E]'
+    3: 'bg-[#B55E45]'
   };
 
   return (

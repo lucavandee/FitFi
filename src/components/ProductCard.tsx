@@ -183,7 +183,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={handleFeedbackMore}
               aria-label="Meer zoals dit"
               title="Meer zoals dit"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#FAF5F2] transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#F5F0EB] transition-colors"
             >
               <ThumbsUp className="w-3.5 h-3.5" />
               Meer zoals dit

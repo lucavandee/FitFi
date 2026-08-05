@@ -464,7 +464,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                           <span
                             key={tag}
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-                            style={{ background: '#FAF5F2', color: '#9A503B' }}
+                            style={{ background: '#F5F0EB', color: '#9A503B' }}
                           >
                             {tag}
                             <button onClick={() => removeTag(tag)} className="hover:text-red-600 ml-0.5">
@@ -579,8 +579,8 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                               onClick={() => toggleColor(name)}
                               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium transition-all border ${
                                 isSelected
-                                  ? 'border-[#9A503B] bg-[#FAF5F2] text-[#9A503B] ring-1 ring-[#D4856E]'
-                                  : 'border-[#E5E5E5] hover:border-[#D4856E] text-[#6E6E6E]'
+                                  ? 'border-[#9A503B] bg-[#F5F0EB] text-[#9A503B] ring-1 ring-[#B55E45]'
+                                  : 'border-[#E5E5E5] hover:border-[#B55E45] text-[#6E6E6E]'
                               }`}
                             >
                               <span

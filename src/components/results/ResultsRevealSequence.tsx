@@ -79,7 +79,7 @@ export function ResultsRevealSequence({
   }, [stage, onComplete]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-b from-[#FAFAF8] to-[#FAF5F2]">
+    <div className="fixed inset-0 z-50 bg-gradient-to-b from-[#FAFAF8] to-[#F5F0EB]">
       <AnimatePresence mode="wait">
         {stage === 'loading' && (
           <motion.div
@@ -298,7 +298,7 @@ export function ResultsRevealSequence({
                       track('results_view_outfits_clicked', { archetype });
                       onComplete();
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl font-semibold hover:bg-[#FAF5F2] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[52px] bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl font-semibold hover:bg-[#F5F0EB] transition-colors"
                   >
                     Bekijk Outfits
                   </button>

@@ -265,7 +265,7 @@ function TimelineItem({
           ? 'border-[#B55E45] bg-[var(--overlay-accent-08a)]'
           : isCompare
           ? 'border-amber-500 bg-amber-50'
-          : 'border-[#E5E5E5] hover:border-[#D4856E]'
+          : 'border-[#E5E5E5] hover:border-[#B55E45]'
       }`}
       onClick={onSelect}
     >

@@ -65,7 +65,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#F4E8E3] rounded-2xl p-6 sm:p-8 mb-8 shadow-lg relative overflow-hidden"
+      className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#F4E8E3] rounded-2xl p-6 sm:p-8 mb-8 shadow-lg relative overflow-hidden"
     >
       {/* Decorative background */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4E8E3] rounded-full blur-3xl opacity-30"></div>

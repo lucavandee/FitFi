@@ -34,7 +34,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
         {/* Disclaimer */}
         <div
           className="flex items-start gap-2.5 p-3 rounded-lg border border-[#E5E5E5]"
-          style={{ background: '#FAF5F2' }}
+          style={{ background: '#F5F0EB' }}
           role="note"
           aria-live="polite"
         >
@@ -60,7 +60,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             <CheckCircle className="w-4 h-4 text-[#B55E45]" aria-hidden="true" />
             <p className="text-sm font-semibold text-[#1A1A1A]">Draag deze kleuren</p>
           </div>
-          <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#FAF5F2' }}>
+          <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#F5F0EB' }}>
             <ColorSwatchGrid swatches={palette.doColors} recommendation="do" columns={6} />
             <p className="text-xs text-[#6E6E6E] flex items-center gap-1.5 mt-3">
               <Info className="w-3 h-3 text-[#B55E45] shrink-0" aria-hidden="true" />
@@ -86,7 +86,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             {groupedColors.accent.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-[#D4856E]" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#B55E45]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Accentkleuren</p>
                   <p className="text-xs text-[#6E6E6E]">— ~30% voor balans</p>
                 </div>
@@ -113,7 +113,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
               <XCircle className="w-4 h-4 text-[#C24A4A]" aria-hidden="true" />
               <p className="text-sm font-semibold text-[#1A1A1A]">Vermijd deze kleuren</p>
             </div>
-            <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#FAF5F2' }}>
+            <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#F5F0EB' }}>
               <ColorSwatchGrid swatches={palette.dontColors} recommendation="dont" columns={6} />
               <p className="text-xs text-[#6E6E6E] flex items-center gap-1.5 mt-3">
                 <Info className="w-3 h-3 text-[#C24A4A] shrink-0" aria-hidden="true" />

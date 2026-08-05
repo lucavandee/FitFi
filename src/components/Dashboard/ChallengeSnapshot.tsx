@@ -81,7 +81,7 @@ export const ChallengeSnapshot: React.FC = () => {
             {(ch.status ?? "open").toUpperCase()}
           </span>
           {ch.rewardPoints && (
-            <span className="px-2 py-1 bg-[#FAF5F2] text-[#9A503B] rounded-full text-xs font-medium">
+            <span className="px-2 py-1 bg-[#F5F0EB] text-[#9A503B] rounded-full text-xs font-medium">
               +{ch.rewardPoints} XP
             </span>
           )}

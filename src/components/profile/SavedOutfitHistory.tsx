@@ -77,7 +77,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
           Array.from({ length: 4 - displayItems.length }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="aspect-square bg-[#FAF5F2] flex items-center justify-center"
+              className="aspect-square bg-[#F5F0EB] flex items-center justify-center"
             >
               <ShoppingBag className="w-4 h-4 text-[#6E6E6E] opacity-30" />
             </div>
@@ -98,7 +98,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
           </div>
           <button
             onClick={() => navigate("/results")}
-            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#B55E45] hover:bg-[#FAF5F2] transition-colors"
+            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#B55E45] hover:bg-[#F5F0EB] transition-colors"
             aria-label="Bekijk outfit"
           >
             <ChevronRight className="w-4 h-4" />
@@ -126,12 +126,12 @@ export default function SavedOutfitHistory({ userId }: Props) {
           <div key={i} className="rounded-2xl bg-[#FFFFFF] border border-[#E5E5E5] overflow-hidden animate-pulse">
             <div className="grid grid-cols-4 gap-px">
               {[0, 1, 2, 3].map((j) => (
-                <div key={j} className="aspect-square bg-[#FAF5F2]" />
+                <div key={j} className="aspect-square bg-[#F5F0EB]" />
               ))}
             </div>
             <div className="p-3.5">
-              <div className="h-4 bg-[#FAF5F2] rounded w-32 mb-1.5" />
-              <div className="h-3 bg-[#FAF5F2] rounded w-24" />
+              <div className="h-4 bg-[#F5F0EB] rounded w-32 mb-1.5" />
+              <div className="h-3 bg-[#F5F0EB] rounded w-24" />
             </div>
           </div>
         ))}
@@ -174,7 +174,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
       {savedOutfits.length > 6 && (
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:border-[#D4856E] hover:text-[#9A503B] transition-colors"
+          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:border-[#B55E45] hover:text-[#9A503B] transition-colors"
         >
           Bekijk alle {savedOutfits.length} outfits
         </button>

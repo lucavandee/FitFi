@@ -26,9 +26,9 @@ export function IconButton({
     "border border-[rgba(30,35,51,0.16)] bg-[rgba(255,255,255,0.72)] " +
     "text-[#1A1A1A] " +
     "transition-all duration-200 " +
-    "hover:bg-[#FAF5F2] " +
+    "hover:bg-[#F5F0EB] " +
     "hover:text-[#9A503B] " +
-    "hover:border-[#D4856E] " +
+    "hover:border-[#B55E45] " +
     "focus-visible:outline-none focus-visible:ring-2 " +
     "focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 " +
     "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";

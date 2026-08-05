@@ -41,14 +41,14 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
           const isPrimary = index === 0;
 
           return (
-            <div key={item.archetype} className={`px-5 sm:px-6 py-4 ${isPrimary ? 'bg-[#FAF5F2]' : ''}`}>
+            <div key={item.archetype} className={`px-5 sm:px-6 py-4 ${isPrimary ? 'bg-[#F5F0EB]' : ''}`}>
               <div className="flex items-start gap-3">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${isPrimary ? 'bg-[#9A503B] text-white' : 'bg-[#E5E5E5] text-[#6E6E6E]'}`}>
                   {index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2 mb-1.5">
-                    <span className={`text-sm font-semibold ${isPrimary ? 'text-[#8A3D28]' : 'text-[#1A1A1A]'}`}>
+                    <span className={`text-sm font-semibold ${isPrimary ? 'text-[#9A503B]' : 'text-[#1A1A1A]'}`}>
                       {getArchetypeDisplayNL(archetype.label)}
                     </span>
                     <span className={`text-sm font-bold tabular-nums ${isPrimary ? 'text-[#9A503B]' : 'text-[#6E6E6E]'}`}>
@@ -62,7 +62,7 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
                       animate={{ width: `${item.percentage}%` }}
                       transition={{ delay: index * 0.1 + 0.15, duration: 0.7, ease: 'easeOut' }}
                       className="h-full rounded-full"
-                      style={{ background: isPrimary ? '#B55E45' : '#D4856E' }}
+                      style={{ background: isPrimary ? '#B55E45' : '#B55E45' }}
                     />
                   </div>
 

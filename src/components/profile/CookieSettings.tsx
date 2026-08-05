@@ -120,7 +120,7 @@ export const CookieSettings: React.FC = () => {
             </button>
             <button
               onClick={() => setConfirmWithdraw(false)}
-              className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[#E5E5E5] text-xs font-semibold text-[#6E6E6E] hover:bg-[#FAFAF8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
+              className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[#E5E5E5] text-xs font-semibold text-[#6E6E6E] hover:bg-[#FAFAF8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
             >
               Annuleer
             </button>

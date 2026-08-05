@@ -97,7 +97,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
                 ${
                   isActive
                     ? 'bg-[#9A503B] text-white shadow-lg'
-                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]'
+                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45]'
                 }
               `}
               whileHover={{ scale: 1.05 }}

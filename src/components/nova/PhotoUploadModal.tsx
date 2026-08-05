@@ -140,9 +140,9 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
               // Upload Area
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-8 text-center cursor-pointer hover:border-[#D4856E] hover:bg-[#FAF5F2] dark:hover:bg-[#5A2010]/10 transition-all"
+                className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-8 text-center cursor-pointer hover:border-[#B55E45] hover:bg-[#F5F0EB] dark:hover:bg-[#1A1A1A]/10 transition-all"
               >
-                <div className="w-16 h-16 mx-auto mb-4 bg-[#FAF5F2] text-[#9A503B] rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#F5F0EB] text-[#9A503B] rounded-full flex items-center justify-center">
                   <Upload className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
@@ -186,7 +186,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
                 </div>
 
                 {/* Info Box */}
-                <div className="bg-[#FAF5F2] dark:bg-[#5A2010]/20 border border-[#F4E8E3] dark:border-[#8A3D28] rounded-xl p-4">
+                <div className="bg-[#F5F0EB] dark:bg-[#1A1A1A]/20 border border-[#F4E8E3] dark:border-[#9A503B] rounded-xl p-4">
                   <div className="flex items-start gap-3">
                     <Sparkles className="w-5 h-5 text-[#9A503B] flex-shrink-0 mt-0.5" />
                     <div className="flex-1">

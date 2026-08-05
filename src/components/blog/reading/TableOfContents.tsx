@@ -88,8 +88,8 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
               className={`
                 w-full text-left px-3 py-2 rounded-lg transition-colors text-sm leading-snug
                 ${activeId === item.id
-                  ? 'bg-[#FAF5F2] text-[#9A503B] font-medium'
-                  : 'text-[#6E6E6E] hover:bg-[#FAF5F2] hover:text-[#1A1A1A]'
+                  ? 'bg-[#F5F0EB] text-[#9A503B] font-medium'
+                  : 'text-[#6E6E6E] hover:bg-[#F5F0EB] hover:text-[#1A1A1A]'
                 }
                 ${item.level === 3 ? 'pl-6' : ''}
               `}

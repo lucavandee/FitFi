@@ -46,7 +46,7 @@ export function ShoppingCTA({
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-8 sm:p-10 md:p-12 border-2 border-[#F4E8E3]"
+        className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-8 sm:p-10 md:p-12 border-2 border-[#F4E8E3]"
       >
         <div className="text-center max-w-3xl mx-auto">
           {/* Icon */}
@@ -94,7 +94,7 @@ export function ShoppingCTA({
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <NavLink
                   to="/profile"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-5 min-h-[60px] bg-white border-2 border-[#E5E5E5] rounded-xl font-semibold text-base hover:border-[#D4856E] hover:bg-white transition-all w-full sm:w-auto"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-5 min-h-[60px] bg-white border-2 border-[#E5E5E5] rounded-xl font-semibold text-base hover:border-[#B55E45] hover:bg-white transition-all w-full sm:w-auto"
                 >
                   <Heart className="w-4 h-4" aria-hidden="true" />
                   <span>Bewaar resultaten</span>

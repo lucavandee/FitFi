@@ -55,7 +55,7 @@ export function StyleDNATooltip({
               transition={{ duration: 0.3 }}
               className="overflow-hidden mt-4"
             >
-              <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-6 border-2 border-[#F4E8E3] shadow-lg">
+              <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-6 border-2 border-[#F4E8E3] shadow-lg">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2">
@@ -142,8 +142,8 @@ export function StyleDNATooltip({
                 </div>
 
                 {/* Why (Educational) */}
-                <div className="p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-lg">
-                  <h5 className="font-semibold text-sm text-[#8A3D28] mb-1">
+                <div className="p-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-lg">
+                  <h5 className="font-semibold text-sm text-[#9A503B] mb-1">
                     Waarom is dit belangrijk?
                   </h5>
                   <p className="text-sm text-[#9A503B] leading-relaxed">

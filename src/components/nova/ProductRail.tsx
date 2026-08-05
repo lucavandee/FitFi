@@ -13,10 +13,10 @@ interface ProductRailProps {
 function ProductSkeleton() {
   return (
     <div className="flex-shrink-0 w-48 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] overflow-hidden animate-pulse">
-      <div className="aspect-[3/4] bg-[#FAF5F2]" />
+      <div className="aspect-[3/4] bg-[#F5F0EB]" />
       <div className="p-2">
-        <div className="h-4 bg-[#FAF5F2] rounded w-32 mb-1" />
-        <div className="h-3 bg-[#FAF5F2] rounded w-24" />
+        <div className="h-4 bg-[#F5F0EB] rounded w-32 mb-1" />
+        <div className="h-3 bg-[#F5F0EB] rounded w-24" />
       </div>
     </div>
   );

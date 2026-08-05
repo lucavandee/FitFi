@@ -117,7 +117,7 @@ export function HeroV3() {
               }}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[#D4856E]"
+                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[#B55E45]"
                 aria-hidden="true"
               />
               <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'rgba(237,217,200,0.70)' }}>
@@ -138,7 +138,7 @@ export function HeroV3() {
             }}
           >
             Outfits die{' '}
-            <em className="not-italic text-[#D4856E]">bij jou</em>
+            <em className="not-italic text-[#B55E45]">bij jou</em>
             <br />
             passen
           </h1>
@@ -217,7 +217,7 @@ export function HeroV3() {
                 >
                   <path
                     d="M2.5 6l2.5 2.5 4.5-5"
-                    stroke="#D4856E"
+                    stroke="#B55E45"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -285,7 +285,7 @@ export function HeroV3() {
               style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)' }}
             >
               Outfits die{' '}
-              <em className="not-italic text-[#D4856E]">
+              <em className="not-italic text-[#B55E45]">
                 bij jou passen
               </em>
             </h1>
@@ -326,10 +326,10 @@ export function HeroV3() {
             {todayCount !== undefined && todayCount > 0 && (
               <p className="mt-5 text-sm flex items-center gap-2" style={{ color: 'rgba(247,243,236,0.60)' }}>
                 <span
-                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[#D4856E]"
+                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[#B55E45]"
                   aria-hidden="true"
                 />
-                <span className="text-[#D4856E] font-semibold">{todayCount}</span>
+                <span className="text-[#B55E45] font-semibold">{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </p>
             )}

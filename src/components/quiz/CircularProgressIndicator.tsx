@@ -108,7 +108,7 @@ export function CircularProgressIndicator({
                     transition-all duration-300
                     ${
                       isCurrent
-                        ? "border-[#B55E45] bg-[#FAF5F2] text-[#9A503B] shadow-lg scale-110"
+                        ? "border-[#B55E45] bg-[#F5F0EB] text-[#9A503B] shadow-lg scale-110"
                         : "border-[#E5E5E5] bg-[#FFFFFF] text-[#6E6E6E]"
                     }
                   `}

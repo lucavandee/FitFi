@@ -247,7 +247,7 @@ export default function AdminDaisyconImportPage() {
           Admin Dashboard
         </button>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center">
             <Package className="w-5 h-5 text-[#9A503B]" />
           </div>
           <div>
@@ -258,7 +258,7 @@ export default function AdminDaisyconImportPage() {
       </div>
 
       {/* Info banner */}
-      <div className="rounded-xl bg-[#FAF5F2] border border-[#FAF5F2] p-4 flex gap-3 mb-6">
+      <div className="rounded-xl bg-[#F5F0EB] border border-[#F5F0EB] p-4 flex gap-3 mb-6">
         <Info className="w-4 h-4 text-[#9A503B] flex-shrink-0 mt-0.5" />
         <div className="text-sm text-[#1A1A1A]">
           <strong>Hoe het werkt:</strong> Plak een Daisycon feed <strong>URL</strong> of de volledige <strong>JSON</strong> inhoud. Bij een URL wordt de feed eerst in de browser opgehaald, daarna automatisch in batches van 200 producten geïmporteerd. Categorieën, kleuren en stijl worden automatisch afgeleid. Producten worden op basis van <code className="bg-white px-1 rounded text-xs">external_id</code> geüpsert (geen duplicaten).
@@ -270,13 +270,13 @@ export default function AdminDaisyconImportPage() {
         <div className="border-b border-[#E5E5E5] p-4 flex gap-2">
           <button
             onClick={() => setActiveTab("paste")}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "paste" ? "bg-[#9A503B] text-white" : "text-[#6E6E6E] hover:bg-[#FAF5F2]"}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "paste" ? "bg-[#9A503B] text-white" : "text-[#6E6E6E] hover:bg-[#F5F0EB]"}`}
           >
             JSON plakken
           </button>
           <button
             onClick={() => setActiveTab("file")}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "file" ? "bg-[#9A503B] text-white" : "text-[#6E6E6E] hover:bg-[#FAF5F2]"}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "file" ? "bg-[#9A503B] text-white" : "text-[#6E6E6E] hover:bg-[#F5F0EB]"}`}
           >
             Bestand uploaden
           </button>
@@ -294,7 +294,7 @@ export default function AdminDaisyconImportPage() {
                 onChange={(e) => setFeedJson(e.target.value)}
                 rows={10}
                 placeholder={"https://daisycon.io/datafeed/?media_id=...&type=JSON\n\nOf plak hier de volledige JSON feed inhoud."}
-                className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm font-mono text-[#1A1A1A] placeholder:text-[#6E6E6E] p-3 focus:outline-none focus:ring-2 focus:ring-[#D4856E] resize-y"
+                className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm font-mono text-[#1A1A1A] placeholder:text-[#6E6E6E] p-3 focus:outline-none focus:ring-2 focus:ring-[#B55E45] resize-y"
               />
               {feedJson && (
                 <p className="text-xs text-[#6E6E6E] mt-1">
@@ -314,7 +314,7 @@ export default function AdminDaisyconImportPage() {
               />
               <label
                 htmlFor="feed-file"
-                className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-[#E5E5E5] rounded-xl p-10 cursor-pointer hover:border-[#D4856E] hover:bg-[#FAF5F2] transition-colors"
+                className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-[#E5E5E5] rounded-xl p-10 cursor-pointer hover:border-[#B55E45] hover:bg-[#F5F0EB] transition-colors"
               >
                 <FileJson className="w-8 h-8 text-[#6E6E6E]" />
                 <div className="text-center">
@@ -411,7 +411,7 @@ export default function AdminDaisyconImportPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#E5E5E5] bg-[#FAF5F2]">
+                <tr className="border-b border-[#E5E5E5] bg-[#F5F0EB]">
                   {["Datum", "Programma", "Producten", "Ingevoegd", "Status"].map((h) => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">
                       {h}
@@ -421,7 +421,7 @@ export default function AdminDaisyconImportPage() {
               </thead>
               <tbody>
                 {logs.map((log, i) => (
-                  <tr key={log.id} className={`border-b border-[#E5E5E5] ${i % 2 === 0 ? "" : "bg-[#FAF5F2]"}`}>
+                  <tr key={log.id} className={`border-b border-[#E5E5E5] ${i % 2 === 0 ? "" : "bg-[#F5F0EB]"}`}>
                     <td className="px-4 py-3 text-[#6E6E6E] text-xs whitespace-nowrap">
                       {new Date(log.imported_at).toLocaleString("nl-NL")}
                     </td>

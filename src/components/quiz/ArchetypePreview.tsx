@@ -132,7 +132,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
         <div className="sm:hidden">
           <button
             onClick={() => setCollapsed(c => !c)}
-            className="w-full flex items-center justify-between gap-3 px-3 py-2.5 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl text-left"
+            className="w-full flex items-center justify-between gap-3 px-3 py-2.5 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3] rounded-xl text-left"
             aria-expanded={!collapsed}
           >
             <div className="flex items-center gap-2 min-w-0">
@@ -149,7 +149,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-1 p-3 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl overflow-hidden"
+              className="mt-1 p-3 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3] rounded-xl overflow-hidden"
             >
               <p className="text-sm text-[#6E6E6E] mb-2">{config.description}</p>
               <div className="flex items-center gap-2">
@@ -167,7 +167,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
         </div>
 
         {/* Desktop: full card */}
-        <div className="hidden sm:block bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#F4E8E3] rounded-2xl p-4 sm:p-6 shadow-lg overflow-hidden relative">
+        <div className="hidden sm:block bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#F4E8E3] rounded-2xl p-4 sm:p-6 shadow-lg overflow-hidden relative">
           <div className="absolute top-0 right-0 w-24 h-24 bg-[#F4E8E3] rounded-full blur-3xl opacity-20"></div>
           <div className="relative flex items-start gap-4">
             <div className="flex-shrink-0 w-14 h-14 bg-white rounded-xl shadow-md flex items-center justify-center text-3xl">

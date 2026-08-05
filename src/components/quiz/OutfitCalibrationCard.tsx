@@ -95,21 +95,21 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     const occasionMap: Record<string, { icon: React.ComponentType<any>; bgClass: string; borderClass: string; title: string; subtitle: string }> = {
       work: {
         icon: Briefcase,
-        bgClass: 'bg-[#FAF5F2]',
+        bgClass: 'bg-[#F5F0EB]',
         borderClass: 'border-[#F4E8E3]',
         title: 'Kantoor',
         subtitle: 'Zakelijke meeting of werkdag'
       },
       casual: {
         icon: Coffee,
-        bgClass: 'bg-[#FAF5F2]',
+        bgClass: 'bg-[#F5F0EB]',
         borderClass: 'border-[#F4E8E3]',
         title: 'Casual dag uit',
         subtitle: 'Lunch, koffie, boodschappen'
       },
       evening: {
         icon: Moon,
-        bgClass: 'bg-[#FAF5F2]',
+        bgClass: 'bg-[#F5F0EB]',
         borderClass: 'border-[#F4E8E3]',
         title: 'Avondje uit',
         subtitle: 'Restaurant, borrel of diner'
@@ -276,9 +276,9 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             </div>
 
             {outfit.colorHarmony && outfit.colorHarmony.harmony !== 'acceptable' && (
-              <div className="p-3 rounded-xl bg-[#FAF5F2] border border-[#FAF5F2]">
+              <div className="p-3 rounded-xl bg-[#F5F0EB] border border-[#F5F0EB]">
                 <div className="flex items-start gap-2">
-                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#FAF5F2] text-[#9A503B]">
+                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#F5F0EB] text-[#9A503B]">
                     {outfit.colorHarmony.score}/100
                   </div>
                   <div className="flex-1">
@@ -343,8 +343,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
-                  ? 'bg-[#FAF5F2] text-[#9A503B] border border-[#F4E8E3]'
-                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#D4856E] hover:text-[#B55E45]'
+                  ? 'bg-[#F5F0EB] text-[#9A503B] border border-[#F4E8E3]'
+                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#B55E45] hover:text-[#B55E45]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" strokeWidth={2.5} />
@@ -377,7 +377,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               disabled={disabled}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#9A503B] border border-[#F4E8E3] hover:from-[#FAF5F2] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] text-[#9A503B] border border-[#F4E8E3] hover:from-[#F5F0EB] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <Sparkles className="w-4 h-4" />
               Smart Remix

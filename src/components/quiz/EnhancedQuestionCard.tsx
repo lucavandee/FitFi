@@ -199,7 +199,7 @@ export function EnhancedQuestionCard({
             {/* Selection Counter */}
             {Array.isArray(value) && value.length > 0 && (
               <div className="text-center mb-3">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#FAF5F2] rounded-full text-sm font-medium text-[#9A503B]">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#F5F0EB] rounded-full text-sm font-medium text-[#9A503B]">
                   <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#B55E45] text-white text-xs font-bold">
                     {value.length}
                   </span>
@@ -218,8 +218,8 @@ export function EnhancedQuestionCard({
                     onClick={() => handleMultiSelect(option.value)}
                     className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-sm focus-visible:border-[#B55E45] ${
                       isSelected
-                        ? 'border-[#B55E45] bg-[#FAF5F2] shadow-sm'
-                        : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E] hover:shadow-sm'
+                        ? 'border-[#B55E45] bg-[#F5F0EB] shadow-sm'
+                        : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#B55E45] hover:shadow-sm'
                     }`}
                     aria-pressed={isSelected}
                   >
@@ -271,8 +271,8 @@ export function EnhancedQuestionCard({
                   onClick={() => handleSingleSelect(option.value)}
                   className={`text-left p-4 min-h-[56px] rounded-xl border-2 transition-all active:scale-[0.98] outline-none focus-visible:shadow-sm focus-visible:border-[#B55E45] ${
                     isSelected
-                      ? 'border-[#B55E45] bg-[#FAF5F2] shadow-sm'
-                      : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E] hover:shadow-sm'
+                      ? 'border-[#B55E45] bg-[#F5F0EB] shadow-sm'
+                      : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#B55E45] hover:shadow-sm'
                   }`}
                   aria-pressed={isSelected}
                 >
@@ -337,7 +337,7 @@ export function EnhancedQuestionCard({
                   const newVal = Math.max(min || 0, currentVal - (step || 5));
                   onChange(field, newVal);
                 }}
-                className="w-12 h-12 rounded-full bg-[#FFFFFF] border-2 border-[#D4856E] text-[#9A503B] font-bold text-xl flex items-center justify-center hover:bg-[#FAF5F2] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-sm focus-visible:border-[#B55E45]"
+                className="w-12 h-12 rounded-full bg-[#FFFFFF] border-2 border-[#B55E45] text-[#9A503B] font-bold text-xl flex items-center justify-center hover:bg-[#F5F0EB] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-sm focus-visible:border-[#B55E45]"
                 aria-label="Verlaag budget"
               >
                 −
@@ -365,7 +365,7 @@ export function EnhancedQuestionCard({
                   const newVal = Math.min(max || 500, currentVal + (step || 5));
                   onChange(field, newVal);
                 }}
-                className="w-12 h-12 rounded-full bg-[#FFFFFF] border-2 border-[#D4856E] text-[#9A503B] font-bold text-xl flex items-center justify-center hover:bg-[#FAF5F2] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-sm focus-visible:border-[#B55E45]"
+                className="w-12 h-12 rounded-full bg-[#FFFFFF] border-2 border-[#B55E45] text-[#9A503B] font-bold text-xl flex items-center justify-center hover:bg-[#F5F0EB] active:scale-95 transition-all shadow-sm outline-none focus-visible:shadow-sm focus-visible:border-[#B55E45]"
                 aria-label="Verhoog budget"
               >
                 +

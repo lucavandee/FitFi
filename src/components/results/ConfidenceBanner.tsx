@@ -41,7 +41,7 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className={`border border-[#E5E5E5] bg-[#FAF5F2] rounded-2xl p-4 sm:p-6 ${className}`}
+      className={`border border-[#E5E5E5] bg-[#F5F0EB] rounded-2xl p-4 sm:p-6 ${className}`}
       role="note"
       aria-label="Toelichting bij je stijlprofiel"
     >
@@ -70,7 +70,7 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
               <ul className="space-y-1.5 text-[#6E6E6E]">
                 {analysis.recommendations.map((rec, index) => (
                   <li key={index} className="text-sm flex items-start gap-2">
-                    <span className="leading-none mt-1 text-[#D4856E]">–</span>
+                    <span className="leading-none mt-1 text-[#B55E45]">–</span>
                     <span className="flex-1">{rec}</span>
                   </li>
                 ))}
@@ -102,7 +102,7 @@ export function ConfidenceBadge({ analysis }: { analysis: ConfidenceAnalysis }) 
     return (
       <div
         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[#E5E5E5]"
-        style={{ background: '#FAF5F2', color: '#9A503B' }}
+        style={{ background: '#F5F0EB', color: '#9A503B' }}
       >
         <span>✓</span>
         <span>Duidelijk profiel</span>
@@ -114,7 +114,7 @@ export function ConfidenceBadge({ analysis }: { analysis: ConfidenceAnalysis }) 
     return (
       <div
         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[#E5E5E5]"
-        style={{ background: '#FAF5F2', color: '#9A503B' }}
+        style={{ background: '#F5F0EB', color: '#9A503B' }}
       >
         <span>○</span>
         <span>Veelzijdig profiel</span>
@@ -125,7 +125,7 @@ export function ConfidenceBadge({ analysis }: { analysis: ConfidenceAnalysis }) 
   return (
     <div
       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[#E5E5E5]"
-      style={{ background: '#FAF5F2', color: '#B55E45' }}
+      style={{ background: '#F5F0EB', color: '#B55E45' }}
     >
       <span>◐</span>
       <span>Brede stijlvoorkeur</span>

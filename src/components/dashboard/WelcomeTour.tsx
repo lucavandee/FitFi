@@ -146,7 +146,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
                         s === step
                           ? 'w-8 bg-[#B55E45]'
                           : i < ['welcome', 'outfits', 'nova', 'complete'].indexOf(step)
-                          ? 'w-2 bg-[#D4856E]'
+                          ? 'w-2 bg-[#B55E45]'
                           : 'w-2 bg-[#E5E5E5]'
                       }`}
                     />

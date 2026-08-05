@@ -215,7 +215,7 @@ export function BulkImageUploader() {
         className={`
           border-2 border-dashed rounded-2xl p-12 text-center transition-all
           ${isDragging
-            ? 'border-[#9A503B] bg-[#FAF5F2]'
+            ? 'border-[#9A503B] bg-[#F5F0EB]'
             : 'border-[#E5E5E5] bg-[#FFFFFF]'
           }
         `}

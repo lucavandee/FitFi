@@ -67,7 +67,7 @@ export function NovaIntelligenceIndicator({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="mb-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/20 dark:to-[#5A2010]/20 rounded-xl border border-[#F4E8E3] dark:border-[#8A3D28]"
+      className="mb-4 p-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] dark:from-[#1A1A1A]/20 dark:to-[#1A1A1A]/20 rounded-xl border border-[#F4E8E3] dark:border-[#9A503B]"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
@@ -139,7 +139,7 @@ export function NovaIntelligenceIndicator({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-3 pt-3 border-t border-[#F4E8E3] dark:border-[#8A3D28]"
+        className="mt-3 pt-3 border-t border-[#F4E8E3] dark:border-[#9A503B]"
       >
         <p className="text-xs text-[#6E6E6E] leading-relaxed">
           Nova gebruikt deze data om je nog beter te helpen. Hoe meer je interacteert, hoe slimmer de adviezen worden.

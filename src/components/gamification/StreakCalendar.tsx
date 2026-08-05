@@ -206,7 +206,7 @@ export function StreakCalendar({
       )}
 
       {hasCheckedInToday && (
-        <div className="mb-4 py-3 px-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#D4856E] rounded-xl flex items-center justify-center gap-2">
+        <div className="mb-4 py-3 px-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#B55E45] rounded-xl flex items-center justify-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-[#B55E45]" />
           <span className="font-semibold text-[#9A503B]">
             Check-in compleet vandaag!
@@ -218,7 +218,7 @@ export function StreakCalendar({
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 p-3 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-xl border border-[#D4856E]"
+          className="mb-4 p-3 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-xl border border-[#B55E45]"
         >
           <div className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-[#B55E45]" />
@@ -284,7 +284,7 @@ function CalendarDay({ day }: { day: ActivityDay }) {
         ${day.hasActivity && day.isCurrentMonth
           ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45] text-white shadow-md hover-scale'
           : day.isCurrentMonth
-          ? 'bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E]'
+          ? 'bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45]'
           : 'bg-transparent'
         }
       `}

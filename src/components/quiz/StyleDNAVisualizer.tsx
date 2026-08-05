@@ -11,13 +11,13 @@ interface StyleDNAVisualizerProps {
 const STYLE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
   minimal: { label: 'Minimaal', emoji: '⚪', color: '#D4D4D4' },
   classic: { label: 'Klassiek', emoji: '👔', color: '#1A1A1A' },
-  romantic: { label: 'Romantisch', emoji: '🌸', color: '#D4856E' },
+  romantic: { label: 'Romantisch', emoji: '🌸', color: '#B55E45' },
   bohemian: { label: 'Bohemian', emoji: '🌿', color: '#A07040' },
   bold: { label: 'Bold', emoji: '⚡', color: '#E07070' },
   urban: { label: 'Urban', emoji: '🏙️', color: '#6A6A6A' },
   sporty: { label: 'Sportief', emoji: '⚽', color: '#2DD4BF' },
   refined: { label: 'Verfijnd', emoji: '✨', color: '#7A5C30' },
-  relaxed: { label: 'Relaxed', emoji: '😌', color: '#D4856E' },
+  relaxed: { label: 'Relaxed', emoji: '😌', color: '#B55E45' },
   professional: { label: 'Professioneel', emoji: '💼', color: '#4A4A4A' },
 };
 

@@ -343,7 +343,7 @@ export default function UnifiedOutfitCard({
             <motion.button
               aria-label="Bekijk outfit details en shop"
               onClick={() => setShowDetailsModal(true)}
-              className="flex-1 px-4 py-3 min-h-[48px] bg-[#9A503B] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#D4856E] focus:ring-offset-2 hover:bg-[#B55E45]"
+              className="flex-1 px-4 py-3 min-h-[48px] bg-[#9A503B] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:ring-offset-2 hover:bg-[#B55E45]"
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.97 }}
             >
@@ -366,10 +366,10 @@ export default function UnifiedOutfitCard({
                 disabled={saveOutfit.isPending}
                 className={cn(
                   'w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center border rounded-xl transition-all',
-                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4856E]',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B55E45]',
                   saveOutfit.isSuccess || saved
                     ? 'border-[#B55E45] bg-[#9A503B] text-white'
-                    : 'border-[#E5E5E5] text-[#6E6E6E] hover:border-[#D4856E] hover:text-[#9A503B]',
+                    : 'border-[#E5E5E5] text-[#6E6E6E] hover:border-[#B55E45] hover:text-[#9A503B]',
                   saveOutfit.isPending && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!saveOutfit.isPending ? { scale: 1.05 } : {}}

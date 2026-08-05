@@ -210,7 +210,7 @@ export function ResultsFeedbackWidget({
 
             {(state === 'positive' || state === 'negative') && (
               <>
-                <div className="flex items-center gap-2 p-3 bg-[#FAF5F2] rounded-lg border border-[#F4E8E3]">
+                <div className="flex items-center gap-2 p-3 bg-[#F5F0EB] rounded-lg border border-[#F4E8E3]">
                   {state === 'positive' ? (
                     <ThumbsUp className="w-5 h-5 text-[#B55E45] flex-shrink-0" />
                   ) : (

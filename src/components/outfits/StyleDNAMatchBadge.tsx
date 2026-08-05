@@ -23,7 +23,7 @@ export function StyleDNAMatchBadge({
     if (score >= 80) return {
       bg: "bg-gradient-to-r from-[#B55E45] to-[#B55E45]",
       text: "text-white",
-      ring: "ring-[#D4856E]/50",
+      ring: "ring-[#B55E45]/50",
       label: "Great Match"
     };
     if (score >= 70) return {

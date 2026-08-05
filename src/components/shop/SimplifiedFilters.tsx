@@ -197,7 +197,7 @@ export function SimplifiedFilters({
 
       {/* Active Filters Breadcrumb */}
       {hasActiveFilters && (
-        <div className="mb-4 p-3 bg-[#FAF5F2] rounded-xl">
+        <div className="mb-4 p-3 bg-[#F5F0EB] rounded-xl">
           <p className="text-xs font-medium text-[#9A503B] mb-2">
             Actieve filters:
           </p>
@@ -242,8 +242,8 @@ export function SimplifiedFilters({
                 onClick={() => toggleCategory(cat.id)}
                 className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-[#B55E45] bg-[#FAF5F2]'
-                    : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E]'
+                    ? 'border-[#B55E45] bg-[#F5F0EB]'
+                    : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#B55E45]'
                 }`}
               >
                 <span className="text-2xl" role="img" aria-label={cat.label}>
@@ -275,8 +275,8 @@ export function SimplifiedFilters({
                 onClick={() => setPriceRange(range.min, range.max)}
                 className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
                   isSelected
-                    ? 'border-[#B55E45] bg-[#FAF5F2] font-semibold'
-                    : 'border-[#E5E5E5] hover:border-[#D4856E]'
+                    ? 'border-[#B55E45] bg-[#F5F0EB] font-semibold'
+                    : 'border-[#E5E5E5] hover:border-[#B55E45]'
                 }`}
               >
                 <span className="text-sm">{range.label}</span>
@@ -301,7 +301,7 @@ export function SimplifiedFilters({
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleStyle(style)}
-                    className="w-4 h-4 rounded border-[#E5E5E5] text-[#B55E45] focus:ring-[#D4856E]"
+                    className="w-4 h-4 rounded border-[#E5E5E5] text-[#B55E45] focus:ring-[#B55E45]"
                   />
                   <span className="text-sm">{style}</span>
                 </label>

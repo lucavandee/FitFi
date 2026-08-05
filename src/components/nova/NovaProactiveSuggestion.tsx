@@ -65,9 +65,9 @@ export function NovaProactiveSuggestion({
         exit={{ opacity: 0, y: -20, scale: 0.95 }}
         transition={{ duration: 0.4 }}
         className={`
-          relative bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2]
-          dark:from-[#5A2010]/30 dark:to-[#5A2010]/30
-          border-2 border-[#F4E8E3] dark:border-[#8A3D28]
+          relative bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB]
+          dark:from-[#1A1A1A]/30 dark:to-[#1A1A1A]/30
+          border-2 border-[#F4E8E3] dark:border-[#9A503B]
           rounded-2xl p-6 shadow-lg
           ${position === "floating" ? "fixed bottom-6 right-6 max-w-md z-40" : ""}
         `}

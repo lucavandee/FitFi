@@ -40,7 +40,7 @@ export function GamificationWidget() {
   if (!user || isLoading) {
     return (
       <div className="space-y-6">
-        <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-8 shadow-xl border-2 border-[#E5E5E5] animate-pulse">
+        <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-8 shadow-xl border-2 border-[#E5E5E5] animate-pulse">
           <div className="h-20 bg-white/50 rounded-xl mb-4"></div>
           <div className="h-3 bg-white/50 rounded-full"></div>
         </div>
@@ -55,10 +55,10 @@ export function GamificationWidget() {
   return (
     <div className="space-y-6">
       {/* Main XP Card - Premium Design */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] rounded-2xl p-8 shadow-2xl border-2 border-white/50 hover-lift">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#F5F0EB] via-white to-[#F5F0EB] rounded-2xl p-8 shadow-2xl border-2 border-white/50 hover-lift">
         {/* Decorative blobs */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#D4856E] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
-        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#D4856E] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#B55E45] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#B55E45] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
 
         <div className="relative z-10">
           {/* Header */}
@@ -178,7 +178,7 @@ export function GamificationWidget() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-2xl border border-[#E5E5E5] hover-lift"
+                className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-2xl border border-[#E5E5E5] hover-lift"
               >
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-lg flex-shrink-0">
                   <span className="text-2xl">{achievement.achievement_icon}</span>
@@ -214,7 +214,7 @@ export function GamificationWidget() {
       />
 
       {/* Next Milestones Preview */}
-      <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010/20] dark:to-[#5A2010/20] rounded-2xl p-6 shadow-xl border-2 border-[#E5E5E5]">
+      <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] dark:from-[#1A1A1A/20] dark:to-[#1A1A1A/20] rounded-2xl p-6 shadow-xl border-2 border-[#E5E5E5]">
         <h4 className="text-lg font-bold text-[#1A1A1A] mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-[#B55E45]" />
           Komende Milestones

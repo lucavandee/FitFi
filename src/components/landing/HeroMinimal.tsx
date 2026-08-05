@@ -89,7 +89,7 @@ export function HeroMinimal() {
                 className="absolute top-0 left-[5%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-xl border border-[#E5E5E5] overflow-hidden transform rotate-[-4deg] transition-transform hover:rotate-[-2deg] hover:scale-105 z-10"
                 style={{ willChange: 'transform' }}
               >
-                <div className="aspect-[3/4] bg-[#FAF5F2] flex items-center justify-center">
+                <div className="aspect-[3/4] bg-[#F5F0EB] flex items-center justify-center">
                   <div className="text-center p-6">
                     <div className="w-16 h-16 mx-auto mb-4 bg-[#B55E45] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                       W
@@ -111,7 +111,7 @@ export function HeroMinimal() {
                 className="absolute top-[80px] left-[20%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-2xl border-2 border-[#B55E45] overflow-hidden transform rotate-[2deg] transition-transform hover:rotate-[0deg] hover:scale-105 z-30"
                 style={{ willChange: 'transform' }}
               >
-                <div className="aspect-[3/4] bg-[#FAF5F2] flex items-center justify-center">
+                <div className="aspect-[3/4] bg-[#F5F0EB] flex items-center justify-center">
                   <div className="text-center p-6">
                     <div className="w-16 h-16 mx-auto mb-4 bg-[#B55E45] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                       W

@@ -58,14 +58,14 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#FAF5F2] hover:bg-[#FAF5F2] transition-colors z-10 flex items-center justify-center"
+              className="absolute top-4 right-4 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#F5F0EB] hover:bg-[#F5F0EB] transition-colors z-10 flex items-center justify-center"
               aria-label="Sluiten"
             >
               <X className="w-5 h-5 text-[#6E6E6E]" />
             </button>
 
             {/* Decorative Background */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-full blur-3xl opacity-30 pointer-events-none" aria-hidden="true" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-full blur-3xl opacity-30 pointer-events-none" aria-hidden="true" />
 
             {/* Content */}
             <div className="text-center relative z-10">
@@ -74,7 +74,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] mb-6"
+                className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] mb-6"
               >
                 <Gift className="w-10 h-10 text-[#9A503B]" />
               </motion.div>
@@ -88,7 +88,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
               </p>
 
               {/* Offer Card */}
-              <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-6 mb-6 border-2 border-[#F4E8E3]">
+              <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-6 mb-6 border-2 border-[#F4E8E3]">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <Sparkles className="w-6 h-6 text-[#9A503B]" />
                   <span className="text-sm font-semibold text-[#9A503B] uppercase tracking-wide">

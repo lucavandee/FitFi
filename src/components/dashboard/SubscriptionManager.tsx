@@ -45,7 +45,7 @@ function FeatureRow({ label, included }: { label: string; included: boolean }) {
         {label}
       </span>
       {!included && (
-        <span className="ml-auto text-[10px] font-bold uppercase tracking-wide text-[#B55E45] bg-[#FAF5F2] px-2 py-0.5 rounded-full">
+        <span className="ml-auto text-[10px] font-bold uppercase tracking-wide text-[#B55E45] bg-[#F5F0EB] px-2 py-0.5 rounded-full">
           Premium
         </span>
       )}
@@ -56,7 +56,7 @@ function FeatureRow({ label, included }: { label: string; included: boolean }) {
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     active: { label: 'Actief', cls: 'bg-[#ECFDF5] text-[#0A6E40]' },
-    trialing: { label: 'Trial', cls: 'bg-[#FAF5F2] text-[#9A503B]' },
+    trialing: { label: 'Trial', cls: 'bg-[#F5F0EB] text-[#9A503B]' },
     canceled: { label: 'Geannuleerd', cls: 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5]' },
     past_due: { label: 'Betaling achterstallig', cls: 'bg-[#FEF2F2] text-[#B91C1C]' },
     incomplete: { label: 'Incompleet', cls: 'bg-[#FEFCE8] text-[#B06020]' },
@@ -180,9 +180,9 @@ export default function SubscriptionManager() {
                     <FeatureRow key={f.label} label={f.label} included={f.included} />
                   ))}
                 </ul>
-                <ul className="px-4 py-2 bg-[#FAF5F2]">
+                <ul className="px-4 py-2 bg-[#F5F0EB]">
                   {PREMIUM_FEATURES.map((f) => (
-                    <li key={f.label} className="flex items-center gap-2.5 py-2.5 border-b border-[#FAF5F2] last:border-0">
+                    <li key={f.label} className="flex items-center gap-2.5 py-2.5 border-b border-[#F5F0EB] last:border-0">
                       <CheckCircle className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
                       <span className="text-sm text-[#1A1A1A]">{f.label}</span>
                     </li>
@@ -211,7 +211,7 @@ export default function SubscriptionManager() {
               </button>
               <button
                 onClick={() => navigate('/resultaten')}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
                 Bekijk Premium-voorbeeld
@@ -224,7 +224,7 @@ export default function SubscriptionManager() {
         {isPremium && activeSubscription && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
             {/* Plan card */}
-            <div className="rounded-xl border border-[#F4E8E3] bg-[#FAF5F2] p-5">
+            <div className="rounded-xl border border-[#F4E8E3] bg-[#F5F0EB] p-5">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="text-xs text-[#B55E45] font-bold uppercase tracking-wide mb-1">
@@ -312,7 +312,7 @@ export default function SubscriptionManager() {
                   <button
                     onClick={handleManageSubscription}
                     disabled={processingPortal}
-                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors disabled:opacity-50"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors disabled:opacity-50"
                   >
                     <ExternalLink className="w-4 h-4" />
                     Download factuur

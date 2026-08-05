@@ -122,7 +122,7 @@ export function ProfileQuickActions({
                 relative p-4 rounded-xl border-2 text-left transition-all group
                 ${isPrimary
                   ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45] border-transparent text-white shadow-lg hover:shadow-xl'
-                  : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#D4856E] hover:shadow-md'
+                  : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#B55E45] hover:shadow-md'
                 }
               `}
               aria-label={`${action.label}: ${action.description}`}
@@ -139,7 +139,7 @@ export function ProfileQuickActions({
                 className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
                   isPrimary
                     ? 'bg-white/20'
-                    : 'bg-[#FAF5F2]'
+                    : 'bg-[#F5F0EB]'
                 }`}
               >
                 <Icon

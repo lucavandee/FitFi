@@ -920,7 +920,7 @@ export default function OnboardingFlowPage() {
             <AnimatedQuestionTransition questionKey={currentStep} direction="forward">
               <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                 {currentStep === 0 && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', backgroundColor: '#FAF5F2', borderRadius: '99px', fontSize: '12px', fontWeight: 500, color: '#9A503B', marginBottom: '16px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', backgroundColor: '#F5F0EB', borderRadius: '99px', fontSize: '12px', fontWeight: 500, color: '#9A503B', marginBottom: '16px' }}>
                     <Clock style={{ width: '12px', height: '12px' }} />
                     Minder dan 2 minuten
                   </div>
@@ -1136,7 +1136,7 @@ export default function OnboardingFlowPage() {
                     <button
                       type="button"
                       onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.max(step.min || 0, v - (step.step || 5))); }}
-                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #D4856E', backgroundColor: '#FFFFFF', color: '#9A503B', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #B55E45', backgroundColor: '#FFFFFF', color: '#9A503B', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verlaag budget"
                     >−</button>
                     <div style={{ position: 'relative' }}>
@@ -1258,7 +1258,7 @@ export default function OnboardingFlowPage() {
                   flex: 1, height: '48px', minWidth: 0,
                   borderRadius: '12px',
                   border: 'none',
-                  backgroundColor: canProceed() || !step?.required ? '#9A503B' : '#D4856E',
+                  backgroundColor: canProceed() || !step?.required ? '#9A503B' : '#B55E45',
                   color: 'white',
                   fontSize: '15px', fontWeight: 700,
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -1322,7 +1322,7 @@ export default function OnboardingFlowPage() {
               </div>
               <button
                 onClick={() => setShowReviewModal(false)}
-                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
+                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
                 aria-label="Sluit overzicht"
               >
                 <X className="w-5 h-5 text-[#6E6E6E]" />
@@ -1398,7 +1398,7 @@ export default function OnboardingFlowPage() {
               <button
                 onClick={handleConfirmProceed}
                 disabled={quizSteps.some(s => s.required && !answers[s.field as keyof QuizAnswers])}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#B55E45] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4856E] focus-visible:ring-offset-2"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#B55E45] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2"
               >
                 <span>Maak mijn rapport</span>
                 <ArrowRight className="w-5 h-5" />
@@ -1427,7 +1427,7 @@ export default function OnboardingFlowPage() {
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
                   <AlertCircle className="w-6 h-6 text-[#B55E45]" aria-hidden="true" />
                 </div>
                 <div>
@@ -1437,7 +1437,7 @@ export default function OnboardingFlowPage() {
               </div>
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
+                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
                 aria-label="Sluit modal"
               >
                 <X className="w-5 h-5 text-[#6E6E6E]" aria-hidden="true" />
@@ -1453,7 +1453,7 @@ export default function OnboardingFlowPage() {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#B55E45] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4856E] focus-visible:ring-offset-2"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#B55E45] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2"
                 autoFocus
               >
                 Doorgaan met quiz

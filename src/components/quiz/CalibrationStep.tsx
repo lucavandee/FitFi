@@ -335,7 +335,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3]"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3]"
           >
             <TrendingUp size={16} className="text-[#9A503B]" />
             <span className="text-sm font-semibold text-[#9A503B]">
@@ -450,7 +450,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           <button
             onClick={handleContinue}
             disabled={applying}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:bg-[#FAF5F2] hover:border-[#D4856E] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:bg-[#F5F0EB] hover:border-[#B55E45] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {feedbackCount === 0 ? 'Beoordeling overslaan' : 'Doorgaan zonder alle outfits te beoordelen'}
           </button>

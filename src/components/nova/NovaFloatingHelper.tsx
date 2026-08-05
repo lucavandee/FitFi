@@ -117,7 +117,7 @@ export function NovaFloatingHelper() {
           <motion.div
             initial={{ width: 0, height: 0 }}
             animate={{ width: "auto", height: "auto" }}
-            className="bg-[#FFFFFF] border-2 border-[#F4E8E3] dark:border-[#8A3D28] rounded-2xl shadow-2xl max-w-sm"
+            className="bg-[#FFFFFF] border-2 border-[#F4E8E3] dark:border-[#9A503B] rounded-2xl shadow-2xl max-w-sm"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5]">
@@ -176,7 +176,7 @@ export function NovaFloatingHelper() {
             {/* Content */}
             <div className="p-4">
               <div className="flex items-start gap-3 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] text-[#9A503B] flex items-center justify-center">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#F5F0EB] text-[#9A503B] flex items-center justify-center">
                   <Lightbulb className="w-4 h-4" />
                 </div>
                 <p className="text-sm text-[#1A1A1A] leading-relaxed">{currentTip.tip}</p>
@@ -203,7 +203,7 @@ export function NovaFloatingHelper() {
                   openNova(true);
                   setIsMinimized(true);
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#D4856E] transition-colors cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#B55E45] transition-colors cursor-pointer"
               >
                 <MessageCircle className="w-3 h-3" />
                 Chat
@@ -217,7 +217,7 @@ export function NovaFloatingHelper() {
                   navigate('/results');
                   setIsMinimized(true);
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#D4856E] transition-colors cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#B55E45] transition-colors cursor-pointer"
               >
                 <TrendingUp className="w-3 h-3" />
                 Trends

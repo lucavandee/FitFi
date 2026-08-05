@@ -114,7 +114,7 @@ export function PullToRefresh({
       >
         <div className="flex flex-col items-center gap-2 py-4">
           <motion.div
-            className="w-10 h-10 rounded-full bg-[#FAF5F2] flex items-center justify-center"
+            className="w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center"
             style={{
               rotate,
               scale

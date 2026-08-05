@@ -118,11 +118,11 @@ export default function NotificationSettings() {
     return (
       <div className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-[#FAF5F2] rounded w-1/3" />
-          <div className="h-4 bg-[#FAF5F2] rounded w-2/3" />
+          <div className="h-6 bg-[#F5F0EB] rounded w-1/3" />
+          <div className="h-4 bg-[#F5F0EB] rounded w-2/3" />
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-[#FAF5F2] rounded" />
+              <div key={i} className="h-16 bg-[#F5F0EB] rounded" />
             ))}
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function NotificationSettings() {
     return (
       <div className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center">
             <BellOff className="w-6 h-6 text-[#B55E45]" />
           </div>
           <div>
@@ -157,7 +157,7 @@ export default function NotificationSettings() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] shadow-md border-2 border-[#E5E5E5] p-6"
+        className="rounded-2xl bg-gradient-to-br from-[#F5F0EB] via-white to-[#F5F0EB] shadow-md border-2 border-[#E5E5E5] p-6"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -165,7 +165,7 @@ export default function NotificationSettings() {
               className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                 isEnabled
                   ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45]'
-                  : 'bg-[#FAF5F2]'
+                  : 'bg-[#F5F0EB]'
               }`}
             >
               {isEnabled ? (
@@ -222,11 +222,11 @@ export default function NotificationSettings() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.15 + index * 0.05 }}
-                className="p-6 hover:bg-[#FAF5F2] transition-colors"
+                className="p-6 hover:bg-[#F5F0EB] transition-colors"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="w-10 h-10 rounded-lg bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
                       <type.icon className="w-5 h-5 text-[#B55E45]" />
                     </div>
                     <div className="flex-1">

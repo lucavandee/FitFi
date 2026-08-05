@@ -34,7 +34,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
             onClick={(e) => e.stopPropagation()}
             className="bg-[#FFFFFF] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"
           >
-            <div className="relative p-8 pb-6 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2]">
+            <div className="relative p-8 pb-6 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB]">
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#FFFFFF]/50 transition-colors"
@@ -59,9 +59,9 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                   navigator.clipboard.writeText(getUrl());
                   toast.success("Link gekopieerd!", { icon: "📋", duration: 2000 });
                 }}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#D4856E] hover:bg-[#FFFFFF] transition-all text-left group"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#B55E45] hover:bg-[#FFFFFF] transition-all text-left group"
               >
-                <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
                   <Download className="w-6 h-6 text-[#9A503B]" />
                 </div>
                 <div className="flex-1">
@@ -77,9 +77,9 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
                   window.open(twitterUrl, "_blank", "noopener,noreferrer");
                 }}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#D4856E] hover:bg-[#FFFFFF] transition-all text-left group"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#B55E45] hover:bg-[#FFFFFF] transition-all text-left group"
               >
-                <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
                   <Share2 className="w-6 h-6 text-[#9A503B]" />
                 </div>
                 <div className="flex-1">

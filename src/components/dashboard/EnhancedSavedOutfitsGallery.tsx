@@ -112,7 +112,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
           {/* Sort Toggle */}
           <button
             onClick={() => setSortMode(sortMode === "recent" ? "oldest" : "recent")}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1A1A1A] bg-[#FAFAF8] hover:bg-[#FAF5F2] rounded-lg transition-colors border border-[#E5E5E5]"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1A1A1A] bg-[#FAFAF8] hover:bg-[#F5F0EB] rounded-lg transition-colors border border-[#E5E5E5]"
           >
             {sortMode === "recent" ? <Calendar className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
             {sortMode === "recent" ? "Nieuwste" : "Oudste"}
@@ -124,7 +124,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded transition-colors ${
                 viewMode === "grid"
-                  ? "bg-[#FAF5F2] text-[#9A503B]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
             >
@@ -134,7 +134,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
               onClick={() => setViewMode("list")}
               className={`p-2 rounded transition-colors ${
                 viewMode === "list"
-                  ? "bg-[#FAF5F2] text-[#9A503B]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
             >
@@ -207,7 +207,7 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       whileHover={{ y: -8, scale: 1.02 }}
-      className="group relative aspect-[3/4] bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-xl overflow-hidden border-2 border-[#E5E5E5] hover:border-[#D4856E] shadow-sm hover:shadow-xl transition-all cursor-pointer"
+      className="group relative aspect-[3/4] bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-xl overflow-hidden border-2 border-[#E5E5E5] hover:border-[#B55E45] shadow-sm hover:shadow-xl transition-all cursor-pointer"
     >
       {/* Nova Match Badge - Top Right */}
       <div className="absolute top-3 right-3 z-10">
@@ -216,7 +216,7 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
 
       {/* Content placeholder */}
       <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-        <Heart className="w-12 h-12 text-[#D4856E] mb-2 group-hover:scale-110 transition-transform" />
+        <Heart className="w-12 h-12 text-[#B55E45] mb-2 group-hover:scale-110 transition-transform" />
         <p className="text-xs text-center text-[#6E6E6E] font-medium">
           Outfit #{outfit.id.substring(0, 8)}
         </p>
@@ -269,11 +269,11 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.03 }}
-      className="group flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:border-[#D4856E] hover:shadow-md transition-all cursor-pointer"
+      className="group flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:border-[#B55E45] hover:shadow-md transition-all cursor-pointer"
     >
       {/* Thumbnail */}
-      <div className="flex-shrink-0 relative w-20 h-28 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-lg flex items-center justify-center border border-[#E5E5E5] group-hover:scale-105 transition-transform">
-        <Heart className="w-6 h-6 text-[#D4856E]" />
+      <div className="flex-shrink-0 relative w-20 h-28 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-lg flex items-center justify-center border border-[#E5E5E5] group-hover:scale-105 transition-transform">
+        <Heart className="w-6 h-6 text-[#B55E45]" />
       </div>
 
       {/* Info */}

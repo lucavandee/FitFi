@@ -146,7 +146,7 @@ export function WeeklyChallengeTracker() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#D4856E] rounded-xl"
+          className="mb-4 p-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#B55E45] rounded-xl"
         >
           <div className="flex items-center gap-3">
             <Trophy className="w-6 h-6 text-[#B55E45] flex-shrink-0" />
@@ -220,8 +220,8 @@ function ChallengeDay({
         ${isToday ? 'ring-2 ring-[#B55E45] ring-offset-2' : ''}
         ${
           challenge.is_completed
-            ? 'bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-[#D4856E]'
-            : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#D4856E]'
+            ? 'bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border-[#B55E45]'
+            : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#B55E45]'
         }
       `}
     >
@@ -272,7 +272,7 @@ function ChallengeDay({
             <button
               onClick={onComplete}
               disabled={isCompleting}
-              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-[#FAF5F2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-[#F5F0EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isCompleting ? (
                 <motion.div

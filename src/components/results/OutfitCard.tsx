@@ -125,7 +125,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         {description.length > 0 && (
           <ul className="mb-2.5">
             <li className="flex items-start gap-1.5 text-[11px] text-[#6E6E6E] leading-snug">
-              <span className="w-1 h-1 rounded-full bg-[#D4856E] mt-1.5 flex-shrink-0" aria-hidden="true" />
+              <span className="w-1 h-1 rounded-full bg-[#B55E45] mt-1.5 flex-shrink-0" aria-hidden="true" />
               <span className="line-clamp-1">{description[0]}</span>
             </li>
           </ul>
@@ -138,7 +138,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
               <button
                 key={idx}
                 onClick={() => handleProductClick(product)}
-                className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#FAF5F2] border border-[#E5E5E5] hover:border-[#D4856E] rounded-lg transition-all text-left"
+                className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#B55E45] rounded-lg transition-all text-left"
               >
                 <ShoppingBag className="w-3 h-3 text-[#6E6E6E] flex-shrink-0" />
                 <span className="text-[11px] text-[#1A1A1A] truncate leading-tight">{product.name}</span>

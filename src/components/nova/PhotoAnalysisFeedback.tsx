@@ -56,10 +56,10 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[#FFFFFF] border-2 border-[#F4E8E3] dark:border-[#8A3D28] rounded-2xl overflow-hidden shadow-lg"
+      className="bg-[#FFFFFF] border-2 border-[#F4E8E3] dark:border-[#9A503B] rounded-2xl overflow-hidden shadow-lg"
     >
       {/* Header with Score */}
-      <div className="bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/30 dark:to-[#5A2010]/30 p-6 border-b border-[#E5E5E5]">
+      <div className="bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] dark:from-[#1A1A1A]/30 dark:to-[#1A1A1A]/30 p-6 border-b border-[#E5E5E5]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
@@ -155,7 +155,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="flex items-start gap-3 bg-[#FAF5F2] dark:bg-[#5A2010]/20 border border-[#F4E8E3] dark:border-[#8A3D28] rounded-lg p-3"
+                  className="flex items-start gap-3 bg-[#F5F0EB] dark:bg-[#1A1A1A]/20 border border-[#F4E8E3] dark:border-[#9A503B] rounded-lg p-3"
                 >
                   <div className="flex-shrink-0 w-6 h-6 bg-[#B55E45] text-white rounded-full flex items-center justify-center text-xs font-bold">
                     {i + 1}

@@ -29,7 +29,7 @@ export function GamificationDashboardMini() {
   return (
     <div className="space-y-4">
       {/* XP Progress Card */}
-      <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl border-2 border-[#F4E8E3] p-6 shadow-lg">
+      <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl border-2 border-[#F4E8E3] p-6 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-md">
@@ -117,7 +117,7 @@ export function GamificationDashboardMini() {
                 key={achievement.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3 p-2 bg-[#FAF5F2] rounded-lg"
+                className="flex items-center gap-3 p-2 bg-[#F5F0EB] rounded-lg"
               >
                 <span className="text-2xl">{achievement.achievement_icon}</span>
                 <div className="flex-1 min-w-0">

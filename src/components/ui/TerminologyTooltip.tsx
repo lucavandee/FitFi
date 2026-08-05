@@ -39,7 +39,7 @@ export function TerminologyTooltip({
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#FAF5F2] hover:bg-[#F4E8E3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:ring-offset-1"
+        className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#F5F0EB] hover:bg-[#F4E8E3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:ring-offset-1"
         aria-label={`Uitleg over ${term}`}
         aria-expanded={isOpen}
       >

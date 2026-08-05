@@ -167,7 +167,7 @@ export function BentoStatCard({
             </p>
           )}
         </div>
-        <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#9A503B]">
+        <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center text-[#9A503B]">
           {icon}
         </div>
       </div>
@@ -204,7 +204,7 @@ export function BentoActionCard({
   return (
     <BentoCard size={size} delay={delay} disableAnimation={disableAnimation}>
       <div className="flex flex-col h-full">
-        <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#9A503B] mb-4">
+        <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center text-[#9A503B] mb-4">
           {icon}
         </div>
         <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
@@ -252,7 +252,7 @@ export function BentoHeroCard({
   return (
     <BentoCard size="hero" delay={delay} className="relative overflow-hidden" disableAnimation={disableAnimation}>
       {/* Subtle gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] to-transparent opacity-50" />
 
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex-1">
@@ -323,7 +323,7 @@ export function BentoListCard({
             onClick={item.onClick}
             className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-colors"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#9A503B]">
+            <div className="w-8 h-8 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#9A503B]">
               {item.icon}
             </div>
             <div className="flex-1 text-left">

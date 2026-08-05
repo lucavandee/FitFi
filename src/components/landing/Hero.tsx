@@ -137,7 +137,7 @@ export function Hero() {
 
               {/* Phone Mockup */}
               <div className="relative bg-white rounded-[3rem] p-2 shadow-2xl border border-[#E5E5E5]">
-                <div className="bg-[#FAF5F2] rounded-[2.5rem] overflow-hidden">
+                <div className="bg-[#F5F0EB] rounded-[2.5rem] overflow-hidden">
                   <img
                     src="/hero/style-report.webp"
                     alt="FitFi Style Report Preview"
@@ -179,7 +179,7 @@ export function Hero() {
                   <div className="text-xs text-[#6E6E6E] font-medium">Kleuren</div>
                   <div className="flex gap-1 mt-1">
                     <div className="w-3 h-3 rounded-full bg-[#B55E45]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#D4856E]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#B55E45]"></div>
                     <div className="w-3 h-3 rounded-full bg-[#6E6E6E]"></div>
                   </div>
                 </div>

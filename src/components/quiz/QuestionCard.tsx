@@ -51,7 +51,7 @@ export default function QuestionCard<T extends string>({
               "text-left rounded-xl sm:rounded-2xl border px-4 py-3.5 min-h-[56px] sm:min-h-[52px] transition-all",
               isActive(c.value)
                 ? "border-[#B55E45] bg-[color-mix(in oklab,#9A503B 8%,transparent)] shadow-md"
-                : "border-[#E5E5E5] bg-[#FAFAF8] hover:border-[#D4856E] hover:shadow-sm active:scale-[0.98]",
+                : "border-[#E5E5E5] bg-[#FAFAF8] hover:border-[#B55E45] hover:shadow-sm active:scale-[0.98]",
             ].join(" ")}
           >
             <div className="text-sm sm:text-base font-medium break-words">{c.label}</div>

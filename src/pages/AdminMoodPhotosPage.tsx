@@ -690,7 +690,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               </button>
 
               {analyzed && aiReasoning && (
-                <div className="p-3 bg-[#FAF5F2] rounded-lg border border-[#F4E8E3]">
+                <div className="p-3 bg-[#F5F0EB] rounded-lg border border-[#F4E8E3]">
                   <div className="flex items-center gap-2 mb-1">
                     <Zap className="w-4 h-4 text-[#9A503B]" />
                     <span className="text-xs font-medium text-[#9A503B]">
@@ -772,8 +772,8 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                       onClick={() => toggleColor(name)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
                         selected
-                          ? 'border-[#9A503B] bg-[#FAF5F2] text-[#9A503B] ring-1 ring-[#9A503B]'
-                          : 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:border-[#D4856E]'
+                          ? 'border-[#9A503B] bg-[#F5F0EB] text-[#9A503B] ring-1 ring-[#9A503B]'
+                          : 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:border-[#B55E45]'
                       }`}
                     >
                       <div className="w-3 h-3 rounded-full border border-black/10" style={{ backgroundColor: hex }} />

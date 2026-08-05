@@ -316,7 +316,7 @@ export default function AdminSwipeAnalyticsPage() {
         </div>
 
         {/* Recommendations */}
-        <div className="mt-12 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-8 border border-[#F4E8E3]">
+        <div className="mt-12 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-8 border border-[#F4E8E3]">
           <h3 className="text-xl font-bold mb-4">💡 Recommendations</h3>
           <ul className="space-y-2 text-gray-700">
             <li className="flex items-start gap-2">

@@ -261,7 +261,7 @@ export function PremiumActionCard({
   const isMobile = useMobile();
 
   const content = (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-[#FAFAF8] border-2 border-[#E5E5E5] hover:border-[#D4856E] transition-all group cursor-pointer">
+    <div className="flex items-center gap-4 p-4 rounded-xl bg-[#FAFAF8] border-2 border-[#E5E5E5] hover:border-[#B55E45] transition-all group cursor-pointer">
       <div
         className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white flex-shrink-0 shadow-lg ${!isMobile && 'group-hover:scale-110'} transition-transform`}
       >
@@ -360,7 +360,7 @@ export function PremiumTabButton({
       className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
         isActive
           ? 'bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white shadow-lg'
-          : 'bg-[#FFFFFF] text-[#1A1A1A] border-2 border-[#E5E5E5] hover:border-[#D4856E]'
+          : 'bg-[#FFFFFF] text-[#1A1A1A] border-2 border-[#E5E5E5] hover:border-[#B55E45]'
       }`}
     >
       <Icon className="w-4 h-4" />

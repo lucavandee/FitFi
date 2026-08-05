@@ -252,7 +252,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 px-4 py-3 bg-[#FAF5F2] border border-[#F4E8E3] rounded-2xl"
+              className="mt-4 px-4 py-3 bg-[#F5F0EB] border border-[#F4E8E3] rounded-2xl"
             >
               <div className="flex items-start gap-3">
                 <TrendingUp size={20} className="text-[#9A503B] mt-0.5" />
@@ -283,7 +283,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                     {currentOutfit.badges?.map((badge) => (
                       <span
                         key={badge}
-                        className="px-3 py-1 text-xs font-semibold bg-[#FAF5F2] text-[#9A503B] rounded-full"
+                        className="px-3 py-1 text-xs font-semibold bg-[#F5F0EB] text-[#9A503B] rounded-full"
                       >
                         {badge}
                       </span>
@@ -320,7 +320,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                   <p className="text-[#1A1A1A] mb-4">{currentOutfit.explanation}</p>
 
                   {currentOutfit.nova_insight && (
-                    <div className="flex items-start gap-3 p-4 bg-[#FAF5F2] rounded-2xl">
+                    <div className="flex items-start gap-3 p-4 bg-[#F5F0EB] rounded-2xl">
                       <Sparkles size={18} className="text-[#9A503B] mt-0.5" />
                       <p className="text-sm text-[#1A1A1A]">
                         {currentOutfit.nova_insight}

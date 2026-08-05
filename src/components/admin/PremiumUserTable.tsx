@@ -42,7 +42,7 @@ export default function PremiumUserTable({
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#B55E45] to-[#8A3D28] flex items-center justify-center text-white font-semibold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center text-white font-semibold text-sm">
                       {user.full_name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                     <div>

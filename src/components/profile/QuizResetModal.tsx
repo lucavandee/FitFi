@@ -100,7 +100,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <X className="w-5 h-5 text-[#6E6E6E]" />
         </button>
 
-        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#FAF5F2] mb-6 mx-auto">
+        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#F5F0EB] mb-6 mx-auto">
           <AlertTriangle className="w-8 h-8 text-[#9A503B]" />
         </div>
 
@@ -113,8 +113,8 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
         </p>
 
         {currentArchetype && (
-          <div className="bg-[#FAF5F2] dark:bg-[#5A2010] rounded-xl p-3 mb-4 text-center border border-[#F4E8E3]">
-            <p className="text-sm text-[#9A503B] dark:text-[#D4856E]">
+          <div className="bg-[#F5F0EB] dark:bg-[#1A1A1A] rounded-xl p-3 mb-4 text-center border border-[#F4E8E3]">
+            <p className="text-sm text-[#9A503B] dark:text-[#B55E45]">
               Huidig archetype: <strong>{currentArchetype}</strong>
             </p>
           </div>

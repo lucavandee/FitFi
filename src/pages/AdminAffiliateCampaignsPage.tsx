@@ -231,7 +231,7 @@ export default function AdminAffiliateCampaignsPage() {
         </button>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
               <Link className="w-5 h-5 text-[#9A503B]" />
             </div>
             <div>
@@ -244,7 +244,7 @@ export default function AdminAffiliateCampaignsPage() {
               <button
                 onClick={handleSyncAll}
                 disabled={syncingId !== null}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F0EB] transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${syncingId ? "animate-spin" : ""}`} />
                 Alles synchroniseren ({activeCampaigns.length})
@@ -271,7 +271,7 @@ export default function AdminAffiliateCampaignsPage() {
               </h2>
               <button
                 onClick={() => setShowForm(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#FAF5F2] text-[#6E6E6E] transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F5F0EB] text-[#6E6E6E] transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -287,7 +287,7 @@ export default function AdminAffiliateCampaignsPage() {
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="bijv. H&M NL Dames"
-                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D4856E]"
+                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                 />
               </div>
 
@@ -297,7 +297,7 @@ export default function AdminAffiliateCampaignsPage() {
                   <select
                     value={form.provider}
                     onChange={e => setForm(f => ({ ...f, provider: e.target.value }))}
-                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D4856E]"
+                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                   >
                     <option value="daisycon">Daisycon</option>
                     <option value="awin">Awin</option>
@@ -311,7 +311,7 @@ export default function AdminAffiliateCampaignsPage() {
                     value={form.program_id}
                     onChange={e => setForm(f => ({ ...f, program_id: e.target.value }))}
                     placeholder="bijv. 17004"
-                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D4856E]"
+                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                   />
                 </div>
               </div>
@@ -325,7 +325,7 @@ export default function AdminAffiliateCampaignsPage() {
                   value={form.feed_url}
                   onChange={e => setForm(f => ({ ...f, feed_url: e.target.value }))}
                   placeholder="https://daisycon.io/datafeed/?media_id=..."
-                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D4856E] font-mono"
+                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45] font-mono"
                 />
                 <p className="text-xs text-[#6E6E6E] mt-1">
                   De volledige feed URL inclusief je media_id en alle parameters
@@ -339,7 +339,7 @@ export default function AdminAffiliateCampaignsPage() {
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   rows={2}
                   placeholder="Optioneel: bijv. 'alleen dames, 3000 producten'"
-                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#D4856E] resize-none"
+                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45] resize-none"
                 />
               </div>
 
@@ -357,7 +357,7 @@ export default function AdminAffiliateCampaignsPage() {
             <div className="px-6 pb-6 flex gap-2 justify-end">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors"
+                className="px-4 py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB] transition-colors"
               >
                 Annuleren
               </button>
@@ -381,7 +381,7 @@ export default function AdminAffiliateCampaignsPage() {
         </div>
       ) : campaigns.length === 0 ? (
         <div className="rounded-2xl bg-white border border-[#E5E5E5] p-12 text-center" style={{ boxShadow: "0 2px 12px rgba(30,35,51,0.06)" }}>
-          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F2] flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-4">
             <Link className="w-6 h-6 text-[#9A503B]" />
           </div>
           <h3 className="font-bold text-[#1A1A1A] mb-2">Geen campagnes</h3>
@@ -417,7 +417,7 @@ export default function AdminAffiliateCampaignsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold text-[#1A1A1A]">{campaign.name}</h3>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#FAF5F2] text-[#9A503B] font-medium capitalize">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#F5F0EB] text-[#9A503B] font-medium capitalize">
                           {campaign.provider}
                         </span>
                         {!campaign.is_active && (
@@ -465,7 +465,7 @@ export default function AdminAffiliateCampaignsPage() {
                       </button>
                       <button
                         onClick={() => openEdit(campaign)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E5E5E5] text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E5E5E5] text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB] transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
@@ -482,7 +482,7 @@ export default function AdminAffiliateCampaignsPage() {
 
                 {/* Sync result */}
                 {result && (
-                  <div className={`px-5 py-3 border-t border-[#E5E5E5] text-xs flex items-center gap-3 ${result.success ? "bg-[#FAF5F2]" : "bg-red-50"}`}>
+                  <div className={`px-5 py-3 border-t border-[#E5E5E5] text-xs flex items-center gap-3 ${result.success ? "bg-[#F5F0EB]" : "bg-red-50"}`}>
                     {result.success ? (
                       <CheckCircle className="w-4 h-4 text-[#3D8B5E] flex-shrink-0" />
                     ) : (
@@ -504,7 +504,7 @@ export default function AdminAffiliateCampaignsPage() {
       )}
 
       {/* Link to manual import */}
-      <div className="mt-6 rounded-xl bg-[#FAF5F2] border border-[#FAF5F2] p-4 flex items-center justify-between gap-4">
+      <div className="mt-6 rounded-xl bg-[#F5F0EB] border border-[#F5F0EB] p-4 flex items-center justify-between gap-4">
         <p className="text-sm text-[#6E6E6E]">
           Wil je een feed handmatig als JSON plakken of uploaden?
         </p>

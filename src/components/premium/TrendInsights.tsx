@@ -20,7 +20,7 @@ const TREND_INSIGHTS_2025: Record<string, TrendData> = {
     title: "Quiet Luxury Dominates",
     description: "Aardse tinten en rijke neutrale kleuren zijn DE trend van 2025. Camel, Cognac en Terracotta zijn overal te zien op runways en in high-street fashion.",
     colors: [
-      { hex: '#D4A373', name: 'Camel' },
+      { hex: '#B55E45', name: 'Camel' },
       { hex: '#A0785A', name: 'Cognac' },
       { hex: '#C17767', name: 'Terracotta' },
       { hex: '#6B8E23', name: 'Olijfgroen' }
@@ -92,7 +92,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
 
   if (compact) {
     return (
-      <div className="bg-gradient-to-br from-[#FFFFFF] to-[#FAF5F2] rounded-2xl p-5 border border-[#F4E8E3] shadow-sm">
+      <div className="bg-gradient-to-br from-[#FFFFFF] to-[#F5F0EB] rounded-2xl p-5 border border-[#F4E8E3] shadow-sm">
         <div className="flex items-start gap-3 mb-4">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />
@@ -171,7 +171,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
               {seasonTrend.colors.map((color, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#D4856E] transition-colors"
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#B55E45] transition-colors"
                 >
                   <div
                     className="w-16 h-16 rounded-full shadow-sm border-2 border-white"
@@ -190,7 +190,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
             {seasonTrend.tags.map((tag, idx) => (
               <span
                 key={idx}
-                className="text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#8A3D28] font-medium border border-[#F4E8E3]"
+                className="text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] text-[#9A503B] font-medium border border-[#F4E8E3]"
               >
                 {tag}
               </span>
@@ -198,7 +198,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           </div>
 
           {/* Shopping Tip */}
-          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3]">
+          <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3]">
             <div className="flex items-start gap-3">
               <Star className="w-5 h-5 text-[#B55E45] flex-shrink-0 mt-0.5" />
               <div>
@@ -227,9 +227,9 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           {UNIVERSAL_TRENDS_2025.map((trend, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-3 p-4 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#D4856E] transition-colors group"
+              className="flex items-start gap-3 p-4 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#B55E45] transition-colors group"
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FAF5F2] flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center group-hover:scale-110 transition-transform">
                 <trend.icon className="w-5 h-5 text-[#9A503B]" />
               </div>
               <div className="flex-1">

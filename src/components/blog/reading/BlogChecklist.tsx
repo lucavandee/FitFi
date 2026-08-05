@@ -32,7 +32,7 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
           <button
             key={idx}
             onClick={() => toggleItem(idx)}
-            className="w-full flex items-start gap-3 text-left group hover:bg-[#FAF5F2] p-3 rounded-lg transition-colors"
+            className="w-full flex items-start gap-3 text-left group hover:bg-[#F5F0EB] p-3 rounded-lg transition-colors"
           >
             {checked.has(idx) ? (
               <CheckSquare className="w-5 h-5 flex-shrink-0 text-[#B55E45] mt-0.5" />

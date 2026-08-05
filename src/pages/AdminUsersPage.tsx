@@ -28,7 +28,7 @@ type SortDir = 'asc' | 'desc';
 const TIER_BADGE: Record<string, { label: string; cls: string }> = {
   founder: { label: 'Founder', cls: 'bg-amber-50 text-amber-700 border border-amber-200' },
   premium: { label: 'Premium', cls: 'bg-blue-50 text-[#6366F1] border border-blue-200' },
-  free:    { label: 'Free',    cls: 'bg-[#FAF5F2] text-[#6E6E6E] border border-[#E5E5E5]' },
+  free:    { label: 'Free',    cls: 'bg-[#F5F0EB] text-[#6E6E6E] border border-[#E5E5E5]' },
 };
 
 function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
@@ -213,7 +213,7 @@ export default function AdminUsersPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/admin')}
-              className="p-2 rounded-lg border border-[#E5E5E5] hover:bg-[#FAF5F2] transition-colors"
+              className="p-2 rounded-lg border border-[#E5E5E5] hover:bg-[#F5F0EB] transition-colors"
             >
               <ArrowLeft className="w-4 h-4 text-[#6E6E6E]" />
             </button>
@@ -231,14 +231,14 @@ export default function AdminUsersPage() {
             <button
               onClick={loadUsers}
               disabled={loading}
-              className="p-2 rounded-lg border border-[#E5E5E5] hover:bg-[#FAF5F2] transition-colors"
+              className="p-2 rounded-lg border border-[#E5E5E5] hover:bg-[#F5F0EB] transition-colors"
             >
               <RefreshCw className={`w-4 h-4 text-[#6E6E6E] ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E5E5E5] text-sm font-medium text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E5E5E5] text-sm font-medium text-[#1A1A1A] hover:bg-[#F5F0EB] transition-colors"
             >
               <Download className="w-4 h-4" />
               {exporting ? 'Exporteren...' : 'CSV Export'}
@@ -316,7 +316,7 @@ export default function AdminUsersPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-[#FAF5F2] border-b border-[#E5E5E5]">
+                    <tr className="bg-[#F5F0EB] border-b border-[#E5E5E5]">
                       <th className="px-5 py-3 text-left text-xs font-semibold text-[#6E6E6E] uppercase tracking-wider">
                         <div className="flex items-center gap-1">
                           Gebruiker
@@ -358,12 +358,12 @@ export default function AdminUsersPage() {
                       return (
                         <tr
                           key={u.id}
-                          className="hover:bg-[#FAF5F2] transition-colors cursor-pointer group"
+                          className="hover:bg-[#F5F0EB] transition-colors cursor-pointer group"
                           onClick={() => setSelectedUserId(u.id)}
                         >
                           <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-full bg-[#FAF5F2] flex items-center justify-center flex-shrink-0 text-xs font-bold text-[#9A503B]">
+                              <div className="w-8 h-8 rounded-full bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 text-xs font-bold text-[#9A503B]">
                                 {(u.full_name || u.email)[0].toUpperCase()}
                               </div>
                               <div className="min-w-0">
@@ -409,7 +409,7 @@ export default function AdminUsersPage() {
                             <div className="relative inline-block">
                               <button
                                 onClick={() => setOpenMenuId(openMenuId === u.id ? null : u.id)}
-                                className="p-1.5 rounded-lg hover:bg-[#FAF5F2] transition-colors"
+                                className="p-1.5 rounded-lg hover:bg-[#F5F0EB] transition-colors"
                               >
                                 <MoreVertical className="w-4 h-4 text-[#6E6E6E]" />
                               </button>
@@ -423,7 +423,7 @@ export default function AdminUsersPage() {
                                         key={t}
                                         onClick={() => handleQuickTier(u.id, t)}
                                         disabled={u.tier === t}
-                                        className="w-full text-left px-3 py-2 text-sm text-[#1A1A1A] hover:bg-[#FAF5F2] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                                        className="w-full text-left px-3 py-2 text-sm text-[#1A1A1A] hover:bg-[#F5F0EB] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                                       >
                                         {t === 'founder' && <Crown className="w-3.5 h-3.5 text-amber-600" />}
                                         {QUICK_TIER_LABELS[t]}
@@ -433,7 +433,7 @@ export default function AdminUsersPage() {
                                     <div className="border-t border-[#E5E5E5] my-1" />
                                     <button
                                       onClick={() => { setOpenMenuId(null); setSelectedUserId(u.id); }}
-                                      className="w-full text-left px-3 py-2 text-sm text-[#1A1A1A] hover:bg-[#FAF5F2]"
+                                      className="w-full text-left px-3 py-2 text-sm text-[#1A1A1A] hover:bg-[#F5F0EB]"
                                     >
                                       Details bekijken
                                     </button>
@@ -458,7 +458,7 @@ export default function AdminUsersPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between px-5 py-3 border-t border-[#E5E5E5] bg-[#FAF5F2]">
+                <div className="flex items-center justify-between px-5 py-3 border-t border-[#E5E5E5] bg-[#F5F0EB]">
                   <span className="text-xs text-[#6E6E6E]">
                     {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filtered.length)} van {filtered.length}
                   </span>

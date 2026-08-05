@@ -89,7 +89,7 @@ export function ResultsStickyCTAFixed({
           </div>
 
           {/* Helper Text (desktop only) */}
-          <div className="hidden sm:block bg-[#FAF5F2] border-t border-[#FAF5F2]">
+          <div className="hidden sm:block bg-[#F5F0EB] border-t border-[#F5F0EB]">
             <div className="max-w-7xl mx-auto px-4 py-2">
               <p className="text-xs text-[#6E6E6E] text-center">
                 Tip: Bewaar je favoriete outfits met het hart-icoon op elke outfit card

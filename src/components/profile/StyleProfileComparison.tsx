@@ -158,21 +158,21 @@ export function StyleProfileComparison({ currentProfile, history }: StyleProfile
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010] dark:to-[#5A2010] rounded-2xl p-6 border-2 border-[#D4856E] relative overflow-hidden"
+            className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] dark:from-[#1A1A1A] dark:to-[#1A1A1A] rounded-2xl p-6 border-2 border-[#B55E45] relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 bg-[#B55E45] text-white text-xs px-3 py-1 rounded-bl-lg font-semibold">
               Huidig profiel
             </div>
 
             <div className="mt-4">
-              <div className="flex items-center gap-2 text-xs text-[#9A503B] dark:text-[#D4856E] mb-4">
+              <div className="flex items-center gap-2 text-xs text-[#9A503B] dark:text-[#B55E45] mb-4">
                 <Calendar className="w-3 h-3" />
                 {formatDate(currentProfile.created_at)}
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <div className="text-xs text-[#9A503B] dark:text-[#D4856E] mb-1">
+                  <div className="text-xs text-[#9A503B] dark:text-[#B55E45] mb-1">
                     Archetype
                   </div>
                   <div className="text-lg font-bold text-[#1A1A1A] flex items-center gap-2">
@@ -186,7 +186,7 @@ export function StyleProfileComparison({ currentProfile, history }: StyleProfile
                 </div>
 
                 <div>
-                  <div className="text-xs text-[#9A503B] dark:text-[#D4856E] mb-1">
+                  <div className="text-xs text-[#9A503B] dark:text-[#B55E45] mb-1">
                     Kleurprofiel
                   </div>
                   <div className="text-sm font-medium text-[#1A1A1A] flex items-center gap-2">
@@ -206,8 +206,8 @@ export function StyleProfileComparison({ currentProfile, history }: StyleProfile
 
       {/* Insight */}
       {hasChanged ? (
-        <div className="bg-[#FAF5F2] dark:bg-[#5A2010] rounded-xl p-4 border border-[#F4E8E3]">
-          <p className="text-sm text-[#9A503B] dark:text-[#D4856E]">
+        <div className="bg-[#F5F0EB] dark:bg-[#1A1A1A] rounded-xl p-4 border border-[#F4E8E3]">
+          <p className="text-sm text-[#9A503B] dark:text-[#B55E45]">
             <strong>Je stijl is geëvolueerd!</strong> {oldArchetype !== newArchetype && `Van ${oldArchetype} naar ${newArchetype}.`} {oldColor !== newColor && `Je kleurprofiel is veranderd van ${oldColor} naar ${newColor}.`}
           </p>
         </div>

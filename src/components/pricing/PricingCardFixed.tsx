@@ -58,7 +58,7 @@ export function PricingCardFixed({
       className={`
         relative p-8 rounded-2xl transition-all
         ${recommended
-          ? 'border-4 border-[#B55E45] shadow-xl scale-105 bg-gradient-to-br from-[#FAF5F2] to-white'
+          ? 'border-4 border-[#B55E45] shadow-xl scale-105 bg-gradient-to-br from-[#F5F0EB] to-white'
           : 'border-2 border-[#E5E5E5] bg-white hover:border-[#F4E8E3] hover:shadow-lg'
         }
       `}

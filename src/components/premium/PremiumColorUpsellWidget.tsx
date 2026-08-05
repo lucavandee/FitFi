@@ -16,7 +16,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
 
   if (inline) {
     return (
-      <div className="bg-gradient-to-br from-[#FFFFFF] to-[#FAF5F2] border border-[#F4E8E3] rounded-2xl p-6 shadow-sm">
+      <div className="bg-gradient-to-br from-[#FFFFFF] to-[#F5F0EB] border border-[#F4E8E3] rounded-2xl p-6 shadow-sm">
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
             <Palette className="w-6 h-6 text-white" />
@@ -100,7 +100,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
         <div className="p-6">
           <div className="space-y-4 mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FAF5F2] flex items-center justify-center">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-[#9A503B]" />
               </div>
               <div>
@@ -114,7 +114,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FAF5F2] flex items-center justify-center">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center">
                 <Palette className="w-5 h-5 text-[#9A503B]" />
               </div>
               <div>
@@ -128,7 +128,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FAF5F2] flex items-center justify-center">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center">
                 <Crown className="w-5 h-5 text-[#9A503B]" />
               </div>
               <div>
@@ -142,14 +142,14 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
             </div>
           </div>
 
-          <div className="bg-[#FAF5F2] rounded-2xl p-4 mb-6">
+          <div className="bg-[#F5F0EB] rounded-2xl p-4 mb-6">
             <div className="flex items-center gap-2 mb-2">
               <Lock className="w-4 h-4 text-[#9A503B]" />
-              <span className="text-sm font-medium text-[#5A2010]">
+              <span className="text-sm font-medium text-[#1A1A1A]">
                 Premium vereist
               </span>
             </div>
-            <p className="text-xs text-[#8A3D28]">
+            <p className="text-xs text-[#9A503B]">
               Kleurenanalyse gebruikt geavanceerde AI (OpenAI Vision) en is exclusief beschikbaar voor Premium members. Vanaf €9,99/maand.
             </p>
           </div>

@@ -30,7 +30,7 @@ export function ShoppingGuidance({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] rounded-2xl border-2 border-[#F4E8E3] p-8 shadow-xl"
+      className="bg-gradient-to-br from-[#F5F0EB] via-white to-[#F5F0EB] rounded-2xl border-2 border-[#F4E8E3] p-8 shadow-xl"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
@@ -107,8 +107,8 @@ export function ShoppingGuidance({
       </div>
 
       {/* Pro Tip */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-xl">
-        <p className="text-sm text-[#8A3D28] leading-relaxed">
+      <div className="mt-6 p-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-xl">
+        <p className="text-sm text-[#9A503B] leading-relaxed">
           <strong>Pro tip:</strong> Screenshot deze sectie en bewaar hem in je telefoon.
           Zo heb je altijd je persoonlijke kleurgids bij de hand tijdens het shoppen!
         </p>

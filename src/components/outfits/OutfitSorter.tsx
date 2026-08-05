@@ -82,7 +82,7 @@ export default function OutfitSorter({
             'flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all',
             'hover:border-[#B55E45] focus:outline-none focus:ring-4 focus:ring-[#B55E45]/20',
             isOpen
-              ? 'border-[#B55E45] bg-[#FAF5F2]'
+              ? 'border-[#B55E45] bg-[#F5F0EB]'
               : 'border-[#E5E5E5] bg-[#FFFFFF]'
           )}
         >
@@ -114,7 +114,7 @@ export default function OutfitSorter({
                   className={cn(
                     'w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-left transition-all',
                     isActive
-                      ? 'bg-[#FAF5F2] text-[#B55E45]'
+                      ? 'bg-[#F5F0EB] text-[#B55E45]'
                       : 'hover:bg-[#FAFAF8] text-[#1A1A1A]'
                   )}
                 >

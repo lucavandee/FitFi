@@ -13,7 +13,7 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
   const bars = [
     { label: '7 dagen', value: data.last_7d, color: '#B55E45' },
     { label: '30 dagen', value: data.last_30d, color: '#9A503B' },
-    { label: '90 dagen', value: data.last_90d, color: '#8A3D28' },
+    { label: '90 dagen', value: data.last_90d, color: '#9A503B' },
   ];
 
   return (

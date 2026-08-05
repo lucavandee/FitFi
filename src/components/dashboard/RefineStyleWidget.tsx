@@ -83,9 +83,9 @@ export function RefineStyleWidget() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] border border-[#E5E5E5] shadow-sm"
+      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#F5F0EB] via-white to-[#F5F0EB] border border-[#E5E5E5] shadow-sm"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2]/40 via-transparent to-[#FAF5F2]/30 opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB]/40 via-transparent to-[#F5F0EB]/30 opacity-60" />
 
       <div className="relative p-6">
         <div className="flex items-start gap-4">
@@ -126,7 +126,7 @@ export function RefineStyleWidget() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
               onClick={handleRefineStyle}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#B55E45] to-[#9A503B] text-white rounded-xl font-semibold hover:from-[#9A503B] hover:to-[#8A3D28] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#B55E45] to-[#9A503B] text-white rounded-xl font-semibold hover:from-[#9A503B] hover:to-[#9A503B] transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm"
             >
               <span>{isPartiallyComplete ? 'Verder gaan' : 'Start nu'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -143,7 +143,7 @@ export function RefineStyleWidget() {
                   <span>Voortgang</span>
                   <span className="text-[#9A503B]">{swipeCount}/10</span>
                 </div>
-                <div className="h-2 bg-[#FAF5F2] rounded-full overflow-hidden shadow-inner">
+                <div className="h-2 bg-[#F5F0EB] rounded-full overflow-hidden shadow-inner">
                   <motion.div
                     className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full"
                     initial={{ width: 0 }}

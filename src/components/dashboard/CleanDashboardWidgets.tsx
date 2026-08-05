@@ -26,7 +26,7 @@ export function QuickInsightsWidget({ insights, onDismiss }: QuickInsightsWidget
   return (
     <BentoCard size="large">
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
           <Sparkles className="w-5 h-5 text-[#9A503B]" />
         </div>
         <div className="flex-1 min-w-0">
@@ -59,7 +59,7 @@ export function PhotoUploadWidget() {
   return (
     <BentoCard size="medium">
       <div className="flex flex-col items-center text-center py-4">
-        <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center mb-3">
+        <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center mb-3">
           <Camera className="w-6 h-6 text-[#9A503B]" />
         </div>
         <h3 className="text-sm font-bold text-[#1A1A1A] mb-1">
@@ -291,7 +291,7 @@ export function RecentOutfitsWidget({ outfitCount, featuredImage }: RecentOutfit
                 {outfitCount}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center">
               <Target className="w-6 h-6 text-[#9A503B]" />
             </div>
           </div>

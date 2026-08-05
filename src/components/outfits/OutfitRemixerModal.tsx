@@ -181,7 +181,7 @@ export default function OutfitRemixerModal({
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Current Outfit Stats */}
-            <div className="bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-2xl p-4">
+            <div className="bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3] rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-[#9A503B] mb-1">
@@ -303,7 +303,7 @@ export default function OutfitRemixerModal({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#D4856E] transition-colors"
+                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#B55E45] transition-colors"
                     >
                       <div className="flex items-start gap-4">
                         {/* Product Image */}

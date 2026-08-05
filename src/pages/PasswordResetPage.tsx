@@ -73,7 +73,7 @@ export default function PasswordResetPage() {
           {/* Back link */}
           <NavLink
             to="/inloggen"
-            className="inline-flex items-center gap-1.5 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] mb-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E] rounded-lg"
+            className="inline-flex items-center gap-1.5 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] mb-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] rounded-lg"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Terug naar inloggen
@@ -87,7 +87,7 @@ export default function PasswordResetPage() {
               {/* Icon */}
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
-                style={{ background: "#FAF5F2" }}
+                style={{ background: "#F5F0EB" }}
               >
                 <Lock className="w-6 h-6" style={{ color: "#9A503B" }} aria-hidden="true" />
               </div>
@@ -191,7 +191,7 @@ export default function PasswordResetPage() {
             >
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
-                style={{ background: "#FAF5F2" }}
+                style={{ background: "#F5F0EB" }}
               >
                 <CheckCircle className="w-7 h-7" style={{ color: "#9A503B" }} aria-hidden="true" />
               </div>
@@ -208,7 +208,7 @@ export default function PasswordResetPage() {
               <div className="space-y-2.5">
                 <button
                   onClick={() => { setSent(false); setEmail(""); setTouched(false); }}
-                  className="w-full py-3 rounded-xl font-semibold text-sm border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] transition-all"
+                  className="w-full py-3 rounded-xl font-semibold text-sm border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45] hover:bg-[#F5F0EB] transition-all"
                 >
                   Ander e-mailadres proberen
                 </button>

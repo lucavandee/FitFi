@@ -63,7 +63,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
           </button>
           <button
             onClick={handleCancel}
-            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center border border-[#E5E5E5] text-[#6E6E6E] rounded-xl hover:border-[#D4856E] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors"
+            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center border border-[#E5E5E5] text-[#6E6E6E] rounded-xl hover:border-[#B55E45] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors"
             aria-label="Annuleren"
           >
             <X className="w-4 h-4" />
@@ -77,7 +77,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
               setEditValue(value);
               setIsEditing(true);
             }}
-            className="h-9 w-9 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#FAF5F2] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors flex-shrink-0"
+            className="h-9 w-9 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#F5F0EB] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors flex-shrink-0"
             aria-label={`Wijzig ${label.toLowerCase()}`}
           >
             <Edit2 className="w-4 h-4" />

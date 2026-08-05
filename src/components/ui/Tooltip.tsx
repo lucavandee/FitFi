@@ -73,7 +73,7 @@ const SIZE_VARIANTS = {
 const THEME_VARIANTS = {
   dark: 'bg-gray-900 text-white border-gray-800',
   light: 'bg-white text-gray-900 border-gray-200 shadow-xl',
-  primary: 'bg-[#9A503B] text-white border-[#8A3D28]'
+  primary: 'bg-[#9A503B] text-white border-[#9A503B]'
 };
 
 const ARROW_SIZE = 6; // pixels

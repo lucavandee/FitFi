@@ -44,7 +44,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
   return (
     <BentoCard size="wide" className="relative overflow-hidden" disableAnimation>
       {/* Subtle gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] to-transparent opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] to-transparent opacity-30" />
 
       <div className="relative z-10 flex items-start gap-6">
         {/* Avatar */}
@@ -186,7 +186,7 @@ export function QuickStatsWidget({ stats }: QuickStatsWidgetProps) {
                 <p className="text-xs text-[#6E6E6E]">{stat.subValue}</p>
               )}
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#9A503B]">
+            <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center text-[#9A503B]">
               <stat.icon className="w-5 h-5" />
             </div>
           </div>
@@ -221,7 +221,7 @@ export function ProfileQuickActions({ actions }: ProfileQuickActionsProps) {
             to={action.to}
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-colors group"
           >
-            <div className="w-10 h-10 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#9A503B] group-hover:bg-[#F4E8E3] transition-colors">
+            <div className="w-10 h-10 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#9A503B] group-hover:bg-[#F4E8E3] transition-colors">
               <action.icon className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
@@ -302,7 +302,7 @@ export function RecentActivityWidget({ activities }: RecentActivityWidgetProps) 
 
             return (
               <div key={index} className="flex items-center gap-3 p-2 rounded-lg">
-                <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#9A503B]">
+                <div className="w-8 h-8 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#9A503B]">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">

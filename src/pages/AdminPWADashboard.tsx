@@ -209,7 +209,7 @@ export default function AdminPWADashboard() {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
         <div className="max-w-2xl text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#FAF5F2] flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#F5F0EB] flex items-center justify-center">
             <XCircle className="w-10 h-10 text-[#B55E45]" />
           </div>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">
@@ -228,7 +228,7 @@ export default function AdminPWADashboard() {
             </div>
           )}
 
-          <div className="bg-[#FAF5F2] border border-[#E5E5E5] rounded-lg p-4 text-left text-sm text-[#6E6E6E] mb-6">
+          <div className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-lg p-4 text-left text-sm text-[#6E6E6E] mb-6">
             <p className="font-medium text-[#1A1A1A] mb-2">Voor developers:</p>
             <p className="mb-2">Je bent ingelogd als: <strong>{user?.email || 'onbekend'}</strong></p>
             <p className="mb-2">Voer dit SQL script uit in Supabase SQL Editor:</p>
@@ -257,10 +257,10 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
       <div className="min-h-screen bg-[#FAFAF8] p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-10 bg-[#FAF5F2] rounded w-1/3" />
+            <div className="h-10 bg-[#F5F0EB] rounded w-1/3" />
             <div className="grid gap-6 md:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-32 bg-[#FAF5F2] rounded-xl" />
+                <div key={i} className="h-32 bg-[#F5F0EB] rounded-xl" />
               ))}
             </div>
           </div>
@@ -335,7 +335,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
               return (
                 <div
                   key={type}
-                  className="p-4 rounded-lg bg-[#FAF5F2] border border-[#E5E5E5]"
+                  className="p-4 rounded-lg bg-[#F5F0EB] border border-[#E5E5E5]"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-[#1A1A1A] capitalize">
@@ -463,7 +463,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
 
           <div className="divide-y divide-[#E5E5E5]">
             {recentNotifications.map((log) => (
-              <div key={log.id} className="p-4 hover:bg-[#FAF5F2] transition-colors">
+              <div key={log.id} className="p-4 hover:bg-[#F5F0EB] transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">

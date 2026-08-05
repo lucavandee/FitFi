@@ -78,7 +78,7 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/20 dark:to-[#5A2010]/20 border-2 border-dashed border-[#D4856E] dark:border-[#9A503B] rounded-2xl p-8 text-center"
+      className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] dark:from-[#1A1A1A]/20 dark:to-[#1A1A1A]/20 border-2 border-dashed border-[#B55E45] dark:border-[#9A503B] rounded-2xl p-8 text-center"
     >
       <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
         <Sparkles className="w-10 h-10 text-white" />

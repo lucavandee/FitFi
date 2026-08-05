@@ -186,7 +186,7 @@ export function ProcessingOverlay({
                         isCompleted
                           ? 'bg-green-100 text-green-600'
                           : isCurrent
-                          ? 'bg-[#FAF5F2] text-[#B55E45]'
+                          ? 'bg-[#F5F0EB] text-[#B55E45]'
                           : 'bg-[#FAFAF8] text-[#6E6E6E]'
                       }`}
                     >

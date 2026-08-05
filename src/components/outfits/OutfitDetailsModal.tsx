@@ -216,7 +216,7 @@ export default function OutfitDetailsModal({
                       {outfit.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#FAF5F2] text-[#B55E45] rounded-full text-xs font-medium"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#F5F0EB] text-[#B55E45] rounded-full text-xs font-medium"
                         >
                           <Tag className="w-3 h-3" />
                           {tag}
@@ -227,7 +227,7 @@ export default function OutfitDetailsModal({
 
                   {/* Explanation */}
                   {outfit.explanation && (
-                    <div className="p-4 bg-[#FAF5F2] border border-[#F4E8E3] rounded-xl">
+                    <div className="p-4 bg-[#F5F0EB] border border-[#F4E8E3] rounded-xl">
                       <div className="flex items-start gap-2 mb-2">
                         <Info className="w-4 h-4 text-[#B55E45] flex-shrink-0 mt-0.5" />
                         <span className="text-sm font-medium text-[#B55E45]">
@@ -284,7 +284,7 @@ export default function OutfitDetailsModal({
                           key={product.id}
                           className={cn(
                             'p-3 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]',
-                            'hover:border-[#D4856E] transition-all',
+                            'hover:border-[#B55E45] transition-all',
                             hasUrl && 'cursor-pointer'
                           )}
                           onClick={() => hasUrl && setSelectedProduct(product)}
@@ -355,7 +355,7 @@ export default function OutfitDetailsModal({
 
                 {/* Sizing Info */}
                 {outfit.products && outfit.products.some(p => p.sizes) && (
-                  <div className="p-4 bg-[#FAF5F2] border border-[#FAF5F2] rounded-xl">
+                  <div className="p-4 bg-[#F5F0EB] border border-[#F5F0EB] rounded-xl">
                     <div className="flex items-start gap-2 mb-1">
                       <TrendingUp className="w-4 h-4 text-[#9A503B] flex-shrink-0 mt-0.5" />
                       <span className="text-sm font-medium text-[#9A503B]">

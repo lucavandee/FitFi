@@ -59,7 +59,7 @@ export default function ColorPalettePreview() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 selectedSeason === season.key
                   ? 'bg-gradient-to-r ' + season.gradient + ' text-white shadow-sm'
-                  : 'bg-[#FAFAF8] text-[#6E6E6E] hover:bg-[#FAF5F2] hover:text-[#9A503B] border border-[#E5E5E5]'
+                  : 'bg-[#FAFAF8] text-[#6E6E6E] hover:bg-[#F5F0EB] hover:text-[#9A503B] border border-[#E5E5E5]'
               }`}
             >
               {season.label}
@@ -91,7 +91,7 @@ export default function ColorPalettePreview() {
 
         {/* Trend Highlights */}
         {selectedSeason === 'herfst' && (
-          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
+          <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
@@ -117,7 +117,7 @@ export default function ColorPalettePreview() {
         )}
 
         {selectedSeason === 'zomer' && (
-          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
+          <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />

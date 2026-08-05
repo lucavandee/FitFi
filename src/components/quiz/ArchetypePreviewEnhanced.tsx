@@ -172,7 +172,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         <div className="sm:hidden">
           <button
             onClick={() => setCollapsed(c => !c)}
-            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl text-left"
+            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3] rounded-xl text-left"
             aria-expanded={!collapsed}
           >
             <div className="flex items-center gap-2 min-w-0">
@@ -185,7 +185,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
             <ChevronDown className={`w-4 h-4 text-[#6E6E6E] flex-shrink-0 transition-transform ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
           </button>
           {!collapsed && (
-            <div className="mt-1 p-4 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-xl">
+            <div className="mt-1 p-4 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3] rounded-xl">
               <p className="text-sm text-[#6E6E6E] mb-2">{config.description}</p>
               <div className="flex flex-wrap gap-1.5">
                 {config.traits.map(trait => (
@@ -197,7 +197,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         </div>
 
         {/* Desktop: full card */}
-        <div className="hidden sm:block bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#F4E8E3] rounded-2xl overflow-hidden relative shadow-lg">
+        <div className="hidden sm:block bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#F4E8E3] rounded-2xl overflow-hidden relative shadow-lg">
 
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4E8E3] rounded-full blur-3xl opacity-20"></div>
@@ -229,7 +229,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                       initial={{ scale: 0 }}
                       animate={{ scale: [0, 1.2, 0] }}
                       transition={{ duration: 0.6 }}
-                      className="absolute inset-0 bg-[#D4856E] rounded-xl opacity-30"
+                      className="absolute inset-0 bg-[#B55E45] rounded-xl opacity-30"
                     />
                   )}
                 </motion.div>
@@ -304,7 +304,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                   {/* Info button */}
                   <button
                     onClick={() => setShowComparison(!showComparison)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/60 hover:bg-white rounded-lg transition-colors text-xs font-medium text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E]"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/60 hover:bg-white rounded-lg transition-colors text-xs font-medium text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
                     aria-label="Bekijk alle archetypes"
                   >
                     <Info className="w-3.5 h-3.5" />

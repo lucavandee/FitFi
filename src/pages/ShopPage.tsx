@@ -204,12 +204,12 @@ export default function ShopPage() {
           >
             <span className="text-[11px] font-bold uppercase tracking-widest text-[#6E6E6E]">Gefilterd op:</span>
             {quizGender !== 'unisex' && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#9A503B]">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F5F0EB] text-[#9A503B]">
                 {quizGender === 'male' ? 'Heren' : 'Dames'}
               </span>
             )}
             {quizBudgetMax && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#9A503B]">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F5F0EB] text-[#9A503B]">
                 Tot €{quizBudgetMax}
               </span>
             )}
@@ -255,7 +255,7 @@ export default function ShopPage() {
               className={`px-3.5 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 (filters.category || '') === cat.value
                   ? 'bg-[#9A503B] text-white'
-                  : 'bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E]'
+                  : 'bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45]'
               }`}
               aria-pressed={(filters.category || '') === cat.value}
             >
@@ -280,7 +280,7 @@ export default function ShopPage() {
                 placeholder="Zoek op product of merk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#D4856E] focus:outline-none focus:ring-2 focus:ring-[#D4856E]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#6E6E6E]"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#B55E45] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#6E6E6E]"
                 aria-label="Zoek producten"
               />
               {searchQuery && (
@@ -299,7 +299,7 @@ export default function ShopPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="appearance-none w-full sm:w-auto pl-3.5 pr-9 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#D4856E] focus:outline-none bg-white text-[#1A1A1A] text-sm cursor-pointer"
+                className="appearance-none w-full sm:w-auto pl-3.5 pr-9 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#B55E45] focus:outline-none bg-white text-[#1A1A1A] text-sm cursor-pointer"
                 aria-label="Sorteer producten"
               >
                 <option value="relevance">Relevantie</option>
@@ -313,7 +313,7 @@ export default function ShopPage() {
             {/* Mobile filter button */}
             <button
               onClick={() => setShowFilters(true)}
-              className="sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] hover:border-[#D4856E] transition-colors"
+              className="sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] hover:border-[#B55E45] transition-colors"
               aria-label="Toon merkfilters"
               aria-expanded={showFilters}
             >
@@ -358,7 +358,7 @@ export default function ShopPage() {
               <button
                 key={brand}
                 onClick={() => toggleBrandFilter(brand)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FAF5F2] text-[#9A503B] rounded-full text-xs font-semibold hover:bg-[#F4E8E3] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F5F0EB] text-[#9A503B] rounded-full text-xs font-semibold hover:bg-[#F4E8E3] transition-colors"
                 aria-label={`Verwijder filter: ${brand}`}
               >
                 {brand}
@@ -402,7 +402,7 @@ export default function ShopPage() {
                       type="checkbox"
                       checked={filters.brands.includes(brand)}
                       onChange={() => toggleBrandFilter(brand)}
-                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#B55E45] cursor-pointer focus:ring-2 focus:ring-[#D4856E]/20"
+                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#B55E45] cursor-pointer focus:ring-2 focus:ring-[#B55E45]/20"
                     />
                     <span className="text-sm text-[#1A1A1A] group-hover:text-[#9A503B] transition-colors">
                       {brand}
@@ -525,7 +525,7 @@ export default function ShopPage() {
                     {searchQuery && (
                       <button
                         onClick={clearSearch}
-                        className="px-5 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
+                        className="px-5 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
                       >
                         Wis zoekopdracht
                       </button>
@@ -599,7 +599,7 @@ export default function ShopPage() {
           >
             <button
               onClick={() => navigate('/results')}
-              className="inline-flex items-center gap-2 px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar rapport

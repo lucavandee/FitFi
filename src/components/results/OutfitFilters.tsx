@@ -89,7 +89,7 @@ export function OutfitFilters({
             onClick={() => setIsExpanded(!isExpanded)}
             aria-expanded={isExpanded}
             aria-controls="outfit-filter-panel"
-            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[#FAF5F2] text-[#9A503B] rounded-xl font-semibold text-sm hover:bg-[#F4E8E3] transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1"
+            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[#F5F0EB] text-[#9A503B] rounded-xl font-semibold text-sm hover:bg-[#F4E8E3] transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1"
           >
             <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             Filters
@@ -134,7 +134,7 @@ export function OutfitFilters({
                 sortBy: e.target.value as FilterOptions["sortBy"],
               })
             }
-            className="px-3 py-2 min-h-[40px] bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm font-medium text-[#1A1A1A] hover:border-[#D4856E] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
+            className="px-3 py-2 min-h-[40px] bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm font-medium text-[#1A1A1A] hover:border-[#B55E45] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.id} value={option.id}>
@@ -153,7 +153,7 @@ export function OutfitFilters({
               onClick={() => onChange({ ...filters, viewMode: "grid-2" })}
               className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] ${
                 filters.viewMode === "grid-2"
-                  ? "bg-[#FAF5F2] text-[#9A503B]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
               aria-label="2 kolommen"
@@ -165,7 +165,7 @@ export function OutfitFilters({
               onClick={() => onChange({ ...filters, viewMode: "grid-3" })}
               className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] ${
                 filters.viewMode === "grid-3"
-                  ? "bg-[#FAF5F2] text-[#9A503B]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
               aria-label="3 kolommen"
@@ -179,7 +179,7 @@ export function OutfitFilters({
               onClick={() => onChange({ ...filters, viewMode: "list" })}
               className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] ${
                 filters.viewMode === "list"
-                  ? "bg-[#FAF5F2] text-[#9A503B]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
               aria-label="Lijstweergave"
@@ -217,7 +217,7 @@ export function OutfitFilters({
                       className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1 ${
                         filters.categories.includes(category.id)
                           ? "bg-[#9A503B] text-white"
-                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]"
+                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45]"
                       }`}
                     >
                       {category.label}
@@ -240,7 +240,7 @@ export function OutfitFilters({
                       className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1 ${
                         filters.seasons.includes(season.id)
                           ? "bg-[#9A503B] text-white"
-                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]"
+                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45]"
                       }`}
                     >
                       {season.label}

@@ -186,7 +186,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
         <button
           type="button"
           onClick={() => setShowTips(p => !p)}
-          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-[#1A1A1A] hover:bg-[#F5F0EB] transition-colors"
         >
           <span className="flex items-center gap-2">
             <Info className="w-4 h-4 text-[#9A503B]" />
@@ -307,7 +307,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               className="relative rounded-2xl transition-all duration-200 cursor-pointer"
               style={{
                 border: `2px dashed ${isDragging ? "#B55E45" : "#E5E5E5"}`,
-                background: isDragging ? "#FAF5F2" : "#FAFAF8",
+                background: isDragging ? "#F5F0EB" : "#FAFAF8",
                 minHeight: "180px",
               }}
               onClick={() => inputRef.current?.click()}
@@ -320,7 +320,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                 <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-200"
                   style={{
-                    background: isDragging ? "#FAF5F2" : "#FFFFFF",
+                    background: isDragging ? "#F5F0EB" : "#FFFFFF",
                     border: "1px solid #E5E5E5",
                     transform: isDragging ? "scale(1.08)" : "scale(1)",
                   }}
@@ -341,7 +341,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] active:scale-[0.98] transition-all min-h-[48px]"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:border-[#B55E45] hover:bg-[#F5F0EB] active:scale-[0.98] transition-all min-h-[48px]"
               >
                 <ImageIcon className="w-4 h-4 text-[#9A503B]" />
                 Uit galerij

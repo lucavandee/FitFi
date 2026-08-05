@@ -89,7 +89,7 @@ export function StyleProfileSummary({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#FAF5F2] rounded-2xl p-6 sm:p-8 shadow-lg"
+      className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#F5F0EB] rounded-2xl p-6 sm:p-8 shadow-lg"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-6">

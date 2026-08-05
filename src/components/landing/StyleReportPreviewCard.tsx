@@ -12,7 +12,7 @@ export function StyleReportPreviewCard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FAF5F2] rounded-full text-sm font-semibold text-[#B55E45] mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-sm font-semibold text-[#B55E45] mb-6">
             <Sparkles className="w-4 h-4" aria-hidden="true" />
             <span>Persoonlijk stijladvies voor kleding</span>
           </div>
@@ -39,7 +39,7 @@ export function StyleReportPreviewCard() {
                   <div className="h-6 w-40 bg-[#F5F0EB] rounded mb-4"></div>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="h-24 bg-[#F4E8E3] rounded-xl"></div>
-                    <div className="h-24 bg-[#FAF5F2] rounded-xl"></div>
+                    <div className="h-24 bg-[#F5F0EB] rounded-xl"></div>
                     <div className="h-24 bg-[#F5F0EB] rounded-xl"></div>
                   </div>
                 </div>
@@ -56,7 +56,7 @@ export function StyleReportPreviewCard() {
                   <div className="h-6 w-56 bg-[#F5F0EB] rounded mb-4"></div>
                   <div className="flex gap-3">
                     <div className="w-16 h-16 bg-[#B55E45] rounded-lg"></div>
-                    <div className="w-16 h-16 bg-[#D4856E] rounded-lg"></div>
+                    <div className="w-16 h-16 bg-[#B55E45] rounded-lg"></div>
                     <div className="w-16 h-16 bg-[#F5F0EB] rounded-lg"></div>
                     <div className="w-16 h-16 bg-[#6E6E6E] rounded-lg"></div>
                   </div>
@@ -119,7 +119,7 @@ export function StyleReportPreviewCard() {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-[#FAF5F2] rounded-full flex items-center justify-center mx-auto mb-3" aria-hidden="true">
+              <div className="w-12 h-12 bg-[#F5F0EB] rounded-full flex items-center justify-center mx-auto mb-3" aria-hidden="true">
                 <svg className="w-6 h-6 text-[#B55E45]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>

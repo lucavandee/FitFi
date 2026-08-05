@@ -14,7 +14,7 @@ export function ClosingCTA() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <p
-            className="text-xs font-bold uppercase tracking-widest mb-4 text-[#D4856E]"
+            className="text-xs font-bold uppercase tracking-widest mb-4 text-[#B55E45]"
           >
             Gratis starten
           </p>
