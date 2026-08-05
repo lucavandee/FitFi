@@ -662,21 +662,50 @@ export class AdaptiveOutfitGenerator {
     scores: OutfitScore,
     context: GenerationContext
   ): string {
+    // Deze uitleg is de kernbelofte van het product: hij staat onder elke
+    // outfit als "Waarom dit bij je past". Eerder stonden hier drie losse
+    // drempels (0.8 / 0.85 / 0.8) zonder ondergrens, waardoor een outfit die
+    // op alle drie lager scoorde een lege lijst opleverde en de regel
+    // `explanations.join('. ') + '.'` letterlijk één punt teruggaf. Dat was
+    // live zichtbaar op alle calibratie-outfits.
+    //
+    // Nu getrapt: elke score levert een zin op die past bij het niveau, dus er
+    // is altijd uitleg en die overdrijft nooit. Toon blijft Nederlands en in
+    // de je-vorm, maximaal drie zinnen conform de copy-regels.
     const explanations: string[] = [];
+    const archetype = String(context.user_profile?.archetype ?? '').trim();
 
     if (scores.style_match > 0.8) {
-      explanations.push(`Perfect match voor je ${context.user_profile.archetype} stijl`);
+      explanations.push(
+        archetype ? `Sluit sterk aan op je ${archetype} stijl` : 'Sluit sterk aan op je stijlprofiel'
+      );
+    } else if (scores.style_match > 0.6) {
+      explanations.push(
+        archetype ? `Past bij je ${archetype} stijl` : 'Past bij je stijlprofiel'
+      );
+    } else {
+      explanations.push(
+        archetype
+          ? `Een rustige basis binnen je ${archetype} stijl`
+          : 'Een rustige basis die bij je profiel past'
+      );
     }
 
     if (scores.color_harmony > 0.85) {
-      explanations.push('Kleuren harmoniëren prachtig');
+      explanations.push('de kleuren versterken elkaar');
+    } else if (scores.color_harmony > 0.6) {
+      explanations.push('de kleuren werken rustig samen');
     }
 
     if (scores.price_optimization > 0.8) {
-      explanations.push('Uitstekende prijs-kwaliteit verhouding');
+      explanations.push('en het blijft ruim binnen je budget');
+    } else if (scores.price_optimization > 0.6) {
+      explanations.push('en het past binnen je budget');
     }
 
-    return explanations.join('. ') + '.';
+    const [first, ...rest] = explanations;
+    const sentence = rest.length ? `${first}, ${rest.join(', ')}` : first;
+    return `${sentence}.`;
   }
 
   /**
