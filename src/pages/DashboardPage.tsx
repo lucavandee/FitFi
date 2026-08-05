@@ -486,7 +486,7 @@ export default function DashboardPage() {
                 >
                   <p className="text-xs font-semibold uppercase tracking-[1.5px] text-white/70">Upgrade</p>
                   <h4 className="text-base font-bold text-white mt-1">Ontgrendel Premium</h4>
-                  <p className="text-sm text-white/80 mt-1">50+ outfits · AI kleuranalyse · persoonlijk advies</p>
+                  <p className="text-sm text-white/80 mt-1">Outfits op maat · kleuranalyse · persoonlijk advies</p>
                   <span className="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-white hover:text-white/90 transition-colors duration-200">
                     Bekijk opties
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />

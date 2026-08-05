@@ -166,7 +166,7 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
     return {
       icon: Sparkles,
       title: 'Je Style DNA is klaar!',
-      description: 'Wauw! Ik heb alle data verwerkt. Je staat op het punt om je persoonlijke Style Report te zien met 50+ outfits die perfect bij je passen.',
+      description: 'Ik heb je antwoorden verwerkt. Je Style Report staat klaar, met outfits die bij je profiel passen en uitleg waarom.',
       expectations: [
         'Je unieke stijlprofiel met archetype',
         '50+ gepersonaliseerde outfit aanbevelingen',
