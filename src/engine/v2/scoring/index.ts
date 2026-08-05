@@ -92,6 +92,12 @@ export function computeProductScore(
   // Fan-merch (clubshirts, F1-merch) hoort vrijwel nooit in een outfit;
   // penalty in plaats van harde uitsluiting zolang de catalogus dun is.
   const llm = readLlmTags(product.product as { tags?: string[]; styleTags?: string[] });
+  // Deze 0.85 is empirisch de ondergrens, niet een willekeurig gekozen getal.
+  // Op 2026-08-05 gemeten met 0.80, 0.78, 0.75, 0.70, 0.60 en 0.50: elke
+  // strengere waarde duwt de haalbaarheidsfloor voor "werk" van 5 naar 4
+  // outfits. De oorzaak is de dunne catalogus (de golden fixture is 996/1000
+  // Puma, waarvan veel clubmerch), niet de scoring. Fan-merch verder terug-
+  // dringen vraagt dus feed-uitbreiding, geen lagere penalty.
   const fanMerchPenalty = llm.fanMerch && occasion !== 'sport' ? 0.85 : 1;
   const multiplier =
     archetypePenalty * occasionPenalty * budgetPenalty * fanMerchPenalty;

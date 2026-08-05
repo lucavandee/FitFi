@@ -41,8 +41,13 @@ describe('TOP classification', () => {
     expect(cat('Puma Ivoorkust 2025 Short Sleeve Shirt')).toBe('top');
   });
 
-  it('classifies a prematch shirt as TOP', () => {
-    expect(cat('Nike Netherlands Prematch Shirt 2025')).toBe('top');
+  it('weert een prematch shirt uit outfits (voetbaltenue)', () => {
+    // Deze test verwachtte 'top', maar 'prematch' staat in REJECT_REGEX omdat
+    // FitFi voetbaltenues bewust buiten outfits houdt (net als thuisshirt,
+    // uitshirt, voetbalbroek). Test en productbeslissing spraken elkaar tegen;
+    // de productbeslissing wint. De TOP-regel voor prematch is daarmee
+    // onbereikbaar, maar blijft staan voor het geval de rejectlijst verandert.
+    expect(cat('Nike Netherlands Prematch Shirt 2025')).toBe('other');
   });
 
   it('classifies a jersey as TOP', () => {
