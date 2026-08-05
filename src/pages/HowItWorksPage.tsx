@@ -321,7 +321,7 @@ export default function HowItWorksPage() {
               </p>
               <div className="flex flex-col gap-4 mb-8">
                 <StepDetail
-                  title="50+ outfitcombinaties per profiel"
+                  title="Outfitcombinaties per profiel"
                   sub="Voor werk, weekend, date en avond uit"
                 />
                 <StepDetail

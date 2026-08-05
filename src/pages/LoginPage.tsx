@@ -23,7 +23,7 @@ function isEmail(v: string) {
 
 const TRUST_ITEMS = [
   { icon: Palette, title: "Persoonlijk kleurpalet", desc: "Afgestemd op jouw kenmerken" },
-  { icon: Shirt, title: "50+ outfitcombinaties", desc: "Voor elke gelegenheid" },
+  { icon: Shirt, title: "Outfitcombinaties op maat", desc: "Voor elke gelegenheid" },
   { icon: Shield, title: "Veilig en privé", desc: "GDPR-compliant, data blijft van jou" },
 ];
 

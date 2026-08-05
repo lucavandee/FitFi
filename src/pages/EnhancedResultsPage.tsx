@@ -1768,7 +1768,7 @@ export default function EnhancedResultsPage() {
                 {/* Features */}
                 <div className="flex flex-col gap-2.5 mb-6">
                   {[
-                    'Alle 50+ outfitcombinaties',
+                    'Alle outfitcombinaties',
                     'Matchscores en stijluitleg per item',
                     'Directe shoplinks naar webshops',
                   ].map((feature, idx) => (
