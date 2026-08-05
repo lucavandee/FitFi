@@ -175,7 +175,7 @@ export default function UnifiedOutfitCard({
     <motion.div
       className={cn(
         'group relative rounded-2xl border-2 p-5 shadow-lg hover:shadow-2xl transition-all',
-        'focus-within:ring-4 focus-within:ring-[0 0 0 3px rgba(194,101,74,0.2)] focus-within:border-[#B55E45]',
+        'focus-within:ring-4 focus-within:ring-[0 0 0 3px rgba(194,101,74,0.2)] focus-within:border-[#A85740]',
         'overflow-hidden',
         currentTheme.container,
         isCompact && 'p-3 rounded-2xl',
@@ -343,7 +343,7 @@ export default function UnifiedOutfitCard({
             <motion.button
               aria-label="Bekijk outfit details en shop"
               onClick={() => setShowDetailsModal(true)}
-              className="flex-1 px-4 py-3 min-h-[48px] bg-[#9A503B] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:ring-offset-2 hover:bg-[#B55E45]"
+              className="flex-1 px-4 py-3 min-h-[48px] bg-[#9A503B] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:ring-offset-2 hover:bg-[#A85740]"
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.97 }}
             >
@@ -366,10 +366,10 @@ export default function UnifiedOutfitCard({
                 disabled={saveOutfit.isPending}
                 className={cn(
                   'w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center border rounded-xl transition-all',
-                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B55E45]',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A85740]',
                   saveOutfit.isSuccess || saved
-                    ? 'border-[#B55E45] bg-[#9A503B] text-white'
-                    : 'border-[#E5E5E5] text-[#6E6E6E] hover:border-[#B55E45] hover:text-[#9A503B]',
+                    ? 'border-[#A85740] bg-[#9A503B] text-white'
+                    : 'border-[#E5E5E5] text-[#6E6E6E] hover:border-[#A85740] hover:text-[#9A503B]',
                   saveOutfit.isPending && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!saveOutfit.isPending ? { scale: 1.05 } : {}}

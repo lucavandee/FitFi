@@ -1,4 +1,6 @@
 // Klein, idempotent boot-script (kan veilig meeliften in main.tsx)
+export {};
+
 declare global {
   interface Window {
     __fitfi_boot?: boolean;

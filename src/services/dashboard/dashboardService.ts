@@ -17,6 +17,7 @@ function readLocalStats(userId: string) {
   return lsRead<UserStats | null>(LS_STATS(userId), { user_id: userId, level: 1, xp: 0, updated_at: new Date().toISOString(), last_active: new Date().toISOString() });
 }
 function writeLocalStats(stats: UserStats) {
+  if (!stats.user_id) throw new Error('writeLocalStats: user_id is verplicht');
   lsWrite(LS_STATS(stats.user_id), { ...stats, updated_at: new Date().toISOString(), last_active: new Date().toISOString() });
   return stats;
 }
@@ -25,6 +26,7 @@ function readLocalStreak(userId: string) {
   return lsRead<UserStreak>(LS_STREAK(userId), { user_id: userId, current_streak: 0, longest_streak: 0, last_check_date: new Date(0).toISOString() });
 }
 function writeLocalStreak(streak: UserStreak) {
+  if (!streak.user_id) throw new Error('writeLocalStreak: user_id is verplicht');
   lsWrite(LS_STREAK(streak.user_id), streak);
   return streak;
 }
@@ -100,8 +102,8 @@ export async function fetchReferrals(inviterId: string): Promise<Referral[]> {
     const referralData = await fetchReferralsByInviter(inviterId);
     return referralData.map(r => ({
       id: r.id,
-      inviter_id: r.inviter_id || r.inviterId || inviterId,
-      invitee_email: null,
+      inviter_id: r.inviter_id || inviterId,
+      invitee_email: undefined,
       status: (r.status as "pending" | "joined" | "converted") || "pending",
       created_at: r.created_at || new Date().toISOString()
     }));

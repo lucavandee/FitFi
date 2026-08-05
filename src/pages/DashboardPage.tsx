@@ -175,7 +175,7 @@ export default function DashboardPage() {
           className="max-w-sm w-full text-center"
         >
           <div className="w-16 h-16 rounded-2xl bg-[#F4E8E3] flex items-center justify-center mx-auto mb-7">
-            <Sparkles className="w-7 h-7 text-[#B55E45]" aria-hidden="true" />
+            <Sparkles className="w-7 h-7 text-[#A85740]" aria-hidden="true" />
           </div>
           {hasQuizInProgress ? (
             <>
@@ -187,13 +187,13 @@ export default function DashboardPage() {
               </p>
               <button
                 onClick={() => navigate("/onboarding")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-xl font-bold text-sm bg-[#B55E45] hover:bg-[#9A503B] transition-colors active:scale-[0.98] mb-3"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-xl font-bold text-sm bg-[#A85740] hover:bg-[#9A503B] transition-colors active:scale-[0.98] mb-3"
               >
                 Verder gaan met quiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
               <button
                 onClick={() => navigate("/onboarding?step=redo")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-xl font-semibold text-sm transition-all border border-[#E5E5E5] hover:border-[#B55E45] text-[#4A4A4A] hover:text-[#B55E45]"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-3 min-h-[48px] rounded-xl font-semibold text-sm transition-all border border-[#E5E5E5] hover:border-[#A85740] text-[#4A4A4A] hover:text-[#A85740]"
               >
                 Opnieuw beginnen
               </button>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
               </p>
               <button
                 onClick={() => navigate("/onboarding")}
-                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-xl font-bold text-sm bg-[#B55E45] hover:bg-[#9A503B] transition-colors active:scale-[0.98]"
+                className="inline-flex items-center justify-center gap-2 w-full px-7 py-4 min-h-[54px] text-white rounded-xl font-bold text-sm bg-[#A85740] hover:bg-[#9A503B] transition-colors active:scale-[0.98]"
               >
                 Start de stijlquiz <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -289,7 +289,7 @@ export default function DashboardPage() {
             <div className="flex gap-3 flex-shrink-0 w-full md:w-auto">
               <button
                 onClick={() => navigate("/results")}
-                className="inline-flex items-center justify-center gap-2 bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-sm py-3.5 px-7 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)] flex-1 md:flex-none"
+                className="inline-flex items-center justify-center gap-2 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3.5 px-7 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)] flex-1 md:flex-none"
               >
                 <Eye className="w-4 h-4" aria-hidden="true" />
                 Bekijk je resultaten
@@ -325,7 +325,7 @@ export default function DashboardPage() {
                 </div>
                 <button
                   onClick={() => navigate("/results")}
-                  className="text-[13px] font-semibold text-[#B55E45] hover:text-[#9A503B] inline-flex items-center gap-1.5 transition-colors duration-200"
+                  className="text-[13px] font-semibold text-[#A85740] hover:text-[#9A503B] inline-flex items-center gap-1.5 transition-colors duration-200"
                 >
                   Bekijk alles
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                         aria-label={`Bekijk outfit: ${label}`}
                         className="group text-left"
                       >
-                        <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#B55E45] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+                        <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#A85740] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
                           <div className="aspect-[3/4] overflow-hidden bg-[#F5F0EB]">
                             {coverImg ? (
                               <img
@@ -362,7 +362,7 @@ export default function DashboardPage() {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Sparkles className="w-6 h-6 text-[#B55E45] opacity-40" aria-hidden="true" />
+                                <Sparkles className="w-6 h-6 text-[#A85740] opacity-40" aria-hidden="true" />
                               </div>
                             )}
                           </div>
@@ -379,13 +379,13 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center py-10 text-center">
-                  <Sparkles className="w-7 h-7 text-[#B55E45] opacity-30 mb-3" aria-hidden="true" />
+                  <Sparkles className="w-7 h-7 text-[#A85740] opacity-30 mb-3" aria-hidden="true" />
                   <p className="text-sm text-[#6E6E6E] mb-4 leading-relaxed">
                     Outfits worden samengesteld op basis van jouw profiel
                   </p>
                   <button
                     onClick={() => navigate("/results")}
-                    className="text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] inline-flex items-center gap-1.5 transition-colors duration-200"
+                    className="text-sm font-semibold text-[#A85740] hover:text-[#9A503B] inline-flex items-center gap-1.5 transition-colors duration-200"
                   >
                     Genereer nu
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -408,12 +408,12 @@ export default function DashboardPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.06 }}
                   onClick={onClick}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-7 cursor-pointer group relative overflow-hidden transition-all duration-300 hover:border-[#B55E45] hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] text-left"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-7 cursor-pointer group relative overflow-hidden transition-all duration-300 hover:border-[#A85740] hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)] text-left"
                 >
                   <div className="w-12 h-12 rounded-[14px] bg-[#F5F0EB] group-hover:bg-[#F4E8E3] flex items-center justify-center mb-4 transition-colors duration-200">
-                    <Icon className="w-[22px] h-[22px] text-[#B55E45]" aria-hidden="true" />
+                    <Icon className="w-[22px] h-[22px] text-[#A85740]" aria-hidden="true" />
                   </div>
-                  <ChevronRight className="absolute top-6 right-5 w-4 h-4 text-[#E5E5E5] group-hover:text-[#B55E45] transition-colors duration-200" aria-hidden="true" />
+                  <ChevronRight className="absolute top-6 right-5 w-4 h-4 text-[#E5E5E5] group-hover:text-[#A85740] transition-colors duration-200" aria-hidden="true" />
                   <h3 className="text-sm font-semibold text-[#1A1A1A]">{label}</h3>
                   <p className="text-xs text-[#6E6E6E] mt-1">{sub}</p>
                 </motion.button>
@@ -441,7 +441,7 @@ export default function DashboardPage() {
                     <circle cx="24" cy="24" r={progressRadius} fill="none" stroke="#E5E5E5" strokeWidth="4" />
                     <motion.circle
                       cx="24" cy="24" r={progressRadius} fill="none"
-                      stroke="#B55E45" strokeWidth="4"
+                      stroke="#A85740" strokeWidth="4"
                       strokeLinecap="round"
                       strokeDasharray={progressCircumference}
                       initial={{ strokeDashoffset: progressCircumference }}
@@ -450,7 +450,7 @@ export default function DashboardPage() {
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[11px] font-bold text-[#B55E45]">{donePct}%</span>
+                    <span className="text-[11px] font-bold text-[#A85740]">{donePct}%</span>
                   </div>
                 </div>
               </div>
@@ -463,7 +463,7 @@ export default function DashboardPage() {
                         ? "bg-[#F4E8E3]"
                         : "border-2 border-[#E5E5E5]"
                     }`}>
-                      {step.done && <Check className="w-3.5 h-3.5 text-[#B55E45]" aria-hidden="true" />}
+                      {step.done && <Check className="w-3.5 h-3.5 text-[#A85740]" aria-hidden="true" />}
                     </div>
                     <span className={`text-[13px] leading-tight ${step.done ? "text-[#1A1A1A]" : "text-[#6E6E6E]"}`}>
                       {step.label}
@@ -482,7 +482,7 @@ export default function DashboardPage() {
               >
                 <Link
                   to="/prijzen"
-                  className="group flex flex-col p-7 rounded-2xl bg-[#B55E45]"
+                  className="group flex flex-col p-7 rounded-2xl bg-[#A85740]"
                 >
                   <p className="text-xs font-semibold uppercase tracking-[1.5px] text-white/70">Upgrade</p>
                   <h4 className="text-base font-bold text-white mt-1">Ontgrendel Premium</h4>
@@ -516,13 +516,13 @@ export default function DashboardPage() {
                     className="w-full flex items-center gap-3 py-3.5 border-b border-[#E5E5E5]/50 last:border-none cursor-pointer group -mx-2 px-2 rounded-xl hover:bg-[#FAFAF8] transition-colors duration-150 text-left"
                   >
                     <div className="w-9 h-9 rounded-xl bg-[#F5F0EB] group-hover:bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 transition-colors duration-200">
-                      <Icon className="w-4 h-4 text-[#B55E45]" aria-hidden="true" />
+                      <Icon className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-semibold text-[#1A1A1A] leading-tight">{label}</p>
                       <p className="text-[11px] text-[#6E6E6E]">{sub}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#B55E45] transition-colors duration-200 flex-shrink-0 ml-auto" aria-hidden="true" />
+                    <ChevronRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#A85740] transition-colors duration-200 flex-shrink-0 ml-auto" aria-hidden="true" />
                   </button>
                 ))}
               </div>
@@ -535,7 +535,7 @@ export default function DashboardPage() {
               transition={{ duration: 0.5, delay: 0.44 }}
               className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-7"
             >
-              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-3">Stijl tip</p>
+              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">Stijl tip</p>
               <h4 className="text-[15px] font-bold text-[#1A1A1A] mb-2">
                 {archetypeName ? `Als ${archetypeName}` : "Jouw stijl"}
               </h4>
@@ -543,13 +543,13 @@ export default function DashboardPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate("/results")}
-                  className="flex-1 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-200 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200 cursor-pointer"
                 >
                   Outfits zien
                 </button>
                 <button
                   onClick={() => navigate("/shop")}
-                  className="flex-1 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-200 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-[13px] font-semibold text-[#1A1A1A] text-center hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200 cursor-pointer"
                 >
                   Shoppen
                 </button>

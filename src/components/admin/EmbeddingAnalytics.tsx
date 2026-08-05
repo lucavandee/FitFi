@@ -91,7 +91,7 @@ export function EmbeddingAnalytics() {
         </div>
         <button
           onClick={loadAnalytics}
-          className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
+          className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Ververs
@@ -148,7 +148,7 @@ export function EmbeddingAnalytics() {
                 </div>
                 <div className="h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#B55E45] rounded-full"
+                    className="h-full bg-[#A85740] rounded-full"
                     style={{
                       width: `${Math.min(100, (item.user_count / archetypes[0].user_count) * 100)}%`
                     }}

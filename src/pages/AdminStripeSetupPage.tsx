@@ -95,7 +95,7 @@ export default function AdminStripeSetupPage() {
           <div className="space-y-6">
             {/* Step 1 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-[#B55E45] text-white rounded-full flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-[#A85740] text-white rounded-full flex items-center justify-center font-bold">
                 1
               </div>
               <div className="flex-1">
@@ -107,7 +107,7 @@ export default function AdminStripeSetupPage() {
                   href="https://dashboard.stripe.com/test/apikeys"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-[#B55E45] hover:text-[#9A503B] font-semibold"
+                  className="inline-flex items-center gap-2 text-sm text-[#A85740] hover:text-[#9A503B] font-semibold"
                 >
                   Ga naar Stripe API Keys
                   <ExternalLink className="w-4 h-4" />
@@ -123,7 +123,7 @@ export default function AdminStripeSetupPage() {
 
             {/* Step 2 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-[#B55E45] text-white rounded-full flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-[#A85740] text-white rounded-full flex items-center justify-center font-bold">
                 2
               </div>
               <div className="flex-1">
@@ -172,7 +172,7 @@ export default function AdminStripeSetupPage() {
                             placeholder="price_xxxxxxxxxxxxx"
                             value={priceIds[product.id] || ''}
                             onChange={(e) => setPriceIds({ ...priceIds, [product.id]: e.target.value })}
-                            className="flex-1 px-3 py-1 text-xs bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#B55E45] font-mono"
+                            className="flex-1 px-3 py-1 text-xs bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#A85740] font-mono"
                           />
                         )}
                       </div>
@@ -181,7 +181,7 @@ export default function AdminStripeSetupPage() {
                         <button
                           onClick={() => handleSave(product.id, priceIds[product.id])}
                           disabled={saving}
-                          className="flex items-center gap-2 px-4 py-2 bg-[#B55E45] text-white rounded-2xl text-sm font-semibold hover:bg-[#9A503B] transition-colors disabled:opacity-50"
+                          className="flex items-center gap-2 px-4 py-2 bg-[#A85740] text-white rounded-2xl text-sm font-semibold hover:bg-[#9A503B] transition-colors disabled:opacity-50"
                         >
                           <Save className="w-4 h-4" />
                           Opslaan
@@ -195,7 +195,7 @@ export default function AdminStripeSetupPage() {
                   href="https://dashboard.stripe.com/test/products"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-[#B55E45] hover:text-[#9A503B] font-semibold mt-2"
+                  className="inline-flex items-center gap-2 text-sm text-[#A85740] hover:text-[#9A503B] font-semibold mt-2"
                 >
                   Ga naar Stripe Products
                   <ExternalLink className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function AdminStripeSetupPage() {
 
             {/* Step 3 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-[#B55E45] text-white rounded-full flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-[#A85740] text-white rounded-full flex items-center justify-center font-bold">
                 3
               </div>
               <div className="flex-1">

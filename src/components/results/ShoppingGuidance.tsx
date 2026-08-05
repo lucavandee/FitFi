@@ -34,7 +34,7 @@ export function ShoppingGuidance({
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center">
           <ShoppingBag className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -51,7 +51,7 @@ export function ShoppingGuidance({
         {/* Must-Haves */}
         <div className="bg-white rounded-2xl p-6 border border-[#E5E5E5]">
           <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-[#B55E45]" />
+            <CheckCircle className="w-5 h-5 text-[#A85740]" />
             <h4 className="font-bold text-[#1A1A1A]">Zoek deze kleuren</h4>
           </div>
           <ul className="space-y-2">
@@ -60,7 +60,7 @@ export function ShoppingGuidance({
                 key={idx}
                 className="flex items-center gap-2 text-sm text-[#4A4A4A]"
               >
-                <div className="w-2 h-2 rounded-full bg-[#B55E45]" />
+                <div className="w-2 h-2 rounded-full bg-[#A85740]" />
                 <span>{item}</span>
               </li>
             ))}

@@ -125,7 +125,7 @@ const MobileBottomNav: React.FC = () => {
                           <Icon
                             className={`w-[22px] h-[22px] transition-colors ${
                               active
-                                ? 'text-[#B55E45]'
+                                ? 'text-[#A85740]'
                                 : 'text-[#6E6E6E] group-hover:text-[#4A4A4A]'
                             }`}
                             strokeWidth={active ? 2.5 : 1.8}
@@ -133,7 +133,7 @@ const MobileBottomNav: React.FC = () => {
                           <span
                             className={`text-[10px] font-semibold leading-none transition-colors ${
                               active
-                                ? 'text-[#B55E45]'
+                                ? 'text-[#A85740]'
                                 : 'text-[#6E6E6E] group-hover:text-[#4A4A4A]'
                             }`}
                           >

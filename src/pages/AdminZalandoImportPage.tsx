@@ -40,7 +40,7 @@ export default function AdminZalandoImportPage() {
           </p>
           <button
             onClick={() => navigate('/admin')}
-            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
           >
             Terug naar Admin Dashboard
           </button>
@@ -253,7 +253,7 @@ export default function AdminZalandoImportPage() {
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
                   file:bg-[#9A503B] file:text-white
-                  hover:file:bg-[#B55E45]
+                  hover:file:bg-[#A85740]
                   file:cursor-pointer file:transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               />

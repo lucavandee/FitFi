@@ -71,7 +71,7 @@ export default function BillingPage() {
             <HelpCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <p>
               Vragen over je abonnement?{' '}
-              <a href="/contact" className="underline text-[#B55E45] hover:no-underline">
+              <a href="/contact" className="underline text-[#A85740] hover:no-underline">
                 Neem contact op
               </a>{' '}
               — we helpen je graag verder.

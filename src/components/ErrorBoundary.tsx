@@ -86,21 +86,21 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="flex flex-wrap gap-2.5 justify-center">
               <button
                 onClick={this.handleRetry}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#9A503B] text-white text-sm font-bold hover:bg-[#B55E45] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#9A503B] text-white text-sm font-bold hover:bg-[#A85740] transition-colors"
               >
                 <RefreshCw className="w-4 h-4" aria-hidden="true" />
                 Probeer opnieuw
               </button>
               <button
                 onClick={() => window.history.back()}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-[#1A1A1A] text-sm font-semibold hover:border-[#B55E45] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-[#1A1A1A] text-sm font-semibold hover:border-[#A85740] transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 Terug
               </button>
               <a
                 href="/"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-[#1A1A1A] text-sm font-semibold hover:border-[#B55E45] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-[#1A1A1A] text-sm font-semibold hover:border-[#A85740] transition-colors"
               >
                 <Home className="w-4 h-4" aria-hidden="true" />
                 Naar start

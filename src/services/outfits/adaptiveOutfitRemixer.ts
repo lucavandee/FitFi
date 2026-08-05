@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
-import { adaptiveOutfitGenerator, type AdaptiveOutfit, type OutfitScore } from '@/services/calibration/adaptiveOutfitGenerator';
-import type { Product } from '@/types/product';
+import { adaptiveOutfitGenerator, type AdaptiveOutfit, type OutfitScore, type Product } from '@/services/calibration/adaptiveOutfitGenerator';
 import { isAdultClothingProduct } from '@/engine/productFilter';
 
 export interface RemixedOutfit {
@@ -117,7 +116,10 @@ export class AdaptiveOutfitRemixer {
   ): Promise<SwapSuggestion[]> {
     const suggestions: SwapSuggestion[] = [];
 
-    let query = supabase
+    const sb = supabase();
+    if (!sb) return [];
+
+    let query = sb
       .from('products')
       .select('*')
       .eq('in_stock', true)
@@ -133,7 +135,7 @@ export class AdaptiveOutfitRemixer {
     if (!rawProducts) return [];
 
     // Filter out kids clothing and non-adult products
-    const availableProducts = rawProducts.filter(isAdultClothingProduct);
+    const availableProducts = (rawProducts as Product[]).filter(isAdultClothingProduct);
 
     // For each category, find better alternatives
     const categories: ('top' | 'bottom' | 'shoes')[] = ['top', 'bottom', 'shoes'];

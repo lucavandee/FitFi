@@ -39,7 +39,7 @@ export function QuickInsightsWidget({ insights, onDismiss }: QuickInsightsWidget
           {topInsight.actionLink && (
             <NavLink
               to={topInsight.actionLink}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#9A503B] hover:text-[#B55E45] transition-colors"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#9A503B] hover:text-[#A85740] transition-colors"
             >
               {topInsight.action || 'Bekijk'}
               <ArrowRight className="w-3 h-3" />
@@ -96,7 +96,7 @@ export function StyleProfileWidget({ archetype, colorPalette }: StyleProfileWidg
   return (
     <BentoCard size="medium">
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center flex-shrink-0">
           <Crown className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1 min-w-0">
@@ -126,7 +126,7 @@ export function StyleProfileWidget({ archetype, colorPalette }: StyleProfileWidg
 
       <NavLink
         to="/profile"
-        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-white border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-base font-medium hover:border-[#B55E45] transition-colors duration-200"
+        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-white border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-base font-medium hover:border-[#A85740] transition-colors duration-200"
       >
         Bekijk profiel
         <ArrowRight className="w-3 h-3" />
@@ -224,7 +224,7 @@ export function GamificationWidget({
         </div>
         <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
+            className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: 'easeOut' }}
@@ -297,7 +297,7 @@ export function RecentOutfitsWidget({ outfitCount, featuredImage }: RecentOutfit
           </div>
           <NavLink
             to="/results"
-            className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-[#9A503B] text-white rounded-xl text-base font-semibold hover:bg-[#B55E45] transition-colors duration-200"
+            className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-[#9A503B] text-white rounded-xl text-base font-semibold hover:bg-[#A85740] transition-colors duration-200"
           >
             Bekijk alles
             <ArrowRight className="w-4 h-4" />
@@ -316,7 +316,7 @@ export function EmptyStateWidget() {
   return (
     <BentoCard size="hero" className="text-center">
       <div className="flex flex-col items-center justify-center h-full py-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center mb-4">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center mb-4">
           <Sparkles className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">
@@ -327,7 +327,7 @@ export function EmptyStateWidget() {
         </p>
         <NavLink
           to="/onboarding"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#B55E45] transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#A85740] transition-all"
         >
           <Sparkles className="w-5 h-5" />
           Start gratis stijlquiz

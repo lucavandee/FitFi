@@ -46,6 +46,8 @@ export function BulkImageUploader() {
   };
 
   const validateSKU = async (sku: string): Promise<UploadedFile['matchedProduct']> => {
+    if (!supabase) return undefined;
+
     const { data, error } = await supabase
       .from('products')
       .select('id, name, sku, image_url')
@@ -111,6 +113,10 @@ export function BulkImageUploader() {
 
   const uploadImage = async (uploadFile: UploadedFile): Promise<{ success: boolean; url?: string; error?: string }> => {
     try {
+      if (!supabase) {
+        return { success: false, error: 'Supabase client unavailable' };
+      }
+
       const fileExt = uploadFile.file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const fileName = `${uploadFile.sku}.${fileExt}`;
       const filePath = `products/${uploadFile.sku}/${fileName}`;
@@ -268,7 +274,7 @@ export function BulkImageUploader() {
             <button
               onClick={handleUploadAll}
               disabled={isProcessing || stats.pending === 0}
-              className="flex-1 py-3 px-6 bg-[#9A503B] text-white rounded-2xl font-semibold hover:bg-[#B55E45] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-6 bg-[#9A503B] text-white rounded-2xl font-semibold hover:bg-[#A85740] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>

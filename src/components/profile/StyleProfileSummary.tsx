@@ -95,7 +95,7 @@ export function StyleProfileSummary({
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Palette className="w-6 h-6 text-[#B55E45]" aria-hidden="true" />
+            <Palette className="w-6 h-6 text-[#A85740]" aria-hidden="true" />
             <h3 className="text-lg font-bold text-[#1A1A1A]">Jouw Stijlprofiel</h3>
           </div>
           <p className="text-sm text-[#6E6E6E]">
@@ -120,7 +120,7 @@ export function StyleProfileSummary({
         </p>
         {season && (
           <p className="text-sm text-[#1A1A1A] flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#B55E45]" aria-hidden="true" />
+            <Sparkles className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
             {season} kleurenseizoen
           </p>
         )}
@@ -188,7 +188,7 @@ export function StyleProfileSummary({
         {onViewResults && (
           <button
             onClick={onViewResults}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-xl font-semibold text-base transition-colors duration-200 flex items-center justify-center gap-2 group"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-xl font-semibold text-base transition-colors duration-200 flex items-center justify-center gap-2 group"
             aria-label="Bekijk je gepersonaliseerde outfit aanbevelingen"
           >
             <Eye className="w-5 h-5" aria-hidden="true" />
@@ -205,7 +205,7 @@ export function StyleProfileSummary({
         {showReset && onReset && (
           <button
             onClick={onReset}
-            className="px-6 py-3 bg-white border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#B55E45] transition-colors duration-200 flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-white border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#A85740] transition-colors duration-200 flex items-center justify-center gap-2"
             aria-label="Doe de quiz opnieuw om je stijlprofiel bij te werken"
           >
             <RefreshCw className="w-4 h-4" aria-hidden="true" />

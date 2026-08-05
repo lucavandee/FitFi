@@ -77,7 +77,7 @@ export default function SaveButton({ outfit, userId, className = '' }: SaveButto
         }
         border border-[#E5E5E5]
         disabled:opacity-50 disabled:cursor-not-allowed
-        focus:outline-none focus:ring-2 focus:ring-[#B55E45]
+        focus:outline-none focus:ring-2 focus:ring-[#A85740]
         ${className}
       `}
       aria-label={isSaved ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten'}

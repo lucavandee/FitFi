@@ -71,7 +71,7 @@ export function NovaIntelligenceIndicator({
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center">
           <Brain className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
@@ -88,7 +88,7 @@ export function NovaIntelligenceIndicator({
               key={i}
               className={`w-1.5 h-1.5 rounded-full transition-all ${
                 i < activeCount
-                  ? "bg-[#B55E45]"
+                  ? "bg-[#A85740]"
                   : "bg-[#E5E5E5]"
               }`}
             />

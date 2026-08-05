@@ -35,6 +35,12 @@ export async function importBramsFruitProducts(csvData: string): Promise<{
 
   for (const product of products) {
     try {
+      if (!supabase) {
+        failed++;
+        errors.push(`SKU ${product.sku}: Supabase client unavailable`);
+        continue;
+      }
+
       const { error } = await supabase
         .from('brams_fruit_products')
         .upsert(product, {
@@ -128,6 +134,10 @@ export async function uploadProductImage(
   file: File
 ): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
+    if (!supabase) {
+      return { success: false, error: 'Supabase client unavailable' };
+    }
+
     const fileExt = file.name.split('.').pop();
     const fileName = `${styleCode}.${fileExt}`;
     const filePath = `products/${styleCode}/${fileName}`;
@@ -158,6 +168,10 @@ export async function updateProductImages(
   imageUrl: string
 ): Promise<{ success: boolean; updated: number; error?: string }> {
   try {
+    if (!supabase) {
+      return { success: false, updated: 0, error: 'Supabase client unavailable' };
+    }
+
     const { count, error } = await supabase
       .from('brams_fruit_products')
       .update({ image_url: imageUrl })

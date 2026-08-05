@@ -13,7 +13,7 @@ export function TrustSignals() {
     <div className="flex items-center flex-wrap gap-x-5 gap-y-2 py-3 border-y border-[#E5E5E5]">
       {trustSignals.map((s, i) => (
         <div key={i} className="flex items-center gap-1.5">
-          <span className="text-[#B55E45] shrink-0">{s.icon}</span>
+          <span className="text-[#A85740] shrink-0">{s.icon}</span>
           <span className="text-[11px] text-[#6E6E6E] whitespace-nowrap font-medium">{s.label}</span>
         </div>
       ))}

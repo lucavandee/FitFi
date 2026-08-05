@@ -100,7 +100,7 @@ export function ProfileQuickActions({
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-[#1A1A1A]">Snelle Acties</h3>
-        <Sparkles className="w-5 h-5 text-[#B55E45]" aria-hidden="true" />
+        <Sparkles className="w-5 h-5 text-[#A85740]" aria-hidden="true" />
       </div>
 
       {/* Action Cards */}
@@ -121,8 +121,8 @@ export function ProfileQuickActions({
               className={`
                 relative p-4 rounded-xl border-2 text-left transition-all group
                 ${isPrimary
-                  ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45] border-transparent text-white shadow-lg hover:shadow-xl'
-                  : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#B55E45] hover:shadow-md'
+                  ? 'bg-gradient-to-br from-[#A85740] to-[#A85740] border-transparent text-white shadow-lg hover:shadow-xl'
+                  : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#A85740] hover:shadow-md'
                 }
               `}
               aria-label={`${action.label}: ${action.description}`}
@@ -146,7 +146,7 @@ export function ProfileQuickActions({
                   className={`w-5 h-5 ${
                     isPrimary
                       ? 'text-white'
-                      : 'text-[#B55E45]'
+                      : 'text-[#A85740]'
                   }`}
                   aria-hidden="true"
                 />
@@ -162,7 +162,7 @@ export function ProfileQuickActions({
                   {action.label}
                   <ArrowRight
                     className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${
-                      isPrimary ? 'text-white' : 'text-[#B55E45]'
+                      isPrimary ? 'text-white' : 'text-[#A85740]'
                     }`}
                     aria-hidden="true"
                   />

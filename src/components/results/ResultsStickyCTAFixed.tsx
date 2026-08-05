@@ -59,7 +59,7 @@ export function ResultsStickyCTAFixed({
                 {/* ✅ PRIMARY CTA - The main goal (shop) */}
                 <button
                   onClick={onShopClick}
-                  className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl flex-1 sm:flex-initial sm:min-w-[280px]"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl flex-1 sm:flex-initial sm:min-w-[280px]"
                   aria-label={`Shop je favoriete items uit ${savedCount} opgeslagen outfits`}
                 >
                   <ShoppingBag className="w-5 h-5" aria-hidden="true" />

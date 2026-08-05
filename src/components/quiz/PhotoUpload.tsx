@@ -306,7 +306,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               onDrop={onDrop}
               className="relative rounded-2xl transition-all duration-200 cursor-pointer"
               style={{
-                border: `2px dashed ${isDragging ? "#B55E45" : "#E5E5E5"}`,
+                border: `2px dashed ${isDragging ? "#A85740" : "#E5E5E5"}`,
                 background: isDragging ? "#F5F0EB" : "#FAFAF8",
                 minHeight: "180px",
               }}
@@ -341,7 +341,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:border-[#B55E45] hover:bg-[#F5F0EB] active:scale-[0.98] transition-all min-h-[48px]"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:border-[#A85740] hover:bg-[#F5F0EB] active:scale-[0.98] transition-all min-h-[48px]"
               >
                 <ImageIcon className="w-4 h-4 text-[#9A503B]" />
                 Uit galerij
@@ -349,7 +349,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 bg-[#9A503B] border-[#9A503B] text-sm font-semibold text-white hover:bg-[#B55E45] active:scale-[0.98] transition-all min-h-[48px]"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 bg-[#9A503B] border-[#9A503B] text-sm font-semibold text-white hover:bg-[#A85740] active:scale-[0.98] transition-all min-h-[48px]"
               >
                 <Camera className="w-4 h-4" />
                 Maak foto

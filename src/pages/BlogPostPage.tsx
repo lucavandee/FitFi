@@ -163,12 +163,12 @@ export default function BlogPostPage() {
             <div className="mb-6" aria-label="Breadcrumb">
               <Link
                 to="/blog"
-                className="text-sm text-[#6E6E6E] hover:text-[#B55E45] transition-colors"
+                className="text-sm text-[#6E6E6E] hover:text-[#A85740] transition-colors"
               >
                 Blog
               </Link>
               <span className="mx-2 text-[#6E6E6E]" aria-hidden="true">/</span>
-              <span className="text-sm font-medium text-[#B55E45]">
+              <span className="text-sm font-medium text-[#A85740]">
                 {post.category}
               </span>
             </div>
@@ -267,10 +267,10 @@ export default function BlogPostPage() {
                             />
                           </div>
                           <div className="p-4">
-                            <span className="text-xs text-[#B55E45] font-medium mb-1.5 block">
+                            <span className="text-xs text-[#A85740] font-medium mb-1.5 block">
                               {related.category}
                             </span>
-                            <h3 className="font-bold text-sm text-[#1A1A1A] mb-1.5 line-clamp-2 group-hover:text-[#B55E45] transition-colors leading-snug">
+                            <h3 className="font-bold text-sm text-[#1A1A1A] mb-1.5 line-clamp-2 group-hover:text-[#A85740] transition-colors leading-snug">
                               {related.title}
                             </h3>
                             <p className="text-xs text-[#6E6E6E] line-clamp-2 leading-relaxed">

@@ -35,9 +35,9 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
             className="w-full flex items-start gap-3 text-left group hover:bg-[#F5F0EB] p-3 rounded-lg transition-colors"
           >
             {checked.has(idx) ? (
-              <CheckSquare className="w-5 h-5 flex-shrink-0 text-[#B55E45] mt-0.5" />
+              <CheckSquare className="w-5 h-5 flex-shrink-0 text-[#A85740] mt-0.5" />
             ) : (
-              <Square className="w-5 h-5 flex-shrink-0 text-[#6E6E6E] group-hover:text-[#B55E45] mt-0.5" />
+              <Square className="w-5 h-5 flex-shrink-0 text-[#6E6E6E] group-hover:text-[#A85740] mt-0.5" />
             )}
             <span className={`leading-relaxed ${
               checked.has(idx)

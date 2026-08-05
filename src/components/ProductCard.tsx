@@ -166,7 +166,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
           <button
             onClick={handleClick}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
             aria-label={`Bekijk bij partner (je verlaat FitFi)`}
           >
             Bekijk bij partner

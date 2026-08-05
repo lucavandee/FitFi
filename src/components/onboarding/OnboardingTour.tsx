@@ -145,7 +145,7 @@ export function OnboardingTour() {
             height: targetPosition.height + 16,
           }}
         >
-          <div className="w-full h-full rounded-2xl border-4 border-[#B55E45] shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] animate-pulse" />
+          <div className="w-full h-full rounded-2xl border-4 border-[#A85740] shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] animate-pulse" />
         </motion.div>
       )}
 
@@ -165,7 +165,7 @@ export function OnboardingTour() {
         >
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-[#E5E5E5] p-6 relative overflow-hidden">
             {/* Decorative gradient */}
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[#B55E45]/20 to-[#B55E45]/20 blur-3xl" />
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[#A85740]/20 to-[#A85740]/20 blur-3xl" />
 
             {/* Close button */}
             <button
@@ -179,7 +179,7 @@ export function OnboardingTour() {
             {/* Content */}
             <div className="relative">
               {/* Icon */}
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center text-white mb-4 shadow-lg">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center text-white mb-4 shadow-lg">
                 {step.icon}
               </div>
 
@@ -201,7 +201,7 @@ export function OnboardingTour() {
                     onClick={() => setCurrentStep(index)}
                     className={`h-2 rounded-full transition-all ${
                       index === currentStep
-                        ? 'w-8 bg-[#B55E45]'
+                        ? 'w-8 bg-[#A85740]'
                         : 'w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600'
                     }`}
                     aria-label={`Ga naar stap ${index + 1}`}
@@ -225,7 +225,7 @@ export function OnboardingTour() {
                   onClick={handleNext}
                   className={`${
                     isFirstStep ? 'flex-1' : 'flex-[2]'
-                  } px-4 py-3 rounded-xl bg-gradient-to-r from-[#9A503B] to-[#9A503B] text-white font-semibold hover:from-[#B55E45] hover:to-[#B55E45] transition-all flex items-center justify-center gap-2 shadow-lg`}
+                  } px-4 py-3 rounded-xl bg-gradient-to-r from-[#9A503B] to-[#9A503B] text-white font-semibold hover:from-[#A85740] hover:to-[#A85740] transition-all flex items-center justify-center gap-2 shadow-lg`}
                 >
                   {isLastStep ? 'Start met FitFi' : 'Volgende'}
                   <ArrowRight className="w-4 h-4" />

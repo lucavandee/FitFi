@@ -267,7 +267,7 @@ export default function OutfitRemixerModal({
                 <button
                   onClick={handleOptimize}
                   disabled={swapping || loading || suggestions.length === 0}
-                  className="text-sm font-semibold text-[#9A503B] hover:text-[#B55E45] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  className="text-sm font-semibold text-[#9A503B] hover:text-[#A85740] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                 >
                   <RefreshCw size={14} />
                   Auto-optimaliseren
@@ -303,7 +303,7 @@ export default function OutfitRemixerModal({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#B55E45] transition-colors"
+                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#A85740] transition-colors"
                     >
                       <div className="flex items-start gap-4">
                         {/* Product Image */}
@@ -351,7 +351,7 @@ export default function OutfitRemixerModal({
                           <button
                             onClick={() => handleSwap(suggestion)}
                             disabled={swapping}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#9A503B] to-[#B55E45] text-white rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#9A503B] to-[#A85740] text-white rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
                           >
                             {swapping && selectedSuggestion === suggestion ? (
                               <>

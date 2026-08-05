@@ -190,7 +190,7 @@ export function EmbeddingTimeline({ userId }: EmbeddingTimelineProps) {
                     </div>
                     <div className="h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[#B55E45] rounded-full"
+                        className="h-full bg-[#A85740] rounded-full"
                         style={{ width: `${score}%` }}
                       />
                     </div>
@@ -262,10 +262,10 @@ function TimelineItem({
     <div
       className={`p-4 border rounded-2xl transition-all cursor-pointer ${
         isSelected
-          ? 'border-[#B55E45] bg-[var(--overlay-accent-08a)]'
+          ? 'border-[#A85740] bg-[var(--overlay-accent-08a)]'
           : isCompare
           ? 'border-amber-500 bg-amber-50'
-          : 'border-[#E5E5E5] hover:border-[#B55E45]'
+          : 'border-[#E5E5E5] hover:border-[#A85740]'
       }`}
       onClick={onSelect}
     >
@@ -299,7 +299,7 @@ function TimelineItem({
           className={`text-xs px-2 py-1 rounded transition-colors ${
             isCompare
               ? 'bg-amber-500 text-white'
-              : 'text-[#6E6E6E] hover:text-[#B55E45]'
+              : 'text-[#6E6E6E] hover:text-[#A85740]'
           }`}
         >
           {isCompare ? 'Vergelijk aan' : 'Vergelijk'}

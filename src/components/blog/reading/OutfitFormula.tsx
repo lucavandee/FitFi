@@ -15,7 +15,7 @@ export const OutfitFormula: React.FC<OutfitFormulaProps> = ({
   return (
     <div className="bg-white/50 backdrop-blur-sm border-2 border-[#E5E5E5] rounded-2xl p-6 my-6">
       <div className="flex items-center gap-3 mb-4">
-        <span className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#B55E45] text-white flex items-center justify-center font-bold">
+        <span className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#A85740] text-white flex items-center justify-center font-bold">
           {number}
         </span>
         {occasion && (

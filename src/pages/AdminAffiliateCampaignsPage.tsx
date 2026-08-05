@@ -207,7 +207,7 @@ export default function AdminAffiliateCampaignsPage() {
           <p className="mt-2 text-[#6E6E6E]">Admin rechten vereist.</p>
           <button
             onClick={() => navigate("/admin")}
-            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
           >
             Terug naar Dashboard
           </button>
@@ -252,7 +252,7 @@ export default function AdminAffiliateCampaignsPage() {
             )}
             <button
               onClick={openNew}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#9A503B] text-white text-sm font-semibold hover:bg-[#B55E45] transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#9A503B] text-white text-sm font-semibold hover:bg-[#A85740] transition-colors"
             >
               <Plus className="w-4 h-4" />
               Campagne toevoegen
@@ -287,7 +287,7 @@ export default function AdminAffiliateCampaignsPage() {
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="bijv. H&M NL Dames"
-                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
+                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#A85740]"
                 />
               </div>
 
@@ -297,7 +297,7 @@ export default function AdminAffiliateCampaignsPage() {
                   <select
                     value={form.provider}
                     onChange={e => setForm(f => ({ ...f, provider: e.target.value }))}
-                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
+                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#A85740]"
                   >
                     <option value="daisycon">Daisycon</option>
                     <option value="awin">Awin</option>
@@ -311,7 +311,7 @@ export default function AdminAffiliateCampaignsPage() {
                     value={form.program_id}
                     onChange={e => setForm(f => ({ ...f, program_id: e.target.value }))}
                     placeholder="bijv. 17004"
-                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
+                    className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#A85740]"
                   />
                 </div>
               </div>
@@ -325,7 +325,7 @@ export default function AdminAffiliateCampaignsPage() {
                   value={form.feed_url}
                   onChange={e => setForm(f => ({ ...f, feed_url: e.target.value }))}
                   placeholder="https://daisycon.io/datafeed/?media_id=..."
-                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45] font-mono"
+                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#A85740] font-mono"
                 />
                 <p className="text-xs text-[#6E6E6E] mt-1">
                   De volledige feed URL inclusief je media_id en alle parameters
@@ -339,7 +339,7 @@ export default function AdminAffiliateCampaignsPage() {
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   rows={2}
                   placeholder="Optioneel: bijv. 'alleen dames, 3000 producten'"
-                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B55E45] resize-none"
+                  className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#A85740] resize-none"
                 />
               </div>
 
@@ -364,7 +364,7 @@ export default function AdminAffiliateCampaignsPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-[#9A503B] text-white text-sm font-semibold hover:bg-[#B55E45] transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-[#9A503B] text-white text-sm font-semibold hover:bg-[#A85740] transition-colors disabled:opacity-50"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 {editingId ? "Bijwerken" : "Toevoegen"}
@@ -390,7 +390,7 @@ export default function AdminAffiliateCampaignsPage() {
           </p>
           <button
             onClick={openNew}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#9A503B] text-white text-sm font-semibold hover:bg-[#B55E45] transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#9A503B] text-white text-sm font-semibold hover:bg-[#A85740] transition-colors"
           >
             <Plus className="w-4 h-4" />
             Eerste campagne toevoegen
@@ -454,7 +454,7 @@ export default function AdminAffiliateCampaignsPage() {
                       <button
                         onClick={() => handleSync(campaign)}
                         disabled={isSyncing || syncingId !== null}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#9A503B] text-white text-xs font-semibold hover:bg-[#B55E45] transition-colors disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#9A503B] text-white text-xs font-semibold hover:bg-[#A85740] transition-colors disabled:opacity-50"
                       >
                         {isSyncing ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />

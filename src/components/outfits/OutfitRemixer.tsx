@@ -87,7 +87,7 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
       {/* Category Selector */}
       <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <RefreshCw className="w-5 h-5 text-[#B55E45]" />
+          <RefreshCw className="w-5 h-5 text-[#A85740]" />
           <h3 className="font-display font-semibold text-[#1A1A1A]">
             Remix dit outfit
           </h3>

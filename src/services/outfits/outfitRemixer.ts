@@ -63,10 +63,13 @@ export function remixOutfit(
     };
 
     // Calculate match score for remixed outfit
+    // `Outfit` has no `colors` field; derive them from the products it contains.
+    const outfitColors = newProducts.flatMap(p => p.colors ?? (p.color ? [p.color] : []));
+
     const matchResult = calculateMatchScore({
       outfit: {
         style: remixedOutfit.archetype,
-        colors: remixedOutfit.colors || [],
+        colors: outfitColors,
         occasion: remixedOutfit.occasion,
         season: remixedOutfit.season,
         items: newProducts

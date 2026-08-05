@@ -118,7 +118,7 @@ export const MatchFeedbackWidget: React.FC<MatchFeedbackWidgetProps> = ({
       {!showTextInput && !compact && (
         <button
           onClick={() => setShowTextInput(true)}
-          className="flex items-center gap-2 text-xs text-[#6E6E6E] hover:text-[#B55E45] transition-colors mb-3"
+          className="flex items-center gap-2 text-xs text-[#6E6E6E] hover:text-[#A85740] transition-colors mb-3"
         >
           <MessageSquare className="w-4 h-4" />
           <span>Voeg opmerking toe (optioneel)</span>

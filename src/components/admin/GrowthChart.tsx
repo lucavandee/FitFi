@@ -11,7 +11,7 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
   const maxValue = Math.max(data.last_7d, data.last_30d, data.last_90d);
 
   const bars = [
-    { label: '7 dagen', value: data.last_7d, color: '#B55E45' },
+    { label: '7 dagen', value: data.last_7d, color: '#A85740' },
     { label: '30 dagen', value: data.last_30d, color: '#9A503B' },
     { label: '90 dagen', value: data.last_90d, color: '#9A503B' },
   ];

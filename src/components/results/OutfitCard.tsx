@@ -68,7 +68,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           />
           {outfit?.matchScore && (
             <div className="absolute top-2 left-2 z-10">
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#B55E45] text-white leading-none">
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#A85740] text-white leading-none">
                 {Math.round(outfit.matchScore)}%
               </span>
             </div>
@@ -125,7 +125,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         {description.length > 0 && (
           <ul className="mb-2.5">
             <li className="flex items-start gap-1.5 text-[11px] text-[#6E6E6E] leading-snug">
-              <span className="w-1 h-1 rounded-full bg-[#B55E45] mt-1.5 flex-shrink-0" aria-hidden="true" />
+              <span className="w-1 h-1 rounded-full bg-[#A85740] mt-1.5 flex-shrink-0" aria-hidden="true" />
               <span className="line-clamp-1">{description[0]}</span>
             </li>
           </ul>
@@ -138,7 +138,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
               <button
                 key={idx}
                 onClick={() => handleProductClick(product)}
-                className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#B55E45] rounded-lg transition-all text-left"
+                className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#A85740] rounded-lg transition-all text-left"
               >
                 <ShoppingBag className="w-3 h-3 text-[#6E6E6E] flex-shrink-0" />
                 <span className="text-[11px] text-[#1A1A1A] truncate leading-tight">{product.name}</span>
@@ -150,7 +150,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             href={shopLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors"
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors"
           >
             <ShoppingBag className="w-3 h-3" />
             Shop vergelijkbare items

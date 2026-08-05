@@ -39,14 +39,14 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
           aria-live="polite"
         >
           {hasPhoto
-            ? <CheckCircle className="w-3.5 h-3.5 text-[#B55E45] shrink-0 mt-0.5" aria-hidden="true" />
-            : <Info className="w-3.5 h-3.5 text-[#B55E45] shrink-0 mt-0.5" aria-hidden="true" />
+            ? <CheckCircle className="w-3.5 h-3.5 text-[#A85740] shrink-0 mt-0.5" aria-hidden="true" />
+            : <Info className="w-3.5 h-3.5 text-[#A85740] shrink-0 mt-0.5" aria-hidden="true" />
           }
           <p className="text-xs text-[#6E6E6E] leading-relaxed">
             {hasPhoto
               ? <><strong className="font-semibold text-[#1A1A1A]">Foto-gebaseerd advies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon.</>
               : <>Kleurtips op basis van jouw quiz. Zonder foto geven we geen uitspraken over huidondertoon.{' '}
-                  <button onClick={() => navigate('/onboarding?step=photo')} className="font-semibold underline underline-offset-2 text-[#9A503B] hover:no-underline focus-visible:ring-1 focus-visible:ring-[#B55E45] rounded">
+                  <button onClick={() => navigate('/onboarding?step=photo')} className="font-semibold underline underline-offset-2 text-[#9A503B] hover:no-underline focus-visible:ring-1 focus-visible:ring-[#A85740] rounded">
                     Voeg selfie toe
                   </button>
                 </>
@@ -57,13 +57,13 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
         {/* Recommended Colors */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <CheckCircle className="w-4 h-4 text-[#B55E45]" aria-hidden="true" />
+            <CheckCircle className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
             <p className="text-sm font-semibold text-[#1A1A1A]">Draag deze kleuren</p>
           </div>
           <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#F5F0EB' }}>
             <ColorSwatchGrid swatches={palette.doColors} recommendation="do" columns={6} />
             <p className="text-xs text-[#6E6E6E] flex items-center gap-1.5 mt-3">
-              <Info className="w-3 h-3 text-[#B55E45] shrink-0" aria-hidden="true" />
+              <Info className="w-3 h-3 text-[#A85740] shrink-0" aria-hidden="true" />
               Sla deze sectie op voor tijdens het shoppen.
             </p>
           </div>
@@ -76,7 +76,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             {groupedColors.basis.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-[#B55E45]" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#A85740]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Basiskleuren</p>
                   <p className="text-xs text-[#6E6E6E]">— ~60% van je garderobe</p>
                 </div>
@@ -86,7 +86,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             {groupedColors.accent.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-[#B55E45]" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#A85740]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Accentkleuren</p>
                   <p className="text-xs text-[#6E6E6E]">— ~30% voor balans</p>
                 </div>
@@ -134,7 +134,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
               </p>
               <button
                 onClick={() => navigate('/onboarding?step=photo')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
                 style={{ background: '#9A503B' }}
               >
                 <Camera className="w-3.5 h-3.5" aria-hidden="true" />

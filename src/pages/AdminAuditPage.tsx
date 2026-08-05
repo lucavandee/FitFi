@@ -43,6 +43,10 @@ export default function AdminAuditPage() {
     try {
       setLoading(true);
       const sb = supabase();
+      if (!sb) {
+        toast.error('Supabase client niet beschikbaar');
+        return;
+      }
 
       // Check if user_activity_log table exists
       const { data, error } = await sb
@@ -98,7 +102,7 @@ export default function AdminAuditPage() {
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#F5F0EB] flex items-center justify-center">
-            <XCircle className="w-10 h-10 text-[#B55E45]" />
+            <XCircle className="w-10 h-10 text-[#A85740]" />
           </div>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">
             Geen toegang
@@ -106,7 +110,7 @@ export default function AdminAuditPage() {
           <p className="text-[#6E6E6E] mb-6">
             Je hebt geen admin rechten om deze pagina te bekijken.
           </p>
-          <a href="/" className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2">
+          <a href="/" className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2">
             Terug naar home
           </a>
         </div>
@@ -120,7 +124,7 @@ export default function AdminAuditPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-8 h-8 text-[#B55E45]" />
+            <FileText className="w-8 h-8 text-[#A85740]" />
             <h1 className="text-3xl font-bold text-[#1A1A1A]">
               Audit Log
             </h1>
@@ -140,14 +144,14 @@ export default function AdminAuditPage() {
                 placeholder="Zoek op email, actie of resource..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#A85740] focus:border-transparent"
               />
             </div>
 
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="px-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent"
+              className="px-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#A85740] focus:border-transparent"
             >
               <option value="all">Alle acties</option>
               {uniqueActions.map(action => (
@@ -186,7 +190,7 @@ export default function AdminAuditPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <Activity className="w-5 h-5 text-[#B55E45]" />
+                      <Activity className="w-5 h-5 text-[#A85740]" />
                       <span className="font-medium text-[#1A1A1A]">
                         {log.action}
                       </span>
@@ -210,7 +214,7 @@ export default function AdminAuditPage() {
 
                     {log.details && Object.keys(log.details).length > 0 && (
                       <details className="mt-3">
-                        <summary className="cursor-pointer text-sm text-[#B55E45] hover:text-[#9A503B]">
+                        <summary className="cursor-pointer text-sm text-[#A85740] hover:text-[#9A503B]">
                           Details tonen
                         </summary>
                         <pre className="mt-2 p-3 bg-gray-50 rounded text-xs overflow-x-auto">

@@ -42,7 +42,7 @@ export function NovaBubble({ message, onDismiss, autoHideDuration = 5000 }: Nova
         >
           <div className="flex items-start gap-3">
             <motion.div
-              className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#9A503B] to-[#B55E45] flex items-center justify-center"
+              className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#9A503B] to-[#A85740] flex items-center justify-center"
               animate={{
                 boxShadow: [
                   '0 0 0 0 rgba(119, 79, 56, 0.4)',

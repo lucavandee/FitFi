@@ -215,7 +215,7 @@ export default function ShopPage() {
             )}
             <button
               onClick={() => navigate('/onboarding')}
-              className="ml-auto text-[11px] font-semibold text-[#6E6E6E] hover:text-[#B55E45] transition-colors"
+              className="ml-auto text-[11px] font-semibold text-[#6E6E6E] hover:text-[#A85740] transition-colors"
             >
               Aanpassen →
             </button>
@@ -255,7 +255,7 @@ export default function ShopPage() {
               className={`px-3.5 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 (filters.category || '') === cat.value
                   ? 'bg-[#9A503B] text-white'
-                  : 'bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45]'
+                  : 'bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A85740]'
               }`}
               aria-pressed={(filters.category || '') === cat.value}
             >
@@ -280,7 +280,7 @@ export default function ShopPage() {
                 placeholder="Zoek op product of merk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#B55E45] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#6E6E6E]"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#A85740] focus:outline-none focus:ring-2 focus:ring-[#A85740]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#6E6E6E]"
                 aria-label="Zoek producten"
               />
               {searchQuery && (
@@ -299,7 +299,7 @@ export default function ShopPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="appearance-none w-full sm:w-auto pl-3.5 pr-9 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#B55E45] focus:outline-none bg-white text-[#1A1A1A] text-sm cursor-pointer"
+                className="appearance-none w-full sm:w-auto pl-3.5 pr-9 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#A85740] focus:outline-none bg-white text-[#1A1A1A] text-sm cursor-pointer"
                 aria-label="Sorteer producten"
               >
                 <option value="relevance">Relevantie</option>
@@ -313,7 +313,7 @@ export default function ShopPage() {
             {/* Mobile filter button */}
             <button
               onClick={() => setShowFilters(true)}
-              className="sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] hover:border-[#B55E45] transition-colors"
+              className="sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] hover:border-[#A85740] transition-colors"
               aria-label="Toon merkfilters"
               aria-expanded={showFilters}
             >
@@ -368,7 +368,7 @@ export default function ShopPage() {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="text-xs text-[#6E6E6E] hover:text-[#B55E45] underline transition-colors"
+                className="text-xs text-[#6E6E6E] hover:text-[#A85740] underline transition-colors"
               >
                 Wis filters
               </button>
@@ -389,7 +389,7 @@ export default function ShopPage() {
                 {filters.brands.length > 0 && (
                   <button
                     onClick={() => setFilters((f) => ({ ...f, brands: [] }))}
-                    className="text-xs text-[#B55E45] hover:underline"
+                    className="text-xs text-[#A85740] hover:underline"
                   >
                     Wis
                   </button>
@@ -402,7 +402,7 @@ export default function ShopPage() {
                       type="checkbox"
                       checked={filters.brands.includes(brand)}
                       onChange={() => toggleBrandFilter(brand)}
-                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#B55E45] cursor-pointer focus:ring-2 focus:ring-[#B55E45]/20"
+                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#A85740] cursor-pointer focus:ring-2 focus:ring-[#A85740]/20"
                     />
                     <span className="text-sm text-[#1A1A1A] group-hover:text-[#9A503B] transition-colors">
                       {brand}
@@ -448,7 +448,7 @@ export default function ShopPage() {
                           type="checkbox"
                           checked={filters.brands.includes(brand)}
                           onChange={() => toggleBrandFilter(brand)}
-                          className="w-5 h-5 rounded border-2 border-[#E5E5E5] text-[#B55E45] cursor-pointer"
+                          className="w-5 h-5 rounded border-2 border-[#E5E5E5] text-[#A85740] cursor-pointer"
                         />
                         <span className="text-sm text-[#1A1A1A]">{brand}</span>
                       </label>
@@ -456,7 +456,7 @@ export default function ShopPage() {
                   </div>
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="w-full py-3.5 bg-[#9A503B] text-white rounded-xl font-bold text-sm hover:bg-[#B55E45] transition-colors"
+                    className="w-full py-3.5 bg-[#9A503B] text-white rounded-xl font-bold text-sm hover:bg-[#A85740] transition-colors"
                   >
                     Toon {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
                   </button>
@@ -495,7 +495,7 @@ export default function ShopPage() {
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
+                  className="px-5 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
                 >
                   Opnieuw proberen
                 </button>
@@ -525,7 +525,7 @@ export default function ShopPage() {
                     {searchQuery && (
                       <button
                         onClick={clearSearch}
-                        className="px-5 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
+                        className="px-5 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
                       >
                         Wis zoekopdracht
                       </button>
@@ -533,7 +533,7 @@ export default function ShopPage() {
                     {hasActiveFilters && (
                       <button
                         onClick={clearFilters}
-                        className="px-5 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
+                        className="px-5 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
                       >
                         Wis filters
                       </button>
@@ -599,7 +599,7 @@ export default function ShopPage() {
           >
             <button
               onClick={() => navigate('/results')}
-              className="inline-flex items-center gap-2 px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar rapport

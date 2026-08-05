@@ -103,7 +103,7 @@ export function BentoCard({
         hover:shadow-md
         transition-shadow duration-200
         ${sizeClasses[size]}
-        ${onClick ? 'cursor-pointer hover:border-[#B55E45]' : ''}
+        ${onClick ? 'cursor-pointer hover:border-[#A85740]' : ''}
         ${className}
       `}
       style={{
@@ -215,7 +215,7 @@ export function BentoActionCard({
         </p>
         <button
           onClick={action.onClick}
-          className="w-full px-4 py-2.5 bg-[#9A503B] text-white rounded-xl font-semibold text-sm hover:bg-[#B55E45] transition-colors"
+          className="w-full px-4 py-2.5 bg-[#9A503B] text-white rounded-xl font-semibold text-sm hover:bg-[#A85740] transition-colors"
         >
           {action.label}
         </button>
@@ -273,7 +273,7 @@ export function BentoHeroCard({
               className={`
                 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all
                 ${action.variant === 'primary'
-                  ? 'bg-[#9A503B] text-white hover:bg-[#B55E45]'
+                  ? 'bg-[#9A503B] text-white hover:bg-[#A85740]'
                   : 'bg-[#F5F0EB] text-[#1A1A1A] hover:bg-[#E5E5E5]'
                 }
               `}

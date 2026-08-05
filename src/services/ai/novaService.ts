@@ -4,7 +4,8 @@ export type Message = { role: Role; content: string };
 export type NovaEvent =
   | { type: "delta"; text?: string }
   | { type: "done" }
-  | { type: "error"; message?: string };
+  | { type: "error"; message?: string; code?: string; data?: any }
+  | { type: "json"; data?: any };
 
 export type NovaStreamOpts = {
   mode: "style";
@@ -74,6 +75,9 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
     // Dynamic import to avoid circular dependency
     const { supabase } = await import('@/lib/supabaseClient');
     const sb = supabase();
+    if (!sb) {
+      throw new Error('Supabase client unavailable');
+    }
     const { data: { session } } = await sb.auth.getSession();
 
     if (session?.user) {

@@ -82,7 +82,7 @@ export default function BramsFruitCatalogPage() {
             <p className="text-[#6E6E6E] mb-6">{error}</p>
             <button
               onClick={() => loadData()}
-              className="px-4 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+              className="px-4 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
             >
               Opnieuw proberen
             </button>

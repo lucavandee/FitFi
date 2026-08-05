@@ -1,5 +1,5 @@
 import React from "react";
-import Container from "@/components/layout/Container";
+import { Container } from "@/components/layout/Container";
 import Button from "@/components/ui/Button";
 
 export default function Hero() {

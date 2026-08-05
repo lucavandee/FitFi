@@ -55,8 +55,8 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
       }
 
       // Time-based preferences
-      if (timeContext === 'morning' && outfit.style?.includes('fresh')) score += 5;
-      if (timeContext === 'evening' && outfit.style?.includes('elegant')) score += 5;
+      if (timeContext === 'morning' && outfit.tags?.includes('fresh')) score += 5;
+      if (timeContext === 'evening' && outfit.tags?.includes('elegant')) score += 5;
 
       return { outfit, score };
     });
@@ -113,7 +113,21 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
       </div>
 
       <div className="mb-4">
-        <OutfitCard outfit={recommendation.outfit} compact />
+        <OutfitCard
+          outfit={{
+            id: recommendation.outfit.id,
+            title: recommendation.outfit.title,
+            description: recommendation.outfit.description,
+            imageUrl: recommendation.outfit.imageUrl || '/images/fallbacks/default.jpg',
+            matchPercentage: recommendation.outfit.matchPercentage,
+            archetype: recommendation.outfit.archetype,
+            tags: recommendation.outfit.tags,
+            products: recommendation.outfit.products.map(product => ({
+              ...product,
+              imageUrl: product.imageUrl || '/images/fallbacks/default.jpg',
+            })),
+          }}
+        />
       </div>
 
       <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
@@ -124,7 +138,7 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
       <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
         <div className="flex items-center justify-between text-xs text-[#6E6E6E]">
           <span>Match score</span>
-          <span className="font-semibold text-[#B55E45]">
+          <span className="font-semibold text-[#A85740]">
             {Math.round(recommendation.score)}%
           </span>
         </div>

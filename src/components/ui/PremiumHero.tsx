@@ -26,8 +26,8 @@ export default function PremiumHero({
           <p className="mt-3 text-base text-[#4A4A4A] leading-relaxed">{subtitle}</p>
 
           <div className="mt-6 flex flex-wrap gap-2">
-            <Link to={ctaLink} className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">{ctaText}</Link>
-            <Link to={secondaryCtaLink} className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">{secondaryCtaText}</Link>
+            <Link to={ctaLink} className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">{ctaText}</Link>
+            <Link to={secondaryCtaLink} className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">{secondaryCtaText}</Link>
           </div>
         </div>
       </div>

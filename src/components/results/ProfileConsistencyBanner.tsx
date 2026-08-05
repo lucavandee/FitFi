@@ -33,7 +33,7 @@ export function ProfileConsistencyBanner({
     switch (analysis.level) {
       case 'high':
         return {
-          icon: <CheckCircle className="w-4 h-4 text-[#B55E45]" />,
+          icon: <CheckCircle className="w-4 h-4 text-[#A85740]" />,
           iconBg: 'bg-[#F4E8E3]',
         };
       case 'medium':
@@ -134,7 +134,7 @@ export function ProfileConsistencyBanner({
                   initial={{ width: 0 }}
                   animate={{ width: `${analysis.score}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full rounded-full bg-[#B55E45]"
+                  className="h-full rounded-full bg-[#A85740]"
                 />
               </div>
             </div>
@@ -143,7 +143,7 @@ export function ProfileConsistencyBanner({
             {analysis.level === 'low' && onRetakeQuiz && (
               <button
                 onClick={onRetakeQuiz}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#B55E45] rounded-full font-semibold text-sm text-[#1A1A1A] transition-all duration-200"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#A85740] rounded-full font-semibold text-sm text-[#1A1A1A] transition-all duration-200"
               >
                 <RefreshCcw className="w-4 h-4" />
                 <span>Quiz opnieuw doen</span>

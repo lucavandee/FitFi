@@ -102,7 +102,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
         </p>
         <button
           onClick={() => navigate('/onboarding')}
-          className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
+          className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
           aria-label="Pas antwoorden aan"
         >
           Pas aan <ArrowRight className="w-3.5 h-3.5" />
@@ -110,7 +110,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
       </div>
       <h3 className="text-lg font-semibold text-[#1A1A1A] mb-8">
         Waarom dit rapport past bij{' '}
-        <span className="text-[#B55E45]">{getArchetypeDisplayNL(archetypeName)}</span>
+        <span className="text-[#A85740]">{getArchetypeDisplayNL(archetypeName)}</span>
       </h3>
 
       {/* ── Bullets ── */}
@@ -125,7 +125,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
           >
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
-                <Check className="w-3.5 h-3.5 text-[#B55E45]" strokeWidth={3} />
+                <Check className="w-3.5 h-3.5 text-[#A85740]" strokeWidth={3} />
               </div>
               <span className="text-sm font-medium text-[#1A1A1A]">
                 {bullet.label}
@@ -141,7 +141,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
       {/* ── Photo upsell ── */}
       {!hasPhoto && (
         <div className="bg-[#F5F0EB] rounded-xl p-4 mt-6 flex items-center gap-3">
-          <Camera className="w-5 h-5 text-[#B55E45] flex-shrink-0" />
+          <Camera className="w-5 h-5 text-[#A85740] flex-shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-sm text-[#4A4A4A]">
               Upload een selfie voor kleuranalyse op basis van jouw huidondertoon.
@@ -149,7 +149,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
           </div>
           <button
             onClick={() => navigate('/onboarding?step=photo')}
-            className="text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] whitespace-nowrap transition-colors duration-200"
+            className="text-sm font-semibold text-[#A85740] hover:text-[#9A503B] whitespace-nowrap transition-colors duration-200"
           >
             Foto toevoegen →
           </button>

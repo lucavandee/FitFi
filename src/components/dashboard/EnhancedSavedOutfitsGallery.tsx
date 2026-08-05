@@ -39,7 +39,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
   const { data: outfits, isLoading } = useQuery({
     queryKey: ["savedOutfits", userId, sortMode],
     queryFn: async () => {
-      const client = supabase();
+      const client = supabase;
       if (!client) return [];
 
       const { data, error } = await client
@@ -90,7 +90,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
         <p className="text-[#6E6E6E] mb-6 max-w-md mx-auto">
           Begin met swipen en save je favoriete looks om een persoonlijke collectie op te bouwen
         </p>
-        <button className="px-6 py-3 bg-[#9A503B] text-white rounded-xl font-semibold text-base hover:bg-[#B55E45] transition-colors duration-200">
+        <button className="px-6 py-3 bg-[#9A503B] text-white rounded-xl font-semibold text-base hover:bg-[#A85740] transition-colors duration-200">
           Start met swipen
         </button>
       </motion.div>
@@ -102,7 +102,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
       {/* Controls Bar */}
       <div className="flex items-center justify-between gap-4 p-4 bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl shadow-sm">
         <div className="flex items-center gap-2">
-          <Heart className="w-5 h-5 text-[#B55E45]" />
+          <Heart className="w-5 h-5 text-[#A85740]" />
           <span className="text-sm font-semibold text-[#1A1A1A]">
             {outfits.length} {outfits.length === 1 ? "outfit" : "outfits"} opgeslagen
           </span>
@@ -207,7 +207,7 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       whileHover={{ y: -8, scale: 1.02 }}
-      className="group relative aspect-[3/4] bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-xl overflow-hidden border-2 border-[#E5E5E5] hover:border-[#B55E45] shadow-sm hover:shadow-xl transition-all cursor-pointer"
+      className="group relative aspect-[3/4] bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-xl overflow-hidden border-2 border-[#E5E5E5] hover:border-[#A85740] shadow-sm hover:shadow-xl transition-all cursor-pointer"
     >
       {/* Nova Match Badge - Top Right */}
       <div className="absolute top-3 right-3 z-10">
@@ -216,7 +216,7 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
 
       {/* Content placeholder */}
       <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-        <Heart className="w-12 h-12 text-[#B55E45] mb-2 group-hover:scale-110 transition-transform" />
+        <Heart className="w-12 h-12 text-[#A85740] mb-2 group-hover:scale-110 transition-transform" />
         <p className="text-xs text-center text-[#6E6E6E] font-medium">
           Outfit #{outfit.id.substring(0, 8)}
         </p>
@@ -269,11 +269,11 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.03 }}
-      className="group flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:border-[#B55E45] hover:shadow-md transition-all cursor-pointer"
+      className="group flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:border-[#A85740] hover:shadow-md transition-all cursor-pointer"
     >
       {/* Thumbnail */}
       <div className="flex-shrink-0 relative w-20 h-28 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-lg flex items-center justify-center border border-[#E5E5E5] group-hover:scale-105 transition-transform">
-        <Heart className="w-6 h-6 text-[#B55E45]" />
+        <Heart className="w-6 h-6 text-[#A85740]" />
       </div>
 
       {/* Info */}
@@ -300,7 +300,7 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
       </div>
 
       {/* Action */}
-      <Heart className="w-5 h-5 text-[#B55E45] fill-[#B55E45] group-hover:scale-110 transition-transform" />
+      <Heart className="w-5 h-5 text-[#A85740] fill-[#A85740] group-hover:scale-110 transition-transform" />
     </motion.div>
   );
 }

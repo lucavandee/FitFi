@@ -61,7 +61,7 @@ export default function CookieBanner() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={acceptAll}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#B55E45] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#A85740] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
               >
                 Alles accepteren
               </button>
@@ -124,7 +124,7 @@ export default function CookieBanner() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={saveCustom}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#B55E45] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#A85740] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
               >
                 Voorkeuren opslaan
               </button>

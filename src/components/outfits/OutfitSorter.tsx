@@ -80,9 +80,9 @@ export default function OutfitSorter({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all',
-            'hover:border-[#B55E45] focus:outline-none focus:ring-4 focus:ring-[#B55E45]/20',
+            'hover:border-[#A85740] focus:outline-none focus:ring-4 focus:ring-[#A85740]/20',
             isOpen
-              ? 'border-[#B55E45] bg-[#F5F0EB]'
+              ? 'border-[#A85740] bg-[#F5F0EB]'
               : 'border-[#E5E5E5] bg-[#FFFFFF]'
           )}
         >
@@ -114,14 +114,14 @@ export default function OutfitSorter({
                   className={cn(
                     'w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-left transition-all',
                     isActive
-                      ? 'bg-[#F5F0EB] text-[#B55E45]'
+                      ? 'bg-[#F5F0EB] text-[#A85740]'
                       : 'hover:bg-[#FAFAF8] text-[#1A1A1A]'
                   )}
                 >
                   <div
                     className={cn(
                       'mt-0.5 flex-shrink-0',
-                      isActive ? 'text-[#B55E45]' : 'text-[#1A1A1A]/60'
+                      isActive ? 'text-[#A85740]' : 'text-[#1A1A1A]/60'
                     )}
                   >
                     {option.icon}
@@ -130,7 +130,7 @@ export default function OutfitSorter({
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <span className="text-sm font-medium">{option.label}</span>
                       {isActive && (
-                        <span className="text-xs font-bold bg-[#B55E45] text-white px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-bold bg-[#A85740] text-white px-2 py-0.5 rounded-full">
                           Actief
                         </span>
                       )}

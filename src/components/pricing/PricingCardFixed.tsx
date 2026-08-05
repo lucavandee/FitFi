@@ -13,8 +13,8 @@
  *   → User confusion, no clear choice
  *
  * AFTER (✅ Correct):
- *   Recommended: <button className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold py-3 px-6 rounded-xl">Start gratis</button>
- *   Others: <button className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium py-3 px-6 rounded-xl">Kies dit plan</button>
+ *   Recommended: <button className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold py-3 px-6 rounded-xl">Start gratis</button>
+ *   Others: <button className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium py-3 px-6 rounded-xl">Kies dit plan</button>
  *   → Clear visual hierarchy, obvious best choice
  */
 
@@ -58,14 +58,14 @@ export function PricingCardFixed({
       className={`
         relative p-8 rounded-2xl transition-all
         ${recommended
-          ? 'border-4 border-[#B55E45] shadow-xl scale-105 bg-gradient-to-br from-[#F5F0EB] to-white'
+          ? 'border-4 border-[#A85740] shadow-xl scale-105 bg-gradient-to-br from-[#F5F0EB] to-white'
           : 'border-2 border-[#E5E5E5] bg-white hover:border-[#F4E8E3] hover:shadow-lg'
         }
       `}
     >
       {/* Recommended Badge */}
       {recommended && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
           <Star className="w-4 h-4 fill-white" aria-hidden="true" />
           Aanbevolen
         </div>
@@ -117,7 +117,7 @@ export function PricingCardFixed({
         <button
           onClick={onSelect}
           disabled={active}
-          className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl w-full group"
+          className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl w-full group"
           aria-label={`Selecteer ${name} plan - Aanbevolen optie`}
         >
           {active ? (
@@ -137,7 +137,7 @@ export function PricingCardFixed({
         <button
           onClick={onSelect}
           disabled={active}
-          className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl w-full"
+          className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl w-full"
           aria-label={`Selecteer ${name} plan`}
         >
           {active ? 'Huidig plan' : 'Kies dit plan'}
@@ -148,7 +148,7 @@ export function PricingCardFixed({
       {recommended && (
         <a
           href="#features"
-          className="text-[#6E6E6E] hover:text-[#B55E45] text-sm font-medium block text-center mt-4 transition-colors duration-200"
+          className="text-[#6E6E6E] hover:text-[#A85740] text-sm font-medium block text-center mt-4 transition-colors duration-200"
         >
           Bekijk alle features →
         </a>

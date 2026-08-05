@@ -145,7 +145,7 @@ export default function AdminTestimonialsPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
           >
             <Plus className="w-5 h-5" />
             Nieuwe Testimonial
@@ -259,7 +259,7 @@ export default function AdminTestimonialsPage() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+                  className="px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
                 >
                   {editingId ? 'Bijwerken' : 'Toevoegen'}
                 </button>

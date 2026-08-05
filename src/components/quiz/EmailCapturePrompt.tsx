@@ -80,7 +80,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
 
       <div className="relative">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-[#B55E45] rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+          <div className="w-12 h-12 bg-[#A85740] rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
             <Save className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -101,7 +101,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="je@email.com"
-              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#6E6E6E] outline-none focus-visible:border-[#B55E45] focus-visible:shadow-sm transition-all"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#6E6E6E] outline-none focus-visible:border-[#A85740] focus-visible:shadow-sm transition-all"
               disabled={isSubmitting}
               required
             />
@@ -111,7 +111,7 @@ export function EmailCapturePrompt({ onDismiss, onEmailSaved }: EmailCaptureProm
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#9A503B] hover:bg-[#B55E45] text-white rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#9A503B] hover:bg-[#A85740] text-white rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>

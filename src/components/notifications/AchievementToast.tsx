@@ -275,7 +275,7 @@ export function XPToast({ amount, reason, onClose }: XPToastProps) {
       exit={{ opacity: 0, x: 50, scale: 0.9 }}
       className="fixed bottom-24 right-6 z-[75]"
     >
-      <div className="bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20">
+      <div className="bg-gradient-to-r from-[#A85740] to-[#A85740] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20">
         <Zap className="w-5 h-5 flex-shrink-0 animate-pulse" />
         <div>
           <div className="text-sm font-bold">+{amount} XP</div>

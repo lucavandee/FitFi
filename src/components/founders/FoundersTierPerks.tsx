@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   Sparkles, Shield, Users, Star, Crown, Wand2, Ticket, Gift,
-  Headphones, Video, Trophy, CheckCircle, Lock
+  Headphones, Video, Trophy, CheckCircle, Lock, type LucideIcon
 } from 'lucide-react';
 import { allPerksSorted } from '@/config/foundersTiers';
 
-const ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
+const ICONS: Record<string, LucideIcon> = {
   Sparkles, Shield, Users, Star, Crown, Wand2, Ticket, Gift, Headphones, Video, Trophy
 };
 

@@ -92,7 +92,7 @@ export const PostComposer: React.FC<Props> = ({
         <div className="flex items-start space-x-4">
           {/* User Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-[#B55E45] flex items-center justify-center text-white font-medium">
+            <div className="w-10 h-10 rounded-full bg-[#A85740] flex items-center justify-center text-white font-medium">
               {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
           </div>
@@ -100,7 +100,7 @@ export const PostComposer: React.FC<Props> = ({
           {/* Content Input */}
           <div className="flex-1">
             <textarea
-              className="w-full border border-gray-200 rounded-2xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:border-[#B55E45] transition-colors placeholder-gray-500"
+              className="w-full border border-gray-200 rounded-2xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:border-[#A85740] transition-colors placeholder-gray-500"
               placeholder={placeholder}
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -132,7 +132,7 @@ export const PostComposer: React.FC<Props> = ({
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:border-[#B55E45] transition-colors"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:border-[#A85740] transition-colors"
                   disabled={busy}
                 />
                 
@@ -161,7 +161,7 @@ export const PostComposer: React.FC<Props> = ({
                   onClick={handleImageToggle}
                   className={`p-2 rounded-lg transition-colors ${
                     showImageInput 
-                      ? 'bg-[#B55E45] text-white' 
+                      ? 'bg-[#A85740] text-white' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                   title="Afbeelding toevoegen"
@@ -184,7 +184,7 @@ export const PostComposer: React.FC<Props> = ({
                 disabled={!canSubmit}
                 icon={busy ? <Loader className="w-4 h-4 animate-spin" /> : <Send size={16} />}
                 iconPosition="left"
-                className="bg-[#B55E45] hover:bg-[#B55E45]/90 text-[#1A1A1A] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#A85740] hover:bg-[#A85740]/90 text-[#1A1A1A] disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-busy={busy}
               >
                 {busy ? 'Plaatsen...' : 'Post'}
@@ -196,7 +196,7 @@ export const PostComposer: React.FC<Props> = ({
       
       {/* Login CTA for guests */}
       {status !== 'authenticated' && (
-        <div className="mt-4 p-4 bg-[#B55E45]/10 rounded-2xl text-center">
+        <div className="mt-4 p-4 bg-[#A85740]/10 rounded-2xl text-center">
           <p className="text-sm text-gray-700 mb-3">
             Log in om posts te delen met de tribe
           </p>
@@ -205,7 +205,7 @@ export const PostComposer: React.FC<Props> = ({
             href="/inloggen"
             variant="primary"
             size="sm"
-            className="bg-[#B55E45] hover:bg-[#B55E45]/90 text-[#1A1A1A]"
+            className="bg-[#A85740] hover:bg-[#A85740]/90 text-[#1A1A1A]"
           >
             Inloggen
           </Button>

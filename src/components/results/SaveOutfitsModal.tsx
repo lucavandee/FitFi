@@ -58,13 +58,13 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
           </button>
 
           {/* Decorative gradient */}
-          <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-br from-[#B55E45] via-[#B55E45] to-[#B55E45] opacity-10"></div>
+          <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-br from-[#A85740] via-[#A85740] to-[#A85740] opacity-10"></div>
 
           {/* Content */}
           <div className="relative p-8 sm:p-10">
             {/* Icon */}
             <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-2xl flex items-center justify-center shadow-xl">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-2xl flex items-center justify-center shadow-xl">
                 <Save className="w-10 h-10 text-white" />
               </div>
             </div>
@@ -82,7 +82,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
             {/* Benefits list */}
             <div className="space-y-3 mb-8 bg-[#F5F0EB] rounded-2xl p-6">
               <div className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-[#B55E45] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 bg-[#A85740] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
@@ -90,7 +90,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
                 <span className="text-sm text-[#1A1A1A] font-medium">Opslaan & delen van je favoriete outfits</span>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-[#B55E45] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 bg-[#A85740] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
@@ -98,7 +98,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
                 <span className="text-sm text-[#1A1A1A] font-medium">Krijg nieuwe outfit suggesties elke week</span>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-[#B55E45] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 bg-[#A85740] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
@@ -111,7 +111,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
             <div className="space-y-3">
               <button
                 onClick={handleRegister}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#B55E45] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#A85740] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200"
               >
                 <Save className="w-5 h-5" />
                 Maak gratis account
@@ -120,7 +120,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
 
               <button
                 onClick={handleLogin}
-                className="w-full px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
+                className="w-full px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
               >
                 Heb je al een account? Log in
               </button>
@@ -135,7 +135,7 @@ export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutf
 
             {/* Privacy note */}
             <p className="text-xs text-center text-[#6E6E6E] mt-6 flex items-center justify-center gap-2">
-              <span className="text-[#B55E45]">🔒</span>
+              <span className="text-[#A85740]">🔒</span>
               Gratis account • Geen betaalgegevens nodig
             </p>
           </div>

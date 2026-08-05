@@ -73,7 +73,7 @@ export default function PasswordResetPage() {
           {/* Back link */}
           <NavLink
             to="/inloggen"
-            className="inline-flex items-center gap-1.5 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] mb-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] rounded-lg"
+            className="inline-flex items-center gap-1.5 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] mb-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] rounded-lg"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Terug naar inloggen
@@ -143,7 +143,7 @@ export default function PasswordResetPage() {
                       className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[#FAFAF8] text-[#1A1A1A] placeholder:text-[#6E6E6E] placeholder:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:opacity-50 ${
                         emailError
                           ? "border-[#C24A4A] focus-visible:ring-[#FECACA]"
-                          : "border-[#E5E5E5] focus-visible:border-[#B55E45] focus-visible:ring-[#F4E8E3]"
+                          : "border-[#E5E5E5] focus-visible:border-[#A85740] focus-visible:ring-[#F4E8E3]"
                       }`}
                     />
                   </div>
@@ -160,7 +160,7 @@ export default function PasswordResetPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-6 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-6 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                   style={{
                     background: "#9A503B",
                     color: "#FAFAF8",
@@ -208,7 +208,7 @@ export default function PasswordResetPage() {
               <div className="space-y-2.5">
                 <button
                   onClick={() => { setSent(false); setEmail(""); setTouched(false); }}
-                  className="w-full py-3 rounded-xl font-semibold text-sm border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45] hover:bg-[#F5F0EB] transition-all"
+                  className="w-full py-3 rounded-xl font-semibold text-sm border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A85740] hover:bg-[#F5F0EB] transition-all"
                 >
                   Ander e-mailadres proberen
                 </button>

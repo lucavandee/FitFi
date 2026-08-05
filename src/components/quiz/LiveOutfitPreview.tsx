@@ -140,7 +140,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
                     initial={{ width: 0 }}
                     animate={{ width: `${outfit.confidence * 100}%` }}
                     transition={{ duration: 0.8, delay: 0.6 }}
-                    className="h-full bg-gradient-to-r from-[#9A503B] to-[#B55E45]"
+                    className="h-full bg-gradient-to-r from-[#9A503B] to-[#A85740]"
                   />
                 </div>
                 <motion.span

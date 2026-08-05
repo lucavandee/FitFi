@@ -12,7 +12,7 @@ const NotFoundPage = () => {
       <section className="min-h-screen flex items-center justify-center px-4 py-24">
         <div className="max-w-md w-full mx-auto text-center">
           <p
-            className="text-7xl md:text-8xl font-bold text-[#B55E45] mb-4 leading-none"
+            className="text-7xl md:text-8xl font-bold text-[#A85740] mb-4 leading-none"
             aria-hidden="true"
           >
             404
@@ -26,13 +26,13 @@ const NotFoundPage = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="/"
-              className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200"
+              className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200"
             >
               Naar de homepage
             </a>
             <a
               href="/onboarding"
-              className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200"
+              className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200"
             >
               Start de stijlquiz
             </a>

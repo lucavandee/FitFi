@@ -33,14 +33,14 @@ type ButtonAsComponent = BaseProps & {
 type Props = ButtonAsButton | ButtonAsLink | ButtonAsComponent;
 
 function classes(variant: Variant, size: Size, extra?: string) {
-  const base = "inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B55E45]";
+  const base = "inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85740]";
   const v =
     variant === "primary"
-      ? "bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold rounded-xl"
+      ? "bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold rounded-xl"
       : variant === "secondary"
-      ? "bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] rounded-xl"
+      ? "bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl"
       : variant === "ghost"
-      ? "bg-transparent border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] rounded-xl"
+      ? "bg-transparent border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl"
       : "text-[#4A4A4A] hover:text-[#1A1A1A]";
   // WCAG AAA: minimum 44px touch targets (h-11 = 44px)
   const s = size === "sm" ? "h-11 px-4 text-sm" : size === "lg" ? "h-14 px-6 text-base" : "h-12 px-5 text-base";

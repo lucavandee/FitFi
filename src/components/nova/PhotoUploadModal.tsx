@@ -113,7 +113,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-[#E5E5E5]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-full flex items-center justify-center">
                 <Camera className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -140,7 +140,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
               // Upload Area
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-8 text-center cursor-pointer hover:border-[#B55E45] hover:bg-[#F5F0EB] dark:hover:bg-[#1A1A1A]/10 transition-all"
+                className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-8 text-center cursor-pointer hover:border-[#A85740] hover:bg-[#F5F0EB] dark:hover:bg-[#1A1A1A]/10 transition-all"
               >
                 <div className="w-16 h-16 mx-auto mb-4 bg-[#F5F0EB] text-[#9A503B] rounded-full flex items-center justify-center">
                   <Upload className="w-8 h-8" />
@@ -230,7 +230,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
           </div>
 
           {/* Bottom Accent */}
-          <div className="h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45]" />
+          <div className="h-1 bg-gradient-to-r from-[#A85740] to-[#A85740]" />
         </motion.div>
       </div>
     </AnimatePresence>

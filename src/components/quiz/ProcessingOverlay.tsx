@@ -119,9 +119,9 @@ export function ProcessingOverlay({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B55E45] via-[#B55E45] to-[#B55E45] opacity-20"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#A85740] via-[#A85740] to-[#A85740] opacity-20"
               style={{
-                background: 'conic-gradient(from 0deg, #B55E45, #B55E45, #B55E45)'
+                background: 'conic-gradient(from 0deg, #A85740, #A85740, #A85740)'
               }}
             />
 
@@ -132,7 +132,7 @@ export function ProcessingOverlay({
                 rotate: [0, 5, -5, 0]
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-2 rounded-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] flex items-center justify-center text-white"
+              className="absolute inset-2 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] flex items-center justify-center text-white"
             >
               {showSteps && currentStep ? currentStep.icon : <Sparkles className="w-8 h-8" />}
             </motion.div>
@@ -155,10 +155,10 @@ export function ProcessingOverlay({
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
+                  className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740]"
                 />
               </div>
-              <div className="mt-2 text-xs font-medium text-[#B55E45]">
+              <div className="mt-2 text-xs font-medium text-[#A85740]">
                 {Math.round(progress)}% voltooid
               </div>
             </div>
@@ -186,7 +186,7 @@ export function ProcessingOverlay({
                         isCompleted
                           ? 'bg-green-100 text-green-600'
                           : isCurrent
-                          ? 'bg-[#F5F0EB] text-[#B55E45]'
+                          ? 'bg-[#F5F0EB] text-[#A85740]'
                           : 'bg-[#FAFAF8] text-[#6E6E6E]'
                       }`}
                     >

@@ -15,9 +15,9 @@ interface StyleDNAMixIndicatorProps {
 
 const BAR_COLORS = [
   '#9A503B',
-  '#B55E45',
-  '#B55E45',
-  '#B55E45',
+  '#A85740',
+  '#A85740',
+  '#A85740',
 ];
 
 export function StyleDNAMixIndicator({ mixItems, confidence, className = "" }: StyleDNAMixIndicatorProps) {

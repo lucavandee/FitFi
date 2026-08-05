@@ -46,7 +46,7 @@ export function AnimatedStatCard({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ scale: 1.02, y: -4 }}
-      className="group relative bg-[#FFFFFF] rounded-2xl p-6 shadow-sm hover:shadow-sm transition-all border-2 border-[#E5E5E5] hover:border-[#B55E45] overflow-hidden"
+      className="group relative bg-[#FFFFFF] rounded-2xl p-6 shadow-sm hover:shadow-sm transition-all border-2 border-[#E5E5E5] hover:border-[#A85740] overflow-hidden"
     >
       {/* Gradient background on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -117,7 +117,7 @@ export function AnimatedStatCard({
       </div>
 
       {/* Hover glow effect */}
-      <div className="absolute -inset-px bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity" />
+      <div className="absolute -inset-px bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity" />
     </motion.div>
   );
 }

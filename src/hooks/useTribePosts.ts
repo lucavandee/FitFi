@@ -11,13 +11,10 @@ const mockTribePostsService = {
         tribe_id: tribeId,
         user_id: "user_1",
         authorId: "user_1",
-        authorName: "Emma S.",
         content: "Mijn favoriete winter look! Warme wollen jas gecombineerd met comfortabele boots.",
         image_url: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
         likes_count: 12,
         comments_count: 3,
-        likes: 12,
-        commentsCount: 3,
         created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
@@ -25,13 +22,10 @@ const mockTribePostsService = {
         tribe_id: tribeId,
         user_id: "user_2",
         authorId: "user_2",
-        authorName: "Lisa M.",
         content: "Vintage thrift find gecombineerd met moderne accessoires. Duurzaam én stijlvol!",
         image_url: "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=600&h=800&dpr=2",
         likes_count: 8,
         comments_count: 1,
-        likes: 8,
-        commentsCount: 1,
         created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
       }
     ];
@@ -43,10 +37,7 @@ const mockTribePostsService = {
       created_at: new Date().toISOString(),
       likes_count: 0,
       comments_count: 0,
-      likes: 0,
-      commentsCount: 0,
       authorId: input.user_id,
-      authorName: `User ${input.user_id.slice(-4)}`,
       ...input,
     };
     return newPost;
@@ -87,7 +78,7 @@ export function useTribePosts(tribeId: string) {
       const updatedPosts = await mockTribePostsService.getTribePosts(tribeId);
       setPosts(updatedPosts);
     } catch (e) {
-      setError(String(e?.message ?? e));
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }

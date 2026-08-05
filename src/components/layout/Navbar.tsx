@@ -209,7 +209,7 @@ export default function Navbar() {
                 </a>
                 <a
                   href="/registreren"
-                  className="bg-[#B55E45] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
                   data-event="nav_start_gratis"
                 >
                   Begin gratis
@@ -219,7 +219,7 @@ export default function Navbar() {
               <>
                 <a
                   href="/dashboard"
-                  className="bg-[#B55E45] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2"
                   data-event="nav_dashboard"
                 >
                   Dashboard
@@ -240,7 +240,7 @@ export default function Navbar() {
                 </button>
                 <div
                   aria-hidden="true"
-                  className="w-[34px] h-[34px] rounded-[10px] bg-[#F4E8E3] flex items-center justify-center text-xs font-bold text-[#B55E45] cursor-pointer transition-all duration-200 hover:bg-[#B55E45] hover:text-white hover:scale-105 ml-1 select-none"
+                  className="w-[34px] h-[34px] rounded-[10px] bg-[#F4E8E3] flex items-center justify-center text-xs font-bold text-[#A85740] cursor-pointer transition-all duration-200 hover:bg-[#A85740] hover:text-white hover:scale-105 ml-1 select-none"
                 >
                   <span>{userInitial}</span>
                 </div>
@@ -252,7 +252,7 @@ export default function Navbar() {
           <button
             ref={toggleRef}
             type="button"
-            className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
+            className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
             aria-label={open ? "Menu sluiten" : "Menu openen"}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -370,7 +370,7 @@ export default function Navbar() {
                   </a>
                   <a
                     href="/registreren"
-                    className="block bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
+                    className="block bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
                   >
                     Begin gratis
                   </a>
@@ -379,7 +379,7 @@ export default function Navbar() {
                 <div className="mt-6 pt-4 border-t border-[#E5E5E5] space-y-3">
                   <a
                     href="/dashboard"
-                    className="block bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
+                    className="block bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
                   >
                     Dashboard
                     {savedOutfitsCount > 0 && (

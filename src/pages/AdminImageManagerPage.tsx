@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function AdminImageManagerPage() {
   const navigate = useNavigate();
-  const { isAdmin, loading } = useIsAdmin();
+  const { isAdmin, isLoading: loading } = useIsAdmin();
   const [stats, setStats] = useState<{
     totalProducts: number;
     withImages: number;
@@ -25,6 +25,8 @@ export default function AdminImageManagerPage() {
   }, []);
 
   const loadStats = async () => {
+    if (!supabase) return;
+
     const { data: allProducts } = await supabase
       .from('products')
       .select('id, image_url');
@@ -58,7 +60,7 @@ export default function AdminImageManagerPage() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#9A503B] to-[#B55E45] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#9A503B] to-[#A85740] flex items-center justify-center">
               <Image className="w-6 h-6 text-white" />
             </div>
             <div>

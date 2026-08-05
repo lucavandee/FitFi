@@ -158,7 +158,7 @@ export function ResultsFeedbackWidget({
       >
         <div className="bg-white rounded-2xl shadow-2xl border border-[#E5E5E5] overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#B55E45] to-[#B55E45] px-4 py-3 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#A85740] to-[#A85740] px-4 py-3 flex items-center justify-between">
             <h3 className="text-white font-semibold text-sm sm:text-base flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Hoe vind je je Style Report?
@@ -183,9 +183,9 @@ export function ResultsFeedbackWidget({
                 <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => handleRating('very_helpful')}
-                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl hover:bg-[#F4E8E3] hover:border-[#B55E45] transition-all active:scale-95"
+                    className="flex-1 flex flex-col items-center gap-2 px-3 py-3 sm:py-4 bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-xl hover:bg-[#F4E8E3] hover:border-[#A85740] transition-all active:scale-95"
                   >
-                    <ThumbsUp className="w-6 h-6 sm:w-8 sm:h-8 text-[#B55E45]" />
+                    <ThumbsUp className="w-6 h-6 sm:w-8 sm:h-8 text-[#A85740]" />
                     <span className="text-xs sm:text-sm font-medium text-[#1A1A1A]">Ja, helemaal!</span>
                   </button>
 
@@ -212,7 +212,7 @@ export function ResultsFeedbackWidget({
               <>
                 <div className="flex items-center gap-2 p-3 bg-[#F5F0EB] rounded-lg border border-[#F4E8E3]">
                   {state === 'positive' ? (
-                    <ThumbsUp className="w-5 h-5 text-[#B55E45] flex-shrink-0" />
+                    <ThumbsUp className="w-5 h-5 text-[#A85740] flex-shrink-0" />
                   ) : (
                     <ThumbsDown className="w-5 h-5 text-red-600 flex-shrink-0" />
                   )}
@@ -237,7 +237,7 @@ export function ResultsFeedbackWidget({
                     }
                     rows={3}
                     maxLength={500}
-                    className="w-full px-3 py-2 border border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:border-transparent resize-none text-sm"
+                    className="w-full px-3 py-2 border border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:border-transparent resize-none text-sm"
                   />
                   <p className="text-xs text-[#6E6E6E] mt-1">
                     {feedbackText.length}/500 tekens
@@ -254,7 +254,7 @@ export function ResultsFeedbackWidget({
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-2.5 bg-[#B55E45] text-white rounded-xl hover:bg-[#9A503B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+                    className="flex-1 px-4 py-2.5 bg-[#A85740] text-white rounded-xl hover:bg-[#9A503B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
                   >
                     {isSubmitting ? (
                       <>
@@ -275,7 +275,7 @@ export function ResultsFeedbackWidget({
             {state === 'submitted' && (
               <div className="text-center py-4">
                 <div className="w-16 h-16 bg-[#F4E8E3] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <ThumbsUp className="w-8 h-8 text-[#B55E45]" />
+                  <ThumbsUp className="w-8 h-8 text-[#A85740]" />
                 </div>
                 <h4 className="text-lg font-semibold text-[#1A1A1A] mb-1">
                   Bedankt!

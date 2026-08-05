@@ -24,19 +24,11 @@ export const NBAQuickActions: React.FC<{ ctx: Parameters<typeof computeNextActio
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {items.map(a => {
-        // State-aware route mapping
-        let route = a.route;
-        let disabled = false;
-        
-        if (a.id === "challenge") {
-          route = best?.challengeId ? routeTo("challenge", best) : routeTo("tribe", {});
-          disabled = !best?.challengeId;
-        } else if (a.id === "post") {
-          route = routeTo("feedCompose");
-        } else if (a.id === "invite") {
-          route = routeTo("referral");
-        }
-        
+        // State-aware route mapping: gebruik de route uit computeNextActions,
+        // alleen de "challenge" actie kan uitgeschakeld worden zonder open challenge.
+        const route = a.route;
+        const disabled = a.id === "challenge" ? !best?.challengeId : false;
+
         return (
           <a
             key={a.id}

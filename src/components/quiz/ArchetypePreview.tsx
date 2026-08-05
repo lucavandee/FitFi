@@ -20,19 +20,19 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Klassiek',
     description: 'Tijdloze elegantie en verfijnde stukken',
     emoji: '👔',
-    color: '#B55E45'
+    color: '#A85740'
   },
   'casual_chic': {
     label: 'Smart Casual',
     description: 'Relaxed maar verzorgd en gepolijst',
     emoji: '✨',
-    color: '#B55E45'
+    color: '#A85740'
   },
   'urban': {
     label: 'Urban/Streetwear',
     description: 'Moderne, expressieve streetstyle',
     emoji: '🎨',
-    color: '#B55E45'
+    color: '#A85740'
   },
   'sportief': {
     label: 'Athletic',
@@ -56,13 +56,13 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Streetstyle',
     description: 'Bold, urban en vol karakter',
     emoji: '🔥',
-    color: '#B55E45'
+    color: '#A85740'
   },
   'retro': {
     label: 'Retro',
     description: 'Vintage-geïnspireerde stijl',
     emoji: '🕰️',
-    color: '#B55E45'
+    color: '#A85740'
   }
 };
 
@@ -158,7 +158,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
                   <span className="text-xs font-semibold">{confidence}% match</span>
                 </div>
                 <div className="flex-1 h-1.5 bg-white/60 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full" style={{ width: `${progress}%` }} />
+                  <div className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full" style={{ width: `${progress}%` }} />
                 </div>
                 <span className="text-xs text-[#6E6E6E]">{progress}%</span>
               </div>
@@ -175,7 +175,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                <Sparkles className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                 <span className="text-sm font-medium text-[#6E6E6E]">Jouw stijlprofiel</span>
               </div>
               <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">{config.label}</h3>
@@ -186,7 +186,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
                   <span className="text-xs font-semibold text-[#1A1A1A]">{confidence}% match</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
-                  <Award className="w-3.5 h-3.5 text-[#B55E45]" />
+                  <Award className="w-3.5 h-3.5 text-[#A85740]" />
                   <span className="text-xs font-semibold text-[#1A1A1A]">{progress}% compleet</span>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function ArchetypePreview({ answers, currentStep, totalSteps }: Archetype
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full"
+                  className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full"
                 />
               </div>
             </div>

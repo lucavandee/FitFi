@@ -267,7 +267,7 @@ export function ShopItemsList({
       {products.length > 0 && (
         <div className="pt-4 mt-4 border-t border-[#E5E5E5] space-y-2">
           <div className="flex items-center gap-2 text-xs text-[#1A1A1A]/60">
-            <Check className="w-4 h-4 text-[#B55E45]" />
+            <Check className="w-4 h-4 text-[#A85740]" />
             <span>Alle links openen in een nieuw tabblad</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-[#1A1A1A]/60">

@@ -118,7 +118,7 @@ Deze opdrachten zijn uitsluitend voor visuele, UX-, copy- en polishverbeteringen
 ### Primaire kleuren
 | Naam | Hex | Tailwind | Gebruik |
 |------|-----|----------|---------|
-| Terracotta | #B55E45 | `text-[#B55E45]` / `bg-[#B55E45]` | Primaire CTA's, accenten, actieve states |
+| Terracotta | #A85740 | `text-[#A85740]` / `bg-[#A85740]` | Primaire CTA's, accenten, actieve states |
 | Terracotta Dark | #9A503B | `bg-[#9A503B]` | Hover state primaire buttons |
 | Terracotta Light | #F4E8E3 | `bg-[#F4E8E3]` | Geselecteerde states, soft highlights |
 
@@ -183,8 +183,8 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 ## 4. Componenten
 
 ### Buttons
-- Primair: `bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl`
-- Secundair: `bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`
+- Primair: `bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl`
+- Secundair: `bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`
 - ALTIJD `rounded-xl`, minimale hoogte 48px, max 1 primaire button per scherm
 
 ### Cards
@@ -194,16 +194,16 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 
 ### Badges
 - ALTIJD `rounded-full`
-- 10% opacity achtergrond: `bg-[#B55E45]/10 text-[#B55E45]`
+- 10% opacity achtergrond: `bg-[#A85740]/10 text-[#A85740]`
 - Positie op cards: `absolute top-3 left-3`
 
 ### Inputs
 - `rounded-xl py-3 px-4 border border-[#E5E5E5]`
-- Focus: `focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45]`
+- Focus: `focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740]`
 - Labels BOVEN het veld
 
 ### Tabs
-- Actief: `text-[#B55E45] border-b-2 border-[#B55E45] font-semibold`
+- Actief: `text-[#A85740] border-b-2 border-[#A85740] font-semibold`
 - Inactief: `text-[#6E6E6E] font-medium`
 
 ### Modals
@@ -213,7 +213,7 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 
 ### Navigation
 - Header: `fixed bg-white/90 backdrop-blur-md border-b border-[#E5E5E5] h-16`
-- Actieve pagina: `text-[#B55E45]`
+- Actieve pagina: `text-[#A85740]`
 
 ## 5. Border Radius
 | Element | Tailwind |
@@ -277,7 +277,7 @@ Page header
 
 ALTIJD op zand-achtergrond: bg-[#F5F0EB] pt-24 pb-16 md:pt-32 md:pb-20
 Bevat: badge, headline (H1), subtitel
-Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#B55E45]
+Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#A85740]
 Headline: text-2xl md:text-3xl font-bold text-[#1A1A1A] text-center
 Subtitel: text-base text-[#4A4A4A] text-center mt-4 max-w-lg mx-auto
 
@@ -300,7 +300,7 @@ Input-velden
 
 ALTIJD volle border rondom: border border-[#E5E5E5] rounded-xl
 NOOIT alleen een bottom-border
-ALTIJD terracotta focus ring: focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45]
+ALTIJD terracotta focus ring: focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740]
 
 Formulier-cards
 

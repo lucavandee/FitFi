@@ -56,7 +56,7 @@ export function ShoppingCTA({
               rotate: [0, 5, -5, 0]
             }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-lg"
+            className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r from-[#A85740] to-[#A85740] flex items-center justify-center shadow-lg"
           >
             <ShoppingBag className="w-8 h-8 text-white" />
           </motion.div>
@@ -64,7 +64,7 @@ export function ShoppingCTA({
           {/* Heading */}
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">
             Klaar om je{' '}
-            <span className="bg-gradient-to-r from-[#B55E45] to-[#B55E45] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#A85740] to-[#A85740] bg-clip-text text-transparent">
               perfecte outfits
             </span>{' '}
             te shoppen?
@@ -81,7 +81,7 @@ export function ShoppingCTA({
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <NavLink
                 to={route}
-                className="inline-flex items-center justify-center gap-3 px-8 py-5 min-h-[60px] bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto group"
+                className="inline-flex items-center justify-center gap-3 px-8 py-5 min-h-[60px] bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto group"
               >
                 <ShoppingBag className="w-5 h-5" aria-hidden="true" />
                 <span>Ontdek je outfits</span>
@@ -94,7 +94,7 @@ export function ShoppingCTA({
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <NavLink
                   to="/profile"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-5 min-h-[60px] bg-white border-2 border-[#E5E5E5] rounded-xl font-semibold text-base hover:border-[#B55E45] hover:bg-white transition-all w-full sm:w-auto"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-5 min-h-[60px] bg-white border-2 border-[#E5E5E5] rounded-xl font-semibold text-base hover:border-[#A85740] hover:bg-white transition-all w-full sm:w-auto"
                 >
                   <Heart className="w-4 h-4" aria-hidden="true" />
                   <span>Bewaar resultaten</span>
@@ -107,21 +107,21 @@ export function ShoppingCTA({
           <div className="mt-8 pt-6 border-t border-[#E5E5E5]">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="flex items-center justify-center gap-1 text-[#B55E45] mb-1">
+                <div className="flex items-center justify-center gap-1 text-[#A85740] mb-1">
                   <Sparkles className="w-4 h-4" aria-hidden="true" />
                   <span className="font-bold text-sm">100%</span>
                 </div>
                 <p className="text-xs text-[#6E6E6E]">Op maat</p>
               </div>
               <div>
-                <div className="flex items-center justify-center gap-1 text-[#B55E45] mb-1">
+                <div className="flex items-center justify-center gap-1 text-[#A85740] mb-1">
                   <TrendingUp className="w-4 h-4" aria-hidden="true" />
                   <span className="font-bold text-sm">{outfitCount}</span>
                 </div>
                 <p className="text-xs text-[#6E6E6E]">Outfits</p>
               </div>
               <div>
-                <div className="flex items-center justify-center gap-1 text-[#B55E45] mb-1">
+                <div className="flex items-center justify-center gap-1 text-[#A85740] mb-1">
                   <ShoppingBag className="w-4 h-4" aria-hidden="true" />
                   <span className="font-bold text-sm">Direct</span>
                 </div>
@@ -153,7 +153,7 @@ export function ShoppingCTA({
               {/* CTA Button - Thumb-friendly position */}
               <NavLink
                 to={route}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex-shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[52px] bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all flex-shrink-0"
               >
                 <ShoppingBag className="w-4 h-4" aria-hidden="true" />
                 <span>Ontdek</span>

@@ -34,13 +34,13 @@ export function StyleProfileConfidenceBadge({
         className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-6 mb-8"
       >
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-[#B55E45]/10 flex items-center justify-center flex-shrink-0">
-            <CheckCircle className="w-5 h-5 text-[#B55E45]" />
+          <div className="w-10 h-10 rounded-2xl bg-[#A85740]/10 flex items-center justify-center flex-shrink-0">
+            <CheckCircle className="w-5 h-5 text-[#A85740]" />
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-[#1A1A1A] mb-2 flex items-center gap-2">
               Gebaseerd op jouw persoonlijke kleuranalyse
-              <span className="text-xs px-2.5 py-1 bg-[#B55E45]/10 text-[#B55E45] rounded-full font-semibold">
+              <span className="text-xs px-2.5 py-1 bg-[#A85740]/10 text-[#A85740] rounded-full font-semibold">
                 {Math.round(confidence * 100)}% accuraat
               </span>
             </h3>
@@ -79,7 +79,7 @@ export function StyleProfileConfidenceBadge({
             </p>
             <Link
               to="/profile"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
             >
               <Camera className="w-4 h-4" />
               Upload selfie voor betere analyse
@@ -114,17 +114,17 @@ export function StyleProfileConfidenceBadge({
             </p>
             <div className="space-y-2 text-sm text-[#4A4A4A]">
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#B55E45]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#A85740]" />
                 <span>Swipe door meer foto's voor voorkeuranalyse</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#B55E45]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#A85740]" />
                 <span><strong>Upload een selfie</strong> voor persoonlijke kleuranalyse (aanbevolen)</span>
               </div>
             </div>
             <Link
               to="/profile"
-              className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
+              className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
             >
               <Upload className="w-4 h-4" />
               Upgrade naar nauwkeurig profiel
@@ -143,8 +143,8 @@ export function StyleProfileConfidenceBadge({
       className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-6 mb-8"
     >
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-2xl bg-[#B55E45]/10 flex items-center justify-center flex-shrink-0">
-          <TrendingUp className="w-5 h-5 text-[#B55E45]" />
+        <div className="w-10 h-10 rounded-2xl bg-[#A85740]/10 flex items-center justify-center flex-shrink-0">
+          <TrendingUp className="w-5 h-5 text-[#A85740]" />
         </div>
         <div className="flex-1">
           <h3 className="font-bold text-[#1A1A1A] mb-2">

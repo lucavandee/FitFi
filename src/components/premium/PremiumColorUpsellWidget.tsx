@@ -18,7 +18,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
     return (
       <div className="bg-gradient-to-br from-[#FFFFFF] to-[#F5F0EB] border border-[#F4E8E3] rounded-2xl p-6 shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
+          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
             <Palette className="w-6 h-6 text-white" />
           </div>
 
@@ -27,7 +27,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
               <h3 className="text-lg font-semibold text-[#1A1A1A]">
                 Ontdek jouw perfecte kleuren
               </h3>
-              <Crown className="w-4 h-4 text-[#B55E45]" />
+              <Crown className="w-4 h-4 text-[#A85740]" />
             </div>
 
             <p className="text-sm text-[#6E6E6E] mb-4">
@@ -36,22 +36,22 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
 
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm">
-                <Sparkles className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                <Sparkles className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                 <span className="text-[#6E6E6E]">AI-analyse van je huidsondertoon</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Sparkles className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                <Sparkles className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                 <span className="text-[#6E6E6E]">Persoonlijk kleurenpalet met 20+ kleuren</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Sparkles className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                <Sparkles className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                 <span className="text-[#6E6E6E]">Wearable 2025 trend insights</span>
               </div>
             </div>
 
             <button
               onClick={handleUpgrade}
-              className="w-full bg-gradient-to-r from-[#9A503B] to-[#B55E45] text-white px-6 py-3 rounded-2xl font-medium hover:from-[#B55E45] hover:to-[#B55E45] transition-all duration-200 shadow-sm hover:shadow-sm flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-[#9A503B] to-[#A85740] text-white px-6 py-3 rounded-2xl font-medium hover:from-[#A85740] hover:to-[#A85740] transition-all duration-200 shadow-sm hover:shadow-sm flex items-center justify-center gap-2"
             >
               Upgrade naar Premium
               <ArrowRight className="w-4 h-4" />
@@ -66,7 +66,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]">
       <div className="bg-[#FAFAF8] rounded-2xl max-w-md w-full shadow-sm overflow-hidden animate-[slideUp_0.3s_ease-out]">
         {/* Header */}
-        <div className="bg-gradient-to-br from-[#9A503B] to-[#B55E45] p-6 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#9A503B] to-[#A85740] p-6 text-white relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
               backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)',
@@ -165,7 +165,7 @@ export default function PremiumColorUpsellWidget({ onClose, inline = false }: Pr
             )}
             <button
               onClick={handleUpgrade}
-              className="flex-1 bg-gradient-to-r from-[#9A503B] to-[#B55E45] text-white px-6 py-3 rounded-2xl font-medium hover:from-[#B55E45] hover:to-[#B55E45] transition-all duration-200 shadow-sm hover:shadow-sm flex items-center justify-center gap-2"
+              className="flex-1 bg-gradient-to-r from-[#9A503B] to-[#A85740] text-white px-6 py-3 rounded-2xl font-medium hover:from-[#A85740] hover:to-[#A85740] transition-all duration-200 shadow-sm hover:shadow-sm flex items-center justify-center gap-2"
             >
               Upgrade nu
               <ArrowRight className="w-4 h-4" />

@@ -97,7 +97,7 @@ export function ResultsRevealSequence({
               >
                 <div className="relative w-32 h-32 mx-auto mb-8">
                   <motion.div
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] opacity-20"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] opacity-20"
                     animate={{
                       scale: [1, 1.2, 1],
                       rotate: [0, 180, 360]
@@ -109,7 +109,7 @@ export function ResultsRevealSequence({
                     }}
                   />
                   <motion.div
-                    className="absolute inset-4 rounded-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] opacity-40"
+                    className="absolute inset-4 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] opacity-40"
                     animate={{
                       scale: [1, 1.1, 1],
                       rotate: [360, 180, 0]
@@ -120,7 +120,7 @@ export function ResultsRevealSequence({
                       ease: "linear"
                     }}
                   />
-                  <div className="absolute inset-8 rounded-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] flex items-center justify-center">
+                  <div className="absolute inset-8 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] flex items-center justify-center">
                     <Sparkles className="w-8 h-8 text-white" />
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export function ResultsRevealSequence({
 
                 <div className="relative h-3 bg-[#FFFFFF] rounded-full overflow-hidden border border-[#E5E5E5]">
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#A85740] to-[#A85740]"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.3 }}
@@ -205,7 +205,7 @@ export function ResultsRevealSequence({
                 className="relative"
               >
                 <motion.div
-                  className="absolute -inset-4 rounded-2xl bg-gradient-to-r from-[#B55E45] to-[#B55E45] opacity-20 blur-xl"
+                  className="absolute -inset-4 rounded-2xl bg-gradient-to-r from-[#A85740] to-[#A85740] opacity-20 blur-xl"
                   animate={{
                     scale: [1, 1.1, 1],
                     opacity: [0.2, 0.3, 0.2]
@@ -215,7 +215,7 @@ export function ResultsRevealSequence({
                     repeat: Infinity
                   }}
                 />
-                <div className="relative bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white px-12 py-8 rounded-2xl shadow-2xl">
+                <div className="relative bg-gradient-to-r from-[#A85740] to-[#A85740] text-white px-12 py-8 rounded-2xl shadow-2xl">
                   <Sparkles className="w-8 h-8 mx-auto mb-4" />
                   <h1 className="text-4xl md:text-5xl font-bold tracking-tight uppercase">
                     {archetype}
@@ -249,7 +249,7 @@ export function ResultsRevealSequence({
               className="max-w-md w-full bg-[#FFFFFF] rounded-2xl shadow-2xl p-8 border border-[#E5E5E5]"
             >
               <div className="text-center space-y-6">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full flex items-center justify-center">
                   <Sparkles className="w-10 h-10 text-white" />
                 </div>
 
@@ -288,7 +288,7 @@ export function ResultsRevealSequence({
                         navigator.share({ text, url: window.location.origin });
                       }
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#B55E45] text-white rounded-xl font-semibold hover:bg-[#9A503B] transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#A85740] text-white rounded-xl font-semibold hover:bg-[#9A503B] transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
                     Delen

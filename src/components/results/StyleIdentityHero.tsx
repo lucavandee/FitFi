@@ -125,7 +125,7 @@ export function StyleIdentityHero({
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           {/* Text content — full width on mobile, left side on desktop */}
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#B55E45] mb-3">
+            <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#A85740] mb-3">
               Jouw stijlprofiel
             </p>
 
@@ -213,7 +213,7 @@ export function StyleIdentityHero({
                 className="bg-white border border-[#E5E5E5] rounded-xl px-5 py-4 flex items-start gap-3"
               >
                 <span
-                  className="text-[#B55E45] text-[10px] mt-0.5 flex-shrink-0 font-bold"
+                  className="text-[#A85740] text-[10px] mt-0.5 flex-shrink-0 font-bold"
                   aria-hidden="true"
                 >
                   {INSIGHT_ICONS[idx] ?? '◆'}

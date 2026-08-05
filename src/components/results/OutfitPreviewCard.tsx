@@ -31,7 +31,7 @@ const PIECE_TYPE_COLORS: Record<string, string> = {
   top: "#D4A98C",
   bottom: "#8B7B6B",
   shoes: "#6B5B4B",
-  accessory: "#B55E45",
+  accessory: "#A85740",
 };
 
 function PieceColorGrid({ pieces }: { pieces: OutfitPreviewPiece[] }) {
@@ -104,7 +104,7 @@ function ProductImageGrid({ products }: { products: OutfitPreviewProduct[] }) {
 function EmptyFallback() {
   return (
     <div className="h-full w-full bg-gradient-to-br from-[#F5F0EB] to-[#E8DDD4] flex items-center justify-center">
-      <span className="text-[#B55E45]/30 text-5xl font-serif italic select-none">
+      <span className="text-[#A85740]/30 text-5xl font-serif italic select-none">
         F
       </span>
     </div>
@@ -121,7 +121,7 @@ export function OutfitPreviewCard({
   const hasProductImages = products.some((p) => p.imageUrl);
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-[#E5E5E5] hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#B55E45] transition-all duration-300 flex flex-col group">
+    <div className="bg-white rounded-2xl overflow-hidden border border-[#E5E5E5] hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#A85740] transition-all duration-300 flex flex-col group">
       {/* Image area — ~65% of card height */}
       <div className="aspect-[3/4] overflow-hidden bg-[#F5F0EB]">
         {hasProductImages ? (
@@ -152,7 +152,7 @@ export function OutfitPreviewCard({
         {onShopClick && (
           <button
             onClick={onShopClick}
-            className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200 self-start"
+            className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200 self-start"
           >
             Shop deze look
             <ArrowRight className="w-4 h-4" />

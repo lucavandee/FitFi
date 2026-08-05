@@ -216,7 +216,7 @@ export default function OutfitDetailsModal({
                       {outfit.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#F5F0EB] text-[#B55E45] rounded-full text-xs font-medium"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#F5F0EB] text-[#A85740] rounded-full text-xs font-medium"
                         >
                           <Tag className="w-3 h-3" />
                           {tag}
@@ -229,8 +229,8 @@ export default function OutfitDetailsModal({
                   {outfit.explanation && (
                     <div className="p-4 bg-[#F5F0EB] border border-[#F4E8E3] rounded-xl">
                       <div className="flex items-start gap-2 mb-2">
-                        <Info className="w-4 h-4 text-[#B55E45] flex-shrink-0 mt-0.5" />
-                        <span className="text-sm font-medium text-[#B55E45]">
+                        <Info className="w-4 h-4 text-[#A85740] flex-shrink-0 mt-0.5" />
+                        <span className="text-sm font-medium text-[#A85740]">
                           Waarom dit werkt:
                         </span>
                       </div>
@@ -243,19 +243,19 @@ export default function OutfitDetailsModal({
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-3 mt-4">
                     <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[#B55E45]">
+                      <div className="text-2xl font-bold text-[#A85740]">
                         {outfit.products?.length || 0}
                       </div>
                       <div className="text-xs text-[#1A1A1A]/60">Items</div>
                     </div>
                     <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[#B55E45]">
+                      <div className="text-2xl font-bold text-[#A85740]">
                         {Math.round(outfit.matchPercentage || 75)}%
                       </div>
                       <div className="text-xs text-[#1A1A1A]/60">Match</div>
                     </div>
                     <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[#B55E45]">
+                      <div className="text-2xl font-bold text-[#A85740]">
                         €{totalPrice.toFixed(0)}
                       </div>
                       <div className="text-xs text-[#1A1A1A]/60">Totaal</div>
@@ -284,7 +284,7 @@ export default function OutfitDetailsModal({
                           key={product.id}
                           className={cn(
                             'p-3 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]',
-                            'hover:border-[#B55E45] transition-all',
+                            'hover:border-[#A85740] transition-all',
                             hasUrl && 'cursor-pointer'
                           )}
                           onClick={() => hasUrl && setSelectedProduct(product)}
@@ -315,7 +315,7 @@ export default function OutfitDetailsModal({
                                   </h5>
                                 </div>
                                 {product.price && (
-                                  <span className="text-lg font-bold text-[#B55E45] flex-shrink-0">
+                                  <span className="text-lg font-bold text-[#A85740] flex-shrink-0">
                                     €{product.price.toFixed(2)}
                                   </span>
                                 )}
@@ -334,7 +334,7 @@ export default function OutfitDetailsModal({
                                     handleShopClick(product);
                                   }}
                                   disabled={isOpening}
-                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[#9A503B] hover:text-[#B55E45] transition-colors disabled:opacity-50"
+                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[#9A503B] hover:text-[#A85740] transition-colors disabled:opacity-50"
                                   aria-label={`Shop ${product.name}`}
                                 >
                                   <ExternalLink className="w-3 h-3" />
@@ -378,7 +378,7 @@ export default function OutfitDetailsModal({
                 <div className="text-sm text-[#1A1A1A]/60 mb-1">
                   Totaalprijs
                 </div>
-                <div className="text-2xl font-bold text-[#B55E45]">
+                <div className="text-2xl font-bold text-[#A85740]">
                   €{totalPrice.toFixed(2)}
                 </div>
               </div>

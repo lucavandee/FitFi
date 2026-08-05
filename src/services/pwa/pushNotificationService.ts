@@ -18,7 +18,7 @@ export interface NotificationPreferences {
   challenges: boolean;
 }
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
@@ -71,12 +71,15 @@ export async function subscribeToPushNotifications(): Promise<PushSubscriptionJS
 
     const subscriptionJson = subscription.toJSON();
 
-    const { data: user } = await supabase.auth.getUser();
+    const sb = supabase();
+    if (!sb) throw new Error('Supabase is niet beschikbaar');
+
+    const { data: user } = await sb.auth.getUser();
     if (!user.user) {
       throw new Error('User not authenticated');
     }
 
-    await supabase.from('push_subscriptions').upsert({
+    await sb.from('push_subscriptions').upsert({
       user_id: user.user.id,
       endpoint: subscriptionJson.endpoint!,
       p256dh_key: subscriptionJson.keys!.p256dh!,
@@ -103,9 +106,10 @@ export async function unsubscribeFromPushNotifications(): Promise<boolean> {
     if (subscription) {
       await subscription.unsubscribe();
 
-      const { data: user } = await supabase.auth.getUser();
-      if (user.user) {
-        await supabase
+      const sb = supabase();
+      const { data: user } = sb ? await sb.auth.getUser() : { data: { user: null } };
+      if (sb && user.user) {
+        await sb
           .from('push_subscriptions')
           .delete()
           .eq('user_id', user.user.id)
@@ -122,10 +126,13 @@ export async function unsubscribeFromPushNotifications(): Promise<boolean> {
 
 export async function getNotificationPreferences(): Promise<NotificationPreferences | null> {
   try {
-    const { data: user } = await supabase.auth.getUser();
+    const sb = supabase();
+    if (!sb) return null;
+
+    const { data: user } = await sb.auth.getUser();
     if (!user.user) return null;
 
-    const { data, error } = await supabase
+    const { data, error } = await sb
       .from('notification_preferences')
       .select('*')
       .eq('user_id', user.user.id)
@@ -150,10 +157,13 @@ export async function updateNotificationPreferences(
   preferences: Partial<NotificationPreferences>
 ): Promise<boolean> {
   try {
-    const { data: user } = await supabase.auth.getUser();
+    const sb = supabase();
+    if (!sb) throw new Error('Supabase is niet beschikbaar');
+
+    const { data: user } = await sb.auth.getUser();
     if (!user.user) throw new Error('User not authenticated');
 
-    const { error } = await supabase
+    const { error } = await sb
       .from('notification_preferences')
       .upsert({
         user_id: user.user.id,
@@ -190,7 +200,9 @@ export async function isPushNotificationEnabled(): Promise<boolean> {
 
 export async function logNotificationClick(notificationId: string): Promise<void> {
   try {
-    await supabase
+    const sb = supabase();
+    if (!sb) return;
+    await sb
       .from('notification_log')
       .update({
         clicked: true,
@@ -202,15 +214,20 @@ export async function logNotificationClick(notificationId: string): Promise<void
   }
 }
 
+// TS's lib.dom.d.ts NotificationOptions doesn't include `vibrate`, even though it's
+// a valid part of the Notifications API (used by supporting browsers/devices).
+type NotificationOptionsWithVibrate = NotificationOptions & { vibrate?: number[] };
+
 export function showLocalNotification(title: string, options?: NotificationOptions): void {
   if ('Notification' in window && Notification.permission === 'granted') {
     navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, {
+      const notificationOptions: NotificationOptionsWithVibrate = {
         icon: '/icons/icon-192.png',
         badge: '/icons/icon-192.png',
         vibrate: [200, 100, 200],
         ...options,
-      });
+      };
+      registration.showNotification(title, notificationOptions);
     });
   }
 }

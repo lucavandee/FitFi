@@ -254,9 +254,9 @@ export default function OutfitGrid({
             disabled={isLoading}
             className={cn(
               'inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold',
-              'bg-[#B55E45] text-white',
+              'bg-[#A85740] text-white',
               'hover:shadow-lg hover:scale-105',
-              'focus:outline-none focus:ring-4 focus:ring-[#B55E45]/20',
+              'focus:outline-none focus:ring-4 focus:ring-[#A85740]/20',
               'transition-all duration-200',
               isLoading && 'opacity-50 cursor-not-allowed'
             )}
@@ -306,7 +306,7 @@ export default function OutfitGrid({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] text-[#B55E45] rounded-full text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] text-[#A85740] rounded-full text-sm font-medium">
             <Sparkles className="w-4 h-4" />
             <span>Je hebt alle {sortedOutfits.length} outfits bekeken!</span>
           </div>

@@ -157,7 +157,7 @@ const RegisterPage: React.FC = () => {
               {TRUST_ITEMS.map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-[#B55E45]" />
+                    <Icon className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">{title}</p>
@@ -194,7 +194,7 @@ const RegisterPage: React.FC = () => {
                 Al een account?{" "}
                 <NavLink
                   to="/inloggen"
-                  className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
+                  className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
                 >
                   Inloggen
                 </NavLink>
@@ -221,7 +221,7 @@ const RegisterPage: React.FC = () => {
               {serverError && isEmailTaken && (
                 <div className="mb-6 flex items-center gap-2 text-sm">
                   <span className="text-[#6E6E6E]">Al een account?</span>
-                  <NavLink to="/inloggen" className="font-semibold text-[#B55E45] underline underline-offset-2 hover:text-[#9A503B]">
+                  <NavLink to="/inloggen" className="font-semibold text-[#A85740] underline underline-offset-2 hover:text-[#9A503B]">
                     Inloggen
                   </NavLink>
                 </div>
@@ -252,7 +252,7 @@ const RegisterPage: React.FC = () => {
                     aria-invalid={!!emailError}
                     aria-describedby={emailError ? "reg-email-error" : undefined}
                     disabled={loading}
-                    className={`w-full bg-white border rounded-2xl py-4 px-5 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-all duration-200 disabled:opacity-50 ${
+                    className={`w-full bg-white border rounded-2xl py-4 px-5 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740] transition-all duration-200 disabled:opacity-50 ${
                       emailError
                         ? "border-[#C24A4A] focus:ring-[#C24A4A]/20"
                         : "border-[#E5E5E5]"
@@ -289,7 +289,7 @@ const RegisterPage: React.FC = () => {
                       aria-invalid={!!pwError}
                       aria-describedby="reg-pw-hint"
                       disabled={loading}
-                      className={`w-full bg-white border rounded-2xl py-4 px-5 pr-14 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-all duration-200 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
+                      className={`w-full bg-white border rounded-2xl py-4 px-5 pr-14 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740] transition-all duration-200 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
                         pwError
                           ? "border-[#C24A4A] focus:ring-[#C24A4A]/20"
                           : "border-[#E5E5E5]"
@@ -344,10 +344,10 @@ const RegisterPage: React.FC = () => {
                       tabIndex={0}
                       onClick={() => setAccepted(!accepted)}
                       onKeyDown={(e) => (e.key === " " || e.key === "Enter") && setAccepted(!accepted)}
-                      className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#B55E45]/40 ${
+                      className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#A85740]/40 ${
                         accepted
-                          ? "bg-[#B55E45] border-[#B55E45]"
-                          : "bg-white border-[#E5E5E5] group-hover:border-[#B55E45]"
+                          ? "bg-[#A85740] border-[#A85740]"
+                          : "bg-white border-[#E5E5E5] group-hover:border-[#A85740]"
                       }`}
                     >
                       {accepted && (
@@ -359,9 +359,9 @@ const RegisterPage: React.FC = () => {
                   </div>
                   <span className="text-sm text-[#4A4A4A] leading-[1.5]">
                     Ik ga akkoord met de{" "}
-                    <a href="/algemene-voorwaarden" target="_blank" rel="noopener noreferrer" className="text-[#B55E45] underline underline-offset-2 hover:text-[#9A503B]" onClick={(e) => e.stopPropagation()}>algemene voorwaarden</a>{" "}
+                    <a href="/algemene-voorwaarden" target="_blank" rel="noopener noreferrer" className="text-[#A85740] underline underline-offset-2 hover:text-[#9A503B]" onClick={(e) => e.stopPropagation()}>algemene voorwaarden</a>{" "}
                     en het{" "}
-                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#B55E45] underline underline-offset-2 hover:text-[#9A503B]" onClick={(e) => e.stopPropagation()}>privacybeleid</a>.
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#A85740] underline underline-offset-2 hover:text-[#9A503B]" onClick={(e) => e.stopPropagation()}>privacybeleid</a>.
                   </span>
                 </label>
 
@@ -373,7 +373,7 @@ const RegisterPage: React.FC = () => {
                     "Je kunt je account altijd verwijderen.",
                   ].map((text) => (
                     <div key={text} className="text-xs text-[#6E6E6E] flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#B55E45] flex-shrink-0" />
+                      <span className="w-1 h-1 rounded-full bg-[#A85740] flex-shrink-0" />
                       {text}
                     </div>
                   ))}
@@ -389,7 +389,7 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 mt-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 mt-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <><Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /><span>Account aanmaken...</span></>
@@ -412,7 +412,7 @@ const RegisterPage: React.FC = () => {
                 <p className="text-xs text-[#6E6E6E] mb-4">Doe de stijlquiz direct, zonder registratie.</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
                 >
                   Start de quiz
                   <ArrowRight className="w-4 h-4" />

@@ -62,7 +62,7 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
                       animate={{ width: `${item.percentage}%` }}
                       transition={{ delay: index * 0.1 + 0.15, duration: 0.7, ease: 'easeOut' }}
                       className="h-full rounded-full"
-                      style={{ background: isPrimary ? '#B55E45' : '#B55E45' }}
+                      style={{ background: isPrimary ? '#A85740' : '#A85740' }}
                     />
                   </div>
 

@@ -89,13 +89,13 @@ export function OutfitFilters({
             onClick={() => setIsExpanded(!isExpanded)}
             aria-expanded={isExpanded}
             aria-controls="outfit-filter-panel"
-            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[#F5F0EB] text-[#9A503B] rounded-xl font-semibold text-sm hover:bg-[#F4E8E3] transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1"
+            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-[#F5F0EB] text-[#9A503B] rounded-xl font-semibold text-sm hover:bg-[#F4E8E3] transition-colors focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-1"
           >
             <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             Filters
             {hasActiveFilters && (
               <span
-                className="ml-0.5 w-5 h-5 rounded-full bg-[#B55E45] text-white text-xs flex items-center justify-center"
+                className="ml-0.5 w-5 h-5 rounded-full bg-[#A85740] text-white text-xs flex items-center justify-center"
                 aria-label={`${activeCount} actieve filters`}
               >
                 {activeCount}
@@ -113,7 +113,7 @@ export function OutfitFilters({
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-[#B55E45] hover:text-[#9A503B] font-medium flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1 rounded"
+              className="text-sm text-[#A85740] hover:text-[#9A503B] font-medium flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-1 rounded"
               aria-label="Wis alle actieve filters"
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -134,7 +134,7 @@ export function OutfitFilters({
                 sortBy: e.target.value as FilterOptions["sortBy"],
               })
             }
-            className="px-3 py-2 min-h-[40px] bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm font-medium text-[#1A1A1A] hover:border-[#B55E45] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
+            className="px-3 py-2 min-h-[40px] bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-sm font-medium text-[#1A1A1A] hover:border-[#A85740] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.id} value={option.id}>
@@ -151,7 +151,7 @@ export function OutfitFilters({
           >
             <button
               onClick={() => onChange({ ...filters, viewMode: "grid-2" })}
-              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] ${
+              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#A85740] ${
                 filters.viewMode === "grid-2"
                   ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
@@ -163,7 +163,7 @@ export function OutfitFilters({
             </button>
             <button
               onClick={() => onChange({ ...filters, viewMode: "grid-3" })}
-              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] ${
+              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#A85740] ${
                 filters.viewMode === "grid-3"
                   ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
@@ -177,7 +177,7 @@ export function OutfitFilters({
             </button>
             <button
               onClick={() => onChange({ ...filters, viewMode: "list" })}
-              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#B55E45] ${
+              className={`p-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#A85740] ${
                 filters.viewMode === "list"
                   ? "bg-[#F5F0EB] text-[#9A503B]"
                   : "text-[#6E6E6E] hover:text-[#1A1A1A]"
@@ -214,10 +214,10 @@ export function OutfitFilters({
                       key={category.id}
                       onClick={() => toggleCategory(category.id)}
                       aria-pressed={filters.categories.includes(category.id)}
-                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1 ${
+                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-1 ${
                         filters.categories.includes(category.id)
                           ? "bg-[#9A503B] text-white"
-                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45]"
+                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#A85740]"
                       }`}
                     >
                       {category.label}
@@ -237,10 +237,10 @@ export function OutfitFilters({
                       key={season.id}
                       onClick={() => toggleSeason(season.id)}
                       aria-pressed={filters.seasons.includes(season.id)}
-                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-1 ${
+                      className={`px-3.5 py-1.5 min-h-[36px] rounded-full font-medium text-sm transition-all focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-1 ${
                         filters.seasons.includes(season.id)
                           ? "bg-[#9A503B] text-white"
-                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45]"
+                          : "bg-[#FAFAF8] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#A85740]"
                       }`}
                     >
                       {season.label}

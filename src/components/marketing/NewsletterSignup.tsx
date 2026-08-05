@@ -25,6 +25,10 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
     try {
       const { supabase } = await import("@/lib/supabase");
 
+      if (!supabase) {
+        throw new Error("Supabase client unavailable");
+      }
+
       const { error } = await supabase
         .from("newsletter_subscribers")
         .insert([{
@@ -56,7 +60,7 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
   const inputBorder = isDark ? "border-white/20" : "border-[#E5E5E5]";
   const inputText = isDark ? "text-white placeholder:text-white/60" : "text-[#1A1A1A] placeholder:text-[#1A1A1A]/60";
   const buttonBg = isDark ? "bg-white text-[#1A1A1A]" : "bg-[#9A503B] text-white";
-  const buttonHover = isDark ? "hover:bg-white/90" : "hover:bg-[#B55E45]";
+  const buttonHover = isDark ? "hover:bg-white/90" : "hover:bg-[#A85740]";
 
   return (
     <div className={className}>
@@ -91,7 +95,7 @@ export default function NewsletterSignup({ variant = "dark", className = "" }: N
               className={`
                 flex-1 px-4 py-2.5 rounded-xl border
                 ${inputBg} ${inputBorder} ${inputText}
-                focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:border-transparent
+                focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:border-transparent
                 transition-all duration-200
                 disabled:opacity-50 disabled:cursor-not-allowed
               `}

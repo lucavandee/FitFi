@@ -78,9 +78,9 @@ export const CookieSettings: React.FC = () => {
             aria-label="Analytische cookies"
             className={[
               'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
-              prefs.analytics ? 'bg-[#B55E45]' : 'bg-[#E5E5E5]',
+              prefs.analytics ? 'bg-[#A85740]' : 'bg-[#E5E5E5]',
               isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
             ].join(' ')}
           >
             <span className={[
@@ -120,7 +120,7 @@ export const CookieSettings: React.FC = () => {
             </button>
             <button
               onClick={() => setConfirmWithdraw(false)}
-              className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[#E5E5E5] text-xs font-semibold text-[#6E6E6E] hover:bg-[#FAFAF8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
+              className="flex-1 py-2.5 min-h-[44px] rounded-xl border border-[#E5E5E5] text-xs font-semibold text-[#6E6E6E] hover:bg-[#FAFAF8] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]"
             >
               Annuleer
             </button>
@@ -137,7 +137,7 @@ export const CookieSettings: React.FC = () => {
           </button>
           <button
             onClick={() => navigate('/cookies')}
-            className="flex-1 py-3 px-6 min-h-[44px] rounded-full border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20"
+            className="flex-1 py-3 px-6 min-h-[44px] rounded-full border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
           >
             Cookiebeleid
           </button>

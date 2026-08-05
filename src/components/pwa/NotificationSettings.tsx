@@ -135,7 +135,7 @@ export default function NotificationSettings() {
       <div className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center">
-            <BellOff className="w-6 h-6 text-[#B55E45]" />
+            <BellOff className="w-6 h-6 text-[#A85740]" />
           </div>
           <div>
             <h3 className="font-heading text-lg text-[#1A1A1A] mb-1">
@@ -164,14 +164,14 @@ export default function NotificationSettings() {
             <div
               className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                 isEnabled
-                  ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45]'
+                  ? 'bg-gradient-to-br from-[#A85740] to-[#A85740]'
                   : 'bg-[#F5F0EB]'
               }`}
             >
               {isEnabled ? (
                 <Bell className="w-6 h-6 text-white" />
               ) : (
-                <BellOff className="w-6 h-6 text-[#B55E45]" />
+                <BellOff className="w-6 h-6 text-[#A85740]" />
               )}
             </div>
             <div>
@@ -188,7 +188,7 @@ export default function NotificationSettings() {
           <button
             onClick={handleToggleNotifications}
             className={`relative w-14 h-8 rounded-full transition-colors ${
-              isEnabled ? 'bg-[#B55E45]' : 'bg-[#E5E5E5]'
+              isEnabled ? 'bg-[#A85740]' : 'bg-[#E5E5E5]'
             }`}
           >
             <motion.div
@@ -227,7 +227,7 @@ export default function NotificationSettings() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
                     <div className="w-10 h-10 rounded-lg bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
-                      <type.icon className="w-5 h-5 text-[#B55E45]" />
+                      <type.icon className="w-5 h-5 text-[#A85740]" />
                     </div>
                     <div className="flex-1">
                       <h5 className="font-medium text-[#1A1A1A] mb-1">{type.label}</h5>
@@ -240,7 +240,7 @@ export default function NotificationSettings() {
                     }
                     className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${
                       preferences[type.key]
-                        ? 'bg-[#B55E45]'
+                        ? 'bg-[#A85740]'
                         : 'bg-[#E5E5E5]'
                     }`}
                   >

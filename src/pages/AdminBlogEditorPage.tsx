@@ -17,7 +17,7 @@ import toast from 'react-hot-toast';
 export default function AdminBlogEditorPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -204,7 +204,7 @@ export default function AdminBlogEditorPage() {
               <button
                 onClick={() => handleSave('published')}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#A85740] transition-colors flex items-center gap-2 disabled:opacity-50"
               >
                 <Sparkles className="w-4 h-4" />
                 {saving ? 'Opslaan...' : 'Publiceren'}
@@ -492,7 +492,7 @@ export default function AdminBlogEditorPage() {
                       />
                       <button
                         onClick={handleAddTag}
-                        className="px-3 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] text-sm"
+                        className="px-3 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#A85740] text-sm"
                       >
                         +
                       </button>

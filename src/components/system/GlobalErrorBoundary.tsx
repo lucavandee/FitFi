@@ -82,14 +82,14 @@ export default class GlobalErrorBoundary extends React.Component<Props, State> {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => window.location.reload()}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
               >
                 <RefreshCw className="w-4 h-4" aria-hidden="true" />
                 Vernieuw pagina
               </button>
               <button
                 onClick={this.handleRetry}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 Probeer opnieuw
@@ -99,14 +99,14 @@ export default class GlobalErrorBoundary extends React.Component<Props, State> {
             <div className="mt-3 flex flex-col sm:flex-row gap-3">
               <a
                 href="/dashboard"
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
               >
                 <Home className="w-4 h-4" aria-hidden="true" />
                 Naar dashboard
               </a>
               <a
                 href="/contact"
-                className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#6E6E6E] rounded-xl text-sm font-semibold hover:border-[#B55E45] hover:text-[#1A1A1A] transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#6E6E6E] rounded-xl text-sm font-semibold hover:border-[#A85740] hover:text-[#1A1A1A] transition-colors"
               >
                 <Mail className="w-4 h-4" aria-hidden="true" />
                 Contact

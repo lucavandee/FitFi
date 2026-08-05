@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useUser } from '@/context/UserContext';
 import type { Product } from '@/types/product';
 import { track } from '@/utils/analytics';
+import { Spinner } from '@/components/ui/Spinner';
 import toast from 'react-hot-toast';
 
 interface AdaptiveCalibrationStepProps {
@@ -30,8 +31,11 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
     if (!user) return;
 
     try {
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase is niet beschikbaar');
+
       // Start calibration session
-      const { data: session, error: sessionError } = await supabase.rpc('start_calibration_session', {
+      const { data: session, error: sessionError } = await sb.rpc('start_calibration_session', {
         p_user_id: user.id
       });
 
@@ -54,8 +58,11 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
     setLoading(true);
 
     try {
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase is niet beschikbaar');
+
       // Get swipe history for this session
-      const { data: swipeHistory, error: swipeError } = await supabase
+      const { data: swipeHistory, error: swipeError } = await sb
         .from('swipe_preferences')
         .select('*')
         .eq('session_id', sessId)
@@ -141,8 +148,11 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
     const currentOutfit = outfits[currentIndex];
 
     try {
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase is niet beschikbaar');
+
       // Record swipe in database
-      const { error } = await supabase.rpc('record_swipe', {
+      const { error } = await sb.rpc('record_swipe', {
         p_session_id: sessionId,
         p_user_id: user?.id,
         p_outfit_id: currentOutfit.id,
@@ -241,7 +251,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
 
           <div className="w-full bg-[#F5F0EB] rounded-full h-2 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-[#9A503B] to-[#B55E45]"
+              className="h-full bg-gradient-to-r from-[#9A503B] to-[#A85740]"
               initial={{ width: 0 }}
               animate={{ width: `${(swipeCount / 9) * 100}%` }}
               transition={{ duration: 0.3 }}
@@ -372,7 +382,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                   </button>
                   <button
                     onClick={() => handleSwipe('right')}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#9A503B] to-[#B55E45] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#9A503B] to-[#A85740] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
                   >
                     <Heart size={24} />
                     <span className="font-semibold">Love it!</span>

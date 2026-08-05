@@ -72,7 +72,7 @@ const ResultsQuizGate: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 onClick={() => select(opt)}
                 aria-pressed={answers[current.key] === opt}
                 className={`px-3 py-2 rounded-xl border border-[#E5E5E5] ${
-                  answers[current.key] === opt ? "ring-2 ring-[#B55E45]" : ""
+                  answers[current.key] === opt ? "ring-2 ring-[#A85740]" : ""
                 }`}
               >
                 {opt}

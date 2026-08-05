@@ -304,7 +304,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         </p>
         <button
           onClick={onComplete}
-          className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
+          className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
         >
           Ga verder
           <ArrowRight className="w-5 h-5" />
@@ -359,7 +359,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
               initial={{ width: 0 }}
               animate={{ width: `${(feedbackCount / outfits.length) * 100}%` }}
               transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-              className="h-full bg-gradient-to-r from-[#B55E45] to-[#9A503B] rounded-full"
+              className="h-full bg-gradient-to-r from-[#A85740] to-[#9A503B] rounded-full"
             />
           </div>
         </div>
@@ -415,7 +415,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             disabled={applying}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
+            className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
           >
             {applying ? (
               <>
@@ -450,7 +450,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           <button
             onClick={handleContinue}
             disabled={applying}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:bg-[#F5F0EB] hover:border-[#B55E45] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:bg-[#F5F0EB] hover:border-[#A85740] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {feedbackCount === 0 ? 'Beoordeling overslaan' : 'Doorgaan zonder alle outfits te beoordelen'}
           </button>

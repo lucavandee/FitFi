@@ -33,11 +33,11 @@ const Logo: React.FC<LogoProps> = ({
 
   const inky =
     variant === "light" ? "rgba(255,255,255,0.55)"
-    : "#B55E45";
+    : "#A85740";
 
   const diamond =
     variant === "light" ? "rgba(255,255,255,0.85)"
-    : "#B55E45";
+    : "#A85740";
 
   const W = Math.round(102 * s);
   const H = Math.round(26 * s);

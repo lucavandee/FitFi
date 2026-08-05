@@ -86,7 +86,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
 
           <button
             onClick={() => setShowDetails(!showDetails)}
-            className="text-sm text-[#9A503B] hover:text-[#B55E45] transition-colors flex items-center gap-1"
+            className="text-sm text-[#9A503B] hover:text-[#A85740] transition-colors flex items-center gap-1"
           >
             <Info className="w-4 h-4" />
             {showDetails ? 'Verberg' : 'Details'}
@@ -160,7 +160,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
                 {onRecalibrate && (
                   <button
                     onClick={onRecalibrate}
-                    className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-sm py-2 px-4 inline-flex items-center gap-2"
+                    className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-sm py-2 px-4 inline-flex items-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Opnieuw calibreren
@@ -191,8 +191,8 @@ function ArchetypeBar({
 
   const rankColors: Record<number, string> = {
     1: 'bg-[#9A503B]',
-    2: 'bg-[#B55E45]',
-    3: 'bg-[#B55E45]'
+    2: 'bg-[#A85740]',
+    3: 'bg-[#A85740]'
   };
 
   return (

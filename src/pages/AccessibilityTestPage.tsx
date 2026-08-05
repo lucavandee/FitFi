@@ -46,7 +46,7 @@ export default function AccessibilityTestPage() {
           <div className="mb-8">
             <a
               href="/dashboard"
-              className="inline-flex items-center gap-2 text-[#6E6E6E] hover:text-[#1A1A1A] mb-4 focus-visible:outline-2 focus-visible:outline-[#B55E45]"
+              className="inline-flex items-center gap-2 text-[#6E6E6E] hover:text-[#1A1A1A] mb-4 focus-visible:outline-2 focus-visible:outline-[#A85740]"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar Dashboard
@@ -59,7 +59,7 @@ export default function AccessibilityTestPage() {
           </div>
 
           {/* Test Instructions */}
-          <div className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6 border-l-4 border-[#B55E45]">
+          <div className="bg-white border border-[#E5E5E5] rounded-2xl mb-8 p-6 border-l-4 border-[#A85740]">
             <h2 className="text-xl md:text-2xl font-semibold text-[#1A1A1A] mb-3">Test Instructions</h2>
             <ol className="space-y-2 text-base font-normal leading-relaxed text-[#4A4A4A]">
               <li>
@@ -87,14 +87,14 @@ export default function AccessibilityTestPage() {
                 <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3">Standard Focus (Light Backgrounds)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl`}
+                    className={`bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl`}
                     onClick={() => addResult('Primary button clicked')}
                   >
                     Primary Button
                   </button>
 
                   <button
-                    className={`bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`}
+                    className={`bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`}
                     onClick={() => addResult('Secondary button clicked')}
                   >
                     Secondary Button
@@ -147,7 +147,7 @@ export default function AccessibilityTestPage() {
                 <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3 text-white">Dark Background Focus</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`bg-transparent border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`}
+                    className={`bg-transparent border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`}
                     onClick={() => addResult('Ghost button clicked')}
                   >
                     Ghost Button
@@ -174,7 +174,7 @@ export default function AccessibilityTestPage() {
                 <h3 className="text-xl font-semibold text-[#1A1A1A] mb-3">Strong Focus (Critical CTAs)</h3>
                 <div className="flex flex-wrap gap-4">
                   <button
-                    className={`bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl ${FOCUS_CLASSES.strong}`}
+                    className={`bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl ${FOCUS_CLASSES.strong}`}
                     onClick={() => addResult('Strong focus CTA clicked')}
                   >
                     Critical Action
@@ -206,7 +206,7 @@ export default function AccessibilityTestPage() {
                 <input
                   id="test-email"
                   type="email"
-                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#B55E45] focus-visible:ring-2 focus-visible:ring-[#B55E45]/20`}
+                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#A85740] focus-visible:ring-2 focus-visible:ring-[#A85740]/20`}
                   placeholder="naam@voorbeeld.nl"
                 />
                 <p className="text-sm text-[#6E6E6E] mt-1">
@@ -222,7 +222,7 @@ export default function AccessibilityTestPage() {
                 <textarea
                   id="test-message"
                   rows={4}
-                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#B55E45] focus-visible:ring-2 focus-visible:ring-[#B55E45]/20`}
+                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#A85740] focus-visible:ring-2 focus-visible:ring-[#A85740]/20`}
                   placeholder="Type your message..."
                 />
               </div>
@@ -234,7 +234,7 @@ export default function AccessibilityTestPage() {
                 </label>
                 <select
                   id="test-select"
-                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#B55E45] focus-visible:ring-2 focus-visible:ring-[#B55E45]/20`}
+                  className={`w-full px-4 py-3 border-2 border-[#E5E5E5] rounded-xl bg-white text-[#1A1A1A] transition-all outline-none focus-visible:border-[#A85740] focus-visible:ring-2 focus-visible:ring-[#A85740]/20`}
                 >
                   <option>Option 1</option>
                   <option>Option 2</option>
@@ -247,7 +247,7 @@ export default function AccessibilityTestPage() {
                 <input
                   id="test-checkbox"
                   type="checkbox"
-                  className={`mt-1 w-5 h-5 border-2 border-[#E5E5E5] rounded transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20 focus-visible:ring-2 focus-visible:ring-[#B55E45]`}
+                  className={`mt-1 w-5 h-5 border-2 border-[#E5E5E5] rounded transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-2 focus-visible:ring-[#A85740]`}
                 />
                 <label htmlFor="test-checkbox" className="text-base font-normal leading-relaxed text-[#4A4A4A]">
                   I agree to the terms and conditions
@@ -255,7 +255,7 @@ export default function AccessibilityTestPage() {
               </div>
 
               {/* Submit */}
-              <button type="submit" className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">
+              <button type="submit" className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">
                 Submit Form
               </button>
             </form>
@@ -372,7 +372,7 @@ export default function AccessibilityTestPage() {
 
             <div className="space-y-4">
               <button
-                className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl"
+                className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl"
                 onClick={() => {
                   announceToScreenReader('This message is announced to screen readers!');
                   addResult('Screen reader announcement triggered');
@@ -412,7 +412,7 @@ export default function AccessibilityTestPage() {
                 ))}
               </div>
               <button
-                className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl mt-4"
+                className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl mt-4"
                 onClick={() => setTestResults([])}
               >
                 Clear Log

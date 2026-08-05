@@ -32,7 +32,7 @@ export function HeroMinimal() {
             {/* H1 - Result or Speed */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-tight tracking-tight">
               Jouw stijl in{' '}
-              <span className="text-[#B55E45]">
+              <span className="text-[#A85740]">
                 2 minuten
               </span>
             </h1>
@@ -48,7 +48,7 @@ export function HeroMinimal() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button
                 onClick={handleStartClick}
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#B55E45] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#A85740] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200"
               >
                 Begin gratis
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -57,7 +57,7 @@ export function HeroMinimal() {
               <NavLink
                 to="/hoe-het-werkt"
                 onClick={handleExampleClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
               >
                 Bekijk voorbeeld
               </NavLink>
@@ -66,15 +66,15 @@ export function HeroMinimal() {
             {/* Micro-proof badges */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 pt-2">
               <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
-                <Shield className="w-4 h-4 text-[#B55E45]" />
+                <Shield className="w-4 h-4 text-[#A85740]" />
                 <span></span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
-                <Zap className="w-4 h-4 text-[#B55E45]" />
+                <Zap className="w-4 h-4 text-[#A85740]" />
                 <span>Geen spam</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
-                <BookOpen className="w-4 h-4 text-[#B55E45]" />
+                <BookOpen className="w-4 h-4 text-[#A85740]" />
                 <span>Uitleg bij elke look</span>
               </div>
             </div>
@@ -91,7 +91,7 @@ export function HeroMinimal() {
               >
                 <div className="aspect-[3/4] bg-[#F5F0EB] flex items-center justify-center">
                   <div className="text-center p-6">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-[#B55E45] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-[#A85740] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                       W
                     </div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">Werk</p>
@@ -108,12 +108,12 @@ export function HeroMinimal() {
 
               {/* Card 2: Weekend - Middle (Front) */}
               <div
-                className="absolute top-[80px] left-[20%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-2xl border-2 border-[#B55E45] overflow-hidden transform rotate-[2deg] transition-transform hover:rotate-[0deg] hover:scale-105 z-30"
+                className="absolute top-[80px] left-[20%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-2xl border-2 border-[#A85740] overflow-hidden transform rotate-[2deg] transition-transform hover:rotate-[0deg] hover:scale-105 z-30"
                 style={{ willChange: 'transform' }}
               >
                 <div className="aspect-[3/4] bg-[#F5F0EB] flex items-center justify-center">
                   <div className="text-center p-6">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-[#B55E45] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-[#A85740] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                       W
                     </div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">Weekend</p>

@@ -226,7 +226,7 @@ export default function AdminDaisyconImportPage() {
           <p className="mt-2 text-[#6E6E6E]">Admin rechten vereist.</p>
           <button
             onClick={() => navigate("/admin")}
-            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
           >
             Terug naar Dashboard
           </button>
@@ -294,7 +294,7 @@ export default function AdminDaisyconImportPage() {
                 onChange={(e) => setFeedJson(e.target.value)}
                 rows={10}
                 placeholder={"https://daisycon.io/datafeed/?media_id=...&type=JSON\n\nOf plak hier de volledige JSON feed inhoud."}
-                className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm font-mono text-[#1A1A1A] placeholder:text-[#6E6E6E] p-3 focus:outline-none focus:ring-2 focus:ring-[#B55E45] resize-y"
+                className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm font-mono text-[#1A1A1A] placeholder:text-[#6E6E6E] p-3 focus:outline-none focus:ring-2 focus:ring-[#A85740] resize-y"
               />
               {feedJson && (
                 <p className="text-xs text-[#6E6E6E] mt-1">
@@ -314,7 +314,7 @@ export default function AdminDaisyconImportPage() {
               />
               <label
                 htmlFor="feed-file"
-                className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-[#E5E5E5] rounded-xl p-10 cursor-pointer hover:border-[#B55E45] hover:bg-[#F5F0EB] transition-colors"
+                className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-[#E5E5E5] rounded-xl p-10 cursor-pointer hover:border-[#A85740] hover:bg-[#F5F0EB] transition-colors"
               >
                 <FileJson className="w-8 h-8 text-[#6E6E6E]" />
                 <div className="text-center">
@@ -333,7 +333,7 @@ export default function AdminDaisyconImportPage() {
           <button
             onClick={handleImport}
             disabled={importing || !feedJson.trim()}
-            className="mt-5 w-full flex items-center justify-center gap-2 bg-[#9A503B] text-white font-semibold py-3 rounded-xl hover:bg-[#B55E45] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-5 w-full flex items-center justify-center gap-2 bg-[#9A503B] text-white font-semibold py-3 rounded-xl hover:bg-[#A85740] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {importing ? (
               <>

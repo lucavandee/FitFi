@@ -39,7 +39,7 @@ export const ResultsEmptyState: React.FC<ResultsEmptyStateProps> = ({
       role="status"
       className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-12 text-center"
     >
-      <Sparkles className="w-12 h-12 mx-auto mb-4 text-[#B55E45]" aria-hidden="true" />
+      <Sparkles className="w-12 h-12 mx-auto mb-4 text-[#A85740]" aria-hidden="true" />
       <h3 className="font-display text-xl font-semibold text-[#1A1A1A] mb-2">
         Nog geen outfits opgeslagen
       </h3>

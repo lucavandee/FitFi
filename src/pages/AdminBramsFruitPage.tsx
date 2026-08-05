@@ -52,7 +52,7 @@ export default function AdminBramsFruitPage() {
           <div className="flex gap-3 mt-6 justify-center">
             <button
               onClick={() => navigate('/inloggen')}
-              className="px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
+              className="px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
             >
               Inloggen
             </button>
@@ -182,7 +182,7 @@ export default function AdminBramsFruitPage() {
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
                   file:bg-[#9A503B] file:text-white
-                  hover:file:bg-[#B55E45]
+                  hover:file:bg-[#A85740]
                   file:cursor-pointer file:transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               />
@@ -240,7 +240,7 @@ export default function AdminBramsFruitPage() {
               </div>
               <button
                 onClick={() => navigate('/admin/images')}
-                className="flex-shrink-0 px-4 py-2 bg-gradient-to-r from-[#9A503B] to-[#B55E45] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
+                className="flex-shrink-0 px-4 py-2 bg-gradient-to-r from-[#9A503B] to-[#A85740] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
               >
                 → Nieuwe Image Manager
               </button>
@@ -271,7 +271,7 @@ export default function AdminBramsFruitPage() {
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
                   file:bg-[#9A503B] file:text-white
-                  hover:file:bg-[#B55E45]
+                  hover:file:bg-[#A85740]
                   file:cursor-pointer file:transition-colors
                   disabled:opacity-50 disabled:cursor-not-allowed"
               />
@@ -310,7 +310,7 @@ export default function AdminBramsFruitPage() {
             <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
               <button
                 onClick={() => navigate('/admin/preview/brams-fruit')}
-                className="px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors font-medium"
+                className="px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors font-medium"
               >
                 Preview Catalog
               </button>

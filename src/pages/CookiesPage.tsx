@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { Cookie, ShieldCheck, ChartBar as BarChart2, Megaphone, Database, Globe, Settings, Clock, Scale, RefreshCw, Mail, ChevronDown, ArrowRight, Check, X, TriangleAlert as AlertTriangle } from 'lucide-react';
 import Seo from '@/components/seo/Seo';
 
 const UPDATED = '7 januari 2026';
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i = 0) => ({
     opacity: 1,
@@ -27,7 +27,7 @@ function CookieRow({ name, provider, purpose, retention }: {
 }) {
   return (
     <div className="grid grid-cols-[1fr_auto] md:grid-cols-[1.5fr_1fr_2fr_1fr] gap-3 py-3 border-b border-[#E5E5E5] last:border-0 items-start">
-      <code className="text-xs font-mono bg-[#F5F0EB] text-[#B55E45] px-2 py-1 rounded-lg break-all">{name}</code>
+      <code className="text-xs font-mono bg-[#F5F0EB] text-[#A85740] px-2 py-1 rounded-lg break-all">{name}</code>
       <span className="text-xs text-[#6E6E6E] font-medium">{provider}</span>
       <span className="text-sm text-[#4A4A4A] leading-[1.6] col-span-2 md:col-span-1">{purpose}</span>
       <span className="text-xs text-[#6E6E6E]">{retention}</span>
@@ -278,14 +278,14 @@ const SECTIONS: Section[] = [
             { right: 'Dataportabiliteit (art. 20)', desc: 'export van je gegevens opvragen' },
           ].map((item) => (
             <li key={item.right} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B55E45] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
               <span><strong className="text-[#1A1A1A]">{item.right}:</strong> {item.desc}</span>
             </li>
           ))}
         </ul>
         <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
           Contact:{' '}
-          <a href="mailto:privacy@fitfi.ai" className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
+          <a href="mailto:privacy@fitfi.ai" className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
             privacy@fitfi.ai
           </a>
         </p>
@@ -318,13 +318,13 @@ const SECTIONS: Section[] = [
           { label: 'Google Privacy Policy', href: 'https://policies.google.com/privacy', internal: false },
         ].map((item) => (
           <li key={item.label} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B55E45] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
             {item.internal ? (
-              <Link to={item.href} className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
+              <Link to={item.href} className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
                 {item.label}
               </Link>
             ) : (
-              <a href={item.href} className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200" target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
+              <a href={item.href} className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200" target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
                 {item.label}
               </a>
             )}
@@ -355,11 +355,11 @@ function AccordionSection({ section, isOpen, onToggle, index }: {
           onClick={() => onToggle(section.id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${section.id}`}
-          className="w-full flex items-center justify-between py-6 gap-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/40 focus-visible:ring-offset-2 rounded"
+          className="w-full flex items-center justify-between py-6 gap-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/40 focus-visible:ring-offset-2 rounded"
         >
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${isOpen ? 'bg-[#F4E8E3]' : 'bg-[#F5F0EB]'}`}>
-              <Icon className="w-4 h-4 text-[#B55E45]" aria-hidden="true" />
+              <Icon className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
             </div>
             <span className="text-base font-semibold text-[#1A1A1A] leading-snug">{section.title}</span>
           </div>
@@ -367,7 +367,7 @@ function AccordionSection({ section, isOpen, onToggle, index }: {
             className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isOpen ? 'bg-[#F4E8E3]' : 'bg-[#F5F0EB]'}`}
             aria-hidden="true"
           >
-            <ChevronDown className={`w-4 h-4 text-[#B55E45] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-[#A85740] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
           </span>
         </button>
       </h2>
@@ -410,7 +410,7 @@ export default function CookiesPage() {
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#B55E45] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#A85740] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
@@ -431,11 +431,11 @@ export default function CookiesPage() {
               custom={0}
               className="inline-flex items-center gap-2.5 mb-8"
             >
-              <span className="w-6 h-px bg-[#B55E45]" aria-hidden="true" />
-              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
+              <span className="w-6 h-px bg-[#A85740]" aria-hidden="true" />
+              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740]">
                 Cookiebeleid
               </span>
-              <span className="w-6 h-px bg-[#B55E45]" aria-hidden="true" />
+              <span className="w-6 h-px bg-[#A85740]" aria-hidden="true" />
             </motion.div>
 
             <motion.h1
@@ -461,7 +461,7 @@ export default function CookiesPage() {
               analytics alleen met jouw toestemming.{' '}
               <Link
                 to="/contact"
-                className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
+                className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
               >
                 Vragen?
               </Link>
@@ -476,7 +476,7 @@ export default function CookiesPage() {
             >
               {TRUST_STATS.map(({ label }) => (
                 <div key={label} className="flex items-center gap-2 text-sm font-medium text-[#4A4A4A]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#B55E45] flex-shrink-0" aria-hidden="true" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                   {label}
                 </div>
               ))}
@@ -580,14 +580,14 @@ export default function CookiesPage() {
             >
               <Link
                 to="/profiel"
-                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-[15px] transition-colors duration-200"
+                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] transition-colors duration-200"
               >
                 Instellingen aanpassen
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <Link
                 to="/privacy"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
               >
                 Privacyverklaring
               </Link>

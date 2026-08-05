@@ -69,7 +69,7 @@ function ProductThumb({ src, alt, index }: { src: string | null; alt: string; in
         />
       )}
       {showFallback && (
-        <span className="text-sm font-bold text-[#B55E45]/40">
+        <span className="text-sm font-bold text-[#A85740]/40">
           {index + 1}
         </span>
       )}
@@ -201,7 +201,7 @@ export function OutfitDetailModal({
             {/* Color advice */}
             {colorProfile && (
               <div className="mx-6 mt-6 mb-7 bg-[#F5F0EB] border border-[#E5E5E5] rounded-xl p-5">
-                <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#B55E45] mb-1.5">
+                <p className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#A85740] mb-1.5">
                   Kleuradvies
                 </p>
                 <p className="text-sm text-[#4A4A4A] leading-[1.5]">
@@ -226,7 +226,7 @@ export function OutfitDetailModal({
             {/* Product list — empty state */}
             {products.length === 0 && (
               <div className="mx-6 mb-6 rounded-xl border border-[#E5E5E5] px-4 py-5 bg-[#F5F0EB] text-center">
-                <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-[#B55E45]/40" aria-hidden="true" />
+                <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-[#A85740]/40" aria-hidden="true" />
                 <p className="text-sm font-semibold text-[#1A1A1A] mb-1">Productlinks worden binnenkort geladen</p>
                 <p className="text-xs text-[#6E6E6E] leading-relaxed">
                   Dit is een voorbeeld outfit op basis van jouw stijlprofiel. Maak een account aan voor directe shoplinks naar Nederlandse webshops.
@@ -296,7 +296,7 @@ export function OutfitDetailModal({
                             {name}
                           </p>
                           {product?.itemReason && (
-                            <p className="text-[11px] text-[#B55E45] mt-0.5 line-clamp-1">
+                            <p className="text-[11px] text-[#A85740] mt-0.5 line-clamp-1">
                               {product.itemReason}
                             </p>
                           )}
@@ -313,7 +313,7 @@ export function OutfitDetailModal({
                               className="w-9 h-9 rounded-full bg-[#F5F0EB] hover:bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 transition-colors duration-200"
                               aria-label={`Shop ${name}`}
                             >
-                              <ExternalLink className="w-4 h-4 text-[#B55E45]" />
+                              <ExternalLink className="w-4 h-4 text-[#A85740]" />
                             </div>
                           ) : null}
                         </div>
@@ -361,7 +361,7 @@ export function OutfitDetailModal({
                   }
                   toast.success(`${shoppableProducts.length} items openen...`, { duration: 2500 });
                 }}
-                className="flex-1 bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-4 rounded-full text-center inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)]"
+                className="flex-1 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-4 rounded-full text-center inline-flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.25)]"
                 aria-label={`Shop ${shoppableProducts.length} items`}
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -375,8 +375,8 @@ export function OutfitDetailModal({
                 onClick={() => onToggleFav(id)}
                 className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 ${
                   isFav
-                    ? "bg-[#B55E45] text-white hover:bg-[#9A503B]"
-                    : "bg-[#F4E8E3] text-[#B55E45] hover:bg-[#F5F0EB]"
+                    ? "bg-[#A85740] text-white hover:bg-[#9A503B]"
+                    : "bg-[#F4E8E3] text-[#A85740] hover:bg-[#F5F0EB]"
                 }`}
                 aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
               >
@@ -390,12 +390,12 @@ export function OutfitDetailModal({
                 onClick={() => onToggleFav(id)}
                 className={`w-14 h-14 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
                   isFav
-                    ? "border-[#B55E45] bg-[#F4E8E3]"
-                    : "border-[#E5E5E5] hover:border-[#B55E45] hover:bg-[#F4E8E3]"
+                    ? "border-[#A85740] bg-[#F4E8E3]"
+                    : "border-[#E5E5E5] hover:border-[#A85740] hover:bg-[#F4E8E3]"
                 }`}
                 aria-label={isFav ? "Verwijder uit favorieten" : "Bewaar outfit"}
               >
-                <Heart className={`w-5 h-5 ${isFav ? "fill-[#B55E45] text-[#B55E45]" : "text-[#6E6E6E]"}`} strokeWidth={isFav ? 0 : 2} />
+                <Heart className={`w-5 h-5 ${isFav ? "fill-[#A85740] text-[#A85740]" : "text-[#6E6E6E]"}`} strokeWidth={isFav ? 0 : 2} />
               </button>
             )}
           </div>

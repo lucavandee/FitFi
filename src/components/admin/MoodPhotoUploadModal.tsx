@@ -326,7 +326,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                 className="p-6 space-y-5"
               >
                 <label className="block cursor-pointer">
-                  <div className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-6 text-center hover:border-[#B55E45] transition-colors">
+                  <div className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-6 text-center hover:border-[#A85740] transition-colors">
                     {previewUrl ? (
                       <div className="space-y-3">
                         <img src={previewUrl} alt="Preview" className="w-full max-h-80 object-contain rounded-lg mx-auto" />
@@ -441,7 +441,7 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
 
                     <button
                       onClick={analyzeWithAI}
-                      className="w-full py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:border-[#B55E45] transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-2 rounded-xl border border-[#E5E5E5] text-sm font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:border-[#A85740] transition-colors flex items-center justify-center gap-2"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       Opnieuw analyseren
@@ -579,8 +579,8 @@ export default function MoodPhotoUploadModal({ onClose, onSuccess }: MoodPhotoUp
                               onClick={() => toggleColor(name)}
                               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium transition-all border ${
                                 isSelected
-                                  ? 'border-[#9A503B] bg-[#F5F0EB] text-[#9A503B] ring-1 ring-[#B55E45]'
-                                  : 'border-[#E5E5E5] hover:border-[#B55E45] text-[#6E6E6E]'
+                                  ? 'border-[#9A503B] bg-[#F5F0EB] text-[#9A503B] ring-1 ring-[#A85740]'
+                                  : 'border-[#E5E5E5] hover:border-[#A85740] text-[#6E6E6E]'
                               }`}
                             >
                               <span

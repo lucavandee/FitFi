@@ -32,7 +32,7 @@ export function GamificationDashboardMini() {
       <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl border-2 border-[#F4E8E3] p-6 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-md">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center shadow-md">
               <span className="text-2xl">{levelInfo.current.icon}</span>
             </div>
             <div>
@@ -63,7 +63,7 @@ export function GamificationDashboardMini() {
             </div>
             <div className="h-3 bg-white/50 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
+                className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740]"
                 initial={{ width: 0 }}
                 animate={{ width: `${levelInfo.progress}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}
@@ -108,7 +108,7 @@ export function GamificationDashboardMini() {
       {achievements && achievements.length > 0 && (
         <div className="bg-white rounded-2xl border-2 border-[#E5E5E5] p-4 shadow-md">
           <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-[#B55E45]" />
+            <Trophy className="w-4 h-4 text-[#A85740]" />
             Recente Achievements
           </h4>
           <div className="space-y-2">

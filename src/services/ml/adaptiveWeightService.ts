@@ -286,9 +286,7 @@ export async function getAdaptiveWeights(
 
   let query = client
     .from('style_profiles')
-    .select('adaptive_archetype_weights, total_feedback_count, last_weight_update')
-    .limit(1)
-    .maybeSingle();
+    .select('adaptive_archetype_weights, total_feedback_count, last_weight_update');
 
   if (userId) {
     query = query.eq('user_id', userId);
@@ -298,7 +296,7 @@ export async function getAdaptiveWeights(
     return null;
   }
 
-  const { data, error } = await query;
+  const { data, error } = await query.limit(1).maybeSingle();
 
   if (error || !data) {
     return null;

@@ -26,10 +26,11 @@ import {
   type BlogPostFilters
 } from '@/services/blog/blogService';
 import toast from 'react-hot-toast';
+import type { LucideIcon } from 'lucide-react';
 
 export default function AdminBlogManagementPage() {
   const navigate = useNavigate();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -192,7 +193,7 @@ export default function AdminBlogManagementPage() {
                 </button>
                 <button
                   onClick={() => navigate('/admin/blog/new')}
-                  className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#A85740] transition-colors flex items-center gap-2"
                 >
                   <PlusCircle className="w-4 h-4" />
                   Nieuwe Post
@@ -276,7 +277,7 @@ export default function AdminBlogManagementPage() {
               </p>
               <button
                 onClick={() => navigate('/admin/blog/new')}
-                className="px-6 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors"
+                className="px-6 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#A85740] transition-colors"
               >
                 Nieuwe Post Maken
               </button>
@@ -300,8 +301,15 @@ export default function AdminBlogManagementPage() {
   );
 }
 
-function MetricCard({ icon: Icon, label, value, color }: any) {
-  const colorClasses = {
+type MetricCardColor = 'blue' | 'green' | 'purple' | 'orange';
+
+function MetricCard({ icon: Icon, label, value, color }: {
+  icon: LucideIcon;
+  label: string;
+  value: number | string;
+  color: MetricCardColor;
+}) {
+  const colorClasses: Record<MetricCardColor, string> = {
     blue: 'text-blue-600',
     green: 'text-green-600',
     purple: 'text-purple-600',
@@ -323,15 +331,20 @@ function MetricCard({ icon: Icon, label, value, color }: any) {
   );
 }
 
-function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
-  const statusColors = {
+function PostCard({ post, onEdit, onDelete, onTogglePublish }: {
+  post: BlogPost;
+  onEdit: () => void;
+  onDelete: () => void;
+  onTogglePublish: () => void;
+}) {
+  const statusColors: Record<BlogPost['status'], string> = {
     draft: 'bg-gray-100 text-gray-800',
     review: 'bg-yellow-100 text-yellow-800',
     published: 'bg-green-100 text-green-800',
     archived: 'bg-red-100 text-red-800'
   };
 
-  const statusLabels = {
+  const statusLabels: Record<BlogPost['status'], string> = {
     draft: 'Draft',
     review: 'Review',
     published: 'Gepubliceerd',

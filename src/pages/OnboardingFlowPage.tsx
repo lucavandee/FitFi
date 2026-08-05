@@ -608,19 +608,19 @@ export default function OnboardingFlowPage() {
 
       // client and userId already declared above
       let syncSuccess = false;
-      let user: any = null;
+      let authUser: any = null;
 
       if (client?.auth && !userId) {
         try {
           const { data } = await client.auth.getUser();
-          user = data?.user || null;
-          userId = user?.id || null;
+          authUser = data?.user || null;
+          userId = authUser?.id || null;
         } catch {
         }
       } else if (userId && client?.auth) {
         try {
           const { data } = await client.auth.getUser();
-          user = data?.user || null;
+          authUser = data?.user || null;
         } catch {
         }
       }
@@ -644,7 +644,7 @@ export default function OnboardingFlowPage() {
           archetype: dutchArchetype
         };
 
-        syncSuccess = await saveToSupabase(client, user, sessionId, updatedResult);
+        syncSuccess = await saveToSupabase(client, authUser, sessionId, updatedResult);
 
         if (syncSuccess && answers.visualPreferencesCompleted && answers.calibrationCompleted) {
           try {
@@ -765,7 +765,7 @@ export default function OnboardingFlowPage() {
               </div>
               <div className="h-2 sm:h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-[#B55E45]"
+                  className="h-full bg-[#A85740]"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -805,7 +805,7 @@ export default function OnboardingFlowPage() {
           {isSubmitting && (
             <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center">
               <div className="bg-white rounded-2xl p-8 max-w-md text-center shadow-xl">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#B55E45] flex items-center justify-center animate-pulse">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#A85740] flex items-center justify-center animate-pulse">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Je Style DNA wordt gegenereerd...</h3>
@@ -822,7 +822,7 @@ export default function OnboardingFlowPage() {
               </div>
               <div className="h-2 sm:h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#B55E45] transition-all duration-500 ease-out"
+                  className="h-full bg-[#A85740] transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -860,13 +860,20 @@ export default function OnboardingFlowPage() {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#B55E45] flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#A85740] flex items-center justify-center animate-pulse">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <p className="text-[#1A1A1A]">Quiz wordt geladen...</p>
         </div>
       </div>
     );
+  }
+
+  // At this point every other phase ('swipes', 'calibration', 'reveal') has
+  // already returned above, so we're rendering the questions phase and step
+  // must be defined. Guard defensively instead of asserting non-null.
+  if (!step) {
+    return null;
   }
 
   return (
@@ -898,7 +905,7 @@ export default function OnboardingFlowPage() {
                 style={{
                   height: '100%',
                   width: `${progress}%`,
-                  background: '#B55E45',
+                  background: '#A85740',
                   borderRadius: '99px',
                   transition: 'width 0.4s ease',
                 }}
@@ -934,7 +941,7 @@ export default function OnboardingFlowPage() {
                   </p>
                 )}
                 {step.field === 'stylePreferences' && (
-                  <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#B55E45', fontWeight: 500 }}>
+                  <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#A85740', fontWeight: 500 }}>
                     <CheckCircle style={{ width: '14px', height: '14px' }} />
                     Kies 2–3 stijlen
                   </div>
@@ -957,7 +964,7 @@ export default function OnboardingFlowPage() {
                         display: 'flex', alignItems: 'flex-start', gap: '12px',
                         padding: '14px 16px', minHeight: '64px',
                         borderRadius: '14px',
-                        border: `2px solid ${isSelected ? '#B55E45' : '#E5E5E5'}`,
+                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
                         backgroundColor: isSelected ? '#FDF9F7' : '#FFFFFF',
                         cursor: 'pointer', textAlign: 'left',
                         transition: 'border-color 0.15s, background-color 0.15s',
@@ -966,8 +973,8 @@ export default function OnboardingFlowPage() {
                       <div style={{
                         width: '20px', height: '20px', flexShrink: 0, marginTop: '1px',
                         borderRadius: '6px',
-                        border: `2px solid ${isSelected ? '#B55E45' : '#E5E5E5'}`,
-                        backgroundColor: isSelected ? '#B55E45' : 'transparent',
+                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
+                        backgroundColor: isSelected ? '#A85740' : 'transparent',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s',
                       }}>
@@ -1000,7 +1007,7 @@ export default function OnboardingFlowPage() {
                         display: 'flex', alignItems: 'center', gap: '12px',
                         padding: '14px 16px', minHeight: '64px',
                         borderRadius: '14px',
-                        border: `2px solid ${isSelected ? '#B55E45' : '#E5E5E5'}`,
+                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
                         backgroundColor: isSelected ? '#FDF9F7' : '#FFFFFF',
                         cursor: 'pointer', textAlign: 'left', width: '100%',
                         transition: 'border-color 0.15s, background-color 0.15s',
@@ -1009,8 +1016,8 @@ export default function OnboardingFlowPage() {
                       <div style={{
                         width: '20px', height: '20px', flexShrink: 0,
                         borderRadius: '50%',
-                        border: `2px solid ${isSelected ? '#B55E45' : '#E5E5E5'}`,
-                        backgroundColor: isSelected ? '#B55E45' : 'transparent',
+                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
+                        backgroundColor: isSelected ? '#A85740' : 'transparent',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s',
                       }}>
@@ -1023,7 +1030,7 @@ export default function OnboardingFlowPage() {
                         )}
                       </div>
                       {isSelected && (
-                        <svg style={{ width: '18px', height: '18px', flexShrink: 0, color: '#B55E45' }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <svg style={{ width: '18px', height: '18px', flexShrink: 0, color: '#A85740' }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
                         </svg>
                       )}
@@ -1059,7 +1066,7 @@ export default function OnboardingFlowPage() {
               return (
                 <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E5E5', padding: '20px' }}>
                   <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '36px', fontWeight: 700, color: '#B55E45', lineHeight: 1.1 }}>
+                    <div style={{ fontSize: '36px', fontWeight: 700, color: '#A85740', lineHeight: 1.1 }}>
                       €{minVal} – €{maxVal}
                     </div>
                     <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
@@ -1125,7 +1132,7 @@ export default function OnboardingFlowPage() {
             {step.type === 'slider' && (
               <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E5E5', padding: '20px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '48px', fontWeight: 700, color: '#B55E45', lineHeight: 1 }}>
+                  <div style={{ fontSize: '48px', fontWeight: 700, color: '#A85740', lineHeight: 1 }}>
                     €{answers[step.field as keyof QuizAnswers] || step.min || 50}
                   </div>
                   <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
@@ -1136,7 +1143,7 @@ export default function OnboardingFlowPage() {
                     <button
                       type="button"
                       onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.max(step.min || 0, v - (step.step || 5))); }}
-                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #B55E45', backgroundColor: '#FFFFFF', color: '#9A503B', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #A85740', backgroundColor: '#FFFFFF', color: '#9A503B', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verlaag budget"
                     >−</button>
                     <div style={{ position: 'relative' }}>
@@ -1155,7 +1162,7 @@ export default function OnboardingFlowPage() {
                     <button
                       type="button"
                       onClick={() => { const v = (answers[step.field as keyof QuizAnswers] as number) || step.min || 50; handleAnswer(step.field, Math.min(step.max || 100, v + (step.step || 5))); }}
-                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #B55E45', backgroundColor: '#B55E45', color: 'white', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #A85740', backgroundColor: '#A85740', color: 'white', fontSize: '20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       aria-label="Verhoog budget"
                     >+</button>
                   </div>
@@ -1167,7 +1174,7 @@ export default function OnboardingFlowPage() {
                   step={step.step || 1}
                   value={answers[step.field as keyof QuizAnswers] as number || step.min || 50}
                   onChange={(e) => handleAnswer(step.field, parseInt(e.target.value))}
-                  style={{ width: '100%', cursor: 'pointer', accentColor: '#B55E45' }}
+                  style={{ width: '100%', cursor: 'pointer', accentColor: '#A85740' }}
                 />
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: '#6E6E6E' }}>
                   <span>€{step.min || 0} Budget</span>
@@ -1258,7 +1265,7 @@ export default function OnboardingFlowPage() {
                   flex: 1, height: '48px', minWidth: 0,
                   borderRadius: '12px',
                   border: 'none',
-                  backgroundColor: canProceed() || !step?.required ? '#9A503B' : '#B55E45',
+                  backgroundColor: canProceed() || !step?.required ? '#9A503B' : '#A85740',
                   color: 'white',
                   fontSize: '15px', fontWeight: 700,
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -1322,7 +1329,7 @@ export default function OnboardingFlowPage() {
               </div>
               <button
                 onClick={() => setShowReviewModal(false)}
-                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
+                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]"
                 aria-label="Sluit overzicht"
               >
                 <X className="w-5 h-5 text-[#6E6E6E]" />
@@ -1362,7 +1369,7 @@ export default function OnboardingFlowPage() {
                     >
                       <span className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
                         hasValue
-                          ? 'bg-[#B55E45] text-white'
+                          ? 'bg-[#A85740] text-white'
                           : s.required
                           ? 'bg-red-50 text-[#C24A4A]'
                           : 'bg-[#E5E5E5] text-[#6E6E6E]'
@@ -1381,7 +1388,7 @@ export default function OnboardingFlowPage() {
                           {hasValue ? displayVal : s.required ? 'Vereist — klik om in te vullen' : 'Overgeslagen'}
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#B55E45] transition-colors flex-shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#A85740] transition-colors flex-shrink-0" />
                     </button>
                   </li>
                 );
@@ -1398,14 +1405,14 @@ export default function OnboardingFlowPage() {
               <button
                 onClick={handleConfirmProceed}
                 disabled={quizSteps.some(s => s.required && !answers[s.field as keyof QuizAnswers])}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#B55E45] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#A85740] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
               >
                 <span>Maak mijn rapport</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
               <button
                 onClick={() => { setShowReviewModal(false); }}
-                className="w-full px-6 py-3 min-h-[48px] border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#B55E45] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20"
+                className="w-full px-6 py-3 min-h-[48px] border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#A85740] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
               >
                 Terug naar vragen
               </button>
@@ -1428,7 +1435,7 @@ export default function OnboardingFlowPage() {
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
-                  <AlertCircle className="w-6 h-6 text-[#B55E45]" aria-hidden="true" />
+                  <AlertCircle className="w-6 h-6 text-[#A85740]" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 id="cancel-modal-title" className="text-xl font-bold text-[#1A1A1A]">Even stoppen?</h3>
@@ -1437,7 +1444,7 @@ export default function OnboardingFlowPage() {
               </div>
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
+                className="p-2 hover:bg-[#FDF9F7] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]"
                 aria-label="Sluit modal"
               >
                 <X className="w-5 h-5 text-[#6E6E6E]" aria-hidden="true" />
@@ -1453,14 +1460,14 @@ export default function OnboardingFlowPage() {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#B55E45] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2"
+                className="w-full px-6 py-3.5 min-h-[52px] bg-[#9A503B] text-white rounded-xl font-bold hover:bg-[#A85740] active:scale-[0.98] transition-all flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
                 autoFocus
               >
                 Doorgaan met quiz
               </button>
               <button
                 onClick={handleSaveAndContinueLater}
-                className="w-full px-6 py-3 border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#B55E45] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20"
+                className="w-full px-6 py-3 border border-[#E5E5E5] rounded-xl font-medium text-base text-[#1A1A1A] hover:border-[#A85740] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
               >
                 Opslaan en later verder
               </button>
@@ -1478,7 +1485,7 @@ export default function OnboardingFlowPage() {
       {/* Phase Transition for questions phase */}
       {showTransition && transitionTo && (
         <PhaseTransition
-          fromPhase={phase}
+          fromPhase="questions"
           toPhase={transitionTo}
           onContinue={handleTransitionComplete}
         />

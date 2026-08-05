@@ -138,7 +138,7 @@ export function StreakCalendar({
                 transition={{ duration: 2, delay: Math.random() * 0.5 }}
                 className="absolute w-2 h-2 rounded-full"
                 style={{
-                  background: ['#B55E45', '#B55E45', '#B55E45'][i % 3],
+                  background: ['#A85740', '#A85740', '#A85740'][i % 3],
                 }}
               />
             ))}
@@ -149,7 +149,7 @@ export function StreakCalendar({
       <div className="flex items-center justify-between mb-4">
         <div>
           <h4 className="text-lg font-bold text-[#1A1A1A] flex items-center gap-2">
-            <Flame className="w-5 h-5 text-[#B55E45]" />
+            <Flame className="w-5 h-5 text-[#A85740]" />
             Streak Calendar
           </h4>
           <p className="text-sm text-[#6E6E6E] mt-1">
@@ -158,7 +158,7 @@ export function StreakCalendar({
         </div>
         <div className="text-right">
           <div className="flex items-center gap-2 justify-end mb-1">
-            <Flame className="w-6 h-6 text-[#B55E45]" />
+            <Flame className="w-6 h-6 text-[#A85740]" />
             <span className="text-2xl font-bold text-[#1A1A1A]">
               {currentStreak}
             </span>
@@ -167,7 +167,7 @@ export function StreakCalendar({
             {currentStreak === 1 ? 'dag' : 'dagen'} streak
           </p>
           {longestStreak > 0 && longestStreak > currentStreak && (
-            <p className="text-xs text-[#B55E45] mt-1 flex items-center justify-end gap-1">
+            <p className="text-xs text-[#A85740] mt-1 flex items-center justify-end gap-1">
               <Trophy className="w-3 h-3" />
               Record: {longestStreak}
             </p>
@@ -184,7 +184,7 @@ export function StreakCalendar({
           whileTap={{ scale: 0.98 }}
           onClick={handleDailyCheckin}
           disabled={isChecking}
-          className="w-full mb-4 py-3 px-4 bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full mb-4 py-3 px-4 bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isChecking ? (
             <>
@@ -206,8 +206,8 @@ export function StreakCalendar({
       )}
 
       {hasCheckedInToday && (
-        <div className="mb-4 py-3 px-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#B55E45] rounded-xl flex items-center justify-center gap-2">
-          <CheckCircle2 className="w-5 h-5 text-[#B55E45]" />
+        <div className="mb-4 py-3 px-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border-2 border-[#A85740] rounded-xl flex items-center justify-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-[#A85740]" />
           <span className="font-semibold text-[#9A503B]">
             Check-in compleet vandaag!
           </span>
@@ -218,10 +218,10 @@ export function StreakCalendar({
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 p-3 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-xl border border-[#B55E45]"
+          className="mb-4 p-3 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-xl border border-[#A85740]"
         >
           <div className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-[#B55E45]" />
+            <Trophy className="w-5 h-5 text-[#A85740]" />
             <span className="text-sm font-bold text-[#1A1A1A]">
               Mijlpaal bereikt: {currentStreak} dagen!
             </span>
@@ -250,7 +250,7 @@ export function StreakCalendar({
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-gradient-to-br from-[#B55E45] to-[#B55E45]" />
+              <div className="w-3 h-3 rounded-full bg-gradient-to-br from-[#A85740] to-[#A85740]" />
               <span className="text-[#6E6E6E]">Actief</span>
             </div>
             <div className="flex items-center gap-1">
@@ -258,8 +258,8 @@ export function StreakCalendar({
               <span className="text-[#6E6E6E]">Inactief</span>
             </div>
           </div>
-          <div className="flex items-center gap-1 text-[#B55E45]">
-            <div className="w-3 h-3 rounded-full ring-2 ring-[#B55E45] ring-offset-2 bg-gradient-to-br from-[#B55E45] to-[#B55E45]" />
+          <div className="flex items-center gap-1 text-[#A85740]">
+            <div className="w-3 h-3 rounded-full ring-2 ring-[#A85740] ring-offset-2 bg-gradient-to-br from-[#A85740] to-[#A85740]" />
             <span className="font-semibold">Vandaag</span>
           </div>
         </div>
@@ -280,11 +280,11 @@ function CalendarDay({ day }: { day: ActivityDay }) {
         aspect-square flex items-center justify-center rounded-lg text-sm font-medium
         transition-all
         ${!day.isCurrentMonth ? 'text-[#6E6E6E] opacity-30' : ''}
-        ${day.isToday ? 'ring-2 ring-[#B55E45] ring-offset-2' : ''}
+        ${day.isToday ? 'ring-2 ring-[#A85740] ring-offset-2' : ''}
         ${day.hasActivity && day.isCurrentMonth
-          ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45] text-white shadow-md hover-scale'
+          ? 'bg-gradient-to-br from-[#A85740] to-[#A85740] text-white shadow-md hover-scale'
           : day.isCurrentMonth
-          ? 'bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45]'
+          ? 'bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A85740]'
           : 'bg-transparent'
         }
       `}

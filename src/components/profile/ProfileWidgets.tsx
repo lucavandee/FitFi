@@ -49,7 +49,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
       <div className="relative z-10 flex items-start gap-6">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-lg">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center shadow-lg">
             <User className="w-10 h-10 text-white" />
           </div>
           {level >= 5 && (
@@ -88,7 +88,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
                 initial={{ width: 0 }}
                 animate={{ width: `${xpProgress}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full"
+                className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full"
               />
             </div>
           </div>
@@ -112,7 +112,7 @@ export function StyleSummaryWidget({ archetype, paletteName, primaryColors }: St
   return (
     <BentoCard size="large">
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center flex-shrink-0">
           <Palette className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">

@@ -56,7 +56,7 @@ function renderContentWithLinks(content:string){
   return parts.map((part,i)=>{
     if(URL_RE.test(part)){
       return <a key={`url-${i}`} href={part} target="_blank" rel="nofollow noopener noreferrer"
-        className="underline decoration-[#B55E45] underline-offset-2 hover:opacity-80">{part}</a>;
+        className="underline decoration-[#A85740] underline-offset-2 hover:opacity-80">{part}</a>;
     }
     return <span key={`t-${i}`}>{part}</span>;
   });
@@ -684,7 +684,7 @@ const NovaChat: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Vraag Nova om styling advies..."
-                className="w-full px-5 py-4 pr-12 rounded-xl border border-[#E5E5E5] bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] outline-none transition-all text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
+                className="w-full px-5 py-4 pr-12 rounded-xl border border-[#E5E5E5] bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740] outline-none transition-all text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
                 disabled={isLoading}
               />
               {/* Animated gradient border on focus */}

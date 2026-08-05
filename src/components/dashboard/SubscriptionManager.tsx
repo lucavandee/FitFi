@@ -37,7 +37,7 @@ function FeatureRow({ label, included }: { label: string; included: boolean }) {
   return (
     <li className="flex items-center gap-3 py-2.5 border-b border-[#E5E5E5] last:border-0">
       {included ? (
-        <CheckCircle className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+        <CheckCircle className="w-4 h-4 text-[#A85740] flex-shrink-0" />
       ) : (
         <Lock className="w-4 h-4 text-[#6E6E6E] flex-shrink-0" />
       )}
@@ -45,7 +45,7 @@ function FeatureRow({ label, included }: { label: string; included: boolean }) {
         {label}
       </span>
       {!included && (
-        <span className="ml-auto text-[10px] font-bold uppercase tracking-wide text-[#B55E45] bg-[#F5F0EB] px-2 py-0.5 rounded-full">
+        <span className="ml-auto text-[10px] font-bold uppercase tracking-wide text-[#A85740] bg-[#F5F0EB] px-2 py-0.5 rounded-full">
           Premium
         </span>
       )}
@@ -134,7 +134,7 @@ export default function SubscriptionManager() {
       <div className="px-6 py-4 border-b border-[#E5E5E5] flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {isPremium ? (
-            <Crown className="w-5 h-5 text-[#B55E45]" />
+            <Crown className="w-5 h-5 text-[#A85740]" />
           ) : (
             <CreditCard className="w-5 h-5 text-[#6E6E6E]" />
           )}
@@ -183,7 +183,7 @@ export default function SubscriptionManager() {
                 <ul className="px-4 py-2 bg-[#F5F0EB]">
                   {PREMIUM_FEATURES.map((f) => (
                     <li key={f.label} className="flex items-center gap-2.5 py-2.5 border-b border-[#F5F0EB] last:border-0">
-                      <CheckCircle className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                       <span className="text-sm text-[#1A1A1A]">{f.label}</span>
                     </li>
                   ))}
@@ -204,14 +204,14 @@ export default function SubscriptionManager() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => navigate('/prijzen')}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
               >
                 <Sparkles className="w-4 h-4" />
                 Upgrade
               </button>
               <button
                 onClick={() => navigate('/resultaten')}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
                 Bekijk Premium-voorbeeld
@@ -227,7 +227,7 @@ export default function SubscriptionManager() {
             <div className="rounded-xl border border-[#F4E8E3] bg-[#F5F0EB] p-5">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <p className="text-xs text-[#B55E45] font-bold uppercase tracking-wide mb-1">
+                  <p className="text-xs text-[#A85740] font-bold uppercase tracking-wide mb-1">
                     {isLifetime ? 'Founder plan' : 'Premium plan'}
                   </p>
                   <h3 className="text-xl font-bold text-[#1A1A1A]">
@@ -287,7 +287,7 @@ export default function SubscriptionManager() {
               <ul className="rounded-xl border border-[#E5E5E5] overflow-hidden divide-y divide-[#E5E5E5]">
                 {PREMIUM_FEATURES.map((f) => (
                   <li key={f.label} className="flex items-center gap-3 px-4 py-3 bg-[#FAFAF8]">
-                    <CheckCircle className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                     <span className="text-sm text-[#1A1A1A]">{f.label}</span>
                   </li>
                 ))}
@@ -301,7 +301,7 @@ export default function SubscriptionManager() {
                   <button
                     onClick={handleManageSubscription}
                     disabled={processingPortal}
-                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors disabled:opacity-50"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors disabled:opacity-50"
                   >
                     {processingPortal ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Bezig...</>
@@ -312,7 +312,7 @@ export default function SubscriptionManager() {
                   <button
                     onClick={handleManageSubscription}
                     disabled={processingPortal}
-                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#B55E45] transition-colors disabled:opacity-50"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors disabled:opacity-50"
                   >
                     <ExternalLink className="w-4 h-4" />
                     Download factuur
@@ -346,7 +346,7 @@ export default function SubscriptionManager() {
                       <div className="mt-3 p-4 rounded-xl bg-[#FAFAF8] border border-[#E5E5E5] text-xs text-[#6E6E6E] space-y-2">
                         <p>Je kunt op elk moment opzeggen. Na opzegging blijft Premium actief tot het einde van de betaalperiode.</p>
                         <p>Je gratis rapport en stijlprofiel blijven daarna altijd beschikbaar.</p>
-                        <p>Opzeggen doe je via de Stripe-portal (knop hierboven). Heb je vragen? <a href="/contact" className="underline text-[#B55E45]">Neem contact op.</a></p>
+                        <p>Opzeggen doe je via de Stripe-portal (knop hierboven). Heb je vragen? <a href="/contact" className="underline text-[#A85740]">Neem contact op.</a></p>
                         <button
                           onClick={handleManageSubscription}
                           disabled={processingPortal}
@@ -386,7 +386,7 @@ export default function SubscriptionManager() {
       {/* Footer */}
       <div className="px-6 py-3 border-t border-[#E5E5E5] bg-[#FAFAF8]">
         <p className="text-xs text-[#6E6E6E]">
-          Vragen? <a href="/contact" className="text-[#B55E45] hover:underline">Neem contact op</a> · Betalingen verlopen veilig via Stripe
+          Vragen? <a href="/contact" className="text-[#A85740] hover:underline">Neem contact op</a> · Betalingen verlopen veilig via Stripe
         </p>
       </div>
     </section>

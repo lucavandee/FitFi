@@ -73,7 +73,7 @@ export function NovaProactiveSuggestion({
         `}
       >
         {/* Nova Badge */}
-        <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center shadow-lg animate-pulse">
+        <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-full flex items-center justify-center shadow-lg animate-pulse">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
 
@@ -87,7 +87,7 @@ export function NovaProactiveSuggestion({
 
         <div className="flex items-start gap-4 pr-10">
           {/* Icon */}
-          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#B55E45] flex items-center justify-center text-white shadow-md">
+          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#A85740] flex items-center justify-center text-white shadow-md">
             <IconComponent className="w-6 h-6" />
           </div>
 
@@ -105,7 +105,7 @@ export function NovaProactiveSuggestion({
                       key={i}
                       className={`w-1.5 h-1.5 rounded-full transition-all ${
                         i === currentIndex
-                          ? "bg-[#B55E45] w-4"
+                          ? "bg-[#A85740] w-4"
                           : "bg-[#E5E5E5]"
                       }`}
                     />
@@ -125,7 +125,7 @@ export function NovaProactiveSuggestion({
                 href={current.action.href}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#B55E45] transition-colors shadow-md"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#A85740] transition-colors shadow-md"
               >
                 <span>{current.action.label}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -135,7 +135,7 @@ export function NovaProactiveSuggestion({
         </div>
 
         {/* Bottom Accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-b-2xl" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-b-2xl" />
       </motion.div>
     </AnimatePresence>
   );

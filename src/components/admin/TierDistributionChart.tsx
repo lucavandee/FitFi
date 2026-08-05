@@ -19,15 +19,15 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
     {
       label: 'Premium',
       value: tiers.premium,
-      color: '#B55E45',
-      gradient: 'linear-gradient(135deg, #B55E45 0%, #9A503B 100%)',
+      color: '#A85740',
+      gradient: 'linear-gradient(135deg, #A85740 0%, #9A503B 100%)',
       icon: '💎',
     },
     {
       label: 'Founder',
       value: tiers.founder,
-      color: '#B55E45',
-      gradient: 'linear-gradient(135deg, #B55E45 0%, #B55E45 100%)',
+      color: '#A85740',
+      gradient: 'linear-gradient(135deg, #A85740 0%, #A85740 100%)',
       icon: '⭐',
     },
   ];

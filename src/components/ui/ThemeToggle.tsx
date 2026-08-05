@@ -41,7 +41,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative w-14 h-8 bg-[#E5E5E5] rounded-full transition-colors hover:bg-[#F4E8E3] focus:outline-none focus:ring-2 focus:ring-[#B55E45] focus:ring-offset-2"
+      className="relative w-14 h-8 bg-[#E5E5E5] rounded-full transition-colors hover:bg-[#F4E8E3] focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:ring-offset-2"
       aria-label={theme === 'light' ? 'Schakel naar dark mode' : 'Schakel naar light mode'}
     >
       <motion.div

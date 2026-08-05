@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, X, Sparkles, Shirt, User, ShoppingBag, Zap } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
+import { streamChat } from '@/services/ai/novaService';
 import { useNovaConn, NovaConnectionProvider } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import OutfitCards from '@/components/ai/OutfitCards';
@@ -47,6 +47,9 @@ interface Message {
   timestamp: number;
 }
 
+/** UI-only context switcher; de daadwerkelijke Nova-call gebruikt altijd mode: "style". */
+type NovaMode = 'outfits' | 'archetype' | 'shop';
+
 const contextModes = [
   { id: 'outfits' as NovaMode, label: 'Outfits', icon: Shirt, color: 'from-blue-500 to-blue-600' },
   { id: 'archetype' as NovaMode, label: 'Stijl', icon: User, color: 'from-purple-500 to-purple-600' },
@@ -87,6 +90,7 @@ function DashboardNovaSectionInner() {
       try {
         const { supabase } = await import('@/lib/supabaseClient');
         const sb = supabase();
+        if (!sb) throw new Error('Supabase client unavailable');
 
         const { data, error } = await sb
           .from('nova_conversations')
@@ -135,6 +139,7 @@ function DashboardNovaSectionInner() {
       try {
         const { supabase } = await import('@/lib/supabaseClient');
         const sb = supabase();
+        if (!sb) return;
 
         await sb.from('nova_conversations').upsert({
           user_id: user.id,
@@ -183,6 +188,7 @@ function DashboardNovaSectionInner() {
     try {
       const { supabase } = await import('@/lib/supabaseClient');
       const sb = supabase();
+      if (!sb) throw new Error('Supabase client unavailable');
       const { data: { session } } = await sb.auth.getSession();
 
       if (!session?.user) {
@@ -249,21 +255,19 @@ function DashboardNovaSectionInner() {
       try {
         const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
         for await (const delta of streamChat({
-          mode: contextMode,
+          mode: 'style',
           messages: history,
           signal: abortRef.current.signal,
           onEvent: (evt) => {
             if (evt.type === 'json' && evt.data?.type === 'outfits') {
               setCards(evt.data);
             }
-            if (evt.type === 'meta') {
-              if (evt.model) conn.setMeta({ model: evt.model });
-              if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
-            } else if (evt.type === 'error') {
-              if ((evt as any).code === 'quota_exceeded') {
+            if (evt.type === 'error') {
+              if (evt.code === 'quota_exceeded') {
                 setQuotaOpen(true);
               }
-            } else if (evt.type === 'chunk') {
+              conn.setStatus('error');
+            } else if (evt.type === 'delta') {
               if (!firstChunkAt) {
                 firstChunkAt = performance.now();
                 conn.setMeta({ ttfbMs: Math.max(0, Math.round(firstChunkAt - tStart)) });
@@ -283,8 +287,6 @@ function DashboardNovaSectionInner() {
                 return { ...m, content: c };
               }));
               conn.setStatus('done');
-            } else if (evt.type === 'error') {
-              conn.setStatus('error');
             }
           }
         })) {
@@ -561,9 +563,10 @@ function DashboardNovaSectionInner() {
 
       {/* Modals */}
       <QuotaModal
-        isOpen={quotaOpen}
+        open={quotaOpen}
         onClose={() => setQuotaOpen(false)}
-        tier={userTier}
+        remaining={usageInfo?.remaining}
+        limit={usageInfo?.limit}
       />
 
       <NovaLoginPrompt

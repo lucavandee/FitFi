@@ -75,7 +75,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
         {value !== 'all' && (
           <button
             onClick={() => onChange('all')}
-            className="text-xs text-[#B55E45] hover:underline min-h-[44px] px-3"
+            className="text-xs text-[#A85740] hover:underline min-h-[44px] px-3"
           >
             Reset filter
           </button>
@@ -97,7 +97,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
                 ${
                   isActive
                     ? 'bg-[#9A503B] text-white shadow-lg'
-                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45]'
+                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#A85740]'
                 }
               `}
               whileHover={{ scale: 1.05 }}

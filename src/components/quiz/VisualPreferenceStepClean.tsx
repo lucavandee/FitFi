@@ -187,7 +187,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
     return (
       <div className="text-center py-12">
         <p className="text-[#6E6E6E] mb-4">Geen stijlbeelden beschikbaar</p>
-        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">
+        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">
           Doorgaan
         </button>
       </div>
@@ -243,7 +243,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-[#B55E45] to-[#9A503B]"
+                className="h-full bg-gradient-to-r from-[#A85740] to-[#9A503B]"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
@@ -355,7 +355,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             <div className="h-2 rounded-full overflow-hidden" style={{ background: '#E5E5E5' }}>
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #B55E45, #9A503B)' }}
+                style={{ background: 'linear-gradient(90deg, #A85740, #9A503B)' }}
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}

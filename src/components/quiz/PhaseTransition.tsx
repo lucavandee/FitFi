@@ -29,7 +29,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 150 }}
-          className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center mb-6 sm:mb-8 shadow-lg"
+          className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center mb-6 sm:mb-8 shadow-lg"
         >
           <content.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
         </motion.div>
@@ -39,7 +39,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 bg-gradient-to-r from-[#B55E45] to-[#B55E45] bg-clip-text text-transparent"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 bg-gradient-to-r from-[#A85740] to-[#A85740] bg-clip-text text-transparent"
         >
           {content.title}
         </motion.h1>
@@ -73,7 +73,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
                 transition={{ delay: 0.6 + idx * 0.1 }}
                 className="flex items-start gap-3"
               >
-                <CheckCircle className="w-5 h-5 text-[#B55E45] flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-[#A85740] flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[#1A1A1A]/80">{exp}</p>
               </motion.div>
             ))}
@@ -85,10 +85,10 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="bg-gradient-to-r from-[#B55E45]/10 to-[#B55E45]/10 border border-[#B55E45]/20 rounded-2xl p-4 mb-6 sm:mb-8"
+          className="bg-gradient-to-r from-[#A85740]/10 to-[#A85740]/10 border border-[#A85740]/20 rounded-2xl p-4 mb-6 sm:mb-8"
         >
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1 min-w-0">
@@ -107,7 +107,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           whileTap={{ scale: 0.98 }}
           onClick={onContinue}
           style={{ paddingBottom: 'max(1rem, calc(1rem + env(safe-area-inset-bottom, 0px)))' }}
-          className="w-full pt-4 px-6 bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-2xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-sm transition-shadow flex items-center justify-center gap-2"
+          className="w-full pt-4 px-6 bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-2xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-sm transition-shadow flex items-center justify-center gap-2"
         >
           {content.ctaText}
           <ArrowRight className="w-5 h-5" />

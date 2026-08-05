@@ -130,7 +130,7 @@ export function ProfileNavigationBreadcrumbs() {
               ) : (
                 <Link
                   to={crumb.path}
-                  className="flex items-center gap-1 text-[#6E6E6E] hover:text-[#B55E45] transition-colors"
+                  className="flex items-center gap-1 text-[#6E6E6E] hover:text-[#A85740] transition-colors"
                 >
                   {isHome && (
                     <Home className="w-4 h-4" aria-hidden="true" />

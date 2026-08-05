@@ -191,7 +191,7 @@ export default function AdminMoodPhotosPage() {
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors flex items-center gap-2 font-medium"
+            className="px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-5 h-5" />
             Nieuwe Foto
@@ -230,7 +230,7 @@ export default function AdminMoodPhotosPage() {
             <button
               onClick={loadPhotos}
               disabled={loading}
-              className="px-4 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Ververs
@@ -773,7 +773,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
                         selected
                           ? 'border-[#9A503B] bg-[#F5F0EB] text-[#9A503B] ring-1 ring-[#9A503B]'
-                          : 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:border-[#B55E45]'
+                          : 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:border-[#A85740]'
                       }`}
                     >
                       <div className="w-3 h-3 rounded-full border border-black/10" style={{ backgroundColor: hex }} />
@@ -800,7 +800,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   placeholder="Type en druk Enter"
                   className="flex-1 px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] text-sm"
                 />
-                <button onClick={addTag} className="px-3 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45]">
+                <button onClick={addTag} className="px-3 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740]">
                   <Plus className="w-4 h-4" />
                 </button>
               </div>

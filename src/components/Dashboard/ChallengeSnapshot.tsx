@@ -30,7 +30,7 @@ export const ChallengeSnapshot: React.FC = () => {
           <h4 className="font-medium text-gray-900 mb-2">Geen open challenges</h4>
           <p className="text-sm text-gray-600 mb-4">Ontdek tribes en vind jouw perfecte challenge.</p>
           <a
-            className="inline-block bg-[#B55E45] hover:bg-[#B55E45] text-white px-4 py-2 rounded-xl font-medium transition-colors"
+            className="inline-block bg-[#A85740] hover:bg-[#A85740] text-white px-4 py-2 rounded-xl font-medium transition-colors"
             href={routeTo("tribe", {})}
           >
             Ontdek Tribes →
@@ -50,7 +50,7 @@ export const ChallengeSnapshot: React.FC = () => {
         <div className="text-center py-4">
           <p className="text-sm text-gray-600 mb-3">Challenge wordt geladen...</p>
           <a
-            className="inline-block text-[#B55E45] hover:text-[#9A503B] font-medium"
+            className="inline-block text-[#A85740] hover:text-[#9A503B] font-medium"
             href={`/tribes/${best.tribeId}?challengeId=${best.challengeId}`}
           >
             Open challenge →
@@ -103,7 +103,7 @@ export const ChallengeSnapshot: React.FC = () => {
           </div>
           
           <a
-            className="inline-flex items-center bg-[#B55E45] hover:bg-[#B55E45] text-white px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
+            className="inline-flex items-center bg-[#A85740] hover:bg-[#A85740] text-white px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
             href={challengeUrl}
           >
             Doe mee →

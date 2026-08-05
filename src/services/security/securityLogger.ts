@@ -84,7 +84,13 @@ export class SecurityLogger {
    */
   static async log(event: SecurityEventDetails): Promise<void> {
     try {
-      const { error } = await supabase.rpc('log_security_event', {
+      const client = supabase();
+      if (!client) {
+        console.warn('⚠️ Security logger: Supabase client unavailable, skipping log');
+        return;
+      }
+
+      const { error } = await client.rpc('log_security_event', {
         p_event_type: event.event_type,
         p_severity: event.severity,
         p_user_id: event.user_id || null,

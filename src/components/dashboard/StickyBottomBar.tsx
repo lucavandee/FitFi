@@ -64,7 +64,7 @@ const StickyBottomBar: React.FC<StickyBottomBarProps> = ({
             onClick={handleOutfitsClick}
             variant="primary"
             size="lg"
-            className="flex-1 bg-[#B55E45] hover:bg-[#B55E45]/90 text-white shadow-sm rounded-2xl"
+            className="flex-1 bg-[#A85740] hover:bg-[#A85740]/90 text-white shadow-sm rounded-2xl"
             icon={<ShoppingBag size={18} />}
             iconPosition="left"
             data-ab-variant={variant}
@@ -76,7 +76,7 @@ const StickyBottomBar: React.FC<StickyBottomBarProps> = ({
             onClick={handleClaimClick}
             variant="outline"
             size="lg"
-            className="flex-1 border-[#B55E45] text-[#B55E45] hover:bg-[#B55E45] hover:text-white rounded-2xl"
+            className="flex-1 border-[#A85740] text-[#A85740] hover:bg-[#A85740] hover:text-white rounded-2xl"
             icon={<Gift size={18} />}
             iconPosition="left"
             data-ab-variant={variant}

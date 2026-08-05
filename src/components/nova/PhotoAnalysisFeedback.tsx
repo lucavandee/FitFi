@@ -31,7 +31,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-4"
       >
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-full flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
@@ -62,7 +62,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       <div className="bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] dark:from-[#1A1A1A]/30 dark:to-[#1A1A1A]/30 p-6 border-b border-[#E5E5E5]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-full flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -157,7 +157,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                   transition={{ delay: i * 0.1 }}
                   className="flex items-start gap-3 bg-[#F5F0EB] dark:bg-[#1A1A1A]/20 border border-[#F4E8E3] dark:border-[#9A503B] rounded-lg p-3"
                 >
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#B55E45] text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#A85740] text-white rounded-full flex items-center justify-center text-xs font-bold">
                     {i + 1}
                   </div>
                   <p className="text-sm text-[#1A1A1A] leading-relaxed flex-1">
@@ -171,7 +171,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       </div>
 
       {/* Bottom Accent */}
-      <div className="h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45]" />
+      <div className="h-1 bg-gradient-to-r from-[#A85740] to-[#A85740]" />
     </motion.div>
   );
 }

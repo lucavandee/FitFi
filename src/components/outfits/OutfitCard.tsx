@@ -318,7 +318,7 @@ export default function OutfitCard({
 
   return (
     <motion.div
-      className="group relative rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[#B55E45] overflow-hidden"
+      className="group relative rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[#A85740] overflow-hidden"
       data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
@@ -429,7 +429,7 @@ export default function OutfitCard({
           <RequireAuth cta="Inloggen voor uitleg">
             <button
               onClick={() => setShowExplanationModal(true)}
-              className="flex items-center gap-1 text-xs text-[#9A503B] hover:text-[#B55E45] transition-colors ml-auto"
+              className="flex items-center gap-1 text-xs text-[#9A503B] hover:text-[#A85740] transition-colors ml-auto"
               aria-label="Waarom deze match?"
             >
               <HelpCircle size={13} />
@@ -543,7 +543,7 @@ export default function OutfitCard({
                   : 'text-[#9A503B] hover:bg-[#F5F0EB]'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
-                borderColor: '#B55E45',
+                borderColor: '#A85740',
                 background: saveOutfit.isSuccess || saved ? '#9A503B' : undefined,
               }}
               whileHover={!saveOutfit.isPending ? { scale: 1.02, y: -1 } : {}}
@@ -567,7 +567,7 @@ export default function OutfitCard({
               title="Voeg vergelijkbare outfits toe aan je feed"
               onClick={handleMoreLikeThis}
               disabled={isProcessing.like}
-              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45] hover:bg-[#F5F0EB] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A85740] hover:bg-[#F5F0EB] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.like ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.like ? { scale: 1.02, y: -1 } : {}}
@@ -609,7 +609,7 @@ export default function OutfitCard({
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#6E6E6E] hover:border-[#B55E45] hover:text-[#9A503B] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#6E6E6E] hover:border-[#A85740] hover:text-[#9A503B] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.explain ? { scale: 1.02, y: -1 } : {}}

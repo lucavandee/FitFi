@@ -37,7 +37,7 @@ export default function ColorPalettePreview() {
   return (
     <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#9A503B] to-[#B55E45] p-6 text-white">
+      <div className="bg-gradient-to-r from-[#9A503B] to-[#A85740] p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
             <Palette className="w-5 h-5" />
@@ -93,7 +93,7 @@ export default function ColorPalettePreview() {
         {selectedSeason === 'herfst' && (
           <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -119,7 +119,7 @@ export default function ColorPalettePreview() {
         {selectedSeason === 'zomer' && (
           <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -145,7 +145,7 @@ export default function ColorPalettePreview() {
                 Krijg AI-analyse + persoonlijk kleurenpalet
               </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#B55E45]" />
+            <ChevronRight className="w-5 h-5 text-[#A85740]" />
           </div>
         </div>
       </div>

@@ -108,15 +108,15 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 {/* Features */}
                 <ul className="space-y-2 text-left max-w-sm mx-auto mb-4">
                   <li className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span className="text-[#B55E45] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#A85740] font-bold" aria-hidden="true">✓</span>
                     <span>50+ gepersonaliseerde outfits</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span className="text-[#B55E45] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#A85740] font-bold" aria-hidden="true">✓</span>
                     <span>AI styling assistent (Nova)</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span className="text-[#B55E45] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#A85740] font-bold" aria-hidden="true">✓</span>
                     <span>Onbeperkt outfits opslaan</span>
                   </li>
                 </ul>
@@ -133,7 +133,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 <NavLink
                   to="/prijzen?promo=exit2free"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white rounded-xl font-semibold text-base transition-colors duration-200"
+                  className="flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-xl font-semibold text-base transition-colors duration-200"
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
                   Claim deze deal

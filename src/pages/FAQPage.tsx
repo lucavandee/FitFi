@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   CircleHelp,
   ShieldCheck,
@@ -102,7 +102,7 @@ const TRUST_STATS = [
   { label: "12 vragen beantwoord"  },
 ];
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i = 0) => ({
     opacity: 1,
@@ -119,7 +119,7 @@ function Highlight({ text, term }: { text: string; term: string }) {
     <>
       {parts.map((p, i) =>
         p.toLowerCase() === term.toLowerCase() ? (
-          <mark key={i} className="bg-[#F4E8E3] text-[#B55E45] rounded px-0.5 not-italic">
+          <mark key={i} className="bg-[#F4E8E3] text-[#A85740] rounded px-0.5 not-italic">
             {p}
           </mark>
         ) : (
@@ -143,7 +143,7 @@ function AccordionItem({
           onClick={() => onToggle(id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${id}`}
-          className="w-full flex justify-between items-center py-6 gap-4 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/40 focus-visible:ring-offset-2 rounded"
+          className="w-full flex justify-between items-center py-6 gap-4 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/40 focus-visible:ring-offset-2 rounded"
         >
           <span className="text-base font-semibold text-[#1A1A1A] flex-1 leading-snug">
             <Highlight text={item.q} term={highlight} />
@@ -157,7 +157,7 @@ function AccordionItem({
           >
             <Plus
               className={[
-                "w-4 h-4 text-[#B55E45] transition-transform duration-300",
+                "w-4 h-4 text-[#A85740] transition-transform duration-300",
                 isOpen ? "rotate-45" : "",
               ].join(" ")}
             />
@@ -221,7 +221,7 @@ export default function FAQPage() {
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#B55E45] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#A85740] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
@@ -242,11 +242,11 @@ export default function FAQPage() {
               custom={0}
               className="inline-flex items-center gap-2.5 mb-8"
             >
-              <span className="w-6 h-px bg-[#B55E45]" aria-hidden="true" />
-              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
+              <span className="w-6 h-px bg-[#A85740]" aria-hidden="true" />
+              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740]">
                 Veelgestelde vragen
               </span>
-              <span className="w-6 h-px bg-[#B55E45]" aria-hidden="true" />
+              <span className="w-6 h-px bg-[#A85740]" aria-hidden="true" />
             </motion.div>
 
             <motion.h1
@@ -271,7 +271,7 @@ export default function FAQPage() {
               Staat je vraag er niet bij?{" "}
               <Link
                 to="/contact"
-                className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
+                className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
               >
                 Stuur ons een bericht
               </Link>
@@ -287,7 +287,7 @@ export default function FAQPage() {
             >
               {TRUST_STATS.map(({ label }) => (
                 <div key={label} className="flex items-center gap-2 text-sm font-medium text-[#4A4A4A]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#B55E45] flex-shrink-0" aria-hidden="true" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                   {label}
                 </div>
               ))}
@@ -320,7 +320,7 @@ export default function FAQPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoComplete="off"
-                className="w-full bg-white border border-[#E5E5E5] rounded-2xl py-3.5 px-5 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-colors duration-200"
+                className="w-full bg-white border border-[#E5E5E5] rounded-2xl py-3.5 px-5 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740] transition-colors duration-200"
                 style={{ paddingLeft: '3rem' }}
               />
               {search && (
@@ -354,10 +354,10 @@ export default function FAQPage() {
                       aria-selected={active}
                       onClick={() => changeCat(id)}
                       className={[
-                        "px-5 py-2.5 rounded-full border text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/40 focus-visible:ring-offset-2",
+                        "px-5 py-2.5 rounded-full border text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/40 focus-visible:ring-offset-2",
                         active
-                          ? "border-[#B55E45] bg-[#B55E45] text-white font-semibold"
-                          : "border-[#E5E5E5] bg-white text-[#4A4A4A] font-medium hover:border-[#B55E45]",
+                          ? "border-[#A85740] bg-[#A85740] text-white font-semibold"
+                          : "border-[#E5E5E5] bg-white text-[#4A4A4A] font-medium hover:border-[#A85740]",
                       ].join(" ")}
                     >
                       {label}
@@ -402,7 +402,7 @@ export default function FAQPage() {
                     </p>
                     <button
                       onClick={clearSearch}
-                      className="min-h-[44px] px-5 py-2 text-sm font-semibold rounded-xl border border-[#E5E5E5] text-[#B55E45] hover:border-[#B55E45] hover:bg-[#F4E8E3] transition-all bg-white cursor-pointer"
+                      className="min-h-[44px] px-5 py-2 text-sm font-semibold rounded-xl border border-[#E5E5E5] text-[#A85740] hover:border-[#A85740] hover:bg-[#F4E8E3] transition-all bg-white cursor-pointer"
                     >
                       Toon alle vragen
                     </button>
@@ -470,13 +470,13 @@ export default function FAQPage() {
             >
               <Link
                 to="/onboarding"
-                className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-[15px] transition-colors duration-200"
+                className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] transition-colors duration-200"
               >
                 Begin gratis →
               </Link>
               <Link
                 to="/resultaten-voorbeeld"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
               >
                 Bekijk voorbeeld
               </Link>

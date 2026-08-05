@@ -20,7 +20,7 @@ const TREND_INSIGHTS_2025: Record<string, TrendData> = {
     title: "Quiet Luxury Dominates",
     description: "Aardse tinten en rijke neutrale kleuren zijn DE trend van 2025. Camel, Cognac en Terracotta zijn overal te zien op runways en in high-street fashion.",
     colors: [
-      { hex: '#B55E45', name: 'Camel' },
+      { hex: '#A85740', name: 'Camel' },
       { hex: '#A0785A', name: 'Cognac' },
       { hex: '#C17767', name: 'Terracotta' },
       { hex: '#6B8E23', name: 'Olijfgroen' }
@@ -94,7 +94,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
     return (
       <div className="bg-gradient-to-br from-[#FFFFFF] to-[#F5F0EB] rounded-2xl p-5 border border-[#F4E8E3] shadow-sm">
         <div className="flex items-start gap-3 mb-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#B55E45] to-[#9A503B] flex items-center justify-center">
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -102,7 +102,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
               <h3 className="text-base font-semibold text-[#1A1A1A]">
                 {seasonTrend.title}
               </h3>
-              <Crown className="w-4 h-4 text-[#B55E45]" />
+              <Crown className="w-4 h-4 text-[#A85740]" />
             </div>
             <p className="text-sm text-[#6E6E6E]">
               {seasonTrend.description}
@@ -139,7 +139,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
     <div className="space-y-6">
       {/* Main Season Trend */}
       <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-[#9A503B] to-[#B55E45] p-6 text-white">
+        <div className="bg-gradient-to-r from-[#9A503B] to-[#A85740] p-6 text-white">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
               <TrendingUp className="w-6 h-6" />
@@ -164,14 +164,14 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           {/* Trending Colors */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#B55E45]" />
+              <Sparkles className="w-4 h-4 text-[#A85740]" />
               Key Colors voor 2025
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {seasonTrend.colors.map((color, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#B55E45] transition-colors"
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#A85740] transition-colors"
                 >
                   <div
                     className="w-16 h-16 rounded-full shadow-sm border-2 border-white"
@@ -200,7 +200,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           {/* Shopping Tip */}
           <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3]">
             <div className="flex items-start gap-3">
-              <Star className="w-5 h-5 text-[#B55E45] flex-shrink-0 mt-0.5" />
+              <Star className="w-5 h-5 text-[#A85740] flex-shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Shopping Tip
@@ -217,7 +217,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
       {/* Universal Trends */}
       <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Calendar className="w-5 h-5 text-[#B55E45]" />
+          <Calendar className="w-5 h-5 text-[#A85740]" />
           <h2 className="text-lg font-bold text-[#1A1A1A]">
             Universele 2025 Trends
           </h2>
@@ -227,7 +227,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           {UNIVERSAL_TRENDS_2025.map((trend, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-3 p-4 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#B55E45] transition-colors group"
+              className="flex items-start gap-3 p-4 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#A85740] transition-colors group"
             >
               <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center group-hover:scale-110 transition-transform">
                 <trend.icon className="w-5 h-5 text-[#9A503B]" />
@@ -252,7 +252,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
 
       {/* Premium Badge */}
       <div className="flex items-center justify-center gap-2 text-xs text-[#6E6E6E]">
-        <Crown className="w-4 h-4 text-[#B55E45]" />
+        <Crown className="w-4 h-4 text-[#A85740]" />
         <span>Premium trend insights • Updated voor 2025</span>
       </div>
     </div>

@@ -44,6 +44,11 @@ export async function logAffiliateClick(params: {
   merchantName?: string;
 }): Promise<void> {
   try {
+    if (!supabase) {
+      console.warn('[AffiliateClick] Supabase client unavailable');
+      return;
+    }
+
     const { error } = await supabase
       .from('affiliate_clicks')
       .insert({

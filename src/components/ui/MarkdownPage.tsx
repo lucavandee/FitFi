@@ -81,7 +81,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
         // SECURITY: Validate URL to prevent javascript: protocol XSS
         const safeUrl = url.trim().toLowerCase().startsWith('javascript:') ? '#' : url;
-        return `<a href="${escapeHtml(safeUrl)}" class="text-[#B55E45] hover:text-[#B55E45]/80 underline">${escapeHtml(text)}</a>`;
+        return `<a href="${escapeHtml(safeUrl)}" class="text-[#A85740] hover:text-[#A85740]/80 underline">${escapeHtml(text)}</a>`;
       })
       .replace(/\n\n/g, '</p><p class="text-[#1A1A1A] leading-relaxed mb-4">')
       .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-[#1A1A1A] leading-relaxed mb-4">')
@@ -115,7 +115,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
             {backLink && (
               <Link
                 to={backLink}
-                className="inline-flex items-center text-[#B55E45] hover:text-[#B55E45]/80 transition-colors mb-6"
+                className="inline-flex items-center text-[#A85740] hover:text-[#A85740]/80 transition-colors mb-6"
               >
                 <ArrowLeft size={20} className="mr-2" />
                 {backLabel}
@@ -133,10 +133,10 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
                   <Button
                     as="a"
                     href={downloadUrl}
-                    variant="outline"
+                    variant="ghost"
                     icon={<Download size={16} />}
                     iconPosition="left"
-                    className="border-[#B55E45] text-[#B55E45] hover:bg-[#B55E45] hover:text-white"
+                    className="border-[#A85740] text-[#A85740] hover:bg-[#A85740] hover:text-white"
                   >
                     Download PDF
                   </Button>

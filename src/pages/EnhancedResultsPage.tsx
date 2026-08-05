@@ -624,7 +624,7 @@ export default function EnhancedResultsPage() {
                 className="flex flex-col items-center gap-3"
               >
                 {/* Eyebrow */}
-                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45] mb-4">
+                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740] mb-4">
                   Jouw stijlrapport
                 </p>
 
@@ -666,7 +666,7 @@ export default function EnhancedResultsPage() {
                         }
                       });
                     }}
-                    className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                    className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                   >
                     <Eye className="w-4 h-4 text-white" />
                     Bekijk outfits
@@ -674,7 +674,7 @@ export default function EnhancedResultsPage() {
 
                   <button
                     onClick={() => navigate('/onboarding?step=redo')}
-                    className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
+                    className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Quiz opnieuw
@@ -682,7 +682,7 @@ export default function EnhancedResultsPage() {
 
                   <button
                     onClick={sharePage}
-                    className="w-10 h-10 rounded-full border border-[#E5E5E5] hover:border-[#B55E45] flex items-center justify-center transition-colors duration-200"
+                    className="w-10 h-10 rounded-full border border-[#E5E5E5] hover:border-[#A85740] flex items-center justify-center transition-colors duration-200"
                     aria-label="Delen"
                   >
                     <Share2 className="w-4 h-4 text-[#4A4A4A]" />
@@ -691,7 +691,7 @@ export default function EnhancedResultsPage() {
               </motion.div>
             ) : (
               <div className="py-4 text-left">
-                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45] mb-4">
+                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740] mb-4">
                   Style Report
                 </p>
                 <h1
@@ -703,7 +703,7 @@ export default function EnhancedResultsPage() {
                 <p className="text-base text-[#4A4A4A] mb-8 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 >
                   Begin gratis
                   <ArrowRight className="w-4 h-4" />
@@ -733,9 +733,9 @@ export default function EnhancedResultsPage() {
                         setActiveTab(tab.id);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20 focus-visible:ring-inset ${
+                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-inset ${
                         isActive
-                          ? 'font-semibold text-[#B55E45] border-[#B55E45]'
+                          ? 'font-semibold text-[#A85740] border-[#A85740]'
                           : 'font-medium text-[#6E6E6E] border-transparent hover:text-[#4A4A4A]'
                       }`}
                     >
@@ -743,7 +743,7 @@ export default function EnhancedResultsPage() {
                       {tab.sub && (
                         <span className={`ml-1.5 text-xs font-semibold px-2 py-0.5 rounded-full transition-colors duration-200 ${
                           isActive
-                            ? 'bg-[#F4E8E3] text-[#B55E45]'
+                            ? 'bg-[#F4E8E3] text-[#A85740]'
                             : 'bg-[#E5E5E5] text-[#6E6E6E]'
                         }`}>
                           {tab.sub}
@@ -792,7 +792,7 @@ export default function EnhancedResultsPage() {
             <div className="max-w-5xl mx-auto">
               <AnimatedSection>
                 <div className="text-center mb-10">
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-3">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
                     Jouw top outfits
                   </p>
                   <h2
@@ -903,7 +903,7 @@ export default function EnhancedResultsPage() {
                         setActiveTab('outfits');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className="text-[#B55E45] hover:text-[#9A503B] font-semibold text-sm inline-flex items-center gap-2 transition-colors duration-200"
+                      className="text-[#A85740] hover:text-[#9A503B] font-semibold text-sm inline-flex items-center gap-2 transition-colors duration-200"
                     >
                       Bekijk alle outfits
                       <ArrowRight className="w-4 h-4" />
@@ -924,30 +924,30 @@ export default function EnhancedResultsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 mb-8">
                 <button
                   onClick={() => { setActiveTab('stijl-dna'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#B55E45] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#A85740] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F4E8E3] transition-colors duration-200">
-                    <Palette className="w-5 h-5 text-[#B55E45]" />
+                    <Palette className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-base font-semibold text-[#1A1A1A]">Stijl DNA</p>
                     <p className="text-sm text-[#6E6E6E]">Kleurprofiel, archetype &amp; tips</p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-[#6E6E6E] shrink-0 ml-auto group-hover:text-[#B55E45] transition-colors duration-200" />
+                  <ArrowRight className="w-5 h-5 text-[#6E6E6E] shrink-0 ml-auto group-hover:text-[#A85740] transition-colors duration-200" />
                 </button>
 
                 <button
                   onClick={() => { setActiveTab('outfits'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#B55E45] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#A85740] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F4E8E3] transition-colors duration-200">
-                    <Shirt className="w-5 h-5 text-[#B55E45]" />
+                    <Shirt className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-base font-semibold text-[#1A1A1A]">Outfits</p>
                     <p className="text-sm text-[#6E6E6E]">{displayOutfits.length} looks voor jouw stijl</p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-[#6E6E6E] shrink-0 ml-auto group-hover:text-[#B55E45] transition-colors duration-200" />
+                  <ArrowRight className="w-5 h-5 text-[#6E6E6E] shrink-0 ml-auto group-hover:text-[#A85740] transition-colors duration-200" />
                 </button>
               </div>
             </div>
@@ -978,7 +978,7 @@ export default function EnhancedResultsPage() {
               {/* Section header */}
               <AnimatedSection>
                 <div>
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-2">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-2">
                     Stijl DNA
                   </p>
                   <h2
@@ -1013,7 +1013,7 @@ export default function EnhancedResultsPage() {
                         <div className="flex items-center justify-between py-3 first:pt-0">
                           <span className="text-sm text-[#6E6E6E]">Temperatuur</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #B55E45, #D4913D)' }} aria-hidden="true" />
+                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #A85740, #D4913D)' }} aria-hidden="true" />
                             <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('temperature', activeColorProfile.temperature)}</span>
                           </div>
                         </div>
@@ -1022,7 +1022,7 @@ export default function EnhancedResultsPage() {
                           <div className="flex items-center gap-2">
                             <div className="flex gap-0.5 w-20" aria-hidden="true">
                               <div className="h-1.5 flex-1 rounded-l-full" style={{ background: 'linear-gradient(to right, #F4E8E3, #D4917A)' }} />
-                              <div className="h-1.5 flex-1" style={{ background: 'linear-gradient(to right, #B55E45, #9A503B)' }} />
+                              <div className="h-1.5 flex-1" style={{ background: 'linear-gradient(to right, #A85740, #9A503B)' }} />
                               <div className="h-1.5 flex-1 rounded-r-full" style={{ background: 'linear-gradient(to right, #8B3D2E, #5C2820)' }} />
                             </div>
                             <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('contrast', activeColorProfile.contrast)}</span>
@@ -1035,7 +1035,7 @@ export default function EnhancedResultsPage() {
                               {(['zomer', 'herfst', 'winter', 'lente'] as const).map((s) => (
                                 <div
                                   key={s}
-                                  className={`h-4 w-4 rounded transition-opacity duration-200 ${activeColorProfile.season === s ? 'opacity-100 ring-1 ring-[#B55E45]/20 ring-offset-1' : 'opacity-25'}`}
+                                  className={`h-4 w-4 rounded transition-opacity duration-200 ${activeColorProfile.season === s ? 'opacity-100 ring-1 ring-[#A85740]/20 ring-offset-1' : 'opacity-25'}`}
                                   style={{ background: s === 'zomer' ? 'linear-gradient(135deg, #d4e8c2, #a8cc8a)' : s === 'herfst' ? 'linear-gradient(135deg, #e8c4a2, #c47a3a)' : s === 'winter' ? 'linear-gradient(135deg, #d0dce8, #7a9ab8)' : 'linear-gradient(135deg, #e8d4c0, #c4956a)' }}
                                 />
                               ))}
@@ -1046,7 +1046,7 @@ export default function EnhancedResultsPage() {
                         <div className="flex items-center justify-between py-3 last:pb-0">
                           <span className="text-sm text-[#6E6E6E]">Chroma</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #B55E45, #8B3D2E)' }} aria-hidden="true" />
+                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #A85740, #8B3D2E)' }} aria-hidden="true" />
                             <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('chroma', activeColorProfile.chroma)}</span>
                           </div>
                         </div>
@@ -1060,7 +1060,7 @@ export default function EnhancedResultsPage() {
                         {activeColorProfile.notes && activeColorProfile.notes.map((note, i) => (
                           <li key={i} className="flex items-start gap-2.5">
                             <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <Check className="w-3 h-3 text-[#B55E45]" strokeWidth={3} aria-hidden="true" />
+                              <Check className="w-3 h-3 text-[#A85740]" strokeWidth={3} aria-hidden="true" />
                             </div>
                             <span className="text-sm text-[#1A1A1A] leading-snug">{note}</span>
                           </li>
@@ -1085,7 +1085,7 @@ export default function EnhancedResultsPage() {
                   <div className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-5 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0">
-                        <Sparkles className="w-4 h-4 text-[#B55E45]" />
+                        <Sparkles className="w-4 h-4 text-[#A85740]" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">Persoonlijk kleurenpalet op basis van jouw ondertoon</p>
@@ -1096,7 +1096,7 @@ export default function EnhancedResultsPage() {
                     </div>
                     <NavLink
                       to="/prijzen#premium"
-                      className="shrink-0 inline-flex items-center gap-1.5 px-6 py-3 bg-[#B55E45] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200 whitespace-nowrap"
+                      className="shrink-0 inline-flex items-center gap-1.5 px-6 py-3 bg-[#A85740] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200 whitespace-nowrap"
                     >
                       Bekijk Premium
                     </NavLink>
@@ -1178,7 +1178,7 @@ export default function EnhancedResultsPage() {
                 return (
                   <AnimatedSection delay={0.28}>
                     <div className="bg-[#F5F0EB] rounded-2xl p-6">
-                      <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-3">
+                      <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
                         Shop in jouw kleuren
                       </p>
                       <h3
@@ -1234,7 +1234,7 @@ export default function EnhancedResultsPage() {
                                 </div>
                               ) : (
                                 <div className="w-20 h-20 rounded-lg flex-shrink-0 bg-[#F5F0EB] flex items-center justify-center">
-                                  <ShoppingBag className="w-6 h-6 text-[#B55E45]/30" />
+                                  <ShoppingBag className="w-6 h-6 text-[#A85740]/30" />
                                 </div>
                               )}
                               <div className="flex-1 min-w-0">
@@ -1247,7 +1247,7 @@ export default function EnhancedResultsPage() {
                                     €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
                                   </p>
                                 )}
-                                <p className="text-xs font-semibold text-[#B55E45] mt-1.5 inline-flex items-center gap-1">
+                                <p className="text-xs font-semibold text-[#A85740] mt-1.5 inline-flex items-center gap-1">
                                   Bekijk bij partner
                                   <ExternalLink className="w-3 h-3" />
                                 </p>
@@ -1297,7 +1297,7 @@ export default function EnhancedResultsPage() {
               {/* How your style was determined — narrative */}
               <AnimatedSection delay={0.4}>
                 <div className="bg-[#F5F0EB] rounded-2xl p-6 sm:p-8 space-y-5">
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#B55E45]">Zo werkt het</p>
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740]">Zo werkt het</p>
 
                   {/* Step 1 — Style profile */}
                   <div>
@@ -1355,7 +1355,7 @@ export default function EnhancedResultsPage() {
                       Upload een selfie voor nog nauwkeuriger kleuradvies.{' '}
                       <button
                         onClick={() => navigate('/onboarding?step=photo')}
-                        className="font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors"
+                        className="font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors"
                       >
                         Foto toevoegen →
                       </button>
@@ -1408,7 +1408,7 @@ export default function EnhancedResultsPage() {
                     <button
                       onClick={() => setGalleryMode('swipe')}
                       aria-pressed={galleryMode === 'swipe'}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20 ${
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 ${
                         galleryMode === 'swipe'
                           ? 'bg-white text-[#1A1A1A] shadow-sm'
                           : 'text-[#6E6E6E] hover:text-[#4A4A4A]'
@@ -1420,7 +1420,7 @@ export default function EnhancedResultsPage() {
                     <button
                       onClick={() => setGalleryMode('grid')}
                       aria-pressed={galleryMode === 'grid'}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20 ${
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 ${
                         galleryMode === 'grid'
                           ? 'bg-white text-[#1A1A1A] shadow-sm'
                           : 'text-[#6E6E6E] hover:text-[#4A4A4A]'
@@ -1436,14 +1436,14 @@ export default function EnhancedResultsPage() {
                         searchParams.delete('occasion');
                         setSearchParams(searchParams, { replace: true });
                       }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#B55E45] text-sm font-medium text-white hover:bg-[#9A503B] transition-all duration-200 whitespace-nowrap"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#A85740] text-sm font-medium text-white hover:bg-[#9A503B] transition-all duration-200 whitespace-nowrap"
                     >
                       Alle outfits
                     </button>
                   )}
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-200 whitespace-nowrap"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200 whitespace-nowrap"
                   >
                     <SlidersHorizontal className="w-4 h-4 shrink-0" />
                     <span className="hidden sm:inline">Aanpassen</span>
@@ -1463,9 +1463,9 @@ export default function EnhancedResultsPage() {
                           role="tab"
                           aria-selected={isActive}
                           onClick={() => setActiveOccasionTab(tab.value)}
-                          className={`relative py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20 focus-visible:ring-inset ${
+                          className={`relative py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-inset ${
                             isActive
-                              ? 'font-semibold text-[#B55E45] border-[#B55E45]'
+                              ? 'font-semibold text-[#A85740] border-[#A85740]'
                               : 'font-medium text-[#6E6E6E] border-transparent hover:text-[#4A4A4A]'
                           }`}
                         >
@@ -1500,7 +1500,7 @@ export default function EnhancedResultsPage() {
             ) : displayOutfits.length === 0 ? (
               <div className="text-center py-20 px-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-6">
-                  <Shirt className="w-7 h-7 text-[#B55E45]" aria-hidden="true" />
+                  <Shirt className="w-7 h-7 text-[#A85740]" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-[#1A1A1A] mb-2">Geen outfits gevonden</p>
@@ -1516,7 +1516,7 @@ export default function EnhancedResultsPage() {
                 </div>
                 <button
                   onClick={() => navigate("/onboarding")}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#B55E45] text-white rounded-xl text-sm font-bold hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/20 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#A85740] text-white rounded-xl text-sm font-bold hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-offset-2"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Stijlquiz opnieuw
@@ -1550,7 +1550,7 @@ export default function EnhancedResultsPage() {
 
                   return (
                     <div
-                      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden h-full hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#B55E45] transition-all duration-300 cursor-pointer group"
+                      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden h-full hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#A85740] transition-all duration-300 cursor-pointer group"
                       onClick={() => {
                         track("outfit_card_click", {
                           outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
@@ -1586,7 +1586,7 @@ export default function EnhancedResultsPage() {
                         ) : (
                           <div className="w-full h-full bg-[#F5F0EB] flex items-center justify-center">
                             <div className="text-center p-6">
-                              <Sparkles className="w-12 h-12 mx-auto mb-3 text-[#B55E45]" aria-hidden="true" />
+                              <Sparkles className="w-12 h-12 mx-auto mb-3 text-[#A85740]" aria-hidden="true" />
                               <p className="text-xs text-[#6E6E6E] font-medium">Outfit {idx + 1}</p>
                             </div>
                           </div>
@@ -1616,18 +1616,18 @@ export default function EnhancedResultsPage() {
                           }}
                           className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm z-10 transition-all duration-200 hover:bg-white hover:scale-110 ${
                             favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
-                              ? 'text-[#B55E45]'
-                              : 'text-[#6E6E6E] hover:text-[#B55E45]'
+                              ? 'text-[#A85740]'
+                              : 'text-[#6E6E6E] hover:text-[#A85740]'
                           }`}
                           aria-label={favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                         >
-                          <Heart className={`w-4 h-4 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-[#B55E45]' : ''}`} />
+                          <Heart className={`w-4 h-4 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-[#A85740]' : ''}`} />
                         </button>
                       </div>
 
                       {/* Info */}
                       <div className="p-5">
-                        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#B55E45] transition-colors duration-200">
+                        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#A85740] transition-colors duration-200">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
                         <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-2 mb-3">
@@ -1641,9 +1641,9 @@ export default function EnhancedResultsPage() {
                             return typeof ms === 'number' ? (
                               <span className="inline-flex items-center gap-1.5">
                                 <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                                  <Check className="w-2.5 h-2.5 text-[#B55E45]" strokeWidth={3} />
+                                  <Check className="w-2.5 h-2.5 text-[#A85740]" strokeWidth={3} />
                                 </span>
-                                <span className="text-sm font-semibold text-[#B55E45]">{Math.round(ms)}% match</span>
+                                <span className="text-sm font-semibold text-[#A85740]">{Math.round(ms)}% match</span>
                               </span>
                             ) : null;
                           })()}
@@ -1756,7 +1756,7 @@ export default function EnhancedResultsPage() {
             <AnimatedSection delay={0.6}>
               <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-10 max-w-[800px] mx-auto mt-12">
                 {/* PREMIUM label */}
-                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-3">
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
                   Premium
                 </p>
 
@@ -1773,7 +1773,7 @@ export default function EnhancedResultsPage() {
                     'Directe shoplinks naar webshops',
                   ].map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#B55E45] shrink-0" aria-hidden="true" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] shrink-0" aria-hidden="true" />
                       <span className="text-sm text-[#4A4A4A]">{feature}</span>
                     </div>
                   ))}
@@ -1791,13 +1791,13 @@ export default function EnhancedResultsPage() {
                   <div className="flex items-center gap-3 sm:ml-auto">
                     <NavLink
                       to="/prijzen#premium"
-                      className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full transition-all duration-200"
+                      className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full transition-all duration-200"
                     >
                       Ontgrendel premium →
                     </NavLink>
                     <NavLink
                       to={user ? "/dashboard" : "/registreren"}
-                      className="text-sm font-medium text-[#4A4A4A] hover:text-[#B55E45] transition-colors duration-200"
+                      className="text-sm font-medium text-[#4A4A4A] hover:text-[#A85740] transition-colors duration-200"
                     >
                       Ga naar dashboard
                     </NavLink>

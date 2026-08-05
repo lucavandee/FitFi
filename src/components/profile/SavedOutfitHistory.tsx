@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { savedOutfitsService, type SavedOutfit } from "@/services/outfits/savedOutfitsService";
 import { resolveProductUrl, openProductLink } from "@/utils/affiliate";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import { getFallbackImageForCategory } from "@/utils/imageUtils";
 
 interface Props {
   userId: string;
@@ -13,7 +14,7 @@ interface Props {
 
 function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number }) {
   const outfit = saved.outfit_json;
-  const items = outfit?.items || [];
+  const items = outfit?.products || [];
   const displayItems = items.slice(0, 4);
   const navigate = useNavigate();
 
@@ -22,11 +23,9 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
     if (!hasUrl) return;
     await openProductLink({
       product: {
-        id: item.id,
+        ...item,
         name: item.name || item.title,
         retailer: item.brand || item.retailer,
-        price: item.price,
-        ...item,
       },
       outfitId: outfit.id,
       slot: idx + 1,
@@ -63,7 +62,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
                 src={item.image_url || item.imageUrl || item.image}
                 alt={item.name || item.title || "Item"}
                 className="w-full h-full object-cover"
-                fallbackCategory={item.category}
+                fallback={getFallbackImageForCategory(item.category)}
               />
               {hasUrl && (
                 <div className="absolute inset-0 bg-black/0 hover:bg-black/25 transition-colors flex items-center justify-center">
@@ -88,7 +87,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-[#1A1A1A] truncate leading-tight">
-              {outfit.name || outfit.occasion || "Outfit"}
+              {outfit.title || outfit.occasion || "Outfit"}
             </p>
             <p className="text-[11px] text-[#6E6E6E] mt-0.5">
               {items.length} items
@@ -98,7 +97,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
           </div>
           <button
             onClick={() => navigate("/results")}
-            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#B55E45] hover:bg-[#F5F0EB] transition-colors"
+            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#A85740] hover:bg-[#F5F0EB] transition-colors"
             aria-label="Bekijk outfit"
           >
             <ChevronRight className="w-4 h-4" />
@@ -147,7 +146,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
         className="bg-[#F5F0EB] rounded-2xl p-10 text-center"
       >
         <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center mx-auto mb-4">
-          <Heart className="w-6 h-6 text-[#B55E45]" />
+          <Heart className="w-6 h-6 text-[#A85740]" />
         </div>
         <p className="text-base font-semibold text-[#1A1A1A] mb-2">
           Nog geen opgeslagen outfits
@@ -157,7 +156,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
         </p>
         <button
           onClick={() => navigate("/results")}
-          className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
+          className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
         >
           <Sparkles className="w-3.5 h-3.5" />
           Bekijk outfits
@@ -174,7 +173,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
       {savedOutfits.length > 6 && (
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:border-[#B55E45] hover:text-[#9A503B] transition-colors"
+          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:border-[#A85740] hover:text-[#9A503B] transition-colors"
         >
           Bekijk alle {savedOutfits.length} outfits
         </button>

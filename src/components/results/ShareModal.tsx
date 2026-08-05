@@ -42,7 +42,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
               >
                 <X className="w-5 h-5 text-[#6E6E6E]" />
               </button>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center mb-4 shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center mb-4 shadow-lg">
                 <Share2 className="w-8 h-8 text-white" />
               </div>
               <h3 id="share-modal-title" className="text-3xl font-bold text-[#1A1A1A] mb-2">
@@ -59,7 +59,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                   navigator.clipboard.writeText(getUrl());
                   toast.success("Link gekopieerd!", { icon: "📋", duration: 2000 });
                 }}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#B55E45] hover:bg-[#FFFFFF] transition-all text-left group"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#A85740] hover:bg-[#FFFFFF] transition-all text-left group"
               >
                 <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
                   <Download className="w-6 h-6 text-[#9A503B]" />
@@ -77,7 +77,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
                   window.open(twitterUrl, "_blank", "noopener,noreferrer");
                 }}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#B55E45] hover:bg-[#FFFFFF] transition-all text-left group"
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#E5E5E5] hover:border-[#A85740] hover:bg-[#FFFFFF] transition-all text-left group"
               >
                 <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center group-hover:bg-[#F4E8E3] transition-colors">
                   <Share2 className="w-6 h-6 text-[#9A503B]" />
@@ -92,7 +92,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
             <div className="px-6 pb-6">
               <button
                 onClick={onClose}
-                className="w-full px-6 py-4 bg-[#B55E45] text-white rounded-2xl font-bold text-base hover:bg-[#9A503B] transition-all shadow-lg active:scale-[0.98]"
+                className="w-full px-6 py-4 bg-[#A85740] text-white rounded-2xl font-bold text-base hover:bg-[#9A503B] transition-all shadow-lg active:scale-[0.98]"
               >
                 Sluiten
               </button>

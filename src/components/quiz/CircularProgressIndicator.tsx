@@ -49,8 +49,8 @@ export function CircularProgressIndicator({
           />
           <defs>
             <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#B55E45" />
-              <stop offset="100%" stopColor="#B55E45" />
+              <stop offset="0%" stopColor="#A85740" />
+              <stop offset="100%" stopColor="#A85740" />
             </linearGradient>
           </defs>
         </svg>
@@ -97,7 +97,7 @@ export function CircularProgressIndicator({
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className="w-full h-full rounded-full bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-md"
+                  className="w-full h-full rounded-full bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center shadow-md"
                 >
                   <Check className="w-5 h-5 text-white" />
                 </motion.div>
@@ -108,7 +108,7 @@ export function CircularProgressIndicator({
                     transition-all duration-300
                     ${
                       isCurrent
-                        ? "border-[#B55E45] bg-[#F5F0EB] text-[#9A503B] shadow-lg scale-110"
+                        ? "border-[#A85740] bg-[#F5F0EB] text-[#9A503B] shadow-lg scale-110"
                         : "border-[#E5E5E5] bg-[#FFFFFF] text-[#6E6E6E]"
                     }
                   `}
@@ -122,7 +122,7 @@ export function CircularProgressIndicator({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute -bottom-8 whitespace-nowrap text-xs font-semibold text-[#B55E45]"
+                  className="absolute -bottom-8 whitespace-nowrap text-xs font-semibold text-[#A85740]"
                 >
                   {stepLabels[step - 1]}
                 </motion.div>

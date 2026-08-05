@@ -96,7 +96,7 @@ export const NovaInsightCard: React.FC<NovaInsightCardProps> = ({
         {action && actionLink && (
           <Link
             to={actionLink}
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#9A503B] hover:text-[#B55E45] transition-colors group-hover:gap-3 duration-300"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#9A503B] hover:text-[#A85740] transition-colors group-hover:gap-3 duration-300"
           >
             {action}
             <span aria-hidden="true">→</span>

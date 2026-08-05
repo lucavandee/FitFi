@@ -57,7 +57,7 @@ const INFO_CARDS = [
 const inputBase =
   "w-full bg-white border border-solid rounded-xl py-3 px-4 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 transition-colors duration-200";
 const inputOk =
-  `${inputBase} border-[#E5E5E5] focus:ring-[#B55E45]/20 focus:border-[#B55E45]`;
+  `${inputBase} border-[#E5E5E5] focus:ring-[#A85740]/20 focus:border-[#A85740]`;
 const inputErr =
   `${inputBase} border-[#C24A4A] focus:ring-[#C24A4A]/20 focus:border-[#C24A4A]`;
 
@@ -175,11 +175,11 @@ export default function ContactPage() {
         <section className="bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-24 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-center gap-3 mb-10">
-              <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
-              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
+              <span className="w-8 h-px bg-[#A85740]" aria-hidden="true" />
+              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740]">
                 Contact
               </span>
-              <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
+              <span className="w-8 h-px bg-[#A85740]" aria-hidden="true" />
             </div>
 
             <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6">
@@ -195,7 +195,7 @@ export default function ContactPage() {
             <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
               {["Binnen 24 uur reactie", "Geen callcenter", "Direct antwoord"].map((tag) => (
                 <div key={tag} className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-[#B55E45] flex-shrink-0" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                   <span>{tag}</span>
                 </div>
               ))}
@@ -260,7 +260,7 @@ export default function ContactPage() {
                   <div className="px-8 pt-8 pb-6 border-b border-[#E5E5E5]">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-9 h-9 rounded-xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
-                        <MessageCircle className="w-4 h-4 text-[#B55E45]" aria-hidden />
+                        <MessageCircle className="w-4 h-4 text-[#A85740]" aria-hidden />
                       </div>
                       <h2 className="text-xl font-sans font-semibold text-[#1A1A1A]">
                         Stuur een bericht
@@ -358,7 +358,7 @@ export default function ContactPage() {
                       <button
                         type="submit"
                         disabled={formState === "submitting" || formState === "success"}
-                        className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-8 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-8 rounded-xl transition-colors duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {formState === "submitting" ? (
                           <>
@@ -378,7 +378,7 @@ export default function ContactPage() {
                         Veilig opgeslagen.{" "}
                         <Link
                           to="/privacy"
-                          className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-2 transition-colors duration-200"
+                          className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-2 transition-colors duration-200"
                         >
                           Privacyverklaring
                         </Link>
@@ -400,10 +400,10 @@ export default function ContactPage() {
                   const Icon = card.icon;
 
                   const inner = (
-                    <div className="group bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-md hover:border-[#B55E45]/40 transition-all duration-200">
+                    <div className="group bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-md hover:border-[#A85740]/40 transition-all duration-200">
                       <div className="flex items-start gap-4">
-                        <div className="w-11 h-11 rounded-xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 group-hover:bg-[#B55E45]/15 transition-colors duration-200">
-                          <Icon className="w-5 h-5 text-[#B55E45]" aria-hidden />
+                        <div className="w-11 h-11 rounded-xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 group-hover:bg-[#A85740]/15 transition-colors duration-200">
+                          <Icon className="w-5 h-5 text-[#A85740]" aria-hidden />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">
@@ -413,7 +413,7 @@ export default function ContactPage() {
                             {card.body}
                           </p>
                           {card.cta && (
-                            <span className="text-sm font-medium text-[#B55E45] group-hover:text-[#9A503B] mt-2.5 inline-flex items-center gap-1.5 transition-colors duration-200">
+                            <span className="text-sm font-medium text-[#A85740] group-hover:text-[#9A503B] mt-2.5 inline-flex items-center gap-1.5 transition-colors duration-200">
                               {card.cta}
                               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" aria-hidden />
                             </span>
@@ -425,14 +425,14 @@ export default function ContactPage() {
 
                   if (card.href && card.internal) {
                     return (
-                      <Link key={i} to={card.href} className="block focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 rounded-2xl">
+                      <Link key={i} to={card.href} className="block focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 rounded-2xl">
                         {inner}
                       </Link>
                     );
                   }
                   if (card.href) {
                     return (
-                      <a key={i} href={card.href} rel="noopener noreferrer" className="block focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 rounded-2xl">
+                      <a key={i} href={card.href} rel="noopener noreferrer" className="block focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 rounded-2xl">
                         {inner}
                       </a>
                     );

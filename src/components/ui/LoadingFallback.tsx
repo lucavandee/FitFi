@@ -35,7 +35,7 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
       className="flex flex-col items-center justify-center gap-4"
     >
       <div
-        className={`${spinnerSizes[size]} border-[#E5E5E5] border-t-[#B55E45] rounded-full animate-spin`}
+        className={`${spinnerSizes[size]} border-[#E5E5E5] border-t-[#A85740] rounded-full animate-spin`}
         aria-hidden="true"
       />
       <div className="text-center space-y-1">

@@ -75,7 +75,7 @@ export default function InstallPrompt() {
       >
         <div className="relative rounded-2xl bg-white/95 backdrop-blur-xl shadow-lg border-2 border-[#E5E5E5] overflow-hidden">
           {/* Gradient accent */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45]" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#A85740] to-[#A85740]" />
 
           {/* Close button */}
           <button
@@ -92,7 +92,7 @@ export default function InstallPrompt() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center mb-4 shadow-lg"
+              className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center mb-4 shadow-lg"
             >
               <Download className="w-6 h-6 text-white" />
             </motion.div>
@@ -121,7 +121,7 @@ export default function InstallPrompt() {
                   transition={{ delay: 0.3 + i * 0.1 }}
                   className="flex items-center gap-3"
                 >
-                  <benefit.icon className="w-4 h-4 text-[#B55E45]" />
+                  <benefit.icon className="w-4 h-4 text-[#A85740]" />
                   <span className="text-sm text-[#1A1A1A]">{benefit.text}</span>
                 </motion.div>
               ))}
@@ -131,13 +131,13 @@ export default function InstallPrompt() {
             <div className="flex gap-3">
               <button
                 onClick={handleInstall}
-                className="flex-1 bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl py-3 text-center"
+                className="flex-1 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl py-3 text-center"
               >
                 Installeren
               </button>
               <button
                 onClick={handleDismiss}
-                className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl py-3 px-6"
+                className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl py-3 px-6"
               >
                 Niet nu
               </button>

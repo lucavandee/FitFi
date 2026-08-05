@@ -38,10 +38,10 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#1A1A1A] mb-4 leading-tight">
                 {greeting},{" "}
                 <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-[#B55E45] to-[#B55E45] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#A85740] to-[#A85740] bg-clip-text text-transparent">
                     {userName || "daar"}
                   </span>
-                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full opacity-60"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full opacity-60"></div>
                 </span>
               </h1>
 
@@ -54,7 +54,7 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
               {!hasQuizData && (
                 <Link
                   to="/onboarding"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#B55E45] to-[#9A503B] text-white text-lg font-bold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#A85740] to-[#9A503B] text-white text-lg font-bold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
                 >
                   <Sparkles className="w-6 h-6" />
                   Start gratis stijlquiz

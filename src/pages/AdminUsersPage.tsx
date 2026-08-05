@@ -219,7 +219,7 @@ export default function AdminUsersPage() {
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <Users className="w-6 h-6 text-[#B55E45]" />
+                <Users className="w-6 h-6 text-[#A85740]" />
                 <h1 className="text-2xl font-bold text-[#1A1A1A]">Gebruikersbeheer</h1>
               </div>
               <p className="text-sm text-[#6E6E6E] mt-0.5">
@@ -266,7 +266,7 @@ export default function AdminUsersPage() {
                 placeholder="Zoek op naam of email..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
-                className="w-full pl-9 pr-4 py-2.5 text-sm border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent bg-[#FFFFFF]"
+                className="w-full pl-9 pr-4 py-2.5 text-sm border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#A85740] focus:border-transparent bg-[#FFFFFF]"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -274,7 +274,7 @@ export default function AdminUsersPage() {
               <select
                 value={filterTier}
                 onChange={(e) => { setFilterTier(e.target.value); setPage(0); }}
-                className="px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent bg-[#FFFFFF]"
+                className="px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#A85740] focus:border-transparent bg-[#FFFFFF]"
               >
                 <option value="all">Alle tiers</option>
                 <option value="free">Free</option>
@@ -284,7 +284,7 @@ export default function AdminUsersPage() {
               <select
                 value={filterQuiz}
                 onChange={(e) => { setFilterQuiz(e.target.value); setPage(0); }}
-                className="px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent bg-[#FFFFFF]"
+                className="px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#A85740] focus:border-transparent bg-[#FFFFFF]"
               >
                 <option value="all">Quiz: alle</option>
                 <option value="done">Quiz voltooid</option>

@@ -315,7 +315,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden ${
                 selectedFeedback === 'spot_on'
                   ? 'bg-[#9A503B] text-white'
-                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45] hover:text-[#9A503B]'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#A85740] hover:text-[#9A503B]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               style={selectedFeedback === 'spot_on' ? { boxShadow: '0 4px 14px rgba(74,56,40,0.25)' } : {}}
             >
@@ -344,7 +344,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
                   ? 'bg-[#F5F0EB] text-[#9A503B] border border-[#F4E8E3]'
-                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#B55E45] hover:text-[#B55E45]'
+                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#A85740] hover:text-[#A85740]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" strokeWidth={2.5} />

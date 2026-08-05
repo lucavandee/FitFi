@@ -167,7 +167,7 @@ export function OutfitZoomModal({
                     {outfit.explanation && (
                       <div className="mb-6 p-4 bg-[#F5F0EB] border border-[#F4E8E3] rounded-xl">
                         <div className="flex items-start gap-3">
-                          <Sparkles className="w-5 h-5 text-[#B55E45] flex-shrink-0 mt-0.5" />
+                          <Sparkles className="w-5 h-5 text-[#A85740] flex-shrink-0 mt-0.5" />
                           <div>
                             <h3 className="font-semibold text-[#1A1A1A] mb-1">
                               Waarom deze combinatie?
@@ -201,7 +201,7 @@ export function OutfitZoomModal({
                               whileHover={hasShopUrl ? { scale: 1.02, x: 4 } : {}}
                               className={`
                                 flex items-center gap-3 p-3 bg-[#FAFAF8] rounded-lg border border-[#E5E5E5] transition-all
-                                ${hasShopUrl ? "hover:border-[#B55E45] hover:shadow-md cursor-pointer" : ""}
+                                ${hasShopUrl ? "hover:border-[#A85740] hover:shadow-md cursor-pointer" : ""}
                               `}
                               onClick={async () => {
                                 if (!hasShopUrl) return;
@@ -217,7 +217,7 @@ export function OutfitZoomModal({
                               }}
                             >
                               <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] flex items-center justify-center flex-shrink-0">
-                                <span className="text-2xl font-bold text-[#B55E45]">{i + 1}</span>
+                                <span className="text-2xl font-bold text-[#A85740]">{i + 1}</span>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <h4 className="font-medium text-[#1A1A1A] truncate">
@@ -236,7 +236,7 @@ export function OutfitZoomModal({
                                 <motion.div
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
-                                  className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#B55E45] text-white flex items-center justify-center hover:bg-[#9A503B] transition-colors"
+                                  className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#A85740] text-white flex items-center justify-center hover:bg-[#9A503B] transition-colors"
                                 >
                                   <ShoppingBag className="w-5 h-5" />
                                 </motion.div>
@@ -275,7 +275,7 @@ export function OutfitZoomModal({
                                     <NavLink
                                       to="/dashboard"
                                       onClick={() => toast.dismiss(t.id)}
-                                      className="text-sm text-[#B55E45] hover:underline"
+                                      className="text-sm text-[#A85740] hover:underline"
                                     >
                                       Bekijk in Dashboard →
                                     </NavLink>
@@ -298,7 +298,7 @@ export function OutfitZoomModal({
                           ${
                             isSaved
                               ? "bg-pink-500 text-white hover:bg-pink-600"
-                              : "bg-[#9A503B] text-white hover:bg-[#B55E45]"
+                              : "bg-[#9A503B] text-white hover:bg-[#A85740]"
                           }
                         `}
                       >
@@ -310,7 +310,7 @@ export function OutfitZoomModal({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onShare}
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-semibold hover:border-[#B55E45] transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#FFFFFF] border-2 border-[#E5E5E5] text-[#1A1A1A] rounded-xl font-semibold hover:border-[#A85740] transition-all"
                       >
                         <Share2 className="w-5 h-5" />
                         Delen

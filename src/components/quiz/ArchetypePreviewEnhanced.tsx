@@ -28,7 +28,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Klassiek',
     description: 'Tijdloze elegantie en verfijnde stukken',
     emoji: '👔',
-    color: '#B55E45',
+    color: '#A85740',
     tagline: 'Tijdloos & verfijnd',
     traits: ['Preppy', 'Verzorgd', 'Professioneel']
   },
@@ -36,7 +36,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Smart Casual',
     description: 'Relaxed maar verzorgd en gepolijst',
     emoji: '✨',
-    color: '#B55E45',
+    color: '#A85740',
     tagline: 'Relaxed & gepolijst',
     traits: ['Toegankelijk', 'Veelzijdig', 'Modern']
   },
@@ -44,7 +44,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Urban',
     description: 'Moderne, expressieve streetstyle',
     emoji: '🎨',
-    color: '#B55E45',
+    color: '#A85740',
     tagline: 'Expressief & urban',
     traits: ['Bold', 'Creatief', 'Trendy']
   },
@@ -76,7 +76,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Streetstyle',
     description: 'Bold, urban en vol karakter',
     emoji: '🔥',
-    color: '#B55E45',
+    color: '#A85740',
     tagline: 'Bold & karaktervol',
     traits: ['Expressief', 'Uniek', 'Statement']
   },
@@ -84,7 +84,7 @@ const ARCHETYPE_CONFIG: Record<string, {
     label: 'Retro',
     description: 'Vintage-geïnspireerde stijl',
     emoji: '🕰️',
-    color: '#B55E45',
+    color: '#A85740',
     tagline: 'Vintage & nostalgisch',
     traits: ['Nostalgisch', 'Karaktervol', 'Uniek']
   }
@@ -229,7 +229,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                       initial={{ scale: 0 }}
                       animate={{ scale: [0, 1.2, 0] }}
                       transition={{ duration: 0.6 }}
-                      className="absolute inset-0 bg-[#B55E45] rounded-xl opacity-30"
+                      className="absolute inset-0 bg-[#A85740] rounded-xl opacity-30"
                     />
                   )}
                 </motion.div>
@@ -238,7 +238,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
+                  <Sparkles className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                   <span className="text-xs sm:text-sm font-medium text-[#6E6E6E]">
                     Jouw stijlprofiel
                   </span>
@@ -295,7 +295,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
 
                   {/* Progress Badge */}
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
-                    <Award className="w-3.5 h-3.5 text-[#B55E45]" />
+                    <Award className="w-3.5 h-3.5 text-[#A85740]" />
                     <span className="text-xs font-semibold text-[#1A1A1A]">
                       {progress}% compleet
                     </span>
@@ -304,7 +304,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                   {/* Info button */}
                   <button
                     onClick={() => setShowComparison(!showComparison)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/60 hover:bg-white rounded-lg transition-colors text-xs font-medium text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/60 hover:bg-white rounded-lg transition-colors text-xs font-medium text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]"
                     aria-label="Bekijk alle archetypes"
                   >
                     <Info className="w-3.5 h-3.5" />
@@ -319,7 +319,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
-                    className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full"
+                    className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full"
                   />
                 </div>
               </div>
@@ -366,7 +366,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                         {/* Rank Badge */}
                         <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
                           index === 0
-                            ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45] text-white shadow-md'
+                            ? 'bg-gradient-to-br from-[#A85740] to-[#A85740] text-white shadow-md'
                             : 'bg-[#FAFAF8] text-[#6E6E6E]'
                         }`}>
                           #{index + 1}
@@ -384,7 +384,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                               {item.label}
                             </span>
                             {item.archetype === archetype && (
-                              <span className="text-xs font-medium text-[#B55E45]">
+                              <span className="text-xs font-medium text-[#A85740]">
                                 (jouw profiel)
                               </span>
                             )}
@@ -398,7 +398,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                               transition={{ duration: 0.6, delay: index * 0.1 }}
                               className={`h-full rounded-full ${
                                 item.archetype === archetype
-                                  ? 'bg-gradient-to-r from-[#B55E45] to-[#B55E45]'
+                                  ? 'bg-gradient-to-r from-[#A85740] to-[#A85740]'
                                   : 'bg-[#6E6E6E]'
                               }`}
                             />

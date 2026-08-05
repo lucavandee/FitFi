@@ -103,7 +103,7 @@ export function NovaFloatingHelper() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsMinimized(false)}
-            className="relative w-16 h-16 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full shadow-2xl flex items-center justify-center"
+            className="relative w-16 h-16 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-full shadow-2xl flex items-center justify-center"
           >
             <Sparkles className="w-8 h-8 text-white" />
             <motion.div
@@ -130,7 +130,7 @@ export function NovaFloatingHelper() {
                 className="flex items-center gap-3 cursor-grab active:cursor-grabbing flex-1"
                 style={{ touchAction: "none" }}
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#A85740] to-[#A85740] rounded-full flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -185,7 +185,7 @@ export function NovaFloatingHelper() {
               {currentTip.action && (
                 <button
                   onClick={currentTip.action.onClick}
-                  className="w-full px-4 py-2 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#B55E45] transition-colors shadow-sm"
+                  className="w-full px-4 py-2 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#A85740] transition-colors shadow-sm"
                 >
                   {currentTip.action.label}
                 </button>
@@ -203,7 +203,7 @@ export function NovaFloatingHelper() {
                   openNova(true);
                   setIsMinimized(true);
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#B55E45] transition-colors cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#A85740] transition-colors cursor-pointer"
               >
                 <MessageCircle className="w-3 h-3" />
                 Chat
@@ -217,7 +217,7 @@ export function NovaFloatingHelper() {
                   navigate('/results');
                   setIsMinimized(true);
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#B55E45] transition-colors cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg text-xs font-medium text-[#1A1A1A] hover:border-[#A85740] transition-colors cursor-pointer"
               >
                 <TrendingUp className="w-3 h-3" />
                 Trends
@@ -225,7 +225,7 @@ export function NovaFloatingHelper() {
             </div>
 
             {/* Bottom Accent */}
-            <div className="h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-b-2xl" />
+            <div className="h-1 bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-b-2xl" />
           </motion.div>
         )}
       </motion.div>
