@@ -43,7 +43,7 @@ function BlogCard({ post, style }: CardProps) {
 
   return (
     <article
-      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 group flex flex-col h-full"
+      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-[#B55E45] transition-all duration-300 group flex flex-col h-full"
       style={style}
     >
       <a
@@ -66,10 +66,10 @@ function BlogCard({ post, style }: CardProps) {
       </a>
 
       <div className="p-7 flex flex-col flex-1">
-        <h3 className="text-lg font-bold text-[#1A1A1A] leading-snug mb-3 line-clamp-2 group-hover:text-[#C2654A] transition-colors duration-200">
+        <h3 className="text-lg font-bold text-[#1A1A1A] leading-snug mb-3 line-clamp-2 group-hover:text-[#B55E45] transition-colors duration-200">
           <a
             href={`/blog/${post.slug}`}
-            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 rounded"
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/40 rounded"
           >
             {post.title}
           </a>
@@ -85,12 +85,12 @@ function BlogCard({ post, style }: CardProps) {
             />
           ) : (
             <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-bold text-[#C2654A]">{initials}</span>
+              <span className="text-[10px] font-bold text-[#B55E45]">{initials}</span>
             </div>
           )}
           <span className="text-xs font-medium text-[#4A4A4A] truncate max-w-[80px]">{post.author.name}</span>
-          <span className="text-xs text-[#8A8A8A] opacity-60" aria-hidden="true">·</span>
-          <span className="text-xs text-[#8A8A8A] flex-shrink-0">{post.date}</span>
+          <span className="text-xs text-[#6E6E6E] opacity-60" aria-hidden="true">·</span>
+          <span className="text-xs text-[#6E6E6E] flex-shrink-0">{post.date}</span>
         </div>
 
         <p className="text-sm text-[#4A4A4A] leading-[1.6] line-clamp-2 mb-4 flex-1">
@@ -98,7 +98,7 @@ function BlogCard({ post, style }: CardProps) {
         </p>
 
         <div className="mt-auto">
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200">
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200">
             Lees meer <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
@@ -206,11 +206,11 @@ export default function BlogPage() {
               }}
             >
               <div className="inline-flex items-center gap-2.5 mb-6">
-                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
-                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                <span className="w-6 h-px bg-[#B55E45]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
                   Stijl &amp; mode
                 </span>
-                <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+                <span className="w-6 h-px bg-[#B55E45]" aria-hidden="true" />
               </div>
 
               <h1 className="text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mb-6">
@@ -232,19 +232,19 @@ export default function BlogPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 max-w-[880px] mx-auto">
               <div className="relative flex-1">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A] pointer-events-none" />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6E6E6E] pointer-events-none" />
                 <input
                   type="search"
                   placeholder="Zoek artikelen..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   aria-label="Zoek artikelen"
-                  className="w-full pl-12 pr-4 py-3.5 bg-white border border-[#E5E5E5] rounded-2xl text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200"
+                  className="w-full pl-12 pr-4 py-3.5 bg-white border border-[#E5E5E5] rounded-2xl text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-colors duration-200"
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors"
                     aria-label="Zoekopdracht wissen"
                   >
                     <X className="w-4 h-4" />
@@ -256,16 +256,16 @@ export default function BlogPage() {
                 onClick={() => setFiltersOpen((v) => !v)}
                 aria-expanded={filtersOpen}
                 aria-controls="filter-panel"
-                className={`flex items-center gap-2 px-5 py-3.5 bg-white border rounded-2xl text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] transition-colors duration-200 flex-shrink-0 ${
+                className={`flex items-center gap-2 px-5 py-3.5 bg-white border rounded-2xl text-sm font-medium text-[#4A4A4A] hover:border-[#B55E45] transition-colors duration-200 flex-shrink-0 ${
                   filtersOpen || activeFiltersCount > 0
-                    ? 'border-[#C2654A] text-[#C2654A]'
+                    ? 'border-[#B55E45] text-[#B55E45]'
                     : 'border-[#E5E5E5]'
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 <span className="hidden sm:inline">Filters</span>
                 {activeFiltersCount > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-[#C2654A] text-white text-xs font-bold flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-full bg-[#B55E45] text-white text-xs font-bold flex items-center justify-center">
                     {activeFiltersCount}
                   </span>
                 )}
@@ -279,11 +279,11 @@ export default function BlogPage() {
                 className="max-w-[880px] mx-auto mt-3 bg-white border border-[#E5E5E5] rounded-2xl p-5"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#8A8A8A]">Categorie</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#6E6E6E]">Categorie</p>
                   {selectedCategory !== 'all' && (
                     <button
                       onClick={() => setSelectedCategory('all')}
-                      className="text-xs font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
+                      className="text-xs font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors"
                     >
                       Wis filter
                     </button>
@@ -297,8 +297,8 @@ export default function BlogPage() {
                       aria-pressed={selectedCategory === cat}
                       className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
                         selectedCategory === cat
-                          ? 'bg-[#C2654A] text-white border-[#C2654A]'
-                          : 'bg-white text-[#1A1A1A] border-[#E5E5E5] hover:border-[#C2654A]'
+                          ? 'bg-[#B55E45] text-white border-[#B55E45]'
+                          : 'bg-white text-[#1A1A1A] border-[#E5E5E5] hover:border-[#B55E45]'
                       }`}
                     >
                       {cat === 'all' ? 'Alle artikelen' : cat}
@@ -310,10 +310,10 @@ export default function BlogPage() {
 
             {!filtersOpen && selectedCategory !== 'all' && (
               <div className="flex items-center gap-2 max-w-[880px] mx-auto mt-3">
-                <span className="text-xs text-[#8A8A8A]">Filter:</span>
+                <span className="text-xs text-[#6E6E6E]">Filter:</span>
                 <button
                   onClick={() => setSelectedCategory('all')}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F4E8E3] text-[#C2654A] transition-colors"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F4E8E3] text-[#B55E45] transition-colors"
                 >
                   {selectedCategory}
                   <X className="w-3 h-3" />
@@ -337,7 +337,7 @@ export default function BlogPage() {
                   animation: 'revealUp 0.9s ease 0.12s forwards',
                 }}
               >
-                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-3">
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#6E6E6E] mb-3">
                   Uitgelicht
                 </p>
 
@@ -358,7 +358,7 @@ export default function BlogPage() {
                   </a>
 
                   <div className="p-6 sm:p-8">
-                    <div className="flex items-center gap-3 text-xs text-[#8A8A8A] mb-4">
+                    <div className="flex items-center gap-3 text-xs text-[#6E6E6E] mb-4">
                       <div className="flex items-center gap-2">
                         <img src={featuredPost.author.avatar} alt={featuredPost.author.name} className="w-6 h-6 rounded-full object-cover" />
                         <span className="text-[#4A4A4A] font-medium">{featuredPost.author.name}</span>
@@ -370,8 +370,8 @@ export default function BlogPage() {
                       </div>
                     </div>
 
-                    <h2 className="text-2xl md:text-[28px] font-bold text-[#1A1A1A] leading-snug mb-3 group-hover:text-[#C2654A] transition-colors duration-200">
-                      <a href={`/blog/${featuredPost.slug}`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 rounded">
+                    <h2 className="text-2xl md:text-[28px] font-bold text-[#1A1A1A] leading-snug mb-3 group-hover:text-[#B55E45] transition-colors duration-200">
+                      <a href={`/blog/${featuredPost.slug}`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45]/40 rounded">
                         {featuredPost.title}
                       </a>
                     </h2>
@@ -382,7 +382,7 @@ export default function BlogPage() {
 
                     <a
                       href={`/blog/${featuredPost.slug}`}
-                      className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                      className="inline-flex items-center gap-2 bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                     >
                       Lees artikel
                       <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -404,7 +404,7 @@ export default function BlogPage() {
               <h2 className="text-xl font-bold text-[#1A1A1A]">
                 {searchTerm || selectedCategory !== 'all' ? 'Resultaten' : 'Alle artikelen'}
                 {!loading && (
-                  <span className="text-[#8A8A8A] font-normal ml-1">({carouselPosts.length})</span>
+                  <span className="text-[#6E6E6E] font-normal ml-1">({carouselPosts.length})</span>
                 )}
               </h2>
 
@@ -413,14 +413,14 @@ export default function BlogPage() {
                   <button
                     onClick={() => scrollCarousel('left')}
                     aria-label="Vorige artikelen"
-                    className="w-11 h-11 rounded-full border border-[#E5E5E5] bg-white flex items-center justify-center text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#C2654A] transition-colors"
+                    className="w-11 h-11 rounded-full border border-[#E5E5E5] bg-white flex items-center justify-center text-[#6E6E6E] hover:text-[#1A1A1A] hover:border-[#B55E45] transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => scrollCarousel('right')}
                     aria-label="Volgende artikelen"
-                    className="w-11 h-11 rounded-full border border-[#E5E5E5] bg-white flex items-center justify-center text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#C2654A] transition-colors"
+                    className="w-11 h-11 rounded-full border border-[#E5E5E5] bg-white flex items-center justify-center text-[#6E6E6E] hover:text-[#1A1A1A] hover:border-[#B55E45] transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -439,10 +439,10 @@ export default function BlogPage() {
               </>
             ) : error ? (
               <div className="text-center py-16">
-                <p className="text-[#8A8A8A] text-sm mb-4">{error}</p>
+                <p className="text-[#6E6E6E] text-sm mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-6 py-3 rounded-xl text-sm font-semibold bg-[#C2654A] text-white hover:bg-[#A8513A] transition-colors"
+                  className="px-6 py-3 rounded-xl text-sm font-semibold bg-[#B55E45] text-white hover:bg-[#9A503B] transition-colors"
                 >
                   Probeer opnieuw
                 </button>
@@ -450,10 +450,10 @@ export default function BlogPage() {
             ) : carouselPosts.length === 0 ? (
               <div className="text-center py-16">
                 <p className="font-semibold text-[#1A1A1A] mb-1">Geen artikelen gevonden</p>
-                <p className="text-sm text-[#8A8A8A] mb-4">Probeer een andere zoekterm of filter.</p>
+                <p className="text-sm text-[#6E6E6E] mb-4">Probeer een andere zoekterm of filter.</p>
                 <button
                   onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }}
-                  className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
+                  className="text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors"
                 >
                   Alle artikelen tonen
                 </button>
@@ -507,7 +507,7 @@ export default function BlogPage() {
             }}
           >
             <div className="w-14 h-14 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-6 h-6 text-[#C2654A]" />
+              <Mail className="w-6 h-6 text-[#B55E45]" />
             </div>
 
             <h3 className="font-serif italic text-3xl text-[#1A1A1A] mb-3">
@@ -528,12 +528,12 @@ export default function BlogPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="flex-1 bg-white border border-[#E5E5E5] rounded-full py-3.5 px-6 text-sm text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-colors duration-200"
+                className="flex-1 bg-white border border-[#E5E5E5] rounded-full py-3.5 px-6 text-sm text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-colors duration-200"
               />
               <button
                 type="submit"
                 disabled={!email}
-                className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubscribed ? 'Aangemeld!' : 'Aanmelden'}
               </button>

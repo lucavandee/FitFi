@@ -253,7 +253,7 @@ export function ShopItemsList({
                   </Button>
                 </ShopTooltip>
               ) : (
-                <div className="inline-flex items-center gap-2 px-3 py-2 bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5] rounded-lg text-xs">
+                <div className="inline-flex items-center gap-2 px-3 py-2 bg-[#FAFAF8] text-[#6E6E6E] border border-[#E5E5E5] rounded-lg text-xs">
                   <AlertCircle className="w-3 h-3" />
                   <span>Binnenkort beschikbaar</span>
                 </div>
@@ -267,7 +267,7 @@ export function ShopItemsList({
       {products.length > 0 && (
         <div className="pt-4 mt-4 border-t border-[#E5E5E5] space-y-2">
           <div className="flex items-center gap-2 text-xs text-[#1A1A1A]/60">
-            <Check className="w-4 h-4 text-[#C2654A]" />
+            <Check className="w-4 h-4 text-[#B55E45]" />
             <span>Alle links openen in een nieuw tabblad</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-[#1A1A1A]/60">

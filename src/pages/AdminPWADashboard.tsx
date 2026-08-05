@@ -210,12 +210,12 @@ export default function AdminPWADashboard() {
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
         <div className="max-w-2xl text-center">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#FAF5F2] flex items-center justify-center">
-            <XCircle className="w-10 h-10 text-[#C2654A]" />
+            <XCircle className="w-10 h-10 text-[#B55E45]" />
           </div>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">
             Geen toegang
           </h1>
-          <p className="text-[#8A8A8A] mb-6">
+          <p className="text-[#6E6E6E] mb-6">
             Je hebt geen admin rechten om deze pagina te bekijken.
           </p>
 
@@ -228,7 +228,7 @@ export default function AdminPWADashboard() {
             </div>
           )}
 
-          <div className="bg-[#FAF5F2] border border-[#E5E5E5] rounded-lg p-4 text-left text-sm text-[#8A8A8A] mb-6">
+          <div className="bg-[#FAF5F2] border border-[#E5E5E5] rounded-lg p-4 text-left text-sm text-[#6E6E6E] mb-6">
             <p className="font-medium text-[#1A1A1A] mb-2">Voor developers:</p>
             <p className="mb-2">Je bent ingelogd als: <strong>{user?.email || 'onbekend'}</strong></p>
             <p className="mb-2">Voer dit SQL script uit in Supabase SQL Editor:</p>
@@ -243,7 +243,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           </div>
           <a
             href="/"
-            className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
+            className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
           >
             Terug naar home
           </a>
@@ -275,13 +275,13 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-[#1A1A1A]">PWA Dashboard</h1>
-            <p className="text-[#8A8A8A] mt-1">
+            <p className="text-[#6E6E6E] mt-1">
               Monitor push notifications en app installaties
             </p>
           </div>
           <button
             onClick={loadStats}
-            className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl flex items-center gap-2"
+            className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl flex items-center gap-2"
           >
             <Activity className="w-4 h-4" />
             Ververs
@@ -323,7 +323,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <BarChart3 className="w-6 h-6 text-[#C2654A]" />
+            <BarChart3 className="w-6 h-6 text-[#B55E45]" />
             <h2 className="text-xl font-heading text-[#1A1A1A]">
               Performance per Categorie
             </h2>
@@ -341,7 +341,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                     <span className="font-medium text-[#1A1A1A] capitalize">
                       {type.replace(/_/g, ' ')}
                     </span>
-                    <span className="text-sm text-[#8A8A8A]">
+                    <span className="text-sm text-[#6E6E6E]">
                       {data.sent} verzonden
                     </span>
                   </div>
@@ -349,12 +349,12 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                     <div className="flex-1">
                       <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
+                          className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
                           style={{ width: `${clickRate}%` }}
                         />
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-[#A8513A]">
+                    <span className="text-sm font-medium text-[#9A503B]">
                       {clickRate.toFixed(1)}%
                     </span>
                   </div>
@@ -372,7 +372,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-md border border-[#E5E5E5] p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <Send className="w-6 h-6 text-[#C2654A]" />
+            <Send className="w-6 h-6 text-[#B55E45]" />
             <h2 className="text-xl font-heading text-[#1A1A1A]">
               Test Notificatie Versturen
             </h2>
@@ -387,7 +387,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                 type="text"
                 value={notification.title}
                 onChange={(e) => setNotification({ ...notification, title: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                 placeholder="Nieuwe outfit suggestie!"
               />
             </div>
@@ -399,7 +399,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
               <textarea
                 value={notification.body}
                 onChange={(e) => setNotification({ ...notification, body: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                 rows={3}
                 placeholder="We hebben 3 nieuwe outfits gevonden die bij je stijl passen."
               />
@@ -413,7 +413,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                 <select
                   value={notification.type}
                   onChange={(e) => setNotification({ ...notification, type: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                  className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                 >
                   <option value="outfit_suggestions">Outfit Suggestions</option>
                   <option value="style_tips">Style Tips</option>
@@ -431,7 +431,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                   type="text"
                   value={notification.url}
                   onChange={(e) => setNotification({ ...notification, url: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                  className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
                   placeholder="/dashboard"
                 />
               </div>
@@ -440,7 +440,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
             <button
               onClick={handleSendTestNotification}
               disabled={sendLoading}
-              className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl w-full flex items-center justify-center gap-2"
+              className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl w-full flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
               {sendLoading ? 'Bezig...' : 'Verstuur Test Notificatie'}
@@ -471,11 +471,11 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
                       {log.clicked ? (
                         <CheckCircle className="w-4 h-4 text-green-600" />
                       ) : (
-                        <XCircle className="w-4 h-4 text-[#8A8A8A]" />
+                        <XCircle className="w-4 h-4 text-[#6E6E6E]" />
                       )}
                     </div>
-                    <p className="text-sm text-[#8A8A8A] mb-2">{log.body}</p>
-                    <div className="flex items-center gap-4 text-xs text-[#8A8A8A]">
+                    <p className="text-sm text-[#6E6E6E] mb-2">{log.body}</p>
+                    <div className="flex items-center gap-4 text-xs text-[#6E6E6E]">
                       <span className="capitalize">{log.notification_type.replace(/_/g, ' ')}</span>
                       <span>{new Date(log.sent_at).toLocaleString('nl-NL')}</span>
                       {log.clicked && log.clicked_at && (
@@ -490,7 +490,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
             ))}
 
             {recentNotifications.length === 0 && (
-              <div className="p-8 text-center text-[#8A8A8A]">
+              <div className="p-8 text-center text-[#6E6E6E]">
                 Nog geen notificaties verzonden
               </div>
             )}
@@ -510,8 +510,8 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
   const colorClasses = {
-    primary: 'from-[#C2654A] to-[#A8513A]',
-    accent: 'from-[#C2654A] to-[#A8513A]',
+    primary: 'from-[#B55E45] to-[#9A503B]',
+    accent: 'from-[#B55E45] to-[#9A503B]',
   };
 
   return (
@@ -527,7 +527,7 @@ function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
         </div>
       </div>
       <div className="text-3xl font-bold text-[#1A1A1A] mb-1">{value}</div>
-      <div className="text-sm text-[#8A8A8A]">{label}</div>
+      <div className="text-sm text-[#6E6E6E]">{label}</div>
     </motion.div>
   );
 }

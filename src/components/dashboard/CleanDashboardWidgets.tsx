@@ -27,10 +27,10 @@ export function QuickInsightsWidget({ insights, onDismiss }: QuickInsightsWidget
     <BentoCard size="large">
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center flex-shrink-0">
-          <Sparkles className="w-5 h-5 text-[#A8513A]" />
+          <Sparkles className="w-5 h-5 text-[#9A503B]" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-[#8A8A8A] mb-1 font-medium uppercase tracking-wide">
+          <p className="text-xs text-[#6E6E6E] mb-1 font-medium uppercase tracking-wide">
             Nova Styling Tip
           </p>
           <p className="text-sm text-[#1A1A1A] mb-3 leading-relaxed">
@@ -39,7 +39,7 @@ export function QuickInsightsWidget({ insights, onDismiss }: QuickInsightsWidget
           {topInsight.actionLink && (
             <NavLink
               to={topInsight.actionLink}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#A8513A] hover:text-[#C2654A] transition-colors"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#9A503B] hover:text-[#B55E45] transition-colors"
             >
               {topInsight.action || 'Bekijk'}
               <ArrowRight className="w-3 h-3" />
@@ -60,18 +60,18 @@ export function PhotoUploadWidget() {
     <BentoCard size="medium">
       <div className="flex flex-col items-center text-center py-4">
         <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center mb-3">
-          <Camera className="w-6 h-6 text-[#A8513A]" />
+          <Camera className="w-6 h-6 text-[#9A503B]" />
         </div>
         <h3 className="text-sm font-bold text-[#1A1A1A] mb-1">
           Voeg een foto toe
         </h3>
-        <p className="text-xs text-[#8A8A8A] mb-4">
+        <p className="text-xs text-[#6E6E6E] mb-4">
           Verfijn je kleurprofiel met een selfie
         </p>
         <NavLink
           to="/onboarding?step=photo"
           className="w-full px-4 py-2 text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity"
-          style={{ background: '#A8513A' }}
+          style={{ background: '#9A503B' }}
         >
           Foto toevoegen
         </NavLink>
@@ -96,11 +96,11 @@ export function StyleProfileWidget({ archetype, colorPalette }: StyleProfileWidg
   return (
     <BentoCard size="medium">
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center flex-shrink-0">
           <Crown className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-[#8A8A8A] mb-0.5 uppercase tracking-wide font-medium">
+          <p className="text-xs text-[#6E6E6E] mb-0.5 uppercase tracking-wide font-medium">
             Jouw Stijl
           </p>
           <h3 className="text-base font-bold text-[#1A1A1A] truncate">
@@ -111,7 +111,7 @@ export function StyleProfileWidget({ archetype, colorPalette }: StyleProfileWidg
 
       {colorPalette.length > 0 && (
         <div>
-          <p className="text-xs text-[#8A8A8A] mb-2 font-medium">Kleuren</p>
+          <p className="text-xs text-[#6E6E6E] mb-2 font-medium">Kleuren</p>
           <div className="flex gap-1.5">
             {colorPalette.slice(0, 5).map((color, i) => (
               <div
@@ -126,7 +126,7 @@ export function StyleProfileWidget({ archetype, colorPalette }: StyleProfileWidg
 
       <NavLink
         to="/profile"
-        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-white border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-base font-medium hover:border-[#C2654A] transition-colors duration-200"
+        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-white border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-base font-medium hover:border-[#B55E45] transition-colors duration-200"
       >
         Bekijk profiel
         <ArrowRight className="w-3 h-3" />
@@ -163,11 +163,11 @@ export function QuickActionsWidget({ actions }: QuickActionsWidgetProps) {
             to={action.href}
             className="p-3 rounded-xl bg-[#FAFAF8] hover:bg-[#F5F0EB] border border-[#E5E5E5] transition-colors group"
           >
-            <action.icon className="w-5 h-5 text-[#A8513A] mb-2" />
+            <action.icon className="w-5 h-5 text-[#9A503B] mb-2" />
             <p className="text-xs font-semibold text-[#1A1A1A] mb-0.5">
               {action.label}
             </p>
-            <p className="text-xs text-[#8A8A8A] line-clamp-1">
+            <p className="text-xs text-[#6E6E6E] line-clamp-1">
               {action.description}
             </p>
           </NavLink>
@@ -200,7 +200,7 @@ export function GamificationWidget({
     <BentoCard size="medium">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-xs text-[#8A8A8A] mb-1 uppercase tracking-wide font-medium">
+          <p className="text-xs text-[#6E6E6E] mb-1 uppercase tracking-wide font-medium">
             Niveau
           </p>
           <p className="text-3xl font-bold text-[#1A1A1A]">
@@ -215,16 +215,16 @@ export function GamificationWidget({
       {/* Progress bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-[#8A8A8A]">
+          <span className="text-xs text-[#6E6E6E]">
             {xp} / {xpToNextLevel} XP
           </span>
-          <span className="text-xs font-semibold text-[#A8513A]">
+          <span className="text-xs font-semibold text-[#9A503B]">
             {Math.round(progress)}%
           </span>
         </div>
         <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
+            className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: 'easeOut' }}
@@ -284,7 +284,7 @@ export function RecentOutfitsWidget({ outfitCount, featuredImage }: RecentOutfit
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-xs text-[#8A8A8A] mb-1 uppercase tracking-wide font-medium">
+              <p className="text-xs text-[#6E6E6E] mb-1 uppercase tracking-wide font-medium">
                 Jouw Outfits
               </p>
               <p className="text-3xl font-bold text-[#1A1A1A]">
@@ -292,12 +292,12 @@ export function RecentOutfitsWidget({ outfitCount, featuredImage }: RecentOutfit
               </p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center">
-              <Target className="w-6 h-6 text-[#A8513A]" />
+              <Target className="w-6 h-6 text-[#9A503B]" />
             </div>
           </div>
           <NavLink
             to="/results"
-            className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-[#A8513A] text-white rounded-xl text-base font-semibold hover:bg-[#C2654A] transition-colors duration-200"
+            className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-[#9A503B] text-white rounded-xl text-base font-semibold hover:bg-[#B55E45] transition-colors duration-200"
           >
             Bekijk alles
             <ArrowRight className="w-4 h-4" />
@@ -316,18 +316,18 @@ export function EmptyStateWidget() {
   return (
     <BentoCard size="hero" className="text-center">
       <div className="flex flex-col items-center justify-center h-full py-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center mb-4">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center mb-4">
           <Sparkles className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">
           Start je stijlreis
         </h2>
-        <p className="text-sm text-[#8A8A8A] mb-6 max-w-sm">
+        <p className="text-sm text-[#6E6E6E] mb-6 max-w-sm">
           Beantwoord een paar vragen en ontdek welke outfits bij jou passen — in 2 minuten
         </p>
         <NavLink
           to="/onboarding"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#A8513A] text-white rounded-xl font-semibold hover:bg-[#C2654A] transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#B55E45] transition-all"
         >
           <Sparkles className="w-5 h-5" />
           Start gratis stijlquiz

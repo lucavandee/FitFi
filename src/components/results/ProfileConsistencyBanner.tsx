@@ -33,7 +33,7 @@ export function ProfileConsistencyBanner({
     switch (analysis.level) {
       case 'high':
         return {
-          icon: <CheckCircle className="w-4 h-4 text-[#C2654A]" />,
+          icon: <CheckCircle className="w-4 h-4 text-[#B55E45]" />,
           iconBg: 'bg-[#F4E8E3]',
         };
       case 'medium':
@@ -65,7 +65,7 @@ export function ProfileConsistencyBanner({
           className="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-[#F5F0EB] flex items-center justify-center transition-colors"
           aria-label="Sluit banner"
         >
-          <X className="w-4 h-4 text-[#8A8A8A]" />
+          <X className="w-4 h-4 text-[#6E6E6E]" />
         </button>
 
         <div className="flex items-start gap-4 pr-8">
@@ -134,7 +134,7 @@ export function ProfileConsistencyBanner({
                   initial={{ width: 0 }}
                   animate={{ width: `${analysis.score}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="h-full rounded-full bg-[#C2654A]"
+                  className="h-full rounded-full bg-[#B55E45]"
                 />
               </div>
             </div>
@@ -143,7 +143,7 @@ export function ProfileConsistencyBanner({
             {analysis.level === 'low' && onRetakeQuiz && (
               <button
                 onClick={onRetakeQuiz}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#C2654A] rounded-full font-semibold text-sm text-[#1A1A1A] transition-all duration-200"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#B55E45] rounded-full font-semibold text-sm text-[#1A1A1A] transition-all duration-200"
               >
                 <RefreshCcw className="w-4 h-4" />
                 <span>Quiz opnieuw doen</span>

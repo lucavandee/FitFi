@@ -113,7 +113,7 @@ export default function ResultsPreviewPage() {
       {/* 1. Sticky Preview Bar */}
       <div className="fixed top-[80px] left-0 right-0 z-50 bg-[#F5F0EB] border-b border-[#E5E5E5] px-6 md:px-10 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-[13px] text-[#4A4A4A]">
-          <Info className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+          <Info className="w-4 h-4 text-[#B55E45] flex-shrink-0" />
           <span className="hidden sm:inline">
             {isPersonalized
               ? `Hé ${userName}! Dit is een voorbeeld. Doe de quiz voor jouw persoonlijke rapport.`
@@ -123,7 +123,7 @@ export default function ResultsPreviewPage() {
         </div>
         <NavLink
           to="/onboarding"
-          className="bg-[#C2654A] hover:bg-[#A8513A] text-white text-[13px] font-semibold py-2.5 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200 flex-shrink-0"
+          className="bg-[#B55E45] hover:bg-[#9A503B] text-white text-[13px] font-semibold py-2.5 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200 flex-shrink-0"
         >
           <span>Begin gratis</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -135,7 +135,7 @@ export default function ResultsPreviewPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-[#E5E5E5] text-xs font-semibold text-[#4A4A4A] mb-8">
-              <Sparkles className="w-3.5 h-3.5 text-[#C2654A]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#B55E45]" />
               <span>Voorbeeld rapport</span>
             </div>
           </FadeIn>
@@ -143,7 +143,7 @@ export default function ResultsPreviewPage() {
           <FadeIn delay={0.12}>
             <h1 className="font-serif italic text-[48px] md:text-[56px] text-[#1A1A1A] leading-[1.08] mb-6 max-w-[600px] mx-auto">
               Zo ziet jouw{" "}
-              <span className="font-sans font-bold text-[#C2654A] not-italic">stijlrapport</span>{" "}
+              <span className="font-sans font-bold text-[#B55E45] not-italic">stijlrapport</span>{" "}
               eruit
             </h1>
           </FadeIn>
@@ -162,14 +162,14 @@ export default function ResultsPreviewPage() {
           <div className="bg-white border border-[#E5E5E5] rounded-2xl p-10 md:p-12">
             {/* Header */}
             <div className="flex items-center gap-8 mb-10 pb-8 border-b border-[#E5E5E5]">
-              <div className="w-[72px] h-[72px] rounded-2xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 text-2xl font-bold text-[#C2654A]">
+              <div className="w-[72px] h-[72px] rounded-2xl bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 text-2xl font-bold text-[#B55E45]">
                 {archetypeInitials}
               </div>
               <div>
                 <h2 className="font-serif italic text-[32px] text-[#1A1A1A] leading-[1.1]">
                   {DEMO_ARCHETYPE}
                 </h2>
-                <p className="text-sm text-[#8A8A8A] mt-1">
+                <p className="text-sm text-[#6E6E6E] mt-1">
                   {seasonLabel} · Neutrale ondertoon · {contrastLabel} contrast
                 </p>
                 <div className="flex gap-2 mt-3 flex-wrap">
@@ -186,7 +186,7 @@ export default function ResultsPreviewPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Left: Kleurprofiel */}
               <div>
-                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-5">
+                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#6E6E6E] mb-5">
                   Kleurprofiel
                 </p>
                 <div>
@@ -209,7 +209,7 @@ export default function ResultsPreviewPage() {
 
               {/* Right: Inzichten */}
               <div>
-                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-5">
+                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#6E6E6E] mb-5">
                   Inzichten
                 </p>
                 <div>
@@ -219,7 +219,7 @@ export default function ResultsPreviewPage() {
                       className={`flex items-start gap-3 py-4 ${i < DEMO_COLOR_PROFILE.notes.length - 1 ? 'border-b border-[#E5E5E5]/50' : ''}`}
                     >
                       <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-[#C2654A]" />
+                        <Check className="w-3.5 h-3.5 text-[#B55E45]" />
                       </div>
                       <span className="text-sm text-[#4A4A4A] leading-[1.5]">{note}</span>
                     </div>
@@ -236,7 +236,7 @@ export default function ResultsPreviewPage() {
         <div className="max-w-[900px] mx-auto px-6">
           <FadeIn>
             <div className="bg-white border border-[#E5E5E5] rounded-2xl p-10 md:p-12">
-              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">
+              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-2">
                 Kleurpalet
               </p>
               <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">
@@ -251,9 +251,9 @@ export default function ResultsPreviewPage() {
                   {/* Basis kleuren */}
                   <div className="mb-8">
                     <div className="flex items-center gap-2 mb-4 mt-2">
-                      <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                      <div className="w-2 h-2 rounded-full bg-[#B55E45]" />
                       <span className="text-[13px] font-semibold text-[#1A1A1A]">Basis</span>
-                      <span className="text-[13px] text-[#8A8A8A]">Je dagelijkse kleuren</span>
+                      <span className="text-[13px] text-[#6E6E6E]">Je dagelijkse kleuren</span>
                     </div>
                     <div className="flex gap-4 flex-wrap">
                       {groupedColors.basis.map((swatch) => (
@@ -271,9 +271,9 @@ export default function ResultsPreviewPage() {
                   {/* Accent kleuren */}
                   <div className="mb-8">
                     <div className="flex items-center gap-2 mb-4 mt-2">
-                      <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                      <div className="w-2 h-2 rounded-full bg-[#B55E45]" />
                       <span className="text-[13px] font-semibold text-[#1A1A1A]">Accent</span>
-                      <span className="text-[13px] text-[#8A8A8A]">Voor kleur en persoonlijkheid</span>
+                      <span className="text-[13px] text-[#6E6E6E]">Voor kleur en persoonlijkheid</span>
                     </div>
                     <div className="flex gap-4 flex-wrap">
                       {groupedColors.accent.map((swatch) => (
@@ -291,9 +291,9 @@ export default function ResultsPreviewPage() {
                   {/* Neutrale kleuren */}
                   <div>
                     <div className="flex items-center gap-2 mb-4 mt-2">
-                      <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                      <div className="w-2 h-2 rounded-full bg-[#B55E45]" />
                       <span className="text-[13px] font-semibold text-[#1A1A1A]">Neutraal</span>
-                      <span className="text-[13px] text-[#8A8A8A]">Combineer met alles</span>
+                      <span className="text-[13px] text-[#6E6E6E]">Combineer met alles</span>
                     </div>
                     <div className="flex gap-4 flex-wrap">
                       {groupedColors.neutraal.map((swatch) => (
@@ -331,7 +331,7 @@ export default function ResultsPreviewPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {seeds.slice(0, 6).map((outfit, idx) => (
               <FadeIn key={idx} delay={idx * 0.12}>
-                <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:border-[#C2654A] hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 group">
+                <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:border-[#B55E45] hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 group">
                   {/* Image area */}
                   <div className="aspect-[3/4] overflow-hidden relative">
                     {outfit.pieces && outfit.pieces.length > 0 ? (
@@ -368,13 +368,13 @@ export default function ResultsPreviewPage() {
                     <h3 className="text-[15px] font-semibold text-[#1A1A1A] mb-1">
                       {outfit.title || `Outfit ${idx + 1}`}
                     </h3>
-                    <p className="text-[13px] text-[#8A8A8A] leading-[1.5] mb-3 line-clamp-2">
+                    <p className="text-[13px] text-[#6E6E6E] leading-[1.5] mb-3 line-clamp-2">
                       {outfit.notes || "Een stijlvolle combinatie die past bij jouw profiel."}
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#C2654A]">
+                      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#B55E45]">
                         <div className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                          <Check className="w-2.5 h-2.5 text-[#C2654A]" />
+                          <Check className="w-2.5 h-2.5 text-[#B55E45]" />
                         </div>
                         <span>{outfit.vibe || "Match"}</span>
                       </div>
@@ -394,7 +394,7 @@ export default function ResultsPreviewPage() {
           <div className="text-center mt-10">
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#E5E5E5] text-[13px] font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#E5E5E5] text-[13px] font-medium text-[#4A4A4A] hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-200"
             >
               <Share2 className="w-4 h-4" />
               <span>Deel dit voorbeeld</span>
@@ -408,7 +408,7 @@ export default function ResultsPreviewPage() {
         <div className="max-w-[700px] mx-auto px-6">
           <FadeIn>
             <div className="bg-white border border-[#E5E5E5] rounded-2xl p-12 md:p-16 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] text-[11px] font-semibold text-[#C2654A] mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] text-[11px] font-semibold text-[#B55E45] mb-6">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{isPersonalized ? `Klaar ${userName}?` : 'Maak het persoonlijk'}</span>
               </div>
@@ -428,14 +428,14 @@ export default function ResultsPreviewPage() {
               <div className="flex items-center justify-center gap-4 flex-wrap">
                 <NavLink
                   to="/onboarding"
-                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-4 px-12 rounded-full inline-flex items-center gap-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(194,101,74,0.2)]"
+                  className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-4 px-12 rounded-full inline-flex items-center gap-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(194,101,74,0.2)]"
                 >
                   <span>Begin gratis</span>
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
                 <NavLink
                   to="/hoe-het-werkt"
-                  className="text-base font-semibold py-4 px-10 rounded-full border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+                  className="text-base font-semibold py-4 px-10 rounded-full border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-200"
                 >
                   Hoe het werkt
                 </NavLink>

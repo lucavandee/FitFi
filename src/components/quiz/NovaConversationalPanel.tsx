@@ -212,9 +212,9 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
         className="fixed bottom-6 right-6 z-50 w-96 h-[600px] flex flex-col bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl shadow-lg overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5] bg-gradient-to-r from-[#C2654A]/5 to-[#C2654A]/5">
+        <div className="flex items-center justify-between p-4 border-b border-[#E5E5E5] bg-gradient-to-r from-[#B55E45]/5 to-[#B55E45]/5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -252,7 +252,7 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                   msg.role === 'user'
-                    ? 'bg-[#C2654A] text-white'
+                    ? 'bg-[#B55E45] text-white'
                     : 'bg-[#FAFAF8] text-[#1A1A1A]'
                 }`}
               >
@@ -263,7 +263,7 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-[#FAFAF8] rounded-2xl px-4 py-2">
-                <Loader2 className="w-4 h-4 animate-spin text-[#C2654A]" />
+                <Loader2 className="w-4 h-4 animate-spin text-[#B55E45]" />
               </div>
             </div>
           )}
@@ -281,12 +281,12 @@ Je doel: Help user met vertrouwen door de quiz heen, maak het leuk en persoonlij
               onKeyPress={handleKeyPress}
               placeholder="Stel me een vraag..."
               disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#C2654A] disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#B55E45] disabled:opacity-50"
             />
             <button
               onClick={sendMessage}
               disabled={!input.trim() || isLoading}
-              className="p-2 bg-[#C2654A] text-white rounded-2xl hover:bg-[#C2654A]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 bg-[#B55E45] text-white rounded-2xl hover:bg-[#B55E45]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-5 h-5" />
             </button>

@@ -117,10 +117,10 @@ function Step3Visual() {
 function StepBadge({ num, label }: { num: string; label: string }) {
   return (
     <div className="inline-flex items-center gap-3 mb-6">
-      <div className="w-8 h-8 rounded-full border-2 border-[#C2654A] flex items-center justify-center text-sm font-extrabold text-[#C2654A] flex-shrink-0">
+      <div className="w-8 h-8 rounded-full border-2 border-[#B55E45] flex items-center justify-center text-sm font-extrabold text-[#B55E45] flex-shrink-0">
         {num}
       </div>
-      <span className="text-xs font-semibold tracking-[3px] uppercase text-[#C2654A]">{label}</span>
+      <span className="text-xs font-semibold tracking-[3px] uppercase text-[#B55E45]">{label}</span>
     </div>
   );
 }
@@ -129,10 +129,10 @@ function StepBadge({ num, label }: { num: string; label: string }) {
 function StepDetail({ title, sub }: { title: string; sub: string }) {
   return (
     <div className="flex items-start gap-0">
-      <div className="w-2 h-2 rounded-full bg-[#C2654A] mt-[6px] flex-shrink-0 mr-3" />
+      <div className="w-2 h-2 rounded-full bg-[#B55E45] mt-[6px] flex-shrink-0 mr-3" />
       <div>
         <p className="text-[15px] font-semibold text-[#1A1A1A] leading-snug">{title}</p>
-        <p className="text-[13px] text-[#8A8A8A] mt-1">{sub}</p>
+        <p className="text-[13px] text-[#6E6E6E] mt-1">{sub}</p>
       </div>
     </div>
   );
@@ -164,7 +164,7 @@ export default function HowItWorksPage() {
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#C2654A] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#B55E45] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
@@ -178,11 +178,11 @@ export default function HowItWorksPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="flex items-center justify-center gap-3 mb-10">
-                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
-                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
                   Hoe het werkt
                 </span>
-                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
               </div>
             </Reveal>
 
@@ -206,7 +206,7 @@ export default function HowItWorksPage() {
               <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
                 {["2 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
                   <div key={tag} className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                    <div className="w-2 h-2 rounded-full bg-[#B55E45] flex-shrink-0" aria-hidden="true" />
                     <span>{tag}</span>
                   </div>
                 ))}
@@ -249,7 +249,7 @@ export default function HowItWorksPage() {
                   sub="Lokaal verwerkt, niet opgeslagen"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#C2654A] w-fit">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#B55E45] w-fit">
                 <Clock className="w-4 h-4" aria-hidden="true" />
                 ~2 minuten
               </div>
@@ -287,7 +287,7 @@ export default function HowItWorksPage() {
                   sub="Concrete tips voor werk, weekend en uitgaan"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-semibold text-[#C2654A] w-fit">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-semibold text-[#B55E45] w-fit">
                 <Zap className="w-4 h-4" aria-hidden="true" />
                 Direct beschikbaar
               </div>
@@ -333,7 +333,7 @@ export default function HowItWorksPage() {
                   sub="Zie direct hoe goed elk kledingstuk bij jouw profiel past"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#C2654A] w-fit">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#B55E45] w-fit">
                 <Heart className="w-4 h-4" aria-hidden="true" />
                 50+ looks
               </div>
@@ -348,7 +348,7 @@ export default function HowItWorksPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-20">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#B55E45]">
                   Vergelijk
                 </span>
                 <h2 className="font-serif italic text-[28px] md:text-[48px] text-[#1A1A1A] leading-[1.1] mt-4 mb-4">
@@ -364,11 +364,11 @@ export default function HowItWorksPage() {
               <div className="max-w-[800px] mx-auto">
                 {/* Header rij */}
                 <div className="grid grid-cols-[1fr_40px_1fr] items-center pb-4 mb-2 border-b-2 border-[#E5E5E5]">
-                  <div className="text-[13px] font-semibold text-[#8A8A8A] uppercase tracking-[1px] text-right pr-6">
+                  <div className="text-[13px] font-semibold text-[#6E6E6E] uppercase tracking-[1px] text-right pr-6">
                     Zonder FitFi
                   </div>
                   <div />
-                  <div className="text-[13px] font-bold text-[#C2654A] uppercase tracking-[1px] text-left pl-6">
+                  <div className="text-[13px] font-bold text-[#B55E45] uppercase tracking-[1px] text-left pl-6">
                     Met FitFi
                   </div>
                 </div>
@@ -378,13 +378,13 @@ export default function HowItWorksPage() {
                     key={i}
                     className={`grid grid-cols-[1fr_40px_1fr] items-center border-b border-[#E5E5E5] last:border-none ${row.highlight ? "pt-5 pb-10" : "py-5"}`}
                   >
-                    <div className="text-[15px] text-[#8A8A8A] text-right pr-6">
+                    <div className="text-[15px] text-[#6E6E6E] text-right pr-6">
                       {row.old}
                     </div>
                     <div className="text-[11px] font-bold text-[#E5E5E5] text-center">
                       →
                     </div>
-                    <div className={`text-[15px] font-semibold text-left pl-6 ${row.highlight ? "text-[#C2654A]" : "text-[#1A1A1A]"}`}>
+                    <div className={`text-[15px] font-semibold text-left pl-6 ${row.highlight ? "text-[#B55E45]" : "text-[#1A1A1A]"}`}>
                       {row.next}
                     </div>
                   </div>
@@ -401,7 +401,7 @@ export default function HowItWorksPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-16">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#B55E45]">
                   Veelgestelde vragen
                 </span>
                 <h2 className="font-serif italic text-[28px] md:text-[48px] text-[#1A1A1A] leading-[1.1] mt-4 mb-4">
@@ -437,7 +437,7 @@ export default function HowItWorksPage() {
                             animate={{ rotate: isOpen ? 45 : 0 }}
                             transition={{ duration: 0.2 }}
                           >
-                            <Plus className="w-4 h-4 text-[#C2654A]" />
+                            <Plus className="w-4 h-4 text-[#B55E45]" />
                           </motion.div>
                         </div>
                       </div>
@@ -467,7 +467,7 @@ export default function HowItWorksPage() {
               <div className="text-center mt-10">
                 <Link
                   to="/veelgestelde-vragen"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
                 >
                   Bekijk alle veelgestelde vragen
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -492,7 +492,7 @@ export default function HowItWorksPage() {
                 </p>
                 <Link
                   to="/onboarding"
-                  className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-3 bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                   style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
                 >
                   Begin gratis

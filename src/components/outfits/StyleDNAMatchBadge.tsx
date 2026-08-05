@@ -21,7 +21,7 @@ export function StyleDNAMatchBadge({
       label: "Perfect Match"
     };
     if (score >= 80) return {
-      bg: "bg-gradient-to-r from-[#C2654A] to-[#C2654A]",
+      bg: "bg-gradient-to-r from-[#B55E45] to-[#B55E45]",
       text: "text-white",
       ring: "ring-[#D4856E]/50",
       label: "Great Match"

@@ -90,7 +90,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               scale: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' }
             }}
             className="absolute -top-20 left-1/2 -translate-x-1/2 z-50
-                       bg-[#A8513A] text-white
+                       bg-[#9A503B] text-white
                        px-5 py-3 rounded-2xl text-sm font-semibold
                        shadow-[0_8px_30px_rgba(0,0,0,0.25)]
                        pointer-events-none whitespace-nowrap

@@ -37,8 +37,8 @@ export default function PremiumFooter() {
           <div className="space-y-2">
             <p className="font-medium">Start</p>
             <div className="flex gap-2">
-              <Link to="/hoe-het-werkt" className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">Meer info</Link>
-              <Link to="/prijzen" className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">Start gratis</Link>
+              <Link to="/hoe-het-werkt" className="bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl">Meer info</Link>
+              <Link to="/prijzen" className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">Start gratis</Link>
             </div>
           </div>
         </div>

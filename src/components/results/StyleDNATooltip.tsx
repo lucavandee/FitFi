@@ -38,7 +38,7 @@ export function StyleDNATooltip({
         {/* Trigger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="inline-flex items-center gap-1.5 text-sm text-[#C2654A] hover:text-[#A8513A] transition-colors font-medium"
+          className="inline-flex items-center gap-1.5 text-sm text-[#B55E45] hover:text-[#9A503B] transition-colors font-medium"
           aria-label="Meer informatie"
         >
           <HelpCircle className="w-4 h-4" />
@@ -59,7 +59,7 @@ export function StyleDNATooltip({
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#C2654A]" />
+                    <Sparkles className="w-5 h-5 text-[#B55E45]" />
                     <h4 className="font-bold text-lg text-[#1A1A1A]">
                       {explanation.label}
                     </h4>
@@ -110,14 +110,14 @@ export function StyleDNATooltip({
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   {/* DO */}
                   <div>
-                    <h5 className="font-semibold text-sm text-[#C2654A] mb-2 flex items-center gap-1">
+                    <h5 className="font-semibold text-sm text-[#B55E45] mb-2 flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" />
                       Draag dit:
                     </h5>
                     <ul className="space-y-1.5">
                       {explanation.do.map((item, idx) => (
                         <li key={idx} className="text-sm text-[#4A4A4A] flex items-start gap-2">
-                          <span className="text-[#C2654A] mt-0.5">•</span>
+                          <span className="text-[#B55E45] mt-0.5">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -146,7 +146,7 @@ export function StyleDNATooltip({
                   <h5 className="font-semibold text-sm text-[#8A3D28] mb-1">
                     Waarom is dit belangrijk?
                   </h5>
-                  <p className="text-sm text-[#A8513A] leading-relaxed">
+                  <p className="text-sm text-[#9A503B] leading-relaxed">
                     {explanation.why}
                   </p>
                 </div>
@@ -177,7 +177,7 @@ export function StyleDNAQuickTip({
 
   return (
     <div className="group relative inline-block">
-      <HelpCircle className="w-4 h-4 text-gray-400 hover:text-[#C2654A] transition-colors cursor-help" />
+      <HelpCircle className="w-4 h-4 text-gray-400 hover:text-[#B55E45] transition-colors cursor-help" />
 
       {/* Tooltip on hover */}
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">

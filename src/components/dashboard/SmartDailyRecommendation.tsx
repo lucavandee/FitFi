@@ -106,7 +106,7 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
           <h3 className="font-display text-lg font-semibold text-[#1A1A1A]">
             {getTimeGreeting()}
           </h3>
-          <p className="text-sm text-[#8A8A8A]">
+          <p className="text-sm text-[#6E6E6E]">
             Nova stelt voor om dit te dragen
           </p>
         </div>
@@ -116,15 +116,15 @@ export const SmartDailyRecommendation: React.FC<SmartDailyRecommendationProps> =
         <OutfitCard outfit={recommendation.outfit} compact />
       </div>
 
-      <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
+      <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
         <Calendar className="w-4 h-4" />
         <span>{getContextMessage()}</span>
       </div>
 
       <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
-        <div className="flex items-center justify-between text-xs text-[#8A8A8A]">
+        <div className="flex items-center justify-between text-xs text-[#6E6E6E]">
           <span>Match score</span>
-          <span className="font-semibold text-[#C2654A]">
+          <span className="font-semibold text-[#B55E45]">
             {Math.round(recommendation.score)}%
           </span>
         </div>

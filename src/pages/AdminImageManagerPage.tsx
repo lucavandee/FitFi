@@ -44,7 +44,7 @@ export default function AdminImageManagerPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
-        <div className="text-[#8A8A8A]">Laden...</div>
+        <div className="text-[#6E6E6E]">Laden...</div>
       </div>
     );
   }
@@ -58,14 +58,14 @@ export default function AdminImageManagerPage() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#A8513A] to-[#C2654A] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#9A503B] to-[#B55E45] flex items-center justify-center">
               <Image className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-[#1A1A1A]">
                 Afbeeldingen Beheer
               </h1>
-              <p className="text-[#8A8A8A]">
+              <p className="text-[#6E6E6E]">
                 Upload product afbeeldingen in bulk
               </p>
             </div>
@@ -77,7 +77,7 @@ export default function AdminImageManagerPage() {
                 <div className="text-2xl font-bold text-[#1A1A1A]">
                   {stats.totalProducts}
                 </div>
-                <div className="text-sm text-[#8A8A8A]">
+                <div className="text-sm text-[#6E6E6E]">
                   Totaal producten
                 </div>
               </div>
@@ -131,7 +131,7 @@ export default function AdminImageManagerPage() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/admin')}
-            className="text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
+            className="text-sm text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors"
           >
             ← Terug naar Admin Dashboard
           </button>

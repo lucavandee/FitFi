@@ -16,12 +16,12 @@ export function PhotoAnalysisWidget() {
       {/* Header & Upload Button */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
             <Camera className="w-5 h-5 text-white" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-[#1A1A1A]">Outfit Analyse</h3>
-            <p className="text-sm text-[#8A8A8A]">Nova analyseert je foto's</p>
+            <p className="text-sm text-[#6E6E6E]">Nova analyseert je foto's</p>
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export function PhotoAnalysisWidget() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-gradient-to-r from-[#A8513A] to-[#A8513A] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+          className="px-4 py-2 bg-gradient-to-r from-[#9A503B] to-[#9A503B] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           <span>Analyseer Foto</span>
@@ -52,7 +52,7 @@ export function PhotoAnalysisWidget() {
       {/* Previous Analyses */}
       {analyses.length > 1 && (
         <div className="space-y-3">
-          <h4 className="text-sm font-bold text-[#8A8A8A] uppercase tracking-wide">
+          <h4 className="text-sm font-bold text-[#6E6E6E] uppercase tracking-wide">
             Eerdere Analyses
           </h4>
           {analyses.slice(1, 4).map((analysis) => (
@@ -78,9 +78,9 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/20 dark:to-[#5A2010]/20 border-2 border-dashed border-[#D4856E] dark:border-[#A8513A] rounded-2xl p-8 text-center"
+      className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/20 dark:to-[#5A2010]/20 border-2 border-dashed border-[#D4856E] dark:border-[#9A503B] rounded-2xl p-8 text-center"
     >
-      <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
+      <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
         <Sparkles className="w-10 h-10 text-white" />
       </div>
 
@@ -88,7 +88,7 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
         Laat Nova je outfit analyseren!
       </h3>
 
-      <p className="text-sm text-[#8A8A8A] max-w-md mx-auto mb-6 leading-relaxed">
+      <p className="text-sm text-[#6E6E6E] max-w-md mx-auto mb-6 leading-relaxed">
         Upload een foto van je outfit en ontvang direct persoonlijke feedback op basis van je
         stijlprofiel, kleurenpalet en voorkeuren.
       </p>
@@ -96,15 +96,15 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-3">
           <div className="text-2xl mb-1">🎨</div>
-          <div className="text-xs text-[#8A8A8A]">Kleur analyse</div>
+          <div className="text-xs text-[#6E6E6E]">Kleur analyse</div>
         </div>
         <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-3">
           <div className="text-2xl mb-1">✨</div>
-          <div className="text-xs text-[#8A8A8A]">Style tips</div>
+          <div className="text-xs text-[#6E6E6E]">Style tips</div>
         </div>
         <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-3">
           <div className="text-2xl mb-1">💯</div>
-          <div className="text-xs text-[#8A8A8A]">Match score</div>
+          <div className="text-xs text-[#6E6E6E]">Match score</div>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ function EmptyState({ onUpload }: { onUpload: () => void }) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onUpload}
-        className="px-6 py-3 bg-gradient-to-r from-[#A8513A] to-[#A8513A] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2 mx-auto"
+        className="px-6 py-3 bg-gradient-to-r from-[#9A503B] to-[#9A503B] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2 mx-auto"
       >
         <Camera className="w-5 h-5" />
         <span>Upload Eerste Foto</span>

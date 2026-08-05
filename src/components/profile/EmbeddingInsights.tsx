@@ -48,8 +48,8 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
   if (!profile || !profile.locked_embedding) {
     return (
       <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 text-center">
-        <Sparkles className="w-12 h-12 mx-auto text-[#8A8A8A] mb-3" />
-        <p className="text-[#8A8A8A]">
+        <Sparkles className="w-12 h-12 mx-auto text-[#6E6E6E] mb-3" />
+        <p className="text-[#6E6E6E]">
           Voltooi de stijlquiz om je profiel te vullen
         </p>
       </div>
@@ -74,19 +74,19 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-[#A8513A]" />
+              <Sparkles className="w-5 h-5 text-[#9A503B]" />
               <h3 className="text-xl font-semibold text-[#1A1A1A]">
                 Jouw Stijlprofiel
               </h3>
             </div>
-            <p className="text-sm text-[#8A8A8A]">
+            <p className="text-sm text-[#6E6E6E]">
               Versie {profile.embedding_version} • {summary}
             </p>
           </div>
 
           <button
             onClick={() => setShowDetails(!showDetails)}
-            className="text-sm text-[#A8513A] hover:text-[#C2654A] transition-colors flex items-center gap-1"
+            className="text-sm text-[#9A503B] hover:text-[#B55E45] transition-colors flex items-center gap-1"
           >
             <Info className="w-4 h-4" />
             {showDetails ? 'Verberg' : 'Details'}
@@ -131,7 +131,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
               color="green"
             />
 
-            <div className="flex items-center gap-2 text-xs text-[#8A8A8A] mt-3">
+            <div className="flex items-center gap-2 text-xs text-[#6E6E6E] mt-3">
               <Clock className="w-3.5 h-3.5" />
               Vastgelegd op {lockedDate.toLocaleDateString('nl-NL', {
                 day: 'numeric',
@@ -160,7 +160,7 @@ export function EmbeddingInsights({ userId, sessionId, onRecalibrate }: Embeddin
                 {onRecalibrate && (
                   <button
                     onClick={onRecalibrate}
-                    className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl text-sm py-2 px-4 inline-flex items-center gap-2"
+                    className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-sm py-2 px-4 inline-flex items-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Opnieuw calibreren
@@ -190,8 +190,8 @@ function ArchetypeBar({
   const capitalizedFirst = formatted.charAt(0).toUpperCase() + formatted.slice(1);
 
   const rankColors: Record<number, string> = {
-    1: 'bg-[#A8513A]',
-    2: 'bg-[#C2654A]',
+    1: 'bg-[#9A503B]',
+    2: 'bg-[#B55E45]',
     3: 'bg-[#D4856E]'
   };
 
@@ -199,14 +199,14 @@ function ArchetypeBar({
     <div>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <div className={`w-6 h-6 rounded-full ${rankColors[rank] || 'bg-[#8A8A8A]'} text-white text-xs font-semibold flex items-center justify-center`}>
+          <div className={`w-6 h-6 rounded-full ${rankColors[rank] || 'bg-[#6E6E6E]'} text-white text-xs font-semibold flex items-center justify-center`}>
             {rank}
           </div>
           <span className="text-sm font-medium text-[#1A1A1A]">
             {capitalizedFirst}
           </span>
         </div>
-        <span className="text-sm font-semibold text-[#A8513A]">
+        <span className="text-sm font-semibold text-[#9A503B]">
           {percentage}%
         </span>
       </div>
@@ -215,7 +215,7 @@ function ArchetypeBar({
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className={`h-full ${rankColors[rank] || 'bg-[#8A8A8A]'} rounded-full`}
+          className={`h-full ${rankColors[rank] || 'bg-[#6E6E6E]'} rounded-full`}
         />
       </div>
     </div>
@@ -240,7 +240,7 @@ function InfluenceBar({
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs text-[#8A8A8A]">{label}</span>
+        <span className="text-xs text-[#6E6E6E]">{label}</span>
         <span className="text-xs font-medium text-[#1A1A1A]">{percentage}%</span>
       </div>
       <div className="h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">

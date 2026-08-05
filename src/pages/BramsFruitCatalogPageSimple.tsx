@@ -26,7 +26,7 @@ export default function BramsFruitCatalogPageSimple() {
       <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-          <p className="mt-4 text-[#8A8A8A]">Producten laden...</p>
+          <p className="mt-4 text-[#6E6E6E]">Producten laden...</p>
         </div>
       </div>
     );
@@ -37,7 +37,7 @@ export default function BramsFruitCatalogPageSimple() {
       <div className="min-h-screen bg-[#FAFAF8] py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-3xl font-bold text-red-500 mb-4">Fout!</h1>
-          <p className="text-[#8A8A8A]">{error}</p>
+          <p className="text-[#6E6E6E]">{error}</p>
         </div>
       </div>
     );
@@ -49,7 +49,7 @@ export default function BramsFruitCatalogPageSimple() {
         <h1 className="text-3xl font-bold text-[#1A1A1A] mb-4">
           Brams Fruit Collectie
         </h1>
-        <p className="text-[#8A8A8A] mb-4">
+        <p className="text-[#6E6E6E] mb-4">
           Test pagina - als je dit ziet werkt de route!
         </p>
         <p className="text-[#1A1A1A] text-xl">

@@ -152,7 +152,7 @@ export default function AdminMoodPhotosPage() {
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="md" className="mx-auto mb-4" />
-          <p className="text-[#8A8A8A]">Admin verificatie...</p>
+          <p className="text-[#6E6E6E]">Admin verificatie...</p>
         </div>
       </div>
     );
@@ -164,7 +164,7 @@ export default function AdminMoodPhotosPage() {
         <div className="text-center max-w-md">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Geen Toegang</h1>
-          <p className="text-[#8A8A8A]">
+          <p className="text-[#6E6E6E]">
             Je hebt admin rechten nodig. Ingelogd als: {user.email}
           </p>
         </div>
@@ -185,13 +185,13 @@ export default function AdminMoodPhotosPage() {
             <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
               Mood Photos Beheer
             </h1>
-            <p className="text-[#8A8A8A]">
+            <p className="text-[#6E6E6E]">
               Upload en beheer foto's voor het swipe-systeem met AI-gestuurde metadata
             </p>
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-6 py-3 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors flex items-center gap-2 font-medium"
+            className="px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-5 h-5" />
             Nieuwe Foto
@@ -201,14 +201,14 @@ export default function AdminMoodPhotosPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <StatCard label="Totaal" value={photos.length} />
           <StatCard label="Actief" value={activeCount} color="text-green-600" />
-          <StatCard label="Verrijkt" value={enrichedCount} color="text-[#A8513A]" />
+          <StatCard label="Verrijkt" value={enrichedCount} color="text-[#9A503B]" />
           <StatCard label="Male" value={maleCount} color="text-blue-600" />
           <StatCard label="Female" value={femaleCount} color="text-pink-600" />
         </div>
 
         <div className="bg-[#FFFFFF] rounded-lg p-4 border border-[#E5E5E5] mb-6">
           <div className="flex flex-wrap gap-4 items-center">
-            <Filter className="w-5 h-5 text-[#8A8A8A]" />
+            <Filter className="w-5 h-5 text-[#6E6E6E]" />
             <select
               value={filterGender}
               onChange={(e) => setFilterGender(e.target.value as typeof filterGender)}
@@ -230,7 +230,7 @@ export default function AdminMoodPhotosPage() {
             <button
               onClick={loadPhotos}
               disabled={loading}
-              className="px-4 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Ververs
@@ -241,11 +241,11 @@ export default function AdminMoodPhotosPage() {
         {loading ? (
           <div className="text-center py-12">
             <Spinner size="md" className="mx-auto mb-4" />
-            <p className="text-[#8A8A8A]">Laden...</p>
+            <p className="text-[#6E6E6E]">Laden...</p>
           </div>
         ) : photos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[#8A8A8A]">Geen foto's gevonden</p>
+            <p className="text-[#6E6E6E]">Geen foto's gevonden</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -274,7 +274,7 @@ export default function AdminMoodPhotosPage() {
 function StatCard({ label, value, color = 'text-[#1A1A1A]' }: { label: string; value: number; color?: string }) {
   return (
     <div className="bg-[#FFFFFF] rounded-lg p-4 border border-[#E5E5E5]">
-      <div className="text-sm text-[#8A8A8A] mb-1">{label}</div>
+      <div className="text-sm text-[#6E6E6E] mb-1">{label}</div>
       <div className={`text-2xl font-bold ${color}`}>{value}</div>
     </div>
   );
@@ -310,7 +310,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <AlertTriangle className="w-8 h-8 text-[#8A8A8A]" />
+            <AlertTriangle className="w-8 h-8 text-[#6E6E6E]" />
           </div>
         )}
         {!photo.active && (
@@ -332,7 +332,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
           }`}>
             {photo.gender}
           </span>
-          <span className="text-xs text-[#8A8A8A]">#{photo.id}</span>
+          <span className="text-xs text-[#6E6E6E]">#{photo.id}</span>
         </div>
 
         {topArchetype && (
@@ -340,7 +340,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
             <span className={`text-xs px-2 py-1 rounded border font-medium ${ARCHETYPE_COLORS[topArchetype[0]] || 'bg-gray-100 text-gray-700'}`}>
               {ARCHETYPE_LABELS[topArchetype[0]] || topArchetype[0]}
             </span>
-            <span className="text-xs text-[#8A8A8A]">
+            <span className="text-xs text-[#6E6E6E]">
               {Math.round(topArchetype[1] * 100)}%
             </span>
           </div>
@@ -354,7 +354,7 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
                   className="w-3 h-3 rounded-full border border-[#E5E5E5]"
                   style={{ backgroundColor: COLOR_SWATCHES[color] || '#ccc' }}
                 />
-                <span className="text-xs text-[#8A8A8A]">{color}</span>
+                <span className="text-xs text-[#6E6E6E]">{color}</span>
               </div>
             ))}
           </div>
@@ -362,12 +362,12 @@ function PhotoCard({ photo, onToggleActive, onDelete }: {
 
         <div className="flex flex-wrap gap-1">
           {photo.mood_tags?.slice(0, 4).map((tag, i) => (
-            <span key={i} className="text-xs px-2 py-0.5 bg-[#FAFAF8] text-[#8A8A8A] rounded">
+            <span key={i} className="text-xs px-2 py-0.5 bg-[#FAFAF8] text-[#6E6E6E] rounded">
               {tag}
             </span>
           ))}
           {photo.mood_tags?.length > 4 && (
-            <span className="text-xs text-[#8A8A8A]">+{photo.mood_tags.length - 4}</span>
+            <span className="text-xs text-[#6E6E6E]">+{photo.mood_tags.length - 4}</span>
           )}
         </div>
 
@@ -608,7 +608,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
         <div className="p-6 border-b border-[#E5E5E5] flex justify-between items-center sticky top-0 bg-[#FFFFFF] z-10">
           <div>
             <h2 className="text-xl font-bold text-[#1A1A1A]">Nieuwe Mood Photo</h2>
-            <p className="text-sm text-[#8A8A8A]">Upload een foto en laat AI alle metadata genereren</p>
+            <p className="text-sm text-[#6E6E6E]">Upload een foto en laat AI alle metadata genereren</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-[#FAFAF8] rounded-lg transition-colors">
             <X className="w-5 h-5" />
@@ -620,21 +620,21 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
           <div className="grid md:grid-cols-[300px_1fr] gap-6 mb-8">
             <div>
               <label className="block w-full cursor-pointer">
-                <div className="border-2 border-dashed border-[#E5E5E5] rounded-xl overflow-hidden hover:border-[#A8513A] transition-colors aspect-[3/4]">
+                <div className="border-2 border-dashed border-[#E5E5E5] rounded-xl overflow-hidden hover:border-[#9A503B] transition-colors aspect-[3/4]">
                   {previewUrl ? (
                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                      <Upload className="w-10 h-10 mb-3 text-[#8A8A8A]" />
+                      <Upload className="w-10 h-10 mb-3 text-[#6E6E6E]" />
                       <p className="text-sm font-medium text-[#1A1A1A] mb-1">Klik om te uploaden</p>
-                      <p className="text-xs text-[#8A8A8A]">JPEG, PNG of WebP (max 5MB)</p>
+                      <p className="text-xs text-[#6E6E6E]">JPEG, PNG of WebP (max 5MB)</p>
                     </div>
                   )}
                 </div>
                 <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" onChange={handleFileSelect} className="hidden" />
               </label>
               {selectedFile && (
-                <p className="text-xs text-[#8A8A8A] mt-2 text-center">
+                <p className="text-xs text-[#6E6E6E] mt-2 text-center">
                   {selectedFile.name} ({(selectedFile.size / 1024).toFixed(0)} KB)
                 </p>
               )}
@@ -669,7 +669,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                 onClick={analyzeWithAI}
                 disabled={analyzing || !selectedFile}
                 className="w-full py-3.5 rounded-xl font-semibold text-white transition-all disabled:opacity-40 flex items-center justify-center gap-2.5"
-                style={{ background: '#A8513A' }}
+                style={{ background: '#9A503B' }}
               >
                 {analyzing ? (
                   <>
@@ -692,8 +692,8 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               {analyzed && aiReasoning && (
                 <div className="p-3 bg-[#FAF5F2] rounded-lg border border-[#F4E8E3]">
                   <div className="flex items-center gap-2 mb-1">
-                    <Zap className="w-4 h-4 text-[#A8513A]" />
-                    <span className="text-xs font-medium text-[#A8513A]">
+                    <Zap className="w-4 h-4 text-[#9A503B]" />
+                    <span className="text-xs font-medium text-[#9A503B]">
                       AI Analyse (confidence: {Math.round(aiConfidence * 100)}%)
                     </span>
                   </div>
@@ -702,7 +702,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               )}
 
               {!analyzed && !analyzing && selectedFile && (
-                <p className="text-sm text-[#8A8A8A] text-center">
+                <p className="text-sm text-[#6E6E6E] text-center">
                   Klik op "Analyseer met AI" om automatisch alle metadata in te vullen
                 </p>
               )}
@@ -715,7 +715,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-[#8A8A8A]" />
+                  <Sliders className="w-4 h-4 text-[#6E6E6E]" />
                   <h3 className="font-semibold text-[#1A1A1A]">Archetype Gewichten</h3>
                 </div>
                 <div className="flex items-center gap-3">
@@ -725,7 +725,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                     Som: {weightSum.toFixed(2)}
                   </span>
                   {!isWeightValid && Object.keys(archetypeWeights).length > 0 && (
-                    <button onClick={normalizeWeights} className="text-xs text-[#A8513A] hover:underline font-medium">
+                    <button onClick={normalizeWeights} className="text-xs text-[#9A503B] hover:underline font-medium">
                       Normaliseer
                     </button>
                   )}
@@ -745,9 +745,9 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                         max="100"
                         value={Math.round(value * 100)}
                         onChange={(e) => updateWeight(arch, parseInt(e.target.value) / 100)}
-                        className="flex-1 h-1.5 accent-[#A8513A]"
+                        className="flex-1 h-1.5 accent-[#9A503B]"
                       />
-                      <span className="text-xs font-mono text-[#8A8A8A] w-8 text-right">
+                      <span className="text-xs font-mono text-[#6E6E6E] w-8 text-right">
                         {Math.round(value * 100)}
                       </span>
                     </div>
@@ -759,9 +759,9 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             {/* Dominant Colors */}
             <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
               <div className="flex items-center gap-2 mb-4">
-                <Palette className="w-4 h-4 text-[#8A8A8A]" />
+                <Palette className="w-4 h-4 text-[#6E6E6E]" />
                 <h3 className="font-semibold text-[#1A1A1A]">Dominante Kleuren</h3>
-                <span className="text-xs text-[#8A8A8A]">(selecteer 1-3)</span>
+                <span className="text-xs text-[#6E6E6E]">(selecteer 1-3)</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(COLOR_SWATCHES).map(([name, hex]) => {
@@ -772,7 +772,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                       onClick={() => toggleColor(name)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
                         selected
-                          ? 'border-[#A8513A] bg-[#FAF5F2] text-[#A8513A] ring-1 ring-[#A8513A]'
+                          ? 'border-[#9A503B] bg-[#FAF5F2] text-[#9A503B] ring-1 ring-[#9A503B]'
                           : 'border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] hover:border-[#D4856E]'
                       }`}
                     >
@@ -789,7 +789,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             <div className="p-5 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]">
               <div className="flex items-center gap-2 mb-4">
                 <h3 className="font-semibold text-[#1A1A1A]">Mood Tags</h3>
-                <span className="text-xs text-[#8A8A8A]">(min 3, max 8)</span>
+                <span className="text-xs text-[#6E6E6E]">(min 3, max 8)</span>
               </div>
               <div className="flex gap-2 mb-3">
                 <input
@@ -800,13 +800,13 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   placeholder="Type en druk Enter"
                   className="flex-1 px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FFFFFF] text-[#1A1A1A] text-sm"
                 />
-                <button onClick={addTag} className="px-3 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A]">
+                <button onClick={addTag} className="px-3 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45]">
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {moodTags.map(tag => (
-                  <span key={tag} className="px-3 py-1 bg-[#A8513A] text-white rounded-full text-xs font-medium flex items-center gap-1.5">
+                  <span key={tag} className="px-3 py-1 bg-[#9A503B] text-white rounded-full text-xs font-medium flex items-center gap-1.5">
                     {tag}
                     <button onClick={() => setMoodTags(moodTags.filter(t => t !== tag))} className="hover:text-red-200">
                       <X className="w-3 h-3" />
@@ -814,7 +814,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                   </span>
                 ))}
                 {moodTags.length === 0 && (
-                  <span className="text-xs text-[#8A8A8A]">Nog geen tags - analyseer met AI of voeg handmatig toe</span>
+                  <span className="text-xs text-[#6E6E6E]">Nog geen tags - analyseer met AI of voeg handmatig toe</span>
                 )}
               </div>
             </div>
@@ -826,16 +826,16 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-medium text-[#1A1A1A]">Formaliteit</label>
-                    <span className="text-xs font-mono text-[#8A8A8A]">{formality.toFixed(2)}</span>
+                    <span className="text-xs font-mono text-[#6E6E6E]">{formality.toFixed(2)}</span>
                   </div>
                   <input
                     type="range"
                     min="0" max="100"
                     value={Math.round(formality * 100)}
                     onChange={(e) => setFormality(parseInt(e.target.value) / 100)}
-                    className="w-full h-2 accent-[#A8513A]"
+                    className="w-full h-2 accent-[#9A503B]"
                   />
-                  <div className="flex justify-between text-xs text-[#8A8A8A] mt-1">
+                  <div className="flex justify-between text-xs text-[#6E6E6E] mt-1">
                     <span>Sportief</span>
                     <span>Black tie</span>
                   </div>
@@ -843,16 +843,16 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-medium text-[#1A1A1A]">Gedurfdheid</label>
-                    <span className="text-xs font-mono text-[#8A8A8A]">{boldness.toFixed(2)}</span>
+                    <span className="text-xs font-mono text-[#6E6E6E]">{boldness.toFixed(2)}</span>
                   </div>
                   <input
                     type="range"
                     min="0" max="100"
                     value={Math.round(boldness * 100)}
                     onChange={(e) => setBoldness(parseInt(e.target.value) / 100)}
-                    className="w-full h-2 accent-[#A8513A]"
+                    className="w-full h-2 accent-[#9A503B]"
                   />
-                  <div className="flex justify-between text-xs text-[#8A8A8A] mt-1">
+                  <div className="flex justify-between text-xs text-[#6E6E6E] mt-1">
                     <span>Subtiel</span>
                     <span>Statement</span>
                   </div>
@@ -864,7 +864,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
 
         {/* Footer */}
         <div className="p-6 border-t border-[#E5E5E5] flex items-center justify-between sticky bottom-0 bg-[#FFFFFF]">
-          <div className="text-xs text-[#8A8A8A] space-y-0.5">
+          <div className="text-xs text-[#6E6E6E] space-y-0.5">
             {!canUpload && (
               <div className="space-y-0.5">
                 {moodTags.length < 3 && <p>- Minimaal 3 mood tags nodig</p>}
@@ -886,7 +886,7 @@ function UploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               onClick={handleUpload}
               disabled={uploading || !canUpload}
               className="px-6 py-2.5 text-white rounded-xl transition-all disabled:opacity-40 flex items-center gap-2 font-medium"
-              style={{ background: '#A8513A' }}
+              style={{ background: '#9A503B' }}
             >
               {uploading ? (
                 <>

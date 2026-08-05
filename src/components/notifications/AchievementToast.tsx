@@ -126,7 +126,7 @@ export function AchievementToast({ achievement, onClose }: AchievementToastProps
                   {achievement.icon}
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-[#8A8A8A] uppercase tracking-wider mb-1">
+                  <div className="text-xs font-bold text-[#6E6E6E] uppercase tracking-wider mb-1">
                     {config.label} Achievement
                   </div>
                   <h3 className="text-xl font-bold text-[#1A1A1A]">
@@ -136,7 +136,7 @@ export function AchievementToast({ achievement, onClose }: AchievementToastProps
               </div>
 
               {/* Description */}
-              <p className="text-sm text-[#8A8A8A] mb-4 leading-relaxed">
+              <p className="text-sm text-[#6E6E6E] mb-4 leading-relaxed">
                 {achievement.description}
               </p>
 
@@ -241,7 +241,7 @@ export function LevelUpToast({ level, levelName, levelIcon, onClose }: LevelUpTo
             <h3 className="text-3xl font-bold text-[#1A1A1A] mb-2">
               Level Up!
             </h3>
-            <p className="text-xl text-[#8A8A8A] mb-4">
+            <p className="text-xl text-[#6E6E6E] mb-4">
               Je bent nu level <span className="font-bold text-[#1A1A1A]">{level}</span>
             </p>
             <div className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl font-bold shadow-lg inline-block">
@@ -275,7 +275,7 @@ export function XPToast({ amount, reason, onClose }: XPToastProps) {
       exit={{ opacity: 0, x: 50, scale: 0.9 }}
       className="fixed bottom-24 right-6 z-[75]"
     >
-      <div className="bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20">
+      <div className="bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20">
         <Zap className="w-5 h-5 flex-shrink-0 animate-pulse" />
         <div>
           <div className="text-sm font-bold">+{amount} XP</div>

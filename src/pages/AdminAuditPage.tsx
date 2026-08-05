@@ -98,15 +98,15 @@ export default function AdminAuditPage() {
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#FAF5F2] flex items-center justify-center">
-            <XCircle className="w-10 h-10 text-[#C2654A]" />
+            <XCircle className="w-10 h-10 text-[#B55E45]" />
           </div>
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">
             Geen toegang
           </h1>
-          <p className="text-[#8A8A8A] mb-6">
+          <p className="text-[#6E6E6E] mb-6">
             Je hebt geen admin rechten om deze pagina te bekijken.
           </p>
-          <a href="/" className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2">
+          <a href="/" className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2">
             Terug naar home
           </a>
         </div>
@@ -120,12 +120,12 @@ export default function AdminAuditPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-8 h-8 text-[#C2654A]" />
+            <FileText className="w-8 h-8 text-[#B55E45]" />
             <h1 className="text-3xl font-bold text-[#1A1A1A]">
               Audit Log
             </h1>
           </div>
-          <p className="text-[#8A8A8A]">
+          <p className="text-[#6E6E6E]">
             Bekijk alle gebruikersactiviteit en systeemgebeurtenissen
           </p>
         </div>
@@ -134,20 +134,20 @@ export default function AdminAuditPage() {
         <div className="bg-white border border-[#E5E5E5] rounded-lg p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6E6E6E]" />
               <input
                 type="text"
                 placeholder="Zoek op email, actie of resource..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#C2654A] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent"
               />
             </div>
 
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="px-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#C2654A] focus:border-transparent"
+              className="px-4 py-2 border border-[#E5E5E5] rounded-lg focus:ring-2 focus:ring-[#B55E45] focus:border-transparent"
             >
               <option value="all">Alle acties</option>
               {uniqueActions.map(action => (
@@ -161,15 +161,15 @@ export default function AdminAuditPage() {
         {loading ? (
           <div className="text-center py-12">
             <Spinner size="lg" className="mx-auto mb-4" />
-            <p className="text-[#8A8A8A]">Audit logs laden...</p>
+            <p className="text-[#6E6E6E]">Audit logs laden...</p>
           </div>
         ) : logs.length === 0 ? (
           <div className="bg-white border border-[#E5E5E5] rounded-lg p-12 text-center">
-            <AlertCircle className="w-12 h-12 text-[#8A8A8A] mx-auto mb-4" />
+            <AlertCircle className="w-12 h-12 text-[#6E6E6E] mx-auto mb-4" />
             <h3 className="text-lg font-medium text-[#1A1A1A] mb-2">
               Nog geen audit logs
             </h3>
-            <p className="text-[#8A8A8A]">
+            <p className="text-[#6E6E6E]">
               De user_activity_log tabel is nog leeg of bestaat niet.
             </p>
           </div>
@@ -186,18 +186,18 @@ export default function AdminAuditPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <Activity className="w-5 h-5 text-[#C2654A]" />
+                      <Activity className="w-5 h-5 text-[#B55E45]" />
                       <span className="font-medium text-[#1A1A1A]">
                         {log.action}
                       </span>
                       {log.resource_type && (
-                        <span className="px-2 py-0.5 bg-[#FAF5F2] text-[#A8513A] text-xs rounded-full">
+                        <span className="px-2 py-0.5 bg-[#FAF5F2] text-[#9A503B] text-xs rounded-full">
                           {log.resource_type}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-[#8A8A8A]">
+                    <div className="flex items-center gap-4 text-sm text-[#6E6E6E]">
                       <div className="flex items-center gap-1">
                         <User className="w-4 h-4" />
                         <span>{log.user_email || log.user_id.substring(0, 8) + '...'}</span>
@@ -210,7 +210,7 @@ export default function AdminAuditPage() {
 
                     {log.details && Object.keys(log.details).length > 0 && (
                       <details className="mt-3">
-                        <summary className="cursor-pointer text-sm text-[#C2654A] hover:text-[#A8513A]">
+                        <summary className="cursor-pointer text-sm text-[#B55E45] hover:text-[#9A503B]">
                           Details tonen
                         </summary>
                         <pre className="mt-2 p-3 bg-gray-50 rounded text-xs overflow-x-auto">
@@ -225,8 +225,8 @@ export default function AdminAuditPage() {
 
             {filteredLogs.length === 0 && (
               <div className="text-center py-12">
-                <FileText className="w-12 h-12 text-[#8A8A8A] mx-auto mb-4" />
-                <p className="text-[#8A8A8A]">Geen logs gevonden voor deze filters</p>
+                <FileText className="w-12 h-12 text-[#6E6E6E] mx-auto mb-4" />
+                <p className="text-[#6E6E6E]">Geen logs gevonden voor deze filters</p>
               </div>
             )}
           </div>

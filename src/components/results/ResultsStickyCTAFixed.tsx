@@ -59,7 +59,7 @@ export function ResultsStickyCTAFixed({
                 {/* ✅ PRIMARY CTA - The main goal (shop) */}
                 <button
                   onClick={onShopClick}
-                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl flex-1 sm:flex-initial sm:min-w-[280px]"
+                  className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl flex-1 sm:flex-initial sm:min-w-[280px]"
                   aria-label={`Shop je favoriete items uit ${savedCount} opgeslagen outfits`}
                 >
                   <ShoppingBag className="w-5 h-5" aria-hidden="true" />
@@ -91,7 +91,7 @@ export function ResultsStickyCTAFixed({
           {/* Helper Text (desktop only) */}
           <div className="hidden sm:block bg-[#FAF5F2] border-t border-[#FAF5F2]">
             <div className="max-w-7xl mx-auto px-4 py-2">
-              <p className="text-xs text-[#8A8A8A] text-center">
+              <p className="text-xs text-[#6E6E6E] text-center">
                 Tip: Bewaar je favoriete outfits met het hart-icoon op elke outfit card
               </p>
             </div>

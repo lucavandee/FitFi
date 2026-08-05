@@ -113,14 +113,14 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-[#E5E5E5]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
                 <Camera className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h2 className="text-lg font-bold text-[#1A1A1A]">
                   Outfit Analyse
                 </h2>
-                <p className="text-sm text-[#8A8A8A]">
+                <p className="text-sm text-[#6E6E6E]">
                   Nova analyseert je outfit
                 </p>
               </div>
@@ -142,16 +142,16 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
                 onClick={() => fileInputRef.current?.click()}
                 className="border-2 border-dashed border-[#E5E5E5] rounded-xl p-8 text-center cursor-pointer hover:border-[#D4856E] hover:bg-[#FAF5F2] dark:hover:bg-[#5A2010]/10 transition-all"
               >
-                <div className="w-16 h-16 mx-auto mb-4 bg-[#FAF5F2] text-[#A8513A] rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#FAF5F2] text-[#9A503B] rounded-full flex items-center justify-center">
                   <Upload className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                   Upload Outfit Foto
                 </h3>
-                <p className="text-sm text-[#8A8A8A] mb-4">
+                <p className="text-sm text-[#6E6E6E] mb-4">
                   Sleep een foto of klik om te selecteren
                 </p>
-                <p className="text-xs text-[#8A8A8A]">
+                <p className="text-xs text-[#6E6E6E]">
                   PNG, JPG tot 10MB
                 </p>
                 <input
@@ -188,7 +188,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
                 {/* Info Box */}
                 <div className="bg-[#FAF5F2] dark:bg-[#5A2010]/20 border border-[#F4E8E3] dark:border-[#8A3D28] rounded-xl p-4">
                   <div className="flex items-start gap-3">
-                    <Sparkles className="w-5 h-5 text-[#A8513A] flex-shrink-0 mt-0.5" />
+                    <Sparkles className="w-5 h-5 text-[#9A503B] flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-sm text-[#1A1A1A] leading-relaxed">
                         {context ? (
@@ -211,7 +211,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
                   whileTap={{ scale: isAnalyzing ? 1 : 0.98 }}
                   onClick={handleAnalyze}
                   disabled={isAnalyzing}
-                  className="w-full py-3 bg-gradient-to-r from-[#A8513A] to-[#A8513A] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-gradient-to-r from-[#9A503B] to-[#9A503B] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isAnalyzing ? (
                     <>
@@ -230,7 +230,7 @@ export function PhotoUploadModal({ isOpen, onClose, onAnalysisComplete }: PhotoU
           </div>
 
           {/* Bottom Accent */}
-          <div className="h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A]" />
+          <div className="h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45]" />
         </motion.div>
       </div>
     </AnimatePresence>

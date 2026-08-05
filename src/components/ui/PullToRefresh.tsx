@@ -122,7 +122,7 @@ export function PullToRefresh({
           >
             <RefreshCw
               className={[
-                'w-5 h-5 text-[#A8513A]',
+                'w-5 h-5 text-[#9A503B]',
                 isRefreshing && 'animate-spin'
               ].filter(Boolean).join(' ')}
             />
@@ -130,7 +130,7 @@ export function PullToRefresh({
 
           {!isRefreshing && (
             <motion.p
-              className="text-xs text-[#8A8A8A] font-medium"
+              className="text-xs text-[#6E6E6E] font-medium"
               style={{ opacity }}
             >
               {currentY.current - startY.current >= threshold ? 'Laat los om te vernieuwen' : 'Trek om te vernieuwen'}
@@ -138,7 +138,7 @@ export function PullToRefresh({
           )}
 
           {isRefreshing && (
-            <p className="text-xs text-[#8A8A8A] font-medium">
+            <p className="text-xs text-[#6E6E6E] font-medium">
               Vernieuwen...
             </p>
           )}
@@ -230,7 +230,7 @@ export function SimplePullToRefresh({
           <div className="py-4">
             <RefreshCw
               className={[
-                'w-6 h-6 text-[#A8513A]',
+                'w-6 h-6 text-[#9A503B]',
                 isRefreshing && 'animate-spin'
               ].filter(Boolean).join(' ')}
             />

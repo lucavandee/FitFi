@@ -103,7 +103,7 @@ export function NovaFloatingHelper() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsMinimized(false)}
-            className="relative w-16 h-16 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full shadow-2xl flex items-center justify-center"
+            className="relative w-16 h-16 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full shadow-2xl flex items-center justify-center"
           >
             <Sparkles className="w-8 h-8 text-white" />
             <motion.div
@@ -130,12 +130,12 @@ export function NovaFloatingHelper() {
                 className="flex items-center gap-3 cursor-grab active:cursor-grabbing flex-1"
                 style={{ touchAction: "none" }}
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <div className="font-bold text-sm text-[#1A1A1A]">Nova</div>
-                  <div className="text-xs text-[#8A8A8A]">Je style assistent</div>
+                  <div className="text-xs text-[#6E6E6E]">Je style assistent</div>
                 </div>
               </motion.div>
 
@@ -151,7 +151,7 @@ export function NovaFloatingHelper() {
                   title="Minimaliseren"
                 >
                   <svg
-                    className="w-4 h-4 text-[#8A8A8A]"
+                    className="w-4 h-4 text-[#6E6E6E]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -168,7 +168,7 @@ export function NovaFloatingHelper() {
                   className="w-8 h-8 rounded-lg hover:bg-[#FAFAF8] flex items-center justify-center transition-colors cursor-pointer"
                   title="Sluiten"
                 >
-                  <X className="w-4 h-4 text-[#8A8A8A]" />
+                  <X className="w-4 h-4 text-[#6E6E6E]" />
                 </button>
               </div>
             </div>
@@ -176,7 +176,7 @@ export function NovaFloatingHelper() {
             {/* Content */}
             <div className="p-4">
               <div className="flex items-start gap-3 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] text-[#A8513A] flex items-center justify-center">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] text-[#9A503B] flex items-center justify-center">
                   <Lightbulb className="w-4 h-4" />
                 </div>
                 <p className="text-sm text-[#1A1A1A] leading-relaxed">{currentTip.tip}</p>
@@ -185,7 +185,7 @@ export function NovaFloatingHelper() {
               {currentTip.action && (
                 <button
                   onClick={currentTip.action.onClick}
-                  className="w-full px-4 py-2 bg-[#A8513A] text-white rounded-xl font-semibold hover:bg-[#C2654A] transition-colors shadow-sm"
+                  className="w-full px-4 py-2 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#B55E45] transition-colors shadow-sm"
                 >
                   {currentTip.action.label}
                 </button>
@@ -225,7 +225,7 @@ export function NovaFloatingHelper() {
             </div>
 
             {/* Bottom Accent */}
-            <div className="h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-b-2xl" />
+            <div className="h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-b-2xl" />
           </motion.div>
         )}
       </motion.div>

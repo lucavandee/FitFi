@@ -150,7 +150,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             className="w-11 h-11 rounded-full bg-white border-2 border-[#E5E5E5] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0 shadow-sm"
             title="Bewaar outfit"
           >
-            <Heart className="w-5 h-5 text-[#8A8A8A] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
+            <Heart className="w-5 h-5 text-[#6E6E6E] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
           </motion.button>
         </div>
       </div>
@@ -222,7 +222,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         <div className="space-y-4 p-4 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
-              <div className="text-sm font-medium text-[#8A8A8A] mb-1">Totaalprijs</div>
+              <div className="text-sm font-medium text-[#6E6E6E] mb-1">Totaalprijs</div>
               <div className="text-2xl font-bold text-[#1A1A1A]">
                 €{formattedTotal}
               </div>
@@ -267,7 +267,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
 
           <div className="pt-4 border-t border-[#E5E5E5] space-y-3">
             <div>
-              <p className="text-sm font-medium text-[#A8513A] mb-2">
+              <p className="text-sm font-medium text-[#9A503B] mb-2">
                 Waarom dit bij je past:
               </p>
               <p className="text-sm text-[#1A1A1A] leading-relaxed">
@@ -278,7 +278,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             {outfit.colorHarmony && outfit.colorHarmony.harmony !== 'acceptable' && (
               <div className="p-3 rounded-xl bg-[#FAF5F2] border border-[#FAF5F2]">
                 <div className="flex items-start gap-2">
-                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#FAF5F2] text-[#A8513A]">
+                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#FAF5F2] text-[#9A503B]">
                     {outfit.colorHarmony.score}/100
                   </div>
                   <div className="flex-1">
@@ -288,8 +288,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                     {outfit.colorHarmony.tips && outfit.colorHarmony.tips.length > 0 && (
                       <ul className="mt-2 space-y-1">
                         {outfit.colorHarmony.tips.map((tip, idx) => (
-                          <li key={idx} className="text-xs text-[#8A8A8A] flex items-start gap-1">
-                            <span className="text-[#A8513A]">•</span>
+                          <li key={idx} className="text-xs text-[#6E6E6E] flex items-start gap-1">
+                            <span className="text-[#9A503B]">•</span>
                             {tip}
                           </li>
                         ))}
@@ -314,8 +314,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden ${
                 selectedFeedback === 'spot_on'
-                  ? 'bg-[#A8513A] text-white'
-                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#C2654A] hover:text-[#A8513A]'
+                  ? 'bg-[#9A503B] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#B55E45] hover:text-[#9A503B]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               style={selectedFeedback === 'spot_on' ? { boxShadow: '0 4px 14px rgba(74,56,40,0.25)' } : {}}
             >
@@ -343,8 +343,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
-                  ? 'bg-[#FAF5F2] text-[#A8513A] border border-[#F4E8E3]'
-                  : 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5] hover:border-[#D4856E] hover:text-[#C2654A]'
+                  ? 'bg-[#FAF5F2] text-[#9A503B] border border-[#F4E8E3]'
+                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#D4856E] hover:text-[#B55E45]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" strokeWidth={2.5} />
@@ -363,8 +363,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'not_for_me'
-                  ? 'bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5]'
-                  : 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5] hover:border-[#E5E5E5]'
+                  ? 'bg-[#FAFAF8] text-[#6E6E6E] border border-[#E5E5E5]'
+                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#E5E5E5]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <X className="w-4 h-4" strokeWidth={2.5} />
@@ -377,7 +377,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               disabled={disabled}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#A8513A] border border-[#F4E8E3] hover:from-[#FAF5F2] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#9A503B] border border-[#F4E8E3] hover:from-[#FAF5F2] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <Sparkles className="w-4 h-4" />
               Smart Remix
@@ -421,7 +421,7 @@ function OutfitItem({ name, brand, price, category, onSwap, isSwapping, disabled
     >
       <div className="flex-1 min-w-0">
         <div className="font-medium text-[#1A1A1A] truncate">{name}</div>
-        <div className="text-[#8A8A8A] text-xs mt-0.5">{brand}</div>
+        <div className="text-[#6E6E6E] text-xs mt-0.5">{brand}</div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <div className="text-[#1A1A1A] font-medium">€{formattedPrice.toFixed(2)}</div>
@@ -431,7 +431,7 @@ function OutfitItem({ name, brand, price, category, onSwap, isSwapping, disabled
             disabled={disabled || isSwapping}
             whileHover={!disabled && !isSwapping ? { scale: 1.1 } : {}}
             whileTap={!disabled && !isSwapping ? { scale: 0.9 } : {}}
-            className="w-7 h-7 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center hover:border-[#A8513A] hover:text-[#A8513A] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
+            className="w-7 h-7 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center hover:border-[#9A503B] hover:text-[#9A503B] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
             title="Vervang dit item"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSwapping ? 'animate-spin' : ''}`} />

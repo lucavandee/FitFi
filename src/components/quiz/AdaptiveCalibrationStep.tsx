@@ -209,7 +209,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-[#1A1A1A] font-medium">Genereer je perfecte outfits...</p>
-          <p className="text-sm text-[#8A8A8A] mt-2">
+          <p className="text-sm text-[#6E6E6E] mt-2">
             Onze AI leert jouw stijl kennen
           </p>
         </div>
@@ -228,20 +228,20 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
               <h2 className="text-2xl font-bold text-[#1A1A1A]">
                 Stijl Calibratie
               </h2>
-              <p className="text-[#8A8A8A] mt-1">
+              <p className="text-[#6E6E6E] mt-1">
                 Swipe om je voorkeuren te verfijnen
               </p>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5]">
-              <Sparkles size={18} className="text-[#A8513A]" />
+              <Sparkles size={18} className="text-[#9A503B]" />
               <span className="font-bold text-[#1A1A1A]">{swipeCount}</span>
-              <span className="text-sm text-[#8A8A8A]">/ 9 swipes</span>
+              <span className="text-sm text-[#6E6E6E]">/ 9 swipes</span>
             </div>
           </div>
 
           <div className="w-full bg-[#F5F0EB] rounded-full h-2 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-[#A8513A] to-[#C2654A]"
+              className="h-full bg-gradient-to-r from-[#9A503B] to-[#B55E45]"
               initial={{ width: 0 }}
               animate={{ width: `${(swipeCount / 9) * 100}%` }}
               transition={{ duration: 0.3 }}
@@ -255,10 +255,10 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
               className="mt-4 px-4 py-3 bg-[#FAF5F2] border border-[#F4E8E3] rounded-2xl"
             >
               <div className="flex items-start gap-3">
-                <TrendingUp size={20} className="text-[#A8513A] mt-0.5" />
+                <TrendingUp size={20} className="text-[#9A503B] mt-0.5" />
                 <div>
                   <p className="font-semibold text-[#1A1A1A]">Leerproces actief</p>
-                  <p className="text-sm text-[#8A8A8A] mt-1">
+                  <p className="text-sm text-[#6E6E6E] mt-1">
                     We verfijnen outfits op basis van je swipes. Outfits worden persoonlijker!
                   </p>
                 </div>
@@ -283,7 +283,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                     {currentOutfit.badges?.map((badge) => (
                       <span
                         key={badge}
-                        className="px-3 py-1 text-xs font-semibold bg-[#FAF5F2] text-[#A8513A] rounded-full"
+                        className="px-3 py-1 text-xs font-semibold bg-[#FAF5F2] text-[#9A503B] rounded-full"
                       >
                         {badge}
                       </span>
@@ -293,7 +293,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                     <p className="text-2xl font-bold text-[#1A1A1A]">
                       €{currentOutfit.price_breakdown.total}
                     </p>
-                    <p className="text-xs text-[#8A8A8A]">
+                    <p className="text-xs text-[#6E6E6E]">
                       {currentOutfit.price_breakdown.tier}
                     </p>
                   </div>
@@ -321,7 +321,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
 
                   {currentOutfit.nova_insight && (
                     <div className="flex items-start gap-3 p-4 bg-[#FAF5F2] rounded-2xl">
-                      <Sparkles size={18} className="text-[#A8513A] mt-0.5" />
+                      <Sparkles size={18} className="text-[#9A503B] mt-0.5" />
                       <p className="text-sm text-[#1A1A1A]">
                         {currentOutfit.nova_insight}
                       </p>
@@ -334,31 +334,31 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                     <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.style_match * 100)}
                     </div>
-                    <div className="text-xs text-[#8A8A8A]">Stijl</div>
+                    <div className="text-xs text-[#6E6E6E]">Stijl</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.color_harmony * 100)}
                     </div>
-                    <div className="text-xs text-[#8A8A8A]">Kleur</div>
+                    <div className="text-xs text-[#6E6E6E]">Kleur</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.price_optimization * 100)}
                     </div>
-                    <div className="text-xs text-[#8A8A8A]">Prijs</div>
+                    <div className="text-xs text-[#6E6E6E]">Prijs</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#1A1A1A]">
                       {Math.round(currentOutfit.score.occasion_fit * 100)}
                     </div>
-                    <div className="text-xs text-[#8A8A8A]">Occasion</div>
+                    <div className="text-xs text-[#6E6E6E]">Occasion</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[#A8513A]">
+                    <div className="text-2xl font-bold text-[#9A503B]">
                       {Math.round(currentOutfit.score.overall * 100)}
                     </div>
-                    <div className="text-xs text-[#8A8A8A]">Overall</div>
+                    <div className="text-xs text-[#6E6E6E]">Overall</div>
                   </div>
                 </div>
 
@@ -372,7 +372,7 @@ export default function AdaptiveCalibrationStep({ onComplete, quizAnswers }: Ada
                   </button>
                   <button
                     onClick={() => handleSwipe('right')}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#A8513A] to-[#C2654A] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#9A503B] to-[#B55E45] rounded-xl transition-colors duration-200 text-white font-semibold text-base"
                   >
                     <Heart size={24} />
                     <span className="font-semibold">Love it!</span>

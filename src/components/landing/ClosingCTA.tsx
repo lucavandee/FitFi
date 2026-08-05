@@ -34,7 +34,7 @@ export function ClosingCTA() {
             <Link
               to={href}
               data-event="cta_start_free_closing"
-              className="group inline-flex items-center justify-center gap-2.5 px-7 min-h-[52px] rounded-xl text-base font-bold transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A] active:scale-[0.98] bg-[#C2654A] hover:bg-[#A8513A] text-white"
+              className="group inline-flex items-center justify-center gap-2.5 px-7 min-h-[52px] rounded-xl text-base font-bold transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A] active:scale-[0.98] bg-[#B55E45] hover:bg-[#9A503B] text-white"
               style={{
                 boxShadow: '0 4px 24px rgba(194,101,74,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
               }}
@@ -44,7 +44,7 @@ export function ClosingCTA() {
             </Link>
             <Link
               to="/hoe-het-werkt"
-              className="inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A]"
+              className="inline-flex items-center justify-center px-7 min-h-[52px] rounded-xl text-base font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A]"
               style={{
                 background: 'rgba(250,248,245,0.08)',
                 border: '1px solid rgba(250,248,245,0.15)',

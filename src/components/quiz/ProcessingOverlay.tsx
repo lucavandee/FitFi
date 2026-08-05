@@ -119,9 +119,9 @@ export function ProcessingOverlay({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#C2654A] via-[#C2654A] to-[#C2654A] opacity-20"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B55E45] via-[#B55E45] to-[#B55E45] opacity-20"
               style={{
-                background: 'conic-gradient(from 0deg, #C2654A, #C2654A, #C2654A)'
+                background: 'conic-gradient(from 0deg, #B55E45, #B55E45, #B55E45)'
               }}
             />
 
@@ -132,7 +132,7 @@ export function ProcessingOverlay({
                 rotate: [0, 5, -5, 0]
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-2 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center text-white"
+              className="absolute inset-2 rounded-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] flex items-center justify-center text-white"
             >
               {showSteps && currentStep ? currentStep.icon : <Sparkles className="w-8 h-8" />}
             </motion.div>
@@ -143,7 +143,7 @@ export function ProcessingOverlay({
             {message || (showSteps && currentStep ? currentStep.label : 'Je Style DNA wordt gegenereerd...')}
           </h3>
 
-          <p className="text-sm text-[#8A8A8A] mb-6">
+          <p className="text-sm text-[#6E6E6E] mb-6">
             Dit duurt nog een paar seconden
           </p>
 
@@ -155,10 +155,10 @@ export function ProcessingOverlay({
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
+                  className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45]"
                 />
               </div>
-              <div className="mt-2 text-xs font-medium text-[#C2654A]">
+              <div className="mt-2 text-xs font-medium text-[#B55E45]">
                 {Math.round(progress)}% voltooid
               </div>
             </div>
@@ -186,8 +186,8 @@ export function ProcessingOverlay({
                         isCompleted
                           ? 'bg-green-100 text-green-600'
                           : isCurrent
-                          ? 'bg-[#FAF5F2] text-[#C2654A]'
-                          : 'bg-[#FAFAF8] text-[#8A8A8A]'
+                          ? 'bg-[#FAF5F2] text-[#B55E45]'
+                          : 'bg-[#FAFAF8] text-[#6E6E6E]'
                       }`}
                     >
                       {isCompleted ? (
@@ -200,7 +200,7 @@ export function ProcessingOverlay({
                       className={`text-sm font-medium ${
                         isCurrent || isCompleted
                           ? 'text-[#1A1A1A]'
-                          : 'text-[#8A8A8A]'
+                          : 'text-[#6E6E6E]'
                       }`}
                     >
                       {step.label}
@@ -213,7 +213,7 @@ export function ProcessingOverlay({
 
           {/* Reassurance Message */}
           <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
-            <p className="text-xs text-[#8A8A8A] leading-relaxed">
+            <p className="text-xs text-[#6E6E6E] leading-relaxed">
               We analyseren je voorkeuren om een persoonlijk stijlprofiel samen te stellen.
               Je resultaten worden veilig opgeslagen.
             </p>

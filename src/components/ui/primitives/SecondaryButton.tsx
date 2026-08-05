@@ -33,11 +33,11 @@ export function SecondaryButton({
     "inline-flex items-center justify-center font-medium rounded-xl " +
     "bg-transparent border border-[#E5E5E5] text-[#1A1A1A] " +
     "transition-all duration-200 " +
-    "hover:border-[#D4856E] hover:text-[#A8513A] " +
+    "hover:border-[#D4856E] hover:text-[#9A503B] " +
     "hover:bg-[#FAF5F2] " +
     "active:scale-[0.98] " +
     "focus-visible:outline-none focus-visible:ring-2 " +
-    "focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 " +
+    "focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 " +
     "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none " +
     "shrink-0";
 

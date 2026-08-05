@@ -31,12 +31,12 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-4"
       >
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-[#A8513A] uppercase tracking-wide">
+              <span className="text-xs font-bold text-[#9A503B] uppercase tracking-wide">
                 Nova Analyse
               </span>
               <div
@@ -62,12 +62,12 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       <div className="bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010]/30 dark:to-[#5A2010]/30 p-6 border-b border-[#E5E5E5]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-[#1A1A1A]">Nova Analyse</h3>
-              <p className="text-sm text-[#8A8A8A]">
+              <p className="text-sm text-[#6E6E6E]">
                 {new Date(analysis.created_at).toLocaleDateString("nl-NL")}
               </p>
             </div>
@@ -80,7 +80,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
             >
               {analysis.match_score}
             </div>
-            <div className="text-xs text-[#8A8A8A] mt-1">Match Score</div>
+            <div className="text-xs text-[#6E6E6E] mt-1">Match Score</div>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       <div className="p-6 space-y-6">
         <div>
           <h4 className="text-sm font-bold text-[#1A1A1A] mb-2 flex items-center gap-2">
-            <Check className="w-4 h-4 text-[#A8513A]" />
+            <Check className="w-4 h-4 text-[#9A503B]" />
             Nova's Feedback
           </h4>
           <p className="text-base text-[#1A1A1A] leading-relaxed">{analysis.feedback}</p>
@@ -99,7 +99,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         {analysis.detected_items && analysis.detected_items.length > 0 && (
           <div>
             <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[#A8513A]" />
+              <TrendingUp className="w-4 h-4 text-[#9A503B]" />
               Gedetecteerde Items
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         {analysis.detected_colors && analysis.detected_colors.length > 0 && (
           <div>
             <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <Palette className="w-4 h-4 text-[#A8513A]" />
+              <Palette className="w-4 h-4 text-[#9A503B]" />
               Gedetecteerde Kleuren
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -145,7 +145,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
         {analysis.suggestions && analysis.suggestions.length > 0 && (
           <div>
             <h4 className="text-sm font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-[#A8513A]" />
+              <Lightbulb className="w-4 h-4 text-[#9A503B]" />
               Verbeterpunten
             </h4>
             <div className="space-y-3">
@@ -157,7 +157,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
                   transition={{ delay: i * 0.1 }}
                   className="flex items-start gap-3 bg-[#FAF5F2] dark:bg-[#5A2010]/20 border border-[#F4E8E3] dark:border-[#8A3D28] rounded-lg p-3"
                 >
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#C2654A] text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#B55E45] text-white rounded-full flex items-center justify-center text-xs font-bold">
                     {i + 1}
                   </div>
                   <p className="text-sm text-[#1A1A1A] leading-relaxed flex-1">
@@ -171,7 +171,7 @@ export function PhotoAnalysisFeedback({ analysis, compact = false }: PhotoAnalys
       </div>
 
       {/* Bottom Accent */}
-      <div className="h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A]" />
+      <div className="h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45]" />
     </motion.div>
   );
 }

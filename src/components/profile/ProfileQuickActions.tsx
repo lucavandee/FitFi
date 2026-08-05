@@ -100,7 +100,7 @@ export function ProfileQuickActions({
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-[#1A1A1A]">Snelle Acties</h3>
-        <Sparkles className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
+        <Sparkles className="w-5 h-5 text-[#B55E45]" aria-hidden="true" />
       </div>
 
       {/* Action Cards */}
@@ -121,7 +121,7 @@ export function ProfileQuickActions({
               className={`
                 relative p-4 rounded-xl border-2 text-left transition-all group
                 ${isPrimary
-                  ? 'bg-gradient-to-br from-[#C2654A] to-[#C2654A] border-transparent text-white shadow-lg hover:shadow-xl'
+                  ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45] border-transparent text-white shadow-lg hover:shadow-xl'
                   : 'bg-[#FFFFFF] border-[#E5E5E5] hover:border-[#D4856E] hover:shadow-md'
                 }
               `}
@@ -146,7 +146,7 @@ export function ProfileQuickActions({
                   className={`w-5 h-5 ${
                     isPrimary
                       ? 'text-white'
-                      : 'text-[#C2654A]'
+                      : 'text-[#B55E45]'
                   }`}
                   aria-hidden="true"
                 />
@@ -162,14 +162,14 @@ export function ProfileQuickActions({
                   {action.label}
                   <ArrowRight
                     className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${
-                      isPrimary ? 'text-white' : 'text-[#C2654A]'
+                      isPrimary ? 'text-white' : 'text-[#B55E45]'
                     }`}
                     aria-hidden="true"
                   />
                 </p>
                 <p
                   className={`text-sm ${
-                    isPrimary ? 'text-white/80' : 'text-[#8A8A8A]'
+                    isPrimary ? 'text-white/80' : 'text-[#6E6E6E]'
                   }`}
                 >
                   {action.description}
@@ -196,9 +196,9 @@ export function ProfileQuickActions({
           >
             <div>
               <p className="text-sm font-medium text-[#1A1A1A]">Email voorkeuren</p>
-              <p className="text-xs text-[#8A8A8A]">Beheer meldingen en nieuwsbrieven</p>
+              <p className="text-xs text-[#6E6E6E]">Beheer meldingen en nieuwsbrieven</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#8A8A8A]" aria-hidden="true" />
+            <ArrowRight className="w-4 h-4 text-[#6E6E6E]" aria-hidden="true" />
           </button>
 
           <button
@@ -208,9 +208,9 @@ export function ProfileQuickActions({
           >
             <div>
               <p className="text-sm font-medium text-[#1A1A1A]">Privacy & cookies</p>
-              <p className="text-xs text-[#8A8A8A]">Beheer je privacy voorkeuren</p>
+              <p className="text-xs text-[#6E6E6E]">Beheer je privacy voorkeuren</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#8A8A8A]" aria-hidden="true" />
+            <ArrowRight className="w-4 h-4 text-[#6E6E6E]" aria-hidden="true" />
           </button>
         </div>
       </div>

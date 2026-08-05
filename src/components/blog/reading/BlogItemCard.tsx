@@ -30,7 +30,7 @@ export const BlogItemCard: React.FC<BlogItemCardProps> = ({
       )}
 
       <div className="flex items-start gap-3 mb-3">
-        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FAF5F2] text-[#A8513A] flex items-center justify-center text-sm font-bold">
+        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FAF5F2] text-[#9A503B] flex items-center justify-center text-sm font-bold">
           {number}
         </span>
         <div className="flex-1">
@@ -38,14 +38,14 @@ export const BlogItemCard: React.FC<BlogItemCardProps> = ({
             {name}
           </h3>
           {color && (
-            <p className="text-sm text-[#8A8A8A] mb-2">
+            <p className="text-sm text-[#6E6E6E] mb-2">
               Kleur: <span className="text-[#1A1A1A]">{color}</span>
             </p>
           )}
         </div>
       </div>
 
-      <p className="text-[#8A8A8A] text-sm leading-relaxed mb-4">
+      <p className="text-[#6E6E6E] text-sm leading-relaxed mb-4">
         {reason}
       </p>
 
@@ -53,7 +53,7 @@ export const BlogItemCard: React.FC<BlogItemCardProps> = ({
         {combinesWith.map((item, idx) => (
           <span
             key={idx}
-            className="px-3 py-1 bg-[#FAF5F2] text-[#A8513A] rounded-full text-xs font-medium"
+            className="px-3 py-1 bg-[#FAF5F2] text-[#9A503B] rounded-full text-xs font-medium"
           >
             {item}
           </span>

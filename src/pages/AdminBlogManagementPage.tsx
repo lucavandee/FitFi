@@ -105,7 +105,7 @@ export default function AdminBlogManagementPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[#8A8A8A]">Laden...</p>
+          <p className="text-[#6E6E6E]">Laden...</p>
         </div>
       </div>
     );
@@ -124,7 +124,7 @@ export default function AdminBlogManagementPage() {
             <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
               Blog Beheer
             </h1>
-            <p className="text-[#8A8A8A]">
+            <p className="text-[#6E6E6E]">
               Beheer AI-gegenereerde en handmatige blog content
             </p>
           </div>
@@ -164,13 +164,13 @@ export default function AdminBlogManagementPage() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8A8A8A]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6E6E6E]" />
                 <input
                   type="text"
                   placeholder="Zoek posts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B]"
                 />
               </div>
 
@@ -192,7 +192,7 @@ export default function AdminBlogManagementPage() {
                 </button>
                 <button
                   onClick={() => navigate('/admin/blog/new')}
-                  className="px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors flex items-center gap-2"
                 >
                   <PlusCircle className="w-4 h-4" />
                   Nieuwe Post
@@ -263,20 +263,20 @@ export default function AdminBlogManagementPage() {
           {loading ? (
             <div className="text-center py-12">
               <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-[#8A8A8A]">Posts laden...</p>
+              <p className="text-[#6E6E6E]">Posts laden...</p>
             </div>
           ) : filteredPosts.length === 0 ? (
             <div className="text-center py-12 bg-[#FFFFFF] rounded-lg border border-[#E5E5E5]">
-              <FileText className="w-16 h-16 mx-auto mb-4 text-[#8A8A8A]" />
+              <FileText className="w-16 h-16 mx-auto mb-4 text-[#6E6E6E]" />
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                 Geen posts gevonden
               </h3>
-              <p className="text-[#8A8A8A] mb-4">
+              <p className="text-[#6E6E6E] mb-4">
                 {searchQuery ? 'Probeer een andere zoekopdracht' : 'Begin met het maken van je eerste blog post'}
               </p>
               <button
                 onClick={() => navigate('/admin/blog/new')}
-                className="px-6 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors"
+                className="px-6 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors"
               >
                 Nieuwe Post Maken
               </button>
@@ -315,7 +315,7 @@ function MetricCard({ icon: Icon, label, value, color }: any) {
           <Icon className="w-6 h-6" />
         </div>
         <div>
-          <p className="text-sm text-[#8A8A8A]">{label}</p>
+          <p className="text-sm text-[#6E6E6E]">{label}</p>
           <p className="text-2xl font-bold text-[#1A1A1A]">{value}</p>
         </div>
       </div>
@@ -359,7 +359,7 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">
                 {post.title}
               </h3>
-              <p className="text-sm text-[#8A8A8A] line-clamp-2">
+              <p className="text-sm text-[#6E6E6E] line-clamp-2">
                 {post.excerpt}
               </p>
             </div>
@@ -382,7 +382,7 @@ function PostCard({ post, onEdit, onDelete, onTogglePublish }: any) {
           </div>
 
           {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[#8A8A8A] mb-3">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#6E6E6E] mb-3">
             <span className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
               {post.read_time_minutes} min

@@ -49,7 +49,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
       <div className="relative z-10 flex items-start gap-6">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-lg">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-lg">
             <User className="w-10 h-10 text-white" />
           </div>
           {level >= 5 && (
@@ -64,7 +64,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
           <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2 truncate">
             {user.name || user.email.split('@')[0] || 'Jouw Profiel'}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[#8A8A8A] mb-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[#6E6E6E] mb-4">
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4" />
               <span className="text-sm">{user.email}</span>
@@ -79,7 +79,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
 
           {/* XP Progress */}
           <div className="max-w-md">
-            <div className="flex items-center justify-between text-xs text-[#8A8A8A] mb-2">
+            <div className="flex items-center justify-between text-xs text-[#6E6E6E] mb-2">
               <span className="font-semibold">Level {level}</span>
               <span>{xp} / {nextLevelXP} XP</span>
             </div>
@@ -88,7 +88,7 @@ export function ProfileHeaderWidget({ user, level, xp, nextLevelXP }: ProfileHea
                 initial={{ width: 0 }}
                 animate={{ width: `${xpProgress}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full"
+                className="h-full bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-full"
               />
             </div>
           </div>
@@ -112,18 +112,18 @@ export function StyleSummaryWidget({ archetype, paletteName, primaryColors }: St
   return (
     <BentoCard size="large">
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center flex-shrink-0">
           <Palette className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-[#8A8A8A] mb-1 uppercase tracking-wide font-medium">
+          <p className="text-xs text-[#6E6E6E] mb-1 uppercase tracking-wide font-medium">
             Jouw Stijl
           </p>
           <h3 className="text-xl font-bold text-[#1A1A1A] truncate">
             {archetype || 'Nog niet ingevuld'}
           </h3>
           {paletteName && (
-            <p className="text-sm text-[#8A8A8A] mt-1">{paletteName}</p>
+            <p className="text-sm text-[#6E6E6E] mt-1">{paletteName}</p>
           )}
         </div>
       </div>
@@ -131,7 +131,7 @@ export function StyleSummaryWidget({ archetype, paletteName, primaryColors }: St
       {/* Color swatches */}
       {primaryColors.length > 0 && (
         <div>
-          <p className="text-xs text-[#8A8A8A] mb-2 font-medium">Kleuren</p>
+          <p className="text-xs text-[#6E6E6E] mb-2 font-medium">Kleuren</p>
           <div className="flex gap-2">
             {primaryColors.slice(0, 6).map((color, i) => (
               <div
@@ -180,13 +180,13 @@ export function QuickStatsWidget({ stats }: QuickStatsWidgetProps) {
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-[#8A8A8A] mb-2">{stat.label}</p>
+              <p className="text-sm text-[#6E6E6E] mb-2">{stat.label}</p>
               <p className="text-3xl font-bold text-[#1A1A1A] mb-1">{stat.value}</p>
               {stat.subValue && (
-                <p className="text-xs text-[#8A8A8A]">{stat.subValue}</p>
+                <p className="text-xs text-[#6E6E6E]">{stat.subValue}</p>
               )}
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
+            <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#9A503B]">
               <stat.icon className="w-5 h-5" />
             </div>
           </div>
@@ -221,18 +221,18 @@ export function ProfileQuickActions({ actions }: ProfileQuickActionsProps) {
             to={action.to}
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-colors group"
           >
-            <div className="w-10 h-10 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#A8513A] group-hover:bg-[#F4E8E3] transition-colors">
+            <div className="w-10 h-10 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#9A503B] group-hover:bg-[#F4E8E3] transition-colors">
               <action.icon className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-[#1A1A1A] mb-0.5">
                 {action.title}
               </p>
-              <p className="text-xs text-[#8A8A8A]">
+              <p className="text-xs text-[#6E6E6E]">
                 {action.description}
               </p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#8A8A8A] group-hover:text-[#1A1A1A] transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#6E6E6E] group-hover:text-[#1A1A1A] transition-colors" />
           </NavLink>
         ))}
       </div>
@@ -284,13 +284,13 @@ export function RecentActivityWidget({ activities }: RecentActivityWidgetProps) 
         <h3 className="text-base font-bold text-[#1A1A1A]">
           Recente activiteit
         </h3>
-        <span className="text-xs text-[#8A8A8A]">
+        <span className="text-xs text-[#6E6E6E]">
           {activities.length} acties
         </span>
       </div>
 
       {activities.length === 0 ? (
-        <p className="text-sm text-[#8A8A8A] text-center py-8">
+        <p className="text-sm text-[#6E6E6E] text-center py-8">
           Nog geen activiteit
         </p>
       ) : (
@@ -302,14 +302,14 @@ export function RecentActivityWidget({ activities }: RecentActivityWidgetProps) 
 
             return (
               <div key={index} className="flex items-center gap-3 p-2 rounded-lg">
-                <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
+                <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#9A503B]">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[#1A1A1A]">
                     {getActivityLabel(activity.action_type)}
                   </p>
-                  <p className="text-xs text-[#8A8A8A]">
+                  <p className="text-xs text-[#6E6E6E]">
                     {timeAgo}
                   </p>
                 </div>
@@ -335,7 +335,7 @@ export function SettingsWidget({ onLogout }: { onLogout: () => void }) {
         <h3 className="text-sm font-bold text-[#1A1A1A] mb-1">
           Account instellingen
         </h3>
-        <p className="text-xs text-[#8A8A8A] mb-4">
+        <p className="text-xs text-[#6E6E6E] mb-4">
           Beheer je voorkeuren
         </p>
         <button

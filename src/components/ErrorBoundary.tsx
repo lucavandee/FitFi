@@ -73,20 +73,20 @@ export default class ErrorBoundary extends Component<Props, State> {
                     ? "text-[#D4913D]"
                     : kind === "server"
                     ? "text-[#C24A4A]"
-                    : "text-[#8A8A8A]"
+                    : "text-[#6E6E6E]"
                 }`}
                 aria-hidden="true"
               />
             </div>
 
             <h2 className="text-xl font-bold text-[#1A1A1A] mb-2">{title}</h2>
-            <p className="text-sm text-[#8A8A8A] mb-1">{body}</p>
-            <p className="text-xs text-[#8A8A8A] mb-6">{hint}</p>
+            <p className="text-sm text-[#6E6E6E] mb-1">{body}</p>
+            <p className="text-xs text-[#6E6E6E] mb-6">{hint}</p>
 
             <div className="flex flex-wrap gap-2.5 justify-center">
               <button
                 onClick={this.handleRetry}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#A8513A] text-white text-sm font-bold hover:bg-[#C2654A] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#9A503B] text-white text-sm font-bold hover:bg-[#B55E45] transition-colors"
               >
                 <RefreshCw className="w-4 h-4" aria-hidden="true" />
                 Probeer opnieuw
@@ -108,7 +108,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {this.state.retryCount > 1 && (
-              <p className="mt-5 text-xs text-[#8A8A8A]">
+              <p className="mt-5 text-xs text-[#6E6E6E]">
                 Blijft het fout gaan?{" "}
                 <a href="/contact" className="underline hover:text-[#1A1A1A] transition-colors">
                   Neem contact op

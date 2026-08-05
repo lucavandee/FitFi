@@ -40,7 +40,7 @@ export default function Footer() {
             <p className="font-serif italic text-[36px] md:text-[44px] text-[#1A1A1A] leading-[1.1]">
               Ontdek jouw stijl
             </p>
-            <p className="text-base text-[#8A8A8A] tracking-wide">
+            <p className="text-base text-[#6E6E6E] tracking-wide">
               Gratis. Twee minuten. Persoonlijk resultaat.
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function Footer() {
           <div className="mb-5">
             <Logo size="sm" variant="default" className="text-[26px]" />
           </div>
-          <p className="text-sm text-[#8A8A8A] leading-[1.8] max-w-[280px]">
+          <p className="text-sm text-[#6E6E6E] leading-[1.8] max-w-[280px]">
             Stijladvies afgestemd op jou. Op basis van je kleuren, voorkeuren en levensstijl.
           </p>
           <div className="flex gap-2 mt-7">
@@ -64,7 +64,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op Instagram"
-              className="group w-[42px] h-[42px] rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#C2654A] hover:border-[#C2654A] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
+              className="group w-[42px] h-[42px] rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#B55E45] hover:border-[#B55E45] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
             >
               <Instagram className="w-4 h-4 text-[#4A4A4A] group-hover:text-white transition-colors duration-250" strokeWidth={2} aria-hidden="true" />
             </a>
@@ -73,7 +73,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op LinkedIn"
-              className="group w-[42px] h-[42px] rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#C2654A] hover:border-[#C2654A] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
+              className="group w-[42px] h-[42px] rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#B55E45] hover:border-[#B55E45] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
             >
               <Linkedin className="w-4 h-4 text-[#4A4A4A] group-hover:text-white transition-colors duration-250" strokeWidth={2} aria-hidden="true" />
             </a>
@@ -82,7 +82,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op X"
-              className="group w-[42px] h-[42px] rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#C2654A] hover:border-[#C2654A] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
+              className="group w-[42px] h-[42px] rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#B55E45] hover:border-[#B55E45] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
             >
               <Twitter className="w-4 h-4 text-[#4A4A4A] group-hover:text-white transition-colors duration-250" strokeWidth={2} aria-hidden="true" />
             </a>
@@ -91,7 +91,7 @@ export default function Footer() {
 
         {/* Kolom 2: Product */}
         <div>
-          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[#C2654A] mb-6 flex items-center gap-3">
+          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[#B55E45] mb-6 flex items-center gap-3">
             Product
             <span className="flex-1 h-px bg-[#E5E5E5]/50" aria-hidden="true" />
           </p>
@@ -101,10 +101,10 @@ export default function Footer() {
                 <li key={link.to}>
                   <NavLink
                     to={link.to}
-                    className="group block text-sm text-[#4A4A4A] py-[7px] transition-all duration-200 relative hover:text-[#C2654A]"
+                    className="group block text-sm text-[#4A4A4A] py-[7px] transition-all duration-200 relative hover:text-[#B55E45]"
                   >
                     {link.label}
-                    <span className="absolute bottom-1 left-0 w-0 h-px bg-[#C2654A] transition-[width] duration-250 group-hover:w-full" aria-hidden="true" />
+                    <span className="absolute bottom-1 left-0 w-0 h-px bg-[#B55E45] transition-[width] duration-250 group-hover:w-full" aria-hidden="true" />
                   </NavLink>
                 </li>
               ))}
@@ -114,7 +114,7 @@ export default function Footer() {
 
         {/* Kolom 3: Bedrijf */}
         <div>
-          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[#C2654A] mb-6 flex items-center gap-3">
+          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[#B55E45] mb-6 flex items-center gap-3">
             Bedrijf
             <span className="flex-1 h-px bg-[#E5E5E5]/50" aria-hidden="true" />
           </p>
@@ -124,10 +124,10 @@ export default function Footer() {
                 <li key={link.to}>
                   <NavLink
                     to={link.to}
-                    className="group block text-sm text-[#4A4A4A] py-[7px] transition-all duration-200 relative hover:text-[#C2654A]"
+                    className="group block text-sm text-[#4A4A4A] py-[7px] transition-all duration-200 relative hover:text-[#B55E45]"
                   >
                     {link.label}
-                    <span className="absolute bottom-1 left-0 w-0 h-px bg-[#C2654A] transition-[width] duration-250 group-hover:w-full" aria-hidden="true" />
+                    <span className="absolute bottom-1 left-0 w-0 h-px bg-[#B55E45] transition-[width] duration-250 group-hover:w-full" aria-hidden="true" />
                   </NavLink>
                 </li>
               ))}
@@ -137,7 +137,7 @@ export default function Footer() {
 
         {/* Kolom 4: Juridisch */}
         <div>
-          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[#C2654A] mb-6 flex items-center gap-3">
+          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[#B55E45] mb-6 flex items-center gap-3">
             Juridisch
             <span className="flex-1 h-px bg-[#E5E5E5]/50" aria-hidden="true" />
           </p>
@@ -147,10 +147,10 @@ export default function Footer() {
                 <li key={link.to}>
                   <NavLink
                     to={link.to}
-                    className="group block text-sm text-[#4A4A4A] py-[7px] transition-all duration-200 relative hover:text-[#C2654A]"
+                    className="group block text-sm text-[#4A4A4A] py-[7px] transition-all duration-200 relative hover:text-[#B55E45]"
                   >
                     {link.label}
-                    <span className="absolute bottom-1 left-0 w-0 h-px bg-[#C2654A] transition-[width] duration-250 group-hover:w-full" aria-hidden="true" />
+                    <span className="absolute bottom-1 left-0 w-0 h-px bg-[#B55E45] transition-[width] duration-250 group-hover:w-full" aria-hidden="true" />
                   </NavLink>
                 </li>
               ))}
@@ -167,24 +167,24 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-6 pb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-[#8A8A8A]">
+        <p className="text-xs text-[#6E6E6E]">
           © {new Date().getFullYear()} FitFi B.V. · KVK 97225665 · Keizersgracht 520 H, Amsterdam
         </p>
         <div className="flex items-center gap-5">
           {/* Trust badges */}
           <div className="flex gap-3">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8A8A8A] px-3 py-1 rounded-full bg-white border border-[#E5E5E5]/50">
-              <Shield className="w-3 h-3 text-[#C2654A]" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#6E6E6E] px-3 py-1 rounded-full bg-white border border-[#E5E5E5]/50">
+              <Shield className="w-3 h-3 text-[#B55E45]" aria-hidden="true" />
               GDPR
             </span>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8A8A8A] px-3 py-1 rounded-full bg-white border border-[#E5E5E5]/50">
-              <Lock className="w-3 h-3 text-[#C2654A]" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#6E6E6E] px-3 py-1 rounded-full bg-white border border-[#E5E5E5]/50">
+              <Lock className="w-3 h-3 text-[#B55E45]" aria-hidden="true" />
               SSL
             </span>
           </div>
           {/* Made in Amsterdam */}
-          <span className="flex items-center gap-1.5 text-xs font-medium text-[#8A8A8A]">
-            <MapPin className="w-3.5 h-3.5 text-[#C2654A]" aria-hidden="true" />
+          <span className="flex items-center gap-1.5 text-xs font-medium text-[#6E6E6E]">
+            <MapPin className="w-3.5 h-3.5 text-[#B55E45]" aria-hidden="true" />
             Made in Amsterdam
           </span>
         </div>

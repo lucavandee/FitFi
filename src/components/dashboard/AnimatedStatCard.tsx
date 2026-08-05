@@ -64,7 +64,7 @@ export function AnimatedStatCard({
             <div className="text-3xl font-bold text-[#1A1A1A] tabular-nums">
               {displayValue.toLocaleString()}
               {suffix && (
-                <span className="text-xl text-[#8A8A8A] ml-1">
+                <span className="text-xl text-[#6E6E6E] ml-1">
                   {suffix}
                 </span>
               )}
@@ -99,7 +99,7 @@ export function AnimatedStatCard({
               )}
               {Math.abs(trend.value)}%
             </div>
-            <span className="text-xs text-[#8A8A8A]">
+            <span className="text-xs text-[#6E6E6E]">
               {trend.label}
             </span>
           </motion.div>
@@ -117,7 +117,7 @@ export function AnimatedStatCard({
       </div>
 
       {/* Hover glow effect */}
-      <div className="absolute -inset-px bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity" />
+      <div className="absolute -inset-px bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity" />
     </motion.div>
   );
 }

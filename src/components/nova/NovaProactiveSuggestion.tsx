@@ -73,7 +73,7 @@ export function NovaProactiveSuggestion({
         `}
       >
         {/* Nova Badge */}
-        <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-[#C2654A] to-[#C2654A] rounded-full flex items-center justify-center shadow-lg animate-pulse">
+        <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-[#B55E45] to-[#B55E45] rounded-full flex items-center justify-center shadow-lg animate-pulse">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
 
@@ -87,7 +87,7 @@ export function NovaProactiveSuggestion({
 
         <div className="flex items-start gap-4 pr-10">
           {/* Icon */}
-          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#C2654A] flex items-center justify-center text-white shadow-md">
+          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#B55E45] flex items-center justify-center text-white shadow-md">
             <IconComponent className="w-6 h-6" />
           </div>
 
@@ -95,7 +95,7 @@ export function NovaProactiveSuggestion({
           <div className="flex-1 min-w-0">
             {/* Header */}
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-[#A8513A] uppercase tracking-wide">
+              <span className="text-xs font-bold text-[#9A503B] uppercase tracking-wide">
                 Nova Tip
               </span>
               {visibleSuggestions.length > 1 && (
@@ -105,7 +105,7 @@ export function NovaProactiveSuggestion({
                       key={i}
                       className={`w-1.5 h-1.5 rounded-full transition-all ${
                         i === currentIndex
-                          ? "bg-[#C2654A] w-4"
+                          ? "bg-[#B55E45] w-4"
                           : "bg-[#E5E5E5]"
                       }`}
                     />
@@ -115,7 +115,7 @@ export function NovaProactiveSuggestion({
             </div>
 
             <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">{current.title}</h3>
-            <p className="text-sm text-[#8A8A8A] leading-relaxed mb-4">
+            <p className="text-sm text-[#6E6E6E] leading-relaxed mb-4">
               {current.message}
             </p>
 
@@ -125,7 +125,7 @@ export function NovaProactiveSuggestion({
                 href={current.action.href}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#A8513A] text-white rounded-xl font-semibold hover:bg-[#C2654A] transition-colors shadow-md"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#B55E45] transition-colors shadow-md"
               >
                 <span>{current.action.label}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -135,7 +135,7 @@ export function NovaProactiveSuggestion({
         </div>
 
         {/* Bottom Accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-b-2xl" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45] rounded-b-2xl" />
       </motion.div>
     </AnimatePresence>
   );

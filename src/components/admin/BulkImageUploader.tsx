@@ -215,7 +215,7 @@ export function BulkImageUploader() {
         className={`
           border-2 border-dashed rounded-2xl p-12 text-center transition-all
           ${isDragging
-            ? 'border-[#A8513A] bg-[#FAF5F2]'
+            ? 'border-[#9A503B] bg-[#FAF5F2]'
             : 'border-[#E5E5E5] bg-[#FFFFFF]'
           }
         `}
@@ -230,14 +230,14 @@ export function BulkImageUploader() {
         />
 
         <label htmlFor="file-input" className="cursor-pointer">
-          <Upload className="w-12 h-12 mx-auto mb-4 text-[#8A8A8A]" />
+          <Upload className="w-12 h-12 mx-auto mb-4 text-[#6E6E6E]" />
           <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
             Sleep afbeeldingen hierheen
           </h3>
-          <p className="text-sm text-[#8A8A8A] mb-4">
+          <p className="text-sm text-[#6E6E6E] mb-4">
             of klik om bestanden te selecteren
           </p>
-          <p className="text-xs text-[#8A8A8A]">
+          <p className="text-xs text-[#6E6E6E]">
             Bestandsnaam = SKU (bijv. BF-12345.jpg, XL22-0001.png)
           </p>
         </label>
@@ -248,19 +248,19 @@ export function BulkImageUploader() {
           <div className="grid grid-cols-4 gap-4 p-4 bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5]">
             <div className="text-center">
               <div className="text-2xl font-bold text-[#1A1A1A]">{stats.total}</div>
-              <div className="text-xs text-[#8A8A8A]">Totaal</div>
+              <div className="text-xs text-[#6E6E6E]">Totaal</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[#A8513A]">{stats.pending}</div>
-              <div className="text-xs text-[#8A8A8A]">Wachtend</div>
+              <div className="text-2xl font-bold text-[#9A503B]">{stats.pending}</div>
+              <div className="text-xs text-[#6E6E6E]">Wachtend</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{stats.success}</div>
-              <div className="text-xs text-[#8A8A8A]">Gelukt</div>
+              <div className="text-xs text-[#6E6E6E]">Gelukt</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">{stats.error}</div>
-              <div className="text-xs text-[#8A8A8A]">Fout</div>
+              <div className="text-xs text-[#6E6E6E]">Fout</div>
             </div>
           </div>
 
@@ -268,7 +268,7 @@ export function BulkImageUploader() {
             <button
               onClick={handleUploadAll}
               disabled={isProcessing || stats.pending === 0}
-              className="flex-1 py-3 px-6 bg-[#A8513A] text-white rounded-2xl font-semibold hover:bg-[#C2654A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-6 bg-[#9A503B] text-white rounded-2xl font-semibold hover:bg-[#B55E45] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>
@@ -318,7 +318,7 @@ export function BulkImageUploader() {
                     {file.status === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
                     {file.status === 'error' && <XCircle className="w-5 h-5 text-red-600" />}
                     {file.status === 'uploading' && <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />}
-                    {file.status === 'pending' && <AlertCircle className="w-5 h-5 text-[#8A8A8A]" />}
+                    {file.status === 'pending' && <AlertCircle className="w-5 h-5 text-[#6E6E6E]" />}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -332,7 +332,7 @@ export function BulkImageUploader() {
                     </div>
 
                     {file.matchedProduct && (
-                      <div className="text-sm text-[#8A8A8A] truncate">
+                      <div className="text-sm text-[#6E6E6E] truncate">
                         → {file.matchedProduct.name}
                       </div>
                     )}
@@ -350,7 +350,7 @@ export function BulkImageUploader() {
                     )}
                   </div>
 
-                  <div className="text-xs text-[#8A8A8A] flex-shrink-0">
+                  <div className="text-xs text-[#6E6E6E] flex-shrink-0">
                     {(file.file.size / 1024).toFixed(1)} KB
                   </div>
                 </div>

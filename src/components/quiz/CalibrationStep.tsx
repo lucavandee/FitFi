@@ -280,7 +280,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
       <div className="flex items-center justify-center min-h-[240px] py-16">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto" />
-          <p className="mt-4 text-[#8A8A8A]">Outfits voorbereiden...</p>
+          <p className="mt-4 text-[#6E6E6E]">Outfits voorbereiden...</p>
         </div>
       </div>
     );
@@ -291,7 +291,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-6">
-          <Sparkles className="w-4 h-4 text-[#A8513A]" />
+          <Sparkles className="w-4 h-4 text-[#9A503B]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
             Outfit Calibratie
           </span>
@@ -299,12 +299,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-4">
           We zijn je profiel aan het voorbereiden
         </h2>
-        <p className="text-[#8A8A8A] mb-8">
+        <p className="text-[#6E6E6E] mb-8">
           Op dit moment kunnen we nog geen outfits genereren, maar we gaan direct verder met je stijlrapport op basis van je quiz- en swipe-antwoorden.
         </p>
         <button
           onClick={onComplete}
-          className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
+          className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
         >
           Ga verder
           <ArrowRight className="w-5 h-5" />
@@ -317,7 +317,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8" style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
       <div className="text-center mb-6 sm:mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-4">
-          <Sparkles className="w-4 h-4 text-[#A8513A]" />
+          <Sparkles className="w-4 h-4 text-[#9A503B]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
             Outfit Calibratie
           </span>
@@ -326,7 +326,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-3">
           Zo ziet jouw stijl er volgens mij uit
         </h2>
-        <p className="text-[#8A8A8A] max-w-2xl mx-auto text-base sm:text-lg">
+        <p className="text-[#6E6E6E] max-w-2xl mx-auto text-base sm:text-lg">
           Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
         </p>
 
@@ -337,8 +337,8 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             transition={{ delay: 0.5 }}
             className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3]"
           >
-            <TrendingUp size={16} className="text-[#A8513A]" />
-            <span className="text-sm font-semibold text-[#A8513A]">
+            <TrendingUp size={16} className="text-[#9A503B]" />
+            <span className="text-sm font-semibold text-[#9A503B]">
               Adaptive AI • Leert van je keuzes
             </span>
           </motion.div>
@@ -350,7 +350,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             <span className="text-sm font-medium text-[#1A1A1A]">
               Voortgang
             </span>
-            <span className="text-sm font-medium text-[#A8513A]">
+            <span className="text-sm font-medium text-[#9A503B]">
               {feedbackCount} / {outfits.length}
             </span>
           </div>
@@ -359,7 +359,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
               initial={{ width: 0 }}
               animate={{ width: `${(feedbackCount / outfits.length) * 100}%` }}
               transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-              className="h-full bg-gradient-to-r from-[#C2654A] to-[#A8513A] rounded-full"
+              className="h-full bg-gradient-to-r from-[#B55E45] to-[#9A503B] rounded-full"
             />
           </div>
         </div>
@@ -405,7 +405,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             <h3 className="font-semibold text-[#1A1A1A] mb-2">
               Impact op je stijlprofiel
             </h3>
-            <p className="text-sm text-[#8A8A8A] leading-relaxed">
+            <p className="text-sm text-[#6E6E6E] leading-relaxed">
               {getFeedbackImpact()}
             </p>
           </div>
@@ -415,7 +415,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             disabled={applying}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
+            className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
           >
             {applying ? (
               <>
@@ -429,7 +429,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
               </>
             )}
           </motion.button>
-          <p className="text-sm text-[#8A8A8A] mt-4">
+          <p className="text-sm text-[#6E6E6E] mt-4">
             Je feedback wordt gebruikt om je aanbevelingen te verfijnen
           </p>
         </motion.div>
@@ -442,7 +442,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           className="text-center mt-8"
         >
           {feedbackCount > 0 && (
-            <p className="text-sm text-[#8A8A8A] mb-4">
+            <p className="text-sm text-[#6E6E6E] mb-4">
               Nog {outfits.length - feedbackCount} {outfits.length - feedbackCount === 1 ? 'outfit' : 'outfits'} te beoordelen
             </p>
           )}

@@ -142,7 +142,7 @@ export function BottomSheet({
                   className="w-8 h-8 rounded-full bg-[#F5F0EB] flex items-center justify-center hover:bg-[#E5E5E5] transition-colors"
                   aria-label="Sluit"
                 >
-                  <X className="w-5 h-5 text-[#8A8A8A]" />
+                  <X className="w-5 h-5 text-[#6E6E6E]" />
                 </button>
               </div>
             )}

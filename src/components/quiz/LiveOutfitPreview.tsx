@@ -74,7 +74,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
             >
-              <Eye className="w-4 h-4 text-[#A8513A]" />
+              <Eye className="w-4 h-4 text-[#9A503B]" />
             </motion.div>
             <h3 className="text-sm font-semibold text-[#1A1A1A]">
               Jouw Stijl Preview
@@ -98,9 +98,9 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
               title={isSaved ? 'Opgeslagen!' : 'Preview opslaan'}
             >
               {isSaved ? (
-                <BookmarkCheck className="w-4 h-4 text-[#A8513A]" />
+                <BookmarkCheck className="w-4 h-4 text-[#9A503B]" />
               ) : (
-                <Bookmark className="w-4 h-4 text-[#8A8A8A] hover:text-[#A8513A]" />
+                <Bookmark className="w-4 h-4 text-[#6E6E6E] hover:text-[#9A503B]" />
               )}
             </motion.button>
           </div>
@@ -109,7 +109,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-xs text-[#8A8A8A] mb-4"
+            className="text-xs text-[#6E6E6E] mb-4"
           >
             {outfit.styleDescription}
           </motion.p>
@@ -131,7 +131,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
             className="mt-4 pt-3 border-t border-[#E5E5E5]"
           >
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#8A8A8A]">
+              <span className="text-[#6E6E6E]">
                 Confidence
               </span>
               <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
                     initial={{ width: 0 }}
                     animate={{ width: `${outfit.confidence * 100}%` }}
                     transition={{ duration: 0.8, delay: 0.6 }}
-                    className="h-full bg-gradient-to-r from-[#A8513A] to-[#C2654A]"
+                    className="h-full bg-gradient-to-r from-[#9A503B] to-[#B55E45]"
                   />
                 </div>
                 <motion.span
@@ -159,7 +159,7 @@ export function LiveOutfitPreview({ outfit, isVisible, swipeCount = 5, sessionId
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.7 }}
-            className="mt-3 flex items-center justify-center gap-1.5 text-xs text-[#8A8A8A]"
+            className="mt-3 flex items-center justify-center gap-1.5 text-xs text-[#6E6E6E]"
           >
             <Sparkles className="w-3 h-3" />
             <span>Blijf swipen voor betere matches!</span>
@@ -237,7 +237,7 @@ function OutfitItemCard({ item, delay }: OutfitItemCardProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: delay + 0.5 }}
-        className="text-[10px] text-[#8A8A8A] text-center mt-1"
+        className="text-[10px] text-[#6E6E6E] text-center mt-1"
       >
         {categoryLabels[item.category]}
       </motion.p>

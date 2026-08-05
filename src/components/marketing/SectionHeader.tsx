@@ -47,7 +47,7 @@ const SectionHeader: React.FC<Props> = ({
       style={{
         // Subtiele warme achtergrond (geen hex; tokens-first)
         background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, white 92%, #A8513A 8%), white)",
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, white 92%, #9A503B 8%), white)",
       }}
     >
       {eyebrow && (

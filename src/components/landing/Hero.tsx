@@ -33,7 +33,7 @@ export function Hero() {
         <div className="px-6 py-8 bg-[#FAFAF8]">
           <h1 className="text-3xl font-bold text-[#1A1A1A] leading-tight mb-3">
             Wat is{' '}
-            <span className="text-[#C2654A]">jouw stijl?</span>
+            <span className="text-[#B55E45]">jouw stijl?</span>
           </h1>
           <p className="text-base text-[#4A4A4A] leading-relaxed mb-6">
             Vul een korte quiz in. Je krijgt een rapport met kleuren en outfits die bij je passen.
@@ -41,22 +41,22 @@ export function Hero() {
           <div className="flex flex-col gap-3">
             <button
               onClick={handleStartClick}
-              className="w-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
             >
               Begin gratis
               <ArrowRight className="w-5 h-5" />
             </button>
             <NavLink
               to="/results/preview"
-              className="w-full bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200 text-center"
+              className="w-full bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200 text-center"
             >
               Zie voorbeeldrapport
             </NavLink>
           </div>
           {!user && (
-            <p className="text-sm text-[#8A8A8A] text-center mt-4">
+            <p className="text-sm text-[#6E6E6E] text-center mt-4">
               Al een account?{' '}
-              <NavLink to="/inloggen" className="font-semibold text-[#C2654A] hover:text-[#A8513A] underline underline-offset-2 transition-colors">
+              <NavLink to="/inloggen" className="font-semibold text-[#B55E45] hover:text-[#9A503B] underline underline-offset-2 transition-colors">
                 Direct inloggen
               </NavLink>
             </p>
@@ -82,7 +82,7 @@ export function Hero() {
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-tight">
                 Wat is{' '}
-                <span className="text-[#C2654A]">
+                <span className="text-[#B55E45]">
                   jouw stijl?
                 </span>
               </h1>
@@ -97,7 +97,7 @@ export function Hero() {
               <Button
                 onClick={handleStartClick}
                 size="lg"
-                className="w-full sm:w-auto bg-[#C2654A] hover:bg-[#A8513A] text-white px-6 py-3 rounded-xl font-semibold text-base transition-colors duration-200"
+                className="w-full sm:w-auto bg-[#B55E45] hover:bg-[#9A503B] text-white px-6 py-3 rounded-xl font-semibold text-base transition-colors duration-200"
               >
                 Start gratis stijlquiz
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -108,7 +108,7 @@ export function Hero() {
                 to="/results/preview"
                 variant="ghost"
                 size="lg"
-                className="w-full sm:w-auto border border-[#E5E5E5] hover:border-[#C2654A] px-6 py-3 rounded-xl font-medium text-base transition-colors duration-200"
+                className="w-full sm:w-auto border border-[#E5E5E5] hover:border-[#B55E45] px-6 py-3 rounded-xl font-medium text-base transition-colors duration-200"
               >
                 Zie voorbeeldrapport
               </Button>
@@ -116,11 +116,11 @@ export function Hero() {
 
             {/* Returning user link */}
             {!user && (
-              <p className="text-sm text-[#8A8A8A] text-center lg:text-left">
+              <p className="text-sm text-[#6E6E6E] text-center lg:text-left">
                 Al een account?{" "}
                 <NavLink
                   to="/inloggen"
-                  className="font-semibold text-[#C2654A] hover:text-[#A8513A] underline underline-offset-2 transition-colors"
+                  className="font-semibold text-[#B55E45] hover:text-[#9A503B] underline underline-offset-2 transition-colors"
                 >
                   Direct inloggen
                 </NavLink>
@@ -152,7 +152,7 @@ export function Hero() {
               {/* Archetype Card - Top Left */}
               <div className="absolute -top-4 -left-16 lg:-left-24 animate-float">
                 <div className="bg-white/90 backdrop-blur-md border border-[#E5E5E5] rounded-xl px-4 py-3 shadow-lg hover:scale-105 transition-transform duration-300">
-                  <div className="text-xs text-[#8A8A8A] font-medium">Archetype</div>
+                  <div className="text-xs text-[#6E6E6E] font-medium">Archetype</div>
                   <div className="text-sm font-semibold text-[#1A1A1A]">Modern Minimal</div>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export function Hero() {
               {/* Outfits Card - Top Right */}
               <div className="absolute -top-8 -right-12 lg:-right-20 animate-float-delayed">
                 <div className="bg-white/90 backdrop-blur-md border border-[#E5E5E5] rounded-xl px-4 py-3 shadow-lg hover:scale-105 transition-transform duration-300">
-                  <div className="text-xs text-[#8A8A8A] font-medium">Outfits</div>
+                  <div className="text-xs text-[#6E6E6E] font-medium">Outfits</div>
                   <div className="text-sm font-semibold text-[#1A1A1A]">6-12 looks</div>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export function Hero() {
               {/* AI Powered Card - Bottom Left */}
               <div className="absolute -bottom-4 -left-12 lg:-left-20 animate-float-slow">
                 <div className="bg-white/90 backdrop-blur-md border border-[#E5E5E5] rounded-xl px-4 py-3 shadow-lg hover:scale-105 transition-transform duration-300">
-                  <div className="text-xs text-[#8A8A8A] font-medium">AI Powered</div>
+                  <div className="text-xs text-[#6E6E6E] font-medium">AI Powered</div>
                   <div className="text-sm font-semibold text-[#1A1A1A]">Smart matching</div>
                 </div>
               </div>
@@ -176,11 +176,11 @@ export function Hero() {
               {/* Color Palette Card - Bottom Right */}
               <div className="absolute -bottom-8 -right-8 lg:-right-16 animate-float">
                 <div className="bg-white/90 backdrop-blur-md border border-[#E5E5E5] rounded-xl px-4 py-3 shadow-lg hover:scale-105 transition-transform duration-300">
-                  <div className="text-xs text-[#8A8A8A] font-medium">Kleuren</div>
+                  <div className="text-xs text-[#6E6E6E] font-medium">Kleuren</div>
                   <div className="flex gap-1 mt-1">
-                    <div className="w-3 h-3 rounded-full bg-[#C2654A]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#B55E45]"></div>
                     <div className="w-3 h-3 rounded-full bg-[#D4856E]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#8A8A8A]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#6E6E6E]"></div>
                   </div>
                 </div>
               </div>

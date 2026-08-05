@@ -361,7 +361,7 @@ function DashboardNovaSectionInner() {
                 </motion.div>
                 <div>
                   <h2 className="text-xl font-bold text-[#1A1A1A]">Chat met Nova</h2>
-                  <p className="text-sm text-[#8A8A8A]">Je persoonlijke AI-stylist</p>
+                  <p className="text-sm text-[#6E6E6E]">Je persoonlijke AI-stylist</p>
                 </div>
               </div>
 
@@ -482,7 +482,7 @@ function DashboardNovaSectionInner() {
                       </motion.div>
                       <span className="text-xs font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
                       <motion.span
-                        className="text-xs text-[#8A8A8A]"
+                        className="text-xs text-[#6E6E6E]"
                         animate={{ opacity: [0.5, 1, 0.5] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       >
@@ -515,7 +515,7 @@ function DashboardNovaSectionInner() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Vraag Nova om styling advies..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white dark:bg-gray-800 text-[#1A1A1A] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder:text-[#8A8A8A]"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white dark:bg-gray-800 text-[#1A1A1A] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder:text-[#6E6E6E]"
                   disabled={isLoading}
                 />
                 {input && (
@@ -526,7 +526,7 @@ function DashboardNovaSectionInner() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <X className="w-4 h-4 text-[#8A8A8A]" />
+                    <X className="w-4 h-4 text-[#6E6E6E]" />
                   </motion.button>
                 )}
               </div>

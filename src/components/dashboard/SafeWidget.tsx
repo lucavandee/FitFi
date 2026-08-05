@@ -37,7 +37,7 @@ const SafeWidget: React.FC<SafeWidgetProps> = ({ name, children, className = '' 
         <p className="text-sm text-gray-600">Kon {name} niet laden.</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-3 text-sm text-[#C2654A] hover:text-[#C2654A]/80 font-medium"
+          className="mt-3 text-sm text-[#B55E45] hover:text-[#B55E45]/80 font-medium"
         >
           Probeer opnieuw
         </button>

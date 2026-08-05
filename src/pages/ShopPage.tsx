@@ -169,7 +169,7 @@ export default function ShopPage() {
         {/* Back to rapport */}
         <button
           onClick={() => navigate('/results')}
-          className="inline-flex items-center gap-1.5 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Terug naar rapport
@@ -181,13 +181,13 @@ export default function ShopPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-5"
         >
-          <p className="text-sm text-[#8A8A8A] mb-1">Jouw stijlwinkel</p>
+          <p className="text-sm text-[#6E6E6E] mb-1">Jouw stijlwinkel</p>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight mb-2">
             {archetype
               ? `Aanbevolen voor jouw ${archetype} stijl`
               : 'Aanbevolen items'}
           </h1>
-          <p className="text-sm text-[#8A8A8A] max-w-2xl">
+          <p className="text-sm text-[#6E6E6E] max-w-2xl">
             {archetype
               ? `Deze items passen bij jouw ${archetype} stijl.`
               : 'Gecureerde kleding en accessoires afgestemd op jouw persoonlijke stijl.'}
@@ -202,20 +202,20 @@ export default function ShopPage() {
             transition={{ delay: 0.08 }}
             className="flex flex-wrap items-center gap-2 mb-6 px-4 py-3 bg-white border border-[#E5E5E5] rounded-xl text-sm"
           >
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#8A8A8A]">Gefilterd op:</span>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#6E6E6E]">Gefilterd op:</span>
             {quizGender !== 'unisex' && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#A8513A]">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#9A503B]">
                 {quizGender === 'male' ? 'Heren' : 'Dames'}
               </span>
             )}
             {quizBudgetMax && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#A8513A]">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF5F2] text-[#9A503B]">
                 Tot €{quizBudgetMax}
               </span>
             )}
             <button
               onClick={() => navigate('/onboarding')}
-              className="ml-auto text-[11px] font-semibold text-[#8A8A8A] hover:text-[#C2654A] transition-colors"
+              className="ml-auto text-[11px] font-semibold text-[#6E6E6E] hover:text-[#B55E45] transition-colors"
             >
               Aanpassen →
             </button>
@@ -227,9 +227,9 @@ export default function ShopPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="flex items-start gap-3 px-4 py-3 rounded-xl bg-white border border-[#E5E5E5] mb-8 text-xs text-[#8A8A8A]"
+          className="flex items-start gap-3 px-4 py-3 rounded-xl bg-white border border-[#E5E5E5] mb-8 text-xs text-[#6E6E6E]"
         >
-          <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#8A8A8A]" />
+          <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#6E6E6E]" />
           <p>
             Transparantie: sommige links zijn <strong className="font-semibold text-[#1A1A1A]">affiliate links</strong>.
             Als je via FitFi shopt, kan FitFi een kleine commissie ontvangen — zonder extra kosten voor jou.{' '}
@@ -254,7 +254,7 @@ export default function ShopPage() {
               onClick={() => setFilters((f) => ({ ...f, category: cat.value || undefined }))}
               className={`px-3.5 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 (filters.category || '') === cat.value
-                  ? 'bg-[#A8513A] text-white'
+                  ? 'bg-[#9A503B] text-white'
                   : 'bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E]'
               }`}
               aria-pressed={(filters.category || '') === cat.value}
@@ -274,13 +274,13 @@ export default function ShopPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8A8A] pointer-events-none" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E6E6E] pointer-events-none" />
               <input
                 type="search"
                 placeholder="Zoek op product of merk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#D4856E] focus:outline-none focus:ring-2 focus:ring-[#D4856E]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#8A8A8A]"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E5E5E5] focus:border-[#D4856E] focus:outline-none focus:ring-2 focus:ring-[#D4856E]/20 bg-white text-[#1A1A1A] text-sm placeholder:text-[#6E6E6E]"
                 aria-label="Zoek producten"
               />
               {searchQuery && (
@@ -289,7 +289,7 @@ export default function ShopPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#FAFAF8] transition-colors"
                   aria-label="Wis zoekopdracht"
                 >
-                  <X className="w-3.5 h-3.5 text-[#8A8A8A]" />
+                  <X className="w-3.5 h-3.5 text-[#6E6E6E]" />
                 </button>
               )}
             </div>
@@ -307,7 +307,7 @@ export default function ShopPage() {
                 <option value="price-desc">Prijs: hoog → laag</option>
                 <option value="newest">Nieuwste eerst</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8A8A] pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E6E6E] pointer-events-none" />
             </div>
 
             {/* Mobile filter button */}
@@ -320,7 +320,7 @@ export default function ShopPage() {
               <Filter className="w-4 h-4" />
               Filter
               {activeFilterCount > 0 && (
-                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-[#A8513A] text-white text-[10px] font-bold">
+                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-[#9A503B] text-white text-[10px] font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -330,7 +330,7 @@ export default function ShopPage() {
             <div className="hidden sm:flex items-center gap-1 bg-white border border-[#E5E5E5] rounded-xl p-1">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[#A8513A] text-white' : 'text-[#8A8A8A] hover:text-[#1A1A1A]'}`}
+                className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[#9A503B] text-white' : 'text-[#6E6E6E] hover:text-[#1A1A1A]'}`}
                 aria-label="Grid weergave"
                 aria-pressed={viewMode === 'grid'}
               >
@@ -338,7 +338,7 @@ export default function ShopPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[#A8513A] text-white' : 'text-[#8A8A8A] hover:text-[#1A1A1A]'}`}
+                className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[#9A503B] text-white' : 'text-[#6E6E6E] hover:text-[#1A1A1A]'}`}
                 aria-label="Lijst weergave"
                 aria-pressed={viewMode === 'list'}
               >
@@ -349,7 +349,7 @@ export default function ShopPage() {
 
           {/* Active filters + result count */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-[#8A8A8A]">
+            <span className="text-sm text-[#6E6E6E]">
               {isLoading ? 'Laden…' : (
                 <><strong className="text-[#1A1A1A]">{filteredProducts.length}</strong> {filteredProducts.length === 1 ? 'item' : 'items'}</>
               )}
@@ -358,7 +358,7 @@ export default function ShopPage() {
               <button
                 key={brand}
                 onClick={() => toggleBrandFilter(brand)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FAF5F2] text-[#A8513A] rounded-full text-xs font-semibold hover:bg-[#F4E8E3] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FAF5F2] text-[#9A503B] rounded-full text-xs font-semibold hover:bg-[#F4E8E3] transition-colors"
                 aria-label={`Verwijder filter: ${brand}`}
               >
                 {brand}
@@ -368,7 +368,7 @@ export default function ShopPage() {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="text-xs text-[#8A8A8A] hover:text-[#C2654A] underline transition-colors"
+                className="text-xs text-[#6E6E6E] hover:text-[#B55E45] underline transition-colors"
               >
                 Wis filters
               </button>
@@ -389,7 +389,7 @@ export default function ShopPage() {
                 {filters.brands.length > 0 && (
                   <button
                     onClick={() => setFilters((f) => ({ ...f, brands: [] }))}
-                    className="text-xs text-[#C2654A] hover:underline"
+                    className="text-xs text-[#B55E45] hover:underline"
                   >
                     Wis
                   </button>
@@ -402,9 +402,9 @@ export default function ShopPage() {
                       type="checkbox"
                       checked={filters.brands.includes(brand)}
                       onChange={() => toggleBrandFilter(brand)}
-                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#C2654A] cursor-pointer focus:ring-2 focus:ring-[#D4856E]/20"
+                      className="w-4 h-4 rounded border-2 border-[#E5E5E5] text-[#B55E45] cursor-pointer focus:ring-2 focus:ring-[#D4856E]/20"
                     />
-                    <span className="text-sm text-[#1A1A1A] group-hover:text-[#A8513A] transition-colors">
+                    <span className="text-sm text-[#1A1A1A] group-hover:text-[#9A503B] transition-colors">
                       {brand}
                     </span>
                   </label>
@@ -438,7 +438,7 @@ export default function ShopPage() {
                       className="p-2 rounded-full hover:bg-[#FAFAF8] transition-colors"
                       aria-label="Sluit filters"
                     >
-                      <X className="w-5 h-5 text-[#8A8A8A]" />
+                      <X className="w-5 h-5 text-[#6E6E6E]" />
                     </button>
                   </div>
                   <div className="space-y-1.5 mb-6">
@@ -448,7 +448,7 @@ export default function ShopPage() {
                           type="checkbox"
                           checked={filters.brands.includes(brand)}
                           onChange={() => toggleBrandFilter(brand)}
-                          className="w-5 h-5 rounded border-2 border-[#E5E5E5] text-[#C2654A] cursor-pointer"
+                          className="w-5 h-5 rounded border-2 border-[#E5E5E5] text-[#B55E45] cursor-pointer"
                         />
                         <span className="text-sm text-[#1A1A1A]">{brand}</span>
                       </label>
@@ -456,7 +456,7 @@ export default function ShopPage() {
                   </div>
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="w-full py-3.5 bg-[#A8513A] text-white rounded-xl font-bold text-sm hover:bg-[#C2654A] transition-colors"
+                    className="w-full py-3.5 bg-[#9A503B] text-white rounded-xl font-bold text-sm hover:bg-[#B55E45] transition-colors"
                   >
                     Toon {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
                   </button>
@@ -490,12 +490,12 @@ export default function ShopPage() {
                 <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
                   Items konden niet worden geladen
                 </h3>
-                <p className="text-sm text-[#8A8A8A] mb-5">
+                <p className="text-sm text-[#6E6E6E] mb-5">
                   Probeer het later opnieuw.
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
+                  className="px-5 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
                 >
                   Opnieuw proberen
                 </button>
@@ -510,12 +510,12 @@ export default function ShopPage() {
                 role="status"
               >
                 <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-white border border-[#E5E5E5] flex items-center justify-center">
-                  <ShoppingBag className="w-6 h-6 text-[#8A8A8A]" />
+                  <ShoppingBag className="w-6 h-6 text-[#6E6E6E]" />
                 </div>
                 <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
                   Geen items gevonden
                 </h3>
-                <p className="text-sm text-[#8A8A8A] mb-5 max-w-sm mx-auto">
+                <p className="text-sm text-[#6E6E6E] mb-5 max-w-sm mx-auto">
                   {searchQuery
                     ? `Geen resultaten voor "${searchQuery}".`
                     : 'Probeer minder filters.'}
@@ -533,7 +533,7 @@ export default function ShopPage() {
                     {hasActiveFilters && (
                       <button
                         onClick={clearFilters}
-                        className="px-5 py-2.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
+                        className="px-5 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#B55E45] transition-colors"
                       >
                         Wis filters
                       </button>

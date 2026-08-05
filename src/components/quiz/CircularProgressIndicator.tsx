@@ -49,8 +49,8 @@ export function CircularProgressIndicator({
           />
           <defs>
             <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#C2654A" />
-              <stop offset="100%" stopColor="#C2654A" />
+              <stop offset="0%" stopColor="#B55E45" />
+              <stop offset="100%" stopColor="#B55E45" />
             </linearGradient>
           </defs>
         </svg>
@@ -67,7 +67,7 @@ export function CircularProgressIndicator({
             <div className="text-4xl font-bold text-[#1A1A1A] mb-1">
               {currentStep}
             </div>
-            <div className="text-sm text-[#8A8A8A] font-medium">
+            <div className="text-sm text-[#6E6E6E] font-medium">
               van {totalSteps}
             </div>
           </motion.div>
@@ -97,7 +97,7 @@ export function CircularProgressIndicator({
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className="w-full h-full rounded-full bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-md"
+                  className="w-full h-full rounded-full bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-md"
                 >
                   <Check className="w-5 h-5 text-white" />
                 </motion.div>
@@ -108,8 +108,8 @@ export function CircularProgressIndicator({
                     transition-all duration-300
                     ${
                       isCurrent
-                        ? "border-[#C2654A] bg-[#FAF5F2] text-[#A8513A] shadow-lg scale-110"
-                        : "border-[#E5E5E5] bg-[#FFFFFF] text-[#8A8A8A]"
+                        ? "border-[#B55E45] bg-[#FAF5F2] text-[#9A503B] shadow-lg scale-110"
+                        : "border-[#E5E5E5] bg-[#FFFFFF] text-[#6E6E6E]"
                     }
                   `}
                 >
@@ -122,7 +122,7 @@ export function CircularProgressIndicator({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute -bottom-8 whitespace-nowrap text-xs font-semibold text-[#C2654A]"
+                  className="absolute -bottom-8 whitespace-nowrap text-xs font-semibold text-[#B55E45]"
                 >
                   {stepLabels[step - 1]}
                 </motion.div>
@@ -138,7 +138,7 @@ export function CircularProgressIndicator({
         animate={{ opacity: 1 }}
         className="text-center"
       >
-        <div className="text-sm font-semibold text-[#8A8A8A]">
+        <div className="text-sm font-semibold text-[#6E6E6E]">
           {Math.round(progress)}% voltooid
         </div>
       </motion.div>

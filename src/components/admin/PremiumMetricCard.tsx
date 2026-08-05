@@ -38,7 +38,7 @@ export default function PremiumMetricCard({
             <p
               className="text-sm font-medium mb-1"
               style={{
-                color: gradient ? 'rgba(255,255,255,0.9)' : '#8A8A8A',
+                color: gradient ? 'rgba(255,255,255,0.9)' : '#6E6E6E',
               }}
             >
               {title}
@@ -68,7 +68,7 @@ export default function PremiumMetricCard({
           <p
             className="text-sm mb-2"
             style={{
-              color: gradient ? 'rgba(255,255,255,0.8)' : '#8A8A8A',
+              color: gradient ? 'rgba(255,255,255,0.8)' : '#6E6E6E',
             }}
           >
             {subtitle}
@@ -89,7 +89,7 @@ export default function PremiumMetricCard({
             <span
               className="text-xs"
               style={{
-                color: gradient ? 'rgba(255,255,255,0.7)' : '#8A8A8A',
+                color: gradient ? 'rgba(255,255,255,0.7)' : '#6E6E6E',
               }}
             >
               {trend.label}

@@ -125,7 +125,7 @@ export function StyleIdentityHero({
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           {/* Text content — full width on mobile, left side on desktop */}
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#C2654A] mb-3">
+            <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#B55E45] mb-3">
               Jouw stijlprofiel
             </p>
 
@@ -141,7 +141,7 @@ export function StyleIdentityHero({
               {getArchetypeDisplayNL(archetype.label)}
             </h2>
             {seasonLabel && (
-              <p className="text-sm text-[#8A8A8A] font-medium mb-4">
+              <p className="text-sm text-[#6E6E6E] font-medium mb-4">
                 {seasonLabel}
               </p>
             )}
@@ -185,7 +185,7 @@ export function StyleIdentityHero({
                   />
                 ))}
               </div>
-              <p className="text-[10px] text-[#8A8A8A] text-center mt-2 font-medium">
+              <p className="text-[10px] text-[#6E6E6E] text-center mt-2 font-medium">
                 Jouw kleuren
               </p>
             </motion.div>
@@ -200,7 +200,7 @@ export function StyleIdentityHero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.35 }}
         >
-          <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#8A8A8A] mb-4 px-1">
+          <p className="text-[10px] font-bold tracking-[2px] uppercase text-[#6E6E6E] mb-4 px-1">
             Op basis van jouw quiz
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -213,7 +213,7 @@ export function StyleIdentityHero({
                 className="bg-white border border-[#E5E5E5] rounded-xl px-5 py-4 flex items-start gap-3"
               >
                 <span
-                  className="text-[#C2654A] text-[10px] mt-0.5 flex-shrink-0 font-bold"
+                  className="text-[#B55E45] text-[10px] mt-0.5 flex-shrink-0 font-bold"
                   aria-hidden="true"
                 >
                   {INSIGHT_ICONS[idx] ?? '◆'}

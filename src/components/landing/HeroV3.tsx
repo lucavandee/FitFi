@@ -166,7 +166,7 @@ export function HeroV3() {
             {/* Primary */}
             <button
               onClick={handleStartClick}
-              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[#C2654A] hover:bg-[#A8513A] text-white"
+              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[#B55E45] hover:bg-[#9A503B] text-white"
               style={{
                 boxShadow: '0 4px 24px rgba(194,101,74,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
                 letterSpacing: '0.01em',
@@ -273,7 +273,7 @@ export function HeroV3() {
 
             {/* Badge */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[#FAFAF8] text-[#C2654A]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[#FAFAF8] text-[#B55E45]"
             >
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
               Persoonlijk AI-stijladvies
@@ -300,7 +300,7 @@ export function HeroV3() {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleStartClick}
-                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[#C2654A] hover:bg-[#A8513A] text-white"
+                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[#B55E45] hover:bg-[#9A503B] text-white"
                 aria-label="Ontvang jouw persoonlijk stijladvies"
               >
                 Ontvang jouw stijladvies

@@ -66,7 +66,7 @@ export const NovaInsightCard: React.FC<NovaInsightCardProps> = ({
       {onDismiss && (
         <button
           onClick={onDismiss}
-          className="absolute top-3 right-3 p-1.5 rounded-full bg-[#FAFAF8]/80 hover:bg-[#FAFAF8] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors opacity-0 group-hover:opacity-100 z-10"
+          className="absolute top-3 right-3 p-1.5 rounded-full bg-[#FAFAF8]/80 hover:bg-[#FAFAF8] text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors opacity-0 group-hover:opacity-100 z-10"
           aria-label="Verberg dit inzicht"
         >
           <X className="w-4 h-4" />
@@ -83,7 +83,7 @@ export const NovaInsightCard: React.FC<NovaInsightCardProps> = ({
             <span className={`text-xs font-bold px-2 py-1 rounded-full ${priorityBadgeColor} uppercase tracking-wide`}>
               {priority}
             </span>
-            <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#FAFAF8] text-[#8A8A8A]">
+            <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#FAFAF8] text-[#6E6E6E]">
               {Math.round(confidence * 100)}%
             </span>
           </div>
@@ -96,7 +96,7 @@ export const NovaInsightCard: React.FC<NovaInsightCardProps> = ({
         {action && actionLink && (
           <Link
             to={actionLink}
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#A8513A] hover:text-[#C2654A] transition-colors group-hover:gap-3 duration-300"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#9A503B] hover:text-[#B55E45] transition-colors group-hover:gap-3 duration-300"
           >
             {action}
             <span aria-hidden="true">→</span>

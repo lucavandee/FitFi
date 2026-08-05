@@ -26,7 +26,7 @@ export const DashboardInsights: React.FC<DashboardInsightsProps> = ({
             <h2 className="text-4xl md:text-5xl font-black text-[#1A1A1A] mb-4">
               Slim advies, speciaal voor jou
             </h2>
-            <p className="text-lg text-[#8A8A8A] max-w-2xl mx-auto">
+            <p className="text-lg text-[#6E6E6E] max-w-2xl mx-auto">
               Styling tips op basis van jouw profiel
             </p>
           </div>

@@ -175,7 +175,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       <div className="h-screen flex items-center justify-center bg-[#FAFAF8] fixed inset-0">
         <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl px-6 py-4 shadow-xl">
           <div className="flex items-center gap-3">
-            <Loader2 className="w-5 h-5 text-[#A8513A] animate-spin" />
+            <Loader2 className="w-5 h-5 text-[#9A503B] animate-spin" />
             <p className="text-sm font-medium text-[#1A1A1A]">Stijlbeelden laden...</p>
           </div>
         </div>
@@ -186,8 +186,8 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
   if (queue.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#8A8A8A] mb-4">Geen stijlbeelden beschikbaar</p>
-        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl">
+        <p className="text-[#6E6E6E] mb-4">Geen stijlbeelden beschikbaar</p>
+        <button onClick={() => { persistSwipeData(swipeCount); onComplete(); }} className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl">
           Doorgaan
         </button>
       </div>
@@ -237,19 +237,19 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           <h2 className="text-base font-bold text-[#1A1A1A] mb-0.5">
             Welke stijl spreekt je aan?
           </h2>
-          <p className="text-xs text-[#8A8A8A] mb-2">
+          <p className="text-xs text-[#6E6E6E] mb-2">
             <strong className="text-[#1A1A1A]">Swipe</strong> door de foto's — hoe meer, hoe beter je resultaat
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-[#C2654A] to-[#A8513A]"
+                className="h-full bg-gradient-to-r from-[#B55E45] to-[#9A503B]"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               />
             </div>
-            <span className="text-xs text-[#8A8A8A] flex-shrink-0 tabular-nums">
+            <span className="text-xs text-[#6E6E6E] flex-shrink-0 tabular-nums">
               {swipeCount}/{totalAvailable}
             </span>
           </div>
@@ -276,7 +276,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           {canComplete ? (
             <button
               onClick={handleFinishEarly}
-              className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#A8513A] transition-all"
+              className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#9A503B] transition-all"
               style={{ background: '#FAF5F2', border: '1.5px solid #F4E8E3' }}
             >
               Klaar — bekijk mijn stijlprofiel
@@ -284,14 +284,14 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           ) : (
             <button
               onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
-              className="w-full py-2 rounded-xl text-xs font-medium text-[#8A8A8A] transition-all flex items-center justify-center gap-1.5 hover:text-[#1A1A1A]"
+              className="w-full py-2 rounded-xl text-xs font-medium text-[#6E6E6E] transition-all flex items-center justify-center gap-1.5 hover:text-[#1A1A1A]"
               aria-label="Sla visuele stap over"
             >
               <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
               Sla deze stap over
             </button>
           )}
-          <p className="text-center text-xs text-[#8A8A8A]">
+          <p className="text-center text-xs text-[#6E6E6E]">
             Tik op de knoppen of sleep de foto
           </p>
         </div>
@@ -327,7 +327,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               border: '1px solid #E5E5E5',
             }}
           >
-            <Sparkles className="w-4 h-4 text-[#A8513A]" />
+            <Sparkles className="w-4 h-4 text-[#9A503B]" />
             <span className="text-sm font-semibold text-[#1A1A1A]">Visuele Voorkeuren</span>
           </div>
 
@@ -338,7 +338,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             Welke stijl spreekt je aan?
           </h2>
 
-          <p className="text-sm text-[#8A8A8A] mb-8">
+          <p className="text-sm text-[#6E6E6E] mb-8">
             <strong className="text-[#1A1A1A] font-semibold">Laatste stap!</strong> Swipe door de foto's — Nova leert van elke keuze en past de selectie aan.
           </p>
 
@@ -347,7 +347,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               <span className="text-sm font-semibold text-[#1A1A1A]">{Math.round(progress)}% compleet</span>
               <span
                 className="text-xs font-medium px-2.5 py-1 rounded-full"
-                style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', color: '#8A8A8A' }}
+                style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', color: '#6E6E6E' }}
               >
                 {swipeCount} / {totalAvailable}
               </span>
@@ -355,14 +355,14 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             <div className="h-2 rounded-full overflow-hidden" style={{ background: '#E5E5E5' }}>
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #C2654A, #A8513A)' }}
+                style={{ background: 'linear-gradient(90deg, #B55E45, #9A503B)' }}
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
               />
             </div>
             {canComplete && (
-              <p className="text-xs text-[#A8513A] mt-1.5 font-medium">
+              <p className="text-xs text-[#9A503B] mt-1.5 font-medium">
                 Genoeg data verzameld — je kunt nu afronden of doorgaan voor nog betere resultaten
               </p>
             )}
@@ -383,7 +383,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </div>
-              <span className="text-xs font-semibold text-[#8A8A8A] group-hover:text-[#1A1A1A] transition-colors">
+              <span className="text-xs font-semibold text-[#6E6E6E] group-hover:text-[#1A1A1A] transition-colors">
                 Niet mijn stijl
               </span>
             </button>
@@ -416,7 +416,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               onClick={handleFinishEarly}
               className="w-full py-3 rounded-xl text-sm font-semibold mb-6 transition-all hover:opacity-90 active:scale-[0.98]"
               style={{
-                background: '#A8513A',
+                background: '#9A503B',
                 color: '#FAFAF8',
               }}
             >
@@ -425,7 +425,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           ) : (
             <button
               onClick={() => { persistSwipeData(swipeCount); onComplete(); }}
-              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[#FAF5F2] text-[#8A8A8A] hover:text-[#1A1A1A]"
+              className="w-full py-2.5 rounded-xl text-sm font-medium mb-6 flex items-center justify-center gap-2 transition-all hover:bg-[#FAF5F2] text-[#6E6E6E] hover:text-[#1A1A1A]"
               style={{ border: '1px solid #E5E5E5' }}
               aria-label="Sla visuele stap over"
             >
@@ -438,23 +438,23 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             className="rounded-xl px-5 py-4"
             style={{ background: '#FFFFFF', border: '1px solid #E5E5E5' }}
           >
-            <p className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wider mb-3">Sneltoetsen</p>
+            <p className="text-xs font-semibold text-[#6E6E6E] uppercase tracking-wider mb-3">Sneltoetsen</p>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A8A8A]">Niet mijn stijl</span>
+                <span className="text-xs text-[#6E6E6E]">Niet mijn stijl</span>
                 <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>←</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A8A8A]">Spreekt me aan</span>
+                <span className="text-xs text-[#6E6E6E]">Spreekt me aan</span>
                 <div className="flex items-center gap-1.5">
                   <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>→</kbd>
-                  <span className="text-[10px] text-[#8A8A8A]">of</span>
+                  <span className="text-[10px] text-[#6E6E6E]">of</span>
                   <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>Space</kbd>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A8A8A]">Sleep de foto</span>
-                <span className="text-xs text-[#8A8A8A]">← →</span>
+                <span className="text-xs text-[#6E6E6E]">Sleep de foto</span>
+                <span className="text-xs text-[#6E6E6E]">← →</span>
               </div>
             </div>
           </div>

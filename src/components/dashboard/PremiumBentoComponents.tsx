@@ -146,7 +146,7 @@ export function PremiumHeaderCard({
     : null;
 
   const headerContent = (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#C2654A] via-[#A8513A] to-[#C2654A] shadow-2xl">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#B55E45] via-[#9A503B] to-[#B55E45] shadow-2xl">
       {/* Subtle pattern overlay - NO backdrop-blur */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div
@@ -270,9 +270,9 @@ export function PremiumActionCard({
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-[#1A1A1A] flex items-center gap-2">
           {title}
-          <ChevronRight className={`w-4 h-4 text-[#8A8A8A] ${!isMobile && 'group-hover:translate-x-1'} transition-transform`} />
+          <ChevronRight className={`w-4 h-4 text-[#6E6E6E] ${!isMobile && 'group-hover:translate-x-1'} transition-transform`} />
         </div>
-        <div className="text-sm text-[#8A8A8A] truncate">
+        <div className="text-sm text-[#6E6E6E] truncate">
           {description}
         </div>
       </div>
@@ -308,7 +308,7 @@ export function PremiumCard({
   const cardContent = (
     <div className="bg-[#FFFFFF] border-2 border-[#E5E5E5] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-[#E5E5E5]">
-        <div className="text-[#C2654A]">
+        <div className="text-[#B55E45]">
           {icon}
         </div>
         <h2 className="text-xl font-bold text-[#1A1A1A]">
@@ -359,7 +359,7 @@ export function PremiumTabButton({
       onClick={onClick}
       className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
         isActive
-          ? 'bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white shadow-lg'
+          ? 'bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white shadow-lg'
           : 'bg-[#FFFFFF] text-[#1A1A1A] border-2 border-[#E5E5E5] hover:border-[#D4856E]'
       }`}
     >

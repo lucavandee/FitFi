@@ -97,12 +97,12 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
     >
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-3 mb-2">
-        <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#8A8A8A]">
+        <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#6E6E6E]">
           Op basis van jouw keuzes
         </p>
         <button
           onClick={() => navigate('/onboarding')}
-          className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+          className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
           aria-label="Pas antwoorden aan"
         >
           Pas aan <ArrowRight className="w-3.5 h-3.5" />
@@ -110,7 +110,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
       </div>
       <h3 className="text-lg font-semibold text-[#1A1A1A] mb-8">
         Waarom dit rapport past bij{' '}
-        <span className="text-[#C2654A]">{getArchetypeDisplayNL(archetypeName)}</span>
+        <span className="text-[#B55E45]">{getArchetypeDisplayNL(archetypeName)}</span>
       </h3>
 
       {/* ── Bullets ── */}
@@ -125,13 +125,13 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
           >
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
-                <Check className="w-3.5 h-3.5 text-[#C2654A]" strokeWidth={3} />
+                <Check className="w-3.5 h-3.5 text-[#B55E45]" strokeWidth={3} />
               </div>
               <span className="text-sm font-medium text-[#1A1A1A]">
                 {bullet.label}
               </span>
             </div>
-            <span className="text-sm text-[#8A8A8A] text-right leading-snug">
+            <span className="text-sm text-[#6E6E6E] text-right leading-snug">
               {bullet.detail}
             </span>
           </motion.li>
@@ -141,7 +141,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
       {/* ── Photo upsell ── */}
       {!hasPhoto && (
         <div className="bg-[#F5F0EB] rounded-xl p-4 mt-6 flex items-center gap-3">
-          <Camera className="w-5 h-5 text-[#C2654A] flex-shrink-0" />
+          <Camera className="w-5 h-5 text-[#B55E45] flex-shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-sm text-[#4A4A4A]">
               Upload een selfie voor kleuranalyse op basis van jouw huidondertoon.
@@ -149,7 +149,7 @@ export function QuizInputSummary({ answers, archetypeName }: QuizInputSummaryPro
           </div>
           <button
             onClick={() => navigate('/onboarding?step=photo')}
-            className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] whitespace-nowrap transition-colors duration-200"
+            className="text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] whitespace-nowrap transition-colors duration-200"
           >
             Foto toevoegen →
           </button>

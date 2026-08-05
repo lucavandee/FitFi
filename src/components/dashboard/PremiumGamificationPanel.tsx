@@ -105,7 +105,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               <h2 className="text-3xl font-bold text-[#1A1A1A]">
                 Jouw <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Progressie</span>
               </h2>
-              <p className="text-[#8A8A8A]">
+              <p className="text-[#6E6E6E]">
                 Verdien XP, behaal badges en zie je stijl groeien
               </p>
             </div>
@@ -144,8 +144,8 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               />
               <defs>
                 <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#C2654A" />
-                  <stop offset="100%" stopColor="#C2654A" />
+                  <stop offset="0%" stopColor="#B55E45" />
+                  <stop offset="100%" stopColor="#B55E45" />
                 </linearGradient>
               </defs>
             </svg>
@@ -156,7 +156,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               <div className="text-4xl font-bold text-[#1A1A1A]">
                 {stats?.current_level || 1}
               </div>
-              <div className="text-sm text-[#8A8A8A] font-medium">
+              <div className="text-sm text-[#6E6E6E] font-medium">
                 Level
               </div>
             </div>
@@ -165,7 +165,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
 
         {/* XP Progress Bar */}
         <div className="mb-6 text-center">
-          <div className="flex items-center justify-between text-sm text-[#8A8A8A] mb-2">
+          <div className="flex items-center justify-between text-sm text-[#6E6E6E] mb-2">
             <span>{currentLevelXP.toLocaleString()} XP</span>
             <span>{xpToNextLevel.toLocaleString()} XP</span>
           </div>
@@ -177,7 +177,7 @@ export function PremiumGamificationPanel({ userId }: PremiumGamificationPanelPro
               transition={{ duration: 1, ease: "easeOut" }}
             />
           </div>
-          <p className="text-xs text-[#8A8A8A] mt-2">
+          <p className="text-xs text-[#6E6E6E] mt-2">
             {(xpToNextLevel - currentLevelXP).toLocaleString()} XP tot level {(stats?.current_level || 1) + 1}
           </p>
         </div>
@@ -245,7 +245,7 @@ function StatBubble({
     >
       <div className={`flex items-center gap-2 mb-2 ${iconColorClass}`}>
         {icon}
-        <span className="text-xs font-semibold text-[#8A8A8A] uppercase tracking-wide">
+        <span className="text-xs font-semibold text-[#6E6E6E] uppercase tracking-wide">
           {label}
         </span>
       </div>

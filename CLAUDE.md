@@ -118,8 +118,8 @@ Deze opdrachten zijn uitsluitend voor visuele, UX-, copy- en polishverbeteringen
 ### Primaire kleuren
 | Naam | Hex | Tailwind | Gebruik |
 |------|-----|----------|---------|
-| Terracotta | #C2654A | `text-[#C2654A]` / `bg-[#C2654A]` | Primaire CTA's, accenten, actieve states |
-| Terracotta Dark | #A8513A | `bg-[#A8513A]` | Hover state primaire buttons |
+| Terracotta | #B55E45 | `text-[#B55E45]` / `bg-[#B55E45]` | Primaire CTA's, accenten, actieve states |
+| Terracotta Dark | #9A503B | `bg-[#9A503B]` | Hover state primaire buttons |
 | Terracotta Light | #F4E8E3 | `bg-[#F4E8E3]` | Geselecteerde states, soft highlights |
 
 ### Neutrale kleuren
@@ -127,7 +127,7 @@ Deze opdrachten zijn uitsluitend voor visuele, UX-, copy- en polishverbeteringen
 |------|-----|----------|---------|
 | Zwart | #1A1A1A | `text-[#1A1A1A]` | Headlines |
 | Donkergrijs | #4A4A4A | `text-[#4A4A4A]` | Body tekst |
-| Middengrijs | #8A8A8A | `text-[#8A8A8A]` | Placeholders, captions |
+| Middengrijs | #6E6E6E | `text-[#6E6E6E]` | Placeholders, captions |
 | Lichtgrijs | #E5E5E5 | `border-[#E5E5E5]` | Borders, dividers |
 | Gebroken wit | #FAFAF8 | `bg-[#FAFAF8]` | Pagina-achtergrond |
 | Wit | #FFFFFF | `bg-white` | Cards, modals, inputs |
@@ -145,7 +145,7 @@ Deze opdrachten zijn uitsluitend voor visuele, UX-, copy- en polishverbeteringen
 - Pagina-achtergrond: ALTIJD #FAFAF8, nooit puur wit
 - Cards: ALTIJD #FFFFFF met border border-[#E5E5E5]
 - Terracotta ALLEEN voor primaire CTA's, actieve tabs en badges
-- Tekst NOOIT lichter dan #8A8A8A
+- Tekst NOOIT lichter dan #6E6E6E
 - GEEN nieuwe kleuren buiten dit palet
 
 ## 2. Typografie
@@ -161,7 +161,7 @@ Deze opdrachten zijn uitsluitend voor visuele, UX-, copy- en polishverbeteringen
 | H4 | 20px | 20px | `text-xl font-semibold` | 600 | #1A1A1A |
 | Body | 16px | 16px | `text-base font-normal leading-relaxed` | 400 | #4A4A4A |
 | Body small | 14px | 14px | `text-sm font-normal` | 400 | #4A4A4A |
-| Caption | 12px | 12px | `text-xs font-medium` | 500 | #8A8A8A |
+| Caption | 12px | 12px | `text-xs font-medium` | 500 | #6E6E6E |
 | Label | 14px | 14px | `text-sm font-medium` | 500 | #1A1A1A |
 
 ### Typografieregels
@@ -183,8 +183,8 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 ## 4. Componenten
 
 ### Buttons
-- Primair: `bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl`
-- Secundair: `bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`
+- Primair: `bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl`
+- Secundair: `bg-white border border-[#E5E5E5] hover:border-[#B55E45] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl`
 - ALTIJD `rounded-xl`, minimale hoogte 48px, max 1 primaire button per scherm
 
 ### Cards
@@ -194,17 +194,17 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 
 ### Badges
 - ALTIJD `rounded-full`
-- 10% opacity achtergrond: `bg-[#C2654A]/10 text-[#C2654A]`
+- 10% opacity achtergrond: `bg-[#B55E45]/10 text-[#B55E45]`
 - Positie op cards: `absolute top-3 left-3`
 
 ### Inputs
 - `rounded-xl py-3 px-4 border border-[#E5E5E5]`
-- Focus: `focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A]`
+- Focus: `focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45]`
 - Labels BOVEN het veld
 
 ### Tabs
-- Actief: `text-[#C2654A] border-b-2 border-[#C2654A] font-semibold`
-- Inactief: `text-[#8A8A8A] font-medium`
+- Actief: `text-[#B55E45] border-b-2 border-[#B55E45] font-semibold`
+- Inactief: `text-[#6E6E6E] font-medium`
 
 ### Modals
 - `rounded-2xl max-w-lg shadow-xl`
@@ -213,7 +213,7 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 
 ### Navigation
 - Header: `fixed bg-white/90 backdrop-blur-md border-b border-[#E5E5E5] h-16`
-- Actieve pagina: `text-[#C2654A]`
+- Actieve pagina: `text-[#B55E45]`
 
 ## 5. Border Radius
 | Element | Tailwind |
@@ -277,7 +277,7 @@ Page header
 
 ALTIJD op zand-achtergrond: bg-[#F5F0EB] pt-24 pb-16 md:pt-32 md:pb-20
 Bevat: badge, headline (H1), subtitel
-Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#C2654A]
+Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#B55E45]
 Headline: text-2xl md:text-3xl font-bold text-[#1A1A1A] text-center
 Subtitel: text-base text-[#4A4A4A] text-center mt-4 max-w-lg mx-auto
 
@@ -300,7 +300,7 @@ Input-velden
 
 ALTIJD volle border rondom: border border-[#E5E5E5] rounded-xl
 NOOIT alleen een bottom-border
-ALTIJD terracotta focus ring: focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A]
+ALTIJD terracotta focus ring: focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45]
 
 Formulier-cards
 

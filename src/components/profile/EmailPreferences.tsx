@@ -133,10 +133,10 @@ export function EmailPreferences() {
   return (
     <div>
       <div className="px-5 pt-4 pb-2 border-b border-[#E5E5E5]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8A8A8A]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#6E6E6E]">
           E-mailvoorkeuren
         </p>
-        <p className="text-xs text-[#8A8A8A] mt-0.5">
+        <p className="text-xs text-[#6E6E6E] mt-0.5">
           Kies welke emails je wilt ontvangen
         </p>
       </div>
@@ -149,7 +149,7 @@ export function EmailPreferences() {
           >
             <div className="min-w-0 pr-4">
               <p className="text-sm font-medium text-[#1A1A1A] leading-snug">{label}</p>
-              <p className="text-xs text-[#8A8A8A] mt-0.5 leading-snug">{description}</p>
+              <p className="text-xs text-[#6E6E6E] mt-0.5 leading-snug">{description}</p>
             </div>
             <button
               role="switch"
@@ -159,8 +159,8 @@ export function EmailPreferences() {
               onClick={() => updatePreference(key, !preferences[key])}
               className={[
                 'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-                preferences[key] ? 'bg-[#C2654A]' : 'bg-[#E5E5E5]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+                preferences[key] ? 'bg-[#B55E45]' : 'bg-[#E5E5E5]',
                 savingKey === key ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
               ].join(' ')}
             >
@@ -174,7 +174,7 @@ export function EmailPreferences() {
       </div>
 
       <div className="px-5 py-3 border-t border-[#E5E5E5]">
-        <p className="text-[11px] text-[#8A8A8A] leading-relaxed">
+        <p className="text-[11px] text-[#6E6E6E] leading-relaxed">
           Account- en transactie-emails ontvang je altijd.
         </p>
       </div>

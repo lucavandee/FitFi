@@ -79,7 +79,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
               key={`empty-${i}`}
               className="aspect-square bg-[#FAF5F2] flex items-center justify-center"
             >
-              <ShoppingBag className="w-4 h-4 text-[#8A8A8A] opacity-30" />
+              <ShoppingBag className="w-4 h-4 text-[#6E6E6E] opacity-30" />
             </div>
           ))}
       </div>
@@ -90,7 +90,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
             <p className="text-sm font-semibold text-[#1A1A1A] truncate leading-tight">
               {outfit.name || outfit.occasion || "Outfit"}
             </p>
-            <p className="text-[11px] text-[#8A8A8A] mt-0.5">
+            <p className="text-[11px] text-[#6E6E6E] mt-0.5">
               {items.length} items
               {outfit.occasion ? ` \u00b7 ${outfit.occasion}` : ""}
               {` \u00b7 ${dateStr}`}
@@ -98,7 +98,7 @@ function OutfitHistoryCard({ saved, index }: { saved: SavedOutfit; index: number
           </div>
           <button
             onClick={() => navigate("/results")}
-            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#C2654A] hover:bg-[#FAF5F2] transition-colors"
+            className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#B55E45] hover:bg-[#FAF5F2] transition-colors"
             aria-label="Bekijk outfit"
           >
             <ChevronRight className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
         className="bg-[#F5F0EB] rounded-2xl p-10 text-center"
       >
         <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center mx-auto mb-4">
-          <Heart className="w-6 h-6 text-[#C2654A]" />
+          <Heart className="w-6 h-6 text-[#B55E45]" />
         </div>
         <p className="text-base font-semibold text-[#1A1A1A] mb-2">
           Nog geen opgeslagen outfits
@@ -157,7 +157,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
         </p>
         <button
           onClick={() => navigate("/results")}
-          className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
+          className="bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
         >
           <Sparkles className="w-3.5 h-3.5" />
           Bekijk outfits
@@ -174,7 +174,7 @@ export default function SavedOutfitHistory({ userId }: Props) {
       {savedOutfits.length > 6 && (
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#8A8A8A] hover:border-[#D4856E] hover:text-[#A8513A] transition-colors"
+          className="w-full py-3 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:border-[#D4856E] hover:text-[#9A503B] transition-colors"
         >
           Bekijk alle {savedOutfits.length} outfits
         </button>

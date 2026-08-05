@@ -48,7 +48,7 @@ export default function SendNotificationModal({
 
         {preselectedUserName && (
           <div className="mb-4 p-3 bg-[#FAFAF8] rounded-lg border border-[#E5E5E5]">
-            <span className="text-sm text-[#8A8A8A]">Ontvanger: </span>
+            <span className="text-sm text-[#6E6E6E]">Ontvanger: </span>
             <span className="text-sm font-medium text-[#1A1A1A]">{preselectedUserName}</span>
           </div>
         )}
@@ -67,7 +67,7 @@ export default function SendNotificationModal({
                     targetTier: e.target.value === 'all' ? undefined : (e.target.value as any),
                   })
                 }
-                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
               >
                 <option value="all">Alle gebruikers</option>
                 <option value="free">Alleen Free users</option>
@@ -88,8 +88,8 @@ export default function SendNotificationModal({
                   onClick={() => setInput({ ...input, type })}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                     input.type === type
-                      ? 'bg-[#A8513A] text-white'
-                      : 'bg-[#FAFAF8] border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A8513A]'
+                      ? 'bg-[#9A503B] text-white'
+                      : 'bg-[#FAFAF8] border border-[#E5E5E5] text-[#1A1A1A] hover:border-[#9A503B]'
                   }`}
                 >
                   {type}
@@ -107,7 +107,7 @@ export default function SendNotificationModal({
               value={input.title}
               onChange={(e) => setInput({ ...input, title: e.target.value })}
               placeholder="Bijvoorbeeld: Nieuwe premium features!"
-              className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+              className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
             />
           </div>
 
@@ -120,7 +120,7 @@ export default function SendNotificationModal({
               onChange={(e) => setInput({ ...input, message: e.target.value })}
               placeholder="Bijvoorbeeld: We hebben nieuwe outfit-suggesties toegevoegd. Bekijk ze in je dashboard."
               rows={4}
-              className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+              className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
             />
           </div>
 
@@ -134,7 +134,7 @@ export default function SendNotificationModal({
                 value={input.actionLabel || ''}
                 onChange={(e) => setInput({ ...input, actionLabel: e.target.value })}
                 placeholder="Bijvoorbeeld: Bekijk nu"
-                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
               />
             </div>
 
@@ -147,7 +147,7 @@ export default function SendNotificationModal({
                 value={input.actionUrl || ''}
                 onChange={(e) => setInput({ ...input, actionUrl: e.target.value })}
                 placeholder="/dashboard"
-                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]"
+                className="w-full px-4 py-2 bg-[#FAFAF8] border border-[#E5E5E5] rounded-lg text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]"
               />
             </div>
           </div>
@@ -157,14 +157,14 @@ export default function SendNotificationModal({
           <button
             onClick={handleSend}
             disabled={loading || !input.title.trim() || !input.message.trim()}
-            className="flex-1 px-6 py-3 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="flex-1 px-6 py-3 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
             {loading ? 'Versturen...' : 'Verstuur Notificatie'}
           </button>
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl hover:border-[#A8513A] transition-colors font-medium"
+            className="px-6 py-3 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl hover:border-[#9A503B] transition-colors font-medium"
           >
             Annuleren
           </button>

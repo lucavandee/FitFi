@@ -226,12 +226,12 @@ export function StackSwipeableCards<T>({
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="w-16 h-16 rounded-full bg-[#FAF5F2] flex items-center justify-center mb-4">
-          <Sparkles className="w-8 h-8 text-[#A8513A]" />
+          <Sparkles className="w-8 h-8 text-[#9A503B]" />
         </div>
         <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
           Geen items meer
         </h3>
-        <p className="text-sm text-[#8A8A8A]">
+        <p className="text-sm text-[#6E6E6E]">
           Je hebt alle items bekeken!
         </p>
       </div>

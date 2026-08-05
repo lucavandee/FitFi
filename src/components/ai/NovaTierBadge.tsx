@@ -69,8 +69,8 @@ export default function NovaTierBadge({ className = '' }: NovaTierBadgeProps) {
 
   // Color based on usage
   let bgColor = 'bg-[#FAF5F2]';
-  let textColor = 'text-[#A8513A]';
-  let barColor = 'bg-[#C2654A]';
+  let textColor = 'text-[#9A503B]';
+  let barColor = 'bg-[#B55E45]';
 
   if (isAtLimit) {
     bgColor = 'bg-red-100';

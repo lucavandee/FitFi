@@ -81,7 +81,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
         // SECURITY: Validate URL to prevent javascript: protocol XSS
         const safeUrl = url.trim().toLowerCase().startsWith('javascript:') ? '#' : url;
-        return `<a href="${escapeHtml(safeUrl)}" class="text-[#C2654A] hover:text-[#C2654A]/80 underline">${escapeHtml(text)}</a>`;
+        return `<a href="${escapeHtml(safeUrl)}" class="text-[#B55E45] hover:text-[#B55E45]/80 underline">${escapeHtml(text)}</a>`;
       })
       .replace(/\n\n/g, '</p><p class="text-[#1A1A1A] leading-relaxed mb-4">')
       .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-[#1A1A1A] leading-relaxed mb-4">')
@@ -97,7 +97,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <h1 className="text-2xl font-bold text-[#1A1A1A] mb-4">Content niet gevonden</h1>
-          <p className="text-[#8A8A8A] mb-6">{error}</p>
+          <p className="text-[#6E6E6E] mb-6">{error}</p>
           <Button as={Link} to={backLink} variant="primary">
             {backLabel}
           </Button>
@@ -115,7 +115,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
             {backLink && (
               <Link
                 to={backLink}
-                className="inline-flex items-center text-[#C2654A] hover:text-[#C2654A]/80 transition-colors mb-6"
+                className="inline-flex items-center text-[#B55E45] hover:text-[#B55E45]/80 transition-colors mb-6"
               >
                 <ArrowLeft size={20} className="mr-2" />
                 {backLabel}
@@ -126,7 +126,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   {title && <h1 className="text-3xl font-light text-[#1A1A1A] mb-2">{title}</h1>}
-                  {description && <p className="text-[#8A8A8A]">{description}</p>}
+                  {description && <p className="text-[#6E6E6E]">{description}</p>}
                 </div>
 
                 {downloadUrl && (
@@ -136,7 +136,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
                     variant="outline"
                     icon={<Download size={16} />}
                     iconPosition="left"
-                    className="border-[#C2654A] text-[#C2654A] hover:bg-[#C2654A] hover:text-white"
+                    className="border-[#B55E45] text-[#B55E45] hover:bg-[#B55E45] hover:text-white"
                   >
                     Download PDF
                   </Button>

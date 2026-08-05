@@ -318,7 +318,7 @@ export default function OutfitCard({
 
   return (
     <motion.div
-      className="group relative rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[#C2654A] overflow-hidden"
+      className="group relative rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-[0_8px_32px_rgba(30,35,51,0.12)] transition-all focus-within:ring-2 focus-within:ring-[#B55E45] overflow-hidden"
       data-kind="outfit-card"
       role="article"
       aria-labelledby={titleId}
@@ -346,7 +346,7 @@ export default function OutfitCard({
       {outfit.matchPercentage && outfit.matchPercentage > 80 && (
         <motion.div
           className="absolute top-3 right-3 z-10 flex items-center gap-1 px-3 py-1.5 rounded-full shadow-md text-sm font-bold text-white"
-          style={{ background: '#A8513A' }}
+          style={{ background: '#9A503B' }}
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 15, delay: 0.2 }}
@@ -397,7 +397,7 @@ export default function OutfitCard({
           </h3>
           <p
             id={descId}
-            className="mt-1 text-sm text-[#8A8A8A] leading-relaxed"
+            className="mt-1 text-sm text-[#6E6E6E] leading-relaxed"
           >
             {outfit.description}
           </p>
@@ -414,14 +414,14 @@ export default function OutfitCard({
           </span>
           {outfit.currentSeasonLabel && (
             <span
-              className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs text-[#8A8A8A] bg-[#FFFFFF]"
+              className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs text-[#6E6E6E] bg-[#FFFFFF]"
             >
               {outfit.currentSeasonLabel}
             </span>
           )}
           {outfit.dominantColorName && (
             <span
-              className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs text-[#8A8A8A] bg-[#FFFFFF]"
+              className="rounded-full border border-[#E5E5E5] px-2.5 py-0.5 text-xs text-[#6E6E6E] bg-[#FFFFFF]"
             >
               {outfit.dominantColorName}
             </span>
@@ -429,7 +429,7 @@ export default function OutfitCard({
           <RequireAuth cta="Inloggen voor uitleg">
             <button
               onClick={() => setShowExplanationModal(true)}
-              className="flex items-center gap-1 text-xs text-[#A8513A] hover:text-[#C2654A] transition-colors ml-auto"
+              className="flex items-center gap-1 text-xs text-[#9A503B] hover:text-[#B55E45] transition-colors ml-auto"
               aria-label="Waarom deze match?"
             >
               <HelpCircle size={13} />
@@ -442,13 +442,13 @@ export default function OutfitCard({
         {showExplanation && explanation && (
           <div className="mt-2 p-3 rounded-xl border border-[#F4E8E3]" style={{ background: '#FAF5F2' }}>
             <div className="flex items-start gap-2 mb-1.5">
-              <MessageCircle className="w-3.5 h-3.5 text-[#A8513A] flex-shrink-0 mt-0.5" />
-              <span className="text-xs font-semibold text-[#A8513A]">Nova's uitleg:</span>
+              <MessageCircle className="w-3.5 h-3.5 text-[#9A503B] flex-shrink-0 mt-0.5" />
+              <span className="text-xs font-semibold text-[#9A503B]">Nova's uitleg:</span>
             </div>
             <p className="text-xs text-[#1A1A1A] leading-relaxed">{explanation}</p>
             <button
               onClick={() => setShowExplanation(false)}
-              className="mt-2 text-xs text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
+              className="mt-2 text-xs text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors"
             >
               Verberg uitleg
             </button>
@@ -470,15 +470,15 @@ export default function OutfitCard({
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:opacity-70"
                   style={{ background: '#FAF5F2' }}
                 >
-                  <X size={15} className="text-[#A8513A]" />
+                  <X size={15} className="text-[#9A503B]" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div className="rounded-xl p-4" style={{ background: '#FAF5F2', border: '1px solid #F4E8E3' }}>
                   <div className="flex items-center gap-2 mb-2">
-                    <MessageCircle className="w-4 h-4 text-[#A8513A]" />
-                    <span className="text-sm font-semibold text-[#A8513A]">Nova's analyse:</span>
+                    <MessageCircle className="w-4 h-4 text-[#9A503B]" />
+                    <span className="text-sm font-semibold text-[#9A503B]">Nova's analyse:</span>
                   </div>
                   <p className="text-sm text-[#1A1A1A] leading-relaxed">
                     {generateNovaExplanation(
@@ -514,7 +514,7 @@ export default function OutfitCard({
                   <button
                     onClick={() => setShowExplanationModal(false)}
                     className="px-6 py-2.5 rounded-xl font-semibold text-sm text-white transition-colors hover:opacity-90"
-                    style={{ background: '#A8513A' }}
+                    style={{ background: '#9A503B' }}
                   >
                     Begrepen
                   </button>
@@ -540,11 +540,11 @@ export default function OutfitCard({
               className={`relative px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 overflow-hidden ${
                 saveOutfit.isSuccess || saved
                   ? 'text-white'
-                  : 'text-[#A8513A] hover:bg-[#FAF5F2]'
+                  : 'text-[#9A503B] hover:bg-[#FAF5F2]'
               } ${saveOutfit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
-                borderColor: '#C2654A',
-                background: saveOutfit.isSuccess || saved ? '#A8513A' : undefined,
+                borderColor: '#B55E45',
+                background: saveOutfit.isSuccess || saved ? '#9A503B' : undefined,
               }}
               whileHover={!saveOutfit.isPending ? { scale: 1.02, y: -1 } : {}}
               whileTap={!saveOutfit.isPending ? { scale: 0.97 } : {}}
@@ -588,7 +588,7 @@ export default function OutfitCard({
               title="Verberg dit type outfit uit je feed"
               onClick={handleDislike}
               disabled={isProcessing.dislike}
-              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#8A8A8A] hover:border-[#C24A4A] hover:text-[#C24A4A] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#6E6E6E] hover:border-[#C24A4A] hover:text-[#C24A4A] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.dislike ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.dislike ? { scale: 1.02, y: -1 } : {}}
@@ -609,7 +609,7 @@ export default function OutfitCard({
               title="Krijg Nova's uitleg waarom dit outfit bij je past"
               onClick={handleExplain}
               disabled={isProcessing.explain}
-              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#8A8A8A] hover:border-[#D4856E] hover:text-[#A8513A] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`px-4 py-2.5 border-2 border-[#E5E5E5] text-[#6E6E6E] hover:border-[#D4856E] hover:text-[#9A503B] rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isProcessing.explain ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               whileHover={!isProcessing.explain ? { scale: 1.02, y: -1 } : {}}
@@ -629,7 +629,7 @@ export default function OutfitCard({
               title="Bekijk en shop alle items uit dit outfit"
               onClick={handleShopClick}
               className="col-span-2 px-4 py-2.5 border-2 rounded-xl text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 text-white"
-              style={{ borderColor: '#A8513A', background: '#A8513A' }}
+              style={{ borderColor: '#9A503B', background: '#9A503B' }}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.97 }}
             >

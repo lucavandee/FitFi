@@ -141,13 +141,13 @@ export function PersonalizedAdviceSection({
               key={section.kicker}
               className="bg-white border border-[#E5E5E5] rounded-2xl p-8"
             >
-              <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">{section.kicker}</p>
+              <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#B55E45] mb-2">{section.kicker}</p>
               <h3 className="text-xl font-bold text-[#1A1A1A] mb-6">{section.title}</h3>
               <div className="space-y-5">
                 {section.items.map((item, i) => (
                   <div key={i} className="flex items-start gap-4 py-4 border-b border-[#E5E5E5]/50 last:border-none last:pb-0 first:pt-0">
                     <div className="w-8 h-8 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
+                      <span className="w-2 h-2 rounded-full bg-[#B55E45]" aria-hidden="true" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-[#1A1A1A]">{item.label}</p>

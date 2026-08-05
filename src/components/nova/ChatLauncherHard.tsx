@@ -9,7 +9,7 @@ const btnBase: React.CSSProperties = {
   width: "56px",
   height: "56px",
   borderRadius: "9999px",
-  background: "#C2654A",
+  background: "#B55E45",
   color: "#fff",
   display: "inline-flex",
   alignItems: "center",

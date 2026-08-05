@@ -50,25 +50,25 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
 
   const steps = {
     welcome: {
-      icon: <Sparkles className="w-12 h-12 text-[#C2654A]" />,
+      icon: <Sparkles className="w-12 h-12 text-[#B55E45]" />,
       title: `Welkom${userName ? `, ${userName}` : ''}!`,
       description: 'Je stijlprofiel is klaar. Laat me je laten zien hoe je dashboard werkt.',
       highlight: null
     },
     outfits: {
-      icon: <Heart className="w-12 h-12 text-[#C2654A]" />,
+      icon: <Heart className="w-12 h-12 text-[#B55E45]" />,
       title: 'Persoonlijke Aanbevelingen',
       description: 'Ontdek outfits die bij jouw stijl passen. Klik voor details of om te shoppen.',
       highlight: 'outfits'
     },
     nova: {
-      icon: <Wand2 className="w-12 h-12 text-[#C2654A]" />,
+      icon: <Wand2 className="w-12 h-12 text-[#B55E45]" />,
       title: 'Nova AI Stylist',
       description: 'Stel vragen, krijg stijladvies, of laat Nova nieuwe combinaties voor je maken.',
       highlight: 'nova'
     },
     complete: {
-      icon: <Sparkles className="w-12 h-12 text-[#C2654A]" />,
+      icon: <Sparkles className="w-12 h-12 text-[#B55E45]" />,
       title: 'Klaar!',
       description: 'Ontdek je outfits of chat met Nova. Veel plezier!',
       highlight: null
@@ -110,7 +110,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
                 className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#FAFAF8] transition-colors"
                 aria-label="Skip tour"
               >
-                <X className="w-5 h-5 text-[#8A8A8A]" />
+                <X className="w-5 h-5 text-[#6E6E6E]" />
               </button>
 
               {/* Content */}
@@ -132,7 +132,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
                   <h2 className="text-2xl font-bold text-[#1A1A1A] mb-3">
                     {currentStep.title}
                   </h2>
-                  <p className="text-[#8A8A8A] leading-relaxed">
+                  <p className="text-[#6E6E6E] leading-relaxed">
                     {currentStep.description}
                   </p>
                 </motion.div>
@@ -144,7 +144,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
                       key={s}
                       className={`h-2 rounded-full transition-all duration-300 ${
                         s === step
-                          ? 'w-8 bg-[#C2654A]'
+                          ? 'w-8 bg-[#B55E45]'
                           : i < ['welcome', 'outfits', 'nova', 'complete'].indexOf(step)
                           ? 'w-2 bg-[#D4856E]'
                           : 'w-2 bg-[#E5E5E5]'
@@ -165,7 +165,7 @@ export function WelcomeTour({ userName, onComplete }: WelcomeTourProps) {
                   )}
                   <button
                     onClick={handleNext}
-                    className="flex-1 px-6 py-3 bg-[#C2654A] text-white rounded-xl font-semibold hover:bg-[#A8513A] transition-colors"
+                    className="flex-1 px-6 py-3 bg-[#B55E45] text-white rounded-xl font-semibold hover:bg-[#9A503B] transition-colors"
                   >
                     {step === 'complete' ? 'Start Browsen!' : 'Volgende'}
                   </button>

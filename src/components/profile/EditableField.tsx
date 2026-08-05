@@ -48,7 +48,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
             type="text"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
-            className="flex-1 h-11 px-3.5 bg-[#FAFAF8] border border-[#C2654A] rounded-xl text-[#1A1A1A] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 transition-colors"
+            className="flex-1 h-11 px-3.5 bg-[#FAFAF8] border border-[#B55E45] rounded-xl text-[#1A1A1A] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors"
             placeholder={placeholder}
             autoFocus
             aria-label={ariaLabel || `Bewerk ${label.toLowerCase()}`}
@@ -56,14 +56,14 @@ export const EditableField: React.FC<EditableFieldProps> = ({
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 disabled:opacity-50 transition-colors"
+            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 disabled:opacity-50 transition-colors"
             aria-label="Opslaan"
           >
             <Check className="w-4 h-4" />
           </button>
           <button
             onClick={handleCancel}
-            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center border border-[#E5E5E5] text-[#8A8A8A] rounded-xl hover:border-[#D4856E] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 transition-colors"
+            className="h-11 w-11 min-w-[44px] min-h-[44px] flex items-center justify-center border border-[#E5E5E5] text-[#6E6E6E] rounded-xl hover:border-[#D4856E] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors"
             aria-label="Annuleren"
           >
             <X className="w-4 h-4" />
@@ -77,7 +77,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
               setEditValue(value);
               setIsEditing(true);
             }}
-            className="h-9 w-9 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#8A8A8A] hover:text-[#A8513A] hover:bg-[#FAF5F2] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 transition-colors flex-shrink-0"
+            className="h-9 w-9 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#FAF5F2] rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 transition-colors flex-shrink-0"
             aria-label={`Wijzig ${label.toLowerCase()}`}
           >
             <Edit2 className="w-4 h-4" />

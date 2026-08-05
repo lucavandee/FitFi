@@ -72,8 +72,8 @@ export default function SaveButton({ outfit, userId, className = '' }: SaveButto
         rounded-xl
         transition-all duration-200
         ${isSaved
-          ? 'bg-[#FAF5F2] text-[#A8513A]'
-          : 'bg-[#FFFFFF] text-[#1A1A1A]/60 hover:text-[#A8513A] hover:bg-[#FAF5F2]'
+          ? 'bg-[#FAF5F2] text-[#9A503B]'
+          : 'bg-[#FFFFFF] text-[#1A1A1A]/60 hover:text-[#9A503B] hover:bg-[#FAF5F2]'
         }
         border border-[#E5E5E5]
         disabled:opacity-50 disabled:cursor-not-allowed

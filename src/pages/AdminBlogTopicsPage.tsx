@@ -92,7 +92,7 @@ export default function AdminBlogTopicsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[#8A8A8A]">Laden...</p>
+          <p className="text-[#6E6E6E]">Laden...</p>
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ export default function AdminBlogTopicsPage() {
           <div className="mb-8">
             <button
               onClick={() => navigate('/admin/blog')}
-              className="flex items-center gap-2 text-[#8A8A8A] hover:text-[#1A1A1A] mb-4"
+              className="flex items-center gap-2 text-[#6E6E6E] hover:text-[#1A1A1A] mb-4"
             >
               <ArrowLeft className="w-4 h-4" />
               Terug naar blog overzicht
@@ -120,13 +120,13 @@ export default function AdminBlogTopicsPage() {
                 <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
                   Blog Topics
                 </h1>
-                <p className="text-[#8A8A8A]">
+                <p className="text-[#6E6E6E]">
                   Beheer ideeën voor toekomstige blog content
                 </p>
               </div>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Nieuw Topic
@@ -142,7 +142,7 @@ export default function AdminBlogTopicsPage() {
                   <Clock className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[#8A8A8A]">Pending</p>
+                  <p className="text-sm text-[#6E6E6E]">Pending</p>
                   <p className="text-2xl font-bold text-[#1A1A1A]">{stats.pending}</p>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function AdminBlogTopicsPage() {
                   <TrendingUp className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[#8A8A8A]">In Progress</p>
+                  <p className="text-sm text-[#6E6E6E]">In Progress</p>
                   <p className="text-2xl font-bold text-[#1A1A1A]">{stats.in_progress}</p>
                 </div>
               </div>
@@ -166,7 +166,7 @@ export default function AdminBlogTopicsPage() {
                   <CheckCircle className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-[#8A8A8A]">Completed</p>
+                  <p className="text-sm text-[#6E6E6E]">Completed</p>
                   <p className="text-2xl font-bold text-[#1A1A1A]">{stats.completed}</p>
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'all'
-                  ? 'bg-[#A8513A] text-white'
+                  ? 'bg-[#9A503B] text-white'
                   : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
@@ -189,7 +189,7 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('pending')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'pending'
-                  ? 'bg-[#A8513A] text-white'
+                  ? 'bg-[#9A503B] text-white'
                   : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
@@ -199,7 +199,7 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('in_progress')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'in_progress'
-                  ? 'bg-[#A8513A] text-white'
+                  ? 'bg-[#9A503B] text-white'
                   : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
@@ -209,7 +209,7 @@ export default function AdminBlogTopicsPage() {
               onClick={() => setFilter('completed')}
               className={`px-4 py-2 rounded-lg transition-colors ${
                 filter === 'completed'
-                  ? 'bg-[#A8513A] text-white'
+                  ? 'bg-[#9A503B] text-white'
                   : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5]'
               }`}
             >
@@ -221,20 +221,20 @@ export default function AdminBlogTopicsPage() {
           {loading ? (
             <div className="text-center py-12">
               <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-[#8A8A8A]">Topics laden...</p>
+              <p className="text-[#6E6E6E]">Topics laden...</p>
             </div>
           ) : filteredTopics.length === 0 ? (
             <div className="text-center py-12 bg-[#FFFFFF] rounded-lg border border-[#E5E5E5]">
-              <Lightbulb className="w-16 h-16 mx-auto mb-4 text-[#8A8A8A]" />
+              <Lightbulb className="w-16 h-16 mx-auto mb-4 text-[#6E6E6E]" />
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                 Geen topics gevonden
               </h3>
-              <p className="text-[#8A8A8A] mb-4">
+              <p className="text-[#6E6E6E] mb-4">
                 Begin met het toevoegen van topic ideeën voor toekomstige posts
               </p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-6 py-3 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors"
+                className="px-6 py-3 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors"
               >
                 Eerste Topic Toevoegen
               </button>
@@ -286,7 +286,7 @@ function TopicCard({ topic, onDelete, onStatusChange }: any) {
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
               {config.label}
             </span>
-            <span className="text-sm text-[#8A8A8A]" title={`Prioriteit: ${topic.priority_score}/10`}>
+            <span className="text-sm text-[#6E6E6E]" title={`Prioriteit: ${topic.priority_score}/10`}>
               {priorityStars}
             </span>
           </div>
@@ -306,7 +306,7 @@ function TopicCard({ topic, onDelete, onStatusChange }: any) {
             ))}
           </div>
 
-          <p className="text-sm text-[#8A8A8A]">
+          <p className="text-sm text-[#6E6E6E]">
             Doelgroep: {topic.target_audience}
           </p>
         </div>
@@ -407,7 +407,7 @@ function AddTopicModal({ onClose, onSuccess }: any) {
               onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
               placeholder="Bijv: De beste kleuren voor het herfstseizoen 2024"
               rows={3}
-              className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A]"
+              className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E]"
             />
           </div>
 
@@ -427,7 +427,7 @@ function AddTopicModal({ onClose, onSuccess }: any) {
               <button
                 type="button"
                 onClick={handleAddKeyword}
-                className="px-3 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] text-sm"
+                className="px-3 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] text-sm"
               >
                 +
               </button>
@@ -442,7 +442,7 @@ function AddTopicModal({ onClose, onSuccess }: any) {
                   <button
                     type="button"
                     onClick={() => handleRemoveKeyword(keyword)}
-                    className="text-[#8A8A8A] hover:text-red-600"
+                    className="text-[#6E6E6E] hover:text-red-600"
                   >
                     ×
                   </button>
@@ -489,7 +489,7 @@ function AddTopicModal({ onClose, onSuccess }: any) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#B55E45] transition-colors disabled:opacity-50"
             >
               {saving ? 'Opslaan...' : 'Topic Toevoegen'}
             </button>

@@ -35,13 +35,13 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
             className="w-full flex items-start gap-3 text-left group hover:bg-[#FAF5F2] p-3 rounded-lg transition-colors"
           >
             {checked.has(idx) ? (
-              <CheckSquare className="w-5 h-5 flex-shrink-0 text-[#C2654A] mt-0.5" />
+              <CheckSquare className="w-5 h-5 flex-shrink-0 text-[#B55E45] mt-0.5" />
             ) : (
-              <Square className="w-5 h-5 flex-shrink-0 text-[#8A8A8A] group-hover:text-[#C2654A] mt-0.5" />
+              <Square className="w-5 h-5 flex-shrink-0 text-[#6E6E6E] group-hover:text-[#B55E45] mt-0.5" />
             )}
             <span className={`leading-relaxed ${
               checked.has(idx)
-                ? 'text-[#8A8A8A] line-through'
+                ? 'text-[#6E6E6E] line-through'
                 : 'text-[#1A1A1A]'
             }`}>
               {item}
@@ -50,7 +50,7 @@ export const BlogChecklist: React.FC<BlogChecklistProps> = ({
         ))}
       </div>
       {checked.size > 0 && (
-        <p className="mt-4 text-sm text-[#8A8A8A] text-center">
+        <p className="mt-4 text-sm text-[#6E6E6E] text-center">
           {checked.size} van {items.length} afgevinkt
         </p>
       )}

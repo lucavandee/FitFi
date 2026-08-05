@@ -194,7 +194,7 @@ export default function PricingPage() {
                     <p className="font-semibold text-[#1A1A1A] text-sm">
                       Checkout geannuleerd
                     </p>
-                    <p className="text-xs text-[#8A8A8A]">
+                    <p className="text-xs text-[#6E6E6E]">
                       Geen zorgen — je kunt altijd later upgraden.
                     </p>
                   </div>
@@ -207,7 +207,7 @@ export default function PricingPage() {
                         handleCheckout(premiumProduct.id);
                       }}
                       disabled={isPending}
-                      className="px-6 py-3 min-h-[48px] bg-[#C2654A] text-white text-base font-semibold rounded-xl transition-colors disabled:opacity-50 whitespace-nowrap hover:bg-[#A8513A]"
+                      className="px-6 py-3 min-h-[48px] bg-[#B55E45] text-white text-base font-semibold rounded-xl transition-colors disabled:opacity-50 whitespace-nowrap hover:bg-[#9A503B]"
                     >
                       Probeer opnieuw
                     </button>
@@ -233,11 +233,11 @@ export default function PricingPage() {
             {/* Eyebrow */}
             <Reveal>
               <div className="flex items-center justify-center gap-3 mb-8">
-                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
-                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
                   Prijzen
                 </span>
-                <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
               </div>
             </Reveal>
 
@@ -268,7 +268,7 @@ export default function PricingPage() {
                   { icon: CreditCard, label: "Geen creditcard voor Free" },
                 ].map(({ icon: Icon, label }) => (
                   <div key={label} className="flex items-center gap-1.5 text-[13px] font-medium text-[#4A4A4A]">
-                    <Icon className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
+                    <Icon className="w-4 h-4 text-[#B55E45]" aria-hidden="true" />
                     <span>{label}</span>
                   </div>
                 ))}
@@ -302,13 +302,13 @@ export default function PricingPage() {
                   </div>
 
                   {/* Note */}
-                  <p className="text-[13px] text-[#8A8A8A] mb-8">Voor altijd, geen creditcard nodig</p>
+                  <p className="text-[13px] text-[#6E6E6E] mb-8">Voor altijd, geen creditcard nodig</p>
 
                   {/* Divider */}
                   <div className="w-full h-px bg-[#E5E5E5] mb-8" />
 
                   {/* Label */}
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#8A8A8A] mb-4">Wat je krijgt</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#6E6E6E] mb-4">Wat je krijgt</p>
 
                   {/* Features */}
                   <div className="flex flex-col gap-3.5 mb-10 flex-1">
@@ -325,7 +325,7 @@ export default function PricingPage() {
                       <div key={label} className="flex items-start gap-3 text-sm">
                         {included ? (
                           <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 text-[#C2654A]" />
+                            <Check className="w-3 h-3 text-[#B55E45]" />
                           </div>
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -340,7 +340,7 @@ export default function PricingPage() {
                   {/* CTA */}
                   <NavLink
                     to="/onboarding"
-                    className="w-full text-center py-4 rounded-xl border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-300 block"
+                    className="w-full text-center py-4 rounded-xl border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#B55E45] hover:text-[#B55E45] transition-all duration-300 block"
                     data-event="cta_start_free_pricing"
                   >
                     Start gratis
@@ -350,9 +350,9 @@ export default function PricingPage() {
 
               {/* ── Premium Card ── */}
               <Reveal delay={0.12}>
-                <article className="relative bg-white border-2 border-[#C2654A] rounded-2xl p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
+                <article className="relative bg-white border-2 border-[#B55E45] rounded-2xl p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
                   {/* Badge */}
-                  <div className="bg-[#F4E8E3] text-[#C2654A] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                  <div className="bg-[#F4E8E3] text-[#B55E45] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Meest gekozen
                   </div>
 
@@ -364,17 +364,17 @@ export default function PricingPage() {
                     <span className="text-[56px] font-extrabold text-[#1A1A1A] tracking-[-2px] leading-none">
                       €{premiumPrice}
                     </span>
-                    <span className="text-base text-[#8A8A8A] font-medium ml-1">/maand</span>
+                    <span className="text-base text-[#6E6E6E] font-medium ml-1">/maand</span>
                   </div>
 
                   {/* Note */}
-                  <p className="text-[13px] text-[#8A8A8A] mb-8">~€0,33 per dag · Maandelijks opzegbaar</p>
+                  <p className="text-[13px] text-[#6E6E6E] mb-8">~€0,33 per dag · Maandelijks opzegbaar</p>
 
                   {/* Divider */}
                   <div className="w-full h-px bg-[#E5E5E5] mb-8" />
 
                   {/* Label */}
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#8A8A8A] mb-4">Alles van Free, plus</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#6E6E6E] mb-4">Alles van Free, plus</p>
 
                   {/* Features */}
                   <div className="flex flex-col gap-3.5 mb-10 flex-1">
@@ -387,7 +387,7 @@ export default function PricingPage() {
                     ].map((label) => (
                       <div key={label} className="flex items-start gap-3 text-sm">
                         <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-[#C2654A]" />
+                          <Check className="w-3 h-3 text-[#B55E45]" />
                         </div>
                         <span className="text-[#1A1A1A]">{label}</span>
                       </div>
@@ -398,7 +398,7 @@ export default function PricingPage() {
                   <button
                     onClick={() => premiumProduct && handleCheckout(premiumProduct.id)}
                     disabled={isLoading || isPending}
-                    className="w-full text-center py-4 rounded-xl bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full text-center py-4 rounded-xl bg-[#B55E45] hover:bg-[#9A503B] text-white text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     data-event="cta_start_premium_pricing"
                   >
                     {isLoading ? (
@@ -417,8 +417,8 @@ export default function PricingPage() {
                   </button>
 
                   {/* Guarantee */}
-                  <div className="text-center text-[13px] text-[#8A8A8A] mt-2 flex items-center justify-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-[#8A8A8A]" aria-hidden="true" />
+                  <div className="text-center text-[13px] text-[#6E6E6E] mt-2 flex items-center justify-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-[#6E6E6E]" aria-hidden="true" />
                     <span>30 dagen geld-terug-garantie</span>
                   </div>
                 </article>
@@ -444,7 +444,7 @@ export default function PricingPage() {
                   <button
                     onClick={() => founderProduct && handleCheckout(founderProduct.id)}
                     disabled={isLoading || isPending}
-                    className="text-[13px] font-semibold text-[#C2654A] hover:text-[#A8513A] mt-3 inline-flex items-center gap-2 transition-colors disabled:opacity-50"
+                    className="text-[13px] font-semibold text-[#B55E45] hover:text-[#9A503B] mt-3 inline-flex items-center gap-2 transition-colors disabled:opacity-50"
                     data-event="cta_start_founder_pricing"
                   >
                     {isPending ? (
@@ -462,9 +462,9 @@ export default function PricingPage() {
                 <div className="text-center md:text-right flex-shrink-0">
                   <div className="flex items-baseline gap-2 justify-center md:justify-end">
                     <span className="text-4xl font-extrabold text-[#1A1A1A] tracking-[-1px]">€{founderPrice}</span>
-                    <span className="text-base text-[#8A8A8A] line-through ml-2">€999</span>
+                    <span className="text-base text-[#6E6E6E] line-through ml-2">€999</span>
                   </div>
-                  <p className="text-xs text-[#8A8A8A] mt-1">Eenmalig · Beperkt beschikbaar</p>
+                  <p className="text-xs text-[#6E6E6E] mt-1">Eenmalig · Beperkt beschikbaar</p>
                 </div>
               </div>
             </Reveal>
@@ -480,11 +480,11 @@ export default function PricingPage() {
             <div className="text-center mb-12">
               <Reveal>
                 <div className="flex items-center justify-center gap-3 mb-6">
-                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
-                  <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                  <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
+                  <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
                     Vergelijk
                   </span>
-                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                  <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
                 </div>
               </Reveal>
               <Reveal delay={0.12}>
@@ -508,8 +508,8 @@ export default function PricingPage() {
                 {/* Header row */}
                 <div className="bg-[#FAFAF8] border-b border-[#E5E5E5] grid grid-cols-[1fr_80px_80px] md:grid-cols-[1fr_160px_160px] px-5 md:px-10 py-5">
                   <div />
-                  <div className="text-xs font-bold uppercase tracking-[1px] text-[#8A8A8A] text-center">Free</div>
-                  <div className="text-xs font-bold uppercase tracking-[1px] text-[#C2654A] text-center">Premium</div>
+                  <div className="text-xs font-bold uppercase tracking-[1px] text-[#6E6E6E] text-center">Free</div>
+                  <div className="text-xs font-bold uppercase tracking-[1px] text-[#B55E45] text-center">Premium</div>
                 </div>
 
                 {/* Content rows */}
@@ -525,7 +525,7 @@ export default function PricingPage() {
                       {typeof row.free === "boolean" ? (
                         row.free ? (
                           <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                            <Check className="w-3 h-3 text-[#C2654A]" />
+                            <Check className="w-3 h-3 text-[#B55E45]" />
                           </div>
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-[#F5F0EB] flex items-center justify-center">
@@ -540,7 +540,7 @@ export default function PricingPage() {
                       {typeof row.premium === "boolean" ? (
                         row.premium ? (
                           <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                            <Check className="w-3 h-3 text-[#C2654A]" />
+                            <Check className="w-3 h-3 text-[#B55E45]" />
                           </div>
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-[#F5F0EB] flex items-center justify-center">
@@ -548,7 +548,7 @@ export default function PricingPage() {
                           </div>
                         )
                       ) : (
-                        <span className="text-[13px] font-bold text-[#C2654A] text-center">{row.premium}</span>
+                        <span className="text-[13px] font-bold text-[#B55E45] text-center">{row.premium}</span>
                       )}
                     </div>
                   </div>
@@ -567,11 +567,11 @@ export default function PricingPage() {
             <div className="text-center mb-12">
               <Reveal>
                 <div className="flex items-center justify-center gap-3 mb-6">
-                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
-                  <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+                  <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
+                  <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#B55E45]">
                     Veelgestelde vragen
                   </span>
-                  <span className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                  <span className="w-8 h-px bg-[#B55E45]" aria-hidden="true" />
                 </div>
               </Reveal>
               <Reveal delay={0.12}>
@@ -607,7 +607,7 @@ export default function PricingPage() {
                         <span className="text-base font-semibold text-[#1A1A1A]">{item.q}</span>
                         <div className={`w-8 h-8 rounded-full ${isOpen ? "bg-[#F4E8E3]" : "bg-[#F5F0EB]"} flex items-center justify-center flex-shrink-0 transition-colors`}>
                           <Plus
-                            className={`w-4 h-4 text-[#C2654A] transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
+                            className={`w-4 h-4 text-[#B55E45] transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
                           />
                         </div>
                       </button>
@@ -642,13 +642,13 @@ export default function PricingPage() {
             <Reveal delay={0.24}>
               <NavLink
                 to="/onboarding"
-                className="inline-flex items-center gap-2 bg-[#C2654A] hover:bg-[#A8513A] text-white text-[15px] font-semibold py-5 px-12 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                className="inline-flex items-center gap-2 bg-[#B55E45] hover:bg-[#9A503B] text-white text-[15px] font-semibold py-5 px-12 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 data-event="cta_start_free_pricing"
               >
                 Begin gratis
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </NavLink>
-              <p className="text-[13px] text-[#8A8A8A] mt-6">
+              <p className="text-[13px] text-[#6E6E6E] mt-6">
                 Geen creditcard nodig · Altijd gratis te gebruiken
               </p>
             </Reveal>

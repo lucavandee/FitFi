@@ -64,15 +64,15 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       <div className="p-2">
         <div className="text-sm font-medium text-[#1A1A1A] line-clamp-2">{title}</div>
         <div className="mt-1 flex items-center justify-between">
-          <div className="text-[13px] text-[#8A8A8A]">{brand}</div>
+          <div className="text-[13px] text-[#6E6E6E]">{brand}</div>
           {price != null && price > 0 && (
-            <div className="text-[13px] font-semibold text-[#A8513A]">
+            <div className="text-[13px] font-semibold text-[#9A503B]">
               €{price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}
             </div>
           )}
         </div>
         {hasUrl && (
-          <div className="mt-2 flex items-center gap-2 text-[12px] text-[#C2654A]">
+          <div className="mt-2 flex items-center gap-2 text-[12px] text-[#B55E45]">
             <ShoppingBag size={14} />
             <span>Shop nu</span>
             <ExternalLink size={14} className="ml-auto opacity-70" />
@@ -98,7 +98,7 @@ export default function ProductRail({ items, loading }: ProductRailProps) {
   return (
     <div className="mt-3">
       <div className="flex items-center gap-2 mb-3">
-        <ShoppingBag size={16} className="text-[#C2654A]" />
+        <ShoppingBag size={16} className="text-[#B55E45]" />
         <span className="text-sm font-medium text-[#1A1A1A]">
           Shoppable look ({items.length} items)
         </span>

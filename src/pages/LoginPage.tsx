@@ -156,11 +156,11 @@ export default function LoginPage() {
               {TRUST_ITEMS.map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-[#C2654A]" />
+                    <Icon className="w-5 h-5 text-[#B55E45]" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">{title}</p>
-                    <p className="text-xs text-[#8A8A8A]">{desc}</p>
+                    <p className="text-xs text-[#6E6E6E]">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -191,7 +191,7 @@ export default function LoginPage() {
                 Of{" "}
                 <NavLink
                   to="/registreren"
-                  className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200"
+                  className="text-[#B55E45] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
                 >
                   maak een gratis account aan
                 </NavLink>
@@ -217,10 +217,10 @@ export default function LoginPage() {
               )}
               {serverError && isCredentialError && (
                 <div className="mb-6 flex items-center gap-2 text-sm">
-                  <span className="text-[#8A8A8A]">Wachtwoord vergeten?</span>
+                  <span className="text-[#6E6E6E]">Wachtwoord vergeten?</span>
                   <NavLink
                     to="/wachtwoord-vergeten"
-                    className="font-semibold text-[#C2654A] underline underline-offset-2 hover:text-[#A8513A]"
+                    className="font-semibold text-[#B55E45] underline underline-offset-2 hover:text-[#9A503B]"
                   >
                     Stuur resetlink
                   </NavLink>
@@ -260,7 +260,7 @@ export default function LoginPage() {
                     aria-invalid={!!emailError}
                     aria-describedby={emailError ? "login-email-error" : undefined}
                     disabled={loading}
-                    className={`w-full bg-white border rounded-2xl py-4 px-5 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-all duration-200 disabled:opacity-50 ${
+                    className={`w-full bg-white border rounded-2xl py-4 px-5 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-all duration-200 disabled:opacity-50 ${
                       emailError
                         ? "border-[#C24A4A] focus:ring-[#C24A4A]/20"
                         : "border-[#E5E5E5]"
@@ -287,7 +287,7 @@ export default function LoginPage() {
                     </label>
                     <NavLink
                       to="/wachtwoord-vergeten"
-                      className="text-sm font-medium text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+                      className="text-sm font-medium text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
                     >
                       Vergeten?
                     </NavLink>
@@ -305,7 +305,7 @@ export default function LoginPage() {
                       aria-invalid={!!pwError}
                       aria-describedby={pwError ? "login-pw-error" : undefined}
                       disabled={loading}
-                      className={`w-full bg-white border rounded-2xl py-4 px-5 pr-14 text-base text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] transition-all duration-200 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
+                      className={`w-full bg-white border rounded-2xl py-4 px-5 pr-14 text-base text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#B55E45]/20 focus:border-[#B55E45] transition-all duration-200 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden disabled:opacity-50 ${
                         pwError
                           ? "border-[#C24A4A] focus:ring-[#C24A4A]/20"
                           : "border-[#E5E5E5]"
@@ -315,7 +315,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => setShowPw(!showPw)}
                       tabIndex={-1}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-[#8A8A8A] hover:text-[#4A4A4A] transition-colors duration-200"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-[#6E6E6E] hover:text-[#4A4A4A] transition-colors duration-200"
                       aria-label={showPw ? "Verberg wachtwoord" : "Toon wachtwoord"}
                     >
                       {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -339,7 +339,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="w-full bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 mt-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#B55E45] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl transition-colors duration-200 mt-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <><Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /><span>Bezig...</span></>
@@ -352,7 +352,7 @@ export default function LoginPage() {
               {/* Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 h-px bg-[#E5E5E5]" />
-                <span className="text-xs text-[#8A8A8A] font-medium">of</span>
+                <span className="text-xs text-[#6E6E6E] font-medium">of</span>
                 <div className="flex-1 h-px bg-[#E5E5E5]" />
               </div>
 
@@ -369,10 +369,10 @@ export default function LoginPage() {
             >
               <div className="bg-[#F5F0EB] rounded-2xl p-6 text-center">
                 <p className="text-sm font-semibold text-[#1A1A1A] mb-1">Nog geen account nodig?</p>
-                <p className="text-xs text-[#8A8A8A] mb-4">Doe de stijlquiz direct, zonder registratie.</p>
+                <p className="text-xs text-[#6E6E6E] mb-4">Doe de stijlquiz direct, zonder registratie.</p>
                 <NavLink
                   to="/onboarding"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] transition-colors duration-200"
                 >
                   Start de quiz
                   <ArrowRight className="w-4 h-4" />
@@ -389,7 +389,7 @@ export default function LoginPage() {
             >
               <NavLink
                 to="/contact"
-                className="text-sm text-[#8A8A8A] hover:text-[#4A4A4A] transition-colors duration-200"
+                className="text-sm text-[#6E6E6E] hover:text-[#4A4A4A] transition-colors duration-200"
               >
                 Hulp nodig bij inloggen?
               </NavLink>

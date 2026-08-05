@@ -48,7 +48,7 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
       <div className="flex items-start gap-3 sm:gap-4">
         <div className="flex-shrink-0">
           <div className="w-10 h-10 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center">
-            <Info className="w-5 h-5 text-[#C2654A]" />
+            <Info className="w-5 h-5 text-[#B55E45]" />
           </div>
         </div>
 
@@ -57,17 +57,17 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
             {title}
           </h3>
 
-          <p className="text-sm sm:text-base text-[#8A8A8A] leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-[#6E6E6E] leading-relaxed mb-4">
             {analysis.explanation}
           </p>
 
           {analysis.recommendations.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#C2654A]" />
+                <Sparkles className="w-4 h-4 text-[#B55E45]" />
                 Suggestie
               </h4>
-              <ul className="space-y-1.5 text-[#8A8A8A]">
+              <ul className="space-y-1.5 text-[#6E6E6E]">
                 {analysis.recommendations.map((rec, index) => (
                   <li key={index} className="text-sm flex items-start gap-2">
                     <span className="leading-none mt-1 text-[#D4856E]">–</span>
@@ -81,7 +81,7 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
 
         <button
           onClick={handleDismiss}
-          className="flex-shrink-0 w-8 h-8 rounded-full hover:bg-[#E5E5E5] transition-colors flex items-center justify-center text-[#8A8A8A]"
+          className="flex-shrink-0 w-8 h-8 rounded-full hover:bg-[#E5E5E5] transition-colors flex items-center justify-center text-[#6E6E6E]"
           aria-label="Sluit toelichting"
         >
           <span className="text-xl leading-none">×</span>
@@ -89,7 +89,7 @@ export function ConfidenceBanner({ analysis, className = '' }: ConfidenceBannerP
       </div>
 
       <div className="mt-4 pt-4 border-t border-[#E5E5E5]">
-        <p className="text-xs sm:text-sm text-[#8A8A8A]">
+        <p className="text-xs sm:text-sm text-[#6E6E6E]">
           De outfits hieronder zijn afgestemd op de breedte van je voorkeuren. Je kunt altijd de quiz opnieuw doen voor een scherper profiel.
         </p>
       </div>
@@ -102,7 +102,7 @@ export function ConfidenceBadge({ analysis }: { analysis: ConfidenceAnalysis }) 
     return (
       <div
         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[#E5E5E5]"
-        style={{ background: '#FAF5F2', color: '#A8513A' }}
+        style={{ background: '#FAF5F2', color: '#9A503B' }}
       >
         <span>✓</span>
         <span>Duidelijk profiel</span>
@@ -114,7 +114,7 @@ export function ConfidenceBadge({ analysis }: { analysis: ConfidenceAnalysis }) 
     return (
       <div
         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[#E5E5E5]"
-        style={{ background: '#FAF5F2', color: '#A8513A' }}
+        style={{ background: '#FAF5F2', color: '#9A503B' }}
       >
         <span>○</span>
         <span>Veelzijdig profiel</span>
@@ -125,7 +125,7 @@ export function ConfidenceBadge({ analysis }: { analysis: ConfidenceAnalysis }) 
   return (
     <div
       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-[#E5E5E5]"
-      style={{ background: '#FAF5F2', color: '#C2654A' }}
+      style={{ background: '#FAF5F2', color: '#B55E45' }}
     >
       <span>◐</span>
       <span>Brede stijlvoorkeur</span>

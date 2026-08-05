@@ -213,7 +213,7 @@ export default function AdminDaisyconImportPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#A8513A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#9A503B]" />
       </div>
     );
   }
@@ -223,10 +223,10 @@ export default function AdminDaisyconImportPage() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold text-[#1A1A1A]">Geen toegang</h1>
-          <p className="mt-2 text-[#8A8A8A]">Admin rechten vereist.</p>
+          <p className="mt-2 text-[#6E6E6E]">Admin rechten vereist.</p>
           <button
             onClick={() => navigate("/admin")}
-            className="mt-6 px-6 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors"
+            className="mt-6 px-6 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#B55E45] transition-colors"
           >
             Terug naar Dashboard
           </button>
@@ -241,25 +241,25 @@ export default function AdminDaisyconImportPage() {
       <div className="mb-8">
         <button
           onClick={() => navigate("/admin")}
-          className="inline-flex items-center gap-2 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Admin Dashboard
         </button>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center">
-            <Package className="w-5 h-5 text-[#A8513A]" />
+            <Package className="w-5 h-5 text-[#9A503B]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#1A1A1A]">Daisycon Feed Import</h1>
-            <p className="text-sm text-[#8A8A8A]">Producten inladen vanuit een Daisycon JSON feed</p>
+            <p className="text-sm text-[#6E6E6E]">Producten inladen vanuit een Daisycon JSON feed</p>
           </div>
         </div>
       </div>
 
       {/* Info banner */}
       <div className="rounded-xl bg-[#FAF5F2] border border-[#FAF5F2] p-4 flex gap-3 mb-6">
-        <Info className="w-4 h-4 text-[#A8513A] flex-shrink-0 mt-0.5" />
+        <Info className="w-4 h-4 text-[#9A503B] flex-shrink-0 mt-0.5" />
         <div className="text-sm text-[#1A1A1A]">
           <strong>Hoe het werkt:</strong> Plak een Daisycon feed <strong>URL</strong> of de volledige <strong>JSON</strong> inhoud. Bij een URL wordt de feed eerst in de browser opgehaald, daarna automatisch in batches van 200 producten geïmporteerd. Categorieën, kleuren en stijl worden automatisch afgeleid. Producten worden op basis van <code className="bg-white px-1 rounded text-xs">external_id</code> geüpsert (geen duplicaten).
         </div>
@@ -270,13 +270,13 @@ export default function AdminDaisyconImportPage() {
         <div className="border-b border-[#E5E5E5] p-4 flex gap-2">
           <button
             onClick={() => setActiveTab("paste")}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "paste" ? "bg-[#A8513A] text-white" : "text-[#8A8A8A] hover:bg-[#FAF5F2]"}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "paste" ? "bg-[#9A503B] text-white" : "text-[#6E6E6E] hover:bg-[#FAF5F2]"}`}
           >
             JSON plakken
           </button>
           <button
             onClick={() => setActiveTab("file")}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "file" ? "bg-[#A8513A] text-white" : "text-[#8A8A8A] hover:bg-[#FAF5F2]"}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "file" ? "bg-[#9A503B] text-white" : "text-[#6E6E6E] hover:bg-[#FAF5F2]"}`}
           >
             Bestand uploaden
           </button>
@@ -294,10 +294,10 @@ export default function AdminDaisyconImportPage() {
                 onChange={(e) => setFeedJson(e.target.value)}
                 rows={10}
                 placeholder={"https://daisycon.io/datafeed/?media_id=...&type=JSON\n\nOf plak hier de volledige JSON feed inhoud."}
-                className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm font-mono text-[#1A1A1A] placeholder:text-[#8A8A8A] p-3 focus:outline-none focus:ring-2 focus:ring-[#D4856E] resize-y"
+                className="w-full rounded-xl border border-[#E5E5E5] bg-[#FAFAF8] text-sm font-mono text-[#1A1A1A] placeholder:text-[#6E6E6E] p-3 focus:outline-none focus:ring-2 focus:ring-[#D4856E] resize-y"
               />
               {feedJson && (
-                <p className="text-xs text-[#8A8A8A] mt-1">
+                <p className="text-xs text-[#6E6E6E] mt-1">
                   {feedJson.length.toLocaleString()} tekens geladen
                 </p>
               )}
@@ -316,14 +316,14 @@ export default function AdminDaisyconImportPage() {
                 htmlFor="feed-file"
                 className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-[#E5E5E5] rounded-xl p-10 cursor-pointer hover:border-[#D4856E] hover:bg-[#FAF5F2] transition-colors"
               >
-                <FileJson className="w-8 h-8 text-[#8A8A8A]" />
+                <FileJson className="w-8 h-8 text-[#6E6E6E]" />
                 <div className="text-center">
                   <p className="text-sm font-medium text-[#1A1A1A]">Klik om een JSON-bestand te kiezen</p>
-                  <p className="text-xs text-[#8A8A8A] mt-1">Alleen .json bestanden</p>
+                  <p className="text-xs text-[#6E6E6E] mt-1">Alleen .json bestanden</p>
                 </div>
               </label>
               {feedJson && (
-                <p className="text-xs text-[#8A8A8A] mt-2 text-center">
+                <p className="text-xs text-[#6E6E6E] mt-2 text-center">
                   Bestand geladen — {feedJson.length.toLocaleString()} tekens
                 </p>
               )}
@@ -333,7 +333,7 @@ export default function AdminDaisyconImportPage() {
           <button
             onClick={handleImport}
             disabled={importing || !feedJson.trim()}
-            className="mt-5 w-full flex items-center justify-center gap-2 bg-[#A8513A] text-white font-semibold py-3 rounded-xl hover:bg-[#C2654A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-5 w-full flex items-center justify-center gap-2 bg-[#9A503B] text-white font-semibold py-3 rounded-xl hover:bg-[#B55E45] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {importing ? (
               <>
@@ -372,7 +372,7 @@ export default function AdminDaisyconImportPage() {
             ].map((s) => (
               <div key={s.label} className="rounded-xl bg-white border border-[#E5E5E5] p-3 text-center">
                 <p className="text-2xl font-bold text-[#1A1A1A]">{s.value}</p>
-                <p className="text-xs text-[#8A8A8A] mt-0.5">{s.label}</p>
+                <p className="text-xs text-[#6E6E6E] mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -393,7 +393,7 @@ export default function AdminDaisyconImportPage() {
           <h2 className="font-semibold text-[#1A1A1A] text-sm">Importgeschiedenis</h2>
           <button
             onClick={loadLogs}
-            className="inline-flex items-center gap-1.5 text-xs text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${logsLoading ? "animate-spin" : ""}`} />
             Verversen
@@ -401,7 +401,7 @@ export default function AdminDaisyconImportPage() {
         </div>
 
         {logs.length === 0 ? (
-          <div className="p-8 text-center text-sm text-[#8A8A8A]">
+          <div className="p-8 text-center text-sm text-[#6E6E6E]">
             Nog geen imports uitgevoerd.{" "}
             <button onClick={loadLogs} className="underline underline-offset-2 hover:text-[#1A1A1A]">
               Laden
@@ -413,7 +413,7 @@ export default function AdminDaisyconImportPage() {
               <thead>
                 <tr className="border-b border-[#E5E5E5] bg-[#FAF5F2]">
                   {["Datum", "Programma", "Producten", "Ingevoegd", "Status"].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#6E6E6E]">
                       {h}
                     </th>
                   ))}
@@ -422,18 +422,18 @@ export default function AdminDaisyconImportPage() {
               <tbody>
                 {logs.map((log, i) => (
                   <tr key={log.id} className={`border-b border-[#E5E5E5] ${i % 2 === 0 ? "" : "bg-[#FAF5F2]"}`}>
-                    <td className="px-4 py-3 text-[#8A8A8A] text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 text-[#6E6E6E] text-xs whitespace-nowrap">
                       {new Date(log.imported_at).toLocaleString("nl-NL")}
                     </td>
                     <td className="px-4 py-3 font-medium text-[#1A1A1A]">{log.program_name}</td>
-                    <td className="px-4 py-3 text-[#8A8A8A]">{log.product_count}</td>
-                    <td className="px-4 py-3 text-[#8A8A8A]">{log.inserted_count}</td>
+                    <td className="px-4 py-3 text-[#6E6E6E]">{log.product_count}</td>
+                    <td className="px-4 py-3 text-[#6E6E6E]">{log.inserted_count}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                         log.status === "success" ? "bg-green-100 text-green-700" :
                         log.status === "error" ? "bg-red-100 text-red-700" :
                         log.status === "running" ? "bg-blue-100 text-blue-700" :
-                        "bg-[#E5E5E5] text-[#8A8A8A]"
+                        "bg-[#E5E5E5] text-[#6E6E6E]"
                       }`}>
                         {log.status}
                       </span>

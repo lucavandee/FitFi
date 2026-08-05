@@ -109,10 +109,10 @@ export function WeeklyChallengeTracker() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h4 className="text-lg font-bold text-[#1A1A1A] flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#C2654A]" />
+            <Calendar className="w-5 h-5 text-[#B55E45]" />
             Weekly Outfit Challenge
           </h4>
-          <p className="text-sm text-[#8A8A8A] mt-1">
+          <p className="text-sm text-[#6E6E6E] mt-1">
             Voltooi dagelijkse stijl-uitdagingen
           </p>
         </div>
@@ -120,7 +120,7 @@ export function WeeklyChallengeTracker() {
           <div className="text-2xl font-bold text-[#1A1A1A]">
             {completedCount}/{totalChallenges}
           </div>
-          <p className="text-xs text-[#8A8A8A]">
+          <p className="text-xs text-[#6E6E6E]">
             {isWeekComplete ? 'Week compleet!' : 'dagen voltooid'}
           </p>
         </div>
@@ -135,8 +135,8 @@ export function WeeklyChallengeTracker() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className={`h-full rounded-full ${
               isWeekComplete
-                ? 'bg-gradient-to-r from-[#C2654A] to-[#A8513A]'
-                : 'bg-gradient-to-r from-[#C2654A] to-[#C2654A]'
+                ? 'bg-gradient-to-r from-[#B55E45] to-[#9A503B]'
+                : 'bg-gradient-to-r from-[#B55E45] to-[#B55E45]'
             }`}
           />
         </div>
@@ -149,12 +149,12 @@ export function WeeklyChallengeTracker() {
           className="mb-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-2 border-[#D4856E] rounded-xl"
         >
           <div className="flex items-center gap-3">
-            <Trophy className="w-6 h-6 text-[#C2654A] flex-shrink-0" />
+            <Trophy className="w-6 h-6 text-[#B55E45] flex-shrink-0" />
             <div>
               <p className="font-bold text-[#1A1A1A] mb-1">
                 Geweldig! Week voltooid 🎉
               </p>
-              <p className="text-sm text-[#8A8A8A]">
+              <p className="text-sm text-[#6E6E6E]">
                 Je hebt alle 7 dagelijkse uitdagingen voltooid en +200 bonus XP verdiend!
               </p>
             </div>
@@ -178,12 +178,12 @@ export function WeeklyChallengeTracker() {
 
       {/* Bonus Info */}
       <div className="mt-4 pt-4 border-t border-[#E5E5E5] flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2 text-[#8A8A8A]">
+        <div className="flex items-center gap-2 text-[#6E6E6E]">
           <Sparkles className="w-4 h-4" />
           <span>Voltooibonus: +200 XP</span>
         </div>
         {!isWeekComplete && (
-          <div className="flex items-center gap-2 text-[#C2654A] font-semibold">
+          <div className="flex items-center gap-2 text-[#B55E45] font-semibold">
             <Flame className="w-4 h-4" />
             <span>{totalChallenges - completedCount} nog te gaan!</span>
           </div>
@@ -217,7 +217,7 @@ function ChallengeDay({
       transition={{ delay }}
       className={`
         relative p-4 rounded-xl border-2 transition-all
-        ${isToday ? 'ring-2 ring-[#C2654A] ring-offset-2' : ''}
+        ${isToday ? 'ring-2 ring-[#B55E45] ring-offset-2' : ''}
         ${
           challenge.is_completed
             ? 'bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border-[#D4856E]'
@@ -232,7 +232,7 @@ function ChallengeDay({
               w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-md
               ${
                 challenge.is_completed
-                  ? 'bg-gradient-to-br from-[#C2654A] to-[#C2654A]'
+                  ? 'bg-gradient-to-br from-[#B55E45] to-[#B55E45]'
                   : 'bg-[#FAFAF8]'
               }
             `}
@@ -247,7 +247,7 @@ function ChallengeDay({
               {dayNames[challenge.day_of_week]}
             </h5>
             {isToday && (
-              <span className="px-2 py-0.5 bg-[#C2654A] text-white text-xs font-semibold rounded-full">
+              <span className="px-2 py-0.5 bg-[#B55E45] text-white text-xs font-semibold rounded-full">
                 Vandaag
               </span>
             )}
@@ -255,7 +255,7 @@ function ChallengeDay({
           <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
             {challenge.theme_name}
           </p>
-          <p className="text-xs text-[#8A8A8A] line-clamp-2">
+          <p className="text-xs text-[#6E6E6E] line-clamp-2">
             {challenge.theme_description}
           </p>
         </div>
@@ -263,8 +263,8 @@ function ChallengeDay({
         <div className="flex-shrink-0">
           {challenge.is_completed ? (
             <div className="flex flex-col items-center gap-1">
-              <CheckCircle2 className="w-8 h-8 text-[#C2654A]" />
-              <span className="text-xs font-semibold text-[#A8513A]">
+              <CheckCircle2 className="w-8 h-8 text-[#B55E45]" />
+              <span className="text-xs font-semibold text-[#9A503B]">
                 +{challenge.xp_reward} XP
               </span>
             </div>
@@ -279,12 +279,12 @@ function ChallengeDay({
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 >
-                  <Circle className="w-8 h-8 text-[#8A8A8A]" />
+                  <Circle className="w-8 h-8 text-[#6E6E6E]" />
                 </motion.div>
               ) : (
                 <>
-                  <Circle className="w-8 h-8 text-[#8A8A8A]" />
-                  <span className="text-xs font-semibold text-[#C2654A]">
+                  <Circle className="w-8 h-8 text-[#6E6E6E]" />
+                  <span className="text-xs font-semibold text-[#B55E45]">
                     +{challenge.xp_reward} XP
                   </span>
                 </>

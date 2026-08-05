@@ -49,7 +49,7 @@ export function RequireQuiz({ children }: { children: React.ReactElement }) {
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAF8]">
         <div className="text-center">
           <Spinner size="lg" className="mb-4" />
-          <p className="text-[#8A8A8A]">Je stijlprofiel wordt geladen...</p>
+          <p className="text-[#6E6E6E]">Je stijlprofiel wordt geladen...</p>
         </div>
       </div>
     );

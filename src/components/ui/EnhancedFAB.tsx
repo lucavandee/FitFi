@@ -50,7 +50,7 @@ interface EnhancedFABProps {
 export function EnhancedFAB({
   actions,
   primaryIcon: PrimaryIcon = Plus,
-  primaryColor = '#A8513A',
+  primaryColor = '#9A503B',
   position = 'bottom-right',
   offset = {}
 }: EnhancedFABProps) {
@@ -197,7 +197,7 @@ export function SimpleFAB({
   icon: Icon,
   onClick,
   label,
-  color = '#A8513A',
+  color = '#9A503B',
   position = 'bottom-right'
 }: SimpleFABProps) {
   const [showLabel, setShowLabel] = useState(false);
@@ -276,7 +276,7 @@ export function ExtendedFAB({
   icon: Icon,
   label,
   onClick,
-  color = '#A8513A',
+  color = '#9A503B',
   position = 'bottom-right'
 }: ExtendedFABProps) {
   const handleClick = () => {
@@ -357,7 +357,7 @@ export function MultiFAB({
           }}
           className="min-w-[48px] min-h-[48px] rounded-full shadow-lg flex items-center justify-center"
           style={{
-            backgroundColor: action.bgColor || '#A8513A'
+            backgroundColor: action.bgColor || '#9A503B'
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

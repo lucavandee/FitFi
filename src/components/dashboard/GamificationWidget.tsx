@@ -64,21 +64,21 @@ export function GamificationWidget() {
           {/* Header */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-xl">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-xl">
                 <span className="text-3xl">{levelInfo.current.icon}</span>
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-[#1A1A1A] mb-1">
                   {levelInfo.current.name}
                 </h3>
-                <p className="text-sm text-[#8A8A8A] font-medium">
+                <p className="text-sm text-[#6E6E6E] font-medium">
                   Level {stats.current_level} • {stats.total_xp.toLocaleString()} XP
                 </p>
               </div>
             </div>
 
             {/* Badge */}
-            <div className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-bold text-[#A8513A] shadow-lg border border-[#E5E5E5]">
+            <div className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-bold text-[#9A503B] shadow-lg border border-[#E5E5E5]">
               <Crown className="w-4 h-4 inline mr-1" />
               Top {Math.ceil((stats.current_level / 50) * 100)}%
             </div>
@@ -87,15 +87,15 @@ export function GamificationWidget() {
           {/* Progress Bar */}
           {levelInfo.next && (
             <div className="mb-6">
-              <div className="flex items-center justify-between text-sm text-[#8A8A8A] mb-3">
+              <div className="flex items-center justify-between text-sm text-[#6E6E6E] mb-3">
                 <span className="font-medium">Tot volgend level</span>
-                <span className="font-bold text-[#A8513A]">
+                <span className="font-bold text-[#9A503B]">
                   {levelInfo.xpToNext} XP
                 </span>
               </div>
               <div className="h-4 bg-white/60 rounded-full overflow-hidden shadow-inner">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[#C2654A] via-[#C2654A] to-[#C2654A] bg-[length:200%_100%]"
+                  className="h-full bg-gradient-to-r from-[#B55E45] via-[#B55E45] to-[#B55E45] bg-[length:200%_100%]"
                   initial={{ width: 0 }}
                   animate={{
                     width: `${levelInfo.progress}%`,
@@ -107,8 +107,8 @@ export function GamificationWidget() {
                   }}
                 />
               </div>
-              <div className="mt-2 flex items-center justify-center gap-2 text-sm text-[#8A8A8A]">
-                <Sparkles className="w-4 h-4 text-[#C2654A]" />
+              <div className="mt-2 flex items-center justify-center gap-2 text-sm text-[#6E6E6E]">
+                <Sparkles className="w-4 h-4 text-[#B55E45]" />
                 <span>Volgend: {levelInfo.next.name} {levelInfo.next.icon}</span>
               </div>
             </div>
@@ -120,32 +120,32 @@ export function GamificationWidget() {
               icon={<Trophy className="w-5 h-5" />}
               label="Achievements"
               value={stats.achievements_count}
-              gradient="from-[#C2654A] to-[#A8513A]"
+              gradient="from-[#B55E45] to-[#9A503B]"
             />
             <MiniStatCard
               icon={<Zap className="w-5 h-5" />}
               label="Streak"
               value={`${stats.daily_streak}d`}
-              gradient="from-[#C2654A] to-[#A8513A]"
+              gradient="from-[#B55E45] to-[#9A503B]"
             />
             <MiniStatCard
               icon={<Target className="w-5 h-5" />}
               label="Challenges"
               value={stats.challenges_completed}
-              gradient="from-[#A8513A] to-[#A8513A]"
+              gradient="from-[#9A503B] to-[#9A503B]"
             />
             <MiniStatCard
               icon={<Star className="w-5 h-5" />}
               label="Outfits"
               value={stats.outfits_saved}
-              gradient="from-[#C2654A] to-[#C2654A]"
+              gradient="from-[#B55E45] to-[#B55E45]"
             />
           </div>
 
           {/* CTA */}
           <NavLink
             to="/gamification"
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#A8513A] to-[#A8513A] text-white rounded-xl font-semibold hover:from-[#C2654A] hover:to-[#C2654A] transition-all shadow-lg hover-lift"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#9A503B] to-[#9A503B] text-white rounded-xl font-semibold hover:from-[#B55E45] hover:to-[#B55E45] transition-all shadow-lg hover-lift"
           >
             <Trophy className="w-5 h-5" />
             Bekijk alle achievements
@@ -159,12 +159,12 @@ export function GamificationWidget() {
         <div className="bg-white dark:bg-[#FFFFFF] rounded-2xl p-6 shadow-xl border-2 border-[#E5E5E5] hover-lift">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-lg font-bold text-[#1A1A1A] flex items-center gap-2">
-              <Award className="w-5 h-5 text-[#C2654A]" />
+              <Award className="w-5 h-5 text-[#B55E45]" />
               Recente Achievements
             </h4>
             <NavLink
               to="/gamification"
-              className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] flex items-center gap-1"
+              className="text-sm font-semibold text-[#B55E45] hover:text-[#9A503B] flex items-center gap-1"
             >
               Bekijk alles
               <ArrowRight className="w-4 h-4" />
@@ -180,17 +180,17 @@ export function GamificationWidget() {
                 transition={{ delay: index * 0.1 }}
                 className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-2xl border border-[#E5E5E5] hover-lift"
               >
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center shadow-lg flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#B55E45] to-[#B55E45] flex items-center justify-center shadow-lg flex-shrink-0">
                   <span className="text-2xl">{achievement.achievement_icon}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-[#1A1A1A] mb-1 truncate">
                     {achievement.achievement_name}
                   </div>
-                  <div className="text-xs text-[#8A8A8A] flex items-center gap-2">
+                  <div className="text-xs text-[#6E6E6E] flex items-center gap-2">
                     <span>{new Date(achievement.unlocked_at).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}</span>
                     <span>•</span>
-                    <span className="font-semibold text-[#C2654A]">+{achievement.achievement_xp_reward} XP</span>
+                    <span className="font-semibold text-[#B55E45]">+{achievement.achievement_xp_reward} XP</span>
                   </div>
                 </div>
               </motion.div>
@@ -216,7 +216,7 @@ export function GamificationWidget() {
       {/* Next Milestones Preview */}
       <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] dark:from-[#5A2010/20] dark:to-[#5A2010/20] rounded-2xl p-6 shadow-xl border-2 border-[#E5E5E5]">
         <h4 className="text-lg font-bold text-[#1A1A1A] mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-[#C2654A]" />
+          <TrendingUp className="w-5 h-5 text-[#B55E45]" />
           Komende Milestones
         </h4>
         <div className="space-y-3">
@@ -266,7 +266,7 @@ function MiniStatCard({
       <div className="text-xl font-bold text-[#1A1A1A]">
         {value}
       </div>
-      <div className="text-xs text-[#8A8A8A] font-medium">
+      <div className="text-xs text-[#6E6E6E] font-medium">
         {label}
       </div>
     </div>
@@ -296,18 +296,18 @@ function MilestoneItem({
           <span className="text-2xl">{icon}</span>
           <div>
             <div className="text-sm font-bold text-[#1A1A1A]">{title}</div>
-            <div className="text-xs text-[#8A8A8A]">
+            <div className="text-xs text-[#6E6E6E]">
               {current} / {target}
             </div>
           </div>
         </div>
-        <div className="px-2 py-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white text-xs font-bold rounded-lg">
+        <div className="px-2 py-1 bg-gradient-to-r from-[#B55E45] to-[#B55E45] text-white text-xs font-bold rounded-lg">
           {reward}
         </div>
       </div>
       <div className="h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
         <motion.div
-          className={`h-full ${isComplete ? 'bg-gradient-to-r from-[#C2654A] to-[#A8513A]' : 'bg-gradient-to-r from-[#C2654A] to-[#C2654A]'}`}
+          className={`h-full ${isComplete ? 'bg-gradient-to-r from-[#B55E45] to-[#9A503B]' : 'bg-gradient-to-r from-[#B55E45] to-[#B55E45]'}`}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 1, ease: 'easeOut' }}

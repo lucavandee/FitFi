@@ -166,14 +166,14 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
       <div className="text-center">
         <div
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3 text-xs font-semibold"
-          style={{ background: "var(--overlay-accent-08a)", border: "1px solid #E5E5E5", color: "#A8513A" }}
+          style={{ background: "var(--overlay-accent-08a)", border: "1px solid #E5E5E5", color: "#9A503B" }}
         >
           <span>Optionele stap</span>
         </div>
         <h2 className="text-xl font-bold text-[#1A1A1A] mb-1">
           Kleuranalyse via foto
         </h2>
-        <p className="text-sm text-[#8A8A8A] max-w-md mx-auto leading-relaxed">
+        <p className="text-sm text-[#6E6E6E] max-w-md mx-auto leading-relaxed">
           Upload een foto van je outfit of jezelf — Nova analyseert welke kleuren het beste bij je passen. <strong className="text-[#1A1A1A]">Je foto helpt kleuren en stijl te matchen, meer niet. We slaan geen gezichtsdata op.</strong>
         </p>
       </div>
@@ -189,13 +189,13 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-[#1A1A1A] hover:bg-[#FAF5F2] transition-colors"
         >
           <span className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-[#A8513A]" />
+            <Info className="w-4 h-4 text-[#9A503B]" />
             Wat voor foto werkt het best?
           </span>
           <motion.span
             animate={{ rotate: showTips ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="text-[#8A8A8A]"
+            className="text-[#6E6E6E]"
           >
             ▾
           </motion.span>
@@ -217,14 +217,14 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                     className="flex-shrink-0 w-24 h-32 rounded-xl flex flex-col items-center justify-center gap-1"
                     style={{ background: "#FAFAF8", border: "2px dashed #E5E5E5" }}
                   >
-                    <ImageIcon className="w-8 h-8 text-[#8A8A8A]" />
-                    <span className="text-[10px] text-center text-[#8A8A8A] leading-tight px-1">schouder tot heup</span>
+                    <ImageIcon className="w-8 h-8 text-[#6E6E6E]" />
+                    <span className="text-[10px] text-center text-[#6E6E6E] leading-tight px-1">schouder tot heup</span>
                   </div>
                   {/* Tips list */}
                   <ul className="flex-1 space-y-2 pt-1">
                     {PHOTO_TIPS.map((tip, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-[#1A1A1A]">
-                        <span className="mt-0.5 w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#A8513A" }}>
+                        <span className="mt-0.5 w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#9A503B" }}>
                           {i + 1}
                         </span>
                         {tip}
@@ -306,7 +306,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               onDrop={onDrop}
               className="relative rounded-2xl transition-all duration-200 cursor-pointer"
               style={{
-                border: `2px dashed ${isDragging ? "#C2654A" : "#E5E5E5"}`,
+                border: `2px dashed ${isDragging ? "#B55E45" : "#E5E5E5"}`,
                 background: isDragging ? "#FAF5F2" : "#FAFAF8",
                 minHeight: "180px",
               }}
@@ -325,12 +325,12 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                     transform: isDragging ? "scale(1.08)" : "scale(1)",
                   }}
                 >
-                  <Upload className="w-7 h-7 text-[#A8513A]" />
+                  <Upload className="w-7 h-7 text-[#9A503B]" />
                 </div>
                 <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Sleep hier een foto naartoe
                 </p>
-                <p className="text-xs text-[#8A8A8A]">
+                <p className="text-xs text-[#6E6E6E]">
                   of klik om te bladeren · JPG, PNG, WEBP · max. 5 MB
                 </p>
               </div>
@@ -343,13 +343,13 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                 onClick={() => inputRef.current?.click()}
                 className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] active:scale-[0.98] transition-all min-h-[48px]"
               >
-                <ImageIcon className="w-4 h-4 text-[#A8513A]" />
+                <ImageIcon className="w-4 h-4 text-[#9A503B]" />
                 Uit galerij
               </button>
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 bg-[#A8513A] border-[#A8513A] text-sm font-semibold text-white hover:bg-[#C2654A] active:scale-[0.98] transition-all min-h-[48px]"
+                className="flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 bg-[#9A503B] border-[#9A503B] text-sm font-semibold text-white hover:bg-[#B55E45] active:scale-[0.98] transition-all min-h-[48px]"
               >
                 <Camera className="w-4 h-4" />
                 Maak foto
@@ -427,7 +427,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
         style={{ background: "#FFFFFF", border: "1px solid #E5E5E5" }}
       >
         <Shield className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-        <div className="text-xs text-[#8A8A8A] leading-relaxed">
+        <div className="text-xs text-[#6E6E6E] leading-relaxed">
           <span className="font-semibold text-[#1A1A1A]">Hoe we jouw foto verwerken: </span>
           De foto wordt alleen gebruikt voor kleuranalyse van kleding. Er vindt geen gezichtsherkenning of biometrische verwerking plaats. Na analyse wordt de foto direct van onze servers verwijderd. Meer info in ons{" "}
           <a href="/privacy" className="underline hover:text-[#1A1A1A] transition-colors">

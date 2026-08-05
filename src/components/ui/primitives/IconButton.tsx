@@ -27,10 +27,10 @@ export function IconButton({
     "text-[#1A1A1A] " +
     "transition-all duration-200 " +
     "hover:bg-[#FAF5F2] " +
-    "hover:text-[#A8513A] " +
+    "hover:text-[#9A503B] " +
     "hover:border-[#D4856E] " +
     "focus-visible:outline-none focus-visible:ring-2 " +
-    "focus-visible:ring-[#C2654A] focus-visible:ring-offset-2 " +
+    "focus-visible:ring-[#B55E45] focus-visible:ring-offset-2 " +
     "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
 
   return (
