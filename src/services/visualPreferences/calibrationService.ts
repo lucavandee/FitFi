@@ -187,11 +187,28 @@ export class CalibrationService {
 
     const template = archetypeTemplates[mainArchetype] || archetypeTemplates['minimal'];
 
+    // De gelegenheid kwam hiervoor uit het archetype-sjabloon in plaats van uit
+    // het antwoord van de gebruiker. Omdat 'minimal', 'scandi_minimal' en
+    // 'street_refined' alle drie op 'casual' staan, kreeg iedereen die drie
+    // archetypes drie keer dezelfde kaart "Casual dag uit", ook wanneer hij
+    // "Werk" had gekozen. Het gekozen antwoord wint nu; het sjabloon is nog
+    // slechts de terugval wanneer er niets is ingevuld.
+    const gekozenGelegenheden: string[] = Array.isArray(quizData?.occasions)
+      ? quizData.occasions.filter((o: unknown): o is string => typeof o === 'string' && o.length > 0)
+      : typeof quizData?.occasions === 'string' && quizData.occasions
+        ? [quizData.occasions]
+        : [];
+    // Meerdere gelegenheden: verdeel ze over de drie outfits in plaats van
+    // alles op de eerste te zetten, zodat de set ook echt varieert.
+    const occasion = gekozenGelegenheden.length
+      ? gekozenGelegenheden[index % gekozenGelegenheden.length]
+      : template.occasion;
+
     // Fetch real products from database with color matching
     const [topProduct, bottomProduct, shoesProduct] = await Promise.all([
-      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
-      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
-      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors)
+      this.fetchProductForSlot('top', mainArchetype, occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
+      this.fetchProductForSlot('bottom', mainArchetype, occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
+      this.fetchProductForSlot('footwear', mainArchetype, occasion, quizData?.gender, quizData?.budgetRange, swipeColors)
     ]);
 
     // Validate color harmony
@@ -225,7 +242,7 @@ export class CalibrationService {
       },
       archetypes: weights,
       dominantColors: template.colors,
-      occasion: template.occasion,
+      occasion,
       colorHarmony,
       explanation: `Deze look combineert ${template.description}. Perfect voor jouw voorkeur voor ${mainArchetype.replace(/_/g, ' ')}.`
     };
