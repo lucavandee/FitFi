@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
+import { seizoenenBotsen } from '@/engine/productSafety';
 
 interface DBProduct {
   id: string;
@@ -280,6 +281,19 @@ export class AdaptiveOutfitGenerator {
 
     if (!bottom || !footwear) {
       console.warn('[AdaptiveOutfitGenerator] Could not build complete outfit');
+      return null;
+    }
+
+    // Seizoen was alleen een SCORE (applySeasonalBoost verhoogt de kleurscore
+    // met hooguit 10%) en sloot niets uit, waardoor een gevoerde winterlaars
+    // in dezelfde outfit kon belanden als een zomershort met bloemenprint.
+    // Nu een harde check: alleen de botsing winter tegen zomer wordt geweigerd,
+    // de aanroeper probeert het dan met een andere combinatie.
+    if (seizoenenBotsen([top.name, bottom.name, footwear.name])) {
+      console.warn(
+        '[AdaptiveOutfitGenerator] Outfit geweigerd op seizoensbotsing:',
+        [top.name, bottom.name, footwear.name]
+      );
       return null;
     }
 

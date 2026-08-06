@@ -127,3 +127,38 @@ export function filterVeiligeProducten<T extends SafetyInput>(
   }
   return { veilig, geweigerd };
 }
+
+/* ------------------------------------------------------------------ */
+/* Seizoenssamenhang                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Seizoenslabel uit de productnaam. Bewust grof: alleen de uitgesproken
+ * gevallen krijgen een label, de rest is 'allseason' en mag met alles.
+ *
+ * Reden: seizoen werd alleen als SCORE meegewogen (applySeasonalBoost verhoogt
+ * de kleurscore met hooguit 10%) en sloot niets uit. Daardoor kon een gevoerde
+ * winterlaars in dezelfde outfit belanden als een zomershort met bloemenprint.
+ */
+export type Seizoen = 'winter' | 'zomer' | 'allseason';
+
+const WINTER = /gevoerd|teddy|sherpa|wollen|\bwol\b|thermo|fleece|donsjas|puffer|winterjas|snowboot|bontvoering|gewatteerd/i;
+const ZOMER = /\bshorts?\b|\bkorte broek\b|zwem|bikini|badpak|linnen|hawaii|strand|sandaal|slipper|teenslipper|mouwloos|halterneck/i;
+
+export function seizoenVan(naam?: string | null): Seizoen {
+  const n = String(naam ?? '');
+  const w = WINTER.test(n);
+  const z = ZOMER.test(n);
+  if (w && !z) return 'winter';
+  if (z && !w) return 'zomer';
+  return 'allseason';
+}
+
+/**
+ * Mogen deze producten samen in één outfit? Alleen de harde botsing
+ * winter tegen zomer wordt geweigerd; al het overige mag.
+ */
+export function seizoenenBotsen(namen: Array<string | null | undefined>): boolean {
+  const labels = namen.map(seizoenVan);
+  return labels.includes('winter') && labels.includes('zomer');
+}
