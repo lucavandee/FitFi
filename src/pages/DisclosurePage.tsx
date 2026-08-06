@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { ShieldCheck, Link2, Gift, Tag, Image, Newspaper, Lock, CircleAlert as AlertCircle, RefreshCw, Mail, ChevronDown, ArrowRight } from 'lucide-react';
 import Seo from '@/components/seo/Seo';
 
 const UPDATED = '1 oktober 2025';
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i = 0) => ({
     opacity: 1,

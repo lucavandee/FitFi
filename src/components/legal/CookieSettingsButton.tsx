@@ -1,6 +1,6 @@
 import React from 'react';
 import CookieBanner from './CookieBanner';
-import { getCookiePrefs } from './CookieBanner';
+import { getCookiePrefs } from '@/utils/consent';
 
 export default function CookieSettingsButton({ className = '' }: { className?: string }) {
   const [open, setOpen] = React.useState(false);

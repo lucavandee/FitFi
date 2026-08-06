@@ -15,7 +15,7 @@ import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 export default function AdminTestimonialsPage() {
   const navigate = useNavigate();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);

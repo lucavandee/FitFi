@@ -5,9 +5,23 @@ import type { TribeChallenge } from "@/services/data/types";
 import Button from "../ui/Button";
 import toast from "react-hot-toast";
 
+// De admin-vorm verzamelt meer velden dan de gedeelde TribeChallenge type declareert
+// (beeld, punten, moeilijkheidsgraad, datums). We breiden het type hier lokaal uit
+// zodat die data niet verloren gaat bij het aanmaken van een challenge.
+type NewChallengeInput = Omit<TribeChallenge, 'id'> & {
+  image?: string;
+  rewardPoints?: number;
+  winnerRewardPoints?: number;
+  startAt?: string;
+  endAt?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  tags?: string[];
+  createdBy?: string;
+};
+
 interface ChallengeAdminFormProps {
   tribeId: string;
-  onCreate: (challenge: Omit<TribeChallenge, 'id' | 'createdAt'>) => Promise<void>;
+  onCreate: (challenge: NewChallengeInput) => Promise<void>;
   onCancel?: () => void;
   className?: string;
 }
@@ -68,7 +82,7 @@ export const ChallengeAdminForm: React.FC<ChallengeAdminFormProps> = ({
     setBusy(true);
     
     try {
-      const challenge: Omit<TribeChallenge, 'id' | 'createdAt'> = {
+      const challenge: NewChallengeInput = {
         tribeId,
         title: formData.title.trim(),
         description: formData.description.trim() || undefined,

@@ -688,19 +688,6 @@ const ProfilePage: React.FC = () => {
                 {seasonLabel && (
                   <p className="text-sm text-[#6E6E6E] mt-1 capitalize">{seasonLabel} type</p>
                 )}
-                {color?.palette && color.palette.length > 0 && (
-                  <div className="flex gap-1.5 flex-wrap mt-4">
-                    {color.palette.slice(0, 8).map((hex: string, i: number) => (
-                      <div
-                        key={i}
-                        role="img"
-                        aria-label={`Kleur ${hex}`}
-                        className="w-6 h-6 rounded-full ring-2 ring-white shadow-sm"
-                        style={{ backgroundColor: hex }}
-                      />
-                    ))}
-                  </div>
-                )}
                 <button
                   onClick={() => navigate("/results")}
                   className="w-full mt-5 py-2.5 rounded-full border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] text-center hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200"

@@ -28,7 +28,10 @@ export default function AdminStripeSetupPage() {
   const handleSave = async (productId: string, priceId: string) => {
     setSaving(true);
     try {
-      const { error } = await supabase
+      const client = supabase();
+      if (!client) throw new Error('Supabase niet beschikbaar');
+
+      const { error } = await client
         .from('stripe_products')
         .update({ stripe_price_id: priceId })
         .eq('id', productId);
@@ -159,7 +162,9 @@ export default function AdminStripeSetupPage() {
                               {product.stripe_price_id}
                             </code>
                             <button
-                              onClick={() => copyToClipboard(product.stripe_price_id)}
+                              onClick={() => {
+                                if (product.stripe_price_id) copyToClipboard(product.stripe_price_id);
+                              }}
                               className="p-1 hover:bg-gray-200 rounded"
                               title="Kopieer"
                             >

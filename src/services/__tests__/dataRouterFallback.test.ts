@@ -32,7 +32,7 @@ describe("DataRouter fallback outfits", () => {
     const outfits = await getOutfitRecommendations(undefined, { limit: 3 });
     expect(outfits.length).toBeGreaterThan(0);
     for (const outfit of outfits) {
-      expect(outfit.products.length).toBeGreaterThan(0);
+      expect(outfit.products?.length ?? 0).toBeGreaterThan(0);
     }
   });
 });

@@ -31,7 +31,8 @@ export function EmbeddingAnalytics() {
 
   const loadAnalytics = async () => {
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { requireSupabase } = await import('@/lib/supabase');
+      const supabase = requireSupabase();
 
       // Get archetype distribution
       const { data: archetypeData } = await supabase.rpc('get_archetype_distribution');

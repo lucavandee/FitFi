@@ -3,7 +3,11 @@ import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trophy, Star, Zap, Target, TrendingUp, ArrowRight, Crown, Award, Sparkles } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { gamificationService } from '@/services/gamification/gamificationService';
+import { gamificationService, type Achievement } from '@/services/gamification/gamificationService';
+
+// De 'user_achievements' tabel kan een xp-reward kolom bevatten die (nog) niet
+// in het gedeelde Achievement-type staat. We lezen 'm defensief uit.
+type AchievementWithXP = Achievement & { achievement_xp_reward?: number };
 import { useUser } from '@/context/UserContext';
 import { StreakCalendar } from '@/components/gamification/StreakCalendar';
 import { WeeklyChallengeTracker } from '@/components/gamification/WeeklyChallengeTracker';
@@ -172,7 +176,7 @@ export function GamificationWidget() {
           </div>
 
           <div className="space-y-3">
-            {achievements.slice(0, 3).map((achievement, index) => (
+            {achievements.slice(0, 3).map((achievement: AchievementWithXP, index) => (
               <motion.div
                 key={achievement.id}
                 initial={{ opacity: 0, x: -20 }}
@@ -189,8 +193,12 @@ export function GamificationWidget() {
                   </div>
                   <div className="text-xs text-[#6E6E6E] flex items-center gap-2">
                     <span>{new Date(achievement.unlocked_at).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}</span>
-                    <span>•</span>
-                    <span className="font-semibold text-[#A85740]">+{achievement.achievement_xp_reward} XP</span>
+                    {achievement.achievement_xp_reward != null && (
+                      <>
+                        <span>•</span>
+                        <span className="font-semibold text-[#A85740]">+{achievement.achievement_xp_reward} XP</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </motion.div>

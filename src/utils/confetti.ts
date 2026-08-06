@@ -11,6 +11,7 @@ interface ConfettiOptions {
   gravity?: number;
   drift?: number;
   scalar?: number;
+  startVelocity?: number;
 }
 
 interface Particle {
@@ -45,6 +46,7 @@ export function fireConfetti(options: ConfettiOptions = {}) {
     gravity = 0.3,
     drift = 0,
     scalar = 1,
+    startVelocity = 3,
   } = options;
 
   // Create canvas overlay
@@ -60,11 +62,15 @@ export function fireConfetti(options: ConfettiOptions = {}) {
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
-  const ctx = canvas.getContext('2d');
-  if (!ctx) {
+  const rawCtx = canvas.getContext('2d');
+  if (!rawCtx) {
     document.body.removeChild(canvas);
     return;
   }
+  // Bind to a fresh const with a non-null type so the narrowing survives
+  // into the `animate` closure below (TS doesn't carry flow-narrowing of
+  // `ctx` into nested function declarations).
+  const ctx: CanvasRenderingContext2D = rawCtx;
 
   // Create particles
   const particles: Particle[] = [];
@@ -73,7 +79,7 @@ export function fireConfetti(options: ConfettiOptions = {}) {
 
   for (let i = 0; i < particleCount; i++) {
     const angle = (Math.random() * spread - spread / 2) * (Math.PI / 180);
-    const velocity = 3 + Math.random() * 5;
+    const velocity = startVelocity + Math.random() * 5;
 
     particles.push({
       x: originX,

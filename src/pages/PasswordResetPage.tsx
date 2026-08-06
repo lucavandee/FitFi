@@ -34,6 +34,10 @@ export default function PasswordResetPage() {
     try {
       const { getSupabase } = await import("@/lib/supabase");
       const client = getSupabase();
+      if (!client) {
+        setError("Er ging iets mis. Probeer het later opnieuw.");
+        return;
+      }
       const { error: supaError } = await client.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/wachtwoord-instellen`,
       });

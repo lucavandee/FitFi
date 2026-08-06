@@ -31,7 +31,7 @@ export const ChallengeSnapshot: React.FC = () => {
           <p className="text-sm text-gray-600 mb-4">Ontdek tribes en vind jouw perfecte challenge.</p>
           <a
             className="inline-block bg-[#A85740] hover:bg-[#A85740] text-white px-4 py-2 rounded-xl font-medium transition-colors"
-            href={routeTo("tribe", {})}
+            href="/tribes"
           >
             Ontdek Tribes →
           </a>
@@ -65,40 +65,25 @@ export const ChallengeSnapshot: React.FC = () => {
 
   return (
     <div className="bg-white rounded-2xl shadow overflow-hidden hover:shadow-md transition-shadow">
-      {ch.image && (
-        <div className="aspect-video overflow-hidden">
-          <ImageWithFallback 
-            src={ch.image} 
-            alt={ch.title} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
-            componentName="ChallengeSnapshot"
-          />
-        </div>
-      )}
       <div className="p-4">
         <div className="flex items-center space-x-2 mb-2">
           <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
             {(ch.status ?? "open").toUpperCase()}
           </span>
-          {ch.rewardPoints && (
-            <span className="px-2 py-1 bg-[#F5F0EB] text-[#9A503B] rounded-full text-xs font-medium">
-              +{ch.rewardPoints} XP
-            </span>
-          )}
         </div>
-        
+
         <h4 className="font-semibold text-gray-900 mb-2 leading-tight">{ch.title}</h4>
-        
+
         {ch.description && (
           <p className="text-sm text-gray-600 mb-3 line-clamp-2">
             {ch.description}
           </p>
         )}
-        
+
         <div className="flex items-center justify-between">
           <div className="text-xs text-gray-500">
-            {ch.endAt && (
-              <>Eindigt: {new Date(ch.endAt).toLocaleDateString('nl-NL')}</>
+            {ch.ends_at && (
+              <>Eindigt: {new Date(ch.ends_at).toLocaleDateString('nl-NL')}</>
             )}
           </div>
           

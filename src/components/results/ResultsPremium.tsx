@@ -87,26 +87,22 @@ const ResultsPremium: React.FC = () => {
               <SmartImage
                 src="/images/fallbacks/top.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
                 fetchPriority="high"
               />
               <SmartImage
                 src="/images/fallbacks/bottom.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/footwear.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/accessory.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
             </div>
@@ -127,25 +123,21 @@ const ResultsPremium: React.FC = () => {
               <SmartImage
                 src="/images/fallbacks/top.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/bottom.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/footwear.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/accessory.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
             </div>
@@ -166,25 +158,21 @@ const ResultsPremium: React.FC = () => {
               <SmartImage
                 src="/images/fallbacks/top.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/bottom.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/footwear.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
               <SmartImage
                 src="/images/fallbacks/accessory.jpg"
                 alt=""
-                aspectRatio={1}
                 className="res-card__tile"
               />
             </div>

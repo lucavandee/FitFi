@@ -104,6 +104,10 @@ export default function AdminMoodPhotosPage() {
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
+      if (!client) {
+        toast.error('Database niet beschikbaar');
+        return;
+      }
       const { error } = await client
         .from('mood_photos')
         .update({ active: !currentActive })
@@ -126,6 +130,10 @@ export default function AdminMoodPhotosPage() {
     try {
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
+      if (!client) {
+        toast.error('Database niet beschikbaar');
+        return;
+      }
       const photo = photos.find(p => p.id === id);
       if (!photo) return;
 

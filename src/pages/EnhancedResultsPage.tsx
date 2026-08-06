@@ -190,8 +190,7 @@ function getOutfitOccasion(outfit: any, userOccasions: string[]): string | null 
 }
 
 const AnimatedSection = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const isVisible = useFadeInOnVisible(ref);
+  const { ref, visible: isVisible } = useFadeInOnVisible<HTMLDivElement>();
 
   return (
     <motion.div
@@ -1526,8 +1525,7 @@ export default function EnhancedResultsPage() {
               <SwipeableOutfitGallery
                 outfits={occasionFilteredOutfits as any[]}
                 onLike={(outfit) => {
-                  const id = 'id' in outfit ? outfit.id : outfit.toString();
-                  toggleFav(String(id));
+                  toggleFav(String(outfit.id));
                 }}
                 onDislike={() => {}}
                 renderCard={(outfit) => {

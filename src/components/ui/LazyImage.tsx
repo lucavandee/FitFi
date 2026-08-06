@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useInView } from '@/hooks/useInView';
 
 interface LazyImageProps {
@@ -23,8 +23,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   const [imageSrc, setImageSrc] = useState<string>(blurDataURL || fallback);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(imgRef, { threshold: 0.1, rootMargin: '50px' });
+  const { ref: imgRef, inView: isInView } = useInView<HTMLDivElement>({ threshold: 0.1, rootMargin: '50px' });
 
   useEffect(() => {
     if (!isInView) return;

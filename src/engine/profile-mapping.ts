@@ -59,6 +59,7 @@ export function convertStyleArrayToPreferences(styleArray: string[]): StylePrefe
 
     if (mapping) {
       Object.entries(mapping).forEach(([key, value]) => {
+        if (value === undefined) return;
         preferences[key as keyof StylePreferences] += value * weight;
       });
     }

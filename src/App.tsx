@@ -36,7 +36,9 @@ const LoginPage          = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));
 const DashboardPage      = lazy(() => import("@/pages/DashboardPage"));
 const ProfilePage        = lazy(() => import("@/pages/ProfilePage"));
-const EmbeddingAnalytics = lazy(() => import("@/components/admin/EmbeddingAnalytics"));
+const EmbeddingAnalytics = lazy(() =>
+  import("@/components/admin/EmbeddingAnalytics").then(m => ({ default: m.EmbeddingAnalytics }))
+);
 const AdminProductsPage  = lazy(() => import("@/pages/AdminProductsPage"));
 const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));

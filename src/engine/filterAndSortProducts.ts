@@ -67,8 +67,13 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
     };
   });
 
-  let genderFilteredProducts = productsWithScores;
-  if (user.gender && user.gender !== 'unisex') {
+  // Explicit `Product[]` annotation (rather than inferring from the first
+  // assignment) so later reassignments from helpers that type `matchScore` as
+  // optional stay structurally compatible.
+  let genderFilteredProducts: Product[] = productsWithScores;
+  // Note: UserProfile.gender is typed as 'male' | 'female' (see FitFiUser in
+  // UserContext.tsx), so it can never be 'unisex' — that check was always a no-op.
+  if (user.gender) {
     genderFilteredProducts = productsWithScores.filter(product => {
       const pg = (product.gender || '').toLowerCase().trim();
       if (pg === 'unisex') return true;
@@ -80,7 +85,7 @@ export function filterAndSortProducts(products: Product[], user: UserProfile): P
   }
 
   // Apply color season filtering if user has color profile
-  let colorFilteredProducts = genderFilteredProducts;
+  let colorFilteredProducts: Product[] = genderFilteredProducts;
   if (user.colorProfile && user.colorProfile.season) {
     console.log(`[FilterAndSort] Applying color season filter: ${user.colorProfile.season} (${user.colorProfile.paletteName})`);
 

@@ -4,6 +4,7 @@ import { X, User, Mail, Calendar, Crown, Shield, ShieldOff, CircleCheck as Check
 import { supabase } from '@/lib/supabaseClient';
 import { setUserTier, setUserAdmin, sendNotification } from '@/services/admin/adminService';
 import toast from 'react-hot-toast';
+import Spinner from '@/components/ui/Spinner';
 
 interface UserDetail {
   id: string;

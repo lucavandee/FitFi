@@ -243,11 +243,14 @@ export function filterAndPrepare(
     }
 
     const enriched = enrichProduct(product);
+    // `Product.formality` is typed as optional even though enrichProduct always
+    // sets it; fall back to the same default archetypeHardReject itself uses.
+    const enrichedFormality = enriched.formality ?? 0.4;
 
     const archetypeReject = archetypeHardReject(
       product,
       cat,
-      enriched.formality,
+      enrichedFormality,
       profile
     );
     if (archetypeReject) {
@@ -256,7 +259,7 @@ export function filterAndPrepare(
     }
 
     const scored: ScoredProduct = {
-      product: { ...product, category: cat, formality: enriched.formality },
+      product: { ...product, category: cat, formality: enrichedFormality },
       category: cat,
       score: 0,
       breakdown: {
@@ -274,7 +277,7 @@ export function filterAndPrepare(
         brand: 0,
       },
       reasons: [],
-      formality: enriched.formality,
+      formality: enrichedFormality,
       archetypeFit: {},
       colorTags: enriched._signals.colorTags,
       materialTags: enriched._signals.materialTags,

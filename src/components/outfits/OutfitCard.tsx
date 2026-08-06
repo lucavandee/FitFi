@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ThumbsUp, ThumbsDown, MessageCircle, X, CircleHelp as HelpCircle, Sparkles, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
-import RequireAuth from '@/components/auth/RequireAuth';
+import RequireAuth from '@/components/auth/InlineAuthGate';
 import { isSaved, toggleSave } from '../../services/engagement';
 import { generateOutfitExplanation, generateNovaExplanation } from '@/engine/explainOutfit';
 import { track } from '@/utils/telemetry';
@@ -286,8 +286,7 @@ export default function OutfitCard({
 
   const handleShopClick = () => {
     if (!outfit.products || outfit.products.length === 0) {
-      toast('Geen items beschikbaar', {
-        description: 'Dit outfit bevat nog geen shopbare items.',
+      toast('Geen items beschikbaar. Dit outfit bevat nog geen shopbare items.', {
         icon: '🛍️',
       });
       return;
@@ -298,8 +297,7 @@ export default function OutfitCard({
     );
 
     if (availableProducts.length === 0) {
-      toast('Shopfunctie komt binnenkort beschikbaar', {
-        description: 'Deze items zijn momenteel niet online beschikbaar.',
+      toast('Shopfunctie komt binnenkort beschikbaar. Deze items zijn momenteel niet online beschikbaar.', {
         icon: '⏳',
       });
       return;

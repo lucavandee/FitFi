@@ -100,7 +100,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
                   <div key={idx} className="aspect-square relative">
                     <SmartImage
                       src={img}
-                      alt={`${outfit.name || 'Outfit'} - afbeelding ${idx + 1}`}
+                      alt={`${outfit.title || 'Outfit'} - afbeelding ${idx + 1}`}
                       className="w-full h-full object-cover rounded"
                     />
                   </div>
@@ -109,7 +109,7 @@ export default function SavedOutfitsGallery({ userId }: SavedOutfitsGalleryProps
 
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-2">
-                  {outfit.name || 'Outfit'}
+                  {outfit.title || 'Outfit'}
                 </h3>
                 <p className="text-sm text-[var(--color-text)]/70 mb-4 line-clamp-2">
                   {outfit.description || outfit.explanation || ''}

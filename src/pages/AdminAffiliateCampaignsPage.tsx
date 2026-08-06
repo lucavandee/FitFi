@@ -98,7 +98,14 @@ export default function AdminAffiliateCampaignsPage() {
 
       setSyncResults(prev => ({
         ...prev,
-        [campaign.id]: { campaignId: campaign.id, success: true, ...json },
+        [campaign.id]: {
+          campaignId: campaign.id,
+          success: true,
+          program: (json.program as string) ?? campaign.name,
+          total: (json.total as number) ?? 0,
+          inserted: (json.inserted as number) ?? 0,
+          skipped: (json.skipped as number) ?? 0,
+        },
       }));
       toast.success(`${json.inserted} producten gesynchroniseerd voor ${campaign.name}`);
       loadCampaigns();

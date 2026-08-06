@@ -28,12 +28,14 @@ interface GlobalStats {
 }
 
 export default function AdminSwipeAnalyticsPage() {
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
 
   const { data: globalStats, isLoading: globalLoading } = useQuery({
     queryKey: ['admin-swipe-global-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_swipe_global_stats');
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase client unavailable');
+      const { data, error } = await sb.rpc('get_swipe_global_stats');
       if (error) throw error;
       return data as GlobalStats;
     },
@@ -43,7 +45,9 @@ export default function AdminSwipeAnalyticsPage() {
   const { data: photoStats, isLoading: photoLoading } = useQuery({
     queryKey: ['admin-swipe-photo-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_swipe_photo_stats');
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase client unavailable');
+      const { data, error } = await sb.rpc('get_swipe_photo_stats');
       if (error) throw error;
       return data as SwipeStats[];
     },

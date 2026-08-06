@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { RefreshCw, Shirt, TrendingUp } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { OutfitCard } from './OutfitCard';
+import OutfitCard from './OutfitCard';
 import { remixOutfit } from '@/services/outfits/outfitRemixer';
 import type { Outfit, Product } from '@/engine/types';
 
@@ -131,9 +131,17 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {remixes.map((remix, idx) => (
                 <div key={idx} className="relative">
+                  {/* Note: OutfitCard has no `compact` prop (it doesn't exist on OutfitCardProps);
+                      it was previously passed as an unused, silently-ignored prop. */}
                   <OutfitCard
-                    outfit={remix.outfit}
-                    compact
+                    outfit={{
+                      ...remix.outfit,
+                      imageUrl: remix.outfit.imageUrl ?? '',
+                      products: remix.outfit.products?.map(p => ({
+                        ...p,
+                        imageUrl: p.imageUrl ?? '',
+                      })),
+                    }}
                   />
                   <div className="mt-2 flex items-center justify-between">
                     <span className="text-xs text-[#6E6E6E]">

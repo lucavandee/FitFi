@@ -204,6 +204,7 @@ export default function OutfitGrid({
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
               className="relative"
+              onClick={onOutfitClick ? () => onOutfitClick(outfit) : undefined}
             >
               {/* Relevance Badge */}
               {getRelevanceBadge(outfit, index)}
@@ -234,7 +235,6 @@ export default function OutfitGrid({
                     sort_by: sortBy
                   });
                 }}
-                onClick={() => onOutfitClick?.(outfit)}
               />
             </motion.div>
           ))}

@@ -24,7 +24,7 @@ import toast from 'react-hot-toast';
 
 export default function AdminBlogTopicsPage() {
   const navigate = useNavigate();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [topics, setTopics] = useState<BlogTopic[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -268,8 +268,14 @@ export default function AdminBlogTopicsPage() {
   );
 }
 
-function TopicCard({ topic, onDelete, onStatusChange }: any) {
-  const statusConfig = {
+interface TopicCardProps {
+  topic: BlogTopic;
+  onDelete: () => void;
+  onStatusChange: (status: BlogTopic['status']) => void;
+}
+
+function TopicCard({ topic, onDelete, onStatusChange }: TopicCardProps) {
+  const statusConfig: Record<BlogTopic['status'], { color: string; label: string }> = {
     pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
     in_progress: { color: 'bg-blue-100 text-blue-800', label: 'In Progress' },
     completed: { color: 'bg-green-100 text-green-800', label: 'Completed' }

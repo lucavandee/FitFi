@@ -82,7 +82,10 @@ const SEED_OUTFITS: Record<string, Omit<OutfitSeed, "id">[]> = {
 };
 
 function seasonText(c: ColorProfile): { palette: string; accentTip: string } {
-  switch (c.season) {
+  // c.season is typed strictly Dutch, maar legacy localStorage/Supabase data
+  // (van vóór de Dutch-only refactor van ColorProfile.season) kan nog Engelse
+  // waarden bevatten; vandaar de defensieve as-string cast + Engelse cases.
+  switch (c.season as string) {
     case "lente":
     case "spring": return { palette: "licht-warme neutrals", accentTip: "lichte, warme accenten" };
     case "zomer":
@@ -95,7 +98,8 @@ function seasonText(c: ColorProfile): { palette: string; accentTip: string } {
 }
 
 function getSeasonalColors(c: ColorProfile): { base: string[]; accent: string[] } {
-  switch (c.season) {
+  // Zie toelichting in seasonText() hierboven.
+  switch (c.season as string) {
     case "lente":
     case "spring":
       return {

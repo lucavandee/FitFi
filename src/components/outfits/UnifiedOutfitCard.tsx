@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Sparkles, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
-import RequireAuth from '@/components/auth/RequireAuth';
+import RequireAuth from '@/components/auth/InlineAuthGate';
 import { isSaved, toggleSave } from '@/services/engagement';
 import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';

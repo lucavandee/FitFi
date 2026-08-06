@@ -1,7 +1,37 @@
-import type { Product, Outfit } from './types';
-import type { ArchetypeWeights } from '@/types/style';
+import type { Product } from './types';
+import type { ArchetypeWeights, ProductLike } from '@/types/style';
 import { scoreAndFilterProducts, buildOutfits } from './matching';
 import type { StyleEmbedding } from '@/services/visualPreferences/embeddingService';
+import { ARCHETYPES, type ArchetypeKey } from '@/config/archetypes';
+
+// `buildOutfits`/`scoreAndFilterProducts` (matching.ts) work with `ProductLike` and
+// return their own ad-hoc outfit shape (top/bottom/shoes + `_fusion`), which is
+// structurally different from the app-wide `Outfit` type (engine/types.ts). This
+// module was previously typed as if it produced `Outfit`s, which it never did.
+type EmbeddingOutfit = ReturnType<typeof buildOutfits>[number];
+
+function isArchetypeKey(key: string): key is ArchetypeKey {
+  return key in ARCHETYPES;
+}
+
+// Bridge from the app-wide `Product` (engine/types.ts) to the `ProductLike` shape
+// that the fusion-scoring engine (archetypeFusion.ts) reads from.
+function toProductLike(p: Product): ProductLike {
+  return {
+    id: p.id,
+    title: p.name,
+    brand: p.brand,
+    category: p.category,
+    colorTags: p.colorTags,
+    materialTags: p.materialTags,
+    silhouetteTags: p.silhouetteTags,
+    formality: p.formality,
+    seasonTags: p.season,
+    image: p.imageUrl,
+    price: p.price,
+    style: p.styleTags?.[0],
+  };
+}
 
 /**
  * Generate outfit recommendations using locked style embedding
@@ -32,7 +62,7 @@ export function generateRecommendationsFromEmbedding(
   lockedEmbedding: StyleEmbedding,
   products: Product[],
   options: EmbeddingBasedRecommendationOptions = {}
-): Outfit[] {
+): EmbeddingOutfit[] {
   const {
     count = 5,
     occasion,
@@ -58,6 +88,7 @@ export function generateRecommendationsFromEmbedding(
   const maxScore = Math.max(...Object.values(lockedEmbedding));
 
   for (const [archetype, score] of Object.entries(lockedEmbedding)) {
+    if (!isArchetypeKey(archetype)) continue;
     // Normalize to 0-1 scale
     archetypeWeights[archetype] = maxScore > 0 ? score / maxScore : 0;
   }
@@ -70,8 +101,8 @@ export function generateRecommendationsFromEmbedding(
     // Filter by occasion
     if (occasion && p.occasion && !p.occasion.includes(occasion)) return false;
 
-    // Filter by season
-    if (season && p.season && p.season !== 'all' && p.season !== season) return false;
+    // Filter by season (`p.season` is a string[] of supported seasons, not a single value)
+    if (season && p.season && !p.season.includes('all') && !p.season.includes(season)) return false;
 
     // Filter by price range
     if (priceRange && p.price) {
@@ -90,8 +121,10 @@ export function generateRecommendationsFromEmbedding(
     console.warn('[EmbeddingRecommendation] Very few products available after filtering');
   }
 
+  const productLikes = filteredProducts.map(toProductLike);
+
   // Score and rank products using archetype weights
-  const scored = scoreAndFilterProducts(filteredProducts, {
+  const scored = scoreAndFilterProducts(productLikes, {
     archetypeMix: archetypeWeights,
     gender,
     season,
@@ -99,7 +132,7 @@ export function generateRecommendationsFromEmbedding(
   });
 
   // Build complete outfits
-  const outfits = buildOutfits(filteredProducts, {
+  const outfits = buildOutfits(productLikes, {
     archetypeMix: archetypeWeights,
     gender,
     season
@@ -115,7 +148,7 @@ export function generateRecommendationsFromEmbedding(
  * Explain why an outfit matches the embedding
  */
 export function explainOutfitMatch(
-  outfit: Outfit,
+  outfit: EmbeddingOutfit,
   lockedEmbedding: StyleEmbedding
 ): string {
   if (!outfit._fusion || !outfit._fusion.matchedSignals) {
@@ -155,6 +188,7 @@ export function getTopProductsFromEmbedding(
   const maxScore = Math.max(...Object.values(lockedEmbedding));
 
   for (const [archetype, score] of Object.entries(lockedEmbedding)) {
+    if (!isArchetypeKey(archetype)) continue;
     archetypeWeights[archetype] = maxScore > 0 ? score / maxScore : 0;
   }
 
@@ -164,24 +198,32 @@ export function getTopProductsFromEmbedding(
     filteredProducts = products.filter(p => p.category === category);
   }
 
+  // Keep a lookup back to the original `Product` so the result can return the
+  // full product record rather than the scoring engine's stripped-down `ProductLike`.
+  const byId = new Map(filteredProducts.map(p => [p.id, p]));
+
   // Score products
-  const scored = scoreAndFilterProducts(filteredProducts, {
+  const scored = scoreAndFilterProducts(filteredProducts.map(toProductLike), {
     archetypeMix: archetypeWeights,
     limit
   });
 
-  return scored.slice(0, limit).map(({ product, score, detail }) => ({
-    product,
-    score,
-    matchReason: detail.matchedSignals[0] || 'Algemene stijl match'
-  }));
+  return scored.slice(0, limit).flatMap(({ product, score, detail }) => {
+    const original = byId.get(product.id);
+    if (!original) return [];
+    return [{
+      product: original,
+      score,
+      matchReason: detail.matchedSignals[0] || 'Algemene stijl match'
+    }];
+  });
 }
 
 /**
  * Compare outfit to embedding for quality assurance
  */
 export function validateOutfitAgainstEmbedding(
-  outfit: Outfit,
+  outfit: EmbeddingOutfit,
   lockedEmbedding: StyleEmbedding
 ): {
   isGoodMatch: boolean;

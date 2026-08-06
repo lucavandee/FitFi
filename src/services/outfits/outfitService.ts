@@ -8,9 +8,8 @@ import { dedupeProductVariants } from "./dedupeProductVariants";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
-export interface GeneratedOutfit extends Outfit {
-  explanation?: string;
-}
+// Outfit.explanation is al verplicht (string); geen aparte optionele override nodig.
+export type GeneratedOutfit = Outfit;
 
 class OutfitService {
   private productsCache: Map<string, Product[]> = new Map();

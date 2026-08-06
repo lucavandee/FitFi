@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PremiumOutfitCard } from '@/components/outfits/PremiumOutfitCard';
+import PremiumOutfitCard from '@/components/outfits/PremiumOutfitCard';
 import type { Outfit } from '@/services/data/types';
 
 interface ResultsOutfitGridProps {
@@ -34,10 +34,28 @@ export const ResultsOutfitGrid: React.FC<ResultsOutfitGridProps> = ({
           }}
         >
           <PremiumOutfitCard
-            outfit={outfit}
+            outfit={{
+              id: outfit.id,
+              name: outfit.title || 'Outfit',
+              items: (outfit.products || []).map(product => ({
+                id: product.id,
+                name: product.title || product.name || '',
+                brand: product.brand || '',
+                price: product.price || 0,
+                image: product.imageUrl || product.image || '',
+                category: product.category || '',
+              })),
+              totalPrice:
+                outfit.priceMax ??
+                outfit.priceMin ??
+                (outfit.products || []).reduce((sum, product) => sum + (product.price || 0), 0),
+              occasion: outfit.tags?.[0] || '',
+              style: outfit.tags?.[1] || outfit.tags?.[0] || '',
+              explanation: outfit.explanation,
+              matchPercentage: outfit.match,
+            }}
             onSave={onSave ? () => onSave(outfit) : undefined}
             onShare={onShare ? () => onShare(outfit) : undefined}
-            onZoom={onZoom ? () => onZoom(outfit) : undefined}
           />
         </motion.div>
       ))}

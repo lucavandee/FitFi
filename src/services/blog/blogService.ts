@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { requireSupabase } from '@/lib/supabase';
 
 /**
  * Blog Service
@@ -73,6 +73,7 @@ export interface CreateBlogPostInput {
 
 export interface UpdateBlogPostInput extends Partial<CreateBlogPostInput> {
   id: string;
+  published_at?: string | null;
 }
 
 export interface BlogPostFilters {
@@ -87,6 +88,7 @@ export interface BlogPostFilters {
  */
 
 export async function getAllBlogPosts(filters?: BlogPostFilters): Promise<BlogPost[]> {
+  const supabase = requireSupabase();
   let query = supabase
     .from('blog_posts')
     .select('*')
@@ -138,9 +140,7 @@ export async function getPublishedBlogPosts(
   pageOffset: number = 0,
   category?: string
 ): Promise<PublishedBlogPost[]> {
-  if (!supabase) {
-    throw new Error('Supabase client is not initialized');
-  }
+  const supabase = requireSupabase();
 
   try {
     const { data, error } = await supabase.rpc('get_published_blog_posts', {
@@ -175,6 +175,7 @@ export async function getPublishedBlogPosts(
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase.rpc('get_blog_post_by_slug', {
     post_slug: slug
   });
@@ -187,6 +188,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 }
 
 export async function getBlogPostById(id: string): Promise<BlogPost | null> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
@@ -201,6 +203,7 @@ export async function getBlogPostById(id: string): Promise<BlogPost | null> {
 }
 
 export async function createBlogPost(input: CreateBlogPostInput): Promise<BlogPost> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from('blog_posts')
     .insert([{
@@ -223,6 +226,7 @@ export async function createBlogPost(input: CreateBlogPostInput): Promise<BlogPo
 }
 
 export async function updateBlogPost(input: UpdateBlogPostInput): Promise<BlogPost> {
+  const supabase = requireSupabase();
   const { id, ...updates } = input;
 
   // Auto-update read time if content changed
@@ -250,6 +254,7 @@ export async function updateBlogPost(input: UpdateBlogPostInput): Promise<BlogPo
 }
 
 export async function deleteBlogPost(id: string): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from('blog_posts')
     .delete()
@@ -281,6 +286,7 @@ export async function unpublishBlogPost(id: string): Promise<BlogPost> {
  */
 
 export async function getAllTopics(status?: BlogTopic['status']): Promise<BlogTopic[]> {
+  const supabase = requireSupabase();
   let query = supabase
     .from('blog_topics')
     .select('*')
@@ -305,6 +311,7 @@ export async function createTopic(
   targetAudience: string = 'algemeen',
   priorityScore: number = 5
 ): Promise<BlogTopic> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from('blog_topics')
     .insert([{
@@ -329,6 +336,7 @@ export async function updateTopicStatus(
   status: BlogTopic['status'],
   generatedPostId?: string
 ): Promise<BlogTopic> {
+  const supabase = requireSupabase();
   const updates: { status: BlogTopic['status']; generated_post_id?: string } = { status };
   if (generatedPostId) {
     updates.generated_post_id = generatedPostId;
@@ -349,6 +357,7 @@ export async function updateTopicStatus(
 }
 
 export async function deleteTopic(id: string): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from('blog_topics')
     .delete()
@@ -369,6 +378,7 @@ export async function trackBlogEvent(
   userId?: string,
   sessionId?: string
 ): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from('blog_analytics')
     .insert([{
@@ -384,6 +394,7 @@ export async function trackBlogEvent(
 }
 
 export async function incrementViewCount(slug: string): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase.rpc('increment_blog_view_count', {
     post_slug: slug
   });
@@ -394,6 +405,7 @@ export async function incrementViewCount(slug: string): Promise<void> {
 }
 
 export async function getBlogAnalytics(postId: string) {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from('blog_analytics')
     .select('event_type, created_at')
@@ -418,6 +430,7 @@ export async function getBlogAnalytics(postId: string) {
 }
 
 export async function getDashboardMetrics() {
+  const supabase = requireSupabase();
   // Get all posts
   const { data: posts, error: postsError } = await supabase
     .from('blog_posts')

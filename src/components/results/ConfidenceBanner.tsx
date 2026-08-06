@@ -1,7 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Info, Sparkles } from 'lucide-react';
-import type { ConfidenceAnalysis } from '@/services/quiz/confidenceAnalyzer';
+import type { analyzeQuizConfidence } from '@/services/quiz/confidenceAnalyzer';
+
+// `ConfidenceAnalysis` isn't exported from confidenceAnalyzer.ts; derive it from the
+// exported function's return type instead of widening to `any`.
+type ConfidenceAnalysis = ReturnType<typeof analyzeQuizConfidence>;
 
 interface ConfidenceBannerProps {
   analysis: ConfidenceAnalysis;

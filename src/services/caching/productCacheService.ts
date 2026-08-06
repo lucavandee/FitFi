@@ -103,7 +103,9 @@ class ProductCacheService {
     // Cleanup old entries (keep max 50)
     if (this.memoryCache.size > 50) {
       const oldestKey = this.memoryCache.keys().next().value;
-      this.memoryCache.delete(oldestKey);
+      if (oldestKey !== undefined) {
+        this.memoryCache.delete(oldestKey);
+      }
     }
   }
 

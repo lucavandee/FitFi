@@ -1,3 +1,7 @@
+/// <reference types="node" />
+// This file runs inside the Vite build (Node.js), not in the browser bundle.
+// The project's tsconfig only auto-includes "react"/"react-dom" ambient types,
+// so Node's globals need an explicit reference here.
 import fs from "node:fs";
 const MUST_EXIST = [
   "src/main.tsx",

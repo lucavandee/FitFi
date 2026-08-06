@@ -102,8 +102,8 @@ export function filterProducts(
   // Step 5: Category filtering (optional)
   if (criteria.categories && criteria.categories.length > 0) {
     filtered = filtered.filter(p =>
-      criteria.categories!.includes(p.category) ||
-      criteria.categories!.includes(p.type)
+      criteria.categories!.includes(p.category ?? '') ||
+      criteria.categories!.includes(p.type ?? '')
     );
     console.log(`[ProductFiltering] After category filter: ${filtered.length} products`);
   }

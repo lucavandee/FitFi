@@ -5,7 +5,7 @@ import LevelProgress from './LevelProgress';
 import Leaderboard from './Leaderboard';
 import ChallengeHub from './ChallengeHub';
 import Button from '../ui/Button';
-import { trackEvent } from '../../utils/analytics';
+import { track } from '../../utils/analytics';
 
 interface GamificationDashboardProps {
   className?: string;
@@ -27,7 +27,10 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
   const handleViewChange = (view: 'overview' | 'challenges' | 'leaderboard') => {
     setActiveView(view);
     
-    trackEvent('gamification_view_changed', 'engagement', view, 1, {
+    track('gamification_view_changed', {
+      category: 'engagement',
+      label: view,
+      value: 1,
       previous_view: activeView,
       user_level: currentLevelInfo?.id,
       user_points: points

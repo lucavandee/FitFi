@@ -49,12 +49,8 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
       setLoading(true);
       setError(null);
       
-      const response: DataResponse<Tribe[]> = await fetchTribes({
-        featured,
-        archetype,
-        limit
-      });
-      
+      const response: DataResponse<Tribe[]> = await fetchTribes();
+
       if (alive) {
         setData(response.data);
         setSource(response.source);
@@ -84,7 +80,7 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
   useEffect(() => {
     if (refetchOnMount || !data) {
       const cleanup = loadTribes();
-      return () => cleanup.then(fn => fn?.());
+      return () => { cleanup.then(fn => fn?.()); };
     }
   }, [featured, archetype, limit, enabled, refetchOnMount]);
 
@@ -94,7 +90,7 @@ export function useTribes(options: UseTribesOptions = {}): UseTribesResult {
     error,
     source,
     cached,
-    refetch: loadTribes
+    refetch: async () => { await loadTribes(); }
   };
 }
 
@@ -120,7 +116,7 @@ export function useTribeBySlug(slug: string, userId?: string): UseTribesResult &
       setLoading(true);
       setError(null);
       
-      const response: DataResponse<Tribe | null> = await fetchTribeBySlug(slug, userId);
+      const response: DataResponse<Tribe | null> = await fetchTribeBySlug(slug);
       
       if (alive) {
         setTribe(response.data);
@@ -150,7 +146,7 @@ export function useTribeBySlug(slug: string, userId?: string): UseTribesResult &
 
   useEffect(() => {
     const cleanup = loadTribe();
-    return () => cleanup.then(fn => fn?.());
+    return () => { cleanup.then(fn => fn?.()); };
   }, [slug, userId]);
 
   return {
@@ -160,6 +156,6 @@ export function useTribeBySlug(slug: string, userId?: string): UseTribesResult &
     error,
     source,
     cached,
-    refetch: loadTribe
+    refetch: async () => { await loadTribe(); }
   };
 }

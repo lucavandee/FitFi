@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
-import { NovaInsightCard } from "@/components/Dashboard/NovaInsightCard";
+import NovaInsightCard from "@/components/Dashboard/NovaInsightCard";
 import type { AmbientInsight } from "@/services/nova/ambientInsights";
 
 interface DashboardInsightsProps {

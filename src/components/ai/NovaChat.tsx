@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader, Sparkles, Copy, X, Bot } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
+import { streamChat } from '@/services/ai/novaService';
+import { loadNovaAgent } from '@/ai/nova/load';
+import type { NovaReply } from '@/ai/nova/agent';
 import { mdNova } from '@/components/ai/markdown';
 import { useNovaConn } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
@@ -150,6 +152,12 @@ const NovaChat: React.FC = () => {
     try {
       const { supabase } = await import('@/lib/supabaseClient');
       const sb = supabase();
+      if (!sb) {
+        setLoginPromptReason('auth');
+        setLoginPromptOpen(true);
+        setIsInitialized(true);
+        return;
+      }
       const { data: { session } } = await sb.auth.getSession();
 
       if (!session?.user) {
@@ -217,6 +225,11 @@ const NovaChat: React.FC = () => {
     try {
       const { supabase } = await import('@/lib/supabaseClient');
       const sb = supabase();
+      if (!sb) {
+        setLoginPromptReason('auth');
+        setLoginPromptOpen(true);
+        return;
+      }
       const { data: { session } } = await sb.auth.getSession();
 
       if (!session?.user) {
@@ -313,28 +326,32 @@ const NovaChat: React.FC = () => {
       
       try {
         const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
-        for await (const delta of streamChat({ 
-          mode: contextMode as NovaMode, 
-          messages: history, 
+        for await (const delta of streamChat({
+          // NovaStreamOpts.mode only supports "style" now; `contextMode` (outfits/
+          // archetype/shop) is a separate concept sent below via `context`.
+          mode: 'style',
+          messages: history,
           signal: abortRef.current.signal,
           onEvent: (evt) => {
+            // NovaEvent (novaService.ts) only carries "delta" | "done" | "error" | "json" —
+            // there is no "meta"/"chunk" event anymore. TTFB tracking now hangs off the
+            // first "delta", and the two previously-separate "error" branches (the second
+            // was unreachable dead code after an earlier `else if` on the same type) are
+            // merged into one.
             if (evt.type === 'json' && evt.data?.type === 'outfits') {
               setCards(evt.data);
-            }
-            if (evt.type === 'meta') {
-              if (evt.model) conn.setMeta({ model: evt.model });
-              if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
-            } else if (evt.type === 'error') {
-              // quota signal vanuit server
-              if ((evt as any).code === 'quota_exceeded') {
-                setQuotaOpen(true);
-              }
-            } else if (evt.type === 'chunk') {
+            } else if (evt.type === 'delta') {
               if (!firstChunkAt) {
                 firstChunkAt = performance.now();
                 conn.setMeta({ ttfbMs: Math.max(0, Math.round(firstChunkAt - tStart)) });
                 conn.setStatus('streaming');
               }
+            } else if (evt.type === 'error') {
+              // quota signal vanuit server
+              if (evt.code === 'quota_exceeded') {
+                setQuotaOpen(true);
+              }
+              conn.setStatus('error');
             } else if (evt.type === 'done') {
               // failsafe: verwijder eventuele JSON markers uit de laatste assistant content
               setMessages(prev => prev.map(m => {
@@ -350,8 +367,6 @@ const NovaChat: React.FC = () => {
                 return { ...m, content: c };
               }));
               conn.setStatus('done');
-            } else if (evt.type === 'error') {
-              conn.setStatus('error');
             }
           }
         })) {
@@ -754,9 +769,10 @@ const NovaChat: React.FC = () => {
 
       {/* Quota Modal */}
       <QuotaModal
-        isOpen={quotaOpen}
+        open={quotaOpen}
         onClose={() => setQuotaOpen(false)}
-        tier={userTier}
+        remaining={usageInfo?.remaining}
+        limit={usageInfo?.limit}
       />
 
       {/* Login/Access Prompt Modal */}

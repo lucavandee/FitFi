@@ -129,12 +129,12 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         setConfidence(Math.max(65, calculatedConfidence));
         setShowPreview(true);
 
-        const scores: ArchetypeScore[] = Object.entries(profile.archetypeScores)
-          .map(([key, score]) => {
-            const config = ARCHETYPE_CONFIG[key] || ARCHETYPE_CONFIG['casual_chic'];
+        const scores: ArchetypeScore[] = profile.archetypeScores
+          .map((item) => {
+            const config = ARCHETYPE_CONFIG[item.archetype] || ARCHETYPE_CONFIG['casual_chic'];
             return {
-              archetype: key,
-              score: Math.round((score as number) * 100),
+              archetype: item.archetype,
+              score: Math.round(item.score * 100),
               label: config.label,
               emoji: config.emoji
             };

@@ -50,7 +50,10 @@ export async function openNovaStream(
   // Rate limit check (30 requests per minute for Nova)
   try {
     const { supabase } = await import('@/lib/supabaseClient');
-    const { data: rateLimitData, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+    const sb = supabase();
+    if (!sb) throw new Error('Supabase client unavailable');
+
+    const { data: rateLimitData, error: rateLimitError } = await sb.rpc('check_rate_limit', {
       p_identifier: uid,
       p_identifier_type: uid === 'anon' ? 'ip' : 'user',
       p_endpoint: '/functions/nova',

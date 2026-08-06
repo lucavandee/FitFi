@@ -59,7 +59,7 @@ const PageHeroStacked: React.FC<Props> = ({
           className="pagehero-media"
           style={
             {
-              // @ts-expect-error custom property
+              // Custom CSS var; @types/react's CSSProperties now types `--*` keys natively.
               "--hero-object-position": focal,
             } as React.CSSProperties
           }

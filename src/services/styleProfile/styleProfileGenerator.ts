@@ -411,6 +411,31 @@ export class StyleProfileGenerator {
     return 'laag';
   }
 
+  // Kleur- en swipedata leveren vrije strings op (quizantwoorden, AI-analyse).
+  // Normaliseer naar de strikte ColorProfile-literals zodat onverwachte
+  // waarden nooit een corrupt profiel opleveren.
+  private static readonly TEMPERATURES = ['warm', 'koel', 'neutraal'] as const;
+  private static readonly VALUES = ['licht', 'medium', 'donker'] as const;
+  private static readonly CONTRASTS = ['laag', 'medium', 'hoog'] as const;
+  private static readonly CHROMAS = ['zacht', 'helder', 'gedurfd', 'gemiddeld'] as const;
+  private static readonly SEASONS = ['winter', 'lente', 'zomer', 'herfst'] as const;
+
+  private static normalizeTemperature(v: string): ColorProfile['temperature'] {
+    return (this.TEMPERATURES as readonly string[]).includes(v) ? (v as ColorProfile['temperature']) : 'neutraal';
+  }
+  private static normalizeValue(v: string): ColorProfile['value'] {
+    return (this.VALUES as readonly string[]).includes(v) ? (v as ColorProfile['value']) : 'medium';
+  }
+  private static normalizeContrast(v: string): ColorProfile['contrast'] {
+    return (this.CONTRASTS as readonly string[]).includes(v) ? (v as ColorProfile['contrast']) : 'medium';
+  }
+  private static normalizeChroma(v: string): ColorProfile['chroma'] {
+    return (this.CHROMAS as readonly string[]).includes(v) ? (v as ColorProfile['chroma']) : 'gemiddeld';
+  }
+  private static normalizeSeason(v: string): ColorProfile['season'] {
+    return (this.SEASONS as readonly string[]).includes(v) ? (v as ColorProfile['season']) : 'zomer';
+  }
+
   /**
    * Combine quiz + swipe data with priority
    */
@@ -428,11 +453,11 @@ export class StyleProfileGenerator {
       const season = this.determineSeasonFromInputs(temperature, value, contrast);
 
       return {
-        temperature,
-        value,
-        contrast,
-        chroma,
-        season,
+        temperature: this.normalizeTemperature(temperature),
+        value: this.normalizeValue(value),
+        contrast: this.normalizeContrast(contrast),
+        chroma: this.normalizeChroma(chroma),
+        season: this.normalizeSeason(season),
         paletteName: this.buildPaletteNameFromInputs(temperature, value, contrast),
         notes: this.buildNotesFromInputs(temperature, value, contrast)
       };
@@ -452,11 +477,11 @@ export class StyleProfileGenerator {
         : 'medium';
 
       return {
-        temperature,
-        value,
-        contrast,
-        chroma: swipeColors.chroma,
-        season: this.determineSeasonFromInputs(temperature, value, contrast),
+        temperature: this.normalizeTemperature(temperature),
+        value: this.normalizeValue(value),
+        contrast: this.normalizeContrast(contrast),
+        chroma: this.normalizeChroma(swipeColors.chroma),
+        season: this.normalizeSeason(this.determineSeasonFromInputs(temperature, value, contrast)),
         paletteName: this.buildPaletteNameFromInputs(temperature, value, contrast),
         notes: this.buildNotesFromInputs(temperature, value, contrast)
       };
@@ -479,11 +504,11 @@ export class StyleProfileGenerator {
       const season = this.determineSeasonFromInputs(temperature, value, contrast);
 
       return {
-        temperature,
-        value,
-        contrast,
-        chroma,
-        season,
+        temperature: this.normalizeTemperature(temperature),
+        value: this.normalizeValue(value),
+        contrast: this.normalizeContrast(contrast),
+        chroma: this.normalizeChroma(chroma),
+        season: this.normalizeSeason(season),
         paletteName: this.buildPaletteNameFromInputs(temperature, value, contrast),
         notes: this.buildNotesFromInputs(temperature, value, contrast)
       };
@@ -726,11 +751,11 @@ export class StyleProfileGenerator {
 
     return {
       colorProfile: {
-        temperature,
-        season,
-        contrast,
-        chroma,
-        value: contrast, // Same as contrast for compatibility
+        temperature: this.normalizeTemperature(temperature),
+        season: this.normalizeSeason(season),
+        contrast: this.normalizeContrast(contrast),
+        chroma: this.normalizeChroma(chroma),
+        value: this.normalizeValue(contrast), // Same as contrast for compatibility
         paletteName,
         notes
       },

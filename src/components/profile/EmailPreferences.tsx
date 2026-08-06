@@ -67,7 +67,9 @@ export function EmailPreferences() {
   const loadPreferences = async () => {
     if (!user) return;
     try {
-      const { data, error } = await supabase()
+      const client = supabase();
+      if (!client) throw new Error('Supabase niet beschikbaar');
+      const { data, error } = await client
         .from('email_preferences')
         .select('*')
         .eq('user_id', user.id)
@@ -100,7 +102,9 @@ export function EmailPreferences() {
     setPreferences(prev => prev ? { ...prev, [key]: value } : prev);
     setSavingKey(key);
     try {
-      const { error } = await supabase()
+      const client = supabase();
+      if (!client) throw new Error('Supabase niet beschikbaar');
+      const { error } = await client
         .from('email_preferences')
         .upsert({ user_id: user.id, [key]: value }, { onConflict: 'user_id' });
       if (error) throw error;

@@ -74,7 +74,7 @@ const StickyBottomBar: React.FC<StickyBottomBarProps> = ({
           
           <Button
             onClick={handleClaimClick}
-            variant="outline"
+            variant="ghost"
             size="lg"
             className="flex-1 border-[#A85740] text-[#A85740] hover:bg-[#A85740] hover:text-white rounded-2xl"
             icon={<Gift size={18} />}

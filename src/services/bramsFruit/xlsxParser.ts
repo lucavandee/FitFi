@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { supabase } from '@/lib/supabase';
+import { requireSupabase } from '@/lib/supabase';
 import { BramsFruitProduct } from './types';
 import { SecurityLogger } from '@/services/security/securityLogger';
 
@@ -13,6 +13,8 @@ export interface XLSXImportResult {
 
 export async function importBramsFruitXLSX(file: File): Promise<XLSXImportResult> {
   try {
+    const supabase = requireSupabase();
+
     // SECURITY: Input validation to mitigate xlsx vulnerabilities (GHSA-4r6h-8v6p-xvw6, GHSA-5pgg-2g8v-p4x9)
     // 1. Check file extension
     const fileName = file.name.toLowerCase();
@@ -290,6 +292,7 @@ async function uploadImageBlob(
   blob: Blob
 ): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
+    const supabase = requireSupabase();
     const fileExt = blob.type.split('/')[1] || 'jpg';
     const fileName = `${styleCode}.${fileExt}`;
     const filePath = `products/${styleCode}/${fileName}`;

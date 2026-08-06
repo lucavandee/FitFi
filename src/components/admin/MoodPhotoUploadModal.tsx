@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { supabase as getSupabaseClient } from '@/lib/supabaseClient';
 import { convertImageToWebP, supportsWebP } from '@/utils/convertImageToWebP';
 import { ARCHETYPES, type ArchetypeKey } from '@/config/archetypes';
+import { Spinner } from '@/components/ui/Spinner';
 
 type UploadPhase = 'select' | 'analyzing' | 'review' | 'saving';
 

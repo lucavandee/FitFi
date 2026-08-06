@@ -23,7 +23,8 @@ class InteractionTrackingService {
     context: InteractionContext;
   }> = [];
 
-  private batchTimeout: NodeJS.Timeout | null = null;
+  // Browser context (Vite/DOM), not Node — `setTimeout` returns a number here, not NodeJS.Timeout.
+  private batchTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly BATCH_SIZE = 10;
   private readonly BATCH_DELAY = 2000; // 2 seconds
 

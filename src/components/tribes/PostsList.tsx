@@ -5,6 +5,13 @@ import SmartImage from "@/components/media/SmartImage";
 import { stableKey } from "@/utils/key";
 import LoadingFallback from "../ui/LoadingFallback";
 import Button from "../ui/Button";
+import type { TribePost } from "@/services/data/types";
+
+// De (mock) post-data bevat een auteursnaam die het gedeelde TribePost-type
+// niet declareert. Lokaal uitbreiden zodat we 'm veilig kunnen tonen.
+type PostWithExtras = TribePost & {
+  authorName?: string;
+};
 
 interface PostsListProps {
   tribeId: string;
@@ -86,8 +93,11 @@ export const PostsList: React.FC<PostsListProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {posts.map((post) => (
-        <article 
+      {posts.map((post: PostWithExtras) => {
+        const authorRef = post.authorId ?? post.userId ?? post.user_id ?? '';
+        const createdAt = post.createdAt ?? post.created_at ?? new Date().toISOString();
+        return (
+        <article
           key={stableKey(post)}
           className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow animate-fade-in"
         >
@@ -98,16 +108,16 @@ export const PostsList: React.FC<PostsListProps> = ({
               <div className="w-10 h-10 rounded-full bg-[#A85740] flex items-center justify-center text-white font-medium">
                 {post.authorName?.charAt(0).toUpperCase() || 'U'}
               </div>
-              
+
               {/* Author Info */}
               <div>
                 <h4 className="font-medium text-gray-900">
-                  {post.authorName ?? `Member ${post.authorId.slice(-4)}`}
+                  {post.authorName ?? `Member ${authorRef.slice(-4)}`}
                 </h4>
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   <Clock size={12} />
-                  <time dateTime={post.createdAt}>
-                    {new Date(post.createdAt).toLocaleDateString('nl-NL', {
+                  <time dateTime={createdAt}>
+                    {new Date(createdAt).toLocaleDateString('nl-NL', {
                       day: 'numeric',
                       month: 'short',
                       hour: '2-digit',
@@ -132,10 +142,10 @@ export const PostsList: React.FC<PostsListProps> = ({
           </div>
 
           {/* Post Image */}
-          {post.imageUrl && (
+          {post.image_url && (
             <div className="mb-4 rounded-2xl overflow-hidden">
               <SmartImage
-                src={post.imageUrl}
+                src={post.image_url}
                 alt="Post afbeelding"
                 id={post.id}
                 kind="generic"
@@ -151,33 +161,34 @@ export const PostsList: React.FC<PostsListProps> = ({
               {/* Like Button */}
               <button className="flex items-center space-x-2 text-gray-500 hover:text-red-500 transition-colors group">
                 <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">{post.likes || 0}</span>
+                <span className="text-sm font-medium">{post.likes_count || 0}</span>
               </button>
-              
+
               {/* Comments Button */}
               <button className="flex items-center space-x-2 text-gray-500 hover:text-[#A85740] transition-colors group">
                 <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-medium">{post.commentsCount || 0}</span>
+                <span className="text-sm font-medium">{post.comments_count || 0}</span>
               </button>
-              
+
               {/* Share Button */}
               <button className="flex items-center space-x-2 text-gray-500 hover:text-[#A85740] transition-colors group">
                 <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </button>
             </div>
-            
+
             {/* Engagement Summary */}
-            {(post.likes || 0) > 0 && (
+            {(post.likes_count || 0) > 0 && (
               <div className="text-sm text-gray-500">
-                {post.likes === 1 ? '1 like' : `${post.likes} likes`}
-                {(post.commentsCount || 0) > 0 && (
-                  <span> • {post.commentsCount === 1 ? '1 comment' : `${post.commentsCount} comments`}</span>
+                {post.likes_count === 1 ? '1 like' : `${post.likes_count} likes`}
+                {(post.comments_count || 0) > 0 && (
+                  <span> • {post.comments_count === 1 ? '1 comment' : `${post.comments_count} comments`}</span>
                 )}
               </div>
             )}
           </div>
         </article>
-      ))}
+        );
+      })}
     </div>
   );
 };

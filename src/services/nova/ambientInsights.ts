@@ -1,4 +1,6 @@
-import type { InsightType } from '@/components/Dashboard/NovaInsightCard';
+// Relatief pad omzeilt de ambient module-shim in types/ambient-shims.d.ts
+// (die het "@/..." pad overschrijft met een uitgeklede default-export type).
+import type { InsightType } from '../../components/Dashboard/NovaInsightCard';
 
 export interface AmbientInsight {
   type: InsightType;

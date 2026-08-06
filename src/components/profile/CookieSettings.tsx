@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export const CookieSettings: React.FC = () => {
-  const [prefs, setPrefs] = useState<CookiePrefs>({ necessary: true, analytics: false, marketing: false });
+  const [prefs, setPrefs] = useState<CookiePrefs>({ necessary: true, analytics: false, marketing: false, consented: false });
   const [isLoading, setIsLoading] = useState(false);
   const [confirmWithdraw, setConfirmWithdraw] = useState(false);
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export const CookieSettings: React.FC = () => {
     setIsLoading(true);
     try {
       withdrawConsent();
-      setPrefs({ necessary: true, analytics: false, marketing: false });
+      setPrefs({ necessary: true, analytics: false, marketing: false, consented: false });
       toast.success('Cookies verwijderd', { duration: 3000 });
     } catch {
       toast.error('Er ging iets mis');

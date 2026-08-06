@@ -94,7 +94,7 @@ export default function DashboardPage() {
     };
   }, []);
 
-  const { data: outfitsData } = useOutfits({ archetype: archetype?.name, gender: gender as any, limit: 6, enabled: hasReport });
+  const { data: outfitsData } = useOutfits({ archetype: archetype ?? undefined, gender: gender as any, limit: 6, enabled: hasReport });
 
   React.useEffect(() => {
     const client = supabase();

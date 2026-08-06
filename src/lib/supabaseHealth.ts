@@ -13,7 +13,8 @@ let healthStatus: HealthStatus = {
   errors: []
 };
 
-let healthCheckInterval: NodeJS.Timeout | null = null;
+// Browser context (Vite/DOM), not Node — `setInterval` returns a number here, not NodeJS.Timeout.
+let healthCheckInterval: ReturnType<typeof setInterval> | null = null;
 
 export async function checkSupabaseHealth(): Promise<HealthStatus> {
   const startTime = Date.now();

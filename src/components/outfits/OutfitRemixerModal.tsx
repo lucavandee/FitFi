@@ -5,6 +5,7 @@ import { AdaptiveOutfitRemixer, type RemixedOutfit, type SwapSuggestion } from '
 import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
+import Spinner from '@/components/ui/Spinner';
 
 interface OutfitRemixerModalProps {
   isOpen: boolean;

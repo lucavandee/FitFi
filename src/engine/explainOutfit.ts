@@ -218,36 +218,35 @@ export function generateNovaExplanation(
       const matchResult = calculateMatchScore({
         outfit: {
           style: outfit.archetype,
-          colors: outfit.colors || [],
+          colors: (outfit.products || []).flatMap(p => p.colors || (p.color ? [p.color] : [])),
           occasion: outfit.occasion,
           season: outfit.season,
           items: outfit.products || []
         },
         userProfile: {
-          archetype: userProfile.archetype,
-          colorPalette: userProfile.colorPalette || [],
           preferences: {
             styles: userProfile.stylePreferences ? Object.keys(userProfile.stylePreferences) : [],
             occasions: []
           }
         }
       });
-      scoreBreakdown = matchResult.breakdown;
+      scoreBreakdown = matchResult;
     } catch (e) {
       console.warn('Match score calculation failed:', e);
     }
   }
 
   // Generate intelligent tip based on score breakdown
+  // Scores from calculateMatchScore are 0-100 percentages, not 0-1 fractions.
   const tips: string[] = [];
 
-  if (scoreBreakdown.archetype && scoreBreakdown.archetype >= 0.9) {
+  if (scoreBreakdown.archetype && scoreBreakdown.archetype >= 90) {
     tips.push('deze stijl past extreem goed bij jouw archetype!');
   }
-  if (scoreBreakdown.color && scoreBreakdown.color >= 0.9) {
+  if (scoreBreakdown.color && scoreBreakdown.color >= 90) {
     tips.push('de kleuren in deze outfit laten je huid perfect stralen.');
   }
-  if (scoreBreakdown.season && scoreBreakdown.season >= 0.9) {
+  if (scoreBreakdown.season && scoreBreakdown.season >= 90) {
     tips.push('perfect getimed voor het huidige seizoen!');
   }
 

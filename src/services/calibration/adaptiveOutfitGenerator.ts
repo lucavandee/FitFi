@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 interface DBProduct {
   id: string;
@@ -908,8 +908,14 @@ export class AdaptiveOutfitGenerator {
     const categories = ['top', 'bottom', 'footwear'];
     const perCategory = 200;
 
+    const sb = supabase();
+    if (!sb) {
+      console.error('[AdaptiveOutfitGenerator] Supabase client unavailable');
+      return [];
+    }
+
     const fetches = categories.map(async (cat) => {
-      let query = supabase
+      let query = sb
         .from('products')
         .select('*')
         .eq('in_stock', true)
@@ -951,7 +957,13 @@ export class AdaptiveOutfitGenerator {
    * Get adaptive recommendations from database
    */
   private async getAdaptiveRecommendations(sessionId: string): Promise<any> {
-    const { data, error } = await supabase.rpc('get_adaptive_recommendations', {
+    const sb = supabase();
+    if (!sb) {
+      console.error('[AdaptiveOutfitGenerator] Supabase client unavailable');
+      return {};
+    }
+
+    const { data, error } = await sb.rpc('get_adaptive_recommendations', {
       p_session_id: sessionId
     });
 

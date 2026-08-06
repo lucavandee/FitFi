@@ -3,7 +3,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { getBramsFruitProductGroups, getBramsFruitCategories } from '@/services/bramsFruit/productService';
 import { BramsFruitProductGroup } from '@/services/bramsFruit/types';
 import { ProductImage } from '@/components/ui/ProductImage';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function BramsFruitCatalogPage() {
   const [groups, setGroups] = useState<BramsFruitProductGroup[]>([]);
@@ -53,7 +53,10 @@ export default function BramsFruitCatalogPage() {
       return imageUrl;
     }
 
-    const { data } = supabase.storage
+    const sb = supabase();
+    if (!sb) return '/images/fallbacks/default.jpg';
+
+    const { data } = sb.storage
       .from('brams-fruit-images')
       .getPublicUrl(imageUrl);
 

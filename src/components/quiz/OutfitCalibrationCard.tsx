@@ -6,6 +6,8 @@ import SmartImage from '@/components/ui/SmartImage';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
 import OutfitRemixerModal from '@/components/outfits/OutfitRemixerModal';
 import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
+import type { Outfit, Product } from '@/engine/types';
+import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
 
 interface OutfitCalibrationCardProps {
@@ -20,7 +22,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
   const [startTime] = useState(Date.now());
   const [selectedFeedback, setSelectedFeedback] = useState<'spot_on' | 'not_for_me' | 'maybe' | null>(null);
   const [showRemixer, setShowRemixer] = useState(false);
-  const { saveOutfit, isSaving } = useSaveOutfit();
+  const { user } = useUser();
+  const { mutateAsync: saveOutfit, isPending: isSaving } = useSaveOutfit(user?.id);
 
   const handleFeedback = (feedback: 'spot_on' | 'not_for_me' | 'maybe') => {
     if (disabled || selectedFeedback) return;
@@ -30,14 +33,43 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     onFeedback(feedback, responseTime);
   };
 
+  // Zet de calibratie-outfit (CalibrationOutfit) om naar het generieke Outfit-formaat
+  // dat useSaveOutfit/saved_outfits verwacht.
+  const buildOutfitForSave = (): Outfit => {
+    const items = Object.values(outfit.items).filter(Boolean) as NonNullable<
+      CalibrationOutfit['items'][keyof CalibrationOutfit['items']]
+    >[];
+    const products: Product[] = items.map(item => ({
+      id: item.id,
+      name: item.name,
+      imageUrl: item.image_url,
+      category: item.category,
+      price: item.price,
+      brand: item.brand,
+      affiliateUrl: item.affiliate_link,
+      colors: item.colors,
+    }));
+
+    return {
+      id: outfit.id,
+      title: outfit.title || outfit.occasion,
+      description: outfit.explanation,
+      archetype: Object.keys(outfit.archetypes)[0] || 'minimal',
+      occasion: outfit.occasion,
+      products,
+      tags: outfit.dominantColors || [],
+      matchPercentage: Math.round((outfit.matchScore ?? 0.8) * 100),
+      explanation: outfit.explanation,
+    };
+  };
+
   const handleSaveOutfit = async () => {
+    if (!user?.id) {
+      toast.error('Log in om outfits te bewaren');
+      return;
+    }
     try {
-      await saveOutfit({
-        items: outfit.items,
-        archetype: Object.keys(outfit.archetypes)[0] || 'minimal',
-        occasion: outfit.occasion,
-        colors: outfit.dominantColors
-      });
+      await saveOutfit({ outfit: buildOutfitForSave(), userId: user.id });
       toast.success('Outfit opgeslagen! 💚', {
         duration: 3000,
         position: 'bottom-center'
@@ -62,7 +94,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       brand: item!.brand || '',
       price: item!.price,
       image_url: item!.image_url,
-      category: item!.category,
+      category: item!.category || '',
       colors: item!.colors || [],
       affiliate_link: item!.affiliate_link || ''
     })),

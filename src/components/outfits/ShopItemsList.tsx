@@ -123,9 +123,7 @@ export function ShopItemsList({
 
       window.open(targetUrl, '_blank', 'noopener,noreferrer');
     } catch {
-      toast.error('Kon shoplink niet openen', {
-        description: 'Probeer het opnieuw of gebruik de directe link.',
-      });
+      toast.error('Kon shoplink niet openen. Probeer het opnieuw of gebruik de directe link.');
     } finally {
       setOpeningProductId(null);
       setConfirmedProductId(null);

@@ -1,4 +1,4 @@
-import { event as gaEvent, pageview as gaPageview, exception as gaException } from '@/utils/analytics';
+import { track as gaEvent, pageview as gaPageview } from '@/utils/analytics';
 
 type Params = Record<string, any>;
 
@@ -51,10 +51,10 @@ export class AdvancedAnalytics {
   }
 
   /** Pageview helper */
-  page(path: string, params: Params = {}) {
+  page(path: string, _params: Params = {}) {
     if (!this.enabled) return;
     try {
-      gaPageview(path, { user_id: this.userId ?? 'guest', ...params });
+      gaPageview(path);
     } catch {
       /* no-op */
     }
@@ -64,7 +64,7 @@ export class AdvancedAnalytics {
   error(description: string, fatal = false) {
     if (!this.enabled) return;
     try {
-      gaException(description, fatal);
+      gaEvent('exception', { description, fatal, user_id: this.userId ?? 'guest' });
     } catch {
       /* no-op */
     }

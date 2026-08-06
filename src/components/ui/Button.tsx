@@ -1,7 +1,7 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
 
-type Variant = "primary" | "secondary" | "quiet" | "ghost";
+type Variant = "primary" | "secondary" | "quiet" | "ghost" | "outline";
 type Size = "sm" | "md" | "lg";
 
 type BaseProps = {
@@ -41,6 +41,8 @@ function classes(variant: Variant, size: Size, extra?: string) {
       ? "bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl"
       : variant === "ghost"
       ? "bg-transparent border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl"
+      : variant === "outline"
+      ? "bg-transparent border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl"
       : "text-[#4A4A4A] hover:text-[#1A1A1A]";
   // WCAG AAA: minimum 44px touch targets (h-11 = 44px)
   const s = size === "sm" ? "h-11 px-4 text-sm" : size === "lg" ? "h-14 px-6 text-base" : "h-12 px-5 text-base";
@@ -76,7 +78,7 @@ function Button({
       <button
         type="button"
         className={cls}
-        disabled={loading || rest.disabled}
+        disabled={loading || (rest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled}
         {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {content}

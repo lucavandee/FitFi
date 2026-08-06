@@ -369,7 +369,11 @@ export default function AdminUsersPage() {
                               <div className="min-w-0">
                                 <div className="font-medium text-[#1A1A1A] flex items-center gap-1.5 truncate">
                                   {u.full_name || u.email.split('@')[0]}
-                                  {u.is_admin && <Shield className="w-3.5 h-3.5 text-red-500 flex-shrink-0" title="Admin" />}
+                                  {u.is_admin && (
+                                    <span title="Admin" className="flex-shrink-0">
+                                      <Shield className="w-3.5 h-3.5 text-red-500" />
+                                    </span>
+                                  )}
                                 </div>
                                 <div className="text-xs text-[#6E6E6E] truncate">{u.email}</div>
                               </div>

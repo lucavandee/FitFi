@@ -277,13 +277,13 @@ export function generateProactiveSuggestions(userContext: any, currentPath?: str
 
   // Style trend detected
   if (userContext?.recentSwipes?.liked?.length > 10) {
-    const styles = userContext.recentSwipes.liked.map((s: any) => s.style);
-    const styleCounts = styles.reduce(
-      (acc: any, style: string) => {
+    const styles: string[] = userContext.recentSwipes.liked.map((s: any) => s.style);
+    const styleCounts = styles.reduce<Record<string, number>>(
+      (acc, style) => {
         acc[style] = (acc[style] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {}
     );
     const topStyle = Object.entries(styleCounts).sort((a: any, b: any) => b[1] - a[1])[0];
 

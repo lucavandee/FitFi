@@ -4,7 +4,7 @@ import { Plus, X } from 'lucide-react';
 import { haptics } from '@/utils/haptics';
 
 interface FABAction {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   label: string;
   onClick: () => void;
   color?: string;
@@ -186,7 +186,7 @@ export function EnhancedFAB({
  * For single primary actions
  */
 interface SimpleFABProps {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   onClick: () => void;
   label?: string;
   color?: string;
@@ -265,7 +265,7 @@ export function SimpleFAB({
  * FAB with text label always visible (for primary actions)
  */
 interface ExtendedFABProps {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   label: string;
   onClick: () => void;
   color?: string;

@@ -34,8 +34,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
     const baseUrl = product.affiliateUrl || product.productUrl;
 
     if (!baseUrl || baseUrl === '#') {
-      toast.error('Shoplink niet beschikbaar', {
-        description: 'Deze retailer biedt momenteel geen online shoplink aan.',
+      toast.error('Shoplink niet beschikbaar. Deze retailer biedt momenteel geen online shoplink aan.', {
         icon: '🛍️',
       });
       return;
@@ -72,9 +71,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
         icon: '🛍️',
       });
     } catch (error) {
-      toast.error('Kon shoplink niet openen', {
-        description: 'Probeer het opnieuw of gebruik de directe link.',
-      });
+      toast.error('Kon shoplink niet openen. Probeer het opnieuw of gebruik de directe link.');
     } finally {
       setIsOpening(false);
     }
