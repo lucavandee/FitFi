@@ -2,6 +2,7 @@ import { getSupabase } from '@/lib/supabase';
 import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 import type { ArchetypeWeights } from '@/types/style';
 import { ColorHarmonyService } from './colorHarmony';
+import { filterVeiligeProducten, type SafetyInput } from '@/engine/productSafety';
 
 export interface CalibrationOutfitItem {
   id: string;
@@ -314,7 +315,22 @@ export class CalibrationService {
     // NOTE: Price filtering CANNOT be done in Supabase query because price is TEXT
     // We must filter client-side after fetching
 
-    const { data, error } = await query;
+    const { data: rawData, error } = await query;
+
+    // Vangnet tegen producten die evident niet in een outfit horen. Deze
+    // service vertrouwde uitsluitend op de databasekolommen `category` en
+    // `is_kids`, en die zijn aantoonbaar onbetrouwbaar: een oude importer
+    // gaf alles zonder trefwoordmatch category='top' (vandaar de bijzettafel
+    // en de fleece plaids), en is_kids kijkt niet naar kinderschoenmaten
+    // (vandaar de peuterschoen). Zie src/engine/productSafety.ts.
+    const safety = rawData ? filterVeiligeProducten(rawData as SafetyInput[]) : null;
+    if (safety && safety.geweigerd.length > 0) {
+      console.warn(
+        `[CalibrationService] ${safety.geweigerd.length}/${rawData!.length} producten geweigerd voor ${category}:`,
+        safety.geweigerd.slice(0, 5).map((g: { reden: string; product: SafetyInput }) => `${g.reden}: ${g.product.name}`)
+      );
+    }
+    const data = safety ? (safety.veilig as typeof rawData) : rawData;
 
     if (error || !data || data.length === 0) {
       console.warn(`⚠️ No products found for ${category}, using fallback`);
