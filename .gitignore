@@ -228,3 +228,4 @@ desktop.ini
 # Claude Code per-project state and vault references
 .claude/
 CLAUDE-vault.md
+.gstack/

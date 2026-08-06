@@ -120,6 +120,12 @@ export type TribeRanking = {
   userId?: ID;
   user_id?: ID;
   score: number;
+  /** Positie in de ranglijst; RankingBoard valt terug op de index. */
+  rank?: number;
+  /** Punten; RankingBoard valt terug op 0. */
+  points?: number;
+  updatedAt?: string;
+  updated_at?: string;
 };
 
 export type UserStats = {
