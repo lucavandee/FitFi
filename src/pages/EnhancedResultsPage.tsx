@@ -7,7 +7,7 @@ import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers,
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
-import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
+import type { OutfitSeed } from "@/lib/quiz/seeds";
 import { useOutfits } from "@/hooks/useOutfits";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
@@ -403,27 +403,18 @@ export default function EnhancedResultsPage() {
     answers: answers ?? undefined,
   });
 
-  const seeds: OutfitSeed[] = React.useMemo(() => {
-    try {
-      return getSeedOutfits(activeColorProfile, archetypeName) || [];
-    } catch {
-      return [];
-    }
-  }, [activeColorProfile, archetypeName]);
-
+  // Hier stond een terugval op getSeedOutfits wanneer de engine niets opleverde.
+  // Een OutfitSeed heeft wel `pieces` maar geen `products`, dus die kaarten
+  // toonden een titel, een matchscore en productCount 0, en de detailmodal zei
+  // "Productlinks worden binnenkort geladen". De gebruiker kreeg dus outfits te
+  // zien die geen outfits waren, met vaste Engelse titels als "Office Minimal",
+  // gepresenteerd alsof ze bij zijn profiel waren samengesteld. Liever een
+  // eerlijke lege staat (die staat er al, verderop) dan een gevulde pagina die
+  // niets waarmaakt.
   const allOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
-    try {
-      if (realOutfits && Array.isArray(realOutfits) && realOutfits.length > 0) {
-        return realOutfits;
-      }
-      if (seeds && Array.isArray(seeds) && seeds.length > 0) {
-        return seeds;
-      }
-      return [];
-    } catch {
-      return [];
-    }
-  }, [realOutfits, seeds]);
+    if (!Array.isArray(realOutfits)) return [];
+    return realOutfits;
+  }, [realOutfits]);
 
   // Filter outfits by occasion when ?occasion= param is set (from dashboard click)
   const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
@@ -1507,9 +1498,9 @@ export default function EnhancedResultsPage() {
                     {(() => {
                       const budget = answers?.budget ?? answers?.budgetRange;
                       const gender = answers?.gender;
-                      if (budget && budget < 50) return `Je budget (€${budget}) is erg laag — probeer het te verhogen of kies "Geen voorkeur".`;
+                      if (budget && budget < 50) return `Je budget van €${budget} is erg laag. Verhoog het, of kies "Geen voorkeur".`;
                       if (gender === 'non-binary' || gender === 'prefer-not-to-say') return 'We hebben nog beperkt aanbod voor jouw gendervoorkeur. Doe de quiz opnieuw en kies een ruimere filteroptie.';
-                      return 'We konden geen complete outfits samenstellen. Dit kan door een combinatie van strakke filters zijn — doe de quiz opnieuw met ruimere voorkeuren.';
+                      return 'We konden geen complete outfits samenstellen. Waarschijnlijk staan je filters te strak. Doe de quiz opnieuw met ruimere voorkeuren.';
                     })()}
                   </p>
                 </div>
