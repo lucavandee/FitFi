@@ -164,7 +164,15 @@ export class AdaptiveOutfitGenerator {
     // Get recommendations from learned preferences
     const recommendations = await this.getAdaptiveRecommendations(context.session_id);
 
-    const maxAttempts = count * 3;
+    // Was count * 3, oftewel 9 pogingen voor 3 outfits. Elke afwijzing kost
+    // een poging: een seizoensbotsing, een product dat het vangnet niet haalt,
+    // of overlap met een eerdere outfit. Sinds die controles er zijn, is de
+    // kandidatenpool smaller en raakten die 9 pogingen op, waardoor een
+    // gebruiker na acht minuten invullen 0 of 2 outfits kreeg in plaats van 3.
+    // Niets tonen is erger dan een matige outfit tonen. De lus stopt zodra hij
+    // klaar is, dus een ruimere bovengrens kost alleen tijd in het slechtste
+    // geval.
+    const maxAttempts = count * 12;
     let attempts = 0;
 
     while (outfits.length < count && attempts < maxAttempts) {
@@ -176,15 +184,29 @@ export class AdaptiveOutfitGenerator {
         : await this.generateOptimizedOutfit(products, context, recommendations, outfits.length);
 
       if (outfit) {
-        const isDuplicate = outfits.some(existing =>
-          existing.products.some(ep =>
-            outfit.products.some(op => op.id === ep.id)
-          )
-        );
-        if (!isDuplicate) {
+        // Eerder werd een outfit al geweigerd zodra hij EEN product deelde met
+        // een eerdere outfit. Bij een dunne pool (na gender-, budget-, vangnet-
+        // en seizoensfilters blijven er soms maar enkele tientallen producten
+        // over) is dat vrijwel altijd waar, en dan komt er niets uit. Nu geldt:
+        // twee outfits mogen hooguit een item delen. Ze blijven daarmee
+        // zichtbaar verschillend zonder dat de set leeg blijft.
+        const teVeelOverlap = outfits.some((existing) => {
+          const gedeeld = existing.products.filter((ep) =>
+            outfit.products.some((op) => op.id === ep.id)
+          ).length;
+          return gedeeld > 1;
+        });
+        if (!teVeelOverlap) {
           outfits.push(outfit);
         }
       }
+    }
+
+    if (outfits.length < count) {
+      console.warn(
+        `[AdaptiveOutfitGenerator] Slechts ${outfits.length}/${count} outfits na ${attempts} pogingen. ` +
+        'De kandidatenpool is te dun voor dit profiel; controleer de feed-breedte.'
+      );
     }
 
     return this.ensureOutfitDiversity(outfits);

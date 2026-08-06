@@ -6,6 +6,10 @@ import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { CalibrationService } from '@/services/visualPreferences/calibrationService';
 import { CalibrationBridge } from '@/services/calibration/calibrationBridge';
+import {
+  generateCalibrationOutfitsV2,
+  swapCalibrationItemV2,
+} from '@/services/calibration/calibrationOutfitsV2';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 
@@ -22,13 +26,22 @@ const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 // Feature flag for adaptive system
 const USE_ADAPTIVE_SYSTEM = true;
 
+/**
+ * Sinds 2026-08-06 komen de calibratie-outfits uit engine v2 in plaats van uit
+ * `adaptiveOutfitGenerator`. Reden: dat pad negeerde de gekozen gelegenheid,
+ * het budget en het productSafety-vangnet, en had geen enkele test. Engine v2
+ * is de enige generator met een golden baseline. Zie
+ * `src/services/calibration/engineV2Calibration.ts`.
+ */
+const USE_ENGINE_V2 = true;
+
 export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp, onBack }: CalibrationStepProps) {
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [swappingState, setSwappingState] = useState<{ outfitId: string; category: 'top' | 'bottom' | 'shoes' } | null>(null);
-  const [isAdaptive, setIsAdaptive] = useState(false);
+  const [isPersonalized, setIsPersonalized] = useState(false);
   const { user } = useUser();
   const loadedRef = useRef(false);
 
@@ -45,7 +58,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
       const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
 
       // Check cache first (only for non-adaptive mode)
-      if (!USE_ADAPTIVE_SYSTEM) {
+      if (!USE_ENGINE_V2 && !USE_ADAPTIVE_SYSTEM) {
         const cachedData = sessionStorage.getItem(OUTFIT_CACHE_KEY);
         if (cachedData) {
           try {
@@ -66,10 +79,18 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
       let generatedOutfits: CalibrationOutfit[];
 
-      if (USE_ADAPTIVE_SYSTEM) {
+      if (USE_ENGINE_V2) {
+        setIsPersonalized(true);
+
+        generatedOutfits = await generateCalibrationOutfitsV2(
+          quizData,
+          sessionId,
+          { count: 3 }
+        );
+      } else if (USE_ADAPTIVE_SYSTEM) {
         // Use new adaptive system
         console.log('🚀 Using ADAPTIVE outfit generation system');
-        setIsAdaptive(true);
+        setIsPersonalized(true);
 
         generatedOutfits = await CalibrationBridge.generateAdaptiveCalibrationOutfits(
           userId,
@@ -134,7 +155,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     setSwappingState({ outfitId, category });
 
     try {
-      const newItem = await CalibrationService.swapOutfitItem(outfit, category, quizData);
+      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      // Het alternatief komt uit dezelfde gekeurde v2-outfits, anders zou één
+      // klik op vervangen het budget-, gender- en veiligheidsfilter omzeilen.
+      const newItem = USE_ENGINE_V2
+        ? await swapCalibrationItemV2(quizData, outfit, category, sessionId)
+        : await CalibrationService.swapOutfitItem(outfit, category, quizData);
 
       if (newItem) {
         setOutfits(prev => prev.map(o => {
@@ -328,10 +354,10 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           Zo ziet jouw stijl er volgens mij uit
         </h2>
         <p className="text-[#6E6E6E] max-w-2xl mx-auto text-base sm:text-lg">
-          Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
+          Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je antwoorden. Geef feedback zodat we je stijl scherper krijgen.
         </p>
 
-        {isAdaptive && (
+        {isPersonalized && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -340,7 +366,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           >
             <TrendingUp size={16} className="text-[#9A503B]" />
             <span className="text-sm font-semibold text-[#9A503B]">
-              Adaptive AI • Leert van je keuzes
+              Afgestemd op je antwoorden
             </span>
           </motion.div>
         )}

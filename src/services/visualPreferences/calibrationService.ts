@@ -22,6 +22,9 @@ export interface CalibrationOutfit {
     top?: CalibrationOutfitItem;
     bottom?: CalibrationOutfitItem;
     shoes?: CalibrationOutfitItem;
+    // Engine v2 componeert regelmatig een jas mee. Zonder eigen slot zou dat
+    // item ofwel onzichtbaar verdwijnen ofwel in de accessoire-slot botsen.
+    outerwear?: CalibrationOutfitItem;
     accessory?: CalibrationOutfitItem;
   };
   archetypes: ArchetypeWeights;

@@ -833,8 +833,12 @@ export default function OnboardingFlowPage() {
             sessionId={sessionId}
             onComplete={handleCalibrationComplete}
             onBack={handleBack}
+            // Alle antwoorden gaan mee. Eerder werden er vijf velden
+            // uitgeknipt, waardoor maten, fit, prints, materialen, doelen en
+            // het exacte budget-bereik het calibratiescherm nooit bereikten.
+            // Engine v2 leest ze allemaal (zie buildUserStyleProfile).
             quizData={{
-              gender: answers.gender,
+              ...answers,
               archetype: answers.stylePreferences?.[0] || 'Casual',
               colors: answers.baseColors?.split(',') || [],
               budgetRange: answers.budget?.max ?? answers.budgetRange,

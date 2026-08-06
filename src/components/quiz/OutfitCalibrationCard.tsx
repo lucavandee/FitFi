@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Minus, RefreshCw, Heart, Sparkles, Briefcase, Coffee, Moon } from 'lucide-react';
+import { Check, X, Minus, RefreshCw, Heart, Sparkles } from 'lucide-react';
+import { presentationForOccasion } from './occasionPresentation';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import SmartImage from '@/components/ui/SmartImage';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
@@ -9,6 +10,15 @@ import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenera
 import type { Outfit, Product } from '@/engine/types';
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
+
+type DisplaySlot = 'top' | 'bottom' | 'shoes' | 'outerwear' | 'accessory';
+type SwappableSlot = 'top' | 'bottom' | 'shoes';
+
+/** Volgorde waarin de outfit op de kaart wordt getoond. */
+const DISPLAY_SLOTS: DisplaySlot[] = ['top', 'bottom', 'shoes', 'outerwear', 'accessory'];
+
+/** Alleen deze drie slots hebben een vervang-knop. */
+const SWAPPABLE_SLOTS: SwappableSlot[] = ['top', 'bottom', 'shoes'];
 
 interface OutfitCalibrationCardProps {
   outfit: CalibrationOutfit;
@@ -79,9 +89,15 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     }
   };
 
-  const totalPrice = Object.values(outfit.items)
-    .filter(Boolean)
-    .reduce((sum, item) => sum + (item?.price || 0), 0);
+  // Elk item dat de kaart toont, in vaste volgorde. Beeld, regel en totaalprijs
+  // lezen allemaal uit deze lijst, zodat er niets in het raster staat dat niet
+  // in de opsomming terugkomt of andersom.
+  const displayedItems = DISPLAY_SLOTS.flatMap((slot) => {
+    const item = outfit.items[slot];
+    return item ? [{ slot, item }] : [];
+  });
+
+  const totalPrice = displayedItems.reduce((sum, { item }) => sum + (item.price || 0), 0);
 
   const formattedTotal = Math.round(totalPrice);
 
@@ -121,36 +137,12 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     nova_insight: outfit.novaInsight
   };
 
-  // Get occasion icon and colors
-  const getOccasionDetails = () => {
-    const occasion = outfit.occasion?.toLowerCase() || 'casual';
-    const occasionMap: Record<string, { icon: React.ComponentType<any>; bgClass: string; borderClass: string; title: string; subtitle: string }> = {
-      work: {
-        icon: Briefcase,
-        bgClass: 'bg-[#F5F0EB]',
-        borderClass: 'border-[#F4E8E3]',
-        title: 'Kantoor',
-        subtitle: 'Zakelijke meeting of werkdag'
-      },
-      casual: {
-        icon: Coffee,
-        bgClass: 'bg-[#F5F0EB]',
-        borderClass: 'border-[#F4E8E3]',
-        title: 'Casual dag uit',
-        subtitle: 'Lunch, koffie, boodschappen'
-      },
-      evening: {
-        icon: Moon,
-        bgClass: 'bg-[#F5F0EB]',
-        borderClass: 'border-[#F4E8E3]',
-        title: 'Avondje uit',
-        subtitle: 'Restaurant, borrel of diner'
-      }
-    };
-    return occasionMap[occasion] || occasionMap.casual;
-  };
-
-  const { icon: OccasionIcon, bgClass, borderClass, title, subtitle } = getOccasionDetails();
+  // Kop van de kaart: naam en icoon van de gelegenheid waarvoor deze outfit is
+  // gecomponeerd. De map staat in een eigen bestand zodat een test kan
+  // afdwingen dat elke gelegenheid van de engine er in staat.
+  const { icon: OccasionIcon, title, subtitle } = presentationForOccasion(outfit.occasion);
+  const bgClass = 'bg-[#F5F0EB]';
+  const borderClass = 'border-[#F4E8E3]';
 
   return (
     <motion.div
@@ -191,62 +183,27 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         {/* Product Images Grid */}
         <div className="relative bg-[#FAFAF8] p-4">
           <div className="grid grid-cols-2 gap-3">
-            {outfit.items.top && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-                className="aspect-square bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.top.image_url}
-                  alt={outfit.items.top.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
-            {outfit.items.bottom && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="aspect-square bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.bottom.image_url}
-                  alt={outfit.items.bottom.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
-            {outfit.items.shoes && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                className="col-span-2 aspect-[2/1] bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.shoes.image_url}
-                  alt={outfit.items.shoes.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
-            {outfit.items.accessory && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 }}
-                className="col-span-2 aspect-[2/1] bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.accessory.image_url}
-                  alt={outfit.items.accessory.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
+            {displayedItems.map(({ slot, item }, index) => {
+              const isLastAlone =
+                index === displayedItems.length - 1 && displayedItems.length % 2 === 1;
+              return (
+                <motion.div
+                  key={slot}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 * (index + 1) }}
+                  className={`${
+                    isLastAlone ? 'col-span-2 aspect-[2/1]' : 'aspect-square'
+                  } bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5`}
+                >
+                  <SmartImage
+                    src={item.image_url}
+                    alt={item.name}
+                    className="w-full h-full object-contain p-2"
+                  />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
@@ -262,39 +219,18 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
           </div>
 
           <div className="space-y-3">
-            {outfit.items.top && (
+            {displayedItems.map(({ slot, item }) => (
               <OutfitItem
-                name={outfit.items.top.name}
-                brand={outfit.items.top.brand}
-                price={outfit.items.top.price}
-                category="top"
+                key={slot}
+                name={item.name}
+                brand={item.brand}
+                price={item.price}
+                category={SWAPPABLE_SLOTS.includes(slot as SwappableSlot) ? (slot as SwappableSlot) : undefined}
                 onSwap={onSwapItem}
-                isSwapping={swappingCategory === 'top'}
+                isSwapping={swappingCategory === slot}
                 disabled={disabled || selectedFeedback !== null}
               />
-            )}
-            {outfit.items.bottom && (
-              <OutfitItem
-                name={outfit.items.bottom.name}
-                brand={outfit.items.bottom.brand}
-                price={outfit.items.bottom.price}
-                category="bottom"
-                onSwap={onSwapItem}
-                isSwapping={swappingCategory === 'bottom'}
-                disabled={disabled || selectedFeedback !== null}
-              />
-            )}
-            {outfit.items.shoes && (
-              <OutfitItem
-                name={outfit.items.shoes.name}
-                brand={outfit.items.shoes.brand}
-                price={outfit.items.shoes.price}
-                category="shoes"
-                onSwap={onSwapItem}
-                isSwapping={swappingCategory === 'shoes'}
-                disabled={disabled || selectedFeedback !== null}
-              />
-            )}
+            ))}
           </div>
 
           <div className="pt-4 border-t border-[#E5E5E5] space-y-3">
