@@ -51,13 +51,32 @@ const PROFILES: Record<string, Record<string, any>> = {
 // tijdvak van 5 minuten zakte nu eens "date", dan weer "sports" door de vloer
 // zonder dat er code was veranderd. Conventie ongewijzigd: één punt marge waar
 // de meting ruimte heeft (6), exact waar de meting krap is (4-5).
+//
+// Hermeten 2026-08-06, nadat engine v2 twee controles kreeg die het
+// calibratiescherm al draaide: beoordeelProduct op productniveau in
+// candidateFilter, en seizoenenBotsen op outfitniveau in tryCompose.
+// Beide dunnen de pool bewust uit. Gemeten op de fixture:
+//   - beoordeelProduct weigert 10 van de 602 producten, alle tien met een
+//     kindermaat in de naam ("Maat 5-6Y", "7-8Y", "9-10Y"). Eén ervan heet
+//     "PUMA Essentials Logo Lab relaxed short voor Heren, Maat 7-8Y": als
+//     herenkleding gelabeld, feitelijk kindermaat. Precies het soort item
+//     dat eerder als peuterschoen in een outfit belandde.
+//   - seizoenenBotsen raakt 3 winteritems (alle drie gewatteerde pufferjacks)
+//     tegen 15 shorts; de overige 584 producten zijn allseason.
+// Van de 42 cellen zakken er hierdoor twee met één outfit. Dat is de prijs
+// en die is het waard: liever vier bruikbare outfits dan vijf waarvan één
+// een kindershort bevat.
+//
+// Let op de derde wijziging: vrouw-expressief/sports gaat juist OMHOOG van 4
+// naar 5, want die cel meet nu 6. Vloeren gaan hier omhoog zodra de meting
+// dat toelaat; ze worden niet alleen verlaagd om rood groen te maken.
 const BASELINE: Record<string, Record<string, number>> = {
   "man-klassiek":      { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 5, travel: 5 },
   "man-casual":        { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 5, travel: 5 },
-  "man-sportief":      { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 5, travel: 5 },
+  "man-sportief":      { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 4, travel: 5 },
   "vrouw-klassiek":    { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 5, travel: 5 },
-  "vrouw-expressief":  { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 4, travel: 5 },
-  "vrouw-sportief":    { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 5, travel: 5 },
+  "vrouw-expressief":  { work: 5, casual: 5, formal: 5, date: 5, party: 5, sports: 5, travel: 5 },
+  "vrouw-sportief":    { work: 5, casual: 5, formal: 4, date: 5, party: 5, sports: 5, travel: 5 },
 };
 
 // Vaste seed. Zonder deze seedt de engine op Math.floor(Date.now()/300000),

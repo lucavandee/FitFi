@@ -1,5 +1,6 @@
 import type { Product } from '../types';
 import { classifyProduct } from '../productClassifier';
+import { beoordeelProduct } from '../productSafety';
 import { deriveAthleticIntent, enrichProduct, TEAM_SPORT_RE } from '../productEnricher';
 import type {
   NormalizedCategory,
@@ -223,6 +224,25 @@ export function filterAndPrepare(
       normalizeCategory(product.category);
     if (!cat) {
       byReason.unclassifiable++;
+      continue;
+    }
+
+    // Zelfde veiligheidscheck die het calibratiescherm al draaide
+    // (engineV2Calibration.beoordeelOutfit), maar hier op productniveau.
+    // Dat is bewust: keur je pas op outfitniveau af, dan gooi je een hele
+    // outfit weg om een product, terwijl de composer daar nog een veilig
+    // alternatief voor had kunnen kiezen. classifyProduct dekt dit niet:
+    // dat kijkt alleen naar de naam, terwijl de kinderschoen-controle op de
+    // maatreeks moet zitten (een schoen die alleen 24 t/m 34 voert).
+    // `cat` en niet product.category, want het ruwe feed-label is onbetrouwbaar.
+    const veiligheid = beoordeelProduct({
+      name: product.name,
+      category: cat,
+      sizes: product.sizes,
+    });
+    if (!veiligheid.ok) {
+      const sleutel = `onveilig_${veiligheid.reden}`;
+      byReason[sleutel] = (byReason[sleutel] ?? 0) + 1;
       continue;
     }
 

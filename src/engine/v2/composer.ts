@@ -7,6 +7,7 @@ import type {
   Season,
 } from './types';
 import type { ArchetypeKey } from '@/config/archetypes';
+import { seizoenenBotsen } from '../productSafety';
 import type { FilterResult } from './candidateFilter';
 import {
   coherenceMultiplier,
@@ -367,6 +368,11 @@ function tryCompose(
 
   if (isHardMismatch(items, profile)) return null;
   if (!withinTotalBudget(items, profile)) return null;
+  // Een gevoerde winterlaars hoort niet bij een zomershort. Seizoen zat tot nu
+  // toe alleen in de score, en een score van een paar procent lager houdt zo'n
+  // combinatie niet tegen. Alleen de botsing winter tegen zomer wordt geweigerd;
+  // de aanroeper probeert het dan met een andere combinatie.
+  if (seizoenenBotsen(items.map((i) => i.product.name))) return null;
   return items;
 }
 
