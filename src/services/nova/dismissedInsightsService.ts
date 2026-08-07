@@ -1,7 +1,7 @@
 import { getSupabase } from '@/lib/supabase';
 // Relatief pad omvat de ambient module-shim in types/ambient-shims.d.ts
 // (die het "@/..." pad overschrijft met een uitgeklede default-export type).
-import type { InsightType } from '../../components/Dashboard/NovaInsightCard';
+import type { InsightType } from '../../components/dashboard/NovaInsightCard';
 
 function hashInsight(type: InsightType, insight: string): string {
   return `${type}:${insight.substring(0, 50)}`;

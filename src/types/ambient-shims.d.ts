@@ -6,12 +6,12 @@ declare module "*.webp" { const src: string; export default src; }
 declare module "*.mp4" { const src: string; export default src; }
 declare module "*?raw" { const content: string; export default content; }
 
-declare module '@/components/Dashboard/NovaInsightCard' {
+declare module '@/components/dashboard/NovaInsightCard' {
   import * as React from 'react';
   const C: React.FC<any>;
   export default C;
 }
-declare module '@/components/Dashboard/GamificationPanel' {
+declare module '@/components/dashboard/GamificationPanel' {
   import * as React from 'react';
   const C: React.FC<any>;
   export default C;
