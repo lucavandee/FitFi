@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getSessionId, isUuid } from '../sessionId';
+import { getSessionId, isUuid, resetSessionId } from '../sessionId';
 
 /** Minimale sessionStorage voor de node-omgeving. */
 function nepOpslag() {
@@ -17,7 +17,9 @@ function nepOpslag() {
 }
 
 beforeEach(() => {
+  vi.stubGlobal('localStorage', nepOpslag());
   vi.stubGlobal('sessionStorage', nepOpslag());
+  vi.stubGlobal('window', { localStorage, sessionStorage });
 });
 
 describe('isUuid', () => {
@@ -51,30 +53,54 @@ describe('getSessionId', () => {
     // Dit is de kern: raakte de gebruiker eerst een affiliate-link aan, dan
     // stond er een niet-uuid in de sleutel en faalde daarna elke insert op
     // style_swipes en swipe_preferences, die allebei UUID NOT NULL zijn.
-    sessionStorage.setItem('fitfi_session_id', '1754521234567_x8k2m9qp1');
+    localStorage.setItem('ff_session_id', '1754521234567_x8k2m9qp1');
 
     const id = getSessionId();
 
     expect(isUuid(id)).toBe(true);
-    expect(sessionStorage.getItem('fitfi_session_id')).toBe(id);
+    expect(localStorage.getItem('ff_session_id')).toBe(id);
   });
 
   it('respecteert een uuid die er al stond', () => {
     const bestaand = '3f2504e0-4f89-41d3-9a0c-0305e82c3301';
-    sessionStorage.setItem('fitfi_session_id', bestaand);
+    localStorage.setItem('ff_session_id', bestaand);
 
     expect(getSessionId()).toBe(bestaand);
   });
 
-  it('valt niet om als sessionStorage gooit', () => {
-    vi.stubGlobal('sessionStorage', {
-      getItem: () => {
-        throw new Error('private mode');
-      },
-      setItem: () => {
-        throw new Error('private mode');
-      },
-    } as unknown as Storage);
+  it('neemt een geldige uuid over uit de oude sessionStorage-sleutel', () => {
+    // Zo raakt iemand die midden in de quiz zit zijn swipes niet kwijt.
+    const oud = '3f2504e0-4f89-41d3-9a0c-0305e82c3301';
+    sessionStorage.setItem('fitfi_session_id', oud);
+
+    expect(getSessionId()).toBe(oud);
+    expect(localStorage.getItem('ff_session_id')).toBe(oud);
+  });
+
+  it('neemt een ONgeldige waarde uit de oude sleutel niet over', () => {
+    sessionStorage.setItem('fitfi_session_id', '1754521234567_x8k2m9qp1');
+
+    const id = getSessionId();
+    expect(isUuid(id)).toBe(true);
+    expect(id).not.toBe('1754521234567_x8k2m9qp1');
+  });
+
+  it('resetSessionId wist beide sleutels', () => {
+    const eerste = getSessionId();
+    resetSessionId();
+    expect(localStorage.getItem('ff_session_id')).toBeNull();
+    expect(getSessionId()).not.toBe(eerste);
+  });
+
+  it('valt niet om als de opslag gooit', () => {
+    const kapot = {
+      getItem: () => { throw new Error('private mode'); },
+      setItem: () => { throw new Error('private mode'); },
+      removeItem: () => { throw new Error('private mode'); },
+    } as unknown as Storage;
+    vi.stubGlobal('localStorage', kapot);
+    vi.stubGlobal('sessionStorage', kapot);
+    vi.stubGlobal('window', { localStorage: kapot, sessionStorage: kapot });
 
     expect(isUuid(getSessionId())).toBe(true);
   });

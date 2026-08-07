@@ -50,6 +50,7 @@ import OutfitCard from "@/components/outfits/OutfitCard";
 import { OutfitPreviewCard } from "@/components/results/OutfitPreviewCard";
 import { openProductLink } from "@/utils/affiliate";
 import { getColorPalette } from "@/data/colorPalettes";
+import { getSessionId } from '@/utils/sessionId';
 
 function readJson<T>(key: string): T | null {
   try {
@@ -316,10 +317,10 @@ export default function EnhancedResultsPage() {
     async function generateProfile() {
       setProfileLoading(true);
       try {
-        const sessionId = user?.id || localStorage.getItem('ff_session_id') || crypto.randomUUID();
-        if (!user?.id) {
-          localStorage.setItem('ff_session_id', sessionId);
-        }
+        // getSessionId() slaat zelf op; hier hoeft niets meer geschreven te
+        // worden. Is er een ingelogde gebruiker, dan telt zijn id en blijft
+        // het anonieme sessie-id ongemoeid.
+        const sessionId = user?.id || getSessionId();
 
         const result = await StyleProfileGenerator.generateStyleProfile(
           answers,

@@ -1,27 +1,40 @@
 /**
- * Eén sessie-id voor de hele app, en het moet een UUID zijn.
+ * Eén sessie-id voor de hele app.
  *
- * Aanleiding (2026-08-07). Twee plekken schreven naar dezelfde sleutel
- * `fitfi_session_id` in sessionStorage, met een ander formaat:
+ * De app had er twee, met verschillende sleutels EN verschillende opslag:
  *
- *   - src/components/quiz/VisualPreferenceStepClean.tsx zette er een
- *     crypto.randomUUID() in;
- *   - src/utils/affiliate.ts zette er `${Date.now()}_${random}` in, dus
- *     bijvoorbeeld "1754521234567_x8k2m9qp1".
+ *   ff_session_id      localStorage    profiel claimen, foto-upload, Nova
+ *   fitfi_session_id   sessionStorage  swipes, calibratie
  *
- * Wie het eerst schreef, won. De kolom swipe_preferences.session_id is
- * `UUID NOT NULL`, en style_swipes.session_id ook. Had een gebruiker dus
- * ergens een affiliate-link aangeraakt voordat hij bij de swipes of de
- * calibratie kwam, dan stond er een niet-UUID in de sleutel en faalde daarna
- * elke insert en elke RPC op een castfout. Die fouten werden alleen
- * ge-console.error'd, dus de gebruiker merkte niets en de data verdween.
+ * Die matchten nooit. Een anonieme gebruiker schreef zijn swipes weg onder het
+ * ene id (style_swipes.session_id) en zijn stijlprofiel onder het andere
+ * (style_profiles.session_id), waardoor de twee niet aan elkaar te koppelen
+ * waren. De visuele voorkeur die uit de swipes wordt berekend kon dus nooit bij
+ * het profiel terechtkomen waar hij bij hoorde.
  *
- * Deze module is de enige plek die de sleutel mag zetten. Een waarde die er
- * al staat maar geen UUID is, wordt vervangen: liever een nieuwe sessie dan
- * een sessie die niets kan opslaan.
+ * Gekozen: ff_session_id in localStorage.
+ *
+ * De sleutel omdat de meeste plekken die al gebruiken, waaronder de enige die
+ * er echt van afhangt: profileSyncService.ts:155 zoekt bij een volgend bezoek
+ * het anonieme profiel op via deze id.
+ *
+ * localStorage en niet sessionStorage omdat een sessie hier "dit apparaat"
+ * betekent en niet "dit tabblad". De hele anonieme flow is: quiz doen,
+ * resultaten bekijken, later terugkomen en een account maken om het profiel te
+ * claimen. Met sessionStorage gooit het sluiten van de tab de enige verwijzing
+ * naar dat profiel weg. Dat OnboardingFlowPage.tsx:428 de id expliciet wist bij
+ * een quiz-reset is het bewijs dat hij normaal juist hoort te blijven staan.
+ *
+ * Het moet een UUID zijn: style_swipes.session_id en swipe_preferences.session_id
+ * zijn allebei UUID NOT NULL. Een waarde in een ander formaat, zoals de
+ * `${Date.now()}_${random}` die affiliate.ts hier vroeger in zette, laat elke
+ * insert stuk lopen op een castfout die alleen in de console belandt.
  */
 
-const KEY = 'fitfi_session_id';
+const KEY = 'ff_session_id';
+
+/** Oude sleutel uit sessionStorage. Alleen om lopende bezoeken over te nemen. */
+const OUDE_KEY = 'fitfi_session_id';
 
 const UUID_PATROON =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -48,17 +61,46 @@ function nieuweUuid(): string {
   });
 }
 
-/** Het sessie-id voor deze tab. Altijd een geldige UUID. */
-export function getSessionId(): string {
+function lees(opslag: Storage | undefined, sleutel: string): string | null {
   try {
-    const bestaand = sessionStorage.getItem(KEY);
-    if (isUuid(bestaand)) return bestaand as string;
-
-    const nieuw = nieuweUuid();
-    sessionStorage.setItem(KEY, nieuw);
-    return nieuw;
+    return opslag?.getItem(sleutel) ?? null;
   } catch {
-    // sessionStorage kan gooien in private mode of met geblokkeerde cookies.
-    return nieuweUuid();
+    return null; // private mode, geblokkeerde cookies
+  }
+}
+
+/**
+ * Het sessie-id voor dit apparaat. Altijd een geldige UUID.
+ *
+ * Neemt eenmalig een geldige waarde over uit de oude sessionStorage-sleutel,
+ * zodat iemand die midden in de quiz zit zijn swipes niet kwijtraakt.
+ */
+export function getSessionId(): string {
+  if (typeof window === 'undefined') return nieuweUuid();
+
+  const bestaand = lees(window.localStorage, KEY);
+  if (isUuid(bestaand)) return bestaand as string;
+
+  const overgenomen = lees(window.sessionStorage, OUDE_KEY);
+  const id = isUuid(overgenomen) ? (overgenomen as string) : nieuweUuid();
+
+  try {
+    window.localStorage.setItem(KEY, id);
+  } catch {
+    // Niet kunnen opslaan is vervelend maar niet fataal: de aanroeper krijgt
+    // een geldige id en de insert slaagt. Alleen een volgend bezoek herkent
+    // deze gebruiker dan niet meer.
+  }
+  return id;
+}
+
+/** Wist het sessie-id. Alleen gebruiken bij een bewuste reset van de quiz. */
+export function resetSessionId(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.removeItem(KEY);
+    window.sessionStorage.removeItem(OUDE_KEY);
+  } catch {
+    /* niets te doen */
   }
 }

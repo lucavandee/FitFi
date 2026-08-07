@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { getSessionId } from '@/utils/sessionId';
 
 export interface NovaMessage {
   role: 'user' | 'assistant';
@@ -25,11 +26,8 @@ class ConversationService {
 
     try {
       const { data: { user } } = await client.auth.getUser();
-      const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
+      const sessionId = getSessionId();
 
-      if (!localStorage.getItem('ff_session_id')) {
-        localStorage.setItem('ff_session_id', sessionId);
-      }
 
       const query = user
         ? client.from('nova_conversations').select('*').eq('user_id', user.id)

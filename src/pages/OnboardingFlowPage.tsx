@@ -21,6 +21,7 @@ import { ArchetypePreviewEnhanced as ArchetypePreview } from "@/components/quiz/
 import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
+import { getSessionId, resetSessionId } from '@/utils/sessionId';
 
 type QuizAnswers = {
   gender?: string;
@@ -96,7 +97,7 @@ export default function OnboardingFlowPage() {
   const [phase, setPhase] = useState<QuizPhase>('questions');
   const [progressLoaded, setProgressLoaded] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const [sessionId] = useState(() => localStorage.getItem('ff_session_id') || crypto.randomUUID());
+  const [sessionId] = useState(getSessionId);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(() => {
     return !!localStorage.getItem('ff_email_captured');
@@ -425,7 +426,7 @@ export default function OnboardingFlowPage() {
   const confirmCancel = () => {
     track("quiz_abandoned", { phase, step: currentStep, answeredFields: Object.keys(answers).length });
     localStorage.removeItem(LS_KEYS.QUIZ_ANSWERS);
-    localStorage.removeItem('ff_session_id');
+    resetSessionId();
     navigate('/');
   };
 
@@ -603,7 +604,7 @@ export default function OnboardingFlowPage() {
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
       localStorage.removeItem('ff_quiz_step');
-      localStorage.setItem('ff_session_id', sessionId);
+      /* sessie-id staat al vast via getSessionId() */
       if (userId) clearProgressFromSupabase(userId);
 
       // client and userId already declared above

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Upload, AlertCircle, CheckCircle, Shield, X, Info, ImageIcon } from "lucide-react";
+import { getSessionId } from '@/utils/sessionId';
 
 interface ColorAnalysis {
   undertone: "warm" | "cool" | "neutral";
@@ -68,8 +69,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
     reader.onload = () => onChange((reader.result as string) || null);
     reader.readAsDataURL(file);
 
-    const sessionId = localStorage.getItem("ff_session_id") || crypto.randomUUID();
-    localStorage.setItem("ff_session_id", sessionId);
+    const sessionId = getSessionId();
 
     setUploading(true);
     try {
