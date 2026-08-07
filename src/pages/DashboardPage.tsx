@@ -79,10 +79,10 @@ export default function DashboardPage() {
   const isPremium = ctxUser?.tier === "premium" || ctxUser?.tier === "founder" || !!ctxUser?.isPremium;
   const isFounder = ctxUser?.tier === "founder";
 
-  const { color, archetype, gender, hasReport, hasPhoto, reportDate } = React.useMemo(() => {
+  const { color, archetype, gender, hasReport, hasPhoto, reportDate, answers } = React.useMemo(() => {
     const c = readJson<ColorProfile>(LS_KEYS.COLOR_PROFILE);
     const a = readJson<Archetype>(LS_KEYS.ARCHETYPE);
-    const ans = readJson<{ photoUrl?: string; gender?: string }>(LS_KEYS.QUIZ_ANSWERS);
+    const ans = readJson<any>(LS_KEYS.QUIZ_ANSWERS);
     const ts = localStorage.getItem(LS_KEYS.RESULTS_TS);
     return {
       color: c,
@@ -91,10 +91,46 @@ export default function DashboardPage() {
       hasReport: !!(a || c),
       hasPhoto: !!(ans?.photoUrl),
       reportDate: formatDate(ts),
+      answers: ans,
     };
   }, []);
 
-  const { data: outfitsData } = useOutfits({ archetype: archetype ?? undefined, gender: gender as any, limit: 6, enabled: hasReport });
+  // Zelfde limiet als /results (EnhancedResultsPage.tsx:380-387). Dit is geen
+  // cosmetiek: de queryKey is ['outfits','v2', digest, limit] (useOutfits.ts:78).
+  // Bij een andere limiet krijg je een tweede cache-entry en dus een tweede
+  // engine-run, en de engine seedt op de klok als er geen seed meekomt
+  // (engine.ts:722, Math.floor(Date.now()/300000)). Twee runs in verschillende
+  // vijf-minutenvakken geven een ANDERE outfitset. Gelijke limiet betekent
+  // dezelfde sleutel, dus letterlijk dezelfde outfits op beide schermen.
+  const outfitLimit = React.useMemo(() => {
+    if (!ctxUser) return 6;
+    const tier = (ctxUser as any).tier || ((ctxUser as any).isPremium ? "premium" : "member");
+    if (tier === "founder") return 20;
+    if (tier === "premium" || tier === "plus") return 12;
+    if (tier === "member") return 9;
+    return 6;
+  }, [ctxUser]);
+
+  // `answers` meegeven zet dit scherm op engine v2, hetzelfde pad als /results
+  // (useOutfits.ts:107). Zonder die prop liep het dashboard via de legacy-tak
+  // naar outfitComposer (v1). Twee gevolgen, allebei gemeten:
+  //
+  // 1. Het dashboard gaf HELEMAAL GEEN budget door, dus wie zijn budget op 15
+  //    euro zette kreeg hier zes outfits en op /results nul. Dat verschil kwam
+  //    dus niet van de engine maar van een weggelaten filter.
+  // 2. v1 kijkt nooit naar `sizes` (productFilter.ts:76-93) en zijn maatregel
+  //    matcht "Maat 92" niet. Een peuterschoen in maat 28 t/m 31 en een
+  //    "Hello Kitty sneaker" komen er bij v1 gewoon doorheen, bij v2 niet.
+  //
+  // De seizoenscheck is GEEN argument: v1 heeft een eigen seizoensfilter
+  // (outfitComposer.ts:317-321). Dat had ik eerst verkeerd opgeschreven.
+  const { data: outfitsData } = useOutfits({
+    archetype: archetype ?? undefined,
+    gender: gender as any,
+    limit: outfitLimit,
+    enabled: hasReport,
+    answers: answers ?? undefined,
+  });
 
   React.useEffect(() => {
     const client = supabase();
