@@ -933,7 +933,7 @@ export default function OnboardingFlowPage() {
                 {currentStep === 0 && (
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', backgroundColor: '#F5F0EB', borderRadius: '99px', fontSize: '12px', fontWeight: 500, color: '#9A503B', marginBottom: '16px' }}>
                     <Clock style={{ width: '12px', height: '12px' }} />
-                    Minder dan 2 minuten
+                    Ongeveer 5 minuten
                   </div>
                 )}
                 <h1 style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 700, lineHeight: 1.25, marginBottom: '10px', color: '#1A1A1A' }}>

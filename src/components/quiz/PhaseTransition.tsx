@@ -158,7 +158,7 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       ],
       novaTip: 'Dit is waar de magie gebeurt. Je feedback hier maakt het verschil tussen "leuke outfits" en "outfits die voelen alsof ze voor jou gemaakt zijn".',
       ctaText: 'Bekijk de outfits',
-      timeEstimate: '2 minuten'
+      timeEstimate: '~5 minuten'
     };
   }
 

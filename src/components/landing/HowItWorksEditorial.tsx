@@ -8,8 +8,8 @@ const HowItWorksEditorial: React.FC<Props> = ({ onStart, onExample }) => {
   const steps = [
     {
       icon: ClipboardList,
-      title: "Beantwoord 6 vragen",
-      text: "Vertel je stijlvoorkeuren en doelen. Klaar in minder dan 2 minuten.",
+      title: "Beantwoord 14 korte stappen",
+      text: "Vertel je stijlvoorkeuren en doelen. Klaar in ongeveer 5 minuten.",
     },
     {
       icon: Sparkles,

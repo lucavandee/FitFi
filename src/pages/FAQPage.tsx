@@ -457,7 +457,7 @@ export default function FAQPage() {
               custom={1}
               className="text-[17px] text-[#4A4A4A] mb-12"
             >
-              Gratis. Twee minuten. Geen account nodig.
+              Gratis. Ongeveer vijf minuten. Geen account nodig.
             </motion.p>
 
             <motion.div

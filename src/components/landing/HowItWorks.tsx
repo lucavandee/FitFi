@@ -6,8 +6,8 @@ const HowItWorks: React.FC = () => {
     {
       number: '01',
       icon: MessageSquare,
-      title: 'Beantwoord 8 vragen',
-      description: 'Vertel ons over jouw voorkeuren, levensstijl en wat je mooi vindt. Duurt maar 2 minuten.',
+      title: 'Beantwoord 14 korte stappen',
+      description: 'Vertel ons over jouw voorkeuren, levensstijl en wat je mooi vindt. Duurt ongeveer 5 minuten.',
     },
     {
       number: '02',

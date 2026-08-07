@@ -44,7 +44,7 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 - Account-aanmaakdatum en laatste login
 
 ### Stijlprofiel
-- Antwoorden op de stijlquiz (6 vragen over voorkeuren, lichaamsbouw, doelen)
+- Antwoorden op de stijlquiz (14 stappen over stijl, kleur, pasvorm, gelegenheden, doelen, merken, budget en maten; de laatste twee stappen zijn optioneel)
 - Optioneel: foto's die je uploadt (alleen met expliciete toestemming)
 - Gegenereerde outfits en opgeslagen favorieten
 

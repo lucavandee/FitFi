@@ -41,7 +41,7 @@ export default function Footer() {
               Ontdek jouw stijl
             </p>
             <p className="text-base text-[#6E6E6E] tracking-wide">
-              Gratis. Twee minuten. Persoonlijk resultaat.
+              Gratis. Ongeveer vijf minuten. Persoonlijk resultaat.
             </p>
           </div>
         </div>

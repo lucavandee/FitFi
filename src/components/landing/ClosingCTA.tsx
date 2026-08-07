@@ -28,7 +28,7 @@ export function ClosingCTA() {
             className="text-base leading-relaxed mb-8"
             style={{ color: 'rgba(247,243,236,0.65)' }}
           >
-            8 vragen, 2 minuten. Direct je persoonlijke stijlprofiel met kleuren en outfits.
+            14 korte stappen, ongeveer 5 minuten. Direct je persoonlijke stijlprofiel met kleuren en outfits.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
@@ -39,7 +39,7 @@ export function ClosingCTA() {
                 boxShadow: '0 4px 24px rgba(194,101,74,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
               }}
             >
-              Start gratis — 2 minuten
+              Start gratis, ongeveer 5 minuten
               <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
             </Link>
             <Link

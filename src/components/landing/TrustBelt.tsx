@@ -13,7 +13,7 @@ const TrustBelt: React.FC = () => {
     },
     {
       icon: Clock,
-      text: '2 minuten klaar'
+      text: '5 minuten klaar'
     },
     {
       icon: Heart,

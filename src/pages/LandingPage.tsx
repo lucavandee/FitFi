@@ -83,51 +83,55 @@ export default function LandingPage() {
     navigate("/results/preview");
   };
 
-  /* Testimonial data — DB first, fallback to hardcoded */
-  const FALLBACK_REVIEWS = [
-    {
-      name: "Sophie V.",
-      meta: "28 jaar · Amsterdam",
-      quote:
-        "Eindelijk weet ik wat ik 's ochtends aantrek. Het rapport klopte verrassend goed met hoe ik me wil kleden.",
-      initial: "S",
-    },
-    {
-      name: "Marieke D.",
-      meta: "34 jaar · Utrecht",
-      quote:
-        "De kleuradviezen zijn een openbaring. Ik shop nu veel gerichter en maak minder spijt-aankopen.",
-      initial: "M",
-    },
-    {
-      name: "Tom B.",
-      meta: "41 jaar · Rotterdam",
-      quote:
-        "Sceptisch begonnen, maar de outfits passen echt bij mijn leven. Een paar minuten werk, direct resultaat.",
-      initial: "T",
-    },
-  ];
+  /*
+   * Alleen echte reviews uit de database.
+   *
+   * Hier stond tot 2026-08-07 een FALLBACK_REVIEWS met drie verzonnen
+   * ervaringen: "Sophie V., 28 jaar, Amsterdam", "Marieke D., 34 jaar,
+   * Utrecht" en "Tom B., 41 jaar, Rotterdam", inclusief citaten. Die werden
+   * getoond zodra de database minder dan drie rijen had, en de tabel is leeg.
+   * Elke bezoeker van fitfi.ai kreeg dus drie verzonnen klantreviews te zien,
+   * onder een kop die letterlijk zei: "Dit zijn echte ervaringen van
+   * FitFi-gebruikers."
+   *
+   * Los van dat het niet waar is: verzonnen consumentenreviews zijn in de EU
+   * verboden (richtlijn 2005/29/EG, bijlage I punt 23b en 23c, sinds de
+   * Omnibus-richtlijn). Een lege sectie is hier de enige juiste uitkomst.
+   *
+   * De sectie verdwijnt nu volledig zolang er minder dan drie echte reviews
+   * zijn. Geen halve variant met een of twee kaarten: dan is de sectie
+   * visueel scheef en verleidt hij alsnog tot aanvullen met verzinsels.
+   */
+  const reviews = testimonials.slice(0, 3).map((t) => ({
+    name: t.author_name,
+    meta: t.author_age ? `${t.author_age} jaar` : "",
+    quote: t.quote,
+    initial: t.author_name?.[0]?.toUpperCase() || "?",
+  }));
 
-  const reviews =
-    testimonials.length >= 3
-      ? testimonials.slice(0, 3).map((t) => ({
-          name: t.author_name,
-          meta:
-            t.author_age
-              ? `${t.author_age} jaar`
-              : "",
-          quote: t.quote,
-          initial: t.author_name?.[0]?.toUpperCase() || "?",
-        }))
-      : FALLBACK_REVIEWS;
+  const toonReviews = reviews.length >= 3;
 
   /* Marquee items */
+  /*
+   * Twee claims hier weggehaald op 2026-08-07:
+   *
+   * "4.9/5 waardering" stond boven een reviewsectie waarvan de tabel leeg is.
+   * Een gemiddelde beoordeling zonder een enkele beoordeling is geen afronding
+   * maar een verzinsel, en valt onder dezelfde regels als de nepreviews die
+   * hieronder zijn verwijderd.
+   *
+   * "50+ outfitcombinaties" was eerder al uit de rest van de site gehaald
+   * (commits 7b1479f4 en a29a2595) omdat het getal nergens op steunt. Deze
+   * ene stond nog.
+   *
+   * "2.400+ gebruikers" laat ik staan: dat kan kloppen, maar ik kon het niet
+   * controleren omdat RLS de telling op style_profiles blokkeert voor anon.
+   * Als dat cijfer niet klopt, hoort het hier ook weg.
+   */
   const marqueeItems = [
     { bold: "2.400+", rest: "gebruikers" },
     { bold: "~5 min", rest: "invultijd" },
     { bold: "Gratis", rest: "geen creditcard" },
-    { bold: "4.9/5", rest: "waardering" },
-    { bold: "50+", rest: "outfitcombinaties" },
     { bold: "Persoonlijk", rest: "kleurpalet" },
   ];
 
@@ -591,7 +595,9 @@ export default function LandingPage() {
 
         {/* ════════════════════════════════════════════════════
             TESTIMONIALS — Ervaringen
+            Alleen zichtbaar bij drie of meer ECHTE reviews uit de database.
         ════════════════════════════════════════════════════ */}
+        {toonReviews && (
         <section className="py-16 md:py-24 bg-[#F5F0EB]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
@@ -648,6 +654,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+        )}
 
         {/* ════════════════════════════════════════════════════
             CTA — Klaar om te beginnen?
@@ -660,7 +667,7 @@ export default function LandingPage() {
                   Klaar om te beginnen?
                 </h2>
                 <p className="text-base md:text-[17px] text-[#4A4A4A] mt-8 mb-14 md:mb-16">
-                  Gratis. Twee minuten. Geen account nodig.
+                  Gratis. Ongeveer vijf minuten. Geen account nodig.
                 </p>
                 <button
                   onClick={handleStartClick}

@@ -21,7 +21,7 @@ const features = [
   {
     icon: Zap,
     iconBg: 'from-yellow-500 to-orange-600',
-    title: 'In 2 minuten klaar',
+    title: 'In 5 minuten klaar',
     description: 'Geen eindeloze vragenlijsten. Beantwoord 6–12 vragen over je voorkeur, lichaamsbouw en gelegenheid. Direct daarna krijg je je persoonlijke Style Report met complete outfits.',
     stats: [
       { label: 'Gemiddelde tijd', value: '2 min' },
