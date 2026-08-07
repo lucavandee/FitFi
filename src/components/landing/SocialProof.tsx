@@ -5,7 +5,7 @@ const SocialProof: React.FC = () => {
   const benefits = [
     {
       title: 'Direct inzicht',
-      description: 'Binnen 2 minuten weet je welke kleuren en stijlen bij je passen.',
+      description: 'Binnen ongeveer 5 minuten weet je welke kleuren en stijlen bij je passen.',
       icon: Sparkles
     },
     {

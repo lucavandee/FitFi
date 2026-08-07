@@ -23,8 +23,8 @@ const Features: React.FC = () => {
     },
     {
       icon: Clock,
-      title: 'Binnen 2 minuten klaar',
-      description: 'Geen lange vragenlijsten. 8 simpele vragen, direct je rapport. Echt 2 minuten.',
+      title: 'Binnen 5 minuten klaar',
+      description: 'Geen eindeloze vragenlijst. 14 korte stappen, direct je rapport.',
       gradient: 'from-cyan-500 to-emerald-500'
     },
     {

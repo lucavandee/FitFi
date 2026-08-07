@@ -57,7 +57,7 @@ export function FinalCTA() {
             </button>
 
             <p className="text-white/55 text-sm mb-4">
-              Duurt ongeveer 2 minuten — geen creditcard nodig
+              Duurt ongeveer 5 minuten, geen creditcard nodig
             </p>
 
             {!user && (
@@ -75,7 +75,7 @@ export function FinalCTA() {
             <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-white/70 text-xs sm:text-sm">
               <div className="flex items-center gap-1.5">
                 <Clock className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                <span>Duurt ~2 minuten</span>
+                <span>Duurt ~5 minuten</span>
               </div>
               <div className="w-1 h-1 rounded-full bg-white/30 hidden sm:block" aria-hidden="true" />
               <div className="flex items-center gap-1.5">

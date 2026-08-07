@@ -46,7 +46,7 @@ const strengthTextColors = [
 ] as const;
 
 const TRUST_ITEMS = [
-  { icon: Clock, title: "Klaar in 2 minuten", desc: "Korte quiz, direct resultaat" },
+  { icon: Clock, title: "Klaar in 5 minuten", desc: "Korte quiz, direct resultaat" },
   { icon: Sparkles, title: "Persoonlijk rapport", desc: "Kleuren, outfits en shoplinks" },
   { icon: Lock, title: "Jouw data, jouw keuze", desc: "Verwijder je account op elk moment" },
 ];

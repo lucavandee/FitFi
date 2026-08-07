@@ -81,7 +81,7 @@ const WEBSITE_SCHEMA = {
 };
 
 const WithSeo = {
-  Home:       () => (<><Seo title="FitFi — Persoonlijk stijladvies in 2 minuten" description="Beantwoord een paar vragen en zie welke outfits bij je passen. Directe shoplinks, persoonlijk advies. Gratis starten." path="/" structuredData={ORG_SCHEMA} /><LandingPage /></>),
+  Home:       () => (<><Seo title="FitFi — Persoonlijk stijladvies in ongeveer 5 minuten" description="Beantwoord een paar vragen en zie welke outfits bij je passen. Directe shoplinks, persoonlijk advies. Gratis starten." path="/" structuredData={ORG_SCHEMA} /><LandingPage /></>),
   How:        () => (<><Seo title="Hoe het werkt — FitFi" description="In drie stappen van quiz naar complete outfits met shoplinks. Geen foto's nodig, geen account verplicht." path="/hoe-het-werkt" /><HowItWorksPage /></>),
   Pricing:    () => (<><Seo title="Prijzen — FitFi" description="Gratis starten met je stijlprofiel en drie outfits. Premium geeft onbeperkte outfits, Nova AI en kleuranalyse." path="/prijzen" /><PricingPage /></>),
   About:      () => (<><Seo title="Over ons — FitFi" description="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak en principes." path="/over-ons" /><AboutPage /></>),

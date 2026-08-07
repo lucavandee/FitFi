@@ -91,7 +91,7 @@ export default function AboutPage() {
               {
                 Icon: Target,
                 title: "Focus op resultaat",
-                body: "Direct bruikbare outfits en keuzes. Binnen 2 minuten bruikbaar advies.",
+                body: "Direct bruikbare outfits en keuzes. Binnen ongeveer vijf minuten bruikbaar advies.",
               },
             ].map(({ Icon, title, body }) => (
               <div

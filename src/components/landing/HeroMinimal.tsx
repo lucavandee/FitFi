@@ -33,7 +33,7 @@ export function HeroMinimal() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-tight tracking-tight">
               Jouw stijl in{' '}
               <span className="text-[#A85740]">
-                2 minuten
+                ~5 minuten
               </span>
             </h1>
 

@@ -323,7 +323,7 @@ export function EmptyStateWidget() {
           Start je stijlreis
         </h2>
         <p className="text-sm text-[#6E6E6E] mb-6 max-w-sm">
-          Beantwoord een paar vragen en ontdek welke outfits bij jou passen — in 2 minuten
+          Beantwoord een paar vragen en ontdek welke outfits bij jou passen — in ongeveer 5 minuten
         </p>
         <NavLink
           to="/onboarding"

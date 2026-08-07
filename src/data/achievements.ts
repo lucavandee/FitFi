@@ -22,7 +22,7 @@ export const achievements: Achievement[] = [
   {
     id: 'speed_demon',
     title: 'Snelle Beslisser',
-    description: 'Quiz voltooid in minder dan 2 minuten',
+    description: 'Quiz voltooid in minder dan 5 minuten',
     icon: '⚡',
     type: 'completion_speed',
     rarity: 'epic',

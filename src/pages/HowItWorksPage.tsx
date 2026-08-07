@@ -60,7 +60,7 @@ const faqs = [
 ];
 
 const compRows = [
-  { old: "Uren zoeken in winkels", next: "2 minuten, direct resultaat", highlight: false },
+  { old: "Uren zoeken in winkels", next: "Ongeveer 5 minuten, direct resultaat", highlight: false },
   { old: "€200+ aan spijt-aankopen per jaar", next: "Alleen items die bij je passen", highlight: false },
   { old: "Kast vol \"draag ik nooit\"", next: "Outfits die je echt draagt", highlight: false },
   { old: "Geen idee welke kleuren passen", next: "Persoonlijk kleurpalet op basis van jou", highlight: false },
@@ -145,14 +145,14 @@ export default function HowItWorksPage() {
   return (
     <>
       <Seo
-        title="Hoe het werkt — Jouw stijladvies in 2 minuten | FitFi"
-        description="In 2 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
+        title="Hoe het werkt — Jouw stijladvies in ongeveer 5 minuten | FitFi"
+        description="In ongeveer 5 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
         path="/hoe-het-werkt"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "HowTo",
-          name: "Hoe FitFi werkt — stijladvies in 2 minuten",
-          description: "In 2 minuten van quiz naar compleet stijladvies. Beantwoord vragen, wij matchen outfits, jij shopt direct.",
+          name: "Hoe FitFi werkt — stijladvies in ongeveer 5 minuten",
+          description: "In ongeveer 5 minuten van quiz naar compleet stijladvies. Beantwoord vragen, wij matchen outfits, jij shopt direct.",
           totalTime: "PT2M",
           step: [
             { "@type": "HowToStep", position: 1, name: "Vertel ons over jouw stijl", text: "Een korte quiz over je voorkeuren, kleuren en levensstijl." },
@@ -204,7 +204,7 @@ export default function HowItWorksPage() {
 
             <Reveal delay={0.36}>
               <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
-                {["2 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
+                {["~5 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
                   <div key={tag} className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                     <span>{tag}</span>
@@ -251,7 +251,7 @@ export default function HowItWorksPage() {
               </div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#A85740] w-fit">
                 <Clock className="w-4 h-4" aria-hidden="true" />
-                ~2 minuten
+                ~5 minuten
               </div>
             </Reveal>
           </div>
@@ -488,7 +488,7 @@ export default function HowItWorksPage() {
                   Klaar om te beginnen?
                 </h2>
                 <p className="text-base md:text-[17px] text-[#4A4A4A] mt-8 mb-14 md:mb-16">
-                  Gratis. Twee minuten. Geen account nodig.
+                  Gratis. Ongeveer vijf minuten. Geen account nodig.
                 </p>
                 <Link
                   to="/onboarding"

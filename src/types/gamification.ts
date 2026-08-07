@@ -90,7 +90,7 @@ export const QUIZ_MILESTONES: QuizMilestone[] = [
     reward: {
       type: 'preview',
       message: '🎯 Gelegenheden Klaar',
-      subMessage: 'Nog 2 minuten tot je perfecte outfits!'
+      subMessage: 'Nog even, dan staan je outfits klaar.'
     }
   },
   {
