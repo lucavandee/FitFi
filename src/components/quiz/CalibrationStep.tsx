@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import Spinner from '@/components/ui/Spinner';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
 import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Spinner } from '@/components/ui/Spinner';

@@ -1,7 +1,12 @@
 [build]
 publish = "dist"
 functions = "netlify/functions"
-command = "npx vite build"
+# `npm run build` = `tsc --noEmit && vite build`. Stond hier eerder als
+# `npx vite build`, dus zonder typecheck, terwijl de site-instelling in het
+# Netlify-dashboard wel `npm run build` draaide. Die twee spraken elkaar tegen
+# en het dashboard won. Nu staat de poort in versiebeheer, waar hij hoort:
+# wie het buildcommando leest, ziet meteen dat de typecheck erbij hoort.
+command = "npm run build"
 
 [build.environment]
 NODE_VERSION = "20"
