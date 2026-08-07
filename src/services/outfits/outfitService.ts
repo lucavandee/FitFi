@@ -4,6 +4,7 @@ import { runEngineV2 } from "@/engine/v2";
 import { generateNovaExplanation } from "@/engine/explainOutfit";
 import { filterByGender, getUserGender } from "@/services/products/genderFilter";
 import { reclassifyProducts } from "@/engine/productClassifier";
+import { filterVeiligeProducten } from "@/engine/productSafety";
 import { dedupeProductVariants } from "./dedupeProductVariants";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
@@ -70,7 +71,27 @@ class OutfitService {
 
       const rawProducts = dedupeProductVariants(data.map(this.mapDatabaseProduct));
 
-      const { classified: products } = reclassifyProducts(rawProducts);
+      const { classified } = reclassifyProducts(rawProducts);
+
+      // Veiligheidsnet hier, op de pool, en niet pas in candidateFilter.
+      // Reden: als engine v2 nul outfits geeft valt generateOutfits terug op
+      // generateRecommendationsFromAnswers (regel ~121), een derde engine die
+      // beoordeelProduct nergens aanroept. Zat de check alleen in
+      // candidateFilter.ts:238, dan omzeilde precies die terugval het net en
+      // kon er alsnog kinderkleding op /results komen. Nu krijgt elke
+      // afnemer van deze pool dezelfde grens.
+      //
+      // reclassifyProducts heeft de categorie op dit punt al genormaliseerd
+      // naar onder meer 'footwear', dus de maatcontrole voor kinderschoenen
+      // werkt hier zoals bedoeld.
+      const { veilig: products, geweigerd } = filterVeiligeProducten(classified);
+      if (geweigerd.length > 0) {
+        const perReden = geweigerd.reduce<Record<string, number>>((acc, g) => {
+          acc[g.reden] = (acc[g.reden] ?? 0) + 1;
+          return acc;
+        }, {});
+        console.log('[OutfitService] veiligheidsnet weigerde producten:', perReden);
+      }
 
       this.productsCache.set(cacheKey, products);
       this.cacheTimestamps.set(cacheKey, Date.now());

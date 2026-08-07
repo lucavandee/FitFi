@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { getSessionId } from '@/utils/sessionId';
 
 export function RefineStyleWidget() {
   const [skipped, setSkipped] = useState(false);
@@ -44,7 +45,10 @@ export function RefineStyleWidget() {
       } else {
         setSkipped(localSkipped);
 
-        const sessionId = localStorage.getItem('fitfi_session_id');
+        // sessionStorage, niet localStorage: sessionId.ts is de enige schrijver
+        // en schrijft daarheen. Deze regel las jarenlang een sleutel die nooit
+        // gezet werd en kreeg dus altijd null.
+        const sessionId = getSessionId();
         if (sessionId) {
           const { getSupabase } = await import('@/lib/supabase');
           const client = getSupabase();

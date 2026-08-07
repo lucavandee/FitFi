@@ -1,4 +1,5 @@
 import { requireSupabase } from "@/lib/supabase";
+import { getSessionId as gedeeldSessionId } from "@/utils/sessionId";
 
 export interface ColorProfile {
   undertone: "warm" | "cool" | "neutral";
@@ -178,7 +179,9 @@ function parseColorProfile(data: any): ColorProfile {
 
 function getSessionId(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem("fitfi_session_id") || sessionStorage.getItem("fitfi_session_id");
+  // Las eerst localStorage, waar nooit iets in wordt gezet, en pas daarna
+  // sessionStorage. Dat werkte toevallig, maar alleen dankzij de tweede helft.
+  return gedeeldSessionId();
 }
 
 export function buildSystemPrompt(context: NovaUserContext): string {
