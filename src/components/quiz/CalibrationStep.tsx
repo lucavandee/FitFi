@@ -12,6 +12,7 @@ import {
 } from '@/services/calibration/calibrationOutfitsV2';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
+import { getSessionId, isUuid } from '@/utils/sessionId';
 
 interface CalibrationStepProps {
   onComplete: () => void;
@@ -55,7 +56,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
   const loadCalibrationOutfits = async () => {
     try {
       const userId = user?.id;
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
 
       // Check cache first (only for non-adaptive mode)
       if (!USE_ENGINE_V2 && !USE_ADAPTIVE_SYSTEM) {
@@ -155,7 +156,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     setSwappingState({ outfitId, category });
 
     try {
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
       // Het alternatief komt uit dezelfde gekeurde v2-outfits, anders zou één
       // klik op vervangen het budget-, gender- en veiligheidsfilter omzeilen.
       const newItem = USE_ENGINE_V2
@@ -223,7 +224,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
     try {
       const userId = user?.id;
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
 
       if (USE_ADAPTIVE_SYSTEM) {
         // Use adaptive feedback recording
@@ -258,7 +259,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
     try {
       const userId = user?.id;
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
 
       // Apply calibration to profile
       await CalibrationService.applyCalibrationToProfile(

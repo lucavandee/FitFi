@@ -9,6 +9,7 @@ import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
 import { loadAdaptivePhotos } from '@/services/visualPreferences/adaptiveLoader';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
+import { getSessionId } from '@/utils/sessionId';
 
 const INITIAL_BATCH = 10;
 const NEXT_BATCH_SIZE = 8;
@@ -106,10 +107,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
       const { getSupabase } = await import('@/lib/supabase');
       const client = getSupabase();
       if (client) {
-        const sessionId = sessionStorage.getItem('fitfi_session_id') || crypto.randomUUID();
-        if (!sessionStorage.getItem('fitfi_session_id')) {
-          sessionStorage.setItem('fitfi_session_id', sessionId);
-        }
+        // Via de gedeelde helper: die garandeert een UUID en vervangt een
+        // niet-UUID die affiliate.ts er eerder in kan hebben gezet. De kolom
+        // style_swipes.session_id is UUID, dus een andere vorm faalt stil.
+        const sessionId = getSessionId();
         await client.from('style_swipes').insert({
           user_id: user?.id || null,
           session_id: !user ? sessionId : null,

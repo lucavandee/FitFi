@@ -6,6 +6,7 @@ import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenera
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
 import Spinner from '@/components/ui/Spinner';
+import { getSessionId } from '@/utils/sessionId';
 
 interface OutfitRemixerModalProps {
   isOpen: boolean;
@@ -59,7 +60,7 @@ export default function OutfitRemixerModal({
     setSelectedSuggestion(suggestion);
 
     try {
-      const sessionId = sessionStorage.getItem('fitfi_session_id');
+      const sessionId = getSessionId();
 
       const remixed = await AdaptiveOutfitRemixer.swapItem(
         currentOutfit,
