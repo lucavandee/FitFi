@@ -8,17 +8,28 @@ const NOW = () => new Date().toISOString();
 const outfitCache = new Map<string, { data: Outfit[]; ts: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 
-const FALLBACK_PRODUCTS: BoltProduct[] = [
-  { id: "p-1", title: "Witte Sneaker", name: "Witte Sneaker", brand: "Common Projects", price: 299, imageUrl: "/images/fallbacks/footwear.jpg", retailer: "Generic", url: "#", category: "footwear" },
-  { id: "p-2", title: "Licht Overshirt", name: "Licht Overshirt", brand: "ARKET", price: 89, imageUrl: "/images/fallbacks/top.jpg", retailer: "Generic", url: "#", category: "top" },
-  { id: "p-3", title: "Slim Jeans", name: "Slim Jeans", brand: "Levi's", price: 119, imageUrl: "/images/fallbacks/bottom.jpg", retailer: "Generic", url: "#", category: "bottom" },
-  { id: "p-4", title: "Wol Blend Coat", name: "Wol Blend Coat", brand: "COS", price: 190, imageUrl: "/images/fallbacks/default.jpg", retailer: "Generic", url: "#", category: "outerwear" },
-];
+/**
+ * Bewust leeg sinds 2026-08-07.
+ *
+ * Hier stonden vier verzonnen producten en twee verzonnen outfits: een "Witte
+ * Sneaker" van Common Projects voor 299 euro, een overshirt van ARKET, Levi's
+ * jeans, een COS-jas. Echte merknamen, verzonnen prijzen, stockfoto's uit
+ * public/images/fallbacks/ en `url: "#"`. Het dashboard toonde die bij elke
+ * storing als "Jouw outfits, op maat voor Smart Casual", met een klik naar een
+ * link die nergens heen ging.
+ *
+ * Dat is dezelfde misleiding als de seed-outfits die op 2026-08-06 van
+ * /results zijn gehaald: een gevulde pagina die niets waarmaakt, en hier met
+ * merknamen en bedragen erbij. De aanroepers geven nu een lege lijst door, en
+ * zowel het dashboard (DashboardPage.tsx:335) als de resultatenpagina hebben
+ * een eerlijke lege staat die de gebruiker vertelt wat er aan de hand is.
+ *
+ * De constanten blijven bestaan zodat het onderscheid tussen source "supabase"
+ * en source "fallback" intact blijft; dat signaal is bruikbaar, de nepdata niet.
+ */
+const FALLBACK_PRODUCTS: BoltProduct[] = [];
 
-const FALLBACK_OUTFITS: Outfit[] = [
-  { id: "o-1", title: "Smart Casual — Minimal", products: FALLBACK_PRODUCTS.slice(0,3) },
-  { id: "o-2", title: "Urban Clean", products: FALLBACK_PRODUCTS.slice(1,4) },
-];
+const FALLBACK_OUTFITS: Outfit[] = [];
 
 const FALLBACK_TRIBES: Tribe[] = [
   { id: "t-1", name: "Minimalists", slug: "minimalists", description: "Clean, tijdloos en functioneel.", member_count: 128, is_member: true, user_role: "owner" },
