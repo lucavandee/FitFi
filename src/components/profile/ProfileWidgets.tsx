@@ -17,7 +17,7 @@ import {
   ArrowRight,
   Palette
 } from 'lucide-react';
-import { BentoCard } from '../Dashboard/BentoGrid';
+import { BentoCard } from '../dashboard/BentoGrid';
 import { motion } from 'framer-motion';
 
 /**
