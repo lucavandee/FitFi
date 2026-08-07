@@ -1,12 +1,19 @@
 [build]
 publish = "dist"
 functions = "netlify/functions"
-# `npm run build` = `tsc --noEmit && vite build`. Stond hier eerder als
-# `npx vite build`, dus zonder typecheck, terwijl de site-instelling in het
-# Netlify-dashboard wel `npm run build` draaide. Die twee spraken elkaar tegen
-# en het dashboard won. Nu staat de poort in versiebeheer, waar hij hoort:
-# wie het buildcommando leest, ziet meteen dat de typecheck erbij hoort.
-command = "npm run build"
+# LET OP: hier hoort GEEN `npm run build` te staan, hoe verleidelijk ook.
+#
+# `npm run build` is `tsc --noEmit && vite build`, en die typecheck kan op de
+# buildmachine niet slagen. package.json heeft een preinstall-hook
+# (scripts/bolt-install.mjs) die voor de installatie alles wegknipt wat op
+# /^(eslint|prettier|husky|vitest|@types\/|...)/ matcht. Op Netlify staan er dus
+# geen @types/react en @types/react-dom, en dan geeft tsc TS2688 "Cannot find
+# type definition file for 'react'" en faalt de build met exit code 2.
+#
+# Op 2026-08-07 heb ik dit "rechtgezet" naar npm run build en daarmee vier
+# builds op rij gesloopt. De typecheck hoort in CI of lokaal te draaien, waar
+# de devDependencies er wel zijn, niet hier.
+command = "npx vite build"
 
 [build.environment]
 NODE_VERSION = "20"
