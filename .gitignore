@@ -232,3 +232,10 @@ desktop.ini
 .claude/
 CLAUDE-vault.md
 .gstack/
+
+# Netlify CLI-cache. Lokale staat, hoort niet in versiebeheer.
+# Stond hier tot 2026-08-07 wel in, met .netlify/state.json dat naar de site-id
+# van een heel ander project wees (55df01cf, niet fitfiai) en een netlify.toml
+# met drie absolute paden naar /Users/luc. De buildmachine genereert deze map
+# zelf; wie hem uitcheckt krijgt andermans instellingen.
+.netlify/
