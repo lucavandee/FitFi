@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { LS_KEYS } from "@/lib/quiz/types";
+import { getSessionId } from '@/utils/sessionId';
 
 export type SyncStatus = 'synced' | 'pending' | 'error' | 'unknown';
 
@@ -152,7 +153,7 @@ class ProfileSyncService {
           console.warn('[ProfileSync] ⚠️ No profile found in database for user');
         }
       } else {
-        const sessionId = localStorage.getItem('ff_session_id');
+        const sessionId = getSessionId();
         console.log('[ProfileSync] No user, checking session:', sessionId?.substring(0, 8));
 
         if (sessionId) {
@@ -219,11 +220,8 @@ class ProfileSyncService {
       }
 
       const { data: { user } } = await client.auth.getUser();
-      const sessionId = localStorage.getItem('ff_session_id') || crypto.randomUUID();
+      const sessionId = getSessionId();
 
-      if (!localStorage.getItem('ff_session_id')) {
-        localStorage.setItem('ff_session_id', sessionId);
-      }
 
       console.log('[ProfileSync] 💾 Starting sync...', {
         hasUser: !!user,

@@ -3,6 +3,7 @@ import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 import type { ArchetypeWeights } from '@/types/style';
 import { ColorHarmonyService } from './colorHarmony';
 import { filterVeiligeProducten, type SafetyInput } from '@/engine/productSafety';
+import { getSessionId } from '@/utils/sessionId';
 
 export interface CalibrationOutfitItem {
   id: string;
@@ -543,7 +544,7 @@ export class CalibrationService {
   private static async getBrandAffinityMap(supabase: any): Promise<Record<string, number>> {
     try {
       const userId = (await supabase.auth.getUser()).data.user?.id;
-      const sessionId = sessionStorage?.getItem?.('fitfi_session_id');
+      const sessionId = getSessionId();
 
       if (!userId && !sessionId) {
         return {};
