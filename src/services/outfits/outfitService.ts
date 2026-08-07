@@ -11,6 +11,23 @@ import type { Outfit } from "@/engine/types";
 // Outfit.explanation is al verplicht (string); geen aparte optionele override nodig.
 export type GeneratedOutfit = Outfit;
 
+/**
+ * De productcatalogus kon niet worden geladen: geen client, een queryfout, of
+ * nul rijen terug.
+ *
+ * Bestaat om dit te kunnen onderscheiden van "de catalogus is geladen maar er
+ * past niets bij dit profiel". Beide gaven eerder een lege lijst, waardoor de
+ * resultatenpagina bij een platte database aan de gebruiker vertelde dat zijn
+ * filters te strak stonden. Die deed dan de quiz opnieuw en kreeg opnieuw
+ * niets, zonder ooit te horen dat het aan onze kant lag.
+ */
+export class CatalogusOnbereikbaar extends Error {
+  constructor(reden: string) {
+    super(`Catalogus onbereikbaar: ${reden}`);
+    this.name = 'CatalogusOnbereikbaar';
+  }
+}
+
 class OutfitService {
   private productsCache: Map<string, Product[]> = new Map();
   private cacheTimestamps: Map<string, number> = new Map();
@@ -27,8 +44,7 @@ class OutfitService {
 
     const client = supabase();
     if (!client) {
-      console.warn('[OutfitService] No Supabase client available');
-      return [];
+      throw new CatalogusOnbereikbaar('geen Supabase-client beschikbaar');
     }
 
     try {
@@ -45,13 +61,11 @@ class OutfitService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('[OutfitService] Error fetching products:', error);
-        return [];
+        throw new CatalogusOnbereikbaar(error.message || 'queryfout op products');
       }
 
       if (!data || data.length === 0) {
-        console.warn('[OutfitService] No products in database');
-        return [];
+        throw new CatalogusOnbereikbaar('nul producten in de catalogus');
       }
 
       const rawProducts = dedupeProductVariants(data.map(this.mapDatabaseProduct));
@@ -64,8 +78,11 @@ class OutfitService {
       console.log(`[OutfitService] Loaded ${products.length} ${gender || 'all'}-gender classified products`);
       return products;
     } catch (error) {
+      if (error instanceof CatalogusOnbereikbaar) throw error;
       console.error('[OutfitService] Exception fetching products:', error);
-      return [];
+      throw new CatalogusOnbereikbaar(
+        error instanceof Error ? error.message : 'onbekende fout bij ophalen'
+      );
     }
   }
 
@@ -125,6 +142,10 @@ class OutfitService {
       console.log(`[OutfitService] Successfully generated ${outfitsWithExplanations.length} outfits`);
       return outfitsWithExplanations;
     } catch (error) {
+      // Bewust doorlaten: een onbereikbare catalogus is iets anders dan een
+      // profiel waar geen outfit bij past, en de gebruiker hoort niet te lezen
+      // dat zijn filters te strak staan terwijl de database plat ligt.
+      if (error instanceof CatalogusOnbereikbaar) throw error;
       console.error('[OutfitService] Error generating outfits:', error);
       return [];
     }

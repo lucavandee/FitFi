@@ -386,7 +386,7 @@ export default function EnhancedResultsPage() {
     return 6;
   }, [user]);
 
-  const { data: realOutfits, loading: outfitsLoading } = useOutfits({
+  const { data: realOutfits, loading: outfitsLoading, error: outfitsError } = useOutfits({
     archetype: archetypeKey,
     secondaryArchetype: archetypeDetectionResult?.secondary || undefined,
     mixFactor: archetypeDetectionResult?.secondary ? 0.3 : 0,
@@ -1493,23 +1493,37 @@ export default function EnhancedResultsPage() {
                   <Shirt className="w-7 h-7 text-[#A85740]" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-lg font-semibold text-[#1A1A1A] mb-2">Geen outfits gevonden</p>
+                  <p className="text-lg font-semibold text-[#1A1A1A] mb-2">
+                    {outfitsError ? 'Even niet beschikbaar' : 'Geen outfits gevonden'}
+                  </p>
                   <p className="text-sm text-[#4A4A4A] max-w-sm mx-auto leading-relaxed">
                     {(() => {
-                      const budget = answers?.budget ?? answers?.budgetRange;
+                      // Ligt het aan ons, dan zeggen we dat. Eerder kreeg de
+                      // gebruiker bij een onbereikbare catalogus te horen dat
+                      // zijn filters te strak stonden, waarna hij de quiz
+                      // opnieuw deed en weer niets kreeg.
+                      if (outfitsError) {
+                        return 'We kunnen de collectie nu niet laden. Dat ligt aan ons, niet aan je antwoorden. Probeer het over een paar minuten opnieuw.';
+                      }
+                      // answers.budget is een object {min, max}; de oude check
+                      // `budget < 50` op dat object was altijd false, dus deze
+                      // tak werd nooit bereikt. parsedBudget kent beide vormen.
+                      const maxBudget = parsedBudget?.max;
                       const gender = answers?.gender;
-                      if (budget && budget < 50) return `Je budget van €${budget} is erg laag. Verhoog het, of kies "Geen voorkeur".`;
+                      if (typeof maxBudget === 'number' && maxBudget > 0 && maxBudget < 50) {
+                        return `Je budget van €${maxBudget} is te laag voor een complete outfit. Verhoog het, of kies "Geen voorkeur".`;
+                      }
                       if (gender === 'non-binary' || gender === 'prefer-not-to-say') return 'We hebben nog beperkt aanbod voor jouw gendervoorkeur. Doe de quiz opnieuw en kies een ruimere filteroptie.';
                       return 'We konden geen complete outfits samenstellen. Waarschijnlijk staan je filters te strak. Doe de quiz opnieuw met ruimere voorkeuren.';
                     })()}
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate("/onboarding")}
+                  onClick={() => (outfitsError ? window.location.reload() : navigate("/onboarding"))}
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#A85740] text-white rounded-xl text-sm font-bold hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-offset-2"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  Stijlquiz opnieuw
+                  {outfitsError ? 'Opnieuw proberen' : 'Stijlquiz opnieuw'}
                 </button>
               </div>
             ) : galleryMode === 'swipe' ? (
