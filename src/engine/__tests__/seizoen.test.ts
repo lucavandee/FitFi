@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { seizoenVan, seizoenenBotsen } from '/Users/luc/Desktop/FitFi-clone/src/engine/productSafety';
+import { seizoenVan, seizoenenBotsen } from '@/engine/productSafety';
 describe('seizoen', () => {
   it('herkent winter en zomer', () => {
     expect(seizoenVan('Gevoerde winterlaars met bontvoering')).toBe('winter');

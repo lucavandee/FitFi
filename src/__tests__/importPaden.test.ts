@@ -29,6 +29,14 @@ const WORTEL = path.resolve(__dirname, '../..');
 const EXTENSIES = ['', '.ts', '.tsx', '.js', '.jsx', '.json', '/index.ts', '/index.tsx'];
 const IMPORT_PATROON = /from\s+['"](@\/[^'"]+)['"]/g;
 
+/*
+ * Absolute paden zijn een aparte val. seizoen.test.ts importeerde
+ * '/Users/luc/Desktop/FitFi-clone/src/engine/productSafety'. Dat typecheckt
+ * prima op de machine waar dat pad bestaat en nergens anders. De CI ving het
+ * op zijn eerste run; deze test vangt het voortaan lokaal.
+ */
+const ABSOLUUT_PATROON = /from\s+['"](\/(?:Users|home|var|opt)\/[^'"]+)['"]/g;
+
 /** Alles wat git kent, exact zoals git het spelt. Vaste argumenten, geen shell. */
 function bestandenVolgensGit(): Set<string> {
   const uitvoer = execFileSync('git', ['ls-files', '-z'], {
@@ -41,12 +49,30 @@ function bestandenVolgensGit(): Set<string> {
 
 describe('import-paden komen exact overeen met wat git kent', () => {
   const inGit = bestandenVolgensGit();
+  // Testbestanden bewust MEE. Ze werden hier eerst uitgesloten, en precies
+  // daar zat de fout die de CI ving: seizoen.test.ts importeerde met een
+  // absoluut pad naar een machine. Een bewaking die de plek overslaat waar het
+  // misging, is geen bewaking.
   const bronnen = [...inGit].filter(
-    (f) => f.startsWith('src/') && /\.tsx?$/.test(f) && !f.includes('__tests__')
+    (f) => f.startsWith('src/') && /\.tsx?$/.test(f)
   );
 
   it('git kent bronbestanden om te controleren', () => {
     expect(bronnen.length).toBeGreaterThan(100);
+  });
+
+  it('geen enkele import gebruikt een absoluut pad', () => {
+    const fouten: string[] = [];
+    for (const bestand of bronnen) {
+      const absoluut = path.join(WORTEL, bestand);
+      if (!fs.existsSync(absoluut)) continue;
+      const inhoud = fs.readFileSync(absoluut, 'utf8');
+      for (const treffer of inhoud.matchAll(ABSOLUUT_PATROON)) {
+        const regel = inhoud.slice(0, treffer.index).split('\n').length;
+        fouten.push(`${bestand}:${regel} importeert ${treffer[1]}`);
+      }
+    }
+    expect(fouten, `\n${fouten.join('\n')}\n`).toEqual([]);
   });
 
   it('elke @/-import bestaat in git met exact die hoofdletters', () => {
