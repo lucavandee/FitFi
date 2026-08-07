@@ -1,0 +1,56 @@
+# Poort vóór de merge: typecheck, tests en build.
+#
+# Waarom hier en niet in de Netlify-build: netlify.toml draait `npx vite build`
+# zonder typecheck, en dat is bewust zo (zie de toelichting in dat bestand).
+# Een poort die pas bij het deployen afgaat, legt bovendien de site plat in
+# plaats van een pull request tegen te houden. Op 2026-08-07 kostte precies dat
+# vier gefaalde productiebuilds op rij.
+#
+# --ignore-scripts is niet optioneel: scripts/bolt-install.mjs is een
+# preinstall-hook die package.json op schijf herschrijft en dev-tooling
+# wegknipt. Zonder deze vlag draait de suite hier zonder vitest en zonder
+# @types/react.
+#
+# Deze workflow leest bewust GEEN gegevens uit de gebeurtenis (geen titels,
+# beschrijvingen of branchnamen in een run-stap). Alles wat hier draait staat
+# vast in dit bestand, dus er is geen weg naar binnen via een pull request.
+
+name: Controle
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  controle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Afhankelijkheden installeren
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Tests
+        run: npx vitest run --reporter=basic
+
+      # Dit is het commando dat Netlify ook draait. Faalt het hier, dan faalt
+      # de deploy straks ook, en dan weet je het vóór de merge.
+      - name: Build
+        run: npx vite build

@@ -14,7 +14,6 @@ import {
   Info,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabaseClient";
 import { useTestimonials } from "@/hooks/useTestimonials";
 
 /* ─── Scroll-reveal wrapper ─── */
@@ -54,24 +53,13 @@ const marqueeCSS = `
 export default function LandingPage() {
   const navigate = useNavigate();
 
-  /* Preserve existing data-fetching */
-  const { data: todayCount } = useQuery({
-    queryKey: ["profiles-today"],
-    queryFn: async () => {
-      const sb = supabase();
-      if (!sb) return 0;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const { count, error } = await sb
-        .from("style_profiles")
-        .select("*", { count: "exact", head: true })
-        .gte("created_at", today.toISOString());
-      if (error) throw error;
-      return count || 0;
-    },
-    staleTime: 60000,
-    refetchInterval: 60000,
-  });
+  /*
+   * Hier stond een useQuery die het aantal style_profiles van vandaag telde.
+   * Die uitkomst werd nergens gerenderd: een Supabase-request bij elk bezoek
+   * aan de drukste pagina, waarvan het antwoord werd weggegooid. Bovendien gaf
+   * hij voor uitgelogde bezoekers altijd 0 terug, want RLS staat anon geen
+   * telling op style_profiles toe.
+   */
 
   const { testimonials } = useTestimonials();
 
@@ -124,12 +112,13 @@ export default function LandingPage() {
    * (commits 7b1479f4 en a29a2595) omdat het getal nergens op steunt. Deze
    * ene stond nog.
    *
-   * "2.400+ gebruikers" laat ik staan: dat kan kloppen, maar ik kon het niet
-   * controleren omdat RLS de telling op style_profiles blokkeert voor anon.
-   * Als dat cijfer niet klopt, hoort het hier ook weg.
+   * "2.400+ gebruikers" is er op 2026-08-07 ook afgehaald. Niet omdat het
+   * aantoonbaar onwaar is, maar omdat het niet te controleren viel: RLS staat
+   * anon geen telling op style_profiles toe. Naast twee claims die wel
+   * aantoonbaar onwaar bleken, is een oncontroleerbaar getal geen houdbare
+   * positie. Klopt het wel, zet het dan terug met de bron erbij.
    */
   const marqueeItems = [
-    { bold: "2.400+", rest: "gebruikers" },
     { bold: "~5 min", rest: "invultijd" },
     { bold: "Gratis", rest: "geen creditcard" },
     { bold: "Persoonlijk", rest: "kleurpalet" },

@@ -41,6 +41,14 @@ export interface NovaSwipeInsight {
   created_at?: string;
 }
 
+/** Fisher-Yates, in-place. */
+function schud<T>(lijst: T[]): void {
+  for (let i = lijst.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [lijst[i], lijst[j]] = [lijst[j], lijst[i]];
+  }
+}
+
 export class VisualPreferenceService {
   private static getClient() {
     const client = getSupabase();
@@ -86,6 +94,10 @@ export class VisualPreferenceService {
 
     let photos = (data && data.length > 0) ? data : [];
 
+    // Wordt true wanneer we hieronder bewust een gebalanceerde volgorde
+    // opbouwen; de globale shuffle slaat die volgorde dan over.
+    let alGebalanceerd = false;
+
     // Hard gender filter: always strip photos belonging to the opposite gender.
     // Computed independently of gendersToTry so any future fallback paths can't bypass it.
     let allowedGenders: string[] | null = null;
@@ -97,29 +109,56 @@ export class VisualPreferenceService {
         (p: MoodPhoto) => !p.gender || allowedGenders!.includes(p.gender)
       );
     } else if (photos.length > 0) {
-      // Gender onbekend, non-binary of niet-opgegeven. Hiervoor bleef
-      // allowedGenders leeg en gebeurde er dus GEEN filtering: de gebruiker
-      // kreeg heren- en dameskleding door elkaar te swipen, wat het profiel
-      // vervuilt en verwarrend oogt. Nu eerst uitsluitend unisex tonen, en
-      // alleen terugvallen op de volledige set wanneer dat te weinig
-      // materiaal oplevert om fatsoenlijk te kunnen swipen.
-      const MIN_FOTOS = 12;
+      // Gender onbekend, non-binary of niet opgegeven.
+      //
+      // Eerst uitsluitend unisex, want dat is wat deze gebruiker vraagt. Maar
+      // gemeten op 2026-08-07 zijn er 86 actieve mood photos: 44 male, 42
+      // female, NUL unisex. De labels komen uit de uploadmap (/mood-photos/male/
+      // en /female/), niemand heeft foto's ooit op genderneutraliteit
+      // beoordeeld. Zolang dat zo is haalt deze tak zijn drempel nooit.
+      //
+      // De terugval is daarom geen randgeval maar het normale pad, en dan moet
+      // hij ook goed zijn. Een simpele shuffle over 86 foto's kan zomaar acht
+      // herenbeelden achter elkaar geven, en dan lijkt het alsof we een keuze
+      // hebben gemaakt die we niet hebben gemaakt. Daarom afwisselend een uit
+      // elke groep, zodat het beeld van begin af aan gemengd is.
+      const MIN_UNISEX = 12;
       const unisex = photos.filter((p: MoodPhoto) => !p.gender || p.gender === 'unisex');
-      if (unisex.length >= MIN_FOTOS) {
+
+      if (unisex.length >= MIN_UNISEX) {
         photos = unisex;
       } else {
+        const mannen = photos.filter((p: MoodPhoto) => p.gender === 'male');
+        const vrouwen = photos.filter((p: MoodPhoto) => p.gender === 'female');
+        const rest = photos.filter(
+          (p: MoodPhoto) => p.gender !== 'male' && p.gender !== 'female'
+        );
+
+        // Binnen elke groep schudden, daarna om en om samenvoegen. De globale
+        // shuffle verderop wordt hiervoor overgeslagen, want die zou de balans
+        // die we net hebben aangebracht meteen weer weggooien.
+        schud(mannen);
+        schud(vrouwen);
+        schud(rest);
+
+        const gemengd: MoodPhoto[] = [];
+        for (let i = 0; i < Math.max(mannen.length, vrouwen.length); i++) {
+          if (mannen[i]) gemengd.push(mannen[i]);
+          if (vrouwen[i]) gemengd.push(vrouwen[i]);
+        }
+        photos = [...gemengd, ...rest];
+        alGebalanceerd = true;
+
         console.warn(
-          `[VisualPreferenceService] Slechts ${unisex.length} unisex-foto's beschikbaar; ` +
-          'val terug op de volledige set. Voeg meer unisex mood photos toe.'
+          `[VisualPreferenceService] ${unisex.length} unisex-foto's, minder dan ${MIN_UNISEX}. ` +
+          `Toon een gebalanceerde mix van ${mannen.length} heren- en ${vrouwen.length} damesbeelden. ` +
+          'Label minstens 12 foto\'s als unisex om dit pad te verbeteren.'
         );
       }
     }
 
-    if (shuffle) {
-      for (let i = photos.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [photos[i], photos[j]] = [photos[j], photos[i]];
-      }
+    if (shuffle && !alGebalanceerd) {
+      schud(photos);
     }
 
     return photos;
