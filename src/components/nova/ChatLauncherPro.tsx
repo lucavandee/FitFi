@@ -3,10 +3,13 @@ import Portal from "@/components/system/Portal";
 import { useNovaChat } from "./NovaChatProvider";
 
 export default function ChatLauncherPro() {
-  const { open, setOpen, unread } = useNovaChat();
+  const { isOpen, setOpen } = useNovaChat();
+  // NovaChatProvider houdt nog geen unread-count bij; badge blijft daarom verborgen
+  // tot die telling bestaat (voorkomt een altijd-undefined vergelijking).
+  const unread = 0;
 
   // Launcher niet tonen wanneer het panel open is (voorkomt overlap)
-  if (open) return null;
+  if (isOpen) return null;
 
   return (
     <Portal id="fitfi-portal-launcher-pro" z={2147483647}>

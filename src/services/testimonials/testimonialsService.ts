@@ -34,6 +34,10 @@ export interface UpdateTestimonialInput extends Partial<CreateTestimonialInput> 
  * Fetch active testimonials for public display
  */
 export async function getActiveTestimonials(): Promise<Testimonial[]> {
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return [];
+  }
   const { data, error } = await supabase
     .from('testimonials')
     .select('*')
@@ -53,6 +57,9 @@ export async function getActiveTestimonials(): Promise<Testimonial[]> {
  * Fetch all testimonials (admin only)
  */
 export async function getAllTestimonials(): Promise<Testimonial[]> {
+  if (!supabase) {
+    throw new Error('Supabase client not initialized');
+  }
   const { data, error } = await supabase
     .from('testimonials')
     .select('*')
@@ -71,6 +78,9 @@ export async function getAllTestimonials(): Promise<Testimonial[]> {
  * Create a new testimonial (admin only)
  */
 export async function createTestimonial(input: CreateTestimonialInput): Promise<Testimonial> {
+  if (!supabase) {
+    throw new Error('Supabase client not initialized');
+  }
   const { data: user } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
@@ -94,6 +104,9 @@ export async function createTestimonial(input: CreateTestimonialInput): Promise<
  * Update a testimonial (admin only)
  */
 export async function updateTestimonial({ id, ...updates }: UpdateTestimonialInput): Promise<Testimonial> {
+  if (!supabase) {
+    throw new Error('Supabase client not initialized');
+  }
   const { data, error } = await supabase
     .from('testimonials')
     .update(updates)
@@ -113,6 +126,9 @@ export async function updateTestimonial({ id, ...updates }: UpdateTestimonialInp
  * Delete a testimonial (admin only)
  */
 export async function deleteTestimonial(id: string): Promise<void> {
+  if (!supabase) {
+    throw new Error('Supabase client not initialized');
+  }
   const { error } = await supabase
     .from('testimonials')
     .delete()

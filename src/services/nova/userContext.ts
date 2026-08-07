@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { requireSupabase } from "@/lib/supabase";
 
 export interface ColorProfile {
   undertone: "warm" | "cool" | "neutral";
@@ -56,6 +56,8 @@ export async function fetchUserContext(
   userId?: string
 ): Promise<NovaUserContext | null> {
   try {
+    const supabase = requireSupabase();
+
     if (!userId) {
       const sessionId = getSessionId();
       if (!sessionId) return null;

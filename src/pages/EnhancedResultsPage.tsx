@@ -7,7 +7,7 @@ import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers,
 import toast from 'react-hot-toast';
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
-import { getSeedOutfits, OutfitSeed } from "@/lib/quiz/seeds";
+import type { OutfitSeed } from "@/lib/quiz/seeds";
 import { useOutfits } from "@/hooks/useOutfits";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import { useUser } from "@/context/UserContext";
@@ -69,7 +69,7 @@ class SectionErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return this.props.fallback ?? (
-        <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 text-center text-sm text-[#8A8A8A]">
+        <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 text-center text-sm text-[#6E6E6E]">
           Dit onderdeel kon niet worden geladen.
         </div>
       );
@@ -190,8 +190,7 @@ function getOutfitOccasion(outfit: any, userOccasions: string[]): string | null 
 }
 
 const AnimatedSection = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const isVisible = useFadeInOnVisible(ref);
+  const { ref, visible: isVisible } = useFadeInOnVisible<HTMLDivElement>();
 
   return (
     <motion.div
@@ -387,7 +386,7 @@ export default function EnhancedResultsPage() {
     return 6;
   }, [user]);
 
-  const { data: realOutfits, loading: outfitsLoading } = useOutfits({
+  const { data: realOutfits, loading: outfitsLoading, error: outfitsError } = useOutfits({
     archetype: archetypeKey,
     secondaryArchetype: archetypeDetectionResult?.secondary || undefined,
     mixFactor: archetypeDetectionResult?.secondary ? 0.3 : 0,
@@ -404,27 +403,18 @@ export default function EnhancedResultsPage() {
     answers: answers ?? undefined,
   });
 
-  const seeds: OutfitSeed[] = React.useMemo(() => {
-    try {
-      return getSeedOutfits(activeColorProfile, archetypeName) || [];
-    } catch {
-      return [];
-    }
-  }, [activeColorProfile, archetypeName]);
-
+  // Hier stond een terugval op getSeedOutfits wanneer de engine niets opleverde.
+  // Een OutfitSeed heeft wel `pieces` maar geen `products`, dus die kaarten
+  // toonden een titel, een matchscore en productCount 0, en de detailmodal zei
+  // "Productlinks worden binnenkort geladen". De gebruiker kreeg dus outfits te
+  // zien die geen outfits waren, met vaste Engelse titels als "Office Minimal",
+  // gepresenteerd alsof ze bij zijn profiel waren samengesteld. Liever een
+  // eerlijke lege staat (die staat er al, verderop) dan een gevulde pagina die
+  // niets waarmaakt.
   const allOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
-    try {
-      if (realOutfits && Array.isArray(realOutfits) && realOutfits.length > 0) {
-        return realOutfits;
-      }
-      if (seeds && Array.isArray(seeds) && seeds.length > 0) {
-        return seeds;
-      }
-      return [];
-    } catch {
-      return [];
-    }
-  }, [realOutfits, seeds]);
+    if (!Array.isArray(realOutfits)) return [];
+    return realOutfits;
+  }, [realOutfits]);
 
   // Filter outfits by occasion when ?occasion= param is set (from dashboard click)
   const displayOutfits: (Outfit | OutfitSeed)[] = React.useMemo(() => {
@@ -624,7 +614,7 @@ export default function EnhancedResultsPage() {
                 className="flex flex-col items-center gap-3"
               >
                 {/* Eyebrow */}
-                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A] mb-4">
+                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740] mb-4">
                   Jouw stijlrapport
                 </p>
 
@@ -666,7 +656,7 @@ export default function EnhancedResultsPage() {
                         }
                       });
                     }}
-                    className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                    className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                   >
                     <Eye className="w-4 h-4 text-white" />
                     Bekijk outfits
@@ -674,7 +664,7 @@ export default function EnhancedResultsPage() {
 
                   <button
                     onClick={() => navigate('/onboarding?step=redo')}
-                    className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
+                    className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Quiz opnieuw
@@ -682,7 +672,7 @@ export default function EnhancedResultsPage() {
 
                   <button
                     onClick={sharePage}
-                    className="w-10 h-10 rounded-full border border-[#E5E5E5] hover:border-[#C2654A] flex items-center justify-center transition-colors duration-200"
+                    className="w-10 h-10 rounded-full border border-[#E5E5E5] hover:border-[#A85740] flex items-center justify-center transition-colors duration-200"
                     aria-label="Delen"
                   >
                     <Share2 className="w-4 h-4 text-[#4A4A4A]" />
@@ -691,7 +681,7 @@ export default function EnhancedResultsPage() {
               </motion.div>
             ) : (
               <div className="py-4 text-left">
-                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A] mb-4">
+                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740] mb-4">
                   Style Report
                 </p>
                 <h1
@@ -703,7 +693,7 @@ export default function EnhancedResultsPage() {
                 <p className="text-base text-[#4A4A4A] mb-8 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
                 <NavLink
                   to="/onboarding"
-                  className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 >
                   Begin gratis
                   <ArrowRight className="w-4 h-4" />
@@ -733,18 +723,18 @@ export default function EnhancedResultsPage() {
                         setActiveTab(tab.id);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
+                      className={`relative flex items-center gap-1.5 py-4 px-6 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-inset ${
                         isActive
-                          ? 'font-semibold text-[#C2654A] border-[#C2654A]'
-                          : 'font-medium text-[#8A8A8A] border-transparent hover:text-[#4A4A4A]'
+                          ? 'font-semibold text-[#A85740] border-[#A85740]'
+                          : 'font-medium text-[#6E6E6E] border-transparent hover:text-[#4A4A4A]'
                       }`}
                     >
                       {tab.label}
                       {tab.sub && (
                         <span className={`ml-1.5 text-xs font-semibold px-2 py-0.5 rounded-full transition-colors duration-200 ${
                           isActive
-                            ? 'bg-[#F4E8E3] text-[#C2654A]'
-                            : 'bg-[#E5E5E5] text-[#8A8A8A]'
+                            ? 'bg-[#F4E8E3] text-[#A85740]'
+                            : 'bg-[#E5E5E5] text-[#6E6E6E]'
                         }`}>
                           {tab.sub}
                         </span>
@@ -792,7 +782,7 @@ export default function EnhancedResultsPage() {
             <div className="max-w-5xl mx-auto">
               <AnimatedSection>
                 <div className="text-center mb-10">
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
                     Jouw top outfits
                   </p>
                   <h2
@@ -807,7 +797,7 @@ export default function EnhancedResultsPage() {
                   >
                     Direct aan de slag
                   </h2>
-                  <p className="text-base text-[#8A8A8A] mt-2">
+                  <p className="text-base text-[#6E6E6E] mt-2">
                     Outfits samengesteld op basis van jouw stijlprofiel
                   </p>
                 </div>
@@ -903,7 +893,7 @@ export default function EnhancedResultsPage() {
                         setActiveTab('outfits');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className="text-[#C2654A] hover:text-[#A8513A] font-semibold text-sm inline-flex items-center gap-2 transition-colors duration-200"
+                      className="text-[#A85740] hover:text-[#9A503B] font-semibold text-sm inline-flex items-center gap-2 transition-colors duration-200"
                     >
                       Bekijk alle outfits
                       <ArrowRight className="w-4 h-4" />
@@ -920,34 +910,34 @@ export default function EnhancedResultsPage() {
         <section className="py-6 sm:py-8 border-t border-[#E5E5E5]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-3">Verder verkennen</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-3">Verder verkennen</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 mb-8">
                 <button
                   onClick={() => { setActiveTab('stijl-dna'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#A85740] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F4E8E3] transition-colors duration-200">
-                    <Palette className="w-5 h-5 text-[#C2654A]" />
+                    <Palette className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-base font-semibold text-[#1A1A1A]">Stijl DNA</p>
-                    <p className="text-sm text-[#8A8A8A]">Kleurprofiel, archetype &amp; tips</p>
+                    <p className="text-sm text-[#6E6E6E]">Kleurprofiel, archetype &amp; tips</p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 ml-auto group-hover:text-[#C2654A] transition-colors duration-200" />
+                  <ArrowRight className="w-5 h-5 text-[#6E6E6E] shrink-0 ml-auto group-hover:text-[#A85740] transition-colors duration-200" />
                 </button>
 
                 <button
                   onClick={() => { setActiveTab('outfits'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#C2654A] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                  className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:border-[#A85740] transition-all duration-300 flex items-center gap-4 cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F4E8E3] transition-colors duration-200">
-                    <Shirt className="w-5 h-5 text-[#C2654A]" />
+                    <Shirt className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-base font-semibold text-[#1A1A1A]">Outfits</p>
-                    <p className="text-sm text-[#8A8A8A]">{displayOutfits.length} looks voor jouw stijl</p>
+                    <p className="text-sm text-[#6E6E6E]">{displayOutfits.length} looks voor jouw stijl</p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-[#8A8A8A] shrink-0 ml-auto group-hover:text-[#C2654A] transition-colors duration-200" />
+                  <ArrowRight className="w-5 h-5 text-[#6E6E6E] shrink-0 ml-auto group-hover:text-[#A85740] transition-colors duration-200" />
                 </button>
               </div>
             </div>
@@ -978,7 +968,7 @@ export default function EnhancedResultsPage() {
               {/* Section header */}
               <AnimatedSection>
                 <div>
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-2">
                     Stijl DNA
                   </p>
                   <h2
@@ -993,7 +983,7 @@ export default function EnhancedResultsPage() {
                   >
                     {archetypeDisplayNL} · {getSeasonDisplayName(activeColorProfile)}
                   </h2>
-                  <p className="text-sm text-[#8A8A8A] mt-2">
+                  <p className="text-sm text-[#6E6E6E] mt-2">
                     {answers?.photoUrl
                       ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
                       : 'Op basis van jouw kleurvoorkeur uit de quiz'}
@@ -1008,34 +998,34 @@ export default function EnhancedResultsPage() {
 
                     {/* Color profile column */}
                     <div className="p-5 sm:p-6">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-4">Kleurprofiel</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-4">Kleurprofiel</p>
                       <div className="divide-y divide-[#E5E5E5]">
                         <div className="flex items-center justify-between py-3 first:pt-0">
-                          <span className="text-sm text-[#8A8A8A]">Temperatuur</span>
+                          <span className="text-sm text-[#6E6E6E]">Temperatuur</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #C2654A, #D4913D)' }} aria-hidden="true" />
+                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #A85740, #D4913D)' }} aria-hidden="true" />
                             <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('temperature', activeColorProfile.temperature)}</span>
                           </div>
                         </div>
                         <div className="flex items-center justify-between py-3">
-                          <span className="text-sm text-[#8A8A8A]">Contrast</span>
+                          <span className="text-sm text-[#6E6E6E]">Contrast</span>
                           <div className="flex items-center gap-2">
                             <div className="flex gap-0.5 w-20" aria-hidden="true">
                               <div className="h-1.5 flex-1 rounded-l-full" style={{ background: 'linear-gradient(to right, #F4E8E3, #D4917A)' }} />
-                              <div className="h-1.5 flex-1" style={{ background: 'linear-gradient(to right, #C2654A, #A8513A)' }} />
+                              <div className="h-1.5 flex-1" style={{ background: 'linear-gradient(to right, #A85740, #9A503B)' }} />
                               <div className="h-1.5 flex-1 rounded-r-full" style={{ background: 'linear-gradient(to right, #8B3D2E, #5C2820)' }} />
                             </div>
                             <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('contrast', activeColorProfile.contrast)}</span>
                           </div>
                         </div>
                         <div className="flex items-center justify-between py-3">
-                          <span className="text-sm text-[#8A8A8A]">Seizoen</span>
+                          <span className="text-sm text-[#6E6E6E]">Seizoen</span>
                           <div className="flex items-center gap-2">
                             <div className="flex gap-1" aria-hidden="true">
                               {(['zomer', 'herfst', 'winter', 'lente'] as const).map((s) => (
                                 <div
                                   key={s}
-                                  className={`h-4 w-4 rounded transition-opacity duration-200 ${activeColorProfile.season === s ? 'opacity-100 ring-1 ring-[#C2654A]/20 ring-offset-1' : 'opacity-25'}`}
+                                  className={`h-4 w-4 rounded transition-opacity duration-200 ${activeColorProfile.season === s ? 'opacity-100 ring-1 ring-[#A85740]/20 ring-offset-1' : 'opacity-25'}`}
                                   style={{ background: s === 'zomer' ? 'linear-gradient(135deg, #d4e8c2, #a8cc8a)' : s === 'herfst' ? 'linear-gradient(135deg, #e8c4a2, #c47a3a)' : s === 'winter' ? 'linear-gradient(135deg, #d0dce8, #7a9ab8)' : 'linear-gradient(135deg, #e8d4c0, #c4956a)' }}
                                 />
                               ))}
@@ -1044,9 +1034,9 @@ export default function EnhancedResultsPage() {
                           </div>
                         </div>
                         <div className="flex items-center justify-between py-3 last:pb-0">
-                          <span className="text-sm text-[#8A8A8A]">Chroma</span>
+                          <span className="text-sm text-[#6E6E6E]">Chroma</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #C2654A, #8B3D2E)' }} aria-hidden="true" />
+                            <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #F4E8E3, #A85740, #8B3D2E)' }} aria-hidden="true" />
                             <span className="text-sm font-medium text-[#1A1A1A] min-w-[4rem] text-right">{formatStyleDNAValue('chroma', activeColorProfile.chroma)}</span>
                           </div>
                         </div>
@@ -1055,12 +1045,12 @@ export default function EnhancedResultsPage() {
 
                     {/* Key insights column */}
                     <div className="p-5 sm:p-6">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-4">Inzichten</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-4">Inzichten</p>
                       <ul className="space-y-3">
                         {activeColorProfile.notes && activeColorProfile.notes.map((note, i) => (
                           <li key={i} className="flex items-start gap-2.5">
                             <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <Check className="w-3 h-3 text-[#C2654A]" strokeWidth={3} aria-hidden="true" />
+                              <Check className="w-3 h-3 text-[#A85740]" strokeWidth={3} aria-hidden="true" />
                             </div>
                             <span className="text-sm text-[#1A1A1A] leading-snug">{note}</span>
                           </li>
@@ -1085,7 +1075,7 @@ export default function EnhancedResultsPage() {
                   <div className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-5 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0">
-                        <Sparkles className="w-4 h-4 text-[#C2654A]" />
+                        <Sparkles className="w-4 h-4 text-[#A85740]" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">Persoonlijk kleurenpalet op basis van jouw ondertoon</p>
@@ -1096,7 +1086,7 @@ export default function EnhancedResultsPage() {
                     </div>
                     <NavLink
                       to="/prijzen#premium"
-                      className="shrink-0 inline-flex items-center gap-1.5 px-6 py-3 bg-[#C2654A] hover:bg-[#A8513A] text-white rounded-xl font-semibold text-base transition-colors duration-200 whitespace-nowrap"
+                      className="shrink-0 inline-flex items-center gap-1.5 px-6 py-3 bg-[#A85740] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200 whitespace-nowrap"
                     >
                       Bekijk Premium
                     </NavLink>
@@ -1178,7 +1168,7 @@ export default function EnhancedResultsPage() {
                 return (
                   <AnimatedSection delay={0.28}>
                     <div className="bg-[#F5F0EB] rounded-2xl p-6">
-                      <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                      <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
                         Shop in jouw kleuren
                       </p>
                       <h3
@@ -1234,12 +1224,12 @@ export default function EnhancedResultsPage() {
                                 </div>
                               ) : (
                                 <div className="w-20 h-20 rounded-lg flex-shrink-0 bg-[#F5F0EB] flex items-center justify-center">
-                                  <ShoppingBag className="w-6 h-6 text-[#C2654A]/30" />
+                                  <ShoppingBag className="w-6 h-6 text-[#A85740]/30" />
                                 </div>
                               )}
                               <div className="flex-1 min-w-0">
                                 {brand && (
-                                  <p className="text-[11px] font-medium text-[#8A8A8A] mb-0.5 truncate">{brand}</p>
+                                  <p className="text-[11px] font-medium text-[#6E6E6E] mb-0.5 truncate">{brand}</p>
                                 )}
                                 <p className="text-sm font-semibold text-[#1A1A1A] truncate">{name}</p>
                                 {rawPrice != null && rawPrice > 0 && (
@@ -1247,7 +1237,7 @@ export default function EnhancedResultsPage() {
                                     €{rawPrice % 1 === 0 ? rawPrice.toFixed(0) : rawPrice.toFixed(2)}
                                   </p>
                                 )}
-                                <p className="text-xs font-semibold text-[#C2654A] mt-1.5 inline-flex items-center gap-1">
+                                <p className="text-xs font-semibold text-[#A85740] mt-1.5 inline-flex items-center gap-1">
                                   Bekijk bij partner
                                   <ExternalLink className="w-3 h-3" />
                                 </p>
@@ -1297,7 +1287,7 @@ export default function EnhancedResultsPage() {
               {/* How your style was determined — narrative */}
               <AnimatedSection delay={0.4}>
                 <div className="bg-[#F5F0EB] rounded-2xl p-6 sm:p-8 space-y-5">
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A]">Zo werkt het</p>
+                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740]">Zo werkt het</p>
 
                   {/* Step 1 — Style profile */}
                   <div>
@@ -1351,11 +1341,11 @@ export default function EnhancedResultsPage() {
 
                   {/* Subtle selfie hint when no photo */}
                   {!answers?.photoUrl && (
-                    <p className="text-sm text-[#8A8A8A] pt-2 border-t border-[#E5E5E5]/60">
+                    <p className="text-sm text-[#6E6E6E] pt-2 border-t border-[#E5E5E5]/60">
                       Upload een selfie voor nog nauwkeuriger kleuradvies.{' '}
                       <button
                         onClick={() => navigate('/onboarding?step=photo')}
-                        className="font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
+                        className="font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors"
                       >
                         Foto toevoegen →
                       </button>
@@ -1408,10 +1398,10 @@ export default function EnhancedResultsPage() {
                     <button
                       onClick={() => setGalleryMode('swipe')}
                       aria-pressed={galleryMode === 'swipe'}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 ${
                         galleryMode === 'swipe'
                           ? 'bg-white text-[#1A1A1A] shadow-sm'
-                          : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                          : 'text-[#6E6E6E] hover:text-[#4A4A4A]'
                       }`}
                       aria-label="Swipe weergave"
                     >
@@ -1420,10 +1410,10 @@ export default function EnhancedResultsPage() {
                     <button
                       onClick={() => setGalleryMode('grid')}
                       aria-pressed={galleryMode === 'grid'}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 ${
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 ${
                         galleryMode === 'grid'
                           ? 'bg-white text-[#1A1A1A] shadow-sm'
-                          : 'text-[#8A8A8A] hover:text-[#4A4A4A]'
+                          : 'text-[#6E6E6E] hover:text-[#4A4A4A]'
                       }`}
                       aria-label="Grid weergave"
                     >
@@ -1436,14 +1426,14 @@ export default function EnhancedResultsPage() {
                         searchParams.delete('occasion');
                         setSearchParams(searchParams, { replace: true });
                       }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C2654A] text-sm font-medium text-white hover:bg-[#A8513A] transition-all duration-200 whitespace-nowrap"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#A85740] text-sm font-medium text-white hover:bg-[#9A503B] transition-all duration-200 whitespace-nowrap"
                     >
                       Alle outfits
                     </button>
                   )}
                   <button
                     onClick={() => navigate('/onboarding')}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200 whitespace-nowrap"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#E5E5E5] text-sm font-medium text-[#4A4A4A] hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200 whitespace-nowrap"
                   >
                     <SlidersHorizontal className="w-4 h-4 shrink-0" />
                     <span className="hidden sm:inline">Aanpassen</span>
@@ -1463,10 +1453,10 @@ export default function EnhancedResultsPage() {
                           role="tab"
                           aria-selected={isActive}
                           onClick={() => setActiveOccasionTab(tab.value)}
-                          className={`relative py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-inset ${
+                          className={`relative py-3 px-5 text-sm whitespace-nowrap transition-colors duration-200 border-b-2 cursor-pointer bg-transparent rounded-none shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-inset ${
                             isActive
-                              ? 'font-semibold text-[#C2654A] border-[#C2654A]'
-                              : 'font-medium text-[#8A8A8A] border-transparent hover:text-[#4A4A4A]'
+                              ? 'font-semibold text-[#A85740] border-[#A85740]'
+                              : 'font-medium text-[#6E6E6E] border-transparent hover:text-[#4A4A4A]'
                           }`}
                         >
                           {tab.label}
@@ -1494,40 +1484,53 @@ export default function EnhancedResultsPage() {
                 <Spinner size="md" />
                 <div className="text-center">
                   <p className="text-sm font-medium text-[#1A1A1A]">Outfits worden samengesteld…</p>
-                  <p className="text-xs text-[#8A8A8A] mt-1">We selecteren outfits die passen bij jouw stijl en kleurprofiel.</p>
+                  <p className="text-xs text-[#6E6E6E] mt-1">We selecteren outfits die passen bij jouw stijl en kleurprofiel.</p>
                 </div>
               </div>
             ) : displayOutfits.length === 0 ? (
               <div className="text-center py-20 px-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mx-auto mb-6">
-                  <Shirt className="w-7 h-7 text-[#C2654A]" aria-hidden="true" />
+                  <Shirt className="w-7 h-7 text-[#A85740]" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-lg font-semibold text-[#1A1A1A] mb-2">Geen outfits gevonden</p>
+                  <p className="text-lg font-semibold text-[#1A1A1A] mb-2">
+                    {outfitsError ? 'Even niet beschikbaar' : 'Geen outfits gevonden'}
+                  </p>
                   <p className="text-sm text-[#4A4A4A] max-w-sm mx-auto leading-relaxed">
                     {(() => {
-                      const budget = answers?.budget ?? answers?.budgetRange;
+                      // Ligt het aan ons, dan zeggen we dat. Eerder kreeg de
+                      // gebruiker bij een onbereikbare catalogus te horen dat
+                      // zijn filters te strak stonden, waarna hij de quiz
+                      // opnieuw deed en weer niets kreeg.
+                      if (outfitsError) {
+                        return 'We kunnen de collectie nu niet laden. Dat ligt aan ons, niet aan je antwoorden. Probeer het over een paar minuten opnieuw.';
+                      }
+                      // answers.budget is een object {min, max}; de oude check
+                      // `budget < 50` op dat object was altijd false, dus deze
+                      // tak werd nooit bereikt. parsedBudget kent beide vormen.
+                      const maxBudget = parsedBudget?.max;
                       const gender = answers?.gender;
-                      if (budget && budget < 50) return `Je budget (€${budget}) is erg laag — probeer het te verhogen of kies "Geen voorkeur".`;
+                      if (typeof maxBudget === 'number' && maxBudget > 0 && maxBudget < 50) {
+                        return `Je budget van €${maxBudget} is te laag voor een complete outfit. Verhoog het, of kies "Geen voorkeur".`;
+                      }
                       if (gender === 'non-binary' || gender === 'prefer-not-to-say') return 'We hebben nog beperkt aanbod voor jouw gendervoorkeur. Doe de quiz opnieuw en kies een ruimere filteroptie.';
-                      return 'We konden geen complete outfits samenstellen. Dit kan door een combinatie van strakke filters zijn — doe de quiz opnieuw met ruimere voorkeuren.';
+                      return 'We konden geen complete outfits samenstellen. Waarschijnlijk staan je filters te strak. Doe de quiz opnieuw met ruimere voorkeuren.';
                     })()}
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate("/onboarding")}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C2654A] text-white rounded-xl text-sm font-bold hover:bg-[#A8513A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 focus-visible:ring-offset-2"
+                  onClick={() => (outfitsError ? window.location.reload() : navigate("/onboarding"))}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#A85740] text-white rounded-xl text-sm font-bold hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 focus-visible:ring-offset-2"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  Stijlquiz opnieuw
+                  {outfitsError ? 'Opnieuw proberen' : 'Stijlquiz opnieuw'}
                 </button>
               </div>
             ) : galleryMode === 'swipe' ? (
               <SwipeableOutfitGallery
                 outfits={occasionFilteredOutfits as any[]}
                 onLike={(outfit) => {
-                  const id = 'id' in outfit ? outfit.id : outfit.toString();
-                  toggleFav(String(id));
+                  toggleFav(String(outfit.id));
                 }}
                 onDislike={() => {}}
                 renderCard={(outfit) => {
@@ -1550,7 +1553,7 @@ export default function EnhancedResultsPage() {
 
                   return (
                     <div
-                      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden h-full hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#C2654A] transition-all duration-300 cursor-pointer group"
+                      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden h-full hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#A85740] transition-all duration-300 cursor-pointer group"
                       onClick={() => {
                         track("outfit_card_click", {
                           outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
@@ -1586,8 +1589,8 @@ export default function EnhancedResultsPage() {
                         ) : (
                           <div className="w-full h-full bg-[#F5F0EB] flex items-center justify-center">
                             <div className="text-center p-6">
-                              <Sparkles className="w-12 h-12 mx-auto mb-3 text-[#C2654A]" aria-hidden="true" />
-                              <p className="text-xs text-[#8A8A8A] font-medium">Outfit {idx + 1}</p>
+                              <Sparkles className="w-12 h-12 mx-auto mb-3 text-[#A85740]" aria-hidden="true" />
+                              <p className="text-xs text-[#6E6E6E] font-medium">Outfit {idx + 1}</p>
                             </div>
                           </div>
                         )}
@@ -1616,18 +1619,18 @@ export default function EnhancedResultsPage() {
                           }}
                           className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm z-10 transition-all duration-200 hover:bg-white hover:scale-110 ${
                             favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`))
-                              ? 'text-[#C2654A]'
-                              : 'text-[#8A8A8A] hover:text-[#C2654A]'
+                              ? 'text-[#A85740]'
+                              : 'text-[#6E6E6E] hover:text-[#A85740]'
                           }`}
                           aria-label={favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
                         >
-                          <Heart className={`w-4 h-4 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-[#C2654A]' : ''}`} />
+                          <Heart className={`w-4 h-4 ${favs.includes(String('id' in outfit ? outfit.id : `seed-${idx}`)) ? 'fill-[#A85740]' : ''}`} />
                         </button>
                       </div>
 
                       {/* Info */}
                       <div className="p-5">
-                        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#C2654A] transition-colors duration-200">
+                        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#A85740] transition-colors duration-200">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
                         <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-2 mb-3">
@@ -1641,9 +1644,9 @@ export default function EnhancedResultsPage() {
                             return typeof ms === 'number' ? (
                               <span className="inline-flex items-center gap-1.5">
                                 <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                                  <Check className="w-2.5 h-2.5 text-[#C2654A]" strokeWidth={3} />
+                                  <Check className="w-2.5 h-2.5 text-[#A85740]" strokeWidth={3} />
                                 </span>
-                                <span className="text-sm font-semibold text-[#C2654A]">{Math.round(ms)}% match</span>
+                                <span className="text-sm font-semibold text-[#A85740]">{Math.round(ms)}% match</span>
                               </span>
                             ) : null;
                           })()}
@@ -1756,7 +1759,7 @@ export default function EnhancedResultsPage() {
             <AnimatedSection delay={0.6}>
               <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-10 max-w-[800px] mx-auto mt-12">
                 {/* PREMIUM label */}
-                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-3">
+                <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
                   Premium
                 </p>
 
@@ -1768,12 +1771,12 @@ export default function EnhancedResultsPage() {
                 {/* Features */}
                 <div className="flex flex-col gap-2.5 mb-6">
                   {[
-                    'Alle 50+ outfitcombinaties',
+                    'Alle outfitcombinaties',
                     'Matchscores en stijluitleg per item',
                     'Directe shoplinks naar webshops',
                   ].map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] shrink-0" aria-hidden="true" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] shrink-0" aria-hidden="true" />
                       <span className="text-sm text-[#4A4A4A]">{feature}</span>
                     </div>
                   ))}
@@ -1784,20 +1787,20 @@ export default function EnhancedResultsPage() {
                   <div>
                     <div>
                       <span className="text-2xl font-extrabold text-[#1A1A1A]">€9,99</span>
-                      <span className="text-base font-normal text-[#8A8A8A] ml-1">/maand</span>
+                      <span className="text-base font-normal text-[#6E6E6E] ml-1">/maand</span>
                     </div>
-                    <p className="text-xs text-[#8A8A8A]">Maandelijks opzegbaar</p>
+                    <p className="text-xs text-[#6E6E6E]">Maandelijks opzegbaar</p>
                   </div>
                   <div className="flex items-center gap-3 sm:ml-auto">
                     <NavLink
                       to="/prijzen#premium"
-                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-sm py-3 px-6 rounded-full transition-all duration-200"
+                      className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full transition-all duration-200"
                     >
                       Ontgrendel premium →
                     </NavLink>
                     <NavLink
                       to={user ? "/dashboard" : "/registreren"}
-                      className="text-sm font-medium text-[#4A4A4A] hover:text-[#C2654A] transition-colors duration-200"
+                      className="text-sm font-medium text-[#4A4A4A] hover:text-[#A85740] transition-colors duration-200"
                     >
                       Ga naar dashboard
                     </NavLink>

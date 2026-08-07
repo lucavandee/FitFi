@@ -1,5 +1,6 @@
 import type { Product } from '../types';
 import { classifyProduct } from '../productClassifier';
+import { beoordeelProduct } from '../productSafety';
 import { deriveAthleticIntent, enrichProduct, TEAM_SPORT_RE } from '../productEnricher';
 import type {
   NormalizedCategory,
@@ -226,6 +227,25 @@ export function filterAndPrepare(
       continue;
     }
 
+    // Zelfde veiligheidscheck die het calibratiescherm al draaide
+    // (engineV2Calibration.beoordeelOutfit), maar hier op productniveau.
+    // Dat is bewust: keur je pas op outfitniveau af, dan gooi je een hele
+    // outfit weg om een product, terwijl de composer daar nog een veilig
+    // alternatief voor had kunnen kiezen. classifyProduct dekt dit niet:
+    // dat kijkt alleen naar de naam, terwijl de kinderschoen-controle op de
+    // maatreeks moet zitten (een schoen die alleen 24 t/m 34 voert).
+    // `cat` en niet product.category, want het ruwe feed-label is onbetrouwbaar.
+    const veiligheid = beoordeelProduct({
+      name: product.name,
+      category: cat,
+      sizes: product.sizes,
+    });
+    if (!veiligheid.ok) {
+      const sleutel = `onveilig_${veiligheid.reden}`;
+      byReason[sleutel] = (byReason[sleutel] ?? 0) + 1;
+      continue;
+    }
+
     const budgetStatus = budgetCheck(product, profile, cat);
     if (budgetStatus !== 'ok') {
       byReason[budgetStatus]++;
@@ -243,11 +263,14 @@ export function filterAndPrepare(
     }
 
     const enriched = enrichProduct(product);
+    // `Product.formality` is typed as optional even though enrichProduct always
+    // sets it; fall back to the same default archetypeHardReject itself uses.
+    const enrichedFormality = enriched.formality ?? 0.4;
 
     const archetypeReject = archetypeHardReject(
       product,
       cat,
-      enriched.formality,
+      enrichedFormality,
       profile
     );
     if (archetypeReject) {
@@ -256,7 +279,7 @@ export function filterAndPrepare(
     }
 
     const scored: ScoredProduct = {
-      product: { ...product, category: cat, formality: enriched.formality },
+      product: { ...product, category: cat, formality: enrichedFormality },
       category: cat,
       score: 0,
       breakdown: {
@@ -274,7 +297,7 @@ export function filterAndPrepare(
         brand: 0,
       },
       reasons: [],
-      formality: enriched.formality,
+      formality: enrichedFormality,
       archetypeFit: {},
       colorTags: enriched._signals.colorTags,
       materialTags: enriched._signals.materialTags,

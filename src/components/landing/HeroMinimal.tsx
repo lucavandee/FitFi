@@ -32,13 +32,13 @@ export function HeroMinimal() {
             {/* H1 - Result or Speed */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] leading-tight tracking-tight">
               Jouw stijl in{' '}
-              <span className="text-[#C2654A]">
+              <span className="text-[#A85740]">
                 2 minuten
               </span>
             </h1>
 
             {/* Subline - Clear Value Prop */}
-            <p className="text-lg sm:text-xl text-[#8A8A8A] max-w-xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-[#6E6E6E] max-w-xl leading-relaxed">
               Style Report + 6–12 outfits + uitleg waarom ze voor je werken.
               <br />
               <strong className="text-[#1A1A1A]">Helder. Direct toepasbaar.</strong>
@@ -48,7 +48,7 @@ export function HeroMinimal() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button
                 onClick={handleStartClick}
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#C2654A] hover:bg-[#A8513A] text-white rounded-xl font-semibold text-base transition-colors duration-200"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#A85740] hover:bg-[#9A503B] text-white rounded-xl font-semibold text-base transition-colors duration-200"
               >
                 Begin gratis
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -57,7 +57,7 @@ export function HeroMinimal() {
               <NavLink
                 to="/hoe-het-werkt"
                 onClick={handleExampleClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] rounded-xl font-medium text-base transition-colors duration-200"
               >
                 Bekijk voorbeeld
               </NavLink>
@@ -65,16 +65,16 @@ export function HeroMinimal() {
 
             {/* Micro-proof badges */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 pt-2">
-              <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
-                <Shield className="w-4 h-4 text-[#C2654A]" />
+              <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
+                <Shield className="w-4 h-4 text-[#A85740]" />
                 <span></span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
-                <Zap className="w-4 h-4 text-[#C2654A]" />
+              <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
+                <Zap className="w-4 h-4 text-[#A85740]" />
                 <span>Geen spam</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
-                <BookOpen className="w-4 h-4 text-[#C2654A]" />
+              <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
+                <BookOpen className="w-4 h-4 text-[#A85740]" />
                 <span>Uitleg bij elke look</span>
               </div>
             </div>
@@ -89,17 +89,17 @@ export function HeroMinimal() {
                 className="absolute top-0 left-[5%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-xl border border-[#E5E5E5] overflow-hidden transform rotate-[-4deg] transition-transform hover:rotate-[-2deg] hover:scale-105 z-10"
                 style={{ willChange: 'transform' }}
               >
-                <div className="aspect-[3/4] bg-[#FAF5F2] flex items-center justify-center">
+                <div className="aspect-[3/4] bg-[#F5F0EB] flex items-center justify-center">
                   <div className="text-center p-6">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-[#C2654A] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-[#A85740] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                       W
                     </div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">Werk</p>
-                    <p className="text-xs text-[#8A8A8A] mt-1">3 outfits</p>
+                    <p className="text-xs text-[#6E6E6E] mt-1">3 outfits</p>
                   </div>
                 </div>
                 <div className="p-4 bg-white">
-                  <div className="flex items-center gap-2 text-xs text-[#8A8A8A]">
+                  <div className="flex items-center gap-2 text-xs text-[#6E6E6E]">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                     <span>Slim fit, klassiek</span>
                   </div>
@@ -108,20 +108,20 @@ export function HeroMinimal() {
 
               {/* Card 2: Weekend - Middle (Front) */}
               <div
-                className="absolute top-[80px] left-[20%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-2xl border-2 border-[#C2654A] overflow-hidden transform rotate-[2deg] transition-transform hover:rotate-[0deg] hover:scale-105 z-30"
+                className="absolute top-[80px] left-[20%] w-[280px] sm:w-[320px] bg-white rounded-2xl shadow-2xl border-2 border-[#A85740] overflow-hidden transform rotate-[2deg] transition-transform hover:rotate-[0deg] hover:scale-105 z-30"
                 style={{ willChange: 'transform' }}
               >
-                <div className="aspect-[3/4] bg-[#FAF5F2] flex items-center justify-center">
+                <div className="aspect-[3/4] bg-[#F5F0EB] flex items-center justify-center">
                   <div className="text-center p-6">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-[#C2654A] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-[#A85740] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                       W
                     </div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">Weekend</p>
-                    <p className="text-xs text-[#8A8A8A] mt-1">4 outfits</p>
+                    <p className="text-xs text-[#6E6E6E] mt-1">4 outfits</p>
                   </div>
                 </div>
                 <div className="p-4 bg-white">
-                  <div className="flex items-center gap-2 text-xs text-[#8A8A8A]">
+                  <div className="flex items-center gap-2 text-xs text-[#6E6E6E]">
                     <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                     <span>Casual, comfortabel</span>
                   </div>
@@ -139,11 +139,11 @@ export function HeroMinimal() {
                       A
                     </div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">Avond</p>
-                    <p className="text-xs text-[#8A8A8A] mt-1">2 outfits</p>
+                    <p className="text-xs text-[#6E6E6E] mt-1">2 outfits</p>
                   </div>
                 </div>
                 <div className="p-4 bg-white">
-                  <div className="flex items-center gap-2 text-xs text-[#8A8A8A]">
+                  <div className="flex items-center gap-2 text-xs text-[#6E6E6E]">
                     <div className="w-2 h-2 rounded-full bg-purple-500"></div>
                     <span>Smart, verfijnd</span>
                   </div>

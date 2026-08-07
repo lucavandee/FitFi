@@ -3,11 +3,12 @@ import PremiumCard from "@/components/ui/PremiumCard";
 import PremiumChip from "@/components/ui/PremiumChip";
 import PremiumButton from "@/components/ui/PremiumButton";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
-import { ExplainBadge } from "@/components/outfits/ExplainBadge";
+import ExplainBadge from "@/components/outfits/ExplainBadge";
 import { useEnhancedNova } from "@/hooks/useEnhancedNova";
 import { MatchFeedbackWidget } from "@/components/outfits/MatchFeedbackWidget";
 import { ShoppingBag, ExternalLink } from "lucide-react";
 import { resolveProductUrl, openProductLink } from "@/utils/affiliate";
+import { getFallbackImageForCategory } from "@/utils/imageUtils";
 import toast from "react-hot-toast";
 import { trackOutfitExplain } from '@/hooks/useABTesting';
 
@@ -79,22 +80,22 @@ export default function PremiumOutfitCard({
               {outfit.name}
             </h3>
             <div className="flex items-center gap-2 flex-wrap">
-              <PremiumChip variant="accent" size="sm">
+              <PremiumChip active>
                 {outfit.occasion}
               </PremiumChip>
-              <PremiumChip variant="default" size="sm">
+              <PremiumChip>
                 {outfit.style}
               </PremiumChip>
               {novaContext && outfit.explanation && (
                 <ExplainBadge
-                  explanation={outfit.explanation}
-                  reasons={[
+                  title={[
                     `Past bij je ${novaContext.archetype} stijl`,
                     `Matcht met je ${novaContext.colorProfile.undertone} undertone`,
                     `Perfect voor ${outfit.occasion}`
-                  ]}
-                  compact={true}
-                />
+                  ].join(' · ')}
+                >
+                  {outfit.explanation}
+                </ExplainBadge>
               )}
             </div>
           </div>
@@ -116,11 +117,8 @@ export default function PremiumOutfitCard({
               if (!hasUrl) return;
               const opened = await openProductLink({
                 product: {
-                  id: item.id,
-                  name: item.name,
-                  retailer: item.brand,
-                  price: item.price,
                   ...item,
+                  retailer: item.brand,
                 },
                 outfitId: outfit.id,
                 slot: idx + 1,
@@ -144,11 +142,11 @@ export default function PremiumOutfitCard({
                     src={item.image}
                     alt={item.name}
                     className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
-                    fallbackCategory={item.category}
+                    fallback={getFallbackImageForCategory(item.category)}
                   />
                   {hasUrl && (
                     <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/30 transition-colors flex items-center justify-center">
-                      <div className="opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 text-[#A8513A] text-xs font-semibold">
+                      <div className="opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/90 text-[#9A503B] text-xs font-semibold">
                         <ShoppingBag className="w-3.5 h-3.5" />
                         Shop
                         <ExternalLink className="w-3 h-3" />

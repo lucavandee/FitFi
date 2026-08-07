@@ -1,8 +1,9 @@
 import React from "react";
-import { motion } from "framer-motion";
-import OutfitCard, { Outfit } from "./OutfitCard";
+import { motion, type Variants } from "framer-motion";
+import OutfitCard from "./OutfitCard";
+import type { Outfit } from "@/engine/types";
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -12,7 +13,7 @@ const container = {
   }
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.95 },
   show: {
     opacity: 1,
@@ -46,11 +47,20 @@ const OutfitGrid: React.FC<{ outfits: Outfit[] }> = ({ outfits }) => {
           initial="hidden"
           animate="show"
         >
-          {outfits.map((o, index) => (
-            <motion.div key={o.id} variants={item}>
-              <OutfitCard outfit={o} />
-            </motion.div>
-          ))}
+          {outfits.map((o) => {
+            const images = [o.imageUrl, ...o.products.map(p => p.imageUrl)]
+              .filter((src): src is string => Boolean(src));
+            return (
+              <motion.div key={o.id} variants={item}>
+                <OutfitCard
+                  title={o.title}
+                  description={[o.description]}
+                  images={images}
+                  outfit={o}
+                />
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

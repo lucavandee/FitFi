@@ -73,7 +73,7 @@ const SIZE_VARIANTS = {
 const THEME_VARIANTS = {
   dark: 'bg-gray-900 text-white border-gray-800',
   light: 'bg-white text-gray-900 border-gray-200 shadow-xl',
-  primary: 'bg-[#A8513A] text-white border-[#8A3D28]'
+  primary: 'bg-[#9A503B] text-white border-[#9A503B]'
 };
 
 const ARROW_SIZE = 6; // pixels
@@ -179,8 +179,8 @@ export function Tooltip({
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const longPressRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const longPressRef = useRef<ReturnType<typeof setTimeout>>();
   const touchStartRef = useRef<number>(0);
 
   // Calculate position when visible
@@ -352,7 +352,7 @@ export function Tooltip({
                   'absolute w-0 h-0 border-solid',
                   theme === 'dark' && 'border-gray-900',
                   theme === 'light' && 'border-white',
-                  theme === 'primary' && 'border-[#A8513A]'
+                  theme === 'primary' && 'border-[#9A503B]'
                 )}
                 style={{
                   ...(actualPosition === 'top' && {

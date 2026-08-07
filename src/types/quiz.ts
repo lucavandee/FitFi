@@ -1,5 +1,13 @@
 export interface QuizAnswers {
   gender?: string;
+  /**
+   * Kleurhelderheid en contrast uit de quiz. Deze twee stonden wel in
+   * quizSteps.ts en worden echt uitgelezen in styleProfileGenerator.ts
+   * (regel 189-190), maar ontbraken hier, waardoor de stapdefinities niet
+   * typechecken tegen keyof QuizAnswers.
+   */
+  lightness?: string;
+  contrast?: string;
   stylePreferences: string[];
   baseColors: string;
   bodyType: string;

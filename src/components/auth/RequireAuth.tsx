@@ -21,7 +21,7 @@ export default function RequireAuth({ children }: { children: React.ReactElement
       <div className="flex items-center justify-center bg-[#FAFAF8]" style={{ minHeight: 'calc(100vh - 72px)' }}>
         <div className="text-center">
           <Spinner size="md" />
-          <p className="mt-3 text-sm text-[#8A8A8A]">Laden...</p>
+          <p className="mt-3 text-sm text-[#6E6E6E]">Laden...</p>
         </div>
       </div>
     );

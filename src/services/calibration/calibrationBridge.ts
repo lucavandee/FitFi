@@ -2,6 +2,9 @@ import { adaptiveOutfitGenerator, type AdaptiveOutfit } from './adaptiveOutfitGe
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import { supabase } from '@/lib/supabaseClient';
+import { dutchToArchetype } from '@/config/archetypeMapping';
+import type { ArchetypeWeights } from '@/types/style';
+import { isUuid } from '@/utils/sessionId';
 
 /**
  * Bridge service to integrate adaptive outfit generation with existing calibration UI
@@ -52,7 +55,7 @@ export class CalibrationBridge {
 
       // Transform to CalibrationOutfit format
       const calibrationOutfits = adaptiveOutfits.map(outfit =>
-        this.transformToCalibrationOutfit(outfit)
+        this.transformToCalibrationOutfit(outfit, quizData?.archetype)
       );
 
       return calibrationOutfits;
@@ -99,11 +102,24 @@ export class CalibrationBridge {
       };
 
       // Record in database
-      const { error } = await supabase.rpc('record_swipe', {
-        p_session_id: sessionId || userId || `session_${Date.now()}`,
-        p_user_id: userId,
+      const sb = supabase();
+      if (!sb) {
+        console.warn('[CalibrationBridge] Supabase unavailable, skipping feedback recording');
+        return;
+      }
+      // record_swipe kent vier parameters: p_outfit_id, p_swipe_direction,
+      // p_session_id (UUID) en p_outfit_features. Hier ging p_user_id mee,
+      // die niet bestaat, waardoor PostgREST geen kandidaat kon matchen
+      // (PGRST202) en elke calibratie-beoordeling stil verdween. De functie
+      // leidt de gebruiker zelf af; meesturen hoeft niet.
+      if (!isUuid(sessionId)) {
+        console.warn('[CalibrationBridge] Geen geldig sessie-id, feedback niet opgeslagen');
+        return;
+      }
+      const { error } = await sb.rpc('record_swipe', {
         p_outfit_id: outfitId,
         p_swipe_direction: swipeDirection,
+        p_session_id: sessionId,
         p_outfit_features: features
       });
 
@@ -118,7 +134,10 @@ export class CalibrationBridge {
   /**
    * Transform AdaptiveOutfit to CalibrationOutfit format
    */
-  private static transformToCalibrationOutfit(adaptive: AdaptiveOutfit): CalibrationOutfit {
+  private static transformToCalibrationOutfit(
+    adaptive: AdaptiveOutfit,
+    archetype?: string
+  ): CalibrationOutfit {
     const items: any = {};
 
     // Map products to calibration format
@@ -138,10 +157,13 @@ export class CalibrationBridge {
       }
     });
 
+    const archetypeKey = dutchToArchetype(archetype);
+    const archetypeWeights: ArchetypeWeights = { [archetypeKey]: 1 };
+
     return {
       id: adaptive.id,
       items,
-      archetypes: adaptive.visual_features.style_tags,
+      archetypes: archetypeWeights,
       dominantColors: adaptive.visual_features.dominant_colors,
       occasion: this.mapFormalityToOccasion(adaptive.visual_features.formality_score),
       explanation: adaptive.explanation,
@@ -156,7 +178,9 @@ export class CalibrationBridge {
    */
   private static async getSwipeHistory(sessionId: string): Promise<any[]> {
     try {
-      const { data, error } = await supabase
+      const sb = supabase();
+      if (!sb) return [];
+      const { data, error } = await sb
         .from('swipe_preferences')
         .select('*')
         .eq('session_id', sessionId)

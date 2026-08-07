@@ -97,6 +97,9 @@ async function callAnalysisAPI(
 
   // Get session token for authenticated request
   const sb = supabase();
+  if (!sb) {
+    throw new Error("Supabase client not initialized");
+  }
   const {
     data: { session },
   } = await sb.auth.getSession();
@@ -147,7 +150,11 @@ async function saveAnalysis(
   photoUrl: string,
   analysisResult: any
 ): Promise<PhotoAnalysisResult> {
-  const { data, error } = await supabase()
+  const sb = supabase();
+  if (!sb) {
+    throw new Error("Supabase client not initialized");
+  }
+  const { data, error } = await sb
     .from("photo_analyses")
     .insert({
       user_id: userId,
@@ -180,6 +187,9 @@ export async function analyzeOutfitPhoto(
 
   // Get current user
   const sb = supabase();
+  if (!sb) {
+    throw new Error("Supabase client not initialized");
+  }
   const {
     data: { user },
   } = await sb.auth.getUser();
@@ -233,7 +243,9 @@ export async function getUserPhotoAnalyses(
   limit = 10
 ): Promise<PhotoAnalysisResult[]> {
   try {
-    const { data, error } = await supabase()
+    const sb = supabase();
+    if (!sb) return [];
+    const { data, error } = await sb
       .from("photo_analyses")
       .select("*")
       .eq("user_id", userId)
@@ -261,7 +273,11 @@ export async function getUserPhotoAnalyses(
  * @param userId - The user ID who owns the analysis (for IDOR prevention)
  */
 export async function deletePhotoAnalysis(id: string, userId: string): Promise<void> {
-  const { error } = await supabase()
+  const sb = supabase();
+  if (!sb) {
+    throw new Error("Supabase client not initialized");
+  }
+  const { error } = await sb
     .from("photo_analyses")
     .delete()
     .eq("id", id)

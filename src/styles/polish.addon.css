@@ -19,7 +19,7 @@
 @media (min-width:768px){ .ff-page-hero{ padding-block:4.4rem 2.8rem; } }
 
 /* ===== TYPO & CTA (ongewijzigd, tokens-first) ===== */
-.ff-hero-title{ font-family:Montserrat,ui-sans-serif,system-ui; font-weight:700; line-height:1.1; letter-spacing:-0.01em; color:var(--color-text); font-size:clamp(2rem,3.2vw + 1rem,2.9rem); max-width:24ch; }
+.ff-hero-title{ font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui; font-weight:700; line-height:1.1; letter-spacing:-0.01em; color:var(--color-text); font-size:clamp(2rem,3.2vw + 1rem,2.9rem); max-width:24ch; }
 .ff-hero-sub{ color:var(--color-muted); font-size:clamp(1rem,.6vw + .84rem,1.12rem); max-width:60ch; }
 .ff-lede{ color:var(--color-text); opacity:.9; font-size:clamp(1rem,.45vw + .95rem,1.125rem); }
 
@@ -134,7 +134,7 @@
 @media (min-width: 768px){ .ff-pricing-hero{ padding-block: 5rem 3rem; } }
 
 .ff-pricing-title{
-  font-family: Montserrat, ui-sans-serif, system-ui;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
   font-weight: 800;
   font-size: clamp(2.5rem, 4vw + 1rem, 4rem);
   line-height: 1.1;
@@ -252,7 +252,7 @@
 }
 
 .ff-pricing-plan-name{
-  font-family: Montserrat, ui-sans-serif, system-ui;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--color-text);
@@ -273,7 +273,7 @@
 }
 
 .ff-price-amount{
-  font-family: Montserrat, ui-sans-serif, system-ui;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
   font-weight: 800;
   font-size: 3rem;
   color: var(--color-text);
@@ -586,7 +586,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--color-muted);
-  font-family: Montserrat, ui-sans-serif, system-ui;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
 }
 
 .ff-step-title {
@@ -594,7 +594,7 @@
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 0.75rem;
-  font-family: Montserrat, ui-sans-serif, system-ui;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
 }
 
 .ff-step-description {
@@ -709,7 +709,7 @@
   font-weight: 800;
   color: var(--color-text);
   margin-bottom: 1rem;
-  font-family: Montserrat, ui-sans-serif, system-ui;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui;
 }
 
 .ff-cta-subtitle {

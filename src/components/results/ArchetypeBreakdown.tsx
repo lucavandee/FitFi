@@ -24,14 +24,14 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
   return (
     <div className={`bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] overflow-hidden ${className}`} style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
       <div className="px-5 sm:px-6 py-4 border-b border-[#E5E5E5]">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-0.5">Stijl archetypen</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-0.5">Stijl archetypen</p>
         <h3 className="text-sm font-semibold text-[#1A1A1A]">
           {isHybrid && secondary
             ? `${ARCHETYPES[primary.archetype].label} × ${ARCHETYPES[secondary.archetype].label}`
             : ARCHETYPES[primary.archetype].label}
         </h3>
         {isHybrid && secondary && (
-          <p className="text-xs text-[#8A8A8A] mt-0.5">Hybride stijl — combineert meerdere elementen</p>
+          <p className="text-xs text-[#6E6E6E] mt-0.5">Hybride stijl — combineert meerdere elementen</p>
         )}
       </div>
 
@@ -41,17 +41,17 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
           const isPrimary = index === 0;
 
           return (
-            <div key={item.archetype} className={`px-5 sm:px-6 py-4 ${isPrimary ? 'bg-[#FAF5F2]' : ''}`}>
+            <div key={item.archetype} className={`px-5 sm:px-6 py-4 ${isPrimary ? 'bg-[#F5F0EB]' : ''}`}>
               <div className="flex items-start gap-3">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${isPrimary ? 'bg-[#A8513A] text-white' : 'bg-[#E5E5E5] text-[#8A8A8A]'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${isPrimary ? 'bg-[#9A503B] text-white' : 'bg-[#E5E5E5] text-[#6E6E6E]'}`}>
                   {index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2 mb-1.5">
-                    <span className={`text-sm font-semibold ${isPrimary ? 'text-[#8A3D28]' : 'text-[#1A1A1A]'}`}>
+                    <span className={`text-sm font-semibold ${isPrimary ? 'text-[#9A503B]' : 'text-[#1A1A1A]'}`}>
                       {getArchetypeDisplayNL(archetype.label)}
                     </span>
-                    <span className={`text-sm font-bold tabular-nums ${isPrimary ? 'text-[#A8513A]' : 'text-[#8A8A8A]'}`}>
+                    <span className={`text-sm font-bold tabular-nums ${isPrimary ? 'text-[#9A503B]' : 'text-[#6E6E6E]'}`}>
                       {Math.round(item.percentage)}%
                     </span>
                   </div>
@@ -62,11 +62,11 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
                       animate={{ width: `${item.percentage}%` }}
                       transition={{ delay: index * 0.1 + 0.15, duration: 0.7, ease: 'easeOut' }}
                       className="h-full rounded-full"
-                      style={{ background: isPrimary ? '#C2654A' : '#D4856E' }}
+                      style={{ background: isPrimary ? '#A85740' : '#A85740' }}
                     />
                   </div>
 
-                  <p className="text-xs text-[#8A8A8A]">
+                  <p className="text-xs text-[#6E6E6E]">
                     {archetype.vibe.slice(0, 3).map((v, i) => (
                       <span key={i}>{i > 0 && ' · '}<span className="capitalize">{v}</span></span>
                     ))}
@@ -79,7 +79,7 @@ export function ArchetypeBreakdown({ archetypeScores, confidence = 0.7, classNam
       </div>
 
       <div className="px-5 sm:px-6 py-3 border-t border-[#E5E5E5]">
-        <p className="text-xs text-[#8A8A8A] leading-relaxed">
+        <p className="text-xs text-[#6E6E6E] leading-relaxed">
           Deze mix bepaalt welke outfits en kleuren het beste bij je passen.
         </p>
       </div>

@@ -42,14 +42,14 @@ export default function PremiumUserTable({
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C2654A] to-[#8A3D28] flex items-center justify-center text-white font-semibold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center text-white font-semibold text-sm">
                       {user.full_name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                     <div>
                       <div className="text-sm font-semibold text-[#1A1A1A]">
                         {user.full_name || 'Onbekend'}
                       </div>
-                      <div className="text-xs text-[#8A8A8A]">
+                      <div className="text-xs text-[#6E6E6E]">
                         {user.email}
                       </div>
                     </div>
@@ -86,20 +86,20 @@ export default function PremiumUserTable({
                       </div>
                     )}
                     {user.saved_outfits_count > 0 && (
-                      <div className="flex items-center gap-1.5 text-xs text-[#8A8A8A]">
+                      <div className="flex items-center gap-1.5 text-xs text-[#6E6E6E]">
                         <span>💾</span>
                         <span>{user.saved_outfits_count} saved outfits</span>
                       </div>
                     )}
                     {user.referral_count > 0 && (
-                      <div className="flex items-center gap-1.5 text-xs text-[#8A8A8A]">
+                      <div className="flex items-center gap-1.5 text-xs text-[#6E6E6E]">
                         <span>🎁</span>
                         <span>{user.referral_count} referrals</span>
                       </div>
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-[#8A8A8A]">
+                <td className="px-6 py-4 text-sm text-[#6E6E6E]">
                   {new Date(user.created_at).toLocaleDateString('nl-NL', {
                     day: 'numeric',
                     month: 'short',
@@ -110,13 +110,13 @@ export default function PremiumUserTable({
                   <div className="flex gap-2 justify-end">
                     <button
                       onClick={() => onSendNotification(user)}
-                      className="px-3 py-1.5 text-xs font-medium text-[#A8513A] hover:bg-[#A8513A] hover:text-white rounded-lg border border-[#A8513A] transition-all duration-200"
+                      className="px-3 py-1.5 text-xs font-medium text-[#9A503B] hover:bg-[#9A503B] hover:text-white rounded-lg border border-[#9A503B] transition-all duration-200"
                     >
                       📨 Message
                     </button>
                     <button
                       onClick={() => onManageUser(user)}
-                      className="px-3 py-1.5 text-xs font-medium text-[#1A1A1A] hover:bg-[#A8513A] hover:text-white rounded-lg border border-[#E5E5E5] hover:border-[#A8513A] transition-all duration-200"
+                      className="px-3 py-1.5 text-xs font-medium text-[#1A1A1A] hover:bg-[#9A503B] hover:text-white rounded-lg border border-[#E5E5E5] hover:border-[#9A503B] transition-all duration-200"
                     >
                       ⚙️ Beheer
                     </button>

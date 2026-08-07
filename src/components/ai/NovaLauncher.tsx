@@ -17,7 +17,7 @@ export default function NovaLauncher({ inline = false }: { inline?: boolean }) {
       variant="primary"
       icon={<MessageCircle size={16} />}
       iconPosition="left"
-      onClick={nova.open}
+      onClick={() => nova.setOpen(true)}
     >
       Open Nova
     </Button>

@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
-import { adaptiveOutfitGenerator, type AdaptiveOutfit, type OutfitScore } from '@/services/calibration/adaptiveOutfitGenerator';
-import type { Product } from '@/types/product';
+import { adaptiveOutfitGenerator, type AdaptiveOutfit, type OutfitScore, type Product } from '@/services/calibration/adaptiveOutfitGenerator';
 import { isAdultClothingProduct } from '@/engine/productFilter';
 
 export interface RemixedOutfit {
@@ -27,6 +26,23 @@ export interface SwapSuggestion {
   suggested_product: Product;
   expected_score_improvement: number;
   reason: string;
+}
+
+// Row shape of the `outfit_swaps` table (see supabase/migrations/20251217082601_create_outfit_swaps_table.sql)
+interface OutfitSwapRow {
+  id: string;
+  outfit_id: string;
+  user_id: string | null;
+  session_id: string | null;
+  category: string;
+  old_product_id: string;
+  new_product_id: string;
+  new_product_brand: string | null;
+  new_product_price: number | null;
+  score_before: number;
+  score_after: number;
+  improvement: boolean;
+  created_at: string;
 }
 
 /**
@@ -70,7 +86,9 @@ export class AdaptiveOutfitRemixer {
       outfit.score.overall,
       newScore.overall,
       userId,
-      sessionId
+      sessionId,
+      newProduct.brand,
+      newProduct.price
     );
 
     // Generate Nova insight about the swap
@@ -117,7 +135,10 @@ export class AdaptiveOutfitRemixer {
   ): Promise<SwapSuggestion[]> {
     const suggestions: SwapSuggestion[] = [];
 
-    let query = supabase
+    const sb = supabase();
+    if (!sb) return [];
+
+    let query = sb
       .from('products')
       .select('*')
       .eq('in_stock', true)
@@ -133,7 +154,7 @@ export class AdaptiveOutfitRemixer {
     if (!rawProducts) return [];
 
     // Filter out kids clothing and non-adult products
-    const availableProducts = rawProducts.filter(isAdultClothingProduct);
+    const availableProducts = (rawProducts as Product[]).filter(isAdultClothingProduct);
 
     // For each category, find better alternatives
     const categories: ('top' | 'bottom' | 'shoes')[] = ['top', 'bottom', 'shoes'];
@@ -255,7 +276,17 @@ export class AdaptiveOutfitRemixer {
     price_sweet_spot: { min: number; max: number };
   }> {
     // Get all swaps for this user/session
-    const { data: swaps } = await supabase
+    const sb = supabase();
+    if (!sb) {
+      return {
+        preferred_combinations: [],
+        avoided_combinations: [],
+        favorite_brands: [],
+        price_sweet_spot: { min: 0, max: 1000 }
+      };
+    }
+
+    const { data: swaps } = await sb
       .from('outfit_swaps')
       .select('*')
       .or(`user_id.eq.${userId},session_id.eq.${sessionId}`)
@@ -272,7 +303,8 @@ export class AdaptiveOutfitRemixer {
     }
 
     // Analyze successful swaps (improvements)
-    const successfulSwaps = swaps.filter(s => s.score_after > s.score_before);
+    const typedSwaps = swaps as OutfitSwapRow[];
+    const successfulSwaps = typedSwaps.filter(s => s.score_after > s.score_before);
 
     // Extract patterns
     const preferred_combinations: Array<{ category1: string; category2: string; compatibility: number }> = [];
@@ -280,7 +312,7 @@ export class AdaptiveOutfitRemixer {
 
     // Find favorite brands from successful swaps
     const brandCounts: Record<string, number> = {};
-    successfulSwaps.forEach((swap: any) => {
+    successfulSwaps.forEach((swap) => {
       if (swap.new_product_brand) {
         brandCounts[swap.new_product_brand] = (brandCounts[swap.new_product_brand] || 0) + 1;
       }
@@ -292,7 +324,7 @@ export class AdaptiveOutfitRemixer {
       .map(([brand]) => brand);
 
     // Calculate price sweet spot
-    const prices = successfulSwaps.map((s: any) => s.new_product_price || 0).filter(p => p > 0);
+    const prices = successfulSwaps.map((s) => s.new_product_price || 0).filter((p) => p > 0);
     const price_sweet_spot = prices.length > 0
       ? {
           min: Math.min(...prices),
@@ -384,16 +416,23 @@ export class AdaptiveOutfitRemixer {
     scoreBefore: number,
     scoreAfter: number,
     userId?: string,
-    sessionId?: string
+    sessionId?: string,
+    newProductBrand?: string,
+    newProductPrice?: number
   ): Promise<void> {
     try {
-      await supabase.from('outfit_swaps').insert({
+      const sb = supabase();
+      if (!sb) return;
+
+      await sb.from('outfit_swaps').insert({
         outfit_id: outfitId,
         user_id: userId,
         session_id: sessionId,
         category,
         old_product_id: oldProductId,
         new_product_id: newProductId,
+        new_product_brand: newProductBrand,
+        new_product_price: newProductPrice,
         score_before: scoreBefore,
         score_after: scoreAfter,
         improvement: scoreAfter > scoreBefore,

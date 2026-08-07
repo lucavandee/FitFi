@@ -69,7 +69,7 @@ const PageHero: React.FC<Props> = ({
       style={{
         // Warme, premium tokens-gradient (geen hex)
         background:
-          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, #C2654A 10%, transparent) 0%, transparent 60%), linear-gradient(180deg, color-mix(in oklab, white 98%, white) 0%, color-mix(in oklab, white 100%, white) 100%)",
+          "radial-gradient(120% 120% at 10% 0%, color-mix(in oklab, #A85740 10%, transparent) 0%, transparent 60%), linear-gradient(180deg, color-mix(in oklab, white 98%, white) 0%, color-mix(in oklab, white 100%, white) 100%)",
         opacity: ready ? 1 : 0,
         transition: "opacity 360ms ease",
       }}
@@ -84,7 +84,7 @@ const PageHero: React.FC<Props> = ({
           {eyebrow && (
             <div
               id={eyebrowId}
-              className="inline-flex items-center rounded-full border border-[#E5E5E5] bg-white px-3 py-1 text-[#8A8A8A] text-[0.8rem] tracking-widest uppercase"
+              className="inline-flex items-center rounded-full border border-[#E5E5E5] bg-white px-3 py-1 text-[#6E6E6E] text-[0.8rem] tracking-widest uppercase"
               aria-label="Eyebrow"
             >
               {eyebrow}
@@ -126,8 +126,8 @@ const PageHero: React.FC<Props> = ({
               {ctas.map((cta, i) => {
                 const cls =
                   cta.variant === "secondary"
-                    ? "bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl"
-                    : "bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl";
+                    ? "bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl"
+                    : "bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl";
                 return isExternal(cta.to) ? (
                   <a
                     key={i}

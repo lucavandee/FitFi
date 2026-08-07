@@ -42,7 +42,7 @@ export function NovaBubble({ message, onDismiss, autoHideDuration = 5000 }: Nova
         >
           <div className="flex items-start gap-3">
             <motion.div
-              className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#A8513A] to-[#C2654A] flex items-center justify-center"
+              className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#9A503B] to-[#A85740] flex items-center justify-center"
               animate={{
                 boxShadow: [
                   '0 0 0 0 rgba(119, 79, 56, 0.4)',
@@ -64,7 +64,7 @@ export function NovaBubble({ message, onDismiss, autoHideDuration = 5000 }: Nova
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xs font-semibold text-[#A8513A] mb-1"
+                className="text-xs font-semibold text-[#9A503B] mb-1"
               >
                 Nova
               </motion.div>
@@ -84,7 +84,7 @@ export function NovaBubble({ message, onDismiss, autoHideDuration = 5000 }: Nova
             whileHover={{ scale: 1.2, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-            className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center text-[#8A8A8A] hover:text-[#1A1A1A] rounded-full hover:bg-[#FAFAF8]"
+            className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center text-[#6E6E6E] hover:text-[#1A1A1A] rounded-full hover:bg-[#FAFAF8]"
             aria-label="Sluit"
           >
             <X className="w-4 h-4" />

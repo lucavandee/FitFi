@@ -2,6 +2,7 @@ import { getSupabase } from '@/lib/supabase';
 import type { VisualPreferenceEmbedding } from './visualPreferenceService';
 import type { ArchetypeWeights } from '@/types/style';
 import { ColorHarmonyService } from './colorHarmony';
+import { filterVeiligeProducten, type SafetyInput } from '@/engine/productSafety';
 
 export interface CalibrationOutfitItem {
   id: string;
@@ -21,6 +22,9 @@ export interface CalibrationOutfit {
     top?: CalibrationOutfitItem;
     bottom?: CalibrationOutfitItem;
     shoes?: CalibrationOutfitItem;
+    // Engine v2 componeert regelmatig een jas mee. Zonder eigen slot zou dat
+    // item ofwel onzichtbaar verdwijnen ofwel in de accessoire-slot botsen.
+    outerwear?: CalibrationOutfitItem;
     accessory?: CalibrationOutfitItem;
   };
   archetypes: ArchetypeWeights;
@@ -59,7 +63,7 @@ export class CalibrationService {
     outfit: CalibrationOutfit,
     category: 'top' | 'bottom' | 'shoes',
     quizData?: any
-  ): Promise<{ name: string; brand: string; price: number; image_url: string } | null> {
+  ): Promise<{ id: string; name: string; brand: string; price: number; image_url: string } | null> {
     const gender = quizData?.gender;
     const archetype = Object.keys(outfit.archetypes)[0] || 'minimal';
 
@@ -186,11 +190,28 @@ export class CalibrationService {
 
     const template = archetypeTemplates[mainArchetype] || archetypeTemplates['minimal'];
 
+    // De gelegenheid kwam hiervoor uit het archetype-sjabloon in plaats van uit
+    // het antwoord van de gebruiker. Omdat 'minimal', 'scandi_minimal' en
+    // 'street_refined' alle drie op 'casual' staan, kreeg iedereen die drie
+    // archetypes drie keer dezelfde kaart "Casual dag uit", ook wanneer hij
+    // "Werk" had gekozen. Het gekozen antwoord wint nu; het sjabloon is nog
+    // slechts de terugval wanneer er niets is ingevuld.
+    const gekozenGelegenheden: string[] = Array.isArray(quizData?.occasions)
+      ? quizData.occasions.filter((o: unknown): o is string => typeof o === 'string' && o.length > 0)
+      : typeof quizData?.occasions === 'string' && quizData.occasions
+        ? [quizData.occasions]
+        : [];
+    // Meerdere gelegenheden: verdeel ze over de drie outfits in plaats van
+    // alles op de eerste te zetten, zodat de set ook echt varieert.
+    const occasion = gekozenGelegenheden.length
+      ? gekozenGelegenheden[index % gekozenGelegenheden.length]
+      : template.occasion;
+
     // Fetch real products from database with color matching
     const [topProduct, bottomProduct, shoesProduct] = await Promise.all([
-      this.fetchProductForSlot('top', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
-      this.fetchProductForSlot('bottom', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
-      this.fetchProductForSlot('footwear', mainArchetype, template.occasion, quizData?.gender, quizData?.budgetRange, swipeColors)
+      this.fetchProductForSlot('top', mainArchetype, occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
+      this.fetchProductForSlot('bottom', mainArchetype, occasion, quizData?.gender, quizData?.budgetRange, swipeColors),
+      this.fetchProductForSlot('footwear', mainArchetype, occasion, quizData?.gender, quizData?.budgetRange, swipeColors)
     ]);
 
     // Validate color harmony
@@ -201,18 +222,21 @@ export class CalibrationService {
       title: `Look ${index + 1}`,
       items: {
         top: topProduct ? {
+          id: topProduct.id,
           name: topProduct.name,
           brand: topProduct.brand || 'Fashion Brand',
           price: topProduct.price || 79,
           image_url: topProduct.image_url
         } : undefined,
         bottom: bottomProduct ? {
+          id: bottomProduct.id,
           name: bottomProduct.name,
           brand: bottomProduct.brand || 'Fashion Brand',
           price: bottomProduct.price || 89,
           image_url: bottomProduct.image_url
         } : undefined,
         shoes: shoesProduct ? {
+          id: shoesProduct.id,
           name: shoesProduct.name,
           brand: shoesProduct.brand || 'Fashion Brand',
           price: shoesProduct.price || 129,
@@ -221,7 +245,7 @@ export class CalibrationService {
       },
       archetypes: weights,
       dominantColors: template.colors,
-      occasion: template.occasion,
+      occasion,
       colorHarmony,
       explanation: `Deze look combineert ${template.description}. Perfect voor jouw voorkeur voor ${mainArchetype.replace(/_/g, ' ')}.`
     };
@@ -276,11 +300,12 @@ export class CalibrationService {
     gender?: string,
     budgetRange?: number,
     swipeColors?: string[]
-  ): Promise<{ name: string; brand: string; price: number; image_url: string } | null> {
+  ): Promise<{ id: string; name: string; brand: string; price: number; image_url: string } | null> {
     const supabase = getSupabase();
     if (!supabase) {
       console.warn('⚠️ Supabase unavailable, using fallback');
       return {
+        id: `fallback-${category}`,
         name: this.getFallbackName(category, archetype),
         brand: 'Example Brand',
         price: category === 'footwear' ? 129 : 79,
@@ -310,11 +335,27 @@ export class CalibrationService {
     // NOTE: Price filtering CANNOT be done in Supabase query because price is TEXT
     // We must filter client-side after fetching
 
-    const { data, error } = await query;
+    const { data: rawData, error } = await query;
+
+    // Vangnet tegen producten die evident niet in een outfit horen. Deze
+    // service vertrouwde uitsluitend op de databasekolommen `category` en
+    // `is_kids`, en die zijn aantoonbaar onbetrouwbaar: een oude importer
+    // gaf alles zonder trefwoordmatch category='top' (vandaar de bijzettafel
+    // en de fleece plaids), en is_kids kijkt niet naar kinderschoenmaten
+    // (vandaar de peuterschoen). Zie src/engine/productSafety.ts.
+    const safety = rawData ? filterVeiligeProducten(rawData as SafetyInput[]) : null;
+    if (safety && safety.geweigerd.length > 0) {
+      console.warn(
+        `[CalibrationService] ${safety.geweigerd.length}/${rawData!.length} producten geweigerd voor ${category}:`,
+        safety.geweigerd.slice(0, 5).map((g: { reden: string; product: SafetyInput }) => `${g.reden}: ${g.product.name}`)
+      );
+    }
+    const data = safety ? (safety.veilig as typeof rawData) : rawData;
 
     if (error || !data || data.length === 0) {
       console.warn(`⚠️ No products found for ${category}, using fallback`);
       return {
+        id: `fallback-${category}`,
         name: this.getFallbackName(category, archetype),
         brand: 'Example Brand',
         price: category === 'footwear' ? 129 : 79,
@@ -384,6 +425,7 @@ export class CalibrationService {
     if (filteredData.length === 0) {
       console.warn(`⚠️ No products found after gender+budget filtering for ${category} (gender: ${gender}, budget: ${priceRange?.min}-${priceRange?.max})`);
       return {
+        id: `fallback-${category}`,
         name: this.getFallbackName(category, archetype),
         brand: 'Example Brand',
         price: category === 'footwear' ? 129 : 79,
@@ -487,6 +529,7 @@ export class CalibrationService {
     console.log(`✅ Product match for ${category} (archetype: ${archetype}, score: ${selectedProduct.score}):`, selectedProduct.name, 'by', selectedProduct.brand);
 
     return {
+      id: selectedProduct.id,
       name: selectedProduct.name,
       brand: selectedProduct.brand || 'Fashion Brand',
       price: selectedProduct.price || (category === 'footwear' ? 129 : 79),
@@ -953,9 +996,9 @@ export class CalibrationService {
         occasion: 'casual',
         colors: ['#F5F5DC', '#808080', '#FFFFFF'],
         items: {
-          top: { name: 'Essential Organic Cotton Tee', brand: 'Basic Line', price: 39, image_url: '/images/fallbacks/top.jpg' },
-          bottom: { name: 'Straight Fit Chinos', brand: 'Basic Line', price: 69, image_url: '/images/fallbacks/bottom.jpg' },
-          shoes: { name: 'Minimalist White Sneakers', brand: 'Basic Line', price: 99, image_url: '/images/fallbacks/footwear.jpg' }
+          top: { id: 'mock-scandi_minimal-top', name: 'Essential Organic Cotton Tee', brand: 'Basic Line', price: 39, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { id: 'mock-scandi_minimal-bottom', name: 'Straight Fit Chinos', brand: 'Basic Line', price: 69, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { id: 'mock-scandi_minimal-shoes', name: 'Minimalist White Sneakers', brand: 'Basic Line', price: 99, image_url: '/images/fallbacks/footwear.jpg' }
         }
       },
       {
@@ -965,9 +1008,9 @@ export class CalibrationService {
         occasion: 'work',
         colors: ['#2C3E50', '#ECF0F1', '#8B7355'],
         items: {
-          top: { name: 'Structured Oxford Shirt', brand: 'Classic Brand', price: 79, image_url: '/images/fallbacks/top.jpg' },
-          bottom: { name: 'Tailored Dress Pants', brand: 'Classic Brand', price: 99, image_url: '/images/fallbacks/bottom.jpg' },
-          shoes: { name: 'Leather Loafers', brand: 'Classic Brand', price: 149, image_url: '/images/fallbacks/footwear.jpg' }
+          top: { id: 'mock-italian_smart_casual-top', name: 'Structured Oxford Shirt', brand: 'Classic Brand', price: 79, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { id: 'mock-italian_smart_casual-bottom', name: 'Tailored Dress Pants', brand: 'Classic Brand', price: 99, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { id: 'mock-italian_smart_casual-shoes', name: 'Leather Loafers', brand: 'Classic Brand', price: 149, image_url: '/images/fallbacks/footwear.jpg' }
         }
       },
       {
@@ -977,9 +1020,9 @@ export class CalibrationService {
         occasion: 'casual',
         colors: ['#1C1C1C', '#FFFFFF', '#808080'],
         items: {
-          top: { name: 'Premium Oversized Hoodie', brand: 'Street Brand', price: 89, image_url: '/images/fallbacks/top.jpg' },
-          bottom: { name: 'Tapered Joggers', brand: 'Street Brand', price: 79, image_url: '/images/fallbacks/bottom.jpg' },
-          shoes: { name: 'Premium Hi-Top Sneakers', brand: 'Street Brand', price: 139, image_url: '/images/fallbacks/footwear.jpg' }
+          top: { id: 'mock-street_refined-top', name: 'Premium Oversized Hoodie', brand: 'Street Brand', price: 89, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { id: 'mock-street_refined-bottom', name: 'Tapered Joggers', brand: 'Street Brand', price: 79, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { id: 'mock-street_refined-shoes', name: 'Premium Hi-Top Sneakers', brand: 'Street Brand', price: 139, image_url: '/images/fallbacks/footwear.jpg' }
         }
       },
       {
@@ -989,9 +1032,9 @@ export class CalibrationService {
         occasion: 'work',
         colors: ['#000080', '#FFFFFF', '#8B7355'],
         items: {
-          top: { name: 'Classic Oxford Shirt', brand: 'Heritage Brand', price: 69, image_url: '/images/fallbacks/top.jpg' },
-          bottom: { name: 'Classic Chino Pants', brand: 'Heritage Brand', price: 79, image_url: '/images/fallbacks/bottom.jpg' },
-          shoes: { name: 'Oxford Dress Shoes', brand: 'Heritage Brand', price: 159, image_url: '/images/fallbacks/footwear.jpg' }
+          top: { id: 'mock-classic-top', name: 'Classic Oxford Shirt', brand: 'Heritage Brand', price: 69, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { id: 'mock-classic-bottom', name: 'Classic Chino Pants', brand: 'Heritage Brand', price: 79, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { id: 'mock-classic-shoes', name: 'Oxford Dress Shoes', brand: 'Heritage Brand', price: 159, image_url: '/images/fallbacks/footwear.jpg' }
         }
       },
       {
@@ -1001,9 +1044,9 @@ export class CalibrationService {
         occasion: 'casual',
         colors: ['#D2691E', '#F4A460', '#8B4513'],
         items: {
-          top: { name: 'Flowing Linen Tunic', brand: 'Boho Brand', price: 59, image_url: '/images/fallbacks/top.jpg' },
-          bottom: { name: 'Wide-Leg Linen Pants', brand: 'Boho Brand', price: 69, image_url: '/images/fallbacks/bottom.jpg' },
-          shoes: { name: 'Suede Desert Boots', brand: 'Boho Brand', price: 119, image_url: '/images/fallbacks/footwear.jpg' }
+          top: { id: 'mock-bohemian-top', name: 'Flowing Linen Tunic', brand: 'Boho Brand', price: 59, image_url: '/images/fallbacks/top.jpg' },
+          bottom: { id: 'mock-bohemian-bottom', name: 'Wide-Leg Linen Pants', brand: 'Boho Brand', price: 69, image_url: '/images/fallbacks/bottom.jpg' },
+          shoes: { id: 'mock-bohemian-shoes', name: 'Suede Desert Boots', brand: 'Boho Brand', price: 119, image_url: '/images/fallbacks/footwear.jpg' }
         }
       }
     ];

@@ -13,7 +13,9 @@ export function HeroV3() {
     queryFn: async () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const { count, error } = await supabase
+      const client = supabase();
+      if (!client) return 0;
+      const { count, error } = await client
         .from('style_profiles')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', today.toISOString());
@@ -49,7 +51,7 @@ export function HeroV3() {
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: '50% 22%' }}
           loading="eager"
-          fetchpriority="high"
+          fetchPriority="high"
         />
 
         {/* ── Bovenste fade — versmelt met header ── */}
@@ -117,7 +119,7 @@ export function HeroV3() {
               }}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[#D4856E]"
+                className="w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 bg-[#A85740]"
                 aria-hidden="true"
               />
               <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'rgba(237,217,200,0.70)' }}>
@@ -138,7 +140,7 @@ export function HeroV3() {
             }}
           >
             Outfits die{' '}
-            <em className="not-italic text-[#D4856E]">bij jou</em>
+            <em className="not-italic text-[#A85740]">bij jou</em>
             <br />
             passen
           </h1>
@@ -166,7 +168,7 @@ export function HeroV3() {
             {/* Primary */}
             <button
               onClick={handleStartClick}
-              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[#C2654A] hover:bg-[#A8513A] text-white"
+              className="group w-full inline-flex items-center justify-between px-5 min-h-[56px] rounded-[16px] font-bold text-[15px] transition-all duration-200 active:scale-[0.98] bg-[#A85740] hover:bg-[#9A503B] text-white"
               style={{
                 boxShadow: '0 4px 24px rgba(194,101,74,0.55), 0 1px 0 rgba(255,255,255,0.08) inset',
                 letterSpacing: '0.01em',
@@ -217,7 +219,7 @@ export function HeroV3() {
                 >
                   <path
                     d="M2.5 6l2.5 2.5 4.5-5"
-                    stroke="#D4856E"
+                    stroke="#A85740"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -273,7 +275,7 @@ export function HeroV3() {
 
             {/* Badge */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[#FAFAF8] text-[#C2654A]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-7 shadow-xl bg-[#FAFAF8] text-[#A85740]"
             >
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
               Persoonlijk AI-stijladvies
@@ -285,7 +287,7 @@ export function HeroV3() {
               style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)' }}
             >
               Outfits die{' '}
-              <em className="not-italic text-[#D4856E]">
+              <em className="not-italic text-[#A85740]">
                 bij jou passen
               </em>
             </h1>
@@ -300,7 +302,7 @@ export function HeroV3() {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleStartClick}
-                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[#C2654A] hover:bg-[#A8513A] text-white"
+                className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 bg-[#A85740] hover:bg-[#9A503B] text-white"
                 aria-label="Ontvang jouw persoonlijk stijladvies"
               >
                 Ontvang jouw stijladvies
@@ -326,10 +328,10 @@ export function HeroV3() {
             {todayCount !== undefined && todayCount > 0 && (
               <p className="mt-5 text-sm flex items-center gap-2" style={{ color: 'rgba(247,243,236,0.60)' }}>
                 <span
-                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[#D4856E]"
+                  className="w-2 h-2 rounded-full animate-pulse inline-block bg-[#A85740]"
                   aria-hidden="true"
                 />
-                <span className="text-[#D4856E] font-semibold">{todayCount}</span>
+                <span className="text-[#A85740] font-semibold">{todayCount}</span>
                 &nbsp;{todayCount === 1 ? 'persoon' : 'mensen'} gestart vandaag
               </p>
             )}

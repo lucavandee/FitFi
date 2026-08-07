@@ -21,7 +21,7 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
 }) => {
   return (
     <section className="relative overflow-hidden py-12 md:py-16">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] via-[#FAFAF8] to-[#FAF5F2] opacity-60"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] via-[#FAFAF8] to-[#F5F0EB] opacity-60"></div>
 
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#F4E8E3] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#F4E8E3] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -30,7 +30,7 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             <div className="flex-1 fade-in-up">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 dark:bg-[#FFFFFF]/80 backdrop-blur-xl rounded-full text-sm font-bold text-[#A8513A] mb-6 shadow-lg border border-[#E5E5E5] hover-lift">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 dark:bg-[#FFFFFF]/80 backdrop-blur-xl rounded-full text-sm font-bold text-[#9A503B] mb-6 shadow-lg border border-[#E5E5E5] hover-lift">
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
                 JOUW STYLE DASHBOARD
               </div>
@@ -38,14 +38,14 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#1A1A1A] mb-4 leading-tight">
                 {greeting},{" "}
                 <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-[#C2654A] to-[#C2654A] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#A85740] to-[#A85740] bg-clip-text text-transparent">
                     {userName || "daar"}
                   </span>
-                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#C2654A] to-[#C2654A] rounded-full opacity-60"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#A85740] to-[#A85740] rounded-full opacity-60"></div>
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-[#8A8A8A] mb-8 max-w-2xl leading-relaxed">
+              <p className="text-xl md:text-2xl text-[#6E6E6E] mb-8 max-w-2xl leading-relaxed">
                 {hasQuizData
                   ? "Jouw stijlreis in één overzicht"
                   : "Start je stijlreis met onze slimme quiz"}
@@ -54,7 +54,7 @@ export const DashboardHero: React.FC<DashboardHeroProps> = ({
               {!hasQuizData && (
                 <Link
                   to="/onboarding"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#C2654A] to-[#A8513A] text-white text-lg font-bold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#A85740] to-[#9A503B] text-white text-lg font-bold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
                 >
                   <Sparkles className="w-6 h-6" />
                   Start gratis stijlquiz
@@ -113,7 +113,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, value, label, gradient, large
       <div className={`${large ? 'text-5xl' : 'text-4xl'} font-black text-[#1A1A1A] mb-2 tabular-nums`}>
         {value}
       </div>
-      <div className={`${large ? 'text-base' : 'text-sm'} font-bold text-[#8A8A8A] uppercase tracking-wider`}>
+      <div className={`${large ? 'text-base' : 'text-sm'} font-bold text-[#6E6E6E] uppercase tracking-wider`}>
         {label}
       </div>
     </div>

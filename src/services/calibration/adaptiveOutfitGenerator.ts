@@ -1,4 +1,5 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
+import { seizoenenBotsen } from '@/engine/productSafety';
 
 interface DBProduct {
   id: string;
@@ -163,7 +164,15 @@ export class AdaptiveOutfitGenerator {
     // Get recommendations from learned preferences
     const recommendations = await this.getAdaptiveRecommendations(context.session_id);
 
-    const maxAttempts = count * 3;
+    // Was count * 3, oftewel 9 pogingen voor 3 outfits. Elke afwijzing kost
+    // een poging: een seizoensbotsing, een product dat het vangnet niet haalt,
+    // of overlap met een eerdere outfit. Sinds die controles er zijn, is de
+    // kandidatenpool smaller en raakten die 9 pogingen op, waardoor een
+    // gebruiker na acht minuten invullen 0 of 2 outfits kreeg in plaats van 3.
+    // Niets tonen is erger dan een matige outfit tonen. De lus stopt zodra hij
+    // klaar is, dus een ruimere bovengrens kost alleen tijd in het slechtste
+    // geval.
+    const maxAttempts = count * 12;
     let attempts = 0;
 
     while (outfits.length < count && attempts < maxAttempts) {
@@ -175,15 +184,29 @@ export class AdaptiveOutfitGenerator {
         : await this.generateOptimizedOutfit(products, context, recommendations, outfits.length);
 
       if (outfit) {
-        const isDuplicate = outfits.some(existing =>
-          existing.products.some(ep =>
-            outfit.products.some(op => op.id === ep.id)
-          )
-        );
-        if (!isDuplicate) {
+        // Eerder werd een outfit al geweigerd zodra hij EEN product deelde met
+        // een eerdere outfit. Bij een dunne pool (na gender-, budget-, vangnet-
+        // en seizoensfilters blijven er soms maar enkele tientallen producten
+        // over) is dat vrijwel altijd waar, en dan komt er niets uit. Nu geldt:
+        // twee outfits mogen hooguit een item delen. Ze blijven daarmee
+        // zichtbaar verschillend zonder dat de set leeg blijft.
+        const teVeelOverlap = outfits.some((existing) => {
+          const gedeeld = existing.products.filter((ep) =>
+            outfit.products.some((op) => op.id === ep.id)
+          ).length;
+          return gedeeld > 1;
+        });
+        if (!teVeelOverlap) {
           outfits.push(outfit);
         }
       }
+    }
+
+    if (outfits.length < count) {
+      console.warn(
+        `[AdaptiveOutfitGenerator] Slechts ${outfits.length}/${count} outfits na ${attempts} pogingen. ` +
+        'De kandidatenpool is te dun voor dit profiel; controleer de feed-breedte.'
+      );
     }
 
     return this.ensureOutfitDiversity(outfits);
@@ -280,6 +303,19 @@ export class AdaptiveOutfitGenerator {
 
     if (!bottom || !footwear) {
       console.warn('[AdaptiveOutfitGenerator] Could not build complete outfit');
+      return null;
+    }
+
+    // Seizoen was alleen een SCORE (applySeasonalBoost verhoogt de kleurscore
+    // met hooguit 10%) en sloot niets uit, waardoor een gevoerde winterlaars
+    // in dezelfde outfit kon belanden als een zomershort met bloemenprint.
+    // Nu een harde check: alleen de botsing winter tegen zomer wordt geweigerd,
+    // de aanroeper probeert het dan met een andere combinatie.
+    if (seizoenenBotsen([top.name, bottom.name, footwear.name])) {
+      console.warn(
+        '[AdaptiveOutfitGenerator] Outfit geweigerd op seizoensbotsing:',
+        [top.name, bottom.name, footwear.name]
+      );
       return null;
     }
 
@@ -662,21 +698,50 @@ export class AdaptiveOutfitGenerator {
     scores: OutfitScore,
     context: GenerationContext
   ): string {
+    // Deze uitleg is de kernbelofte van het product: hij staat onder elke
+    // outfit als "Waarom dit bij je past". Eerder stonden hier drie losse
+    // drempels (0.8 / 0.85 / 0.8) zonder ondergrens, waardoor een outfit die
+    // op alle drie lager scoorde een lege lijst opleverde en de regel
+    // `explanations.join('. ') + '.'` letterlijk één punt teruggaf. Dat was
+    // live zichtbaar op alle calibratie-outfits.
+    //
+    // Nu getrapt: elke score levert een zin op die past bij het niveau, dus er
+    // is altijd uitleg en die overdrijft nooit. Toon blijft Nederlands en in
+    // de je-vorm, maximaal drie zinnen conform de copy-regels.
     const explanations: string[] = [];
+    const archetype = String(context.user_profile?.archetype ?? '').trim();
 
     if (scores.style_match > 0.8) {
-      explanations.push(`Perfect match voor je ${context.user_profile.archetype} stijl`);
+      explanations.push(
+        archetype ? `Sluit sterk aan op je ${archetype} stijl` : 'Sluit sterk aan op je stijlprofiel'
+      );
+    } else if (scores.style_match > 0.6) {
+      explanations.push(
+        archetype ? `Past bij je ${archetype} stijl` : 'Past bij je stijlprofiel'
+      );
+    } else {
+      explanations.push(
+        archetype
+          ? `Een rustige basis binnen je ${archetype} stijl`
+          : 'Een rustige basis die bij je profiel past'
+      );
     }
 
     if (scores.color_harmony > 0.85) {
-      explanations.push('Kleuren harmoniëren prachtig');
+      explanations.push('de kleuren versterken elkaar');
+    } else if (scores.color_harmony > 0.6) {
+      explanations.push('de kleuren werken rustig samen');
     }
 
     if (scores.price_optimization > 0.8) {
-      explanations.push('Uitstekende prijs-kwaliteit verhouding');
+      explanations.push('en het blijft ruim binnen je budget');
+    } else if (scores.price_optimization > 0.6) {
+      explanations.push('en het past binnen je budget');
     }
 
-    return explanations.join('. ') + '.';
+    const [first, ...rest] = explanations;
+    const sentence = rest.length ? `${first}, ${rest.join(', ')}` : first;
+    return `${sentence}.`;
   }
 
   /**
@@ -773,13 +838,24 @@ export class AdaptiveOutfitGenerator {
       getFormalityBand(p.name, p.style) === targetBand
     );
 
-    const compatible = targetBand === 'smart'
-      ? categoryProducts
-      : sameBand.length > 0
-        ? sameBand
-        : categoryProducts.filter(p =>
-            getFormalityBand(p.name, p.style) === 'smart'
-          );
+    // Eerder gaf de tak voor 'smart' de VOLLEDIGE pool terug, zonder enige
+    // filtering. Omdat 'smart' de terugval is zodra een productnaam geen
+    // formeel en geen casual trefwoord bevat, valt circa 76% van de tops
+    // daarin. Driekwart van de outfits werd dus ongecontroleerd samengesteld,
+    // wat combinaties als een nette pantalon met een sportitem verklaart.
+    //
+    // Nu voor alle drie de banden dezelfde volgorde: eerst dezelfde band, dan
+    // de neutrale middenband, en pas als laatste redmiddel de hele pool. Zo
+    // wordt een uitgesproken formeel of casual item nooit meer willekeurig
+    // gekoppeld aan zijn tegenpool.
+    const smartBand = categoryProducts.filter(
+      (p) => getFormalityBand(p.name, p.style) === 'smart'
+    );
+    const compatible = sameBand.length > 0
+      ? sameBand
+      : smartBand.length > 0
+        ? smartBand
+        : categoryProducts;
 
     const pool = compatible.length > 0 ? compatible : categoryProducts;
 
@@ -879,8 +955,14 @@ export class AdaptiveOutfitGenerator {
     const categories = ['top', 'bottom', 'footwear'];
     const perCategory = 200;
 
+    const sb = supabase();
+    if (!sb) {
+      console.error('[AdaptiveOutfitGenerator] Supabase client unavailable');
+      return [];
+    }
+
     const fetches = categories.map(async (cat) => {
-      let query = supabase
+      let query = sb
         .from('products')
         .select('*')
         .eq('in_stock', true)
@@ -922,7 +1004,13 @@ export class AdaptiveOutfitGenerator {
    * Get adaptive recommendations from database
    */
   private async getAdaptiveRecommendations(sessionId: string): Promise<any> {
-    const { data, error } = await supabase.rpc('get_adaptive_recommendations', {
+    const sb = supabase();
+    if (!sb) {
+      console.error('[AdaptiveOutfitGenerator] Supabase client unavailable');
+      return {};
+    }
+
+    const { data, error } = await sb.rpc('get_adaptive_recommendations', {
       p_session_id: sessionId
     });
 

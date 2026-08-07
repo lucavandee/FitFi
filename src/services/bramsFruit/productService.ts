@@ -4,6 +4,10 @@ import { mapBramsFruitToFitFiProduct } from './categoryMapper';
 import { Product } from '@/engine/types';
 
 export async function getAllBramsFruitProducts(): Promise<BramsFruitProduct[]> {
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return [];
+  }
   const { data, error } = await supabase
     .from('brams_fruit_products')
     .select('*')
@@ -23,6 +27,10 @@ export async function getAllBramsFruitProducts(): Promise<BramsFruitProduct[]> {
 export async function getBramsFruitProductsByCategory(
   category: string
 ): Promise<BramsFruitProduct[]> {
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return [];
+  }
   const { data, error } = await supabase
     .from('brams_fruit_products')
     .select('*')
@@ -41,6 +49,10 @@ export async function getBramsFruitProductsByCategory(
 export async function getBramsFruitProductsBySubCategory(
   subCategory: string
 ): Promise<BramsFruitProduct[]> {
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return [];
+  }
   const { data, error } = await supabase
     .from('brams_fruit_products')
     .select('*')
@@ -96,6 +108,10 @@ export async function getBramsFruitProductGroups(): Promise<BramsFruitProductGro
 export async function getBramsFruitProductByStyleCode(
   styleCode: string
 ): Promise<BramsFruitProduct[]> {
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return [];
+  }
   const { data, error } = await supabase
     .from('brams_fruit_products')
     .select('*')
@@ -116,6 +132,10 @@ export async function getBramsFruitCategories(): Promise<{
   categories: string[];
   subCategories: Map<string, string[]>;
 }> {
+  if (!supabase) {
+    console.error('Supabase client not initialized');
+    return { categories: [], subCategories: new Map() };
+  }
   const { data, error } = await supabase
     .from('brams_fruit_products')
     .select('category, sub_category')
@@ -170,7 +190,8 @@ export async function getBramsFruitProductsForOutfitEngine(): Promise<Product[]>
 
     console.log(`[BramsFruit] Loaded ${fitfiProducts.length} products for outfit engine (${bramsFruitProducts.length} total variants)`);
     console.log('[BramsFruit] Products by category:', fitfiProducts.reduce((acc, p) => {
-      acc[p.category] = (acc[p.category] || 0) + 1;
+      const category = p.category || 'unknown';
+      acc[category] = (acc[category] || 0) + 1;
       return acc;
     }, {} as Record<string, number>));
 

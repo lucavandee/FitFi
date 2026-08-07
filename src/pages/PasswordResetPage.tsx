@@ -34,6 +34,10 @@ export default function PasswordResetPage() {
     try {
       const { getSupabase } = await import("@/lib/supabase");
       const client = getSupabase();
+      if (!client) {
+        setError("Er ging iets mis. Probeer het later opnieuw.");
+        return;
+      }
       const { error: supaError } = await client.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/wachtwoord-instellen`,
       });
@@ -73,7 +77,7 @@ export default function PasswordResetPage() {
           {/* Back link */}
           <NavLink
             to="/inloggen"
-            className="inline-flex items-center gap-1.5 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] mb-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4856E] rounded-lg"
+            className="inline-flex items-center gap-1.5 text-sm text-[#6E6E6E] hover:text-[#1A1A1A] mb-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] rounded-lg"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Terug naar inloggen
@@ -87,15 +91,15 @@ export default function PasswordResetPage() {
               {/* Icon */}
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
-                style={{ background: "#FAF5F2" }}
+                style={{ background: "#F5F0EB" }}
               >
-                <Lock className="w-6 h-6" style={{ color: "#A8513A" }} aria-hidden="true" />
+                <Lock className="w-6 h-6" style={{ color: "#9A503B" }} aria-hidden="true" />
               </div>
 
               <h1 className="font-heading font-bold text-xl text-[#1A1A1A] mb-1">
                 Wachtwoord vergeten?
               </h1>
-              <p className="text-sm text-[#8A8A8A] mb-6 leading-relaxed">
+              <p className="text-sm text-[#6E6E6E] mb-6 leading-relaxed">
                 Vul je e-mailadres in. We sturen je een link waarmee je een nieuw wachtwoord kunt instellen.
               </p>
 
@@ -124,7 +128,7 @@ export default function PasswordResetPage() {
                   <div className="relative">
                     <Mail
                       className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                      style={{ color: "#8A8A8A" }}
+                      style={{ color: "#6E6E6E" }}
                       aria-hidden="true"
                     />
                     <input
@@ -140,10 +144,10 @@ export default function PasswordResetPage() {
                       aria-invalid={!!emailError}
                       aria-describedby={emailError ? "reset-email-error" : undefined}
                       disabled={loading}
-                      className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[#FAFAF8] text-[#1A1A1A] placeholder:text-[#8A8A8A] placeholder:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:opacity-50 ${
+                      className={`w-full pl-10 pr-4 py-3.5 min-h-[52px] text-base rounded-xl border-2 transition-colors bg-[#FAFAF8] text-[#1A1A1A] placeholder:text-[#6E6E6E] placeholder:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:opacity-50 ${
                         emailError
                           ? "border-[#C24A4A] focus-visible:ring-[#FECACA]"
-                          : "border-[#E5E5E5] focus-visible:border-[#C2654A] focus-visible:ring-[#F4E8E3]"
+                          : "border-[#E5E5E5] focus-visible:border-[#A85740] focus-visible:ring-[#F4E8E3]"
                       }`}
                     />
                   </div>
@@ -160,9 +164,9 @@ export default function PasswordResetPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-6 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-6 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                   style={{
-                    background: "#A8513A",
+                    background: "#9A503B",
                     color: "#FAFAF8",
                     boxShadow: "0 8px 40px rgba(166,136,106,0.35)",
                   }}
@@ -178,7 +182,7 @@ export default function PasswordResetPage() {
               <div className="mt-4 text-center">
                 <NavLink
                   to="/registreren"
-                  className="text-sm text-[#8A8A8A] hover:text-[#A8513A] transition-colors underline underline-offset-2"
+                  className="text-sm text-[#6E6E6E] hover:text-[#9A503B] transition-colors underline underline-offset-2"
                 >
                   Nog geen account? Maak er een aan
                 </NavLink>
@@ -191,31 +195,31 @@ export default function PasswordResetPage() {
             >
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
-                style={{ background: "#FAF5F2" }}
+                style={{ background: "#F5F0EB" }}
               >
-                <CheckCircle className="w-7 h-7" style={{ color: "#A8513A" }} aria-hidden="true" />
+                <CheckCircle className="w-7 h-7" style={{ color: "#9A503B" }} aria-hidden="true" />
               </div>
               <h1 className="font-heading font-bold text-xl text-[#1A1A1A] mb-2">
                 Resetlink verstuurd
               </h1>
-              <p className="text-sm text-[#8A8A8A] mb-1 leading-relaxed">
+              <p className="text-sm text-[#6E6E6E] mb-1 leading-relaxed">
                 Als <strong className="text-[#1A1A1A]">{email}</strong> bij ons bekend is, ontvang je binnen enkele minuten een e-mail met een resetlink.
               </p>
-              <p className="text-xs text-[#8A8A8A] mb-7 leading-relaxed">
+              <p className="text-xs text-[#6E6E6E] mb-7 leading-relaxed">
                 Controleer ook je spam- of ongewenste e-mailmap.
               </p>
 
               <div className="space-y-2.5">
                 <button
                   onClick={() => { setSent(false); setEmail(""); setTouched(false); }}
-                  className="w-full py-3 rounded-xl font-semibold text-sm border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#D4856E] hover:bg-[#FAF5F2] transition-all"
+                  className="w-full py-3 rounded-xl font-semibold text-sm border-2 border-[#E5E5E5] text-[#1A1A1A] hover:border-[#A85740] hover:bg-[#F5F0EB] transition-all"
                 >
                   Ander e-mailadres proberen
                 </button>
                 <NavLink
                   to="/inloggen"
                   className="flex items-center justify-center gap-1.5 w-full py-3 rounded-xl font-bold text-sm transition-all"
-                  style={{ background: "#A8513A", color: "#FAFAF8" }}
+                  style={{ background: "#9A503B", color: "#FAFAF8" }}
                 >
                   <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                   Terug naar inloggen

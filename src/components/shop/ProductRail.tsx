@@ -25,7 +25,7 @@ export default function ProductRail({ items, onClickItem }: Props) {
               onClick={() => onClickItem?.(p)}
               className={cn(
                 "block rounded-2xl overflow-hidden border border-black/10 bg-white shadow-sm",
-                "transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#C2654A]/30"
+                "transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#A85740]/30"
               )}
             >
               <div className="aspect-[3/4] overflow-hidden bg-gray-100">

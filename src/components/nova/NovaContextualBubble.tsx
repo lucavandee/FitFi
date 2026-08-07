@@ -34,7 +34,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
     return () => clearTimeout(timer);
   }, [context]);
 
-  const getContextualMessage = (ctx: string): string[] => {
+  const getContextualMessage = (ctx: NovaContextualBubbleProps['context']): string[] => {
     const messages = {
       dashboard: [
         'Hoi! Ik ben Nova, je AI stylist. Kan ik je ergens mee helpen?',
@@ -98,7 +98,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
                 className="absolute top-2 right-2 p-1 rounded-full hover:bg-[#FAFAF8] transition-colors"
                 aria-label="Dismiss"
               >
-                <X className="w-4 h-4 text-[#8A8A8A]" />
+                <X className="w-4 h-4 text-[#6E6E6E]" />
               </button>
 
               <div className="flex items-start gap-3 pr-6">
@@ -112,7 +112,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
                     repeat: Infinity,
                     repeatDelay: 3
                   }}
-                  className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center"
+                  className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] flex items-center justify-center"
                 >
                   <Sparkles className="w-5 h-5 text-white" />
                 </motion.div>
@@ -124,7 +124,7 @@ export function NovaContextualBubble({ context, onInteract }: NovaContextualBubb
 
                   <button
                     onClick={handleInteract}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#C2654A] text-white text-sm font-medium rounded-xl hover:bg-[#A8513A] transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#A85740] text-white text-sm font-medium rounded-xl hover:bg-[#9A503B] transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Chat met Nova

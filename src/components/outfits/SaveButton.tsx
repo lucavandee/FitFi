@@ -72,12 +72,12 @@ export default function SaveButton({ outfit, userId, className = '' }: SaveButto
         rounded-xl
         transition-all duration-200
         ${isSaved
-          ? 'bg-[#FAF5F2] text-[#A8513A]'
-          : 'bg-[#FFFFFF] text-[#1A1A1A]/60 hover:text-[#A8513A] hover:bg-[#FAF5F2]'
+          ? 'bg-[#F5F0EB] text-[#9A503B]'
+          : 'bg-[#FFFFFF] text-[#1A1A1A]/60 hover:text-[#9A503B] hover:bg-[#F5F0EB]'
         }
         border border-[#E5E5E5]
         disabled:opacity-50 disabled:cursor-not-allowed
-        focus:outline-none focus:ring-2 focus:ring-[#D4856E]
+        focus:outline-none focus:ring-2 focus:ring-[#A85740]
         ${className}
       `}
       aria-label={isSaved ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten'}

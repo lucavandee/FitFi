@@ -35,12 +35,12 @@ const LoadingFallback: React.FC<LoadingFallbackProps> = ({
       className="flex flex-col items-center justify-center gap-4"
     >
       <div
-        className={`${spinnerSizes[size]} border-[#E5E5E5] border-t-[#C2654A] rounded-full animate-spin`}
+        className={`${spinnerSizes[size]} border-[#E5E5E5] border-t-[#A85740] rounded-full animate-spin`}
         aria-hidden="true"
       />
       <div className="text-center space-y-1">
         <p className={`${textSizes[size]} text-[#1A1A1A] font-medium`}>{message}</p>
-        {hint && <p className="text-sm text-[#8A8A8A]">{hint}</p>}
+        {hint && <p className="text-sm text-[#6E6E6E]">{hint}</p>}
       </div>
     </div>
   );

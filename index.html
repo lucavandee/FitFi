@@ -13,10 +13,6 @@
     <link rel="prefetch" href="/results" as="document">
     <link rel="prefetch" href="/prijzen" as="document">
 
-    <!-- ✅ Fonts: Montserrat (headings) + Lato (body) — non-render-blocking -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600&family=Montserrat:wght@600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet"></noscript>
-
     <!-- ✅ Fonts: Instrument Serif (editorial headlines) + Plus Jakarta Sans (premium body) -->
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,13 +22,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#A6886A" />
 
-    <!-- ✅ SEO defaults -->
-    <link rel="canonical" href="https://fitfi.ai/" />
+    <!-- SEO defaults.
+         Deze tags gelden voor elke bezoeker die GEEN JavaScript uitvoert:
+         social scrapers (WhatsApp, LinkedIn, Slack) en crawlers die niet
+         renderen. De Seo-component overschrijft ze client-side per route.
+         Er stond hier eerder een harde canonical naar https://fitfi.ai/,
+         waardoor elke subpagina naar de homepage canonicaliseerde en die
+         canonical bovendien naar een 301 wees. Die is nu weg: zonder tag
+         bepaalt Google de URL zelf, wat beter is dan een foute tag. -->
     <meta property="og:site_name" content="FitFi" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="nl_NL" />
+    <meta property="og:title" content="FitFi — Persoonlijk stijladvies" />
+    <meta property="og:description" content="Beantwoord een paar vragen en zie welke outfits bij je passen. Met uitleg en directe shoplinks." />
+    <meta property="og:image" content="https://www.fitfi.ai/og/og-default.jpg" />
+    <meta property="og:url" content="https://www.fitfi.ai/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FitFi — Persoonlijk stijladvies" />
+    <meta name="twitter:description" content="Beantwoord een paar vragen en zie welke outfits bij je passen. Met uitleg en directe shoplinks." />
+    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-default.jpg" />
+    <meta name="description" content="Beantwoord een paar vragen en zie welke outfits bij je passen. Met uitleg en directe shoplinks." />
 
-    <title>FitFi — AI Style Report</title>
+    <title>FitFi — Persoonlijk stijladvies</title>
 
     <!-- Daisycon verification -->
     <meta name="ee766b42deed7db" content="4a91cb66c90ac80df32bb7517a55886a" />

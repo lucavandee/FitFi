@@ -12,22 +12,22 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
     {
       label: 'Free',
       value: tiers.free,
-      color: '#8A8A8A',
-      gradient: 'linear-gradient(135deg, #8A8A8A 0%, #1A1A1A 70%)',
+      color: '#6E6E6E',
+      gradient: 'linear-gradient(135deg, #6E6E6E 0%, #1A1A1A 70%)',
       icon: '👤',
     },
     {
       label: 'Premium',
       value: tiers.premium,
-      color: '#C2654A',
-      gradient: 'linear-gradient(135deg, #C2654A 0%, #A8513A 100%)',
+      color: '#A85740',
+      gradient: 'linear-gradient(135deg, #A85740 0%, #9A503B 100%)',
       icon: '💎',
     },
     {
       label: 'Founder',
       value: tiers.founder,
-      color: '#C2654A',
-      gradient: 'linear-gradient(135deg, #C2654A 0%, #C2654A 100%)',
+      color: '#A85740',
+      gradient: 'linear-gradient(135deg, #A85740 0%, #A85740 100%)',
       icon: '⭐',
     },
   ];
@@ -41,7 +41,7 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
         <h3 className="text-lg font-semibold text-[#1A1A1A]">💰 Tier Verdeling</h3>
         <div className="text-right">
           <div className="text-sm font-bold text-[#1A1A1A]">{conversionRate}%</div>
-          <div className="text-xs text-[#8A8A8A]">Conversion</div>
+          <div className="text-xs text-[#6E6E6E]">Conversion</div>
         </div>
       </div>
 
@@ -93,13 +93,13 @@ export default function TierDistributionChart({ tiers, total }: TierDistribution
 
       <div className="mt-6 pt-6 border-t border-[#E5E5E5] grid grid-cols-2 gap-4">
         <div className="bg-[#FAFAF8] rounded-lg p-3">
-          <div className="text-xs text-[#8A8A8A] mb-1">Geschatte MRR</div>
+          <div className="text-xs text-[#6E6E6E] mb-1">Geschatte MRR</div>
           <div className="text-xl font-bold text-[#1A1A1A]">
             €{(tiers.premium * 9.99).toFixed(2)}
           </div>
         </div>
         <div className="bg-[#FAFAF8] rounded-lg p-3">
-          <div className="text-xs text-[#8A8A8A] mb-1">Lifetime Value</div>
+          <div className="text-xs text-[#6E6E6E] mb-1">Lifetime Value</div>
           <div className="text-xl font-bold text-[#1A1A1A]">
             €{totalRevenue.toFixed(2)}
           </div>

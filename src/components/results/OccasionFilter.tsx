@@ -75,7 +75,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
         {value !== 'all' && (
           <button
             onClick={() => onChange('all')}
-            className="text-xs text-[#C2654A] hover:underline min-h-[44px] px-3"
+            className="text-xs text-[#A85740] hover:underline min-h-[44px] px-3"
           >
             Reset filter
           </button>
@@ -96,8 +96,8 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
                 flex items-center gap-2
                 ${
                   isActive
-                    ? 'bg-[#A8513A] text-white shadow-lg'
-                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#D4856E]'
+                    ? 'bg-[#9A503B] text-white shadow-lg'
+                    : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#A85740]'
                 }
               `}
               whileHover={{ scale: 1.05 }}
@@ -110,7 +110,7 @@ export function OccasionFilter({ value, onChange, className = '' }: OccasionFilt
 
               {isActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-xl bg-[#A8513A]/10 pointer-events-none"
+                  className="absolute inset-0 rounded-xl bg-[#9A503B]/10 pointer-events-none"
                   layoutId="occasion-active"
                   transition={{ type: 'spring', damping: 20, stiffness: 300 }}
                 />

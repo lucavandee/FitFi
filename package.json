@@ -9,11 +9,11 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "dev:netlify": "netlify dev",
     "preinstall": "node scripts/bolt-install.mjs",
-    "typecheck": "tsc --noEmit --pretty",
+    "typecheck": "tsc --noEmit",
     "build:strict": "npm run typecheck && vite build",
     "test": "vitest",
     "test:e2e": "playwright test",
@@ -45,12 +45,15 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
     "terser": "^5.44.1",
     "typescript": "^5.9.2",
-    "vite": "^5.4.20"
+    "vite": "^5.4.20",
+    "vitest": "^1.6.1"
   }
 }

@@ -16,7 +16,7 @@ const FoundersWall: React.FC = () => {
   return (
     <div className="rounded-2xl border border-[#E5E5E5] bg-[#FAFAF8] p-5 shadow-sm">
       <div className="flex items-start gap-3 mb-3">
-        <div className="w-8 h-8 rounded-full bg-[#C2654A] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-[#A85740] flex items-center justify-center">
           <Unlock className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -46,7 +46,7 @@ const FoundersWall: React.FC = () => {
           placeholder="jij@voorbeeld.nl"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] px-4 py-3 outline-none focus:ring-2 focus:ring-[#C2654A]"
+          className="rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] px-4 py-3 outline-none focus:ring-2 focus:ring-[#A85740]"
         />
         <Button
           type="submit"

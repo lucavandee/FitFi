@@ -97,7 +97,7 @@ export default function ChatPanel() {
             </div>
             <div>
               <h2 id={titleId} className="font-semibold text-sm sm:text-base text-[#1A1A1A]">Nova</h2>
-              <p className="text-xs text-[#8A8A8A] hidden sm:block">
+              <p className="text-xs text-[#6E6E6E] hidden sm:block">
                 {sending ? "Aan het typen..." : "Je persoonlijke style assistent"}
               </p>
             </div>
@@ -182,7 +182,7 @@ export default function ChatPanel() {
                   px-3 sm:px-4 py-2 sm:py-3
                   text-xs sm:text-sm
                   text-[#1A1A1A]
-                  placeholder:text-[#8A8A8A]
+                  placeholder:text-[#6E6E6E]
                   focus:outline-none
                   focus:ring-2
                   focus:ring-[#818CF8]
@@ -206,7 +206,7 @@ export default function ChatPanel() {
               )}
             </Button>
           </div>
-          <p className="text-xs text-[#8A8A8A] mt-2 hidden sm:block">
+          <p className="text-xs text-[#6E6E6E] mt-2 hidden sm:block">
             Tip: Gebruik Enter om te versturen, Shift+Enter voor een nieuwe regel
           </p>
         </form>

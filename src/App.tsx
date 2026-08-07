@@ -36,7 +36,9 @@ const LoginPage          = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));
 const DashboardPage      = lazy(() => import("@/pages/DashboardPage"));
 const ProfilePage        = lazy(() => import("@/pages/ProfilePage"));
-const EmbeddingAnalytics = lazy(() => import("@/components/admin/EmbeddingAnalytics"));
+const EmbeddingAnalytics = lazy(() =>
+  import("@/components/admin/EmbeddingAnalytics").then(m => ({ default: m.EmbeddingAnalytics }))
+);
 const AdminProductsPage  = lazy(() => import("@/pages/AdminProductsPage"));
 const AdminStripeSetupPage = lazy(() => import("@/pages/AdminStripeSetupPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
@@ -134,8 +136,8 @@ function AppShell() {
         {!isFullscreen && <Navbar />}
         <Suspense fallback={
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center gap-3" style={{ minHeight: 'calc(100vh - 72px)' }} role="status" aria-live="polite">
-            <div className="w-8 h-8 border-2 border-[#E5E5E5] border-t-[#C2654A] rounded-full animate-spin" aria-hidden="true" />
-            <span className="text-sm text-[#8A8A8A]">Laden…</span>
+            <div className="w-8 h-8 border-2 border-[#E5E5E5] border-t-[#A85740] rounded-full animate-spin" aria-hidden="true" />
+            <span className="text-sm text-[#6E6E6E]">Laden…</span>
           </div>
         }>
           {isFullscreen ? (

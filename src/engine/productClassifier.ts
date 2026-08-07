@@ -20,9 +20,9 @@ interface PatternEntry {
 // ─── FOOTWEAR ─────────────────────────────────────────────────────────────
 // "boot" is FOOTWEAR, not outerwear — checked first to avoid false positives
 const FOOTWEAR_RULES: PatternEntry[] = [
-  { regex: /\bsneaker(s)?\b/i, subcategory: 'sneakers', weight: 3 },
+  { regex: /\b[a-z]*sneaker(s)?\b/i, subcategory: 'sneakers', weight: 3 },
   { regex: /\btrainer(s)?\b/i, subcategory: 'trainers', weight: 3 },
-  { regex: /\bschoen(en)?\b/i, subcategory: 'schoenen', weight: 3 },
+  { regex: /\b(?!handschoen)[a-z]*schoen(en)?\b/i, subcategory: 'schoenen', weight: 3 },
   { regex: /\bschoeisel\b/i, subcategory: 'schoeisel', weight: 2 },
   { regex: /\bshoe(s)?\b/i, subcategory: 'shoes', weight: 3 },
   { regex: /\blaars\b|\blaarzen\b/i, subcategory: 'laarzen', weight: 3 },
@@ -53,8 +53,9 @@ const FOOTWEAR_RULES: PatternEntry[] = [
 const UNDERWEAR_RULES: PatternEntry[] = [
   { regex: /\bondergoed\b|\bunderwear\b/i, subcategory: 'ondergoed', weight: 3 },
   { regex: /\bonderbroek\b/i, subcategory: 'onderbroek', weight: 3 },
+  { regex: /\bboxershorts?\b/i, subcategory: 'boxershort', weight: 3 },
   { regex: /\bboxer(s)?\b(?!\s*short)/i, subcategory: 'boxer', weight: 2 },
-  { regex: /\bbh\b|\bbra\b|\bbralette\b/i, subcategory: 'bh', weight: 3 },
+  { regex: /\b[a-z]*bh\b|\bbra\b|\bbralette\b|\b[a-z]*beha\b/i, subcategory: 'bh', weight: 3 },
   { regex: /\blingerie\b/i, subcategory: 'lingerie', weight: 3 },
   { regex: /\bsokken\b|\bsock(s)?\b/i, subcategory: 'sokken', weight: 3 },
   { regex: /\bkousen\b|\bpanty\b|\bstocking(s)?\b/i, subcategory: 'kousen', weight: 3 },
@@ -86,6 +87,11 @@ const ACCESSORY_RULES: PatternEntry[] = [
   { regex: /\bmanchetknoop\b|\bcufflink(s)?\b/i, subcategory: 'manchetknopen', weight: 3 },
   { regex: /\bbroche\b|\bbrooch(es)?\b/i, subcategory: 'broche', weight: 3 },
   { regex: /\bhaarband\b|\bheadband\b/i, subcategory: 'haarband', weight: 3 },
+  // Handschoenen hadden geen enkele regel en vielen dus door naar de
+  // beschrijving. De footwear-regel sluit ze expliciet uit, anders zou
+  // "handschoenen" op \bschoen(en)\b matchen en footwear winnen (die staat
+  // eerder in ORDERED_RULES en wint elk gelijkspel).
+  { regex: /\bhandschoen(en)?\b|\bglove(s)?\b/i, subcategory: 'handschoenen', weight: 3 },
   { regex: /\bparaplu\b|\bumbrella\b/i, subcategory: 'paraplu', weight: 3 },
   { regex: /\bsieraden\b|\bjewelry\b|\bjewellery\b/i, subcategory: 'sieraden', weight: 2 },
   { regex: /\baccessoire(s)?\b|\baccessory\b|\baccessories\b/i, subcategory: 'accessoire', weight: 2 },
@@ -94,7 +100,17 @@ const ACCESSORY_RULES: PatternEntry[] = [
 // ─── DRESS ────────────────────────────────────────────────────────────────
 const DRESS_RULES: PatternEntry[] = [
   { regex: /\bjurk\b/i, subcategory: 'jurk', weight: 3 },
-  { regex: /\bdress\b/i, subcategory: 'dress', weight: 3 },
+  // "dress" is een vals vriendje in herenmode ("dress shirt", "dress shoes",
+  // "dress pants") en in verkleedkleding ("fancy dress"). Zonder deze
+  // uitsluiting wint dress (gewicht 3) van het generieke shirt (gewicht 2) en
+  // belandt een herenoverhemd in de jurk-categorie.
+  // Let op: "shirt dress" en "shirtjurk" blijven jurken, want daar staat
+  // "dress" ACHTER het zelfstandig naamwoord en grijpt de lookahead niet.
+  {
+    regex: /\bdress\b(?!\s*(?:shirt|shoes?|boots?|pants?|trousers?|socks?|code))/i,
+    subcategory: 'dress',
+    weight: 3,
+  },
   { regex: /\bmaxijurk\b|\bmaxi[\s-]?jurk\b|\bmaxi[\s-]?dress\b/i, subcategory: 'maxijurk', weight: 3 },
   { regex: /\bminijurk\b|\bmini[\s-]?jurk\b|\bmini[\s-]?dress\b/i, subcategory: 'minijurk', weight: 3 },
   { regex: /\bmidijurk\b|\bmidi[\s-]?jurk\b|\bmidi[\s-]?dress\b/i, subcategory: 'midijurk', weight: 3 },
@@ -141,7 +157,7 @@ const OUTERWEAR_RULES: PatternEntry[] = [
   { regex: /\bcolbert\b/i, subcategory: 'colbert', weight: 2 },
   { regex: /\bponcho\b|\bcape\b/i, subcategory: 'cape', weight: 2 },
   { regex: /\bjas\b/i, subcategory: 'jas', weight: 2 },
-  { regex: /\bjack\b/i, subcategory: 'jack', weight: 2 },
+  { regex: /\b[a-z]*jack\b/i, subcategory: 'jack', weight: 2 },
   { regex: /\bcoat\b/i, subcategory: 'coat', weight: 2 },
   { regex: /\btrench\b/i, subcategory: 'trench', weight: 2 },
 ];
@@ -156,6 +172,22 @@ const BOTTOM_RULES: PatternEntry[] = [
   { regex: /\bchinos?\b/i, subcategory: 'chino', weight: 3 },
   { regex: /\bcargo[\s-]?(pant|broek|trouser|short)?\b/i, subcategory: 'cargo', weight: 2 },
   { regex: /\bshorts\b|\bkorte[\s-]?broek\b/i, subcategory: 'shorts', weight: 3 },
+  // Nederlandse retail gebruikt het enkelvoud ("PUMA CLRT relaxte uniseks
+  // short") en gesloten samenstellingen ("keepersshort", "trainingsshort").
+  // Zonder deze regel matcht de naam nergens op, valt de classifier terug op
+  // de beschrijving, en bepaalt marketingtekst ("trek je favoriete PUMA-
+  // sneakers erbij aan") de categorie: een short werd zo footwear.
+  // De lookahead houdt de oorspronkelijke bescherming tegen "short sleeve"
+  // en tegen "short" als bijvoeglijk naamwoord voor een ander kledingstuk.
+  {
+    regex: /\b[a-z]*short\b(?!\s*(?:sleeve|sleeved|mouw|jacket|coat|jas|trench|dress|jurk|boot|sock))/i,
+    subcategory: 'shorts',
+    weight: 3,
+  },
+  // "tight" is het Nederlandse retailwoord voor een sportlegging. Zonder deze
+  // regel besliste de stofnaam "Single jersey" in de beschrijving, waardoor
+  // een dameslegging als top werd geclassificeerd.
+  { regex: /\btights?\b/i, subcategory: 'legging', weight: 3 },
   { regex: /\bbermuda\b/i, subcategory: 'bermuda', weight: 3 },
   { regex: /\bleggings?\b/i, subcategory: 'legging', weight: 3 },
   { regex: /\btreggings?\b/i, subcategory: 'tregging', weight: 3 },
@@ -201,7 +233,8 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\blongsleeve\b|\blong[\s-]?sleeve\b|\blange[\s-]?mouw\b/i, subcategory: 'longsleeve', weight: 3 },
   { regex: /\btanktop\b|\btank[\s-]?top\b/i, subcategory: 'tanktop', weight: 3 },
   { regex: /\bknit\b|\bgebreid\b/i, subcategory: 'gebreid', weight: 2 },
-  { regex: /\btrui\b/i, subcategory: 'trui', weight: 3 },
+  { regex: /\b[a-z]*trui\b/i, subcategory: 'trui', weight: 3 },
+  { regex: /\b[a-z]*tuniek\b|\btunic\b/i, subcategory: 'tuniek', weight: 3 },
   { regex: /\bbodysuit\b/i, subcategory: 'bodysuit', weight: 3 },
   { regex: /\bcrop[\s-]?top\b/i, subcategory: 'crop top', weight: 3 },
   { regex: /\btopje\b/i, subcategory: 'topje', weight: 3 },
@@ -211,7 +244,7 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\bgame[\s-]?shirt\b|\bmatch[\s-]?shirt\b/i, subcategory: 'match shirt', weight: 3 },
   // "short sleeve" = sleeve length, not shorts
   { regex: /\bshort[\s-]?sleeve\b|\bkorte[\s-]?mouw\b/i, subcategory: 'short sleeve top', weight: 2 },
-  { regex: /\bshirt\b/i, subcategory: 'shirt', weight: 2 },
+  { regex: /\b[a-z]*shirt\b/i, subcategory: 'shirt', weight: 2 },
   { regex: /\bvest\b/i, subcategory: 'vest', weight: 1 },
   { regex: /\btee\b/i, subcategory: 't-shirt', weight: 2 },
 ];

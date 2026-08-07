@@ -96,7 +96,7 @@ export default function BlogPostPage() {
       <main className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[#8A8A8A]">Artikel laden...</p>
+          <p className="text-[#6E6E6E]">Artikel laden...</p>
         </div>
       </main>
     );
@@ -108,7 +108,7 @@ export default function BlogPostPage() {
         <h1 className="text-3xl font-bold text-[#1A1A1A] mb-4">
           Artikel niet gevonden
         </h1>
-        <p className="text-[#8A8A8A] mb-8">
+        <p className="text-[#6E6E6E] mb-8">
           We konden dit artikel niet vinden.
         </p>
         <Button variant="primary" onClick={() => navigate('/blog')}>
@@ -149,7 +149,7 @@ export default function BlogPostPage() {
         title={`${post.seo_meta_title || post.title} — FitFi`}
         description={post.seo_meta_description || post.excerpt}
         path={`/blog/${post.slug}`}
-        image={post.featured_image_url}
+        ogImage={post.featured_image_url}
         structuredData={articleSchema}
       />
 
@@ -157,18 +157,18 @@ export default function BlogPostPage() {
 
       <main className="bg-[#FAFAF8] text-[#1A1A1A] pb-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] py-12 md:py-16 border-b border-[#E5E5E5]">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#F5F0EB] via-white to-[#F5F0EB] py-12 md:py-16 border-b border-[#E5E5E5]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Breadcrumb */}
             <div className="mb-6" aria-label="Breadcrumb">
               <Link
                 to="/blog"
-                className="text-sm text-[#8A8A8A] hover:text-[#C2654A] transition-colors"
+                className="text-sm text-[#6E6E6E] hover:text-[#A85740] transition-colors"
               >
                 Blog
               </Link>
-              <span className="mx-2 text-[#8A8A8A]" aria-hidden="true">/</span>
-              <span className="text-sm font-medium text-[#C2654A]">
+              <span className="mx-2 text-[#6E6E6E]" aria-hidden="true">/</span>
+              <span className="text-sm font-medium text-[#A85740]">
                 {post.category}
               </span>
             </div>
@@ -177,7 +177,7 @@ export default function BlogPostPage() {
               {post.title}
             </h1>
 
-            <p className="text-xl md:text-2xl text-[#8A8A8A] leading-relaxed mb-8 max-w-3xl">
+            <p className="text-xl md:text-2xl text-[#6E6E6E] leading-relaxed mb-8 max-w-3xl">
               {post.excerpt}
             </p>
 
@@ -225,7 +225,7 @@ export default function BlogPostPage() {
                 <TLDRSection points={tldrPoints} />
 
                 {/* End CTA */}
-                <div className="bg-[#A8513A] rounded-2xl p-8 md:p-12 text-center my-12 text-white">
+                <div className="bg-[#9A503B] rounded-2xl p-8 md:p-12 text-center my-12 text-white">
                   <h2 className="text-3xl font-bold mb-4">
                     Ontdek jouw perfecte stijl
                   </h2>
@@ -235,7 +235,7 @@ export default function BlogPostPage() {
                   <Button
                     variant="secondary"
                     onClick={() => navigate('/onboarding')}
-                    className="bg-white text-[#A8513A] hover:bg-[#FAF5F2]"
+                    className="bg-white text-[#9A503B] hover:bg-[#F5F0EB]"
                   >
                     Start gratis quiz
                     <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
@@ -267,13 +267,13 @@ export default function BlogPostPage() {
                             />
                           </div>
                           <div className="p-4">
-                            <span className="text-xs text-[#C2654A] font-medium mb-1.5 block">
+                            <span className="text-xs text-[#A85740] font-medium mb-1.5 block">
                               {related.category}
                             </span>
-                            <h3 className="font-bold text-sm text-[#1A1A1A] mb-1.5 line-clamp-2 group-hover:text-[#C2654A] transition-colors leading-snug">
+                            <h3 className="font-bold text-sm text-[#1A1A1A] mb-1.5 line-clamp-2 group-hover:text-[#A85740] transition-colors leading-snug">
                               {related.title}
                             </h3>
-                            <p className="text-xs text-[#8A8A8A] line-clamp-2 leading-relaxed">
+                            <p className="text-xs text-[#6E6E6E] line-clamp-2 leading-relaxed">
                               {related.excerpt}
                             </p>
                           </div>

@@ -30,8 +30,8 @@ export const ChallengeSnapshot: React.FC = () => {
           <h4 className="font-medium text-gray-900 mb-2">Geen open challenges</h4>
           <p className="text-sm text-gray-600 mb-4">Ontdek tribes en vind jouw perfecte challenge.</p>
           <a
-            className="inline-block bg-[#C2654A] hover:bg-[#C2654A] text-white px-4 py-2 rounded-xl font-medium transition-colors"
-            href={routeTo("tribe", {})}
+            className="inline-block bg-[#A85740] hover:bg-[#A85740] text-white px-4 py-2 rounded-xl font-medium transition-colors"
+            href="/tribes"
           >
             Ontdek Tribes →
           </a>
@@ -50,7 +50,7 @@ export const ChallengeSnapshot: React.FC = () => {
         <div className="text-center py-4">
           <p className="text-sm text-gray-600 mb-3">Challenge wordt geladen...</p>
           <a
-            className="inline-block text-[#C2654A] hover:text-[#A8513A] font-medium"
+            className="inline-block text-[#A85740] hover:text-[#9A503B] font-medium"
             href={`/tribes/${best.tribeId}?challengeId=${best.challengeId}`}
           >
             Open challenge →
@@ -65,45 +65,30 @@ export const ChallengeSnapshot: React.FC = () => {
 
   return (
     <div className="bg-white rounded-2xl shadow overflow-hidden hover:shadow-md transition-shadow">
-      {ch.image && (
-        <div className="aspect-video overflow-hidden">
-          <ImageWithFallback 
-            src={ch.image} 
-            alt={ch.title} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
-            componentName="ChallengeSnapshot"
-          />
-        </div>
-      )}
       <div className="p-4">
         <div className="flex items-center space-x-2 mb-2">
           <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
             {(ch.status ?? "open").toUpperCase()}
           </span>
-          {ch.rewardPoints && (
-            <span className="px-2 py-1 bg-[#FAF5F2] text-[#A8513A] rounded-full text-xs font-medium">
-              +{ch.rewardPoints} XP
-            </span>
-          )}
         </div>
-        
+
         <h4 className="font-semibold text-gray-900 mb-2 leading-tight">{ch.title}</h4>
-        
+
         {ch.description && (
           <p className="text-sm text-gray-600 mb-3 line-clamp-2">
             {ch.description}
           </p>
         )}
-        
+
         <div className="flex items-center justify-between">
           <div className="text-xs text-gray-500">
-            {ch.endAt && (
-              <>Eindigt: {new Date(ch.endAt).toLocaleDateString('nl-NL')}</>
+            {ch.ends_at && (
+              <>Eindigt: {new Date(ch.ends_at).toLocaleDateString('nl-NL')}</>
             )}
           </div>
           
           <a
-            className="inline-flex items-center bg-[#C2654A] hover:bg-[#C2654A] text-white px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
+            className="inline-flex items-center bg-[#A85740] hover:bg-[#A85740] text-white px-3 py-2 rounded-xl font-medium transition-all hover:scale-105"
             href={challengeUrl}
           >
             Doe mee →

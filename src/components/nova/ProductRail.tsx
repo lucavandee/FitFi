@@ -13,10 +13,10 @@ interface ProductRailProps {
 function ProductSkeleton() {
   return (
     <div className="flex-shrink-0 w-48 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] overflow-hidden animate-pulse">
-      <div className="aspect-[3/4] bg-[#FAF5F2]" />
+      <div className="aspect-[3/4] bg-[#F5F0EB]" />
       <div className="p-2">
-        <div className="h-4 bg-[#FAF5F2] rounded w-32 mb-1" />
-        <div className="h-3 bg-[#FAF5F2] rounded w-24" />
+        <div className="h-4 bg-[#F5F0EB] rounded w-32 mb-1" />
+        <div className="h-3 bg-[#F5F0EB] rounded w-24" />
       </div>
     </div>
   );
@@ -24,7 +24,7 @@ function ProductSkeleton() {
 
 function ProductCard({ product, index }: { product: Product; index: number }) {
   const title = product.title || (product as any).name || "Product";
-  const brand = product.brand || product.retailer || "";
+  const brand = (product as any).brand || product.retailer || "";
   const rawPrice =
     (product as any).price?.current ??
     (product as any).price ??
@@ -60,19 +60,19 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         hasUrl ? "cursor-pointer hover:shadow-sm hover:-translate-y-0.5" : "opacity-60 cursor-default"
       }`}
     >
-      <ImageWithFallback src={(product as any).image_url || product.imageUrl || (product as any).image} alt={title} ratio="portrait" />
+      <ImageWithFallback src={(product as any).image_url || product.image} alt={title} ratio="portrait" />
       <div className="p-2">
         <div className="text-sm font-medium text-[#1A1A1A] line-clamp-2">{title}</div>
         <div className="mt-1 flex items-center justify-between">
-          <div className="text-[13px] text-[#8A8A8A]">{brand}</div>
+          <div className="text-[13px] text-[#6E6E6E]">{brand}</div>
           {price != null && price > 0 && (
-            <div className="text-[13px] font-semibold text-[#A8513A]">
+            <div className="text-[13px] font-semibold text-[#9A503B]">
               €{price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}
             </div>
           )}
         </div>
         {hasUrl && (
-          <div className="mt-2 flex items-center gap-2 text-[12px] text-[#C2654A]">
+          <div className="mt-2 flex items-center gap-2 text-[12px] text-[#A85740]">
             <ShoppingBag size={14} />
             <span>Shop nu</span>
             <ExternalLink size={14} className="ml-auto opacity-70" />
@@ -98,7 +98,7 @@ export default function ProductRail({ items, loading }: ProductRailProps) {
   return (
     <div className="mt-3">
       <div className="flex items-center gap-2 mb-3">
-        <ShoppingBag size={16} className="text-[#C2654A]" />
+        <ShoppingBag size={16} className="text-[#A85740]" />
         <span className="text-sm font-medium text-[#1A1A1A]">
           Shoppable look ({items.length} items)
         </span>

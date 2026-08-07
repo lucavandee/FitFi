@@ -174,7 +174,7 @@ export default function OutfitDetailsModal({
             <div className="flex items-center gap-3">
               <h2 id={titleId} className="text-xl font-semibold">Outfit details</h2>
               {outfit.matchPercentage && outfit.matchPercentage > 80 && (
-                <div className="flex items-center gap-1 px-2 py-1 bg-[#A8513A] text-white rounded-full text-xs font-bold">
+                <div className="flex items-center gap-1 px-2 py-1 bg-[#9A503B] text-white rounded-full text-xs font-bold">
                   <Sparkles className="w-3 h-3" />
                   <span>{Math.round(outfit.matchPercentage)}%</span>
                 </div>
@@ -216,7 +216,7 @@ export default function OutfitDetailsModal({
                       {outfit.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#FAF5F2] text-[#C2654A] rounded-full text-xs font-medium"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[#F5F0EB] text-[#A85740] rounded-full text-xs font-medium"
                         >
                           <Tag className="w-3 h-3" />
                           {tag}
@@ -227,10 +227,10 @@ export default function OutfitDetailsModal({
 
                   {/* Explanation */}
                   {outfit.explanation && (
-                    <div className="p-4 bg-[#FAF5F2] border border-[#F4E8E3] rounded-xl">
+                    <div className="p-4 bg-[#F5F0EB] border border-[#F4E8E3] rounded-xl">
                       <div className="flex items-start gap-2 mb-2">
-                        <Info className="w-4 h-4 text-[#C2654A] flex-shrink-0 mt-0.5" />
-                        <span className="text-sm font-medium text-[#C2654A]">
+                        <Info className="w-4 h-4 text-[#A85740] flex-shrink-0 mt-0.5" />
+                        <span className="text-sm font-medium text-[#A85740]">
                           Waarom dit werkt:
                         </span>
                       </div>
@@ -243,19 +243,19 @@ export default function OutfitDetailsModal({
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-3 mt-4">
                     <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[#C2654A]">
+                      <div className="text-2xl font-bold text-[#A85740]">
                         {outfit.products?.length || 0}
                       </div>
                       <div className="text-xs text-[#1A1A1A]/60">Items</div>
                     </div>
                     <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[#C2654A]">
+                      <div className="text-2xl font-bold text-[#A85740]">
                         {Math.round(outfit.matchPercentage || 75)}%
                       </div>
                       <div className="text-xs text-[#1A1A1A]/60">Match</div>
                     </div>
                     <div className="p-3 bg-[#FAFAF8] rounded-xl text-center">
-                      <div className="text-2xl font-bold text-[#C2654A]">
+                      <div className="text-2xl font-bold text-[#A85740]">
                         €{totalPrice.toFixed(0)}
                       </div>
                       <div className="text-xs text-[#1A1A1A]/60">Totaal</div>
@@ -284,7 +284,7 @@ export default function OutfitDetailsModal({
                           key={product.id}
                           className={cn(
                             'p-3 bg-[#FAFAF8] rounded-xl border border-[#E5E5E5]',
-                            'hover:border-[#D4856E] transition-all',
+                            'hover:border-[#A85740] transition-all',
                             hasUrl && 'cursor-pointer'
                           )}
                           onClick={() => hasUrl && setSelectedProduct(product)}
@@ -315,14 +315,14 @@ export default function OutfitDetailsModal({
                                   </h5>
                                 </div>
                                 {product.price && (
-                                  <span className="text-lg font-bold text-[#C2654A] flex-shrink-0">
+                                  <span className="text-lg font-bold text-[#A85740] flex-shrink-0">
                                     €{product.price.toFixed(2)}
                                   </span>
                                 )}
                               </div>
 
                               {product.inStock === false && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5] mb-1">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#FAFAF8] text-[#6E6E6E] border border-[#E5E5E5] mb-1">
                                   Niet beschikbaar
                                 </span>
                               )}
@@ -334,7 +334,7 @@ export default function OutfitDetailsModal({
                                     handleShopClick(product);
                                   }}
                                   disabled={isOpening}
-                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[#A8513A] hover:text-[#C2654A] transition-colors disabled:opacity-50"
+                                  className="mt-1 flex items-center gap-1 text-xs font-medium text-[#9A503B] hover:text-[#A85740] transition-colors disabled:opacity-50"
                                   aria-label={`Shop ${product.name}`}
                                 >
                                   <ExternalLink className="w-3 h-3" />
@@ -355,14 +355,14 @@ export default function OutfitDetailsModal({
 
                 {/* Sizing Info */}
                 {outfit.products && outfit.products.some(p => p.sizes) && (
-                  <div className="p-4 bg-[#FAF5F2] border border-[#FAF5F2] rounded-xl">
+                  <div className="p-4 bg-[#F5F0EB] border border-[#F5F0EB] rounded-xl">
                     <div className="flex items-start gap-2 mb-1">
-                      <TrendingUp className="w-4 h-4 text-[#A8513A] flex-shrink-0 mt-0.5" />
-                      <span className="text-sm font-medium text-[#A8513A]">
+                      <TrendingUp className="w-4 h-4 text-[#9A503B] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm font-medium text-[#9A503B]">
                         Maat-informatie
                       </span>
                     </div>
-                    <p className="text-xs text-[#8A8A8A] leading-relaxed">
+                    <p className="text-xs text-[#6E6E6E] leading-relaxed">
                       Klik op een item voor beschikbare maten
                     </p>
                   </div>
@@ -378,7 +378,7 @@ export default function OutfitDetailsModal({
                 <div className="text-sm text-[#1A1A1A]/60 mb-1">
                   Totaalprijs
                 </div>
-                <div className="text-2xl font-bold text-[#C2654A]">
+                <div className="text-2xl font-bold text-[#A85740]">
                   €{totalPrice.toFixed(2)}
                 </div>
               </div>
@@ -488,7 +488,7 @@ export default function OutfitDetailsModal({
                   </div>
 
                   {selectedProduct.price && (
-                    <div className="text-2xl font-bold text-[#A8513A]">
+                    <div className="text-2xl font-bold text-[#9A503B]">
                       €{selectedProduct.price.toFixed(2)}
                     </div>
                   )}

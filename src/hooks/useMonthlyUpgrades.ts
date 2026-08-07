@@ -6,7 +6,7 @@ export function useMonthlyUpgrades() {
     queryKey: ["monthly-upgrades"],
     queryFn: getCachedMonthlyUpgradeCount,
     staleTime: 1000 * 60 * 15,
-    cacheTime: 1000 * 60 * 30,
+    gcTime: 1000 * 60 * 30,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });

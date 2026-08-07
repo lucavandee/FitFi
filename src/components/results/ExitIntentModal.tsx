@@ -58,14 +58,14 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#FAF5F2] hover:bg-[#FAF5F2] transition-colors z-10 flex items-center justify-center"
+              className="absolute top-4 right-4 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#F5F0EB] hover:bg-[#F5F0EB] transition-colors z-10 flex items-center justify-center"
               aria-label="Sluiten"
             >
-              <X className="w-5 h-5 text-[#8A8A8A]" />
+              <X className="w-5 h-5 text-[#6E6E6E]" />
             </button>
 
             {/* Decorative Background */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-full blur-3xl opacity-30 pointer-events-none" aria-hidden="true" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-full blur-3xl opacity-30 pointer-events-none" aria-hidden="true" />
 
             {/* Content */}
             <div className="text-center relative z-10">
@@ -74,24 +74,24 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] mb-6"
+                className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] mb-6"
               >
-                <Gift className="w-10 h-10 text-[#A8513A]" />
+                <Gift className="w-10 h-10 text-[#9A503B]" />
               </motion.div>
 
               {/* Heading */}
               <h2 id={headingId} className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-3">
                 Wacht even!
               </h2>
-              <p className="text-xl text-[#8A8A8A] mb-6">
+              <p className="text-xl text-[#6E6E6E] mb-6">
                 We hebben een speciale deal voor je
               </p>
 
               {/* Offer Card */}
-              <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-6 mb-6 border-2 border-[#F4E8E3]">
+              <div className="bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-6 mb-6 border-2 border-[#F4E8E3]">
                 <div className="flex items-center justify-center gap-3 mb-4">
-                  <Sparkles className="w-6 h-6 text-[#A8513A]" />
-                  <span className="text-sm font-semibold text-[#A8513A] uppercase tracking-wide">
+                  <Sparkles className="w-6 h-6 text-[#9A503B]" />
+                  <span className="text-sm font-semibold text-[#9A503B] uppercase tracking-wide">
                     Exclusieve Exit Aanbieding
                   </span>
                 </div>
@@ -100,7 +100,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                   <div className="text-5xl font-bold text-[#1A1A1A] mb-2">
                     2 maanden gratis
                   </div>
-                  <div className="text-lg text-[#8A8A8A]">
+                  <div className="text-lg text-[#6E6E6E]">
                     in plaats van 1 maand
                   </div>
                 </div>
@@ -108,21 +108,21 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 {/* Features */}
                 <ul className="space-y-2 text-left max-w-sm mx-auto mb-4">
                   <li className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span className="text-[#C2654A] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#A85740] font-bold" aria-hidden="true">✓</span>
                     <span>50+ gepersonaliseerde outfits</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span className="text-[#C2654A] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#A85740] font-bold" aria-hidden="true">✓</span>
                     <span>AI styling assistent (Nova)</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span className="text-[#C2654A] font-bold" aria-hidden="true">✓</span>
+                    <span className="text-[#A85740] font-bold" aria-hidden="true">✓</span>
                     <span>Onbeperkt outfits opslaan</span>
                   </li>
                 </ul>
 
                 {/* Timer */}
-                <div className="flex items-center justify-center gap-2 text-sm text-[#8A8A8A]">
+                <div className="flex items-center justify-center gap-2 text-sm text-[#6E6E6E]">
                   <Clock className="w-4 h-4" />
                   <span>Deze aanbieding is 24 uur geldig</span>
                 </div>
@@ -133,7 +133,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
                 <NavLink
                   to="/prijzen?promo=exit2free"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] bg-gradient-to-r from-[#C2654A] to-[#C2654A] text-white rounded-xl font-semibold text-base transition-colors duration-200"
+                  className="flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] bg-gradient-to-r from-[#A85740] to-[#A85740] text-white rounded-xl font-semibold text-base transition-colors duration-200"
                 >
                   <Sparkles className="w-5 h-5" aria-hidden="true" />
                   Claim deze deal
@@ -141,14 +141,14 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
 
                 <button
                   onClick={onClose}
-                  className="text-sm text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors min-h-[44px] px-4 w-full"
+                  className="text-sm text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors min-h-[44px] px-4 w-full"
                 >
                   Nee, bedankt. Ik betaal liever vol tarief.
                 </button>
               </div>
 
               {/* Fine Print */}
-              <p className="text-xs text-[#8A8A8A] mt-4">
+              <p className="text-xs text-[#6E6E6E] mt-4">
                 Geldig voor nieuwe Premium abonnementen · Stop wanneer je wilt
               </p>
             </div>

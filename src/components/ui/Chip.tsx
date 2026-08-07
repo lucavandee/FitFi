@@ -12,7 +12,7 @@ export default function Chip({ children, selected, onClick, className = "" }: Pr
     <button
       type="button"
       onClick={onClick}
-      className={`ff-chip ${selected ? "outline outline-2 outline-[#C2654A]" : ""} ${className}`}
+      className={`ff-chip ${selected ? "outline outline-2 outline-[#A85740]" : ""} ${className}`}
     >
       {children}
     </button>

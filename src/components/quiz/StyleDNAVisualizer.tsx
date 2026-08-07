@@ -11,13 +11,13 @@ interface StyleDNAVisualizerProps {
 const STYLE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
   minimal: { label: 'Minimaal', emoji: '⚪', color: '#D4D4D4' },
   classic: { label: 'Klassiek', emoji: '👔', color: '#1A1A1A' },
-  romantic: { label: 'Romantisch', emoji: '🌸', color: '#D4856E' },
+  romantic: { label: 'Romantisch', emoji: '🌸', color: '#A85740' },
   bohemian: { label: 'Bohemian', emoji: '🌿', color: '#A07040' },
   bold: { label: 'Bold', emoji: '⚡', color: '#E07070' },
   urban: { label: 'Urban', emoji: '🏙️', color: '#6A6A6A' },
   sporty: { label: 'Sportief', emoji: '⚽', color: '#2DD4BF' },
   refined: { label: 'Verfijnd', emoji: '✨', color: '#7A5C30' },
-  relaxed: { label: 'Relaxed', emoji: '😌', color: '#D4856E' },
+  relaxed: { label: 'Relaxed', emoji: '😌', color: '#A85740' },
   professional: { label: 'Professioneel', emoji: '💼', color: '#4A4A4A' },
 };
 
@@ -55,20 +55,20 @@ export function StyleDNAVisualizer({
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               >
-                <Sparkles className="w-4 h-4 text-[#A8513A]" />
+                <Sparkles className="w-4 h-4 text-[#9A503B]" />
               </motion.div>
               <h3 className="text-sm font-semibold text-[#1A1A1A]">
                 Je Stijl DNA
               </h3>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#8A8A8A]">
+            <div className="flex items-center gap-1 text-xs text-[#6E6E6E]">
               <TrendingUp className="w-3 h-3" />
               <span>{swipeCount}/{totalSwipes}</span>
             </div>
           </div>
 
           {sortedStyles.length === 0 ? (
-            <p className="text-xs text-[#8A8A8A] text-center py-2">
+            <p className="text-xs text-[#6E6E6E] text-center py-2">
               Swipe om je stijlprofiel te ontdekken...
             </p>
           ) : (
@@ -77,7 +77,7 @@ export function StyleDNAVisualizer({
                 const style = STYLE_LABELS[styleKey] || {
                   label: styleKey,
                   emoji: '🎨',
-                  color: '#8A8A8A'
+                  color: '#6E6E6E'
                 };
                 const percentage = Math.round(score);
                 const isTop = index === 0;
@@ -94,7 +94,7 @@ export function StyleDNAVisualizer({
                       <div className="flex items-center gap-2">
                         <span className="text-sm">{style.emoji}</span>
                         <span className={`text-xs font-medium ${
-                          isTop ? 'text-[#A8513A]' : 'text-[#1A1A1A]'
+                          isTop ? 'text-[#9A503B]' : 'text-[#1A1A1A]'
                         }`}>
                           {style.label}
                         </span>
@@ -102,7 +102,7 @@ export function StyleDNAVisualizer({
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="text-[10px] px-1.5 py-0.5 bg-[#A8513A] text-white rounded-full"
+                            className="text-[10px] px-1.5 py-0.5 bg-[#9A503B] text-white rounded-full"
                           >
                             Top
                           </motion.span>
@@ -112,7 +112,7 @@ export function StyleDNAVisualizer({
                         key={percentage}
                         initial={{ scale: 1.2, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="text-xs font-semibold text-[#8A8A8A]"
+                        className="text-xs font-semibold text-[#6E6E6E]"
                       >
                         {percentage}%
                       </motion.span>
@@ -126,7 +126,7 @@ export function StyleDNAVisualizer({
                         className="h-full rounded-full"
                         style={{
                           backgroundColor: isTop
-                            ? '#A8513A'
+                            ? '#9A503B'
                             : style.color,
                           opacity: isTop ? 1 : 0.7
                         }}
@@ -145,7 +145,7 @@ export function StyleDNAVisualizer({
               transition={{ delay: 0.5 }}
               className="mt-4 pt-3 border-t border-[#E5E5E5]"
             >
-              <p className="text-xs text-[#8A8A8A] text-center">
+              <p className="text-xs text-[#6E6E6E] text-center">
                 {swipeCount < 7 ? (
                   <>
                     Je {STYLE_LABELS[topStyle[0]]?.label.toLowerCase() || topStyle[0]} stijl komt naar voren!
@@ -153,7 +153,7 @@ export function StyleDNAVisualizer({
                   </>
                 ) : (
                   <>
-                    <span className="font-medium text-[#A8513A]">Perfect!</span> Je stijlprofiel is helder.
+                    <span className="font-medium text-[#9A503B]">Perfect!</span> Je stijlprofiel is helder.
                   </>
                 )}
               </p>
@@ -164,7 +164,7 @@ export function StyleDNAVisualizer({
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent}%` }}
-              className="h-full bg-gradient-to-r from-[#A8513A] to-[#C2654A]"
+              className="h-full bg-gradient-to-r from-[#9A503B] to-[#A85740]"
               transition={{ duration: 0.3 }}
             />
           </div>

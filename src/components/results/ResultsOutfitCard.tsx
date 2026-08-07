@@ -40,7 +40,7 @@ export function ResultsOutfitCard({
   return (
     <article
       onClick={onSelect}
-      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#C2654A] transition-all duration-300 cursor-pointer group"
+      className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-[#A85740] transition-all duration-300 cursor-pointer group"
     >
       {/* Image area — 3:4 ratio */}
       <div className="relative aspect-[3/4] overflow-hidden bg-[#F5F0EB]">
@@ -55,8 +55,8 @@ export function ResultsOutfitCard({
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#F4E8E3] to-[#F5F0EB] flex items-center justify-center">
             <div className="text-center p-4">
-              <Sparkles className="w-10 h-10 mx-auto mb-2 text-[#C2654A]" aria-hidden="true" />
-              <p className="text-xs text-[#8A8A8A] font-medium">Outfit {index + 1}</p>
+              <Sparkles className="w-10 h-10 mx-auto mb-2 text-[#A85740]" aria-hidden="true" />
+              <p className="text-xs text-[#6E6E6E] font-medium">Outfit {index + 1}</p>
             </div>
           </div>
         )}
@@ -76,18 +76,18 @@ export function ResultsOutfitCard({
           aria-label={isFavorite ? "Verwijder uit favorieten" : "Toevoegen aan favorieten"}
           className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm z-10 transition-all duration-200 hover:bg-white hover:scale-110 ${
             isFavorite
-              ? "text-[#C2654A]"
-              : "text-[#8A8A8A] hover:text-[#C2654A]"
+              ? "text-[#A85740]"
+              : "text-[#6E6E6E] hover:text-[#A85740]"
           }`}
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? "fill-[#C2654A]" : ""}`} />
+          <Heart className={`w-4 h-4 ${isFavorite ? "fill-[#A85740]" : ""}`} />
         </button>
       </div>
 
       {/* Info area */}
       <div className="p-5">
         {/* Title */}
-        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#C2654A] transition-colors duration-200">
+        <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#A85740] transition-colors duration-200">
           {name}
         </h3>
 
@@ -102,9 +102,9 @@ export function ResultsOutfitCard({
             {typeof matchScore === "number" && (
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                  <Check className="w-2.5 h-2.5 text-[#C2654A]" strokeWidth={3} />
+                  <Check className="w-2.5 h-2.5 text-[#A85740]" strokeWidth={3} />
                 </span>
-                <span className="text-sm font-semibold text-[#C2654A]">{Math.round(matchScore)}% match</span>
+                <span className="text-sm font-semibold text-[#A85740]">{Math.round(matchScore)}% match</span>
               </span>
             )}
             {fitLabel && (

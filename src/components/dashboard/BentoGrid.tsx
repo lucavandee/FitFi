@@ -103,7 +103,7 @@ export function BentoCard({
         hover:shadow-md
         transition-shadow duration-200
         ${sizeClasses[size]}
-        ${onClick ? 'cursor-pointer hover:border-[#C2654A]' : ''}
+        ${onClick ? 'cursor-pointer hover:border-[#A85740]' : ''}
         ${className}
       `}
       style={{
@@ -159,7 +159,7 @@ export function BentoStatCard({
     <BentoCard size="small" delay={delay} disableAnimation={disableAnimation}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-[#8A8A8A] mb-2">{label}</p>
+          <p className="text-sm text-[#6E6E6E] mb-2">{label}</p>
           <p className="text-3xl font-bold text-[#1A1A1A]">{value}</p>
           {trend && (
             <p className={`text-xs mt-2 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
@@ -167,7 +167,7 @@ export function BentoStatCard({
             </p>
           )}
         </div>
-        <div className="w-10 h-10 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
+        <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center text-[#9A503B]">
           {icon}
         </div>
       </div>
@@ -204,18 +204,18 @@ export function BentoActionCard({
   return (
     <BentoCard size={size} delay={delay} disableAnimation={disableAnimation}>
       <div className="flex flex-col h-full">
-        <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] flex items-center justify-center text-[#A8513A] mb-4">
+        <div className="w-12 h-12 rounded-xl bg-[#F5F0EB] flex items-center justify-center text-[#9A503B] mb-4">
           {icon}
         </div>
         <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
           {title}
         </h3>
-        <p className="text-sm text-[#8A8A8A] mb-4 flex-1">
+        <p className="text-sm text-[#6E6E6E] mb-4 flex-1">
           {description}
         </p>
         <button
           onClick={action.onClick}
-          className="w-full px-4 py-2.5 bg-[#A8513A] text-white rounded-xl font-semibold text-sm hover:bg-[#C2654A] transition-colors"
+          className="w-full px-4 py-2.5 bg-[#9A503B] text-white rounded-xl font-semibold text-sm hover:bg-[#A85740] transition-colors"
         >
           {action.label}
         </button>
@@ -252,15 +252,15 @@ export function BentoHeroCard({
   return (
     <BentoCard size="hero" delay={delay} className="relative overflow-hidden" disableAnimation={disableAnimation}>
       {/* Subtle gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FAF5F2] to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0EB] to-transparent opacity-50" />
 
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex-1">
-          <p className="text-sm text-[#8A8A8A] mb-2">{greeting}</p>
+          <p className="text-sm text-[#6E6E6E] mb-2">{greeting}</p>
           <h1 className="text-4xl font-bold text-[#1A1A1A] mb-3">
             {userName}
           </h1>
-          <p className="text-base text-[#8A8A8A] mb-6">
+          <p className="text-base text-[#6E6E6E] mb-6">
             {subtitle}
           </p>
         </div>
@@ -273,7 +273,7 @@ export function BentoHeroCard({
               className={`
                 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all
                 ${action.variant === 'primary'
-                  ? 'bg-[#A8513A] text-white hover:bg-[#C2654A]'
+                  ? 'bg-[#9A503B] text-white hover:bg-[#A85740]'
                   : 'bg-[#F5F0EB] text-[#1A1A1A] hover:bg-[#E5E5E5]'
                 }
               `}
@@ -323,7 +323,7 @@ export function BentoListCard({
             onClick={item.onClick}
             className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#F5F0EB] transition-colors"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#FAF5F2] flex items-center justify-center text-[#A8513A]">
+            <div className="w-8 h-8 rounded-lg bg-[#F5F0EB] flex items-center justify-center text-[#9A503B]">
               {item.icon}
             </div>
             <div className="flex-1 text-left">
@@ -331,7 +331,7 @@ export function BentoListCard({
                 {item.label}
               </p>
             </div>
-            <span className="text-xs text-[#8A8A8A]">
+            <span className="text-xs text-[#6E6E6E]">
               {item.value}
             </span>
           </button>

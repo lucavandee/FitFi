@@ -50,7 +50,16 @@ export async function getOutfitRecommendations(_userId?: string, opts?: { limit?
 
     if (outfits && outfits.length > 0) {
       console.log(`[DataRouter] Generated ${outfits.length} personalized outfits`);
-      return outfits;
+      // outfitService.generateOutfits() gebruikt het strikte engine/types Outfit/Product
+      // model (o.a. Product.name i.p.v. .title); map naar het lossere @/engine model
+      // dat deze module naar buiten toe belooft, zonder velden te verliezen.
+      return outfits.map((o) => ({
+        ...o,
+        products: (o.products || []).map((p) => ({
+          ...p,
+          title: p.title ?? p.name,
+        })),
+      }));
     }
 
     console.warn('[DataRouter] No outfits generated, using fallback');

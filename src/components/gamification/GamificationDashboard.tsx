@@ -5,7 +5,7 @@ import LevelProgress from './LevelProgress';
 import Leaderboard from './Leaderboard';
 import ChallengeHub from './ChallengeHub';
 import Button from '../ui/Button';
-import { trackEvent } from '../../utils/analytics';
+import { track } from '../../utils/analytics';
 
 interface GamificationDashboardProps {
   className?: string;
@@ -27,7 +27,10 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
   const handleViewChange = (view: 'overview' | 'challenges' | 'leaderboard') => {
     setActiveView(view);
     
-    trackEvent('gamification_view_changed', 'engagement', view, 1, {
+    track('gamification_view_changed', {
+      category: 'engagement',
+      label: view,
+      value: 1,
       previous_view: activeView,
       user_level: currentLevelInfo?.id,
       user_points: points
@@ -46,7 +49,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
       label: 'Huidige Level',
       value: currentLevelInfo?.level_name || 'Beginner',
       icon: <Trophy className="w-5 h-5" />,
-      color: 'text-[#C2654A]',
+      color: 'text-[#A85740]',
       bgColor: 'bg-blue-50'
     },
     {
@@ -80,7 +83,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
               onClick={() => handleViewChange(tab.id as any)}
               className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl transition-all duration-200 ${
                 activeView === tab.id
-                  ? 'bg-[#C2654A] text-white shadow-sm'
+                  ? 'bg-[#A85740] text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
@@ -126,7 +129,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
             {earnedBadges.length > 0 && (
               <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="flex items-center space-x-2 mb-4">
-                  <Gift className="w-5 h-5 text-[#C2654A]" />
+                  <Gift className="w-5 h-5 text-[#A85740]" />
                   <h3 className="text-lg font-bold text-gray-900">Jouw Badges</h3>
                 </div>
                 
@@ -158,12 +161,12 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-r from-[#C2654A]/10 to-blue-50 rounded-2xl p-6">
+              <div className="bg-gradient-to-r from-[#A85740]/10 to-blue-50 rounded-2xl p-6">
                 <h4 className="font-medium text-gray-900 mb-4">Deze Week</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Punten verdiend:</span>
-                    <span className="font-bold text-[#C2654A]">{weeklyPoints.toLocaleString()}</span>
+                    <span className="font-bold text-[#A85740]">{weeklyPoints.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Challenges voltooid:</span>

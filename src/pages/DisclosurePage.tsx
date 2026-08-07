@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { ShieldCheck, Link2, Gift, Tag, Image, Newspaper, Lock, CircleAlert as AlertCircle, RefreshCw, Mail, ChevronDown, ArrowRight } from 'lucide-react';
 import Seo from '@/components/seo/Seo';
 
 const UPDATED = '1 oktober 2025';
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i = 0) => ({
     opacity: 1,
@@ -54,7 +54,7 @@ const SECTIONS: Section[] = [
           'We weigeren "pay-to-rank": betalende partijen bepalen niet jouw volgorde van aanbevelingen.',
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
             {item}
           </li>
         ))}
@@ -78,12 +78,12 @@ const SECTIONS: Section[] = [
             'wordt alleen toegepast als het relevant en beschikbaar is.',
           ].map((item, i) => (
             <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
               {item}
             </li>
           ))}
         </ul>
-        <p className="text-[15px] text-[#8A8A8A] leading-[1.7]">
+        <p className="text-[15px] text-[#6E6E6E] leading-[1.7]">
           Als een specifieke samenwerking of korting van invloed is op content, vermelden we dat expliciet bij de betreffende sectie.
         </p>
       </div>
@@ -101,7 +101,7 @@ const SECTIONS: Section[] = [
           'Materiële relaties die wél relevant zijn, worden duidelijk vermeld.',
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
             {item}
           </li>
         ))}
@@ -119,14 +119,14 @@ const SECTIONS: Section[] = [
           'We streven naar correctheid, maar menselijke en technische fouten kunnen voorkomen.',
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
             {item}
           </li>
         ))}
         <li className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
           Zie je iets dat niet klopt?{' '}
-          <NavLink to="/contact" className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200">
+          <NavLink to="/contact" className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
             Laat het ons weten
           </NavLink>.
         </li>
@@ -145,7 +145,7 @@ const SECTIONS: Section[] = [
           'Beelden kunnen indicatief zijn; vertrouw voor maten/kleuren op de productpagina van de winkel.',
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0 mt-[0.55em]" aria-hidden="true" />
             {item}
           </li>
         ))}
@@ -171,11 +171,11 @@ const SECTIONS: Section[] = [
       <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
         FitFi werkt privacy-first en verwerkt alleen wat nodig is om advies te tonen. Bekijk de
         relevante antwoorden in de{' '}
-        <NavLink to="/veelgestelde-vragen" className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200">
+        <NavLink to="/veelgestelde-vragen" className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
           FAQ
         </NavLink>{' '}
         of neem contact op via{' '}
-        <NavLink to="/contact" className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200">
+        <NavLink to="/contact" className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
           /contact
         </NavLink>.
       </p>
@@ -210,7 +210,7 @@ const SECTIONS: Section[] = [
     content: (
       <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
         Vragen of zorgen? Neem contact op via{' '}
-        <NavLink to="/contact" className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200">
+        <NavLink to="/contact" className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200">
           /contact
         </NavLink>.
       </p>
@@ -238,11 +238,11 @@ function AccordionSection({ section, isOpen, onToggle, index }: {
           onClick={() => onToggle(section.id)}
           aria-expanded={isOpen}
           aria-controls={`panel-${section.id}`}
-          className="w-full flex items-center justify-between py-6 gap-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/40 focus-visible:ring-offset-2 rounded"
+          className="w-full flex items-center justify-between py-6 gap-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/40 focus-visible:ring-offset-2 rounded"
         >
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${isOpen ? 'bg-[#F4E8E3]' : 'bg-[#F5F0EB]'}`}>
-              <Icon className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
+              <Icon className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
             </div>
             <span className="text-base font-semibold text-[#1A1A1A] leading-snug">{section.title}</span>
           </div>
@@ -250,7 +250,7 @@ function AccordionSection({ section, isOpen, onToggle, index }: {
             className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isOpen ? 'bg-[#F4E8E3]' : 'bg-[#F5F0EB]'}`}
             aria-hidden="true"
           >
-            <ChevronDown className={`w-4 h-4 text-[#C2654A] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-[#A85740] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
           </span>
         </button>
       </h2>
@@ -293,7 +293,7 @@ export default function DisclosurePage() {
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#C2654A] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#A85740] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
@@ -314,11 +314,11 @@ export default function DisclosurePage() {
               custom={0}
               className="inline-flex items-center gap-2.5 mb-8"
             >
-              <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
-              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#C2654A]">
+              <span className="w-6 h-px bg-[#A85740]" aria-hidden="true" />
+              <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740]">
                 Disclosure
               </span>
-              <span className="w-6 h-px bg-[#C2654A]" aria-hidden="true" />
+              <span className="w-6 h-px bg-[#A85740]" aria-hidden="true" />
             </motion.div>
 
             <motion.h1
@@ -344,7 +344,7 @@ export default function DisclosurePage() {
               met beelden en privacy.{' '}
               <Link
                 to="/contact"
-                className="text-[#C2654A] hover:text-[#A8513A] underline underline-offset-4 transition-colors duration-200"
+                className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
               >
                 Stel een vraag
               </Link>
@@ -360,7 +360,7 @@ export default function DisclosurePage() {
             >
               {TRUST_STATS.map(({ label }) => (
                 <div key={label} className="flex items-center gap-2 text-sm font-medium text-[#4A4A4A]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                   {label}
                 </div>
               ))}
@@ -371,7 +371,7 @@ export default function DisclosurePage() {
               initial="hidden"
               animate="visible"
               custom={4}
-              className="text-xs text-[#8A8A8A] mt-6"
+              className="text-xs text-[#6E6E6E] mt-6"
             >
               Laatst bijgewerkt: {UPDATED}
             </motion.p>
@@ -390,7 +390,7 @@ export default function DisclosurePage() {
               className="max-w-[720px] mx-auto bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-6 md:p-8 flex items-start gap-5"
             >
               <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                <ShieldCheck className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
+                <ShieldCheck className="w-5 h-5 text-[#A85740]" aria-hidden="true" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-[#1A1A1A] mb-2">Korte versie</h2>
@@ -456,14 +456,14 @@ export default function DisclosurePage() {
             >
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] transition-colors duration-200"
+                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] transition-colors duration-200"
               >
                 Stel een vraag
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <Link
                 to="/veelgestelde-vragen"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
               >
                 Bekijk FAQ
               </Link>

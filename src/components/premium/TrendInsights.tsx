@@ -20,7 +20,7 @@ const TREND_INSIGHTS_2025: Record<string, TrendData> = {
     title: "Quiet Luxury Dominates",
     description: "Aardse tinten en rijke neutrale kleuren zijn DE trend van 2025. Camel, Cognac en Terracotta zijn overal te zien op runways en in high-street fashion.",
     colors: [
-      { hex: '#D4A373', name: 'Camel' },
+      { hex: '#A85740', name: 'Camel' },
       { hex: '#A0785A', name: 'Cognac' },
       { hex: '#C17767', name: 'Terracotta' },
       { hex: '#6B8E23', name: 'Olijfgroen' }
@@ -92,9 +92,9 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
 
   if (compact) {
     return (
-      <div className="bg-gradient-to-br from-[#FFFFFF] to-[#FAF5F2] rounded-2xl p-5 border border-[#F4E8E3] shadow-sm">
+      <div className="bg-gradient-to-br from-[#FFFFFF] to-[#F5F0EB] rounded-2xl p-5 border border-[#F4E8E3] shadow-sm">
         <div className="flex items-start gap-3 mb-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#C2654A] to-[#A8513A] flex items-center justify-center">
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -102,9 +102,9 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
               <h3 className="text-base font-semibold text-[#1A1A1A]">
                 {seasonTrend.title}
               </h3>
-              <Crown className="w-4 h-4 text-[#C2654A]" />
+              <Crown className="w-4 h-4 text-[#A85740]" />
             </div>
-            <p className="text-sm text-[#8A8A8A]">
+            <p className="text-sm text-[#6E6E6E]">
               {seasonTrend.description}
             </p>
           </div>
@@ -125,7 +125,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           {seasonTrend.tags.map((tag, idx) => (
             <span
               key={idx}
-              className="text-xs px-2 py-1 rounded-full bg-white text-[#A8513A] font-medium border border-[#F4E8E3]"
+              className="text-xs px-2 py-1 rounded-full bg-white text-[#9A503B] font-medium border border-[#F4E8E3]"
             >
               {tag}
             </span>
@@ -139,7 +139,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
     <div className="space-y-6">
       {/* Main Season Trend */}
       <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-[#A8513A] to-[#C2654A] p-6 text-white">
+        <div className="bg-gradient-to-r from-[#9A503B] to-[#A85740] p-6 text-white">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
               <TrendingUp className="w-6 h-6" />
@@ -157,21 +157,21 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
         </div>
 
         <div className="p-6">
-          <p className="text-[#8A8A8A] mb-6">
+          <p className="text-[#6E6E6E] mb-6">
             {seasonTrend.description}
           </p>
 
           {/* Trending Colors */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#C2654A]" />
+              <Sparkles className="w-4 h-4 text-[#A85740]" />
               Key Colors voor 2025
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {seasonTrend.colors.map((color, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#D4856E] transition-colors"
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#A85740] transition-colors"
                 >
                   <div
                     className="w-16 h-16 rounded-full shadow-sm border-2 border-white"
@@ -190,7 +190,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
             {seasonTrend.tags.map((tag, idx) => (
               <span
                 key={idx}
-                className="text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#8A3D28] font-medium border border-[#F4E8E3]"
+                className="text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] text-[#9A503B] font-medium border border-[#F4E8E3]"
               >
                 {tag}
               </span>
@@ -198,14 +198,14 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           </div>
 
           {/* Shopping Tip */}
-          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3]">
+          <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3]">
             <div className="flex items-start gap-3">
-              <Star className="w-5 h-5 text-[#C2654A] flex-shrink-0 mt-0.5" />
+              <Star className="w-5 h-5 text-[#A85740] flex-shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Shopping Tip
                 </h4>
-                <p className="text-xs text-[#8A8A8A]">
+                <p className="text-xs text-[#6E6E6E]">
                   Deze kleuren zijn nu overal beschikbaar. Zoek naar deze kleurnamen bij je favoriete merken voor instant-trendy looks.
                 </p>
               </div>
@@ -217,7 +217,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
       {/* Universal Trends */}
       <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Calendar className="w-5 h-5 text-[#C2654A]" />
+          <Calendar className="w-5 h-5 text-[#A85740]" />
           <h2 className="text-lg font-bold text-[#1A1A1A]">
             Universele 2025 Trends
           </h2>
@@ -227,10 +227,10 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
           {UNIVERSAL_TRENDS_2025.map((trend, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-3 p-4 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#D4856E] transition-colors group"
+              className="flex items-start gap-3 p-4 rounded-2xl bg-[#FAFAF8] border border-[#E5E5E5] hover:border-[#A85740] transition-colors group"
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FAF5F2] flex items-center justify-center group-hover:scale-110 transition-transform">
-                <trend.icon className="w-5 h-5 text-[#A8513A]" />
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#F5F0EB] flex items-center justify-center group-hover:scale-110 transition-transform">
+                <trend.icon className="w-5 h-5 text-[#9A503B]" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
@@ -241,7 +241,7 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
                     <ArrowUpRight className="w-3 h-3 text-[#3D8B5E]" />
                   )}
                 </div>
-                <p className="text-xs text-[#8A8A8A]">
+                <p className="text-xs text-[#6E6E6E]">
                   {trend.description}
                 </p>
               </div>
@@ -251,8 +251,8 @@ export default function TrendInsights({ userSeason = 'herfst', compact = false }
       </div>
 
       {/* Premium Badge */}
-      <div className="flex items-center justify-center gap-2 text-xs text-[#8A8A8A]">
-        <Crown className="w-4 h-4 text-[#C2654A]" />
+      <div className="flex items-center justify-center gap-2 text-xs text-[#6E6E6E]">
+        <Crown className="w-4 h-4 text-[#A85740]" />
         <span>Premium trend insights • Updated voor 2025</span>
       </div>
     </div>

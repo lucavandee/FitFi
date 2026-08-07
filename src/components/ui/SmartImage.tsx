@@ -36,7 +36,6 @@ const SmartImage: React.FC<Props> = ({ fallbackColor, style, src, alt, ...rest }
 
     return (
       <div
-        aria-hidden="true"
         role="img"
         aria-label={alt || "Product afbeelding"}
         style={{

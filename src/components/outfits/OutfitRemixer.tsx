@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { RefreshCw, Shirt, TrendingUp } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { OutfitCard } from './OutfitCard';
+import OutfitCard from './OutfitCard';
 import { remixOutfit } from '@/services/outfits/outfitRemixer';
 import type { Outfit, Product } from '@/engine/types';
 
@@ -74,8 +74,8 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
   if (remixableCategories.length === 0) {
     return (
       <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 text-center">
-        <Shirt className="w-12 h-12 mx-auto mb-3 text-[#8A8A8A]" />
-        <p className="text-sm text-[#8A8A8A]">
+        <Shirt className="w-12 h-12 mx-auto mb-3 text-[#6E6E6E]" />
+        <p className="text-sm text-[#6E6E6E]">
           Geen alternatieven beschikbaar voor dit outfit
         </p>
       </div>
@@ -87,12 +87,12 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
       {/* Category Selector */}
       <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <RefreshCw className="w-5 h-5 text-[#C2654A]" />
+          <RefreshCw className="w-5 h-5 text-[#A85740]" />
           <h3 className="font-display font-semibold text-[#1A1A1A]">
             Remix dit outfit
           </h3>
         </div>
-        <p className="text-sm text-[#8A8A8A] mb-4">
+        <p className="text-sm text-[#6E6E6E] mb-4">
           Kies een item om te vervangen en zie direct alternatieve combinaties
         </p>
 
@@ -114,7 +114,7 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
       {/* Remix Results */}
       {selectedCategory && (
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-[#8A8A8A]">
+          <div className="flex items-center gap-2 text-sm text-[#6E6E6E]">
             <TrendingUp className="w-4 h-4" />
             <span>
               {remixes.length} {remixes.length === 1 ? 'alternatief' : 'alternatieven'} gevonden
@@ -123,7 +123,7 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
 
           {remixes.length === 0 ? (
             <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 text-center">
-              <p className="text-sm text-[#8A8A8A]">
+              <p className="text-sm text-[#6E6E6E]">
                 Geen goede alternatieven gevonden voor {getCategoryLabel(selectedCategory).toLowerCase()}
               </p>
             </div>
@@ -131,12 +131,20 @@ export const OutfitRemixer: React.FC<OutfitRemixerProps> = ({
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {remixes.map((remix, idx) => (
                 <div key={idx} className="relative">
+                  {/* Note: OutfitCard has no `compact` prop (it doesn't exist on OutfitCardProps);
+                      it was previously passed as an unused, silently-ignored prop. */}
                   <OutfitCard
-                    outfit={remix.outfit}
-                    compact
+                    outfit={{
+                      ...remix.outfit,
+                      imageUrl: remix.outfit.imageUrl ?? '',
+                      products: remix.outfit.products?.map(p => ({
+                        ...p,
+                        imageUrl: p.imageUrl ?? '',
+                      })),
+                    }}
                   />
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-xs text-[#8A8A8A]">
+                    <span className="text-xs text-[#6E6E6E]">
                       Match: {Math.round(remix.matchScore)}%
                     </span>
                     {onSelectRemix && (

@@ -107,6 +107,10 @@ export function NovaChatProvider({ children }: { children: React.ReactNode }) {
       try {
         const { supabase } = await import('@/lib/supabaseClient');
         const sb = supabase();
+        if (!sb) {
+          setError('Authenticatie mislukt. Log opnieuw in.');
+          return;
+        }
         const { data: { session } } = await sb.auth.getSession();
 
         if (!session?.user) {

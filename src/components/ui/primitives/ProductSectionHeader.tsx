@@ -49,7 +49,7 @@ export function ProductSectionHeader({
           {title}
         </Heading>
         {subtitle && (
-          <p className="text-sm text-[#8A8A8A] leading-relaxed max-w-prose">
+          <p className="text-sm text-[#6E6E6E] leading-relaxed max-w-prose">
             {subtitle}
           </p>
         )}

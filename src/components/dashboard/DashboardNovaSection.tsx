@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, X, Sparkles, Shirt, User, ShoppingBag, Zap } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { streamChat, type NovaMode, type NovaStreamEvent } from '@/services/ai/novaService';
+import { streamChat } from '@/services/ai/novaService';
 import { useNovaConn, NovaConnectionProvider } from '@/components/ai/NovaConnection';
 import TypingSkeleton from '@/components/ai/TypingSkeleton';
 import OutfitCards from '@/components/ai/OutfitCards';
@@ -47,6 +47,9 @@ interface Message {
   timestamp: number;
 }
 
+/** UI-only context switcher; de daadwerkelijke Nova-call gebruikt altijd mode: "style". */
+type NovaMode = 'outfits' | 'archetype' | 'shop';
+
 const contextModes = [
   { id: 'outfits' as NovaMode, label: 'Outfits', icon: Shirt, color: 'from-blue-500 to-blue-600' },
   { id: 'archetype' as NovaMode, label: 'Stijl', icon: User, color: 'from-purple-500 to-purple-600' },
@@ -87,6 +90,7 @@ function DashboardNovaSectionInner() {
       try {
         const { supabase } = await import('@/lib/supabaseClient');
         const sb = supabase();
+        if (!sb) throw new Error('Supabase client unavailable');
 
         const { data, error } = await sb
           .from('nova_conversations')
@@ -135,6 +139,7 @@ function DashboardNovaSectionInner() {
       try {
         const { supabase } = await import('@/lib/supabaseClient');
         const sb = supabase();
+        if (!sb) return;
 
         await sb.from('nova_conversations').upsert({
           user_id: user.id,
@@ -183,6 +188,7 @@ function DashboardNovaSectionInner() {
     try {
       const { supabase } = await import('@/lib/supabaseClient');
       const sb = supabase();
+      if (!sb) throw new Error('Supabase client unavailable');
       const { data: { session } } = await sb.auth.getSession();
 
       if (!session?.user) {
@@ -249,21 +255,19 @@ function DashboardNovaSectionInner() {
       try {
         const history = [...messages, userMessage].map(m => ({ role: m.role, content: m.content }));
         for await (const delta of streamChat({
-          mode: contextMode,
+          mode: 'style',
           messages: history,
           signal: abortRef.current.signal,
           onEvent: (evt) => {
             if (evt.type === 'json' && evt.data?.type === 'outfits') {
               setCards(evt.data);
             }
-            if (evt.type === 'meta') {
-              if (evt.model) conn.setMeta({ model: evt.model });
-              if (evt.traceId) conn.setMeta({ traceId: evt.traceId });
-            } else if (evt.type === 'error') {
-              if ((evt as any).code === 'quota_exceeded') {
+            if (evt.type === 'error') {
+              if (evt.code === 'quota_exceeded') {
                 setQuotaOpen(true);
               }
-            } else if (evt.type === 'chunk') {
+              conn.setStatus('error');
+            } else if (evt.type === 'delta') {
               if (!firstChunkAt) {
                 firstChunkAt = performance.now();
                 conn.setMeta({ ttfbMs: Math.max(0, Math.round(firstChunkAt - tStart)) });
@@ -283,8 +287,6 @@ function DashboardNovaSectionInner() {
                 return { ...m, content: c };
               }));
               conn.setStatus('done');
-            } else if (evt.type === 'error') {
-              conn.setStatus('error');
             }
           }
         })) {
@@ -361,7 +363,7 @@ function DashboardNovaSectionInner() {
                 </motion.div>
                 <div>
                   <h2 className="text-xl font-bold text-[#1A1A1A]">Chat met Nova</h2>
-                  <p className="text-sm text-[#8A8A8A]">Je persoonlijke AI-stylist</p>
+                  <p className="text-sm text-[#6E6E6E]">Je persoonlijke AI-stylist</p>
                 </div>
               </div>
 
@@ -482,7 +484,7 @@ function DashboardNovaSectionInner() {
                       </motion.div>
                       <span className="text-xs font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nova</span>
                       <motion.span
-                        className="text-xs text-[#8A8A8A]"
+                        className="text-xs text-[#6E6E6E]"
                         animate={{ opacity: [0.5, 1, 0.5] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       >
@@ -515,7 +517,7 @@ function DashboardNovaSectionInner() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Vraag Nova om styling advies..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white dark:bg-gray-800 text-[#1A1A1A] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder:text-[#8A8A8A]"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white dark:bg-gray-800 text-[#1A1A1A] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder:text-[#6E6E6E]"
                   disabled={isLoading}
                 />
                 {input && (
@@ -526,7 +528,7 @@ function DashboardNovaSectionInner() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <X className="w-4 h-4 text-[#8A8A8A]" />
+                    <X className="w-4 h-4 text-[#6E6E6E]" />
                   </motion.button>
                 )}
               </div>
@@ -561,9 +563,10 @@ function DashboardNovaSectionInner() {
 
       {/* Modals */}
       <QuotaModal
-        isOpen={quotaOpen}
+        open={quotaOpen}
         onClose={() => setQuotaOpen(false)}
-        tier={userTier}
+        remaining={usageInfo?.remaining}
+        limit={usageInfo?.limit}
       />
 
       <NovaLoginPrompt

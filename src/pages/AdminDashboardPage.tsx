@@ -190,7 +190,7 @@ export default function AdminDashboardPage() {
           <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-[#8A8A8A]">
+          <p className="text-[#6E6E6E]">
             Welkom terug, {user?.name || 'Admin'} • Beheer alle FitFi systemen
           </p>
         </div>
@@ -217,7 +217,7 @@ export default function AdminDashboardPage() {
               >
                 <Activity className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.active_users_last_7_days || 0)}
+                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.growth.last_7d || 0)}
                 </div>
                 <div className="text-sm opacity-90">Actief (7d)</div>
               </motion.div>
@@ -230,7 +230,7 @@ export default function AdminDashboardPage() {
               >
                 <Award className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.premium_users || 0)}
+                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.tier_breakdown.premium || 0)}
                 </div>
                 <div className="text-sm opacity-90">Premium Users</div>
               </motion.div>
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
               >
                 <TrendingUp className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {loading ? <span className="inline-block w-10 h-7 bg-white/30 rounded animate-pulse" /> : `${((metrics?.quiz_completion_rate || 0) * 100).toFixed(0)}%`}
+                  {loading ? <span className="inline-block w-10 h-7 bg-white/30 rounded animate-pulse" /> : `${(metrics?.total_users ? (metrics.engagement.with_quiz_completed / metrics.total_users) * 100 : 0).toFixed(0)}%`}
                 </div>
                 <div className="text-sm opacity-90">Quiz Completion</div>
               </motion.div>
@@ -273,7 +273,7 @@ export default function AdminDashboardPage() {
                       className={`w-full bg-[#FFFFFF] rounded-xl p-6 border border-[#E5E5E5] text-left transition-all ${
                         isDisabled
                           ? 'opacity-50 cursor-not-allowed'
-                          : 'hover:border-[#A8513A] hover:shadow-lg cursor-pointer'
+                          : 'hover:border-[#9A503B] hover:shadow-lg cursor-pointer'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -285,7 +285,7 @@ export default function AdminDashboardPage() {
                         {(module.badge || module.status) && (
                           <div className="flex gap-2">
                             {module.badge && (
-                              <span className="px-2 py-1 bg-[#A8513A] text-white rounded text-xs font-medium">
+                              <span className="px-2 py-1 bg-[#9A503B] text-white rounded text-xs font-medium">
                                 {module.badge}
                               </span>
                             )}
@@ -297,12 +297,12 @@ export default function AdminDashboardPage() {
                       <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                         {module.title}
                       </h3>
-                      <p className="text-sm text-[#8A8A8A] mb-4">
+                      <p className="text-sm text-[#6E6E6E] mb-4">
                         {module.description}
                       </p>
 
                       {!isDisabled && (
-                        <div className="flex items-center text-[#A8513A] text-sm font-medium">
+                        <div className="flex items-center text-[#9A503B] text-sm font-medium">
                           Open module
                           <ArrowRight className="w-4 h-4 ml-1" />
                         </div>
@@ -317,7 +317,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-4">
                 Quick Tips
               </h3>
-              <ul className="space-y-2 text-sm text-[#8A8A8A]">
+              <ul className="space-y-2 text-sm text-[#6E6E6E]">
                 <li>• <strong>Mood Photos:</strong> Upload en beheer visual preference photos voor de quiz</li>
                 <li>• <strong>PWA & Push:</strong> Monitor app installaties en verstuur push notificaties naar gebruikers</li>
                 <li>• <strong>Gebruikers Tab:</strong> Sommige modules hebben tabs in dit dashboard (gebruik navbar om te wisselen)</li>

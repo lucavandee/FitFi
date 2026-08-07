@@ -23,30 +23,30 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
     <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] overflow-hidden" style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
       {/* Header */}
       <div className="px-5 sm:px-6 py-4 border-b border-[#E5E5E5]">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-0.5">Kleurpalet</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-0.5">Kleurpalet</p>
         <h3 className="text-sm font-semibold text-[#1A1A1A]">
           {palette.season}
         </h3>
-        <p className="text-xs text-[#8A8A8A] mt-0.5 leading-relaxed">{palette.description}</p>
+        <p className="text-xs text-[#6E6E6E] mt-0.5 leading-relaxed">{palette.description}</p>
       </div>
 
       <div className="p-5 sm:p-6 space-y-6">
         {/* Disclaimer */}
         <div
           className="flex items-start gap-2.5 p-3 rounded-lg border border-[#E5E5E5]"
-          style={{ background: '#FAF5F2' }}
+          style={{ background: '#F5F0EB' }}
           role="note"
           aria-live="polite"
         >
           {hasPhoto
-            ? <CheckCircle className="w-3.5 h-3.5 text-[#C2654A] shrink-0 mt-0.5" aria-hidden="true" />
-            : <Info className="w-3.5 h-3.5 text-[#C2654A] shrink-0 mt-0.5" aria-hidden="true" />
+            ? <CheckCircle className="w-3.5 h-3.5 text-[#A85740] shrink-0 mt-0.5" aria-hidden="true" />
+            : <Info className="w-3.5 h-3.5 text-[#A85740] shrink-0 mt-0.5" aria-hidden="true" />
           }
-          <p className="text-xs text-[#8A8A8A] leading-relaxed">
+          <p className="text-xs text-[#6E6E6E] leading-relaxed">
             {hasPhoto
               ? <><strong className="font-semibold text-[#1A1A1A]">Foto-gebaseerd advies</strong> — kleurtips zijn mede gebaseerd op je huidondertoon.</>
               : <>Kleurtips op basis van jouw quiz. Zonder foto geven we geen uitspraken over huidondertoon.{' '}
-                  <button onClick={() => navigate('/onboarding?step=photo')} className="font-semibold underline underline-offset-2 text-[#A8513A] hover:no-underline focus-visible:ring-1 focus-visible:ring-[#C2654A] rounded">
+                  <button onClick={() => navigate('/onboarding?step=photo')} className="font-semibold underline underline-offset-2 text-[#9A503B] hover:no-underline focus-visible:ring-1 focus-visible:ring-[#A85740] rounded">
                     Voeg selfie toe
                   </button>
                 </>
@@ -57,13 +57,13 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
         {/* Recommended Colors */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <CheckCircle className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
+            <CheckCircle className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
             <p className="text-sm font-semibold text-[#1A1A1A]">Draag deze kleuren</p>
           </div>
-          <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#FAF5F2' }}>
+          <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#F5F0EB' }}>
             <ColorSwatchGrid swatches={palette.doColors} recommendation="do" columns={6} />
-            <p className="text-xs text-[#8A8A8A] flex items-center gap-1.5 mt-3">
-              <Info className="w-3 h-3 text-[#C2654A] shrink-0" aria-hidden="true" />
+            <p className="text-xs text-[#6E6E6E] flex items-center gap-1.5 mt-3">
+              <Info className="w-3 h-3 text-[#A85740] shrink-0" aria-hidden="true" />
               Sla deze sectie op voor tijdens het shoppen.
             </p>
           </div>
@@ -71,14 +71,14 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
 
         {/* Full palette by category */}
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-4">Compleet palet</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#6E6E6E] mb-4">Compleet palet</p>
           <div className="space-y-5">
             {groupedColors.basis.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-[#C2654A]" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#A85740]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Basiskleuren</p>
-                  <p className="text-xs text-[#8A8A8A]">— ~60% van je garderobe</p>
+                  <p className="text-xs text-[#6E6E6E]">— ~60% van je garderobe</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.basis} columns={6} />
               </div>
@@ -86,9 +86,9 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             {groupedColors.accent.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-[#D4856E]" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#A85740]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Accentkleuren</p>
-                  <p className="text-xs text-[#8A8A8A]">— ~30% voor balans</p>
+                  <p className="text-xs text-[#6E6E6E]">— ~30% voor balans</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.accent} columns={6} />
               </div>
@@ -96,9 +96,9 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             {groupedColors.neutraal.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-[#8A8A8A]" aria-hidden="true" />
+                  <div className="w-2 h-2 rounded-full bg-[#6E6E6E]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Neutrale tinten</p>
-                  <p className="text-xs text-[#8A8A8A]">— ~10% als complementen</p>
+                  <p className="text-xs text-[#6E6E6E]">— ~10% als complementen</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.neutraal} columns={6} />
               </div>
@@ -113,9 +113,9 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
               <XCircle className="w-4 h-4 text-[#C24A4A]" aria-hidden="true" />
               <p className="text-sm font-semibold text-[#1A1A1A]">Vermijd deze kleuren</p>
             </div>
-            <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#FAF5F2' }}>
+            <div className="rounded-xl p-4 border border-[#E5E5E5]" style={{ background: '#F5F0EB' }}>
               <ColorSwatchGrid swatches={palette.dontColors} recommendation="dont" columns={6} />
-              <p className="text-xs text-[#8A8A8A] flex items-center gap-1.5 mt-3">
+              <p className="text-xs text-[#6E6E6E] flex items-center gap-1.5 mt-3">
                 <Info className="w-3 h-3 text-[#C24A4A] shrink-0" aria-hidden="true" />
                 Op basis van jouw huidondertoon zijn deze kleuren minder flatterend.
               </p>
@@ -126,16 +126,16 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
             <div className="absolute inset-0 bg-[#FAFAF8]/50 backdrop-blur-[2px] rounded-xl" />
             <div className="relative z-10 flex flex-col items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center">
-                <Lock className="w-3.5 h-3.5 text-[#8A8A8A]" aria-hidden="true" />
+                <Lock className="w-3.5 h-3.5 text-[#6E6E6E]" aria-hidden="true" />
               </div>
               <p className="text-sm font-semibold text-[#1A1A1A]">Kleuren om te vermijden</p>
-              <p className="text-xs text-[#8A8A8A] max-w-xs leading-relaxed">
+              <p className="text-xs text-[#6E6E6E] max-w-xs leading-relaxed">
                 Upload een selfie voor ondertoonanalyse en persoonlijk kleuradvies.
               </p>
               <button
                 onClick={() => navigate('/onboarding?step=photo')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2"
-                style={{ background: '#A8513A' }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
+                style={{ background: '#9A503B' }}
               >
                 <Camera className="w-3.5 h-3.5" aria-hidden="true" />
                 Foto toevoegen
@@ -145,7 +145,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhoto = false }: Col
         )}
 
         {/* Usage tip */}
-        <p className="text-sm text-[#8A8A8A] leading-relaxed pt-3 border-t border-[#E5E5E5]">
+        <p className="text-sm text-[#6E6E6E] leading-relaxed pt-3 border-t border-[#E5E5E5]">
           Test kleuren altijd in natuurlijk daglicht bij je gezicht voordat je koopt.
         </p>
       </div>

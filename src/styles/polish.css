@@ -1094,7 +1094,7 @@
 /* === How-it-works — premium editorial pass ================================== */
 .section-header { max-width: 56rem; margin-inline: auto; text-align: left; }
 .kicker { letter-spacing:.04em; text-transform:uppercase; font-weight:600; color:var(--color-muted); margin-bottom:.5rem; }
-.section-title { font-family: var(--ff-heading, Montserrat, ui-sans-serif); font-size:clamp(1.75rem, 2.2vw, 2.5rem); line-height:1.2; color:var(--color-text); }
+.section-title { font-family: var(--ff-heading, 'Plus Jakarta Sans', ui-sans-serif); font-size:clamp(1.75rem, 2.2vw, 2.5rem); line-height:1.2; color:var(--color-text); }
 .section-intro { margin-top:.75rem; color:var(--color-muted); font-size:clamp(1rem, 1.2vw, 1.125rem); }
 
 /* ritme */
@@ -1215,7 +1215,7 @@
 
 .kicker { letter-spacing:.06em; text-transform:uppercase; font-weight:600; color:var(--color-muted); }
 .display-title {
-  font-family: var(--ff-heading, Montserrat, ui-sans-serif);
+  font-family: var(--ff-heading, 'Plus Jakarta Sans', ui-sans-serif);
   font-size: clamp(2.2rem, 4vw, 3.25rem);
   line-height: 1.15;
 }

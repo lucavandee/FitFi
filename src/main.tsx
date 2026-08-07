@@ -28,7 +28,7 @@ import { GamificationProvider } from "@/context/GamificationContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 
 // Performance & PWA
-import { registerServiceWorker } from "@/utils/serviceWorker.ts";
+import { registerServiceWorker } from "@/utils/serviceWorker";
 
 // Analytics
 import { initAnalytics, track as analyticsTrack } from "@/utils/analytics";

@@ -94,27 +94,27 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
         <button
           onClick={onClose}
           disabled={isResetting}
-          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#FAFAF8] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]"
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#FAFAF8] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]"
           aria-label="Sluiten"
         >
-          <X className="w-5 h-5 text-[#8A8A8A]" />
+          <X className="w-5 h-5 text-[#6E6E6E]" />
         </button>
 
-        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#FAF5F2] mb-6 mx-auto">
-          <AlertTriangle className="w-8 h-8 text-[#A8513A]" />
+        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#F5F0EB] mb-6 mx-auto">
+          <AlertTriangle className="w-8 h-8 text-[#9A503B]" />
         </div>
 
         <h2 id={headingId} className="text-2xl font-bold text-[#1A1A1A] text-center mb-3">
           Quiz opnieuw doen?
         </h2>
 
-        <p className="text-[#8A8A8A] text-center mb-4 leading-relaxed">
+        <p className="text-[#6E6E6E] text-center mb-4 leading-relaxed">
           Je huidige profiel wordt <strong>gearchiveerd</strong> (niet verwijderd) en je kunt de quiz opnieuw doen.
         </p>
 
         {currentArchetype && (
-          <div className="bg-[#FAF5F2] dark:bg-[#5A2010] rounded-xl p-3 mb-4 text-center border border-[#F4E8E3]">
-            <p className="text-sm text-[#A8513A] dark:text-[#D4856E]">
+          <div className="bg-[#F5F0EB] dark:bg-[#1A1A1A] rounded-xl p-3 mb-4 text-center border border-[#F4E8E3]">
+            <p className="text-sm text-[#9A503B] dark:text-[#A85740]">
               Huidig archetype: <strong>{currentArchetype}</strong>
             </p>
           </div>
@@ -122,17 +122,17 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
 
         <div className="bg-[#FAFAF8] rounded-xl p-4 mb-6 border border-[#E5E5E5]">
           <h3 className="font-semibold text-sm text-[#1A1A1A] mb-2">Wat blijft behouden:</h3>
-          <ul className="space-y-1 text-sm text-[#8A8A8A]">
+          <ul className="space-y-1 text-sm text-[#6E6E6E]">
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-[#C2654A]" />
+              <CheckCircle className="w-4 h-4 text-[#A85740]" />
               Je oude profiel (gearchiveerd voor vergelijking)
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-[#C2654A]" />
+              <CheckCircle className="w-4 h-4 text-[#A85740]" />
               Account, email, subscription en tier
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-[#C2654A]" />
+              <CheckCircle className="w-4 h-4 text-[#A85740]" />
               Gamification voortgang en achievements
             </li>
           </ul>
@@ -140,13 +140,13 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
 
         <div className="mb-4">
           <label className="block text-sm font-semibold text-[#1A1A1A] mb-2">
-            Waarom wil je de quiz opnieuw doen? <span className="text-[#8A8A8A]">(helpt ons)</span>
+            Waarom wil je de quiz opnieuw doen? <span className="text-[#6E6E6E]">(helpt ons)</span>
           </label>
           <select
             value={selectedReason}
             onChange={(e) => setSelectedReason(e.target.value)}
             disabled={isResetting}
-            className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] focus:outline-none focus:border-[#C2654A] transition-colors disabled:opacity-50"
+            className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] focus:outline-none focus:border-[#A85740] transition-colors disabled:opacity-50"
           >
             <option value="">-- Selecteer een reden --</option>
             {RESET_REASONS.map(reason => (
@@ -165,7 +165,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
               onChange={(e) => setCustomReason(e.target.value)}
               disabled={isResetting}
               placeholder="Typ je reden hier..."
-              className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#C2654A] transition-colors disabled:opacity-50"
+              className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:border-[#A85740] transition-colors disabled:opacity-50"
             />
           </div>
         )}
@@ -180,7 +180,7 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
             onChange={(e) => setConfirmText(e.target.value)}
             disabled={isResetting}
             placeholder="RESET"
-            className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#C2654A] transition-colors disabled:opacity-50"
+            className="w-full px-4 py-3 bg-[#FAFAF8] border-2 border-[#E5E5E5] rounded-xl text-[#1A1A1A] placeholder:text-[#6E6E6E] focus:outline-none focus:border-[#A85740] transition-colors disabled:opacity-50"
           />
         </div>
 
@@ -188,14 +188,14 @@ export function QuizResetModal({ isOpen, onClose, currentArchetype }: QuizResetM
           <button
             onClick={onClose}
             disabled={isResetting}
-            className="flex-1 px-6 py-3 min-h-[44px] bg-[#FAFAF8] text-[#1A1A1A] rounded-xl font-semibold hover:bg-[#FFFFFF] transition-all border border-[#E5E5E5] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2"
+            className="flex-1 px-6 py-3 min-h-[44px] bg-[#FAFAF8] text-[#1A1A1A] rounded-xl font-semibold hover:bg-[#FFFFFF] transition-all border border-[#E5E5E5] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
           >
             Annuleren
           </button>
           <button
             onClick={handleReset}
             disabled={isResetting || confirmText.toLowerCase() !== 'reset'}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#A8513A] text-white rounded-xl font-semibold hover:bg-[#C2654A] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A] focus-visible:ring-offset-2"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#9A503B] text-white rounded-xl font-semibold hover:bg-[#A85740] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
           >
             {isResetting ? (
               <>

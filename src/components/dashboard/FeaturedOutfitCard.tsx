@@ -21,7 +21,7 @@ interface FeaturedOutfitCardProps {
 }
 
 const NewHintChip: React.FC = () => (
-  <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--overlay-accent-08a)] text-[#C2654A] text-xs font-medium">
+  <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[var(--overlay-accent-08a)] text-[#A85740] text-xs font-medium">
     <Sparkles className="w-3.5 h-3.5" />
     Nieuw: waarom dit werkt
   </span>
@@ -80,7 +80,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
     <div className={`rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 shadow-sm hover:shadow-md transition-shadow animate-fade-in ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#C2654A]">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#A85740]">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -115,7 +115,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
         <div className="flex flex-col justify-between">
           <div>
             <div className="flex items-center space-x-2 mb-3">
-              <Star className="w-4 h-4 text-[#C2654A]" />
+              <Star className="w-4 h-4 text-[#A85740]" />
               <span className="text-sm font-medium text-[#1A1A1A]">
                 {outfit.matchPercentage}% Match
               </span>
@@ -134,7 +134,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
                 {outfit.tags.slice(0, 3).map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-[var(--overlay-accent-08a)] text-[#C2654A] rounded-full text-xs font-medium"
+                    className="px-3 py-1 bg-[var(--overlay-accent-08a)] text-[#A85740] rounded-full text-xs font-medium"
                   >
                     {tag}
                   </span>

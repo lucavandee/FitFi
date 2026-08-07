@@ -31,7 +31,8 @@ export function EmbeddingAnalytics() {
 
   const loadAnalytics = async () => {
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { requireSupabase } = await import('@/lib/supabase');
+      const supabase = requireSupabase();
 
       // Get archetype distribution
       const { data: archetypeData } = await supabase.rpc('get_archetype_distribution');
@@ -85,13 +86,13 @@ export function EmbeddingAnalytics() {
           <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
             Embedding Analytics
           </h1>
-          <p className="text-[#8A8A8A]">
+          <p className="text-[#6E6E6E]">
             Inzicht in style profiles en archetype distributie
           </p>
         </div>
         <button
           onClick={loadAnalytics}
-          className="bg-white border border-[#E5E5E5] hover:border-[#C2654A] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
+          className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Ververs
@@ -126,7 +127,7 @@ export function EmbeddingAnalytics() {
           className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6"
         >
           <h3 className="text-lg font-semibold text-[#1A1A1A] mb-6 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-[#A8513A]" />
+            <BarChart3 className="w-5 h-5 text-[#9A503B]" />
             Top 10 Archetypes
           </h3>
 
@@ -138,17 +139,17 @@ export function EmbeddingAnalytics() {
                     {item.archetype.replace(/_/g, ' ')}
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-[#8A8A8A]">
+                    <span className="text-xs text-[#6E6E6E]">
                       {item.user_count} users
                     </span>
-                    <span className="text-sm font-semibold text-[#A8513A]">
+                    <span className="text-sm font-semibold text-[#9A503B]">
                       {Math.round(item.avg_score)}
                     </span>
                   </div>
                 </div>
                 <div className="h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#C2654A] rounded-full"
+                    className="h-full bg-[#A85740] rounded-full"
                     style={{
                       width: `${Math.min(100, (item.user_count / archetypes[0].user_count) * 100)}%`
                     }}
@@ -166,7 +167,7 @@ export function EmbeddingAnalytics() {
           className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6"
         >
           <h3 className="text-lg font-semibold text-[#1A1A1A] mb-6 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-[#A8513A]" />
+            <TrendingUp className="w-5 h-5 text-[#9A503B]" />
             Preference Stabiliteit
           </h3>
 
@@ -178,11 +179,11 @@ export function EmbeddingAnalytics() {
                     <div className="text-sm font-medium text-[#1A1A1A]">
                       {item.category}
                     </div>
-                    <div className="text-xs text-[#8A8A8A] mt-1">
+                    <div className="text-xs text-[#6E6E6E] mt-1">
                       {item.user_count} gebruikers ({item.percentage}%)
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[#A8513A]">
+                  <div className="text-2xl font-bold text-[#9A503B]">
                     {item.percentage}%
                   </div>
                 </div>
@@ -197,7 +198,7 @@ export function EmbeddingAnalytics() {
           </div>
 
           <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
-            <p className="text-xs text-[#8A8A8A]">
+            <p className="text-xs text-[#6E6E6E]">
               <strong>Very Stable (≥90%):</strong> Preferences blijven consistent<br />
               <strong>Moderately Stable (70-90%):</strong> Kleine veranderingen<br />
               <strong>Volatile (&lt;70%):</strong> Significante stijl evolutie
@@ -234,7 +235,7 @@ function StatCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm text-[#8A8A8A] mb-2">{label}</p>
+          <p className="text-sm text-[#6E6E6E] mb-2">{label}</p>
           <p className="text-3xl font-bold text-[#1A1A1A]">{value}</p>
         </div>
         <div className={`p-3 rounded-xl border ${colorClasses[color]}`}>
@@ -254,6 +255,6 @@ function getStabilityColor(category: string): string {
     case 'Volatile':
       return 'bg-red-500';
     default:
-      return 'bg-[#8A8A8A]';
+      return 'bg-[#6E6E6E]';
   }
 }

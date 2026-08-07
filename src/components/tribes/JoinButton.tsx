@@ -109,16 +109,20 @@ export const JoinButton: React.FC<Props> = ({
   
   const buttonContent = getButtonContent();
 
+  // Button's own Variant type has no "outline"; map to the closest supported variant.
+  const toButtonVariant = (v: 'primary' | 'outline' | 'ghost') =>
+    v === 'outline' ? 'ghost' : v;
+
   return (
     <Button
       onClick={handleClick}
       disabled={isDisabled}
-      variant={isMember ? 'outline' : variant}
+      variant={toButtonVariant(isMember ? 'outline' : variant)}
       size={size}
       className={`transition-all duration-200 ${
         isMember 
           ? 'border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400' 
-          : 'bg-[#C2654A] hover:bg-[#C2654A]/90 text-[#1A1A1A]'
+          : 'bg-[#A85740] hover:bg-[#A85740]/90 text-[#1A1A1A]'
       } ${status !== 'authenticated' ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
       icon={buttonContent.icon}
       iconPosition="left"

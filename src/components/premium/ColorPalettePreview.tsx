@@ -37,7 +37,7 @@ export default function ColorPalettePreview() {
   return (
     <div className="bg-[#FFFFFF] rounded-2xl border border-[#E5E5E5] shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#A8513A] to-[#C2654A] p-6 text-white">
+      <div className="bg-gradient-to-r from-[#9A503B] to-[#A85740] p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
             <Palette className="w-5 h-5" />
@@ -59,7 +59,7 @@ export default function ColorPalettePreview() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 selectedSeason === season.key
                   ? 'bg-gradient-to-r ' + season.gradient + ' text-white shadow-sm'
-                  : 'bg-[#FAFAF8] text-[#8A8A8A] hover:bg-[#FAF5F2] hover:text-[#A8513A] border border-[#E5E5E5]'
+                  : 'bg-[#FAFAF8] text-[#6E6E6E] hover:bg-[#F5F0EB] hover:text-[#9A503B] border border-[#E5E5E5]'
               }`}
             >
               {season.label}
@@ -71,7 +71,7 @@ export default function ColorPalettePreview() {
       {/* Color Preview */}
       <div className="p-6">
         <div className="mb-6">
-          <p className="text-sm text-[#8A8A8A] mb-4">
+          <p className="text-sm text-[#6E6E6E] mb-4">
             {palette.description}
           </p>
         </div>
@@ -91,23 +91,23 @@ export default function ColorPalettePreview() {
 
         {/* Trend Highlights */}
         {selectedSeason === 'herfst' && (
-          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
+          <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#C2654A] to-[#A8513A] flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div>
                 <h5 className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Trending in 2025
                 </h5>
-                <p className="text-xs text-[#8A8A8A] mb-2">
+                <p className="text-xs text-[#6E6E6E] mb-2">
                   Herfst is HET seizoen voor quiet luxury. Camel, Cognac, Terracotta en Sage domineren de runways.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[#A8513A] font-medium border border-[#F4E8E3]">
+                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[#9A503B] font-medium border border-[#F4E8E3]">
                     Quiet Luxury
                   </span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[#A8513A] font-medium border border-[#F4E8E3]">
+                  <span className="text-xs px-2 py-1 rounded-full bg-white text-[#9A503B] font-medium border border-[#F4E8E3]">
                     Earthy Tones
                   </span>
                 </div>
@@ -117,16 +117,16 @@ export default function ColorPalettePreview() {
         )}
 
         {selectedSeason === 'zomer' && (
-          <div className="bg-gradient-to-br from-[#FAF5F2] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
+          <div className="bg-gradient-to-br from-[#F5F0EB] to-transparent rounded-2xl p-4 border border-[#F4E8E3] mb-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#C2654A] to-[#A8513A] flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-[#A85740] to-[#9A503B] flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div>
                 <h5 className="text-sm font-semibold text-[#1A1A1A] mb-1">
                   Soft Sophistication
                 </h5>
-                <p className="text-xs text-[#8A8A8A]">
+                <p className="text-xs text-[#6E6E6E]">
                   Gedempte pastels en grijs-tinten blijven populair voor elegant minimalism.
                 </p>
               </div>
@@ -141,11 +141,11 @@ export default function ColorPalettePreview() {
               <p className="text-sm font-medium text-[#1A1A1A] mb-1">
                 Ontdek jouw perfecte kleuren
               </p>
-              <p className="text-xs text-[#8A8A8A]">
+              <p className="text-xs text-[#6E6E6E]">
                 Krijg AI-analyse + persoonlijk kleurenpalet
               </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#C2654A]" />
+            <ChevronRight className="w-5 h-5 text-[#A85740]" />
           </div>
         </div>
       </div>

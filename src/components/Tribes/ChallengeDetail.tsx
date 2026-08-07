@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Spinner } from '@/components/ui/Spinner';
 import type { TribeChallenge } from "@/services/data/types";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
-import { Send, Image, Link, X, Trophy, Clock, Users, Star } from 'lucide-react';
+import { Send, Image, Link, Clock } from 'lucide-react';
 import Button from "../ui/Button";
 import { useAddXp } from '@/hooks/useDashboard';
 import toast from 'react-hot-toast';
+import ToastXp from '@/components/ui/ToastXp';
 
 interface ChallengeDetailProps {
   challenge: TribeChallenge;
@@ -82,9 +83,9 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
   }
 
   const getTimeRemaining = () => {
-    if (!challenge.endAt) return null;
-    
-    const endTime = new Date(challenge.endAt).getTime();
+    if (!challenge.ends_at) return null;
+
+    const endTime = new Date(challenge.ends_at).getTime();
     const now = Date.now();
     const remaining = endTime - now;
     
@@ -104,16 +105,6 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
     <div className={`bg-white rounded-2xl shadow-sm p-6 ${className}`}>
       {/* Challenge Header */}
       <div className="mb-6">
-        {challenge.image && (
-          <div className="aspect-video rounded-2xl overflow-hidden mb-4">
-            <ImageWithFallback 
-              src={challenge.image} 
-              alt={challenge.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-        
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
@@ -123,22 +114,11 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
                 challenge.status === 'closed' ? 'bg-red-100 text-red-800' :
                 'bg-purple-100 text-purple-800'
               }`}>
-                {challenge.status === 'open' ? 'Actief' : 
-                 challenge.status === 'draft' ? 'Concept' : 
+                {challenge.status === 'open' ? 'Actief' :
+                 challenge.status === 'draft' ? 'Concept' :
                  challenge.status === 'closed' ? 'Gesloten' : 'Gearchiveerd'}
               </span>
-              
-              {challenge.difficulty && (
-                <span className={`px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1 ${
-                  challenge.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                  challenge.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-orange-100 text-orange-800'
-                }`}>
-                  <Star size={14} />
-                  <span className="capitalize">{challenge.difficulty}</span>
-                </span>
-              )}
-              
+
               {timeRemaining && (
                 <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium flex items-center space-x-1">
                   <Clock size={14} />
@@ -170,24 +150,6 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
           </div>
         )}
 
-        {/* Rewards */}
-        <div className="flex items-center justify-between mb-6 p-4 bg-[var(--ff-color-primary-500)]/10 rounded-2xl">
-          <div className="flex items-center space-x-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--ff-color-primary-500)]">+{challenge.rewardPoints || 0}</div>
-              <div className="text-sm text-gray-600">Deelname punten</div>
-            </div>
-            
-            {challenge.winnerRewardPoints && (
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">+{challenge.winnerRewardPoints}</div>
-                <div className="text-sm text-gray-600">Winnaar bonus</div>
-              </div>
-            )}
-          </div>
-          
-          <Trophy className="w-8 h-8 text-[var(--ff-color-primary-500)]" />
-        </div>
       </div>
 
       {/* Submission Form */}

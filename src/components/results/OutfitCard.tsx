@@ -68,7 +68,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           />
           {outfit?.matchScore && (
             <div className="absolute top-2 left-2 z-10">
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C2654A] text-white leading-none">
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#A85740] text-white leading-none">
                 {Math.round(outfit.matchScore)}%
               </span>
             </div>
@@ -116,7 +116,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         )}
 
         {rationaleTag && (
-          <p className="text-[11px] text-[#8A8A8A] mb-2 leading-snug line-clamp-1">
+          <p className="text-[11px] text-[#6E6E6E] mb-2 leading-snug line-clamp-1">
             {rationaleTag}
           </p>
         )}
@@ -124,8 +124,8 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
         {/* Description — max 1 bullet, niet concurrerend met titel */}
         {description.length > 0 && (
           <ul className="mb-2.5">
-            <li className="flex items-start gap-1.5 text-[11px] text-[#8A8A8A] leading-snug">
-              <span className="w-1 h-1 rounded-full bg-[#D4856E] mt-1.5 flex-shrink-0" aria-hidden="true" />
+            <li className="flex items-start gap-1.5 text-[11px] text-[#6E6E6E] leading-snug">
+              <span className="w-1 h-1 rounded-full bg-[#A85740] mt-1.5 flex-shrink-0" aria-hidden="true" />
               <span className="line-clamp-1">{description[0]}</span>
             </li>
           </ul>
@@ -138,9 +138,9 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
               <button
                 key={idx}
                 onClick={() => handleProductClick(product)}
-                className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#FAF5F2] border border-[#E5E5E5] hover:border-[#D4856E] rounded-lg transition-all text-left"
+                className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#A85740] rounded-lg transition-all text-left"
               >
-                <ShoppingBag className="w-3 h-3 text-[#8A8A8A] flex-shrink-0" />
+                <ShoppingBag className="w-3 h-3 text-[#6E6E6E] flex-shrink-0" />
                 <span className="text-[11px] text-[#1A1A1A] truncate leading-tight">{product.name}</span>
               </button>
             ))}
@@ -150,13 +150,13 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
             href={shopLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors"
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors"
           >
             <ShoppingBag className="w-3 h-3" />
             Shop vergelijkbare items
           </a>
         ) : (
-          <span className="inline-flex items-center gap-1.5 text-[11px] text-[#8A8A8A] cursor-default select-none opacity-60">
+          <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6E6E6E] cursor-default select-none opacity-60">
             <ShoppingBag className="w-3 h-3" aria-hidden="true" />
             Nog geen shoplinks
           </span>

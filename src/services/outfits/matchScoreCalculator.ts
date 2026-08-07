@@ -1,5 +1,3 @@
-import type { StyleProfile } from '@/engine/types';
-
 interface OutfitMatchInput {
   outfit: {
     items?: any[];

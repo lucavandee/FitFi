@@ -112,7 +112,7 @@ export function ProfileNavigationBreadcrumbs() {
               {/* Separator */}
               {index > 0 && (
                 <ChevronRight
-                  className="w-4 h-4 text-[#8A8A8A]"
+                  className="w-4 h-4 text-[#6E6E6E]"
                   aria-hidden="true"
                 />
               )}
@@ -130,7 +130,7 @@ export function ProfileNavigationBreadcrumbs() {
               ) : (
                 <Link
                   to={crumb.path}
-                  className="flex items-center gap-1 text-[#8A8A8A] hover:text-[#C2654A] transition-colors"
+                  className="flex items-center gap-1 text-[#6E6E6E] hover:text-[#A85740] transition-colors"
                 >
                   {isHome && (
                     <Home className="w-4 h-4" aria-hidden="true" />

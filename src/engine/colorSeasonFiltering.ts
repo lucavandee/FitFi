@@ -270,7 +270,7 @@ export function filterProductsByColorSeason(
         colorSeasonScore: bestScore
       };
     })
-    .filter((p): p is Product & { colorSeasonScore?: number } => p !== null);
+    .filter((p): p is Product & { colorSeasonScore: number } => p !== null);
 
   console.log(`[ColorSeasonFiltering] Result: ${filteredProducts.length}/${products.length} products passed color season filtering`);
 

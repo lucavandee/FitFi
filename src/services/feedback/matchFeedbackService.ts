@@ -27,6 +27,10 @@ export async function submitMatchFeedback(
   feedback: MatchFeedback
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    if (!sb) {
+      return { success: false, error: 'Supabase client unavailable' };
+    }
+
     const { data: { user } } = await sb.auth.getUser();
 
     if (!user) {
@@ -62,6 +66,8 @@ export async function getUserFeedback(
   outfitId: string
 ): Promise<MatchFeedback | null> {
   try {
+    if (!sb) return null;
+
     const { data: { user } } = await sb.auth.getUser();
 
     if (!user) {
@@ -105,6 +111,8 @@ export async function getOutfitAnalytics(
   outfitId: string
 ): Promise<FeedbackAnalytics | null> {
   try {
+    if (!sb) return null;
+
     const { data, error } = await sb
       .from('outfit_match_feedback_analytics')
       .select('*')
@@ -128,6 +136,8 @@ export async function getOutfitAnalytics(
  */
 export async function getAllFeedbackAnalytics(): Promise<FeedbackAnalytics[]> {
   try {
+    if (!sb) return [];
+
     const { data, error } = await sb
       .from('outfit_match_feedback_analytics')
       .select('*')
@@ -154,6 +164,10 @@ export async function updateMatchFeedback(
   updates: Partial<MatchFeedback>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    if (!sb) {
+      return { success: false, error: 'Supabase client unavailable' };
+    }
+
     const { error } = await sb
       .from('outfit_match_feedback')
       .update({

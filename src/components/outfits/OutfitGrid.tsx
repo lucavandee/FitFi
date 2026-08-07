@@ -204,6 +204,7 @@ export default function OutfitGrid({
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
               className="relative"
+              onClick={onOutfitClick ? () => onOutfitClick(outfit) : undefined}
             >
               {/* Relevance Badge */}
               {getRelevanceBadge(outfit, index)}
@@ -234,7 +235,6 @@ export default function OutfitGrid({
                     sort_by: sortBy
                   });
                 }}
-                onClick={() => onOutfitClick?.(outfit)}
               />
             </motion.div>
           ))}
@@ -254,9 +254,9 @@ export default function OutfitGrid({
             disabled={isLoading}
             className={cn(
               'inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold',
-              'bg-[#C2654A] text-white',
+              'bg-[#A85740] text-white',
               'hover:shadow-lg hover:scale-105',
-              'focus:outline-none focus:ring-4 focus:ring-[#C2654A]/20',
+              'focus:outline-none focus:ring-4 focus:ring-[#A85740]/20',
               'transition-all duration-200',
               isLoading && 'opacity-50 cursor-not-allowed'
             )}
@@ -306,7 +306,7 @@ export default function OutfitGrid({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FAF5F2] text-[#C2654A] rounded-full text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] text-[#A85740] rounded-full text-sm font-medium">
             <Sparkles className="w-4 h-4" />
             <span>Je hebt alle {sortedOutfits.length} outfits bekeken!</span>
           </div>

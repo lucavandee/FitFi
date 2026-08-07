@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import Spinner from '@/components/ui/Spinner';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
 import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Spinner } from '@/components/ui/Spinner';
 import { useUser } from '@/context/UserContext';
 import { CalibrationService } from '@/services/visualPreferences/calibrationService';
 import { CalibrationBridge } from '@/services/calibration/calibrationBridge';
+import {
+  generateCalibrationOutfitsV2,
+  swapCalibrationItemV2,
+} from '@/services/calibration/calibrationOutfitsV2';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
+import { getSessionId, isUuid } from '@/utils/sessionId';
 
 interface CalibrationStepProps {
   onComplete: () => void;
@@ -22,13 +28,22 @@ const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 // Feature flag for adaptive system
 const USE_ADAPTIVE_SYSTEM = true;
 
+/**
+ * Sinds 2026-08-06 komen de calibratie-outfits uit engine v2 in plaats van uit
+ * `adaptiveOutfitGenerator`. Reden: dat pad negeerde de gekozen gelegenheid,
+ * het budget en het productSafety-vangnet, en had geen enkele test. Engine v2
+ * is de enige generator met een golden baseline. Zie
+ * `src/services/calibration/engineV2Calibration.ts`.
+ */
+const USE_ENGINE_V2 = true;
+
 export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp, onBack }: CalibrationStepProps) {
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [swappingState, setSwappingState] = useState<{ outfitId: string; category: 'top' | 'bottom' | 'shoes' } | null>(null);
-  const [isAdaptive, setIsAdaptive] = useState(false);
+  const [isPersonalized, setIsPersonalized] = useState(false);
   const { user } = useUser();
   const loadedRef = useRef(false);
 
@@ -42,10 +57,10 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
   const loadCalibrationOutfits = async () => {
     try {
       const userId = user?.id;
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
 
       // Check cache first (only for non-adaptive mode)
-      if (!USE_ADAPTIVE_SYSTEM) {
+      if (!USE_ENGINE_V2 && !USE_ADAPTIVE_SYSTEM) {
         const cachedData = sessionStorage.getItem(OUTFIT_CACHE_KEY);
         if (cachedData) {
           try {
@@ -66,10 +81,18 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
       let generatedOutfits: CalibrationOutfit[];
 
-      if (USE_ADAPTIVE_SYSTEM) {
+      if (USE_ENGINE_V2) {
+        setIsPersonalized(true);
+
+        generatedOutfits = await generateCalibrationOutfitsV2(
+          quizData,
+          sessionId,
+          { count: 3 }
+        );
+      } else if (USE_ADAPTIVE_SYSTEM) {
         // Use new adaptive system
         console.log('🚀 Using ADAPTIVE outfit generation system');
-        setIsAdaptive(true);
+        setIsPersonalized(true);
 
         generatedOutfits = await CalibrationBridge.generateAdaptiveCalibrationOutfits(
           userId,
@@ -134,7 +157,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     setSwappingState({ outfitId, category });
 
     try {
-      const newItem = await CalibrationService.swapOutfitItem(outfit, category, quizData);
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
+      // Het alternatief komt uit dezelfde gekeurde v2-outfits, anders zou één
+      // klik op vervangen het budget-, gender- en veiligheidsfilter omzeilen.
+      const newItem = USE_ENGINE_V2
+        ? await swapCalibrationItemV2(quizData, outfit, category, sessionId)
+        : await CalibrationService.swapOutfitItem(outfit, category, quizData);
 
       if (newItem) {
         setOutfits(prev => prev.map(o => {
@@ -197,7 +225,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
     try {
       const userId = user?.id;
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
 
       if (USE_ADAPTIVE_SYSTEM) {
         // Use adaptive feedback recording
@@ -232,7 +260,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
     try {
       const userId = user?.id;
-      const sessionId = sessionIdProp || sessionStorage.getItem('fitfi_session_id');
+      const sessionId = isUuid(sessionIdProp) ? sessionIdProp : getSessionId();
 
       // Apply calibration to profile
       await CalibrationService.applyCalibrationToProfile(
@@ -281,7 +309,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
       <div className="flex items-center justify-center min-h-[240px] py-16">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto" />
-          <p className="mt-4 text-[#8A8A8A]">Outfits voorbereiden...</p>
+          <p className="mt-4 text-[#6E6E6E]">Outfits voorbereiden...</p>
         </div>
       </div>
     );
@@ -292,7 +320,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-6">
-          <Sparkles className="w-4 h-4 text-[#A8513A]" />
+          <Sparkles className="w-4 h-4 text-[#9A503B]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
             Outfit Calibratie
           </span>
@@ -300,12 +328,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-4">
           We zijn je profiel aan het voorbereiden
         </h2>
-        <p className="text-[#8A8A8A] mb-8">
+        <p className="text-[#6E6E6E] mb-8">
           Op dit moment kunnen we nog geen outfits genereren, maar we gaan direct verder met je stijlrapport op basis van je quiz- en swipe-antwoorden.
         </p>
         <button
           onClick={onComplete}
-          className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
+          className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2"
         >
           Ga verder
           <ArrowRight className="w-5 h-5" />
@@ -318,7 +346,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8" style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
       <div className="text-center mb-6 sm:mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-4">
-          <Sparkles className="w-4 h-4 text-[#A8513A]" />
+          <Sparkles className="w-4 h-4 text-[#9A503B]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
             Outfit Calibratie
           </span>
@@ -327,20 +355,20 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-3">
           Zo ziet jouw stijl er volgens mij uit
         </h2>
-        <p className="text-[#8A8A8A] max-w-2xl mx-auto text-base sm:text-lg">
-          Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je swipes. Geef feedback zodat we je stijl perfect kunnen afstemmen.
+        <p className="text-[#6E6E6E] max-w-2xl mx-auto text-base sm:text-lg">
+          Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je antwoorden. Geef feedback zodat we je stijl scherper krijgen.
         </p>
 
-        {isAdaptive && (
+        {isPersonalized && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3]"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3]"
           >
-            <TrendingUp size={16} className="text-[#A8513A]" />
-            <span className="text-sm font-semibold text-[#A8513A]">
-              Adaptive AI • Leert van je keuzes
+            <TrendingUp size={16} className="text-[#9A503B]" />
+            <span className="text-sm font-semibold text-[#9A503B]">
+              Afgestemd op je antwoorden
             </span>
           </motion.div>
         )}
@@ -351,7 +379,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             <span className="text-sm font-medium text-[#1A1A1A]">
               Voortgang
             </span>
-            <span className="text-sm font-medium text-[#A8513A]">
+            <span className="text-sm font-medium text-[#9A503B]">
               {feedbackCount} / {outfits.length}
             </span>
           </div>
@@ -360,7 +388,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
               initial={{ width: 0 }}
               animate={{ width: `${(feedbackCount / outfits.length) * 100}%` }}
               transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-              className="h-full bg-gradient-to-r from-[#C2654A] to-[#A8513A] rounded-full"
+              className="h-full bg-gradient-to-r from-[#A85740] to-[#9A503B] rounded-full"
             />
           </div>
         </div>
@@ -406,7 +434,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             <h3 className="font-semibold text-[#1A1A1A] mb-2">
               Impact op je stijlprofiel
             </h3>
-            <p className="text-sm text-[#8A8A8A] leading-relaxed">
+            <p className="text-sm text-[#6E6E6E] leading-relaxed">
               {getFeedbackImpact()}
             </p>
           </div>
@@ -416,7 +444,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             disabled={applying}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
+            className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 px-10 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
           >
             {applying ? (
               <>
@@ -430,7 +458,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
               </>
             )}
           </motion.button>
-          <p className="text-sm text-[#8A8A8A] mt-4">
+          <p className="text-sm text-[#6E6E6E] mt-4">
             Je feedback wordt gebruikt om je aanbevelingen te verfijnen
           </p>
         </motion.div>
@@ -443,7 +471,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           className="text-center mt-8"
         >
           {feedbackCount > 0 && (
-            <p className="text-sm text-[#8A8A8A] mb-4">
+            <p className="text-sm text-[#6E6E6E] mb-4">
               Nog {outfits.length - feedbackCount} {outfits.length - feedbackCount === 1 ? 'outfit' : 'outfits'} te beoordelen
             </p>
           )}
@@ -451,7 +479,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           <button
             onClick={handleContinue}
             disabled={applying}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:bg-[#FAF5F2] hover:border-[#D4856E] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-xl border-2 border-[#E5E5E5] bg-[#FFFFFF] text-sm font-semibold text-[#1A1A1A] hover:bg-[#F5F0EB] hover:border-[#A85740] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {feedbackCount === 0 ? 'Beoordeling overslaan' : 'Doorgaan zonder alle outfits te beoordelen'}
           </button>

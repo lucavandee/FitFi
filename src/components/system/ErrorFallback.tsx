@@ -34,7 +34,7 @@ export default function ErrorFallback({
     >
       <div className={cn("w-full text-center", compact ? "max-w-sm" : "max-w-md")}>
         <div className="w-12 h-12 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center mx-auto mb-5">
-          <RefreshCw className="w-5 h-5 text-[#8A8A8A]" aria-hidden="true" />
+          <RefreshCw className="w-5 h-5 text-[#6E6E6E]" aria-hidden="true" />
         </div>
 
         <h2
@@ -47,8 +47,8 @@ export default function ErrorFallback({
         >
           {title}
         </h2>
-        <p className="text-sm text-[#8A8A8A] mb-1">{description}</p>
-        <p className="text-sm text-[#8A8A8A] mb-6">
+        <p className="text-sm text-[#6E6E6E] mb-1">{description}</p>
+        <p className="text-sm text-[#6E6E6E] mb-6">
           We kunnen dit nu niet laden. Probeer later nog eens.
         </p>
 
@@ -56,7 +56,7 @@ export default function ErrorFallback({
           {onRetry ? (
             <button
               onClick={onRetry}
-              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
             >
               <RefreshCw className="w-4 h-4" aria-hidden="true" />
               Probeer opnieuw
@@ -64,7 +64,7 @@ export default function ErrorFallback({
           ) : (
             <button
               onClick={() => window.location.reload()}
-              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-[#A8513A] text-white rounded-xl text-sm font-bold hover:bg-[#C2654A] transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
             >
               <RefreshCw className="w-4 h-4" aria-hidden="true" />
               Vernieuw
@@ -73,7 +73,7 @@ export default function ErrorFallback({
           {showBack && (
             <button
               onClick={() => window.history.back()}
-              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               Terug
@@ -85,14 +85,14 @@ export default function ErrorFallback({
           <div className="mt-2.5 flex flex-col sm:flex-row gap-2.5">
             <a
               href="/dashboard"
-              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#D4856E] transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 border border-[#E5E5E5] text-[#1A1A1A] rounded-xl text-sm font-semibold hover:border-[#A85740] transition-colors"
             >
               <Home className="w-4 h-4" aria-hidden="true" />
               Naar dashboard
             </a>
             <a
               href="/contact"
-              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 border border-[#E5E5E5] text-[#8A8A8A] rounded-xl text-sm font-semibold hover:border-[#D4856E] hover:text-[#1A1A1A] transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 border border-[#E5E5E5] text-[#6E6E6E] rounded-xl text-sm font-semibold hover:border-[#A85740] hover:text-[#1A1A1A] transition-colors"
             >
               <Mail className="w-4 h-4" aria-hidden="true" />
               Contact
@@ -100,7 +100,7 @@ export default function ErrorFallback({
           </div>
         )}
 
-        <p className="mt-5 text-xs text-[#8A8A8A]">
+        <p className="mt-5 text-xs text-[#6E6E6E]">
           Probeer het later nog eens als het probleem aanhoudt.
         </p>
       </div>

@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Minus, RefreshCw, Heart, Sparkles, Briefcase, Coffee, Moon } from 'lucide-react';
+import { Check, X, Minus, RefreshCw, Heart, Sparkles } from 'lucide-react';
+import { presentationForOccasion } from './occasionPresentation';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import SmartImage from '@/components/ui/SmartImage';
 import { useSaveOutfit } from '@/hooks/useSaveOutfit';
 import OutfitRemixerModal from '@/components/outfits/OutfitRemixerModal';
 import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
+import type { Outfit, Product } from '@/engine/types';
+import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
+
+type DisplaySlot = 'top' | 'bottom' | 'shoes' | 'outerwear' | 'accessory';
+type SwappableSlot = 'top' | 'bottom' | 'shoes';
+
+/** Volgorde waarin de outfit op de kaart wordt getoond. */
+const DISPLAY_SLOTS: DisplaySlot[] = ['top', 'bottom', 'shoes', 'outerwear', 'accessory'];
+
+/** Alleen deze drie slots hebben een vervang-knop. */
+const SWAPPABLE_SLOTS: SwappableSlot[] = ['top', 'bottom', 'shoes'];
 
 interface OutfitCalibrationCardProps {
   outfit: CalibrationOutfit;
@@ -20,7 +32,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
   const [startTime] = useState(Date.now());
   const [selectedFeedback, setSelectedFeedback] = useState<'spot_on' | 'not_for_me' | 'maybe' | null>(null);
   const [showRemixer, setShowRemixer] = useState(false);
-  const { saveOutfit, isSaving } = useSaveOutfit();
+  const { user } = useUser();
+  const { mutateAsync: saveOutfit, isPending: isSaving } = useSaveOutfit(user?.id);
 
   const handleFeedback = (feedback: 'spot_on' | 'not_for_me' | 'maybe') => {
     if (disabled || selectedFeedback) return;
@@ -30,14 +43,43 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     onFeedback(feedback, responseTime);
   };
 
+  // Zet de calibratie-outfit (CalibrationOutfit) om naar het generieke Outfit-formaat
+  // dat useSaveOutfit/saved_outfits verwacht.
+  const buildOutfitForSave = (): Outfit => {
+    const items = Object.values(outfit.items).filter(Boolean) as NonNullable<
+      CalibrationOutfit['items'][keyof CalibrationOutfit['items']]
+    >[];
+    const products: Product[] = items.map(item => ({
+      id: item.id,
+      name: item.name,
+      imageUrl: item.image_url,
+      category: item.category,
+      price: item.price,
+      brand: item.brand,
+      affiliateUrl: item.affiliate_link,
+      colors: item.colors,
+    }));
+
+    return {
+      id: outfit.id,
+      title: outfit.title || outfit.occasion,
+      description: outfit.explanation,
+      archetype: Object.keys(outfit.archetypes)[0] || 'minimal',
+      occasion: outfit.occasion,
+      products,
+      tags: outfit.dominantColors || [],
+      matchPercentage: Math.round((outfit.matchScore ?? 0.8) * 100),
+      explanation: outfit.explanation,
+    };
+  };
+
   const handleSaveOutfit = async () => {
+    if (!user?.id) {
+      toast.error('Log in om outfits te bewaren');
+      return;
+    }
     try {
-      await saveOutfit({
-        items: outfit.items,
-        archetype: Object.keys(outfit.archetypes)[0] || 'minimal',
-        occasion: outfit.occasion,
-        colors: outfit.dominantColors
-      });
+      await saveOutfit({ outfit: buildOutfitForSave(), userId: user.id });
       toast.success('Outfit opgeslagen! 💚', {
         duration: 3000,
         position: 'bottom-center'
@@ -47,9 +89,15 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     }
   };
 
-  const totalPrice = Object.values(outfit.items)
-    .filter(Boolean)
-    .reduce((sum, item) => sum + (item?.price || 0), 0);
+  // Elk item dat de kaart toont, in vaste volgorde. Beeld, regel en totaalprijs
+  // lezen allemaal uit deze lijst, zodat er niets in het raster staat dat niet
+  // in de opsomming terugkomt of andersom.
+  const displayedItems = DISPLAY_SLOTS.flatMap((slot) => {
+    const item = outfit.items[slot];
+    return item ? [{ slot, item }] : [];
+  });
+
+  const totalPrice = displayedItems.reduce((sum, { item }) => sum + (item.price || 0), 0);
 
   const formattedTotal = Math.round(totalPrice);
 
@@ -62,7 +110,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
       brand: item!.brand || '',
       price: item!.price,
       image_url: item!.image_url,
-      category: item!.category,
+      category: item!.category || '',
       colors: item!.colors || [],
       affiliate_link: item!.affiliate_link || ''
     })),
@@ -89,36 +137,12 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
     nova_insight: outfit.novaInsight
   };
 
-  // Get occasion icon and colors
-  const getOccasionDetails = () => {
-    const occasion = outfit.occasion?.toLowerCase() || 'casual';
-    const occasionMap: Record<string, { icon: React.ComponentType<any>; bgClass: string; borderClass: string; title: string; subtitle: string }> = {
-      work: {
-        icon: Briefcase,
-        bgClass: 'bg-[#FAF5F2]',
-        borderClass: 'border-[#F4E8E3]',
-        title: 'Kantoor',
-        subtitle: 'Zakelijke meeting of werkdag'
-      },
-      casual: {
-        icon: Coffee,
-        bgClass: 'bg-[#FAF5F2]',
-        borderClass: 'border-[#F4E8E3]',
-        title: 'Casual dag uit',
-        subtitle: 'Lunch, koffie, boodschappen'
-      },
-      evening: {
-        icon: Moon,
-        bgClass: 'bg-[#FAF5F2]',
-        borderClass: 'border-[#F4E8E3]',
-        title: 'Avondje uit',
-        subtitle: 'Restaurant, borrel of diner'
-      }
-    };
-    return occasionMap[occasion] || occasionMap.casual;
-  };
-
-  const { icon: OccasionIcon, bgClass, borderClass, title, subtitle } = getOccasionDetails();
+  // Kop van de kaart: naam en icoon van de gelegenheid waarvoor deze outfit is
+  // gecomponeerd. De map staat in een eigen bestand zodat een test kan
+  // afdwingen dat elke gelegenheid van de engine er in staat.
+  const { icon: OccasionIcon, title, subtitle } = presentationForOccasion(outfit.occasion);
+  const bgClass = 'bg-[#F5F0EB]';
+  const borderClass = 'border-[#F4E8E3]';
 
   return (
     <motion.div
@@ -150,7 +174,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             className="w-11 h-11 rounded-full bg-white border-2 border-[#E5E5E5] flex items-center justify-center hover:border-red-500 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex-shrink-0 shadow-sm"
             title="Bewaar outfit"
           >
-            <Heart className="w-5 h-5 text-[#8A8A8A] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
+            <Heart className="w-5 h-5 text-[#6E6E6E] group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
           </motion.button>
         </div>
       </div>
@@ -159,62 +183,27 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         {/* Product Images Grid */}
         <div className="relative bg-[#FAFAF8] p-4">
           <div className="grid grid-cols-2 gap-3">
-            {outfit.items.top && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-                className="aspect-square bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.top.image_url}
-                  alt={outfit.items.top.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
-            {outfit.items.bottom && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="aspect-square bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.bottom.image_url}
-                  alt={outfit.items.bottom.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
-            {outfit.items.shoes && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                className="col-span-2 aspect-[2/1] bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.shoes.image_url}
-                  alt={outfit.items.shoes.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
-            {outfit.items.accessory && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 }}
-                className="col-span-2 aspect-[2/1] bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5"
-              >
-                <SmartImage
-                  src={outfit.items.accessory.image_url}
-                  alt={outfit.items.accessory.name}
-                  className="w-full h-full object-contain p-2"
-                />
-              </motion.div>
-            )}
+            {displayedItems.map(({ slot, item }, index) => {
+              const isLastAlone =
+                index === displayedItems.length - 1 && displayedItems.length % 2 === 1;
+              return (
+                <motion.div
+                  key={slot}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 * (index + 1) }}
+                  className={`${
+                    isLastAlone ? 'col-span-2 aspect-[2/1]' : 'aspect-square'
+                  } bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5`}
+                >
+                  <SmartImage
+                    src={item.image_url}
+                    alt={item.name}
+                    className="w-full h-full object-contain p-2"
+                  />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
@@ -222,7 +211,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
         <div className="space-y-4 p-4 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
-              <div className="text-sm font-medium text-[#8A8A8A] mb-1">Totaalprijs</div>
+              <div className="text-sm font-medium text-[#6E6E6E] mb-1">Totaalprijs</div>
               <div className="text-2xl font-bold text-[#1A1A1A]">
                 €{formattedTotal}
               </div>
@@ -230,44 +219,23 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
           </div>
 
           <div className="space-y-3">
-            {outfit.items.top && (
+            {displayedItems.map(({ slot, item }) => (
               <OutfitItem
-                name={outfit.items.top.name}
-                brand={outfit.items.top.brand}
-                price={outfit.items.top.price}
-                category="top"
+                key={slot}
+                name={item.name}
+                brand={item.brand}
+                price={item.price}
+                category={SWAPPABLE_SLOTS.includes(slot as SwappableSlot) ? (slot as SwappableSlot) : undefined}
                 onSwap={onSwapItem}
-                isSwapping={swappingCategory === 'top'}
+                isSwapping={swappingCategory === slot}
                 disabled={disabled || selectedFeedback !== null}
               />
-            )}
-            {outfit.items.bottom && (
-              <OutfitItem
-                name={outfit.items.bottom.name}
-                brand={outfit.items.bottom.brand}
-                price={outfit.items.bottom.price}
-                category="bottom"
-                onSwap={onSwapItem}
-                isSwapping={swappingCategory === 'bottom'}
-                disabled={disabled || selectedFeedback !== null}
-              />
-            )}
-            {outfit.items.shoes && (
-              <OutfitItem
-                name={outfit.items.shoes.name}
-                brand={outfit.items.shoes.brand}
-                price={outfit.items.shoes.price}
-                category="shoes"
-                onSwap={onSwapItem}
-                isSwapping={swappingCategory === 'shoes'}
-                disabled={disabled || selectedFeedback !== null}
-              />
-            )}
+            ))}
           </div>
 
           <div className="pt-4 border-t border-[#E5E5E5] space-y-3">
             <div>
-              <p className="text-sm font-medium text-[#A8513A] mb-2">
+              <p className="text-sm font-medium text-[#9A503B] mb-2">
                 Waarom dit bij je past:
               </p>
               <p className="text-sm text-[#1A1A1A] leading-relaxed">
@@ -276,9 +244,9 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
             </div>
 
             {outfit.colorHarmony && outfit.colorHarmony.harmony !== 'acceptable' && (
-              <div className="p-3 rounded-xl bg-[#FAF5F2] border border-[#FAF5F2]">
+              <div className="p-3 rounded-xl bg-[#F5F0EB] border border-[#F5F0EB]">
                 <div className="flex items-start gap-2">
-                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#FAF5F2] text-[#A8513A]">
+                  <div className="text-xs font-semibold px-2 py-1 rounded-full bg-[#F5F0EB] text-[#9A503B]">
                     {outfit.colorHarmony.score}/100
                   </div>
                   <div className="flex-1">
@@ -288,8 +256,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
                     {outfit.colorHarmony.tips && outfit.colorHarmony.tips.length > 0 && (
                       <ul className="mt-2 space-y-1">
                         {outfit.colorHarmony.tips.map((tip, idx) => (
-                          <li key={idx} className="text-xs text-[#8A8A8A] flex items-start gap-1">
-                            <span className="text-[#A8513A]">•</span>
+                          <li key={idx} className="text-xs text-[#6E6E6E] flex items-start gap-1">
+                            <span className="text-[#9A503B]">•</span>
                             {tip}
                           </li>
                         ))}
@@ -314,8 +282,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-4 px-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2.5 relative overflow-hidden ${
                 selectedFeedback === 'spot_on'
-                  ? 'bg-[#A8513A] text-white'
-                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#C2654A] hover:text-[#A8513A]'
+                  ? 'bg-[#9A503B] text-white'
+                  : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#A85740] hover:text-[#9A503B]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               style={selectedFeedback === 'spot_on' ? { boxShadow: '0 4px 14px rgba(74,56,40,0.25)' } : {}}
             >
@@ -343,8 +311,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'maybe'
-                  ? 'bg-[#FAF5F2] text-[#A8513A] border border-[#F4E8E3]'
-                  : 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5] hover:border-[#D4856E] hover:text-[#C2654A]'
+                  ? 'bg-[#F5F0EB] text-[#9A503B] border border-[#F4E8E3]'
+                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#A85740] hover:text-[#A85740]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Minus className="w-4 h-4" strokeWidth={2.5} />
@@ -363,8 +331,8 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               }
               className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${
                 selectedFeedback === 'not_for_me'
-                  ? 'bg-[#FAFAF8] text-[#8A8A8A] border border-[#E5E5E5]'
-                  : 'bg-[#FFFFFF] text-[#8A8A8A] border border-[#E5E5E5] hover:border-[#E5E5E5]'
+                  ? 'bg-[#FAFAF8] text-[#6E6E6E] border border-[#E5E5E5]'
+                  : 'bg-[#FFFFFF] text-[#6E6E6E] border border-[#E5E5E5] hover:border-[#E5E5E5]'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <X className="w-4 h-4" strokeWidth={2.5} />
@@ -377,7 +345,7 @@ export function OutfitCalibrationCard({ outfit, onFeedback, onSwapItem, disabled
               disabled={disabled}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] text-[#A8513A] border border-[#F4E8E3] hover:from-[#FAF5F2] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="w-full py-3 px-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] text-[#9A503B] border border-[#F4E8E3] hover:from-[#F5F0EB] hover:to-[#F4E8E3] hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <Sparkles className="w-4 h-4" />
               Smart Remix
@@ -421,7 +389,7 @@ function OutfitItem({ name, brand, price, category, onSwap, isSwapping, disabled
     >
       <div className="flex-1 min-w-0">
         <div className="font-medium text-[#1A1A1A] truncate">{name}</div>
-        <div className="text-[#8A8A8A] text-xs mt-0.5">{brand}</div>
+        <div className="text-[#6E6E6E] text-xs mt-0.5">{brand}</div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <div className="text-[#1A1A1A] font-medium">€{formattedPrice.toFixed(2)}</div>
@@ -431,7 +399,7 @@ function OutfitItem({ name, brand, price, category, onSwap, isSwapping, disabled
             disabled={disabled || isSwapping}
             whileHover={!disabled && !isSwapping ? { scale: 1.1 } : {}}
             whileTap={!disabled && !isSwapping ? { scale: 0.9 } : {}}
-            className="w-7 h-7 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center hover:border-[#A8513A] hover:text-[#A8513A] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
+            className="w-7 h-7 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] flex items-center justify-center hover:border-[#9A503B] hover:text-[#9A503B] transition-all disabled:opacity-50 disabled:cursor-not-allowed opacity-0 group-hover:opacity-100"
             title="Vervang dit item"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSwapping ? 'animate-spin' : ''}`} />

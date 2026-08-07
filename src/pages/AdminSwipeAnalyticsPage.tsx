@@ -28,12 +28,14 @@ interface GlobalStats {
 }
 
 export default function AdminSwipeAnalyticsPage() {
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
 
   const { data: globalStats, isLoading: globalLoading } = useQuery({
     queryKey: ['admin-swipe-global-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_swipe_global_stats');
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase client unavailable');
+      const { data, error } = await sb.rpc('get_swipe_global_stats');
       if (error) throw error;
       return data as GlobalStats;
     },
@@ -43,7 +45,9 @@ export default function AdminSwipeAnalyticsPage() {
   const { data: photoStats, isLoading: photoLoading } = useQuery({
     queryKey: ['admin-swipe-photo-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_swipe_photo_stats');
+      const sb = supabase();
+      if (!sb) throw new Error('Supabase client unavailable');
+      const { data, error } = await sb.rpc('get_swipe_photo_stats');
       if (error) throw error;
       return data as SwipeStats[];
     },
@@ -86,7 +90,7 @@ export default function AdminSwipeAnalyticsPage() {
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <BarChart3 className="inline-block w-10 h-10 mr-3 text-[#C2654A]" />
+            <BarChart3 className="inline-block w-10 h-10 mr-3 text-[#A85740]" />
             Swipe Analytics
           </h1>
           <p className="text-xl text-gray-600">
@@ -143,7 +147,7 @@ export default function AdminSwipeAnalyticsPage() {
         {globalStats && (
           <div className="bg-white rounded-2xl border border-[#E5E5E5] p-8 shadow-lg mb-12">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <ImageIcon className="w-6 h-6 text-[#C2654A]" />
+              <ImageIcon className="w-6 h-6 text-[#A85740]" />
               Photo Distribution
             </h2>
             <div className="grid grid-cols-2 gap-6">
@@ -187,7 +191,7 @@ export default function AdminSwipeAnalyticsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl font-bold text-[#C2654A]">
+                      <span className="text-2xl font-bold text-[#A85740]">
                         #{idx + 1}
                       </span>
                       <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
@@ -316,23 +320,23 @@ export default function AdminSwipeAnalyticsPage() {
         </div>
 
         {/* Recommendations */}
-        <div className="mt-12 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-2xl p-8 border border-[#F4E8E3]">
+        <div className="mt-12 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-2xl p-8 border border-[#F4E8E3]">
           <h3 className="text-xl font-bold mb-4">💡 Recommendations</h3>
           <ul className="space-y-2 text-gray-700">
             <li className="flex items-start gap-2">
-              <span className="text-[#C2654A] font-bold">•</span>
+              <span className="text-[#A85740] font-bold">•</span>
               <span>Consider replacing photos with {'<'}30% like rate</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#C2654A] font-bold">•</span>
+              <span className="text-[#A85740] font-bold">•</span>
               <span>Top performing photos show clear style direction - add similar content</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#C2654A] font-bold">•</span>
+              <span className="text-[#A85740] font-bold">•</span>
               <span>Monitor unique users count to ensure diverse feedback</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#C2654A] font-bold">•</span>
+              <span className="text-[#A85740] font-bold">•</span>
               <span>Aim for 50%+ like rate across all photos for optimal recommendation quality</span>
             </li>
           </ul>

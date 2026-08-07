@@ -1,6 +1,21 @@
 import { supabase } from "@/lib/supabase";
 import type { NovaUserContext } from "./userContext";
 
+// `mood_photo_id` is a many-to-one FK on style_swipes -> mood_photos, so PostgREST
+// returns a single joined object per row. The Supabase client has no generated
+// Database types here, so postgrest-js can't infer that cardinality and defaults
+// nested selects to an array shape. This type reflects the real (single-object) shape.
+type SwipeWithMoodPhoto = {
+  direction: string;
+  created_at: string;
+  mood_photos: {
+    photo_url: string | null;
+    style_tags: string[] | null;
+    dominant_colors: string[] | null;
+    brands: string[] | null;
+  } | null;
+};
+
 /**
  * Enhanced context with real-time swipe data, brand preferences, and recent activity
  */
@@ -31,7 +46,9 @@ export interface EnhancedNovaContext extends NovaUserContext {
  */
 async function fetchRecentSwipes(userId: string) {
   try {
-    const { data, error } = await supabase
+    if (!supabase) throw new Error("Supabase is niet beschikbaar");
+
+    const { data: rawData, error } = await supabase
       .from("style_swipes")
       .select(`
         direction,
@@ -48,7 +65,9 @@ async function fetchRecentSwipes(userId: string) {
       .limit(50);
 
     if (error) throw error;
-    if (!data || data.length === 0) return null;
+    if (!rawData || rawData.length === 0) return null;
+
+    const data = rawData as unknown as SwipeWithMoodPhoto[];
 
     const liked = data
       .filter((s) => s.direction === "right")
@@ -87,6 +106,7 @@ async function fetchRecentSwipes(userId: string) {
  */
 async function fetchBrandAffinity(userId: string) {
   try {
+    if (!supabase) throw new Error("Supabase is niet beschikbaar");
     const { data, error } = await supabase
       .from("brand_affinity")
       .select("brand, like_count, dislike_count, view_count")
@@ -125,6 +145,7 @@ async function fetchBrandAffinity(userId: string) {
  */
 async function fetchRecentOutfits(userId: string) {
   try {
+    if (!supabase) throw new Error("Supabase is niet beschikbaar");
     const { data, error } = await supabase
       .from("saved_outfits")
       .select("id, outfit_data, created_at")
@@ -151,6 +172,7 @@ async function fetchRecentOutfits(userId: string) {
  */
 async function fetchConversationHistory(userId: string) {
   try {
+    if (!supabase) throw new Error("Supabase is niet beschikbaar");
     const { data, error } = await supabase
       .from("nova_conversations")
       .select("messages, created_at")

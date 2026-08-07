@@ -10,7 +10,7 @@ export default function QuizStepper({ total, current }: { total: number; current
             aria-hidden
             className={[
               "h-2 rounded-full transition-all",
-              active ? "bg-[#A8513A]" : "bg-[#E5E5E5]",
+              active ? "bg-[#9A503B]" : "bg-[#E5E5E5]",
               i === current ? "w-8" : "w-4",
             ].join(" ")}
           />

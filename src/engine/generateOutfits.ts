@@ -117,6 +117,7 @@ const SUBSTITUTE_CATEGORIES: Record<ProductCategory, ProductCategory[]> = {
   [ProductCategory.JUMPSUIT]: [ProductCategory.TOP, ProductCategory.BOTTOM],
   [ProductCategory.TOP]: [],
   [ProductCategory.BOTTOM]: [],
+  [ProductCategory.SKIRT]: [],
   [ProductCategory.FOOTWEAR]: [],
   [ProductCategory.ACCESSORY]: [],
   [ProductCategory.OUTERWEAR]: [],
@@ -800,7 +801,7 @@ function generateOutfitForOccasion(
   const occasionRule = OCCASION_RULES[canonicalOccasion];
   if (occasionRule) {
     const avgFormality =
-      outfitProducts.reduce((sum, p) => sum + enrichProduct(p).formality, 0) / outfitProducts.length;
+      outfitProducts.reduce((sum, p) => sum + (enrichProduct(p).formality ?? 0.4), 0) / outfitProducts.length;
 
     const formalityGap = occasionRule.requiredFormality - avgFormality;
     if (formalityGap > 0.2) {
@@ -826,7 +827,7 @@ function generateOutfitForOccasion(
     }
   }
 
-  const formalities = outfitProducts.map(p => enrichProduct(p).formality);
+  const formalities = outfitProducts.map(p => enrichProduct(p).formality ?? 0.4);
   const maxF = Math.max(...formalities);
   const minF = Math.min(...formalities);
   if (maxF - minF > 0.3) {
@@ -992,10 +993,14 @@ function calculateCategoryRatio(products: Product[]): CategoryRatio {
     other: 0
   };
   
-  // Count products in each category
+  // Count products in each category.
+  // CategoryRatio heeft geen aparte 'skirt' bucket: rokken tellen mee als 'bottom'
+  // (zelfde conventie als CATEGORY_MAPPING in engine/helpers.ts).
   products.forEach(product => {
     const category = getProductCategory(product);
-    ratio[category] += 1;
+    const key: keyof CategoryRatio =
+      category === ProductCategory.SKIRT ? 'bottom' : (category as keyof CategoryRatio);
+    ratio[key] += 1;
   });
   
   // Convert counts to percentages
@@ -1286,7 +1291,7 @@ function selectProductForCategory(
     const goalsBonus = getGoalsScore(product, goals);
     const comfortBonus = getComfortScore(product, comfort);
 
-    const formalityDelta = Math.abs(enriched.formality - formalityTarget);
+    const formalityDelta = Math.abs((enriched.formality ?? 0.4) - formalityTarget);
     const formalityBonus = Math.max(0, 0.25 * (1 - formalityDelta));
 
     const brandPenalty = usedBrands && product.brand && usedBrands.has(product.brand.toLowerCase()) ? 0.30 : 0;

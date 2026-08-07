@@ -4,13 +4,25 @@ import type { Config } from "tailwindcss";
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
-    // Override default spacing to enforce 8px grid
+    // Override default spacing to enforce 8px grid.
+    //
+    // LET OP: dit is een OVERRIDE, geen extend. Elke stap die hier niet in
+    // staat compileert naar niets, zonder waarschuwing bij de build. Op
+    // 2026-08-05 waren daardoor 779 utility-classes in src/ stil dood
+    // (1.5: 294x, 3.5: 221x, 2.5: 186x, 11: 46x, 9: 32x). Zichtbaar gevolg:
+    // avatars van 44x44 vielen terug naar enkele pixels en icoon-badges
+    // rekten uit. Voeg een stap hier toe voordat je hem in een class gebruikt.
     spacing: {
       px: '1px',
       0: '0',
       0.5: '0.125rem',  // 2px - rarely used
       1: '0.25rem',     // 4px - tight spacing only
+      1.5: '0.375rem',  // 6px - halve stap, in gebruik
       2: '0.5rem',      // 8px ✅
+      2.5: '0.625rem',  // 10px - halve stap, in gebruik
+      3.5: '0.875rem',  // 14px - halve stap, in gebruik
+      9: '2.25rem',     // 36px - in gebruik
+      11: '2.75rem',    // 44px - minimale touch target
       3: '0.75rem',     // 12px ✅
       4: '1rem',        // 16px ✅
       5: '1.25rem',     // 20px ✅
@@ -141,9 +153,9 @@ export default {
       },
 
       fontFamily: {
-        heading: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
-        body: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"],
-        sans: ["Lato", "ui-sans-serif", "system-ui", "sans-serif"], // Default
+        heading: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"], // Default
         serif: ["Instrument Serif", "Georgia", "serif"],
         jakarta: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
       },

@@ -5,7 +5,10 @@
  * Inconsistente profielen krijgen speciale guidance op de results page.
  */
 
-import type { QuizAnswers } from "@/lib/quiz/types";
+// `@/lib/quiz/types` has no `QuizAnswers` export; `AnswerMap` is the current answers
+// shape and (like this module's field access) carries a permissive index signature
+// for legacy fields, so it's used here as the closest real equivalent.
+import type { AnswerMap as QuizAnswers } from "@/lib/quiz/types";
 
 export interface ConsistencyAnalysis {
   score: number; // 0-100, higher = meer consistent

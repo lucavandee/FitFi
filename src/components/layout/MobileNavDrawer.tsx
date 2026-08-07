@@ -151,7 +151,7 @@ export default function MobileNavDrawer({ open, onClose, links }: Props) {
             <NavLink
               to="/registreren"
               onClick={onClose}
-              className="block bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
+              className="block bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
             >
               Begin gratis
             </NavLink>

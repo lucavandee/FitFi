@@ -1,6 +1,10 @@
 import { fusionScore } from '@/engine/archetypeFusion';
 import type { ArchetypeWeights, ProductLike } from '@/types/style';
-import { DEFAULT_ARCHETYPE_MIX } from '@/config/archetypes';
+import { DEFAULT_ARCHETYPE_MIX, ARCHETYPES, type ArchetypeKey } from '@/config/archetypes';
+
+function isArchetypeKey(key: string): key is ArchetypeKey {
+  return key in ARCHETYPES;
+}
 
 export interface VisualPreferenceEmbedding {
   [archetype: string]: number;
@@ -49,6 +53,8 @@ function blendArchetypesWithVisualPreferences(
   if (maxVisualScore === 0) return blended;
 
   for (const [archetype, visualScore] of Object.entries(visualPrefs)) {
+    if (!isArchetypeKey(archetype)) continue;
+
     const normalizedVisual = visualScore / maxVisualScore;
     const baseScore = blended[archetype] || 0;
 

@@ -23,7 +23,7 @@ export function MetaInlineRow({
   return (
     <div
       className={twMerge(
-        "flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-[#8A8A8A]",
+        "flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-[#6E6E6E]",
         className
       )}
     >
@@ -40,7 +40,7 @@ export function MetaInlineRow({
                 "inline-flex items-center px-2 py-0.5 rounded-full " +
                 "border border-[#E5E5E5] " +
                 "bg-[color-mix(in_oklab,#FFFFFF_94%,#1A1A1A_6%)] " +
-                "text-[#8A8A8A] text-xs"
+                "text-[#6E6E6E] text-xs"
               }
             >
               {item.value ?? item.label}
@@ -49,7 +49,7 @@ export function MetaInlineRow({
             <span>
               {item.label && item.value ? (
                 <>
-                  <span className="font-medium text-[#8A8A8A]">{item.label}:</span>{" "}
+                  <span className="font-medium text-[#6E6E6E]">{item.label}:</span>{" "}
                   {item.value}
                 </>
               ) : (

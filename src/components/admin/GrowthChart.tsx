@@ -11,9 +11,9 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
   const maxValue = Math.max(data.last_7d, data.last_30d, data.last_90d);
 
   const bars = [
-    { label: '7 dagen', value: data.last_7d, color: '#C2654A' },
-    { label: '30 dagen', value: data.last_30d, color: '#A8513A' },
-    { label: '90 dagen', value: data.last_90d, color: '#8A3D28' },
+    { label: '7 dagen', value: data.last_7d, color: '#A85740' },
+    { label: '30 dagen', value: data.last_30d, color: '#9A503B' },
+    { label: '90 dagen', value: data.last_90d, color: '#9A503B' },
   ];
 
   return (
@@ -37,7 +37,7 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
                   <span className="text-sm font-bold text-[#1A1A1A]">
                     {bar.value}
                   </span>
-                  <span className="text-xs text-[#8A8A8A]">
+                  <span className="text-xs text-[#6E6E6E]">
                     ({growthRate}%)
                   </span>
                 </div>
@@ -62,15 +62,15 @@ export default function GrowthChart({ data, totalUsers }: GrowthChartProps) {
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold text-[#1A1A1A]">{data.last_7d}</div>
-            <div className="text-xs text-[#8A8A8A]">Deze week</div>
+            <div className="text-xs text-[#6E6E6E]">Deze week</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-[#1A1A1A]">{data.last_30d}</div>
-            <div className="text-xs text-[#8A8A8A]">Deze maand</div>
+            <div className="text-xs text-[#6E6E6E]">Deze maand</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-[#1A1A1A]">{data.last_90d}</div>
-            <div className="text-xs text-[#8A8A8A]">Dit kwartaal</div>
+            <div className="text-xs text-[#6E6E6E]">Dit kwartaal</div>
           </div>
         </div>
       </div>

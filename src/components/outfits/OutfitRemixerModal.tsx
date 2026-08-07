@@ -5,6 +5,8 @@ import { AdaptiveOutfitRemixer, type RemixedOutfit, type SwapSuggestion } from '
 import type { AdaptiveOutfit } from '@/services/calibration/adaptiveOutfitGenerator';
 import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
+import Spinner from '@/components/ui/Spinner';
+import { getSessionId } from '@/utils/sessionId';
 
 interface OutfitRemixerModalProps {
   isOpen: boolean;
@@ -58,7 +60,7 @@ export default function OutfitRemixerModal({
     setSelectedSuggestion(suggestion);
 
     try {
-      const sessionId = sessionStorage.getItem('fitfi_session_id');
+      const sessionId = getSessionId();
 
       const remixed = await AdaptiveOutfitRemixer.swapItem(
         currentOutfit,
@@ -163,10 +165,10 @@ export default function OutfitRemixerModal({
           <div className="flex items-center justify-between p-6 border-b border-[#E5E5E5]">
             <div>
               <h2 className="text-2xl font-bold text-[#1A1A1A] flex items-center gap-2">
-                <RefreshCw size={24} className="text-[#A8513A]" />
+                <RefreshCw size={24} className="text-[#9A503B]" />
                 Outfit Remixer
               </h2>
-              <p className="text-sm text-[#8A8A8A] mt-1">
+              <p className="text-sm text-[#6E6E6E] mt-1">
                 Swap items om je outfit te perfectioneren
               </p>
             </div>
@@ -174,28 +176,28 @@ export default function OutfitRemixerModal({
               onClick={onClose}
               className="p-2 hover:bg-[#F5F0EB] rounded-2xl transition-colors"
             >
-              <X size={24} className="text-[#8A8A8A]" />
+              <X size={24} className="text-[#6E6E6E]" />
             </button>
           </div>
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Current Outfit Stats */}
-            <div className="bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] border border-[#F4E8E3] rounded-2xl p-4">
+            <div className="bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] border border-[#F4E8E3] rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-[#A8513A] mb-1">
+                  <p className="text-sm font-semibold text-[#9A503B] mb-1">
                     Huidige Score
                   </p>
                   <p className="text-3xl font-bold text-[#1A1A1A]">
                     {Math.round(currentOutfit.score.overall * 100)}
-                    <span className="text-lg text-[#8A8A8A]">/100</span>
+                    <span className="text-lg text-[#6E6E6E]">/100</span>
                   </p>
                 </div>
 
                 {swapHistory.length > 0 && (
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-[#A8513A] mb-1">
+                    <p className="text-sm font-semibold text-[#9A503B] mb-1">
                       Verbetering
                     </p>
                     <div className="flex items-center gap-2">
@@ -214,7 +216,7 @@ export default function OutfitRemixerModal({
                           </p>
                         </>
                       ) : (
-                        <p className="text-2xl font-bold text-[#8A8A8A]">±0</p>
+                        <p className="text-2xl font-bold text-[#6E6E6E]">±0</p>
                       )}
                     </div>
                   </div>
@@ -223,7 +225,7 @@ export default function OutfitRemixerModal({
 
               {swapHistory.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-[#F4E8E3]">
-                  <p className="text-sm text-[#8A8A8A]">
+                  <p className="text-sm text-[#6E6E6E]">
                     {swapHistory.length} {swapHistory.length === 1 ? 'swap' : 'swaps'} gedaan in deze sessie
                   </p>
                 </div>
@@ -261,13 +263,13 @@ export default function OutfitRemixerModal({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold text-[#1A1A1A] flex items-center gap-2">
-                  <Sparkles size={18} className="text-[#A8513A]" />
+                  <Sparkles size={18} className="text-[#9A503B]" />
                   Aanbevolen Swaps
                 </h3>
                 <button
                   onClick={handleOptimize}
                   disabled={swapping || loading || suggestions.length === 0}
-                  className="text-sm font-semibold text-[#A8513A] hover:text-[#C2654A] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  className="text-sm font-semibold text-[#9A503B] hover:text-[#A85740] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                 >
                   <RefreshCw size={14} />
                   Auto-optimaliseren
@@ -277,7 +279,7 @@ export default function OutfitRemixerModal({
               {loading && (
                 <div className="text-center py-8">
                   <Spinner size="md" className="mx-auto" />
-                  <p className="text-sm text-[#8A8A8A] mt-2">
+                  <p className="text-sm text-[#6E6E6E] mt-2">
                     Suggesties laden...
                   </p>
                 </div>
@@ -289,7 +291,7 @@ export default function OutfitRemixerModal({
                   <p className="font-semibold text-[#1A1A1A]">
                     Outfit is geoptimaliseerd!
                   </p>
-                  <p className="text-sm text-[#8A8A8A] mt-1">
+                  <p className="text-sm text-[#6E6E6E] mt-1">
                     Geen significante verbeteringen meer mogelijk
                   </p>
                 </div>
@@ -303,7 +305,7 @@ export default function OutfitRemixerModal({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#D4856E] transition-colors"
+                      className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-4 hover:border-[#A85740] transition-colors"
                     >
                       <div className="flex items-start gap-4">
                         {/* Product Image */}
@@ -319,13 +321,13 @@ export default function OutfitRemixerModal({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-semibold text-[#A8513A] uppercase mb-1">
+                              <p className="text-xs font-semibold text-[#9A503B] uppercase mb-1">
                                 {suggestion.category}
                               </p>
                               <p className="font-semibold text-[#1A1A1A] truncate">
                                 {suggestion.suggested_product.name}
                               </p>
-                              <p className="text-sm text-[#8A8A8A]">
+                              <p className="text-sm text-[#6E6E6E]">
                                 €{suggestion.suggested_product.price}
                               </p>
                             </div>
@@ -338,20 +340,20 @@ export default function OutfitRemixerModal({
                                   +{Math.round(suggestion.expected_score_improvement * 100)}
                                 </span>
                               </div>
-                              <p className="text-xs text-[#8A8A8A]">
+                              <p className="text-xs text-[#6E6E6E]">
                                 score
                               </p>
                             </div>
                           </div>
 
-                          <p className="text-sm text-[#8A8A8A] mb-3">
+                          <p className="text-sm text-[#6E6E6E] mb-3">
                             {suggestion.reason}
                           </p>
 
                           <button
                             onClick={() => handleSwap(suggestion)}
                             disabled={swapping}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#A8513A] to-[#C2654A] text-white rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#9A503B] to-[#A85740] text-white rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
                           >
                             {swapping && selectedSuggestion === suggestion ? (
                               <>
@@ -378,7 +380,7 @@ export default function OutfitRemixerModal({
           {/* Footer */}
           <div className="p-6 border-t border-[#E5E5E5] bg-[#F5F0EB]">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-[#8A8A8A]">
+              <p className="text-sm text-[#6E6E6E]">
                 Swaps worden opgeslagen om je toekomstige aanbevelingen te verbeteren
               </p>
               <button

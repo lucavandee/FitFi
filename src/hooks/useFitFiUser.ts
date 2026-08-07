@@ -47,7 +47,7 @@ export function useFitFiUser(
       setLoading(true);
       setError(null);
       
-      const response: DataResponse<FitFiUserProfile | null> = await fetchUser(userId);
+      const response: DataResponse<FitFiUserProfile | null> = await fetchUser();
       
       if (alive) {
         setData(response.data);
@@ -79,7 +79,7 @@ export function useFitFiUser(
   useEffect(() => {
     if (refetchOnMount || !data) {
       const cleanup = fetchUserData();
-      return () => cleanup.then(fn => fn?.());
+      return () => { cleanup.then(fn => fn?.()); };
     }
   }, [userId, enabled, refetchOnMount]);
 
@@ -92,7 +92,7 @@ export function useFitFiUser(
     error,
     source,
     cached,
-    refetch: fetchUserData,
+    refetch: async () => { await fetchUserData(); },
     isStale
   };
 }
@@ -148,7 +148,7 @@ export function useMultipleFitFiUsers(userIds: string[]): {
     await Promise.all(
       userIds.map(async (userId) => {
         try {
-          const response = await fetchUser(userId);
+          const response = await fetchUser();
           newUsers[userId] = response.data;
         } catch (error) {
           newErrors[userId] = error instanceof Error ? error.message : 'Onbekende fout';

@@ -118,7 +118,7 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
     colors: [
       // Basis kleuren - Quiet Luxury
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
-      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#A85740', name: 'Camel', category: 'basis' },
       { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
       { hex: '#5D4037', name: 'Espresso', category: 'basis' },
 
@@ -137,7 +137,7 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
       { hex: '#AFA396', name: 'Taupe', category: 'neutraal' }
     ],
     doColors: [
-      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#A85740', name: 'Camel', category: 'basis' },
       { hex: '#A0785A', name: 'Cognac', category: 'accent' },
       { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
       { hex: '#C17767', name: 'Terracotta', category: 'accent' },
@@ -164,7 +164,7 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
 
       // Accent kleuren - Fresh 2025
       { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
-      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#A85740', name: 'Licht camel', category: 'accent' },
       { hex: '#A3B899', name: 'Licht sage', category: 'accent' },
       { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
       { hex: '#E5B299', name: 'Peach', category: 'accent' },
@@ -179,7 +179,7 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
     doColors: [
       { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
       { hex: '#5F7A61', name: 'Sage groen', category: 'basis' },
-      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#A85740', name: 'Licht camel', category: 'accent' },
       { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
       { hex: '#FFF8DC', name: 'Crème', category: 'basis' },
       { hex: '#E8DCC4', name: 'Warm ivory', category: 'neutraal' }
@@ -212,7 +212,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#E5B299', name: 'Peach', category: 'accent' },
       { hex: '#A3B899', name: 'Licht sage', category: 'accent' },
       { hex: '#98B4AA', name: 'Mint sage', category: 'accent' },
-      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#A85740', name: 'Licht camel', category: 'accent' },
       { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
       { hex: '#D4B5B0', name: 'Poederroze', category: 'accent' },
       { hex: '#B8C5D6', name: 'Licht lavendel', category: 'accent' },
@@ -244,7 +244,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#F5F5DC', name: 'Beige', category: 'basis' },
       { hex: '#E08E79', name: 'Warm terracotta', category: 'accent' },
       { hex: '#C4A77D', name: 'Soft gold', category: 'accent' },
-      { hex: '#D4A373', name: 'Licht camel', category: 'accent' },
+      { hex: '#A85740', name: 'Licht camel', category: 'accent' },
       { hex: '#B4926B', name: 'Warm sand', category: 'accent' },
       { hex: '#D48B6A', name: 'Warm koraal', category: 'accent' },
       { hex: '#7BA05B', name: 'Appelgroen', category: 'accent' },
@@ -325,7 +325,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
     description: 'Gedempte, warme herfsttinten met laag contrast. Subtle en warm.',
     colors: [
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
-      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#A85740', name: 'Camel', category: 'basis' },
       { hex: '#E8DDD3', name: 'Sand', category: 'basis' },
       { hex: '#C9B8A9', name: 'Greige', category: 'basis' },
       { hex: '#9C7A5E', name: 'Warm taupe', category: 'accent' },
@@ -340,7 +340,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#E0D5C8', name: 'Champagne', category: 'neutraal' },
     ],
     doColors: [
-      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#A85740', name: 'Camel', category: 'basis' },
       { hex: '#9C7A5E', name: 'Warm taupe', category: 'accent' },
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
       { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' },
@@ -364,7 +364,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
     colors: [
       { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
       { hex: '#5D4037', name: 'Espresso', category: 'basis' },
-      { hex: '#D4A373', name: 'Camel', category: 'basis' },
+      { hex: '#A85740', name: 'Camel', category: 'basis' },
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
       { hex: '#A0785A', name: 'Cognac', category: 'accent' },
       { hex: '#C17767', name: 'Terracotta', category: 'accent' },

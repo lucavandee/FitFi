@@ -237,10 +237,11 @@ export const gamificationService = {
       challenge_name: challenge.challenge_name,
     });
 
+    const stats = await this.getUserStats(userId);
     await client
       .from('user_gamification')
       .update({
-        challenges_completed: client.sql`challenges_completed + 1`,
+        challenges_completed: (stats?.challenges_completed || 0) + 1,
       })
       .eq('user_id', userId);
 

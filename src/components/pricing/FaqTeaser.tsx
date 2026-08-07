@@ -27,7 +27,7 @@ const FaqTeaser: React.FC = () => {
           </details>
         ))}
       </div>
-      <p className="faq-foot text-[#8A8A8A]">
+      <p className="faq-foot text-[#6E6E6E]">
         Meer vragen? <a className="underlined" href="/contact">Neem contact op</a>.
       </p>
     </div>

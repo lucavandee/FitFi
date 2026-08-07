@@ -23,7 +23,7 @@ const FaqSearch: React.FC<Props> = ({ query, onChange, placeholder = "Zoek in de
           px-4 py-3
           placeholder:opacity-60
           focus:outline-none focus:ring-2
-          focus:ring-[color-mix(in_oklab,_#A8513A_50%,_transparent)]
+          focus:ring-[color-mix(in_oklab,_#9A503B_50%,_transparent)]
           shadow-sm
         "
         aria-describedby="faq-search-hint"

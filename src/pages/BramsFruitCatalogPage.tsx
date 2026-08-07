@@ -3,7 +3,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { getBramsFruitProductGroups, getBramsFruitCategories } from '@/services/bramsFruit/productService';
 import { BramsFruitProductGroup } from '@/services/bramsFruit/types';
 import { ProductImage } from '@/components/ui/ProductImage';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function BramsFruitCatalogPage() {
   const [groups, setGroups] = useState<BramsFruitProductGroup[]>([]);
@@ -53,7 +53,10 @@ export default function BramsFruitCatalogPage() {
       return imageUrl;
     }
 
-    const { data } = supabase.storage
+    const sb = supabase();
+    if (!sb) return '/images/fallbacks/default.jpg';
+
+    const { data } = sb.storage
       .from('brams-fruit-images')
       .getPublicUrl(imageUrl);
 
@@ -66,7 +69,7 @@ export default function BramsFruitCatalogPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
             <Spinner size="lg" className="mx-auto" />
-            <p className="mt-4 text-[#8A8A8A]">Producten laden...</p>
+            <p className="mt-4 text-[#6E6E6E]">Producten laden...</p>
           </div>
         </div>
       </div>
@@ -79,10 +82,10 @@ export default function BramsFruitCatalogPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
             <div className="text-red-500 text-xl mb-4">Fout bij het laden van producten</div>
-            <p className="text-[#8A8A8A] mb-6">{error}</p>
+            <p className="text-[#6E6E6E] mb-6">{error}</p>
             <button
               onClick={() => loadData()}
-              className="px-4 py-2 bg-[#A8513A] text-white rounded-xl hover:bg-[#C2654A] transition-colors"
+              className="px-4 py-2 bg-[#9A503B] text-white rounded-xl hover:bg-[#A85740] transition-colors"
             >
               Opnieuw proberen
             </button>
@@ -99,7 +102,7 @@ export default function BramsFruitCatalogPage() {
           <h1 className="text-3xl font-bold text-[#1A1A1A]">
             Brams Fruit Collectie
           </h1>
-          <p className="mt-2 text-[#8A8A8A]">
+          <p className="mt-2 text-[#6E6E6E]">
             Premium menswear met een rustige uitstraling
           </p>
         </div>
@@ -111,7 +114,7 @@ export default function BramsFruitCatalogPage() {
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedCategory === category
-                  ? 'bg-[#A8513A] text-white'
+                  ? 'bg-[#9A503B] text-white'
                   : 'bg-[#FFFFFF] text-[#1A1A1A] border border-[#E5E5E5] hover:bg-[#FAFAF8]'
               }`}
             >
@@ -140,7 +143,7 @@ export default function BramsFruitCatalogPage() {
               </div>
 
               <div className="p-4">
-                <p className="text-xs text-[#8A8A8A] mb-1">
+                <p className="text-xs text-[#6E6E6E] mb-1">
                   {group.category} · {group.sub_category}
                 </p>
                 <h3 className="font-semibold text-[#1A1A1A] mb-2 line-clamp-2">
@@ -148,10 +151,10 @@ export default function BramsFruitCatalogPage() {
                 </h3>
 
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-[#8A8A8A]">
+                  <span className="text-sm text-[#6E6E6E]">
                     {group.colors.length} {group.colors.length === 1 ? 'kleur' : 'kleuren'}
                   </span>
-                  <span className="text-sm text-[#8A8A8A]">
+                  <span className="text-sm text-[#6E6E6E]">
                     {group.sizes.length} maten
                   </span>
                 </div>
@@ -161,7 +164,7 @@ export default function BramsFruitCatalogPage() {
                     €{group.price_range.min.toFixed(2)}
                   </span>
                   {group.price_range.min !== group.price_range.max && (
-                    <span className="text-sm text-[#8A8A8A]">
+                    <span className="text-sm text-[#6E6E6E]">
                       - €{group.price_range.max.toFixed(2)}
                     </span>
                   )}
@@ -173,7 +176,7 @@ export default function BramsFruitCatalogPage() {
 
         {filteredGroups.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-[#8A8A8A]">
+            <p className="text-[#6E6E6E]">
               Geen producten gevonden in deze categorie.
             </p>
           </div>

@@ -144,11 +144,11 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
         </div>
         
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           icon={<Plus size={16} />}
           iconPosition="left"
-          className="border-[#C2654A] text-[#C2654A] hover:bg-[#C2654A] hover:text-white"
+          className="border-[#A85740] text-[#A85740] hover:bg-[#A85740] hover:text-white"
         >
           Suggereer Challenge
         </Button>
@@ -167,7 +167,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
             onClick={() => setFilter(tab.id as any)}
             className={`flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-md transition-all duration-200 ${
               filter === tab.id
-                ? 'bg-white text-[#C2654A] shadow-sm'
+                ? 'bg-white text-[#A85740] shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -203,7 +203,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
               </div>
               
               <div className="text-right">
-                <div className="text-lg font-bold text-[#C2654A]">+{challenge.points}</div>
+                <div className="text-lg font-bold text-[#A85740]">+{challenge.points}</div>
                 <div className="text-xs text-gray-500">punten</div>
               </div>
             </div>
@@ -222,7 +222,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-[#C2654A] h-2 rounded-full transition-all duration-300"
+                    className="bg-[#A85740] h-2 rounded-full transition-all duration-300"
                     style={{ width: `${(challenge.progress / challenge.maxProgress) * 100}%` }}
                   />
                 </div>
@@ -246,14 +246,14 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
 
             {/* Action Button */}
             <Button
-              variant={challenge.completed ? 'outline' : 'primary'}
+              variant={challenge.completed ? 'ghost' : 'primary'}
               size="sm"
               fullWidth
               disabled={challenge.completed}
               onClick={() => handleChallengeComplete(challenge.id)}
               className={challenge.completed 
                 ? 'border-green-300 text-green-600 bg-green-50' 
-                : 'bg-[#C2654A] hover:bg-[#C2654A]/90 text-[#1A1A1A]'
+                : 'bg-[#A85740] hover:bg-[#A85740]/90 text-[#1A1A1A]'
               }
               icon={challenge.completed ? <Star size={16} className="fill-current" /> : <Target size={16} />}
               iconPosition="left"
@@ -277,9 +277,9 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
             Kom later terug voor nieuwe uitdagingen!
           </p>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => setFilter('all')}
-            className="border-[#C2654A] text-[#C2654A] hover:bg-[#C2654A] hover:text-white"
+            className="border-[#A85740] text-[#A85740] hover:bg-[#A85740] hover:text-white"
           >
             Bekijk alle challenges
           </Button>

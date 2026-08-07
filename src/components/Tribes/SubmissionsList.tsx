@@ -1,7 +1,7 @@
 import React from "react";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import type { TribeChallengeSubmission } from "@/services/data/types";
-import { ExternalLink, Trophy, Star, Crown, Clock, User } from 'lucide-react';
+import { Trophy, Clock } from 'lucide-react';
 
 interface SubmissionsListProps {
   subs: TribeChallengeSubmission[] | null;
@@ -62,101 +62,66 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
         </div>
       </div>
       
-      {subs.map((submission, index) => (
-        <article 
-          key={submission.id} 
-          className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow animate-fade-in"
-          style={{ animationDelay: `${index * 0.05}s` }}
-        >
-          {/* Submission Header */}
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              {/* User Avatar */}
-              <div className="w-10 h-10 rounded-full bg-[#C2654A] flex items-center justify-center text-white font-medium">
-                {submission.userName?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              
-              {/* User Info */}
-              <div>
-                <h4 className="font-medium text-gray-900">
-                  {submission.userName || `User ${submission.userId.slice(-4)}`}
-                </h4>
-                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <Clock size={12} />
-                  <time dateTime={submission.createdAt}>
-                    {new Date(submission.createdAt).toLocaleDateString('nl-NL', {
-                      day: 'numeric',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </time>
+      {subs.map((submission, index) => {
+        const userId = submission.userId ?? submission.user_id;
+        const createdAt = submission.createdAt ?? submission.created_at;
+
+        return (
+          <article
+            key={submission.id}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow animate-fade-in"
+            style={{ animationDelay: `${index * 0.05}s` }}
+          >
+            {/* Submission Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                {/* User Avatar */}
+                <div className="w-10 h-10 rounded-full bg-[#A85740] flex items-center justify-center text-white font-medium">
+                  U
+                </div>
+
+                {/* User Info */}
+                <div>
+                  <h4 className="font-medium text-gray-900">
+                    {userId ? `User ${userId.slice(-4)}` : 'Onbekende gebruiker'}
+                  </h4>
+                  {createdAt && (
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <Clock size={12} />
+                      <time dateTime={createdAt}>
+                        {new Date(createdAt).toLocaleDateString('nl-NL', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </time>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-            
-            {/* Score & Winner Badge */}
-            <div className="flex items-center space-x-2">
-              {submission.score && (
-                <span className="px-3 py-1 bg-[#C2654A]/10 text-[#C2654A] rounded-full text-sm font-medium">
+
+              {/* Score */}
+              {submission.score !== undefined && submission.score !== null && (
+                <span className="px-3 py-1 bg-[#A85740]/10 text-[#A85740] rounded-full text-sm font-medium">
                   {submission.score}/100
                 </span>
               )}
-              
-              {submission.isWinner && (
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium flex items-center space-x-1">
-                  <Crown size={14} />
-                  <span>Winnaar</span>
-                </span>
-              )}
             </div>
-          </div>
 
-          {/* Submission Content */}
-          {submission.content && (
-            <div className="mb-4">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {submission.content}
-              </p>
-            </div>
-          )}
-
-          {/* Submission Image */}
-          {submission.imageUrl && (
-            <div className="mb-4 rounded-2xl overflow-hidden">
-              <ImageWithFallback
-                src={submission.imageUrl}
-                alt="Submission afbeelding"
-                className="w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-          )}
-
-          {/* Submission Link */}
-          {submission.linkUrl && (
-            <div className="mb-4">
-              <a
-                href={submission.linkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-[#C2654A] hover:text-[#C2654A]/80 transition-colors"
-              >
-                <ExternalLink size={16} />
-                <span>Bekijk externe link</span>
-              </a>
-            </div>
-          )}
-
-          {/* Submission Type Badge */}
-          {submission.submissionType && (
-            <div className="flex items-center space-x-2">
-              <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
-                Type: {submission.submissionType}
-              </span>
-            </div>
-          )}
-        </article>
-      ))}
+            {/* Submission Image */}
+            {submission.image && (
+              <div className="mb-4 rounded-2xl overflow-hidden">
+                <ImageWithFallback
+                  src={submission.image}
+                  alt="Submission afbeelding"
+                  className="w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            )}
+          </article>
+        );
+      })}
     </div>
   );
 };

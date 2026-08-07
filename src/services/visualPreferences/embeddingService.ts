@@ -114,10 +114,7 @@ export class EmbeddingService {
     let query = client
       .from('style_profiles')
       .select('locked_embedding')
-      .not('embedding_locked_at', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .not('embedding_locked_at', 'is', null);
 
     if (userId) {
       query = query.eq('user_id', userId);
@@ -127,7 +124,10 @@ export class EmbeddingService {
       return null;
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error) {
       console.error('Failed to fetch locked embedding:', error);
@@ -152,10 +152,7 @@ export class EmbeddingService {
     let query = client
       .from('style_profiles')
       .select('id, user_id, session_id, archetype, locked_embedding, embedding_locked_at, embedding_version, embedding_sources')
-      .not('embedding_locked_at', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .not('embedding_locked_at', 'is', null);
 
     if (userId) {
       query = query.eq('user_id', userId);
@@ -165,7 +162,10 @@ export class EmbeddingService {
       return null;
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error) {
       console.error('Failed to fetch locked profile:', error);
@@ -190,9 +190,7 @@ export class EmbeddingService {
     let query = client
       .from('style_profiles')
       .select('embedding_locked_at')
-      .not('embedding_locked_at', 'is', null)
-      .limit(1)
-      .maybeSingle();
+      .not('embedding_locked_at', 'is', null);
 
     if (userId) {
       query = query.eq('user_id', userId);
@@ -202,7 +200,7 @@ export class EmbeddingService {
       return false;
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.limit(1).maybeSingle();
 
     if (error) {
       return false;
@@ -349,14 +347,16 @@ export class EmbeddingService {
     sessionId?: string,
     trigger: 'quiz_complete' | 'swipes_complete' | 'calibration_complete' | 'manual_update' = 'manual_update'
   ): Promise<void> {
+    const client = this.getClient();
+    if (!client) {
+      throw new Error('Supabase client unavailable');
+    }
+
     const embedding = await this.computeFinalEmbedding(userId, sessionId);
 
-    let profileQuery = supabase
+    let profileQuery = client
       .from('style_profiles')
-      .select('id, embedding_version')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .select('id, embedding_version');
 
     if (userId) {
       profileQuery = profileQuery.eq('user_id', userId);
@@ -366,13 +366,16 @@ export class EmbeddingService {
       throw new Error('Either userId or sessionId must be provided');
     }
 
-    const { data: profile, error: profileError } = await profileQuery;
+    const { data: profile, error: profileError } = await profileQuery
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (profileError || !profile) {
       throw new Error('Profile not found');
     }
 
-    const { error } = await supabase
+    const { error } = await client
       .from('style_embedding_snapshots')
       .insert({
         user_id: userId || null,

@@ -35,7 +35,12 @@ export function useRateLimit() {
         const identifierType = user?.id ? 'user' : 'ip';
 
         // Call rate limit check function
-        const { data, error } = await supabase.rpc('check_rate_limit', {
+        const sb = supabase();
+        if (!sb) {
+          throw new Error('Supabase client unavailable');
+        }
+
+        const { data, error } = await sb.rpc('check_rate_limit', {
           p_identifier: identifier,
           p_identifier_type: identifierType,
           p_endpoint: config.endpoint,

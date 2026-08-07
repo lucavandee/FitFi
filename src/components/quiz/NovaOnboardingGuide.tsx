@@ -100,7 +100,7 @@ export function NovaOnboardingGuide({
       <motion.button
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
         onClick={() => setIsMinimized(false)}
       >
         <Sparkles className="w-6 h-6 text-white" />
@@ -120,7 +120,7 @@ export function NovaOnboardingGuide({
           {/* Header */}
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#C2654A] to-[#C2654A] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#A85740] to-[#A85740] flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -155,7 +155,7 @@ export function NovaOnboardingGuide({
               </div>
               <div className="h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[#C2654A] to-[#C2654A]"
+                  className="h-full bg-gradient-to-r from-[#A85740] to-[#A85740]"
                   initial={{ width: 0 }}
                   animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -170,8 +170,8 @@ export function NovaOnboardingGuide({
               onClick={onOpenChat}
               className={`mt-3 w-full text-xs py-2 px-3 rounded-2xl border transition-colors ${
                 showProactiveTrigger
-                  ? 'border-[#C2654A] bg-[#C2654A]/10 text-[#C2654A] font-medium animate-pulse'
-                  : 'border-[#E5E5E5] hover:border-[#C2654A] hover:bg-[#C2654A]/5 text-[#1A1A1A]/70 hover:text-[#1A1A1A]'
+                  ? 'border-[#A85740] bg-[#A85740]/10 text-[#A85740] font-medium animate-pulse'
+                  : 'border-[#E5E5E5] hover:border-[#A85740] hover:bg-[#A85740]/5 text-[#1A1A1A]/70 hover:text-[#1A1A1A]'
               }`}
             >
               {showProactiveTrigger ? '✨ Ik heb een tip voor je!' : '💬 Stel me een vraag'}

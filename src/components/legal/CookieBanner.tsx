@@ -49,7 +49,7 @@ export default function CookieBanner() {
             <p className="text-sm sm:text-base text-[#1A1A1A] font-semibold mb-1">
               Wij gebruiken cookies
             </p>
-            <p className="text-sm text-[#8A8A8A] mb-4 leading-relaxed">
+            <p className="text-sm text-[#6E6E6E] mb-4 leading-relaxed">
               Noodzakelijke cookies zorgen dat de site werkt. Optionele cookies
               (analytics) helpen ons de ervaring te verbeteren. Je kunt je
               keuze altijd wijzigen via{" "}
@@ -61,7 +61,7 @@ export default function CookieBanner() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={acceptAll}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#A8513A] hover:bg-[#C2654A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8513A] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#A85740] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
               >
                 Alles accepteren
               </button>
@@ -73,7 +73,7 @@ export default function CookieBanner() {
               </button>
               <button
                 onClick={() => setView("detail")}
-                className="h-10 px-5 rounded-xl text-sm font-medium text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8A8A8A] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-medium text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6E6E6E] focus-visible:ring-offset-2"
               >
                 Aanpassen
               </button>
@@ -88,7 +88,7 @@ export default function CookieBanner() {
               <button
                 onClick={() => setView("simple")}
                 aria-label="Terug naar overzicht"
-                className="text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8A8A8A] rounded"
+                className="text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6E6E6E] rounded"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -124,7 +124,7 @@ export default function CookieBanner() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={saveCustom}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#A8513A] hover:bg-[#C2654A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A8513A] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#A85740] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
               >
                 Voorkeuren opslaan
               </button>
@@ -162,12 +162,12 @@ function ConsentRow({
       <div className="flex-1 min-w-0">
         <label
           htmlFor={id}
-          className={`text-sm font-medium block mb-0.5 ${disabled ? "text-[#8A8A8A]" : "text-[#1A1A1A] cursor-pointer"}`}
+          className={`text-sm font-medium block mb-0.5 ${disabled ? "text-[#6E6E6E]" : "text-[#1A1A1A] cursor-pointer"}`}
         >
           {label}
           {disabled && <span className="ml-2 text-xs font-normal">(altijd aan)</span>}
         </label>
-        <p className="text-xs text-[#8A8A8A] leading-relaxed">{description}</p>
+        <p className="text-xs text-[#6E6E6E] leading-relaxed">{description}</p>
       </div>
       <div className="flex-shrink-0 pt-0.5">
         <input
@@ -176,7 +176,7 @@ function ConsentRow({
           checked={checked}
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}
-          className="w-4 h-4 rounded accent-[#A8513A] cursor-pointer disabled:cursor-not-allowed"
+          className="w-4 h-4 rounded accent-[#9A503B] cursor-pointer disabled:cursor-not-allowed"
         />
       </div>
     </div>

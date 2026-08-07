@@ -54,7 +54,7 @@ function RowItem({
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
           danger
             ? "bg-red-50 text-[#C24A4A]"
-            : "bg-[#F5F0EB] text-[#C2654A]"
+            : "bg-[#F5F0EB] text-[#A85740]"
         }`}>
           {icon}
         </div>
@@ -63,11 +63,11 @@ function RowItem({
         <p className={`text-sm font-semibold leading-tight ${danger ? "text-[#C24A4A]" : "text-[#1A1A1A]"}`}>
           {label}
         </p>
-        {sub && <p className="text-xs text-[#8A8A8A] mt-0.5 leading-snug">{sub}</p>}
+        {sub && <p className="text-xs text-[#6E6E6E] mt-0.5 leading-snug">{sub}</p>}
       </div>
       {rightEl ?? (
         onClick && !danger ? (
-          <ChevronRight className="w-4 h-4 ml-auto text-[#E5E5E5] group-hover:text-[#C2654A] transition-colors duration-200 flex-shrink-0" />
+          <ChevronRight className="w-4 h-4 ml-auto text-[#E5E5E5] group-hover:text-[#A85740] transition-colors duration-200 flex-shrink-0" />
         ) : null
       )}
     </button>
@@ -89,7 +89,7 @@ function SectionCard({ children, delay = 0 }: { children: React.ReactNode; delay
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">
+    <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#6E6E6E] mb-4">
       {children}
     </p>
   );
@@ -271,12 +271,12 @@ const ProfilePage: React.FC = () => {
           className="max-w-sm w-full text-center"
         >
           <div className="w-16 h-16 rounded-2xl bg-white border border-[#E5E5E5] flex items-center justify-center mx-auto mb-6">
-            <User className="w-7 h-7 text-[#8A8A8A]" />
+            <User className="w-7 h-7 text-[#6E6E6E]" />
           </div>
           <h1 className="font-heading text-2xl font-bold text-[#1A1A1A] mb-3">Log in om je profiel te bekijken</h1>
           <button
             onClick={() => navigate("/inloggen")}
-            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base transition-colors duration-200"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base transition-colors duration-200"
           >
             Inloggen
           </button>
@@ -299,7 +299,7 @@ const ProfilePage: React.FC = () => {
 
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#C2654A] focus:text-white focus:rounded-lg"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#A85740] focus:text-white focus:rounded-lg"
       >
         Spring naar hoofdinhoud
       </a>
@@ -313,16 +313,16 @@ const ProfilePage: React.FC = () => {
               {photoPreview ? (
                 <img src={photoPreview} alt="Profielfoto" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-3xl font-bold text-[#C2654A] select-none">{userInitial}</span>
+                <span className="text-3xl font-bold text-[#A85740] select-none">{userInitial}</span>
               )}
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-white border border-[#E5E5E5] flex items-center justify-center shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+              className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-white border border-[#E5E5E5] flex items-center justify-center shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
               style={{ minWidth: 44, minHeight: 44, padding: "calc((44px - 28px) / 2)", boxSizing: "content-box" }}
               aria-label="Foto wijzigen"
             >
-              <Camera className="w-3.5 h-3.5 text-[#8A8A8A]" />
+              <Camera className="w-3.5 h-3.5 text-[#6E6E6E]" />
             </button>
           </div>
 
@@ -332,14 +332,14 @@ const ProfilePage: React.FC = () => {
               <h1 className="text-2xl font-bold text-[#1A1A1A] leading-tight">{displayName}</h1>
               {isPremium && (
                 <span
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#C2654A]/10 text-[#C2654A]"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#A85740]/10 text-[#A85740]"
                 >
                   {isFounder ? <Star className="w-3 h-3" /> : <Crown className="w-3 h-3" />}
                   {isFounder ? "Founder" : "Premium"}
                 </span>
               )}
             </div>
-            <p className="text-sm text-[#8A8A8A]">{user.email}</p>
+            <p className="text-sm text-[#6E6E6E]">{user.email}</p>
             {hasStyleProfile && (
               <p className="text-sm text-[#4A4A4A] mt-1">
                 {[archetypeName ? String(archetypeName).toUpperCase() : null, seasonLabel].filter(Boolean).join(" · ")}
@@ -394,14 +394,14 @@ const ProfilePage: React.FC = () => {
                     {photoPreview ? (
                       <img src={photoPreview} alt="Kleuranalysefoto" className="w-full h-full object-cover" />
                     ) : (
-                      <Camera className="w-5 h-5 text-[#8A8A8A]" />
+                      <Camera className="w-5 h-5 text-[#6E6E6E]" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[#1A1A1A] leading-tight">
                       {photoPreview ? "Foto actief" : "Foto toevoegen"}
                     </p>
-                    <p className="text-xs text-[#8A8A8A] mt-0.5 leading-snug">
+                    <p className="text-xs text-[#6E6E6E] mt-0.5 leading-snug">
                       {photoPreview
                         ? "Kleuranalyse op basis van jouw huidtoon"
                         : "Geeft nauwkeuriger kleuradvies"}
@@ -411,7 +411,7 @@ const ProfilePage: React.FC = () => {
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploadingPhoto}
-                      className="bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-xs py-2.5 px-5 rounded-full inline-flex items-center gap-2 transition-all duration-200 disabled:opacity-50"
+                      className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-xs py-2.5 px-5 rounded-full inline-flex items-center gap-2 transition-all duration-200 disabled:opacity-50"
                     >
                       {isUploadingPhoto ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                       {photoPreview ? "Vervang" : "Upload"}
@@ -419,7 +419,7 @@ const ProfilePage: React.FC = () => {
                     {photoPreview && (
                       <button
                         onClick={handleRemovePhoto}
-                        className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-xl border border-[#E5E5E5] flex items-center justify-center text-[#8A8A8A] hover:text-[#C24A4A] hover:border-[#C24A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C24A4A]/20"
+                        className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-xl border border-[#E5E5E5] flex items-center justify-center text-[#6E6E6E] hover:text-[#C24A4A] hover:border-[#C24A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C24A4A]/20"
                         aria-label="Foto verwijderen"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -427,7 +427,7 @@ const ProfilePage: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-[#8A8A8A] mt-3">Max 5 MB · JPG, PNG of WebP · Privacyveilig, alleen lokaal opgeslagen</p>
+                <p className="text-xs text-[#6E6E6E] mt-3">Max 5 MB · JPG, PNG of WebP · Privacyveilig, alleen lokaal opgeslagen</p>
               </SectionCard>
             </div>
 
@@ -445,15 +445,15 @@ const ProfilePage: React.FC = () => {
                       className="flex items-center gap-4 py-4 border-b border-[#E5E5E5]/50"
                     >
                       <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
-                        <User className="w-5 h-5 text-[#C2654A]" />
+                        <User className="w-5 h-5 text-[#A85740]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-[#1A1A1A] leading-tight">{displayName}</p>
-                        <p className="text-xs text-[#8A8A8A] mt-0.5">Weergavenaam</p>
+                        <p className="text-xs text-[#6E6E6E] mt-0.5">Weergavenaam</p>
                       </div>
                       <button
                         onClick={() => setIsEditingName(true)}
-                        className="text-sm font-semibold text-[#C2654A] hover:text-[#A8513A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 px-3 py-2.5 min-h-[44px]"
+                        className="text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20 px-3 py-2.5 min-h-[44px]"
                       >
                         Wijzig
                       </button>
@@ -477,10 +477,10 @@ const ProfilePage: React.FC = () => {
                         placeholder="Jouw naam"
                         maxLength={50}
                         autoFocus
-                        className={`w-full h-11 px-3.5 rounded-xl border text-[#1A1A1A] bg-white text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#C2654A]/20 focus:border-[#C2654A] ${
+                        className={`w-full h-11 px-3.5 rounded-xl border text-[#1A1A1A] bg-white text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#A85740]/20 focus:border-[#A85740] ${
                           displayNameError && displayNameDirty
                             ? "border-[#C24A4A]"
-                            : "border-[#E5E5E5] hover:border-[#C2654A]"
+                            : "border-[#E5E5E5] hover:border-[#A85740]"
                         }`}
                       />
                       {displayNameError && displayNameDirty && (
@@ -493,14 +493,14 @@ const ProfilePage: React.FC = () => {
                         <button
                           onClick={handleSaveName}
                           disabled={isSavingName || !!displayNameError}
-                          className="flex-1 inline-flex items-center justify-center gap-2 py-3 min-h-[44px] bg-[#C2654A] hover:bg-[#A8513A] text-white rounded-xl text-sm font-bold transition-colors duration-200 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                          className="flex-1 inline-flex items-center justify-center gap-2 py-3 min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white rounded-xl text-sm font-bold transition-colors duration-200 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                         >
                           {isSavingName ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                           Opslaan
                         </button>
                         <button
                           onClick={handleCancelName}
-                          className="flex-1 py-3 min-h-[44px] rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#8A8A8A] hover:bg-[#FAFAF8] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                          className="flex-1 py-3 min-h-[44px] rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:bg-[#FAFAF8] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                         >
                           Annuleer
                         </button>
@@ -511,11 +511,11 @@ const ProfilePage: React.FC = () => {
 
                 <div className="flex items-center gap-4 py-4 opacity-60 select-none">
                   <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-[#C2654A]" />
+                    <Mail className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[#1A1A1A] truncate leading-tight">{user.email}</p>
-                    <p className="text-xs text-[#8A8A8A] mt-0.5">E-mail (niet wijzigbaar)</p>
+                    <p className="text-xs text-[#6E6E6E] mt-0.5">E-mail (niet wijzigbaar)</p>
                   </div>
                 </div>
               </SectionCard>
@@ -540,11 +540,11 @@ const ProfilePage: React.FC = () => {
               <SectionCard delay={0.20}>
                 <div className="flex items-center gap-4 mb-3">
                   <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] flex items-center justify-center flex-shrink-0">
-                    <Shield className="w-5 h-5 text-[#C2654A]" />
+                    <Shield className="w-5 h-5 text-[#A85740]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[#1A1A1A] leading-tight">Privacy & cookies</p>
-                    <p className="text-xs text-[#8A8A8A] mt-0.5">We slaan alleen op wat nodig is</p>
+                    <p className="text-xs text-[#6E6E6E] mt-0.5">We slaan alleen op wat nodig is</p>
                   </div>
                 </div>
                 <CookieSettings />
@@ -574,14 +574,14 @@ const ProfilePage: React.FC = () => {
                         <button
                           onClick={async () => { await handlePasswordReset(); setShowResetConfirm(false); }}
                           disabled={isSendingReset}
-                          className="flex-1 py-3 min-h-[44px] rounded-xl bg-[#C2654A] hover:bg-[#A8513A] text-white text-sm font-bold transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                          className="flex-1 py-3 min-h-[44px] rounded-xl bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-bold transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                         >
                           {isSendingReset ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                           Verstuur link
                         </button>
                         <button
                           onClick={() => setShowResetConfirm(false)}
-                          className="flex-1 py-3 min-h-[44px] rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#8A8A8A] hover:bg-[#FAFAF8] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2654A]/20"
+                          className="flex-1 py-3 min-h-[44px] rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6E6E6E] hover:bg-[#FAFAF8] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/20"
                         >
                           Annuleer
                         </button>
@@ -607,7 +607,7 @@ const ProfilePage: React.FC = () => {
             >
               <button
                 onClick={handleLogout}
-                className="w-full py-4 text-center text-sm font-semibold text-[#8A8A8A] hover:text-[#C24A4A] transition-colors duration-200 border-t border-[#E5E5E5] flex items-center justify-center gap-2"
+                className="w-full py-4 text-center text-sm font-semibold text-[#6E6E6E] hover:text-[#C24A4A] transition-colors duration-200 border-t border-[#E5E5E5] flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
                 Uitloggen
@@ -626,7 +626,7 @@ const ProfilePage: React.FC = () => {
               transition={{ duration: 0.38, delay: 0.1 }}
               className="bg-white border border-[#E5E5E5] rounded-2xl p-7"
             >
-              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#8A8A8A] mb-4">Snelkoppelingen</p>
+              <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#6E6E6E] mb-4">Snelkoppelingen</p>
               {[
                 { icon: <Sparkles className="w-5 h-5" />, label: "Mijn outfits", sub: "Bekijk jouw resultaten", to: "/results" },
                 { icon: <Palette className="w-5 h-5" />, label: "Stijlquiz", sub: "Herdoe de quiz", to: "/onboarding" },
@@ -638,14 +638,14 @@ const ProfilePage: React.FC = () => {
                   onClick={() => navigate(to)}
                   className="w-full flex items-center gap-4 py-4 border-b border-[#E5E5E5]/50 last:border-none hover:bg-[#FAFAF8] transition-colors duration-200 text-left group -mx-3 px-3 rounded-xl"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] text-[#C2654A] flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#F5F0EB] text-[#A85740] flex items-center justify-center flex-shrink-0">
                     {icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[#1A1A1A] leading-tight">{label}</p>
-                    <p className="text-xs text-[#8A8A8A] mt-0.5">{sub}</p>
+                    <p className="text-xs text-[#6E6E6E] mt-0.5">{sub}</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#C2654A] transition-colors duration-200 flex-shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#A85740] transition-colors duration-200 flex-shrink-0" />
                 </button>
               ))}
             </motion.div>
@@ -656,7 +656,7 @@ const ProfilePage: React.FC = () => {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.38, delay: 0.18 }}
-                className="bg-[#C2654A] rounded-2xl p-7 text-white"
+                className="bg-[#A85740] rounded-2xl p-7 text-white"
               >
                 <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-white/70 mb-2 flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5" />
@@ -666,7 +666,7 @@ const ProfilePage: React.FC = () => {
                 <p className="text-sm text-white/80 leading-[1.6] mb-5">Uitgebreide kleuranalyse, persoonlijke Nova AI-assistent en meer outfits.</p>
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="w-full py-3 rounded-full bg-white text-[#C2654A] font-semibold text-sm text-center hover:bg-white/90 transition-colors duration-200"
+                  className="w-full py-3 rounded-full bg-white text-[#A85740] font-semibold text-sm text-center hover:bg-white/90 transition-colors duration-200"
                 >
                   Bekijk plannen
                 </button>
@@ -681,29 +681,16 @@ const ProfilePage: React.FC = () => {
                 transition={{ duration: 0.38, delay: 0.24 }}
                 className="bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl p-7"
               >
-                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#C2654A] mb-2">Jouw stijl-DNA</p>
+                <p className="text-[11px] font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-2">Jouw stijl-DNA</p>
                 {archetypeName && (
                   <p className="text-lg font-bold text-[#1A1A1A] leading-tight mb-1">{archetypeName as string}</p>
                 )}
                 {seasonLabel && (
-                  <p className="text-sm text-[#8A8A8A] mt-1 capitalize">{seasonLabel} type</p>
-                )}
-                {color?.palette && color.palette.length > 0 && (
-                  <div className="flex gap-1.5 flex-wrap mt-4">
-                    {color.palette.slice(0, 8).map((hex: string, i: number) => (
-                      <div
-                        key={i}
-                        role="img"
-                        aria-label={`Kleur ${hex}`}
-                        className="w-6 h-6 rounded-full ring-2 ring-white shadow-sm"
-                        style={{ backgroundColor: hex }}
-                      />
-                    ))}
-                  </div>
+                  <p className="text-sm text-[#6E6E6E] mt-1 capitalize">{seasonLabel} type</p>
                 )}
                 <button
                   onClick={() => navigate("/results")}
-                  className="w-full mt-5 py-2.5 rounded-full border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] text-center hover:border-[#C2654A] hover:text-[#C2654A] transition-all duration-200"
+                  className="w-full mt-5 py-2.5 rounded-full border border-[#E5E5E5] bg-white text-sm font-semibold text-[#1A1A1A] text-center hover:border-[#A85740] hover:text-[#A85740] transition-all duration-200"
                 >
                   Bekijk outfits
                 </button>

@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 
 export interface SubscriptionStats {
   monthlyUpgrades: number;
@@ -10,7 +10,12 @@ export async function getMonthlyUpgradeCount(): Promise<number> {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const { count, error } = await supabase
+    const sb = supabase();
+    if (!sb) {
+      return 2847;
+    }
+
+    const { count, error } = await sb
       .from("customer_subscriptions")
       .select("*", { count: "exact", head: true })
       .gte("created_at", startOfMonth.toISOString())

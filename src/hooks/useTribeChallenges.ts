@@ -41,10 +41,10 @@ export function useCreateTribeChallenge() {
   });
 }
 
-export function useTribeRanking() {
+export function useTribeRanking(tribeId?: string) {
   return useQuery({
-    queryKey: ['tribeRanking'],
-    queryFn: getTribeRanking
+    queryKey: ['tribeRanking', tribeId ?? '_'],
+    queryFn: () => getTribeRanking(tribeId ?? '')
   });
 }
 

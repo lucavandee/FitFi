@@ -17,7 +17,7 @@ import toast from 'react-hot-toast';
 export default function AdminBlogEditorPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -145,7 +145,7 @@ export default function AdminBlogEditorPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[#8A8A8A]">Laden...</p>
+          <p className="text-[#6E6E6E]">Laden...</p>
         </div>
       </div>
     );
@@ -156,7 +156,7 @@ export default function AdminBlogEditorPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Spinner size="lg" className="mx-auto mb-4" />
-          <p className="text-[#8A8A8A]">Post laden...</p>
+          <p className="text-[#6E6E6E]">Post laden...</p>
         </div>
       </div>
     );
@@ -175,7 +175,7 @@ export default function AdminBlogEditorPage() {
             <div>
               <button
                 onClick={() => navigate('/admin/blog')}
-                className="flex items-center gap-2 text-[#8A8A8A] hover:text-[#1A1A1A] mb-4"
+                className="flex items-center gap-2 text-[#6E6E6E] hover:text-[#1A1A1A] mb-4"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Terug naar overzicht
@@ -204,7 +204,7 @@ export default function AdminBlogEditorPage() {
               <button
                 onClick={() => handleSave('published')}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#A85740] transition-colors flex items-center gap-2 disabled:opacity-50"
               >
                 <Sparkles className="w-4 h-4" />
                 {saving ? 'Opslaan...' : 'Publiceren'}
@@ -226,7 +226,7 @@ export default function AdminBlogEditorPage() {
                 <h1 className="text-4xl font-bold text-[#1A1A1A] mb-4">
                   {formData.title || 'Titel'}
                 </h1>
-                <div className="flex items-center gap-4 text-sm text-[#8A8A8A] mb-6">
+                <div className="flex items-center gap-4 text-sm text-[#6E6E6E] mb-6">
                   <span>{formData.author_name}</span>
                   <span>•</span>
                   <span>{formData.read_time_minutes} min leestijd</span>
@@ -261,30 +261,30 @@ export default function AdminBlogEditorPage() {
                         value={formData.title}
                         onChange={(e) => handleTitleChange(e.target.value)}
                         placeholder="De titel van je blog post"
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B]"
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#1A1A1A] mb-2 flex items-center gap-2">
                         <LinkIcon className="w-4 h-4" />
-                        Slug * <span className="text-[#8A8A8A] font-normal">(URL pad)</span>
+                        Slug * <span className="text-[#6E6E6E] font-normal">(URL pad)</span>
                       </label>
                       <input
                         type="text"
                         value={formData.slug}
                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                         placeholder="de-titel-van-je-post"
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A] font-mono text-sm"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B] font-mono text-sm"
                       />
-                      <p className="mt-1 text-xs text-[#8A8A8A]">
+                      <p className="mt-1 text-xs text-[#6E6E6E]">
                         URL: fitfi.ai/blog/{formData.slug || 'slug'}
                       </p>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
-                        Excerpt * <span className="text-[#8A8A8A] font-normal">(Max 160 tekens voor SEO)</span>
+                        Excerpt * <span className="text-[#6E6E6E] font-normal">(Max 160 tekens voor SEO)</span>
                       </label>
                       <textarea
                         value={formData.excerpt}
@@ -292,23 +292,23 @@ export default function AdminBlogEditorPage() {
                         placeholder="Een korte samenvatting van je post..."
                         rows={3}
                         maxLength={160}
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B]"
                       />
-                      <p className="mt-1 text-xs text-[#8A8A8A]">
+                      <p className="mt-1 text-xs text-[#6E6E6E]">
                         {formData.excerpt.length}/160 tekens
                       </p>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
-                        Content * <span className="text-[#8A8A8A] font-normal">(Markdown ondersteund)</span>
+                        Content * <span className="text-[#6E6E6E] font-normal">(Markdown ondersteund)</span>
                       </label>
                       <textarea
                         value={formData.content}
                         onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                         placeholder="# Hoofdstuk 1&#10;&#10;Je content hier...&#10;&#10;## Subkop&#10;&#10;Meer tekst..."
                         rows={20}
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A] font-mono text-sm"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B] font-mono text-sm"
                       />
                     </div>
                   </div>
@@ -323,20 +323,20 @@ export default function AdminBlogEditorPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
-                        SEO Titel <span className="text-[#8A8A8A] font-normal">(Indien leeg, wordt titel gebruikt)</span>
+                        SEO Titel <span className="text-[#6E6E6E] font-normal">(Indien leeg, wordt titel gebruikt)</span>
                       </label>
                       <input
                         type="text"
                         value={formData.seo_meta_title}
                         onChange={(e) => setFormData({ ...formData, seo_meta_title: e.target.value })}
                         placeholder={formData.title || 'SEO titel'}
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B]"
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
-                        SEO Beschrijving <span className="text-[#8A8A8A] font-normal">(Indien leeg, wordt excerpt gebruikt)</span>
+                        SEO Beschrijving <span className="text-[#6E6E6E] font-normal">(Indien leeg, wordt excerpt gebruikt)</span>
                       </label>
                       <textarea
                         value={formData.seo_meta_description}
@@ -344,7 +344,7 @@ export default function AdminBlogEditorPage() {
                         placeholder={formData.excerpt || 'SEO beschrijving'}
                         rows={2}
                         maxLength={160}
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B]"
                       />
                     </div>
 
@@ -357,7 +357,7 @@ export default function AdminBlogEditorPage() {
                         value={formData.seo_focus_keyword}
                         onChange={(e) => setFormData({ ...formData, seo_focus_keyword: e.target.value })}
                         placeholder="stijltips, kleuradvies, etc."
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-[#A8513A]"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] focus:outline-none focus:ring-2 focus:ring-[#9A503B]"
                       />
                     </div>
                   </div>
@@ -412,7 +412,7 @@ export default function AdminBlogEditorPage() {
                         onChange={(e) => setFormData({ ...formData, author_bio: e.target.value })}
                         placeholder="Een korte bio van de auteur..."
                         rows={3}
-                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A]"
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E]"
                       />
                     </div>
 
@@ -459,7 +459,7 @@ export default function AdminBlogEditorPage() {
                       value={formData.featured_image_url}
                       onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
                       placeholder="https://images.pexels.com/..."
-                      className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#8A8A8A] text-sm"
+                      className="w-full px-4 py-2 rounded-lg border border-[#E5E5E5] bg-[#FAFAF8] text-[#1A1A1A] placeholder-[#6E6E6E] text-sm"
                     />
                     {formData.featured_image_url && (
                       <img
@@ -468,7 +468,7 @@ export default function AdminBlogEditorPage() {
                         className="w-full h-32 object-cover rounded-lg"
                       />
                     )}
-                    <p className="text-xs text-[#8A8A8A]">
+                    <p className="text-xs text-[#6E6E6E]">
                       Tip: Gebruik Pexels voor gratis stock foto's
                     </p>
                   </div>
@@ -492,7 +492,7 @@ export default function AdminBlogEditorPage() {
                       />
                       <button
                         onClick={handleAddTag}
-                        className="px-3 py-2 rounded-xl bg-[#A8513A] text-white hover:bg-[#C2654A] text-sm"
+                        className="px-3 py-2 rounded-xl bg-[#9A503B] text-white hover:bg-[#A85740] text-sm"
                       >
                         +
                       </button>
@@ -507,7 +507,7 @@ export default function AdminBlogEditorPage() {
                           {tag}
                           <button
                             onClick={() => handleRemoveTag(tag)}
-                            className="text-[#8A8A8A] hover:text-red-600"
+                            className="text-[#6E6E6E] hover:text-red-600"
                           >
                             ×
                           </button>

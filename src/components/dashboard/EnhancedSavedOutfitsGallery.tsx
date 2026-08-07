@@ -39,7 +39,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
   const { data: outfits, isLoading } = useQuery({
     queryKey: ["savedOutfits", userId, sortMode],
     queryFn: async () => {
-      const client = supabase();
+      const client = supabase;
       if (!client) return [];
 
       const { data, error } = await client
@@ -83,14 +83,14 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
         animate={{ opacity: 1, y: 0 }}
         className="bg-[#FFFFFF] border-2 border-dashed border-[#E5E5E5] rounded-2xl p-12 text-center"
       >
-        <Heart className="w-16 h-16 mx-auto text-[#8A8A8A] mb-4 opacity-50" />
+        <Heart className="w-16 h-16 mx-auto text-[#6E6E6E] mb-4 opacity-50" />
         <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">
           Nog geen opgeslagen outfits
         </h3>
-        <p className="text-[#8A8A8A] mb-6 max-w-md mx-auto">
+        <p className="text-[#6E6E6E] mb-6 max-w-md mx-auto">
           Begin met swipen en save je favoriete looks om een persoonlijke collectie op te bouwen
         </p>
-        <button className="px-6 py-3 bg-[#A8513A] text-white rounded-xl font-semibold text-base hover:bg-[#C2654A] transition-colors duration-200">
+        <button className="px-6 py-3 bg-[#9A503B] text-white rounded-xl font-semibold text-base hover:bg-[#A85740] transition-colors duration-200">
           Start met swipen
         </button>
       </motion.div>
@@ -102,7 +102,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
       {/* Controls Bar */}
       <div className="flex items-center justify-between gap-4 p-4 bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl shadow-sm">
         <div className="flex items-center gap-2">
-          <Heart className="w-5 h-5 text-[#C2654A]" />
+          <Heart className="w-5 h-5 text-[#A85740]" />
           <span className="text-sm font-semibold text-[#1A1A1A]">
             {outfits.length} {outfits.length === 1 ? "outfit" : "outfits"} opgeslagen
           </span>
@@ -112,7 +112,7 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
           {/* Sort Toggle */}
           <button
             onClick={() => setSortMode(sortMode === "recent" ? "oldest" : "recent")}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1A1A1A] bg-[#FAFAF8] hover:bg-[#FAF5F2] rounded-lg transition-colors border border-[#E5E5E5]"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1A1A1A] bg-[#FAFAF8] hover:bg-[#F5F0EB] rounded-lg transition-colors border border-[#E5E5E5]"
           >
             {sortMode === "recent" ? <Calendar className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
             {sortMode === "recent" ? "Nieuwste" : "Oudste"}
@@ -124,8 +124,8 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded transition-colors ${
                 viewMode === "grid"
-                  ? "bg-[#FAF5F2] text-[#A8513A]"
-                  : "text-[#8A8A8A] hover:text-[#1A1A1A]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
+                  : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
             >
               <Grid3x3 className="w-4 h-4" />
@@ -134,8 +134,8 @@ export function EnhancedSavedOutfitsGallery({ userId }: EnhancedSavedOutfitsGall
               onClick={() => setViewMode("list")}
               className={`p-2 rounded transition-colors ${
                 viewMode === "list"
-                  ? "bg-[#FAF5F2] text-[#A8513A]"
-                  : "text-[#8A8A8A] hover:text-[#1A1A1A]"
+                  ? "bg-[#F5F0EB] text-[#9A503B]"
+                  : "text-[#6E6E6E] hover:text-[#1A1A1A]"
               }`}
             >
               <List className="w-4 h-4" />
@@ -207,7 +207,7 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       whileHover={{ y: -8, scale: 1.02 }}
-      className="group relative aspect-[3/4] bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-xl overflow-hidden border-2 border-[#E5E5E5] hover:border-[#D4856E] shadow-sm hover:shadow-xl transition-all cursor-pointer"
+      className="group relative aspect-[3/4] bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-xl overflow-hidden border-2 border-[#E5E5E5] hover:border-[#A85740] shadow-sm hover:shadow-xl transition-all cursor-pointer"
     >
       {/* Nova Match Badge - Top Right */}
       <div className="absolute top-3 right-3 z-10">
@@ -216,8 +216,8 @@ function OutfitCard({ outfit, index }: { outfit: SavedOutfit; index: number }) {
 
       {/* Content placeholder */}
       <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-        <Heart className="w-12 h-12 text-[#D4856E] mb-2 group-hover:scale-110 transition-transform" />
-        <p className="text-xs text-center text-[#8A8A8A] font-medium">
+        <Heart className="w-12 h-12 text-[#A85740] mb-2 group-hover:scale-110 transition-transform" />
+        <p className="text-xs text-center text-[#6E6E6E] font-medium">
           Outfit #{outfit.id.substring(0, 8)}
         </p>
       </div>
@@ -269,11 +269,11 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.03 }}
-      className="group flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:border-[#D4856E] hover:shadow-md transition-all cursor-pointer"
+      className="group flex items-center gap-4 p-4 bg-[#FFFFFF] rounded-xl border border-[#E5E5E5] hover:border-[#A85740] hover:shadow-md transition-all cursor-pointer"
     >
       {/* Thumbnail */}
-      <div className="flex-shrink-0 relative w-20 h-28 bg-gradient-to-br from-[#FAF5F2] to-[#FAF5F2] rounded-lg flex items-center justify-center border border-[#E5E5E5] group-hover:scale-105 transition-transform">
-        <Heart className="w-6 h-6 text-[#D4856E]" />
+      <div className="flex-shrink-0 relative w-20 h-28 bg-gradient-to-br from-[#F5F0EB] to-[#F5F0EB] rounded-lg flex items-center justify-center border border-[#E5E5E5] group-hover:scale-105 transition-transform">
+        <Heart className="w-6 h-6 text-[#A85740]" />
       </div>
 
       {/* Info */}
@@ -284,7 +284,7 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
           </h4>
           <NovaMatchBadge score={matchScore} size="xs" />
         </div>
-        <p className="text-sm text-[#8A8A8A]">
+        <p className="text-sm text-[#6E6E6E]">
           Opgeslagen op{" "}
           {new Date(outfit.created_at).toLocaleDateString("nl-NL", {
             day: "numeric",
@@ -293,14 +293,14 @@ function OutfitListItem({ outfit, index }: { outfit: SavedOutfit; index: number 
           })}
         </p>
         {outfit.notes && (
-          <p className="text-xs text-[#8A8A8A] mt-1 line-clamp-1">
+          <p className="text-xs text-[#6E6E6E] mt-1 line-clamp-1">
             {outfit.notes}
           </p>
         )}
       </div>
 
       {/* Action */}
-      <Heart className="w-5 h-5 text-[#C2654A] fill-[#C2654A] group-hover:scale-110 transition-transform" />
+      <Heart className="w-5 h-5 text-[#A85740] fill-[#A85740] group-hover:scale-110 transition-transform" />
     </motion.div>
   );
 }

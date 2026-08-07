@@ -4,7 +4,6 @@ import { useUser } from "@/context/UserContext";
 import { fetchReferralsByInviter } from "@/services/dashboard/referralsService";
 import FoundersTierBadge from '@/components/founders/FoundersTierBadge';
 import FoundersTierPerks from '@/components/founders/FoundersTierPerks';
-import { resolveTier } from '@/config/foundersTiers';
 import urls from "@/utils/urls";
 
 export const FoundersBlock: React.FC = () => {
@@ -37,8 +36,6 @@ export const FoundersBlock: React.FC = () => {
     return () => { mounted = false; };
   }, [userId]);
 
-  const tier = resolveTier(refCount);
-
   return (
     <div className="rounded-2xl border border-[#E5E5E5] p-6 bg-[#FFFFFF] shadow-sm">
       <div className="flex items-center justify-between gap-4">
@@ -46,7 +43,7 @@ export const FoundersBlock: React.FC = () => {
           <h3 className="font-montserrat text-xl text-[#1A1A1A]">Founders</h3>
           <p className="text-sm text-gray-600">Nodig vrienden uit en verdien extra voordelen</p>
         </div>
-        <FoundersTierBadge tier={tier} />
+        <FoundersTierBadge referrals={loading ? 0 : refCount} />
       </div>
 
       <div className="mt-4 grid gap-3">

@@ -58,13 +58,15 @@ async function clearAnswers(userId: string): Promise<void> {
 
 async function submit(userId: string): Promise<QuizSubmission> {
   const answers = (await getAnswers(userId)) ?? ({} as QuizAnswers);
+  const now = new Date().toISOString();
   const submission: QuizSubmission = {
     id: crypto.randomUUID(),
-    userId,
-    createdAt: new Date().toISOString(),
+    user_id: userId,
     answers,
-    status: "submitted",
-  } as QuizSubmission;
+    completed_at: now,
+    created_at: now,
+    updated_at: now,
+  };
   safeWrite(LS_SUB(userId), submission);
   return submission;
 }

@@ -27,20 +27,20 @@ const HowItWorks: React.FC = () => {
     <section className="py-16 md:py-24 bg-[#FAFAF8] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E5E5] rounded-full text-sm font-semibold text-[#8A8A8A] mb-6">
-            <Sparkles className="w-4 h-4 text-[#C2654A]" aria-hidden="true" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E5E5] rounded-full text-sm font-semibold text-[#6E6E6E] mb-6">
+            <Sparkles className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
             HOE HET WERKT
           </div>
 
           <h2 className="font-heading font-bold tracking-tight text-[#1A1A1A] mb-4"
               style={{ fontSize: 'clamp(1.75rem, 3vw + 1rem, 2.75rem)', lineHeight: 1.1 }}>
             Van vraag tot{' '}
-            <span className="text-[#C2654A]">
+            <span className="text-[#A85740]">
               jouw stijlrapport
             </span>
           </h2>
 
-          <p className="text-base md:text-lg text-[#8A8A8A] max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-base md:text-lg text-[#6E6E6E] max-w-2xl mx-auto leading-relaxed font-light">
             In drie simpele stappen krijg je een compleet stijlrapport.
             Helder, direct en toepasbaar.
           </p>
@@ -55,11 +55,11 @@ const HowItWorks: React.FC = () => {
               return (
                 <div key={index} className="relative">
                   <div className="group relative bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
-                    <div className="absolute -top-4 -left-4 w-11 h-11 bg-[#C2654A] rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md">
+                    <div className="absolute -top-4 -left-4 w-11 h-11 bg-[#A85740] rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md">
                       {step.number}
                     </div>
 
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 shadow-sm bg-[#C2654A]"
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 shadow-sm bg-[#A85740]"
                          aria-hidden="true">
                       <Icon className="w-7 h-7 text-white" />
                     </div>
@@ -68,14 +68,14 @@ const HowItWorks: React.FC = () => {
                       {step.title}
                     </h3>
 
-                    <p className="text-[#8A8A8A] leading-relaxed text-sm md:text-base">
+                    <p className="text-[#6E6E6E] leading-relaxed text-sm md:text-base">
                       {step.description}
                     </p>
                   </div>
 
                   {!isLast && (
                     <div className="hidden md:block absolute top-1/2 -right-5 transform -translate-y-1/2 z-10">
-                      <ArrowRight className="w-5 h-5 text-[#8A8A8A]" aria-hidden="true" />
+                      <ArrowRight className="w-5 h-5 text-[#6E6E6E]" aria-hidden="true" />
                     </div>
                   )}
                 </div>
@@ -85,12 +85,12 @@ const HowItWorks: React.FC = () => {
         </div>
 
         <div className="text-center mt-12 md:mt-16">
-          <p className="text-base md:text-lg text-[#8A8A8A] mb-6 font-light">
+          <p className="text-base md:text-lg text-[#6E6E6E] mb-6 font-light">
             Klaar om te beginnen?
           </p>
           <a
             href="/stijlquiz"
-            className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#C2654A]/20 bg-[#C2654A] hover:bg-[#A8513A] text-white"
+            className="group inline-flex items-center gap-2.5 px-6 py-3 min-h-[48px] rounded-xl font-semibold text-base transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#A85740]/20 bg-[#A85740] hover:bg-[#9A503B] text-white"
             style={{
               boxShadow: '0 8px 40px rgba(194,101,74,0.45)',
             }}

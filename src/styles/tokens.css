@@ -158,7 +158,7 @@
   --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
   --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
 
-  /* Typography fallback (Tailwind configureert Montserrat/Lato) */
+  /* Typography fallback (Tailwind configureert Plus Jakarta Sans) */
   font-synthesis-weight: none;
 }
 
@@ -174,7 +174,7 @@ body {
   /* Minimum 16px on mobile, scale up on larger screens */
   font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   line-height: 1.6;
-  font-family: Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

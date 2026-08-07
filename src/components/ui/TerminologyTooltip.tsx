@@ -39,11 +39,11 @@ export function TerminologyTooltip({
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#FAF5F2] hover:bg-[#F4E8E3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C2654A] focus:ring-offset-1"
+        className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#F5F0EB] hover:bg-[#F4E8E3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:ring-offset-1"
         aria-label={`Uitleg over ${term}`}
         aria-expanded={isOpen}
       >
-        <HelpCircle className="w-3.5 h-3.5 text-[#C2654A]" />
+        <HelpCircle className="w-3.5 h-3.5 text-[#A85740]" />
       </button>
 
       {/* Tooltip Popup */}
@@ -65,12 +65,12 @@ export function TerminologyTooltip({
               {/* Content */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-[#C2654A] flex-shrink-0" />
+                  <Info className="w-4 h-4 text-[#A85740] flex-shrink-0" />
                   <h4 className="font-semibold text-sm text-[#1A1A1A]">
                     {term}
                   </h4>
                 </div>
-                <p className="text-sm text-[#8A8A8A] leading-relaxed">
+                <p className="text-sm text-[#6E6E6E] leading-relaxed">
                   {explanation}
                 </p>
               </div>

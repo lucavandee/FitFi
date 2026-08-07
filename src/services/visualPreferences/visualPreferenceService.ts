@@ -96,6 +96,23 @@ export class VisualPreferenceService {
       photos = photos.filter(
         (p: MoodPhoto) => !p.gender || allowedGenders!.includes(p.gender)
       );
+    } else if (photos.length > 0) {
+      // Gender onbekend, non-binary of niet-opgegeven. Hiervoor bleef
+      // allowedGenders leeg en gebeurde er dus GEEN filtering: de gebruiker
+      // kreeg heren- en dameskleding door elkaar te swipen, wat het profiel
+      // vervuilt en verwarrend oogt. Nu eerst uitsluitend unisex tonen, en
+      // alleen terugvallen op de volledige set wanneer dat te weinig
+      // materiaal oplevert om fatsoenlijk te kunnen swipen.
+      const MIN_FOTOS = 12;
+      const unisex = photos.filter((p: MoodPhoto) => !p.gender || p.gender === 'unisex');
+      if (unisex.length >= MIN_FOTOS) {
+        photos = unisex;
+      } else {
+        console.warn(
+          `[VisualPreferenceService] Slechts ${unisex.length} unisex-foto's beschikbaar; ` +
+          'val terug op de volledige set. Voeg meer unisex mood photos toe.'
+        );
+      }
     }
 
     if (shuffle) {

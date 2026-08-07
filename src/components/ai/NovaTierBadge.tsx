@@ -20,6 +20,11 @@ export default function NovaTierBadge({ className = '' }: NovaTierBadgeProps) {
 
     async function fetchUsage() {
       try {
+        if (!supabase) {
+          setLoading(false);
+          return;
+        }
+
         // Get tier and usage from Supabase
         const { data: accessData, error } = await supabase
           .rpc('can_use_nova', { p_user_id: user!.id });
@@ -68,9 +73,9 @@ export default function NovaTierBadge({ className = '' }: NovaTierBadgeProps) {
   const isAtLimit = usage.current >= usage.limit;
 
   // Color based on usage
-  let bgColor = 'bg-[#FAF5F2]';
-  let textColor = 'text-[#A8513A]';
-  let barColor = 'bg-[#C2654A]';
+  let bgColor = 'bg-[#F5F0EB]';
+  let textColor = 'text-[#9A503B]';
+  let barColor = 'bg-[#A85740]';
 
   if (isAtLimit) {
     bgColor = 'bg-red-100';

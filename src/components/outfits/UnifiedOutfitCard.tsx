@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Sparkles, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LazyImage } from '@/components/ui/LazyImage';
-import RequireAuth from '@/components/auth/RequireAuth';
+import RequireAuth from '@/components/auth/InlineAuthGate';
 import { isSaved, toggleSave } from '@/services/engagement';
 import { track } from '@/utils/telemetry';
 import { useUser } from '@/context/UserContext';
@@ -175,7 +175,7 @@ export default function UnifiedOutfitCard({
     <motion.div
       className={cn(
         'group relative rounded-2xl border-2 p-5 shadow-lg hover:shadow-2xl transition-all',
-        'focus-within:ring-4 focus-within:ring-[0 0 0 3px rgba(194,101,74,0.2)] focus-within:border-[#C2654A]',
+        'focus-within:ring-4 focus-within:ring-[0 0 0 3px rgba(194,101,74,0.2)] focus-within:border-[#A85740]',
         'overflow-hidden',
         currentTheme.container,
         isCompact && 'p-3 rounded-2xl',
@@ -210,7 +210,7 @@ export default function UnifiedOutfitCard({
       {/* Match score badge */}
       {outfit.matchPercentage && outfit.matchPercentage > 80 && (
         <motion.div
-          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-[#A8513A] text-white rounded-full text-xs font-bold"
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-[#9A503B] text-white rounded-full text-xs font-bold"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 15, delay: 0.2 }}
@@ -343,7 +343,7 @@ export default function UnifiedOutfitCard({
             <motion.button
               aria-label="Bekijk outfit details en shop"
               onClick={() => setShowDetailsModal(true)}
-              className="flex-1 px-4 py-3 min-h-[48px] bg-[#A8513A] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#D4856E] focus:ring-offset-2 hover:bg-[#C2654A]"
+              className="flex-1 px-4 py-3 min-h-[48px] bg-[#9A503B] text-white rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#A85740] focus:ring-offset-2 hover:bg-[#A85740]"
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.97 }}
             >
@@ -366,10 +366,10 @@ export default function UnifiedOutfitCard({
                 disabled={saveOutfit.isPending}
                 className={cn(
                   'w-12 h-12 min-w-[48px] min-h-[48px] flex items-center justify-center border rounded-xl transition-all',
-                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4856E]',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A85740]',
                   saveOutfit.isSuccess || saved
-                    ? 'border-[#C2654A] bg-[#A8513A] text-white'
-                    : 'border-[#E5E5E5] text-[#8A8A8A] hover:border-[#D4856E] hover:text-[#A8513A]',
+                    ? 'border-[#A85740] bg-[#9A503B] text-white'
+                    : 'border-[#E5E5E5] text-[#6E6E6E] hover:border-[#A85740] hover:text-[#9A503B]',
                   saveOutfit.isPending && 'opacity-50 cursor-not-allowed'
                 )}
                 whileHover={!saveOutfit.isPending ? { scale: 1.05 } : {}}

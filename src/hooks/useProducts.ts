@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { BoltProduct } from "@/services/data/types";
 import { fetchProducts } from "@/services/data/dataService";
 
@@ -26,45 +26,45 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState<'supabase' | 'local' | 'fallback'>('fallback');
   const [cached, setCached] = useState(false);
+  const aliveRef = useRef(true);
 
   const loadProducts = async () => {
-    let alive = true;
-    
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetchProducts(options);
-      
-      if (alive) {
+
+      if (aliveRef.current) {
         setData(response.data);
         setSource(response.source);
         setCached(response.cached);
-        
+
         // Set warning if using fallback
         if (response.source === 'fallback' && response.errors && response.errors.length > 0) {
           setError('Live data niet beschikbaar, fallback gebruikt');
         }
       }
     } catch (err) {
-      if (alive) {
+      if (aliveRef.current) {
         setError(err instanceof Error ? err.message : 'Onbekende fout');
         setData([]);
         setSource('fallback');
         setCached(false);
       }
     } finally {
-      if (alive) {
+      if (aliveRef.current) {
         setLoading(false);
       }
     }
-    
-    return () => { alive = false; };
   };
 
   useEffect(() => {
-    const cleanup = loadProducts();
-    return () => cleanup.then(fn => fn?.());
+    aliveRef.current = true;
+    loadProducts();
+    return () => {
+      aliveRef.current = false;
+    };
   }, [options.gender, options.category, options.archetype, options.limit, options.budgetMax]);
 
   return {

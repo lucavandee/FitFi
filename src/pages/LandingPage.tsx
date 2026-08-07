@@ -58,9 +58,11 @@ export default function LandingPage() {
   const { data: todayCount } = useQuery({
     queryKey: ["profiles-today"],
     queryFn: async () => {
+      const sb = supabase();
+      if (!sb) return 0;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const { count, error } = await supabase
+      const { count, error } = await sb
         .from("style_profiles")
         .select("*", { count: "exact", head: true })
         .gte("created_at", today.toISOString());
@@ -172,7 +174,7 @@ export default function LandingPage() {
       {/* Skip to main content — A11Y */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#C2654A] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#A85740] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
       >
         Spring naar hoofdinhoud
       </a>
@@ -218,7 +220,7 @@ export default function LandingPage() {
             <div className="max-w-[560px]">
               {/* Eyebrow */}
               <div className="flex items-center gap-[10px] mb-6">
-                <div className="w-8 h-px bg-[#C2654A]" aria-hidden="true" />
+                <div className="w-8 h-px bg-[#A85740]" aria-hidden="true" />
                 <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#F4E8E3]">
                   Persoonlijk stijladvies
                 </span>
@@ -252,7 +254,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                 <button
                   onClick={handleStartClick}
-                  className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-[15px] py-[18px] px-10 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] py-[18px] px-10 rounded-full transition-all duration-200 hover:-translate-y-0.5"
                   style={{
                     boxShadow: "0 12px 40px rgba(194,101,74,0.3)",
                   }}
@@ -290,7 +292,7 @@ export default function LandingPage() {
             }}
           >
             <div className="flex gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#C2654A]" />
+              <div className="w-10 h-10 rounded-full bg-[#A85740]" />
               <div className="w-10 h-10 rounded-full bg-[#D4913D]" />
               <div className="w-10 h-10 rounded-full bg-[#8B6E4E]" />
               <div className="w-10 h-10 rounded-full bg-[#3D5A4E]" />
@@ -299,7 +301,7 @@ export default function LandingPage() {
               <p className="text-sm font-bold text-[#1A1A1A]">
                 Jouw kleurpalet
               </p>
-              <p className="text-xs text-[#8A8A8A]">Warm · Herfst · Diep</p>
+              <p className="text-xs text-[#6E6E6E]">Warm · Herfst · Diep</p>
             </div>
           </div>
 
@@ -333,12 +335,12 @@ export default function LandingPage() {
                 key={i}
                 className="inline-flex items-center gap-3 mx-8 flex-shrink-0"
               >
-                <div className="w-1 h-1 rounded-full bg-[#C2654A] flex-shrink-0" />
+                <div className="w-1 h-1 rounded-full bg-[#A85740] flex-shrink-0" />
                 <span className="text-sm">
                   <strong className="font-bold text-[#1A1A1A]">
                     {item.bold}
                   </strong>{" "}
-                  <span className="font-medium text-[#8A8A8A]">
+                  <span className="font-medium text-[#6E6E6E]">
                     {item.rest}
                   </span>
                 </span>
@@ -355,7 +357,7 @@ export default function LandingPage() {
             {/* Header */}
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-16 md:mb-20">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740]">
                   Hoe het werkt
                 </span>
                 <h2 className="font-serif italic text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mt-4">
@@ -397,7 +399,7 @@ export default function LandingPage() {
                 },
               ].map((step, i) => (
                 <Reveal key={step.num} delay={i * 0.12}>
-                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-12 relative overflow-hidden group transition-all duration-200 hover:border-[#C2654A] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] h-full flex flex-col">
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-8 md:p-12 relative overflow-hidden group transition-all duration-200 hover:border-[#A85740] hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] h-full flex flex-col">
                     {/* Big number */}
                     <span
                       className="font-serif italic text-[72px] text-[#F5F0EB] absolute -top-3 right-5 select-none pointer-events-none"
@@ -408,7 +410,7 @@ export default function LandingPage() {
 
                     {/* Icon */}
                     <div className="w-12 h-12 rounded-2xl bg-[#F5F0EB] flex items-center justify-center mb-7">
-                      <step.icon className="w-[22px] h-[22px] text-[#C2654A]" />
+                      <step.icon className="w-[22px] h-[22px] text-[#A85740]" />
                     </div>
 
                     {/* Content */}
@@ -420,7 +422,7 @@ export default function LandingPage() {
                     </p>
 
                     {/* Tag */}
-                    <div className="flex items-center gap-2 mt-6 text-xs font-semibold text-[#C2654A]">
+                    <div className="flex items-center gap-2 mt-6 text-xs font-semibold text-[#A85740]">
                       <step.tagIcon className="w-3.5 h-3.5" />
                       {step.tag}
                     </div>
@@ -451,7 +453,7 @@ export default function LandingPage() {
               className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#F5F0EB]"
               delay={0.12}
             >
-              <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A] mb-4">
+              <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740] mb-4">
                 Kleuradvies
               </span>
               <h2 className="font-serif italic text-[32px] md:text-[48px] text-[#1A1A1A] leading-[1.05] mb-6">
@@ -471,7 +473,7 @@ export default function LandingPage() {
                     key={item}
                     className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.6]"
                   >
-                    <div className="w-2 h-2 rounded-full bg-[#C2654A] mt-2 flex-shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[#A85740] mt-2 flex-shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -490,7 +492,7 @@ export default function LandingPage() {
               className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#FAFAF8] order-2 lg:order-1"
               delay={0.12}
             >
-              <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A] mb-4">
+              <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740] mb-4">
                 Outfits
               </span>
               <h2 className="font-serif italic text-[32px] md:text-[48px] text-[#1A1A1A] leading-[1.05] mb-6">
@@ -510,7 +512,7 @@ export default function LandingPage() {
                     key={item}
                     className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.6]"
                   >
-                    <div className="w-2 h-2 rounded-full bg-[#C2654A] mt-2 flex-shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[#A85740] mt-2 flex-shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -537,7 +539,7 @@ export default function LandingPage() {
             {/* Header */}
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-16 md:mb-20">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740]">
                   Privacy & vertrouwen
                 </span>
                 <h2 className="font-serif italic text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mt-4">
@@ -572,7 +574,7 @@ export default function LandingPage() {
                 <Reveal key={card.title} delay={i * 0.12}>
                   <div className="bg-[#F5F0EB] rounded-2xl p-8 md:p-10 h-full">
                     <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mb-6">
-                      <card.icon className="w-[22px] h-[22px] text-[#C2654A]" />
+                      <card.icon className="w-[22px] h-[22px] text-[#A85740]" />
                     </div>
                     <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
                       {card.title}
@@ -595,7 +597,7 @@ export default function LandingPage() {
             {/* Header */}
             <Reveal>
               <div className="text-center max-w-[680px] mx-auto mb-16 md:mb-20">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#C2654A]">
+                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740]">
                   Ervaringen
                 </span>
                 <h2 className="font-serif italic text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mt-4">
@@ -629,7 +631,7 @@ export default function LandingPage() {
                     {/* Author */}
                     <div className="flex items-center gap-3.5 pt-5 border-t border-[#E5E5E5]">
                       <div className="w-11 h-11 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-[#C2654A]">
+                        <span className="text-sm font-bold text-[#A85740]">
                           {review.initial}
                         </span>
                       </div>
@@ -637,7 +639,7 @@ export default function LandingPage() {
                         <p className="text-sm font-bold text-[#1A1A1A]">
                           {review.name}
                         </p>
-                        <p className="text-xs text-[#8A8A8A]">{review.meta}</p>
+                        <p className="text-xs text-[#6E6E6E]">{review.meta}</p>
                       </div>
                     </div>
                   </article>
@@ -662,7 +664,7 @@ export default function LandingPage() {
                 </p>
                 <button
                   onClick={handleStartClick}
-                  className="group inline-flex items-center gap-3 bg-[#C2654A] hover:bg-[#A8513A] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-full transition-all duration-200 hover:-translate-y-0.5"
                   style={{
                     boxShadow: "0 12px 40px rgba(194,101,74,0.3)",
                   }}

@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { getSessionId } from '@/utils/sessionId';
 
 function hashString(input: string): string {
   let hash = 0;
@@ -8,18 +9,6 @@ function hashString(input: string): string {
     hash = hash & hash;
   }
   return Math.abs(hash).toString(36).padStart(8, '0').slice(0, 8);
-}
-
-function getSessionId(): string {
-  const key = 'fitfi_session_id';
-  let sessionId = sessionStorage.getItem(key);
-
-  if (!sessionId) {
-    sessionId = `${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-    sessionStorage.setItem(key, sessionId);
-  }
-
-  return sessionId;
 }
 
 export interface ClickRefParams {
@@ -44,6 +33,11 @@ export async function logAffiliateClick(params: {
   merchantName?: string;
 }): Promise<void> {
   try {
+    if (!supabase) {
+      console.warn('[AffiliateClick] Supabase client unavailable');
+      return;
+    }
+
     const { error } = await supabase
       .from('affiliate_clicks')
       .insert({

@@ -1,5 +1,7 @@
-import { supabase } from '@/lib/supabase';
-import type { InsightType } from '@/components/Dashboard/NovaInsightCard';
+import { getSupabase } from '@/lib/supabase';
+// Relatief pad omvat de ambient module-shim in types/ambient-shims.d.ts
+// (die het "@/..." pad overschrijft met een uitgeklede default-export type).
+import type { InsightType } from '../../components/Dashboard/NovaInsightCard';
 
 function hashInsight(type: InsightType, insight: string): string {
   return `${type}:${insight.substring(0, 50)}`;
@@ -12,7 +14,7 @@ export async function dismissInsight(
   daysUntilExpiry: number = 7
 ): Promise<boolean> {
   try {
-    const client = supabase();
+    const client = getSupabase();
     if (!client) return false;
 
     const hash = hashInsight(type, insight);
@@ -45,7 +47,7 @@ export async function dismissInsight(
 
 export async function getDismissedInsights(userId: string): Promise<Set<string>> {
   try {
-    const client = supabase();
+    const client = getSupabase();
     if (!client) return new Set();
 
     const { data, error } = await client
@@ -72,7 +74,7 @@ export async function undismissInsight(
   insight: string
 ): Promise<boolean> {
   try {
-    const client = supabase();
+    const client = getSupabase();
     if (!client) return false;
 
     const hash = hashInsight(type, insight);

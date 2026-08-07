@@ -162,12 +162,15 @@ dist-ssr/
 ehthumbs.db
 Thumbs.db
 
-# Test files and reports
-tests/
-test/
-__tests__/
-*.test.*
-*.spec.*
+# Testrapporten en -artefacten. Uitsluitend uitvoer, geen broncode.
+#
+# Hier stonden tot 2026-08-06 ook tests/, test/, __tests__/, *.test.* en
+# *.spec.*, toegevoegd in b0ebe39f ("Project Optimalisatie & Verkleining").
+# Daardoor werd de hele testsuite buiten versiebeheer gehouden: elf bestanden
+# stonden er nog in van voor die commit, maar src/engine/__tests__/jayden-r7.test.ts
+# stond alleen op deze machine en elke nieuwe test verdween stil bij het
+# committen. Een test die niet in de repo staat, draait niet in CI en is een
+# git clean van weg.
 coverage/
 .nyc_output/
 playwright-report/
@@ -228,3 +231,4 @@ desktop.ini
 # Claude Code per-project state and vault references
 .claude/
 CLAUDE-vault.md
+.gstack/

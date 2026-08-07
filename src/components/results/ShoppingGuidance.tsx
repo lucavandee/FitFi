@@ -30,11 +30,11 @@ export function ShoppingGuidance({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-gradient-to-br from-[#FAF5F2] via-white to-[#FAF5F2] rounded-2xl border-2 border-[#F4E8E3] p-8 shadow-xl"
+      className="bg-gradient-to-br from-[#F5F0EB] via-white to-[#F5F0EB] rounded-2xl border-2 border-[#F4E8E3] p-8 shadow-xl"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#C2654A] to-[#C2654A] flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center">
           <ShoppingBag className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -51,7 +51,7 @@ export function ShoppingGuidance({
         {/* Must-Haves */}
         <div className="bg-white rounded-2xl p-6 border border-[#E5E5E5]">
           <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-[#C2654A]" />
+            <CheckCircle className="w-5 h-5 text-[#A85740]" />
             <h4 className="font-bold text-[#1A1A1A]">Zoek deze kleuren</h4>
           </div>
           <ul className="space-y-2">
@@ -60,7 +60,7 @@ export function ShoppingGuidance({
                 key={idx}
                 className="flex items-center gap-2 text-sm text-[#4A4A4A]"
               >
-                <div className="w-2 h-2 rounded-full bg-[#C2654A]" />
+                <div className="w-2 h-2 rounded-full bg-[#A85740]" />
                 <span>{item}</span>
               </li>
             ))}
@@ -107,8 +107,8 @@ export function ShoppingGuidance({
       </div>
 
       {/* Pro Tip */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-[#FAF5F2] to-[#FAF5F2] rounded-xl">
-        <p className="text-sm text-[#8A3D28] leading-relaxed">
+      <div className="mt-6 p-4 bg-gradient-to-r from-[#F5F0EB] to-[#F5F0EB] rounded-xl">
+        <p className="text-sm text-[#9A503B] leading-relaxed">
           <strong>Pro tip:</strong> Screenshot deze sectie en bewaar hem in je telefoon.
           Zo heb je altijd je persoonlijke kleurgids bij de hand tijdens het shoppen!
         </p>

@@ -100,18 +100,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .select('tier, is_admin, gender, created_at')
           .eq('id', session.user.id)
           .maybeSingle()
-          .then(({ data: profile }) => {
-            if (profile) {
-              setUser(prev => prev ? {
-                ...prev,
-                tier: profile.tier as 'free' | 'premium' | 'founder',
-                isAdmin: profile.is_admin === true,
-                gender: profile.gender as 'male' | 'female' | undefined,
-                created_at: profile.created_at
-              } : null);
-            }
-          })
-          .catch(() => {});
+          .then(
+            ({ data: profile }) => {
+              if (profile) {
+                setUser(prev => prev ? {
+                  ...prev,
+                  tier: profile.tier as 'free' | 'premium' | 'founder',
+                  isAdmin: profile.is_admin === true,
+                  gender: profile.gender as 'male' | 'female' | undefined,
+                  created_at: profile.created_at
+                } : null);
+              }
+            },
+            () => {}
+          );
       } else {
         setUser(null);
         setStatus('unauthenticated');

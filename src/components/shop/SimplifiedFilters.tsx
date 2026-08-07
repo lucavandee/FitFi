@@ -139,7 +139,7 @@ export function SimplifiedFilters({
       <div className="border-b border-[#E5E5E5] last:border-0">
         <button
           onClick={() => setExpandedSection(isExpanded ? null : id)}
-          className="w-full flex items-center justify-between py-4 px-1 text-left font-semibold text-[#1A1A1A] hover:text-[#C2654A] transition-colors"
+          className="w-full flex items-center justify-between py-4 px-1 text-left font-semibold text-[#1A1A1A] hover:text-[#A85740] transition-colors"
         >
           <span>{title}</span>
           <ChevronRight
@@ -170,7 +170,7 @@ export function SimplifiedFilters({
       {/* Header */}
       <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#E5E5E5]">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5 text-[#C2654A]" aria-hidden="true" />
+          <SlidersHorizontal className="w-5 h-5 text-[#A85740]" aria-hidden="true" />
           <h3 className="font-bold text-lg text-[#1A1A1A]">Filters</h3>
         </div>
 
@@ -178,7 +178,7 @@ export function SimplifiedFilters({
           {hasActiveFilters && (
             <button
               onClick={clearAll}
-              className="text-sm text-[#C2654A] hover:text-[#A8513A] font-medium"
+              className="text-sm text-[#A85740] hover:text-[#9A503B] font-medium"
             >
               Wis alles
             </button>
@@ -197,8 +197,8 @@ export function SimplifiedFilters({
 
       {/* Active Filters Breadcrumb */}
       {hasActiveFilters && (
-        <div className="mb-4 p-3 bg-[#FAF5F2] rounded-xl">
-          <p className="text-xs font-medium text-[#A8513A] mb-2">
+        <div className="mb-4 p-3 bg-[#F5F0EB] rounded-xl">
+          <p className="text-xs font-medium text-[#9A503B] mb-2">
             Actieve filters:
           </p>
           <div className="flex flex-wrap gap-2">
@@ -242,8 +242,8 @@ export function SimplifiedFilters({
                 onClick={() => toggleCategory(cat.id)}
                 className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-[#C2654A] bg-[#FAF5F2]'
-                    : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#D4856E]'
+                    ? 'border-[#A85740] bg-[#F5F0EB]'
+                    : 'border-[#E5E5E5] bg-[#FFFFFF] hover:border-[#A85740]'
                 }`}
               >
                 <span className="text-2xl" role="img" aria-label={cat.label}>
@@ -255,7 +255,7 @@ export function SimplifiedFilters({
                   </span>
                 </div>
                 {isSelected && (
-                  <Check className="w-4 h-4 text-[#C2654A] flex-shrink-0" aria-hidden="true" />
+                  <Check className="w-4 h-4 text-[#A85740] flex-shrink-0" aria-hidden="true" />
                 )}
               </button>
             );
@@ -275,8 +275,8 @@ export function SimplifiedFilters({
                 onClick={() => setPriceRange(range.min, range.max)}
                 className={`w-full text-left px-3 py-2 rounded-lg border transition-all ${
                   isSelected
-                    ? 'border-[#C2654A] bg-[#FAF5F2] font-semibold'
-                    : 'border-[#E5E5E5] hover:border-[#D4856E]'
+                    ? 'border-[#A85740] bg-[#F5F0EB] font-semibold'
+                    : 'border-[#E5E5E5] hover:border-[#A85740]'
                 }`}
               >
                 <span className="text-sm">{range.label}</span>
@@ -301,7 +301,7 @@ export function SimplifiedFilters({
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleStyle(style)}
-                    className="w-4 h-4 rounded border-[#E5E5E5] text-[#C2654A] focus:ring-[#D4856E]"
+                    className="w-4 h-4 rounded border-[#E5E5E5] text-[#A85740] focus:ring-[#A85740]"
                   />
                   <span className="text-sm">{style}</span>
                 </label>
@@ -323,7 +323,7 @@ export function SimplifiedFilters({
                   onClick={() => toggleColor(color)}
                   className={`aspect-square rounded-lg border-2 transition-all ${
                     isSelected
-                      ? 'border-[#C2654A] scale-110'
+                      ? 'border-[#A85740] scale-110'
                       : 'border-[#E5E5E5] hover:scale-105'
                   }`}
                   style={{ backgroundColor: color }}

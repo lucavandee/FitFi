@@ -3,7 +3,7 @@ import { Award, Star, Crown, Gift } from 'lucide-react';
 import Progress from '@/components/ui/Progress';
 import { resolveTier } from '@/config/foundersTiers';
 
-const ICONS: Record<string, React.ComponentType<{ size?: number }>> = { Award, Star, Crown, Gift };
+const ICONS: Record<string, typeof Award> = { Award, Star, Crown, Gift };
 
 function getIcon(name?: string) {
   if (!name) return Gift;
