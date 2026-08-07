@@ -48,7 +48,10 @@ class NavigationService {
     error: null
   };
   private listeners: ((state: NavigationState) => void)[] = [];
-  private progressInterval: NodeJS.Timeout | null = null;
+  // Browser context (Vite/DOM), not Node — `setInterval` returns a number here,
+  // not NodeJS.Timeout. Zelfde patroon als supabaseHealth.ts en
+  // interactionTrackingService.ts, die dit al goed hadden staan.
+  private progressInterval: ReturnType<typeof setInterval> | null = null;
 
   /**
    * Initialize the navigation service with a navigate function
