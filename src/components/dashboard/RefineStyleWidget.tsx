@@ -29,6 +29,8 @@ export function RefineStyleWidget() {
             .from('style_profiles')
             .select('visual_preference_skipped, visual_preference_completed_at')
             .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
             .maybeSingle();
 
           if (profile) {

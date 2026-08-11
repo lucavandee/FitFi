@@ -489,6 +489,7 @@ export default function OnboardingFlowPage() {
           .select('id')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
         existingProfile = data;
       }
@@ -527,6 +528,7 @@ export default function OnboardingFlowPage() {
 
       const { data: verifyData, error: verifyError } = await verifyQuery
         .order('created_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (verifyError || !verifyData) return false;

@@ -661,6 +661,8 @@ export class StyleProfileGenerator {
         .from('style_profiles')
         .select('color_analysis, photo_url')
         .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (error) {

@@ -320,7 +320,7 @@ WHERE email = '${user?.email || 'jouw@email.com'}';`}
           <StatCard
             icon={TrendingUp}
             label="Gem. Click Rate"
-            value={`${stats?.avg_click_rate.toFixed(1)}%`}
+            value={`${(stats?.avg_click_rate ?? 0).toFixed(1)}%`}
             color="accent"
           />
         </div>

@@ -217,7 +217,7 @@ export default function AdminDashboardPage() {
               >
                 <Activity className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.growth.last_7d || 0)}
+                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.growth?.last_7d || 0)}
                 </div>
                 <div className="text-sm opacity-90">Actief (7d)</div>
               </motion.div>
@@ -230,7 +230,7 @@ export default function AdminDashboardPage() {
               >
                 <Award className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.tier_breakdown.premium || 0)}
+                  {loading ? <span className="inline-block w-8 h-7 bg-white/30 rounded animate-pulse" /> : (metrics?.tier_breakdown?.premium || 0)}
                 </div>
                 <div className="text-sm opacity-90">Premium Users</div>
               </motion.div>
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
               >
                 <TrendingUp className="w-8 h-8 mb-2 opacity-80" />
                 <div className="text-2xl font-bold mb-1">
-                  {loading ? <span className="inline-block w-10 h-7 bg-white/30 rounded animate-pulse" /> : `${(metrics?.total_users ? (metrics.engagement.with_quiz_completed / metrics.total_users) * 100 : 0).toFixed(0)}%`}
+                  {loading ? <span className="inline-block w-10 h-7 bg-white/30 rounded animate-pulse" /> : `${(metrics?.total_users ? ((metrics.engagement?.with_quiz_completed ?? 0) / metrics.total_users) * 100 : 0).toFixed(0)}%`}
                 </div>
                 <div className="text-sm opacity-90">Quiz Completion</div>
               </motion.div>

@@ -130,6 +130,8 @@ export async function* streamChat(opts: NovaStreamOpts): AsyncGenerator<string, 
           .from('style_profiles')
           .select('*')
           .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
 
         if (profile && !error) {

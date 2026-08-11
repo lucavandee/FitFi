@@ -55,6 +55,7 @@ class ProfileSyncService {
           .select('*')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
 
         if (error || !data) return false;
@@ -97,6 +98,7 @@ class ProfileSyncService {
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
 
         if (error) {
@@ -162,6 +164,7 @@ class ProfileSyncService {
             .select('*')
             .eq('session_id', sessionId)
             .order('created_at', { ascending: false })
+            .limit(1)
             .maybeSingle();
 
           if (error) {
@@ -252,6 +255,7 @@ class ProfileSyncService {
           .select('id')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
         existingProfile = data;
       }
