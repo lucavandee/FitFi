@@ -68,6 +68,7 @@ export async function fetchUserContext(
         .select("*")
         .eq("session_id", sessionId)
         .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (error) {
@@ -84,6 +85,7 @@ export async function fetchUserContext(
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (error) {

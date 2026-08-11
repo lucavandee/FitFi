@@ -47,6 +47,69 @@ export interface AuditLogEntry {
   created_at: string;
 }
 
+function getal(waarde: unknown): number {
+  return typeof waarde === 'number' && Number.isFinite(waarde) ? waarde : 0;
+}
+
+function tak(bron: Record<string, unknown>, sleutel: string): Record<string, unknown> {
+  const waarde = bron[sleutel];
+  return waarde !== null && typeof waarde === 'object' && !Array.isArray(waarde)
+    ? (waarde as Record<string, unknown>)
+    : {};
+}
+
+/**
+ * Maakt van de RPC-payload altijd een compleet DashboardMetrics-object.
+ *
+ * `get_dashboard_metrics` is twee keer van vorm veranderd. De versie van
+ * migratie 20251020135118 leverde geneste `growth`, `engagement`, `referrals`
+ * en `admin_count`; de recursie-fix van 20251103103800 gooide die weg en gaf
+ * er `active_users_last_7_days` en `quiz_completion_rate` voor terug. De UI
+ * las nog de oude vorm en crashte op de nieuwe. Deze functie leest beide, en
+ * vult wat de database niet meer levert met nul in plaats van undefined.
+ *
+ * Exported zodat de regressietest hem los kan aanroepen.
+ */
+export function normalizeDashboardMetrics(raw: unknown): DashboardMetrics | null {
+  if (raw === null || raw === undefined) return null;
+
+  const bron: Record<string, unknown> =
+    typeof raw === 'object' && !Array.isArray(raw) ? (raw as Record<string, unknown>) : {};
+
+  const tiers = tak(bron, 'tier_breakdown');
+  const groei = tak(bron, 'growth');
+  const betrokkenheid = tak(bron, 'engagement');
+  const referrals = tak(bron, 'referrals');
+
+  const totaalGebruikers = getal(bron.total_users);
+  const quizRatio = getal(bron.quiz_completion_rate);
+
+  return {
+    total_users: totaalGebruikers,
+    admin_count: getal(bron.admin_count),
+    tier_breakdown: {
+      free: getal(tiers.free),
+      premium: getal(tiers.premium),
+      founder: getal(tiers.founder),
+    },
+    growth: {
+      last_7d: getal(groei.last_7d) || getal(bron.active_users_last_7_days),
+      last_30d: getal(groei.last_30d),
+      last_90d: getal(groei.last_90d),
+    },
+    engagement: {
+      with_style_profile: getal(betrokkenheid.with_style_profile),
+      with_saved_outfits: getal(betrokkenheid.with_saved_outfits),
+      with_quiz_completed:
+        getal(betrokkenheid.with_quiz_completed) || Math.round(quizRatio * totaalGebruikers),
+    },
+    referrals: {
+      users_with_referrals: getal(referrals.users_with_referrals),
+      total_referrals: getal(referrals.total_referrals),
+    },
+  };
+}
+
 export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
   try {
     const sb = supabase();
@@ -56,7 +119,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics | null> {
       console.error('Failed to fetch dashboard metrics:', error);
       return null;
     }
-    return data as DashboardMetrics;
+    return normalizeDashboardMetrics(data);
   } catch (err) {
     console.error('Exception fetching dashboard metrics:', err);
     return null;
