@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -15,6 +15,52 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useTestimonials } from "@/hooks/useTestimonials";
+import { track as trackFunnel } from "@/utils/analytics";
+
+const PAGE = "landing";
+
+/* ─── Scrolldiepte ─── */
+/*
+ * Meet 25/50/75/100 procent, elk hoogstens een keer per paginabezoek.
+ * De hook staat bewust in dit bestand en niet in een gedeelde module die de
+ * andere pagina's importeren: pagina's worden lazy geladen, en een import over
+ * paginabestanden heen trekt de hele pagina mee in de chunk van de ander.
+ */
+function useScrollDepth(page: string) {
+  useEffect(() => {
+    const drempels = [25, 50, 75, 100];
+    let hoogstGemeld = 0;
+    let frame = 0;
+
+    const meet = () => {
+      frame = 0;
+      const scrollbaar =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollbaar <= 0) return;
+
+      const pct = (window.scrollY / scrollbaar) * 100;
+      for (const drempel of drempels) {
+        // Marge van 0,5 procent: op 100 procent komt scrollY door afronding
+        // en zoom zelden exact op de maximale waarde uit.
+        if (drempel > hoogstGemeld && pct >= drempel - 0.5) {
+          hoogstGemeld = drempel;
+          trackFunnel("scroll_depth", { page, depth: drempel });
+        }
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(meet);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [page]);
+}
 
 /* ─── Scroll-reveal wrapper ─── */
 function Reveal({
@@ -28,14 +74,25 @@ function Reveal({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const beperkteBeweging = useReducedMotion();
+
+  // Bij reduced motion staat scroll-behavior: smooth uit, dus een ankerlink,
+  // Ctrl+F of terugnavigatie springt echt. De observer vuurt dan niet voor wat
+  // je overslaat en het blok blijft permanent op opacity 0. Daarom niet op
+  // zichtbaarheid wachten maar meteen tonen.
+  const tonen = beperkteBeweging || isInView;
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }}
+      initial={beperkteBeweging ? false : { opacity: 0, y: 40 }}
+      animate={tonen ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={
+        beperkteBeweging
+          ? { duration: 0 }
+          : { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }
+      }
     >
       {children}
     </motion.div>
@@ -63,7 +120,11 @@ export default function LandingPage() {
 
   const { testimonials } = useTestimonials();
 
-  const handleStartClick = () => {
+  useScrollDepth(PAGE);
+
+  const handleStartClick = (position: string) => {
+    trackFunnel("cta_click", { page: PAGE, position });
+    trackFunnel("quiz_start", { page: PAGE, position });
     navigate("/onboarding");
   };
 
@@ -187,12 +248,16 @@ export default function LandingPage() {
             <source
               media="(max-width: 1023px)"
               srcSet="/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
+              width={1152}
+              height={2048}
             />
             <img
               src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
               alt="Stijlvol stel op een Amsterdams kanaal"
               className="absolute inset-0 w-full h-full object-cover"
               style={{ objectPosition: "center 20%" }}
+              width={2048}
+              height={1152}
               loading="eager"
               fetchPriority="high"
             />
@@ -246,7 +311,7 @@ export default function LandingPage() {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                 <button
-                  onClick={handleStartClick}
+                  onClick={() => handleStartClick("hero")}
                   className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] py-[18px] px-10 rounded-full transition-all duration-200 hover:-translate-y-0.5"
                   style={{
                     boxShadow: "0 12px 40px rgba(194,101,74,0.3)",
@@ -437,6 +502,8 @@ export default function LandingPage() {
                 src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
                 alt="Persoonlijk kleuradvies en kleurpalet"
                 className="w-full h-full min-h-[400px] lg:min-h-[640px] object-cover"
+                width={2048}
+                height={2048}
                 loading="lazy"
               />
             </Reveal>
@@ -518,6 +585,8 @@ export default function LandingPage() {
                 src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
                 alt="Persoonlijke outfit combinaties"
                 className="w-full h-full min-h-[400px] lg:min-h-[640px] object-cover"
+                width={2048}
+                height={2048}
                 loading="lazy"
               />
             </Reveal>
@@ -659,7 +728,7 @@ export default function LandingPage() {
                   Gratis. Ongeveer vijf minuten. Geen account nodig.
                 </p>
                 <button
-                  onClick={handleStartClick}
+                  onClick={() => handleStartClick("footer")}
                   className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-full transition-all duration-200 hover:-translate-y-0.5"
                   style={{
                     boxShadow: "0 12px 40px rgba(194,101,74,0.3)",

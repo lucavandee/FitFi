@@ -1,6 +1,8 @@
 // /src/App.tsx
 import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
+import ScrollToTop from "@/components/ScrollToTop";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
@@ -130,9 +132,12 @@ function AppShell() {
 
   return (
     <div className={isFullscreen ? undefined : "min-h-screen bg-[#FAFAF8] text-[#1A1A1A]"}>
+      {/* reducedMotion="user" laat framer-motion de systeemvoorkeur volgen; de CSS-regel alleen werkt niet omdat framer inline styles per frame schrijft */}
+      <MotionConfig reducedMotion="user">
       <ErrorBoundary>
         <ProfileSyncInitializer />
         <AwinMasterTag />
+        <ScrollToTop />
         {!isFullscreen && <Navbar />}
         <Suspense fallback={
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center gap-3" style={{ minHeight: 'calc(100vh - 72px)' }} role="status" aria-live="polite">
@@ -222,6 +227,7 @@ function AppShell() {
         <InstallPrompt />
         <AnalyticsLoader />
       </ErrorBoundary>
+      </MotionConfig>
     </div>
   );
 }

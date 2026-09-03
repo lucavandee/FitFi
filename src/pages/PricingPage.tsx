@@ -17,12 +17,71 @@ import { useCreateCheckout } from "@/hooks/useCreateCheckout";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
+import { track as trackFunnel } from "@/utils/analytics";
+
+const PAGE = "pricing";
+
+/* ─── Scrolldiepte ────────────────────────────────────────────────────────── */
+/*
+ * Meet 25/50/75/100 procent, elk hoogstens een keer per paginabezoek.
+ * Bewust een kopie in dit bestand en geen import uit een ander paginabestand:
+ * pagina's worden lazy geladen, en zo'n import trekt die hele pagina mee in de
+ * chunk van deze pagina.
+ */
+function useScrollDepth(page: string) {
+  useEffect(() => {
+    const drempels = [25, 50, 75, 100];
+    let hoogstGemeld = 0;
+    let frame = 0;
+
+    const meet = () => {
+      frame = 0;
+      const scrollbaar =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollbaar <= 0) return;
+
+      const pct = (window.scrollY / scrollbaar) * 100;
+      for (const drempel of drempels) {
+        // Marge van 0,5 procent: op 100 procent komt scrollY door afronding
+        // en zoom zelden exact op de maximale waarde uit.
+        if (drempel > hoogstGemeld && pct >= drempel - 0.5) {
+          hoogstGemeld = drempel;
+          trackFunnel("scroll_depth", { page, depth: drempel });
+        }
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(meet);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [page]);
+}
 
 /* ─── Reveal hook ─────────────────────────────────────────────────────────── */
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  // Bij reduced motion staat scroll-behavior: smooth uit, dus een ankerlink,
+  // Ctrl+F of terugnavigatie springt echt. De observer vuurt dan niet voor wat
+  // je overslaat en het blok blijft permanent op opacity 0. Daarom meteen tonen.
+  const [visible, setVisible] = useState(() => {
+    try {
+      return (
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    } catch {
+      return false;
+    }
+  });
   useEffect(() => {
+    if (visible) return;
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -31,7 +90,7 @@ function useReveal() {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [visible]);
   return { ref, visible };
 }
 
@@ -100,6 +159,17 @@ export default function PricingPage() {
 
   const founderProduct = products?.find((p) => p.interval === "one_time");
   const premiumProduct = products?.find((p) => p.interval === "month");
+
+  useScrollDepth(PAGE);
+
+  const handleCtaClick = (position: string) => {
+    trackFunnel("cta_click", { page: PAGE, position });
+  };
+
+  const handleQuizClick = (position: string) => {
+    trackFunnel("cta_click", { page: PAGE, position });
+    trackFunnel("quiz_start", { page: PAGE, position });
+  };
 
   useEffect(() => {
     track("pricing_page_viewed", {});
@@ -203,6 +273,7 @@ export default function PricingPage() {
                   {premiumProduct && (
                     <button
                       onClick={() => {
+                        handleCtaClick("cancel-banner");
                         handleCloseCancelBanner();
                         handleCheckout(premiumProduct.id);
                       }}
@@ -340,6 +411,7 @@ export default function PricingPage() {
                   {/* CTA */}
                   <NavLink
                     to="/onboarding"
+                    onClick={() => handleQuizClick("plan-free")}
                     className="w-full text-center py-4 rounded-xl border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#A85740] hover:text-[#A85740] transition-all duration-300 block"
                     data-event="cta_start_free_pricing"
                   >
@@ -396,7 +468,10 @@ export default function PricingPage() {
 
                   {/* CTA */}
                   <button
-                    onClick={() => premiumProduct && handleCheckout(premiumProduct.id)}
+                    onClick={() => {
+                      handleCtaClick("plan-premium");
+                      if (premiumProduct) handleCheckout(premiumProduct.id);
+                    }}
                     disabled={isLoading || isPending}
                     className="w-full text-center py-4 rounded-xl bg-[#A85740] hover:bg-[#9A503B] text-white text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     data-event="cta_start_premium_pricing"
@@ -442,7 +517,10 @@ export default function PricingPage() {
                     Eenmalige betaling, levenslang Premium. Voor early adopters die FitFi mee willen bouwen. Inclusief beta-toegang, prioritaire support en invloed op de roadmap.
                   </p>
                   <button
-                    onClick={() => founderProduct && handleCheckout(founderProduct.id)}
+                    onClick={() => {
+                      handleCtaClick("founder");
+                      if (founderProduct) handleCheckout(founderProduct.id);
+                    }}
                     disabled={isLoading || isPending}
                     className="text-[13px] font-semibold text-[#A85740] hover:text-[#9A503B] mt-3 inline-flex items-center gap-2 transition-colors disabled:opacity-50"
                     data-event="cta_start_founder_pricing"
@@ -642,6 +720,7 @@ export default function PricingPage() {
             <Reveal delay={0.24}>
               <NavLink
                 to="/onboarding"
+                onClick={() => handleQuizClick("footer")}
                 className="inline-flex items-center gap-2 bg-[#A85740] hover:bg-[#9A503B] text-white text-[15px] font-semibold py-5 px-12 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
                 data-event="cta_start_free_pricing"
               >

@@ -3,12 +3,71 @@ import { Link } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Zap, Heart, ArrowRight, Plus } from "lucide-react";
+import { track as trackFunnel } from "@/utils/analytics";
+
+const PAGE = "how-it-works";
+
+/* ─── Scrolldiepte ────────────────────────────────────────────────────────── */
+/*
+ * Meet 25/50/75/100 procent, elk hoogstens een keer per paginabezoek.
+ * Bewust een kopie in dit bestand en geen import uit een ander paginabestand:
+ * pagina's worden lazy geladen, en zo'n import trekt die hele pagina mee in de
+ * chunk van deze pagina.
+ */
+function useScrollDepth(page: string) {
+  useEffect(() => {
+    const drempels = [25, 50, 75, 100];
+    let hoogstGemeld = 0;
+    let frame = 0;
+
+    const meet = () => {
+      frame = 0;
+      const scrollbaar =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollbaar <= 0) return;
+
+      const pct = (window.scrollY / scrollbaar) * 100;
+      for (const drempel of drempels) {
+        // Marge van 0,5 procent: op 100 procent komt scrollY door afronding
+        // en zoom zelden exact op de maximale waarde uit.
+        if (drempel > hoogstGemeld && pct >= drempel - 0.5) {
+          hoogstGemeld = drempel;
+          trackFunnel("scroll_depth", { page, depth: drempel });
+        }
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(meet);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [page]);
+}
 
 /* ─── Reveal hook ─────────────────────────────────────────────────────────── */
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  // Bij reduced motion staat scroll-behavior: smooth uit, dus een ankerlink,
+  // Ctrl+F of terugnavigatie springt echt. De observer vuurt dan niet voor wat
+  // je overslaat en het blok blijft permanent op opacity 0. Daarom meteen tonen.
+  const [visible, setVisible] = useState(() => {
+    try {
+      return (
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    } catch {
+      return false;
+    }
+  });
   useEffect(() => {
+    if (visible) return;
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -17,7 +76,7 @@ function useReveal() {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [visible]);
   return { ref, visible };
 }
 
@@ -76,6 +135,8 @@ function Step1Visual() {
           src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
           alt="FitFi stijlquiz — kleurtonen en stijlvoorkeuren"
           className="w-full h-auto"
+          width={2048}
+          height={2048}
           loading="lazy"
         />
       </div>
@@ -91,6 +152,8 @@ function Step2Visual() {
           src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
           alt="FitFi stijlrapport — kleurprofiel en aanbevelingen"
           className="w-full h-auto"
+          width={2048}
+          height={2048}
           loading="lazy"
         />
       </div>
@@ -106,6 +169,8 @@ function Step3Visual() {
           src="/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp"
           alt="FitFi outfit shoppen — directe shoplinks"
           className="w-full h-auto"
+          width={2048}
+          height={2048}
           loading="lazy"
         />
       </div>
@@ -141,6 +206,13 @@ function StepDetail({ title, sub }: { title: string; sub: string }) {
 /* ─── Page ────────────────────────────────────────────────────────────────── */
 export default function HowItWorksPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  useScrollDepth(PAGE);
+
+  const handleQuizClick = (position: string) => {
+    trackFunnel("cta_click", { page: PAGE, position });
+    trackFunnel("quiz_start", { page: PAGE, position });
+  };
 
   return (
     <>
@@ -492,6 +564,7 @@ export default function HowItWorksPage() {
                 </p>
                 <Link
                   to="/onboarding"
+                  onClick={() => handleQuizClick("footer")}
                   className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                   style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
                 >
