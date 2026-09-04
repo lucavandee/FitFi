@@ -18,6 +18,7 @@ import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { track as trackFunnel } from "@/utils/analytics";
+import PrijsGrens from "@/components/landing/sections/PrijsGrens";
 
 const PAGE = "pricing";
 
@@ -124,19 +125,17 @@ const COMPARISON_ROWS: Array<{
   { label: "Rapport aanpasbaar", free: true, premium: true },
   { label: "Kleuranalyse (foto)", free: false, premium: true },
   { label: "Nova AI-assistent", free: false, premium: true },
-  { label: "Shopping cheatsheet", free: false, premium: true },
-  { label: "Smart learning", free: false, premium: true },
 ];
 
 /* ─── FAQ data ────────────────────────────────────────────────────────────── */
 const FAQ_ITEMS = [
   {
     q: "Wat blijft altijd beschikbaar met Free?",
-    a: "Je stijlprofiel, 3 gepersonaliseerde outfits, directe shoplinks en de mogelijkheid om je rapport aan te passen. Free is geen proefperiode — het blijft altijd beschikbaar.",
+    a: "Je stijlprofiel, 3 gepersonaliseerde outfits, directe shoplinks en de mogelijkheid om je rapport aan te passen. Free is geen proefperiode, het blijft altijd beschikbaar.",
   },
   {
     q: "Wat krijg ik met Premium precies?",
-    a: "Onbeperkte outfits voor alle gelegenheden, kleuranalyse op basis van je foto, de Nova AI-assistent voor persoonlijke stijlvragen, een shopping cheatsheet en smart learning dat je aanbevelingen steeds beter maakt.",
+    a: "Onbeperkte outfits voor alle gelegenheden, kleuranalyse op basis van je foto en de Nova AI-assistent voor je persoonlijke stijlvragen.",
   },
   {
     q: "Kan ik maandelijks opzeggen?",
@@ -265,7 +264,7 @@ export default function PricingPage() {
                       Checkout geannuleerd
                     </p>
                     <p className="text-xs text-[#6E6E6E]">
-                      Geen zorgen — je kunt altijd later upgraden.
+                      Geen zorgen, je kunt altijd later upgraden.
                     </p>
                   </div>
                 </div>
@@ -318,8 +317,8 @@ export default function PricingPage() {
                 id="pricing-heading"
                 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto mb-6"
               >
-                <span className="font-serif italic">Jouw stijl, jouw </span>
-                <span className="font-sans font-bold" style={{ letterSpacing: "-2px" }}>keuze</span>
+                <span className="font-serif italic">Free blijft. </span>
+                <span className="font-sans font-bold" style={{ letterSpacing: "-2px" }}>Premium gaat verder.</span>
               </h1>
             </Reveal>
 
@@ -338,7 +337,7 @@ export default function PricingPage() {
                   { icon: Users, label: "Maandelijks opzegbaar" },
                   { icon: CreditCard, label: "Geen creditcard voor Free" },
                 ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-1.5 text-[13px] font-medium text-[#4A4A4A]">
+                  <div key={label} className="flex items-center gap-1.5 text-sm font-medium text-[#4A4A4A]">
                     <Icon className="w-4 h-4 text-[#A85740]" aria-hidden="true" />
                     <span>{label}</span>
                   </div>
@@ -360,7 +359,7 @@ export default function PricingPage() {
               <Reveal>
                 <article className="bg-white border border-[#E5E5E5] rounded-2xl p-12 hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full">
                   {/* Badge */}
-                  <div className="bg-[#F5F0EB] text-[#4A4A4A] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                  <div className="bg-[#F5F0EB] text-[#4A4A4A] text-xs font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Altijd gratis
                   </div>
 
@@ -373,13 +372,13 @@ export default function PricingPage() {
                   </div>
 
                   {/* Note */}
-                  <p className="text-[13px] text-[#6E6E6E] mb-8">Voor altijd, geen creditcard nodig</p>
+                  <p className="text-sm text-[#6E6E6E] mb-8">Voor altijd, geen creditcard nodig</p>
 
                   {/* Divider */}
                   <div className="w-full h-px bg-[#E5E5E5] mb-8" />
 
                   {/* Label */}
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#6E6E6E] mb-4">Wat je krijgt</p>
+                  <p className="text-xs font-semibold uppercase tracking-[1.5px] text-[#6E6E6E] mb-4">Wat je krijgt</p>
 
                   {/* Features */}
                   <div className="flex flex-col gap-3.5 mb-10 flex-1">
@@ -390,8 +389,6 @@ export default function PricingPage() {
                       { included: true, label: "Rapport aanpasbaar" },
                       { included: false, label: "Kleuranalyse (foto)" },
                       { included: false, label: "Nova AI-assistent" },
-                      { included: false, label: "Shopping cheatsheet" },
-                      { included: false, label: "Smart learning" },
                     ].map(({ included, label }) => (
                       <div key={label} className="flex items-start gap-3 text-sm">
                         {included ? (
@@ -415,7 +412,7 @@ export default function PricingPage() {
                     className="w-full text-center py-4 rounded-xl border border-[#E5E5E5] text-[15px] font-semibold text-[#1A1A1A] hover:border-[#A85740] hover:text-[#A85740] transition-all duration-300 block"
                     data-event="cta_start_free_pricing"
                   >
-                    Start gratis
+                    Begin gratis
                   </NavLink>
                 </article>
               </Reveal>
@@ -424,8 +421,8 @@ export default function PricingPage() {
               <Reveal delay={0.12}>
                 <article className="relative bg-white border-2 border-[#A85740] rounded-2xl p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
                   {/* Badge */}
-                  <div className="bg-[#F4E8E3] text-[#A85740] text-[11px] font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
-                    Meest gekozen
+                  <div className="bg-[#F4E8E3] text-[#A85740] text-xs font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                    Aanbevolen
                   </div>
 
                   {/* Name */}
@@ -440,13 +437,13 @@ export default function PricingPage() {
                   </div>
 
                   {/* Note */}
-                  <p className="text-[13px] text-[#6E6E6E] mb-8">~€0,33 per dag · Maandelijks opzegbaar</p>
+                  <p className="text-sm text-[#6E6E6E] mb-8">~€0,33 per dag · Maandelijks opzegbaar</p>
 
                   {/* Divider */}
                   <div className="w-full h-px bg-[#E5E5E5] mb-8" />
 
                   {/* Label */}
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-[#6E6E6E] mb-4">Alles van Free, plus</p>
+                  <p className="text-xs font-semibold uppercase tracking-[1.5px] text-[#6E6E6E] mb-4">Alles van Free, plus</p>
 
                   {/* Features */}
                   <div className="flex flex-col gap-3.5 mb-10 flex-1">
@@ -454,8 +451,6 @@ export default function PricingPage() {
                       "Onbeperkte outfits",
                       "Kleuranalyse (foto)",
                       "Nova AI-assistent",
-                      "Shopping cheatsheet",
-                      "Smart learning",
                     ].map((label) => (
                       <div key={label} className="flex items-start gap-3 text-sm">
                         <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -487,12 +482,12 @@ export default function PricingPage() {
                         <span>Bezig...</span>
                       </>
                     ) : (
-                      <span>Upgrade naar Premium →</span>
+                      <span>Ontgrendel premium</span>
                     )}
                   </button>
 
                   {/* Guarantee */}
-                  <div className="text-center text-[13px] text-[#6E6E6E] mt-2 flex items-center justify-center gap-1.5">
+                  <div className="text-center text-sm text-[#6E6E6E] mt-2 flex items-center justify-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-[#6E6E6E]" aria-hidden="true" />
                     <span>30 dagen geld-terug-garantie</span>
                   </div>
@@ -522,7 +517,7 @@ export default function PricingPage() {
                       if (founderProduct) handleCheckout(founderProduct.id);
                     }}
                     disabled={isLoading || isPending}
-                    className="text-[13px] font-semibold text-[#A85740] hover:text-[#9A503B] mt-3 inline-flex items-center gap-2 transition-colors disabled:opacity-50"
+                    className="inline-flex items-center min-h-[44px] text-sm font-semibold text-[#A85740] hover:text-[#9A503B] mt-3 inline-flex items-center gap-2 transition-colors disabled:opacity-50"
                     data-event="cta_start_founder_pricing"
                   >
                     {isPending ? (
@@ -540,7 +535,6 @@ export default function PricingPage() {
                 <div className="text-center md:text-right flex-shrink-0">
                   <div className="flex items-baseline gap-2 justify-center md:justify-end">
                     <span className="text-4xl font-extrabold text-[#1A1A1A] tracking-[-1px]">€{founderPrice}</span>
-                    <span className="text-base text-[#6E6E6E] line-through ml-2">€999</span>
                   </div>
                   <p className="text-xs text-[#6E6E6E] mt-1">Eenmalig · Beperkt beschikbaar</p>
                 </div>
@@ -550,7 +544,12 @@ export default function PricingPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            4. FEATURE COMPARISON TABLE
+            4. PRIJSGRENS
+        ════════════════════════════════════════════════════ */}
+        <PrijsGrens />
+
+        {/* ════════════════════════════════════════════════════
+            5. FEATURE COMPARISON TABLE
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#F5F0EB] py-28" aria-labelledby="compare-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -598,7 +597,7 @@ export default function PricingPage() {
                       i < COMPARISON_ROWS.length - 1 ? "border-b border-[#E5E5E5]/50" : ""
                     }`}
                   >
-                    <div className="text-[13px] md:text-sm font-medium text-[#1A1A1A]">{row.label}</div>
+                    <div className="text-sm md:text-sm font-medium text-[#1A1A1A]">{row.label}</div>
                     <div className="flex items-center justify-center">
                       {typeof row.free === "boolean" ? (
                         row.free ? (
@@ -611,7 +610,7 @@ export default function PricingPage() {
                           </div>
                         )
                       ) : (
-                        <span className="text-[13px] font-semibold text-[#1A1A1A] text-center">{row.free}</span>
+                        <span className="text-sm font-semibold text-[#1A1A1A] text-center">{row.free}</span>
                       )}
                     </div>
                     <div className="flex items-center justify-center">
@@ -626,7 +625,7 @@ export default function PricingPage() {
                           </div>
                         )
                       ) : (
-                        <span className="text-[13px] font-bold text-[#A85740] text-center">{row.premium}</span>
+                        <span className="text-sm font-bold text-[#A85740] text-center">{row.premium}</span>
                       )}
                     </div>
                   </div>
@@ -637,7 +636,7 @@ export default function PricingPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            5. FAQ SECTION
+            6. FAQ SECTION
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#FAFAF8] py-28" aria-labelledby="faq-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -703,7 +702,7 @@ export default function PricingPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            6. CTA SECTION
+            7. CTA SECTION
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#F5F0EB] py-[120px] md:py-[200px] text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -727,7 +726,7 @@ export default function PricingPage() {
                 Begin gratis
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </NavLink>
-              <p className="text-[13px] text-[#6E6E6E] mt-6">
+              <p className="text-sm text-[#6E6E6E] mt-6">
                 Geen creditcard nodig · Altijd gratis te gebruiken
               </p>
             </Reveal>
@@ -735,7 +734,7 @@ export default function PricingPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            7. FOOTER SEPARATOR
+            8. FOOTER SEPARATOR
         ════════════════════════════════════════════════════ */}
         {/* Footer is rendered by the app shell. Add border-top separator since CTA is also sand-colored */}
         <div className="h-px bg-[#E5E5E5]" />
