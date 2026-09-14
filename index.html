@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.pexels.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    <link rel="dns-prefetch" href="https://supabase.co">
 
     <!-- Prefetch common routes -->
     <link rel="prefetch" href="/results" as="document">
@@ -20,6 +19,18 @@
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- LCP: het hero-beeld staat in een lazy geladen pagina, dus de preload-scanner
+         ontdekt het normaal pas na index-chunk, vendors, pagina-chunk en render.
+         Deze twee regels spiegelen exact de <picture> in LandingPage: onder 1024px
+         het hero/-beeld, daarboven het images/-beeld. Zo haalt de browser er precies
+         een op. Ze staan bewust NA de viewport-meta, anders rekent een mobiele
+         browser de media-query tegen de standaard 980px en kan hij het verkeerde
+         bestand kiezen. -->
+    <link rel="preload" as="image" media="(max-width: 1023px)" fetchpriority="high"
+          href="/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp" />
+    <link rel="preload" as="image" media="(min-width: 1024px)" fetchpriority="high"
+          href="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp" />
     <meta name="theme-color" content="#A6886A" />
 
     <!-- SEO defaults.
