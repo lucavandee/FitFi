@@ -35,6 +35,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          # De design-poort draait op de bestanden die t.o.v. main veranderd zijn
+          # en heeft daarvoor de geschiedenis nodig. Met de standaard fetch-depth
+          # van 1 kent de runner `origin/main` niet en kan hij geen merge-base
+          # bepalen.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -49,6 +54,12 @@ jobs:
 
       - name: Tests
         run: npx vitest run --reporter=basic
+
+      # Toetst alleen de bestanden die deze pull request aanraakt aan design
+      # system v1.0 (CLAUDE.md deel 2). Bewust niet de hele src/: daar staat
+      # legacy uit eerdere iteraties die deze wijziging niet hoeft op te ruimen.
+      - name: Design system
+        run: npm run design:check:ci
 
       # Dit is het commando dat Netlify ook draait. Faalt het hier, dan faalt
       # de deploy straks ook, en dan weet je het vóór de merge.
