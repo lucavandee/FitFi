@@ -171,7 +171,7 @@ export default function Navbar() {
             "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-500",
             isTransparent
               ? "bg-transparent border border-transparent shadow-none"
-              : "bg-white border border-[#E5E5E5] shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)]",
+              : "bg-white border border-[#E5E5E5] hover:shadow-md",
           ].join(" ")}
         >
           {/* Brand */}
@@ -219,7 +219,7 @@ export default function Navbar() {
                 </a>
                 <a
                   href="/registreren"
-                  className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
+                  className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
                   data-event="nav_start_gratis"
                 >
                   Begin gratis

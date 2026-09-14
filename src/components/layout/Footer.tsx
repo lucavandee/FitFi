@@ -64,7 +64,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op Instagram"
-              className="group w-11 h-11 rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#A85740] hover:border-[#A85740] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
+              className="group w-11 h-11 rounded-xl bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#A85740] hover:border-[#A85740] hover:-translate-y-0.5 hover:shadow-md"
             >
               <Instagram className="w-4 h-4 text-[#4A4A4A] group-hover:text-white transition-colors duration-250" strokeWidth={2} aria-hidden="true" />
             </a>
@@ -73,7 +73,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op LinkedIn"
-              className="group w-11 h-11 rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#A85740] hover:border-[#A85740] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
+              className="group w-11 h-11 rounded-xl bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#A85740] hover:border-[#A85740] hover:-translate-y-0.5 hover:shadow-md"
             >
               <Linkedin className="w-4 h-4 text-[#4A4A4A] group-hover:text-white transition-colors duration-250" strokeWidth={2} aria-hidden="true" />
             </a>
@@ -82,7 +82,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Volg FitFi op X"
-              className="group w-11 h-11 rounded-[14px] bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#A85740] hover:border-[#A85740] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(194,101,74,0.2)]"
+              className="group w-11 h-11 rounded-xl bg-white border border-[#E5E5E5]/60 flex items-center justify-center transition-all duration-250 cursor-pointer hover:bg-[#A85740] hover:border-[#A85740] hover:-translate-y-0.5 hover:shadow-md"
             >
               <Twitter className="w-4 h-4 text-[#4A4A4A] group-hover:text-white transition-colors duration-250" strokeWidth={2} aria-hidden="true" />
             </a>
