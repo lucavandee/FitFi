@@ -31,6 +31,10 @@ const PAGE = "landing";
  * paginabestanden heen trekt de hele pagina mee in de chunk van de ander.
  */
 function useScrollDepth(page: string) {
+  // LET OP: dit meet scrollafstand, niet gelezen content. Een vastgezette
+  // scene van 200vh telt als twee schermen scrollen terwijl er een sectie
+  // voorbijkomt. De drempels zijn dus alleen vergelijkbaar tussen versies
+  // met dezelfde pagina-opbouw, niet met een pagina zonder pins.
   useEffect(() => {
     const drempels = [25, 50, 75, 100];
     let hoogstGemeld = 0;
@@ -517,7 +521,7 @@ export default function LandingPage() {
         {/* ════════════════════════════════════════════════════
             CTA — Klaar om te beginnen?
         ════════════════════════════════════════════════════ */}
-        <section className="py-[120px] md:py-[200px] bg-[#FAFAF8]">
+        <section className="py-40 bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="text-center">

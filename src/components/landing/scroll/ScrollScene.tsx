@@ -49,8 +49,18 @@ export function ScrollScene({
     offset: ["start start", "end end"],
   });
 
+  // De ref hangt in beide takken aan hetzelfde element. useScroll draait
+  // onvoorwaardelijk (hooks mogen niet in een if), en framer-motion gooit in
+  // development een invariant zodra target.current null is: "Target ref is
+  // defined but not hydrated". Zonder ref hier crashte de hele pagina in dev
+  // op elke viewport onder de pin-drempel. In productie is die check
+  // weggestript, maar dan meet de subscriptie stil tegen niets.
   if (beperkteBeweging || !kanPinnen) {
-    return <div className={className}>{statisch}</div>;
+    return (
+      <div ref={ref} className={className}>
+        {statisch}
+      </div>
+    );
   }
 
   return (

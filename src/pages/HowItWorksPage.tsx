@@ -15,6 +15,10 @@ const PAGE = "how-it-works";
  * chunk van deze pagina.
  */
 function useScrollDepth(page: string) {
+  // LET OP: dit meet scrollafstand, niet gelezen content. Een vastgezette
+  // scene van 200vh telt als twee schermen scrollen terwijl er een sectie
+  // voorbijkomt. De drempels zijn dus alleen vergelijkbaar tussen versies
+  // met dezelfde pagina-opbouw, niet met een pagina zonder pins.
   useEffect(() => {
     const drempels = [25, 50, 75, 100];
     let hoogstGemeld = 0;
@@ -401,10 +405,6 @@ export default function HowItWorksPage() {
                   sub="Zie direct hoe goed elk kledingstuk bij jouw profiel past"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-sm font-semibold text-[#A85740] w-fit">
-                <Heart className="w-4 h-4" aria-hidden="true" />
-                50+ looks
-              </div>
             </Reveal>
           </div>
         </section>
@@ -449,7 +449,7 @@ export default function HowItWorksPage() {
                     <div className="text-[15px] text-[#6E6E6E] text-right pr-6">
                       {row.old}
                     </div>
-                    <div className="text-[11px] font-bold text-[#E5E5E5] text-center">
+                    <div className="text-sm font-bold text-[#E5E5E5] text-center">
                       →
                     </div>
                     <div className={`text-[15px] font-semibold text-left pl-6 ${row.highlight ? "text-[#A85740]" : "text-[#1A1A1A]"}`}>

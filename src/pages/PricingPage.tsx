@@ -30,6 +30,10 @@ const PAGE = "pricing";
  * chunk van deze pagina.
  */
 function useScrollDepth(page: string) {
+  // LET OP: dit meet scrollafstand, niet gelezen content. Een vastgezette
+  // scene van 200vh telt als twee schermen scrollen terwijl er een sectie
+  // voorbijkomt. De drempels zijn dus alleen vergelijkbaar tussen versies
+  // met dezelfde pagina-opbouw, niet met een pagina zonder pins.
   useEffect(() => {
     const drempels = [25, 50, 75, 100];
     let hoogstGemeld = 0;
@@ -359,7 +363,7 @@ export default function PricingPage() {
               <Reveal>
                 <article className="bg-white border border-[#E5E5E5] rounded-2xl p-12 hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full">
                   {/* Badge */}
-                  <div className="bg-[#F5F0EB] text-[#4A4A4A] text-xs font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                  <div className="bg-[#F5F0EB] text-[#4A4A4A] text-sm font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Altijd gratis
                   </div>
 
@@ -421,7 +425,7 @@ export default function PricingPage() {
               <Reveal delay={0.12}>
                 <article className="relative bg-white border-2 border-[#A85740] rounded-2xl p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
                   {/* Badge */}
-                  <div className="bg-[#F4E8E3] text-[#A85740] text-xs font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                  <div className="bg-[#F4E8E3] text-[#A85740] text-sm font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Aanbevolen
                   </div>
 

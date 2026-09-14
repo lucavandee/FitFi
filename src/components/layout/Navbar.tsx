@@ -191,7 +191,7 @@ export default function Navbar() {
                 to={l.to}
                 className={({ isActive }) =>
                   [
-                    "inline-flex items-center min-h-[44px] text-[13px] px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none outline-none ring-0",
+                    "inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none outline-none ring-0",
                     isActive ? navActiveTextClass : `font-medium ${navTextClass}`,
                   ].join(" ")
                 }
@@ -208,7 +208,7 @@ export default function Navbar() {
                 <a
                   href="/inloggen"
                   className={[
-                    "inline-flex items-center min-h-[44px] text-[13px] font-medium px-[18px] py-2 rounded-full transition-all duration-200",
+                    "inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200",
                     isTransparent
                       ? "text-white/70 hover:text-white hover:bg-white/10"
                       : "text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
@@ -219,7 +219,7 @@ export default function Navbar() {
                 </a>
                 <a
                   href="/registreren"
-                  className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
+                  className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
                   data-event="nav_start_gratis"
                 >
                   Begin gratis
@@ -229,7 +229,7 @@ export default function Navbar() {
               <>
                 <a
                   href="/dashboard"
-                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2 min-h-[44px]"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2 min-h-[44px]"
                   data-event="nav_dashboard"
                 >
                   Dashboard
@@ -243,7 +243,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="inline-flex items-center min-h-[44px] text-[13px] font-medium text-[#6E6E6E] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
+                  className="inline-flex items-center min-h-[44px] text-sm font-medium text-[#6E6E6E] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
                   data-event="nav_logout"
                 >
                   Uitloggen

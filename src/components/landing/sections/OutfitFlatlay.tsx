@@ -139,7 +139,10 @@ function Kop() {
       <span className="block text-xs font-semibold uppercase tracking-[2.5px] text-[#A85740]">
         Voorbeeldoutfit
       </span>
-      <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mt-4 leading-snug">
+      <h2
+        id="flatlay-kop"
+        className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mt-4 leading-snug"
+      >
         Zo ziet een outfit eruit
       </h2>
       <p className="text-base text-[#4A4A4A] mt-4 leading-relaxed">
@@ -248,9 +251,11 @@ function Teller({ voortgang }: { voortgang: MotionValue<number> }) {
 export default function OutfitFlatlay() {
   return (
     <section className="bg-[#F5F0EB]" aria-labelledby="flatlay-kop">
-      <h2 id="flatlay-kop" className="sr-only">
-        Zo ziet een outfit eruit
-      </h2>
+      {/*
+        De sectiekop staat in <Kop/>, die via <Statisch/> in beide takken van
+        ScrollScene in de DOM staat (in de gepinde tak als sr-only). Een tweede
+        sr-only h2 hier gaf schermlezers dezelfde kop twee keer achter elkaar.
+      */}
       <ScrollScene hoogte="200vh" statisch={<Statisch />}>
         {(voortgang) => <Stage voortgang={voortgang} />}
       </ScrollScene>
