@@ -330,31 +330,21 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Floating color palette card — desktop only */}
-          <div
-            className="hidden lg:flex absolute bottom-[120px] right-20 z-20 flex-col gap-4"
-            style={{
-              background: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              borderRadius: "20px",
-              padding: "24px",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-            }}
-          >
-            <div className="flex gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#A85740]" />
-              <div className="w-10 h-10 rounded-full bg-[#D4913D]" />
-              <div className="w-10 h-10 rounded-full bg-[#8B6E4E]" />
-              <div className="w-10 h-10 rounded-full bg-[#3D5A4E]" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-[#1A1A1A]">
-                Jouw kleurpalet
-              </p>
-              <p className="text-xs text-[#6E6E6E]">Warm · Herfst · Diep</p>
-            </div>
-          </div>
+          {/*
+           * Hier zweefde een glaskaart over de foto met vier swatches en de
+           * tekst "Jouw kleurpalet — Warm · Herfst · Diep". Verwijderd om twee
+           * redenen die dezelfde kant op wijzen.
+           *
+           * Het was een claim: "jouw" palet, terwijl er op de landingspagina
+           * geen profiel en dus geen uitkomst bestaat. Een bezoeker die dit
+           * leest als haar eigen resultaat is misleid, en het is dezelfde soort
+           * bewering als de cijfers die op 2026-08-07 uit de copy zijn gehaald.
+           *
+           * En het is het patroon dat Luc als "heel AI" leest: zwevende
+           * glass-cards met blur en badge-tags over een foto. De hero werkt
+           * sterker zonder: de foto blijft schoon en de belofte staat een keer
+           * stil in beeld, wat het plan voor deze sectie ook vraagt.
+           */}
 
           {/* Scroll indicator — desktop only */}
           <div

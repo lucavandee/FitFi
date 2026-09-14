@@ -22,6 +22,25 @@ import { ScrollScene } from "../scroll/ScrollScene";
 const BEELD = "/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp";
 
 /*
+ * Het bronbeeld heeft rechtsonder een UI-kaart ingebakken met "12+", "98%" en
+ * de letterlijke placeholders "tiny hint" en "label hint". Die cijfers steunen
+ * nergens op en horen in dezelfde categorie als "4.9/5" en "2.400+ gebruikers",
+ * die op 2026-08-07 uit de copy zijn gehaald. Een percentage in een plaatje is
+ * net zo goed een claim, alleen ontsnapte het aan die opschoning omdat het geen
+ * tekst in de code is.
+ *
+ * Tot er een schone export ligt, snijden we de kaart uit beeld: de verhouding
+ * 100/62 met object-position top toont alleen de bovenste 62 procent van het
+ * vierkante bronbeeld, en de kaart begint pas op 67 procent. Buste en
+ * kleurenwaaier vallen volledig binnen die uitsnede.
+ *
+ * Deze verhouding is bewust vast en niet in svh: dan hangt de uitsnede af van
+ * de schermhoogte en kan de kaart op een hoog scherm alsnog terugkomen.
+ */
+const UITSNEDE = "aspect-[100/62]";
+const UITSNEDE_POSITIE = "center top";
+
+/*
  * Warmer: sepia levert goud, de negatieve hue-rotate trekt dat door naar
  * terracotta in plaats van geel. Meer saturatie houdt de huid levend.
  */
@@ -91,8 +110,8 @@ function Weergave({
         width={2048}
         height={2048}
         loading="lazy"
-        style={{ filter }}
-        className="w-full aspect-[3/4] object-cover rounded-2xl border border-[#E5E5E5]"
+        style={{ filter, objectPosition: UITSNEDE_POSITIE }}
+        className={`w-full ${UITSNEDE} object-cover rounded-2xl border border-[#E5E5E5]`}
       />
       <figcaption className="text-sm font-medium text-[#6E6E6E] mt-3">
         {label}
@@ -175,7 +194,9 @@ function Stage({ voortgang }: { voortgang: MotionValue<number> }) {
         </div>
 
         <div className="col-span-7">
-          <div className="relative w-full h-[58svh] rounded-2xl overflow-hidden border border-[#E5E5E5] bg-white">
+          <div
+            className={`relative w-full ${UITSNEDE} rounded-2xl overflow-hidden border border-[#E5E5E5] bg-white`}
+          >
             {/* Onderste laag: de warme weergave, altijd volledig aanwezig. */}
             <img
               src={BEELD}
@@ -183,7 +204,7 @@ function Stage({ voortgang }: { voortgang: MotionValue<number> }) {
               width={2048}
               height={2048}
               loading="lazy"
-              style={{ filter: WARM }}
+              style={{ filter: WARM, objectPosition: UITSNEDE_POSITIE }}
               className="absolute inset-0 w-full h-full object-cover"
             />
 
@@ -195,7 +216,7 @@ function Stage({ voortgang }: { voortgang: MotionValue<number> }) {
                 width={2048}
                 height={2048}
                 loading="lazy"
-                style={{ filter: KOEL }}
+                style={{ filter: KOEL, objectPosition: UITSNEDE_POSITIE }}
                 className="w-full h-full object-cover"
               />
             </motion.div>
