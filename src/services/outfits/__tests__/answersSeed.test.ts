@@ -40,4 +40,16 @@ describe("seedFromAnswers", () => {
     expect(seedFromAnswers(null as unknown as Record<string, any>)).toBe(leeg);
     expect(seedFromAnswers(undefined as unknown as Record<string, any>)).toBe(leeg);
   });
+
+  it("gooit door als een antwoord NaN bevat, zoals een budgetgrens uit een mislukte parse", () => {
+    expect(() =>
+      seedFromAnswers({ gender: "male", budget: { min: 50, max: NaN } })
+    ).toThrow();
+  });
+
+  it("gooit door bij een circulair antwoordobject", () => {
+    const answers: Record<string, any> = { gender: "male" };
+    answers.self = answers;
+    expect(() => seedFromAnswers(answers)).toThrow();
+  });
 });
