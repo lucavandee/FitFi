@@ -29,9 +29,27 @@ export interface SaveOutfitRatingInput {
 }
 
 /**
+ * Op deze tabel heeft de insert-policy precies één voorwaarde die een
+ * anonieme of ingelogde bezoeker zelf kan raken: `session_id is not null`
+ * (de andere helft, `user_id = auth.uid()`, raakt alleen iemand die een
+ * user_id van een ander probeert mee te sturen). Een ontbrekende of lege
+ * session_id geeft daarom een RLS-weigering (Postgres-foutcode 42501), niet
+ * de not-null-constraint op de kolom: de policy wint. Supabase geeft die
+ * weigering terug als HTTP 401 met een kale melding die het woord
+ * "session_id" niet noemt en op zichzelf leest als een auth-probleem. Zonder
+ * uitleg zou wie op `reden` afgaat dus in inlog- of rechtenlogica gaan
+ * zoeken terwijl de oorzaak een ontbrekende session_id is.
+ */
+const RLS_GEWEIGERD = "42501";
+
+/**
  * Schrijft een beoordeling. Geeft de fout terug in plaats van te gooien: een
- * mislukte meting mag de resultatenpagina nooit breken. De aanroeper (taak 9/10)
- * logt of toont dit, deze functie beslist niet hoe dat zichtbaar wordt.
+ * mislukte meting mag de resultatenpagina nooit breken. Wél wordt elke
+ * mislukking gelogd met console.error: de vorige tabel (results_feedback)
+ * kreeg in maanden twee rijen zonder dat iemand het merkte, en dat mag deze
+ * meting niet nog eens overkomen. De log bevat de foutcode en de afgeleide
+ * oorzaak, nooit de ruwe input (session_id, profile_hash, outfit_key,
+ * user_id) van de bezoeker.
  */
 export async function saveOutfitRating(
   input: SaveOutfitRatingInput
@@ -47,9 +65,21 @@ export async function saveOutfitRating(
       session_id: input.sessionId,
       user_id: input.userId ?? null,
     });
-    if (error) return { ok: false, reden: error.message || "insert mislukt" };
+    if (error) {
+      const reden =
+        error.code === RLS_GEWEIGERD
+          ? `insert geweigerd door outfit_ratings: session_id ontbreekt waarschijnlijk (rls ${RLS_GEWEIGERD}: ${error.message})`
+          : error.message || "insert mislukt";
+      console.error("[outfitRatings] saveOutfitRating mislukt:", {
+        code: error.code ?? "onbekend",
+        reden,
+      });
+      return { ok: false, reden };
+    }
     return { ok: true };
   } catch (e) {
-    return { ok: false, reden: e instanceof Error ? e.message : "onbekende fout" };
+    const reden = e instanceof Error ? e.message : "onbekende fout";
+    console.error("[outfitRatings] saveOutfitRating mislukt (netwerkfout):", { reden });
+    return { ok: false, reden };
   }
 }

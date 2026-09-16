@@ -67,4 +67,47 @@ describe("saveOutfitRating", () => {
     clientBeschikbaar = false;
     expect(await saveOutfitRating(invoer)).toEqual({ ok: false, reden: "geen Supabase-client" });
   });
+
+  it("legt een RLS-weigering (42501) uit als ontbrekende session_id, zonder de originele melding weg te gooien", async () => {
+    const ruweMelding = 'new row violates row-level security policy for table "outfit_ratings"';
+    insert.mockResolvedValue({ error: { code: "42501", message: ruweMelding } });
+
+    const uitkomst = await saveOutfitRating(invoer);
+
+    expect(uitkomst.ok).toBe(false);
+    if (uitkomst.ok) throw new Error("onbereikbaar: ok moet false zijn");
+    expect(uitkomst.reden).toContain("session_id");
+    expect(uitkomst.reden).toContain("42501");
+    expect(uitkomst.reden).toContain(ruweMelding);
+  });
+
+  it("logt een mislukte schrijfactie met console.error, zonder de session_id in de log", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    insert.mockResolvedValue({
+      error: { code: "42501", message: "new row violates row-level security policy" },
+    });
+
+    await saveOutfitRating(invoer);
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    const geloggd = JSON.stringify(spy.mock.calls[0]);
+    expect(geloggd).toContain("42501");
+    expect(geloggd).not.toContain(invoer.sessionId);
+    expect(geloggd).not.toContain(invoer.profileHash);
+    expect(geloggd).not.toContain(invoer.outfitKey);
+
+    spy.mockRestore();
+  });
+
+  it("logt ook een netwerkfout met console.error", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    insert.mockRejectedValue(new Error("Failed to fetch"));
+
+    const uitkomst = await saveOutfitRating(invoer);
+
+    expect(uitkomst).toEqual({ ok: false, reden: "Failed to fetch" });
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    spy.mockRestore();
+  });
 });
