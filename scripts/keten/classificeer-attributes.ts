@@ -37,15 +37,39 @@
  * data of de query; een paar hernieuwde pogingen lossen dat op zonder de
  * hele run te laten struikelen over één haperend verzoek.
  *
+ * Veegronde na de paginering: products.id is een willekeurige uuid, dus de
+ * cursor/checkpoint hierboven kan een rij missen die na het checkpoint is
+ * toegevoegd met een uuid die vóór de cursor valt (en plan 2's
+ * keten_vul_nieuwe_producten() zet na elke feed-import nieuwe rijen met
+ * classifier_version null). Na de paginering roept dit script
+ * src/services/attributes/veegronde.ts aan, die herhaaldelijk alle rijen
+ * met classifier_version is null opvraagt (via de partiële index
+ * idx_product_attributes_onbewerkt uit migratie 20260914120300) en die
+ * alsnog classificeert, tot een ronde niets meer teruggeeft. Het checkpoint
+ * blijft puur een versnelling: de veegronde vangt op wat de paginering
+ * mist, ongeacht hoe oud het checkpoint is.
+ *
  * Gebruik:
  *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer
  *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer -- --retailer "H&M (NL)"
  * VITE_SUPABASE_URL komt uit de shell of uit .env. De service-role-sleutel
  * komt alleen uit de shell en wordt nooit gelogd.
+ *
+ * Bekende beperking van --retailer: in deze omgeving loopt dat pad
+ * structureel op de statement-timeout van 8 seconden die PostgREST via de
+ * authenticator-rol op de sessie zet (ook voor service_role-verzoeken).
+ * Oorzaak: geen index op products.retailer, dus elke retailer-filter is een
+ * volledige tabel-scan (gemeten 2026-09-16: 7,4-8,0 s voor een retailer met
+ * 19 rijen uit 281.999). Dat ligt buiten deze taak. Draai zonder --retailer
+ * (dat pad gebruikt alleen products_pkey via order/limit en heeft dit
+ * probleem niet); wil je één retailer controleren, doe dat na de run met
+ * een gewone select via `supabase db query --linked` in plaats van via dit
+ * script.
  */
 import { existsSync, readFileSync, writeFileSync, unlinkSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import { CLASSIFIER_VERSIE, classificeerRij, type ClassificatieRij } from "../../src/services/attributes/classificatie";
+import { veegronde, type VeegrondeRij } from "../../src/services/attributes/veegronde";
 
 function leesDotEnv(): Record<string, string> {
   const pad = new URL("../../.env", import.meta.url).pathname;
@@ -197,8 +221,7 @@ async function main(): Promise<void> {
     if (rijen.length < PAGINA) break;
   }
 
-  console.warn = oorspronkelijkWarn;
-  oorspronkelijkLog(`\nKlaar: ${gelezen} gelezen, ${geschreven} geschreven in ${Math.round((Date.now() - start) / 1000)} s`);
+  oorspronkelijkLog(`\nPaginering klaar: ${gelezen} gelezen, ${geschreven} geschreven in ${Math.round((Date.now() - start) / 1000)} s`);
   oorspronkelijkLog("Uitkomst per categorie:", perUitkomst);
   oorspronkelijkLog("Gewijzigd ten opzichte van products.category (top 15):");
   Object.entries(gewijzigd)
@@ -207,13 +230,59 @@ async function main(): Promise<void> {
     .forEach(([k, v]) => oorspronkelijkLog(`  ${k.padEnd(24)} ${v}`));
 
   if (geschreven < gelezen) {
+    console.warn = oorspronkelijkWarn;
     oorspronkelijkLog(
       `\nLet op: ${gelezen - geschreven} rijen niet geschreven. Meestal: product_attributes mist die rijen (draai eerst npm run keten:vul).`
     );
     process.exit(1);
   }
 
-  // Schone afronding: dit checkpoint is niet meer nodig.
+  // Veegronde: vangt rijen die de paginering kan hebben gemist (zie
+  // docstring hierboven) en de rijen die plan 2's
+  // keten_vul_nieuwe_producten() na een feed-import achterlaat. Bij een
+  // schone catalogus is dit één lege ronde.
+  const veegStart = Date.now();
+  const veegResultaat = await veegronde(PAGINA, {
+    haalOnbewerkt: async (limiet) => {
+      const { data, error } = await metHerhaling(
+        () =>
+          client
+            .from("product_attributes")
+            .select("products!inner(id, name, description, category, type, is_kids)")
+            .is("classifier_version", null)
+            .order("product_id", { ascending: true })
+            .limit(limiet),
+        "veegronde: lezen van onbewerkte rijen",
+        oorspronkelijkLog
+      );
+      if (error) return { data: null, error };
+      const rijen = ((data ?? []) as Array<{ products: VeegrondeRij }>).map((r) => r.products);
+      return { data: rijen, error: null };
+    },
+    schrijf: (batch) =>
+      metHerhaling(
+        () => client.rpc("zet_classificatie", { p_rijen: batch, p_versie: CLASSIFIER_VERSIE }),
+        "veegronde: zet_classificatie",
+        oorspronkelijkLog
+      ),
+    log: oorspronkelijkLog,
+  });
+
+  console.warn = oorspronkelijkWarn;
+  oorspronkelijkLog(
+    `Veegronde klaar: ${veegResultaat.gevonden} onbewerkte rijen gevonden, ${veegResultaat.geschreven} geschreven in ${Math.round((Date.now() - veegStart) / 1000)} s`
+  );
+
+  if (veegResultaat.geschreven < veegResultaat.gevonden) {
+    oorspronkelijkLog(
+      `\nLet op: veegronde vond ${veegResultaat.gevonden - veegResultaat.geschreven} rijen die niet weggeschreven konden worden.`
+    );
+    process.exit(1);
+  }
+
+  // Schone afronding: dit checkpoint is niet meer nodig. Pas hier wissen,
+  // na de veegronde, zodat een checkpoint dat een gat had nooit stilzwijgend
+  // rijen achterlaat (zie docstring: de veegronde is wat dat garandeert).
   wisCheckpoint();
 }
 
