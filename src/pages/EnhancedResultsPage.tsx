@@ -480,7 +480,19 @@ export default function EnhancedResultsPage() {
     }
   }, [outfitsLoading, allOutfits.length]);
 
-  const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
+  // Zelfde regel als de resize-effect verderop (window.innerWidth < 768), maar
+  // hier al in de useState-initializer in plaats van pas in een useEffect na
+  // mount. Twee redenen: (1) op mobiel toonde de pagina eerst kort de
+  // grid-weergave voordat de effect 'm naar swipe zette; (2) een
+  // useState-initializer draait ook onder renderToString (zie
+  // OutfitRatingButtons.tsx en CalibrationStep.render.test.tsx), een effect
+  // niet — zonder deze wijziging is de swipe-weergave niet zonder een echte
+  // browser te bereiken. In de browser is `window` er altijd, dus dit
+  // verandert de uiteindelijke waarde niet, alleen het moment waarop hij
+  // wordt bepaald.
+  const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>(
+    () => (typeof window !== 'undefined' && window.innerWidth < 768 ? 'swipe' : 'grid')
+  );
 
   // Occasion grouping: check if outfits have occasion data
   const userOccasions: string[] = React.useMemo(() => {
