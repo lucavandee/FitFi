@@ -28,8 +28,11 @@ draai() {
 
 for r in "${RETAILERS[@]}"; do
   echo "== $r =="
+  # Verdubbel een apostrof in de retailernaam voor het SQL-stringliteral
+  # (bv. "Levi's"); anders sluit de apostrof het literal voortijdig af.
+  r_sql="${r//\'/\'\'}"
   start=$(date +%s)
-  uit=$(draai "select * from vul_product_attributes('$r')")
+  uit=$(draai "select * from vul_product_attributes('$r_sql')")
   echo "$uit"
   if echo "$uit" | grep -qi "timeout\|canceling statement\|context deadline\|unexpected status 5"; then
     echo "-- tijdslimiet, opnieuw in vier merk-ranges"
@@ -38,7 +41,7 @@ for r in "${RETAILERS[@]}"; do
       van_sql=$([ -z "$van" ] && echo "null" || echo "'$van'")
       tot_sql=$([ -z "$tot" ] && echo "null" || echo "'$tot'")
       echo "-- range [$van, $tot)"
-      draai "select * from vul_product_attributes('$r', $van_sql, $tot_sql)"
+      draai "select * from vul_product_attributes('$r_sql', $van_sql, $tot_sql)"
     done
   fi
   echo "-- duur: $(( $(date +%s) - start )) s"

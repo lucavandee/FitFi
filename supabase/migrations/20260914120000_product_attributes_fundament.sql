@@ -17,11 +17,15 @@
      de feed). De tagger-kolommen uit spec 5.1 komen in plan 2.
   3. normaliseer_productnaam: naam zonder maat- en kleursuffix.
   4. vul_product_attributes(p_retailer, p_merk_van, p_merk_tot): vult of
-     ververst de tabel uit products en kiest per (retailer, merk,
-     genormaliseerde naam) de goedkoopste in-stock variant als canoniek.
-     Idempotent. Per retailer en desnoods per merk-range te draaien als een
-     run te lang duurt. Rijen met een classifier_version houden hun category
-     en is_fashion.
+     ververst de tabel uit products en kiest per (retailer, image_url) de
+     goedkoopste in-stock variant als canoniek: dezelfde foto is dezelfde
+     look in een andere maat of prijs, een andere kleur heeft een andere
+     foto (spec 5.1, 16 september; naam-dedupe vouwde bij Giglio 169.697
+     rijen samen tot 10.209 terwijl er 68.739 unieke foto's zijn). Alleen
+     als image_url leeg is (vandaag 0 rijen) valt de sleutel terug op
+     retailer, merk en genormaliseerde naam. Idempotent. Per retailer en
+     desnoods per merk-range te draaien als een run te lang duurt. Rijen
+     met een classifier_version houden hun category en is_fashion.
   5. zet_classificatie(p_rijen, p_versie): schrijft category en is_fashion
      voor een batch rijen (jsonb) en zet classifier_version. Alleen voor
      service_role; dit is de schrijfweg van scripts/keten/classificeer-attributes.ts.
@@ -125,7 +129,8 @@ begin
       lower(coalesce(p.category, '')) as cat,
       lower(coalesce(p.gender, 'unisex')) as gen,
       p.is_kids,
-      p.name as ruwe_naam
+      p.name as ruwe_naam,
+      p.image_url
     from products p
     where (p_retailer is null or p.retailer = p_retailer)
       and (p_merk_van is null or lower(coalesce(p.brand, '')) >= p_merk_van)
@@ -135,7 +140,13 @@ begin
     select
       b.*,
       first_value(b.id) over (
-        partition by b.retailer, b.merk, b.naam
+        partition by b.retailer,
+          -- Dezelfde foto is dezelfde look in een andere maat of prijs;
+          -- een andere kleur heeft een andere foto en blijft een eigen
+          -- product (spec 5.1). Terugval op merk + genormaliseerde naam
+          -- alleen als image_url leeg is; vandaag 0 rijen, dus dode code
+          -- die klaarstaat voor een toekomstige feed zonder foto's.
+          coalesce(nullif(b.image_url, ''), 'naam:' || b.merk || ':' || b.naam)
         order by (b.in_stock is true) desc, b.price asc, b.id asc
       ) as canonical_id
     from basis b
@@ -146,7 +157,7 @@ begin
     g.canonical_id,
     (
       g.cat in ('top', 'bottom', 'footwear', 'outerwear', 'dress', 'accessory')
-      and g.is_kids = false
+      and coalesce(g.is_kids, false) = false
       and g.ruwe_naam !~* niet_kleding
     ) as is_fashion,
     case
