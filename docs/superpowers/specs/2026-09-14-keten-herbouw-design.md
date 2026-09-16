@@ -186,7 +186,7 @@ Elke stap stuurt `track('onboarding_step', { step, index })`; afbreken stuurt `o
 
 ### 7.2 `pair_sets`
 
-Vooraf gegenereerd per segment (gender x gelegenheid x prijsband), per as minstens vier paren. Een paar is twee complete outfits die op precies een as verschillen en verder zo gelijk mogelijk zijn (zelfde gelegenheid, zelfde prijsband, zelfde kleurfamilie). Gegenereerd door `compose-outfits` in een aparte modus (`mode: 'pair', axis, side`) en vastgelegd met product_ids en beeld-URL's. Regeneratie als een item uit voorraad gaat.
+Vooraf gegenereerd per segment (gender x gelegenheid x prijsband), per as minstens vier paren. Een paar is twee complete outfits die op precies een as verschillen en verder zo gelijk mogelijk zijn (zelfde gelegenheid, zelfde prijsband, zelfde kleurfamilie). Gegenereerd door `compose-outfits` in een aparte modus (`mode: 'pair', axis, side`) en vastgelegd met product_ids en beeld-URL's. De paarselectie slaat bij het ophalen elk paar over waarvan een item niet meer `in_stock` is (join op `products`); `genereer-paren.ts` is een handmatig script met een kostenplafond dat opnieuw draait als een segment te weinig bruikbare paren overhoudt. Geen cron.
 
 ## 7. Wat bewust niet
 
@@ -198,7 +198,7 @@ Vooraf gegenereerd per segment (gender x gelegenheid x prijsband), per as minste
 ## 8. Poorten
 
 - Elke taak: `npx tsc --noEmit`, `npx vitest run`, `npx vite build`, en `npm run design:check:ci` groen.
-- Elke week: `scripts/keten/persona-run.ts` groen op H&M.
+- Voor het afronden van een plan, en voor elke nieuwe feed: `scripts/keten/persona-run.ts` groen. Geen wekelijks schema: pg_cron kan geen TypeScript draaien en er is geen CI-schema met databasesleutels. De feed-poort (5.7) is het moment waarop dit telt.
 - Voor de vlag omgaat: de vier persona's groen, Luc heeft de outfits gezien, en `weekly_ratings` vult zich.
 
 ## 9. Volgorde en plannen
