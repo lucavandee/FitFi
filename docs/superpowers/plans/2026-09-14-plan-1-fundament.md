@@ -46,7 +46,22 @@ where category = 'accessory'
   and name ~* '(shirt|top|blouse|jurk|dress|broek|jeans|trui|sweater)';
 ```
 
-Uitkomst: **50.618** rijen. Van de circa 74.600 accessoires in de catalogus heeft dus twee derde een kledingwoord in de naam. `products.category` is niet bruikbaar als emmer voor een top-N-per-categorie; daarom corrigeert taak 2 de categorie in `product_attributes` voordat taak 3 erop afkapt.
+Uitkomst: **50.618** rijen (opnieuw gedraaid op 2026-09-16 bij de tweede roast-ronde: zelfde getal). Van de circa 74.600 accessoires in de catalogus heeft dus twee derde een kledingwoord in de naam. `products.category` is niet bruikbaar als emmer voor een top-N-per-categorie; daarom corrigeert taak 2 de categorie in `product_attributes` voordat taak 3 erop afkapt.
+
+De roast stelde als alternatief een SQL-vertaling van `reclassifyProducts` in `get_kandidaten` voor. Dat is niet overgenomen: de repo heeft al twee kopieën van de classifier (`src/engine/productClassifier.ts` en `supabase/functions/_shared/productClassifier.ts`), en een derde in Postgres-regexsyntaxis zou bij elke wijziging uit de pas lopen. Taak 2 laat in plaats daarvan de TypeScript-functie zelf over alle rijen draaien en de uitkomst in de database schrijven; het effect is hetzelfde (de emmer in taak 3 is de gecorrigeerde categorie) en er is maar een bron.
+
+### Stand van uitvoering (gecontroleerd op 2026-09-16 tegen repo en live database)
+
+Van taak 1 zijn stap 1 tot en met 5 al uitgevoerd en nog niet gecommit:
+
+- `supabase/migrations/20260914120000_product_attributes_fundament.sql` staat op schijf (ongetrackt) en is byte voor byte gelijk aan het SQL-blok in taak 1 stap 2.
+- De migratie is toegepast: `product_attributes` bestaat met de negen kolommen uit stap 2, de vier indexen, RLS aan en de leespolicy; `normaliseer_productnaam`, `vul_product_attributes` en `zet_classificatie` bestaan; `vector` staat in schema `extensions`. De controles uit stap 4 geven exact de verwachte uitkomst.
+- `product_attributes` heeft 0 rijen: stap 6 (vullen) is nog niet gedraaid.
+- `scripts/keten/vul-attributes.sh` staat op schijf (ongetrackt) en is gelijk aan het blok in stap 5. De regel `keten:vul` in `package.json` ontbreekt nog.
+
+Begin dus bij taak 1 stap 5 (alleen de `package.json`-regel) en stap 6. De eerdere stappen staan in het plan zodat een verse omgeving ze ook kan draaien; ze zijn allemaal idempotent.
+
+Verder bestaat `src/utils/hash.ts` al (met `hashString`, gebruikt door `src/utils/image.ts`). Taak 5 breidt dat bestand uit in plaats van het aan te maken.
 
 Retailers (voor de vulscripts in taak 1 en 2):
 
@@ -96,7 +111,7 @@ Betrokkenen: de uitvoerder, en Luc als poort na taak 11 (spec 8: "Luc heeft de o
 | `supabase/migrations/20260914120200_outfit_ratings.sql` | Aanmaken | Tabel `outfit_ratings`, RLS voor anonieme insert, view `weekly_ratings` |
 | `src/utils/stableJson.ts` | Aanmaken | `stableStringify`: JSON met gesorteerde sleutels, basis voor hash en seed |
 | `src/utils/__tests__/stableJson.test.ts` | Aanmaken | Test voor `stableStringify` |
-| `src/utils/hash.ts` | Aanmaken | `sha256Hex` (WebCrypto, browser en Node) en `fnv1a32` (synchrone 32-bits hash voor de seed) |
+| `src/utils/hash.ts` | Wijzigen | Bestaand bestand met `hashString` (FNV-1a, gebruikt door `src/utils/image.ts`); erbij komen `sha256Hex` (WebCrypto, browser en Node) en `fnv1a32` (synchrone 32-bits hash voor de seed) |
 | `src/utils/__tests__/hash.test.ts` | Aanmaken | Testvectoren voor beide hashes |
 | `src/services/outfits/answersSeed.ts` | Aanmaken | `seedFromAnswers`: vaste seed uit de quiz-antwoorden |
 | `src/services/outfits/__tests__/answersSeed.test.ts` | Aanmaken | Test: zelfde antwoorden, zelfde seed; andere sleutelvolgorde, zelfde seed |
@@ -112,6 +127,7 @@ Betrokkenen: de uitvoerder, en Luc als poort na taak 11 (spec 8: "Luc heeft de o
 | `src/components/results/OutfitRatingButtons.tsx` | Aanmaken | Knoppenpaar "Zou ik dragen" / "Nooit" onder een outfitkaart |
 | `src/components/results/__tests__/OutfitRatingButtons.render.test.tsx` | Aanmaken | Render-test van het knoppenpaar, inclusief een onthouden keuze uit een gestubde localStorage |
 | `src/pages/EnhancedResultsPage.tsx` | Wijzigen | Profile-hash berekenen, knoppenpaar onder elke kaart in de top-3-sectie, de grid- en de swipe-weergave |
+| `src/keten/personas.ts` | Aanmaken | Canonieke persona-data (naam, gender, gelegenheden, budget, stijlvoorkeuren) uit spec 5.7; bron voor dit harnas en voor plan 3 taak 8 |
 | `scripts/keten/persona-run.ts` | Aanmaken | Persona-harnas: vier persona's door `get_kandidaten` en `runEngineV2`, controles uit spec 5.7 plus de afwijkingsteller |
 | `package.json` | Wijzigen | Scripts `keten:vul`, `keten:classificeer`, `keten:personas` |
 
@@ -136,14 +152,14 @@ Wat de spec openlaat en hier is besloten:
 - `vul_product_attributes` schrijft de ruwe categorie als eerste vulling. Zodra `classifier_version` gevuld is (taak 2), laat een nieuwe run van `vul_product_attributes` `category` en `is_fashion` van die rij met rust; alleen `canonical_id`, `gender` en `price_band` worden ververst. Zo overschrijft een her-run na een feed-import de classificatie niet.
 - `zet_classificatie` is de enige schrijfweg voor het script in taak 2: 1.000 rijen per aanroep als jsonb, security definer, alleen uitvoerbaar door `service_role`.
 
-- [ ] **Stap 1: Controle vooraf, verwacht een fout, en check waar pgvector staat**
+- [ ] **Stap 1: Controle vooraf en check waar pgvector staat**
 
 ```bash
 supabase db query --linked "select count(*) from product_attributes" -o table
 supabase db query --linked "select e.extname, n.nspname from pg_extension e join pg_namespace n on n.oid = e.extnamespace where e.extname = 'vector'" -o table
 ```
 
-Verwacht: de eerste query faalt met `relation "product_attributes" does not exist`. De tweede geeft nul rijen (pgvector staat nog uit) of een rij met `nspname = extensions`. Geeft de tweede query `nspname = public`, vervang dan in de migratie hieronder `extensions.vector(512)` door `public.vector(512)`; `create extension if not exists` laat een bestaande extensie waar hij staat.
+Verwacht op de live database (stand 2026-09-16): de eerste query geeft `0` (de tabel bestaat al, zie "Stand van uitvoering" bovenaan) en de tweede geeft een rij met `nspname = extensions`. Op een verse omgeving faalt de eerste query met `relation "product_attributes" does not exist` en geeft de tweede nul rijen; beide zijn goed. Geeft de tweede query `nspname = public`, vervang dan in de migratie hieronder `extensions.vector(512)` door `public.vector(512)`; `create extension if not exists` laat een bestaande extensie waar hij staat.
 
 - [ ] **Stap 2: Schrijf de migratie**
 
@@ -169,11 +185,15 @@ Maak `supabase/migrations/20260914120000_product_attributes_fundament.sql`:
      de feed). De tagger-kolommen uit spec 5.1 komen in plan 2.
   3. normaliseer_productnaam: naam zonder maat- en kleursuffix.
   4. vul_product_attributes(p_retailer, p_merk_van, p_merk_tot): vult of
-     ververst de tabel uit products en kiest per (retailer, merk,
-     genormaliseerde naam) de goedkoopste in-stock variant als canoniek.
-     Idempotent. Per retailer en desnoods per merk-range te draaien als een
-     run te lang duurt. Rijen met een classifier_version houden hun category
-     en is_fashion.
+     ververst de tabel uit products en kiest per (retailer, image_url) de
+     goedkoopste in-stock variant als canoniek (spec 5.1: dezelfde foto is
+     dezelfde look in een andere maat of prijsvariant). Alleen als image_url
+     leeg is, valt hij terug op (retailer, merk, genormaliseerde naam); dat
+     is vandaag dode code (geen enkele rij heeft een lege image_url) en
+     blijft staan voor een toekomstige feed zonder foto's. Idempotent. Per
+     retailer en desnoods per merk-range te draaien als een run te lang
+     duurt. Rijen met een classifier_version houden hun category en
+     is_fashion.
   5. zet_classificatie(p_rijen, p_versie): schrijft category en is_fashion
      voor een batch rijen (jsonb) en zet classifier_version. Alleen voor
      service_role; dit is de schrijfweg van scripts/keten/classificeer-attributes.ts.
@@ -277,7 +297,8 @@ begin
       lower(coalesce(p.category, '')) as cat,
       lower(coalesce(p.gender, 'unisex')) as gen,
       p.is_kids,
-      p.name as ruwe_naam
+      p.name as ruwe_naam,
+      p.image_url
     from products p
     where (p_retailer is null or p.retailer = p_retailer)
       and (p_merk_van is null or lower(coalesce(p.brand, '')) >= p_merk_van)
@@ -286,8 +307,13 @@ begin
   gerangschikt as (
     select
       b.*,
+      -- Dedupe op (retailer, image_url): dezelfde foto is dezelfde look in
+      -- een andere maat of prijsvariant (spec 5.1, gemeten 16 september:
+      -- 281.999 rijen, 100.849 unieke image_url's, geen enkele lege). De
+      -- naam-terugval hierna is vandaag dode code (image_url is nooit leeg)
+      -- en blijft staan voor een toekomstige feed zonder foto's.
       first_value(b.id) over (
-        partition by b.retailer, b.merk, b.naam
+        partition by b.retailer, coalesce(nullif(b.image_url, ''), 'naam:' || b.merk || ':' || b.naam)
         order by (b.in_stock is true) desc, b.price asc, b.id asc
       ) as canonical_id
     from basis b
@@ -298,7 +324,7 @@ begin
     g.canonical_id,
     (
       g.cat in ('top', 'bottom', 'footwear', 'outerwear', 'dress', 'accessory')
-      and g.is_kids = false
+      and coalesce(g.is_kids, false) = false
       and g.ruwe_naam !~* niet_kleding
     ) as is_fashion,
     case
@@ -373,7 +399,7 @@ grant execute on function zet_classificatie(jsonb, text) to service_role;
 supabase db query --linked -f supabase/migrations/20260914120000_product_attributes_fundament.sql
 ```
 
-Verwacht: geen fout.
+Verwacht: geen fout. De migratie is idempotent (`create table if not exists`, `create index if not exists`, `create or replace function`, `drop policy if exists` gevolgd door `create policy`); op de live database, waar hij al is toegepast, is opnieuw draaien veilig en verandert er niets.
 
 - [ ] **Stap 4: Test de naamnormalisatie en de rechten**
 
@@ -393,7 +419,7 @@ anon_mag: false, service_mag: true
 
 - [ ] **Stap 5: Schrijf het vulscript**
 
-Maak `scripts/keten/vul-attributes.sh` (en `chmod +x`):
+Maak `scripts/keten/vul-attributes.sh` (en `chmod +x`). Op de live checkout staat dit bestand er al met de apostrof-verdubbeling voor de retailernaam; controleer dat met `diff` tegen dit blok. Ontbreekt alleen de verdubbeling voor `van_sql`/`tot_sql` (de merkgrens), vul die aan zodat het bestand gelijk is aan het blok hieronder, en ga dan door naar de `package.json`-regel onderaan deze stap.
 
 ```bash
 #!/usr/bin/env bash
@@ -426,17 +452,23 @@ draai() {
 
 for r in "${RETAILERS[@]}"; do
   echo "== $r =="
+  # Verdubbel een apostrof in de retailernaam voor het SQL-stringliteral
+  # (bv. "Levi's"); anders sluit de apostrof het literal voortijdig af.
+  r_sql=${r//\'/\'\'}
   start=$(date +%s)
-  uit=$(draai "select * from vul_product_attributes('$r')")
+  uit=$(draai "select * from vul_product_attributes('$r_sql')")
   echo "$uit"
-  if echo "$uit" | grep -qi "timeout\|canceling statement\|context deadline"; then
+  if echo "$uit" | grep -qi "timeout\|canceling statement\|context deadline\|unexpected status 5"; then
     echo "-- tijdslimiet, opnieuw in vier merk-ranges"
     for range in "${RANGES[@]}"; do
       van="${range%%|*}"; tot="${range##*|}"
-      van_sql=$([ -z "$van" ] && echo "null" || echo "'$van'")
-      tot_sql=$([ -z "$tot" ] && echo "null" || echo "'$tot'")
+      # Zelfde verdubbeling voor de merkgrens; de ranges hierboven zijn
+      # letters zonder apostrof, maar een handmatige aanroep met een
+      # merknaam als grens mag niet stilzwijgend breken.
+      van_sql=$([ -z "$van" ] && echo "null" || echo "'${van//\'/\'\'}'")
+      tot_sql=$([ -z "$tot" ] && echo "null" || echo "'${tot//\'/\'\'}'")
       echo "-- range [$van, $tot)"
-      draai "select * from vul_product_attributes('$r', $van_sql, $tot_sql)"
+      draai "select * from vul_product_attributes('$r_sql', $van_sql, $tot_sql)"
     done
   fi
   echo "-- duur: $(( $(date +%s) - start )) s"
@@ -461,12 +493,13 @@ Verwacht per retailer: `verwerkt` gelijk aan het aantal rijen uit de tabel onder
 
 ```bash
 supabase db query --linked "select count(*) as totaal, count(*) filter (where product_id = canonical_id) as canoniek, count(*) filter (where is_fashion) as fashion, count(*) filter (where is_fashion and product_id = canonical_id) as bruikbaar, count(*) filter (where classifier_version is not null) as geclassificeerd from product_attributes" -o table
+supabase db query --linked "select p.retailer, count(*) filter (where pa.product_id = pa.canonical_id) as canoniek from product_attributes pa join products p on p.id = pa.product_id group by 1 order by 1" -o table
 supabase db query --linked "select gender, category, price_band, count(*) from product_attributes where is_fashion and product_id = canonical_id group by 1,2,3 order by 1,2,3" -o table
 supabase db query --linked "select count(*) from product_attributes pa join products p on p.id = pa.product_id where p.retailer = 'H&M (NL)'" -o table
 supabase db query --linked "select count(*) as accessory_met_kledingnaam from product_attributes pa join products p on p.id = pa.product_id where pa.category = 'accessory' and p.name ~* '(shirt|top|blouse|jurk|dress|broek|jeans|trui|sweater)'" -o table
 ```
 
-Verwacht: `totaal = 281999`; `canoniek` kleiner dan `totaal`; `bruikbaar` groter dan 0; `geclassificeerd = 0` (dat komt in taak 2); de dekkingsmatrix heeft rijen voor `male` en `female` in alle zes categorieen; de derde query geeft `88043` (H&M zit nu in de pool, spec 2); de vierde query geeft ongeveer 50.618 (minus rijen met `is_kids` of een niet-kledingwoord). Dat laatste getal is de nulmeting voor taak 2: schrijf het op.
+Verwacht: `totaal = 281999`; `canoniek = 100849` (spec 5.1, gemeten op de foto-dedupe van 16 september); per retailer uit de tweede query: Giglio (INT) 68.739, H&M (NL) 24.815, PUMA (EU) - USD 4.143, Mart Visser 1.009, OFM. 2.125, The New Originals (NL) 18; `bruikbaar` groter dan 0; `geclassificeerd = 0` (dat komt in taak 2); de dekkingsmatrix heeft rijen voor `male` en `female` in alle zes categorieen; de vierde query geeft `88043` (H&M zit nu in de pool, spec 2); de vijfde query geeft ongeveer 50.618 (minus rijen met `is_kids` of een niet-kledingwoord). Dat laatste getal is de nulmeting voor taak 2: schrijf het op.
 
 - [ ] **Stap 8: Poorten en commit**
 
@@ -1186,11 +1219,16 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 ### Taak 5: Stabiele JSON, sha256 en seed
 
 **Bestanden:**
-- Aanmaken: `src/utils/stableJson.ts`, `src/utils/hash.ts`, `src/services/outfits/answersSeed.ts`
+- Aanmaken: `src/utils/stableJson.ts`, `src/services/outfits/answersSeed.ts`
+- Wijzigen: `src/utils/hash.ts` (bestaat al, 5 regels, exporteert `hashString`; `src/utils/image.ts` regel 1 importeert die en blijft ongewijzigd werken)
 - Test: `src/utils/__tests__/stableJson.test.ts`, `src/utils/__tests__/hash.test.ts`, `src/services/outfits/__tests__/answersSeed.test.ts`
 
 **Interfaces:**
-- Levert: `stableStringify(value: unknown): string`; `sha256Hex(input: string): Promise<string>`; `fnv1a32(input: string): number`; `seedFromAnswers(answers: Record<string, any>): number`.
+- Gebruikt: `hashString(input: string): number` uit het bestaande `src/utils/hash.ts` (FNV-1a 32 bits: offset 2166136261, prime 16777619).
+- Levert: `stableStringify(value: unknown): string`; `sha256Hex(input: string): Promise<string>`; `fnv1a32(input: string): number` (zelfde uitkomst als `hashString`, onder de naam die de rest van dit plan gebruikt); `seedFromAnswers(answers: Record<string, any>): number`.
+
+Wat de repo al had en hier is besloten:
+- `hashString` in `src/utils/hash.ts` is al een FNV-1a. Het bestand wordt niet overschreven: `hashString` blijft staan voor `image.ts`, en `fnv1a32` roept hem aan zodat er een implementatie is. De testvectoren hieronder bewijzen dat het inderdaad FNV-1a is.
 
 - [ ] **Stap 1: Schrijf de falende tests**
 
@@ -1277,7 +1315,7 @@ describe("seedFromAnswers", () => {
 npx vitest run src/utils/__tests__/stableJson.test.ts src/utils/__tests__/hash.test.ts src/services/outfits/__tests__/answersSeed.test.ts
 ```
 
-Verwacht: drie testbestanden falen met `Failed to resolve import "../stableJson"` (en `../hash`, `../answersSeed`).
+Verwacht: `stableJson.test.ts` en `answersSeed.test.ts` falen met `Failed to resolve import "../stableJson"` en `Failed to resolve import "../answersSeed"`. `hash.test.ts` laadt wel (het bestand bestaat) en faalt met `TypeError: sha256Hex is not a function` en `TypeError: fnv1a32 is not a function`, omdat die exports er nog niet zijn.
 
 - [ ] **Stap 3: Implementeer**
 
@@ -1308,9 +1346,28 @@ function sorteer(value: unknown): unknown {
 }
 ```
 
-Maak `src/utils/hash.ts`:
+Vervang de volledige inhoud van het bestaande `src/utils/hash.ts` (nu alleen `hashString`) door:
 
 ```ts
+/**
+ * FNV-1a, 32 bits, synchroon. Bestond al in dit bestand en wordt gebruikt
+ * door src/utils/image.ts; ongewijzigd gelaten.
+ */
+export function hashString(input: string): number {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < input.length; i++) { h ^= input.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+
+/**
+ * Dezelfde FNV-1a onder de naam die de keten-code gebruikt. Voor een seed
+ * hoeft een hash niet cryptografisch te zijn; hij moet alleen vast en snel
+ * zijn. Testvectoren staan in __tests__/hash.test.ts.
+ */
+export function fnv1a32(input: string): number {
+  return hashString(input);
+}
+
 /**
  * sha256 als hex-string. Gebruikt WebCrypto, dat in de browser en in Node 19+
  * als globalThis.crypto beschikbaar is (Node 22 in deze repo).
@@ -1319,19 +1376,6 @@ export async function sha256Hex(input: string): Promise<string> {
   const bytes = new TextEncoder().encode(input);
   const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-/**
- * FNV-1a, 32 bits, synchroon. Voor een seed hoeft een hash niet
- * cryptografisch te zijn; hij moet alleen vast en snel zijn.
- */
-export function fnv1a32(input: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i);
-    h = Math.imul(h, 0x01000193) >>> 0;
-  }
-  return h >>> 0;
 }
 ```
 
@@ -2936,13 +2980,14 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 ### Taak 11: Persona-harnas `scripts/keten/persona-run.ts`
 
 **Bestanden:**
+- Aanmaken: `src/keten/personas.ts`
 - Aanmaken: `scripts/keten/persona-run.ts`
 - Wijzigen: `package.json` (blok `"scripts"`, na de regel `"keten:classificeer"`)
 - Test: het script zelf is de test; hij eindigt met exit 0 of 1
 
 **Interfaces:**
 - Gebruikt: `createClient` uit `@supabase/supabase-js`; `naarKandidatenParams`, `bereidKandidatenVoor`, `telCategorieAfwijkingen`, `KandidaatRij` uit taak 6; `seedFromAnswers` uit taak 5; `runEngineV2(answers, products, { count, seed })` uit `src/engine/v2`; type `Outfit` uit `src/engine/types` (velden `id`, `title`, `occasion`, `products: Product[]`).
-- Levert: npm-script `keten:personas`.
+- Levert: npm-script `keten:personas`; `KETEN_PERSONAS`, type `KetenPersona` (`src/keten/personas.ts`) als canonieke bron van de vier persona's uit spec 5.7, ook gebruikt door plan 3 taak 8 (`scripts/keten/stylist-run.ts`), zodat een wijziging aan een persona op een plek gebeurt.
 
 Wat de spec openlaat en hier is besloten:
 - Spec 5.7 controleert "footwear met shoe_type = sandaal bij gelegenheid work". Er zijn nog geen tags, dus de controle kijkt naar de productnaam: footwear waarvan de naam `sandaal|sandal|slipper|teenslipper|flip-flop` bevat, of een accessory met `zwem` in de naam, bij een outfit met gelegenheid `work`. Plan 2 vervangt dit door `shoe_type`.
@@ -2959,9 +3004,40 @@ npx vite-node scripts/keten/persona-run.ts
 
 Verwacht: een fout dat het bestand niet bestaat.
 
-- [ ] **Stap 2: Schrijf het script**
+- [ ] **Stap 2: Schrijf de canonieke persona-data en het script**
 
-Maak `scripts/keten/persona-run.ts`:
+Maak eerst `src/keten/personas.ts`. Dit is de enige bron van de vier persona's uit spec 5.7; plan 3 taak 8 importeert dit bestand in plaats van er een eigen versie van te maken:
+
+```typescript
+/**
+ * Canonieke persona-data voor de feed-poort (spec 5.7).
+ *
+ * Een bron voor de vier vaste persona's, gebruikt door twee harnassen:
+ * plan 1 (scripts/keten/persona-run.ts, get_kandidaten -> runEngineV2) en
+ * plan 3 (scripts/keten/stylist-run.ts, get_kandidaten -> compose-outfits).
+ * Bevat alleen de rauwe feiten uit de spec (naam, gender, gelegenheden,
+ * budget, stijlvoorkeuren); elke afnemer leidt zelf zijn eigen vorm af
+ * (quiz-antwoorden respectievelijk assen met zekerheid), zodat een wijziging
+ * aan een persona op een plek gebeurt.
+ */
+export interface KetenPersona {
+  naam: string;
+  gender: "male" | "female";
+  occasions: string[];
+  budget_min: number;
+  budget_max: number;
+  stylePreferences: string[];
+}
+
+export const KETEN_PERSONAS: KetenPersona[] = [
+  { naam: "man klassiek", gender: "male", occasions: ["work"], budget_min: 50, budget_max: 150, stylePreferences: ["classic"] },
+  { naam: "vrouw minimalistisch", gender: "female", occasions: ["work", "date"], budget_min: 25, budget_max: 100, stylePreferences: ["minimalist"] },
+  { naam: "man streetwear", gender: "male", occasions: ["casual", "party"], budget_min: 25, budget_max: 100, stylePreferences: ["streetwear"] },
+  { naam: "vrouw romantisch", gender: "female", occasions: ["date", "travel"], budget_min: 25, budget_max: 75, stylePreferences: ["romantic"] },
+];
+```
+
+Maak daarna `scripts/keten/persona-run.ts`:
 
 ```ts
 /**
@@ -2989,6 +3065,7 @@ import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { runEngineV2 } from "../../src/engine/v2";
 import type { Outfit, Product } from "../../src/engine/types";
+import { KETEN_PERSONAS, type KetenPersona } from "../../src/keten/personas";
 import { seedFromAnswers } from "../../src/services/outfits/answersSeed";
 import {
   bereidKandidatenVoor,
@@ -3024,24 +3101,27 @@ interface Persona {
   answers: Record<string, any>;
 }
 
-const PERSONAS: Persona[] = [
-  {
-    naam: "Man, klassiek, werk, 50-150",
-    answers: { gender: "male", stylePreferences: ["classic"], occasions: ["work"], budget: { min: 50, max: 150 }, fit: "regular" },
-  },
-  {
-    naam: "Vrouw, minimalistisch, werk en date, 25-100",
-    answers: { gender: "female", stylePreferences: ["minimalist"], occasions: ["work", "date"], budget: { min: 25, max: 100 }, fit: "regular" },
-  },
-  {
-    naam: "Man, streetwear, casual en uitgaan, 25-100",
-    answers: { gender: "male", stylePreferences: ["streetwear"], occasions: ["casual", "party"], budget: { min: 25, max: 100 }, fit: "relaxed" },
-  },
-  {
-    naam: "Vrouw, romantisch, date en reizen, 25-75",
-    answers: { gender: "female", stylePreferences: ["romantic"], occasions: ["date", "travel"], budget: { min: 25, max: 75 }, fit: "regular" },
-  },
-];
+// Fit is geen onderdeel van de canonieke persona-data (die is voor alle
+// afnemers hetzelfde); alleen dit harnas heeft "fit" nodig voor runEngineV2,
+// dus die vertaling staat hier, niet in src/keten/personas.ts.
+const FIT_PER_STYLE: Record<string, string> = {
+  classic: "regular",
+  minimalist: "regular",
+  streetwear: "relaxed",
+  romantic: "regular",
+};
+
+function persoonaAnswers(p: KetenPersona): Record<string, any> {
+  return {
+    gender: p.gender,
+    stylePreferences: p.stylePreferences,
+    occasions: p.occasions,
+    budget: { min: p.budget_min, max: p.budget_max },
+    fit: FIT_PER_STYLE[p.stylePreferences[0]] ?? "regular",
+  };
+}
+
+const PERSONAS: Persona[] = KETEN_PERSONAS.map((p) => ({ naam: p.naam, answers: persoonaAnswers(p) }));
 
 const AANTAL_OUTFITS = 6;
 const SANDAAL_RE = /\b(sandaal|sandalen|sandal|sandals|slipper|slippers|teenslipper|flip-?flops?)\b/i;
@@ -3262,4 +3342,8 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 | 7 engine v2 niet aangepast; `products` niet aangeraakt; bestaande `/results` blijft staan | Alle taken (alleen nieuwe tabellen, functies en bestanden; `productClassifier.ts` wordt geimporteerd, niet gewijzigd; `EnhancedResultsPage` krijgt alleen het knoppenpaar) |
 | 8 poorten per taak: tsc, vitest, vite build, design-check | Elke taak, stap "Poorten en commit" |
 | Roast: tijd, kosten, betrokkenen, tripwires | Secties "Omvang en tijd", "Stopregels" en "Controle vooraf" bovenaan; meetpunten in taak 1 stap 6 en 8, taak 2 stap 7 en 8 |
+| Roast: pre-commitment-query voor de start | "Controle vooraf": 50.618 op 2026-09-15, opnieuw 50.618 op 2026-09-16 |
+| Roast: SQL-vertaling van `reclassifyProducts` in de RPC | Niet overgenomen, reden in "Controle vooraf": een derde kopie van de classifier; taak 2 bereikt hetzelfde met de bestaande TypeScript-functie |
+| Roast: jsdom- of e2e-test voor het herlaad-gedrag | Niet letterlijk overgenomen (geen jsdom, happy-dom of Playwright in `node_modules`, en geen nieuwe afhankelijkheden in dit plan); in plaats daarvan taak 9: pure geheugen-module met injecteerbare opslag en een render-test met gestubde `localStorage` |
+| Stand van uitvoering: taak 1 stap 1 tot en met 5 al gedaan, `hash.ts` bestaat al | Sectie "Stand van uitvoering"; taak 1 stap 1, 3 en 5 benoemen de bestaande stand; taak 5 wijzigt `hash.ts` in plaats van het aan te maken |
 | CLAUDE.md design system: palet, `rounded-xl`, 48px, Lucide `w-5 h-5`, tekst minimaal 14px, Nederlands met je/jij | Taak 9 |
