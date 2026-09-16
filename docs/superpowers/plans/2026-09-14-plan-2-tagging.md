@@ -17,7 +17,7 @@
 - De `products`-tabel krijgt geen nieuwe kolommen (spec 4). Alles wat afgeleid is gaat naar `product_attributes`. Twee uitzonderingen, bewust en alleen hier: een index op `products (retailer)` (taak 2, geen data) en `in_stock = false` voor producten die uit een feed verdwenen zijn (taak 12; spec 9 legt "cron voor feed en voorraad" bij dit plan, en `in_stock` is feed-data die de import zelf ook schrijft).
 - Migraties worden toegepast met `supabase db query --linked -f <bestand>` (Supabase CLI 2.90.0 op `/opt/homebrew/bin/supabase`, gekoppeld via `supabase/.temp/linked-project.json`). Nooit `supabase db push`: er staat geen psql op deze machine, en de migratiehistorie van dit project is niet in de remote geregistreerd, dus `db push` zou alle oude migraties opnieuw willen draaien (plan 1, regel 25). Controle-queries gaan met `supabase db query --linked "<sql>" -o table`. De Management API heeft een tijdslimiet per query; zware aanroepen doe je per retailer, en als dat niet genoeg is via een eenmalige pg_cron-job (zie taak 6, stap "Uitwijk bij een tijdslimiet").
 - Tagging is idempotent: een rij met dezelfde `tagger_version` wordt overgeslagen (spec 5.1). De tweede ronde met foto draait alleen op `confidence < 0.6`.
-- `vul_product_attributes()` uit plan 1 draai je na taak 5 nooit meer: die functie overschrijft bij elke run `canonical_id`, `gender` en `price_band` uit de ruwe velden (en `is_fashion` en `category` voor rijen zonder `classifier_version`), en draait daarmee de LLM-tags op `gender` en `is_fashion` en de embedding-dedupe op `canonical_id` terug zonder dat `tagger_version` verandert. Nieuwe producten krijgen hun rij via `keten_vul_nieuwe_producten()` (taak 12), die alleen invoegt wat nog geen rij heeft.
+- `vul_product_attributes()` uit plan 1 draai je na taak 5 nooit meer: die functie overschrijft bij elke run `canonical_id`, `gender` en `price_band` uit de ruwe velden (en `is_fashion` en `category` voor rijen zonder `classifier_version`), en draait daarmee de LLM-tags op `gender` en `is_fashion` en de embedding-dedupe op `canonical_id` terug zonder dat `tagger_version` verandert. Sinds migratie `20260914120400` (plan 1 taak 3, tijdens uitvoering toegevoegd op ruling van de controller) ververst diezelfde functie ook `price`, `in_stock` en `retailer` op elke run, omdat `get_kandidaten` anders via een dure join naar `products` liep en vastliep op de 8 seconden statement-timeout van de browser-route (zie de aannametabel hieronder). Dat ververswerk verdwijnt niet: `keten_vul_nieuwe_producten()` (taak 12) neemt het over, voor elke rij van de retailer, canoniek of niet, zonder `canonical_id` aan te raken (onderbouwing bij "Wat de spec openlaat" hieronder). Nieuwe producten krijgen hun rij via diezelfde `keten_vul_nieuwe_producten()`, die alleen invoegt wat nog geen rij heeft.
 - `category` heeft in deze codebase een eigenaar: de productclassifier uit plan 1 (`zet_classificatie`, `classifier_version`). Plan 1's harnas telt afwijkingen tussen de client-classifier en `product_attributes.category` en gaat rood zodra die groter dan nul is (stopregel 2). De tagger geeft `category` terug (spec 5.1, strikt schema) maar `keten_schrijf_tags` schrijft hem niet weg; hij dient om `shoe_type` te valideren en om `is_fashion` te verlagen. Alleen geclassificeerde rijen (`classifier_version is not null`) worden getagd. Wie na een feed-import nieuwe producten wil taggen, draait eerst `npm run keten:classificeer -- --retailer "<naam>"` (plan 1 taak 2) en dan `npm run keten:tag -- --ja`.
 - De retailer-naam is de letterlijke waarde van `products.retailer` (dat is de programmanaam uit de Daisycon-feed, zie `import-daisycon-feed/index.ts` regel 427). Hij staat op een plek: `scripts/keten/retailers.ts` (taak 1). Elke RPC met een `p_retailer`-parameter controleert de naam en geeft een fout bij een onbekende waarde, zodat een typefout nooit stilzwijgend nul rijen oplevert.
 - Het tagschema is exact spec 5.1: waarden in het Nederlands waar de spec dat zegt (`warm`, `koel`, `neutraal`, `licht`, `medium`, `donker`, `effen`, `subtiel`, `statement`, kleuren en materialen genormaliseerd), gelegenheden in het Engels (`work`, `casual`, `formal`, `date`, `travel`, `sport`, `party`).
@@ -36,7 +36,8 @@ Dit plan bouwt op `docs/superpowers/plans/2026-09-14-plan-1-fundament.md`. Contr
 |---|---|---|
 | Tabel `product_attributes` | kolommen `product_id uuid pk`, `canonical_id uuid not null`, `is_fashion boolean`, `category text`, `gender text`, `price_band text`, `classifier_version text`, `embedding extensions.vector(512)`, `tagged_at timestamptz`; RLS aan, lezen voor iedereen, schrijven alleen service role | `grep -l "product_attributes" supabase/migrations/*.sql` geeft `20260914120000_product_attributes_fundament.sql` (staat al in de werkmap, nog niet gecommit op 2026-09-16) |
 | Functie `normaliseer_productnaam(text)` | `immutable strict`, haalt maat- en kleursuffix van een productnaam | `grep -n "function normaliseer_productnaam" supabase/migrations/*.sql` |
-| Vulfunctie `vul_product_attributes(p_retailer text, p_merk_van text, p_merk_tot text)` | vult en overschrijft de ruwe velden (`on conflict do update`); wordt in dit plan niet meer aangeroepen | `grep -n "function vul_product_attributes" supabase/migrations/*.sql` |
+| Vulfunctie `vul_product_attributes(p_retailer text, p_merk_van text, p_merk_tot text)` | vult en overschrijft de ruwe velden (`on conflict do update`); ververst sinds migratie `20260914120400` ook `price`, `in_stock` en `retailer` op elke run; wordt in dit plan niet meer aangeroepen, `keten_vul_nieuwe_producten()` (taak 12) neemt het verversen van die drie kolommen over | `grep -n "function vul_product_attributes" supabase/migrations/*.sql` |
+| Kolommen `price`, `in_stock`, `retailer` op `product_attributes` | tijdens plan 1 taak 3 toegevoegd op ruling van de controller: `get_kandidaten` liep via een join naar `products` vast op de 8 seconden statement-timeout van de browser-route (56,5s pure uitvoertijd voor ~39.000 losse heap-fetches, gemeten met EXPLAIN ANALYZE); `vul_product_attributes()` ververste de drie kolommen sindsdien bij elke run en `get_kandidaten` filtert sindsdien op deze kolommen in plaats van op een join naar `products` | `grep -n "add column if not exists price" supabase/migrations/20260914120400_keten_kandidaten_kolommen.sql`; `grep -l "pa.in_stock" supabase/migrations/20260914120500_get_kandidaten_op_attributes.sql` |
 | Classifier `zet_classificatie(jsonb, text)` en script `npm run keten:classificeer -- --retailer "<naam>"` | zet `category`, `is_fashion` en `classifier_version` per rij; H&M is na plan 1 volledig geclassificeerd | `grep -n "function zet_classificatie" supabase/migrations/*.sql`; `grep -n "keten:classificeer" package.json` |
 | RPC `get_kandidaten` | signatuur uit spec 5.3 met acht parameters, `security invoker`, zonder tags in de score, `attrs` bevat `classifier_version` | `grep -n "function get_kandidaten" supabase/migrations/*.sql` |
 | Harnas `scripts/keten/persona-run.ts` (plan 1 taak 11) | vite-node-script dat exit code 0 geeft als de vier persona's slagen; haalt kandidaten op met `client.rpc("get_kandidaten", params)` waarbij `params` van het type `KandidatenParams` is (acht vaste velden); telt categorie-afwijkingen met `telCategorieAfwijkingen` en is rood als dat getal groter dan nul is | `grep -n 'rpc("get_kandidaten"' scripts/keten/persona-run.ts` geeft precies een regel |
@@ -52,6 +53,7 @@ Ontbreekt iets, dan voer je eerst de betreffende taak van plan 1 uit. Dit plan v
 - Producten die uit een feed verdwenen zijn (wel `campaign_id`, niet bijgewerkt in de laatste geslaagde import) krijgen `in_stock = false` (taak 12).
 - `category` blijft van de classifier uit plan 1. Spec 5.1 laat de tagger `category` teruggeven, maar plan 1 heeft de categorie al in de database gecorrigeerd en meet in het harnas of de client-classifier het daarmee eens is (stopregel 2). Zou de tagger `category` overschrijven, dan gaat elke feed-poort rood op afwijkingen die niets met de feed te maken hebben. `keten_schrijf_tags` schrijft daarom alle tags behalve `category`, en `is_fashion` kan alleen van waar naar onwaar (taak 2).
 - `get_kandidaten` geeft alleen getagde rijen terug (`tagger_version is not null`). Spec 5.3 noemt dat filter niet, maar de score bestaat voor 0.8 uit tags; een ongetagde rij kan niet gescoord worden en zou een lege plek in een outfit vullen met een product waar niets over bekend is. Gevolg: een retailer die nog niet getagd is, komt niet in kandidaten voor, wat spoort met "een feed telt pas mee na de poort" (spec 3 en 5.7). Nieuwe producten uit de wekelijkse import zijn onzichtbaar tot de eerstvolgende classificeer- en tag-run (taak 7 en 12).
+- Na elke feed-import moeten `price`, `in_stock` en `retailer` op `product_attributes` weer gelijk zijn aan `products`: die drie kolommen zijn tijdens plan 1 taak 3 gedenormaliseerd (migratie `20260914120400`, controller-ruling) en werden tot dan toe door `vul_product_attributes()` ververst. Dit plan verbiedt die functie vanaf taak 5 (Globale randvoorwaarden), dus `keten_vul_nieuwe_producten()` (taak 12) neemt het ververswerk over: `price`, `in_stock`, `retailer` en `price_band` worden voor elke rij van de retailer bijgewerkt, canoniek of niet, ongeacht `classifier_version` of `tagger_version`. Bewust gekozen: alleen deze vier kolommen verversen, niet de volledige `vul_product_attributes()` opnieuw draaien. Die functie herberekent `canonical_id` voor de hele retailer bij elke run (`first_value() over (partition by retailer, image_url ...)`); een nieuw, goedkoper product in een bestaande fotogroep zou dan zonder aankondiging de canonieke rij van een al getagde groep verplaatsen naar een ongetagde rij, en `get_kandidaten` zou die hele groep tijdelijk verliezen totdat de nieuwe rij ook geclassificeerd en getagd is. Met alleen verversen blijft `canonical_id` ongemoeid: een nieuw, goedkoper product in een bestaande fotogroep wordt, net als `keten_vul_nieuwe_producten()` al deed voor nieuwe rijen, een niet-canonieke rij totdat een bewuste her-dedupe (`keten_dedupe_embedding`, taak 8) of een nieuwe classificeer/tag-ronde de rangorde binnen die groep herbepaalt. Gevolg: de kandidatenpool verschuift nooit stilletjes door een feed-import, maar een nieuw goedkoper product wordt ook niet vanzelf zichtbaar als canoniek totdat iemand de dedupe bewust opnieuw draait.
 
 ## Bestandsstructuur
 
@@ -1937,10 +1939,12 @@ Vervang de tweede statement in de job door de query die te lang duurde. pg_cron 
 - Test: `scripts/keten/__tests__/migraties.test.ts` en `migraties.live.test.ts` (uitbreiden), live controle
 
 **Interfaces:**
-- Gebruikt: `get_kandidaten` met acht parameters uit plan 1 (wordt vervangen), tag-kolommen en embedding (taak 2 en 6), `keten_controleer_retailer` (taak 2).
+- Gebruikt: `get_kandidaten` met acht parameters (wordt vervangen); de live versie is `20260914120500_get_kandidaten_op_attributes.sql` uit plan 1 taak 3 (controller-ruling), niet de oorspronkelijke `20260914120100`. Die live versie filtert en rangschikt volledig op `product_attributes` en joint `products` pas na de topN-afkap; de vorige vorm (join naar `products` per kandidaatrij, vóór de afkap) mat 56,5 seconden pure uitvoertijd en gaf via de anon-route `57014` op de 8 seconden statement-timeout (`.superpowers/sdd/2026-09-14-plan-1-fundament/taak-3-report.md`). Verder gebruikt: tag-kolommen en embedding (taak 2 en 6), `keten_controleer_retailer` (taak 2), partiële index `idx_product_attributes_kandidaten (gender, category, price) where product_id = canonical_id and is_fashion and in_stock` (`20260914120400`).
 - Levert: `get_kandidaten(p_gender text, p_occasions text[], p_budget_min int, p_budget_max int, p_axes jsonb, p_liked_ids uuid[], p_disliked_ids uuid[], p_per_category int default 12, p_retailer text default null) returns table (product_id uuid, category text, score real, attrs jsonb, product jsonb)`. De negende parameter heeft een default, dus elke aanroep uit plan 1 blijft werken. `p_axes` heeft de vorm `{ "formality": {"value": 3, "confidence": 0.8}, "silhouette": {"value": "slim", "confidence": 1}, ... }` (spec 5.2). De functie blijft `security invoker` zoals in plan 1: de aanroeper leest `products` en `product_attributes` onder zijn eigen RLS (select-policies `using (true)`), en er is geen reden voor meer rechten op een publiek aanroepbare functie.
 
 Wat de spec openlaat en hier is besloten: alleen getagde rijen (`tagger_version is not null`) doen mee. Spec 5.3 noemt dat filter niet, maar 0.8 van de score komt uit tags; een ongetagde rij scoort nul en zou toch een plek in een outfit vullen. Een retailer die nog niet getagd is komt dus niet in kandidaten voor; `npm run keten:personas` zonder `--retailer` ziet na deze taak alleen H&M tot een tweede retailer door taak 5 is gegaan. Nieuwe producten uit de wekelijkse import (taak 12) blijven onzichtbaar tot de eerstvolgende classificeer- en tag-run.
+
+Niet-onderhandelbaar voor deze taak: de score-termen komen erbij zonder de queryvorm van `20260914120500` te verlaten. Filteren, uitsluiten (`p_disliked_ids`) en rangschikken (de `row_number() over (partition by category ...)`) gebeurt volledig op `product_attributes`, inclusief `price`, `in_stock`, `retailer` en de tag-kolommen; `products` wordt pas na `where rn <= p_per_category` gejoind, alleen voor de rijen die worden teruggegeven, met `to_jsonb(p.*)` zodat plan 1 taak 6 en plan 3 nog steeds `colors`, `sizes` en `description` uit dat object kunnen lezen. Een join naar `products` vóór de afkap (zoals een eerdere versie van deze taak per ongeluk deed, geschreven vóór `20260914120400`/`20260914120500` bestonden) reproduceert de 56,5s/57014-regressie zodra deze migratie de live functie vervangt.
 
 - [ ] Breid de contract-test uit. Voeg onderaan `scripts/keten/__tests__/migraties.test.ts` toe:
 
@@ -1962,7 +1966,16 @@ describe("20260916100200_keten_get_kandidaten_score", () => {
     expect(sql).toContain("0.5 *");
     expect(sql).toContain("0.3 *");
     expect(sql).toContain("0.2 *");
-    expect(sql).toContain("order by score desc, product_id");
+    expect(sql).toContain("order by g.category, g.score desc, g.product_id");
+  });
+
+  it("filtert en rangschikt volledig op product_attributes; products wordt pas na de topN-afkap gejoind", () => {
+    expect(sql).not.toContain("join products p on p.id = pa.product_id");
+    expect(sql).toContain("and pa.in_stock");
+    expect(sql).toContain("and (p_retailer is null or pa.retailer = p_retailer)");
+    expect(sql).toContain("join products p on p.id = g.product_id");
+    expect(sql).toContain("where g.rn <= p_per_category");
+    expect(sql).toContain("to_jsonb(p.*) as product");
   });
 
   it("blijft security invoker en aanroepbaar voor de frontend", () => {
@@ -2036,11 +2049,30 @@ describe.skipIf(!url || !serviceKey)("20260916100200_keten_get_kandidaten_score 
   + 0.3 * gelegenheid-overlap (aandeel van p_occasions dat in occasions zit)
   + 0.2 * max cosine-similariteit met de embeddings van p_liked_ids (0 als leeg)
 
+  De live get_kandidaten (20260914120500, plan 1 taak 3, controller-ruling)
+  filtert en rangschikt volledig op product_attributes en joint products pas
+  na de topN-afkap. De vorige vorm (20260914120100, join naar products per
+  kandidaatrij, vóór de afkap) liet de planner 526 rijen schatten tegen
+  39.046 werkelijke, deed daarvoor ~39.000 losse heap-fetches op products en
+  kwam op 56,5 seconden pure uitvoertijd; via de anon-route (8s
+  statement-timeout) faalde de RPC met 57014. Deze migratie voegt de
+  score-termen toe zonder die vorm te verlaten: geen join naar products vóór
+  de afkap.
+
   ## Wat deze migratie doet
   - Dropt de oude signatuur (een extra parameter zou anders een tweede
     overload maken in plaats van een vervanging).
   - Voegt p_retailer toe (default null) zodat de feed-poort de keten op
     een enkele feed kan draaien (spec 5.7); onbekende naam geeft een fout.
+  - Filtert, sluit uit (p_disliked_ids) en rangschikt volledig op
+    product_attributes: price, in_stock, retailer en de tag-kolommen
+    (formality, silhouette, color_temp, lightness, pattern, shoe_type,
+    occasions, embedding) staan daar al. Geen join naar products in de
+    kandidaat-CTE's. products wordt pas na "where rn <= p_per_category"
+    gejoind, alleen voor de rijen die worden teruggegeven (maximaal
+    6 x p_per_category, bij de default 12 dus maximaal 72), met
+    to_jsonb(p.*) zodat plan 1 taak 6 en plan 3 nog steeds colors, sizes en
+    description uit dat object lezen.
   - Top p_per_category per categorie, deterministisch op product_id.
   - Alleen getagde rijen (tagger_version is not null): 0.8 van de score komt
     uit tags, een ongetagde rij is niet te scoren. Een retailer telt pas mee
@@ -2050,9 +2082,23 @@ describe.skipIf(!url || !serviceKey)("20260916100200_keten_get_kandidaten_score 
   - Blijft security invoker, zoals in plan 1: de aanroeper leest onder zijn
     eigen select-policies. Geen bevoegdheidsverhoging op een publieke functie.
 
+  ## Verwachting bij de partiële index
+  idx_product_attributes_kandidaten (20260914120400) op (gender, category,
+  price) where product_id = canonical_id and is_fashion and in_stock dekt
+  precies de voorwaarden die hier ook gelden: de query hieronder voegt geen
+  voorwaarde toe die de index minder bruikbaar maakt. De extra voorwaarden
+  in deze versie (tagger_version is not null, retailer, de disliked-
+  uitsluiting) staan niet in de index, maar worden toegepast als filter op
+  een rij die de index-scan toch al heeft opgehaald (dezelfde heap-tuple
+  die ook attrs vult): geen extra tabel, geen extra I/O. Verwachting: de
+  index blijft de query bedienen en de duur blijft in dezelfde orde van
+  grootte als de 20260914120500-meting (onder de twee seconden), niet terug
+  naar de tientallen seconden van de nested-loop-naar-products. Bewezen, niet
+  aangenomen: zie de twee metingen in de checklist hieronder.
+
   ## Terugdraaien
-  Zet de functie uit de plan 1-migratie terug (grep "function get_kandidaten"
-  in supabase/migrations).
+  Zet de functie uit 20260914120500 terug:
+  supabase db query --linked -f supabase/migrations/20260914120500_get_kandidaten_op_attributes.sql
 */
 
 drop function if exists get_kandidaten(text, text[], int, int, jsonb, uuid[], uuid[], int);
@@ -2102,7 +2148,6 @@ as $$
       pa.embedding,
       pa.occasions,
       to_jsonb(pa) - 'embedding' as attrs,
-      to_jsonb(p.*) as product,
       (
         select coalesce(sum(a.as_conf), 0)::real
         from assen a
@@ -2114,23 +2159,21 @@ as $$
            or (a.as_naam = 'shoe_type'  and pa.shoe_type = a.as_waarde)
       ) as as_som
     from product_attributes pa
-    join products p on p.id = pa.product_id
-    where pa.canonical_id = pa.product_id
+    where pa.product_id = pa.canonical_id
       and pa.is_fashion
+      and pa.in_stock
       and pa.tagger_version is not null
-      and p.in_stock
       and pa.category in ('top', 'bottom', 'footwear', 'outerwear', 'dress', 'accessory')
       and (p_gender = 'unisex' or pa.gender in (p_gender, 'unisex'))
-      and p.price between p_budget_min and p_budget_max
+      and pa.price between p_budget_min and p_budget_max
       and not (pa.product_id = any(coalesce(p_disliked_ids, '{}'::uuid[])))
-      and (p_retailer is null or p.retailer = p_retailer)
+      and (p_retailer is null or pa.retailer = p_retailer)
   ),
   gescoord as (
     select
       b.product_id,
       b.category,
       b.attrs,
-      b.product,
       (
         0.5 * case when t.som > 0 then b.as_som / t.som else 0 end
       + 0.3 * case
@@ -2151,10 +2194,16 @@ as $$
            row_number() over (partition by category order by score desc, product_id) as rn
     from gescoord
   )
-  select product_id, category, score, attrs, product
-  from gerangschikt
-  where rn <= p_per_category
-  order by category, score desc, product_id;
+  select
+    g.product_id,
+    g.category,
+    g.score,
+    g.attrs,
+    to_jsonb(p.*) as product
+  from gerangschikt g
+  join products p on p.id = g.product_id
+  where g.rn <= p_per_category
+  order by g.category, g.score desc, g.product_id;
 $$;
 
 grant execute on function get_kandidaten(text, text[], int, int, jsonb, uuid[], uuid[], int, text) to anon, authenticated;
@@ -2188,8 +2237,30 @@ diff /tmp/keten-run1.json /tmp/keten-run2.json && echo "gelijk"
 
 Verwacht: `gelijk`.
 
+- [ ] Meet de duur na het toepassen, op dezelfde manier als plan 1 taak 3 (`.superpowers/sdd/2026-09-14-plan-1-fundament/taak-3-report.md`, addendum "De lat: aanroep onder de 8 seconden, bewezen op twee manieren"). Dit is de enige poort die telt: de browser roept `get_kandidaten` aan via de anon-route van PostgREST, met een statement-timeout van 8 seconden.
+
+  1. Getimed via `supabase db query --linked`, drie opeenvolgende aanroepen (cache warmt op):
+
+  ```bash
+  time supabase db query --linked "select count(*) from get_kandidaten('male', array['work','casual'], 20, 150, '{}'::jsonb, '{}'::uuid[], '{}'::uuid[], 12, 'H&M (NL)')" -o table
+  time supabase db query --linked "select count(*) from get_kandidaten('male', array['work','casual'], 20, 150, '{}'::jsonb, '{}'::uuid[], '{}'::uuid[], 12, 'H&M (NL)')" -o table
+  time supabase db query --linked "select count(*) from get_kandidaten('male', array['work','casual'], 20, 150, '{}'::jsonb, '{}'::uuid[], '{}'::uuid[], 12, 'H&M (NL)')" -o table
+  ```
+
+  2. Via de anon-route met curl, dezelfde aanroep die vóór `20260914120500` op `57014` faalde:
+
+  ```bash
+  curl -s -w "\nHTTP_STATUS:%{http_code} TIME:%{time_total}\n" -X POST "$VITE_SUPABASE_URL/rest/v1/rpc/get_kandidaten" \
+    -H "apikey: $VITE_SUPABASE_ANON_KEY" -H "Authorization: Bearer $VITE_SUPABASE_ANON_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{"p_gender":"male","p_occasions":["work","casual"],"p_budget_min":20,"p_budget_max":150,"p_axes":{},"p_liked_ids":[],"p_disliked_ids":[],"p_per_category":12,"p_retailer":"H&M (NL)"}'
+  ```
+
+  Verwacht: `HTTP_STATUS:200` en `TIME` ruim onder de 8 seconden, ook op de eerste (koude) aanroep. Harde grens, geen richtlijn: blijft een van beide metingen op of boven de 8 seconden, dan is deze taak niet af. Herstel dat niet door `products` vóór de afkap terug te joinen; de eerstvolgende stap is dan een aanvullende partiële index die ook `tagger_version` en `retailer` in het predicaat opneemt (analoog aan `idx_product_attributes_kandidaten` uit `20260914120400`), niet een structuurwijziging die de topN-afkap weer vóór de `products`-toegang zet.
+
+- [ ] Controleer meteen of elders in dit plan een tweede plek `product_attributes` weer via een join naar `products` filtert waar de kolommen `price`, `in_stock` of `retailer` al op `product_attributes` staan (taak 9's `keten_dekkingsmatrix` is hier al op gecontroleerd en gefixt, zie hieronder); vind je een nieuwe plek, fix hem in dezelfde vorm als hierboven voordat je verder gaat.
 - [ ] Poorten: `npx tsc --noEmit && npx vitest run && npx vite build && npm run design:check:ci`.
-- [ ] Commit: `git add supabase/migrations/20260916100200_keten_get_kandidaten_score.sql scripts/keten/__tests__/migraties.test.ts scripts/keten/__tests__/migraties.live.test.ts && git commit -m "feat(keten): get_kandidaten scoort op assen, gelegenheid en embedding"`
+- [ ] Commit: `git add supabase/migrations/20260916100200_keten_get_kandidaten_score.sql scripts/keten/__tests__/migraties.test.ts scripts/keten/__tests__/migraties.live.test.ts && git commit -m "feat(keten): get_kandidaten scoort op assen, gelegenheid en embedding, filter en rangschikking blijven op product_attributes"`
 
 ---
 
@@ -2430,6 +2501,8 @@ Verwacht: de grootste groep bestaat uit varianten van hetzelfde product (kleur, 
 
 Waarom niet een losse JWT-check in de policy: nergens in de migraties wordt een claim `app_metadata.role` gezet, en de migratie van `is_current_user_admin()` legt vast dat de admin-gebruikers `is_admin = true` in `raw_app_meta_data` hebben. Vijf oudere migraties gebruiken wel `->> 'role'` (`newsletter_subscribers`, `contact_messages`, `daisycon_imports`, `affiliate_campaigns`, `critical_security_fixes_final`); of die policies een admin doorlaten hangt af van iets dat in de repo niet te zien is, en dit plan neemt dat patroon daarom niet over. `is_current_user_admin()` is de twee keer geharde helper die op `is_admin` controleert, met terugval op `profiles.is_admin`. Een policy die niemand doorlaat geeft geen fout, alleen een lege resultset; daarom test de live test met de anon-sleutel dat lezen leeg is en dat de service role wel leest, en controleer je hieronder met `pg_get_expr` welke expressie er echt staat.
 
+`keten_dekkingsmatrix` is `grant`ed aan `authenticated`, dus bereikbaar via dezelfde PostgREST-route als `get_kandidaten` (taak 7), niet alleen via de service role. De functie telt 2 x 7 x 4 = 56 cellen, en elke cel deed in een eerdere versie van deze taak een eigen `join products` om `in_stock` en `retailer` te toetsen: precies de vorm die in taak 7 op 56,5 seconden voor één enkele combinatie uitkwam, hier vermenigvuldigd met 56 combinaties in één aanroep. `product_attributes` heeft `in_stock` en `retailer` al staan (`20260914120400`); de telling hieronder filtert daarom volledig op `product_attributes` en raakt `products` helemaal niet aan, ook niet na een afkap, want er wordt geen enkele kolom van `products` teruggegeven.
+
 - [ ] Breid de contract-test uit. Voeg onderaan `scripts/keten/__tests__/migraties.test.ts` toe:
 
 ```ts
@@ -2451,6 +2524,12 @@ describe("20260916100400_keten_feed_gates", () => {
     expect(sql).toContain("select keten_controleer_retailer(p_retailer)");
     expect(sql).toContain("'tot50', '50tot100', '100tot200', 'boven200'");
     expect(sql).toContain("'work', 'casual', 'formal', 'date', 'travel', 'sport', 'party'");
+  });
+
+  it("telt volledig op product_attributes, zonder join naar products", () => {
+    expect(sql).not.toContain("join products");
+    expect(sql).toContain("and pa.in_stock");
+    expect(sql).toContain("and pa.retailer = p_retailer");
   });
 });
 ```
@@ -2508,7 +2587,14 @@ describe.skipIf(!url || !serviceKey)("20260916100400_keten_feed_gates (live)", (
     migratie in dit project zet die claim, de admins hebben is_admin.
   - keten_dekkingsmatrix(p_retailer): telt canonieke, in-stock fashionproducten
     per gender x gelegenheid x prijsband. Unisex telt bij male en female mee.
-    Onbekende retailer-naam geeft een fout.
+    Onbekende retailer-naam geeft een fout. Telt volledig op product_attributes
+    (in_stock en retailer staan daar al sinds 20260914120400): geen join naar
+    products. Zonder die keuze zou elke van de 56 cellen (2 gender x 7
+    gelegenheid x 4 band) een eigen join naar products doen om in_stock en
+    retailer te toetsen, precies de vorm die get_kandidaten (taak 7) op 56,5
+    seconden voor een enkele combinatie liet uitkomen, hier 56 keer in een
+    aanroep. keten_dekkingsmatrix is grant'ed aan authenticated en loopt dus,
+    net als get_kandidaten, via de PostgREST-route met een statement-timeout.
 
   ## Terugdraaien
   drop function if exists keten_dekkingsmatrix(text);
@@ -2552,11 +2638,10 @@ as $$
       (
         select count(*)
         from product_attributes pa
-        join products p on p.id = pa.product_id
         where pa.canonical_id = pa.product_id
           and pa.is_fashion
-          and p.in_stock
-          and p.retailer = p_retailer
+          and pa.in_stock
+          and pa.retailer = p_retailer
           and pa.gender in (g.gender, 'unisex')
           and pa.price_band = b.band
           and o.occasion = any(pa.occasions)
@@ -2580,6 +2665,7 @@ grant execute on function keten_dekkingsmatrix(text) to authenticated;
 
 - [ ] Draai `npx vitest run scripts/keten/__tests__/migraties.test.ts` en zie alles slagen. Zet live: `supabase db query --linked -f supabase/migrations/20260916100400_keten_feed_gates.sql`. Draai de live test en zie 13 tests slagen.
 - [ ] Controleer live: `supabase db query --linked "select jsonb_pretty(keten_dekkingsmatrix('H&M (NL)'))" -o table`. Verwacht: twee sleutels `male` en `female`, elk zeven gelegenheden, elk vier banden met een getal. Ook: `supabase db query --linked "select polname, pg_get_expr(polqual, polrelid) as using_expr from pg_policy where polrelid = 'feed_gates'::regclass" -o table` toont `is_current_user_admin()`.
+- [ ] Meet de duur, zelfde reden als bij `get_kandidaten` (taak 7): `time supabase db query --linked "select keten_dekkingsmatrix('H&M (NL)')" -o table`. Verwacht: ruim onder de 8 seconden (deze functie raakt `products` niet aan, dus dit zou ruim binnen een seconde moeten liggen). Ligt de duur hoger, is de eerste vraag of `products` per ongeluk toch weer wordt aangeraakt (`grep -n "join products" supabase/migrations/20260916100400_keten_feed_gates.sql` moet niets teruggeven), niet een index toevoegen.
 - [ ] Poorten: `npx tsc --noEmit && npx vitest run && npx vite build && npm run design:check:ci`.
 - [ ] Commit: `git add supabase/migrations/20260916100400_keten_feed_gates.sql scripts/keten/__tests__/migraties.test.ts scripts/keten/__tests__/migraties.live.test.ts && git commit -m "feat(keten): feed_gates (admin-lezen via is_current_user_admin) en dekkingsmatrix"`
 
@@ -2903,12 +2989,13 @@ Verwacht: status 400 met de bestaande foutmelding uit de functie die begint met 
   - tabel `keten_cron_log(id bigint pk, job text, run_at timestamptz, resultaat jsonb)`; admins lezen, alleen de functies schrijven
   - `keten_roep_edge(p_functie text, p_body jsonb default '{}', p_query text default '') returns bigint` (het request-id van pg_net)
   - `keten_wekelijkse_import() returns integer` (aantal aangeroepen campagnes; logt naar `keten_cron_log`)
-  - `keten_vul_nieuwe_producten(p_retailer text default null) returns table (aantal_nieuw bigint, aantal_prijsband bigint)`: geeft producten zonder rij in `product_attributes` een rij (dedupe op naam naar een bestaande canonieke rij als die er is), ververst `price_band` uit `products.price`, en raakt bestaande `is_fashion`, `category`, `gender`, `canonical_id` en tags nooit aan
+  - `keten_vul_nieuwe_producten(p_retailer text default null) returns table (aantal_nieuw bigint, aantal_feedvelden_ververst bigint)`: geeft producten zonder rij in `product_attributes` een rij (dedupe op naam naar een bestaande canonieke rij als die er is), en ververst `price`, `in_stock`, `retailer` en `price_band` uit `products` voor elke rij van de retailer, canoniek of niet (dit is het ververswerk dat `vul_product_attributes()` deed vóór taak 5, zie Globale randvoorwaarden); raakt bestaande `is_fashion`, `category`, `gender`, `canonical_id` en tags nooit aan
   - `keten_vul_na_import() returns jsonb`: wacht tot elke actieve campagne een geslaagde import jonger dan twaalf uur heeft, zet dan verdwenen producten op `in_stock = false`, roept `keten_vul_nieuwe_producten()` aan en logt het resultaat; idempotent binnen een importronde
   - cron-jobs `keten-feed-import-wekelijks` (zondag 03:00 UTC), `keten-vul-na-import` (zondag elk uur 05:00 tot en met 11:00 UTC), `keten-links-elke-10-min` (elke tien minuten, 200 producten per keer)
 
 Wat de spec openlaat en hier is besloten:
-- De vulstap overschrijft niets. Plan 1's `vul_product_attributes()` doet `on conflict do update` op `is_fashion`, `category`, `gender` en `canonical_id` en zou elke zondag de tags uit taak 5 en de dedupe uit taak 8 terugdraaien zonder dat `tagger_version` verandert. Daarom een aparte functie die alleen invoegt.
+- De vulstap overschrijft niets van de classificatie of de tags. Plan 1's `vul_product_attributes()` doet `on conflict do update` op `is_fashion`, `category`, `gender` en `canonical_id` en zou elke zondag de tags uit taak 5 en de dedupe uit taak 8 terugdraaien zonder dat `tagger_version` verandert. Daarom een aparte functie die nieuwe rijen alleen invoegt.
+- `price`, `in_stock` en `retailer` op `product_attributes` zijn sinds plan 1 taak 3 (migratie `20260914120400`, controller-ruling) gedenormaliseerd vanuit `products`; `vul_product_attributes()` ververste ze tot dan toe bij elke run. Omdat die functie na taak 5 nooit meer draait (Globale randvoorwaarden), ververst `keten_vul_nieuwe_producten()` deze drie kolommen voortaan zelf, samen met `price_band`, voor elke rij van de retailer, canoniek of niet. Alleen die vier kolommen staan in de update-stap; `canonical_id` blijft erbuiten (de volledige afweging tussen alleen verversen en de hele functie opnieuw draaien staat bij "Wat de spec openlaat en hier is besloten" bovenaan dit plan).
 - Een nieuw product dat op retailer, merk en genormaliseerde naam gelijk is aan een bestaande rij, wijst naar de canonieke rij van die groep en neemt het canoniek-zijn niet over, ook niet als het goedkoper is. De bestaande rij is getagd, de nieuwe niet, en `get_kandidaten` ziet sinds taak 7 alleen getagde canonieke producten. Bij een her-tagging (nieuwe `TAGGER_VERSION`) kan de dedupe uit taak 8 de rangorde opnieuw bepalen.
 - Nieuwe rijen krijgen geen `classifier_version` en geen tags; dat doen twee handmatige runs na de zondagse import, in deze volgorde: `npm run keten:classificeer -- --retailer "<naam>"` (plan 1 taak 2), `npm run keten:tag -- --retailer "<naam>" --ja`, daarna `embed-products.py --retailer "<naam>"` (taak 6) en `select keten_dedupe_embedding('<naam>')` (taak 8). Tot die tijd zijn de nieuwe producten voor de engine onzichtbaar; dat is bewust, een ongeclassificeerd product met een ruwe feedcategorie hoort niet in een outfit. Automatisch taggen vanuit cron staat niet in dit plan: het kost geld per run en de kostenschatting met `--ja` is een bewuste stap (scope b).
 - Afhankelijkheid tussen de jobs is een controle op data, geen geraden tijdsoffset: de import loopt via `pg_net` (fire-and-forget), dus de vulstap kijkt in `daisycon_imports` of de laatste import per actieve campagne `success` is en jonger dan twaalf uur. Anders schrijft hij `status: wacht` in het log en probeert het een uur later opnieuw.
@@ -2950,6 +3037,19 @@ describe("20260916100500_keten_cron", () => {
     expect(sql).toContain("set in_stock = false");
   });
 
+  it("ververst price, in_stock, retailer en price_band voor elke rij van de retailer, zonder canonical_id aan te raken", () => {
+    expect(sql).toContain(
+      "insert into product_attributes (product_id, canonical_id, is_fashion, category, gender, price_band, price, in_stock, retailer)"
+    );
+    expect(sql).toContain("returns table (aantal_nieuw bigint, aantal_feedvelden_ververst bigint)");
+    expect(sql).toContain("set price = b.price,");
+    expect(sql).toContain("in_stock = b.in_stock,");
+    expect(sql).toContain("retailer = b.retailer,");
+    expect(sql).not.toContain("canonical_id = b.");
+    expect(sql).toContain("v_vul.aantal_feedvelden_ververst");
+    expect(sql).toContain("'feedvelden_ververst'");
+  });
+
   it("plant de drie jobs en maakt ze herhaalbaar", () => {
     for (const job of ["keten-feed-import-wekelijks", "keten-vul-na-import", "keten-links-elke-10-min"]) {
       expect(sql).toContain(`cron.unschedule('${job}')`);
@@ -2968,16 +3068,45 @@ describe("20260916100500_keten_cron", () => {
 
 ```ts
 describe.skipIf(!url || !serviceKey)("20260916100500_keten_cron (live)", () => {
-  it("keten_vul_nieuwe_producten weigert een onbekende retailer en is idempotent op een retailer zonder nieuwe producten", async () => {
+  it("keten_vul_nieuwe_producten weigert een onbekende retailer en is idempotent op een retailer zonder nieuwe producten of wijzigingen", async () => {
     const fout = await service().rpc("keten_vul_nieuwe_producten", { p_retailer: "bestaat niet" });
     expect(fout.error?.message ?? "").toContain("Onbekende retailer");
     const een = await service().rpc("keten_vul_nieuwe_producten", { p_retailer: STANDAARD_RETAILER });
     expect(een.error).toBeNull();
     const twee = await service().rpc("keten_vul_nieuwe_producten", { p_retailer: STANDAARD_RETAILER });
     expect(twee.error).toBeNull();
-    const rij = ((twee.data ?? []) as Array<{ aantal_nieuw: number; aantal_prijsband: number }>)[0];
+    const rij = ((twee.data ?? []) as Array<{ aantal_nieuw: number; aantal_feedvelden_ververst: number }>)[0];
     expect(Number(rij.aantal_nieuw)).toBe(0);
-    expect(Number(rij.aantal_prijsband)).toBe(0);
+    expect(Number(rij.aantal_feedvelden_ververst)).toBe(0);
+  });
+
+  it("keten_vul_nieuwe_producten ververst price, in_stock en retailer naar de huidige stand van products", async () => {
+    const vul = await service().rpc("keten_vul_nieuwe_producten", { p_retailer: STANDAARD_RETAILER });
+    expect(vul.error).toBeNull();
+
+    const attrs = await service()
+      .from("product_attributes")
+      .select("product_id, price, in_stock, retailer")
+      .eq("retailer", STANDAARD_RETAILER)
+      .limit(50);
+    expect(attrs.error).toBeNull();
+    const rijen = (attrs.data ?? []) as Array<{
+      product_id: string; price: number | null; in_stock: boolean | null; retailer: string | null;
+    }>;
+    expect(rijen.length).toBeGreaterThan(0);
+
+    const ids = rijen.map((r) => r.product_id);
+    const producten = await service().from("products").select("id, price, in_stock, retailer").in("id", ids);
+    expect(producten.error).toBeNull();
+    const perId = new Map((producten.data ?? []).map((p: any) => [p.id, p]));
+
+    for (const r of rijen) {
+      const p = perId.get(r.product_id);
+      expect(p).toBeDefined();
+      expect(Number(r.price)).toBe(Number(p.price));
+      expect(r.in_stock).toBe(p.in_stock);
+      expect(r.retailer).toBe(p.retailer);
+    }
   });
 
   it("keten_cron_log is leesbaar met de service role en leeg voor de anon-sleutel", async () => {
@@ -3007,6 +3136,14 @@ describe.skipIf(!url || !serviceKey)("20260916100500_keten_cron (live)", () => {
   voor dienen: die overschrijft bij elke run is_fashion, category, gender en
   canonical_id en zou de LLM-tags en de embedding-dedupe terugdraaien.
 
+  Diezelfde vulfunctie ververst sinds plan 1 taak 3 (migratie 20260914120400,
+  controller-ruling) ook price, in_stock en retailer op product_attributes,
+  nodig omdat get_kandidaten anders via products vastliep op de statement-
+  timeout. Zonder vervanging zouden die drie kolommen na taak 5 permanent
+  bevriezen op de stand van vlak voor taak 5, terwijl products.in_stock via
+  de voorraadstap hieronder wel doorloopt: kandidaten zouden dan producten
+  tonen die niet meer op voorraad zijn of een andere prijs hebben.
+
   ## Wat deze migratie doet
   - Schakelt pg_cron en pg_net in.
   - keten_cron_log: een regel per run van de keten-jobs (admins lezen).
@@ -3021,8 +3158,14 @@ describe.skipIf(!url || !serviceKey)("20260916100500_keten_cron (live)", () => {
   - keten_vul_nieuwe_producten(p_retailer): geeft producten zonder rij in
     product_attributes een rij, met dezelfde heuristiek als plan 1 voor
     is_fashion, category, gender en price_band, en dedupe op naam naar een
-    bestaande canonieke rij als die er is. Ververst price_band uit
-    products.price voor alle rijen. Raakt bestaande tags nooit aan.
+    bestaande canonieke rij als die er is. Ververst daarnaast price,
+    in_stock, retailer en price_band uit products, voor elke rij van de
+    retailer, canoniek of niet: dat ververswerk deed tot en met plan 1 taak 3
+    de vulfunctie uit plan 1 (migratie 20260914120400), en die functie draait
+    in dit plan nooit meer (Globale randvoorwaarden). canonical_id staat niet
+    in die ververs-stap; de dedupe verschuift alleen via taak 8
+    (keten_dedupe_embedding) of een nieuwe classificeer/tag-ronde. Raakt
+    bestaande tags en classificatie nooit aan.
   - keten_vul_na_import(): controleert eerst per actieve campagne of de laatste
     import (affiliate_campaigns.last_sync_log_id -> daisycon_imports) status
     'success' heeft en jonger dan twaalf uur is. Zo niet: log 'wacht' en stop.
@@ -3140,8 +3283,20 @@ revoke all on function keten_wekelijkse_import() from public, anon, authenticate
 -- een rij met dezelfde retailer, merk en genormaliseerde naam, dan wijst de
 -- nieuwe rij naar de canonieke rij van die groep. Anders wint binnen de
 -- nieuwe rijen de goedkoopste in-stock variant.
+--
+-- price, in_stock en retailer zijn sinds migratie 20260914120400 (plan 1
+-- taak 3, controller-ruling) gedenormaliseerd naar product_attributes:
+-- get_kandidaten liep anders via een join naar products vast op de 8
+-- seconden statement-timeout van de browser-route. Die migratie liet de
+-- vulfunctie uit plan 1 die drie kolommen bij elke run verversen; omdat die
+-- functie in dit plan nooit meer draait (Globale randvoorwaarden), doet
+-- deze functie dat verversen voortaan zelf, voor elke rij van de retailer,
+-- canoniek of niet, ongeacht classifier_version of tagger_version. Dit zijn
+-- feed-eigenschappen, geen classificatie of tag: canonical_id, gender,
+-- category, is_fashion en alle tag-kolommen worden in die stap niet
+-- aangeraakt.
 create or replace function keten_vul_nieuwe_producten(p_retailer text default null)
-returns table (aantal_nieuw bigint, aantal_prijsband bigint)
+returns table (aantal_nieuw bigint, aantal_feedvelden_ververst bigint)
 language plpgsql
 security definer
 set search_path = public, extensions
@@ -3150,7 +3305,7 @@ declare
   niet_kleding constant text :=
     '\m(vaas|vazen|lamp|lampen|servies|bord|borden|beker|mok|mokken|kussen|kussens|kaars|kaarsen|poster|handdoek|handdoeken|deken|plaid|fotolijst|spiegel|speelgoed|knuffel|puzzel|sticker|telefoonhoesje|supporter|supporters|fanshirt|thuisshirt|uitshirt|matchworn|hondenjas|hondentuig|halsband|kattenmand)\M';
   v_nieuw bigint;
-  v_band bigint;
+  v_ververst bigint;
 begin
   perform keten_controleer_retailer(p_retailer);
 
@@ -3191,7 +3346,7 @@ begin
       ) as groep_canoniek
     from nieuwe_rijen n
   )
-  insert into product_attributes (product_id, canonical_id, is_fashion, category, gender, price_band)
+  insert into product_attributes (product_id, canonical_id, is_fashion, category, gender, price_band, price, in_stock, retailer)
   select
     g.id,
     coalesce(b.canonical_id, g.groep_canoniek),
@@ -3210,7 +3365,10 @@ begin
       when g.price < 100 then '50tot100'
       when g.price < 200 then '100tot200'
       else 'boven200'
-    end
+    end,
+    g.price,
+    g.in_stock,
+    g.retailer
   from gerangschikt g
   left join bestaand b
     on b.retailer is not distinct from g.retailer
@@ -3219,11 +3377,20 @@ begin
   on conflict (product_id) do nothing;
   get diagnostics v_nieuw = row_count;
 
-  -- price_band komt uit products.price en is nooit een tag: altijd verversen.
+  -- price, in_stock, retailer en price_band komen uit products en zijn
+  -- nooit een tag: altijd verversen, voor elke rij van deze retailer,
+  -- canoniek of niet, net als de vulfunctie uit plan 1 deed vóór taak 5.
+  -- canonical_id staat hier niet in de set-lijst: de dedupe verschuift
+  -- nooit door deze stap, alleen door taak 8 (keten_dedupe_embedding) of
+  -- een nieuwe classificeer/tag-ronde (zie "Wat de spec openlaat" bovenaan
+  -- dit plan voor de afweging).
   update product_attributes pa
-  set price_band = b.band
+  set price = b.price,
+      in_stock = b.in_stock,
+      retailer = b.retailer,
+      price_band = b.band
   from (
-    select p.id,
+    select p.id, p.price, p.in_stock, p.retailer,
       case
         when p.price < 50 then 'tot50'
         when p.price < 100 then '50tot100'
@@ -3234,10 +3401,15 @@ begin
     where (p_retailer is null or p.retailer = p_retailer)
   ) b
   where pa.product_id = b.id
-    and pa.price_band is distinct from b.band;
-  get diagnostics v_band = row_count;
+    and (
+      pa.price is distinct from b.price
+      or pa.in_stock is distinct from b.in_stock
+      or pa.retailer is distinct from b.retailer
+      or pa.price_band is distinct from b.band
+    );
+  get diagnostics v_ververst = row_count;
 
-  return query select v_nieuw, v_band;
+  return query select v_nieuw, v_ververst;
 end;
 $$;
 
@@ -3304,13 +3476,17 @@ begin
     v_verdwenen := v_verdwenen + v_stap;
   end loop;
 
-  -- 4. Nieuwe producten een rij geven; bestaande tags blijven staan.
+  -- 4. Nieuwe producten een rij geven, en price, in_stock, retailer en
+  --    price_band verversen voor alle bestaande rijen van elke retailer;
+  --    tags, classificatie en canonical_id blijven onaangeroerd. De
+  --    voorraadstap hierboven staat al in products voordat deze stap
+  --    product_attributes ernaar bijwerkt.
   select * into v_vul from keten_vul_nieuwe_producten(null);
 
   v_uit := jsonb_build_object(
     'status', 'klaar',
     'nieuw', v_vul.aantal_nieuw,
-    'prijsband_bijgewerkt', v_vul.aantal_prijsband,
+    'feedvelden_ververst', v_vul.aantal_feedvelden_ververst,
     'uit_voorraad', v_verdwenen
   );
   insert into keten_cron_log (job, resultaat) values ('keten-vul-na-import', v_uit);
@@ -3339,7 +3515,7 @@ select cron.schedule('keten-vul-na-import', '0 5-11 * * 0', $$select keten_vul_n
 select cron.schedule('keten-links-elke-10-min', '*/10 * * * *', $$select keten_roep_edge('validate-product-links', '{}'::jsonb, '?limit=200')$$);
 ```
 
-- [ ] Draai `npx vitest run scripts/keten/__tests__/migraties.test.ts` en zie alles slagen. Zet live: `supabase db query --linked -f supabase/migrations/20260916100500_keten_cron.sql`. Faalt hij op `extension "pg_net" is not available`, schakel pg_net dan in via het dashboard (Database, Extensions) en draai het bestand opnieuw. Draai de live test en zie 15 tests slagen.
+- [ ] Draai `npx vitest run scripts/keten/__tests__/migraties.test.ts` en zie alles slagen. Zet live: `supabase db query --linked -f supabase/migrations/20260916100500_keten_cron.sql`. Faalt hij op `extension "pg_net" is not available`, schakel pg_net dan in via het dashboard (Database, Extensions) en draai het bestand opnieuw. Draai de live test en zie 16 tests slagen.
 - [ ] Controleer de jobs: `supabase db query --linked "select jobname, schedule, command from cron.job where jobname like 'keten-%' order by jobname" -o table` geeft drie rijen.
 - [ ] Test de edge-aanroep handmatig, klein:
 
@@ -3353,15 +3529,16 @@ Verwacht: `status_code 200` en een antwoord dat begint met `{"message":"Link val
 
 - [ ] Test de wachtstand van de vulstap voordat er een verse import is: `supabase db query --linked "select keten_vul_na_import()" -o table` geeft `{"status": "wacht", "campagnes_zonder_verse_import": [...]}` met de namen van de actieve campagnes (tenzij je vandaag al met de hand hebt geimporteerd; dan gaat hij direct door naar de volgende stap).
 - [ ] Test de wekelijkse import handmatig: `supabase db query --linked "select keten_wekelijkse_import()" -o table` geeft het aantal actieve campagnes. Na enkele minuten: `supabase db query --linked "select program_name, status, inserted_count, triggered_by, imported_at from daisycon_imports order by imported_at desc limit 3" -o table` toont nieuwe rijen met `triggered_by` null en status `success` (of `running` als de import nog loopt; wacht dan).
-- [ ] Test de vulstap na de import: `supabase db query --linked "select keten_vul_na_import()" -o table` geeft `{"status": "klaar", "nieuw": n, "prijsband_bijgewerkt": n, "uit_voorraad": n}`. Loopt hij op de tijdslimiet, gebruik de uitwijk uit taak 6 met `select keten_vul_na_import()` als statement. Nog een keer aanroepen geeft `{"status": "al_gedaan"}`. Daarna:
+- [ ] Test de vulstap na de import: `supabase db query --linked "select keten_vul_na_import()" -o table` geeft `{"status": "klaar", "nieuw": n, "feedvelden_ververst": n, "uit_voorraad": n}`. Loopt hij op de tijdslimiet, gebruik de uitwijk uit taak 6 met `select keten_vul_na_import()` als statement. Nog een keer aanroepen geeft `{"status": "al_gedaan"}`. Daarna:
 
 ```bash
 supabase db query --linked "select count(*) as zonder_rij from products p left join product_attributes pa on pa.product_id = p.id where pa.product_id is null" -o table
 supabase db query --linked "select count(*) as tags_intact from product_attributes where tagger_version is not null" -o table
+supabase db query --linked "select count(*) as afwijkend from product_attributes pa join products p on p.id = pa.product_id where pa.price is distinct from p.price or pa.in_stock is distinct from p.in_stock or pa.retailer is distinct from p.retailer" -o table
 supabase db query --linked "select job, run_at, resultaat from keten_cron_log order by run_at desc limit 5" -o table
 ```
 
-Verwacht: `zonder_rij` is 0; `tags_intact` is gelijk aan het aantal uit de controle in taak 5 (geen tag verloren); het log toont de runs. Nieuwe producten hebben `classifier_version` en `tagger_version` null; ze komen pas in `get_kandidaten` na `npm run keten:classificeer -- --retailer "H&M (NL)"` (plan 1) gevolgd door `npm run keten:tag -- --ja`, en daarna `embed-products.py` en `keten_dedupe_embedding` (zie "Wat de spec openlaat" hierboven). Controleer dat de volgorde klopt: `supabase db query --linked "select count(*) as nieuw_zonder_classifier from product_attributes where classifier_version is null and tagger_version is null" -o table` geeft het aantal nieuwe rijen, en `keten_tag_kandidaten('H&M (NL)', 'tekst', 'haiku-4.5-v1', 5, null)` geeft nul rijen zolang de classificeer-run niet gedraaid is.
+Verwacht: `zonder_rij` is 0; `tags_intact` is gelijk aan het aantal uit de controle in taak 5 (geen tag verloren); `afwijkend` is 0 (`price`, `in_stock` en `retailer` in `product_attributes` zijn gelijk aan `products`, voor elke rij, niet alleen de canonieke); het log toont de runs. Nieuwe producten hebben `classifier_version` en `tagger_version` null; ze komen pas in `get_kandidaten` na `npm run keten:classificeer -- --retailer "H&M (NL)"` (plan 1) gevolgd door `npm run keten:tag -- --ja`, en daarna `embed-products.py` en `keten_dedupe_embedding` (zie "Wat de spec openlaat" hierboven). Controleer dat de volgorde klopt: `supabase db query --linked "select count(*) as nieuw_zonder_classifier from product_attributes where classifier_version is null and tagger_version is null" -o table` geeft het aantal nieuwe rijen, en `keten_tag_kandidaten('H&M (NL)', 'tekst', 'haiku-4.5-v1', 5, null)` geeft nul rijen zolang de classificeer-run niet gedraaid is.
 
 - [ ] Controleer de volgende ochtend: `supabase db query --linked "select jobname, status, return_message, start_time from cron.job_run_details where jobname like 'keten-%' order by start_time desc limit 10" -o table` toont `succeeded` voor `keten-links-elke-10-min` (meerdere keren per uur) en na de eerste zondag ook voor de andere twee. `supabase db query --linked "select count(*) filter (where link_last_checked_at > now() - interval '1 day') as vandaag_gecontroleerd from products" -o table` ligt na een volle dag rond 28.000.
 - [ ] Poorten: `npx tsc --noEmit && npx vitest run && npx vite build && npm run design:check:ci`.
@@ -3378,7 +3555,8 @@ Verwacht: `zonder_rij` is 0; `tags_intact` is gelijk aan het aantal uit de contr
 | 5.1 RLS: lezen voor iedereen, schrijven alleen service role (tabel uit plan 1; de nieuwe RPC's zijn alleen voor de service role) | Taak 2, 6, 8, 12 |
 | 5.1 tagger krijgt naam, merk, beschrijving, prijs, retailer en ruwe categorie; foto alleen bij confidence < 0.6 in een tweede ronde | Taak 2 (RPC-selectie), 3 (prompt), 5 (`--met-foto`) |
 | 5.1 uitvoer strikt volgens schema, structured output, een product per verzoek, Batch API | Taak 3 (`TAG_SCHEMA`, `bouwVerzoek`), 5 |
-| 5.1 idempotent: dezelfde tagger_version wordt overgeslagen; tags worden door geen enkele job overschreven | Taak 2 (RPC), 5, 12 (`keten_vul_nieuwe_producten` voegt alleen in) |
+| 5.1 idempotent: dezelfde tagger_version wordt overgeslagen; tags worden door geen enkele job overschreven | Taak 2 (RPC), 5, 12 (`keten_vul_nieuwe_producten` voegt nieuwe rijen alleen in en ververst op bestaande rijen alleen de feed-velden price, in_stock, retailer en price_band; tags en classificatie blijven ongemoeid) |
+| `price`, `in_stock` en `retailer` op `product_attributes` blijven na elke feed-import gelijk aan `products`; `canonical_id` verschuift niet door deze ververs-stap (bevinding tijdens uitvoering plan 1 taak 3, migratie `20260914120400`) | Globale randvoorwaarden, "Wat de spec openlaat en hier is besloten", taak 12 (`keten_vul_nieuwe_producten`, contract- en live-test, controle-query `afwijkend`) |
 | 5.1 `category` een van de zes waarden; eigenaar blijft de classifier uit plan 1 (aanname, expliciet benoemd: de tagger levert `category` maar `keten_schrijf_tags` schrijft hem niet; `is_fashion` alleen omlaag; alleen geclassificeerde rijen worden getagd) | Globale randvoorwaarden, taak 2 (contract-test: `classifier_version is not null` aanwezig, `category = case` en `category = r->>` afwezig), 12 (volgorde classificeer, tag, embed, dedupe na de import) |
 | 5.3 alleen getagde rijen in `get_kandidaten` (aanname, expliciet benoemd) | Taak 7 (`tagger_version is not null`, contract-test) |
 | Scope (b): model claude-haiku-4-5-20251001, tagger_version haiku-4.5-v1 met confidence, batch-id's in gitignored `.batches.json`, hervatbaar, kosten printen voor de start, sleutels alleen uit de omgeving | Taak 1, 3, 4, 5 |
