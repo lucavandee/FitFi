@@ -43,6 +43,8 @@ import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
 import { ShareModal } from "@/components/results/ShareModal";
 import { ResultsOutfitCard } from "@/components/results/ResultsOutfitCard";
+import { OutfitRatingButtons } from "@/components/results/OutfitRatingButtons";
+import { hashProfile } from "@/services/ratings/outfitRatings";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
 import { getArchetypeDisplayNL } from "@/utils/displayNames";
@@ -232,6 +234,23 @@ export default function EnhancedResultsPage() {
   const answers = React.useMemo(() => readJson<any>(LS_KEYS.QUIZ_ANSWERS), []);
 
   const hasCompletedQuiz = !!answers;
+
+  // profile_hash voor outfit_ratings: sha256 van de quiz-antwoorden. Async
+  // omdat WebCrypto async is; tot die tijd staan de beoordelingsknoppen uit.
+  const [profileHash, setProfileHash] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (!answers) return;
+    let actief = true;
+    hashProfile(answers)
+      .then((hash) => { if (actief) setProfileHash(hash); })
+      .catch(() => { /* zonder hash blijven de knoppen uit */ });
+    return () => { actief = false; };
+  }, [answers]);
+
+  // Product-ids van een outfit voor de outfit_key; dezelfde functie op alle
+  // drie de plekken, zodat de top-outfits en het grid dezelfde key opleveren.
+  const productIdsVan = (outfit: any): string[] =>
+    Array.isArray(outfit?.products) ? outfit.products.map((p: any) => String(p.id)) : [];
 
   const archetypeName = React.useMemo((): string => {
     if (!archetypeRaw) return "Smart Casual";
@@ -882,6 +901,13 @@ export default function EnhancedResultsPage() {
                                     }
                                   : undefined
                               }
+                            />
+                            <OutfitRatingButtons
+                              key={profileHash ?? 'geen-hash'}
+                              outfitId={String(id)}
+                              productIds={productIdsVan(outfit)}
+                              profileHash={profileHash}
+                              userId={(user as any)?.id ?? null}
                             />
                           </AnimatedSection>
                         );
@@ -1655,6 +1681,13 @@ export default function EnhancedResultsPage() {
                             <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A]">{answers.fit}</span>
                           )}
                         </div>
+                        <OutfitRatingButtons
+                          key={profileHash ?? 'geen-hash'}
+                          outfitId={String(id)}
+                          productIds={productIdsVan(outfit)}
+                          profileHash={profileHash}
+                          userId={(user as any)?.id ?? null}
+                        />
                       </div>
                     </div>
                   );
@@ -1749,6 +1782,13 @@ export default function EnhancedResultsPage() {
                             source: "grid",
                           });
                         }}
+                      />
+                      <OutfitRatingButtons
+                        key={profileHash ?? 'geen-hash'}
+                        outfitId={String(id)}
+                        productIds={productIdsVan(outfit)}
+                        profileHash={profileHash}
+                        userId={(user as any)?.id ?? null}
                       />
                     </AnimatedSection>
                   );
