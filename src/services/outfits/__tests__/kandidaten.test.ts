@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   KANDIDATEN_PER_CATEGORIE,
   bereidKandidatenVoor,
+  bereidKandidatenVoorMetDiagnose,
   mapKandidaatProduct,
   naarKandidatenParams,
   telCategorieAfwijkingen,
@@ -131,5 +132,40 @@ describe("telCategorieAfwijkingen", () => {
     const rijen = [rij("p1", "accessory", { name: "Basic T-shirt", category: "accessory" })];
     const pool = bereidKandidatenVoor(rijen); // classifier zegt top
     expect(telCategorieAfwijkingen(rijen, pool)).toBe(1);
+  });
+});
+
+describe("bereidKandidatenVoorMetDiagnose", () => {
+  it("maakt een door de classifier volledig afgekeurd product zichtbaar in plaats van het spoorloos te laten verdwijnen", () => {
+    // "Onbekend Merkartikel 9000" matcht geen enkele categorie-regel en komt
+    // dus niet in classified terecht, maar in rejected (unclassifiable).
+    // Zonder deze fix verdween dit product uit bereidKandidatenVoor zonder
+    // dat telCategorieAfwijkingen (die alleen over de pool itereert) dat kon
+    // zien: de stopregel was blind voor precies dit scenario.
+    const rijen = [
+      rij("p1", "top", { name: "Basic T-shirt", category: "top" }),
+      rij("p2", "top", { name: "Onbekend Merkartikel 9000", category: "top" }),
+    ];
+
+    const resultaat = bereidKandidatenVoorMetDiagnose(rijen);
+
+    expect(resultaat.pool.map((p) => p.id)).toEqual(["p1"]);
+    expect(resultaat.classifierAfgekeurd).toBe(1);
+    expect(resultaat.veiligheidsnetGeweigerd).toBe(0);
+
+    // bereidKandidatenVoor (het brief-contract) blijft alleen de pool geven.
+    expect(bereidKandidatenVoor(rijen).map((p) => p.id)).toEqual(["p1"]);
+  });
+
+  it("telt ook wat het veiligheidsnet weigert, per reden", () => {
+    // Sneakers die de classifier prima als footwear herkent, maar waarvan de
+    // hele maatreeks binnen de EU-kinderschoenband valt: dat ziet alleen het
+    // veiligheidsnet, niet de classifier.
+    const rijen = [rij("p1", "footwear", { name: "Witte sneakers", category: "footwear", sizes: ["24", "25", "26"] })];
+    const resultaat = bereidKandidatenVoorMetDiagnose(rijen);
+    expect(resultaat.pool).toHaveLength(0);
+    expect(resultaat.classifierAfgekeurd).toBe(0);
+    expect(resultaat.veiligheidsnetGeweigerd).toBe(1);
+    expect(resultaat.geweigerdPerReden).toMatchObject({ kinderschoenmaat: 1 });
   });
 });

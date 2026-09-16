@@ -113,6 +113,53 @@ export function mapKandidaatProduct(dbProduct: Record<string, any>): Product {
   };
 }
 
+/** Rijke uitkomst van de poolopbouw, voor wie de afgevallen aantallen nodig heeft. */
+export interface KandidatenPoolMetDiagnose {
+  pool: Product[];
+  /** Aantal producten dat reclassifyProducts volledig afkeurde (result.rejected). */
+  classifierAfgekeurd: number;
+  /** Aantal producten dat het veiligheidsnet weigerde, met reden in geweigerdPerReden. */
+  veiligheidsnetGeweigerd: number;
+  geweigerdPerReden: Record<string, number>;
+}
+
+/**
+ * Bouwt de pool en meet in één klassificatiepas hoeveel producten onderweg
+ * afvallen. `bereidKandidatenVoor` gebruikt dit intern en geeft alleen de
+ * pool terug (het contract uit de brief); `bereidKandidatenVoorMetDiagnose`
+ * geeft er de aantallen bij voor wie de stopregel programmatisch wil
+ * bewaken in plaats van op een consolelog te vertrouwen (taak 7, het
+ * persona-harnas).
+ */
+function bouwKandidatenPool(rijen: KandidaatRij[]): KandidatenPoolMetDiagnose {
+  const ruw = rijen.map((rij) => ({
+    ...mapKandidaatProduct(rij.product),
+    category: rij.category,
+  }));
+  const { classified, rejected } = reclassifyProducts(ruw);
+  const { veilig, geweigerd } = filterVeiligeProducten(classified);
+  const geweigerdPerReden = geweigerd.reduce<Record<string, number>>((acc, g) => {
+    acc[g.reden] = (acc[g.reden] ?? 0) + 1;
+    return acc;
+  }, {});
+  if (rejected.length > 0 || geweigerd.length > 0) {
+    // console.debug in plaats van console.log: dit draait straks (taak 7) bij
+    // elke bezoeker van de resultatenpagina mee, en hoort dus niet standaard
+    // in ieders browserconsole te verschijnen. Zelfde patroon als elders in
+    // de repo, bijvoorbeeld src/services/supabaseService.ts.
+    console.debug("[kandidaten] producten uit de pool gehaald:", {
+      classifier_afgekeurd: rejected.length,
+      veiligheidsnet_geweigerd: geweigerdPerReden,
+    });
+  }
+  return {
+    pool: veilig,
+    classifierAfgekeurd: rejected.length,
+    veiligheidsnetGeweigerd: geweigerd.length,
+    geweigerdPerReden,
+  };
+}
+
 /**
  * Van RPC-rijen naar de pool die engine v2 krijgt. De categorie komt uit
  * product_attributes (rij.category, na de classifier van taak 2), niet uit
@@ -121,22 +168,19 @@ export function mapKandidaatProduct(dbProduct: Record<string, any>): Product {
  * telCategorieAfwijkingen). Daarna het veiligheidsnet tegen kinderkleding.
  * De dedupe zit in de database (canonical_id), dus dedupeProductVariants
  * wordt hier niet meer aangeroepen.
+ *
+ * Producten die reclassifyProducts volledig afkeurt (rejected, bijvoorbeeld
+ * onclassificeerbaar) verdwijnen hier stil uit de pool, net als de
+ * producten die het veiligheidsnet weigert. bereidKandidatenVoorMetDiagnose
+ * geeft die aantallen terug voor wie ze nodig heeft.
  */
 export function bereidKandidatenVoor(rijen: KandidaatRij[]): Product[] {
-  const ruw = rijen.map((rij) => ({
-    ...mapKandidaatProduct(rij.product),
-    category: rij.category,
-  }));
-  const { classified } = reclassifyProducts(ruw);
-  const { veilig, geweigerd } = filterVeiligeProducten(classified);
-  if (geweigerd.length > 0) {
-    const perReden = geweigerd.reduce<Record<string, number>>((acc, g) => {
-      acc[g.reden] = (acc[g.reden] ?? 0) + 1;
-      return acc;
-    }, {});
-    console.log("[kandidaten] veiligheidsnet weigerde producten:", perReden);
-  }
-  return veilig;
+  return bouwKandidatenPool(rijen).pool;
+}
+
+/** Zelfde als bereidKandidatenVoor, met de aantallen die onderweg zijn afgevallen. */
+export function bereidKandidatenVoorMetDiagnose(rijen: KandidaatRij[]): KandidatenPoolMetDiagnose {
+  return bouwKandidatenPool(rijen);
 }
 
 /**
