@@ -75,7 +75,9 @@ Indexen: canonical_id, (gender, category, price_band), GIN op occasions, ivfflat
 
 De tagger krijgt naam, merk, beschrijving, prijs, retailer en de bestaande ruwe categorie; alleen als `confidence < 0.6` krijgt hij in een tweede ronde ook de foto. Uitvoer is strikt dit schema (structured output), een product per verzoek, via de Batch API. Idempotent: een rij met dezelfde `tagger_version` wordt overgeslagen.
 
-Dedupe: twee producten zijn duplicaat als retailer, merk en genormaliseerde naam (zonder kleur en maat) gelijk zijn, of als de embeddings cosine >= 0.999 hebben. De goedkoopste in-stock variant wordt canoniek. De bestaande `dedupeProductVariants` (client) vervalt zodra dit staat.
+Dedupe: twee producten zijn duplicaat als retailer en `image_url` gelijk zijn (dezelfde foto is hetzelfde product in een andere maat; een andere kleur heeft een andere foto en blijft een eigen product), of als de embeddings cosine >= 0.999 hebben. Alleen als `image_url` leeg is, geldt als terugval: retailer, merk en genormaliseerde naam gelijk. De goedkoopste in-stock variant wordt canoniek. De bestaande `dedupeProductVariants` (client) vervalt zodra dit staat.
+
+Waarom niet op naam: gemeten op 16 september. Giglio schrijft namen als "Sneakers AUTRY Woman color White"; de naam zonder kleur is dan voor 1.280 verschillende producten met 286 verschillende foto's gelijk. Naam-dedupe hield van 169.697 Giglio-rijen er 10.209 over, terwijl er 68.739 unieke foto's zijn. Over de hele catalogus: 281.999 rijen, circa 101.000 unieke foto's; dat spoort met de 45 procent duplicaten die de FashionCLIP-PoC in augustus op identieke beelden mat.
 
 ### 5.2 `taste_profiles`
 
