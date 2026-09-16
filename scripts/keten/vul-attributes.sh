@@ -30,7 +30,7 @@ for r in "${RETAILERS[@]}"; do
   echo "== $r =="
   # Verdubbel een apostrof in de retailernaam voor het SQL-stringliteral
   # (bv. "Levi's"); anders sluit de apostrof het literal voortijdig af.
-  r_sql="${r//\'/\'\'}"
+  r_sql=${r//\'/\'\'}
   start=$(date +%s)
   uit=$(draai "select * from vul_product_attributes('$r_sql')")
   echo "$uit"
