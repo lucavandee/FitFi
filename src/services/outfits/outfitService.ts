@@ -1,11 +1,9 @@
 import { supabase } from "@/lib/supabaseClient";
 import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngine";
 import { runEngineV2 } from "@/engine/v2";
-import { generateNovaExplanation } from "@/engine/explainOutfit";
-import { filterByGender, getUserGender } from "@/services/products/genderFilter";
-import { reclassifyProducts } from "@/engine/productClassifier";
-import { filterVeiligeProducten } from "@/engine/productSafety";
-import { dedupeProductVariants } from "./dedupeProductVariants";
+import { stableStringify } from "@/utils/stableJson";
+import { seedFromAnswers } from "./answersSeed";
+import { bereidKandidatenVoorMetDiagnose, naarKandidatenParams, type KandidaatRij } from "./kandidaten";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
@@ -34,8 +32,32 @@ class OutfitService {
   private cacheTimestamps: Map<string, number> = new Map();
   private readonly CACHE_DURATION = 1000 * 60 * 30;
 
-  async getProducts(gender?: string, forceRefresh = false): Promise<Product[]> {
-    const cacheKey = gender || '_all';
+  /**
+   * De productpool voor de engine, uit de RPC get_kandidaten (spec 5.3).
+   *
+   * Vroeger: select * from products zonder limit, dus de eerste 1.000 rijen
+   * in rijvolgorde van circa 282.000 (0 H&M). Nu: per categorie de beste
+   * kandidaten uit product_attributes, gefilterd aan de serverkant op
+   * canoniek, draagbaar, voorraad, gender en budget.
+   *
+   * Een string als eerste argument wordt gelezen als gender; dat is de vorm
+   * die calibrationOutfitsV2 gebruikt.
+   *
+   * Gebruikt bereidKandidatenVoorMetDiagnose (niet de gewone variant): die
+   * geeft classifierAfgekeurd, veiligheidsnetGeweigerd en geweigerdPerReden
+   * terug. Zonder die diagnose is er geen stopregel: een classifier die
+   * plotseling de hele pool afkeurt, ziet er in de gewone variant hetzelfde
+   * uit als "niets binnen de filters" (lege lijst), en dat verschil hoort
+   * zichtbaar te zijn, niet alleen in een consolelog.
+   */
+  async getProducts(
+    answersOfGender?: Record<string, any> | string,
+    forceRefresh = false
+  ): Promise<Product[]> {
+    const answers =
+      typeof answersOfGender === 'string' ? { gender: answersOfGender } : (answersOfGender ?? {});
+    const params = naarKandidatenParams(answers);
+    const cacheKey = stableStringify(params);
     const cached = this.productsCache.get(cacheKey);
     const cachedAt = this.cacheTimestamps.get(cacheKey) ?? 0;
 
@@ -49,54 +71,57 @@ class OutfitService {
     }
 
     try {
-      let query = client
-        .from('products')
-        .select('*')
-        .eq('in_stock', true)
-        .eq('is_kids', false);
-
-      if (gender && gender !== 'unisex' && gender !== 'prefer-not-to-say') {
-        query = query.or(`gender.eq.${gender},gender.eq.unisex`);
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await client.rpc('get_kandidaten', params);
 
       if (error) {
-        throw new CatalogusOnbereikbaar(error.message || 'queryfout op products');
+        throw new CatalogusOnbereikbaar(error.message || 'rpc get_kandidaten faalde');
       }
 
-      if (!data || data.length === 0) {
-        throw new CatalogusOnbereikbaar('nul producten in de catalogus');
+      const rijen = (data ?? []) as KandidaatRij[];
+
+      if (rijen.length === 0) {
+        // Nul rijen is nu dubbelzinnig: filters te strak, of de tabel is
+        // nooit gevuld. Alleen het tweede is "catalogus onbereikbaar".
+        const { count, error: telFout } = await client
+          .from('product_attributes')
+          .select('product_id', { count: 'exact', head: true });
+        if (telFout) {
+          throw new CatalogusOnbereikbaar(telFout.message || 'product_attributes niet leesbaar');
+        }
+        if (!count) {
+          throw new CatalogusOnbereikbaar('product_attributes is leeg');
+        }
+        console.warn('[OutfitService] get_kandidaten gaf nul rijen voor', params);
+        return [];
       }
 
-      const rawProducts = dedupeProductVariants(data.map(this.mapDatabaseProduct));
+      const { pool: products, classifierAfgekeurd, veiligheidsnetGeweigerd, geweigerdPerReden } =
+        bereidKandidatenVoorMetDiagnose(rijen);
 
-      const { classified } = reclassifyProducts(rawProducts);
-
-      // Veiligheidsnet hier, op de pool, en niet pas in candidateFilter.
-      // Reden: als engine v2 nul outfits geeft valt generateOutfits terug op
-      // generateRecommendationsFromAnswers (regel ~121), een derde engine die
-      // beoordeelProduct nergens aanroept. Zat de check alleen in
-      // candidateFilter.ts:238, dan omzeilde precies die terugval het net en
-      // kon er alsnog kinderkleding op /results komen. Nu krijgt elke
-      // afnemer van deze pool dezelfde grens.
-      //
-      // reclassifyProducts heeft de categorie op dit punt al genormaliseerd
-      // naar onder meer 'footwear', dus de maatcontrole voor kinderschoenen
-      // werkt hier zoals bedoeld.
-      const { veilig: products, geweigerd } = filterVeiligeProducten(classified);
-      if (geweigerd.length > 0) {
-        const perReden = geweigerd.reduce<Record<string, number>>((acc, g) => {
-          acc[g.reden] = (acc[g.reden] ?? 0) + 1;
-          return acc;
-        }, {});
-        console.log('[OutfitService] veiligheidsnet weigerde producten:', perReden);
+      // Stopregel (taak 7): classifierAfgekeurd is zichtbaar, niet alleen
+      // een consolelog. Keurt de classifier de hele of nagenoeg de hele
+      // aangeleverde rij af (bijvoorbeeld doordat product_attributes achter
+      // de code aanloopt, zie telCategorieAfwijkingen), dan is dat een ander
+      // probleem dan "niets binnen de filters" en hoort dat luid te zijn.
+      if (classifierAfgekeurd > 0 || veiligheidsnetGeweigerd > 0) {
+        console.warn('[OutfitService] pool na classificatie en veiligheidsnet:', {
+          rijen: rijen.length,
+          classifierAfgekeurd,
+          veiligheidsnetGeweigerd,
+          geweigerdPerReden,
+          overgebleven: products.length,
+        });
+      }
+      if (rijen.length > 0 && classifierAfgekeurd >= rijen.length) {
+        console.error(
+          '[OutfitService] classifier keurde de volledige RPC-pool af; product_attributes loopt vermoedelijk achter op de classifier-code'
+        );
       }
 
       this.productsCache.set(cacheKey, products);
       this.cacheTimestamps.set(cacheKey, Date.now());
 
-      console.log(`[OutfitService] Loaded ${products.length} ${gender || 'all'}-gender classified products`);
+      console.log(`[OutfitService] ${products.length} kandidaten uit ${rijen.length} rijen (${params.p_gender}, ${params.p_budget_min}-${params.p_budget_max})`);
       return products;
     } catch (error) {
       if (error instanceof CatalogusOnbereikbaar) throw error;
@@ -112,8 +137,7 @@ class OutfitService {
     count: number = 6
   ): Promise<GeneratedOutfit[]> {
     try {
-      const gender = quizAnswers.gender as string | undefined;
-      const products = await this.getProducts(gender);
+      const products = await this.getProducts(quizAnswers);
 
       console.log(`[OutfitService] Loaded ${products.length} products from database`);
 
@@ -127,9 +151,17 @@ class OutfitService {
 
       if (useV2) {
         try {
+          // Vaste seed: dezelfde antwoorden geven dezelfde outfits, ook na
+          // een herlaad (spec 2, "geen seed in productie"). seedFromAnswers
+          // gooit bewust door bij NaN/Infinity/een circulaire verwijzing in
+          // de antwoorden (zie de docblock in answersSeed.ts): dat mag hier
+          // niet doorborrelen naar de render, dus een kapot antwoordobject
+          // valt terug op een vaste seed in plaats van dat de pagina leeg
+          // blijft.
           const result = runEngineV2(quizAnswers, products, {
             count,
             debug: true,
+            seed: seedVoorEngine(quizAnswers),
           });
           outfits = result.outfits;
           console.log('[OutfitService] engine v2 stats', result.stats);
@@ -202,38 +234,30 @@ class OutfitService {
     }
   }
 
-  private mapDatabaseProduct(dbProduct: any): Product {
-    const tags: string[] = dbProduct.tags || [];
-    const style: string = dbProduct.style || '';
-    const styleTags = style ? [...tags, ...style.split(/[,;/]+/).map((s: string) => s.trim()).filter(Boolean)] : tags;
-
-    return {
-      id: dbProduct.id,
-      name: dbProduct.name || dbProduct.title,
-      brand: dbProduct.brand,
-      price: dbProduct.price,
-      imageUrl: dbProduct.image_url || dbProduct.imageUrl,
-      category: dbProduct.category,
-      type: dbProduct.type,
-      gender: dbProduct.gender,
-      colors: dbProduct.colors || [],
-      color: (dbProduct.colors || [])[0],
-      sizes: dbProduct.sizes || [],
-      tags,
-      styleTags,
-      retailer: dbProduct.retailer,
-      affiliateUrl: dbProduct.affiliate_url || dbProduct.affiliateUrl,
-      productUrl: dbProduct.product_url || dbProduct.productUrl,
-      description: dbProduct.description,
-      inStock: dbProduct.in_stock ?? true,
-      rating: dbProduct.rating,
-      reviewCount: dbProduct.review_count,
-    };
-  }
-
   clearCache(): void {
     this.productsCache.clear();
     this.cacheTimestamps.clear();
+  }
+}
+
+/**
+ * Vaste terugvalseed als seedFromAnswers gooit. Geen 0: 0 is een geldige,
+ * en dus verwarrende, echte seed (bijvoorbeeld voor een leeg antwoordobject).
+ * Dit getal komt nergens anders vandaan en dient alleen als herkenbare
+ * noodgreep; alle bezoekers met kapotte antwoorden krijgen wel dezelfde
+ * (vaste) outfits, in plaats van een crash of een lege pagina.
+ */
+const VASTE_TERUGVAL_SEED = 0xdeadbeef;
+
+function seedVoorEngine(quizAnswers: Record<string, any>): number {
+  try {
+    return seedFromAnswers(quizAnswers);
+  } catch (error) {
+    console.error(
+      '[OutfitService] seedFromAnswers kon geen seed maken uit de antwoorden, val terug op een vaste seed:',
+      error
+    );
+    return VASTE_TERUGVAL_SEED;
   }
 }
 
