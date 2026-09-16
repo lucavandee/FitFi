@@ -45,10 +45,21 @@ class OutfitService {
    *
    * Gebruikt bereidKandidatenVoorMetDiagnose (niet de gewone variant): die
    * geeft classifierAfgekeurd, veiligheidsnetGeweigerd en geweigerdPerReden
-   * terug. Zonder die diagnose is er geen stopregel: een classifier die
-   * plotseling de hele pool afkeurt, ziet er in de gewone variant hetzelfde
-   * uit als "niets binnen de filters" (lege lijst), en dat verschil hoort
-   * zichtbaar te zijn, niet alleen in een consolelog.
+   * terug. Twee stopregels op die diagnose, verderop in deze methode:
+   *
+   *   1. Valt meer dan AFWIJZINGSDREMPEL (20%) van de RPC-pool weg door
+   *      classificatie en veiligheidsnet samen, dan is dat console.warn
+   *      (mogelijk iets structureels, geen incident).
+   *   2. Valt de pool daardoor volledig leeg terwijl de RPC wel rijen gaf,
+   *      dan is dat altijd console.error, ongeacht het aandeel, en wordt
+   *      die lege uitkomst nooit gecachet: anders zou een storing
+   *      CACHE_DURATION (30 minuten) lang voor iedereen "niets binnen de
+   *      filters" blijven tonen, ook nadat de oorzaak al verholpen is.
+   *
+   * Zonder die twee regels ziet een classifier of veiligheidsnet die
+   * plotseling (een deel van) de pool afkeurt er hetzelfde uit als "niets
+   * binnen de filters" (lege lijst), en blijft dat bovendien een half uur
+   * hangen in de cache.
    */
   async getProducts(
     answersOfGender?: Record<string, any> | string,
@@ -98,24 +109,49 @@ class OutfitService {
       const { pool: products, classifierAfgekeurd, veiligheidsnetGeweigerd, geweigerdPerReden } =
         bereidKandidatenVoorMetDiagnose(rijen);
 
-      // Stopregel (taak 7): classifierAfgekeurd is zichtbaar, niet alleen
-      // een consolelog. Keurt de classifier de hele of nagenoeg de hele
-      // aangeleverde rij af (bijvoorbeeld doordat product_attributes achter
-      // de code aanloopt, zie telCategorieAfwijkingen), dan is dat een ander
-      // probleem dan "niets binnen de filters" en hoort dat luid te zijn.
-      if (classifierAfgekeurd > 0 || veiligheidsnetGeweigerd > 0) {
-        console.warn('[OutfitService] pool na classificatie en veiligheidsnet:', {
+      // Stopregel (taak 7, aangescherpt in fixronde 1): een enkel geweigerd
+      // product per aanroep is normaal. Bij 240 rijen weigert het
+      // veiligheidsnet vrijwel altijd wel één kinderschoenmaat of noemt de
+      // classifier één merkartikel onclassificeerbaar; dat is ruis, geen
+      // signaal. Pas als een aanzienlijk deel van de RPC-pool wegvalt, is er
+      // vermoedelijk iets structureels mis: product_attributes die achterloopt
+      // op de classifier-code (zie telCategorieAfwijkingen), of een
+      // veiligheidsnetregel die te grofmazig is geworden. AFWIJZINGSDREMPEL
+      // (20%) is die grens: ruim boven wat één of twee incidentele
+      // weigeringen op een pool van tientallen rijen veroorzaken, ruim onder
+      // "de pool is grotendeels weg".
+      const totaalAfgekeurd = classifierAfgekeurd + veiligheidsnetGeweigerd;
+      const afwijzingsaandeel = totaalAfgekeurd / rijen.length;
+      if (afwijzingsaandeel > AFWIJZINGSDREMPEL) {
+        console.warn('[OutfitService] opvallend deel van de pool afgekeurd:', {
           rijen: rijen.length,
           classifierAfgekeurd,
           veiligheidsnetGeweigerd,
           geweigerdPerReden,
+          aandeelAfgekeurd: `${Math.round(afwijzingsaandeel * 100)}%`,
           overgebleven: products.length,
         });
       }
-      if (rijen.length > 0 && classifierAfgekeurd >= rijen.length) {
+
+      // De pool is na classificatie én veiligheidsnet volledig leeg, terwijl
+      // de RPC wel rijen teruggaf. Dat is nooit normaal, ongeacht of de
+      // classifier, het veiligheidsnet, of een combinatie van beide de
+      // oorzaak is: er komt hoe dan ook niets aan bij de engine, en de
+      // bezoeker ziet straks "je filters staan te strak" terwijl er geen
+      // filterprobleem is. Dit signaal geldt dus altijd, niet pas boven
+      // AFWIJZINGSDREMPEL.
+      if (products.length === 0) {
         console.error(
-          '[OutfitService] classifier keurde de volledige RPC-pool af; product_attributes loopt vermoedelijk achter op de classifier-code'
+          '[OutfitService] classificatie en veiligheidsnet keurden de volledige RPC-pool af; product_attributes loopt vermoedelijk achter op de classifier-code, of het veiligheidsnet is te grofmazig',
+          { rijen: rijen.length, classifierAfgekeurd, veiligheidsnetGeweigerd, geweigerdPerReden }
         );
+
+        // Niet cachen: dit is een storing, geen "niets binnen de filters".
+        // Cachen zou de storing CACHE_DURATION (30 minuten) lang vastzetten,
+        // ook voor bezoekers die langskomen nadat de oorzaak al is verholpen.
+        // Zonder cache-entry probeert de eerstvolgende aanroep met dezelfde
+        // parameters het gewoon opnieuw.
+        return products;
       }
 
       this.productsCache.set(cacheKey, products);
@@ -239,6 +275,13 @@ class OutfitService {
     this.cacheTimestamps.clear();
   }
 }
+
+/**
+ * Aandeel van de RPC-pool dat classificatie en veiligheidsnet samen mogen
+ * afkeuren voordat getProducts dat luid meldt (zie de stopregel in
+ * getProducts). Zie de toelichting daar voor waarom 20% de grens is.
+ */
+const AFWIJZINGSDREMPEL = 0.2;
 
 /**
  * Vaste terugvalseed als seedFromAnswers gooit. Geen 0: 0 is een geldige,
