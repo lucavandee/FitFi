@@ -17,13 +17,24 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
  * - Aangehaalde waarde, met `"..."` of `'...'` (symmetrisch behandeld):
  *   alles tussen de eerste en de bijbehorende sluitende aanhalingsteken is
  *   de waarde, letterlijk. Ná die sluitende aanhalingsteken mag alleen nog
- *   witruimte staan, eventueel gevolgd door `#` en commentaar; niets anders.
- *   Fixronde 3: `KEY="foo"rommel`, `KEY="foo" rommel` en `KEY="foo"
- *   BAR="baz"` lieten de rommel voorheen stilzwijgend verdwijnen (en bij het
- *   laatste geval: BAR bestond dan gewoon niet, zonder melding). Dat is
- *   dezelfde soort stille corruptie als bevinding 2 hierboven, dus dezelfde
- *   behandeling: weigeren met een Error die de variabelenaam noemt, nooit de
- *   waarde.
+ *   witruimte staan, eventueel gevolgd door witruimte plus `#` en
+ *   commentaar; niets anders. Fixronde 3: `KEY="foo"rommel`,
+ *   `KEY="foo" rommel` en `KEY="foo" BAR="baz"` lieten de rommel voorheen
+ *   stilzwijgend verdwijnen (en bij het laatste geval: BAR bestond dan
+ *   gewoon niet, zonder melding). Dat is dezelfde soort stille corruptie als
+ *   bevinding 2 hierboven, dus dezelfde behandeling: weigeren met een Error
+ *   die de variabelenaam noemt, nooit de waarde.
+ *   Fixronde 4: de eerste versie van die controle (`/^\s*(#.*)?$/`) stond
+ *   nul witruimte vóór de `#` toe, dus `KEY="foo"#BAR="baz"` glipte er nog
+ *   doorheen met hetzelfde lek (BAR verdween spoorloos, geen fout). Dat was
+ *   inconsistent met het onaangehaalde pad hieronder, dat altijd al
+ *   witruimte vóór de `#` eiste. De controle is nu `/^(\s*|\s+#.*)$/`:
+ *   commentaar na de sluitende aanhalingsteken telt alleen als er minstens
+ *   één witruimteteken vóór de `#` staat. Bewuste, zichtbare consequentie:
+ *   `KEY="foo"#commentaar` (geen spatie) wordt nu geweigerd in plaats van
+ *   stil geaccepteerd als waarde "foo". Dat is de bedoeling, niet een
+ *   toevallige bijwerking: correct afhandelen of zichtbaar weigeren, nooit
+ *   er stilzwijgend doorheen laten glippen.
  * - Een geopende aanhalingsteken zonder sluitende tegenhanger (`KEY="foo`)
  *   wordt geweigerd met een Error die de variabelenaam noemt, nooit de
  *   waarde. Bewuste keuze, niet de enige mogelijke: er is geen betrouwbare
@@ -58,7 +69,7 @@ function ontleedWaarde(sleutel: string, rest: string): string {
       );
     }
     const na = rest.slice(sluit + 1);
-    if (!/^\s*(#.*)?$/.test(na)) {
+    if (!/^(\s*|\s+#.*)$/.test(na)) {
       throw new Error(
         `Ongeldige .env-regel voor ${sleutel}: onverwachte tekst na de sluitende ${opent}`
       );

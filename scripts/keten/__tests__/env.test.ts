@@ -69,6 +69,19 @@ describe("parseDotEnv", () => {
     expect(() => parseDotEnv('KEY="foo"rommel\n')).toThrow(/KEY/);
     expect(() => parseDotEnv('KEY="foo" rommel\n')).toThrow(/KEY/);
   });
+
+  // Fixronde 4: de eerste versie van de "wat volgt er nog"-controle stond
+  // een # zonder voorafgaande witruimte toe, dus KEY="foo"#BAR="baz" glipte
+  // er stilzwijgend doorheen als { KEY: "foo" }, met BAR spoorloos
+  // verdwenen. Inconsistent met het onaangehaalde pad, dat altijd al
+  // witruimte vóór de # eiste. Bewuste, zichtbare consequentie hiervan:
+  // KEY="foo"#commentaar (zonder spatie) wordt nu ook geweigerd in plaats
+  // van stil geaccepteerd als "foo" — dat is de bedoeling, niet een
+  // ongelukje.
+  it("eist witruimte vóór de # ná een sluitende aanhalingsteken, net als bij een onaangehaalde waarde", () => {
+    expect(() => parseDotEnv('KEY="foo"#BAR="baz"\n')).toThrow(/KEY/);
+    expect(() => parseDotEnv('KEY="foo"#commentaar\n')).toThrow(/KEY/);
+  });
 });
 
 describe("leesEnv", () => {
