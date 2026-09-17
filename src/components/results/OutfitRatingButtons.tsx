@@ -1,9 +1,8 @@
 import React from "react";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { outfitKey, saveOutfitRating, type OutfitRating } from "@/services/ratings/outfitRatings";
-import { getSessionId } from "@/utils/sessionId";
-import track from "@/utils/telemetry";
-import { abonneer, bewaarKeuze, leesKeuze, magSchrijven, onthoudSleutel } from "./outfitRatingGeheugen";
+import type { OutfitRating } from "@/services/ratings/outfitRatings";
+import { abonneer, leesKeuze, magSchrijven, onthoudSleutel } from "./outfitRatingGeheugen";
+import { voerRatingUit } from "./outfitRatingSchrijven";
 
 export interface OutfitRatingButtonsProps {
   outfitId: string;
@@ -42,27 +41,15 @@ export function OutfitRatingButtons({ outfitId, productIds, profileHash, userId 
   }, [sleutel]);
 
   const kies = async (rating: OutfitRating) => {
+    const stand = { profileHash, sleutel, gekozen, bezig };
     if (!profileHash || !sleutel) return;
-    if (!magSchrijven({ profileHash, gekozen, bezig }, rating)) return;
+    if (!magSchrijven(stand, rating)) return;
     setBezig(true);
     const vorige = gekozen;
     setGekozen(rating);
     try {
-      const key = await outfitKey(productIds);
-      const uitkomst = await saveOutfitRating({
-        profileHash,
-        outfitKey: key,
-        rating,
-        sessionId: getSessionId(),
-        userId: userId ?? null,
-      });
-      if (uitkomst.ok) {
-        bewaarKeuze(sleutel, rating);
-        track("outfit_rating", { outfit_id: outfitId, rating, item_count: productIds.length });
-      } else {
-        setGekozen(vorige);
-        track("outfit_rating_failed", { outfit_id: outfitId, rating, reden: uitkomst.reden });
-      }
+      const uitkomst = await voerRatingUit(stand, rating, { outfitId, productIds, userId });
+      if (uitkomst.status !== "geschreven") setGekozen(vorige);
     } finally {
       setBezig(false);
     }
