@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 
 import App from "./App";
+import getQueryClient from "@/system/queryClient";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import "./index.css";               // Tailwind + tokens
 import "@/styles/polish.addon.css"; // opt-in polish
@@ -46,7 +47,12 @@ if (typeof window !== 'undefined' && import.meta.env.PROD) {
   }
 }
 
-const queryClient = new QueryClient();
+// Gedeelde client met defensieve defaults (retry: 1, geen refetch-on-focus)
+// in plaats van een kale `new QueryClient()` (retry: 3 default). Drie van
+// tien koude anonieme RPC-aanroepen (get_kandidaten via PostgREST) gaven een
+// timeout; vier pogingen van 4-8s elk gaf zo een spinner van circa 35
+// seconden voordat de eerlijke foutpagina verscheen (fixronde 1, punt 6).
+const queryClient = getQueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

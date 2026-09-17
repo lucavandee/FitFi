@@ -239,3 +239,6 @@ CLAUDE-vault.md
 # met drie absolute paden naar /Users/luc. De buildmachine genereert deze map
 # zelf; wie hem uitcheckt krijgt andermans instellingen.
 .netlify/
+
+# SDD-werkruimte (grootboek, briefs, reviewpakketten), nooit committen
+.superpowers/
