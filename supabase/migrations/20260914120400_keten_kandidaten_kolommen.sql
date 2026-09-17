@@ -41,6 +41,12 @@
      herschreven op product_attributes) voor de EXPLAIN ANALYZE voor en na.
 
   ## Terugdraaien
+  Let op de volgorde (fixronde 1, punt 6): get_kandidaten (20260914120500,
+  20260914120700, 20260914120800) verwijst naar price/in_stock op deze
+  tabel. Draai eerst die drie terug (in omgekeerde volgorde: 120800, dan
+  120700, dan 120500), pas dan deze migratie -- anders verwijst de
+  functie naar een net gedropte kolom.
+
   drop index if exists idx_product_attributes_kandidaten;
   alter table public.product_attributes drop column if exists retailer;
   alter table public.product_attributes drop column if exists in_stock;

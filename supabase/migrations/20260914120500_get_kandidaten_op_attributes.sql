@@ -55,6 +55,13 @@
   Ongewijzigd: security invoker, uitvoerbaar voor anon en authenticated.
 
   ## Terugdraaien
+  Let op de volgorde (fixronde 1, punt 6): deze functie wordt na deze
+  migratie nog twee keer vervangen (20260914120700, 20260914120800) en
+  verwijst naar price/in_stock, kolommen die pas in 20260914120400 zijn
+  toegevoegd. Draai eerst 20260914120800 en 20260914120700 terug, dan pas
+  deze migratie, en draai 20260914120400 pas terug NA deze migratie --
+  anders verwijst get_kandidaten naar een net gedropte kolom.
+
   Vorige versie opnieuw toepassen: supabase db query --linked -f
   supabase/migrations/20260914120100_get_kandidaten.sql
 */

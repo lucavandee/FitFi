@@ -36,9 +36,12 @@ class OutfitService {
    * De productpool voor de engine, uit de RPC get_kandidaten (spec 5.3).
    *
    * Vroeger: select * from products zonder limit, dus de eerste 1.000 rijen
-   * in rijvolgorde van circa 282.000 (0 H&M). Nu: per categorie de beste
+   * in rijvolgorde van circa 282.000 (0 H&M). Nu: per categorie de
    * kandidaten uit product_attributes, gefilterd aan de serverkant op
-   * canoniek, draagbaar, voorraad, gender en budget.
+   * canoniek, draagbaar, voorraad, gender en budget, en geordend op
+   * prijsafstand (gebucket, fixronde 1 punt 4) tot het midden van dat
+   * budget. Niet "de beste": score staat op deze laag nog altijd op 0
+   * (plan 2 vult die pas), de ordening is puur prijsafstand.
    *
    * Een string als eerste argument wordt gelezen als gender; dat is de vorm
    * die calibrationOutfitsV2 gebruikt.

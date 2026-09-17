@@ -70,16 +70,31 @@ function lees(opslag: Storage | undefined, sleutel: string): string | null {
 }
 
 /**
+ * Geheugen voor binnen deze pagina-load, alleen gebruikt als localStorage
+ * niet leesbaar/schrijfbaar is (geblokkeerd, private mode). Zonder dit gaf
+ * elke aanroep in die situatie een nieuwe uuid: wie dan van mening
+ * veranderde (bijvoorbeeld eerst "Zou ik dragen", dan terug naar "Nooit")
+ * schreef twee rijen weg onder twee session_id's en telde in weekly_ratings
+ * als twee bezoekers in plaats van één.
+ */
+let memoBijGeblokkeerdeOpslag: string | null = null;
+
+/**
  * Het sessie-id voor dit apparaat. Altijd een geldige UUID.
  *
  * Neemt eenmalig een geldige waarde over uit de oude sessionStorage-sleutel,
  * zodat iemand die midden in de quiz zit zijn swipes niet kwijtraakt.
  */
 export function getSessionId(): string {
-  if (typeof window === 'undefined') return nieuweUuid();
+  if (typeof window === 'undefined') {
+    if (!memoBijGeblokkeerdeOpslag) memoBijGeblokkeerdeOpslag = nieuweUuid();
+    return memoBijGeblokkeerdeOpslag;
+  }
 
   const bestaand = lees(window.localStorage, KEY);
   if (isUuid(bestaand)) return bestaand as string;
+
+  if (memoBijGeblokkeerdeOpslag) return memoBijGeblokkeerdeOpslag;
 
   const overgenomen = lees(window.sessionStorage, OUDE_KEY);
   const id = isUuid(overgenomen) ? (overgenomen as string) : nieuweUuid();
@@ -88,14 +103,17 @@ export function getSessionId(): string {
     window.localStorage.setItem(KEY, id);
   } catch {
     // Niet kunnen opslaan is vervelend maar niet fataal: de aanroeper krijgt
-    // een geldige id en de insert slaagt. Alleen een volgend bezoek herkent
-    // deze gebruiker dan niet meer.
+    // een geldige id en de insert slaagt. Onthoud hem in elk geval voor de
+    // rest van deze pagina-load, zodat een volgende aanroep hier niet
+    // opnieuw een nieuwe uuid genereert.
+    memoBijGeblokkeerdeOpslag = id;
   }
   return id;
 }
 
 /** Wist het sessie-id. Alleen gebruiken bij een bewuste reset van de quiz. */
 export function resetSessionId(): void {
+  memoBijGeblokkeerdeOpslag = null;
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.removeItem(KEY);
