@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { classifyProductDetailed } from '../productClassifier';
 
@@ -533,13 +534,38 @@ describe('Merk bepaalt de categorie niet meer', () => {
       ).toBe('top');
     });
 
-    it('de twee echte merken uit de melding stripen mechanisch correct', () => {
+    it('rooktest op de twee echte merken uit de melding: geen crash, geen mangled tekst', () => {
+      // Geen van "gallery", "dept", "herschel" of "supply" matcht een regel
+      // in deze classifier, dus deze assertie bewijst NIET dat het strippen
+      // hier iets aan de uitkomst verandert (die twee categorieen komen ook
+      // uit "hoodie"/"sneakers" als er helemaal niets gestript wordt). Het
+      // mechanische bewijs dat een merk met een punt aan het eind wél
+      // gestript wordt staat hierboven ("punt aan het eind van het merk:
+      // 'Jeans Co.'"). Dit is puur een rooktest met de twee echte
+      // productienamen uit de melding: bevestigt dat de escaping van de punt
+      // in "Gallery Dept."/"Herschel Supply Co." niet crasht en geen
+      // kapotte tekst oplevert voor deze specifieke tekens.
       expect(
         classifyProductDetailed('Hoodie GALLERY DEPT. Men color Black', '', '', 'Gallery Dept.').category
       ).toBe('top');
       expect(
         classifyProductDetailed('Sneakers HERSCHEL SUPPLY CO. Men color Black', '', '', 'Herschel Supply Co.').category
       ).toBe('footwear');
+    });
+
+    it('bevat geen negatieve lookbehind meer (Safari 15.4 t/m 16.3 ondersteunen die niet)', () => {
+      // Fixronde 2, bevinding 1: (?<!\w) werd stil nooit gedetecteerd door
+      // tsc/vite build, omdat het patroon met new RegExp(dynamische string)
+      // wordt gebouwd; esbuild herschrijft een lookbehind alleen in een
+      // regex-LITERAL naar een oudere vorm, niet in zo'n string. Zonder deze
+      // test zou een toekomstige (?<!...) hier stil terug kunnen sluipen en
+      // pas op een niet-ondersteunende Safari-versie een SyntaxError geven,
+      // zonder try/catch eromheen op de aanroeppaden.
+      const bron = readFileSync(new URL('../productClassifier.ts', import.meta.url), 'utf8');
+      // Commentaar eruit: deze docstring noemt (?<!\w) zelf als toelichting
+      // op wat er niet meer in de CODE mag staan.
+      const zonderCommentaar = bron.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+      expect(zonderCommentaar).not.toMatch(/\(\?<[!=]/);
     });
   });
 });

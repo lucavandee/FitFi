@@ -321,17 +321,26 @@ function determineConfidence(totalWeight: number, matchCount: number, fromName: 
  * dan trekt dat het product naar de verkeerde categorie. Zo werd
  * "Sweater TOMMY JEANS" `bottom` in plaats van `top`.
  *
- * Grenzen rond de merknaam worden gecontroleerd met `(?<!\w)`/`(?!\w)` in
- * plaats van `\b`. `\b` eist dat één kant van de grens een woordteken is; een
- * merk dat eindigt op leesteken of een accent ("Gallery Dept.", "Herschel
- * Supply Co.") heeft aan die kant géén woordteken (het leesteken zelf niet,
- * en JS telt een geaccentueerde letter zonder de `u`-vlag ook niet als
- * woordteken), dus de tekst ERNA (meestal een spatie) is ook geen woordteken
- * en `\b` matcht daar nooit. Gevolg: de merknaam werd stil niet gestript en
- * het merkwoord telde alsnog mee voor de categorie, precies het defect dat
- * deze functie moet voorkomen. `(?<!\w)`/`(?!\w)` kijken alleen naar het
- * teken BUITEN de match (typisch een spatie), niet naar het laatste/eerste
- * teken van het merk zelf, en falen dus niet op dat leesteken.
+ * De grens NA de merknaam is een lookahead: `(?!\w)`. Die is ES3 en overal
+ * ondersteund. De grens VOOR de merknaam ving eerst een negatieve lookbehind
+ * (`(?<!\w)`), maar dat is ES2018 en Safari ondersteunt het pas vanaf 16.4
+ * (15.4 t/m 16.3 niet). Erger nog: het patroon wordt gebouwd met
+ * `new RegExp(dynamische string)`, en esbuild kan een lookbehind daarin niet
+ * herschrijven naar een oudere vorm (dat lukt esbuild alleen bij een
+ * regex-*literal*, niet bij een string die pas ten tijde van uitvoering een
+ * regex wordt), dus op een niet-ondersteunende Safari-versie was dit geen
+ * build- of laadfout geweest, maar een SyntaxError zodra `stripBrand` voor
+ * het eerst met een niet-leeg merk draait, zonder try/catch eromheen op de
+ * aanroeppaden (`v2/candidateFilter.ts`, de v1-fallbackketen,
+ * `outfitComposer.ts`), dus rechtstreeks naar de ErrorBoundary.
+ *
+ * Vervangen door een gevangen groep in plaats van een lookbehind: `(^|[^\w])`
+ * vangt het teken vóór de merknaam (of niets, bij het begin van de tekst) en
+ * de replace-callback zet dat teken gewoon terug. Dat geeft hetzelfde gedrag
+ * als de lookbehind (ook voor een merk dat eindigt op een leesteken of een
+ * accent, zoals "Gallery Dept." of "Herschel Supply Co.": `\b` faalde daar
+ * stil omdat geen van beide kanten van die grens een woordteken is), maar
+ * zonder lookbehind-syntax.
  *
  * Geen brand meegegeven: tekst ongewijzigd terug (bestaand gedrag voor elke
  * aanroeper die nog geen merk doorgeeft).
@@ -340,7 +349,10 @@ function stripBrand(text: string, brand: string): string {
   const merk = brand.trim();
   if (!merk) return text;
   const patroon = merk.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return text.replace(new RegExp(`(?<!\\w)${patroon}(?!\\w)`, 'gi'), ' ').replace(/\s+/g, ' ').trim();
+  return text
+    .replace(new RegExp(`(^|[^\\w])${patroon}(?!\\w)`, 'gi'), (_match, voor) => voor)
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**

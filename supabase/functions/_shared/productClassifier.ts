@@ -307,6 +307,22 @@ function determineConfidence(totalWeight: number, matchCount: number, fromName: 
 }
 
 /**
+ * Haalt de merknaam als deelstring uit de tekst voordat er gescoord wordt.
+ * Spiegelt src/engine/productClassifier.ts exact (zie daar de volledige
+ * toelichting op waarom een lookbehind hier niet gebruikt wordt en waarom de
+ * grens ervoor een gevangen groep is in plaats van `\b`).
+ */
+function stripBrand(text: string, brand: string): string {
+  const merk = brand.trim();
+  if (!merk) return text;
+  const patroon = merk.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text
+    .replace(new RegExp(`(^|[^\\w])${patroon}(?!\\w)`, 'gi'), (_match, voor) => voor)
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Classify a product using name, description, category path, and brand.
  * Returns category, subcategory, confidence level, and matched signals.
  */
@@ -314,9 +330,10 @@ export function classifyProductRaw(
   name: string,
   description: string,
   categoryPath: string,
-  _brand: string = '',
+  brand: string = '',
 ): RawClassificationResult {
-  const nameText = (name || '').toLowerCase();
+  const rawNameText = (name || '').toLowerCase();
+  const nameText = stripBrand(rawNameText, brand);
   const descText = (description || '').toLowerCase();
   const catText = (categoryPath || '').toLowerCase();
   const fullText = buildText(nameText, descText, catText);
