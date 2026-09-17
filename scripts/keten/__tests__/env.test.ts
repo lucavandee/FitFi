@@ -57,6 +57,18 @@ describe("parseDotEnv", () => {
   it("noemt in die foutmelding nooit de waarde zelf", () => {
     expect(() => parseDotEnv('KEY="geheime-waarde-xyz\n')).not.toThrow(/geheime-waarde-xyz/);
   });
+
+  // Fixronde 3: ná de sluitende aanhalingsteken mag alleen witruimte en
+  // eventueel commentaar staan. Vóór deze fix negeerde ontleedWaarde()
+  // alles ná de sluitende quote, dus KEY="foo" BAR="baz" gaf stilzwijgend
+  // alleen { KEY: "foo" } terug: BAR bestond dan gewoon niet, zonder
+  // melding. Dat is precies het geval waarbij iemand denkt twee variabelen
+  // op één regel te zetten en er stilzwijgend maar één krijgt.
+  it("weigert tekst na de sluitende aanhalingsteken die geen commentaar is, ook een tweede KEY= op dezelfde regel", () => {
+    expect(() => parseDotEnv('KEY="foo" BAR="baz"\n')).toThrow(/KEY/);
+    expect(() => parseDotEnv('KEY="foo"rommel\n')).toThrow(/KEY/);
+    expect(() => parseDotEnv('KEY="foo" rommel\n')).toThrow(/KEY/);
+  });
 });
 
 describe("leesEnv", () => {

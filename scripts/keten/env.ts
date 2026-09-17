@@ -16,9 +16,14 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
  *
  * - Aangehaalde waarde, met `"..."` of `'...'` (symmetrisch behandeld):
  *   alles tussen de eerste en de bijbehorende sluitende aanhalingsteken is
- *   de waarde, letterlijk, ook als daarna nog een `#` volgt. De
- *   aanhalingstekens zijn dan de expliciete grens; wat erna komt negeren we
- *   net als bij een gewone regel-comment.
+ *   de waarde, letterlijk. Ná die sluitende aanhalingsteken mag alleen nog
+ *   witruimte staan, eventueel gevolgd door `#` en commentaar; niets anders.
+ *   Fixronde 3: `KEY="foo"rommel`, `KEY="foo" rommel` en `KEY="foo"
+ *   BAR="baz"` lieten de rommel voorheen stilzwijgend verdwijnen (en bij het
+ *   laatste geval: BAR bestond dan gewoon niet, zonder melding). Dat is
+ *   dezelfde soort stille corruptie als bevinding 2 hierboven, dus dezelfde
+ *   behandeling: weigeren met een Error die de variabelenaam noemt, nooit de
+ *   waarde.
  * - Een geopende aanhalingsteken zonder sluitende tegenhanger (`KEY="foo`)
  *   wordt geweigerd met een Error die de variabelenaam noemt, nooit de
  *   waarde. Bewuste keuze, niet de enige mogelijke: er is geen betrouwbare
@@ -31,7 +36,17 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
  *   (` # toelichting`). Een `#` zonder voorafgaande witruimte hoort bij de
  *   waarde. Dat dekt de twee gevallen die dit moet onderscheiden: een
  *   `KEY=waarde # toelichting` regel (commentaar eraf) versus een
- *   wachtwoord of URL-fragment met een `#` erin (blijft intact).
+ *   wachtwoord of URL-fragment met een `#` erin (blijft intact). Bewust geen
+ *   vergelijkbare "wat volgt er nog" controle voor het onaangehaalde pad:
+ *   daar is de hele rest van de regel altijd al de waarde (spaties
+ *   inbegrepen), dat is geen leemte maar het bestaande, verwachte gedrag van
+ *   een onaangehaalde toewijzing.
+ *
+ * Wat dit bewust niet is: een volwaardige dotenv-implementatie. Escaped
+ * aanhalingstekens (`KEY="foo\"bar"`) worden niet ondersteund; die eindigen
+ * op de eerste `"` erna en de rest ("bar"") wordt dan als rommel geweigerd
+ * volgens de regel hierboven. Dat is aanvaardbaar: dit is een leeshulp voor
+ * scripts, geen parser voor elke geldige .env-vorm.
  */
 function ontleedWaarde(sleutel: string, rest: string): string {
   const opent = rest[0];
@@ -40,6 +55,12 @@ function ontleedWaarde(sleutel: string, rest: string): string {
     if (sluit === -1) {
       throw new Error(
         `Ongeldige .env-regel voor ${sleutel}: opent met ${opent} maar sluit niet af`
+      );
+    }
+    const na = rest.slice(sluit + 1);
+    if (!/^\s*(#.*)?$/.test(na)) {
+      throw new Error(
+        `Ongeldige .env-regel voor ${sleutel}: onverwachte tekst na de sluitende ${opent}`
       );
     }
     return rest.slice(1, sluit);
