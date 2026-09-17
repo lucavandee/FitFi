@@ -1,12 +1,23 @@
 /**
- * Live test tegen de RPC get_kandidaten. Draait alleen als
- * VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY in de omgeving staan; anders
- * wordt hij overgeslagen zodat de gewone testrun offline groen blijft.
+ * Live test tegen de RPC get_kandidaten. Draait alleen expliciet opt-in via
+ * LIVE_DB_TEST=1 (fixronde 1, punt 5).
+ *
+ * Vóór deze fix draaide dit alleen op VITE_SUPABASE_URL/ANON_KEY in de
+ * omgeving, en Vitest laadt .env in process.env. Wie lokaal een .env heeft
+ * (iedereen die aan dit project werkt) kreeg deze test dus ALTIJD mee in een
+ * gewone `npx vitest run`, terwijl CI (geen .env) hem altijd oversloeg:
+ * "vitest groen" betekende dan iets anders lokaal dan in CI, voor precies de
+ * poort die onder elke taak in dit plan staat. LIVE_DB_TEST staat nergens in
+ * .env, dus `npx vitest run` slaat deze test nu overal over, ongeacht welke
+ * Supabase-variabelen aanwezig zijn. Bewust opt-in draaien:
+ *
+ *   LIVE_DB_TEST=1 npx vitest run src/services/outfits/__tests__/getKandidaten.live.test.ts
  */
 import { describe, expect, it } from "vitest";
 import { createClient } from "@supabase/supabase-js";
 import { naarKandidatenParams, type KandidaatRij } from "../kandidaten";
 
+const liveOptIn = process.env.LIVE_DB_TEST === "1";
 const url = process.env.VITE_SUPABASE_URL;
 const key = process.env.VITE_SUPABASE_ANON_KEY;
 
@@ -23,7 +34,7 @@ const key = process.env.VITE_SUPABASE_ANON_KEY;
 // echt iets mis met het RPC-contract.
 const LIVE_TEST_OPTIES = { timeout: 20_000, retry: 2 };
 
-describe.skipIf(!url || !key)("get_kandidaten (live)", () => {
+describe.skipIf(!liveOptIn || !url || !key)("get_kandidaten (live)", () => {
   it(
     "geeft per categorie hooguit p_per_category rijen binnen budget en gender",
     async () => {
