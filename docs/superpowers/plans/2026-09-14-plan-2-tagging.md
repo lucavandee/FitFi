@@ -100,6 +100,14 @@ Wijzigen:
 
 ### Taak 1: Retailer-naam en scripts-fundament (SDK, env, args, retailers, npm-scripts)
 
+> **AMENDEMENT (controller, 17 september 2026, na de review van deze taak). De `env.ts`-code die hieronder letterlijk is uitgeschreven bevat twee gedragsfouten. Ze zijn tijdens de uitvoering gereproduceerd en gefixt; neem de code hieronder niet ongewijzigd over als dit plan ooit opnieuw wordt uitgevoerd.**
+>
+> 1. De terugval van `SUPABASE_URL` naar `VITE_SUPABASE_URL` gebruikt `??`, die alleen op `null` en `undefined` terugvalt. Met `SUPABASE_URL=""` en een geldige `VITE_SUPABASE_URL` meldt het script "Ontbrekende omgevingsvariabelen: SUPABASE_URL" terwijl er een bruikbare waarde staat. Dat is het tegendeel van wat de globale randvoorwaarde over foutmeldingen bedoelt.
+> 2. `parseDotEnv` herkent alleen hele commentaarregels, niet `KEY=waarde # toelichting`. De toelichting wordt dan onderdeel van de waarde. Dat is bijzonder vervelend omdat waarden terecht nooit gelogd worden: het gevolg is een client die niet verbindt, zonder foutmelding en zonder spoor. Een naieve split op `#` is geen oplossing, want een `#` kan legitiem in een waarde staan.
+>
+> Kleiner, in dezelfde functie: `split("\n")` laat op een CRLF-bestand een `\r` achter aan het eind van elke waarde.
+
+
 **Bestanden:**
 - Aanmaken: `scripts/keten/.gitignore`, `scripts/keten/env.ts`, `scripts/keten/args.ts`, `scripts/keten/retailers.ts`
 - Wijzigen: `package.json` regels 28-29 (npm-scripts) en 31-46 (dependency)
