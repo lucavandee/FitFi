@@ -32,15 +32,30 @@
  * een bestaand, op zichzelf staand punt (zie taak-10-report.md, sectie
  * "Zorgen" en de escalatie in de fixronde-aantekening) dat niet in deze
  * bewaking wordt opgelost. Voor de top3-plek valt deze test daarom terug op
- * een structurele (AST-)controle van de broncode via de TypeScript-compiler:
- * niet regex of ingesprongen tekst (dat is bros, precies waar de opdracht
- * voor waarschuwt), maar de echte syntaxboom, met de attribuut-expressies
- * geextraheerd op naam. Dat overleeft herformatteren, andere inspringing of
- * het verplaatsen van een regel; het overleeft NIET het hernoemen van een
- * prop of het aanroepen van een andere functie voor productIds — precies
- * het soort wijziging waar deze bewaking voor bedoeld is. Wat de AST-controle
- * bewust niet bewijst: dat de top3-plek ook echt bereikbaar is tijdens een
- * bezoek (dat is nu juist het losstaande punt hierboven).
+ * een structurele (AST-)controle van de broncode via de TypeScript-compiler,
+ * niet regex of ingesprongen tekst.
+ *
+ * Die AST-controle identificeert de gevonden plekken NIET bij naam (niet via
+ * de variabele top3, niet via occasionFilteredOutfits, niet via renderCard):
+ * een eerdere versie deed dat wel, en een her-review liet zien dat een pure
+ * hernoeming van de lokale variabele top3 dan een misleidende melding gaf
+ * ("OutfitRatingButtons ontbreekt in de top3-sectie" terwijl de plek er
+ * gewoon stond). In plaats daarvan telt hij simpelweg hoeveel keer
+ * `<OutfitRatingButtons />` voorkomt en vergelijkt hij de attributen tussen
+ * de gevonden plekken, gerapporteerd op regelnummer in plaats van op naam.
+ * Dat overleeft herformatteren, verplaatsen en hernoemen van omliggende
+ * variabelen of functies. Het overleeft ook overbodige haakjes en
+ * witruimteverschillen: expressies worden voor vergelijking genormaliseerd
+ * door de AST te ontdoen van ParenthesizedExpression-knopen en opnieuw af te
+ * drukken met de TypeScript-printer, zodat `productIdsVan(outfit)` en
+ * `productIdsVan((outfit))` als gelijk gelden. Het overleeft NIET een andere
+ * functie of een ander argument voor een prop — precies het soort wijziging
+ * waar deze bewaking voor bedoeld is. Wat de AST-controle bewust niet
+ * bewijst: dat de top3-plek ook echt bereikbaar is tijdens een bezoek (dat is
+ * het losstaande punt hierboven), en zonder naam-identificatie kan hij bij
+ * een ontbrekende plek niet zeggen WELKE van de drie het is — alleen hoeveel
+ * er zijn en op welke regels, waarna de lezer dat zelf tegen
+ * EnhancedResultsPage.tsx kan afzetten.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
@@ -217,13 +232,43 @@ describe("OutfitRatingButtons — gedrag op de bereikbare plekken (grid en swipe
 // name voor de top3-sectie die hierboven niet gerenderd kan worden. Leest
 // EnhancedResultsPage.tsx met de TypeScript-compiler (dezelfde package die
 // ook tsc --noEmit draait) en zoekt elk <OutfitRatingButtons /> op in de
-// echte syntaxboom, niet in de platte tekst.
+// echte syntaxboom, niet in de platte tekst. Identificeert bewust NIET welke
+// van de drie plekken een vondst is (geen afhankelijkheid van de naam top3,
+// occasionFilteredOutfits of renderCard) — zie de toelichting bovenaan dit
+// bestand. Meldingen werken daarom met regelnummers, niet met plek-namen.
 // ---------------------------------------------------------------------------
-type Plek = "top3" | "grid" | "swipe" | "onbekend";
-
 interface Vondst {
-  plek: Plek;
+  /** 1-indexed regelnummer in EnhancedResultsPage.tsx, voor menselijke identificatie. */
+  regel: number;
+  /** attribuutnaam -> genormaliseerde (haakjes/witruimte-vrije) brontekst van de expressie. */
   attrs: Record<string, string>;
+}
+
+/**
+ * Print een expressie opnieuw nadat overbodige ParenthesizedExpression-
+ * knopen zijn verwijderd, en normaliseert resterende witruimte. Zo gelden
+ * `productIdsVan(outfit)` en `productIdsVan((outfit))` als gelijk, terwijl
+ * een echt andere functie of een ander argument nog steeds een andere
+ * uitkomst geeft.
+ */
+function normaliseerExpressie(expr: ts.Expression, sourceFile: ts.SourceFile): string {
+  const resultaat = ts.transform(expr, [
+    (context: ts.TransformationContext) => {
+      const visit: ts.Visitor = (node) => {
+        const bezocht = ts.visitEachChild(node, visit, context);
+        return ts.isParenthesizedExpression(bezocht) ? bezocht.expression : bezocht;
+      };
+      return (node: ts.Node) => ts.visitNode(node, visit) as ts.Node;
+    },
+  ]);
+  try {
+    const genormaliseerdeNode = resultaat.transformed[0] as ts.Expression;
+    const printer = ts.createPrinter({ removeComments: true });
+    const tekst = printer.printNode(ts.EmitHint.Unspecified, genormaliseerdeNode, sourceFile);
+    return tekst.replace(/\s+/g, " ").trim();
+  } finally {
+    resultaat.dispose();
+  }
 }
 
 function vindOutfitRatingButtonsPlekken(): Vondst[] {
@@ -231,25 +276,6 @@ function vindOutfitRatingButtonsPlekken(): Vondst[] {
   const bron = readFileSync(pagePath, "utf-8");
   const sourceFile = ts.createSourceFile(pagePath, bron, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const vondsten: Vondst[] = [];
-
-  function bepaalPlek(node: ts.Node): Plek {
-    let huidige: ts.Node | undefined = node;
-    while (huidige) {
-      if (ts.isJsxAttribute(huidige) && huidige.name.getText(sourceFile) === "renderCard") {
-        return "swipe";
-      }
-      if (ts.isCallExpression(huidige)) {
-        const callee = huidige.expression;
-        if (ts.isPropertyAccessExpression(callee) && callee.name.getText(sourceFile) === "map") {
-          const object = callee.expression.getText(sourceFile);
-          if (object === "top3") return "top3";
-          if (object === "occasionFilteredOutfits") return "grid";
-        }
-      }
-      huidige = huidige.parent;
-    }
-    return "onbekend";
-  }
 
   function bezoek(node: ts.Node) {
     const isDoelElement =
@@ -266,61 +292,59 @@ function vindOutfitRatingButtonsPlekken(): Vondst[] {
           ts.isJsxExpression(attr.initializer) &&
           attr.initializer.expression
         ) {
-          attrs[attr.name.getText(sourceFile)] = attr.initializer.expression.getText(sourceFile);
+          attrs[attr.name.getText(sourceFile)] = normaliseerExpressie(attr.initializer.expression, sourceFile);
         }
       }
-      vondsten.push({ plek: bepaalPlek(node), attrs });
+      const regel = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
+      vondsten.push({ regel, attrs });
     }
     ts.forEachChild(node, bezoek);
   }
 
   bezoek(sourceFile);
-  return vondsten;
+  return vondsten.sort((a, b) => a.regel - b.regel);
 }
 
-describe("OutfitRatingButtons — structurele aanwezigheid op alle drie de plekken", () => {
-  it("komt precies drie keer voor: top3, grid en swipe", () => {
+describe("OutfitRatingButtons — structurele aanwezigheid en propsvorm (identiteit-onafhankelijk)", () => {
+  it("komt op precies drie plekken voor", () => {
     const vondsten = vindOutfitRatingButtonsPlekken();
-    const plekken = vondsten.map((v) => v.plek);
+    const regels = vondsten.map((v) => v.regel);
 
     expect(
-      plekken.includes("top3"),
-      `OutfitRatingButtons ontbreekt in de top3-sectie ('Jouw top outfits'). Gevonden plekken: ${plekken.join(", ") || "geen"}`
-    ).toBe(true);
-    expect(
-      plekken.includes("grid"),
-      `OutfitRatingButtons ontbreekt in de grid-weergave. Gevonden plekken: ${plekken.join(", ") || "geen"}`
-    ).toBe(true);
-    expect(
-      plekken.includes("swipe"),
-      `OutfitRatingButtons ontbreekt in de swipe-weergave (renderCard). Gevonden plekken: ${plekken.join(", ") || "geen"}`
-    ).toBe(true);
-    expect(
       vondsten.length,
-      `verwacht precies 3 plekken, gevonden ${vondsten.length}: ${plekken.join(", ") || "geen"}`
+      `verwacht 3 plekken, gevonden ${vondsten.length} (regel${vondsten.length === 1 ? "" : "s"} ${regels.join(", ") || "geen"}). ` +
+        `Vergelijk deze regelnummers met de top3-sectie, het grid en de swipe-kaart in EnhancedResultsPage.tsx om te zien welke ontbreekt.`
     ).toBe(3);
   });
 
-  it("gebruikt op alle drie de plekken dezelfde expressie voor productIds en profileHash", () => {
+  it("gebruikt op elke gevonden plek dezelfde attributen en dezelfde (betekenisvolle) expressies", () => {
     const vondsten = vindOutfitRatingButtonsPlekken();
-    // Als de vorige test al faalt op het aantal plekken, is een uitspraak
-    // over "dezelfde bron" niet zinvol; deze test focust op de inhoud.
-    if (vondsten.length !== 3) {
+    if (vondsten.length < 2) {
       throw new Error(
-        `verwacht 3 plekken om te vergelijken, gevonden ${vondsten.length}; zie de vorige test voor welke ontbreekt`
+        `te weinig plekken gevonden om onderling te vergelijken (${vondsten.length}, regel${vondsten.length === 1 ? "" : "s"} ${
+          vondsten.map((v) => v.regel).join(", ") || "geen"
+        }); zie de vorige test`
       );
     }
 
-    const productIdsBron = new Map(vondsten.map((v) => [v.plek, v.attrs.productIds]));
-    const profileHashBron = new Map(vondsten.map((v) => [v.plek, v.attrs.profileHash]));
+    const referentie = vondsten[0];
+    const referentieNamen = Object.keys(referentie.attrs).sort().join(", ");
 
-    expect(
-      new Set(productIdsBron.values()).size,
-      `productIds-expressie loopt uiteen tussen plekken: ${[...productIdsBron.entries()].map(([p, e]) => `${p}=${e}`).join(", ")}`
-    ).toBe(1);
-    expect(
-      new Set(profileHashBron.values()).size,
-      `profileHash-expressie loopt uiteen tussen plekken: ${[...profileHashBron.entries()].map(([p, e]) => `${p}=${e}`).join(", ")}`
-    ).toBe(1);
+    for (const vondst of vondsten.slice(1)) {
+      const namen = Object.keys(vondst.attrs).sort().join(", ");
+      expect(
+        namen,
+        `de attributen op regel ${vondst.regel} (${namen}) wijken af van regel ${referentie.regel} (${referentieNamen})`
+      ).toBe(referentieNamen);
+    }
+
+    for (const naam of Object.keys(referentie.attrs)) {
+      const perRegel = vondsten.map((v) => [v.regel, v.attrs[naam]] as const);
+      const unieke = new Set(perRegel.map(([, expressie]) => expressie));
+      expect(
+        unieke.size,
+        `${naam}-expressie loopt uiteen tussen plekken: ${perRegel.map(([regel, expressie]) => `regel ${regel} = ${expressie}`).join(", ")}`
+      ).toBe(1);
+    }
   });
 });
