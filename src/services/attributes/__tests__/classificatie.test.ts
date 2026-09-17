@@ -38,6 +38,41 @@ describe("classificeerRij", () => {
   });
 
   it("heeft een vaste versiestring", () => {
-    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09");
+    // Verhoogd voor taak 0 (merknaam-fix in productClassifier.ts): het oude
+    // "productClassifier-2026-09" hoort bij de classifier van vóór de
+    // merknaam-strip. Zonder versiebump zou de veegronde (die alleen rijen
+    // met classifier_version is null oppakt) de al geclassificeerde rijen
+    // nooit opnieuw langs de gerepareerde classifier sturen.
+    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09-17-brand-strip");
+  });
+
+  it("laat het merk niet meer de categorie bepalen", () => {
+    // Het defect uit taak 0: "Sweater TOMMY JEANS" werd bottom omdat "Jeans"
+    // in de merknaam meetelde als categoriewoord. brand meegeven strip dat
+    // woord uit de tekst die gescoord wordt, waarna "Sweater" overblijft.
+    const r = classificeerRij({
+      id: "p8",
+      name: "Sweater TOMMY JEANS Men color Navy",
+      category: "top",
+      brand: "Tommy Jeans",
+    });
+    expect(r.category).toBe("top");
+  });
+
+  it("blijft Moon Boot bij footwear houden ook al staat er geen ander kledingstukwoord in de naam", () => {
+    // Moon Boot is het gemeten tegenvoorbeeld: "Ballet Flat MOON BOOT Woman
+    // color Black" heeft geen kledingstukwoord los van de merknaam. Strip je
+    // "Moon Boot" uit de naam, dan blijft "Ballet Flat" over, dat op geen
+    // enkele regel matcht. De classifier valt dan terug op de (ongestripte)
+    // beschrijving en categoryPath, niet op de ongestripte naam, en de
+    // ruwe feed-category "footwear" in dit voorbeeld staat daar model voor.
+    const r = classificeerRij({
+      id: "p9",
+      name: "Ballet Flat MOON BOOT Woman color Black",
+      description: "Ballet Flat MOON BOOT Woman color Black",
+      category: "footwear",
+      brand: "Moon Boot",
+    });
+    expect(r.category).toBe("footwear");
   });
 });

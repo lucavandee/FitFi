@@ -127,6 +127,7 @@ interface ProductRij {
   type: string | null;
   is_kids: boolean | null;
   retailer: string | null;
+  brand: string | null;
 }
 
 /**
@@ -178,7 +179,7 @@ async function main(): Promise<void> {
     const bouwLeesQuery = () => {
       let q = client
         .from("products")
-        .select("id, name, description, category, type, is_kids, retailer")
+        .select("id, name, description, category, type, is_kids, retailer, brand")
         .order("id", { ascending: true })
         .limit(PAGINA);
       if (laatsteId) q = q.gt("id", laatsteId);
@@ -248,7 +249,7 @@ async function main(): Promise<void> {
         () =>
           client
             .from("product_attributes")
-            .select("products!inner(id, name, description, category, type, is_kids)")
+            .select("products!inner(id, name, description, category, type, is_kids, brand)")
             .is("classifier_version", null)
             .order("product_id", { ascending: true })
             .limit(limiet),

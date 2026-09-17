@@ -386,3 +386,81 @@ describe('Dutch closed compounds', () => {
     expect(cat('Alter Ego | Heren | Overshirt Bruin')).toBe('outerwear');
   });
 });
+
+// ─── Taak 0: de merknaam mag de categorie niet bepalen ─────────────────────
+// products.name is de letterlijke feed-titel en bevat altijd het merk. Een
+// merk met een categoriewoord erin ("Tommy Jeans", "Moon Boot") trok het
+// product voorheen naar de verkeerde categorie: "Sweater TOMMY JEANS" werd
+// bottom in plaats van top. Gevonden op de productiedatabase 2026-09-17,
+// negen merken, 2.551 canonieke producten, 111 truien/hoodies op de
+// broekpositie.
+describe('Merk bepaalt de categorie niet meer', () => {
+  it('sweater met een merk dat "Jeans" bevat wordt top, niet bottom', () => {
+    expect(
+      classifyProductDetailed('Sweater TOMMY JEANS Men color Navy', '', '', 'Tommy Jeans').category
+    ).toBe('top');
+  });
+
+  it('hetzelfde kledingstuk met een merk zonder categoriewoord wordt ook top', () => {
+    // Bewijst dat het niet "toevallig top" is: met of zonder categoriewoord
+    // in het merk komt hetzelfde kledingstuk op dezelfde categorie uit.
+    expect(
+      classifyProductDetailed('Sweater TOMMY HILFIGER Men color Navy', '', '', 'Tommy Hilfiger').category
+    ).toBe('top');
+  });
+
+  it('valt bij een merk-only signaal terug op categoryPath, niet stilletjes op de ongestripte naam', () => {
+    // Zonder brand-parameter matcht de naam zelf op "jeans" en wordt bottom.
+    // Dat is exact het defect: het bewijst dat het signaal echt uit het merk
+    // komt en niet uit iets anders in de naam.
+    const zonderBrand = classifyProductDetailed('Item DENIM JEANS CO Woman color Black', '', '', '');
+    expect(zonderBrand.category).toBe('bottom');
+
+    // Met brand gestript blijft er geen kledingstukwoord over ("Item ...
+    // Woman color Black"). Een terugval die stilletjes de ongestripte naam
+    // erbij pakt zou hier weer bottom geven: het defect is dan terug. De
+    // functie valt in plaats daarvan terug op het onafhankelijke
+    // categoryPath-veld (hier gezet op "footwear" om het verschil met zowel
+    // "bottom" als "top" ondubbelzinnig te maken).
+    const metBrand = classifyProductDetailed(
+      'Item DENIM JEANS CO Woman color Black',
+      '',
+      'footwear',
+      'Denim Jeans Co'
+    );
+    expect(metBrand.category).toBe('footwear');
+    expect(metBrand.category).not.toBe('bottom');
+  });
+
+  it('Moon Boot-geval: merk beschrijft de juiste categorie en komt alleen daar in het product terug', () => {
+    // "Ballet Flat MOON BOOT Woman color Black" heeft geen ander
+    // kledingstukwoord dan "boot" uit de merknaam zelf ("ballet flat" matcht
+    // op geen enkele regel). Zonder terugval zou dit product onclassificeerbaar
+    // worden na het strippen van de naam. De beschrijving dupliceert in de
+    // echte feed de naam en blijft ongestript, dus het footwear-signaal komt
+    // via die terugval alsnog binnen. Gemeten: 95 van 95 Moon Boot-producten
+    // stonden vóór deze fix op footwear; dat mag niet veranderen.
+    const r = classifyProductDetailed(
+      'Ballet Flat MOON BOOT Woman color Black',
+      'Ballet Flat MOON BOOT Woman color Black',
+      'footwear',
+      'Moon Boot'
+    );
+    expect(r.category).toBe('footwear');
+  });
+
+  it('laat Polo Ralph Lauren-producten die nu al goed staan niet omslaan', () => {
+    // Polo Ralph Lauren is het andere gemeten tegenvoorbeeld: 825 top, 90
+    // accessory, 71 bottom, 32 outerwear, 23 dress, 12 footwear. Niet alles
+    // wordt door "Polo" naar top getrokken, dus de fix mag die spreiding niet
+    // plat slaan. Een broek met het merk erin moet bottom blijven.
+    expect(
+      classifyProductDetailed('Pants POLO RALPH LAUREN Woman color Blue', '', '', 'Polo Ralph Lauren').category
+    ).toBe('bottom');
+    // Een polo-shirt met het merk erin moet top blijven (het merk bevat zelf
+    // ook "Polo", maar dat mag geen dubbel signaal geven of iets omgooien).
+    expect(
+      classifyProductDetailed('Polo Shirt POLO RALPH LAUREN Men color Black', '', '', 'Polo Ralph Lauren').category
+    ).toBe('top');
+  });
+});

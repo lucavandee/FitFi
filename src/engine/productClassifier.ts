@@ -315,6 +315,23 @@ function determineConfidence(totalWeight: number, matchCount: number, fromName: 
 }
 
 /**
+ * Haalt de merknaam als woordgrens-begrensde deelstring uit de tekst voordat
+ * er gescoord wordt. products.name is de letterlijke feed-titel en bevat dus
+ * altijd het merk; staat daar toevallig een categoriewoord in ("Tommy Jeans",
+ * "Moon Boot"), dan trekt dat het product naar de verkeerde categorie. Zo werd
+ * "Sweater TOMMY JEANS" `bottom` in plaats van `top`.
+ *
+ * Geen brand meegegeven: tekst ongewijzigd terug (bestaand gedrag voor elke
+ * aanroeper die nog geen merk doorgeeft).
+ */
+function stripBrand(text: string, brand: string): string {
+  const merk = brand.trim();
+  if (!merk) return text;
+  const patroon = merk.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`\\b${patroon}\\b`, 'gi'), ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
  * Classify a product by raw text fields. Returns category, subcategory,
  * confidence level, and matched signals for debugging.
  */
@@ -322,30 +339,45 @@ export function classifyProductDetailed(
   name: string,
   description: string = '',
   categoryPath: string = '',
-  _brand: string = '',
+  brand: string = '',
 ): ClassificationResult {
-  const nameText = (name || '').toLowerCase();
+  const rawNameText = (name || '').toLowerCase();
+  // Reject/kids/multipack-checks raken dit defect niet en blijven op de volle
+  // naam werken. Alleen de tekst die op categorie scoort is gestript.
+  const nameText = stripBrand(rawNameText, brand);
   const descText = (description || '').toLowerCase();
   const catText = (categoryPath || '').toLowerCase();
+  // descText en catText blijven ongestript: dat is de bestaande terugval van
+  // deze functie (zie nameMatches/fullMatches hieronder) en géén nieuwe
+  // uitzondering. Strip je hier ook, dan verdwijnt bij een merk zonder ander
+  // categoriewoord in de naam (bv. "Ballet Flat MOON BOOT Woman color Black",
+  // waar "boot" nergens anders in de naam staat) elk signaal en valt het
+  // product buiten de kandidatenpool. Met alleen de naam gestript blijft de
+  // fix precies waar hij moet zijn: elk van de negen geraakte merken heeft in
+  // zijn geclassificeerde producten altijd een eigen kledingstukwoord náást de
+  // merknaam ("Sweater CALVIN KLEIN JEANS" → "sweater" blijft over), dus die
+  // gevallen worden nooit aan deze terugval overgelaten. Moon Boot is de
+  // uitzondering waar dat woord ontbreekt, en juist daar mag de terugval nog
+  // op de (ongestripte) beschrijving en categoryPath leunen.
   const fullText = [nameText, descText, catText].filter(Boolean).join(' ');
 
   // Reject checks
-  if (REJECT_REGEX.test(nameText)) {
+  if (REJECT_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'non-clothing keyword' };
   }
-  if (KIDS_REGEX.test(nameText)) {
+  if (KIDS_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'kids product' };
   }
-  if (SPORT_FOOTWEAR_REGEX.test(nameText)) {
+  if (SPORT_FOOTWEAR_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'sport footwear studs pattern' };
   }
-  if (BASELAYER_RE.test(nameText) || BASELAYER_RE.test(descText)) {
+  if (BASELAYER_RE.test(rawNameText) || BASELAYER_RE.test(descText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'baselayer/thermal — not outfit-visible' };
   }
-  if (MULTIPACK_REGEX.test(nameText)) {
+  if (MULTIPACK_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'multipack' };
   }
-  if (SET_REGEX.test(nameText)) {
+  if (SET_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'set product' };
   }
 
@@ -406,8 +438,9 @@ export function classifyProduct(product: Product): { category: ProductCategory; 
   const desc = product.description || '';
   const dbCategory = (product.category || '').toLowerCase();
   const type = (product.type || '').toLowerCase();
+  const brand = product.brand || '';
 
-  const result = classifyProductDetailed(name, desc, type || dbCategory);
+  const result = classifyProductDetailed(name, desc, type || dbCategory, brand);
 
   if (result.rejected) {
     return { category: 'other' as ProductCategory, rejected: true, reason: result.rejectReason };
@@ -460,7 +493,7 @@ export function reclassifyProducts(products: Product[]): {
     classified.push({ ...product, category: result.category });
   }
 
-  const detailed = products.map(p => classifyProductDetailed(p.name || '', p.description || ''));
+  const detailed = products.map(p => classifyProductDetailed(p.name || '', p.description || '', '', p.brand || ''));
   for (const r of detailed) {
     if (r.confidence === 'high') stats.confidence_high++;
     else if (r.confidence === 'medium') stats.confidence_medium++;

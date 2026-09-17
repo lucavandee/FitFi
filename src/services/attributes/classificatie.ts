@@ -6,7 +6,7 @@ import type { Product } from "@/engine/types";
  * Verhoog deze string als productClassifier.ts verandert, en draai
  * scripts/keten/classificeer-attributes.ts opnieuw.
  */
-export const CLASSIFIER_VERSIE = "productClassifier-2026-09";
+export const CLASSIFIER_VERSIE = "productClassifier-2026-09-17-brand-strip";
 
 export type AttribuutCategorie = "top" | "bottom" | "footwear" | "outerwear" | "dress" | "accessory";
 
@@ -25,6 +25,7 @@ export interface ProductBron {
   category?: string | null;
   type?: string | null;
   is_kids?: boolean | null;
+  brand?: string | null;
 }
 
 /**
@@ -42,6 +43,7 @@ export function classificeerRij(rij: ProductBron): ClassificatieRij {
     description: rij.description ?? undefined,
     category: rij.category ?? undefined,
     type: rij.type ?? undefined,
+    brand: rij.brand ?? undefined,
   } as Product;
   const uitkomst = classifyProduct(product);
   if (uitkomst.rejected) {
