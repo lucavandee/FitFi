@@ -90,4 +90,53 @@ describe("voerRatingUit", () => {
     });
     expect(deps.saveOutfitRating).not.toHaveBeenCalled();
   });
+
+  it("outfitKey die gooit (lege productIds, spec 5.6): mislukt met de echte melding, geen saveOutfitRating, geen bewaarKeuze", async () => {
+    const deps = nepDeps({
+      outfitKey: vi.fn().mockRejectedValue(
+        new Error("outfitKey: geen product-ids, een outfit zonder producten heeft geen geldige sleutel")
+      ),
+    });
+
+    const uitkomst = await voerRatingUit(STAND, "zou_dragen", { ...CTX, productIds: [] }, deps);
+
+    expect(uitkomst).toEqual({
+      status: "mislukt",
+      reden: "outfitKey: geen product-ids, een outfit zonder producten heeft geen geldige sleutel",
+    });
+    expect(deps.saveOutfitRating).not.toHaveBeenCalled();
+    expect(deps.bewaarKeuze).not.toHaveBeenCalled();
+  });
+
+  it("een gooiende outfitKey meldt zich net als een geweigerde schrijfactie: outfit_rating_failed met dezelfde velden", async () => {
+    const deps = nepDeps({
+      outfitKey: vi.fn().mockRejectedValue(new Error("boem")),
+    });
+
+    await voerRatingUit(STAND, "nooit", CTX, deps);
+
+    expect(deps.track).toHaveBeenCalledWith("outfit_rating_failed", {
+      outfit_id: "outfit-1",
+      rating: "nooit",
+      reden: "boem",
+    });
+    expect(deps.track).toHaveBeenCalledTimes(1);
+  });
+
+  it("een gooiende saveOutfitRating loopt net zo af: mislukt met de echte melding, geen bewaarKeuze, wel outfit_rating_failed", async () => {
+    const deps = nepDeps({
+      saveOutfitRating: vi.fn().mockRejectedValue(new Error("netwerk weg")),
+    });
+
+    const uitkomst = await voerRatingUit(STAND, "zou_dragen", CTX, deps);
+
+    expect(uitkomst).toEqual({ status: "mislukt", reden: "netwerk weg" });
+    expect(deps.outfitKey).toHaveBeenCalledWith(CTX.productIds);
+    expect(deps.bewaarKeuze).not.toHaveBeenCalled();
+    expect(deps.track).toHaveBeenCalledWith("outfit_rating_failed", {
+      outfit_id: "outfit-1",
+      rating: "zou_dragen",
+      reden: "netwerk weg",
+    });
+  });
 });

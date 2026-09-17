@@ -75,14 +75,29 @@ export async function voerRatingUit(
   if (!stand.profileHash || !stand.sleutel) return { status: "overgeslagen" };
   if (!magSchrijven(stand, rating)) return { status: "overgeslagen" };
 
-  const key = await deps.outfitKey(ctx.productIds);
-  const uitkomst = await deps.saveOutfitRating({
-    profileHash: stand.profileHash,
-    outfitKey: key,
-    rating,
-    sessionId: deps.getSessionId(),
-    userId: ctx.userId ?? null,
-  });
+  // outfitKey gooit op een lege productIds-lijst (zie outfitRatings.ts); dat
+  // gooien blijft zo. Vandaag onbereikbaar (de engine levert altijd complete
+  // outfits), maar zonder deze try/catch zou de throw hier naar buiten
+  // ontsnappen: de optimistische setGekozen in OutfitRatingButtons staat dan
+  // al, de promise wordt afgewezen zonder afhandeling, en de bezoeker ziet
+  // een keuze die niet is weggeschreven. Vang daarom hier, net als een
+  // geweigerde schrijfactie, met de echte foutmelding in `reden`.
+  let key: string;
+  let uitkomst: Awaited<ReturnType<RatingAfhankelijkheden["saveOutfitRating"]>>;
+  try {
+    key = await deps.outfitKey(ctx.productIds);
+    uitkomst = await deps.saveOutfitRating({
+      profileHash: stand.profileHash,
+      outfitKey: key,
+      rating,
+      sessionId: deps.getSessionId(),
+      userId: ctx.userId ?? null,
+    });
+  } catch (e) {
+    const reden = e instanceof Error ? e.message : String(e);
+    deps.track("outfit_rating_failed", { outfit_id: ctx.outfitId, rating, reden });
+    return { status: "mislukt", reden };
+  }
 
   if (uitkomst.ok) {
     deps.bewaarKeuze(stand.sleutel, rating);
