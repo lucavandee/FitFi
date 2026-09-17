@@ -5,8 +5,10 @@
  *  - een persona minder dan zes outfits krijgt, of een outfit niet compleet is
  *    (top + bottom + footwear, of dress + footwear);
  *  - een item buiten het budget van de persona valt;
+ *  - een item een gender heeft dat niet bij de persona past (unisex mag altijd);
+ *  - een outfit een gelegenheid heeft die de persona niet heeft opgevraagd;
  *  - bij gelegenheid work een outfit footwear met sandaal/slipper in de naam
- *    of een accessory met "zwem" in de naam bevat (tot shoe_type er is);
+ *    of een accessory met "swim"/"zwem" in de naam bevat (tot shoe_type er is);
  *  - twee outfits dezelfde itemset hebben;
  *  - twee runs achter elkaar verschillende outfits geven voor hetzelfde profiel;
  *  - de client-classifier het oneens is met product_attributes (stopregel 2).
@@ -83,7 +85,13 @@ const PERSONAS: Persona[] = KETEN_PERSONAS.map((p) => ({ naam: p.naam, answers: 
 
 const AANTAL_OUTFITS = 6;
 const SANDAAL_RE = /\b(sandaal|sandalen|sandal|sandals|slipper|slippers|teenslipper|flip-?flops?)\b/i;
-const ZWEM_RE = /zwem/i;
+// Fixronde 1 (reviewer): de catalogus is Engelstalig. "zwem" alleen kwam
+// gemeten 0 keer voor; "swim" (Swimsuit/Swimwear/Swim Top/SWIM als
+// merklabel) kwam 1.630 keer voor, waarvan 1.596 als accessory, waaronder de
+// 27 La Martina-badkleding-items uit de nulmeting van 14 september. Zonder
+// "swim" kon deze controle dus nooit afgaan. "zwem" blijft erin voor een
+// eventuele Nederlandstalige feed later.
+const ZWEM_RE = /\b(zwem\w*|swim\w*)\b/i;
 
 const CATEGORIE_ALIAS: Record<string, string> = {
   top: "top", tops: "top", shirt: "top", shirts: "top",
@@ -116,6 +124,34 @@ function isCompleet(outfit: Outfit): boolean {
   return metSchoen && ((cats.has("top") && cats.has("bottom")) || cats.has("dress") || cats.has("jumpsuit"));
 }
 
+/**
+ * Fixronde 1 (reviewer): geen controle toetste of de producten in een
+ * outfit bij het gender van de persona horen. Een regressie in naarGender()
+ * of in het p_gender-filter van get_kandidaten (die unisex bewust als "geen
+ * filter" behandelt) zou herenkleding bij een damespersona door de poort
+ * laten glippen zonder dat er iets rood wordt. Unisex product mag altijd;
+ * een leeg of onbekend gender-veld wordt niet als fout gerekend (dat is een
+ * datakwaliteitsprobleem van product_attributes, geen kwestie van deze poort).
+ */
+function genderPast(productGender: unknown, personaGender: "male" | "female"): boolean {
+  const g = String(productGender ?? "").toLowerCase().trim();
+  if (!g || g === "unisex") return true;
+  return g === personaGender;
+}
+
+/**
+ * Fixronde 1 (reviewer): geen controle toetste of outfit.occasion voorkomt
+ * in de gelegenheden die de persona zelf heeft opgevraagd. Dat is op
+ * zichzelf een gat, en het maakt de sandaalcontrole broos: die kijkt naar
+ * outfit.occasion === "work"; een werkoutfit die per ongeluk als "casual"
+ * gelabeld wordt, laat de sandaalcontrole voor die outfit stilzwijgend
+ * overslaan.
+ */
+function gelegenheidGevraagd(outfit: Outfit, persona: Persona): boolean {
+  const gevraagd: string[] = Array.isArray(persona.answers.occasions) ? persona.answers.occasions : [];
+  return gevraagd.map((g) => String(g).toLowerCase()).includes(String(outfit.occasion ?? "").toLowerCase());
+}
+
 const client = createClient(url, key);
 
 async function haalKandidaten(answers: Record<string, any>): Promise<{ rijen: KandidaatRij[]; pool: Product[] }> {
@@ -142,15 +178,23 @@ function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], af
     fouten.push(`minder dan ${AANTAL_OUTFITS} outfits: ${outfits.length}`);
   }
 
+  const personaGender: "male" | "female" = persona.answers.gender;
+
   outfits.forEach((outfit, i) => {
     const label = `outfit ${i + 1} (${outfit.title})`;
     if (!isCompleet(outfit)) {
       fouten.push(`${label} is niet compleet: ${outfit.products.map(categorieVan).join(", ")}`);
     }
+    if (!gelegenheidGevraagd(outfit, persona)) {
+      fouten.push(`${label}: gelegenheid "${outfit.occasion}" is niet gevraagd (persona vroeg ${JSON.stringify(persona.answers.occasions)})`);
+    }
     for (const p of outfit.products) {
       const prijs = typeof p.price === "number" ? p.price : Number(p.price);
       if (!(prijs >= budget.p_budget_min && prijs <= budget.p_budget_max)) {
         fouten.push(`${label}: "${p.name}" kost ${prijs}, buiten ${budget.p_budget_min}-${budget.p_budget_max}`);
+      }
+      if (!genderPast(p.gender, personaGender)) {
+        fouten.push(`${label}: "${p.name}" heeft gender "${p.gender}", persona is ${personaGender}`);
       }
       const isWerk = String(outfit.occasion ?? "").toLowerCase() === "work";
       if (isWerk && categorieVan(p) === "footwear" && SANDAAL_RE.test(p.name ?? "")) {
