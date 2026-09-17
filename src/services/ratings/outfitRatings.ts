@@ -1,22 +1,42 @@
 import { supabase } from "@/lib/supabaseClient";
 import { sha256Hex } from "@/utils/hash";
 import { stableStringify } from "@/utils/stableJson";
+import { naarOutfitBepalendeVelden } from "@/services/outfits/profielIdentiteit";
 
 export type OutfitRating = "zou_dragen" | "nooit";
 
 /**
- * profile_hash voor outfit_ratings: sha256 van de quiz-antwoorden zoals ze in
- * localStorage staan (LS_KEYS.QUIZ_ANSWERS), met gesorteerde sleutels. In
- * plan 4 wordt dit de hash van taste_profiles (spec 5.2.1); tot die tijd is
- * dit de enige stabiele identiteit van een profiel.
+ * profile_hash voor outfit_ratings: sha256 van de whitelist uit spec 5.2.1
+ * (profielIdentiteit.ts) -- gender, gesorteerde occasions en budget -- niet
+ * meer van de hele antwoordenset. Vóór deze fix hashte dit de complete
+ * LS_KEYS.QUIZ_ANSWERS, inclusief photoDataUrl (tot 5 MB base64,
+ * ProfilePage.tsx): een foto toevoegen of verwijderen gaf dan een andere
+ * hash, andere outfits, en zette bestaande "Zou ik dragen"/"Nooit"-keuzes
+ * terug op onbeslist (ze staan in localStorage onder de oude hash, zie
+ * outfitRatingGeheugen.ts). Occasions worden hier gesorteerd (spec 5.2.1:
+ * "gesorteerde occasions"), in tegenstelling tot answersSeed.ts, dat de
+ * gekozen volgorde bewust laat staan -- zie de docblock daar voor waarom
+ * die twee hier mogen verschillen.
  */
 export async function hashProfile(answers: Record<string, any>): Promise<string> {
-  return sha256Hex(stableStringify(answers ?? {}));
+  const velden = naarOutfitBepalendeVelden(answers);
+  return sha256Hex(
+    stableStringify({ ...velden, occasions: [...velden.occasions].sort() })
+  );
 }
 
-/** outfit_key: sha256 van de gesorteerde, ontdubbelde product-ids (spec 5.6). */
+/**
+ * outfit_key: sha256 van de gesorteerde, ontdubbelde product-ids (spec 5.6).
+ * Gooit op een lege lijst in plaats van sha256("") terug te geven: een
+ * outfit zonder producten heeft geen geldige identiteit, en zonder deze
+ * guard zou elke lege outfit op dezelfde sleutel uitkomen (vandaag
+ * onbereikbaar vanuit de UI, maar de guard kost niets).
+ */
 export async function outfitKey(productIds: string[]): Promise<string> {
   const ids = Array.from(new Set(productIds.map(String))).sort();
+  if (ids.length === 0) {
+    throw new Error("outfitKey: geen product-ids, een outfit zonder producten heeft geen geldige sleutel");
+  }
   return sha256Hex(ids.join(","));
 }
 

@@ -36,11 +36,17 @@ export const KANDIDATEN_PER_CATEGORIE = 40;
 
 const STANDAARD_BUDGET_MAX = 150;
 
-function naarGender(raw: unknown): KandidatenGender {
+/**
+ * Geëxporteerd (naast intern gebruik in naarKandidatenParams) zodat
+ * profielIdentiteit.ts dezelfde gender/gelegenheden-normalisatie kan
+ * hergebruiken voor profile_hash en de engine-seed: dat zijn precies de
+ * velden die hier ook de RPC-kandidatenpool bepalen (spec 5.2.1 vs 5.3).
+ */
+export function naarGender(raw: unknown): KandidatenGender {
   return raw === "male" || raw === "female" ? raw : "unisex";
 }
 
-function naarGelegenheden(raw: unknown): string[] {
+export function naarGelegenheden(raw: unknown): string[] {
   if (!Array.isArray(raw)) return [];
   const uit: string[] = [];
   for (const item of raw) {

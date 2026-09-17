@@ -47,9 +47,29 @@ describe("seedFromAnswers", () => {
     ).toThrow();
   });
 
-  it("gooit door bij een circulair antwoordobject", () => {
-    const answers: Record<string, any> = { gender: "male" };
+  it("gooit door bij een circulaire verwijzing in een whitelist-veld (budget.min)", () => {
+    // budget.min zelf verwijst circulair naar budget: dat overleeft de
+    // min/max-extractie in profielIdentiteit.ts (in tegenstelling tot een
+    // cirkel op een andere sleutel van budget, die daar wordt weggefilterd).
+    const budget: Record<string, any> = { max: 150 };
+    budget.min = budget;
+    expect(() => seedFromAnswers({ gender: "male", budget })).toThrow();
+  });
+
+  it("gooit NIET meer bij een circulaire verwijzing buiten de whitelist (fixronde 1, punt 1)", () => {
+    // Vóór de whitelist hashte seedFromAnswers de hele antwoordenset, dus
+    // een circulaire verwijzing overal in `answers` gooide door. Na de
+    // whitelist wordt alleen gender/occasions/budget gelezen: een cirkel
+    // ergens anders (hier: `self`, net als photoDataUrl) wordt nooit
+    // aangeraakt en mag dus geen fout meer geven.
+    const answers: Record<string, any> = { gender: "male", occasions: ["work"] };
     answers.self = answers;
-    expect(() => seedFromAnswers(answers)).toThrow();
+    expect(() => seedFromAnswers(answers)).not.toThrow();
+  });
+
+  it("verandert niet als er een foto wordt toegevoegd of verwijderd (fixronde 1, punt 1)", () => {
+    const zonderFoto = { gender: "male", occasions: ["work"], budget: { min: 50, max: 150 } };
+    const metFoto = { ...zonderFoto, photoDataUrl: "data:image/png;base64," + "A".repeat(1000) };
+    expect(seedFromAnswers(metFoto)).toBe(seedFromAnswers(zonderFoto));
   });
 });

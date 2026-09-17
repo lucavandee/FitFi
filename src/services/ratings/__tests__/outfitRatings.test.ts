@@ -21,6 +21,26 @@ describe("hashProfile", () => {
     expect(a).toBe(b);
     expect(a).toMatch(/^[0-9a-f]{64}$/);
   });
+
+  it("is onafhankelijk van de volgorde van occasions (spec 5.2.1: gesorteerd)", async () => {
+    const a = await hashProfile({ gender: "male", occasions: ["work", "casual"] });
+    const b = await hashProfile({ gender: "male", occasions: ["casual", "work"] });
+    expect(a).toBe(b);
+  });
+
+  it("verandert niet als er een foto wordt toegevoegd of verwijderd (fixronde 1, punt 1)", async () => {
+    const zonderFoto = { gender: "male", occasions: ["work"], budget: { min: 50, max: 150 } };
+    const metFoto = { ...zonderFoto, photoDataUrl: "data:image/png;base64," + "A".repeat(1000) };
+    expect(await hashProfile(metFoto)).toBe(await hashProfile(zonderFoto));
+  });
+
+  it("verandert wel als gender, occasions of budget verandert", async () => {
+    const basis = { gender: "male", occasions: ["work"], budget: { min: 50, max: 150 } };
+    const a = await hashProfile(basis);
+    expect(await hashProfile({ ...basis, gender: "female" })).not.toBe(a);
+    expect(await hashProfile({ ...basis, occasions: ["casual"] })).not.toBe(a);
+    expect(await hashProfile({ ...basis, budget: { min: 50, max: 200 } })).not.toBe(a);
+  });
 });
 
 describe("outfitKey", () => {
@@ -33,6 +53,10 @@ describe("outfitKey", () => {
 
   it("verschilt als een item verschilt", async () => {
     expect(await outfitKey(["p1", "p2"])).not.toBe(await outfitKey(["p1", "p3"]));
+  });
+
+  it("gooit op een lege lijst in plaats van een sha256 van de lege string te geven (fixronde 1, punt 6)", async () => {
+    await expect(outfitKey([])).rejects.toThrow();
   });
 });
 
