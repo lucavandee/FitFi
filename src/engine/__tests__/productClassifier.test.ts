@@ -463,4 +463,83 @@ describe('Merk bepaalt de categorie niet meer', () => {
       classifyProductDetailed('Polo Shirt POLO RALPH LAUREN Men color Black', '', '', 'Polo Ralph Lauren').category
     ).toBe('top');
   });
+
+  it('vangt ook Jean Paul Gaultier: "Jean" matcht dezelfde jeans-regel als "Jeans"', () => {
+    // Gevonden tijdens fixronde 1 (bevinding 2), niet in de brief se lijst
+    // van negen merken: \bjeans?\b matcht ook het enkelvoud "Jean", dus
+    // "Jean Paul Gaultier" heeft precies hetzelfde defect. 25 rijen op de
+    // volledige catalogus: 19 bottom -> top, 5 bottom -> outerwear,
+    // 1 bottom -> accessory, geen enkele regressie.
+    expect(
+      classifyProductDetailed('Shirt JEAN PAUL GAULTIER Woman color White', '', '', 'Jean Paul Gaultier').category
+    ).toBe('top');
+    expect(
+      classifyProductDetailed('Blazer JEAN PAUL GAULTIER Woman color Denim', '', '', 'Jean Paul Gaultier').category
+    ).toBe('outerwear');
+    // Een echte broek met het merk erin moet bottom blijven.
+    expect(
+      classifyProductDetailed('Jeans JEAN PAUL GAULTIER Woman color Blue', '', '', 'Jean Paul Gaultier').category
+    ).toBe('bottom');
+  });
+
+  // Fixronde 1, bevinding 1: stripBrand gebruikte \b aan het begin en eind
+  // van de merknaam. \b eist een woordteken aan minstens één kant van de
+  // grens; een merk dat eindigt op een leesteken of een accent heeft daar
+  // geen woordteken (het leesteken/accent zelf niet, en de spatie erna ook
+  // niet), dus \b matchte nooit en de merknaam werd stil niet gestript. Twee
+  // echte merken hebben deze vorm: "Gallery Dept." en "Herschel Supply Co.".
+  // Reproductie op de echte module (vóór de fix):
+  //   classifyProductDetailed('Item SHIRT CO. Woman color Black', '', '', 'Shirt Co.')
+  //   -> { category: 'top', ... } — het merkwoord "shirt" telde nog mee.
+  describe('merken die eindigen op een leesteken of accent', () => {
+    it('reproduceert het gemelde geval: "Shirt Co." mag niet meer als top-signaal meetellen', () => {
+      // Zonder ander kledingstukwoord in de naam moet dit na de fix
+      // onclassificeerbaar worden (geen signaal meer), niet stilletjes top
+      // blijven via het ongestripte merkwoord "shirt".
+      const r = classifyProductDetailed('Item SHIRT CO. Woman color Black', '', '', 'Shirt Co.');
+      expect(r.category).not.toBe('top');
+      expect(r.rejected).toBe(true);
+    });
+
+    it('punt aan het eind van het merk: "Jeans Co." mag een trui niet naar bottom trekken', () => {
+      expect(
+        classifyProductDetailed('Sweater JEANS CO. Men color Black', '', '', 'Jeans Co.').category
+      ).toBe('top');
+    });
+
+    it('koppelteken aan het eind van het merk', () => {
+      expect(
+        classifyProductDetailed('Sweater JEANS CO- Men color Black', '', '', 'Jeans Co-').category
+      ).toBe('top');
+    });
+
+    it('ampersand aan het eind van het merk', () => {
+      expect(
+        classifyProductDetailed('Sweater JEANS & Men color Black', '', '', 'Jeans &').category
+      ).toBe('top');
+    });
+
+    it('apostrof aan het eind van het merk', () => {
+      expect(
+        classifyProductDetailed("Sweater JEANS CO' Men color Black", '', '', "Jeans Co'").category
+      ).toBe('top');
+    });
+
+    it('geaccentueerde letter aan het eind van het merk', () => {
+      // JS telt een letter met accent zonder de unicode-vlag niet als
+      // woordteken, dus dit faalt op dezelfde manier als het leesteken-geval.
+      expect(
+        classifyProductDetailed('Sweater JEANS CAFÉ Men color Black', '', '', 'Jeans Café').category
+      ).toBe('top');
+    });
+
+    it('de twee echte merken uit de melding stripen mechanisch correct', () => {
+      expect(
+        classifyProductDetailed('Hoodie GALLERY DEPT. Men color Black', '', '', 'Gallery Dept.').category
+      ).toBe('top');
+      expect(
+        classifyProductDetailed('Sneakers HERSCHEL SUPPLY CO. Men color Black', '', '', 'Herschel Supply Co.').category
+      ).toBe('footwear');
+    });
+  });
 });

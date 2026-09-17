@@ -93,7 +93,12 @@ export function isAdultClothingProduct(row: Record<string, any>): boolean {
 }
 
 export function classifyCategory(row: Record<string, any>): string {
-  const result = classifyProductDetailed(row.name || '', row.description || '', row.category || '');
+  // row.brand doorgeven: zonder dit argument laat classifyProductDetailed de
+  // merknaam meetellen als categoriewoord (taak 0, fixronde 1, bevinding 3).
+  // Dit pad loopt buiten get_kandidaten om via outfitComposer.ts
+  // (composeOutfits -> classifyCategory), dus zonder deze regel bleef het
+  // defect intact op het pad dat EnhancedResultsPage/DashboardPage toont.
+  const result = classifyProductDetailed(row.name || '', row.description || '', row.category || '', row.brand || '');
   if (result.rejected || result.category === 'underwear') return 'other';
   return result.category;
 }

@@ -315,11 +315,23 @@ function determineConfidence(totalWeight: number, matchCount: number, fromName: 
 }
 
 /**
- * Haalt de merknaam als woordgrens-begrensde deelstring uit de tekst voordat
- * er gescoord wordt. products.name is de letterlijke feed-titel en bevat dus
- * altijd het merk; staat daar toevallig een categoriewoord in ("Tommy Jeans",
- * "Moon Boot"), dan trekt dat het product naar de verkeerde categorie. Zo werd
+ * Haalt de merknaam als deelstring uit de tekst voordat er gescoord wordt.
+ * products.name is de letterlijke feed-titel en bevat dus altijd het merk;
+ * staat daar toevallig een categoriewoord in ("Tommy Jeans", "Moon Boot"),
+ * dan trekt dat het product naar de verkeerde categorie. Zo werd
  * "Sweater TOMMY JEANS" `bottom` in plaats van `top`.
+ *
+ * Grenzen rond de merknaam worden gecontroleerd met `(?<!\w)`/`(?!\w)` in
+ * plaats van `\b`. `\b` eist dat één kant van de grens een woordteken is; een
+ * merk dat eindigt op leesteken of een accent ("Gallery Dept.", "Herschel
+ * Supply Co.") heeft aan die kant géén woordteken (het leesteken zelf niet,
+ * en JS telt een geaccentueerde letter zonder de `u`-vlag ook niet als
+ * woordteken), dus de tekst ERNA (meestal een spatie) is ook geen woordteken
+ * en `\b` matcht daar nooit. Gevolg: de merknaam werd stil niet gestript en
+ * het merkwoord telde alsnog mee voor de categorie, precies het defect dat
+ * deze functie moet voorkomen. `(?<!\w)`/`(?!\w)` kijken alleen naar het
+ * teken BUITEN de match (typisch een spatie), niet naar het laatste/eerste
+ * teken van het merk zelf, en falen dus niet op dat leesteken.
  *
  * Geen brand meegegeven: tekst ongewijzigd terug (bestaand gedrag voor elke
  * aanroeper die nog geen merk doorgeeft).
@@ -328,7 +340,7 @@ function stripBrand(text: string, brand: string): string {
   const merk = brand.trim();
   if (!merk) return text;
   const patroon = merk.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return text.replace(new RegExp(`\\b${patroon}\\b`, 'gi'), ' ').replace(/\s+/g, ' ').trim();
+  return text.replace(new RegExp(`(?<!\\w)${patroon}(?!\\w)`, 'gi'), ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
