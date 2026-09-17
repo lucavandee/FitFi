@@ -562,7 +562,12 @@ export default function EnhancedResultsPage() {
   }, [occasionGroupedOutfits, activeOccasionTab, displayOutfits]);
 
   type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
-  const [activeTab, setActiveTab] = React.useState<ResultTab>(occasionFilter ? 'outfits' : 'outfits');
+  // Landt altijd op Outfits. Stond eerder in een ternary op occasionFilter
+  // waarvan beide takken 'outfits' gaven, dus de voorwaarde deed niets en
+  // suggereerde een verschil dat er niet was. Luc heeft bevestigd dat dit het
+  // bedoelde gedrag is; de ?occasion=-parameter schakelt verderop alsnog naar
+  // het juiste gelegenheidstabblad.
+  const [activeTab, setActiveTab] = React.useState<ResultTab>('outfits');
 
   // Auto-switch to outfits tab and scroll when navigating with ?occasion= param
   React.useEffect(() => {
