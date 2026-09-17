@@ -15,14 +15,47 @@ describe("parseDotEnv", () => {
     expect(uit.WACHTWOORD).toBe("een#wachtwoord");
   });
 
-  it("laat een # binnen aanhalingstekens ongemoeid, ook als het op commentaar lijkt", () => {
-    const uit = parseDotEnv(`FOO="waarde # dit is geen commentaar"\n`);
+  // Let op wat deze test wel en niet bewaakt (fixronde 2, bevinding 3): met
+  // alleen `FOO="waarde # ..."` áls hele regel slaagt dit ook met de heel
+  // oorspronkelijke, kapotte regex uit de brief (die combineerde alles in
+  // één patroon en sloot "?([^"\n]*)"? toevallig quotes uit, dus een # die
+  // binnen quotes staat en waarvan de sluitende quote het laatste teken van
+  // de regel is, kwam daar ook goed uit). Wat deze test dus WEL bewaakt: dat
+  // quote-parsing voorrang heeft over commentaar-stripping en precies tot de
+  // sluitende aanhalingsteken loopt. De toegevoegde " # nu wel commentaar"
+  // ná de sluitende quote maakt hem tot een echte regressiewacht tegen een
+  // volledige terugval naar die oorspronkelijke regex: die faalt op zo'n
+  // regel volledig (kan '\s*$' na de sluitende quote niet meer matchen) en
+  // laat FOO dan stilzwijgend helemaal weg in plaats van "waarde # dit is
+  // geen commentaar" te geven.
+  it("laat een # binnen aanhalingstekens ongemoeid en negeert wat ná de sluitende aanhalingsteken volgt", () => {
+    const uit = parseDotEnv(`FOO="waarde # dit is geen commentaar" # nu wel commentaar\n`);
     expect(uit.FOO).toBe("waarde # dit is geen commentaar");
   });
 
   it("laat geen \\r achter in de waarde bij een CRLF-bestand", () => {
     const uit = parseDotEnv("FOO=bar\r\n");
     expect(uit.FOO).toBe("bar");
+  });
+
+  // Fixronde 2, bevinding 1: enkele aanhalingstekens moeten symmetrisch met
+  // dubbele behandeld worden. Vóór deze fix viel `'...'` op het onaangehaalde
+  // pad en knipte het spatie-hekje de waarde stilzwijgend doormidden
+  // ("foo # bar" -> "foo").
+  it("behandelt enkele aanhalingstekens net als dubbele: een # erbinnen is geen commentaar", () => {
+    const uit = parseDotEnv(`KEY='foo # bar'\n`);
+    expect(uit.KEY).toBe("foo # bar");
+  });
+
+  // Fixronde 2, bevinding 2: een niet-afgesloten aanhalingsteken wordt
+  // geweigerd in plaats van geraden. Vóór deze fix bleef de openende `"`
+  // stilzwijgend in de waarde staan ('"unterminated' in plaats van een fout).
+  it("weigert een niet-afgesloten aanhalingsteken in plaats van de waarde af te kappen of te raden", () => {
+    expect(() => parseDotEnv('KEY="geheime-waarde-xyz\n')).toThrow(/KEY/);
+  });
+
+  it("noemt in die foutmelding nooit de waarde zelf", () => {
+    expect(() => parseDotEnv('KEY="geheime-waarde-xyz\n')).not.toThrow(/geheime-waarde-xyz/);
   });
 });
 
