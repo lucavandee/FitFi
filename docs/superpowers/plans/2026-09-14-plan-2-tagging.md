@@ -1944,6 +1944,8 @@ Vervang de tweede statement in de job door de query die te lang duurde. pg_cron 
 
 Wat de spec openlaat en hier is besloten: alleen getagde rijen (`tagger_version is not null`) doen mee. Spec 5.3 noemt dat filter niet, maar 0.8 van de score komt uit tags; een ongetagde rij scoort nul en zou toch een plek in een outfit vullen. Een retailer die nog niet getagd is komt dus niet in kandidaten voor; `npm run keten:personas` zonder `--retailer` ziet na deze taak alleen H&M tot een tweede retailer door taak 5 is gegaan. Nieuwe producten uit de wekelijkse import (taak 12) blijven onzichtbaar tot de eerstvolgende classificeer- en tag-run.
 
+AMENDEMENT (controller, 17 september 2026, preflight-scan bevinding 2). De plantekst hieronder was geschreven tegen `20260914120500`, maar de live functie is sindsdien drie migraties verder: `20260914120700` (eist `classifier_version`), `20260914120800` (prijsbucket-tiebreak) en `20260914120900` (plafond). Die laatste voegde `least(60, greatest(1, coalesce(p_per_category, 12)))` toe omdat `get_kandidaten` `grant execute ... to anon` heeft en een anonieme aanroeper anders zelf mocht bepalen hoeveel rijen de database per categorie uitrekent. Dit amendement zet dat plafond terug in de SQL en in de test hieronder. Laat het er niet uit: zonder plafond is een dichtgezette kwetsbaarheid weer open. Controleer bij de start met `pg_get_functiondef` wat er live staat en neem ook de andere twee migraties mee; ga niet af op de tekst van dit plan over de huidige staat.
+
 Niet-onderhandelbaar voor deze taak: de score-termen komen erbij zonder de queryvorm van `20260914120500` te verlaten. Filteren, uitsluiten (`p_disliked_ids`) en rangschikken (de `row_number() over (partition by category ...)`) gebeurt volledig op `product_attributes`, inclusief `price`, `in_stock`, `retailer` en de tag-kolommen; `products` wordt pas na `where rn <= p_per_category` gejoind, alleen voor de rijen die worden teruggegeven, met `to_jsonb(p.*)` zodat plan 1 taak 6 en plan 3 nog steeds `colors`, `sizes` en `description` uit dat object kunnen lezen. Een join naar `products` vóór de afkap (zoals een eerdere versie van deze taak per ongeluk deed, geschreven vóór `20260914120400`/`20260914120500` bestonden) reproduceert de 56,5s/57014-regressie zodra deze migratie de live functie vervangt.
 
 - [ ] Breid de contract-test uit. Voeg onderaan `scripts/keten/__tests__/migraties.test.ts` toe:
@@ -1974,7 +1976,7 @@ describe("20260916100200_keten_get_kandidaten_score", () => {
     expect(sql).toContain("and pa.in_stock");
     expect(sql).toContain("and (p_retailer is null or pa.retailer = p_retailer)");
     expect(sql).toContain("join products p on p.id = g.product_id");
-    expect(sql).toContain("where g.rn <= p_per_category");
+    expect(sql).toContain("least(60, greatest(1, coalesce(p_per_category, 12)))");
     expect(sql).toContain("to_jsonb(p.*) as product");
   });
 
@@ -2202,7 +2204,7 @@ as $$
     to_jsonb(p.*) as product
   from gerangschikt g
   join products p on p.id = g.product_id
-  where g.rn <= p_per_category
+  where g.rn <= least(60, greatest(1, coalesce(p_per_category, 12)))
   order by g.category, g.score desc, g.product_id;
 $$;
 
@@ -2978,6 +2980,17 @@ Verwacht: status 400 met de bestaande foutmelding uit de functie die begint met 
 ---
 
 ### Taak 12: Cron voor feed-import, vulling van nieuwe producten, voorraad en linkcontrole
+
+> **AMENDEMENT (controller, 17 september 2026, preflight-scan bevinding 4). `keten_vul_nieuwe_producten()` dedupliceert hieronder op `(retailer, merk, genormaliseerde naam)`. Dat is de naam-dedupe die spec 5.1 expliciet afwijst, en het is de zwaarste bevinding van de preflight-scan.**
+>
+> Spec 5.1 is op 14 september geamendeerd nadat naam-dedupe gemeten werd: van 169.697 Giglio-rijen bleven er 10.209 over terwijl er 68.739 unieke foto's zijn, omdat Giglio namen schrijft als "Sneakers AUTRY Woman color White" en de naam zonder kleur dan voor 1.280 verschillende producten gelijk is. De bindende sleutel is sindsdien `(retailer, image_url)`, met merk plus genormaliseerde naam **alleen** als terugval bij een lege `image_url`. `vul_product_attributes` in `20260914120000_product_attributes_fundament.sql` (regel 143) gebruikt die sleutel al.
+>
+> Deze functie draait bij elke wekelijkse feed-import. Met de naam-sleutel zou elke import opnieuw producten samenvoegen die geen duplicaat zijn. Erger: een verkeerd samengevoegd nieuw product wordt niet-canoniek, krijgt daarom nooit een eigen embedding (taak 6 embedt alleen canonieke rijen), en wordt dus ook nooit door `keten_dedupe_embedding` (taak 8) teruggevonden. Er is geen herstelpad.
+>
+> **Wat je doet:** gebruik in deze functie dezelfde sleutel als `vul_product_attributes`, op alle drie de plekken waar de naam-sleutel nu staat: de `bestaand`-CTE (`distinct on` en `order by`), de `partition by` in `gerangschikt`, en de `left join bestaand`. Neem de vorm letterlijk over uit `20260914120000_product_attributes_fundament.sql` zodat de twee functies niet uit elkaar kunnen lopen, en leg in de migratie-commentaar vast dat ze dezelfde sleutel delen en waarom.
+>
+> **Wat je aantoont:** een controle-query die laat zien dat na een run geen enkele fotogroep over twee `canonical_id`'s is verdeeld, en dat het aantal canonieke rijen per retailer overeenkomt met het aantal unieke `image_url`'s. Een test die alleen de tekst van de migratie controleert is hier niet genoeg.
+
 
 **Bestanden:**
 - Aanmaken: `supabase/migrations/20260916100500_keten_cron.sql`
