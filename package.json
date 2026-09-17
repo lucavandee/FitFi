@@ -28,6 +28,7 @@
     "design:check:ci": "node scripts/check-design-compliance.mjs --strict",
     "keten:vul": "bash scripts/keten/vul-attributes.sh",
     "keten:classificeer": "vite-node scripts/keten/classificeer-attributes.ts",
+    "keten:personas": "vite-node scripts/keten/persona-run.ts",
     "start": "vite"
   },
   "dependencies": {
