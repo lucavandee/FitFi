@@ -25,10 +25,23 @@ import { naarGelegenheden, naarGender } from "./kandidaten";
  * de kandidatenpool zelf is voor iedereen met dezelfde gender/occasions/
  * budget identiek, alleen de compositie daarbinnen verschilt. Deze whitelist
  * gaat over identiteit voor de meting (profile_hash) en reproduceerbaarheid
- * van de tiebreak (seed), niet over volledige stylistische equivalentie;
- * zie de docblocks in outfitRatings.ts en answersSeed.ts voor waarom de
- * twee gebruikers hiervan (hash vs seed) niet identiek hoeven te
- * normaliseren.
+ * van de tiebreak (seed).
+ *
+ * occasions staat hieronder gesorteerd, niet in klikvolgorde. De klikvolgorde
+ * draagt geen rang: handleMultiSelect (OnboardingFlowPage.tsx) doet
+ * `[...current, value]` bij aanklikken en filtert eruit bij opnieuw klikken,
+ * en de gelegenheden worden gerenderd als een rooster van gelijkwaardige
+ * knoppen, niet als een geordende lijst. quiz/logic.ts telt gelegenheden ook
+ * in een `for`-lus die elke gelegenheid een vaste score geeft, ongeacht
+ * positie. Spec 5.2.1 (docs/superpowers/specs/2026-09-14-keten-herbouw-design.md)
+ * schrijft daarom "gesorteerde occasions" voor: "Twee mensen met dezelfde
+ * keuzes krijgen dezelfde outfits; dat is gewenst." Vóór deze fix sorteerde
+ * alleen hashProfile (outfitRatings.ts) en liet seedFromAnswers (answersSeed.ts)
+ * de klikvolgorde staan; twee bezoekers met dezelfde smaak in een andere
+ * klikvolgorde kregen dan wel dezelfde profile_hash maar een andere
+ * engine-seed, en telden dus als één profiel terwijl ze verschillende
+ * outfitsets beoordeelden. Door hier te sorteren delen hash en seed voortaan
+ * één normalisatie.
  */
 export interface OutfitBepalendeVelden {
   gender: string;
@@ -56,12 +69,17 @@ function naarBudgetVoorIdentiteit(answers: Record<string, any>): { min: number; 
   return null;
 }
 
-/** De drie outfitbepalende velden uit de quiz-antwoorden, ongesorteerd. */
+/**
+ * De drie outfitbepalende velden uit de quiz-antwoorden. occasions wordt hier
+ * gesorteerd (zie de docblock hierboven): dit is de ene plek die hash
+ * (outfitRatings.ts) en seed (answersSeed.ts) delen, dus zij hoeven zelf niet
+ * meer te sorteren of juist bewust niet te sorteren.
+ */
 export function naarOutfitBepalendeVelden(answers: Record<string, any>): OutfitBepalendeVelden {
   const a = answers ?? {};
   return {
     gender: naarGender(a.gender),
-    occasions: naarGelegenheden(a.occasions),
+    occasions: [...naarGelegenheden(a.occasions)].sort(),
     budget: naarBudgetVoorIdentiteit(a),
   };
 }

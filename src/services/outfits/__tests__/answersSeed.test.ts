@@ -14,12 +14,27 @@ describe("seedFromAnswers", () => {
     expect(a).not.toBe(b);
   });
 
-  it("geeft een andere seed als de volgorde in een array verandert", () => {
-    // Arrays houden hun eigen volgorde vast (dat betekent hier iets: eerste
-    // en tweede keuze zijn niet hetzelfde antwoord), dus dit moet een andere
-    // seed geven.
+  it("geeft dezelfde seed als alleen de klikvolgorde van occasions verandert", () => {
+    // Klikvolgorde is geen rangschikking: handleMultiSelect
+    // (OnboardingFlowPage.tsx) voegt bij aanklikken toe met
+    // `[...current, value]` en filtert eruit bij opnieuw klikken, de
+    // gelegenheden staan als gelijkwaardige knoppen in een rooster, en
+    // quiz/logic.ts telt ze in een for-lus die geen acht slaat op positie.
+    // Spec 5.2.1 eist daarom gesorteerde occasions: twee bezoekers met
+    // dezelfde smaak in een andere klikvolgorde moeten dezelfde seed krijgen,
+    // net zoals ze al dezelfde profile_hash kregen (hashProfile sorteerde al
+    // vóór deze fix).
     const a = seedFromAnswers({ occasions: ["work", "casual"] });
     const b = seedFromAnswers({ occasions: ["casual", "work"] });
+    expect(a).toBe(b);
+  });
+
+  it("geeft nog steeds een andere seed voor een echt andere set gelegenheden", () => {
+    // Sorteren mag de gevoeligheid voor een echt andere keuze niet
+    // wegnemen: een derde, niet-gekozen gelegenheid moet de seed blijven
+    // veranderen, ook al verandert die verder niets aan de volgorde-ruis.
+    const a = seedFromAnswers({ occasions: ["work", "casual"] });
+    const b = seedFromAnswers({ occasions: ["work", "formal"] });
     expect(a).not.toBe(b);
   });
 

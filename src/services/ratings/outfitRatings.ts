@@ -13,16 +13,15 @@ export type OutfitRating = "zou_dragen" | "nooit";
  * ProfilePage.tsx): een foto toevoegen of verwijderen gaf dan een andere
  * hash, andere outfits, en zette bestaande "Zou ik dragen"/"Nooit"-keuzes
  * terug op onbeslist (ze staan in localStorage onder de oude hash, zie
- * outfitRatingGeheugen.ts). Occasions worden hier gesorteerd (spec 5.2.1:
- * "gesorteerde occasions"), in tegenstelling tot answersSeed.ts, dat de
- * gekozen volgorde bewust laat staan -- zie de docblock daar voor waarom
- * die twee hier mogen verschillen.
+ * outfitRatingGeheugen.ts). Het sorteren van occasions (spec 5.2.1:
+ * "gesorteerde occasions") gebeurt sinds deze fix in
+ * naarOutfitBepalendeVelden zelf, dus niet meer hier: seedFromAnswers
+ * (answersSeed.ts) gebruikt dezelfde functie en deelt daarmee voortaan
+ * dezelfde normalisatie, in plaats van er zelf de klikvolgorde in te laten
+ * staan.
  */
 export async function hashProfile(answers: Record<string, any>): Promise<string> {
-  const velden = naarOutfitBepalendeVelden(answers);
-  return sha256Hex(
-    stableStringify({ ...velden, occasions: [...velden.occasions].sort() })
-  );
+  return sha256Hex(stableStringify(naarOutfitBepalendeVelden(answers)));
 }
 
 /**
