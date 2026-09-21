@@ -79,6 +79,20 @@ const batterij: Geval[] = [
   { naam: 'Denim jumpsuit', beschrijving: '', categoryPath: '', merk: '' },
   { naam: 'Nike Handschoenen Zwart', beschrijving: '', categoryPath: '', merk: 'Nike' },
   { naam: 'Bjorn Borg | Heren | Boxershorts Multicolor', beschrijving: '', categoryPath: '', merk: 'Bjorn Borg' },
+  // Zwemkleding (spec 5.1), gevonden via het persona-harnas 2026-09-21: de
+  // exacte gemelde producten en de vorm "Swimsuit MERK Gender color X".
+  { naam: 'Swimsuit BOSS Men color Black', beschrijving: '', categoryPath: '', merk: 'Boss' },
+  { naam: 'Swimsuit POLO RALPH LAUREN Men color White', beschrijving: '', categoryPath: '', merk: 'Polo Ralph Lauren' },
+  // Drie merken heten zelf "... Swim" of "... Swimwear" (Moschino Swim,
+  // Emporio Armani Swimwear, Ea7 Swimwear). Op de ruwe naam zou de zwem-regel
+  // deze producten afwijzen; het zijn geen zwemkleding. Beide kopieën moeten
+  // hier hetzelfde in blijven zien nadat de merknaam gestript is.
+  { naam: 'Polo Shirt MOSCHINO SWIM Men color White', beschrijving: '', categoryPath: '', merk: 'Moschino Swim' },
+  { naam: 'Shorts MOSCHINO SWIM Men color Multicolor', beschrijving: '', categoryPath: '', merk: 'Moschino Swim' },
+  { naam: 'Sandals EMPORIO ARMANI SWIMWEAR Men color Black', beschrijving: '', categoryPath: '', merk: 'Emporio Armani Swimwear' },
+  { naam: 'Pants EMPORIO ARMANI SWIMWEAR Woman color Natural', beschrijving: '', categoryPath: '', merk: 'Emporio Armani Swimwear' },
+  // En het echte zwempak van diezelfde merken moet wél worden afgewezen.
+  { naam: 'Swimsuit EA7 SWIMWEAR Men color Black', beschrijving: '', categoryPath: '', merk: 'Ea7 Swimwear' },
 ];
 
 describe('client- en Deno-classifier blijven het eens (bewaking tegen driften)', () => {

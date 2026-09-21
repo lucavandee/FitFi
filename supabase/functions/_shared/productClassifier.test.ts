@@ -46,6 +46,27 @@ Deno.test("Jean Paul Gaultier: 'Jean' matcht dezelfde jeans-regel als 'Jeans'", 
   assertGelijk(r.category, "top", "Jean Paul Gaultier-shirt");
 });
 
+Deno.test("zwemkleding wordt afgewezen (spec 5.1): Swimsuit MERK Gender color X", () => {
+  const boss = classifyProductRaw("Swimsuit BOSS Men color Black", "", "", "Boss");
+  assertGelijk(boss.category, "other", "Swimsuit BOSS");
+  const ralphLauren = classifyProductRaw("Swimsuit POLO RALPH LAUREN Men color White", "", "", "Polo Ralph Lauren");
+  assertGelijk(ralphLauren.category, "other", "Swimsuit Polo Ralph Lauren");
+});
+
+Deno.test("merken die zelf 'Swim(wear)' heten geven geen valse positief: polo/T-shirt/short blijven top/bottom", () => {
+  const polo = classifyProductRaw("Polo Shirt MOSCHINO SWIM Men color White", "", "", "Moschino Swim");
+  assertGelijk(polo.category, "top", "Moschino Swim polo");
+  const short = classifyProductRaw("Shorts MOSCHINO SWIM Men color Multicolor", "", "", "Moschino Swim");
+  assertGelijk(short.category, "bottom", "Moschino Swim short");
+  const sandalen = classifyProductRaw("Sandals EMPORIO ARMANI SWIMWEAR Men color Black", "", "", "Emporio Armani Swimwear");
+  assertGelijk(sandalen.category, "footwear", "Emporio Armani Swimwear sandalen");
+});
+
+Deno.test("een echt zwempak van diezelfde merken wordt wel afgewezen", () => {
+  const r = classifyProductRaw("Swimsuit EA7 SWIMWEAR Men color Black", "", "", "Ea7 Swimwear");
+  assertGelijk(r.category, "other", "Swimsuit Ea7 Swimwear");
+});
+
 Deno.test("productClassifier.ts (Deno-kopie) bevat geen negatieve lookbehind", () => {
   // Spiegelt de test in src/engine/__tests__/productClassifier.test.ts.
   const bron = Deno.readTextFileSync(new URL("./productClassifier.ts", import.meta.url));

@@ -569,3 +569,83 @@ describe('Merk bepaalt de categorie niet meer', () => {
     });
   });
 });
+
+// ─── Zwemkleding hoort niet in de kandidatenpool (spec 5.1) ────────────────
+// Gevonden via het persona-harnas (man klassiek): alle vijf "werk"-outfits
+// bevatten een zwembroek/zwempak als accessoire, omdat de merknaam-strip-fix
+// hierboven 90 Polo Ralph Lauren-zwempakken van top naar de accessoire-emmer
+// verplaatste, waar de prijsafstand-tiebreak ze in het middenbudget optilde.
+// Gemeten op de productiedatabase 2026-09-21: 611 canonieke fashion-producten
+// matchen op /\b(swim\w*|zwem\w*|bikini|badpak|boardshort\w*)\b/i in de ruwe
+// naam (595 accessory, 5 top, 8 bottom, 3 footwear).
+describe('Zwemkleding wordt afgewezen (spec 5.1)', () => {
+  it('wijst de exacte gemelde producten af (Swimsuit MERK Gender color X)', () => {
+    const boss = classifyProductDetailed('Swimsuit BOSS Men color Black', '', '', 'Boss');
+    expect(boss.rejected).toBe(true);
+    expect(boss.category).toBe('other');
+
+    const ralphLauren = classifyProductDetailed(
+      'Swimsuit POLO RALPH LAUREN Men color White',
+      '',
+      '',
+      'Polo Ralph Lauren'
+    );
+    expect(ralphLauren.rejected).toBe(true);
+    expect(ralphLauren.category).toBe('other');
+  });
+
+  it('wijst Engelse en Nederlandse zwemtermen af, ongeacht kledingstukwoorden eromheen', () => {
+    expect(classifyProductDetailed('Bottega Veneta intrecciato nylon one-piece swimsuit').rejected).toBe(true);
+    expect(classifyProductDetailed('PUMA Swim Top voor Dames, Roze, Maat XL').rejected).toBe(true);
+    expect(classifyProductDetailed('H&M Zwembroek Blauw').rejected).toBe(true);
+    expect(classifyProductDetailed('Bikini set met print').rejected).toBe(true);
+    expect(classifyProductDetailed('Boardshort met print').rejected).toBe(true);
+  });
+
+  // Drie merken heten zelf "... Swim" of "... Swimwear" (Moschino Swim,
+  // Emporio Armani Swimwear, Ea7 Swimwear). Op de ruwe naam zou de
+  // zwem-regel deze producten afwijzen; ze zijn geen zwemkleding — een polo,
+  // twee T-shirts, een short en drie sandalen. 8 van de 611 gemeten
+  // treffers op de ruwe naam waren dit soort valse positief, en de regel is
+  // daarom getest tegen de merk-gestripte naam, niet de ruwe naam.
+  describe('merken die zelf "Swim(wear)" heten geven geen valse positief', () => {
+    it('een polo en T-shirts van Moschino Swim blijven top', () => {
+      expect(
+        classifyProductDetailed('Polo Shirt MOSCHINO SWIM Men color White', '', '', 'Moschino Swim').category
+      ).toBe('top');
+      expect(
+        classifyProductDetailed('T-Shirt MOSCHINO SWIM Men color Black', '', '', 'Moschino Swim').category
+      ).toBe('top');
+    });
+
+    it('een short van Moschino Swim blijft bottom', () => {
+      expect(
+        classifyProductDetailed('Shorts MOSCHINO SWIM Men color Multicolor', '', '', 'Moschino Swim').category
+      ).toBe('bottom');
+    });
+
+    it('een broek van Emporio Armani Swimwear blijft bottom', () => {
+      expect(
+        classifyProductDetailed('Pants EMPORIO ARMANI SWIMWEAR Woman color Natural', '', '', 'Emporio Armani Swimwear')
+          .category
+      ).toBe('bottom');
+    });
+
+    it('sandalen van Emporio Armani Swimwear blijven footwear', () => {
+      expect(
+        classifyProductDetailed('Sandals EMPORIO ARMANI SWIMWEAR Men color Black', '', '', 'Emporio Armani Swimwear')
+          .category
+      ).toBe('footwear');
+    });
+
+    it('een echt zwempak van diezelfde merken wordt wel afgewezen (het productwoord zelf blijft over na het strippen)', () => {
+      expect(
+        classifyProductDetailed('Swimsuit EA7 SWIMWEAR Men color Black', '', '', 'Ea7 Swimwear').rejected
+      ).toBe(true);
+      expect(
+        classifyProductDetailed('Swimsuit EMPORIO ARMANI SWIMWEAR Men color Yellow', '', '', 'Emporio Armani Swimwear')
+          .rejected
+      ).toBe(true);
+    });
+  });
+});

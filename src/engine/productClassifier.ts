@@ -250,13 +250,41 @@ const TOP_RULES: PatternEntry[] = [
 ];
 
 // ─── REJECT PATTERNS ──────────────────────────────────────────────────────
-const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|bikini|badpak|zwembroek|zwemshort|zwemtop|boardshort|zwemset|pantoffel|sloffen|slippers?|flip[\s-]?flop|badslip|teenslipper|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer|voetbalshirt|voetbaltenue|voetbalbroek|voetbalsok|thuisshirt|uitshirt|thuistenue|uittenue|thuisbroek|uitbroek|prematch|pre[\s-]?match|(?:football|soccer|voetbal|rugby|hockey|match|game)[\s-]?(?:jersey|shirt|kit|tenue|jacket|pant|broek))\b/i;
+// bikini/badpak/zwembroek/zwemshort/zwemtop/boardshort/zwemset stonden hier
+// vroeger ook in, maar zijn verhuisd naar SWIMWEAR_REGEX hieronder (die dekt
+// dezelfde Nederlandse termen plus de Engelse feed-taal, getest tegen de
+// merk-gestripte naam). Twee bronnen van waarheid voor "is dit zwemkleding"
+// naast elkaar laten bestaan leidt tot drift; vandaar de verplaatsing i.p.v.
+// een losse toevoeging hier.
+const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|pantoffel|sloffen|slippers?|flip[\s-]?flop|badslip|teenslipper|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer|voetbalshirt|voetbaltenue|voetbalbroek|voetbalsok|thuisshirt|uitshirt|thuistenue|uittenue|thuisbroek|uitbroek|prematch|pre[\s-]?match|(?:football|soccer|voetbal|rugby|hockey|match|game)[\s-]?(?:jersey|shirt|kit|tenue|jacket|pant|broek))\b/i;
 
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic|in)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic|in)\b/i;
 
 // Baselayers / thermals are worn under clothing and should never surface in an
 // outfit (e.g. Uniqlo Heattech at €29 was slipping into tops at high min-budget).
 export const BASELAYER_RE = /heattech|baselayer|thermal|ondershirt|\bhemd\b/i;
+
+// Spec 5.1: zwemkleding hoort niet in de kandidatenpool (is_fashion onwaar,
+// category 'geen'), net als ondergoed. De catalogus is grotendeels
+// Engelstalig ("Swimsuit BOSS Men color Black", "Swim Top"); de oude
+// REJECT_REGEX kende alleen de Nederlandse samenstellingen en liet die er
+// dus doorheen. Nadat de merknaam-strip-fix hierboven 90 Polo Ralph
+// Lauren-zwempakken van top naar de accessoire-emmer verplaatste, trok de
+// prijsafstand-tiebreak ze in het middenbudget omhoog en verschenen ze bij
+// "werk"-outfits.
+//
+// Getest tegen de merk-gestripte nameText in classifyProductDetailed hieronder,
+// NIET tegen rawNameText zoals de reject-regels hierboven. Drie merken heten
+// zelf "... Swim" of "... Swimwear" (Moschino Swim, Emporio Armani Swimwear,
+// Ea7 Swimwear); op de ruwe naam zou dit patroon "Polo Shirt MOSCHINO SWIM
+// Men color White", "Shorts MOSCHINO SWIM Men color Multicolor", "Pants
+// EMPORIO ARMANI SWIMWEAR Woman color Natural" en de drie "Sandals EMPORIO
+// ARMANI SWIMWEAR"-varianten afwijzen: 8 van de 611 gemeten treffers op de
+// ruwe naam, geen van alle zwemkleding (een polo, twee T-shirts, een
+// broek/short, drie sandalen). Op de gestripte naam verdwijnt de merknaam en
+// blijft alleen "swimsuit"/"swim top" over bij de 603 producten die het wél
+// zijn — precies het mechanisme waarvoor stripBrand hierboven gebouwd is.
+export const SWIMWEAR_REGEX = /\b(swim\w*|zwem\w*|bikini|badpak|boardshort\w*)\b/i;
 
 const KIDS_REGEX = /\b(baby|babies|peuter|kleuter|newborn|infant|kinder|kinderen|junior|kids?|dreumes|toddler|jongens|meisjes|boys|girls|child|children)\b/i;
 
@@ -388,6 +416,11 @@ export function classifyProductDetailed(
   // Reject checks
   if (REJECT_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'non-clothing keyword' };
+  }
+  // Tegen nameText (merk-gestripte naam), niet rawNameText — zie de
+  // toelichting bij SWIMWEAR_REGEX hierboven.
+  if (SWIMWEAR_REGEX.test(nameText)) {
+    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'swimwear — non-fashion (spec 5.1)' };
   }
   if (KIDS_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'kids product' };

@@ -38,12 +38,14 @@ describe("classificeerRij", () => {
   });
 
   it("heeft een vaste versiestring", () => {
-    // Verhoogd voor taak 0 (merknaam-fix in productClassifier.ts): het oude
-    // "productClassifier-2026-09" hoort bij de classifier van vóór de
-    // merknaam-strip. Zonder versiebump zou de veegronde (die alleen rijen
-    // met classifier_version is null oppakt) de al geclassificeerde rijen
-    // nooit opnieuw langs de gerepareerde classifier sturen.
-    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09-17-brand-strip");
+    // Verhoogd voor de zwemkleding-fix (spec 5.1) in productClassifier.ts:
+    // het oude "productClassifier-2026-09-17-brand-strip" hoort bij de
+    // classifier van vóór de zwemkleding-afwijzing. Zonder versiebump zou de
+    // veegronde (die alleen rijen met classifier_version is null oppakt) de
+    // al geclassificeerde rijen nooit opnieuw langs de gerepareerde
+    // classifier sturen, en blijven de zwempakken als accessory/top/bottom
+    // in product_attributes staan.
+    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09-21-swimwear-reject");
   });
 
   it("laat het merk niet meer de categorie bepalen", () => {
@@ -74,5 +76,38 @@ describe("classificeerRij", () => {
       brand: "Moon Boot",
     });
     expect(r.category).toBe("footwear");
+  });
+
+  it("wijst zwemkleding af (spec 5.1), ook als de feed-categorie accessory zegt", () => {
+    // Het gemelde defect: "Swimsuit BOSS Men color Black" stond als accessory
+    // in product_attributes en verscheen bij "werk"-outfits in het
+    // persona-harnas.
+    const r = classificeerRij({
+      id: "p10",
+      name: "Swimsuit BOSS Men color Black",
+      category: "accessory",
+      brand: "Boss",
+    });
+    expect(r).toEqual({ product_id: "p10", category: null, is_fashion: false });
+  });
+
+  it("wijst zwemkleding van een merk dat zelf 'Swim' heet niet per ongeluk een polo of sandaal af", () => {
+    const polo = classificeerRij({
+      id: "p11",
+      name: "Polo Shirt MOSCHINO SWIM Men color White",
+      category: "top",
+      brand: "Moschino Swim",
+    });
+    expect(polo.category).toBe("top");
+    expect(polo.is_fashion).toBe(true);
+
+    const sandalen = classificeerRij({
+      id: "p12",
+      name: "Sandals EMPORIO ARMANI SWIMWEAR Men color Black",
+      category: "footwear",
+      brand: "Emporio Armani Swimwear",
+    });
+    expect(sandalen.category).toBe("footwear");
+    expect(sandalen.is_fashion).toBe(true);
   });
 });

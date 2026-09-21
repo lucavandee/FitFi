@@ -257,6 +257,14 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\btee\b/i, subcategory: 't-shirt', weight: 2 },
 ];
 
+// Spec 5.1: zwemkleding hoort niet in de kandidatenpool (is_fashion onwaar,
+// category 'geen'), net als ondergoed. Spiegelt SWIMWEAR_REGEX in
+// src/engine/productClassifier.ts exact (zie daar de volledige toelichting:
+// getest tegen de merk-gestripte naam, niet de ruwe naam, omdat drie merken
+// zelf "... Swim" of "... Swimwear" heten en anders normale polo's, T-shirts,
+// een broek en sandalen van die merken zouden worden afgewezen).
+const SWIMWEAR_REGEX = /\b(swim\w*|zwem\w*|bikini|badpak|boardshort\w*)\b/i;
+
 // ─── CATEGORY RULES MAP (ordered by priority) ─────────────────────────────
 const ORDERED_RULES: Array<[RawCategory, PatternEntry[]]> = [
   ['footwear', FOOTWEAR_RULES],
@@ -337,6 +345,12 @@ export function classifyProductRaw(
   const descText = (description || '').toLowerCase();
   const catText = (categoryPath || '').toLowerCase();
   const fullText = buildText(nameText, descText, catText);
+
+  // Getest tegen nameText (merk-gestripte naam) — zie toelichting bij
+  // SWIMWEAR_REGEX hierboven.
+  if (SWIMWEAR_REGEX.test(nameText)) {
+    return { category: 'other', subcategory: undefined, confidence: 'high', signals: [] };
+  }
 
   const nameMatches: MatchResult[] = [];
   const fullMatches: MatchResult[] = [];
