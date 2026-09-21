@@ -52,12 +52,22 @@ describe("leesBatches en schrijfBatches", () => {
     expect(() => leesBatches(pad)).toThrow();
   });
 
-  it("gooit een fout als batches ontbreekt of het verkeerde type heeft, in plaats van stilzwijgend terug te vallen op een lege lijst", () => {
+  // Drie aparte blokken in plaats van drie asserties in één test: faalt de eerste
+  // variant, dan blijven de andere twee toch zichtbaar in de testuitslag.
+  it("gooit een fout als het batches-veld helemaal ontbreekt", () => {
     const pad = join(dir, ".batches.json");
     writeFileSync(pad, JSON.stringify({}));
     expect(() => leesBatches(pad)).toThrow();
+  });
+
+  it("gooit een fout als batches geen array is", () => {
+    const pad = join(dir, ".batches.json");
     writeFileSync(pad, JSON.stringify({ batches: "niet een array" }));
     expect(() => leesBatches(pad)).toThrow();
+  });
+
+  it("gooit een fout als het hele bestand een array is in plaats van een object met batches", () => {
+    const pad = join(dir, ".batches.json");
     writeFileSync(pad, JSON.stringify([record()]));
     expect(() => leesBatches(pad)).toThrow();
   });

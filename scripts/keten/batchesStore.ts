@@ -9,14 +9,16 @@
  * Faalgevallen: wat hier wel en niet is opgelost.
  *
  * Wel opgelost:
- * - Proces afgebroken tijdens schrijven. schrijfBatches schrijft naar <pad>.tmp en
- *   hernoemt pas daarna naar <pad>. renameSync is atomisch op hetzelfde bestandssysteem,
- *   en de .tmp staat altijd in dezelfde map als het doel, dus dit is nooit een
- *   cross-device rename. Een lezer ziet daardoor nooit een half geschreven
- *   .batches.json: ofwel de volledige oude inhoud, ofwel de volledige nieuwe inhoud.
- *   Wordt het proces gedood tijdens het schrijven van de .tmp zelf, dan blijft het
- *   origineel ongemoeid (de rename heeft nog niet plaatsgevonden); een achtergebleven
- *   .tmp-bestand wordt bij de eerstvolgende schrijfactie gewoon overschreven.
+ * - Corruptie van een reeds bestaand bestand door een crash tijdens het schrijven.
+ *   schrijfBatches schrijft naar <pad>.tmp en hernoemt pas daarna naar <pad>. renameSync
+ *   is atomisch op hetzelfde bestandssysteem, en de .tmp staat altijd in dezelfde map als
+ *   het doel, dus dit is nooit een cross-device rename. Bestond er al een <pad> met eerdere
+ *   batches, dan ziet een lezer daardoor nooit een half geschreven versie ervan: ofwel de
+ *   volledige oude inhoud, ofwel de volledige nieuwe inhoud. Wordt het proces gedood tijdens
+ *   het schrijven van de .tmp zelf, dan blijft dat bestaande origineel ongemoeid (de rename
+ *   heeft nog niet plaatsgevonden); een achtergebleven .tmp-bestand wordt bij de
+ *   eerstvolgende schrijfactie gewoon overschreven. Zie hieronder voor het geval waarin er
+ *   nog geen origineel was: dat is NIET dezelfde vraag en niet opgelost.
  * - Bestand ontbreekt (eerste run). leesBatches geeft dan bewust { batches: [] } terug:
  *   dat is een geldige beginstand, geen fout.
  * - Bestand bestaat maar is leeg, bevat geen geldige JSON, of heeft niet de vorm
@@ -42,6 +44,19 @@
  *   rename. renameSync zelf is atomisch, maar er wordt niet ge-fsynct voor de
  *   rename. Op een laptop-run is dat risico verwaarloosbaar naast de gevallen
  *   hierboven, dus dat is bewust niet dichtgetimmerd.
+ * - Verlies van de laatst geschreven update wanneer <pad> op het moment van de crash nog
+ *   NIET bestond (de allereerste schrijfactie ooit, of een eerder verwijderd bestand).
+ *   Wordt het proces gedood na writeFileSync(tmp) maar vóór renameSync(tmp, pad), dan staat
+ *   de nieuwe data wel in de .tmp, maar leesBatches(pad) ziet existsSync(pad) === false en
+ *   geeft stilzwijgend { batches: [] } terug: precies het scenario waar dit bestand voor
+ *   bestaat, een lopende batch die onzichtbaar wordt. De eerstvolgende schrijfactie
+ *   overschrijft die wees-.tmp bovendien geruisloos, dus de data is dan ook echt weg, niet
+ *   alleen tijdelijk onzichtbaar. Het venster hiervoor is klein: één synchrone
+ *   writeFileSync van een paar kilobytes, dus alleen een vrijwel gelijktijdige kill (of een
+ *   crash) raakt het. Klein risico, maar niet nul, en dus niet "opgelost": leesBatches kan
+ *   corruptie van een bestaand bestand detecteren (zie boven), maar heeft geen manier om
+ *   een ontbrekend bestand te onderscheiden van een bestand dat er nooit had mogen
+ *   ontbreken.
  */
 import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import type { Modus } from "./tagging";
