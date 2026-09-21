@@ -151,6 +151,10 @@ describe("valideerTags", () => {
     expect(valideerTags(zonderFormality)).toBeNull();
   });
 
+  it("wijst een object met een onbekend extra veld af (additionalProperties: false)", () => {
+    expect(valideerTags({ ...geldigeTags, extraField: "x" })).toBeNull();
+  });
+
   it("wijst een formality buiten 1..5 af", () => {
     expect(valideerTags({ ...geldigeTags, formality: 0 })).toBeNull();
     expect(valideerTags({ ...geldigeTags, formality: 6 })).toBeNull();
@@ -244,6 +248,23 @@ describe("verwerkResultaten", () => {
     );
     expect(uit.rijen).toEqual([]);
     expect(uit.fouten.map((f) => f.custom_id)).toEqual(["a", "b", "c"]);
+  });
+
+  it("forceert is_fashion op false via het volledige pad (JSON-parse plus validatie) wanneer category 'geen' is", () => {
+    const badpak = {
+      custom_id: "swim-1",
+      result: {
+        type: "succeeded",
+        message: {
+          stop_reason: "end_turn",
+          content: [{ type: "text", text: JSON.stringify({ ...geldigeTags, is_fashion: true, category: "geen" }) }],
+        },
+      },
+    };
+    const uit = verwerkResultaten([badpak], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].is_fashion).toBe(false);
+    expect(uit.rijen[0].category).toBe("geen");
   });
 
   it("zet een resultaat met stop_reason max_tokens bij de fouten in plaats van afgekapte tags te accepteren", () => {

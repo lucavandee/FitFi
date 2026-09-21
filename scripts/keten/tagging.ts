@@ -167,9 +167,15 @@ function alleInLijst<T extends readonly string[]>(lijst: T, w: unknown): w is T[
   return Array.isArray(w) && w.every((x) => inLijst(lijst, x));
 }
 
+// TAG_SCHEMA staat op additionalProperties: false; deze validator handhaaft dat zelf ook,
+// in plaats van erop te vertrouwen dat de structured-output-API het al afdwingt.
+const TOEGESTANE_VELDEN = new Set(Object.keys(TAG_SCHEMA.properties));
+
 export function valideerTags(obj: unknown): TagUitvoer | null {
   if (!obj || typeof obj !== "object") return null;
   const o = obj as Record<string, unknown>;
+
+  if (Object.keys(o).some((veld) => !TOEGESTANE_VELDEN.has(veld))) return null;
 
   if (typeof o.is_fashion !== "boolean") return null;
   if (!inLijst(CATEGORIES, o.category)) return null;
@@ -189,11 +195,13 @@ export function valideerTags(obj: unknown): TagUitvoer | null {
   return {
     // Spec 5.1: category anders dan de zes echte waarden ("geen") betekent
     // is_fashion false. Dit forceren we hier zelf in plaats van te vertrouwen
-    // op een consistente modeluitvoer, want dit is precies de knop die
-    // badkleding (en ander niet-mode-spul dat nu in de accessoire-emmer van
-    // plan 1 zit) definitief buiten get_kandidaten houdt: keten_schrijf_tags
-    // kan is_fashion alleen van waar naar onwaar zetten, dus een gemiste
-    // downgrade hier is een gemiste downgrade voor altijd.
+    // op een consistente modeluitvoer. keten_schrijf_tags (taak 2, migratie
+    // 20260916100000) berekent is_fashion onafhankelijk met dezelfde regel
+    // (pa.is_fashion and coalesce(is_fashion, true) and category <> 'geen'),
+    // dus dit is niet de enige verdedigingslinie tegen badkleding-in-de-
+    // accessoire-emmer. Deze forcering telt wel voor de TagRij zelf, vóór
+    // die de database in gaat: logging, QA en de foutenlijst zien anders een
+    // rij die intern tegenstrijdig is (is_fashion true met category 'geen').
     is_fashion: o.category === "geen" ? false : o.is_fashion,
     category: o.category,
     gender: o.gender,
