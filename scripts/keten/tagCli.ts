@@ -69,56 +69,79 @@ export const CONCURRENCY_STANDAARD = 4;
 // probleem (limiet, storing, kapotte auth) dan van toevallige ruis.
 export const MAX_OPEENVOLGENDE_FOUTEN = 3;
 
-// Tijdmodel, BASIS uit de brief (amendement, gemeten 22 sept 2026 zonder
-// --json-schema): ~55s opstart + ~1.4s/product (194s voor 100, 69s voor 10).
-export const OPSTART_SECONDEN = 55;
+// ---------------------------------------------------------------------------
+// Tijd- en kostenmodel.
+//
+// IJkpunt: PORTIE_GROOTTE = 100, want dat is de portiegrootte die het script
+// ZELF gebruikt voor elke aanroep (op de laatste, kleinere restportie van een
+// ronde na). Fixronde (controller, 22 sept 2026): een eerdere versie van dit
+// bestand mat --json-schema op porties van 25 en leidde daar een enkele
+// factor JSON_SCHEMA_OPSLAG = 2 uit af, toegepast op zowel tijd als kosten.
+// Dat was op twee manieren fout:
+// 1. Tijd en kosten gedragen zich verschillend onder --json-schema (zie
+//    hieronder: sneller, maar duurder). Eén gedeelde factor kan dat per
+//    definitie niet allebei goed weergeven.
+// 2. Een portie van 25 is niet representatief voor een portie van 100: de
+//    vaste opstartkosten (~55s, zie OPSTART_SECONDEN) wegen bij 25 producten
+//    veel zwaarder mee dan bij 100, dus een op 25 gemeten verhouding
+//    extrapoleert niet naar de portiegrootte die de ronde echt gebruikt.
+// De controller draaide een schone A/B op exact dezelfde 100 producten, met
+// en zonder --json-schema:
+//   met  --json-schema: 132s, num_turns 2, $0.212
+//   zonder --json-schema: 194s, num_turns 1, $0.148
+// Dat geeft TIJD_FACTOR_MET_SCHEMA ≈ 0.68 (32% SNELLER, niet trager) en
+// KOSTEN_FACTOR_MET_SCHEMA ≈ 1.43 (43% duurder, niet 2x). Beide factoren zijn
+// dus GEEN afgeleiden van elkaar en apart gehouden.
+//
+// LET OP voor de volgende lezer (dit is precies waar de vorige versie in
+// liep): deze twee factoren zijn gekalibreerd op n = 100. Ze zijn niet
+// gevalideerd voor veel kleinere porties (bijvoorbeeld een handmatige
+// --limit 10/25-proefrun). Bij zo'n kleine n kan zowel de droge-run-schatting
+// als de afgeleide subprocess-timeout (timeoutMsVoorPortie) afwijken van wat
+// je in de praktijk ziet: eigen metingen tijdens taak 5 op n = 25 met
+// --json-schema toonden een spreiding van ~78s tot >180s, wat noch met de
+// oude (2x) noch met deze nieuwe (0.68x) tijdfactor goed te voorspellen is.
+// Voor de echte 91.650-producten-ronde (die vrijwel uitsluitend porties van
+// 100 gebruikt) is dat geen probleem; voor een kleine proefrun kan het
+// script vaker een gezonde-maar-trage aanroep op de time-out laten lopen dan
+// dit model doet vermoeden. De tijdens een --ja-run geprinte
+// duration_ms/total_cost_usd per aanroep (zie tag-products.ts) blijven de
+// echte referentie, dit model is alleen de schatting vooraf.
+// ---------------------------------------------------------------------------
+
+// Basis (ZONDER --json-schema), twee ECHTE metingen: 69s/$0.044 bij 10
+// producten (amendement taak-5-brief.md, 22 sept 2026) en 194s/$0.148 bij
+// 100 producten (controllers A/B, fixronde 22 sept 2026 — dit verving de
+// oudere extrapolatie van $0.11 bij 100 uit het amendement zelf, die geen
+// echte meting was maar "eigenaars eigen extrapolatie").
+export const OPSTART_SECONDEN = 55; // 55 + 1.4*10 ≈ 69, 55 + 1.4*100 ≈ 195 ≈ 194 gemeten
 export const SECONDEN_PER_PRODUCT = 1.4;
+export const BASIS_KOSTEN_USD = 0.03244; // basis + 10k = 0.044, basis + 100k = 0.148
+export const PER_PRODUCT_KOSTEN_USD = 0.0011556;
 
-// JSON_SCHEMA_OPSLAG: eigen, latere meting (22 sept 2026, tijdens het bouwen
-// van taak 5) toont dat --json-schema dit basismodel niet klopt houdt. Een
-// echte portie van 25 producten (zie taak-5-report.md) nam ~180s in beslag
-// tegen de ~90s die het kale model voorspelt: ruwweg een factor 2. Aannemelijke
-// oorzaak: --json-schema dwingt soms een extra beurt af om het antwoord aan
-// het schema te laten voldoen (in eigen toetsen tijdens deze taak gezien als
-// num_turns: 2 i.p.v. 1), wat zowel tijd als kosten verdubbelt. Dit is één
-// meting, geen twee-punts-kalibratie: behandel als grove marge, niet als
-// precieze factor. De echte, per aanroep gerapporteerde duration_ms/
-// total_cost_usd (zie tag-products.ts) zijn de bron van waarheid tijdens een
-// live run; dit model is alleen voor de droge-run-schatting vooraf.
-export const JSON_SCHEMA_OPSLAG = 2;
-
-// Extra veiligheidsmarge BOVENOP het (al opgehoogde) tijdmodel voor de
-// subprocess-timeout, zodat een gezonde-maar-trage aanroep niet op de rand
-// wordt afgebroken. Vóór deze aanpassing stond de timeout exact op de
-// opgehoogde schatting (2x het kale model) en liep één portie er tijdens de
-// hervattest van deze taak precies tegenaan (time-out na 180s bij een
-// schatting van ook 180s, zie taak-5-report.md): geen marge, dus geraakt.
-export const TIMEOUT_VEILIGHEIDSMARGE = 1.5;
+// Factoren MET --json-schema (wat het script echt gebruikt), gekalibreerd op
+// n = 100: 132/194 ≈ 0.6804 (tijd) en 0.212/0.148 ≈ 1.4324 (kosten). Apart
+// gehouden, precies omdat ze niet gelijk zijn (zie uitleg hierboven).
+export const TIJD_FACTOR_MET_SCHEMA = 132 / 194;
+export const KOSTEN_FACTOR_MET_SCHEMA = 0.212 / 0.148;
 
 export function geschatteSecondenVoorPortie(aantalProducten: number): number {
-  return JSON_SCHEMA_OPSLAG * (OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * aantalProducten);
+  return TIJD_FACTOR_MET_SCHEMA * (OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * aantalProducten);
 }
+
+export function schatEquivalentUsd(aantalProducten: number): number {
+  return KOSTEN_FACTOR_MET_SCHEMA * (BASIS_KOSTEN_USD + aantalProducten * PER_PRODUCT_KOSTEN_USD);
+}
+
+// Extra veiligheidsmarge BOVENOP de tijdschatting voor de subprocess-timeout,
+// zodat een gezonde-maar-trage aanroep niet op de rand wordt afgebroken. Ook
+// deze marge is alleen expliciet gevalideerd rond n = 100 (132s schatting →
+// 198s time-out, ruim boven de gemeten 132s); zie de waarschuwing hierboven
+// over kleinere porties.
+export const TIMEOUT_VEILIGHEIDSMARGE = 1.5;
 
 export function timeoutMsVoorPortie(aantalProducten: number): number {
   return Math.round(geschatteSecondenVoorPortie(aantalProducten) * TIMEOUT_VEILIGHEIDSMARGE * 1000);
-}
-
-// Kostenindicatie, LINEAIR AFGELEID uit de twee metingen in het amendement
-// (zonder --json-schema): 10 producten ≈ $0.044, 100 producten ≈ $0.11
-// (eigenaars eigen extrapolatie). Twee punten, twee onbekenden:
-// basis + 10k = 0.044, basis + 100k = 0.11 → 90k = 0.066 → k ≈ 0.000733,
-// basis ≈ 0.037. Ook hier geldt JSON_SCHEMA_OPSLAG (zie boven): de ene
-// echte meting met --json-schema (25 producten, $0.1387) ligt tussen het
-// kale model ($0.055) en het verdubbelde model ($0.110) in, dichter bij
-// verdubbeld. Puur indicatief: dit is geen factuur, het loopt op het
-// abonnement (zie amendement, "blijft nuttig als indicatie maar is niet
-// langer een factuur"); de tijdens een --ja-run geprinte total_cost_usd per
-// aanroep is de echte referentie.
-export const BASIS_KOSTEN_USD = 0.037;
-export const PER_PRODUCT_KOSTEN_USD = 0.00073;
-
-export function schatEquivalentUsd(aantalProducten: number): number {
-  return JSON_SCHEMA_OPSLAG * (BASIS_KOSTEN_USD + aantalProducten * PER_PRODUCT_KOSTEN_USD);
 }
 
 export interface DroogeRunSchatting {

@@ -223,9 +223,10 @@ async function main(): Promise<void> {
   const porties = splitsInPorties(producten, PORTIE_GROOTTE);
   const schatting = schatDroogeRun(porties, concurrency);
   console.log(
-    `${producten.length} producten in ${schatting.aantalAanroepen} aanroep(en) van claude -p. ` +
+    `${producten.length} producten in ${schatting.aantalAanroepen} aanroep(en) van claude -p (portiegrootte ${PORTIE_GROOTTE}). ` +
       `Geschatte looptijd: ~${Math.max(1, Math.round(schatting.geschatteSeconden / 60))} minuten met concurrency ${concurrency}. ` +
-      `Geschat equivalent verbruik: ~$${schatting.equivalentUsd.toFixed(2)} (indicatie op basis van de meting van 22 sept 2026, geen factuur).`
+      `Geschat equivalent verbruik: ~$${schatting.equivalentUsd.toFixed(2)} ` +
+      `(indicatie, gekalibreerd op porties van 100 producten, zie tagCli.ts; geen factuur, het loopt op het abonnement).`
   );
 
   if (!ja) {

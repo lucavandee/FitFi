@@ -6,14 +6,15 @@ import type { BatchesBestand } from "../batchesStore";
 import {
   BASIS_KOSTEN_USD,
   CLI_SCHEMA,
-  JSON_SCHEMA_OPSLAG,
   KANDIDATEN_PAGINA,
+  KOSTEN_FACTOR_MET_SCHEMA,
   MAX_OPEENVOLGENDE_FOUTEN,
   OPSTART_SECONDEN,
   PER_PRODUCT_KOSTEN_USD,
   PORTIE_GROOTTE,
   SCHRIJF_CHUNK,
   SECONDEN_PER_PRODUCT,
+  TIJD_FACTOR_MET_SCHEMA,
   TIMEOUT_VEILIGHEIDSMARGE,
   bouwClaudeArgs,
   bouwOpdracht,
@@ -90,35 +91,44 @@ describe("splitsInPorties", () => {
   });
 });
 
-describe("tijd- en kostenmodel (basis: amendement taak-5-brief.md 22 sept 2026; JSON_SCHEMA_OPSLAG: eigen meting tijdens taak 5, zie taak-5-report.md)", () => {
-  it("het kale basismodel (zonder opslag) is ~55s opstart + 1.4s/product", () => {
+describe("tijd- en kostenmodel (fixronde 22 sept 2026: gekalibreerd op n=100, zie taak-5-report.md)", () => {
+  it("het basismodel zonder --json-schema klopt met de twee echte metingen (10 en 100 producten)", () => {
+    // 55 + 1.4*10 = 69 (amendement), 55 + 1.4*100 = 195 ≈ 194 (controllers A/B).
     expect(OPSTART_SECONDEN).toBe(55);
     expect(SECONDEN_PER_PRODUCT).toBe(1.4);
+    expect(OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 10).toBeCloseTo(69, 5);
+    // Het kale model geeft 195 (55 + 1.4*100); de echte meting was 194s. Eén
+    // seconde verschil door afronding, geen exacte pasvorm en dat hoeft ook
+    // niet: dit is de zonder-schema-basis, niet het ijkpunt zelf.
+    expect(Math.abs(OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 100 - 194)).toBeLessThanOrEqual(2);
+    // Kostenbasis: basis + 10k = 0.044, basis + 100k = 0.148.
+    expect(BASIS_KOSTEN_USD + 10 * PER_PRODUCT_KOSTEN_USD).toBeCloseTo(0.044, 3);
+    expect(BASIS_KOSTEN_USD + 100 * PER_PRODUCT_KOSTEN_USD).toBeCloseTo(0.148, 3);
   });
 
-  it("geschatteSecondenVoorPortie past JSON_SCHEMA_OPSLAG toe op het basismodel", () => {
-    expect(geschatteSecondenVoorPortie(0)).toBeCloseTo(JSON_SCHEMA_OPSLAG * OPSTART_SECONDEN, 5);
-    expect(geschatteSecondenVoorPortie(100)).toBeCloseTo(JSON_SCHEMA_OPSLAG * (OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 100), 5);
+  it("tijd- en kostenfactor voor --json-schema zijn apart (niet gelijk): sneller maar duurder", () => {
+    // Controllers A/B op 100 producten: met schema 132s/$0.212, zonder 194s/$0.148.
+    expect(TIJD_FACTOR_MET_SCHEMA).toBeLessThan(1); // sneller
+    expect(KOSTEN_FACTOR_MET_SCHEMA).toBeGreaterThan(1); // duurder
+    expect(TIJD_FACTOR_MET_SCHEMA).not.toBeCloseTo(KOSTEN_FACTOR_MET_SCHEMA, 1);
+    expect(TIJD_FACTOR_MET_SCHEMA).toBeCloseTo(132 / 194, 6);
+    expect(KOSTEN_FACTOR_MET_SCHEMA).toBeCloseTo(0.212 / 0.148, 6);
   });
 
-  it("timeoutMsVoorPortie geeft ruime marge bovenop het (al opgehoogde) tijdmodel", () => {
-    // Eigen meting: 25 producten nam ~180s in beslag (zie taak-5-report.md).
-    // Vóór de marge-fix stond de timeout daar exact op, en liep een portie
-    // er tijdens de hervattest ook echt tegenaan. Met de marge moet de
-    // timeout daar nu duidelijk boven zitten.
-    const timeoutSeconden = timeoutMsVoorPortie(25) / 1000;
-    expect(timeoutSeconden).toBeGreaterThan(180);
-    expect(timeoutSeconden).toBeCloseTo(TIMEOUT_VEILIGHEIDSMARGE * geschatteSecondenVoorPortie(25), 5);
+  it("geschatteSecondenVoorPortie en schatEquivalentUsd komen op het ijkpunt (n=100) overeen met de echte meting", () => {
+    expect(Math.abs(geschatteSecondenVoorPortie(100) - 132)).toBeLessThanOrEqual(1);
+    expect(schatEquivalentUsd(100)).toBeCloseTo(0.212, 2);
   });
 
-  it("schatEquivalentUsd past JSON_SCHEMA_OPSLAG toe op het uit het amendement afgeleide basismodel", () => {
-    const kaal10 = BASIS_KOSTEN_USD + 10 * PER_PRODUCT_KOSTEN_USD;
-    expect(kaal10).toBeCloseTo(0.044, 2); // basismodel klopt nog met het amendement (zonder --json-schema)
-    expect(schatEquivalentUsd(10)).toBeCloseTo(JSON_SCHEMA_OPSLAG * kaal10, 5);
-    // Eigen meting: 25 producten met --json-schema kostte $0.1387 (taak-5-report.md).
-    // Het opgehoogde model moet in de buurt zitten, niet exact (één meting, geen kalibratie).
-    expect(schatEquivalentUsd(25)).toBeGreaterThan(0.08);
-    expect(schatEquivalentUsd(25)).toBeLessThan(0.15);
+  it("geschatteSecondenVoorPortie en schatEquivalentUsd passen hun eigen factor toe (geen gedeelde vermenigvuldiger)", () => {
+    expect(geschatteSecondenVoorPortie(50)).toBeCloseTo(TIJD_FACTOR_MET_SCHEMA * (OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 50), 6);
+    expect(schatEquivalentUsd(50)).toBeCloseTo(KOSTEN_FACTOR_MET_SCHEMA * (BASIS_KOSTEN_USD + PER_PRODUCT_KOSTEN_USD * 50), 6);
+  });
+
+  it("timeoutMsVoorPortie geeft marge bovenop de tijdschatting, ook bij het ijkpunt n=100", () => {
+    const timeoutSeconden = timeoutMsVoorPortie(100) / 1000;
+    expect(timeoutSeconden).toBeGreaterThan(132); // ruim boven de echte meting van 132s
+    expect(timeoutSeconden).toBeCloseTo(TIMEOUT_VEILIGHEIDSMARGE * geschatteSecondenVoorPortie(100), 2);
   });
 
   it("schatDroogeRun telt aanroepen, verdeelt looptijd over de concurrency en somt de kosten", () => {
