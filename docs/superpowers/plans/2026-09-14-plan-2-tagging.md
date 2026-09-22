@@ -1274,6 +1274,30 @@ export function markeerVerwerkt(data: BatchesBestand, id: string, wanneer: strin
 
 ### Taak 5: tag-products.ts, de CLI
 
+> **AMENDEMENT (controller, 22 september 2026, op verzoek van Luc). Deze taak gebruikt NIET langer de Anthropic Batch API en NIET langer een `ANTHROPIC_API_KEY`. Het taggen loopt via `claude -p` op Lucs abonnement.**
+>
+> **Waarom.** De Batch API vraagt een API-sleutel die hier niet beschikbaar is, en kost circa 68 dollar voor de eerste ronde plus 13 tot 40 voor de fotoronde. Luc wil het op zijn abonnement. Dat is geen compromis: het is gemeten en het werkt.
+>
+> **Wat is gemeten, 22 september, op echte ongetagde producten uit de catalogus:**
+> - 100 producten in een aanroep: `claude -p --model haiku --allowed-tools "" --append-system-prompt "<systeemprompt + schema>"`, 194 seconden, **100 van de 100 goedgekeurd door `valideerTags` uit taak 3**. Inhoudelijk correct steekproefsgewijs nagelopen.
+> - 10 producten in een aanroep: 69 seconden. De opstartkosten zijn dus ongeveer 55 seconden en het variabele deel ongeveer 1,4 seconde per product; porties van 100 amortiseren die overhead tienvoudig.
+> - Verbruik van een echte aanroep van 10 producten (`--output-format json`): 15.825 cache-read, 12.691 cache-write, 5.393 outputtokens, API-equivalent 0,044 dollar. Die vaste overhead is Claude Codes eigen systeemprompt en is per aanroep ongeveer constant.
+> - Extrapolatie: 917 aanroepen van 100 producten, circa 0,11 dollar equivalent per aanroep, dus grofweg 100 dollar equivalent uit het abonnement in plaats van uit de portemonnee.
+>
+> **Harde randvoorwaarden die uit die meting volgen:**
+> - **Nooit `--bare`.** Die vlag leest uitsluitend `ANTHROPIC_API_KEY` of een apiKeyHelper en negeert OAuth en keychain. Dan draait het dus niet op het abonnement.
+> - **`--model haiku`.** Inschalen van een productnaam in een vaste lijst waarden vraagt geen Opus. Dit is ook Lucs staande regel over modelkeuze.
+> - **`--allowed-tools ""`.** Het taggen heeft geen enkele tool nodig; elke tool vergroot alleen de systeemprompt.
+> - **Het model zet zijn antwoord in ```json-hekjes**, ondanks een instructie om dat niet te doen. Strip die; reken er niet op dat een instructie het voorkomt.
+> - **Beperk de parallelliteit tot vier a zes gelijktijdige aanroepen.** Lucs abonnement liep eerder vol door veel parallelle sessies, en dit is qua vorm hetzelfde patroon. Het script moet dat aantal als vlag hebben, niet hardgecodeerd, en moet stoppen met een duidelijke melding als het op een limiet stuit in plaats van door te rammen.
+>
+> **Wat blijft staan:** alles uit `tagging.ts` (taak 3) voor schema, prompt, validatie en resultaatverwerking; `batchesStore.ts` (taak 4) voor hervatbaarheid, waarbij een "batch" nu een portie van 100 producten is in plaats van een Batch API-id; `keten_tag_kandidaten` en `keten_schrijf_tags` (taak 2) voor lezen en schrijven; `leesEnv`, `leesVlag`, `heeftVlag` en `STANDAARD_RETAILER` (taak 1).
+>
+> **Wat vervalt:** `@anthropic-ai/sdk`, `client.messages.batches.*`, `client.messages.countTokens`, `ANTHROPIC_API_KEY` in `leesEnv`, en het pollen op batchstatus. De kostenschatting uit `schatKosten` blijft nuttig als indicatie maar is niet langer een factuur; de droge run zonder `--ja` moet nu het aantal aanroepen, de geschatte looptijd en het equivalente verbruik tonen.
+>
+> De code hieronder beschrijft de oude Batch API-weg. Gebruik hem als bron voor de structuur (vlaggen, hervatten, schrijven per portie, foutafhandeling) en niet als bron voor de aanroep zelf.
+
+
 **Bestanden:**
 - Aanmaken: `scripts/keten/tag-products.ts`
 - Test: droge run en een echte run met `--limit 25` (de pure logica is in taak 3 en 4 getest)
