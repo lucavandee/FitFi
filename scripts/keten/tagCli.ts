@@ -56,36 +56,41 @@ const execFileAsync = promisify(execFile);
 // taak-5-brief.md.
 export const PORTIE_GROOTTE = 100;
 
-// Was 4, "letterlijk uit het amendement". FIXRONDE 3 (controller, 22 sept
-// 2026): de echte H&M-ronde op concurrency 4 liep volledig vast (alle 166
-// porties op de time-out, niets getagd). Gemeten met vier gelijktijdige
-// aanroepen van 100 producten: 198s, 319s, 438s, 451s — de wandkloktijd van
-// die hele golf (451s) is maar ~10% korter dan vier keer solo achter elkaar
-// (4×126s ≈ 504s, zie CONTENTIE_FACTOR_OP_IJKPUNT hieronder). Concurrency 4
-// koopt dus vrijwel niets aan doorlooptijd, terwijl het de kans op een
-// time-out van een individuele aanroep tot ~3,6x vergroot (451/126). Dat is
-// een slechte ruil.
+// Geschiedenis: was 4 (amendement), toen 2 (fixronde 3, afgeleid uit een
+// lineair model zonder directe meting op concurrency 2). FIXRONDE 4
+// (controller, 22 sept 2026): een echte H&M-ronde op concurrency 2 liep
+// opnieuw vast. In 75 minuten: 14 porties geslaagd, 15 op de time-out van
+// 370s. Duur van de geslaagde aanroepen: 122, 132, 178, 248, 269, 273, 281,
+// 283, 288, 289, 293, 296, 315, 349 seconden — een enorme spreiding voor
+// identiek werk. De twee snelste (122, 132) vielen aan het einde, toen nog
+// maar één aanroep liep, en komen exact overeen met de solo-baseline (126s,
+// fixronde 3). Conclusie: de werkelijke vertraging bij concurrency 2 is 2 tot
+// 2,8x en regelmatig meer (de time-outs bereikten minstens 370/126≈2,94x,
+// ware duur onbekend) — niet de 1,86x die fixronde 3's lineaire model tussen
+// concurrency 1 en 4 voorspelde. Een rechte lijn tussen twee verre punten
+// onderschat kennelijk wat er dichterbij gebeurt.
 //
-// Nieuwe standaard: 2. Onderbouwing (geen directe meting op concurrency 2,
-// wel afgeleid): het lineaire contentiemodel hieronder voorspelt bij
-// concurrency 2 een individuele-aanroep-factor van ~1,86x (tegen 3,58x bij
-// 4) en een doorlooptijdwinst van ~3,5% (tegen ~10% bij 4). Concurrency 2
-// geeft dus een kleiner deel van de (toch al kleine) winst, maar ook een
-// beduidend kleiner deel van het risico — en blijft, in tegenstelling tot 1,
-// nog een reëel vangnet tegen één enkele trage aanroep die de hele rest van
-// de rij blokkeert. Als vlag, niet hardgecodeerd: zie --concurrency in
-// tag-products.ts.
-export const CONCURRENCY_STANDAARD = 2;
+// Nieuwe standaard: 1. De gemeten opbrengst van parallelliteit was toch al
+// klein (~10% bij concurrency 4, ~3,5% bij 2, zie doorloopFactorVoorConcurrency
+// hieronder); die paar procent zijn twee mislukte, uren durende ronde niet
+// waard. Bij concurrency 1 is de spreiding klein: 122, 126 en 132 seconden
+// over drie losse metingen (fixronde 3 en 4 samen) — nog geen 10 seconden
+// verschil. Bij één aanroep tegelijk wordt een ruime time-out een echt
+// vangnet; bij twee of meer is elke vaste time-out een gok, hoe ruim ook,
+// zolang de spreiding zo groot blijft. Als vlag, niet hardgecodeerd: zie
+// --concurrency in tag-products.ts. Wie hem toch hoger zet: de time-out
+// schaalt mee (zie contentieFactorVoorTimeout hieronder), maar dat maakt een
+// hogere concurrency niet aan te raden, alleen minder gevaarlijk.
+export const CONCURRENCY_STANDAARD = 1;
 
 // Aantal opeenvolgende MISLUKTE porties (de hele aanroep leverde niets
 // bruikbaars op, geen individuele contentfout) voordat het script stopt in
 // plaats van doorrammen. Geen exacte foutmelding om op te matchen, met opzet:
-// niet gebaseerd op geraden woorden maar op het patroon zelf. Bevestigd
-// tijdens de echte (mislukte) H&M-ronde met concurrency 4 (fixronde 3,
-// controller, 22 sept 2026): zes opeenvolgende time-outs werden herkend als
-// patroon, het script stopte netjes en liet alle 166 porties open staan voor
-// een herstart, in plaats van door te rammen of stil te falen. Dat deel werkt
-// zoals bedoeld.
+// niet gebaseerd op geraden woorden maar op het patroon zelf. Twee keer
+// bevestigd op de echte (allebei mislukte) H&M-ronde: fixronde 3 (concurrency
+// 4, zes opeenvolgende time-outs herkend) en fixronde 4 (concurrency 2, 15
+// van de 29 aanroepen op de time-out, ook daar netjes gestopt met exitcode 1
+// i.p.v. een valse 0). Dat deel werkt zoals bedoeld, allebei de keren.
 export const MAX_OPEENVOLGENDE_FOUTEN = 3;
 
 // ---------------------------------------------------------------------------
@@ -154,55 +159,102 @@ export function schatEquivalentUsd(aantalProducten: number): number {
 
 // Extra veiligheidsmarge BOVENOP de tijdschatting voor de subprocess-timeout,
 // zodat een gezonde-maar-trage aanroep niet op de rand wordt afgebroken.
-export const TIMEOUT_VEILIGHEIDSMARGE = 1.5;
+// Was 1,5. FIXRONDE 4 (controller, 22 sept 2026), de les van twee mislukte
+// echte ronden op rij: een krappe time-out is duurder dan een ruime. Een te
+// ruime time-out kost in het slechtste geval wat wachttijd; een te krappe
+// kost al het werk tot dat moment plus de wachttijd (vijftien time-outs van
+// ~370s in fixronde 4 was ruim anderhalf uur abonnementsverbruik voor nul
+// resultaat). Drie losse solo-metingen (fixronde 3 en 4) clusteren rond
+// 122-132s. Op het ijkpunt n=100, concurrency 1: 3x de schatting (≈132,7s)
+// geeft ≈398s, ruim boven (3,0x) de traagste waargenomen solo-aanroep (132s),
+// niet krap erboven.
+export const TIMEOUT_VEILIGHEIDSMARGE = 3;
 
 // ---------------------------------------------------------------------------
-// Concurrency-contentie. FIXRONDE 3 (controller, 22 sept 2026): de echte
-// H&M-ronde (concurrency 4) mislukte volledig — alle 166 porties liepen op
-// de time-out van 199s, niets getagd. Oorzaak: die time-out was afgeleid van
-// de SOLO-schatting en wist niets van concurrency. Twee gerichte metingen
-// legden bloot waarom, en het zijn TWEE verschillende effecten:
+// Concurrency-contentie. Twee ronden op de echte database, twee keer
+// vastgelopen, en de oorzaak schoof allebei de keren op:
 //
-//   solo, 100 producten               : 126s (bevestigt geschatteSecondenVoorPortie,
-//                                        ongewijzigd, zie hierboven — TIJD_FACTOR_MET_SCHEMA
-//                                        blijft staan)
-//   4 gelijktijdig, elk 100 producten : 198s, 319s, 438s, 451s individueel;
-//                                        451s wandkloktijd voor de hele golf
+//   FIXRONDE 3: concurrency 4 mislukte volledig (time-out 199s, blind voor
+//     concurrency). Gemeten: 4 gelijktijdig, elk 100 producten: 198, 319,
+//     438, 451s individueel; 451s wandkloktijd voor de hele golf.
+//   FIXRONDE 4: de FIX (time-out schaalt lineair mee, concurrency-standaard
+//     naar 2) mislukte OOK. Gemeten: concurrency 2, 75 minuten, 14 porties
+//     geslaagd (122, 132, 178, 248, 269, 273, 281, 283, 288, 289, 293, 296,
+//     315, 349s), 15 op de time-out van 370s (dus ≥370s, ware duur onbekend
+//     — gecensureerde data). De twee snelste (122, 132) vielen aan het einde,
+//     toen nog maar één aanroep liep: die komen exact overeen met solo.
 //
-// 1. Individuele aanroepen duren bij concurrency 4 tot 3,6x zo lang als solo
-//    (451/126). De time-out moet daarmee meeschalen: contentieFactorVoorTimeout.
-// 2. De TOTALE doorlooptijd van die vier porties (451s) is maar ~10% korter
-//    dan vier keer solo achter elkaar (4×126=504s): concurrency 4 koopt geen
-//    4x snelheid, amper 1,1x. De aanroepen delen kennelijk grotendeels
-//    dezelfde capaciteit (staan in de rij voor dezelfde bottleneck) in plaats
-//    van echt parallel te lopen. Het schattingsmodel mag dus NIET meer delen
-//    door concurrency (dat veronderstelt lineaire versnelling, en die is er
-//    niet): doorloopFactorVoorConcurrency.
+// Fixronde 3's lineaire interpolatie tussen concurrency 1 (factor 1) en 4
+// (factor ≈3,58) voorspelde bij concurrency 2 een factor van 1,86x. De
+// werkelijkheid was 2 tot 2,8x en regelmatig meer. Een rechte lijn tussen
+// twee VERRE punten onderschat dus wat er dichterbij gebeurt: de curve buigt
+// kennelijk snel omhoog zodra er meer dan één aanroep om dezelfde resource
+// strijdt. Daarom nu drie ijkpunten i.p.v. twee, PIECEWISE lineair ertussen
+// (CONTENTIE_IJKPUNTEN): 1→1 (triviaal), 2→2,8 (de bovenkant van de gemeten
+// spreiding — bewust conservatief: een deel van de metingen is gecensureerd
+// door de time-out zelf, de werkelijke bovengrens ligt mogelijk hoger),
+// 4→3,58 (ongewijzigd, fixronde 3). Boven concurrency 4: dezelfde helling
+// als het laatste segment (2→4), niet vlak — er is geen reden om aan te
+// nemen dat de contentie daar stopt met stijgen.
 //
-// Beide factoren zijn LINEAIRE interpolatie tussen precies twee meetpunten:
-// concurrency 1 (triviaal, factor 1) en concurrency 4 (de meting hierboven).
-// Alles ertussen of erboven (2, 3, 5, 6, ...) is EXTRAPOLATIE, geen meting.
-// Bewust simpel gehouden: met twee punten is een lineair model het enige dat
-// niet overfit. De time-out-kant kiest de veilige richting (lineair in
-// concurrency voorspelt bij 4 al 504s, ruimer dan de gemeten 451s, dus eerder
-// te veel dan te weinig marge); de doorloop-kant is een indicatie voor de
-// droge run, geen garantie — de tijdens een --ja-run geprinte duration_ms
-// per aanroep (zie tag-products.ts) blijft de echte referentie.
-export const CONTENTIE_CONCURRENCY_IJKPUNT = 4;
-export const CONTENTIE_FACTOR_OP_IJKPUNT = 451 / 126; // ≈ 3.579: traagste individuele aanroep / solo
-export const DOORLOOP_FACTOR_OP_IJKPUNT = 451 / 4 / 126; // ≈ 0.895: effectieve seconden/portie (golf van 4) / solo
-
-function lineaireContentie(concurrency: number, factorOpIjkpunt: number): number {
-  const c = Math.max(1, concurrency);
-  return 1 + ((c - 1) * (factorOpIjkpunt - 1)) / (CONTENTIE_CONCURRENCY_IJKPUNT - 1);
+// CONCLUSIE, niet alleen een getal: concurrency 1 is de aanbevolen instelling
+// (zie CONCURRENCY_STANDAARD hierboven), niet een van meerdere gelijkwaardige
+// opties. Dit model bestaat zodat een time-out ook bij een hogere, afgeraden
+// concurrency niet een gegarandeerde mislukking wordt — niet om hogere
+// concurrency aantrekkelijk te maken. De tijdens een --ja-run geprinte
+// duration_ms per aanroep (zie tag-products.ts) blijft de echte referentie.
+//
+// doorloopFactorVoorConcurrency (de droge-run-schatting van de wandkloktijd)
+// is in fixronde 4 NIET herijkt: er is geen nieuwe wandkloktijd-meting voor
+// een volledige golf bij concurrency 2, alleen individuele-aanroepduren. Die
+// functie gebruikt daarom nog steeds de 2-punts lineaire interpolatie uit
+// fixronde 3 (concurrency 1→1, concurrency 4→≈0,895). Bij de nieuwe standaard
+// (concurrency 1) is dat sowieso irrelevant: de factor is daar per constructie
+// exact 1, dus de droge run toont de eerlijke, volledig seriële schatting.
+export interface ContentieIjkpunt {
+  concurrency: number;
+  factor: number;
 }
+
+// Bovenkant van de gemeten spreiding bij concurrency 2 (fixronde 4, bewust
+// conservatief, zie uitleg hierboven), resp. de gemeten factor op concurrency
+// 4 (fixronde 3, ongewijzigd). Los geëxporteerd (niet alleen inline in
+// CONTENTIE_IJKPUNTEN) zodat er in tests en elders rechtstreeks naar
+// verwezen kan worden.
+export const CONTENTIE_FACTOR_OP_CONCURRENCY_2 = 2.8;
+export const CONTENTIE_FACTOR_OP_IJKPUNT = 451 / 126; // ≈ 3.579
+
+export const CONTENTIE_IJKPUNTEN: ContentieIjkpunt[] = [
+  { concurrency: 1, factor: 1 },
+  { concurrency: 2, factor: CONTENTIE_FACTOR_OP_CONCURRENCY_2 },
+  { concurrency: 4, factor: CONTENTIE_FACTOR_OP_IJKPUNT },
+];
 
 export function contentieFactorVoorTimeout(concurrency: number): number {
-  return lineaireContentie(concurrency, CONTENTIE_FACTOR_OP_IJKPUNT);
+  const c = Math.max(1, concurrency);
+  const punten = CONTENTIE_IJKPUNTEN;
+  if (c <= punten[0].concurrency) return punten[0].factor;
+  for (let i = 0; i < punten.length - 1; i++) {
+    const a = punten[i];
+    const b = punten[i + 1];
+    if (c <= b.concurrency) {
+      return a.factor + ((c - a.concurrency) * (b.factor - a.factor)) / (b.concurrency - a.concurrency);
+    }
+  }
+  // Boven het hoogste ijkpunt: extrapoleer met de helling van het laatste
+  // segment, niet vlak.
+  const laatste = punten[punten.length - 1];
+  const voorlaatste = punten[punten.length - 2];
+  const helling = (laatste.factor - voorlaatste.factor) / (laatste.concurrency - voorlaatste.concurrency);
+  return laatste.factor + (c - laatste.concurrency) * helling;
 }
 
+export const CONTENTIE_CONCURRENCY_IJKPUNT = 4;
+export const DOORLOOP_FACTOR_OP_IJKPUNT = 451 / 4 / 126; // ≈ 0.895: effectieve seconden/portie (golf van 4) / solo, fixronde 3, niet herijkt in fixronde 4
+
 export function doorloopFactorVoorConcurrency(concurrency: number): number {
-  return lineaireContentie(concurrency, DOORLOOP_FACTOR_OP_IJKPUNT);
+  const c = Math.max(1, concurrency);
+  return 1 + ((c - 1) * (DOORLOOP_FACTOR_OP_IJKPUNT - 1)) / (CONTENTIE_CONCURRENCY_IJKPUNT - 1);
 }
 // ---------------------------------------------------------------------------
 

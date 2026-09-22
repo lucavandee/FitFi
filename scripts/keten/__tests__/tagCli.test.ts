@@ -7,6 +7,7 @@ import {
   BASIS_KOSTEN_USD,
   CLI_SCHEMA,
   CONTENTIE_CONCURRENCY_IJKPUNT,
+  CONTENTIE_FACTOR_OP_CONCURRENCY_2,
   CONTENTIE_FACTOR_OP_IJKPUNT,
   DOORLOOP_FACTOR_OP_IJKPUNT,
   KANDIDATEN_PAGINA,
@@ -131,32 +132,46 @@ describe("tijd- en kostenmodel (fixronde 22 sept 2026: gekalibreerd op n=100, zi
     expect(schatEquivalentUsd(50)).toBeCloseTo(KOSTEN_FACTOR_MET_SCHEMA * (BASIS_KOSTEN_USD + PER_PRODUCT_KOSTEN_USD * 50), 6);
   });
 
-  it("timeoutMsVoorPortie geeft marge bovenop de solo-tijdschatting bij concurrency 1", () => {
+  it("timeoutMsVoorPortie geeft ruime marge (3x) boven de solo-tijdschatting bij concurrency 1 (fixronde 4)", () => {
+    // Drie losse solo-metingen (fixronde 3 en 4): 122, 126, 132s. De time-out
+    // moet ruim boven de traagste daarvan zitten, niet krap erboven: dat was
+    // precies de les van twee mislukte echte ronden ("een krappe time-out is
+    // duurder dan een ruime").
     const timeoutSeconden = timeoutMsVoorPortie(100, 1) / 1000;
-    expect(timeoutSeconden).toBeGreaterThan(132); // ruim boven de echte meting van 132s
+    expect(timeoutSeconden).toBeGreaterThan(3 * 132); // ruim (3x) boven de traagste waargenomen solo-aanroep
     expect(timeoutSeconden).toBeCloseTo(TIMEOUT_VEILIGHEIDSMARGE * geschatteSecondenVoorPortie(100), 2);
+    expect(TIMEOUT_VEILIGHEIDSMARGE).toBe(3);
   });
 
-  it("timeoutMsVoorPortie schaalt mee met concurrency (fixronde 3): bij 4 ruim boven de gemeten 451s", () => {
-    // Dit is letterlijk de bug die de echte H&M-ronde deed mislukken: de
-    // oude time-out (199s, blind voor concurrency) overleefde de traagste
-    // van vier gelijktijdige aanroepen (451s) niet. De nieuwe time-out moet
-    // dat ruim overleven.
-    const timeoutSeconden = timeoutMsVoorPortie(100, 4) / 1000;
-    expect(timeoutSeconden).toBeGreaterThan(451);
-    // En hij moet daadwerkelijk groter zijn dan bij concurrency 1: dat is
-    // het hele punt van "meeschalen met concurrency".
-    expect(timeoutMsVoorPortie(100, 4)).toBeGreaterThan(timeoutMsVoorPortie(100, 1));
+  it("timeoutMsVoorPortie schaalt mee met concurrency en overleeft de gemeten waarden ruim op elk ijkpunt", () => {
+    // Concurrency 4 (fixronde 3): traagste individuele aanroep 451s.
+    expect(timeoutMsVoorPortie(100, 4) / 1000).toBeGreaterThan(451);
+    // Concurrency 2 (fixronde 4): 15 van de 29 aanroepen liepen op de oude
+    // time-out van 370s vast (dus ≥370s, gecensureerd). De nieuwe time-out
+    // moet daar ruim boven zitten, niet er net overheen.
+    expect(timeoutMsVoorPortie(100, 2) / 1000).toBeGreaterThan(2 * 370);
+    // Moet strikt stijgen met concurrency: dat is het hele punt van "meeschalen".
+    expect(timeoutMsVoorPortie(100, 1)).toBeLessThan(timeoutMsVoorPortie(100, 2));
+    expect(timeoutMsVoorPortie(100, 2)).toBeLessThan(timeoutMsVoorPortie(100, 4));
   });
 
-  it("contentieFactorVoorTimeout: triviaal 1 bij concurrency 1, gemeten ratio bij concurrency 4", () => {
+  it("contentieFactorVoorTimeout: drie echte ijkpunten (1, 2, 4), piecewise lineair ertussen en erboven", () => {
+    // Triviaal op concurrency 1.
     expect(contentieFactorVoorTimeout(1)).toBe(1);
+    // Concurrency 2 is nu een EXACT ijkpunt (fixronde 4: 2 tot 2,8x gemeten,
+    // 2,8 = de bovenkant, bewust conservatief), niet langer een interpolatie
+    // tussen 1 en 4 (die voorspelde 1,86x — te laag, zie fixronde 4).
+    expect(contentieFactorVoorTimeout(2)).toBeCloseTo(CONTENTIE_FACTOR_OP_CONCURRENCY_2, 6);
+    expect(CONTENTIE_FACTOR_OP_CONCURRENCY_2).toBe(2.8);
+    expect(contentieFactorVoorTimeout(2)).toBeGreaterThan(1.86); // ruim boven fixronde 3's (te lage) voorspelling
+    // Concurrency 4 blijft het ongewijzigde ijkpunt uit fixronde 3.
     expect(contentieFactorVoorTimeout(CONTENTIE_CONCURRENCY_IJKPUNT)).toBeCloseTo(CONTENTIE_FACTOR_OP_IJKPUNT, 6);
     expect(CONTENTIE_FACTOR_OP_IJKPUNT).toBeCloseTo(451 / 126, 6);
-    // Lineaire interpolatie: tussen 1 en 4 moet 2 tussen de twee factoren in liggen.
-    expect(contentieFactorVoorTimeout(2)).toBeGreaterThan(1);
-    expect(contentieFactorVoorTimeout(2)).toBeLessThan(CONTENTIE_FACTOR_OP_IJKPUNT);
-    // Boven het ijkpunt is extrapolatie, maar moet wel doorstijgen (behoudend, niet plat).
+    // Tussen 2 en 4 (bijvoorbeeld 3): piecewise lineair, dus strikt tussen de twee ijkpunten.
+    expect(contentieFactorVoorTimeout(3)).toBeGreaterThan(CONTENTIE_FACTOR_OP_CONCURRENCY_2);
+    expect(contentieFactorVoorTimeout(3)).toBeLessThan(CONTENTIE_FACTOR_OP_IJKPUNT);
+    // Boven het hoogste ijkpunt (4): extrapolatie met de helling van het
+    // laatste segment, niet plat.
     expect(contentieFactorVoorTimeout(6)).toBeGreaterThan(CONTENTIE_FACTOR_OP_IJKPUNT);
   });
 
@@ -187,6 +202,19 @@ describe("tijd- en kostenmodel (fixronde 22 sept 2026: gekalibreerd op n=100, zi
     // Expliciete regressietoets tegen de oude (foute) aanname: NIET gelijk
     // aan delen door 4.
     expect(schattingVier.geschatteSeconden).not.toBe(Math.round(serieelTotaal / 4));
+  });
+
+  it("toont bij concurrency 1 (de nieuwe standaard) de eerlijke, volledig seriële schatting (fixronde 4, punt 4)", () => {
+    // 166 porties van ~100 producten (de echte H&M-ronde): de controller
+    // noemt "circa 5,8 uur" als de eerlijke solo-schatting.
+    const porties166 = Array.from({ length: 166 }, () => Array.from({ length: 100 }, () => product()));
+    const schatting = schatDroogeRun(porties166, 1);
+    // Geen enkele versnelling verondersteld bij concurrency 1: exact de
+    // seriële som, geen doorloopfactor.
+    expect(schatting.geschatteSeconden).toBe(Math.round(166 * geschatteSecondenVoorPortie(100)));
+    const uren = schatting.geschatteSeconden / 3600;
+    expect(uren).toBeGreaterThan(5.5);
+    expect(uren).toBeLessThan(6.5);
   });
 });
 

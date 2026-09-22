@@ -24,9 +24,9 @@
  *   npm run keten:tag -- --retailer "H&M (NL)" --ja      verstuurt en schrijft
  *   npm run keten:tag -- --met-foto --ja                 foto-ronde voor confidence < 0.6
  *   --limit N            alleen de eerste N kandidaten (proefrun)
- *   --concurrency N      aantal gelijktijdige claude -p aanroepen (standaard 2, zie fixronde 3
- *                         in taak-5-report.md: concurrency 4 vertraagde individuele aanroepen tot
- *                         ~3,6x en won amper doorlooptijd, ~10%)
+ *   --concurrency N      aantal gelijktijdige claude -p aanroepen (standaard 1: twee echte rondes
+ *                         op concurrency 4 en 2 liepen allebei vast, zie fixronde 3 en 4 in
+ *                         taak-5-report.md. Hoger dan 1 wordt afgeraden, niet aanbevolen)
  *
  * Idempotent: keten_tag_kandidaten selecteert op tagger_version, een rij die
  * deze versie al heeft komt niet meer langs. Hervatbaar: openstaande porties
@@ -85,18 +85,18 @@ async function main(): Promise<void> {
   const concurrency = Math.max(1, Number(leesVlag(argv, "concurrency") ?? CONCURRENCY_STANDAARD) || CONCURRENCY_STANDAARD);
   const versie = modus === "foto" ? TAGGER_VERSION_FOTO : TAGGER_VERSION;
 
-  // Was ">6", uit het amendement. Fixronde 3 (controller, 22 sept 2026) mat
-  // dat concurrency 4 al een individuele aanroep tot ~3,6x vertraagt en de
-  // volledige H&M-ronde daardoor deed mislukken (alle porties op de
-  // time-out). Er is geen meting die concurrency boven de nieuwe standaard
-  // (CONCURRENCY_STANDAARD, 2) goedkeurt, dus de waarschuwing schaalt nu
-  // daarmee mee in plaats van een losse, inmiddels weerlegde drempel van 6
-  // vast te houden.
+  // Geschiedenis: was ">6" (amendement), toen ">4" (fixronde 3). Fixronde 4
+  // (controller, 22 sept 2026): ook concurrency 2 liep een echte ronde vast
+  // (14 geslaagd, 15 op de time-out in 75 minuten; individuele aanroepen 2
+  // tot 2,8x en regelmatig meer vertraagd t.o.v. solo). De standaard is nu 1
+  // en dit is dus geen "drempel binnen het aanbevolen bereik" meer: ELKE
+  // waarde boven 1 is expliciet afgeraden, niet alleen boven een getal.
   if (concurrency > CONCURRENCY_STANDAARD) {
     console.log(
-      `Waarschuwing: concurrency ${concurrency} ligt boven de standaard (${CONCURRENCY_STANDAARD}). Fixronde 3 ` +
-        "(22 sept 2026) mat dat concurrency 4 een individuele aanroep tot ~3,6x vertraagt en amper doorlooptijd " +
-        "wint (~10%); de time-out schaalt mee, maar hoger dan gemeten is ongetoetst. Ga door op eigen risico."
+      `Waarschuwing: concurrency ${concurrency} ligt boven de aanbevolen standaard (${CONCURRENCY_STANDAARD}). ` +
+        "Twee echte rondes liepen vast op concurrency 4 en 2 (fixronde 3 en 4, 22 sept 2026): individuele " +
+        "aanroepen werden 2 tot 3,6x trager dan solo terwijl de doorlooptijd amper verbeterde (~3,5-10%). De " +
+        "time-out schaalt mee, maar hoger dan gemeten (concurrency 4) is extrapolatie. Ga door op eigen risico."
     );
   }
 
