@@ -24,7 +24,9 @@
  *   npm run keten:tag -- --retailer "H&M (NL)" --ja      verstuurt en schrijft
  *   npm run keten:tag -- --met-foto --ja                 foto-ronde voor confidence < 0.6
  *   --limit N            alleen de eerste N kandidaten (proefrun)
- *   --concurrency N      aantal gelijktijdige claude -p aanroepen (standaard 4)
+ *   --concurrency N      aantal gelijktijdige claude -p aanroepen (standaard 2, zie fixronde 3
+ *                         in taak-5-report.md: concurrency 4 vertraagde individuele aanroepen tot
+ *                         ~3,6x en won amper doorlooptijd, ~10%)
  *
  * Idempotent: keten_tag_kandidaten selecteert op tagger_version, een rij die
  * deze versie al heeft komt niet meer langs. Hervatbaar: openstaande porties
@@ -83,10 +85,18 @@ async function main(): Promise<void> {
   const concurrency = Math.max(1, Number(leesVlag(argv, "concurrency") ?? CONCURRENCY_STANDAARD) || CONCURRENCY_STANDAARD);
   const versie = modus === "foto" ? TAGGER_VERSION_FOTO : TAGGER_VERSION;
 
-  if (concurrency > 6) {
+  // Was ">6", uit het amendement. Fixronde 3 (controller, 22 sept 2026) mat
+  // dat concurrency 4 al een individuele aanroep tot ~3,6x vertraagt en de
+  // volledige H&M-ronde daardoor deed mislukken (alle porties op de
+  // time-out). Er is geen meting die concurrency boven de nieuwe standaard
+  // (CONCURRENCY_STANDAARD, 2) goedkeurt, dus de waarschuwing schaalt nu
+  // daarmee mee in plaats van een losse, inmiddels weerlegde drempel van 6
+  // vast te houden.
+  if (concurrency > CONCURRENCY_STANDAARD) {
     console.log(
-      `Waarschuwing: concurrency ${concurrency} ligt boven de aanbevolen 4-6 (zie amendement in taak-5-brief.md: ` +
-        "het abonnement liep eerder vol door veel parallelle sessies). Ga door op eigen risico."
+      `Waarschuwing: concurrency ${concurrency} ligt boven de standaard (${CONCURRENCY_STANDAARD}). Fixronde 3 ` +
+        "(22 sept 2026) mat dat concurrency 4 een individuele aanroep tot ~3,6x vertraagt en amper doorlooptijd " +
+        "wint (~10%); de time-out schaalt mee, maar hoger dan gemeten is ongetoetst. Ga door op eigen risico."
     );
   }
 
@@ -144,7 +154,7 @@ async function main(): Promise<void> {
         opdracht,
         jsonSchema: CLI_SCHEMA,
       });
-      const respons = await voerClaudeCliUit(args, timeoutMsVoorPortie(record.aantal), afbrekenController.signal);
+      const respons = await voerClaudeCliUit(args, timeoutMsVoorPortie(record.aantal, concurrency), afbrekenController.signal);
       const verwerkt = verwerkCliUitvoer(respons, record.producten, record.modus);
 
       if (verwerkt.mislukt) {

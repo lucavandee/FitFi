@@ -6,6 +6,9 @@ import type { BatchesBestand } from "../batchesStore";
 import {
   BASIS_KOSTEN_USD,
   CLI_SCHEMA,
+  CONTENTIE_CONCURRENCY_IJKPUNT,
+  CONTENTIE_FACTOR_OP_IJKPUNT,
+  DOORLOOP_FACTOR_OP_IJKPUNT,
   KANDIDATEN_PAGINA,
   KOSTEN_FACTOR_MET_SCHEMA,
   MAX_OPEENVOLGENDE_FOUTEN,
@@ -21,7 +24,9 @@ import {
   bouwProductBlok,
   bouwSysteemPromptCli,
   comprimeerVerwerkt,
+  contentieFactorVoorTimeout,
   controleerGeenOpenPortiesMeer,
+  doorloopFactorVoorConcurrency,
   downloadFoto,
   extensieVoorUrl,
   geschatteSecondenVoorPortie,
@@ -126,27 +131,62 @@ describe("tijd- en kostenmodel (fixronde 22 sept 2026: gekalibreerd op n=100, zi
     expect(schatEquivalentUsd(50)).toBeCloseTo(KOSTEN_FACTOR_MET_SCHEMA * (BASIS_KOSTEN_USD + PER_PRODUCT_KOSTEN_USD * 50), 6);
   });
 
-  it("timeoutMsVoorPortie geeft marge bovenop de tijdschatting, ook bij het ijkpunt n=100", () => {
-    const timeoutSeconden = timeoutMsVoorPortie(100) / 1000;
+  it("timeoutMsVoorPortie geeft marge bovenop de solo-tijdschatting bij concurrency 1", () => {
+    const timeoutSeconden = timeoutMsVoorPortie(100, 1) / 1000;
     expect(timeoutSeconden).toBeGreaterThan(132); // ruim boven de echte meting van 132s
     expect(timeoutSeconden).toBeCloseTo(TIMEOUT_VEILIGHEIDSMARGE * geschatteSecondenVoorPortie(100), 2);
   });
 
-  it("schatDroogeRun telt aanroepen, verdeelt looptijd over de concurrency en somt de kosten", () => {
-    const porties = [[product()], [product(), product()]]; // 1 + 2 producten
-    const schatting = schatDroogeRun(porties, 4);
-    expect(schatting.aantalAanroepen).toBe(2);
-    // met concurrency >= aantal porties lopen ze effectief parallel: de
-    // looptijd is de langzaamste portie, niet de som.
-    const verwacht = Math.round((geschatteSecondenVoorPortie(1) + geschatteSecondenVoorPortie(2)) / 2);
-    expect(schatting.geschatteSeconden).toBe(verwacht);
-    expect(schatting.equivalentUsd).toBeCloseTo(schatEquivalentUsd(1) + schatEquivalentUsd(2), 6);
+  it("timeoutMsVoorPortie schaalt mee met concurrency (fixronde 3): bij 4 ruim boven de gemeten 451s", () => {
+    // Dit is letterlijk de bug die de echte H&M-ronde deed mislukken: de
+    // oude time-out (199s, blind voor concurrency) overleefde de traagste
+    // van vier gelijktijdige aanroepen (451s) niet. De nieuwe time-out moet
+    // dat ruim overleven.
+    const timeoutSeconden = timeoutMsVoorPortie(100, 4) / 1000;
+    expect(timeoutSeconden).toBeGreaterThan(451);
+    // En hij moet daadwerkelijk groter zijn dan bij concurrency 1: dat is
+    // het hele punt van "meeschalen met concurrency".
+    expect(timeoutMsVoorPortie(100, 4)).toBeGreaterThan(timeoutMsVoorPortie(100, 1));
   });
 
-  it("schatDroogeRun deelt niet door meer werkers dan er porties zijn", () => {
-    const porties = [Array.from({ length: 5 }, () => product())];
-    const schatting = schatDroogeRun(porties, 4);
-    expect(schatting.geschatteSeconden).toBe(Math.round(geschatteSecondenVoorPortie(5)));
+  it("contentieFactorVoorTimeout: triviaal 1 bij concurrency 1, gemeten ratio bij concurrency 4", () => {
+    expect(contentieFactorVoorTimeout(1)).toBe(1);
+    expect(contentieFactorVoorTimeout(CONTENTIE_CONCURRENCY_IJKPUNT)).toBeCloseTo(CONTENTIE_FACTOR_OP_IJKPUNT, 6);
+    expect(CONTENTIE_FACTOR_OP_IJKPUNT).toBeCloseTo(451 / 126, 6);
+    // Lineaire interpolatie: tussen 1 en 4 moet 2 tussen de twee factoren in liggen.
+    expect(contentieFactorVoorTimeout(2)).toBeGreaterThan(1);
+    expect(contentieFactorVoorTimeout(2)).toBeLessThan(CONTENTIE_FACTOR_OP_IJKPUNT);
+    // Boven het ijkpunt is extrapolatie, maar moet wel doorstijgen (behoudend, niet plat).
+    expect(contentieFactorVoorTimeout(6)).toBeGreaterThan(CONTENTIE_FACTOR_OP_IJKPUNT);
+  });
+
+  it("doorloopFactorVoorConcurrency: triviaal 1 bij concurrency 1, gemeten ~10% winst bij concurrency 4", () => {
+    expect(doorloopFactorVoorConcurrency(1)).toBe(1);
+    expect(doorloopFactorVoorConcurrency(CONTENTIE_CONCURRENCY_IJKPUNT)).toBeCloseTo(DOORLOOP_FACTOR_OP_IJKPUNT, 6);
+    expect(DOORLOOP_FACTOR_OP_IJKPUNT).toBeCloseTo(451 / 4 / 126, 6);
+    // Gemeten: ~10% winst, geen 4x (dat zou 0.25 zijn geweest bij lineaire versnelling).
+    expect(DOORLOOP_FACTOR_OP_IJKPUNT).toBeGreaterThan(0.85);
+    expect(DOORLOOP_FACTOR_OP_IJKPUNT).toBeLessThan(0.95);
+  });
+
+  it("schatDroogeRun telt aanroepen, past de gemeten (bescheiden) doorloopwinst toe i.p.v. te delen door concurrency, en somt de kosten", () => {
+    const porties = [[product()], [product(), product()]]; // 1 + 2 producten
+    const schattingSolo = schatDroogeRun(porties, 1);
+    expect(schattingSolo.aantalAanroepen).toBe(2);
+    // Bij concurrency 1 is de schatting exact de seriële som: geen enkele
+    // versnelling verondersteld.
+    const serieelTotaal = geschatteSecondenVoorPortie(1) + geschatteSecondenVoorPortie(2);
+    expect(schattingSolo.geschatteSeconden).toBe(Math.round(serieelTotaal));
+    expect(schattingSolo.equivalentUsd).toBeCloseTo(schatEquivalentUsd(1) + schatEquivalentUsd(2), 6);
+
+    // Bij concurrency 4 (het ijkpunt) is de schatting NIET serieelTotaal/4
+    // (dat zou lineaire versnelling zijn, en die is er niet), maar
+    // serieelTotaal keer de gemeten doorloopfactor (~0.895, dus ~10% korter).
+    const schattingVier = schatDroogeRun(porties, 4);
+    expect(schattingVier.geschatteSeconden).toBe(Math.round(serieelTotaal * DOORLOOP_FACTOR_OP_IJKPUNT));
+    // Expliciete regressietoets tegen de oude (foute) aanname: NIET gelijk
+    // aan delen door 4.
+    expect(schattingVier.geschatteSeconden).not.toBe(Math.round(serieelTotaal / 4));
   });
 });
 
