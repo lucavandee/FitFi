@@ -54,6 +54,7 @@ import {
   bouwOpdracht,
   bouwSysteemPromptCli,
   comprimeerVerwerkt,
+  controleerGeenOpenPortiesMeer,
   downloadFoto,
   extensieVoorUrl,
   haalKandidaten,
@@ -177,6 +178,41 @@ async function main(): Promise<void> {
     }
   }
 
+  // Eén mislukte portie op zichzelf triggert voerMetConcurrency's stopregel
+  // niet (die telt pas bij MAX_OPEENVOLGENDE_FOUTEN op rij); het kan dus
+  // teruggeven zonder "gestopt" te zijn terwijl er toch nog een open portie
+  // overblijft (verspreide, niet-opeenvolgende time-outs). Zonder deze
+  // controle eindigt het script met "Klaar." en exitcode 0 terwijl er
+  // producten zonder tagger_version blijven staan: bij een onbeheerde ronde
+  // van tientallen minuten tot uren ziet iemand die alleen de laatste regel
+  // of de exitcode checkt dan succes waar dat niet klopt. Dat is precies wat
+  // het amendement uitsluit ("stopt met een duidelijke melding in plaats van
+  // stil producten over te slaan"). Gevonden en gefixt na twee fixrondes op
+  // deze taak; eerst alleen na de hervat-fase toegevoegd (waar hij ook een
+  // dubbele-portie-bug voorkwam, zie taak-5-report.md), nu ook na de
+  // hoofdronde, waar dezelfde blinde vlek bestond.
+  //
+  // Bewuste, gedocumenteerde aanname: MAX_OPEENVOLGENDE_FOUTEN in
+  // voerMetConcurrency is lokale functiestate en telt dus niet door tussen
+  // de hervat-fase (open portie(s) van een eerdere run) en de hoofdronde
+  // (nieuwe porties) hieronder. Dat is onschadelijk zolang deze functie na
+  // de hervat-fase al stopt zodra er ook maar één portie open blijft: de
+  // hoofdronde begint dan altijd bij nul openstaande porties, dus twee
+  // verspreide mislukkingen in de hervat-fase kunnen nooit optellen bij twee
+  // verspreide mislukkingen in de hoofdronde. De teller hoeft daarom niet
+  // tussen beide voerMetConcurrency-aanroepen te worden opgetild.
+  function stopAlsPortiesOpenBlijven(momentmelding: string): void {
+    const controle = controleerGeenOpenPortiesMeer(store, retailer, modus);
+    if (!controle.moetStoppen) return;
+    console.error(
+      `${momentmelding}: ${controle.aantalPorties} portie(s) (${controle.aantalProducten} producten) staan nog ` +
+        "open, door losse mislukkingen die de opeenvolgende-mislukkingen-drempel niet raakten. Geen dataverlies " +
+        "(keten_schrijf_tags is idempotent), maar dit is geen volledig geslaagde ronde: draai het commando " +
+        "opnieuw om ze af te ronden."
+    );
+    process.exit(1);
+  }
+
   // 1. Open porties van een eerdere run altijd eerst afronden, ook zonder --ja.
   const open = openBatches(store, retailer, modus) as PortieRecord[];
   if (open.length > 0) {
@@ -189,25 +225,13 @@ async function main(): Promise<void> {
       );
       process.exit(1);
     }
-    // Eén mislukte portie op zichzelf triggert de stopregel hierboven niet
-    // (die telt pas bij MAX_OPEENVOLGENDE_FOUTEN op rij), dus voerMetConcurrency
-    // kan hier teruggeven zonder gestopt te zijn terwijl er toch nog een open
-    // portie overblijft. Doorgaan naar nieuwe kandidaten zou dan hetzelfde
-    // product in twee porties kunnen laten belanden: één keer als de oude,
-    // nog openstaande portie (die zichzelf bij een volgende run weer aanbiedt)
-    // en één keer in een net gemaakte nieuwe portie met dezelfde, nog
-    // ongetagde producten. Geen dataverlies (keten_schrijf_tags is een
-    // idempotente upsert), maar wel een dubbele, verspilde claude -p aanroep.
-    // Waargenomen tijdens het testen van deze taak (taak-5-report.md).
-    const nogOpen = openBatches(store, retailer, modus);
-    if (nogOpen.length > 0) {
-      console.error(
-        `${nogOpen.length} portie(s) staan nog steeds open na een mislukte poging. Los dat eerst op (draai het ` +
-          "commando opnieuw) voordat er nieuwe kandidaten worden opgehaald, anders kan hetzelfde product in twee " +
-          "porties terechtkomen."
-      );
-      process.exit(1);
-    }
+    // Doorgaan naar nieuwe kandidaten met een nog openstaande portie zou
+    // hetzelfde product in twee porties kunnen laten belanden: één keer als
+    // de oude, nog openstaande portie (die zichzelf bij een volgende run
+    // weer aanbiedt) en één keer in een net gemaakte nieuwe portie met
+    // dezelfde, nog ongetagde producten. Waargenomen tijdens het testen van
+    // deze taak (taak-5-report.md).
+    stopAlsPortiesOpenBlijven("Na het afronden van openstaande porties");
   }
 
   // 2. Nieuwe kandidaten.
@@ -248,6 +272,7 @@ async function main(): Promise<void> {
     );
     process.exit(1);
   }
+  stopAlsPortiesOpenBlijven("Na de hoofdronde");
 
   console.log("Klaar.");
 }

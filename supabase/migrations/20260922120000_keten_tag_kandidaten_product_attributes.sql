@@ -65,23 +65,46 @@
      image_url like 'http%') zit om dezelfde reden niet in het
      indexpredicaat: p_versie is een parameter, geen vaste waarde, dus een
      partiële index op een specifieke versiestring zou bij de eerstvolgende
-     tag-versie al niet meer dekken. De foto-verzameling is bovendien veel
-     kleiner dan de tekst-verzameling (pas gevuld ná een volledige
-     tekst-ronde, alleen lage-confidence rijen): dezelfde index reduceert
-     eerst tot de retailer/canoniek/fashion/geclassificeerd/voorraad-
-     deelverzameling, en tagger_version/confidence lopen daarna als filter
-     mee, zonder een eigen index nodig te hebben.
+     tag-versie al niet meer dekken.
+
+     FIXRONDE 2 (controller, 22 sept 2026): de oorspronkelijke tekst hier
+     beweerde "geen regressie" voor de foto-tak op basis van aanname, niet
+     van een meting. Dat is gecorrigeerd na EXPLAIN (ANALYZE, BUFFERS) op de
+     foto-tak-query zelf (retailer H&M (NL), tagger_version haiku-4.5-v1,
+     22 getagde rijen op dat moment): de planner kiest daar
+     idx_product_attributes_tagger_version (op (tagger_version, product_id),
+     niet-partieel, geen retailer of confidence in het predicaat), NIET de
+     nieuwe idx_product_attributes_tag_kandidaten hierboven. is_fashion,
+     classifier_version, in_stock, confidence, canonical_id en retailer
+     lopen dan allemaal als filter NA de indexscan, op de al opgehaalde
+     heap-rijen ("Rows Removed by Filter: 25", 5,2 ms totaal). Bij de
+     huidige lage volumes is dat verwaarloosbaar. Zodra tienduizenden rijen
+     dezelfde tagger_version delen -- na een volledige tekst-ronde is dat
+     vrijwel de hele populatie -- wordt tagger_version als enig indexcriterium
+     onselectief: dezelfde soort probleem als deze migratie voor de tekst-tak
+     oploste (veel heap-fetches voordat een filter iets uitsluit), maar dan
+     voor de foto-tak en nog ongemeten. Vooral relevant voor een kleine
+     retailer die zijn fotoronde draait nadat een grote retailer al volledig
+     getagd is: dan matcht tagger_version bijna de hele tabel en sluit
+     retailer pas als post-scan-filter het grootste deel weer uit. Wat NIET
+     is vastgesteld: of de planner bij die volumes dezelfde indexkeuze
+     maakt (kardinaliteitsschattingen kunnen dan anders uitvallen) -- alleen
+     dat het risico van een onselectief predicaat reëel en ongetoetst is.
+
+     Bewust NIET hersteld in deze migratie: er is geen populatie om een
+     index tegen te toetsen (de fotoronde start pas ná een volledige
+     tekst-ronde), en een index bouwen op een vermoeden in plaats van een
+     meting is precies de fout die deze migratie voor de tekst-tak
+     repareerde. Aanbeveling: EXPLAIN (ANALYZE, BUFFERS) opnieuw draaien op
+     de foto-tak-query zodra een tekst-ronde met voldoende volume klaar is,
+     en pas dan beslissen of er een eigen (partiële) index nodig is.
 
      image_url blijft getoetst via de join naar products (p.image_url like
      'http%'): product_attributes heeft geen image_url-kolom. Die
      toevoegen vraagt om een backfill via vul_product_attributes of een
      losse update op basis van products, en dat valt buiten deze taak
      (products en vul_product_attributes blijven onaangeraakt van deze
-     migratie, expliciete randvoorwaarde). Geen regressie: de foto-tak was
-     nooit de gerapporteerde blokkade, en zijn kandidatenverzameling is na
-     de indexreductie hierboven al klein, dus de resterende join naar
-     products raakt geen duizenden losse heap-fetches meer zoals de
-     tekst-tak vóór deze migratie.
+     migratie, expliciete randvoorwaarde).
 
   ## Meting na deze migratie
   EXPLAIN ANALYZE op pagina 1, pagina 3 en een pagina diep in de reeks

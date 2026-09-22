@@ -21,6 +21,7 @@ import {
   bouwProductBlok,
   bouwSysteemPromptCli,
   comprimeerVerwerkt,
+  controleerGeenOpenPortiesMeer,
   downloadFoto,
   extensieVoorUrl,
   geschatteSecondenVoorPortie,
@@ -467,6 +468,80 @@ describe("voerMetConcurrency", () => {
     let i = 0;
     const uitkomst = await voerMetConcurrency(uitslagen, 1, 3, async () => uitslagen[i++]);
     expect(uitkomst.gestopt).toBe(false);
+  });
+});
+
+describe("controleerGeenOpenPortiesMeer (fixronde 2, controller 22 sept 2026)", () => {
+  // Reproduceert precies het faalscenario uit de review: bij verspreide
+  // mislukkingen die MAX_OPEENVOLGENDE_FOUTEN nooit op rij raken, geeft
+  // voerMetConcurrency "gestopt: false" terug terwijl er toch open porties
+  // overblijven. Zonder een aparte, na afloop uitgevoerde controle zou
+  // tag-products.ts dan "Klaar." met exitcode 0 melden. Deze test bewijst
+  // dat de combinatie (voerMetConcurrency + controleerGeenOpenPortiesMeer)
+  // dat scenario wél als niet-succesvol herkent.
+  it("herkent verspreide, niet-opeenvolgende mislukkingen als 'moet stoppen', ook als voerMetConcurrency zelf niet stopte", async () => {
+    const retailer = "H&M (NL)";
+    const modus = "tekst" as const;
+
+    // 20 porties, alle "open". Porties op index 4 en 13 mislukken (time-out);
+    // de rest, inclusief de porties er direct naast, slaagt. Nooit twee
+    // mislukkingen op rij, dus de drempel van 3 wordt nooit geraakt.
+    const porties: PortieRecord[] = Array.from({ length: 20 }, (_, i) =>
+      maakPortieRecord({ retailer, modus, tagger_version: TAGGER_VERSION, producten: [product({ product_id: `p${i}` })] })
+    );
+    let store: BatchesBestand = { batches: porties };
+    const mislukkenOp = new Set([4, 13]);
+
+    const uitkomst = await voerMetConcurrency(porties, 4, 3, async (portie) => {
+      const i = porties.indexOf(portie);
+      if (mislukkenOp.has(i)) {
+        return { ok: false, reden: `portie ${i} time-out` };
+      }
+      // Simuleert wat verwerkPortie in tag-products.ts doet bij succes:
+      // markeren als verwerkt in de gedeelde store.
+      store = { batches: store.batches.map((b) => (b.id === portie.id ? { ...b, status: "verwerkt" as const } : b)) };
+      return { ok: true };
+    });
+
+    // De kern van de bug: geen enkele reeks van 3 mislukkingen op rij, dus
+    // voerMetConcurrency meldt zelf geen "gestopt".
+    expect(uitkomst.gestopt).toBe(false);
+
+    // Maar er staan wél degelijk nog 2 porties open, met samen 2 producten
+    // (1 product per portie in deze test). controleerGeenOpenPortiesMeer
+    // moet dat vangen, ook al zegt voerMetConcurrency "niet gestopt".
+    const controle = controleerGeenOpenPortiesMeer(store, retailer, modus);
+    expect(controle.moetStoppen).toBe(true);
+    expect(controle.aantalPorties).toBe(2);
+    expect(controle.aantalProducten).toBe(2);
+  });
+
+  it("geeft moetStoppen: false als alle porties verwerkt zijn", () => {
+    const retailer = "H&M (NL)";
+    const modus = "tekst" as const;
+    const porties = Array.from({ length: 5 }, (_, i) =>
+      maakPortieRecord({ retailer, modus, tagger_version: TAGGER_VERSION, producten: [product({ product_id: `p${i}` })] })
+    );
+    const store: BatchesBestand = {
+      batches: porties.map((p) => ({ ...p, status: "verwerkt" as const })),
+    };
+    const controle = controleerGeenOpenPortiesMeer(store, retailer, modus);
+    expect(controle).toEqual({ moetStoppen: false, aantalPorties: 0, aantalProducten: 0 });
+  });
+
+  it("telt alleen open porties van de opgegeven retailer en modus mee", () => {
+    const modus = "tekst" as const;
+    const open1 = maakPortieRecord({ retailer: "H&M (NL)", modus, tagger_version: TAGGER_VERSION, producten: [product()] });
+    const anderRetailer = maakPortieRecord({ retailer: "Giglio", modus, tagger_version: TAGGER_VERSION, producten: [product()] });
+    const anderModus = maakPortieRecord({
+      retailer: "H&M (NL)",
+      modus: "foto",
+      tagger_version: TAGGER_VERSION_FOTO,
+      producten: [product()],
+    });
+    const store: BatchesBestand = { batches: [open1, anderRetailer, anderModus] };
+    const controle = controleerGeenOpenPortiesMeer(store, "H&M (NL)", "tekst");
+    expect(controle).toEqual({ moetStoppen: true, aantalPorties: 1, aantalProducten: 1 });
   });
 });
 

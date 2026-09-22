@@ -32,7 +32,7 @@ import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import { promisify } from "node:util";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { BatchesBestand, BatchRecord } from "./batchesStore";
+import { openBatches, type BatchesBestand, type BatchRecord } from "./batchesStore";
 import {
   TAG_SCHEMA,
   TAGGER_VERSION,
@@ -211,6 +211,41 @@ export function comprimeerVerwerkt(store: BatchesBestand, id: string): BatchesBe
       delete rest.producten;
       return rest as BatchRecord;
     }),
+  };
+}
+
+export interface OpenPortiesControle {
+  moetStoppen: boolean;
+  aantalPorties: number;
+  aantalProducten: number;
+}
+
+/**
+ * Controleert of er, ondanks een niet-gestopte voerMetConcurrency-aanroep,
+ * toch nog open porties over zijn. voerMetConcurrency's stopregel telt pas
+ * bij MAX_OPEENVOLGENDE_FOUTEN mislukkingen OP RIJ (zie voerMetConcurrency
+ * hieronder); verspreide, niet-opeenvolgende mislukkingen (een paar
+ * time-outs met geslaagde porties ertussen) triggeren die stopregel nooit,
+ * maar laten wel degelijk producten zonder tagger_version achter.
+ *
+ * Fixronde 2 (controller, 22 sept 2026): zonder een aparte controle NA elke
+ * voerMetConcurrency-aanroep eindigt tag-products.ts dan met "Klaar." en
+ * exitcode 0, terwijl er nog open porties (met producten zonder
+ * tagger_version) in .batches.json staan. Bij een onbeheerde ronde van
+ * tientallen minuten tot uren ziet iemand die alleen de laatste regel of de
+ * exitcode checkt dan succes waar dat niet klopt: precies wat het amendement
+ * uitsluit ("stopt met een duidelijke melding in plaats van stil producten
+ * over te slaan"). tag-products.ts roept dit na ZOWEL de hervat-fase als de
+ * hoofdronde aan; de eerste keer voorkwam dit ook al een dubbele-portie-bug
+ * (zie taak-5-report.md), de tweede plek (na de hoofdronde) ontbrak in de
+ * eerste versie van deze taak en is in deze fixronde toegevoegd.
+ */
+export function controleerGeenOpenPortiesMeer(store: BatchesBestand, retailer: string, modus: Modus): OpenPortiesControle {
+  const nogOpen = openBatches(store, retailer, modus);
+  return {
+    moetStoppen: nogOpen.length > 0,
+    aantalPorties: nogOpen.length,
+    aantalProducten: nogOpen.reduce((som, b) => som + b.aantal, 0),
   };
 }
 
