@@ -13,11 +13,12 @@ import {
   KANDIDATEN_PAGINA,
   KOSTEN_FACTOR_MET_SCHEMA,
   MAX_OPEENVOLGENDE_FOUTEN,
+  OPBRENGST_FRACTIE_ZONDER_SCHEMA,
   OPSTART_SECONDEN,
-  PER_PRODUCT_KOSTEN_USD,
+  PER_PRODUCT_KOSTEN_USD_ZONDER_SCHEMA,
   PORTIE_GROOTTE,
   SCHRIJF_CHUNK,
-  SECONDEN_PER_PRODUCT,
+  SECONDEN_PER_PRODUCT_ZONDER_SCHEMA,
   TIJD_FACTOR_MET_SCHEMA,
   TIMEOUT_VEILIGHEIDSMARGE,
   bouwClaudeArgs,
@@ -30,9 +31,11 @@ import {
   doorloopFactorVoorConcurrency,
   downloadFoto,
   extensieVoorUrl,
+  geschatteRondesTotConvergentie,
   geschatteSecondenVoorPortie,
   haalKandidaten,
   maakPortieRecord,
+  parseJsonUitCliTekst,
   schatDroogeRun,
   schatEquivalentUsd,
   schrijfRijen,
@@ -98,61 +101,72 @@ describe("splitsInPorties", () => {
   });
 });
 
-describe("tijd- en kostenmodel (fixronde 22 sept 2026: gekalibreerd op n=100, zie taak-5-report.md)", () => {
-  it("het basismodel zonder --json-schema klopt met de twee echte metingen (10 en 100 producten)", () => {
-    // 55 + 1.4*10 = 69 (amendement), 55 + 1.4*100 = 195 ≈ 194 (controllers A/B).
+describe("tijd- en kostenmodel (herijkt 23 sept 2026: --json-schema is niet meer de standaard, zie taak-5-report.md)", () => {
+  it("de vaste (opstart)kosten blijven ongewijzigd; alleen de per-product-term ZONDER schema is herrekend op de meting van vandaag", () => {
     expect(OPSTART_SECONDEN).toBe(55);
-    expect(SECONDEN_PER_PRODUCT).toBe(1.4);
-    expect(OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 10).toBeCloseTo(69, 5);
-    // Het kale model geeft 195 (55 + 1.4*100); de echte meting was 194s. Eén
-    // seconde verschil door afronding, geen exacte pasvorm en dat hoeft ook
-    // niet: dit is de zonder-schema-basis, niet het ijkpunt zelf.
-    expect(Math.abs(OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 100 - 194)).toBeLessThanOrEqual(2);
-    // Kostenbasis: basis + 10k = 0.044, basis + 100k = 0.148.
-    expect(BASIS_KOSTEN_USD + 10 * PER_PRODUCT_KOSTEN_USD).toBeCloseTo(0.044, 3);
-    expect(BASIS_KOSTEN_USD + 100 * PER_PRODUCT_KOSTEN_USD).toBeCloseTo(0.148, 3);
+    expect(BASIS_KOSTEN_USD).toBeCloseTo(0.03244, 5);
+    // Enige betrouwbare ijkpunt op de nieuwe standaardweg: 84s / $0.110 bij
+    // n=100, 1 beurt (Luc, 23 sept 2026). (84-55)/100 en (0.110-basis)/100.
+    expect(SECONDEN_PER_PRODUCT_ZONDER_SCHEMA).toBeCloseTo((84 - 55) / 100, 6);
+    expect(PER_PRODUCT_KOSTEN_USD_ZONDER_SCHEMA).toBeCloseTo((0.11 - 0.03244) / 100, 6);
+    expect(OPSTART_SECONDEN + SECONDEN_PER_PRODUCT_ZONDER_SCHEMA * 100).toBeCloseTo(84, 5);
+    expect(BASIS_KOSTEN_USD + 100 * PER_PRODUCT_KOSTEN_USD_ZONDER_SCHEMA).toBeCloseTo(0.11, 5);
   });
 
-  it("tijd- en kostenfactor voor --json-schema zijn apart (niet gelijk): sneller maar duurder", () => {
-    // Controllers A/B op 100 producten: met schema 132s/$0.212, zonder 194s/$0.148.
-    expect(TIJD_FACTOR_MET_SCHEMA).toBeLessThan(1); // sneller
-    expect(KOSTEN_FACTOR_MET_SCHEMA).toBeGreaterThan(1); // duurder
-    expect(TIJD_FACTOR_MET_SCHEMA).not.toBeCloseTo(KOSTEN_FACTOR_MET_SCHEMA, 1);
-    expect(TIJD_FACTOR_MET_SCHEMA).toBeCloseTo(132 / 194, 6);
-    expect(KOSTEN_FACTOR_MET_SCHEMA).toBeCloseTo(0.212 / 0.148, 6);
+  it("geschatteSecondenVoorPortie/schatEquivalentUsd zijn ZONDER schema standaard (metSchema=false) en komen op n=100 overeen met de meting van vandaag", () => {
+    expect(geschatteSecondenVoorPortie(100)).toBeCloseTo(84, 5);
+    expect(geschatteSecondenVoorPortie(100, false)).toBeCloseTo(84, 5);
+    expect(schatEquivalentUsd(100)).toBeCloseTo(0.11, 5);
+    expect(schatEquivalentUsd(100, false)).toBeCloseTo(0.11, 5);
   });
 
-  it("geschatteSecondenVoorPortie en schatEquivalentUsd komen op het ijkpunt (n=100) overeen met de echte meting", () => {
-    expect(Math.abs(geschatteSecondenVoorPortie(100) - 132)).toBeLessThanOrEqual(1);
-    expect(schatEquivalentUsd(100)).toBeCloseTo(0.212, 2);
+  it("geschatteSecondenVoorPortie/schatEquivalentUsd komen MET schema (metSchema=true) overeen met de meting van vandaag (428s / $0.408 bij n=100)", () => {
+    expect(geschatteSecondenVoorPortie(100, true)).toBeCloseTo(428, 3);
+    expect(schatEquivalentUsd(100, true)).toBeCloseTo(0.408, 3);
   });
 
-  it("geschatteSecondenVoorPortie en schatEquivalentUsd passen hun eigen factor toe (geen gedeelde vermenigvuldiger)", () => {
-    expect(geschatteSecondenVoorPortie(50)).toBeCloseTo(TIJD_FACTOR_MET_SCHEMA * (OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * 50), 6);
-    expect(schatEquivalentUsd(50)).toBeCloseTo(KOSTEN_FACTOR_MET_SCHEMA * (BASIS_KOSTEN_USD + PER_PRODUCT_KOSTEN_USD * 50), 6);
+  it("TIJD_FACTOR_MET_SCHEMA en KOSTEN_FACTOR_MET_SCHEMA komen uit een schone, gelijktijdige A/B van vandaag, niet meer uit het oudere paar dat de meting van vandaag tegensprak", () => {
+    expect(TIJD_FACTOR_MET_SCHEMA).toBeCloseTo(428 / 84, 6);
+    expect(KOSTEN_FACTOR_MET_SCHEMA).toBeCloseTo(0.408 / 0.11, 6);
+    // Deze keer wijzen beide factoren dezelfde kant op (allebei trager EN
+    // duurder met schema): anders dan de vorige kalibratie (sneller maar
+    // duurder). Dat verschil is zelf een teken van hoeveel ruis er op dit pad
+    // zit, geen tegenstrijdigheid die opgelost moet worden.
+    expect(TIJD_FACTOR_MET_SCHEMA).toBeGreaterThan(1);
+    expect(KOSTEN_FACTOR_MET_SCHEMA).toBeGreaterThan(1);
   });
 
-  it("timeoutMsVoorPortie geeft ruime marge (3x) boven de solo-tijdschatting bij concurrency 1 (fixronde 4)", () => {
-    // Drie losse solo-metingen (fixronde 3 en 4): 122, 126, 132s. De time-out
-    // moet ruim boven de traagste daarvan zitten, niet krap erboven: dat was
-    // precies de les van twee mislukte echte ronden ("een krappe time-out is
-    // duurder dan een ruime").
+  it("timeoutMsVoorPortie is standaard (zonder schema) een ruime (3x) marge boven de meting van vandaag bij concurrency 1", () => {
     const timeoutSeconden = timeoutMsVoorPortie(100, 1) / 1000;
-    expect(timeoutSeconden).toBeGreaterThan(3 * 132); // ruim (3x) boven de traagste waargenomen solo-aanroep
-    expect(timeoutSeconden).toBeCloseTo(TIMEOUT_VEILIGHEIDSMARGE * geschatteSecondenVoorPortie(100), 2);
+    expect(timeoutSeconden).toBeCloseTo(TIMEOUT_VEILIGHEIDSMARGE * 84, 2);
+    expect(timeoutSeconden).toBeGreaterThan(3 * 84 - 1);
     expect(TIMEOUT_VEILIGHEIDSMARGE).toBe(3);
   });
 
-  it("timeoutMsVoorPortie schaalt mee met concurrency en overleeft de gemeten waarden ruim op elk ijkpunt", () => {
+  it("timeoutMsVoorPortie blijft MET schema ruim boven de fixronde-3/4-metingen (die allemaal met --json-schema aan zijn gedraaid)", () => {
     // Concurrency 4 (fixronde 3): traagste individuele aanroep 451s.
-    expect(timeoutMsVoorPortie(100, 4) / 1000).toBeGreaterThan(451);
+    expect(timeoutMsVoorPortie(100, 4, true) / 1000).toBeGreaterThan(451);
     // Concurrency 2 (fixronde 4): 15 van de 29 aanroepen liepen op de oude
-    // time-out van 370s vast (dus ≥370s, gecensureerd). De nieuwe time-out
-    // moet daar ruim boven zitten, niet er net overheen.
-    expect(timeoutMsVoorPortie(100, 2) / 1000).toBeGreaterThan(2 * 370);
-    // Moet strikt stijgen met concurrency: dat is het hele punt van "meeschalen".
+    // time-out van 370s vast (dus ≥370s, gecensureerd).
+    expect(timeoutMsVoorPortie(100, 2, true) / 1000).toBeGreaterThan(2 * 370);
+    expect(timeoutMsVoorPortie(100, 1, true)).toBeLessThan(timeoutMsVoorPortie(100, 2, true));
+    expect(timeoutMsVoorPortie(100, 2, true)).toBeLessThan(timeoutMsVoorPortie(100, 4, true));
+  });
+
+  it("timeoutMsVoorPortie schaalt mee met concurrency, met én zonder schema", () => {
     expect(timeoutMsVoorPortie(100, 1)).toBeLessThan(timeoutMsVoorPortie(100, 2));
     expect(timeoutMsVoorPortie(100, 2)).toBeLessThan(timeoutMsVoorPortie(100, 4));
+    // Bij dezelfde concurrency is de met-schema-timeout altijd ruimer dan
+    // zonder, want geschatteSecondenVoorPortie(..., true) > (..., false).
+    expect(timeoutMsVoorPortie(100, 1, true)).toBeGreaterThan(timeoutMsVoorPortie(100, 1, false));
+  });
+
+  it("OPBRENGST_FRACTIE_ZONDER_SCHEMA en geschatteRondesTotConvergentie: gedeeltelijke opbrengst als meetkundige reeks", () => {
+    expect(OPBRENGST_FRACTIE_ZONDER_SCHEMA).toBeCloseTo(0.65, 6);
+    expect(geschatteRondesTotConvergentie(1)).toBe(1);
+    expect(geschatteRondesTotConvergentie(0.5)).toBeCloseTo(2, 6);
+    expect(geschatteRondesTotConvergentie(OPBRENGST_FRACTIE_ZONDER_SCHEMA)).toBeCloseTo(1 / 0.65, 6);
+    expect(geschatteRondesTotConvergentie(0)).toBe(Infinity);
   });
 
   it("contentieFactorVoorTimeout: drie echte ijkpunten (1, 2, 4), piecewise lineair ertussen en erboven", () => {
@@ -204,17 +218,47 @@ describe("tijd- en kostenmodel (fixronde 22 sept 2026: gekalibreerd op n=100, zi
     expect(schattingVier.geschatteSeconden).not.toBe(Math.round(serieelTotaal / 4));
   });
 
-  it("toont bij concurrency 1 (de nieuwe standaard) de eerlijke, volledig seriële schatting (fixronde 4, punt 4)", () => {
-    // 166 porties van ~100 producten (de echte H&M-ronde): de controller
-    // noemt "circa 5,8 uur" als de eerlijke solo-schatting.
+  it("toont bij concurrency 1 (de nieuwe standaard) de eerlijke, volledig seriële schatting VOOR ÉÉN RONDE", () => {
+    // 166 porties van 100 producten (de echte H&M-ronde, 147 nog open op het
+    // moment van deze herijking): één ronde (één `--ja`-aanroep) zonder
+    // schema duurt naar schatting geen 5,8 uur meer, want die schatting kwam
+    // uit het oude, schema-gekalibreerde model. Op het nieuwe ijkpunt (84s
+    // per portie) is dat ~3,9 uur voor ÉÉN pass over de kandidaten.
     const porties166 = Array.from({ length: 166 }, () => Array.from({ length: 100 }, () => product()));
     const schatting = schatDroogeRun(porties166, 1);
     // Geen enkele versnelling verondersteld bij concurrency 1: exact de
     // seriële som, geen doorloopfactor.
     expect(schatting.geschatteSeconden).toBe(Math.round(166 * geschatteSecondenVoorPortie(100)));
     const uren = schatting.geschatteSeconden / 3600;
-    expect(uren).toBeGreaterThan(5.5);
-    expect(uren).toBeLessThan(6.5);
+    expect(uren).toBeGreaterThan(3.5);
+    expect(uren).toBeLessThan(4.5);
+  });
+
+  it("schatDroogeRun rekent zonder schema de gedeeltelijke opbrengst door naar een eerlijk totaalbeeld (meerdere ronden om te convergeren)", () => {
+    const porties166 = Array.from({ length: 166 }, () => Array.from({ length: 100 }, () => product()));
+    const schatting = schatDroogeRun(porties166, 1);
+    expect(schatting.geschatteRondesTotConvergentie).toBeCloseTo(1 / OPBRENGST_FRACTIE_ZONDER_SCHEMA, 6);
+    expect(schatting.geschatteSecondenTotConvergentie).toBe(
+      Math.round(schatting.geschatteSeconden * schatting.geschatteRondesTotConvergentie)
+    );
+    expect(schatting.equivalentUsdTotConvergentie).toBeCloseTo(
+      schatting.equivalentUsd * schatting.geschatteRondesTotConvergentie,
+      6
+    );
+    // Met de opbrengstfractie meegerekend komt het totaalbeeld (meerdere
+    // ronden) weer in de buurt van de oude "circa 5,8 uur"-orde van grootte,
+    // maar nu als optelsom van ~1,5 ronde i.p.v. één ronde met schema.
+    const urenTotConvergentie = schatting.geschatteSecondenTotConvergentie / 3600;
+    expect(urenTotConvergentie).toBeGreaterThan(5.5);
+    expect(urenTotConvergentie).toBeLessThan(6.5);
+  });
+
+  it("schatDroogeRun rekent MET schema geen extra ronden: geschatteRondesTotConvergentie is exact 1 (100% opbrengst gemeten)", () => {
+    const porties = [[product(), product()]];
+    const schatting = schatDroogeRun(porties, 1, true);
+    expect(schatting.geschatteRondesTotConvergentie).toBe(1);
+    expect(schatting.geschatteSecondenTotConvergentie).toBe(schatting.geschatteSeconden);
+    expect(schatting.equivalentUsdTotConvergentie).toBeCloseTo(schatting.equivalentUsd, 6);
   });
 });
 
@@ -314,6 +358,26 @@ describe("strippenJsonHekjes", () => {
   it("strip kale ```-hekjes zonder taalcode", () => {
     expect(strippenJsonHekjes('```\n{"a":1}\n```')).toBe('{"a":1}');
   });
+
+  it("strip hekjes ook als er tekst vóór of na het blok staat (zonder --json-schema gemeten, 23 sept 2026)", () => {
+    expect(strippenJsonHekjes('Hier zijn de tags:\n```json\n{"a":1}\n```\nBedankt!')).toBe('{"a":1}');
+  });
+});
+
+describe("parseJsonUitCliTekst (het hoofdpad zonder --json-schema sinds de terugdraai)", () => {
+  it("parseert platte JSON en JSON in hekjes, zoals strippenJsonHekjes", () => {
+    expect(parseJsonUitCliTekst('{"a":1}')).toEqual({ a: 1 });
+    expect(parseJsonUitCliTekst('```json\n{"a":1}\n```')).toEqual({ a: 1 });
+  });
+
+  it("haalt het JSON-object eruit als er tekst vóór of na staat, ook zonder hekjes eromheen", () => {
+    expect(parseJsonUitCliTekst('Hier zijn de tags: {"a":1} Dat was het.')).toEqual({ a: 1 });
+  });
+
+  it("geeft null bij volledig onparseerbare of lege tekst, in plaats van te gooien", () => {
+    expect(parseJsonUitCliTekst("sorry, ik kan dit niet")).toBeNull();
+    expect(parseJsonUitCliTekst("")).toBeNull();
+  });
 });
 
 describe("bouwClaudeArgs: harde randvoorwaarden uit het amendement", () => {
@@ -322,6 +386,12 @@ describe("bouwClaudeArgs: harde randvoorwaarden uit het amendement", () => {
     systeemPrompt: "systeem",
     opdracht: "opdracht",
     jsonSchema: { type: "object" },
+  });
+
+  it("laat --json-schema helemaal weg als er geen schema wordt meegegeven (de standaard sinds 23 sept 2026)", () => {
+    const argsZonder = bouwClaudeArgs({ model: "m", systeemPrompt: "s", opdracht: "o" });
+    expect(argsZonder).not.toContain("--json-schema");
+    expect(argsZonder[argsZonder.length - 1]).toBe("o");
   });
 
   it("bevat nooit --bare", () => {
@@ -369,6 +439,7 @@ describe("verwerkCliUitvoer", () => {
     expect(uit.rijen.map((r) => r.product_id).sort()).toEqual(["a", "b"]);
     expect(uit.rijen[0].tagger_version).toBe(TAGGER_VERSION);
     expect(uit.fouten).toEqual([]);
+    expect(uit.aantalObjecten).toBe(2);
   });
 
   it("gebruikt TAGGER_VERSION_FOTO in modus foto", () => {
@@ -386,6 +457,18 @@ describe("verwerkCliUitvoer", () => {
     expect(uit.rijen).toHaveLength(2);
   });
 
+  it("valt terug op result met tekst vóór/na het JSON-blok, ook zonder hekjes (gemeten zonder --json-schema, 23 sept 2026)", () => {
+    const respons = {
+      result:
+        "Hier zijn de tags: " +
+        JSON.stringify({ items: [{ index: 1, ...geldigeTags }, { index: 2, ...geldigeTags }] }) +
+        " Klaar.",
+    };
+    const uit = verwerkCliUitvoer(respons, producten, "tekst");
+    expect(uit.mislukt).toBe(false);
+    expect(uit.rijen).toHaveLength(2);
+  });
+
   it("koppelt op index, niet op array-positie: een product dat ontbreekt wordt een fout, niet een verschuiving", () => {
     // Het model laat index 1 weg; alleen index 2 komt terug.
     const respons = { structured_output: { items: [{ index: 2, ...geldigeTags }] } };
@@ -394,6 +477,30 @@ describe("verwerkCliUitvoer", () => {
     expect(uit.rijen).toHaveLength(1);
     expect(uit.rijen[0].product_id).toBe("b");
     expect(uit.fouten).toEqual([{ product_id: "a", reden: "geen tag ontvangen van het model (ontbreekt in de uitvoer)" }]);
+    expect(uit.aantalObjecten).toBe(1);
+  });
+
+  it("laat MEERDERE ontbrekende producten (minder objecten terug dan verstuurd) allemaal als fout zien, geen enkele stilzwijgend als verwerkt", () => {
+    // Nabootsing van de echte meting (23 sept 2026): 5 verstuurd, het model
+    // geeft alleen voor product 1, 3 en 5 een object terug (3 van de 5).
+    const vijfProducten = Array.from({ length: 5 }, (_, i) => product({ product_id: `p${i}` }));
+    const respons = {
+      structured_output: {
+        items: [
+          { index: 1, ...geldigeTags },
+          { index: 3, ...geldigeTags },
+          { index: 5, ...geldigeTags },
+        ],
+      },
+    };
+    const uit = verwerkCliUitvoer(respons, vijfProducten, "tekst");
+    expect(uit.mislukt).toBe(false);
+    expect(uit.aantalObjecten).toBe(3);
+    expect(uit.rijen.map((r) => r.product_id).sort()).toEqual(["p0", "p2", "p4"]);
+    // p1 (index 2) en p3 (index 4) kregen geen object: moeten als fout
+    // genoteerd staan, niet stilzwijgend als verwerkt gelden.
+    expect(uit.fouten.map((f) => f.product_id).sort()).toEqual(["p1", "p3"]);
+    expect(uit.fouten.every((f) => f.reden.includes("ontbreekt in de uitvoer"))).toBe(true);
   });
 
   it("negeert een dubbele index (eerste telt) in plaats van te crashen", () => {

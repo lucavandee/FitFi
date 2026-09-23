@@ -13,20 +13,32 @@
  *   zo blijft vastliggen welke snapshot een tagger_version heeft getagd, ook
  *   als het alias later naar een nieuw model wijst;
  * - --allowed-tools "" (taggen heeft geen tools nodig);
- * - --json-schema voor gevalideerde structured output (zie tagCli.ts voor
- *   waarom dit een bewuste afwijking is van de letterlijke aanroep in de
- *   brief: --json-schema bestond kennelijk niet in de geteste opzet daar,
- *   maar lost het "```json-hekjes"-probleem structureel op in plaats van met
- *   string-strippen).
+ * - --json-schema is GEEN standaard meer sinds de terugdraai (Luc, 23 sept
+ *   2026, zie tagCli.ts): drie echte productierondes liepen vast op
+ *   time-outs, wat toen ten onrechte aan een abonnementslimiet werd
+ *   toegeschreven. De echte oorzaak: --json-schema dwingt soms tot 4
+ *   herkansingen (beurten) af om het antwoord aan het schema te laten
+ *   voldoen, en dat kost tijd, niet contentie. Het standaardpad gebruikt nu
+ *   GEEN --json-schema (1 beurt, 84s/$0.110 gemeten bij n=100) en valt terug
+ *   op het robuust extraheren van JSON uit de vrije tekst (parseJsonUitCliTekst
+ *   in tagCli.ts, dekt hekjes, tekst vóór/na het blok, en minder objecten
+ *   terug dan verstuurd). --json-schema blijft bestaan als expliciete vlag
+ *   (--json-schema) voor wie gegarandeerd 100% van de objecten in één beurt
+ *   wil, tegen een prijs van ~5x de tijd en ~3,7x de kosten (gemeten 23 sept
+ *   2026, zie tagCli.ts).
  *
  * Gebruik:
  *   npm run keten:tag                                   droge run op STANDAARD_RETAILER
  *   npm run keten:tag -- --retailer "H&M (NL)" --ja      verstuurt en schrijft
  *   npm run keten:tag -- --met-foto --ja                 foto-ronde voor confidence < 0.6
  *   --limit N            alleen de eerste N kandidaten (proefrun)
+ *   --json-schema         forceert claude -p --json-schema (standaard uit sinds 23 sept 2026: trager,
+ *                         duurder, maar 100% opbrengst in één beurt i.p.v. de ~65% zonder schema)
  *   --concurrency N      aantal gelijktijdige claude -p aanroepen (standaard 1: twee echte rondes
  *                         op concurrency 4 en 2 liepen allebei vast, zie fixronde 3 en 4 in
- *                         taak-5-report.md. Hoger dan 1 wordt afgeraden, niet aanbevolen)
+ *                         taak-5-report.md. Hoger dan 1 wordt afgeraden, niet aanbevolen. LET OP: die
+ *                         metingen zijn allebei gedraaid MET --json-schema aan, dus mogelijk niet meer
+ *                         representatief voor het standaardpad zonder schema, zie tagCli.ts)
  *
  * Idempotent: keten_tag_kandidaten selecteert op tagger_version, een rij die
  * deze versie al heeft komt niet meer langs. Hervatbaar: openstaande porties
@@ -82,6 +94,7 @@ async function main(): Promise<void> {
   const modus: Modus = heeftVlag(argv, "met-foto") ? "foto" : "tekst";
   const limiet = Number(leesVlag(argv, "limit") ?? 0) || 0;
   const ja = heeftVlag(argv, "ja");
+  const metJsonSchema = heeftVlag(argv, "json-schema");
   const concurrency = Math.max(1, Number(leesVlag(argv, "concurrency") ?? CONCURRENCY_STANDAARD) || CONCURRENCY_STANDAARD);
   const versie = modus === "foto" ? TAGGER_VERSION_FOTO : TAGGER_VERSION;
 
@@ -119,7 +132,8 @@ async function main(): Promise<void> {
   });
 
   console.log(
-    `Tagger ${versie} met model ${TAGGER_MODEL} via claude -p, retailer "${retailer}", modus ${modus}, concurrency ${concurrency}`
+    `Tagger ${versie} met model ${TAGGER_MODEL} via claude -p, retailer "${retailer}", modus ${modus}, concurrency ${concurrency}, ` +
+      `${metJsonSchema ? "--json-schema aan (trager, duurder, 100% opbrengst per beurt)" : "zonder --json-schema (standaard sinds 23 sept 2026)"}`
   );
 
   let store: BatchesBestand = leesBatches(BATCHES_PAD);
@@ -152,9 +166,13 @@ async function main(): Promise<void> {
         model: TAGGER_MODEL,
         systeemPrompt: bouwSysteemPromptCli(),
         opdracht,
-        jsonSchema: CLI_SCHEMA,
+        jsonSchema: metJsonSchema ? CLI_SCHEMA : undefined,
       });
-      const respons = await voerClaudeCliUit(args, timeoutMsVoorPortie(record.aantal, concurrency), afbrekenController.signal);
+      const respons = await voerClaudeCliUit(
+        args,
+        timeoutMsVoorPortie(record.aantal, concurrency, metJsonSchema),
+        afbrekenController.signal
+      );
       const verwerkt = verwerkCliUitvoer(respons, record.producten, record.modus);
 
       if (verwerkt.mislukt) {
@@ -163,16 +181,20 @@ async function main(): Promise<void> {
       }
 
       const geschreven = await schrijfRijen(supabase, verwerkt.rijen);
+      // Voortgang per portie: hoeveel producten erin gingen, hoeveel objecten
+      // het model teruggaf en hoeveel daarvan geldig waren. Zonder --json-schema
+      // is een gedeeltelijke opbrengst normaal (zie OPBRENGST_FRACTIE_ZONDER_SCHEMA
+      // in tagCli.ts); zonder deze regel is een opbrengst van 65% niet te
+      // onderscheiden van een stille fout.
+      const samenvatting =
+        `${record.aantal} producten, ${verwerkt.aantalObjecten} objecten terug, ${geschreven} geldig geschreven`;
       if (verwerkt.fouten.length > 0) {
         mkdirSync(OUT, { recursive: true });
         const foutPad = join(OUT, `tag-fouten-${record.id}.json`);
         writeFileSync(foutPad, JSON.stringify(verwerkt.fouten, null, 2) + "\n");
-        console.log(
-          `  ${geschreven} rijen geschreven, ${verwerkt.fouten.length} fouten (zie ${foutPad}). ` +
-            "Fouten blijven ongetagd en komen bij de volgende run terug."
-        );
+        console.log(`  ${samenvatting}, ${verwerkt.fouten.length} fouten (zie ${foutPad}). ` + "Fouten blijven ongetagd en komen bij de volgende run terug.");
       } else {
-        console.log(`  ${geschreven} rijen geschreven, 0 fouten.`);
+        console.log(`  ${samenvatting}, 0 fouten.`);
       }
       if (typeof respons.total_cost_usd === "number") {
         const duur = typeof respons.duration_ms === "number" ? `, ${Math.round(respons.duration_ms / 1000)}s` : "";
@@ -255,13 +277,23 @@ async function main(): Promise<void> {
   }
 
   const porties = splitsInPorties(producten, PORTIE_GROOTTE);
-  const schatting = schatDroogeRun(porties, concurrency);
+  const schatting = schatDroogeRun(porties, concurrency, metJsonSchema);
   console.log(
-    `${producten.length} producten in ${schatting.aantalAanroepen} aanroep(en) van claude -p (portiegrootte ${PORTIE_GROOTTE}). ` +
-      `Geschatte looptijd: ~${Math.max(1, Math.round(schatting.geschatteSeconden / 60))} minuten met concurrency ${concurrency}. ` +
+    `${producten.length} producten in ${schatting.aantalAanroepen} aanroep(en) van claude -p (portiegrootte ${PORTIE_GROOTTE}), ` +
+      `deze ronde. Geschatte looptijd: ~${Math.max(1, Math.round(schatting.geschatteSeconden / 60))} minuten met concurrency ${concurrency}. ` +
       `Geschat equivalent verbruik: ~$${schatting.equivalentUsd.toFixed(2)} ` +
       `(indicatie, gekalibreerd op porties van 100 producten, zie tagCli.ts; geen factuur, het loopt op het abonnement).`
   );
+  if (!metJsonSchema) {
+    console.log(
+      `Zonder --json-schema is de opbrengst per ronde circa 65% (meting 23 sept 2026: 65 van de 100 geldig). ` +
+        `Ongetagde producten komen vanzelf terug als kandidaat bij de volgende \`npm run keten:tag\`-aanroep ` +
+        `(zelfherstellend, geen dataverlies). Geschat: ~${schatting.geschatteRondesTotConvergentie.toFixed(1)} ronden nodig om ` +
+        `deze ${producten.length} producten volledig te taggen, ~${Math.max(1, Math.round(schatting.geschatteSecondenTotConvergentie / 60))} ` +
+        `minuten en ~$${schatting.equivalentUsdTotConvergentie.toFixed(2)} in totaal (aanname op één meting, geen kalibratie over ` +
+        `meerdere ronden heen, zie geschatteRondesTotConvergentie in tagCli.ts).`
+    );
+  }
 
   if (!ja) {
     console.log("Droge run. Voeg --ja toe om echt te versturen.");

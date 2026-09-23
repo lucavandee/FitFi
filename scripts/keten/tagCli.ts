@@ -13,19 +13,33 @@
  * AMENDEMENT (Luc, 22 sept 2026) in taak-5-brief.md verving de Anthropic Batch
  * API door `claude -p` op het abonnement. Dit bestand implementeert die weg:
  * - bouwClaudeArgs bouwt de argv voor `claude -p`, nooit met --bare.
- * - CLI_SCHEMA is een deviatie t.o.v. de brief: de brief testte `claude -p`
- *   zonder --json-schema en ving daardoor ```json-hekjes op die gestript
- *   moesten worden. Deze CLI-versie (2.1.120) heeft een --json-schema vlag die
- *   gevalideerde JSON teruggeeft in structured_output, zonder hekjes. Getest
- *   op 22 sept 2026 (zie taak-5-report.md). verwerkCliUitvoer gebruikt dat pad
- *   als eerste keuze en valt terug op het hekjes-strippen van `result` als
- *   structured_output ontbreekt, voor het geval een oudere CLI-versie draait.
  * - Eén `claude -p`-aanroep tagt een hele portie (PORTIE_GROOTTE producten)
  *   tegelijk, niet één product per aanroep: dat is wat op 22 sept is gemeten
  *   (100 producten per aanroep amortiseert de ~55s opstartkosten). Elk product
  *   krijgt een nummer; het model geeft dat nummer terug als "index" in elk
  *   tag-object, zodat de uitvoer op inhoud (niet op volgorde) teruggekoppeld
  *   kan worden aan een product_id.
+ *
+ * TERUGDRAAI (Luc, 23 sept 2026): `--json-schema` was hierboven ooit de
+ * STANDAARD, om gegarandeerd geldige JSON terug te krijgen. Drie echte
+ * productierondes liepen daarna vast op time-outs, en dat is toen ten
+ * onrechte gediagnosticeerd als een doorvoerlimiet van het abonnement (zie de
+ * fixrondes in taak-5-report.md, die stuk voor stuk aan concurrency
+ * sleutelden). Dat klopte niet. Op 23 sept is dezelfde portie van 100
+ * producten twee keer gemeten, nu ook met het aantal beurten erbij:
+ *   met --json-schema : 428s, 4 beurten, 54.397 outputtokens, $0.408, 100/100 objecten
+ *   zonder            :  84s, 1 beurt,   12.912 outputtokens, $0.110,  83/100 objecten (65 geldig)
+ * Het aantal beurten is de verklarende variabele: het model levert uitvoer
+ * die het schema niet haalt en probeert het opnieuw, tot vier keer. Dat
+ * verklaart ook de spreiding van 122-341s die eerder aan concurrency-
+ * contentie werd toegeschreven. Vandaar: `--json-schema` is nu een expliciete
+ * vlag (`--json-schema` op de command line, zie tag-products.ts), niet meer
+ * de standaard. CLI_SCHEMA zelf blijft bestaan voor wie de vlag wel gebruikt.
+ * `verwerkCliUitvoer` gebruikt `structured_output` als dat er is (met de
+ * vlag) en valt anders terug op het strippen/extraheren van JSON uit `result`
+ * (nu het hoofdpad, zie parseJsonUitCliTekst hieronder) — dat pad moet dus
+ * robuust zijn tegen hekjes, tekst vóór/na het blok, én minder objecten terug
+ * dan verstuurd (zie de opmerkingen bij verwerkCliUitvoer).
  */
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -81,6 +95,20 @@ export const PORTIE_GROOTTE = 100;
 // --concurrency in tag-products.ts. Wie hem toch hoger zet: de time-out
 // schaalt mee (zie contentieFactorVoorTimeout hieronder), maar dat maakt een
 // hogere concurrency niet aan te raden, alleen minder gevaarlijk.
+//
+// LET OP (Luc, 23 sept 2026, zie de TERUGDRAAI-tekst bovenaan dit bestand):
+// alle metingen hierboven (198/319/438/451s bij concurrency 4, de
+// 122-349s-spreiding bij concurrency 2) zijn gedraaid MET --json-schema aan,
+// toen dat nog de standaard was. Nu bekend is dat --json-schema zelf tot 4
+// herkansingen (beurten) kan kosten, is niet meer zeker of dezelfde
+// concurrency-cijfers (de contentiefactoren, niet alleen de absolute duur)
+// ook gelden voor de nieuwe standaardweg zonder schema — minder beurten
+// betekent minder tijd per aanroep, wat de verhouding tussen solo en
+// gelijktijdig anders kan laten uitvallen. Bewust NIET opnieuw gemeten of
+// herijkt: de structuur (drie ijkpunten, piecewise lineair) blijft staan
+// zoals hij was, alleen dit voorbehoud is toegevoegd. CONCURRENCY_STANDAARD
+// blijft daarom op 1 staan, niet omdat de oude meting nog aantoonbaar klopt,
+// maar omdat er geen nieuwe meting is die een hogere waarde rechtvaardigt.
 export const CONCURRENCY_STANDAARD = 1;
 
 // Aantal opeenvolgende MISLUKTE porties (de hele aanroep leverde niets
@@ -98,63 +126,97 @@ export const MAX_OPEENVOLGENDE_FOUTEN = 3;
 //
 // IJkpunt: PORTIE_GROOTTE = 100, want dat is de portiegrootte die het script
 // ZELF gebruikt voor elke aanroep (op de laatste, kleinere restportie van een
-// ronde na). Fixronde (controller, 22 sept 2026): een eerdere versie van dit
-// bestand mat --json-schema op porties van 25 en leidde daar een enkele
-// factor JSON_SCHEMA_OPSLAG = 2 uit af, toegepast op zowel tijd als kosten.
-// Dat was op twee manieren fout:
-// 1. Tijd en kosten gedragen zich verschillend onder --json-schema (zie
-//    hieronder: sneller, maar duurder). Eén gedeelde factor kan dat per
-//    definitie niet allebei goed weergeven.
-// 2. Een portie van 25 is niet representatief voor een portie van 100: de
-//    vaste opstartkosten (~55s, zie OPSTART_SECONDEN) wegen bij 25 producten
-//    veel zwaarder mee dan bij 100, dus een op 25 gemeten verhouding
-//    extrapoleert niet naar de portiegrootte die de ronde echt gebruikt.
-// De controller draaide een schone A/B op exact dezelfde 100 producten, met
-// en zonder --json-schema:
-//   met  --json-schema: 132s, num_turns 2, $0.212
-//   zonder --json-schema: 194s, num_turns 1, $0.148
-// Dat geeft TIJD_FACTOR_MET_SCHEMA ≈ 0.68 (32% SNELLER, niet trager) en
-// KOSTEN_FACTOR_MET_SCHEMA ≈ 1.43 (43% duurder, niet 2x). Beide factoren zijn
-// dus GEEN afgeleiden van elkaar en apart gehouden.
+// ronde na).
 //
-// LET OP voor de volgende lezer (dit is precies waar de vorige versie in
-// liep): deze twee factoren zijn gekalibreerd op n = 100. Ze zijn niet
-// gevalideerd voor veel kleinere porties (bijvoorbeeld een handmatige
-// --limit 10/25-proefrun). Bij zo'n kleine n kan zowel de droge-run-schatting
-// als de afgeleide subprocess-timeout (timeoutMsVoorPortie) afwijken van wat
-// je in de praktijk ziet: eigen metingen tijdens taak 5 op n = 25 met
-// --json-schema toonden een spreiding van ~78s tot >180s, wat noch met de
-// oude (2x) noch met deze nieuwe (0.68x) tijdfactor goed te voorspellen is.
-// Voor de echte 91.650-producten-ronde (die vrijwel uitsluitend porties van
-// 100 gebruikt) is dat geen probleem; voor een kleine proefrun kan het
-// script vaker een gezonde-maar-trage aanroep op de time-out laten lopen dan
-// dit model doet vermoeden. De tijdens een --ja-run geprinte
-// duration_ms/total_cost_usd per aanroep (zie tag-products.ts) blijven de
-// echte referentie, dit model is alleen de schatting vooraf.
+// HERIJKING (Luc, 23 sept 2026, zie de TERUGDRAAI-tekst bovenaan dit
+// bestand): de standaardweg is nu ZONDER --json-schema, dus dat wordt hier de
+// basis in plaats van een afgeleide. Er is precies één betrouwbare meting op
+// deze weg bij n = 100: 84s, $0.110, 1 beurt. Geen tweede punt om opstart en
+// per-product apart op te lossen (het oudere "zonder schema"-punt bij n = 10,
+// 69s uit het amendement van 22 sept, dateert van vóór dit inzicht — het
+// aantal beurten is toen niet gelogd — en de bijbehorende n=100-meting uit
+// die periode, 194s, wijkt 2,3x af van de meting van vandaag bij dezelfde n.
+// Te groot om aan ruis toe te schrijven, en er is geen manier om vast te
+// stellen welke van de twee metingen toen representatief was). In plaats van
+// een ongefundeerde knoop door te hakken tussen twee elkaar tegensprekende
+// metingen: de vaste opstartkosten (OPSTART_SECONDEN, BASIS_KOSTEN_USD)
+// blijven de oude, niet-weersproken schatting (die kosten zijn onafhankelijk
+// van --json-schema, dezelfde systeemprompt gaat sowieso mee), en UITSLUITEND
+// de per-product-term is herrekend op het ijkpunt van vandaag.
+//
+// LET OP voor de volgende lezer: dit blijft, net als de vorige versie, alleen
+// gevalideerd op n = 100. Voor een kleine proefrun (--limit 10/25) kan de
+// werkelijke duur afwijken van wat dit model voorspelt. De tijdens een
+// --ja-run geprinte duration_ms/total_cost_usd per aanroep (zie
+// tag-products.ts) blijven de echte referentie, dit model is alleen de
+// schatting vooraf.
 // ---------------------------------------------------------------------------
 
-// Basis (ZONDER --json-schema), twee ECHTE metingen: 69s/$0.044 bij 10
-// producten (amendement taak-5-brief.md, 22 sept 2026) en 194s/$0.148 bij
-// 100 producten (controllers A/B, fixronde 22 sept 2026 — dit verving de
-// oudere extrapolatie van $0.11 bij 100 uit het amendement zelf, die geen
-// echte meting was maar "eigenaars eigen extrapolatie").
-export const OPSTART_SECONDEN = 55; // 55 + 1.4*10 ≈ 69, 55 + 1.4*100 ≈ 195 ≈ 194 gemeten
-export const SECONDEN_PER_PRODUCT = 1.4;
-export const BASIS_KOSTEN_USD = 0.03244; // basis + 10k = 0.044, basis + 100k = 0.148
-export const PER_PRODUCT_KOSTEN_USD = 0.0011556;
+// Vaste (opstart-)kosten, ONGEWIJZIGD t.o.v. de vorige versie: niet
+// weersproken door de meting van vandaag, en verondersteld onafhankelijk van
+// --json-schema (dezelfde systeemprompt gaat sowieso mee, met of zonder
+// schema-argument).
+export const OPSTART_SECONDEN = 55;
+export const BASIS_KOSTEN_USD = 0.03244;
 
-// Factoren MET --json-schema (wat het script echt gebruikt), gekalibreerd op
-// n = 100: 132/194 ≈ 0.6804 (tijd) en 0.212/0.148 ≈ 1.4324 (kosten). Apart
-// gehouden, precies omdat ze niet gelijk zijn (zie uitleg hierboven).
-export const TIJD_FACTOR_MET_SCHEMA = 132 / 194;
-export const KOSTEN_FACTOR_MET_SCHEMA = 0.212 / 0.148;
+// Per-product-term ZONDER --json-schema (nu de standaard), herrekend op het
+// enige betrouwbare ijkpunt van vandaag: 84s / $0.110 bij n=100, 1 beurt.
+// (84 - OPSTART_SECONDEN) / 100 en (0.110 - BASIS_KOSTEN_USD) / 100.
+export const SECONDEN_PER_PRODUCT_ZONDER_SCHEMA = (84 - OPSTART_SECONDEN) / 100; // 0.29
+export const PER_PRODUCT_KOSTEN_USD_ZONDER_SCHEMA = (0.11 - BASIS_KOSTEN_USD) / 100; // ≈ 0.0007756
 
-export function geschatteSecondenVoorPortie(aantalProducten: number): number {
-  return TIJD_FACTOR_MET_SCHEMA * (OPSTART_SECONDEN + SECONDEN_PER_PRODUCT * aantalProducten);
+// Factor MET --json-schema (nu een expliciete vlag, niet meer de standaard).
+// Herijkt op een schone, GELIJKTIJDIGE A/B van vandaag op dezelfde 100
+// producten (in plaats van het oudere 132s/194s-paar uit fixronde 1, dat de
+// meting van vandaag tegenspreekt, zie hierboven): 428s/$0.408 (4 beurten)
+// tegenover 84s/$0.110 (1 beurt) zonder schema. Uitgedrukt als factor BOVENOP
+// het zonder-schema-model hierboven, dezelfde vorm als eerder — tijd en
+// kosten blijven apart, want ze gedragen zich niet gelijk (met schema is de
+// aanroep 5,1x trager EN 3,7x duurder, dus deze keer allebei in dezelfde
+// richting, in tegenstelling tot de vorige kalibratie die sneller-maar-duurder
+// liet zien; dat verschil zelf is een teken van hoe ruizig dit pad is).
+// Extra los datapunt, niet in de kalibratie verwerkt: 50 producten MET schema
+// gaf 182s in 3 beurten — bevestigt dat het aantal beurten wisselt (geen
+// vaste 4), maar te weinig om een eigen n=50-ijkpunt op te bouwen bovenop een
+// al kleine steekproef.
+export const TIJD_FACTOR_MET_SCHEMA = 428 / 84; // ≈ 5.095
+export const KOSTEN_FACTOR_MET_SCHEMA = 0.408 / 0.11; // ≈ 3.709
+
+export function geschatteSecondenVoorPortie(aantalProducten: number, metSchema = false): number {
+  const zonderSchema = OPSTART_SECONDEN + SECONDEN_PER_PRODUCT_ZONDER_SCHEMA * aantalProducten;
+  return metSchema ? TIJD_FACTOR_MET_SCHEMA * zonderSchema : zonderSchema;
 }
 
-export function schatEquivalentUsd(aantalProducten: number): number {
-  return KOSTEN_FACTOR_MET_SCHEMA * (BASIS_KOSTEN_USD + aantalProducten * PER_PRODUCT_KOSTEN_USD);
+export function schatEquivalentUsd(aantalProducten: number, metSchema = false): number {
+  const zonderSchema = BASIS_KOSTEN_USD + aantalProducten * PER_PRODUCT_KOSTEN_USD_ZONDER_SCHEMA;
+  return metSchema ? KOSTEN_FACTOR_MET_SCHEMA * zonderSchema : zonderSchema;
+}
+
+// ---------------------------------------------------------------------------
+// Gedeeltelijke opbrengst (alleen relevant ZONDER --json-schema, de
+// standaard). Meting 23 sept 2026: 100 producten verstuurd, 83 objecten
+// terug, 65 daarvan geldig na valideerTags. De overige producten blijven
+// ongetagd en komen via keten_tag_kandidaten vanzelf terug als kandidaat bij
+// de eerstvolgende aanroep van dit script (zie verwerkCliUitvoer en
+// tag-products.ts): dat pad is zelfherstellend, maar betekent wel dat één
+// portie zelden voldoende is om een populatie VOLLEDIG te taggen. Met
+// --json-schema was de opbrengst in dezelfde meting 100/100 (ten koste van 4
+// beurten i.p.v. 1), dus daar is dit niet van toepassing.
+// ---------------------------------------------------------------------------
+export const OPBRENGST_FRACTIE_ZONDER_SCHEMA = 65 / 100;
+
+/**
+ * Geschat aantal RONDES (niet: aanroepen) om een populatie volledig te
+ * taggen bij een constante opbrengstfractie per ronde: een meetkundige reeks
+ * 1 + (1-p) + (1-p)^2 + ... = 1/p. Aanname, geen meting over meerdere ronden
+ * heen (er is maar één echte meting, de eerste ronde): dat een product dat
+ * de eerste keer geen geldig object opleverde, bij een volgende poging
+ * dezelfde kans op succes heeft. Geen reden om aan te nemen dat dat anders
+ * ligt, maar ook niet getoetst.
+ */
+export function geschatteRondesTotConvergentie(opbrengstFractie: number): number {
+  if (opbrengstFractie <= 0) return Infinity;
+  return 1 / opbrengstFractie;
 }
 
 // Extra veiligheidsmarge BOVENOP de tijdschatting voor de subprocess-timeout,
@@ -258,9 +320,9 @@ export function doorloopFactorVoorConcurrency(concurrency: number): number {
 }
 // ---------------------------------------------------------------------------
 
-export function timeoutMsVoorPortie(aantalProducten: number, concurrency: number): number {
+export function timeoutMsVoorPortie(aantalProducten: number, concurrency: number, metSchema = false): number {
   return Math.round(
-    geschatteSecondenVoorPortie(aantalProducten) * contentieFactorVoorTimeout(concurrency) * TIMEOUT_VEILIGHEIDSMARGE * 1000
+    geschatteSecondenVoorPortie(aantalProducten, metSchema) * contentieFactorVoorTimeout(concurrency) * TIMEOUT_VEILIGHEIDSMARGE * 1000
   );
 }
 
@@ -268,20 +330,37 @@ export interface DroogeRunSchatting {
   aantalAanroepen: number;
   geschatteSeconden: number;
   equivalentUsd: number;
+  // Alleen > 1 zonder --json-schema (gedeeltelijke opbrengst, zie
+  // OPBRENGST_FRACTIE_ZONDER_SCHEMA hierboven): hoeveel keer deze ronde naar
+  // schatting herhaald moet worden (dus: hoe vaak `npm run keten:tag`
+  // opnieuw draaien) voordat de HUIDIGE kandidaten allemaal getagd zijn. Met
+  // --json-schema is dit per constructie 1 (100/100 gemeten).
+  geschatteRondesTotConvergentie: number;
+  // geschatteSeconden/equivalentUsd hierboven zijn voor ÉÉN ronde (wat er
+  // gebeurt bij --ja); deze twee zijn de eerlijke schatting voor VOLLEDIGE
+  // convergentie van de huidige kandidatenlijst, dus geschatteSeconden/
+  // equivalentUsd keer geschatteRondesTotConvergentie.
+  geschatteSecondenTotConvergentie: number;
+  equivalentUsdTotConvergentie: number;
 }
 
-export function schatDroogeRun(porties: TagProduct[][], concurrency: number): DroogeRunSchatting {
+export function schatDroogeRun(porties: TagProduct[][], concurrency: number, metSchema = false): DroogeRunSchatting {
   // Som van de solo-schatting over alle porties: dit IS de "volledig
   // serieel"-schatting (concurrency 1). Niet meer delen door het aantal
   // werkers: dat veronderstelde lineaire versnelling die niet bestaat (zie
   // hierboven). In plaats daarvan de gemeten, veel bescheidener
   // doorloopwinst toepassen.
-  const totaalSecondenSerieel = porties.reduce((som, p) => som + geschatteSecondenVoorPortie(p.length), 0);
-  const equivalentUsd = porties.reduce((som, p) => som + schatEquivalentUsd(p.length), 0);
+  const totaalSecondenSerieel = porties.reduce((som, p) => som + geschatteSecondenVoorPortie(p.length, metSchema), 0);
+  const equivalentUsd = porties.reduce((som, p) => som + schatEquivalentUsd(p.length, metSchema), 0);
+  const geschatteSeconden = Math.round(totaalSecondenSerieel * doorloopFactorVoorConcurrency(concurrency));
+  const rondes = metSchema ? 1 : geschatteRondesTotConvergentie(OPBRENGST_FRACTIE_ZONDER_SCHEMA);
   return {
     aantalAanroepen: porties.length,
-    geschatteSeconden: Math.round(totaalSecondenSerieel * doorloopFactorVoorConcurrency(concurrency)),
+    geschatteSeconden,
     equivalentUsd,
+    geschatteRondesTotConvergentie: rondes,
+    geschatteSecondenTotConvergentie: Math.round(geschatteSeconden * rondes),
+    equivalentUsdTotConvergentie: equivalentUsd * rondes,
   };
 }
 
@@ -426,12 +505,45 @@ export const CLI_SCHEMA = {
   },
 } as const;
 
+/**
+ * Strip een ```json ... ``` of kaal ``` ... ``` codeblok uit de tekst, ook als
+ * er tekst vóór of na het blok staat (niet meer alleen anker-aan-begin/eind:
+ * zie de TERUGDRAAI-tekst bovenaan dit bestand, zonder --json-schema zet het
+ * model soms een inleidende of afsluitende zin om het blok heen). Zonder
+ * hekjes in de tekst blijft de tekst ongemoeid (getrimd) staan, dan is er
+ * niets te strippen.
+ */
 export function strippenJsonHekjes(tekst: string): string {
-  return tekst
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/```\s*$/, "")
-    .trim();
+  const getrimd = tekst.trim();
+  const hekjesMatch = getrimd.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  return hekjesMatch ? hekjesMatch[1].trim() : getrimd;
+}
+
+/**
+ * Haalt het JSON-object uit de vrije-tekst-uitvoer van `claude -p` zonder
+ * --json-schema (het hoofdpad sinds de terugdraai, zie bovenaan dit bestand).
+ * Drie stappen, elk een reactie op iets dat echt is waargenomen:
+ * 1. Strip een eventueel codeblok (strippenJsonHekjes) en probeer te parsen.
+ * 2. Lukt dat niet (bijvoorbeeld tekst vóór/na het blok, of geen hekjes maar
+ *    wel omringende tekst): pak de breedste {...}-substring (eerste { tot
+ *    laatste }) en probeer die te parsen.
+ * 3. Lukt ook dat niet: null. verwerkCliUitvoer behandelt dat als "mislukt",
+ *    de portie blijft open voor een volgende poging.
+ */
+export function parseJsonUitCliTekst(tekst: string): unknown | null {
+  const gestript = strippenJsonHekjes(tekst);
+  try {
+    return JSON.parse(gestript);
+  } catch {
+    const start = gestript.indexOf("{");
+    const eind = gestript.lastIndexOf("}");
+    if (start === -1 || eind === -1 || eind <= start) return null;
+    try {
+      return JSON.parse(gestript.slice(start, eind + 1));
+    } catch {
+      return null;
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -442,26 +554,23 @@ export function strippenJsonHekjes(tekst: string): string {
 // negeert OAuth en keychain, dus dan draait het niet op het abonnement).
 // --allowed-tools "" schakelt alle tools uit: taggen heeft er geen nodig en
 // elke tool vergroot alleen de systeemprompt (en dus de opstartkosten).
+//
+// jsonSchema is optioneel sinds de terugdraai (zie bovenaan dit bestand):
+// zonder waarde blijft --json-schema helemaal weg uit de argv, dat is nu het
+// standaardpad. Alleen met een expliciete waarde (de --json-schema-vlag op
+// tag-products.ts, zie daar) komt --json-schema erbij.
 export function bouwClaudeArgs(opts: {
   model: string;
   systeemPrompt: string;
   opdracht: string;
-  jsonSchema: unknown;
+  jsonSchema?: unknown;
 }): string[] {
-  return [
-    "-p",
-    "--model",
-    opts.model,
-    "--allowed-tools",
-    "",
-    "--append-system-prompt",
-    opts.systeemPrompt,
-    "--json-schema",
-    JSON.stringify(opts.jsonSchema),
-    "--output-format",
-    "json",
-    opts.opdracht,
-  ];
+  const args = ["-p", "--model", opts.model, "--allowed-tools", "", "--append-system-prompt", opts.systeemPrompt];
+  if (opts.jsonSchema !== undefined) {
+    args.push("--json-schema", JSON.stringify(opts.jsonSchema));
+  }
+  args.push("--output-format", "json", opts.opdracht);
+  return args;
 }
 
 export interface ClaudeCliResultaat {
@@ -526,6 +635,12 @@ export interface CliVerwerkResultaat {
   reden?: string;
   rijen: TagRij[];
   fouten: { product_id: string; reden: string }[];
+  // Aantal items dat het model teruggaf, VÓÓR validatie (dus vóór rijen/
+  // fouten-splitsing). 0 bij een mislukte aanroep. Puur voor de voortgangslog
+  // in tag-products.ts: "N producten in, M objecten terug, K geldig" maakt
+  // een gedeeltelijke opbrengst (zie OPBRENGST_FRACTIE_ZONDER_SCHEMA) zichtbaar
+  // in plaats van dat die verdwijnt achter een enkel "X fouten"-getal.
+  aantalObjecten: number;
 }
 
 /**
@@ -543,6 +658,14 @@ export interface CliVerwerkResultaat {
  *   ongetagd; de RPC biedt hem bij de eerstvolgende scriptrun gewoon weer aan
  *   als kandidaat. Dit telt niet als "mislukt": één rotte appel stopt de
  *   portie niet.
+ *
+ * Een product waarvoor het model HELEMAAL geen object teruggeeft (minder
+ * objecten terug dan verstuurd — gemeten zonder --json-schema, 23 sept 2026:
+ * 83 van de 100) valt onder de tweede soort: de "geziene"-boekhouding hieronder
+ * dekt zowel "index nooit gezien" als "index gezien maar object ongeldig",
+ * dus zo'n product komt met een eigen reden in `fouten` terecht. Het wordt
+ * NOOIT stilzwijgend als verwerkt geteld: er is geen pad waarop een
+ * ontbrekende index een rij in `rijen` oplevert.
  */
 export function verwerkCliUitvoer(
   respons: ClaudeCliResultaat,
@@ -555,6 +678,7 @@ export function verwerkCliUitvoer(
       reden: `claude -p meldde een fout: ${respons.result || respons.subtype || "onbekend"}`,
       rijen: [],
       fouten: [],
+      aantalObjecten: 0,
     };
   }
 
@@ -563,13 +687,9 @@ export function verwerkCliUitvoer(
   if (structured && Array.isArray(structured.items)) {
     items = structured.items;
   } else {
-    try {
-      const obj = JSON.parse(strippenJsonHekjes(respons.result ?? ""));
-      if (obj && Array.isArray((obj as { items?: unknown }).items)) {
-        items = (obj as { items: unknown[] }).items;
-      }
-    } catch {
-      items = null;
+    const obj = parseJsonUitCliTekst(respons.result ?? "");
+    if (obj && typeof obj === "object" && Array.isArray((obj as { items?: unknown }).items)) {
+      items = (obj as { items: unknown[] }).items;
     }
   }
 
@@ -579,6 +699,7 @@ export function verwerkCliUitvoer(
       reden: "geen bruikbare JSON-uitvoer (geen structured_output, en result was niet als JSON te lezen)",
       rijen: [],
       fouten: [],
+      aantalObjecten: 0,
     };
   }
   if (items.length === 0 && producten.length > 0) {
@@ -587,6 +708,7 @@ export function verwerkCliUitvoer(
       reden: `lege items-array (0 van de ${producten.length} producten), waarschijnlijk een geweigerd of afgekapt antwoord`,
       rijen: [],
       fouten: [],
+      aantalObjecten: 0,
     };
   }
 
@@ -618,7 +740,7 @@ export function verwerkCliUitvoer(
     }
   });
 
-  return { mislukt: false, rijen, fouten };
+  return { mislukt: false, rijen, fouten, aantalObjecten: items.length };
 }
 
 // ---------------------------------------------------------------------------
