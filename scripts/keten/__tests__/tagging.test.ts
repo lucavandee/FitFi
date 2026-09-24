@@ -2,9 +2,19 @@ import { describe, expect, it } from "vitest";
 import {
   BATCH_INPUT_USD_PER_MTOK,
   BATCH_OUTPUT_USD_PER_MTOK,
+  COLOR_TEMPS,
   KLEUR_SYNONIEMEN,
+  KLEURTEMPERATUUR_SYNONIEMEN,
+  LICHTHEID_SYNONIEMEN,
+  LIGHTNESS,
   MATERIALS,
   MATERIAAL_SYNONIEMEN,
+  PATROON_SYNONIEMEN,
+  PATTERNS,
+  SCHOENTYPE_SYNONIEMEN,
+  SHOE_TYPES,
+  SILHOUET_SYNONIEMEN,
+  SILHOUETTES,
   TAG_SCHEMA,
   TAGGER_MODEL,
   TAGGER_VERSION,
@@ -13,6 +23,7 @@ import {
   bouwSysteemPrompt,
   bouwVerzoek,
   normaliseerLijst,
+  normaliseerWaarde,
   schatKosten,
   valideerTags,
   valideerTagsGedetailleerd,
@@ -158,7 +169,11 @@ describe("valideerTags", () => {
   });
 
   it("wijst een waarde buiten de lijst af", () => {
-    expect(valideerTags({ ...geldigeTags, color_temp: "cool" })).toBeNull();
+    // "cold" i.p.v. het oudere "cool": sinds FIXRONDE 6 normaliseert "cool"
+    // naar "koel" (zie het aparte normaliseerWaarde-testblok verderop), dus
+    // die waarde test hier niet langer een echte afkeuring. "cold" heeft geen
+    // synoniem en blijft dus wel een afkeuring.
+    expect(valideerTags({ ...geldigeTags, color_temp: "cold" })).toBeNull();
     expect(valideerTags({ ...geldigeTags, occasions: ["werk"] })).toBeNull();
     expect(valideerTags({ ...geldigeTags, confidence: 1.4 })).toBeNull();
   });
@@ -287,6 +302,186 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
     for (const doel of Object.values(KLEUR_SYNONIEMEN)) expect(kleuren.has(doel as string)).toBe(true);
     for (const doel of Object.values(MATERIAAL_SYNONIEMEN)) expect(materialen.has(doel as string)).toBe(true);
   });
+
+  it("mapt 'synthetic' en 'plastic' (generieke Engelse woorden, geen specifieke vezelnaam) naar 'synthetisch'", () => {
+    expect(valideerTags({ ...geldigeTags, materials: ["synthetic"] })?.materials).toEqual(["synthetisch"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["plastic"] })?.materials).toEqual(["synthetisch"]);
+  });
+
+  it("mapt 'kunststof', 'kunstleer' en 'imitatieleer' naar 'synthetisch' (Nederlandse woorden, geen gok: toegevoegd na de meting)", () => {
+    // Gevonden in de meting die deze fix moest toetsen: kunststof was, samen
+    // met kunstleer/imitatieleer, de enige overgebleven reden van afkeuring
+    // in producten die op color_temp/lightness/pattern al foutloos waren -
+    // zie het commentaar bij MATERIAAL_SYNONIEMEN.
+    expect(valideerTags({ ...geldigeTags, materials: ["kunststof"] })?.materials).toEqual(["synthetisch"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["kunstleer"] })?.materials).toEqual(["synthetisch"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["imitatieleer"] })?.materials).toEqual(["synthetisch"]);
+  });
+
+  it("laat 'geweven', 'joggingstof' en 'twill' ONGEWIJZIGD staan (weef-/stoftype, geen vezelnaam, bewust geen synoniem, FIXRONDE 6)", () => {
+    // Zelfde principe als viscose hierboven, nu met de drie andere woorden
+    // uit de opdracht die samen met viscose de grootste materialen-
+    // afkeuringen in de lopende H&M-ronde vormden (740x, 293x, 285x).
+    expect(valideerTags({ ...geldigeTags, materials: ["geweven"] })).toBeNull();
+    expect(valideerTags({ ...geldigeTags, materials: ["joggingstof"] })).toBeNull();
+    expect(valideerTags({ ...geldigeTags, materials: ["twill"] })).toBeNull();
+    expect(valideerTags({ ...geldigeTags, materials: ["woven"] })).toBeNull();
+  });
+
+  it("laat 'goud' (kleur) ONGEWIJZIGD staan: geen zekere 1-op-1 met een van de vijftien schemakleuren", () => {
+    expect(valideerTags({ ...geldigeTags, colors: ["goud"] })).toBeNull();
+  });
+});
+
+// FIXRONDE 6 (controller, 24 sept 2026): dezelfde normalisatielaag, nu ook
+// voor de vijf SCALAIRE velden (geen array) met een vaste Nederlandse
+// waardenlijst. Aanleiding: de lopende H&M-ronde liet zien dat het model
+// hetzelfde "Engels waar Nederlands hoort"-patroon dat FIXRONDE 5 al bij
+// colors/materials herkende, ook hier laat zien (color_temp:'cool' 6.475x in
+// 248 foutbestanden, lightness:'light' 674x, pattern:'solid' 108x, zie
+// tagging.ts). Zelfde twee harde grenzen als hierboven.
+describe("normaliseerWaarde (scalaire velden, vóór validatie, FIXRONDE 6)", () => {
+  it("normaliseert color_temp: 'cool' -> 'koel', 'neutral' -> 'neutraal', hoofdletter-ongevoelig", () => {
+    expect(valideerTags({ ...geldigeTags, color_temp: "cool" })?.color_temp).toBe("koel");
+    expect(valideerTags({ ...geldigeTags, color_temp: "Cool" })?.color_temp).toBe("koel");
+    expect(valideerTags({ ...geldigeTags, color_temp: "neutral" })?.color_temp).toBe("neutraal");
+  });
+
+  it("laat color_temp 'warm' met rust: identiek gespeld in beide talen, geen synoniem nodig", () => {
+    expect(valideerTags({ ...geldigeTags, color_temp: "warm" })?.color_temp).toBe("warm");
+  });
+
+  it("normaliseert lightness: 'light' -> 'licht', 'dark' -> 'donker'", () => {
+    expect(valideerTags({ ...geldigeTags, lightness: "light" })?.lightness).toBe("licht");
+    expect(valideerTags({ ...geldigeTags, lightness: "dark" })?.lightness).toBe("donker");
+  });
+
+  it("normaliseert pattern: 'solid' en 'plain' -> 'effen', 'subtle' -> 'subtiel'", () => {
+    expect(valideerTags({ ...geldigeTags, pattern: "solid" })?.pattern).toBe("effen");
+    expect(valideerTags({ ...geldigeTags, pattern: "plain" })?.pattern).toBe("effen");
+    expect(valideerTags({ ...geldigeTags, pattern: "subtle" })?.pattern).toBe("subtiel");
+  });
+
+  it("normaliseert silhouette: 'loose' -> 'relaxed' (het enige waargenomen geval in productie)", () => {
+    expect(valideerTags({ ...geldigeTags, silhouette: "loose" })?.silhouette).toBe("relaxed");
+  });
+
+  it("laat een onopgelost geval per scalair veld ONGEWIJZIGD staan (blijft een afkeuring, geen gok)", () => {
+    // "cold" is geen woord dat de opdracht of de productiedata noemt; net als
+    // viscose bij materials moet dit een afkeuring blijven, geen gok naar
+    // "koel".
+    expect(valideerTags({ ...geldigeTags, color_temp: "cold" })).toBeNull();
+    expect(normaliseerWaarde("cold", COLOR_TEMPS, KLEURTEMPERATUUR_SYNONIEMEN)).toBe("cold");
+  });
+
+  it("normaliseert shoe_type bij category footwear: 'boot' -> 'laars', 'sandal' -> 'sandaal', 'dress'/'formal' -> 'net'", () => {
+    expect(valideerTags({ ...geldigeTags, category: "footwear", shoe_type: "boot" })?.shoe_type).toBe("laars");
+    expect(valideerTags({ ...geldigeTags, category: "footwear", shoe_type: "sandal" })?.shoe_type).toBe("sandaal");
+    expect(valideerTags({ ...geldigeTags, category: "footwear", shoe_type: "dress" })?.shoe_type).toBe("net");
+    expect(valideerTags({ ...geldigeTags, category: "footwear", shoe_type: "formal" })?.shoe_type).toBe("net");
+  });
+
+  it("KLEURTEMPERATUUR_/LICHTHEID_/PATROON_/SILHOUET_/SCHOENTYPE_SYNONIEMEN wijzen uitsluitend naar canonieke schemawaarden", () => {
+    const naar = <T extends readonly string[]>(map: Partial<Record<string, T[number]>>, lijst: T) => {
+      const toegestaan = new Set<string>(lijst);
+      for (const doel of Object.values(map)) expect(toegestaan.has(doel as string)).toBe(true);
+    };
+    naar(KLEURTEMPERATUUR_SYNONIEMEN, COLOR_TEMPS);
+    naar(LICHTHEID_SYNONIEMEN, LIGHTNESS);
+    naar(PATROON_SYNONIEMEN, PATTERNS);
+    naar(SILHOUET_SYNONIEMEN, SILHOUETTES);
+    naar(SCHOENTYPE_SYNONIEMEN, SHOE_TYPES);
+  });
+});
+
+// FIXRONDE 6 (controller, 24 sept 2026), punt 2 van de opdracht: "lege string
+// is niet hetzelfde als afwezig". shoe_type is de concrete diagnose (86 van
+// 86 shoe_type-afkeuringen in de lopende H&M-ronde waren een ontbrekend
+// veld bij een NIET-footwear product, geen enkele een echt foutief
+// schoentype bij een schoen, zie het commentaar in tagging.ts).
+describe("shoe_type: leeg/ontbrekend bij een niet-footwear product is geen afkeuring meer (FIXRONDE 6)", () => {
+  it("accepteert een lege string bij een niet-footwear product en zet shoe_type op null", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, category: "top", shoe_type: "" });
+    expect(resultaat.ok).toBe(true);
+    if (resultaat.ok) expect(resultaat.tags.shoe_type).toBeNull();
+  });
+
+  it("accepteert een volledig ONTBREKEND shoe_type-veld bij een niet-footwear product (het echte model-gedrag zonder --json-schema)", () => {
+    const { shoe_type: _shoe_type, ...zonderShoeType } = geldigeTags;
+    expect(zonderShoeType).not.toHaveProperty("shoe_type");
+    const resultaat = valideerTagsGedetailleerd({ ...zonderShoeType, category: "top" });
+    expect(resultaat.ok).toBe(true);
+    if (resultaat.ok) expect(resultaat.tags.shoe_type).toBeNull();
+  });
+
+  it("blijft een echt foutief schoentype bij een FOOTWEAR-product afkeuren, ook na deze fix", () => {
+    expect(valideerTagsGedetailleerd({ ...geldigeTags, category: "footwear", shoe_type: "" })).toEqual({
+      ok: false,
+      veld: "shoe_type",
+      waarde: "",
+    });
+    expect(valideerTagsGedetailleerd({ ...geldigeTags, category: "footwear", shoe_type: "instapper" })).toEqual({
+      ok: false,
+      veld: "shoe_type",
+      waarde: "instapper",
+    });
+  });
+
+  it("reproduceert het echte productiepad: JSON.stringify laat een ontbrekend shoe_type-veld weg, verwerkResultaten accepteert het toch voor een niet-footwear product", () => {
+    // JSON.stringify(undefined-veld) laat de sleutel volledig weg (geen
+    // "null" in de tekst); dat is precies wat --json-schema-loze aanroepen
+    // soms teruggeven. Dit reproduceert dat pad end-to-end, niet alleen op
+    // een handmatig object.
+    const { shoe_type: _shoe_type, ...zonderShoeType } = geldigeTags;
+    const tekst = JSON.stringify({ ...zonderShoeType, category: "top" });
+    expect(tekst).not.toContain("shoe_type");
+    const resultaat = {
+      custom_id: "zonder-shoe-type",
+      result: { type: "succeeded", message: { stop_reason: "end_turn", content: [{ type: "text", text: tekst }] } },
+    };
+    const uit = verwerkResultaten([resultaat], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].shoe_type).toBeNull();
+  });
+});
+
+// FIXRONDE 6 (controller, 24 sept 2026), punt 4 van de opdracht: gender en
+// formality zijn GEEN normalisatiekwestie (geen NL/EN-verwarring, gewoon een
+// ontbrekende waarde) en horen afgekeurd te blijven. Deze tests controleren
+// alleen dat ze correct als ONTBREKEND herkend worden, niet als iets anders,
+// inclusief het echte JSON.stringify-gedrag (sleutel valt weg, niet "null").
+describe("gender/formality: ontbrekend blijft afgekeurd, niet iets anders (FIXRONDE 6, geen normalisatiekwestie)", () => {
+  it("keurt een ontbrekend gender-veld af als 'gender', niet als een ander veld", () => {
+    const { gender: _gender, ...zonderGender } = geldigeTags;
+    expect(valideerTagsGedetailleerd(zonderGender)).toEqual({ ok: false, veld: "gender", waarde: undefined });
+  });
+
+  it("keurt een ontbrekend formality-veld af als 'formality', niet als een ander veld", () => {
+    const { formality: _formality, ...zonderFormality } = geldigeTags;
+    expect(valideerTagsGedetailleerd(zonderFormality)).toEqual({ ok: false, veld: "formality", waarde: undefined });
+  });
+
+  it("reproduceert het echte productiepad voor beide via JSON.stringify (sleutel valt weg, geen 'null' in de tekst)", () => {
+    const { gender: _gender, ...zonderGender } = geldigeTags;
+    const tekstGender = JSON.stringify(zonderGender);
+    expect(tekstGender).not.toContain("gender");
+    const uitGender = verwerkResultaten(
+      [{ custom_id: "a", result: { type: "succeeded", message: { stop_reason: "end_turn", content: [{ type: "text", text: tekstGender }] } } }],
+      "tekst"
+    );
+    expect(uitGender.rijen).toEqual([]);
+    expect(uitGender.fouten).toEqual([{ custom_id: "a", reden: "waarde buiten schema", veld: "gender", waarde: undefined }]);
+
+    const { formality: _formality, ...zonderFormality } = geldigeTags;
+    const tekstFormality = JSON.stringify(zonderFormality);
+    expect(tekstFormality).not.toContain("formality");
+    const uitFormality = verwerkResultaten(
+      [{ custom_id: "b", result: { type: "succeeded", message: { stop_reason: "end_turn", content: [{ type: "text", text: tekstFormality }] } } }],
+      "tekst"
+    );
+    expect(uitFormality.rijen).toEqual([]);
+    expect(uitFormality.fouten).toEqual([{ custom_id: "b", reden: "waarde buiten schema", veld: "formality", waarde: undefined }]);
+  });
 });
 
 describe("valideerTagsGedetailleerd (veld+waarde bij een afkeuring, FIXRONDE 5)", () => {
@@ -302,10 +497,12 @@ describe("valideerTagsGedetailleerd (veld+waarde bij een afkeuring, FIXRONDE 5)"
   });
 
   it("meldt veld+waarde voor elk van de andere schemavelden", () => {
-    expect(valideerTagsGedetailleerd({ ...geldigeTags, color_temp: "cool" })).toEqual({
+    // "cold" i.p.v. "cool": zie de toelichting bij "wijst een waarde buiten
+    // de lijst af" hierboven (FIXRONDE 6 normaliseert "cool" nu naar "koel").
+    expect(valideerTagsGedetailleerd({ ...geldigeTags, color_temp: "cold" })).toEqual({
       ok: false,
       veld: "color_temp",
-      waarde: "cool",
+      waarde: "cold",
     });
     expect(valideerTagsGedetailleerd({ ...geldigeTags, formality: 9 })).toEqual({
       ok: false,
@@ -427,11 +624,13 @@ describe("verwerkResultaten", () => {
   });
 
   it("zet geldige JSON die het schema niet haalt bij de fouten met reden 'waarde buiten schema'", () => {
+    // "cold" i.p.v. "cool": zie de toelichting bij "wijst een waarde buiten
+    // de lijst af" hierboven (FIXRONDE 6 normaliseert "cool" nu naar "koel").
     const buitenSchema = {
       custom_id: "f",
       result: {
         type: "succeeded",
-        message: { stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ ...geldigeTags, color_temp: "cool" }) }] },
+        message: { stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ ...geldigeTags, color_temp: "cold" }) }] },
       },
     };
     const uit = verwerkResultaten([buitenSchema], "tekst");
@@ -439,7 +638,7 @@ describe("verwerkResultaten", () => {
     // FIXRONDE 5 (controller, 24 sept 2026): het foutenrecord bevat nu ook
     // veld+waarde, zodat de oorzaak niet meer uit een apart bewaarde
     // modeluitvoer gereconstrueerd hoeft te worden.
-    expect(uit.fouten).toEqual([{ custom_id: "f", reden: "waarde buiten schema", veld: "color_temp", waarde: "cool" }]);
+    expect(uit.fouten).toEqual([{ custom_id: "f", reden: "waarde buiten schema", veld: "color_temp", waarde: "cold" }]);
   });
 
   it("verwerkt een gemengde lijst en houdt geslaagde en gefaalde rijen in de oorspronkelijke volgorde uit elkaar", () => {

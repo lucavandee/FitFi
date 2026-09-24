@@ -184,22 +184,41 @@ function alleInLijst<T extends readonly string[]>(lijst: T, w: unknown): w is T[
 const TOEGESTANE_VELDEN = new Set(Object.keys(TAG_SCHEMA.properties));
 
 // ---------------------------------------------------------------------------
-// Normalisatielaag, vóór validatie (FIXRONDE 5, controller, 24 sept 2026).
+// Normalisatielaag, vóór validatie (FIXRONDE 5, controller, 24 sept 2026;
+// uitgebreid FIXRONDE 6, controller, 24 sept 2026, zie hieronder).
 //
 // Spec 5.1 schrijft voor dat colors/materials "genormaliseerd" zijn; dat stond
-// nooit als code. Alleen deze twee velden: spec 5.1 noemt expliciet alleen
-// colors/materials, andere velden (occasions, seasons, ...) zijn vaste enums
-// zonder aangetoonde synoniemenbehoefte en blijven hier bewust onaangeraakt,
-// om niet meer scope te pakken dan de diagnose rechtvaardigt.
+// nooit als code. FIXRONDE 5 deed daarom alleen colors/materials.
 //
-// Twee harde grenzen, letterlijk uit de opdracht:
+// FIXRONDE 6: de lopende H&M-ronde (8.985 van 16.606 getagd op het moment van
+// deze fix) liet zien dat hetzelfde probleem ook de vijf overige velden met
+// een vaste Nederlandse waardenlijst raakt: silhouette, color_temp, lightness,
+// pattern en shoe_type. Oorzaak is dezelfde als bij FIXRONDE 5, niet een
+// nieuw defect: de prompt hamert sinds FIXRONDE 5 hard in dat "occasions"
+// Engels moet zijn met precies zeven woorden, en het model trekt dat kennelijk
+// door naar velden die juist Nederlands horen te zijn. Geteld over 248
+// foutbestanden van de lopende ronde (17.893 afgekeurde veld+waarde-paren,
+// ruimer dan de 25-bestanden-steekproef uit de opdracht): color_temp:'cool'
+// 6.475x, lightness:'light' 674x, pattern:'solid' 108x, pattern:'subtle' 59x,
+// pattern:'plain' 36x, color_temp:'neutral' 37x, lightness:'dark' 99x,
+// silhouette:'loose' 2x. Dezelfde vaststelling geldt hier: andere velden met
+// een vaste lijst die geen Nederlands/Engels-verwarring laten zien in de
+// data (occasions is met opzet Engels en blijft onaangeraakt; seasons en
+// gender/formality zijn geen normalisatiekwestie, zie verderop) blijven
+// buiten deze laag, om niet meer scope te pakken dan de diagnose rechtvaardigt.
+//
+// Twee harde grenzen, letterlijk uit de opdracht, gelden voor ALLE
+// synoniemenlijsten hieronder, niet alleen kleur/materiaal:
 // 1. Alleen normaliseren waar de betekenis vaststaat: hoofdletters/spaties,
 //    de simpele meervoudsvorm (trailing "s"), en een met de hand vastgelegde
 //    synoniemenlijst (Engelse varianten, en voor materialen: vezelnamen die
 //    per definitie synthetisch zijn). Geen fuzzy matching, geen taalkundige
 //    gok. "viscose"/"rayon"/"modal" (halfsynthetisch) en "cashmere"/"suède"
 //    (specifieker dan wol/leer) staan er daarom bewust NIET in: geen zekere
-//    1-op-1 relatie met een van de negen schemawaarden.
+//    1-op-1 relatie met een van de negen schemawaarden. Zie ook de uitgebreide
+//    toelichting bij MATERIAAL_SYNONIEMEN hieronder voor "geweven"/"twill"/
+//    "joggingstof" (FIXRONDE 6): fabrieks-/weeftype, geen vezelnaam, dus
+//    dezelfde redenering, bewust ook niet gemapt.
 // 2. Nooit stilzwijgend informatie weggooien: een waarde die na dit alles nog
 //    steeds niet in de lijst staat, gaat ONGEWIJZIGD terug. valideerTags
 //    keurt hem dan af zoals voorheen ("waarde buiten schema"), niets wordt
@@ -257,10 +276,58 @@ export const MATERIAAL_SYNONIEMEN: Partial<Record<string, (typeof MATERIALS)[num
   nylon: "synthetisch",
   acryl: "synthetisch",
   acrylic: "synthetisch",
+  // Generieke Engelse woorden voor "synthetisch" zelf (niet alleen specifieke
+  // vezelnamen hierboven): even ondubbelzinnig, dezelfde categorie.
+  synthetic: "synthetisch",
+  plastic: "synthetisch",
+  // Nederlandse woorden die zelf al ondubbelzinnig "synthetisch materiaal"
+  // betekenen (geen Engelse variant, maar wel dezelfde "betekenis staat vast"-
+  // toets als de rest van deze lijst, zie de opdracht bij MATERIALS-oordelen
+  // hieronder). Toegevoegd ná de meting van FIXRONDE 6 (controller, 24 sept
+  // 2026): 4 losse claude -p aanroepen van 100 producten op de gefixte
+  // normalisatielaag lieten "kunststof" 15x en "kunstleer"/"imitatieleer"
+  // samen 7x zien als ENIGE reden van afkeuring (0x in de eerder gemeten
+  // color_temp/lightness/pattern-velden, die dus volledig zijn opgelost) -
+  // in de eerdere 248-bestanden-mining uit productie ook al 158x resp. 19x.
+  // Anders dan "geweven"/"twill"/"joggingstof" hierboven is dit geen
+  // weeftype of stofsoort met een onzekere vezelsamenstelling: "kunststof"
+  // IS het Nederlandse woord voor "synthetisch materiaal" (Van Dale: "stof
+  // door een chemisch proces vervaardigd"), en "kunstleer"/"imitatieleer"
+  // zijn per definitie GEEN leer, dus per uitsluiting synthetisch. Geen gok,
+  // een vertaling.
+  kunststof: "synthetisch",
+  kunstleer: "synthetisch",
+  imitatieleer: "synthetisch",
   unknown: "onbekend",
 };
 
-function normaliseerWaarde<T extends readonly string[]>(
+// FIXRONDE 6 (controller, 24 sept 2026): materialen die in de lopende ronde
+// veelvuldig afkeuren maar BEWUST buiten deze lijst blijven, met reden:
+// - "geweven"/"woven" (740x resp. 38x in 248 foutbestanden) en "twill"
+//   (285x, plus samenstellingen als "katoenen twill"/"katoen twill") zijn een
+//   WEEFTYPE (de manier waarop garens verstrengeld zijn), geen vezelnaam. Een
+//   geweven of keperstof kan katoen, wol, synthetisch of een mix zijn: er is
+//   geen 1-op-1 met een van de negen schemawaarden, dus mappen zou gokken
+//   zijn naar precies het soort "verkeerde tag" dat de opdracht uitsluit.
+// - "joggingstof" (293x) is een stofSOORT (sweatshirt-/french-terry-achtige
+//   gebreide stof), typisch een katoen/polyester-mix maar niet vast: zelfde
+//   redenering, geen vezelnaam, geen zekere 1-op-1.
+// - "viscose" (746x, de grootste losse materialen-afkeuring in de ronde) is
+//   halfsynthetisch (regenerated cellulose): noch "katoen"/"linnen" (natuurlijk)
+//   noch "synthetisch" (petrochemisch) dekt de lading zuiver. Ongewijzigd
+//   bevestigd t.o.v. de beslissing in FIXRONDE 5, nu met het productiecijfer
+//   erbij. "lyocell" (106x, ook halfsynthetisch/regenerated cellulose) valt
+//   onder dezelfde redenering en is om dezelfde reden niet toegevoegd.
+// Al deze producten blijven ongetagd en komen vanzelf terug als kandidaat bij
+// de volgende ronde (zie de opdracht); dat is de bewust gekozen, eerlijkere
+// uitkomst boven een geraden materiaal.
+//
+// Geëxporteerd (was intern): FIXRONDE 6 normaliseert nu ook vijf scalaire
+// velden (silhouette, color_temp, lightness, pattern, shoe_type) die geen
+// array zijn en dus niet via normaliseerLijst lopen; valideerTagsGedetailleerd
+// roept deze functie voor die velden rechtstreeks aan, en de tests hieronder
+// toetsen dat pad ook rechtstreeks, net als normaliseerLijst al deed.
+export function normaliseerWaarde<T extends readonly string[]>(
   ruw: unknown,
   lijst: T,
   synoniemen: Partial<Record<string, T[number]>>
@@ -272,9 +339,12 @@ function normaliseerWaarde<T extends readonly string[]>(
   if (exact) return exact;
   if (synoniemen[key]) return synoniemen[key];
   // Simpele meervoudsvorm: alleen de trailing-"s"-vorm, geen taalkundige
-  // heuristiek. Geen van de canonieke waarden in COLORS/MATERIALS eindigt
-  // zelf op "s", dus dit kan een echte canonieke waarde niet per ongeluk
-  // verminken.
+  // heuristiek. Van de canonieke waarden over alle lijsten die deze functie
+  // gebruikt (FIXRONDE 6 breidde dat uit van COLORS/MATERIALS naar ook
+  // SILHOUETTES/COLOR_TEMPS/LIGHTNESS/PATTERNS/SHOE_TYPES) eindigt alleen
+  // "laars" zelf op "s". Onschadelijk: de exacte-match-check hierboven vangt
+  // een letterlijk "laars"-invoer al af vóórdat deze tak ooit bereikt wordt,
+  // dus die kan hier niet per ongeluk verminkt worden.
   if (key.length > 1 && key.endsWith("s")) {
     const enkelvoud = key.slice(0, -1);
     const exactEnkelvoud = lijst.find((v) => v.toLowerCase() === enkelvoud);
@@ -297,6 +367,63 @@ export function normaliseerLijst<T extends readonly string[]>(
 }
 
 // ---------------------------------------------------------------------------
+// Synoniemenlijsten voor de vijf scalaire velden (FIXRONDE 6, controller, 24
+// sept 2026). Zelfde regels als KLEUR_SYNONIEMEN/MATERIAAL_SYNONIEMEN
+// hierboven: alleen waar de betekenis vaststaat, elke waarde hieronder komt
+// uit ofwel een directe NL/EN-vertaling ofwel een concreet, in de lopende
+// H&M-ronde waargenomen geval (aantallen in het commentaarblok hierboven).
+//
+// KLEURTEMPERATUUR_SYNONIEMEN: "warm" heeft geen synoniem nodig (identiek
+// gespeld in beide talen, komt in de data ook nooit fout terug).
+export const KLEURTEMPERATUUR_SYNONIEMEN: Partial<Record<string, (typeof COLOR_TEMPS)[number]>> = {
+  cool: "koel",
+  neutral: "neutraal",
+};
+
+// LICHTHEID_SYNONIEMEN: "medium" heeft geen synoniem nodig (identiek gespeld).
+export const LICHTHEID_SYNONIEMEN: Partial<Record<string, (typeof LIGHTNESS)[number]>> = {
+  light: "licht",
+  dark: "donker",
+};
+
+// PATROON_SYNONIEMEN: "statement" heeft geen synoniem nodig (al Engels/
+// internationaal, geen vertaalprobleem waargenomen). "solid" en "plain"
+// betekenen allebei "effen" in het Engels (beide waargenomen: 108x resp. 36x).
+export const PATROON_SYNONIEMEN: Partial<Record<string, (typeof PATTERNS)[number]>> = {
+  solid: "effen",
+  plain: "effen",
+  subtle: "subtiel",
+};
+
+// SILHOUET_SYNONIEMEN: "slim"/"regular"/"relaxed"/"oversized" zijn zelf al
+// Engelse leenwoorden (identiek gespeld in beide talen), dus vrijwel geen
+// synoniemenbehoefte. "loose" is de enige waargenomen uitzondering (2x): een
+// duidelijk, ondubbelzinnig synoniem voor "relaxed" (losvallend silhouet).
+export const SILHOUET_SYNONIEMEN: Partial<Record<string, (typeof SILHOUETTES)[number]>> = {
+  loose: "relaxed",
+};
+
+// SCHOENTYPE_SYNONIEMEN: "sneaker" is al Engels, geen synoniem nodig (het
+// meervoud "sneakers" vangt de generieke trailing-"s"-regel al af). "boot" en
+// "sandal" zijn de directe Engelse woorden voor "laars"/"sandaal". "net"
+// (in de prompt: brede categorie voor nette/formele schoenen, geen sneaker,
+// laars of sandaal) heeft geen enkel Engels woord dat het dekt; "dress" en
+// "formal" zijn de meest voor de hand liggende Engelse aanduidingen voor
+// diezelfde categorie en vallen, binnen deze vier waarden, ondubbelzinnig in
+// dezelfde emmer (geen andere schoentype-optie past bij een "dress shoe").
+// Geen van deze vijf is in de lopende ronde waargenomen (de enige
+// shoe_type-afkeuringen in productie waren een ontbrekend veld, zie
+// verderop, en één keer "regular", een silhouette-waarde in het verkeerde
+// veld die bewust niet gemapt wordt): dit is preventieve dekking, dezelfde
+// vertaalslag als de andere vier lijsten hierboven.
+export const SCHOENTYPE_SYNONIEMEN: Partial<Record<string, (typeof SHOE_TYPES)[number]>> = {
+  boot: "laars",
+  sandal: "sandaal",
+  dress: "net",
+  formal: "net",
+};
+
+// ---------------------------------------------------------------------------
 
 /**
  * Resultaat van valideerTagsGedetailleerd: bij een afkeuring bevat dit WELK
@@ -316,7 +443,15 @@ export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   const onbekendVeld = Object.keys(o).find((veld) => !TOEGESTANE_VELDEN.has(veld));
   if (onbekendVeld) return { ok: false, veld: onbekendVeld, waarde: o[onbekendVeld] };
 
-  // Normalisatielaag, alleen colors/materials (zie hierboven).
+  // Normalisatielaag. colors/materials zijn arrays (normaliseerLijst,
+  // FIXRONDE 5); silhouette/color_temp/lightness/pattern/shoe_type zijn
+  // scalaire velden en gaan rechtstreeks door normaliseerWaarde (FIXRONDE 6,
+  // zie het commentaarblok boven KLEURTEMPERATUUR_SYNONIEMEN hierboven).
+  o.silhouette = normaliseerWaarde(o.silhouette, SILHOUETTES, SILHOUET_SYNONIEMEN);
+  o.color_temp = normaliseerWaarde(o.color_temp, COLOR_TEMPS, KLEURTEMPERATUUR_SYNONIEMEN);
+  o.lightness = normaliseerWaarde(o.lightness, LIGHTNESS, LICHTHEID_SYNONIEMEN);
+  o.pattern = normaliseerWaarde(o.pattern, PATTERNS, PATROON_SYNONIEMEN);
+  o.shoe_type = normaliseerWaarde(o.shoe_type, SHOE_TYPES, SCHOENTYPE_SYNONIEMEN);
   o.colors = normaliseerLijst(o.colors, COLORS, KLEUR_SYNONIEMEN);
   o.materials = normaliseerLijst(o.materials, MATERIALS, MATERIAAL_SYNONIEMEN);
 
@@ -329,7 +464,22 @@ export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   if (!inLijst(COLOR_TEMPS, o.color_temp)) return { ok: false, veld: "color_temp", waarde: o.color_temp };
   if (!inLijst(LIGHTNESS, o.lightness)) return { ok: false, veld: "lightness", waarde: o.lightness };
   if (!inLijst(PATTERNS, o.pattern)) return { ok: false, veld: "pattern", waarde: o.pattern };
-  if (o.shoe_type !== null && !inLijst(SHOE_TYPES, o.shoe_type)) {
+  // shoe_type telt alleen mee bij category "footwear": voor elke andere
+  // categorie forceert de TagUitvoer hieronder de waarde sowieso naar null,
+  // ongeacht wat het model invulde. FIXRONDE 6 (controller, 24 sept 2026):
+  // vóór deze wijziging werd een lege of ontbrekende shoe_type bij een
+  // NIET-footwear product hier alsnog afgekeurd (het model laat het veld
+  // soms helemaal weg in plaats van "null" te schrijven, want --json-schema
+  // is sinds 23 sept geen standaard meer en niets dwingt het veld af) -
+  // precies de "lege string is niet hetzelfde als afwezig"-fout uit de
+  // opdracht. In de lopende H&M-ronde was dit 86 van de 86 shoe_type-
+  // afkeuringen (alle "waarde: ontbrekend", geen enkele een echt foutief
+  // schoentype bij een schoen); zie ook de toelichting bij
+  // SCHOENTYPE_SYNONIEMEN hierboven. Bij category "footwear" blijft de
+  // controle onverkort: een model dat daar iets anders dan de vier geldige
+  // schoentypes teruggeeft (of null, wat voor een schoen zelf al onvolledig
+  // is) blijft een afkeuring.
+  if (o.category === "footwear" && o.shoe_type !== null && !inLijst(SHOE_TYPES, o.shoe_type)) {
     return { ok: false, veld: "shoe_type", waarde: o.shoe_type };
   }
   if (!alleInLijst(COLORS, o.colors)) return { ok: false, veld: "colors", waarde: o.colors };
