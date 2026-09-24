@@ -27,9 +27,22 @@ export const PATTERNS = ["effen", "subtiel", "statement"] as const;
 export const SHOE_TYPES = ["sneaker", "net", "laars", "sandaal"] as const;
 export const COLORS = [
   "zwart", "wit", "grijs", "navy", "beige", "camel", "bruin", "groen", "rood",
-  "roze", "blauw", "geel", "paars", "oranje", "multicolor",
+  "roze", "blauw", "geel", "paars", "oranje", "goud", "zilver", "multicolor",
 ] as const;
-export const MATERIALS = ["katoen", "wol", "denim", "linnen", "leer", "synthetisch", "zijde", "tricot", "onbekend"] as const;
+// MATERIALS uitgebreid 24 sept 2026 (spec 5.1, commit 10b41712) met suede,
+// viscose, canvas, dons en rubber, na de eerste echte H&M-tagronde: 9.914
+// producten werden ooit afgekeurd, 7.621 daarvan in twee of meer ronden, en
+// dat was precies het aantal dat na zes ronden nog ongetagd was. Dat is geen
+// convergentieprobleem maar een plafond: een product waarvan het materiaal
+// werkelijk viscose is, geeft elke ronde opnieuw viscose en wordt elke ronde
+// opnieuw afgekeurd. Deze vijf waren geen vertaalprobleem (het model gaf ze
+// al letterlijk zo terug) maar ontbraken gewoon in onze eigen lijst. Volgorde
+// gelijk aan de spec-tabel. Zie ook FIXRONDE 7 verderop in dit bestand voor
+// de normalisatielaag-gevolgen (lyocell/rayon -> viscose, suède -> suede).
+export const MATERIALS = [
+  "katoen", "wol", "denim", "linnen", "leer", "suede", "synthetisch", "zijde",
+  "tricot", "viscose", "canvas", "dons", "rubber", "onbekend",
+] as const;
 export const SEASONS = ["lente", "zomer", "herfst", "winter"] as const;
 
 export interface TagProduct {
@@ -123,7 +136,13 @@ export function bouwSysteemPrompt(): string {
     "- formality is een CIJFERSCHAAL van 1 tot 5, GEEN gelegenheid: 1 = sport of loungewear, 2 = casual, 3 = smart casual, 4 = net, 5 = formeel. Vul dit veld met uitsluitend het cijfer. Deze vijf namen (sport, casual, smart casual, net, formeel) beschrijven ALLEEN formality en mogen nooit in occasions terechtkomen.",
     "- occasions is een APARTE, vaste lijst met precies deze zeven Engelse woorden, niets anders: work, casual, formal, date, travel, sport, party. 'smart casual' staat hier NIET tussen: dat is uitsluitend de naam van formaliteitsniveau 3 hierboven, geen gelegenheid, gebruik die tekst dus nooit in occasions. Vul dit veld met een of meer van de zeven woorden hierboven (exact zo gespeld, in het Engels) die bij dit item passen. Minimaal een.",
     "- silhouette: slim, regular, relaxed of oversized; bij schoenen en accessoires regular.",
-    "- color_temp: warm (beige, camel, bruin, rood, oranje, geel, olijf), koel (navy, blauw, grijs, zwart, wit, roze, paars) of neutraal (gemengd of onduidelijk).",
+    // FIXRONDE 7 (controller, 25 sept 2026): goud en zilver zijn nieuw in
+    // COLORS (zie hierboven). Dit is de enige plek in de systeemprompt waar
+    // colors/materials-waarden letterlijk worden opgesomd (colors/materials
+    // zelf verwijzen alleen naar "de vaste lijst", zonder de waarden uit te
+    // schrijven); daarom hier toegevoegd, verder niets in deze regel of de
+    // regels eromheen aangeraakt.
+    "- color_temp: warm (beige, camel, bruin, rood, oranje, geel, olijf, goud), koel (navy, blauw, grijs, zwart, wit, roze, paars, zilver) of neutraal (gemengd of onduidelijk).",
     "- lightness: licht, medium of donker, van de hoofdkleur.",
     "- pattern: effen, subtiel (fijne streep, ruit, structuur) of statement (print, logo, opvallend dessin).",
     "- shoe_type: alleen bij footwear: sneaker, net, laars of sandaal. Anders null.",
@@ -213,12 +232,22 @@ const TOEGESTANE_VELDEN = new Set(Object.keys(TAG_SCHEMA.properties));
 //    de simpele meervoudsvorm (trailing "s"), en een met de hand vastgelegde
 //    synoniemenlijst (Engelse varianten, en voor materialen: vezelnamen die
 //    per definitie synthetisch zijn). Geen fuzzy matching, geen taalkundige
-//    gok. "viscose"/"rayon"/"modal" (halfsynthetisch) en "cashmere"/"suède"
-//    (specifieker dan wol/leer) staan er daarom bewust NIET in: geen zekere
-//    1-op-1 relatie met een van de negen schemawaarden. Zie ook de uitgebreide
-//    toelichting bij MATERIAAL_SYNONIEMEN hieronder voor "geweven"/"twill"/
-//    "joggingstof" (FIXRONDE 6): fabrieks-/weeftype, geen vezelnaam, dus
-//    dezelfde redenering, bewust ook niet gemapt.
+//    gok. "modal" (halfsynthetisch, net als viscose, maar een eigen vezel-
+//    proces met eigen eigenschappen) en "cashmere" (specifieker dan wol)
+//    staan er daarom bewust NIET in: geen zekere 1-op-1 relatie met een van
+//    de veertien schemawaarden. FIXRONDE 7 (controller, 25 sept 2026):
+//    "viscose" zelf is sinds de uitbreiding van MATERIALS (zie hierboven)
+//    een canonieke waarde, geen synoniem meer nodig; "rayon" (in de praktijk
+//    hetzelfde vezelproces, in de VS de gangbare naam voor wat hier viscose
+//    heet) en "lyocell" (regenerated cellulose, net als viscose, en expliciet
+//    zo benoemd in de opdracht) wijzen er nu naar, zie MATERIAAL_SYNONIEMEN
+//    hieronder. "suède" (met accent) normaliseert naar het nieuwe "suede".
+//    Zie ook de uitgebreide toelichting bij MATERIAAL_SYNONIEMEN hieronder
+//    voor "geweven"/"twill"/"joggingstof" (FIXRONDE 6): fabrieks-/weeftype,
+//    geen vezelnaam, dus dezelfde redenering, ook na FIXRONDE 7 nog steeds
+//    bewust niet gemapt (canvas is zelf ook een weefsel, geen vezel, en lost
+//    die onzekerheid niet op: een geweven of keperstof kan katoen, wol,
+//    synthetisch of canvas zijn, er is nog steeds geen 1-op-1).
 // 2. Nooit stilzwijgend informatie weggooien: een waarde die na dit alles nog
 //    steeds niet in de lijst staat, gaat ONGEWIJZIGD terug. valideerTags
 //    keurt hem dan af zoals voorheen ("waarde buiten schema"), niets wordt
@@ -251,6 +280,13 @@ export const KLEUR_SYNONIEMEN: Partial<Record<string, (typeof COLORS)[number]>> 
   multicolored: "multicolor",
   colorful: "multicolor",
   colourful: "multicolor",
+  // FIXRONDE 7 (controller, 25 sept 2026): goud/zilver zijn nieuw in COLORS
+  // (zie hierboven bij de MATERIALS-toelichting). Zelfde defensieve reden als
+  // de twaalf Engelse woorden hierboven (FIXRONDE 5/6: het model geeft soms
+  // Engels terug waar Nederlands hoort): "gold"/"silver" zijn de directe
+  // Engelse woorden, geen gok.
+  gold: "goud",
+  silver: "zilver",
 };
 
 export const MATERIAAL_SYNONIEMEN: Partial<Record<string, (typeof MATERIALS)[number]>> = {
@@ -299,6 +335,40 @@ export const MATERIAAL_SYNONIEMEN: Partial<Record<string, (typeof MATERIALS)[num
   kunstleer: "synthetisch",
   imitatieleer: "synthetisch",
   unknown: "onbekend",
+  // FIXRONDE 7 (controller, 25 sept 2026): MATERIALS uitgebreid met suede,
+  // viscose, canvas, dons, rubber (zie hierboven). Drie synoniemen naar de
+  // nieuwe waarden, elk met een eigen, vaststaande reden (geen gok):
+  // - "suède": de Nederlandse spelling met accent van exact hetzelfde woord
+  //   als het nieuwe "suede" (spec 5.1 schrijft "suede" zonder accent in de
+  //   lijst). Zonder deze regel zou de accentvariant een letterlijk andere
+  //   string zijn en alsnog afgekeurd worden, precies het lek dat deze hele
+  //   ronde repareert.
+  // - "lyocell": expliciet genoemd in de opdracht. Vóór deze ronde bewust
+  //   NIET gemapt (zie het commentaarblok hierboven bij KLEUR_SYNONIEMEN/
+  //   MATERIAAL_SYNONIEMEN) omdat er geen canonieke bestemming was; nu
+  //   viscose bestaat, is dat er wel. Lyocell is een ander productieproces
+  //   dan viscose (NMMO-oplosmiddel i.p.v. het viscoseproces), maar beide
+  //   zijn regenerated-cellulosevezels met vergelijkbare val en uitstraling;
+  //   voor deze styling-classificatie is dat verschil niet relevant.
+  // - "rayon": in de eerdere toelichting hierboven letterlijk in hetzelfde
+  //   rijtje als "viscose" genoemd ("viscose"/"rayon"/"modal", allemaal
+  //   halfsynthetisch, geen doel). Rayon is de in de VS gangbare naam voor
+  //   wat in Europa vrijwel altijd "viscose" heet (hetzelfde fabricageproces,
+  //   geen apart procedé zoals lyocell of modal dat wel heeft); vandaar hier
+  //   wel gemapt, in tegenstelling tot "modal" hierboven, dat een eigen,
+  //   onderscheidend proces met eigen eigenschappen is en dus onopgelost
+  //   blijft (geen gok naar de dichtstbijzijnde waarde).
+  suède: "suede",
+  lyocell: "viscose",
+  rayon: "viscose",
+  // "down": toegevoegd NA de meting hieronder (taak-5-report.md), niet ervoor.
+  // De vier post-fix aanroepen lieten "down" (Engels) 2x zien als enige reden
+  // van afkeuring in een materials-array (call 1: "synthetisch","down"), het-
+  // zelfde Engels-i.p.v.-Nederlands-patroon als de rest van deze lijst, nu met
+  // "dons" als het nieuwe canonieke doel. Net als "kunststof" in FIXRONDE 6:
+  // ná de metingen toegevoegd, dus niet in de gerapporteerde opbrengstcijfers
+  // verwerkt.
+  down: "dons",
 };
 
 // FIXRONDE 6 (controller, 24 sept 2026): materialen die in de lopende ronde
@@ -312,15 +382,21 @@ export const MATERIAAL_SYNONIEMEN: Partial<Record<string, (typeof MATERIALS)[num
 // - "joggingstof" (293x) is een stofSOORT (sweatshirt-/french-terry-achtige
 //   gebreide stof), typisch een katoen/polyester-mix maar niet vast: zelfde
 //   redenering, geen vezelnaam, geen zekere 1-op-1.
-// - "viscose" (746x, de grootste losse materialen-afkeuring in de ronde) is
-//   halfsynthetisch (regenerated cellulose): noch "katoen"/"linnen" (natuurlijk)
-//   noch "synthetisch" (petrochemisch) dekt de lading zuiver. Ongewijzigd
-//   bevestigd t.o.v. de beslissing in FIXRONDE 5, nu met het productiecijfer
-//   erbij. "lyocell" (106x, ook halfsynthetisch/regenerated cellulose) valt
-//   onder dezelfde redenering en is om dezelfde reden niet toegevoegd.
-// Al deze producten blijven ongetagd en komen vanzelf terug als kandidaat bij
-// de volgende ronde (zie de opdracht); dat is de bewust gekozen, eerlijkere
-// uitkomst boven een geraden materiaal.
+// - "viscose" (746x, de grootste losse materialen-afkeuring in de ronde) was
+//   op dat moment halfsynthetisch (regenerated cellulose) zonder canonieke
+//   bestemming: noch "katoen"/"linnen" (natuurlijk) noch "synthetisch"
+//   (petrochemisch) dekte de lading zuiver. "lyocell" (106x, ook halfsynthe-
+//   tisch/regenerated cellulose) viel onder dezelfde redenering en werd om
+//   dezelfde reden niet toegevoegd.
+//   FIXRONDE 7 (controller, 25 sept 2026): dit is inmiddels OPGELOST. Spec
+//   5.1 voegde "viscose" zelf toe aan MATERIALS (zie de constante hierboven);
+//   "viscose" is dus geen afkeuring meer, en "lyocell"/"rayon" normaliseren
+//   er nu naartoe (zie de synoniemenlijst hierboven). Deze twee bullets
+//   blijven staan als historisch record van de meting die tot de spec-
+//   uitbreiding leidde, niet als actuele uitzondering.
+// Geweven/woven/twill/joggingstof blijven wel ongetagd en komen vanzelf terug
+// als kandidaat bij de volgende ronde (zie de opdracht); dat is de bewust
+// gekozen, eerlijkere uitkomst boven een geraden materiaal.
 //
 // Geëxporteerd (was intern): FIXRONDE 6 normaliseert nu ook vijf scalaire
 // velden (silhouette, color_temp, lightness, pattern, shoe_type) die geen

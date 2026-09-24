@@ -3,6 +3,7 @@ import {
   BATCH_INPUT_USD_PER_MTOK,
   BATCH_OUTPUT_USD_PER_MTOK,
   COLOR_TEMPS,
+  COLORS,
   KLEUR_SYNONIEMEN,
   KLEURTEMPERATUUR_SYNONIEMEN,
   LICHTHEID_SYNONIEMEN,
@@ -285,10 +286,15 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
   });
 
   it("laat een onopgelost geval ONGEWIJZIGD staan, zodat het een afkeuring blijft (geen gok naar de dichtstbijzijnde waarde)", () => {
-    // Viscose is halfsynthetisch: geen zekere 1-op-1 met een van de negen
-    // schemawaarden, dus bewust geen synoniem.
-    expect(valideerTags({ ...geldigeTags, materials: ["viscose"] })).toBeNull();
-    expect(normaliseerLijst(["viscose"], MATERIALS, MATERIAAL_SYNONIEMEN)).toEqual(["viscose"]);
+    // FIXRONDE 7 (controller, 25 sept 2026): "viscose" was hier het
+    // voorbeeld van een onopgelost geval; sinds de MATERIALS-uitbreiding is
+    // viscose zelf canoniek (zie het FIXRONDE-7-testblok verderop), dus dat
+    // voorbeeld test niets onopgelosts meer. "modal" is het nieuwe
+    // voorbeeld: ook halfsynthetisch (regenerated cellulose), maar een eigen
+    // productieproces met eigen eigenschappen, dus bewust geen synoniem naar
+    // viscose (in tegenstelling tot lyocell/rayon, zie verderop).
+    expect(valideerTags({ ...geldigeTags, materials: ["modal"] })).toBeNull();
+    expect(normaliseerLijst(["modal"], MATERIALS, MATERIAAL_SYNONIEMEN)).toEqual(["modal"]);
   });
 
   it("laat een niet-array-waarde ongemoeid (valideerTags keurt die op de normale manier af)", () => {
@@ -328,8 +334,79 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
     expect(valideerTags({ ...geldigeTags, materials: ["woven"] })).toBeNull();
   });
 
-  it("laat 'goud' (kleur) ONGEWIJZIGD staan: geen zekere 1-op-1 met een van de vijftien schemakleuren", () => {
-    expect(valideerTags({ ...geldigeTags, colors: ["goud"] })).toBeNull();
+  it("accepteert 'goud' en 'zilver' als canonieke kleuren en normaliseert 'gold'/'silver' ernaartoe (FIXRONDE 7, controller, 25 sept 2026)", () => {
+    // Vervangt de oude "blijft ONGEWIJZIGD staan"-test: "goud" was een
+    // bewust onopgelost geval toen COLORS nog vijftien waarden had, en is
+    // sinds de uitbreiding zelf canoniek. "zilver" hoort er hetzelfde bij;
+    // "gold"/"silver" zijn de directe Engelse woorden (KLEUR_SYNONIEMEN).
+    expect(valideerTags({ ...geldigeTags, colors: ["goud"] })?.colors).toEqual(["goud"]);
+    expect(valideerTags({ ...geldigeTags, colors: ["zilver"] })?.colors).toEqual(["zilver"]);
+    expect(valideerTags({ ...geldigeTags, colors: ["gold"] })?.colors).toEqual(["goud"]);
+    expect(valideerTags({ ...geldigeTags, colors: ["silver"] })?.colors).toEqual(["zilver"]);
+  });
+});
+
+// FIXRONDE 7 (controller, 25 sept 2026): spec 5.1 breidde MATERIALS uit met
+// suede, viscose, canvas, dons, rubber en COLORS met goud, zilver, na de
+// eerste echte H&M-ronde (7.621 producten liepen twee of meer ronden vast op
+// exact deze afkeuringen, zie tagging.ts). Dit blok toetst de uitbreiding
+// zelf en de bijbehorende normalisatiegevallen (suède-accent, lyocell/rayon
+// naar viscose); de oudere FIXRONDE 5/6-blokken hierboven zijn waar nodig
+// bijgewerkt om niet langer een nu-canonieke waarde als "onopgelost" te
+// gebruiken (zie de aangepaste tests voor "modal" en "goud"/"zilver").
+describe("FIXRONDE 7: materialen en kleuren uitgebreid (suede, viscose, canvas, dons, rubber, goud, zilver)", () => {
+  it("accepteert de vijf nieuwe materialen rechtstreeks, met exact de spelling uit de spec", () => {
+    for (const materiaal of ["suede", "viscose", "canvas", "dons", "rubber"]) {
+      expect(valideerTags({ ...geldigeTags, materials: [materiaal] })?.materials).toEqual([materiaal]);
+    }
+  });
+
+  it("normaliseert 'suède' (met accent) naar het canonieke 'suede' (zonder accent, spec 5.1)", () => {
+    expect(valideerTags({ ...geldigeTags, materials: ["suède"] })?.materials).toEqual(["suede"]);
+  });
+
+  it("normaliseert 'lyocell' en 'rayon' naar 'viscose', nu die canoniek is", () => {
+    // lyocell: expliciet genoemd in de opdracht (viel eerder onder dezelfde
+    // "geen doel"-redenering als viscose zelf). rayon: in de VS de gangbare
+    // naam voor wat hier "viscose" heet, hetzelfde fabricageproces.
+    expect(valideerTags({ ...geldigeTags, materials: ["lyocell"] })?.materials).toEqual(["viscose"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["rayon"] })?.materials).toEqual(["viscose"]);
+  });
+
+  it("laat 'modal' bewust ongewijzigd staan: eigen productieproces, geen zekere 1-op-1 met viscose", () => {
+    expect(valideerTags({ ...geldigeTags, materials: ["modal"] })).toBeNull();
+  });
+
+  it("kunstleer en imitatieleer blijven naar synthetisch wijzen, niet naar het nieuwe suede (opdracht expliciet)", () => {
+    expect(valideerTags({ ...geldigeTags, materials: ["kunstleer"] })?.materials).toEqual(["synthetisch"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["imitatieleer"] })?.materials).toEqual(["synthetisch"]);
+  });
+
+  it("normaliseert 'down' naar 'dons': gevonden in de post-fix meting (2x in 100 producten), na de meting toegevoegd", () => {
+    expect(valideerTags({ ...geldigeTags, materials: ["down"] })?.materials).toEqual(["dons"]);
+  });
+
+  it("MATERIALS en COLORS bevatten de zeven nieuwe waarden uit spec 5.1, exacte spelling", () => {
+    for (const m of ["suede", "viscose", "canvas", "dons", "rubber"]) {
+      expect(MATERIALS as readonly string[]).toContain(m);
+    }
+    for (const c of ["goud", "zilver"]) {
+      expect(COLORS as readonly string[]).toContain(c);
+    }
+    // "suède" met accent is bewust GEEN lid van de canonieke lijst zelf: die
+    // normaliseert via MATERIAAL_SYNONIEMEN naar "suede", zie hierboven.
+    expect(MATERIALS as readonly string[]).not.toContain("suède");
+  });
+
+  it("bouwSysteemPrompt noemt goud en zilver in de bestaande color_temp-opsomming, verder ongewijzigd", () => {
+    const prompt = bouwSysteemPrompt();
+    const colorTempRegel = prompt.split("\n").find((r) => r.startsWith("- color_temp"));
+    expect(colorTempRegel).toBeDefined();
+    expect(colorTempRegel).toContain("goud");
+    expect(colorTempRegel).toContain("zilver");
+    // De rest van de regel (warm/koel/neutraal-structuur) blijft intact.
+    expect(colorTempRegel).toContain("warm (beige, camel, bruin, rood, oranje, geel, olijf, goud)");
+    expect(colorTempRegel).toContain("koel (navy, blauw, grijs, zwart, wit, roze, paars, zilver)");
   });
 });
 
