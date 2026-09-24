@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   BATCH_INPUT_USD_PER_MTOK,
   BATCH_OUTPUT_USD_PER_MTOK,
+  KLEUR_SYNONIEMEN,
+  MATERIALS,
+  MATERIAAL_SYNONIEMEN,
   TAG_SCHEMA,
   TAGGER_MODEL,
   TAGGER_VERSION,
@@ -9,8 +12,10 @@ import {
   bouwGebruikersTekst,
   bouwSysteemPrompt,
   bouwVerzoek,
+  normaliseerLijst,
   schatKosten,
   valideerTags,
+  valideerTagsGedetailleerd,
   verwerkResultaten,
   type TagProduct,
 } from "../tagging";
@@ -99,6 +104,35 @@ describe("bouwSysteemPrompt", () => {
     expect(accessoryRegel).toContain("Zwemkleding");
     expect(accessoryRegel).toContain("geen accessory");
   });
+
+  // FIXRONDE 5 (controller, 24 sept 2026): het model haalde "smart casual"
+  // (formaliteitsniveau 3) en occasions door elkaar, goed voor bijna 90% van
+  // het verlies in een echte ronde (847 van de 851 afkeuringen op één reden,
+  // een steekproef van 83 objecten liet occasions:"smart casual" 16x zien).
+  // Deze tests bewaken dat de twee velden nu onmiskenbaar gescheiden zijn.
+  it("beschrijft formality als een cijferschaal die GEEN gelegenheid is", () => {
+    const prompt = bouwSysteemPrompt();
+    const formalityRegel = prompt.split("\n").find((r) => r.startsWith("- formality"));
+    expect(formalityRegel).toBeDefined();
+    expect(formalityRegel).toContain("CIJFERSCHAAL");
+    expect(formalityRegel).toContain("GEEN gelegenheid");
+    expect(formalityRegel).toContain("smart casual");
+  });
+
+  it("occasions herhaalt zijn eigen zeven toegestane waarden en verbiedt 'smart casual' expliciet, vlak bij het veld", () => {
+    const prompt = bouwSysteemPrompt();
+    const occasionsRegel = prompt.split("\n").find((r) => r.startsWith("- occasions"));
+    expect(occasionsRegel).toBeDefined();
+    expect(occasionsRegel).toContain("work, casual, formal, date, travel, sport, party");
+    expect(occasionsRegel).toContain("'smart casual' staat hier NIET tussen");
+  });
+
+  it("noemt 'smart casual' nooit als een van de zeven occasions-waarden zelf", () => {
+    const prompt = bouwSysteemPrompt();
+    const occasionsRegel = prompt.split("\n").find((r) => r.startsWith("- occasions"));
+    const lijstDeel = occasionsRegel!.split(":")[1].split(".")[0];
+    expect(lijstDeel.toLowerCase()).not.toContain("smart casual");
+  });
 });
 
 describe("bouwGebruikersTekst", () => {
@@ -166,10 +200,27 @@ describe("valideerTags", () => {
     expect(valideerTags({ ...geldigeTags, confidence: 1 })?.confidence).toBe(1);
   });
 
-  it("wijst een ongeldige kleur, materiaal of seizoen af", () => {
+  it("wijst een ongeldige kleur of seizoen af (geen normalisatie op deze velden)", () => {
+    // "turquoise" is een echt onopgelost geval (koel of neutraal? geen zekere
+    // canonieke kleur), en seasons krijgt bewust geen normalisatielaag (spec
+    // 5.1 noemt alleen colors/materials, zie FIXRONDE 5 in tagging.ts).
     expect(valideerTags({ ...geldigeTags, colors: ["turquoise"] })).toBeNull();
-    expect(valideerTags({ ...geldigeTags, materials: ["polyester"] })).toBeNull();
     expect(valideerTags({ ...geldigeTags, seasons: ["voorjaar"] })).toBeNull();
+  });
+
+  it("normaliseert 'polyester' naar 'synthetisch' vóór validatie (FIXRONDE 5, controller 24 sept 2026)", () => {
+    // Polyester is per definitie een synthetische vezel, geen inschatting.
+    // Vóór de normalisatielaag werd dit afgekeurd; dat was precies het soort
+    // verlies dat de echte ronde grotendeels trof (samen met "elastaan",
+    // hieronder apart getest).
+    expect(valideerTags({ ...geldigeTags, materials: ["polyester"] })?.materials).toEqual(["synthetisch"]);
+  });
+
+  it("wijst een materiaal af dat na normalisatie nog steeds onbekend is (geen gok)", () => {
+    // "stretchdenim" is de echte, geobserveerde modeluitvoer (terugdraai-
+    // toets 23 sept 2026, aanroep 3): geen canonieke waarde, geen synoniem.
+    // Blijft een afkeuring, wordt niet naar "denim" of "synthetisch" geraden.
+    expect(valideerTags({ ...geldigeTags, materials: ["stretchdenim"] })).toBeNull();
   });
 
   it("wijst een shoe_type buiten de lijst af, ook bij category footwear", () => {
@@ -189,6 +240,88 @@ describe("valideerTags", () => {
     expect(uit?.colors).toEqual(["wit"]);
     expect(uit?.materials).toEqual(["katoen"]);
     expect(uit?.seasons).toEqual(["lente", "zomer"]);
+  });
+});
+
+// FIXRONDE 5 (controller, 24 sept 2026): normalisatielaag vóór validatie,
+// spec 5.1 ("colors/materials genormaliseerd"). Twee harde grenzen: alleen
+// normaliseren waar de betekenis vaststaat, en nooit stilzwijgend informatie
+// weggooien (een onopgelost geval blijft ongewijzigd staan, dus een afkeuring).
+describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
+  it("is hoofdletter- en spatie-ongevoelig", () => {
+    expect(valideerTags({ ...geldigeTags, colors: [" Zwart "] })?.colors).toEqual(["zwart"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["KATOEN"] })?.materials).toEqual(["katoen"]);
+  });
+
+  it("herkent Engelse varianten van de Nederlandse schemawaarden", () => {
+    expect(valideerTags({ ...geldigeTags, colors: ["black", "white"] })?.colors).toEqual(["zwart", "wit"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["cotton", "leather"] })?.materials).toEqual(["katoen", "leer"]);
+  });
+
+  it("herkent de simpele meervoudsvorm, ook gecombineerd met een Engels synoniem", () => {
+    // "pinks" -> stripped "pink" -> Engels synoniem -> "roze".
+    expect(valideerTags({ ...geldigeTags, colors: ["pinks"] })?.colors).toEqual(["roze"]);
+  });
+
+  it("mapt elastaan (het geval uit de diagnose) en verwante synthetische vezelnamen naar 'synthetisch'", () => {
+    for (const vezel of ["elastaan", "elastane", "spandex", "lycra", "nylon", "polyamide", "acryl"]) {
+      expect(valideerTags({ ...geldigeTags, materials: [vezel] })?.materials).toEqual(["synthetisch"]);
+    }
+  });
+
+  it("laat een onopgelost geval ONGEWIJZIGD staan, zodat het een afkeuring blijft (geen gok naar de dichtstbijzijnde waarde)", () => {
+    // Viscose is halfsynthetisch: geen zekere 1-op-1 met een van de negen
+    // schemawaarden, dus bewust geen synoniem.
+    expect(valideerTags({ ...geldigeTags, materials: ["viscose"] })).toBeNull();
+    expect(normaliseerLijst(["viscose"], MATERIALS, MATERIAAL_SYNONIEMEN)).toEqual(["viscose"]);
+  });
+
+  it("laat een niet-array-waarde ongemoeid (valideerTags keurt die op de normale manier af)", () => {
+    expect(normaliseerLijst("niet-een-array", MATERIALS, MATERIAAL_SYNONIEMEN)).toBe("niet-een-array");
+    expect(normaliseerLijst(null, MATERIALS, MATERIAAL_SYNONIEMEN)).toBeNull();
+  });
+
+  it("KLEUR_SYNONIEMEN en MATERIAAL_SYNONIEMEN wijzen uitsluitend naar canonieke schemawaarden", () => {
+    const kleuren = new Set(TAG_SCHEMA.properties.colors.items.enum);
+    const materialen = new Set(TAG_SCHEMA.properties.materials.items.enum);
+    for (const doel of Object.values(KLEUR_SYNONIEMEN)) expect(kleuren.has(doel as string)).toBe(true);
+    for (const doel of Object.values(MATERIAAL_SYNONIEMEN)) expect(materialen.has(doel as string)).toBe(true);
+  });
+});
+
+describe("valideerTagsGedetailleerd (veld+waarde bij een afkeuring, FIXRONDE 5)", () => {
+  it("geeft bij een geldige uitvoer ok:true met de getagde rij", () => {
+    const resultaat = valideerTagsGedetailleerd(geldigeTags);
+    expect(resultaat.ok).toBe(true);
+    if (resultaat.ok) expect(resultaat.tags).toEqual(geldigeTags);
+  });
+
+  it("meldt precies welk veld en welke waarde een occasions-afkeuring veroorzaakten (het 'smart casual'-geval)", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, occasions: ["work", "smart casual"] });
+    expect(resultaat).toEqual({ ok: false, veld: "occasions", waarde: ["work", "smart casual"] });
+  });
+
+  it("meldt veld+waarde voor elk van de andere schemavelden", () => {
+    expect(valideerTagsGedetailleerd({ ...geldigeTags, color_temp: "cool" })).toEqual({
+      ok: false,
+      veld: "color_temp",
+      waarde: "cool",
+    });
+    expect(valideerTagsGedetailleerd({ ...geldigeTags, formality: 9 })).toEqual({
+      ok: false,
+      veld: "formality",
+      waarde: 9,
+    });
+  });
+
+  it("meldt het onbekende veld zelf bij additionalProperties-schending", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, extraField: "x" });
+    expect(resultaat).toEqual({ ok: false, veld: "extraField", waarde: "x" });
+  });
+
+  it("valideerTags blijft een dunne wrapper: null bij ok:false, de rij bij ok:true", () => {
+    expect(valideerTags({ ...geldigeTags, formality: 9 })).toBeNull();
+    expect(valideerTags(geldigeTags)).toEqual(geldigeTags);
   });
 });
 
@@ -303,7 +436,10 @@ describe("verwerkResultaten", () => {
     };
     const uit = verwerkResultaten([buitenSchema], "tekst");
     expect(uit.rijen).toEqual([]);
-    expect(uit.fouten).toEqual([{ custom_id: "f", reden: "waarde buiten schema" }]);
+    // FIXRONDE 5 (controller, 24 sept 2026): het foutenrecord bevat nu ook
+    // veld+waarde, zodat de oorzaak niet meer uit een apart bewaarde
+    // modeluitvoer gereconstrueerd hoeft te worden.
+    expect(uit.fouten).toEqual([{ custom_id: "f", reden: "waarde buiten schema", veld: "color_temp", waarde: "cool" }]);
   });
 
   it("verwerkt een gemengde lijst en houdt geslaagde en gefaalde rijen in de oorspronkelijke volgorde uit elkaar", () => {

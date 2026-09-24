@@ -44,7 +44,6 @@
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
-import { promisify } from "node:util";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { openBatches, type BatchesBestand, type BatchRecord } from "./batchesStore";
 import {
@@ -53,13 +52,11 @@ import {
   TAGGER_VERSION_FOTO,
   bouwGebruikersTekst,
   bouwSysteemPrompt,
-  valideerTags,
+  valideerTagsGedetailleerd,
   type Modus,
   type TagProduct,
   type TagRij,
 } from "./tagging";
-
-const execFileAsync = promisify(execFile);
 
 // ---------------------------------------------------------------------------
 // Constanten
@@ -597,13 +594,45 @@ export interface ClaudeCliResultaat {
  * later actief, terwijl `npx vite-node ...` al weg was). execFile stuurt bij
  * een abort een SIGTERM naar het kindproces, dus met een gekoppelde
  * AbortController stopt de echte aanroep mee met Ctrl-C.
+ *
+ * STDIN-FIX (controller, 24 sept 2026): ronde 2 van de echte productieronde
+ * stierf al na 37s op elke portie met (stderr, exitcode 1):
+ *   "Warning: no stdin data received in 3s, proceeding without it.
+ *    If piping from a slow command, redirect stdin explicitly: < /dev/null
+ *    to skip, or wait longer."
+ * Oorzaak: `execFile` geeft het kindproces standaard een pipe als stdin. Er
+ * wordt nooit iets naar die pipe geschreven én hij wordt nooit gesloten, dus
+ * het kindproces ziet geen EOF en `claude -p` (non-interactief, zonder TTY)
+ * blijft op invoer wachten die nooit komt. De boodschap zegt "proceeding
+ * without it", maar de aanroep faalde toch met exitcode 1 op exact dat
+ * moment, dus "doorgaan" loste het kennelijk niet op. Fix: stdin van het
+ * kindproces METEEN na het starten expliciet sluiten (`child.stdin.end()`),
+ * zodat `claude -p` direct een EOF ziet in plaats van drie seconden te
+ * wachten op invoer die nooit komt. Dit vervangt de `promisify(execFile)`-weg
+ * (geen toegang tot het ChildProcess-object om stdin te sluiten) door een
+ * directe `execFile`-aanroep met callback, waarvan het teruggegeven
+ * ChildProcess-object hier gebruikt wordt.
  */
 export async function voerClaudeCliUit(args: string[], timeoutMs: number, signal?: AbortSignal): Promise<ClaudeCliResultaat> {
   try {
-    const { stdout } = await execFileAsync("claude", args, {
-      timeout: timeoutMs,
-      maxBuffer: 20 * 1024 * 1024,
-      signal,
+    const stdout = await new Promise<string>((resolve, reject) => {
+      const kindproces = execFile(
+        "claude",
+        args,
+        { timeout: timeoutMs, maxBuffer: 20 * 1024 * 1024, signal },
+        (fout, stdout, stderr) => {
+          if (fout) {
+            const verrijkteFout = fout as NodeJS.ErrnoException & { stdout?: string; stderr?: string };
+            verrijkteFout.stdout = stdout;
+            verrijkteFout.stderr = stderr;
+            reject(verrijkteFout);
+          } else {
+            resolve(stdout);
+          }
+        }
+      );
+      // Zie STDIN-FIX hierboven: zonder dit blijft claude -p op invoer wachten.
+      kindproces.stdin?.end();
     });
     try {
       return JSON.parse(stdout) as ClaudeCliResultaat;
@@ -630,11 +659,23 @@ export async function voerClaudeCliUit(args: string[], timeoutMs: number, signal
 // Uitvoer verwerken
 // ---------------------------------------------------------------------------
 
+export interface CliVerwerkFout {
+  product_id: string;
+  reden: string;
+  // Alleen gezet bij reden "waarde buiten schema" (FIXRONDE 5, controller, 24
+  // sept 2026): welk veld en welke waarde de afkeuring veroorzaakten, zodat de
+  // oorzaak uit tag-fouten-*.json is af te lezen in plaats van gereconstrueerd
+  // te moeten worden uit een apart bewaarde modeluitvoer (zoals bij de 851/2775-
+  // ronde nodig was: 847 afkeuringen met alleen "waarde buiten schema").
+  veld?: string;
+  waarde?: unknown;
+}
+
 export interface CliVerwerkResultaat {
   mislukt: boolean;
   reden?: string;
   rijen: TagRij[];
-  fouten: { product_id: string; reden: string }[];
+  fouten: CliVerwerkFout[];
   // Aantal items dat het model teruggaf, VÓÓR validatie (dus vóór rijen/
   // fouten-splitsing). 0 bij een mislukte aanroep. Puur voor de voortgangslog
   // in tag-products.ts: "N producten in, M objecten terug, K geldig" maakt
@@ -714,7 +755,7 @@ export function verwerkCliUitvoer(
 
   const versie = modus === "foto" ? TAGGER_VERSION_FOTO : TAGGER_VERSION;
   const rijen: TagRij[] = [];
-  const fouten: { product_id: string; reden: string }[] = [];
+  const fouten: CliVerwerkFout[] = [];
   const geziene = new Set<number>();
 
   for (const ruwItem of items) {
@@ -726,12 +767,12 @@ export function verwerkCliUitvoer(
     geziene.add(i);
 
     const product = producten[i - 1];
-    const tags = valideerTags(rest);
-    if (!tags) {
-      fouten.push({ product_id: product.product_id, reden: "waarde buiten schema" });
+    const resultaat = valideerTagsGedetailleerd(rest);
+    if (!resultaat.ok) {
+      fouten.push({ product_id: product.product_id, reden: "waarde buiten schema", veld: resultaat.veld, waarde: resultaat.waarde });
       continue;
     }
-    rijen.push({ ...tags, product_id: product.product_id, tagger_version: versie });
+    rijen.push({ ...resultaat.tags, product_id: product.product_id, tagger_version: versie });
   }
 
   producten.forEach((p, idx) => {

@@ -1,7 +1,8 @@
+import { execFile } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BatchesBestand } from "../batchesStore";
 import {
   BASIS_KOSTEN_USD,
@@ -43,10 +44,17 @@ import {
   strippenJsonHekjes,
   timeoutMsVoorPortie,
   verwerkCliUitvoer,
+  voerClaudeCliUit,
   voerMetConcurrency,
   type PortieRecord,
 } from "../tagCli";
 import { TAGGER_VERSION, TAGGER_VERSION_FOTO, TAG_SCHEMA, type TagProduct } from "../tagging";
+
+// Mockt het kindproces zodat voerClaudeCliUit getest kan worden zonder een
+// echte `claude`-subprocess te starten. Alleen relevant voor de
+// "voerClaudeCliUit: stdin-fix"-tests hieronder; verder gebruikt niets in dit
+// bestand node:child_process.
+vi.mock("node:child_process", () => ({ execFile: vi.fn() }));
 
 const product = (extra: Partial<TagProduct> = {}): TagProduct => ({
   product_id: "11111111-1111-4111-8111-111111111111",
@@ -524,7 +532,7 @@ describe("verwerkCliUitvoer", () => {
     expect(uit.fouten).toEqual([{ product_id: "a", reden: "geen tag ontvangen van het model (ontbreekt in de uitvoer)" }]);
   });
 
-  it("logt een schema-fout per product zonder de rest van de portie te raken", () => {
+  it("logt een schema-fout per product zonder de rest van de portie te raken, met veld+waarde erbij (FIXRONDE 5)", () => {
     const respons = {
       structured_output: {
         items: [
@@ -537,7 +545,35 @@ describe("verwerkCliUitvoer", () => {
     expect(uit.mislukt).toBe(false);
     expect(uit.rijen).toHaveLength(1);
     expect(uit.rijen[0].product_id).toBe("b");
-    expect(uit.fouten).toEqual([{ product_id: "a", reden: "waarde buiten schema" }]);
+    // Vóór FIXRONDE 5 (controller, 24 sept 2026) was dit alleen
+    // { product_id, reden: "waarde buiten schema" }: de oorzaak van 847
+    // afkeuringen in een echte ronde moest toen uit een apart bewaarde
+    // modeluitvoer gereconstrueerd worden. Nu staat veld+waarde er meteen bij.
+    expect(uit.fouten).toEqual([{ product_id: "a", reden: "waarde buiten schema", veld: "formality", waarde: 99 }]);
+  });
+
+  it("meldt het 'smart casual'-occasions-geval uit de diagnose met veld+waarde, blijft een afkeuring (geen drop, geen gok)", () => {
+    const respons = {
+      structured_output: {
+        items: [{ index: 1, ...geldigeTags, occasions: ["work", "smart casual"] }],
+      },
+    };
+    const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
+    expect(uit.rijen).toEqual([]);
+    expect(uit.fouten).toEqual([
+      { product_id: "a", reden: "waarde buiten schema", veld: "occasions", waarde: ["work", "smart casual"] },
+    ]);
+  });
+
+  it("normaliseert materialen ook via het claude -p-pad ('elastaan' -> 'synthetisch', het andere geval uit de diagnose)", () => {
+    const respons = {
+      structured_output: {
+        items: [{ index: 1, ...geldigeTags, materials: ["elastaan"] }],
+      },
+    };
+    const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].materials).toEqual(["synthetisch"]);
   });
 
   it("is mislukt bij is_error", () => {
@@ -555,6 +591,64 @@ describe("verwerkCliUitvoer", () => {
     const uit = verwerkCliUitvoer({ structured_output: { items: [] } }, producten, "tekst");
     expect(uit.mislukt).toBe(true);
     expect(uit.reden).toContain("0 van de 2");
+  });
+});
+
+// FIXRONDE 5 (controller, 24 sept 2026): een echte ronde stierf na 37s op
+// elke portie met "Warning: no stdin data received in 3s, proceeding without
+// it." (stderr) gevolgd door exitcode 1. Oorzaak: execFile geeft het
+// kindproces een open stdin-pipe; zonder die te sluiten wacht `claude -p`
+// (geen TTY, non-interactief) op invoer die nooit komt. Fix: child.stdin.end()
+// meteen na het starten. Deze tests mocken node:child_process (zie de
+// vi.mock-aanroep bovenaan dit bestand) om te bewijzen dat dat ECHT gebeurt,
+// zonder een echte `claude`-subprocess te starten; de fix is daarnaast ook
+// los, met een echte `claude -p`-aanroep buiten deze testsuite geverifieerd
+// (zie taak-5-report.md).
+describe("voerClaudeCliUit: stdin-fix", () => {
+  const execFileMock = vi.mocked(execFile as unknown as (...args: unknown[]) => { stdin?: { end: () => void } });
+
+  beforeEach(() => {
+    execFileMock.mockReset();
+  });
+
+  it("sluit stdin van het kindproces meteen na het starten", async () => {
+    const stdinEnd = vi.fn();
+    execFileMock.mockImplementation((..._args: unknown[]) => {
+      const cb = _args[_args.length - 1] as (fout: unknown, stdout: string, stderr: string) => void;
+      cb(null, JSON.stringify({ is_error: false, result: "ok" }), "");
+      return { stdin: { end: stdinEnd } };
+    });
+
+    const uit = await voerClaudeCliUit(["-p"], 1000);
+
+    expect(stdinEnd).toHaveBeenCalledTimes(1);
+    expect(uit).toEqual({ is_error: false, result: "ok" });
+  });
+
+  it("sluit stdin ook als de aanroep zelf mislukt (regressietoets tegen de echte 37s-crash)", async () => {
+    const stdinEnd = vi.fn();
+    execFileMock.mockImplementation((..._args: unknown[]) => {
+      const cb = _args[_args.length - 1] as (fout: unknown, stdout: string, stderr: string) => void;
+      const fout = Object.assign(new Error("Command failed"), { code: 1 });
+      cb(fout, "", "Warning: no stdin data received in 3s, proceeding without it.");
+      return { stdin: { end: stdinEnd } };
+    });
+
+    const uit = await voerClaudeCliUit(["-p"], 1000);
+
+    expect(stdinEnd).toHaveBeenCalledTimes(1);
+    expect(uit.is_error).toBe(true);
+    expect(uit.result).toContain("no stdin data received");
+  });
+
+  it("crasht niet als het kindproces geen stdin-stream blijkt te hebben", async () => {
+    execFileMock.mockImplementation((..._args: unknown[]) => {
+      const cb = _args[_args.length - 1] as (fout: unknown, stdout: string, stderr: string) => void;
+      cb(null, JSON.stringify({ is_error: false }), "");
+      return {}; // geen .stdin
+    });
+
+    await expect(voerClaudeCliUit(["-p"], 1000)).resolves.toEqual({ is_error: false });
   });
 });
 
