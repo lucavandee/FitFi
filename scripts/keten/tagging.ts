@@ -194,10 +194,6 @@ function inLijst<T extends readonly string[]>(lijst: T, w: unknown): w is T[numb
   return typeof w === "string" && (lijst as readonly string[]).includes(w);
 }
 
-function alleInLijst<T extends readonly string[]>(lijst: T, w: unknown): w is T[number][] {
-  return Array.isArray(w) && w.every((x) => inLijst(lijst, x));
-}
-
 // TAG_SCHEMA staat op additionalProperties: false; deze validator handhaaft dat zelf ook,
 // in plaats van erop te vertrouwen dat de structured-output-API het al afdwingt.
 const TOEGESTANE_VELDEN = new Set(Object.keys(TAG_SCHEMA.properties));
@@ -509,8 +505,58 @@ export const SCHOENTYPE_SYNONIEMEN: Partial<Record<string, (typeof SHOE_TYPES)[n
  * gereconstrueerd worden uit een apart bewaarde modeluitvoer; met veld+waarde
  * in het foutenrecord (zie verwerkResultaten/verwerkCliUitvoer) staat die
  * oorzaak meteen in `tag-fouten-*.json`.
+ *
+ * Bij een GESLAAGDE validatie kan `weggevallen` losse array-elementen bevatten
+ * die wel gefilterd maar niet het hele product hebben gekost (FIXRONDE 8, zie
+ * hieronder bij filterMetWeggevallen): altijd aanwezig, leeg als er niets is
+ * weggevallen, zodat een aanroeper niet apart hoeft te checken op undefined.
  */
-export type ValidatieResultaat = { ok: true; tags: TagUitvoer } | { ok: false; veld: string; waarde: unknown };
+export interface WeggevallenElement {
+  veld: string;
+  waarde: unknown;
+}
+
+export type ValidatieResultaat =
+  | { ok: true; tags: TagUitvoer; weggevallen: WeggevallenElement[] }
+  | { ok: false; veld: string; waarde: unknown };
+
+/**
+ * Filtert een array-veld ELEMENT VOOR ELEMENT tegen de vaste lijst, in plaats
+ * van de hele array af te keuren zodra één element niet past (FIXRONDE 8,
+ * controller, 25 sept 2026 — het structurele defect achter het plafond van
+ * zeven fixrondes, zie het commentaarblok boven MATERIAAL_SYNONIEMEN
+ * hierboven).
+ *
+ * `ruw` is hier al door de normalisatielaag heen (colors/materials via
+ * normaliseerLijst, hierboven, vóór deze functie aangeroepen); wat na
+ * normalisatie nog steeds niet in de lijst staat, is een element waarvan de
+ * betekenis niet vaststaat, geen gok waard. Zo'n element verdwijnt niet
+ * stilzwijgend: het komt terug in `weggevallen`, zodat later te tellen is
+ * welke waarden vaak wegvallen (dezelfde soort mining als leidde tot
+ * FIXRONDE 6/7), zonder dat daar een apart bewaarde modeluitvoer voor nodig
+ * is.
+ *
+ * Geeft `null` terug als `ruw` geen array is: dat is een fout van een ANDER
+ * soort (verkeerd veldtype, geen elementen om te filteren) en blijft, net als
+ * vóór deze fixronde, een directe afkeuring van het hele veld.
+ */
+function filterMetWeggevallen<T extends readonly string[]>(
+  veld: string,
+  ruw: unknown,
+  lijst: T,
+  weggevallen: WeggevallenElement[]
+): T[number][] | null {
+  if (!Array.isArray(ruw)) return null;
+  const behouden: T[number][] = [];
+  for (const element of ruw) {
+    if (inLijst(lijst, element)) {
+      behouden.push(element);
+    } else {
+      weggevallen.push({ veld, waarde: element });
+    }
+  }
+  return behouden;
+}
 
 export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   if (!obj || typeof obj !== "object") return { ok: false, veld: "(geen object)", waarde: obj };
@@ -535,7 +581,27 @@ export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   if (!inLijst(CATEGORIES, o.category)) return { ok: false, veld: "category", waarde: o.category };
   if (!inLijst(GENDERS, o.gender)) return { ok: false, veld: "gender", waarde: o.gender };
   if (![1, 2, 3, 4, 5].includes(o.formality as number)) return { ok: false, veld: "formality", waarde: o.formality };
-  if (!alleInLijst(OCCASIONS, o.occasions)) return { ok: false, veld: "occasions", waarde: o.occasions };
+
+  // FIXRONDE 8 (controller, 25 sept 2026): het structurele defect. Zie het
+  // uitgebreide commentaar bij filterMetWeggevallen hierboven voor de
+  // motivatie; hier alleen de per-veld beslissing over wat een LEGE lijst na
+  // filteren betekent, met een eigen reden per veld (niet één regel voor
+  // alle vier).
+  const weggevallen: WeggevallenElement[] = [];
+
+  // occasions: leeg blijft een afkeuring. De systeemprompt eist expliciet
+  // minimaal één gelegenheid; zonder gelegenheid kan een product nooit
+  // kandidaat worden voor een outfit op die as, dus een lege lijst is geen
+  // bruikbaar "we weten het niet"-antwoord zoals bij materials hieronder.
+  // `waarde` bij een afkeuring is de OORSPRONKELIJKE (ongefilterde) invoer,
+  // zodat zichtbaar blijft wat er precies mis was (bijvoorbeeld uitsluitend
+  // "smart casual", nul geldige gelegenheden).
+  const occasionsGefilterd = filterMetWeggevallen("occasions", o.occasions, OCCASIONS, weggevallen);
+  if (occasionsGefilterd === null || occasionsGefilterd.length === 0) {
+    return { ok: false, veld: "occasions", waarde: o.occasions };
+  }
+  o.occasions = occasionsGefilterd;
+
   if (!inLijst(SILHOUETTES, o.silhouette)) return { ok: false, veld: "silhouette", waarde: o.silhouette };
   if (!inLijst(COLOR_TEMPS, o.color_temp)) return { ok: false, veld: "color_temp", waarde: o.color_temp };
   if (!inLijst(LIGHTNESS, o.lightness)) return { ok: false, veld: "lightness", waarde: o.lightness };
@@ -558,15 +624,53 @@ export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   if (o.category === "footwear" && o.shoe_type !== null && !inLijst(SHOE_TYPES, o.shoe_type)) {
     return { ok: false, veld: "shoe_type", waarde: o.shoe_type };
   }
-  if (!alleInLijst(COLORS, o.colors)) return { ok: false, veld: "colors", waarde: o.colors };
-  if (!alleInLijst(MATERIALS, o.materials)) return { ok: false, veld: "materials", waarde: o.materials };
-  if (!alleInLijst(SEASONS, o.seasons)) return { ok: false, veld: "seasons", waarde: o.seasons };
+  // colors: leeg blijft een afkeuring. Zonder herkenbare kleur is een item
+  // niet te matchen in een outfit: kleur is een van de assen waarop de
+  // stylist-compositie (spec 5.1/5.4) items combineert, en "geen enkele
+  // kleur" is geen bruikbaar antwoord op die vraag.
+  const colorsGefilterd = filterMetWeggevallen("colors", o.colors, COLORS, weggevallen);
+  if (colorsGefilterd === null || colorsGefilterd.length === 0) {
+    return { ok: false, veld: "colors", waarde: o.colors };
+  }
+  o.colors = colorsGefilterd;
+
+  // materials: leeg wordt ["onbekend"], GEEN afkeuring. "onbekend" staat al
+  // in MATERIALS (spec 5.1) en is precies wat er op dat moment feitelijk
+  // bekend is over het materiaal, niet een gok. Dit is het exacte defect uit
+  // de opdracht: vóór deze fixronde kostte bijvoorbeeld
+  // materials: ["viscose", "kralen"] het HELE product (dertien overigens
+  // correcte velden inbegrepen) om "kralen" alleen. Een product zonder
+  // herkend materiaal is nog steeds op categorie, kleur, gelegenheid en
+  // formaliteit te matchen, dus dat mag niet langer de reden zijn om alles
+  // weg te gooien.
+  const materialsGefilterd = filterMetWeggevallen("materials", o.materials, MATERIALS, weggevallen);
+  if (materialsGefilterd === null) {
+    return { ok: false, veld: "materials", waarde: o.materials };
+  }
+  o.materials = materialsGefilterd.length > 0 ? materialsGefilterd : ["onbekend"];
+
+  // seasons: leeg blijft OOK GEEN afkeuring, net als materials maar met een
+  // eigen, downstream-onderbouwde reden (anders dan materials' "onbekend"):
+  // src/engine/outfitComposer.ts (isSeasonMatch) en src/engine/helpers.ts
+  // behandelen een product zonder seizoensdata al expliciet als "geschikt
+  // voor alle seizoenen" ("If product has no season data, assume it's
+  // suitable for all seasons"). Een lege seasons-array na het wegfilteren
+  // van een onherkend seizoenswoord heeft dus al een vaste, correcte
+  // downstream-betekenis; er hoeft niets aan toegevoegd te worden zoals bij
+  // materials, en het is geen gok om die betekenis te laten staan.
+  const seasonsGefilterd = filterMetWeggevallen("seasons", o.seasons, SEASONS, weggevallen);
+  if (seasonsGefilterd === null) {
+    return { ok: false, veld: "seasons", waarde: o.seasons };
+  }
+  o.seasons = seasonsGefilterd;
+
   if (typeof o.confidence !== "number" || o.confidence < 0 || o.confidence > 1) {
     return { ok: false, veld: "confidence", waarde: o.confidence };
   }
 
   return {
     ok: true,
+    weggevallen,
     tags: {
       // Spec 5.1: category anders dan de zes echte waarden ("geen") betekent
       // is_fashion false. Dit forceren we hier zelf in plaats van te vertrouwen
@@ -630,13 +734,32 @@ export interface VerwerkFout {
   waarde?: unknown;
 }
 
+/**
+ * Eén weggevallen array-element bij een verder GESLAAGDE validatie (FIXRONDE
+ * 8, controller, 25 sept 2026, zie filterMetWeggevallen/WeggevallenElement
+ * hierboven). Dit is bewust een apart, lichter record naast VerwerkFout in
+ * plaats van er een veld op te plakken: een weggevallen element is geen
+ * afkeuring (het product is wél geschreven), en meeliften op VerwerkFout zou
+ * "mislukt" en "gelukt met een kanttekening" door elkaar laten lopen in
+ * tag-fouten-*.json, precies het soort tellingsfout die deze fixronde
+ * repareert. Wel dezelfde velden (custom_id/veld/waarde) zodat dezelfde
+ * mining-aanpak als bij de vorige fixrondes (tellen per veld+waarde) er
+ * rechtstreeks op los kan.
+ */
+export interface WeggevallenRecord {
+  custom_id: string;
+  veld: string;
+  waarde: unknown;
+}
+
 export function verwerkResultaten(
   resultaten: BatchResultaat[],
   modus: Modus
-): { rijen: TagRij[]; fouten: VerwerkFout[] } {
+): { rijen: TagRij[]; fouten: VerwerkFout[]; weggevallen: WeggevallenRecord[] } {
   const versie = modus === "foto" ? TAGGER_VERSION_FOTO : TAGGER_VERSION;
   const rijen: TagRij[] = [];
   const fouten: VerwerkFout[] = [];
+  const weggevallen: WeggevallenRecord[] = [];
 
   for (const r of resultaten) {
     if (r.result.type !== "succeeded" || !r.result.message) {
@@ -660,8 +783,11 @@ export function verwerkResultaten(
       fouten.push({ custom_id: r.custom_id, reden: "waarde buiten schema", veld: resultaat.veld, waarde: resultaat.waarde });
       continue;
     }
+    for (const w of resultaat.weggevallen) {
+      weggevallen.push({ custom_id: r.custom_id, veld: w.veld, waarde: w.waarde });
+    }
     rijen.push({ ...resultaat.tags, product_id: r.custom_id, tagger_version: versie });
   }
 
-  return { rijen, fouten };
+  return { rijen, fouten, weggevallen };
 }

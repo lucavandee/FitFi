@@ -216,12 +216,32 @@ describe("valideerTags", () => {
     expect(valideerTags({ ...geldigeTags, confidence: 1 })?.confidence).toBe(1);
   });
 
-  it("wijst een ongeldige kleur of seizoen af (geen normalisatie op deze velden)", () => {
+  it("wijst een ongeldige kleur af als het de ENIGE kleur is (leeg na filteren blijft een afkeuring)", () => {
     // "turquoise" is een echt onopgelost geval (koel of neutraal? geen zekere
-    // canonieke kleur), en seasons krijgt bewust geen normalisatielaag (spec
-    // 5.1 noemt alleen colors/materials, zie FIXRONDE 5 in tagging.ts).
+    // canonieke kleur), en colors krijgt bewust geen normalisatielaag voor
+    // zo'n geval (spec 5.1 noemt alleen exacte/synonieme mapping, zie
+    // FIXRONDE 5 in tagging.ts). FIXRONDE 8 (controller, 25 sept 2026)
+    // verving de "hele array moet kloppen"-toets door per-element filteren;
+    // met precies één, ongeldig element wordt colors na filteren leeg, en
+    // dat blijft een afkeuring (zonder herkenbare kleur is een item niet te
+    // matchen in een outfit), dus de uitkomst hier is ongewijzigd.
     expect(valideerTags({ ...geldigeTags, colors: ["turquoise"] })).toBeNull();
-    expect(valideerTags({ ...geldigeTags, seasons: ["voorjaar"] })).toBeNull();
+  });
+
+  // FIXRONDE 8 (controller, 25 sept 2026): vervangt de oude, samengevoegde
+  // "kleur of seizoen"-test. Vóór deze fixronde keurde alleInLijst colors EN
+  // seasons op dezelfde manier af zodra er één ongeldig element in stond; nu
+  // filtert valideerTagsGedetailleerd element voor element, en seasons kreeg
+  // daarbij een BEWUST andere regel dan colors (zie het commentaar in
+  // tagging.ts): src/engine/outfitComposer.ts behandelt een product zonder
+  // seizoensdata al als "geschikt voor alle seizoenen", dus een lege
+  // seasons-array na filteren is geen afkeuring meer, in tegenstelling tot
+  // colors hierboven. Dit is dus geen test die alleen is aangepast om hem
+  // groen te krijgen: het gedrag is met opzet anders voor dit veld.
+  it("laat een ongeldig seizoen wegvallen zonder het product af te keuren (seasons mag leeg zijn)", () => {
+    const resultaat = valideerTags({ ...geldigeTags, seasons: ["voorjaar"] });
+    expect(resultaat).not.toBeNull();
+    expect(resultaat?.seasons).toEqual([]);
   });
 
   it("normaliseert 'polyester' naar 'synthetisch' vóór validatie (FIXRONDE 5, controller 24 sept 2026)", () => {
@@ -232,11 +252,20 @@ describe("valideerTags", () => {
     expect(valideerTags({ ...geldigeTags, materials: ["polyester"] })?.materials).toEqual(["synthetisch"]);
   });
 
-  it("wijst een materiaal af dat na normalisatie nog steeds onbekend is (geen gok)", () => {
-    // "stretchdenim" is de echte, geobserveerde modeluitvoer (terugdraai-
-    // toets 23 sept 2026, aanroep 3): geen canonieke waarde, geen synoniem.
-    // Blijft een afkeuring, wordt niet naar "denim" of "synthetisch" geraden.
-    expect(valideerTags({ ...geldigeTags, materials: ["stretchdenim"] })).toBeNull();
+  // FIXRONDE 8 (controller, 25 sept 2026): dit was tot en met FIXRONDE 7 een
+  // afkeuring ("wijst een materiaal af dat na normalisatie nog steeds
+  // onbekend is"). Dat was precies het structurele defect uit de opdracht:
+  // "stretchdenim" (de echte, geobserveerde modeluitvoer, terugdraai-toets 23
+  // sept 2026, aanroep 3) heeft geen canonieke waarde en geen synoniem, maar
+  // dat is nu geen reden meer om het HELE product af te keuren. Het element
+  // valt weg (blijft niet ongeraden staan als "stretchdenim", wordt ook niet
+  // naar "denim" of "synthetisch" geraden: dat zou alsnog een gok zijn),
+  // materials wordt daardoor leeg en valt terug op "onbekend", en de rest van
+  // het product (dertien andere velden) blijft gewoon staan.
+  it("laat een onherkend materiaal wegvallen; materials valt terug op 'onbekend' in plaats van het product af te keuren", () => {
+    const resultaat = valideerTags({ ...geldigeTags, materials: ["stretchdenim"] });
+    expect(resultaat).not.toBeNull();
+    expect(resultaat?.materials).toEqual(["onbekend"]);
   });
 
   it("wijst een shoe_type buiten de lijst af, ook bij category footwear", () => {
@@ -285,7 +314,7 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
     }
   });
 
-  it("laat een onopgelost geval ONGEWIJZIGD staan, zodat het een afkeuring blijft (geen gok naar de dichtstbijzijnde waarde)", () => {
+  it("normaliseerLijst laat een onopgelost geval ONGEWIJZIGD staan (geen gok naar de dichtstbijzijnde waarde); valideerTags laat het element wegvallen in plaats van het product af te keuren", () => {
     // FIXRONDE 7 (controller, 25 sept 2026): "viscose" was hier het
     // voorbeeld van een onopgelost geval; sinds de MATERIALS-uitbreiding is
     // viscose zelf canoniek (zie het FIXRONDE-7-testblok verderop), dus dat
@@ -293,8 +322,17 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
     // voorbeeld: ook halfsynthetisch (regenerated cellulose), maar een eigen
     // productieproces met eigen eigenschappen, dus bewust geen synoniem naar
     // viscose (in tegenstelling tot lyocell/rayon, zie verderop).
-    expect(valideerTags({ ...geldigeTags, materials: ["modal"] })).toBeNull();
+    //
+    // FIXRONDE 8 (controller, 25 sept 2026): normaliseerLijst zelf verandert
+    // hier niets (nog steeds geen gok, "modal" blijft ongewijzigd staan als
+    // string). Wat WEL verandert is wat valideerTags daarmee doet: vóór deze
+    // fixronde was "ongewijzigd staan" gelijk aan "hele product afgekeurd"
+    // (alleInLijst zag één ongeldig element in de array); nu wordt het
+    // element weggelaten en valt materials terug op "onbekend", zonder de
+    // rest van het product te raken. Dit was letterlijk het voorbeeld uit de
+    // opdracht (materials: ["viscose","kralen"] kostte het hele product).
     expect(normaliseerLijst(["modal"], MATERIALS, MATERIAAL_SYNONIEMEN)).toEqual(["modal"]);
+    expect(valideerTags({ ...geldigeTags, materials: ["modal"] })?.materials).toEqual(["onbekend"]);
   });
 
   it("laat een niet-array-waarde ongemoeid (valideerTags keurt die op de normale manier af)", () => {
@@ -324,14 +362,19 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
     expect(valideerTags({ ...geldigeTags, materials: ["imitatieleer"] })?.materials).toEqual(["synthetisch"]);
   });
 
-  it("laat 'geweven', 'joggingstof' en 'twill' ONGEWIJZIGD staan (weef-/stoftype, geen vezelnaam, bewust geen synoniem, FIXRONDE 6)", () => {
+  it("'geweven', 'joggingstof' en 'twill' vallen weg in plaats van het product af te keuren (weef-/stoftype, geen vezelnaam, bewust geen synoniem, FIXRONDE 6)", () => {
     // Zelfde principe als viscose hierboven, nu met de drie andere woorden
     // uit de opdracht die samen met viscose de grootste materialen-
     // afkeuringen in de lopende H&M-ronde vormden (740x, 293x, 285x).
-    expect(valideerTags({ ...geldigeTags, materials: ["geweven"] })).toBeNull();
-    expect(valideerTags({ ...geldigeTags, materials: ["joggingstof"] })).toBeNull();
-    expect(valideerTags({ ...geldigeTags, materials: ["twill"] })).toBeNull();
-    expect(valideerTags({ ...geldigeTags, materials: ["woven"] })).toBeNull();
+    // FIXRONDE 8 (controller, 25 sept 2026): dit waren tot en met FIXRONDE 7
+    // stuk voor stuk hele-product-afkeuringen (toBeNull()); precies de
+    // "grootste losse afkeuringsredenen"-lijst uit de opdracht die liet zien
+    // dat elke uitbreiding van MATERIALS zomaar een volgende laag stofwoorden
+    // blootlegde. Nu vallen ze weg en valt materials terug op "onbekend",
+    // zonder de rest van het product te raken.
+    for (const materiaal of ["geweven", "joggingstof", "twill", "woven"]) {
+      expect(valideerTags({ ...geldigeTags, materials: [materiaal] })?.materials).toEqual(["onbekend"]);
+    }
   });
 
   it("accepteert 'goud' en 'zilver' als canonieke kleuren en normaliseert 'gold'/'silver' ernaartoe (FIXRONDE 7, controller, 25 sept 2026)", () => {
@@ -373,8 +416,8 @@ describe("FIXRONDE 7: materialen en kleuren uitgebreid (suede, viscose, canvas, 
     expect(valideerTags({ ...geldigeTags, materials: ["rayon"] })?.materials).toEqual(["viscose"]);
   });
 
-  it("laat 'modal' bewust ongewijzigd staan: eigen productieproces, geen zekere 1-op-1 met viscose", () => {
-    expect(valideerTags({ ...geldigeTags, materials: ["modal"] })).toBeNull();
+  it("laat 'modal' bewust ongewijzigd staan: eigen productieproces, geen zekere 1-op-1 met viscose (valt weg i.p.v. het product af te keuren, FIXRONDE 8)", () => {
+    expect(valideerTags({ ...geldigeTags, materials: ["modal"] })?.materials).toEqual(["onbekend"]);
   });
 
   it("kunstleer en imitatieleer blijven naar synthetisch wijzen, niet naar het nieuwe suede (opdracht expliciet)", () => {
@@ -568,9 +611,106 @@ describe("valideerTagsGedetailleerd (veld+waarde bij een afkeuring, FIXRONDE 5)"
     if (resultaat.ok) expect(resultaat.tags).toEqual(geldigeTags);
   });
 
-  it("meldt precies welk veld en welke waarde een occasions-afkeuring veroorzaakten (het 'smart casual'-geval)", () => {
+  // FIXRONDE 8 (controller, 25 sept 2026): dit was tot en met FIXRONDE 7 een
+  // regelrechte afkeuring van het hele product ({ ok: false, veld:
+  // "occasions", waarde: ["work", "smart casual"] }). Dat is exact het
+  // structurele defect uit de opdracht: "work" is een geldige gelegenheid,
+  // "smart casual" niet, en de oude alles-of-niets-toets (alleInLijst) gooide
+  // dan het hele product weg, dertien overigens correcte velden inbegrepen.
+  // Nu blijft "work" staan, valt "smart casual" weg (het element, niet het
+  // product) en komt het terug in `weggevallen` in plaats van stilzwijgend
+  // te verdwijnen. Dit is dus geen test die is aangepast om hem groen te
+  // krijgen: het gedrag is met opzet veranderd, dit is het letterlijke
+  // voorbeeld dat tot de fix leidde.
+  it("laat 'smart casual' wegvallen uit occasions zonder het product af te keuren zolang er een geldige gelegenheid overblijft", () => {
     const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, occasions: ["work", "smart casual"] });
-    expect(resultaat).toEqual({ ok: false, veld: "occasions", waarde: ["work", "smart casual"] });
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.tags.occasions).toEqual(["work"]);
+    expect(resultaat.weggevallen).toEqual([{ veld: "occasions", waarde: "smart casual" }]);
+  });
+
+  // occasions blijft wel afgekeurd zodra ER GEEN ENKELE geldige gelegenheid
+  // overblijft: spec 5.1 eist minimaal één, en zonder gelegenheid kan een
+  // product nooit kandidaat worden voor een outfit op die as. Dit is het
+  // andere uiteinde van dezelfde regel als de test hierboven.
+  it("keurt occasions nog steeds af als ALLE elementen wegvallen (leeg na filteren, minimaal één vereist)", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, occasions: ["smart casual", "werk"] });
+    expect(resultaat).toEqual({ ok: false, veld: "occasions", waarde: ["smart casual", "werk"] });
+  });
+
+  // Zelfde regel als occasions hierboven, toegepast op colors: één ongeldige
+  // kleur naast een geldige kost het product niet meer, wel geregistreerd.
+  it("laat een ongeldige kleur wegvallen naast een geldige, zonder het product af te keuren", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, colors: ["wit", "turquoise"] });
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.tags.colors).toEqual(["wit"]);
+    expect(resultaat.weggevallen).toEqual([{ veld: "colors", waarde: "turquoise" }]);
+  });
+
+  it("colors blijft afgekeurd als ALLE kleuren wegvallen (leeg na filteren)", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, colors: ["turquoise", "robijnrood"] });
+    expect(resultaat).toEqual({ ok: false, veld: "colors", waarde: ["turquoise", "robijnrood"] });
+  });
+
+  // Het letterlijke voorbeeld uit de opdracht: materials: ["viscose",
+  // "kralen"] mag "kralen" niet meer laten uitgroeien tot een afkeuring van
+  // het hele product. "viscose" is hier zelf al canoniek (FIXRONDE 7), dus
+  // dit test specifiek dat een MIX van geldig+ongeldig het geldige element
+  // behoudt in plaats van naar "onbekend" te vallen (dat gebeurt alleen als
+  // ALLES wegvalt, zie de test erna).
+  it("behoudt een geldig materiaal naast een weggevallen versieringswoord (het 'viscose + kralen'-voorbeeld uit de opdracht)", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, materials: ["viscose", "kralen"] });
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.tags.materials).toEqual(["viscose"]);
+    expect(resultaat.tags.category).toBe("top");
+    expect(resultaat.tags.occasions).toEqual(["work", "date"]);
+    expect(resultaat.weggevallen).toEqual([{ veld: "materials", waarde: "kralen" }]);
+  });
+
+  it("materials valt terug op ['onbekend'] mét een weggevallen-record als ALLE materialen wegvallen", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, materials: ["kralen"] });
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.tags.materials).toEqual(["onbekend"]);
+    expect(resultaat.weggevallen).toEqual([{ veld: "materials", waarde: "kralen" }]);
+  });
+
+  // seasons volgt dezelfde per-element-regel maar heeft geen fallbackwaarde
+  // nodig (geen "onbekend" in SEASONS): een lege array na filteren is zelf al
+  // de juiste downstream-betekenis (zie het commentaar in tagging.ts), dus
+  // geen ok:false EN geen substitutie, alleen de weggevallen-registratie.
+  it("seasons: een ongeldig seizoen valt weg en wordt geregistreerd, zonder substitutie", () => {
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, seasons: ["lente", "voorjaar"] });
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.tags.seasons).toEqual(["lente"]);
+    expect(resultaat.weggevallen).toEqual([{ veld: "seasons", waarde: "voorjaar" }]);
+  });
+
+  it("een geldige uitvoer zonder enig weggevallen element geeft een lege weggevallen-lijst, geen undefined", () => {
+    const resultaat = valideerTagsGedetailleerd(geldigeTags);
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.weggevallen).toEqual([]);
+  });
+
+  it("verzamelt weggevallen elementen uit MEERDERE velden van hetzelfde product in één lijst", () => {
+    const resultaat = valideerTagsGedetailleerd({
+      ...geldigeTags,
+      occasions: ["work", "smart casual"],
+      colors: ["wit", "turquoise"],
+      materials: ["viscose", "kralen"],
+    });
+    expect(resultaat.ok).toBe(true);
+    if (!resultaat.ok) return;
+    expect(resultaat.weggevallen).toEqual([
+      { veld: "occasions", waarde: "smart casual" },
+      { veld: "colors", waarde: "turquoise" },
+      { veld: "materials", waarde: "kralen" },
+    ]);
   });
 
   it("meldt veld+waarde voor elk van de andere schemavelden", () => {
@@ -725,5 +865,33 @@ describe("verwerkResultaten", () => {
     expect(uit.fouten).toHaveLength(1);
     expect(uit.rijen[0].product_id).toBe(product.product_id);
     expect(uit.fouten[0].custom_id).toBe("g");
+  });
+
+  // FIXRONDE 8 (controller, 25 sept 2026): weggevallen elementen (per-element
+  // filteren i.p.v. hele-array-afkeuring, zie tagging.ts) mogen niet
+  // stilzwijgend verdwijnen. verwerkResultaten geeft ze door met het
+  // custom_id van het product erbij, apart van fouten (het product IS
+  // geschreven), zodat een latere telling (net als de mining die tot
+  // FIXRONDE 6/7 leidde) kan laten zien welke waarden vaak wegvallen.
+  it("geeft weggevallen elementen door met het custom_id van het product, apart van fouten", () => {
+    const metVersiering = {
+      custom_id: "swim-of-kralen",
+      result: {
+        type: "succeeded",
+        message: {
+          stop_reason: "end_turn",
+          content: [{ type: "text", text: JSON.stringify({ ...geldigeTags, materials: ["viscose", "kralen"] }) }],
+        },
+      },
+    };
+    const uit = verwerkResultaten([metVersiering], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].materials).toEqual(["viscose"]);
+    expect(uit.weggevallen).toEqual([{ custom_id: "swim-of-kralen", veld: "materials", waarde: "kralen" }]);
+  });
+
+  it("geeft een lege weggevallen-lijst terug als er niets is weggevallen", () => {
+    const uit = verwerkResultaten([geslaagd], "tekst");
+    expect(uit.weggevallen).toEqual([]);
   });
 });

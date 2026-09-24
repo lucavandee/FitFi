@@ -671,11 +671,34 @@ export interface CliVerwerkFout {
   waarde?: unknown;
 }
 
+/**
+ * Eén weggevallen array-element bij een verder GESLAAGDE validatie (FIXRONDE
+ * 8, controller, 25 sept 2026: tagging.ts filtert occasions/colors/materials/
+ * seasons voortaan element-voor-element in plaats van de hele array af te
+ * keuren, zie WeggevallenElement/filterMetWeggevallen daar). Dit is de
+ * claude-p-tegenhanger van tagging.ts' WeggevallenRecord: apart van
+ * CliVerwerkFout om dezelfde reden (een weggevallen element is geen
+ * afkeuring, het product IS geschreven; meeliften op fouten zou "mislukt" en
+ * "gelukt met een kanttekening" door elkaar laten lopen).
+ */
+export interface CliWeggevallenRecord {
+  product_id: string;
+  veld: string;
+  waarde: unknown;
+}
+
 export interface CliVerwerkResultaat {
   mislukt: boolean;
   reden?: string;
   rijen: TagRij[];
   fouten: CliVerwerkFout[];
+  // Weggevallen array-elementen van geschreven rijen (zie CliWeggevallenRecord
+  // hierboven). Niet stilzwijgend laten verdwijnen: tag-products.ts schrijft
+  // dit net als fouten weg naar een bestand, zodat later te tellen is welke
+  // waarden vaak wegvallen (dezelfde mining als leidde tot de eerdere
+  // MATERIALS/COLORS-uitbreidingen), zonder een handmatig bewaarde
+  // modeluitvoer nodig te hebben.
+  weggevallen: CliWeggevallenRecord[];
   // Aantal items dat het model teruggaf, VÓÓR validatie (dus vóór rijen/
   // fouten-splitsing). 0 bij een mislukte aanroep. Puur voor de voortgangslog
   // in tag-products.ts: "N producten in, M objecten terug, K geldig" maakt
@@ -719,6 +742,7 @@ export function verwerkCliUitvoer(
       reden: `claude -p meldde een fout: ${respons.result || respons.subtype || "onbekend"}`,
       rijen: [],
       fouten: [],
+      weggevallen: [],
       aantalObjecten: 0,
     };
   }
@@ -740,6 +764,7 @@ export function verwerkCliUitvoer(
       reden: "geen bruikbare JSON-uitvoer (geen structured_output, en result was niet als JSON te lezen)",
       rijen: [],
       fouten: [],
+      weggevallen: [],
       aantalObjecten: 0,
     };
   }
@@ -749,6 +774,7 @@ export function verwerkCliUitvoer(
       reden: `lege items-array (0 van de ${producten.length} producten), waarschijnlijk een geweigerd of afgekapt antwoord`,
       rijen: [],
       fouten: [],
+      weggevallen: [],
       aantalObjecten: 0,
     };
   }
@@ -756,6 +782,7 @@ export function verwerkCliUitvoer(
   const versie = modus === "foto" ? TAGGER_VERSION_FOTO : TAGGER_VERSION;
   const rijen: TagRij[] = [];
   const fouten: CliVerwerkFout[] = [];
+  const weggevallen: CliWeggevallenRecord[] = [];
   const geziene = new Set<number>();
 
   for (const ruwItem of items) {
@@ -772,6 +799,9 @@ export function verwerkCliUitvoer(
       fouten.push({ product_id: product.product_id, reden: "waarde buiten schema", veld: resultaat.veld, waarde: resultaat.waarde });
       continue;
     }
+    for (const w of resultaat.weggevallen) {
+      weggevallen.push({ product_id: product.product_id, veld: w.veld, waarde: w.waarde });
+    }
     rijen.push({ ...resultaat.tags, product_id: product.product_id, tagger_version: versie });
   }
 
@@ -781,7 +811,7 @@ export function verwerkCliUitvoer(
     }
   });
 
-  return { mislukt: false, rijen, fouten, aantalObjecten: items.length };
+  return { mislukt: false, rijen, fouten, weggevallen, aantalObjecten: items.length };
 }
 
 // ---------------------------------------------------------------------------

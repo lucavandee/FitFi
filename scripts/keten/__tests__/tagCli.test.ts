@@ -552,16 +552,36 @@ describe("verwerkCliUitvoer", () => {
     expect(uit.fouten).toEqual([{ product_id: "a", reden: "waarde buiten schema", veld: "formality", waarde: 99 }]);
   });
 
-  it("meldt het 'smart casual'-occasions-geval uit de diagnose met veld+waarde, blijft een afkeuring (geen drop, geen gok)", () => {
+  // FIXRONDE 8 (controller, 25 sept 2026): tagging.ts filtert occasions
+  // voortaan element voor element in plaats van de hele array af te keuren
+  // zodra één waarde ongeldig is (zie het uitgebreide commentaar bij
+  // filterMetWeggevallen in tagging.ts). Vóór deze fixronde kostte
+  // "smart casual" hier het HELE product (deze test verwachtte toen
+  // uit.rijen: [] en een afkeuring met veld+waarde); dat was exact het
+  // structurele defect dat deze fixronde oplost. "work" is geldig en blijft
+  // staan, "smart casual" valt weg en komt terug in uit.weggevallen.
+  it("laat 'smart casual' wegvallen uit occasions via het claude -p-pad, product blijft geldig zolang 'work' overblijft", () => {
     const respons = {
       structured_output: {
         items: [{ index: 1, ...geldigeTags, occasions: ["work", "smart casual"] }],
       },
     };
     const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].occasions).toEqual(["work"]);
+    expect(uit.weggevallen).toEqual([{ product_id: "a", veld: "occasions", waarde: "smart casual" }]);
+  });
+
+  it("keurt occasions via het claude -p-pad nog steeds af als ALLE elementen wegvallen (leeg na filteren)", () => {
+    const respons = {
+      structured_output: {
+        items: [{ index: 1, ...geldigeTags, occasions: ["smart casual", "werk"] }],
+      },
+    };
+    const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
     expect(uit.rijen).toEqual([]);
     expect(uit.fouten).toEqual([
-      { product_id: "a", reden: "waarde buiten schema", veld: "occasions", waarde: ["work", "smart casual"] },
+      { product_id: "a", reden: "waarde buiten schema", veld: "occasions", waarde: ["smart casual", "werk"] },
     ]);
   });
 
@@ -574,6 +594,41 @@ describe("verwerkCliUitvoer", () => {
     const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
     expect(uit.fouten).toEqual([]);
     expect(uit.rijen[0].materials).toEqual(["synthetisch"]);
+  });
+
+  // FIXRONDE 8 (controller, 25 sept 2026): het letterlijke voorbeeld uit de
+  // opdracht (materials: ["viscose", "kralen"]) via het echte claude -p-pad.
+  // "kralen" mag het product niet meer kosten; het valt weg, komt terug in
+  // uit.weggevallen met het product_id erbij, en het product wordt gewoon
+  // geschreven (uit.fouten blijft leeg).
+  it("laat 'kralen' wegvallen uit materials via het claude -p-pad zonder het product af te keuren", () => {
+    const respons = {
+      structured_output: {
+        items: [{ index: 1, ...geldigeTags, materials: ["viscose", "kralen"] }],
+      },
+    };
+    const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].materials).toEqual(["viscose"]);
+    expect(uit.weggevallen).toEqual([{ product_id: "a", veld: "materials", waarde: "kralen" }]);
+  });
+
+  it("materials valt terug op ['onbekend'] via het claude -p-pad als alle materialen wegvallen, product blijft geldig", () => {
+    const respons = {
+      structured_output: {
+        items: [{ index: 1, ...geldigeTags, materials: ["kralen"] }],
+      },
+    };
+    const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
+    expect(uit.fouten).toEqual([]);
+    expect(uit.rijen[0].materials).toEqual(["onbekend"]);
+    expect(uit.weggevallen).toEqual([{ product_id: "a", veld: "materials", waarde: "kralen" }]);
+  });
+
+  it("geeft een lege weggevallen-lijst terug als er niets is weggevallen", () => {
+    const respons = { structured_output: { items: [{ index: 1, ...geldigeTags }] } };
+    const uit = verwerkCliUitvoer(respons, [producten[0]], "tekst");
+    expect(uit.weggevallen).toEqual([]);
   });
 
   it("is mislukt bij is_error", () => {

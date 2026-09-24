@@ -196,6 +196,20 @@ async function main(): Promise<void> {
       } else {
         console.log(`  ${samenvatting}, 0 fouten.`);
       }
+      // FIXRONDE 8 (controller, 25 sept 2026): valideerTagsGedetailleerd
+      // keurt occasions/colors/materials/seasons voortaan element voor
+      // element af in plaats van de hele array; een element buiten de lijst
+      // kost het product niet langer, maar mag ook niet stilzwijgend
+      // verdwijnen (anders is er over een maand niets meer te tellen om de
+      // lijsten gericht uit te breiden, zie tagging.ts). Zelfde bestandsvorm
+      // als tag-fouten-*.json, apart bestand omdat dit GEEN afkeuringen zijn
+      // (de producten zijn wel degelijk geschreven).
+      if (verwerkt.weggevallen.length > 0) {
+        mkdirSync(OUT, { recursive: true });
+        const weggevallenPad = join(OUT, `tag-weggevallen-${record.id}.json`);
+        writeFileSync(weggevallenPad, JSON.stringify(verwerkt.weggevallen, null, 2) + "\n");
+        console.log(`  ${verwerkt.weggevallen.length} element(en) weggevallen uit geschreven rijen (zie ${weggevallenPad}).`);
+      }
       if (typeof respons.total_cost_usd === "number") {
         const duur = typeof respons.duration_ms === "number" ? `, ${Math.round(respons.duration_ms / 1000)}s` : "";
         console.log(`  gerapporteerd equivalent verbruik: $${respons.total_cost_usd.toFixed(4)}${duur} (abonnement, geen factuur)`);
