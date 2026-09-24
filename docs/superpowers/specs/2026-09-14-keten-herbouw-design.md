@@ -63,7 +63,7 @@ De `products`-tabel blijft de ruwe feed. Alles wat afgeleid is, staat in `produc
 | pattern | text | effen, subtiel, statement |
 | shoe_type | text, null | sneaker, net, laars, sandaal, null als geen footwear |
 | colors | text[] | genormaliseerd Nederlands: zwart, wit, grijs, navy, beige, camel, bruin, groen, rood, roze, blauw, geel, paars, oranje, multicolor |
-| materials | text[] | katoen, wol, denim, linnen, leer, synthetisch, zijde, tricot, onbekend |
+| materials | text[] | katoen, wol, denim, linnen, leer, suede, synthetisch, zijde, tricot, viscose, canvas, dons, rubber, onbekend (uitgebreid 24 sep 2026, zie hieronder) |
 | seasons | text[] | lente, zomer, herfst, winter |
 | price_band | text | tot50, 50tot100, 100tot200, boven200 (uit products.price) |
 | confidence | real 0..1 | van de tagger |
@@ -74,6 +74,10 @@ De `products`-tabel blijft de ruwe feed. Alles wat afgeleid is, staat in `produc
 Indexen: canonical_id, (gender, category, price_band), GIN op occasions, ivfflat op embedding. RLS: lezen voor iedereen, schrijven alleen service role.
 
 De tagger krijgt naam, merk, beschrijving, prijs, retailer en de bestaande ruwe categorie; alleen als `confidence < 0.6` krijgt hij in een tweede ronde ook de foto. Uitvoer is strikt dit schema (structured output), een product per verzoek, via de Batch API. Idempotent: een rij met dezelfde `tagger_version` wordt overgeslagen.
+
+Uitbreiding van de vocabulaires op 24 september 2026, na de eerste echte tagronde. De lijsten voor `materials` en `colors` bleken te kort voor een echte catalogus, en dat is duurder dan het klinkt: de tagpijplijn keurt een waarde buiten de lijst af en biedt het product bij de volgende ronde opnieuw aan. Een product waarvan het materiaal werkelijk viscose is, geeft elke ronde opnieuw viscose en wordt elke ronde opnieuw afgekeurd. Gemeten op de H&M-ronde: 9.914 producten werden ooit afgekeurd, waarvan er 7.621 in twee of meer ronden sneuvelden, en dat was precies het aantal dat na zes ronden nog ongetagd was. De zelfherstellende herkansing helpt alleen bij toevallige fouten, niet bij een gat in de lijst.
+
+`materials` krijgt er daarom `suede`, `viscose`, `canvas`, `dons` en `rubber` bij, en `colors` krijgt `goud` en `zilver`. Alle zeven kwamen in de echte uitvoer voor en geen ervan is zuiver te mappen op een bestaande waarde: suede is leer maar met een eigen uiterlijk dat voor een outfit uitmaakt, viscose is halfsynthetisch, en goud en zilver zijn metallic waar geen van de vijftien kleuren op past. Waarden die wel eenduidig te vertalen zijn (kunstleer en imitatieleer naar synthetisch) blijven in de normalisatielaag en komen niet in de lijst.
 
 Dedupe: twee producten zijn duplicaat als retailer en `image_url` gelijk zijn (dezelfde foto is hetzelfde product in een andere maat; een andere kleur heeft een andere foto en blijft een eigen product), of als de embeddings cosine >= 0.999 hebben. Alleen als `image_url` leeg is, geldt als terugval: retailer, merk en genormaliseerde naam gelijk. De goedkoopste in-stock variant wordt canoniek. De bestaande `dedupeProductVariants` (client) vervalt zodra dit staat.
 
