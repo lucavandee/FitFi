@@ -133,6 +133,46 @@ describe("20260916100200_keten_get_kandidaten_score", () => {
   });
 });
 
+describe("20260925090000_keten_get_kandidaten_attrs_expliciet", () => {
+  const sql = lees("20260925090000_keten_get_kandidaten_attrs_expliciet.sql");
+
+  it("bouwt attrs met een expliciete jsonb_build_object, niet met to_jsonb(pa)", () => {
+    expect(sql).toContain("jsonb_build_object(");
+    // De oude regressie stond letterlijk als "... as attrs"; die vorm mag nergens
+    // meer als functionele code voorkomen. Het commentaarblok legt uit waarom en
+    // noemt to_jsonb(pa) daarbij bewust wel (leesbaarheid voor de volgende lezer),
+    // dus een kale "not toContain to_jsonb(pa)" zou dat commentaar zelf afkeuren.
+    expect(sql).not.toContain("to_jsonb(pa) - 'embedding' as attrs");
+  });
+
+  it("neemt classifier_version en category op (gedocumenteerd client-contract uit plan 1)", () => {
+    expect(sql).toContain("'classifier_version', pa.classifier_version");
+    expect(sql).toContain("'category', pa.category");
+  });
+
+  it("neemt de tag-attributen uit spec 5.1 op, niet de embedding-kolom", () => {
+    for (const veld of [
+      "formality", "occasions", "silhouette", "color_temp", "lightness",
+      "pattern", "shoe_type", "colors", "materials", "seasons",
+    ]) {
+      expect(sql).toContain(`'${veld}', pa.${veld}`);
+    }
+    expect(sql).not.toContain("'embedding', pa.embedding");
+  });
+
+  it("laat de rest van de functie ongemoeid: signatuur, plafond, products pas na de afkap, security invoker", () => {
+    expect(sql).toContain("p_gender text,");
+    expect(sql).toContain("p_retailer text default null");
+    expect(sql).toContain("least(60, greatest(1, coalesce(p_per_category, 12)))");
+    expect(sql).toContain("to_jsonb(p.*) as product");
+    expect(sql).toContain("join products p on p.id = g.product_id");
+    expect(sql).not.toContain("join products p on p.id = pa.product_id");
+    expect(sql).toContain("security invoker");
+    expect(sql).not.toContain("security definer");
+    expect(sql).toContain("grant execute on function get_kandidaten");
+  });
+});
+
 describe("20260916100100_keten_embedding_rpcs", () => {
   const sql = lees("20260916100100_keten_embedding_rpcs.sql");
 
