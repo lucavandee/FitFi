@@ -57,3 +57,46 @@ describe.skipIf(!url || !serviceKey)("20260916100000_keten_tag_kolommen (live)",
     expect(error?.message ?? "").toContain("permission denied");
   });
 });
+
+describe.skipIf(!url || !serviceKey)("20260916100200_keten_get_kandidaten_score (live)", () => {
+  const params = {
+    p_gender: "male",
+    p_occasions: ["work", "casual"],
+    p_budget_min: 20,
+    p_budget_max: 150,
+    p_axes: { formality: { value: 3, confidence: 1 }, color_temp: { value: "koel", confidence: 0.5 } },
+    p_liked_ids: [] as string[],
+    p_disliked_ids: [] as string[],
+    p_per_category: 12,
+    p_retailer: STANDAARD_RETAILER,
+  };
+
+  it("geeft per categorie hooguit p_per_category rijen van de retailer, score tussen 0 en 1, deterministisch", async () => {
+    const een = await service().rpc("get_kandidaten", params);
+    const twee = await service().rpc("get_kandidaten", params);
+    expect(een.error).toBeNull();
+    const rijen = (een.data ?? []) as Array<{ product_id: string; category: string; score: number; product: { retailer: string; price: number } }>;
+    expect(rijen.length).toBeGreaterThan(0);
+    expect(rijen.map((r) => r.product_id)).toEqual(((twee.data ?? []) as Array<{ product_id: string }>).map((r) => r.product_id));
+    const perCategorie = new Map<string, number>();
+    for (const r of rijen) {
+      perCategorie.set(r.category, (perCategorie.get(r.category) ?? 0) + 1);
+      expect(r.score).toBeGreaterThanOrEqual(0);
+      expect(r.score).toBeLessThanOrEqual(1);
+      expect(r.product.retailer).toBe(STANDAARD_RETAILER);
+      expect(Number(r.product.price)).toBeGreaterThanOrEqual(20);
+      expect(Number(r.product.price)).toBeLessThanOrEqual(150);
+    }
+    for (const n of perCategorie.values()) expect(n).toBeLessThanOrEqual(12);
+  });
+
+  it("weigert een onbekende retailer", async () => {
+    const { error } = await service().rpc("get_kandidaten", { ...params, p_retailer: "bestaat niet" });
+    expect(error?.message ?? "").toContain("Onbekende retailer");
+  });
+
+  it.skipIf(!anonKey)("is aanroepbaar met de anon-sleutel (security invoker, select-policies)", async () => {
+    const { error } = await anon().rpc("get_kandidaten", { ...params, p_per_category: 1 });
+    expect(error).toBeNull();
+  });
+});

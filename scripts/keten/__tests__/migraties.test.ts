@@ -96,3 +96,39 @@ describe("20260922120000_keten_tag_kandidaten_product_attributes", () => {
     expect(sql).toContain("revoke all on function keten_tag_kandidaten(text, text, text, int, uuid) from public, anon, authenticated");
   });
 });
+
+describe("20260916100200_keten_get_kandidaten_score", () => {
+  const sql = lees("20260916100200_keten_get_kandidaten_score.sql");
+
+  it("vervangt de oude signatuur en voegt p_retailer met default en controle toe", () => {
+    expect(sql).toContain("drop function if exists get_kandidaten(text, text[], int, int, jsonb, uuid[], uuid[], int)");
+    expect(sql).toContain("p_retailer text default null");
+    expect(sql).toContain("select keten_controleer_retailer(p_retailer)");
+  });
+
+  it("geeft alleen getagde rijen terug", () => {
+    expect(sql).toContain("and pa.tagger_version is not null");
+  });
+
+  it("weegt de drie onderdelen 0.5, 0.3 en 0.2 en is deterministisch op product_id", () => {
+    expect(sql).toContain("0.5 *");
+    expect(sql).toContain("0.3 *");
+    expect(sql).toContain("0.2 *");
+    expect(sql).toContain("order by g.category, g.score desc, g.product_id");
+  });
+
+  it("filtert en rangschikt volledig op product_attributes; products wordt pas na de topN-afkap gejoind", () => {
+    expect(sql).not.toContain("join products p on p.id = pa.product_id");
+    expect(sql).toContain("and pa.in_stock");
+    expect(sql).toContain("and (p_retailer is null or pa.retailer = p_retailer)");
+    expect(sql).toContain("join products p on p.id = g.product_id");
+    expect(sql).toContain("least(60, greatest(1, coalesce(p_per_category, 12)))");
+    expect(sql).toContain("to_jsonb(p.*) as product");
+  });
+
+  it("blijft security invoker en aanroepbaar voor de frontend", () => {
+    expect(sql).toContain("security invoker");
+    expect(sql).not.toContain("security definer");
+    expect(sql).toContain("grant execute on function get_kandidaten");
+  });
+});
