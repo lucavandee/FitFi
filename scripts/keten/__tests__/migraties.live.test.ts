@@ -100,3 +100,21 @@ describe.skipIf(!url || !serviceKey)("20260916100200_keten_get_kandidaten_score 
     expect(error).toBeNull();
   });
 });
+
+describe.skipIf(!url || !serviceKey)("20260916100100_keten_embedding_rpcs (live)", () => {
+  it("keten_embed_kandidaten geeft alleen rijen met een http-afbeelding en weigert een onbekende retailer", async () => {
+    const goed = await service().rpc("keten_embed_kandidaten", { p_retailer: STANDAARD_RETAILER, p_limit: 5, p_after: null });
+    expect(goed.error).toBeNull();
+    for (const r of (goed.data ?? []) as Array<{ image_url: string }>) {
+      expect(r.image_url.startsWith("http")).toBe(true);
+    }
+    const fout = await service().rpc("keten_embed_kandidaten", { p_retailer: "bestaat niet", p_limit: 1, p_after: null });
+    expect(fout.error?.message ?? "").toContain("Onbekende retailer");
+  });
+
+  it("keten_schrijf_embeddings met een lege lijst schrijft nul rijen", async () => {
+    const { data, error } = await service().rpc("keten_schrijf_embeddings", { p_rijen: [] });
+    expect(error).toBeNull();
+    expect(Number(data)).toBe(0);
+  });
+});

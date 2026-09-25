@@ -132,3 +132,16 @@ describe("20260916100200_keten_get_kandidaten_score", () => {
     expect(sql).toContain("grant execute on function get_kandidaten");
   });
 });
+
+describe("20260916100100_keten_embedding_rpcs", () => {
+  const sql = lees("20260916100100_keten_embedding_rpcs.sql");
+
+  it("levert de twee embedding-RPC's met retailer-controle, alleen voor de service role", () => {
+    expect(sql).toContain("function keten_embed_kandidaten(");
+    expect(sql).toContain("select keten_controleer_retailer(p_retailer)");
+    expect(sql).toContain("function keten_schrijf_embeddings(");
+    expect(sql).toContain("::extensions.vector");
+    expect(sql).toContain("revoke all on function keten_embed_kandidaten");
+    expect(sql).toContain("revoke all on function keten_schrijf_embeddings");
+  });
+});
