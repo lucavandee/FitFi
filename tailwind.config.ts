@@ -105,7 +105,15 @@ export default {
         },
         warning: {
           50: "var(--ff-color-warning-50)",
+          100: "var(--ff-color-warning-100)",
+          200: "var(--ff-color-warning-200)",
+          300: "var(--ff-color-warning-300)",
+          400: "var(--ff-color-warning-400)",
+          500: "var(--ff-color-warning-500)",
           600: "var(--ff-color-warning-600)",
+          700: "var(--ff-color-warning-700)",
+          800: "var(--ff-color-warning-800)",
+          900: "var(--ff-color-warning-900)",
           DEFAULT: "var(--color-warning)",
         },
         danger: {
