@@ -43,6 +43,36 @@ def download(url: str) -> "bytes | None":
         return None
 
 
+def laad_model():
+    """Laadt FashionCLIP eenmalig. Geeft (model, processor, device)."""
+    import torch
+    from transformers import CLIPModel, CLIPProcessor
+
+    device = "mps" if torch.backends.mps.is_available() else "cpu"
+    model = CLIPModel.from_pretrained(MODEL).to(device)
+    model.train(False)  # inferentie-modus, geen gradients nodig
+    processor = CLIPProcessor.from_pretrained(MODEL)
+    return model, processor, device
+
+
+def embed_afbeeldingen(model, processor, device, imgs) -> "list[list[float]]":
+    """L2-genormaliseerde beeld-embeddings (512 floats, 6 decimalen) voor PIL-afbeeldingen."""
+    import torch
+
+    inputs = processor(images=imgs, return_tensors="pt").to(device)
+    with torch.no_grad():
+        out = model.get_image_features(**inputs)
+    # transformers <5 geeft een tensor, v5 een output-object
+    if torch.is_tensor(out):
+        feats = out
+    elif hasattr(out, "image_embeds"):
+        feats = out.image_embeds
+    else:
+        feats = out.pooler_output
+    feats = feats / feats.norm(dim=-1, keepdim=True)
+    return [[round(x, 6) for x in vec] for vec in feats.cpu().tolist()]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", default=str(OUT / "catalog-images.json"))
@@ -55,14 +85,9 @@ def main() -> None:
         products = products[: args.limit]
     print(f"{len(products)} producten te embedden (model: {MODEL})")
 
-    import torch
     from PIL import Image
-    from transformers import CLIPModel, CLIPProcessor
 
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
-    model = CLIPModel.from_pretrained(MODEL).to(device)
-    model.train(False)  # inferentie-modus, geen gradients nodig
-    processor = CLIPProcessor.from_pretrained(MODEL)
+    model, processor, device = laad_model()
 
     embeddings: "dict[str, list[float]]" = {}
     existing = Path(args.output)
@@ -76,19 +101,8 @@ def main() -> None:
     def flush() -> None:
         if not batch_imgs:
             return
-        inputs = processor(images=batch_imgs, return_tensors="pt").to(device)
-        with torch.no_grad():
-            out = model.get_image_features(**inputs)
-        # transformers <5 geeft een tensor, v5 een output-object
-        if torch.is_tensor(out):
-            feats = out
-        elif hasattr(out, "image_embeds"):
-            feats = out.image_embeds
-        else:
-            feats = out.pooler_output
-        feats = feats / feats.norm(dim=-1, keepdim=True)
-        for pid, vec in zip(batch_ids, feats.cpu().tolist()):
-            embeddings[pid] = [round(x, 6) for x in vec]
+        for pid, vec in zip(batch_ids, embed_afbeeldingen(model, processor, device, batch_imgs)):
+            embeddings[pid] = vec
         batch_imgs.clear()
         batch_ids.clear()
 

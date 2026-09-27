@@ -104,4 +104,24 @@ describe('getSessionId', () => {
 
     expect(isUuid(getSessionId())).toBe(true);
   });
+
+  it('geeft dezelfde id bij herhaalde aanroepen terwijl de opslag geblokkeerd is (fixronde 1, punt 6)', () => {
+    // Zonder het in-memory geheugen gaf elke aanroep hier een nieuwe uuid:
+    // wie binnen dezelfde pagina-load van mening veranderde (eerst "Zou ik
+    // dragen", dan "Nooit") schreef dan twee rijen onder twee session_id's.
+    const kapot = {
+      getItem: () => { throw new Error('private mode'); },
+      setItem: () => { throw new Error('private mode'); },
+      removeItem: () => { throw new Error('private mode'); },
+    } as unknown as Storage;
+    vi.stubGlobal('localStorage', kapot);
+    vi.stubGlobal('sessionStorage', kapot);
+    vi.stubGlobal('window', { localStorage: kapot, sessionStorage: kapot });
+
+    const eerste = getSessionId();
+    const tweede = getSessionId();
+
+    expect(isUuid(eerste)).toBe(true);
+    expect(tweede).toBe(eerste);
+  });
 });

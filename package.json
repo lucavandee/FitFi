@@ -26,10 +26,16 @@
     "scan:secrets": "bash scripts/scan-secrets.sh",
     "design:check": "node scripts/check-design-compliance.mjs",
     "design:check:ci": "node scripts/check-design-compliance.mjs --changed --strict",
-    "start": "vite",
-    "design:check:changed": "node scripts/check-design-compliance.mjs --changed"
+    "design:check:changed": "node scripts/check-design-compliance.mjs --changed",
+    "keten:vul": "bash scripts/keten/vul-attributes.sh",
+    "keten:classificeer": "vite-node scripts/keten/classificeer-attributes.ts",
+    "keten:personas": "vite-node scripts/keten/persona-run.ts",
+    "keten:tag": "vite-node scripts/keten/tag-products.ts",
+    "keten:poort": "vite-node scripts/keten/feed-poort.ts",
+    "start": "vite"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.126.0",
     "@react-oauth/google": "^0.12.2",
     "@supabase/supabase-js": "^2.57.4",
     "@tanstack/react-query": "^5.90.2",

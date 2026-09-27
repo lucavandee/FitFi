@@ -2,8 +2,16 @@
  * Shared CORS helper for Supabase edge functions.
  *
  * Replaces the previous `Access-Control-Allow-Origin: *` wildcard with an
- * explicit allowlist. Any origin not on the list receives `null` for the
- * Allow-Origin header, which browsers will block.
+ * explicit allowlist. An origin that is not on the list gets no
+ * Allow-Origin header at all, so the browser blocks the read.
+ *
+ * Why not the literal string "null" (the previous behaviour, fixed after the
+ * plan 2 final review on 27 September 2026): a browser sends `Origin: null`
+ * itself from a sandboxed iframe, a data: or file: context and some
+ * cross-origin redirects. Answering "null" therefore matched exactly what
+ * such a context sent, and the browser allowed it to read the response.
+ * That is the well-known "null origin whitelisted" hole, and it undid the
+ * allowlist for precisely the contexts an attacker controls.
  *
  * Stripe webhooks are server-to-server and do not use CORS, so the wildcard
  * removal does not affect them — the headers are only consulted by browsers.
@@ -32,13 +40,16 @@ export function buildCorsHeaders(
   extraHeaders: Record<string, string> = {},
 ): Record<string, string> {
   const origin = req.headers.get("Origin") ?? "";
-  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : "null";
+  const headers: Record<string, string> = { ...BASE_HEADERS, ...extraHeaders };
 
-  return {
-    ...BASE_HEADERS,
-    ...extraHeaders,
-    "Access-Control-Allow-Origin": allowOrigin,
-  };
+  // Only an allowlisted origin is echoed back. No header for anything else,
+  // including a request without an Origin header: those are server-to-server
+  // calls that ignore CORS anyway.
+  if (ALLOWED_ORIGINS.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+
+  return headers;
 }
 
 export function isOriginAllowed(req: Request): boolean {

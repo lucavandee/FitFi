@@ -99,7 +99,7 @@ export const PostsList: React.FC<PostsListProps> = ({
         return (
         <article
           key={stableKey(post)}
-          className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow animate-fade-in"
+          className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow"
         >
           {/* Post Header */}
           <div className="flex items-center justify-between mb-4">

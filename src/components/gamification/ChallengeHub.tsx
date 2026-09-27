@@ -182,7 +182,7 @@ const ChallengeHub: React.FC<ChallengeHubProps> = ({ className = '' }) => {
         {filteredChallenges.map((challenge, index) => (
           <div
             key={challenge.id}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow animate-fade-in"
+            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             {/* Challenge Header */}
