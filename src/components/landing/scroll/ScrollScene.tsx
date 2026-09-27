@@ -94,6 +94,34 @@ export function ScrollScene({
 }
 
 /**
+ * De vier knikpunten van een beat: invaden, vol, vol, uitfaden.
+ *
+ * De marge ligt bewust BINNEN [0,1]. Een band die op 0 begint of op 1 eindigt
+ * (StepsScene gebruikt [0, 0.36], [0.32, 0.68], [0.64, 1]) leverde anders
+ * -0.06 en 1.06 op. framer-motion geeft het invoerbereik van een scroll-gekoppelde
+ * waarde door als keyframe-offsets aan de Web Animations API, en die eist
+ * offsets in [0,1]. Vanaf 12.3x gooit dat:
+ *   "Failed to execute 'animate' on 'Element': Offsets must be null or in the
+ *    range [0,1]."
+ * De hele landingspagina viel daardoor in de error boundary, maar alleen boven
+ * 1024x700, want onder die grens pint ScrollScene niet en bestaat de motion.div
+ * niet. Op 12.29.2 (de versie in package-lock.json) gebeurde het niet, dus CI
+ * met `npm ci` bleef groen terwijl Netlify met een nieuwere versie bouwde.
+ *
+ * Het bereik moet strikt stijgend zijn, anders rekent useTransform verkeerd.
+ * Daarom een minimale afstand tussen de punten in plaats van kale clamping.
+ */
+export function beatBereik(van: number, tot: number): number[] {
+  const EPS = 0.001;
+  const marge = Math.min(0.06, (tot - van) / 3);
+  const a = Math.max(0, van - marge);
+  const d = Math.min(1, tot + marge);
+  const b = Math.min(Math.max(van + marge, a + EPS), d - 2 * EPS);
+  const c = Math.min(Math.max(tot - marge, b + EPS), d - EPS);
+  return [a, b, c, d];
+}
+
+/**
  * Blendt een kind in en uit binnen een deel van de scene-voortgang. Gebruikt
  * voor "een ding tegelijk": elke beat krijgt zijn eigen band.
  *
@@ -114,13 +142,9 @@ export function Beat({
   children: React.ReactNode;
   className?: string;
 }) {
-  const marge = Math.min(0.06, (tot - van) / 3);
-  const opacity = useTransform(
-    voortgang,
-    [van - marge, van + marge, tot - marge, tot + marge],
-    [0, 1, 1, 0],
-    { clamp: true }
-  );
+  const opacity = useTransform(voortgang, beatBereik(van, tot), [0, 1, 1, 0], {
+    clamp: true,
+  });
 
   return (
     <motion.div
