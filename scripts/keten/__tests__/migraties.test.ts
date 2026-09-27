@@ -398,3 +398,44 @@ describe("20260916100600_create_outfit_sets", () => {
     expect(sql).toContain("on public.outfit_sets (created_at)");
   });
 });
+
+/**
+ * Taak 6, herzien (amendement 27 september 2026 bij spec 5.2.1): geen edge
+ * function compose-outfits, maar twee RPC's op de outfit-cache. Deze suite
+ * bewaakt de vorm; het gedrag (levensduur, voorraadcontrole, de grants) is
+ * bewezen tegen de live database en staat in taak-6-report.md.
+ */
+describe("20260916100700_keten_outfit_set_rpcs", () => {
+  const sql = lees("20260916100700_keten_outfit_set_rpcs.sql");
+
+  it("bevat beide functienamen", () => {
+    expect(sql).toContain("function keten_outfit_set(");
+    expect(sql).toContain("function keten_schrijf_outfit_set(");
+  });
+
+  it("staat allebei op security definer", () => {
+    expect((sql.match(/security definer/g) ?? []).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("sluit het schrijfpad voor anon en authenticated, en opent alleen het leespad voor ze", () => {
+    expect(sql).toContain(
+      "revoke all on function keten_schrijf_outfit_set(text, text, jsonb, text, integer, integer, integer)"
+    );
+    expect(sql).toContain("from public, anon, authenticated");
+    expect(sql).toContain("grant execute on function keten_outfit_set(text, text) to anon, authenticated");
+    expect(sql).not.toContain("grant execute on function keten_schrijf_outfit_set");
+  });
+
+  it("zet de levensduur (14 dagen) en de opruimtermijn (30 dagen) als leesbare constanten neer", () => {
+    expect(sql).toContain("v_max_leeftijd_dagen constant int := 14");
+    expect(sql).toContain("v_opruim_dagen constant int := 30");
+  });
+
+  it("bevat geen analyze-statement buiten het commentaarblok (valkuil plan 2 taak 8: een planner-wijziging kan get_kandidaten raken)", () => {
+    // Het commentaarblok noemt EXPLAIN (ANALYZE, BUFFERS) en legt uit waarom
+    // er geen kaal analyze-statement in deze migratie staat; die uitleg mag
+    // het woord bevatten. De echte SQL erna (na de eerste "*/") niet.
+    const naCommentaar = sql.slice(sql.indexOf("*/") + 2);
+    expect(naCommentaar).not.toContain("analyze");
+  });
+});
