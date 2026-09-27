@@ -33,6 +33,11 @@ import {
   telCategorieAfwijkingen,
   type KandidaatRij,
 } from "../../src/services/outfits/kandidaten";
+import { leesVlag } from "./args";
+
+// Feed-poort (spec 5.7): met --retailer draait het harnas op een enkele feed.
+// null betekent alle retailers, precies zoals get_kandidaten dat verstaat.
+const RETAILER: string | null = leesVlag(process.argv.slice(2), "retailer") || null;
 
 function leesDotEnv(): Record<string, string> {
   const pad = new URL("../../.env", import.meta.url).pathname;
@@ -156,7 +161,8 @@ const client = createClient(url, key);
 
 async function haalKandidaten(answers: Record<string, any>): Promise<{ rijen: KandidaatRij[]; pool: Product[] }> {
   const params = naarKandidatenParams(answers);
-  const { data, error } = await client.rpc("get_kandidaten", params);
+  // KandidatenParams heeft acht vaste velden; p_retailer gaat er via spread naast.
+  const { data, error } = await client.rpc("get_kandidaten", { ...params, p_retailer: RETAILER });
   if (error) throw new Error(`get_kandidaten faalde: ${error.message}`);
   const rijen = (data ?? []) as KandidaatRij[];
   return { rijen, pool: bereidKandidatenVoor(rijen) };
