@@ -268,6 +268,16 @@ describe("valideerTags", () => {
     expect(resultaat?.materials).toEqual(["onbekend"]);
   });
 
+  it("wijst een expliciete shoe_type null af bij category footwear", () => {
+    // Eindreview 27 sept 2026: dit was het enige geval dat de validatie
+    // doorliet terwijl het commentaar in tagging.ts belooft dat het een
+    // afkeuring is. Een schoen zonder schoentype ging zo ongemerkt de
+    // database in en was daarna nergens op shoe_type te matchen.
+    expect(valideerTags({ ...geldigeTags, category: "footwear", shoe_type: null })).toBeNull();
+    // Een niet-footwear product met shoe_type null blijft juist geldig.
+    expect(valideerTags({ ...geldigeTags, category: "top", shoe_type: null })).not.toBeNull();
+  });
+
   it("wijst een shoe_type buiten de lijst af, ook bij category footwear", () => {
     expect(valideerTags({ ...geldigeTags, category: "footwear", shoe_type: "instapper" })).toBeNull();
   });

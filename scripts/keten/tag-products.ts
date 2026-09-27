@@ -92,7 +92,18 @@ async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const retailer = leesVlag(argv, "retailer") || STANDAARD_RETAILER;
   const modus: Modus = heeftVlag(argv, "met-foto") ? "foto" : "tekst";
-  const limiet = Number(leesVlag(argv, "limit") ?? 0) || 0;
+  // Een tikfout in --limit mag niet stil "geen limiet" betekenen: die vlag is
+  // er juist om een proefrun klein en goedkoop te houden, en Number("abc")
+  // gaf via `|| 0` exact hetzelfde resultaat als de vlag weglaten.
+  const limietRuw = leesVlag(argv, "limit");
+  let limiet = 0;
+  if (limietRuw !== undefined) {
+    limiet = Number(limietRuw);
+    if (!Number.isInteger(limiet) || limiet <= 0) {
+      console.error(`--limit verwacht een positief geheel getal, kreeg: "${limietRuw}"`);
+      process.exit(1);
+    }
+  }
   const ja = heeftVlag(argv, "ja");
   const metJsonSchema = heeftVlag(argv, "json-schema");
   const concurrency = Math.max(1, Number(leesVlag(argv, "concurrency") ?? CONCURRENCY_STANDAARD) || CONCURRENCY_STANDAARD);

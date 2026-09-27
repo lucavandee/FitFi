@@ -621,7 +621,13 @@ export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   // controle onverkort: een model dat daar iets anders dan de vier geldige
   // schoentypes teruggeeft (of null, wat voor een schoen zelf al onvolledig
   // is) blijft een afkeuring.
-  if (o.category === "footwear" && o.shoe_type !== null && !inLijst(SHOE_TYPES, o.shoe_type)) {
+  // EINDREVIEW 27 sept 2026: hier stond `o.shoe_type !== null` in de
+  // voorwaarde, waardoor een expliciete null bij een schoen juist ONTSNAPTE
+  // aan de afkeuring die het commentaar hierboven belooft. Een schoen zonder
+  // schoentype werd dan weggeschreven zonder in de foutenlijst te belanden en
+  // was daarna nergens op shoe_type te matchen. De guard is weg: bij footwear
+  // moet shoe_type een van de vier waarden zijn.
+  if (o.category === "footwear" && !inLijst(SHOE_TYPES, o.shoe_type)) {
     return { ok: false, veld: "shoe_type", waarde: o.shoe_type };
   }
   // colors: leeg blijft een afkeuring. Zonder herkenbare kleur is een item

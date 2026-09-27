@@ -230,9 +230,22 @@ begin
         limit 1) as winnaar
     from keten_paren kp
   ),
+  -- distinct ON de verliezer, niet distinct over het hele paar. Ligt product C
+  -- binnen de drempel van zowel A als B terwijl A en B onderling geen paar
+  -- vormen, dan levert de rangorde twee rijen op met dezelfde verliezer C en
+  -- een andere winnaar. Een UPDATE ... FROM met twee matches op dezelfde
+  -- doelrij laat Postgres vrij welke match hij toepast, dus dan bepaalde
+  -- toeval in welk cluster C terechtkwam. Met distinct on plus dezelfde
+  -- rangschikking als bij de paar-winnaar hierboven (goedkoopste op voorraad,
+  -- uuid als tiebreak) is de uitkomst weer voorspelbaar. Eindreview 27 sept 2026.
   verliezers as (
-    select distinct case when winnaar = a_id then b_id else a_id end as verliezer, winnaar
-    from rangorde
+    select distinct on (s.verliezer) s.verliezer, s.winnaar
+    from (
+      select case when winnaar = a_id then b_id else a_id end as verliezer, winnaar
+      from rangorde
+    ) s
+    join product_attributes w on w.product_id = s.winnaar
+    order by s.verliezer, w.in_stock desc, w.price asc, s.winnaar
   )
   update product_attributes pa
   set canonical_id = v.winnaar

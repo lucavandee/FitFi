@@ -36,15 +36,40 @@ PAGINA = 500
 SCHRIJF_CHUNK = 64
 
 
+def _ontleed_waarde(sleutel: str, rest: str) -> str:
+    """Spiegelt ontleedWaarde() in scripts/keten/env.ts.
+
+    Een waarde tussen aanhalingstekens loopt tot het sluitende teken; daarna
+    mag alleen witruimte of een toelichting staan. Zonder aanhalingstekens
+    wordt een toelichting achter de waarde afgekapt. Dat laatste is de reden
+    dat deze functie bestaat: de oude regex trok "# toelichting" mee in de
+    waarde, en omdat waarden nooit gelogd worden was het gevolg een client
+    die niet verbindt zonder enig spoor.
+    """
+    if rest[:1] in ('"', "'"):
+        opent = rest[0]
+        sluit = rest.find(opent, 1)
+        if sluit == -1:
+            raise ValueError(f"Ongeldige .env-regel voor {sleutel}: opent met {opent} maar sluit niet af")
+        na = rest[sluit + 1:]
+        if na.strip() and not na.lstrip().startswith("#"):
+            raise ValueError(f"Ongeldige .env-regel voor {sleutel}: onverwachte tekst na de sluitende {opent}")
+        return rest[1:sluit]
+    return re.sub(r"\s+#.*$", "", rest).strip()
+
+
 def lees_dotenv() -> "dict[str, str]":
+    """Leest de repo-root .env. Regeleinden: een CRLF-bestand laat anders een
+    \r achter aan het eind van elke waarde."""
     pad = ROOT / ".env"
     if not pad.exists():
         return {}
     uit = {}
-    for regel in pad.read_text().split("\n"):
-        m = re.match(r'^\s*([A-Z0-9_]+)\s*=\s*"?([^"\n]*)"?\s*$', regel)
+    for ruwe_regel in pad.read_text().split("\n"):
+        regel = ruwe_regel.rstrip("\r")
+        m = re.match(r"^\s*([A-Z0-9_]+)\s*=\s*(.*)$", regel)
         if m:
-            uit[m.group(1)] = m.group(2)
+            uit[m.group(1)] = _ontleed_waarde(m.group(1), m.group(2))
     return uit
 
 

@@ -512,8 +512,23 @@ export const CLI_SCHEMA = {
  */
 export function strippenJsonHekjes(tekst: string): string {
   const getrimd = tekst.trim();
-  const hekjesMatch = getrimd.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  return hekjesMatch ? hekjesMatch[1].trim() : getrimd;
+  // EINDREVIEW 27 sept 2026: hier werd met een niet-gulzige match het EERSTE
+  // hekjesblok gepakt. Bij een antwoord in "concept, dan correctie"-vorm won
+  // daardoor het concept en werd de correctie genegeerd, zonder spoor in de
+  // foutenlijst als het concept toevallig schema-geldig was. Van alle blokken
+  // wint nu het laatste dat als JSON parseert; is er geen enkel parseerbaar
+  // blok, dan het laatste blok (dan faalt het verderop zichtbaar).
+  const blokken = [...getrimd.matchAll(/```(?:json)?\s*([\s\S]*?)\s*```/gi)].map((m) => m[1].trim());
+  if (blokken.length === 0) return getrimd;
+  for (let i = blokken.length - 1; i >= 0; i--) {
+    try {
+      JSON.parse(blokken[i]);
+      return blokken[i];
+    } catch {
+      // Dit blok is geen geldige JSON; probeer het blok ervoor.
+    }
+  }
+  return blokken[blokken.length - 1];
 }
 
 /**

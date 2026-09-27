@@ -213,9 +213,18 @@
   status 'klaar', dus deze extra regels kunnen de volgende run niet blokkeren.
 
   ## Terugdraaien
-  select cron.unschedule('keten-feed-import-wekelijks');
-  select cron.unschedule('keten-vul-na-import');
-  select cron.unschedule('keten-links-elke-10-min');
+  do $r$ begin
+    if exists (select 1 from cron.job where jobname = 'keten-feed-import-wekelijks')
+      then perform cron.unschedule('keten-feed-import-wekelijks'); end if;
+    if exists (select 1 from cron.job where jobname = 'keten-vul-na-import')
+      then perform cron.unschedule('keten-vul-na-import'); end if;
+    if exists (select 1 from cron.job where jobname = 'keten-links-elke-10-min')
+      then perform cron.unschedule('keten-links-elke-10-min'); end if;
+  end $r$;
+  -- De existence-check is nodig: cron.unschedule('naam') gooit een fout als
+  -- die job niet bestaat, en dan breekt het terugdraaien af voordat de
+  -- drop function- en drop table-regels hieronder aan de beurt zijn. Dezelfde
+  -- vorm als de voorwaartse migratie hieronder. Eindreview 27 sept 2026.
   drop function if exists keten_vul_na_import();
   drop function if exists keten_vul_nieuwe_producten(text);
   drop function if exists keten_wekelijkse_import();

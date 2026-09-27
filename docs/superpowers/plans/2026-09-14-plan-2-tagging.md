@@ -55,6 +55,41 @@ Ontbreekt iets, dan voer je eerst de betreffende taak van plan 1 uit. Dit plan v
 - `get_kandidaten` geeft alleen getagde rijen terug (`tagger_version is not null`). Spec 5.3 noemt dat filter niet, maar de score bestaat voor 0.8 uit tags; een ongetagde rij kan niet gescoord worden en zou een lege plek in een outfit vullen met een product waar niets over bekend is. Gevolg: een retailer die nog niet getagd is, komt niet in kandidaten voor, wat spoort met "een feed telt pas mee na de poort" (spec 3 en 5.7). Nieuwe producten uit de wekelijkse import zijn onzichtbaar tot de eerstvolgende classificeer- en tag-run (taak 7 en 12).
 - Na elke feed-import moeten `price`, `in_stock` en `retailer` op `product_attributes` weer gelijk zijn aan `products`: die drie kolommen zijn tijdens plan 1 taak 3 gedenormaliseerd (migratie `20260914120400`, controller-ruling) en werden tot dan toe door `vul_product_attributes()` ververst. Dit plan verbiedt die functie vanaf taak 5 (Globale randvoorwaarden), dus `keten_vul_nieuwe_producten()` (taak 12) neemt het ververswerk over: `price`, `in_stock`, `retailer` en `price_band` worden voor elke rij van de retailer bijgewerkt, canoniek of niet, ongeacht `classifier_version` of `tagger_version`. Bewust gekozen: alleen deze vier kolommen verversen, niet de volledige `vul_product_attributes()` opnieuw draaien. Die functie herberekent `canonical_id` voor de hele retailer bij elke run (`first_value() over (partition by retailer, image_url ...)`); een nieuw, goedkoper product in een bestaande fotogroep zou dan zonder aankondiging de canonieke rij van een al getagde groep verplaatsen naar een ongetagde rij, en `get_kandidaten` zou die hele groep tijdelijk verliezen totdat de nieuwe rij ook geclassificeerd en getagd is. Met alleen verversen blijft `canonical_id` ongemoeid: een nieuw, goedkoper product in een bestaande fotogroep wordt, net als `keten_vul_nieuwe_producten()` al deed voor nieuwe rijen, een niet-canonieke rij totdat een bewuste her-dedupe (`keten_dedupe_embedding`, taak 8) of een nieuwe classificeer/tag-ronde de rangorde binnen die groep herbepaalt. Gevolg: de kandidatenpool verschuift nooit stilletjes door een feed-import, maar een nieuw goedkoper product wordt ook niet vanzelf zichtbaar als canoniek totdat iemand de dedupe bewust opnieuw draait.
 
+### Nagekomen besluiten, vastgelegd in de eindreview van 27 september 2026
+
+Deze drie stonden alleen als commentaar in de migraties. Ze horen hier, omdat het interpretaties van de spec zijn en niet implementatiedetails.
+
+- **Een unisex-profiel ziet alle genders, niet alleen unisex-getagde rijen.** `get_kandidaten` filtert met `p_gender = 'unisex' or pa.gender in (p_gender, 'unisex')`. De letterlijke formule uit spec 5.3 (`gender in (p_gender, 'unisex')`) zou bij `p_gender = 'unisex'` alleen unisex-getagde producten doorlaten, en dat zijn er 669 van de 16.133 getagde: de pool voor zo'n profiel zou vrijwel leeg zijn. De verbreding is dus bewust, met als prijs dat een unisex-profiel herenkleding en dameskleding door elkaar kan krijgen.
+- **De as-overeenkomst is genormaliseerd op de som van de aanwezige as-confidences**, niet een directe som (`as_som / t.som`). Nodig om de score binnen [0,1] te houden, wat de live test ook toetst. Gevolg dat je moet weten: is er maar een as aanwezig en matcht die, dan telt hij voor het volle gewicht van 0.5, ook als zijn confidence laag is.
+- **colors en materials hebben geen CHECK-constraint in de database**, in tegenstelling tot de andere tag-kolommen. Voor materials is dat de conclusie van fixronde 8: stofnamen zijn een open verzameling en een CHECK zou elke nieuwe stof laten sneuvelen op het wegschrijven. De validatie zit in `scripts/keten/tagging.ts` en keurt per element. Een schrijfpad buiten dat script om is dus niet beschermd.
+
+### Bekend gat: een nieuw product kan permanent uit de pool vallen
+
+Hierboven staat dat een nieuw, goedkoper product in een bestaande fotogroep niet-canoniek blijft "totdat een bewuste her-dedupe (`keten_dedupe_embedding`, taak 8) of een nieuwe classificeer/tag-ronde de rangorde binnen die groep herbepaalt". **Dat herstelpad bestaat niet.** Gevonden in de eindreview van 27 september 2026.
+
+Elke stap die de rangorde zou kunnen herbepalen eist zelf al dat de rij canoniek is: `keten_embed_kandidaten` embedt alleen rijen met `product_id = canonical_id`, `keten_tag_kandidaten` tagt alleen zulke rijen, en de paren-CTE van `keten_dedupe_embedding` eist aan beide kanten `canonical_id = product_id` plus een gevulde embedding. Een rij die via `keten_vul_nieuwe_producten()` aan een bestaande `canonical_id` is gekoppeld, krijgt dus nooit een embedding of tags en kan die stappen nooit bereiken.
+
+Het scenario waarin dat bijt: een canoniek product raakt uit voorraad, en een nieuw, goedkoper, wel leverbaar product met dezelfde foto-URL komt binnen via de wekelijkse import. De nieuwe rij erft de canonical_id van de rij die uit voorraad is. `get_kandidaten` eist `pa.product_id = pa.canonical_id and pa.in_stock`, dus de hele fotogroep verdwijnt uit de kandidatenpool en komt er niet meer terug.
+
+Vandaag is de impact nul, omdat de wekelijkse import inactief staat. Het enige herstelpad is met de hand:
+
+```sql
+-- Kies binnen elke fotogroep opnieuw een canonieke rij als de huidige uit voorraad is.
+-- Draai dit per retailer en controleer eerst de telling, voordat je iets wegschrijft.
+update product_attributes pa
+   set canonical_id = pa.product_id
+ where pa.retailer = '<retailer>'
+   and pa.in_stock
+   and exists (
+     select 1 from product_attributes c
+      where c.product_id = pa.canonical_id
+        and c.product_id <> pa.product_id
+        and not c.in_stock
+   );
+```
+
+Daarna moeten die rijen opnieuw door `npm run keten:classificeer`, `npm run keten:tag` en `embed-products.py`. **Dit gat moet opgelost zijn voordat `keten-feed-import-wekelijks` actief wordt gezet**, anders lekt de kandidatenpool stil weg zonder dat iets alarm slaat.
+
 ## Bestandsstructuur
 
 Aanmaken:
@@ -3604,7 +3639,7 @@ Verwacht: `zonder_rij` is 0; `tags_intact` is gelijk aan het aantal uit de contr
 | `price`, `in_stock` en `retailer` op `product_attributes` blijven na elke feed-import gelijk aan `products`; `canonical_id` verschuift niet door deze ververs-stap (bevinding tijdens uitvoering plan 1 taak 3, migratie `20260914120400`) | Globale randvoorwaarden, "Wat de spec openlaat en hier is besloten", taak 12 (`keten_vul_nieuwe_producten`, contract- en live-test, controle-query `afwijkend`) |
 | 5.1 `category` een van de zes waarden; eigenaar blijft de classifier uit plan 1 (aanname, expliciet benoemd: de tagger levert `category` maar `keten_schrijf_tags` schrijft hem niet; `is_fashion` alleen omlaag; alleen geclassificeerde rijen worden getagd) | Globale randvoorwaarden, taak 2 (contract-test: `classifier_version is not null` aanwezig, `category = case` en `category = r->>` afwezig), 12 (volgorde classificeer, tag, embed, dedupe na de import) |
 | 5.3 alleen getagde rijen in `get_kandidaten` (aanname, expliciet benoemd) | Taak 7 (`tagger_version is not null`, contract-test) |
-| Scope (b): model claude-haiku-4-5-20251001, tagger_version haiku-4.5-v1 met confidence, batch-id's in gitignored `.batches.json`, hervatbaar, kosten printen voor de start, sleutels alleen uit de omgeving | Taak 1, 3, 4, 5 |
+| Scope (b): model claude-haiku-4-5-20251001, tagger_version haiku-4.5-v1 met confidence, hervatbaar via gitignored `.batches.json`, kosten printen voor de start, sleutels alleen uit de omgeving. **BIJGEWERKT 27 sept 2026:** de tagger draait via `claude -p` op het abonnement, niet via de Anthropic Batch API, en `--json-schema` is een optie en niet de standaard; `.batches.json` houdt porties bij in plaats van batch-id's. Zie het amendement in spec 5.1. | Taak 1, 3, 4, 5 |
 | 5.1 embeddings via FashionCLIP, hergebruik van scripts/visual-embeddings/embed_products.py, in batches naar product_attributes.embedding | Taak 6 |
 | 5.1 dedupe ook bij embedding cosine >= 0.999, goedkoopste in-stock variant canoniek (aannames: zelfde retailer, geen gender/category-eis, placeholder-beveiliging; expliciet benoemd) | Taak 8 |
 | 5.3 get_kandidaten score 0.5 as-overeenkomst (gewogen met confidence) + 0.3 gelegenheid-overlap + 0.2 max cosine met liked; top p_per_category per categorie; deterministisch op product_id; alleen canoniek, is_fashion, in_stock, gender, budget, niet disliked; security invoker | Taak 7 |

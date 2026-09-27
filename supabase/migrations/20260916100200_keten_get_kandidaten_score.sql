@@ -29,7 +29,7 @@
 
   ## De prestatieles van dit project (twee keer geleerd)
   get_kandidaten filterde ooit via een join naar products (20260914120100):
-  56,5 seconden pure uitvoertijd, 57014 op de 8s statement-timeout via de
+  56,5 seconden pure uitvoertijd, 57014 op de statement-timeout via de
   anon-route (taak-3-report.md). 20260914120400/120500 losten dat op door
   price, in_stock en retailer naar product_attributes te denormaliseren en
   products pas na de topN-afkap te joinen. Diezelfde fout kwam deze week
@@ -89,9 +89,18 @@
   aangenomen: zie de metingen in taak-7-report.md.
 
   ## Terugdraaien
-  Zet de functie uit 20260914120900 terug (de laatste versie zonder score
-  en zonder p_retailer):
+  Eerst de 9-parameterversie die dit bestand aanmaakt weghalen, dan de oude
+  8-parameterversie terugzetten. Die eerste regel is niet optioneel: laat je
+  hem weg, dan staan er twee overloads naast elkaar en blijft elke aanroeper
+  die p_retailer meegeeft (9 argumenten, of named args) de nieuwe versie met
+  score raken. Het terugdraaien doet dan voor een deel van de aanroepers stil
+  niets. Gevonden in de eindreview van 27 september 2026.
+  drop function if exists get_kandidaten(text, text[], int, int, jsonb, uuid[], uuid[], int, text);
   supabase db query --linked -f supabase/migrations/20260914120900_get_kandidaten_per_category_plafond.sql
+
+  Let op: 20260925090000 herdefinieert get_kandidaten nog een keer (attrs met
+  jsonb_build_object). Terugdraaien naar plan 1 betekent dus ook dat die
+  migratie niet meer van toepassing is.
 */
 
 drop function if exists get_kandidaten(text, text[], int, int, jsonb, uuid[], uuid[], int);

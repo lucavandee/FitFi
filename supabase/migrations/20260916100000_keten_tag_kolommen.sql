@@ -6,9 +6,20 @@
   per product. Engine v2 compenseert met regex op productnamen.
 
   ## Wat deze migratie doet
-  - Voegt de tag-kolommen uit spec 5.1 toe aan product_attributes, met
-    check-constraints op de vaste waardenlijsten. embedding en tagged_at
-    bestaan al sinds plan 1; "if not exists" maakt dat onschadelijk.
+  - Voegt de tag-kolommen uit spec 5.1 toe aan product_attributes. De
+    scalaire velden krijgen een check-constraint op hun vaste waardenlijst
+    (formality, silhouette, color_temp, lightness, pattern, shoe_type,
+    confidence) en occasions een <@-constraint op de zeven gelegenheden.
+    colors en materials krijgen er BEWUST geen: de validatie in
+    scripts/keten/tagging.ts keurt die twee per element en laat een onbekend
+    element weg in plaats van het hele product af te keuren (fixronde 8,
+    25 sept 2026). Voor materials is dat geen tijdelijke keuze maar de
+    conclusie dat stofnamen in een echte modecatalogus een open verzameling
+    zijn; een CHECK zou daar elke nieuwe stof laten sneuvelen op het
+    wegschrijven. Gevolg dat je moet weten: een schrijfpad buiten tagging.ts
+    om kan in colors en materials een waarde buiten de lijst zetten zonder
+    dat de database dat tegenhoudt. embedding en tagged_at bestaan al sinds
+    plan 1; "if not exists" maakt dat onschadelijk.
   - Indexen uit spec 5.1: canonical_id, (gender, category, price_band),
     GIN op occasions. De ivfflat-index op embedding volgt in
     20260916100300, na de embed-run, zodat de lijsten op echte data trainen.

@@ -367,6 +367,20 @@ describe("strippenJsonHekjes", () => {
     expect(strippenJsonHekjes('```\n{"a":1}\n```')).toBe('{"a":1}');
   });
 
+  it("pakt bij twee hekjesblokken het laatste dat parseert, niet het eerste", () => {
+    // Eindreview 27 sept 2026: de niet-gulzige match pakte het eerste blok.
+    // Bij een antwoord in "concept, dan correctie"-vorm won daardoor het
+    // concept, en als dat toevallig schema-geldig was verdween de correctie
+    // zonder spoor.
+    const antwoord = 'Concept:\n```json\n{"items":[{"index":1,"colors":["zwart"]}]}\n```\nCorrectie:\n```json\n{"items":[{"index":1,"colors":["wit"]}]}\n```';
+    expect(strippenJsonHekjes(antwoord)).toBe('{"items":[{"index":1,"colors":["wit"]}]}');
+  });
+
+  it("slaat een onparseerbaar laatste blok over en pakt het blok ervoor", () => {
+    const antwoord = '```json\n{"a":1}\n```\nen dan nog:\n```\nniet eens JSON\n```';
+    expect(strippenJsonHekjes(antwoord)).toBe('{"a":1}');
+  });
+
   it("strip hekjes ook als er tekst vóór of na het blok staat (zonder --json-schema gemeten, 23 sept 2026)", () => {
     expect(strippenJsonHekjes('Hier zijn de tags:\n```json\n{"a":1}\n```\nBedankt!')).toBe('{"a":1}');
   });

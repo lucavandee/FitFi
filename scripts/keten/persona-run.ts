@@ -19,7 +19,7 @@
  * Waarden worden nooit gelogd. De uitvoer gaat ook naar
  * ~/claude-artifacts/fitfi-keten/persona-run-<datum>.txt voor de poort van Luc.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
@@ -34,21 +34,14 @@ import {
   type KandidaatRij,
 } from "../../src/services/outfits/kandidaten";
 import { leesVlag } from "./args";
+// .env lezen gaat via env.ts en niet via een eigen parser: die eigen kopie
+// had nog de drie fouten uit het amendement van 17 september (lege terugval,
+// "KEY=waarde # toelichting" en een achterblijvende \r op CRLF-bestanden).
+import { leesDotEnv } from "./env";
 
 // Feed-poort (spec 5.7): met --retailer draait het harnas op een enkele feed.
 // null betekent alle retailers, precies zoals get_kandidaten dat verstaat.
 const RETAILER: string | null = leesVlag(process.argv.slice(2), "retailer") || null;
-
-function leesDotEnv(): Record<string, string> {
-  const pad = new URL("../../.env", import.meta.url).pathname;
-  if (!existsSync(pad)) return {};
-  const uit: Record<string, string> = {};
-  for (const regel of readFileSync(pad, "utf8").split("\n")) {
-    const m = regel.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\n]*)"?\s*$/);
-    if (m) uit[m[1]] = m[2];
-  }
-  return uit;
-}
 
 const dotenv = leesDotEnv();
 const url = process.env.VITE_SUPABASE_URL ?? dotenv.VITE_SUPABASE_URL;
