@@ -349,3 +349,52 @@ describe("gedeelde afspraken tussen de vulfuncties", () => {
     }
   });
 });
+
+/**
+ * outfit_sets zelf heeft geen taak-eigen test in plan 3, maar taak 6 schrijft
+ * erin en taak 8 leest de tokenkolommen voor de kostenquery per week. De
+ * kolomlijst en de RLS-zonder-policy zijn dus een contract tussen taken; deze
+ * suite bewaakt dat contract, niet alleen de stand van vandaag (zie
+ * taak-3-brief.md, punt 3).
+ */
+describe("20260916100600_create_outfit_sets", () => {
+  const sql = lees("20260916100600_create_outfit_sets.sql");
+
+  it("bevat alle negen kolommen uit de interfacesectie van het plan", () => {
+    for (const kolom of [
+      "profile_hash",
+      "stylist_version",
+      "source",
+      "outfits",
+      "model",
+      "latency_ms",
+      "input_tokens",
+      "output_tokens",
+      "created_at",
+    ]) {
+      expect(sql).toContain(kolom);
+    }
+  });
+
+  it("heeft (profile_hash, stylist_version) als primaire sleutel", () => {
+    expect(sql).toContain("primary key (profile_hash, stylist_version)");
+  });
+
+  it("zet RLS aan zonder een enkele policy: alleen de service role komt erbij", () => {
+    expect(sql).toContain("enable row level security");
+    expect(sql).not.toContain("create policy");
+  });
+
+  it("beperkt source met een CHECK tot 'stylist' en 'v2-fallback', niet 'cache'", () => {
+    expect(sql).toContain("check (source in ('stylist', 'v2-fallback'))");
+    // 'cache' mag in het commentaarblok staan (dat legt juist uit waarom het
+    // niet in de CHECK hoort), maar niet in de create table-statement zelf.
+    const vanTabel = sql.slice(sql.indexOf("create table if not exists public.outfit_sets"));
+    expect(vanTabel.slice(0, vanTabel.indexOf(";") + 1)).not.toContain("'cache'");
+  });
+
+  it("heeft een index op created_at voor de levensduur- en kostenqueries", () => {
+    expect(sql).toContain("idx_outfit_sets_created_at");
+    expect(sql).toContain("on public.outfit_sets (created_at)");
+  });
+});
