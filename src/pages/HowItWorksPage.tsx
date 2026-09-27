@@ -268,8 +268,8 @@ export default function HowItWorksPage() {
 
             <Reveal delay={0.24}>
               <p className="text-[17px] text-[#4A4A4A] leading-[1.7] max-w-[480px] mx-auto mb-12 text-center">
-                Geen eindeloze vragenlijsten, geen vage tips. In twee
-                minuten heb je een persoonlijk stijlrapport met kleuren,
+                Geen eindeloze vragenlijsten, geen vage tips. In ongeveer
+                vijf minuten heb je een persoonlijk stijlrapport met kleuren,
                 outfits en directe shoplinks.
               </p>
             </Reveal>
