@@ -18,6 +18,13 @@
  *    PRIJSBAND uit de sleutel (BAND_BEREIK hieronder), niet het ruwe budget
  *    van het profiel: de weggeschreven set wordt gedeeld door iedereen in die
  *    band (spec 5.2.1 amendement, punt 3).
+ * 2b. FIXRONDE 1 (coordinator, 27 sept 2026): vóór er ook maar een `claude -p`
+ *    aanroep gebeurt, toetst `toetsKandidatenpool` (valideer-set.ts) of de
+ *    kandidatenpool wiskundig genoeg heeft voor zes outfits zonder een dubbel
+ *    product. Dat kostte de echte run van dezelfde datum een aanroep die op
+ *    voorhand al kansloos was op een andere band (male/100tot200: 2
+ *    footwear-kandidaten); deze toets maakt zo'n aanroep overbodig. Faalt de
+ *    toets: profiel overslaan, reden loggen, geen aanroep.
  * 3. Prompts bouwen met stylist-prompt.ts (taak 5) en `claude -p` aanroepen,
  *    in de vorm van tagCli.ts (regel 578-586: execFile met een
  *    argumentenarray, geen shell; regel 631-651: stdin expliciet gesloten,
@@ -28,6 +35,15 @@
  *    (bouwGebruikersPrompt heeft daar een parameter voor). Faalt het daarna
  *    nog: profiel overslaan, reden loggen, doorgaan met het volgende. Er
  *    wordt nooit een set weggeschreven die niet door beide validaties komt.
+ *    FIXRONDE 1: is de enige overtreding dat een of meer product-ids in twee
+ *    outfits voorkomen (valideerSet, regel 3), dan krijgt de herkansing
+ *    NIET de volledige foutmelding (die noemt outfit-indices, zinloos voor
+ *    een verse, geheugenloze `claude -p`-sessie die zijn vorige antwoord niet
+ *    terugziet) maar alleen de betrokken product-ids met de instructie ze
+ *    niet te hergebruiken (`vindDubbeleProductIds`). Aanleiding: de echte run
+ *    van 27 september gaf bij de volledige foutmelding als herkansingsfout
+ *    zes outfits met lege items-arrays terug, een overduidelijk slechter
+ *    antwoord dan de eerste poging.
  * 5. Wegschrijven met `keten_schrijf_outfit_set`, inclusief latency_ms en de
  *    tokens uit het CLI-antwoord (`usage.input_tokens`/`usage.output_tokens`),
  *    als die er zijn.
@@ -75,7 +91,7 @@ import {
   STYLIST_VERSION,
 } from "../../supabase/functions/_shared/stylist-prompt.ts";
 import { valideerOutfits } from "../../supabase/functions/_shared/valideer-outfits.ts";
-import { valideerSet } from "../../supabase/functions/_shared/valideer-set.ts";
+import { toetsKandidatenpool, valideerSet, vindDubbeleProductIds } from "../../supabase/functions/_shared/valideer-set.ts";
 import {
   legeAssen,
   type Assen,
@@ -486,6 +502,25 @@ async function verwerkProfiel(
   }
   console.log(`  ${naam}: ${kandidaten.length} kandidaten (band ${band}, ${bereik.min}-${bereik.max} euro).`);
 
+  // FIXRONDE 1 (coordinator, 27 sept 2026, eis 1): deterministisch en gratis,
+  // dus altijd vóór de eerste claude -p aanroep. Zonder deze toets betaalde de
+  // echte run van dezelfde datum voor een compositie die op de "man
+  // klassiek"-band (male/100tot200, destijds 2 footwear-kandidaten) wiskundig
+  // nooit door valideerSet-regel 3 had kunnen komen.
+  const poolToets = toetsKandidatenpool(kandidaten);
+  if (!poolToets.voldoende) {
+    console.log(`  ${naam}: overgeslagen vóór enige aanroep, kandidatenpool onvoldoende: ${poolToets.reden}`);
+    return {
+      naam,
+      status: "overgeslagen",
+      reden: poolToets.reden,
+      duurMs: Date.now() - start,
+      aantalGeldig: 0,
+      kostenUsd: 0,
+      hash,
+    };
+  }
+
   let vorigeFouten: string[] = [];
   let laatsteRedenen: string[] = [];
   let geldigeOutfits: StylistOutfit[] = [];
@@ -541,8 +576,33 @@ async function verwerkProfiel(
       break;
     }
 
+    // FIXRONDE 1 (coordinator, 27 sept 2026, eis 2): de volledige
+    // valideerSet-foutmelding voor regel 3 noemt outfit-indices ("outfit 2
+    // en outfit 4"). Die zijn zinloos voor de herkansing: elke claude -p
+    // aanroep is een verse, geheugenloze sessie die zijn eigen vorige
+    // antwoord niet terugziet, dus "outfit 2" verwijst nergens naar. Gemeten
+    // op de echte run van dezelfde datum: die volledige melding als enige
+    // herkansingsfout meegeven leverde een duidelijk SLECHTER antwoord op
+    // (zes outfits met lege items-arrays) dan de eerste poging. In plaats
+    // daarvan: de dubbele product-ids apart benoemen met een korte,
+    // concrete instructie ze niet te hergebruiken, en de rest van de
+    // foutmeldingen (andere regels, wel met zinvolle inhoud voor een verse
+    // poging) ongemoeid laten.
+    const dubbeleIds = vindDubbeleProductIds(geldig);
+    const overigeFouten = alleFouten.filter((f) => !f.includes("komt twee keer voor in de set"));
+    const herkansingsFouten = [
+      ...overigeFouten,
+      ...dubbeleIds.map(
+        (id) =>
+          `product-id ${id} mag maar in een outfit van de set voorkomen; vervang het in de andere outfit(s) door een ander kandidaat-product uit dezelfde categorie`
+      ),
+    ];
+
+    // laatsteRedenen (het rapport aan het eind) blijft de volledige,
+    // gedetailleerde lijst tonen; alleen vorigeFouten (wat de VOLGENDE
+    // claude -p aanroep te zien krijgt) gebruikt de kortere, gerichte versie.
     laatsteRedenen = alleFouten;
-    vorigeFouten = alleFouten;
+    vorigeFouten = herkansingsFouten;
     console.log(
       `    ${alleFouten.length} fout(en) (${kostenLabel}): ${alleFouten.slice(0, 5).join(" | ")}${alleFouten.length > 5 ? " | ..." : ""}`
     );
@@ -672,7 +732,7 @@ async function main(): Promise<void> {
   console.log("\n=== Totaal ===");
   for (const u of uitkomsten) {
     console.log(
-      `- ${u.naam}: ${u.status}${u.reden ? ` (${u.reden})` : ""}, ${u.duurMs}ms, ${u.aantalGeldig} geldige outfits, $${u.kostenUsd.toFixed(4)}`
+      `- ${u.naam}: ${u.status}${u.reden ? ` (${u.reden})` : ""}, ${u.duurMs}ms, ${u.aantalGeldig} geldige outfits, $${u.kostenUsd.toFixed(4)} dollar-equivalent`
     );
   }
   const hits = uitkomsten.filter((u) => u.status === "hit").length;
@@ -680,9 +740,14 @@ async function main(): Promise<void> {
   const overgeslagen = uitkomsten.filter((u) => u.status === "overgeslagen").length;
   const totaalKosten = uitkomsten.reduce((s, u) => s + u.kostenUsd, 0);
   const totaalDuurMs = uitkomsten.reduce((s, u) => s + u.duurMs, 0);
+  // FIXRONDE 1 (coordinator, 27 sept 2026): total_cost_usd is wat dezelfde
+  // tokens via de betaalde API zouden kosten, geen bedrag dat van de
+  // rekening gaat. Op het abonnement verbruikt een aanroep sessiecapaciteit,
+  // geen geld; vandaar "dollar-equivalent", niet "kosten" of "uitgave".
   console.log(
     `${uitkomsten.length} profiel(en): ${hits} hit, ${geschreven} geschreven, ${overgeslagen} overgeslagen. ` +
-      `Totale doorlooptijd ${totaalDuurMs}ms, totale kosten $${totaalKosten.toFixed(4)} (abonnement, geen factuur).`
+      `Totale doorlooptijd ${totaalDuurMs}ms, totaal $${totaalKosten.toFixed(4)} dollar-equivalent aan sessiecapaciteit ` +
+      "(abonnement, geen factuur, geen echte uitgave)."
   );
 }
 
