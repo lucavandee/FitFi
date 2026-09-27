@@ -26,7 +26,6 @@ import "@/utils/migrateQuizToDatabase";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@/context/UserContext";
 import { GamificationProvider } from "@/context/GamificationContext";
-import { OnboardingProvider } from "@/context/OnboardingContext";
 
 // Performance & PWA
 import { registerServiceWorker } from "@/utils/serviceWorker";
@@ -73,10 +72,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <ThemeProvider>
               <UserProvider>
                 <GamificationProvider>
-                  <OnboardingProvider>
                     <App />
                     <Toaster position="top-center" />
-                  </OnboardingProvider>
                 </GamificationProvider>
               </UserProvider>
             </ThemeProvider>
