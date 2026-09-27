@@ -70,12 +70,31 @@ src/
 
 ## 2. Typografie
 
-**Plus Jakarta Sans** — Google Fonts
+Twee fonts, allebei via Google Fonts, allebei geladen in `index.html`.
+
+- **Instrument Serif** — display. Alleen voor de grote kop boven de vouw.
+- **Plus Jakarta Sans** — al het andere: body, UI, knoppen, H2 tot en met H4.
+
+### Display-kop
+De kop boven de vouw is een serif display met een italic accent: het eerste
+deel `font-serif italic`, het tweede `font-sans font-bold`. Dat patroon staat op
+home, prijzen en contact en is de norm, niet de uitzondering.
+
+```tsx
+<h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05]">
+  <span className="font-serif italic">We horen </span>
+  <span className="font-sans font-bold">graag van je</span>
+</h1>
+```
+
+De homepage-hero staat op `text-4xl md:text-[68px]` omdat hij over een
+full-bleed beeld valt en meer gewicht nodig heeft. Dat is de enige afwijking.
 
 ### Schaal
 | Element | Desktop | Mobiel | Tailwind | Gewicht | Kleur |
 |---------|---------|--------|----------|---------|-------|
-| H1 | 48px | 32px | `text-3xl md:text-5xl font-bold leading-tight` | 700 | #1A1A1A |
+| Display-kop (boven de vouw) | 64px | 32px | `text-[32px] md:text-[64px]` | serif italic + sans 700 | #1A1A1A |
+| H1 page header (deel 13) | 30px | 24px | `text-2xl md:text-3xl font-bold` | 700 | #1A1A1A |
 | H2 | 32px | 24px | `text-2xl md:text-3xl font-bold leading-snug` | 700 | #1A1A1A |
 | H3 | 24px | 20px | `text-xl md:text-2xl font-semibold` | 600 | #1A1A1A |
 | H4 | 20px | 20px | `text-xl font-semibold` | 600 | #1A1A1A |
@@ -89,7 +108,9 @@ src/
 - Headlines: ALTIJD #1A1A1A
 - Body: ALTIJD #4A4A4A
 - Max 65-75 karakters per regel (`max-w-prose`)
-- GEEN ander font dan Plus Jakarta Sans
+- Alleen Instrument Serif en Plus Jakarta Sans. Geen derde font.
+- Instrument Serif (`font-serif`) uitsluitend voor de display-kop en het italic
+  accent daarin. Nooit voor body, knoppen, labels of H2 en lager.
 
 ## 3. Spacing
 
@@ -132,7 +153,8 @@ Basis-eenheid: 8px. Altijd Tailwind spacing scale.
 - ALTIJD sluitknop rechtsboven
 
 ### Navigation
-- Header: `fixed bg-white/90 backdrop-blur-md border-b border-[#E5E5E5] h-16`
+- Header: `fixed top-0 w-full z-50`. Geen vaste hoogteklasse: de navigatie is een
+  zwevende pil met eigen padding. Gemeten hoogte is 90px, op elke breedte.
 - Actieve pagina: `text-[#A85740]`
 
 ## 5. Border Radius
@@ -195,7 +217,7 @@ Geen variaties.
 Elke pagina op FitFi volgt deze visuele opbouw:
 Page header
 
-ALTIJD op zand-achtergrond: bg-[#F5F0EB] pt-24 pb-16 md:pt-32 md:pb-20
+ALTIJD op zand-achtergrond: bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-20
 Bevat: badge, headline (H1), subtitel
 Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#A85740]
 Headline: text-2xl md:text-3xl font-bold text-[#1A1A1A] text-center
@@ -232,10 +254,54 @@ De pagina moet altijd warmte uitstralen. Geen wit-op-wit. Gebruik de zand-achter
 
 ## 14. Header overlap preventie
 
-De fixed header is 72px hoog. Elke pagina-hero of page-header sectie die NIET een full-screen achtergrondafbeelding gebruikt, moet minimaal `pt-44 md:pt-52` (176px/208px) padding-top hebben. Dit voorkomt dat content achter de header verdwijnt.
+De fixed header is 90px hoog (gemeten op productie, zowel op 390 als op 1440 breed). Elke pagina-hero of page-header sectie die NIET een full-screen achtergrondafbeelding gebruikt, moet minimaal `pt-44 md:pt-52` (176px/208px) padding-top hebben. Dit voorkomt dat content achter de header verdwijnt.
 
 Uitzondering: de homepage hero (full-bleed afbeelding) regelt zijn eigen spacing via `min-h-screen` en flex positioning.
 
 ## 15. CTA secties
 
 CTA-secties boven de footer hebben ALTIJD `py-40` (160px) verticale padding. Dit zorgt voor voldoende ademruimte. Een CTA moet voelen als een eigen blok, niet als een verlengstuk van de sectie erboven of de footer eronder.
+
+## 16. Scroll-grammatica
+
+De landingspagina en de prijzenpagina bouwen hun onderwerp laag voor laag op
+tijdens het scrollen. De bouwstenen staan in `src/components/landing/scroll/`.
+
+### ScrollScene
+Een hoge spacer met een sticky stage erin. De scroll door de spacer levert een
+voortgang van 0 tot 1 waarmee de inhoud gestuurd wordt.
+
+- `hoogte` minstens `200vh`. Daaronder leest het als een glitch.
+- `statisch` is verplicht: wat er staat als pinnen niet kan. Een echte
+  alternatieve opbouw, niet dezelfde scene met een andere transitie.
+- Sticky, niet fixed. Voor een fixed element is `offsetParent` null, waardoor
+  framer-motion de voortgang niet meer kan meten.
+
+### Wanneer er niet gepind wordt
+`useKanPinnen` zet de pin uit onder 1024px breed en onder 700px hoog, en
+`MotionConfig reducedMotion="user"` zet hem uit bij `prefers-reduced-motion`.
+De hoogtegrens dekt ook 400 procent zoom: WCAG 1.4.10 eist dat er dan geen
+content verloren gaat, en een sticky stage van 100svh scrolt niet intern.
+
+### Beats
+`Beat` blendt een kind in en uit binnen een deel van de scene-voortgang, voor
+"een ding tegelijk". Het invoerbereik komt uit `beatBereik(van, tot)` en blijft
+binnen [0,1].
+
+Dat laatste is geen detail. framer-motion geeft het invoerbereik van een
+scroll-gekoppelde waarde door als keyframe-offsets aan de Web Animations API,
+en die eist offsets in [0,1]. Een band die op 0 begint met een marge ervoor gaf
+-0.06, en dan valt de hele pagina in de error boundary, maar alleen boven
+1024x700. Schrijf een bereik dus nooit met de hand; gebruik `beatBereik`.
+
+### Toegankelijkheid in een stage
+- Alles in de geanimeerde stage staat op `aria-hidden`. De echte tekst staat in
+  het statische blok, dat in de pinned variant als `sr-only` meeloopt.
+- Geen focusbare elementen in de stage. De fixed header loopt eroverheen, dus
+  een getabte link verdwijnt eronder (WCAG 2.4.11). Links en knoppen horen in
+  het statische blok erna.
+
+### Grens
+Animaties blijven onder 500ms en zijn nooit bouncy (deel 8). Scroll-gekoppelde
+beweging heeft geen eigen duur, maar de beats mogen niet sneller wisselen dan
+de lezer kan volgen: minstens 200vh scroll per scene.

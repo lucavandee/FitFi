@@ -8,7 +8,6 @@
   --color-text: #1E2333;
   --color-text-muted: #4A5568;  /* AA on white: 5.8:1 */
   --color-muted: #4A5568;       /* AA on --color-bg: 5.8:1 */
-  --color-text-secondary: #3D4557; /* Small text on beige: ~7:1 — use when opacity tricks reduce contrast */
 
   --color-primary: #A85740;          /* terracotta, zie CLAUDE.md deel 2 */
   --ff-color-primary-25: #FBF7F6;    /* ultra light tint */
@@ -77,24 +76,10 @@
 
   /* Nova AI brand color */
   --ff-color-nova: #2B6AF3;          /* Nova chat accent (intentional blue — distinct from brand taupe) */
-  --ff-color-nova-hover: #245de0;    /* Nova hover state */
-  --ff-color-nova-ring: rgba(43, 106, 243, 0.30); /* Nova focus ring */
 
   /* Additional utility colors */
   --ff-color-turquoise: #40E0D0;     /* accent color for special elements */
-  --ff-color-secondary-600: #6B7280; /* neutral secondary */
 
-  /* Beige/Warm scale — used across landing, quiz, and product components */
-  --ff-color-beige-50:  #FAF8F5;
-  --ff-color-beige-100: #F5F0E8;
-  --ff-color-beige-200: #EDE3D4;
-  --ff-color-beige-300: #DCCFBC;
-  --ff-color-beige-400: #C4B5A0;
-  --ff-color-beige-500: #A6886A;
-  --ff-color-beige-600: #8F7459;
-  --ff-color-beige-700: #7A614A;
-  --ff-color-beige-800: #5C4937;
-  --ff-color-beige-900: #3E3125;
 
   /* Neutral/Gray scale (warm-tinted) */
   --ff-color-neutral-50: #FAFAF9;
@@ -131,24 +116,9 @@
   /* Neutrale inkt & border die mooi samengaan met CTA */
   --ff-ink-600: #1D2430;
   --ff-ink-500: #2B3342;
-  --ff-border-soft: color-mix(in oklab, var(--ff-ink-500) 14%, #FFFFFF);
 
   /* Accent color - matches "Start gratis" button */
   --ff-color-accent: #9C745E;
-  --ff-color-accent-contrast: #fff;
-
-  /* Links consistent with accent */
-  --ff-link: var(--ff-color-accent);
-  --ff-link-hover: color-mix(
-    in oklab,
-    var(--ff-color-accent) 84%,
-    black 16%
-  );
-  --ff-focus: color-mix(
-    in oklab,
-    var(--ff-color-accent) 20%,
-    white 80%
-  );
 
   /* Radii */
   --radius-lg: 1rem;

@@ -72,19 +72,19 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
       {/* Messages */}
       <div className="space-y-4">
         {step >= 1 && (
-          <h2 className="text-3xl font-light text-gray-900 animate-fade-in">
+          <h2 className="text-3xl font-light text-gray-900">
             Quiz Voltooid! 🎉
           </h2>
         )}
         
         {step >= 2 && (
-          <p className="text-lg text-gray-600 animate-fade-in">
+          <p className="text-lg text-gray-600">
             Je stijlprofiel wordt nu gegenereerd...
           </p>
         )}
         
         {step >= 3 && (
-          <div className="animate-fade-in">
+          <div>
             <div className="w-64 bg-gray-200 rounded-full h-2 mx-auto mb-4">
               <div className={`bg-gradient-to-r ${celebrationStyle.bgGradient} h-2 rounded-full animate-pulse`} style={{ width: '100%' }}></div>
             </div>

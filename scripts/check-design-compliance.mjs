@@ -61,6 +61,13 @@ const TOKEN_VERPLICHT = [
   { hex: '#f4e8e3', rol: 'Terracotta Light' },
 ];
 
+// Deel 2 kent naast de Tailwind-schaal een display-stap voor de kop boven de
+// vouw: text-[32px] md:text-[64px], en 68px voor de homepage-hero over een
+// full-bleed beeld. Die staan letterlijk in CLAUDE.md, dus ze zijn geen
+// arbitraire grootte. Staat hier iets dat NIET in deel 2 staat, dan is dit
+// bestand fout, niet de code.
+const DISPLAY_PX = new Set([32, 64, 68]);
+
 // deel 5: geen andere radii
 const RADII_TOEGESTAAN = new Set(['rounded-xl', 'rounded-2xl', 'rounded-full', 'rounded-none']);
 
@@ -88,6 +95,7 @@ const CTA_VARIANTEN = [
 const violations = {
   kleurBuitenPalet: [],
   tokenDrift: [],
+  teKleineTekst: [],
   verbodenRadius: [],
   verbodenSchaduw: [],
   arbitraireSpacing: [],
@@ -96,7 +104,7 @@ const violations = {
 };
 
 // harde categorieen laten --strict falen, zachte zijn rapportage
-const HARD = ['kleurBuitenPalet', 'tokenDrift', 'verbodenRadius', 'verbodenSchaduw', 'ctaVariant'];
+const HARD = ['kleurBuitenPalet', 'tokenDrift', 'teKleineTekst', 'verbodenRadius', 'verbodenSchaduw', 'ctaVariant'];
 
 let scannedFiles = 0;
 
@@ -277,10 +285,20 @@ function checkTypografie(content, filePath) {
     const waarde = parseFloat(match[1]);
     const eenheid = match[2];
     const px = eenheid === 'px' ? waarde : waarde * 16;
-    const uitleg = px < 14
-      ? `${match[0]} is ${px}px, onder de ondergrens van 14px uit deel 12`
-      : `${match[0]} valt buiten de type-schaal, gebruik text-xs t/m text-5xl`;
-    meld('arbitraireFontSize', filePath, content, match.index, match[0], uitleg);
+    if (DISPLAY_PX.has(px)) continue; // display-stap uit deel 2
+
+    // Onder 14px is geen smaakkwestie maar onleesbaar. Deel 2 zegt "NOOIT
+    // kleiner dan 16px voor body, 14px voor enige tekst" en deel 12 herhaalt
+    // het voor mobiel. Daarom hard: dit hoort een PR tegen te houden, een
+    // grootte die alleen naast de schaal valt niet.
+    if (px < 14) {
+      meld('teKleineTekst', filePath, content, match.index, match[0],
+        `${match[0]} is ${px}px, onder de ondergrens van 14px uit deel 2 en deel 12`);
+      continue;
+    }
+
+    meld('arbitraireFontSize', filePath, content, match.index, match[0],
+      `${match[0]} valt buiten de type-schaal (text-xs t/m text-5xl) en buiten de display-stap uit deel 2`);
   }
 }
 
@@ -486,6 +504,7 @@ function scanFile(filePath) {
 const CATEGORIEEN = [
   { key: 'kleurBuitenPalet', naam: 'Kleur buiten het palet', emoji: '🎨' },
   { key: 'tokenDrift', naam: 'Tokenlaag wijkt af van CLAUDE.md', emoji: '🧩' },
+  { key: 'teKleineTekst', naam: 'Tekst onder 14px', emoji: '🔍' },
   { key: 'verbodenRadius', naam: 'Verboden border-radius', emoji: '⬜' },
   { key: 'verbodenSchaduw', naam: 'Verboden schaduw', emoji: '🌑' },
   { key: 'ctaVariant', naam: 'Variatie op een vaste CTA-tekst', emoji: '🔤' },
@@ -542,7 +561,7 @@ function printResults() {
 
   if (STRICT) {
     if (hardTotaal > 0) {
-      console.log(`Poort dicht: ${hardTotaal} harde overtredingen (kleur, tokenlaag, radius, schaduw, CTA-tekst).`);
+      console.log(`Poort dicht: ${hardTotaal} harde overtredingen (kleur, tokenlaag, tekstgrootte, radius, schaduw, CTA-tekst).`);
       console.log('Zachte overtredingen (spacing, font-size) laten de poort open.\n');
       process.exit(1);
     }

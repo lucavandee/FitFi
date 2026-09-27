@@ -77,7 +77,7 @@ const FeaturedOutfitCard: React.FC<FeaturedOutfitCardProps> = ({
   }
 
   return (
-    <div className={`rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 shadow-sm hover:shadow-md transition-shadow animate-fade-in ${className}`}>
+    <div className={`rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] p-6 shadow-sm hover:shadow-md transition-shadow ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#A85740]">
