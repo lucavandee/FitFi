@@ -51,6 +51,7 @@ import { getArchetypeDisplayNL } from "@/utils/displayNames";
 import OutfitCard from "@/components/outfits/OutfitCard";
 import { OutfitPreviewCard } from "@/components/results/OutfitPreviewCard";
 import { openProductLink } from "@/utils/affiliate";
+import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
 import { getColorPalette } from "@/data/colorPalettes";
 import { getSessionId } from '@/utils/sessionId';
 
@@ -1712,6 +1713,12 @@ export default function EnhancedResultsPage() {
                 className="max-w-5xl mx-auto"
               />
             ) : (
+              <>
+                {/* De links onder deze kaarten zijn affiliate links. De melding
+                    stond alleen op een aparte pagina en in de footer, niet bij
+                    de commerciele inhoud zelf. */}
+                <AffiliateDisclosureNote className="max-w-5xl mx-auto mb-6" />
+
               <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
                 {occasionFilteredOutfits.map((outfit, idx) => {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
@@ -1811,6 +1818,7 @@ export default function EnhancedResultsPage() {
                   );
                 })}
               </div>
+              </>
             )}
 
             {/* Upsell Block */}
