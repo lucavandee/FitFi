@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { Cookie, ShieldCheck, ChartBar as BarChart2, Megaphone, Database, Globe, Settings, Clock, Scale, RefreshCw, Mail, ChevronDown, ArrowRight, Check, X, TriangleAlert as AlertTriangle } from 'lucide-react';
 import Seo from '@/components/seo/Seo';
+import { CookieSettings } from '@/components/profile/CookieSettings';
 
 const UPDATED = '7 januari 2026';
 
@@ -567,8 +568,23 @@ export default function CookiesPage() {
               custom={1}
               className="text-[17px] text-[#4A4A4A] mb-12"
             >
-              Pas je cookie-instellingen aan via je profiel, of neem contact op.
+              Pas je keuze hier aan. Dat kan ook zonder account.
             </motion.p>
+
+            {/* Het paneel stond alleen op /profile, dus achter een account. Wie
+                geen account heeft kon zijn keuze niet meer wijzigen, terwijl de
+                banner belooft dat het altijd kan. De knop hierboven wees
+                bovendien naar /profiel, een route die niet bestaat. */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={2}
+              className="max-w-xl mx-auto mb-12 text-left bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 shadow-sm"
+            >
+              <CookieSettings />
+            </motion.div>
 
             <motion.div
               variants={fadeUp}
@@ -578,13 +594,6 @@ export default function CookiesPage() {
               custom={2}
               className="flex items-center justify-center gap-4 flex-wrap"
             >
-              <Link
-                to="/profiel"
-                className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] transition-colors duration-200"
-              >
-                Instellingen aanpassen
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
-              </Link>
               <Link
                 to="/privacy"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-[15px] transition-colors duration-200 bg-white"
