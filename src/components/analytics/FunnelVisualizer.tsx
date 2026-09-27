@@ -51,7 +51,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
           return (
             <div
               key={step.id}
-              className="relative animate-fade-in"
+              className="relative"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Step Container */}
@@ -96,7 +96,7 @@ const FunnelVisualizer: React.FC<FunnelVisualizerProps> = ({
               {/* Drop-off Warning */}
               {isDropOffPoint && (
                 <div
-                  className="ml-12 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg animate-fade-in"
+                  className="ml-12 mt-2 p-3 bg-red-50 border border-red-200 rounded-xl"
                   style={{ animationDelay: `${(index + 1) * 0.1}s` }}
                 >
                   <div className="flex items-center space-x-2">

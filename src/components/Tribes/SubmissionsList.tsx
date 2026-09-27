@@ -69,7 +69,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
         return (
           <article
             key={submission.id}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow animate-fade-in"
+            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
             {/* Submission Header */}

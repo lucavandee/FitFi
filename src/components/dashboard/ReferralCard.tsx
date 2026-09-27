@@ -30,7 +30,7 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
       // Enhanced feedback with custom toast
       const el = document.createElement("div");
       el.textContent = "Invite link gedeeld/gekopieerd ✅";
-      el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-50 animate-fade-in";
+      el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white text-sm px-3 py-2 rounded-full z-50";
       document.body.appendChild(el);
       setTimeout(() => {
         el.style.opacity = "0";
@@ -42,7 +42,7 @@ export const ReferralCard: React.FC<{ codeUrl: string; count: number; goal?: num
       // Error feedback
       const el = document.createElement("div");
       el.textContent = "Share mislukt, probeer opnieuw";
-      el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-600 text-white text-sm px-3 py-2 rounded-full z-50 animate-fade-in";
+      el.className = "fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-600 text-white text-sm px-3 py-2 rounded-full z-50";
       document.body.appendChild(el);
       setTimeout(() => {
         el.style.opacity = "0";

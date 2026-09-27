@@ -97,7 +97,6 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
       {/* Content */}
       <div
         key={activeView}
-        className="animate-fade-in"
       >
         {activeView === 'overview' && (
           <div className="space-y-6">
@@ -106,7 +105,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
               {stats.map((stat, index) => (
                 <div
                   key={stat.label}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 animate-scale-in"
+                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className={`w-10 h-10 ${stat.bgColor} rounded-full flex items-center justify-center mb-3`}>
@@ -137,7 +136,7 @@ const GamificationDashboard: React.FC<GamificationDashboardProps> = ({ className
                   {earnedBadges.slice(0, 8).map((badge, index) => (
                     <div
                       key={badge.badge_id}
-                      className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors animate-scale-in"
+                      className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       <div className="text-2xl mb-2">{badge.badge_icon}</div>
