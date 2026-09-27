@@ -87,14 +87,16 @@ home, prijzen en contact en is de norm, niet de uitzondering.
 </h1>
 ```
 
-De homepage-hero staat op `text-4xl md:text-[68px]` omdat hij over een
-full-bleed beeld valt en meer gewicht nodig heeft. Dat is de enige afwijking.
+Twee afwijkingen, allebei met reden. De homepage-hero staat op
+`text-4xl md:text-[68px]` omdat hij over een full-bleed beeld valt en meer
+gewicht nodig heeft. Blog en de resultatenpagina staan op 56px omdat hun koppen
+langer zijn; results begint op 48px op mobiel.
 
 ### Schaal
 | Element | Desktop | Mobiel | Tailwind | Gewicht | Kleur |
 |---------|---------|--------|----------|---------|-------|
-| Display-kop (boven de vouw) | 64px | 32px | `text-[32px] md:text-[64px]` | serif italic + sans 700 | #1A1A1A |
-| H1 page header (deel 13) | 30px | 24px | `text-2xl md:text-3xl font-bold` | 700 | #1A1A1A |
+| Display-kop (elke publieke pagina) | 64px | 32px | `text-[32px] md:text-[64px]` | serif italic + sans 700 | #1A1A1A |
+| H1 in de app (dashboard, account, login) | 24px | 24px | `text-2xl font-bold` | 700 | #1A1A1A |
 | H2 | 32px | 24px | `text-2xl md:text-3xl font-bold leading-snug` | 700 | #1A1A1A |
 | H3 | 24px | 20px | `text-xl md:text-2xl font-semibold` | 600 | #1A1A1A |
 | H4 | 20px | 20px | `text-xl font-semibold` | 600 | #1A1A1A |
@@ -220,7 +222,8 @@ Page header
 ALTIJD op zand-achtergrond: bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-20
 Bevat: badge, headline (H1), subtitel
 Badge op page header: bg-white (wit op zand), met Lucide icoon in text-[#A85740]
-Headline: text-2xl md:text-3xl font-bold text-[#1A1A1A] text-center
+Headline: de display-kop uit deel 2, gecentreerd. Niet text-2xl: dat is de maat
+voor schermen in de app (dashboard, account), niet voor een publieke pagina.
 Subtitel: text-base text-[#4A4A4A] text-center mt-4 max-w-lg mx-auto
 
 Content secties
