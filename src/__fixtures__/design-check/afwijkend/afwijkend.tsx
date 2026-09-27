@@ -6,6 +6,7 @@ export function Afwijkend() {
     <div style={{ backgroundColor: '#123456' }}>
       <div className="bg-[#FF00FF] rounded-lg shadow-2xl p-[13px] text-[17px]">
         <button>Start gratis</button>
+        <span className="text-[11px]">onleesbaar klein</span>
       </div>
     </div>
   );

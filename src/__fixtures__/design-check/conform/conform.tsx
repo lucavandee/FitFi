@@ -41,6 +41,12 @@ export function Conform() {
         </div>
       </div>
 
+      {/* Display-kop uit deel 2: serif italic plus sans bold, display-stap. */}
+      <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05]">
+        <span className="font-serif italic">We horen </span>
+        <span className="font-sans font-bold">graag van je</span>
+      </h1>
+
       <section className="py-40 bg-[#F5F0EB]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" />
         <p className="text-[#3D8B5E]">Succes</p>
