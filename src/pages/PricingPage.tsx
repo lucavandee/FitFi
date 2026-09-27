@@ -128,7 +128,10 @@ const COMPARISON_ROWS: Array<{
   { label: "Directe shoplinks", free: true, premium: true },
   { label: "Rapport aanpasbaar", free: true, premium: true },
   { label: "Kleuranalyse (foto)", free: false, premium: true },
-  { label: "Nova AI-assistent", free: false, premium: true },
+  // Nova AI-assistent stond hier, maar die functie bestaat niet. Er is geen
+  // enkele knop die hem opent (zes launcher-componenten, geen een gemount) en
+  // /.netlify/functions/nova geeft 404: er is geen backend gedeployed. Zet hem
+  // pas terug als je hem kunt openen en hij antwoordt.
 ];
 
 /* ─── FAQ data ────────────────────────────────────────────────────────────── */
@@ -139,7 +142,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Wat krijg ik met Premium precies?",
-    a: "Onbeperkte outfits voor alle gelegenheden, kleuranalyse op basis van je foto en de Nova AI-assistent voor je persoonlijke stijlvragen.",
+    a: "Onbeperkte outfits voor alle gelegenheden en kleuranalyse op basis van je foto.",
   },
   {
     q: "Kan ik maandelijks opzeggen?",
@@ -392,7 +395,6 @@ export default function PricingPage() {
                       { included: true, label: "Directe shoplinks" },
                       { included: true, label: "Rapport aanpasbaar" },
                       { included: false, label: "Kleuranalyse (foto)" },
-                      { included: false, label: "Nova AI-assistent" },
                     ].map(({ included, label }) => (
                       <div key={label} className="flex items-start gap-3 text-sm">
                         {included ? (
@@ -454,7 +456,6 @@ export default function PricingPage() {
                     {[
                       "Onbeperkte outfits",
                       "Kleuranalyse (foto)",
-                      "Nova AI-assistent",
                     ].map((label) => (
                       <div key={label} className="flex items-start gap-3 text-sm">
                         <div className="w-5 h-5 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0 mt-0.5">
