@@ -664,7 +664,7 @@ const ProfilePage: React.FC = () => {
                   Premium
                 </p>
                 <p className="text-base font-bold text-white mb-2">Ontgrendel je volledige stijlpotentieel</p>
-                <p className="text-sm text-white/80 leading-[1.6] mb-5">Uitgebreide kleuranalyse, persoonlijke Nova AI-assistent en meer outfits.</p>
+                <p className="text-sm text-white/80 leading-[1.6] mb-5">Uitgebreide kleuranalyse en meer outfits.</p>
                 <button
                   onClick={() => navigate("/pricing")}
                   className="w-full py-3 rounded-full bg-white text-[#A85740] font-semibold text-sm text-center hover:bg-white/90 transition-colors duration-200"
