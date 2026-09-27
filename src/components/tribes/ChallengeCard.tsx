@@ -45,7 +45,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({ c, onOpen, classNa
 
   return (
     <div 
-      className={`bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer hover:transform hover:scale-105 overflow-hidden border border-gray-100 ${className}`}
+      className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:transform hover:scale-105 overflow-hidden border border-gray-100 ${className}`}
       onClick={() => onOpen?.(c.id)}
     >
       <div className="p-6">
