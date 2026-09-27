@@ -127,13 +127,9 @@ interface ProductRij {
  * keep-alive-verbinding na veel opeenvolgende verzoeken). Geeft na de
  * laatste mislukte poging het laatste resultaat terug, zodat de aanroeper
  * zijn bestaande foutafhandeling op `error` ongewijzigd kan gebruiken.
- *
- * De type-parameter 'T' hoort bij het antwoord van de RPC. werk() kan elke
- * awaitbare teruggeven (inclusief Supabase's PostgrestFilterBuilder), zolang
- * die awaitbare { data: T | null; error: ... } oplevert.
  */
 async function metHerhaling<T>(
-  werk: () => any,
+  werk: () => PromiseLike<{ data: T | null; error: { message: string } | null }>,
   omschrijving: string,
   log: (...args: unknown[]) => void,
   pogingen = 4
@@ -253,7 +249,7 @@ async function main(): Promise<void> {
         oorspronkelijkLog
       );
       if (error) return { data: null, error };
-      const rijen = ((data ?? []) as Array<{ products: VeegrondeRij }>).map((r) => r.products);
+      const rijen = ((data ?? []) as unknown as Array<{ products: VeegrondeRij }>).map((r) => r.products);
       return { data: rijen, error: null };
     },
     schrijf: (batch) =>
