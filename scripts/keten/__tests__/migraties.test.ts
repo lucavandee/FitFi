@@ -185,3 +185,24 @@ describe("20260916100100_keten_embedding_rpcs", () => {
     expect(sql).toContain("revoke all on function keten_schrijf_embeddings");
   });
 });
+
+describe("20260916100300_keten_dedupe_embedding", () => {
+  const sql = lees("20260916100300_keten_dedupe_embedding.sql");
+
+  it("maakt de ivfflat-index uit spec 5.1 na de embed-run", () => {
+    expect(sql).toContain("using ivfflat (embedding extensions.vector_cosine_ops)");
+  });
+
+  it("dedupet op cosine-afstand met drempel 0.999 binnen de retailer, zonder gender- of category-eis, met placeholder-beveiliging", () => {
+    expect(sql).toContain("function keten_dedupe_embedding(");
+    expect(sql).toContain("p_drempel real default 0.999");
+    expect(sql).toContain("perform keten_controleer_retailer(p_retailer)");
+    expect(sql).toContain("<=>");
+    expect(sql).toContain("ivfflat.probes");
+    expect(sql).toContain("keten_placeholder");
+    expect(sql).not.toContain("b.gender = a.gender");
+    expect(sql).not.toContain("b.category = a.category");
+    expect(sql).toContain("order by x.in_stock desc, x.price asc, x.id asc");
+    expect(sql).toContain("revoke all on function keten_dedupe_embedding");
+  });
+});

@@ -118,3 +118,14 @@ describe.skipIf(!url || !serviceKey)("20260916100100_keten_embedding_rpcs (live)
     expect(Number(data)).toBe(0);
   });
 });
+
+describe.skipIf(!url || !serviceKey)("20260916100300_keten_dedupe_embedding (live)", () => {
+  it("weigert een onbekende retailer en is niet aanroepbaar met de anon-sleutel", async () => {
+    const fout = await service().rpc("keten_dedupe_embedding", { p_retailer: "bestaat niet", p_drempel: 0.999 });
+    expect(fout.error?.message ?? "").toContain("Onbekende retailer");
+    if (anonKey) {
+      const anonFout = await anon().rpc("keten_dedupe_embedding", { p_retailer: null, p_drempel: 0.999 });
+      expect(anonFout.error?.message ?? "").toContain("permission denied");
+    }
+  });
+});
