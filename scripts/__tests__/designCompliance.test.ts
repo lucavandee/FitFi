@@ -120,4 +120,23 @@ describe("design-system checker", () => {
       fout.violations.kleurBuitenPalet.length + fout.violations.tokenDrift.length,
     );
   });
+  it("laat de display-stap uit deel 2 door", () => {
+    // CLAUDE.md deel 2 kent naast de Tailwind-schaal een display-stap voor de
+    // kop boven de vouw: text-[32px] md:text-[64px], en 68px voor de
+    // homepage-hero. Slaat de checker daarop aan, dan spreekt hij het design
+    // system tegen en is hij fout, niet de code.
+    const r = draai("conform");
+    expect(r.violations.arbitraireFontSize).toEqual([]);
+    expect(r.violations.teKleineTekst).toEqual([]);
+  });
+
+  it("rekent tekst onder 14px als hard, niet als smaakkwestie", () => {
+    // Deel 2: "NOOIT kleiner dan 16px voor body, 14px voor enige tekst".
+    // Deel 12 herhaalt het voor mobiel. Een grootte die alleen naast de schaal
+    // valt blijft zacht; onleesbaar klein hoort een PR tegen te houden.
+    const r = draai("afwijkend");
+    expect(r.violations.teKleineTekst.map((v) => v.match)).toContain("text-[11px]");
+    expect(r.violations.arbitraireFontSize.map((v) => v.match)).toContain("text-[17px]");
+    expect(r.violations.teKleineTekst.map((v) => v.match)).not.toContain("text-[17px]");
+  });
 });
