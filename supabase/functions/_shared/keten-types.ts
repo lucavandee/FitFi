@@ -232,6 +232,21 @@ export interface VerrijkteOutfit {
 
 export type OutfitBron = 'stylist' | 'cache' | 'v2-fallback';
 
+/**
+ * Versie van de stylist-prompt en het validatieschema (spec 5.4, taak 5).
+ * Hoort inhoudelijk bij stylist-prompt.ts, maar staat hier omdat dit het
+ * enige bestand van de drie is zonder eigen imports: stylist-prompt.ts
+ * importeert Deno-stijl met een expliciete .ts-extensie
+ * (`from './keten-types.ts'`), en dat breekt `npx tsc --noEmit` zodra een
+ * src-bestand (zoals composeClient.ts, taak 7) stylist-prompt.ts transitief
+ * meeneemt: de hoofd-tsconfig kent geen allowImportingTsExtensions, in
+ * tegenstelling tot tsconfig.keten.json. Verhoog je de prompt of het schema,
+ * verhoog dan deze constante; dat maakt de cache in outfit_sets automatisch
+ * ongeldig voor de oude versie. stylist-prompt.ts re-exporteert hem
+ * ongewijzigd zodat bestaande imports uit dat bestand blijven werken.
+ */
+export const STYLIST_VERSION = 'stylist-v1';
+
 export interface ComposeVerzoek {
   profile_hash: string;
   profile: TasteProfileInput;

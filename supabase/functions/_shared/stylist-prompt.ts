@@ -31,9 +31,15 @@
  * straffeloos negeren. Zie het rapport bij deze taak.
  */
 import type { Gelegenheid, Kandidaat, TasteProfileInput } from './keten-types.ts';
-import { AS_NAMEN, CATEGORIEEN } from './keten-types.ts';
+import { AS_NAMEN, CATEGORIEEN, STYLIST_VERSION } from './keten-types.ts';
 
-export const STYLIST_VERSION = 'stylist-v1';
+// Re-export zodat bestaande imports van STYLIST_VERSION uit dit bestand
+// (scripts/keten/stylist-vul-cache.ts, de eigen test van dit bestand)
+// ongewijzigd blijven werken. De waarde zelf staat sinds taak 7 in
+// keten-types.ts (zie het commentaar daar): dat is het enige van de drie
+// gedeelde bestanden zonder eigen imports, en dus het enige dat een
+// src-bestand zonder allowImportingTsExtensions transitief kan meenemen.
+export { STYLIST_VERSION };
 export const TOOL_NAAM = 'lever_outfits';
 
 export function bouwToolSchema(occasions: Gelegenheid[]): Record<string, unknown> {
