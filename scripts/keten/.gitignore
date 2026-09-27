@@ -1,0 +1,3 @@
+# Batch-id's van lopende tag-runs en lokale uitvoer. Machinestaat, geen broncode.
+.batches.json
+out/

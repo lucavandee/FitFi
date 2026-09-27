@@ -185,6 +185,10 @@ error.log
 
 # Python files (not used in frontend)
 *.py
+# Uitzondering: de keten-scripts in Python horen wel in de repo, net als
+# scripts/visual-embeddings/embed_products.py dat al is.
+!scripts/keten/*.py
+!scripts/keten/__tests__/*.py
 *.pyc
 __pycache__/
 *.pyo
@@ -239,3 +243,6 @@ CLAUDE-vault.md
 # met drie absolute paden naar /Users/luc. De buildmachine genereert deze map
 # zelf; wie hem uitcheckt krijgt andermans instellingen.
 .netlify/
+
+# SDD-werkruimte (grootboek, briefs, reviewpakketten), nooit committen
+.superpowers/

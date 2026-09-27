@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { classifyProductDetailed } from '../productClassifier';
 
@@ -384,5 +385,267 @@ describe('Dutch closed compounds', () => {
   it('keeps jacket and overshirt in outerwear', () => {
     expect(cat('Acne Studios Jacket Men color Blue')).toBe('outerwear');
     expect(cat('Alter Ego | Heren | Overshirt Bruin')).toBe('outerwear');
+  });
+});
+
+// ─── Taak 0: de merknaam mag de categorie niet bepalen ─────────────────────
+// products.name is de letterlijke feed-titel en bevat altijd het merk. Een
+// merk met een categoriewoord erin ("Tommy Jeans", "Moon Boot") trok het
+// product voorheen naar de verkeerde categorie: "Sweater TOMMY JEANS" werd
+// bottom in plaats van top. Gevonden op de productiedatabase 2026-09-17,
+// negen merken, 2.551 canonieke producten, 111 truien/hoodies op de
+// broekpositie.
+describe('Merk bepaalt de categorie niet meer', () => {
+  it('sweater met een merk dat "Jeans" bevat wordt top, niet bottom', () => {
+    expect(
+      classifyProductDetailed('Sweater TOMMY JEANS Men color Navy', '', '', 'Tommy Jeans').category
+    ).toBe('top');
+  });
+
+  it('hetzelfde kledingstuk met een merk zonder categoriewoord wordt ook top', () => {
+    // Bewijst dat het niet "toevallig top" is: met of zonder categoriewoord
+    // in het merk komt hetzelfde kledingstuk op dezelfde categorie uit.
+    expect(
+      classifyProductDetailed('Sweater TOMMY HILFIGER Men color Navy', '', '', 'Tommy Hilfiger').category
+    ).toBe('top');
+  });
+
+  it('valt bij een merk-only signaal terug op categoryPath, niet stilletjes op de ongestripte naam', () => {
+    // Zonder brand-parameter matcht de naam zelf op "jeans" en wordt bottom.
+    // Dat is exact het defect: het bewijst dat het signaal echt uit het merk
+    // komt en niet uit iets anders in de naam.
+    const zonderBrand = classifyProductDetailed('Item DENIM JEANS CO Woman color Black', '', '', '');
+    expect(zonderBrand.category).toBe('bottom');
+
+    // Met brand gestript blijft er geen kledingstukwoord over ("Item ...
+    // Woman color Black"). Een terugval die stilletjes de ongestripte naam
+    // erbij pakt zou hier weer bottom geven: het defect is dan terug. De
+    // functie valt in plaats daarvan terug op het onafhankelijke
+    // categoryPath-veld (hier gezet op "footwear" om het verschil met zowel
+    // "bottom" als "top" ondubbelzinnig te maken).
+    const metBrand = classifyProductDetailed(
+      'Item DENIM JEANS CO Woman color Black',
+      '',
+      'footwear',
+      'Denim Jeans Co'
+    );
+    expect(metBrand.category).toBe('footwear');
+    expect(metBrand.category).not.toBe('bottom');
+  });
+
+  it('Moon Boot-geval: merk beschrijft de juiste categorie en komt alleen daar in het product terug', () => {
+    // "Ballet Flat MOON BOOT Woman color Black" heeft geen ander
+    // kledingstukwoord dan "boot" uit de merknaam zelf ("ballet flat" matcht
+    // op geen enkele regel). Zonder terugval zou dit product onclassificeerbaar
+    // worden na het strippen van de naam. De beschrijving dupliceert in de
+    // echte feed de naam en blijft ongestript, dus het footwear-signaal komt
+    // via die terugval alsnog binnen. Gemeten: 95 van 95 Moon Boot-producten
+    // stonden vóór deze fix op footwear; dat mag niet veranderen.
+    const r = classifyProductDetailed(
+      'Ballet Flat MOON BOOT Woman color Black',
+      'Ballet Flat MOON BOOT Woman color Black',
+      'footwear',
+      'Moon Boot'
+    );
+    expect(r.category).toBe('footwear');
+  });
+
+  it('laat Polo Ralph Lauren-producten die nu al goed staan niet omslaan', () => {
+    // Polo Ralph Lauren is het andere gemeten tegenvoorbeeld: 825 top, 90
+    // accessory, 71 bottom, 32 outerwear, 23 dress, 12 footwear. Niet alles
+    // wordt door "Polo" naar top getrokken, dus de fix mag die spreiding niet
+    // plat slaan. Een broek met het merk erin moet bottom blijven.
+    expect(
+      classifyProductDetailed('Pants POLO RALPH LAUREN Woman color Blue', '', '', 'Polo Ralph Lauren').category
+    ).toBe('bottom');
+    // Een polo-shirt met het merk erin moet top blijven (het merk bevat zelf
+    // ook "Polo", maar dat mag geen dubbel signaal geven of iets omgooien).
+    expect(
+      classifyProductDetailed('Polo Shirt POLO RALPH LAUREN Men color Black', '', '', 'Polo Ralph Lauren').category
+    ).toBe('top');
+  });
+
+  it('vangt ook Jean Paul Gaultier: "Jean" matcht dezelfde jeans-regel als "Jeans"', () => {
+    // Gevonden tijdens fixronde 1 (bevinding 2), niet in de brief se lijst
+    // van negen merken: \bjeans?\b matcht ook het enkelvoud "Jean", dus
+    // "Jean Paul Gaultier" heeft precies hetzelfde defect. 25 rijen op de
+    // volledige catalogus: 19 bottom -> top, 5 bottom -> outerwear,
+    // 1 bottom -> accessory, geen enkele regressie.
+    expect(
+      classifyProductDetailed('Shirt JEAN PAUL GAULTIER Woman color White', '', '', 'Jean Paul Gaultier').category
+    ).toBe('top');
+    expect(
+      classifyProductDetailed('Blazer JEAN PAUL GAULTIER Woman color Denim', '', '', 'Jean Paul Gaultier').category
+    ).toBe('outerwear');
+    // Een echte broek met het merk erin moet bottom blijven.
+    expect(
+      classifyProductDetailed('Jeans JEAN PAUL GAULTIER Woman color Blue', '', '', 'Jean Paul Gaultier').category
+    ).toBe('bottom');
+  });
+
+  // Fixronde 1, bevinding 1: stripBrand gebruikte \b aan het begin en eind
+  // van de merknaam. \b eist een woordteken aan minstens één kant van de
+  // grens; een merk dat eindigt op een leesteken of een accent heeft daar
+  // geen woordteken (het leesteken/accent zelf niet, en de spatie erna ook
+  // niet), dus \b matchte nooit en de merknaam werd stil niet gestript. Twee
+  // echte merken hebben deze vorm: "Gallery Dept." en "Herschel Supply Co.".
+  // Reproductie op de echte module (vóór de fix):
+  //   classifyProductDetailed('Item SHIRT CO. Woman color Black', '', '', 'Shirt Co.')
+  //   -> { category: 'top', ... } — het merkwoord "shirt" telde nog mee.
+  describe('merken die eindigen op een leesteken of accent', () => {
+    it('reproduceert het gemelde geval: "Shirt Co." mag niet meer als top-signaal meetellen', () => {
+      // Zonder ander kledingstukwoord in de naam moet dit na de fix
+      // onclassificeerbaar worden (geen signaal meer), niet stilletjes top
+      // blijven via het ongestripte merkwoord "shirt".
+      const r = classifyProductDetailed('Item SHIRT CO. Woman color Black', '', '', 'Shirt Co.');
+      expect(r.category).not.toBe('top');
+      expect(r.rejected).toBe(true);
+    });
+
+    it('punt aan het eind van het merk: "Jeans Co." mag een trui niet naar bottom trekken', () => {
+      expect(
+        classifyProductDetailed('Sweater JEANS CO. Men color Black', '', '', 'Jeans Co.').category
+      ).toBe('top');
+    });
+
+    it('koppelteken aan het eind van het merk', () => {
+      expect(
+        classifyProductDetailed('Sweater JEANS CO- Men color Black', '', '', 'Jeans Co-').category
+      ).toBe('top');
+    });
+
+    it('ampersand aan het eind van het merk', () => {
+      expect(
+        classifyProductDetailed('Sweater JEANS & Men color Black', '', '', 'Jeans &').category
+      ).toBe('top');
+    });
+
+    it('apostrof aan het eind van het merk', () => {
+      expect(
+        classifyProductDetailed("Sweater JEANS CO' Men color Black", '', '', "Jeans Co'").category
+      ).toBe('top');
+    });
+
+    it('geaccentueerde letter aan het eind van het merk', () => {
+      // JS telt een letter met accent zonder de unicode-vlag niet als
+      // woordteken, dus dit faalt op dezelfde manier als het leesteken-geval.
+      expect(
+        classifyProductDetailed('Sweater JEANS CAFÉ Men color Black', '', '', 'Jeans Café').category
+      ).toBe('top');
+    });
+
+    it('rooktest op de twee echte merken uit de melding: geen crash, geen mangled tekst', () => {
+      // Geen van "gallery", "dept", "herschel" of "supply" matcht een regel
+      // in deze classifier, dus deze assertie bewijst NIET dat het strippen
+      // hier iets aan de uitkomst verandert (die twee categorieen komen ook
+      // uit "hoodie"/"sneakers" als er helemaal niets gestript wordt). Het
+      // mechanische bewijs dat een merk met een punt aan het eind wél
+      // gestript wordt staat hierboven ("punt aan het eind van het merk:
+      // 'Jeans Co.'"). Dit is puur een rooktest met de twee echte
+      // productienamen uit de melding: bevestigt dat de escaping van de punt
+      // in "Gallery Dept."/"Herschel Supply Co." niet crasht en geen
+      // kapotte tekst oplevert voor deze specifieke tekens.
+      expect(
+        classifyProductDetailed('Hoodie GALLERY DEPT. Men color Black', '', '', 'Gallery Dept.').category
+      ).toBe('top');
+      expect(
+        classifyProductDetailed('Sneakers HERSCHEL SUPPLY CO. Men color Black', '', '', 'Herschel Supply Co.').category
+      ).toBe('footwear');
+    });
+
+    it('bevat geen negatieve lookbehind meer (Safari 15.4 t/m 16.3 ondersteunen die niet)', () => {
+      // Fixronde 2, bevinding 1: (?<!\w) werd stil nooit gedetecteerd door
+      // tsc/vite build, omdat het patroon met new RegExp(dynamische string)
+      // wordt gebouwd; esbuild herschrijft een lookbehind alleen in een
+      // regex-LITERAL naar een oudere vorm, niet in zo'n string. Zonder deze
+      // test zou een toekomstige (?<!...) hier stil terug kunnen sluipen en
+      // pas op een niet-ondersteunende Safari-versie een SyntaxError geven,
+      // zonder try/catch eromheen op de aanroeppaden.
+      const bron = readFileSync(new URL('../productClassifier.ts', import.meta.url), 'utf8');
+      // Commentaar eruit: deze docstring noemt (?<!\w) zelf als toelichting
+      // op wat er niet meer in de CODE mag staan.
+      const zonderCommentaar = bron.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+      expect(zonderCommentaar).not.toMatch(/\(\?<[!=]/);
+    });
+  });
+});
+
+// ─── Zwemkleding hoort niet in de kandidatenpool (spec 5.1) ────────────────
+// Gevonden via het persona-harnas (man klassiek): alle vijf "werk"-outfits
+// bevatten een zwembroek/zwempak als accessoire, omdat de merknaam-strip-fix
+// hierboven 90 Polo Ralph Lauren-zwempakken van top naar de accessoire-emmer
+// verplaatste, waar de prijsafstand-tiebreak ze in het middenbudget optilde.
+// Gemeten op de productiedatabase 2026-09-21: 611 canonieke fashion-producten
+// matchen op /\b(swim\w*|zwem\w*|bikini|badpak|boardshort\w*)\b/i in de ruwe
+// naam (595 accessory, 5 top, 8 bottom, 3 footwear).
+describe('Zwemkleding wordt afgewezen (spec 5.1)', () => {
+  it('wijst de exacte gemelde producten af (Swimsuit MERK Gender color X)', () => {
+    const boss = classifyProductDetailed('Swimsuit BOSS Men color Black', '', '', 'Boss');
+    expect(boss.rejected).toBe(true);
+    expect(boss.category).toBe('other');
+
+    const ralphLauren = classifyProductDetailed(
+      'Swimsuit POLO RALPH LAUREN Men color White',
+      '',
+      '',
+      'Polo Ralph Lauren'
+    );
+    expect(ralphLauren.rejected).toBe(true);
+    expect(ralphLauren.category).toBe('other');
+  });
+
+  it('wijst Engelse en Nederlandse zwemtermen af, ongeacht kledingstukwoorden eromheen', () => {
+    expect(classifyProductDetailed('Bottega Veneta intrecciato nylon one-piece swimsuit').rejected).toBe(true);
+    expect(classifyProductDetailed('PUMA Swim Top voor Dames, Roze, Maat XL').rejected).toBe(true);
+    expect(classifyProductDetailed('H&M Zwembroek Blauw').rejected).toBe(true);
+    expect(classifyProductDetailed('Bikini set met print').rejected).toBe(true);
+    expect(classifyProductDetailed('Boardshort met print').rejected).toBe(true);
+  });
+
+  // Drie merken heten zelf "... Swim" of "... Swimwear" (Moschino Swim,
+  // Emporio Armani Swimwear, Ea7 Swimwear). Op de ruwe naam zou de
+  // zwem-regel deze producten afwijzen; ze zijn geen zwemkleding — een polo,
+  // twee T-shirts, een short en drie sandalen. 8 van de 611 gemeten
+  // treffers op de ruwe naam waren dit soort valse positief, en de regel is
+  // daarom getest tegen de merk-gestripte naam, niet de ruwe naam.
+  describe('merken die zelf "Swim(wear)" heten geven geen valse positief', () => {
+    it('een polo en T-shirts van Moschino Swim blijven top', () => {
+      expect(
+        classifyProductDetailed('Polo Shirt MOSCHINO SWIM Men color White', '', '', 'Moschino Swim').category
+      ).toBe('top');
+      expect(
+        classifyProductDetailed('T-Shirt MOSCHINO SWIM Men color Black', '', '', 'Moschino Swim').category
+      ).toBe('top');
+    });
+
+    it('een short van Moschino Swim blijft bottom', () => {
+      expect(
+        classifyProductDetailed('Shorts MOSCHINO SWIM Men color Multicolor', '', '', 'Moschino Swim').category
+      ).toBe('bottom');
+    });
+
+    it('een broek van Emporio Armani Swimwear blijft bottom', () => {
+      expect(
+        classifyProductDetailed('Pants EMPORIO ARMANI SWIMWEAR Woman color Natural', '', '', 'Emporio Armani Swimwear')
+          .category
+      ).toBe('bottom');
+    });
+
+    it('sandalen van Emporio Armani Swimwear blijven footwear', () => {
+      expect(
+        classifyProductDetailed('Sandals EMPORIO ARMANI SWIMWEAR Men color Black', '', '', 'Emporio Armani Swimwear')
+          .category
+      ).toBe('footwear');
+    });
+
+    it('een echt zwempak van diezelfde merken wordt wel afgewezen (het productwoord zelf blijft over na het strippen)', () => {
+      expect(
+        classifyProductDetailed('Swimsuit EA7 SWIMWEAR Men color Black', '', '', 'Ea7 Swimwear').rejected
+      ).toBe(true);
+      expect(
+        classifyProductDetailed('Swimsuit EMPORIO ARMANI SWIMWEAR Men color Yellow', '', '', 'Emporio Armani Swimwear')
+          .rejected
+      ).toBe(true);
+    });
   });
 });

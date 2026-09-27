@@ -43,6 +43,8 @@ import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
 import { ShareModal } from "@/components/results/ShareModal";
 import { ResultsOutfitCard } from "@/components/results/ResultsOutfitCard";
+import { OutfitRatingButtons } from "@/components/results/OutfitRatingButtons";
+import { hashProfile } from "@/services/ratings/outfitRatings";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
 import { getArchetypeDisplayNL } from "@/utils/displayNames";
@@ -232,6 +234,23 @@ export default function EnhancedResultsPage() {
   const answers = React.useMemo(() => readJson<any>(LS_KEYS.QUIZ_ANSWERS), []);
 
   const hasCompletedQuiz = !!answers;
+
+  // profile_hash voor outfit_ratings: sha256 van de quiz-antwoorden. Async
+  // omdat WebCrypto async is; tot die tijd staan de beoordelingsknoppen uit.
+  const [profileHash, setProfileHash] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (!answers) return;
+    let actief = true;
+    hashProfile(answers)
+      .then((hash) => { if (actief) setProfileHash(hash); })
+      .catch(() => { /* zonder hash blijven de knoppen uit */ });
+    return () => { actief = false; };
+  }, [answers]);
+
+  // Product-ids van een outfit voor de outfit_key; dezelfde functie op alle
+  // drie de plekken, zodat de top-outfits en het grid dezelfde key opleveren.
+  const productIdsVan = (outfit: any): string[] =>
+    Array.isArray(outfit?.products) ? outfit.products.map((p: any) => String(p.id)) : [];
 
   const archetypeName = React.useMemo((): string => {
     if (!archetypeRaw) return "Smart Casual";
@@ -461,7 +480,19 @@ export default function EnhancedResultsPage() {
     }
   }, [outfitsLoading, allOutfits.length]);
 
-  const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>('grid');
+  // Zelfde regel als de resize-effect verderop (window.innerWidth < 768), maar
+  // hier al in de useState-initializer in plaats van pas in een useEffect na
+  // mount. Twee redenen: (1) op mobiel toonde de pagina eerst kort de
+  // grid-weergave voordat de effect 'm naar swipe zette; (2) een
+  // useState-initializer draait ook onder renderToString (zie
+  // OutfitRatingButtons.tsx en CalibrationStep.render.test.tsx), een effect
+  // niet — zonder deze wijziging is de swipe-weergave niet zonder een echte
+  // browser te bereiken. In de browser is `window` er altijd, dus dit
+  // verandert de uiteindelijke waarde niet, alleen het moment waarop hij
+  // wordt bepaald.
+  const [galleryMode, setGalleryMode] = React.useState<'swipe' | 'grid'>(
+    () => (typeof window !== 'undefined' && window.innerWidth < 768 ? 'swipe' : 'grid')
+  );
 
   // Occasion grouping: check if outfits have occasion data
   const userOccasions: string[] = React.useMemo(() => {
@@ -531,7 +562,12 @@ export default function EnhancedResultsPage() {
   }, [occasionGroupedOutfits, activeOccasionTab, displayOutfits]);
 
   type ResultTab = 'overzicht' | 'stijl-dna' | 'outfits';
-  const [activeTab, setActiveTab] = React.useState<ResultTab>(occasionFilter ? 'outfits' : 'outfits');
+  // Landt altijd op Outfits. Stond eerder in een ternary op occasionFilter
+  // waarvan beide takken 'outfits' gaven, dus de voorwaarde deed niets en
+  // suggereerde een verschil dat er niet was. Luc heeft bevestigd dat dit het
+  // bedoelde gedrag is; de ?occasion=-parameter schakelt verderop alsnog naar
+  // het juiste gelegenheidstabblad.
+  const [activeTab, setActiveTab] = React.useState<ResultTab>('outfits');
 
   // Auto-switch to outfits tab and scroll when navigating with ?occasion= param
   React.useEffect(() => {
@@ -882,6 +918,13 @@ export default function EnhancedResultsPage() {
                                     }
                                   : undefined
                               }
+                            />
+                            <OutfitRatingButtons
+                              key={profileHash ?? 'geen-hash'}
+                              outfitId={String(id)}
+                              productIds={productIdsVan(outfit)}
+                              profileHash={profileHash}
+                              userId={(user as any)?.id ?? null}
                             />
                           </AnimatedSection>
                         );
@@ -1655,6 +1698,13 @@ export default function EnhancedResultsPage() {
                             <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A]">{answers.fit}</span>
                           )}
                         </div>
+                        <OutfitRatingButtons
+                          key={profileHash ?? 'geen-hash'}
+                          outfitId={String(id)}
+                          productIds={productIdsVan(outfit)}
+                          profileHash={profileHash}
+                          userId={(user as any)?.id ?? null}
+                        />
                       </div>
                     </div>
                   );
@@ -1749,6 +1799,13 @@ export default function EnhancedResultsPage() {
                             source: "grid",
                           });
                         }}
+                      />
+                      <OutfitRatingButtons
+                        key={profileHash ?? 'geen-hash'}
+                        outfitId={String(id)}
+                        productIds={productIdsVan(outfit)}
+                        profileHash={profileHash}
+                        userId={(user as any)?.id ?? null}
                       />
                     </AnimatedSection>
                   );
