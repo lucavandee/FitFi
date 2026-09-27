@@ -233,3 +233,119 @@ describe("20260916100400_keten_feed_gates", () => {
     expect(sql).toContain("and pa.retailer = p_retailer");
   });
 });
+
+describe("20260916100500_keten_cron", () => {
+  const sql = lees("20260916100500_keten_cron.sql");
+
+  it("schakelt pg_cron en pg_net in en roept edge functions via de vault aan", () => {
+    expect(sql).toContain("create extension if not exists pg_cron");
+    expect(sql).toContain("create extension if not exists pg_net");
+    expect(sql).toContain("function keten_roep_edge(");
+    expect(sql).toContain("vault.decrypted_secrets");
+    expect(sql).not.toMatch(/eyj[a-z0-9]{20,}/i);
+  });
+
+  it("geeft de linkjob de index die hij nodig heeft om binnen de statement-timeout te blijven", () => {
+    expect(sql).toContain("on products (link_last_checked_at asc nulls first)");
+  });
+
+  it("vult alleen nieuwe producten, controleert de import vooraf en logt elke run", () => {
+    expect(sql).toContain("create table if not exists keten_cron_log");
+    expect(sql).toContain("using (is_current_user_admin())");
+    expect(sql).toContain("function keten_vul_nieuwe_producten(");
+    expect(sql).toContain("not exists (select 1 from product_attributes pa where pa.product_id = p.id)");
+    expect(sql).toContain("on conflict (product_id) do nothing");
+    expect(sql).not.toContain("vul_product_attributes(");
+    expect(sql).toContain("function keten_vul_na_import(");
+    expect(sql).toContain("di.status <> 'success'");
+    expect(sql).toContain("set in_stock = false");
+  });
+
+  it("ververst price, in_stock, retailer en price_band voor elke rij van de retailer, zonder canonical_id aan te raken", () => {
+    expect(sql).toContain(
+      "insert into product_attributes (product_id, canonical_id, is_fashion, category, gender, price_band, price, in_stock, retailer)"
+    );
+    expect(sql).toContain("returns table (aantal_nieuw bigint, aantal_feedvelden_ververst bigint)");
+    expect(sql).toContain("set price = b.price,");
+    expect(sql).toContain("in_stock = b.in_stock,");
+    expect(sql).toContain("retailer = b.retailer,");
+    expect(sql).not.toContain("canonical_id = b.");
+    expect(sql).toContain("v_vul.aantal_feedvelden_ververst");
+    expect(sql).toContain("'feedvelden_ververst'");
+  });
+
+  it("plant de drie jobs en maakt ze herhaalbaar", () => {
+    for (const job of ["keten-feed-import-wekelijks", "keten-vul-na-import", "keten-links-elke-10-min"]) {
+      expect(sql).toContain(`cron.unschedule('${job}')`);
+      expect(sql).toContain(`cron.schedule('${job}'`);
+    }
+    expect(sql).toContain("'0 3 * * 0'");
+    expect(sql).toContain("'0 5-11 * * 0'");
+    expect(sql).toContain("'*/10 * * * *'");
+    expect(sql).toContain("validate-product-links");
+    expect(sql).toContain("keten_vul_na_import()");
+  });
+
+  it("zet de twee zondagsjobs inactief en laat de linkjob actief", () => {
+    // Via cron.alter_job: de postgres-rol heeft geen update-recht op cron.job.
+    expect(sql).toContain("perform cron.alter_job(job_id := v_jobid, active := false)");
+    expect(sql).toContain("where jobname in ('keten-feed-import-wekelijks', 'keten-vul-na-import')");
+    // De linkjob mag niet in het uitzet-blok staan.
+    const vanaf = sql.slice(sql.indexOf("select jobid from cron.job\n     where jobname in ("));
+    expect(vanaf.slice(0, vanaf.indexOf(";") + 1)).not.toContain("keten-links-elke-10-min");
+    // De weg terug staat in de commentaar, zodat niemand hoeft te raden.
+    expect(sql).toContain(
+      "select cron.alter_job((select jobid from cron.job where jobname = 'keten-feed-import-wekelijks'), active := true)"
+    );
+    expect(sql).toContain(
+      "select cron.alter_job((select jobid from cron.job where jobname = 'keten-vul-na-import'), active := true)"
+    );
+  });
+
+  it("logt per retailer hoeveel rijen op de classificeer-ronde wachten, en logt ook de al_gedaan-tak", () => {
+    expect(sql).toContain("'ongeclassificeerd_per_retailer'");
+    expect(sql).toContain("where pa.classifier_version is null");
+    // Drie takken (wacht, al_gedaan, klaar), drie inserts in het log.
+    expect(sql.match(/insert into keten_cron_log \(job, resultaat\) values \('keten-vul-na-import'/g)).toHaveLength(3);
+  });
+
+  it("dedupliceert op de fotogroep, niet op de naam", () => {
+    expect(sql).toContain("coalesce(nullif(b.image_url, ''), 'naam:' || b.merk || ':' || b.naam)");
+    expect(sql).not.toContain("partition by n.retailer, n.merk, n.naam");
+  });
+});
+
+/**
+ * Drie kopieen van dezelfde afspraak. Zolang ze kopieen zijn, moeten ze
+ * letterlijk gelijk blijven: een aanpassing aan een ervan maakt deze suite
+ * rood in plaats van stil af te wijken. Samenvoegen naar een functie is een
+ * migratie op bestaande functies en valt buiten plan 2 taak 12.
+ */
+describe("gedeelde afspraken tussen de vulfuncties", () => {
+  const BESTANDEN = [
+    "20260914120000_product_attributes_fundament.sql",
+    "20260914120400_keten_kandidaten_kolommen.sql",
+    "20260916100500_keten_cron.sql",
+  ];
+
+  const leesRuw = (naam: string) => readFileSync(join(MIGRATIES, naam), "utf8");
+
+  const haalNietKleding = (naam: string) => {
+    const treffer = leesRuw(naam).match(/niet_kleding constant text :=\s*\r?\n\s*('(?:[^']|'')*')/);
+    if (!treffer) throw new Error(`niet_kleding-regex niet gevonden in ${naam}`);
+    return treffer[1];
+  };
+
+  it("de niet_kleding-regex is in alle drie de migraties letterlijk gelijk", () => {
+    const [eerste, ...rest] = BESTANDEN.map(haalNietKleding);
+    expect(eerste).toContain("vaas|vazen|lamp");
+    for (const andere of rest) expect(andere).toBe(eerste);
+  });
+
+  it("de dedupe-sleutel (retailer, image_url met naam-terugval) staat letterlijk gelijk in alle drie", () => {
+    const sleutel = "coalesce(nullif(b.image_url, ''), 'naam:' || b.merk || ':' || b.naam)";
+    for (const bestand of BESTANDEN) {
+      expect(leesRuw(bestand), `dedupe-sleutel ontbreekt in ${bestand}`).toContain(sleutel);
+    }
+  });
+});
