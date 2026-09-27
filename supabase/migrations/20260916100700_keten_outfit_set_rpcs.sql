@@ -11,10 +11,28 @@
   `keten_tag_kandidaten` al doen. Deze migratie schrapt daarmee het
   `ANTHROPIC_API_KEY`-secret en `supabase functions deploy` uit dit pad.
 
+  ## Amendement (fix 4, eindreview plan 3, 27 sept 2026)
+  keten_outfit_set gaf model, input_tokens en output_tokens aan anon terug,
+  terwijl de badge op de resultatenpagina alleen `source` (hier: `bron`)
+  nodig heeft. Die drie kolommen zijn uit de RETURNS TABLE en de functiebody
+  van keten_outfit_set gehaald; `latency_ms` blijft staan. keten_schrijf_
+  outfit_set (het schrijfpad) is ONGEWIJZIGD: die blijft model, input_tokens
+  en output_tokens gewoon in outfit_sets schrijven, want taak 8 leest die
+  kolommen straks rechtstreeks uit de tabel via de service role, niet via
+  deze RPC. Vóór de drop is er een `drop function if exists` gezet omdat
+  Postgres het returntype van een bestaande functie niet via een kale
+  `create or replace` laat wijzigen; dat maakt dit bestand idempotent (veilig
+  opnieuw te draaien tegen een database die de oude óf geen vorm van de
+  functie heeft). LET OP: dit bestand is al eerder toegepast met de oude
+  (bredere) RETURNS TABLE; de live database heeft die oude vorm nog totdat
+  iemand dit bestand na dit amendement opnieuw uitvoert (`supabase db push`
+  ziet dit versienummer als al toegepast en slaat het over -- dit vraagt een
+  losse, bewuste stap). Zie het eindreview-rapport van 27 sept 2026.
+
   ## Wat deze migratie doet
   - `keten_outfit_set(p_profile_hash, p_stylist_version)`: het leespad.
-    Geeft ten hoogste een rij terug (outfits, source, model, latency_ms,
-    input_tokens, output_tokens, created_at) als er een rij bestaat die
+    Geeft ten hoogste een rij terug (outfits, source, latency_ms, created_at)
+    als er een rij bestaat die
     jonger is dan de cache-levensduur EN waarvan elk product in de outfits
     nog `in_stock` is. `source` komt altijd terug als 'cache': dat is het
     antwoord van het leespad, niet de bron van de compositie (spec 5.5/5.4,
@@ -63,17 +81,22 @@
 */
 
 -- Het leespad. Geen schrijven, geen opruiming: dat hoort bij het schrijfpad.
-create or replace function keten_outfit_set(
+-- Fix 4 (eindreview plan 3, 27 sept 2026): drop vóór create, want Postgres
+-- staat niet toe dat een kale `create or replace function` het returntype
+-- (hier: de RETURNS TABLE-kolommen) van een bestaande functie wijzigt. Deze
+-- drop maakt het bestand idempotent: veilig te draaien of de database nu de
+-- oude vorm (met model/input_tokens/output_tokens), de nieuwe vorm, of de
+-- functie helemaal niet heeft.
+drop function if exists keten_outfit_set(text, text);
+
+create function keten_outfit_set(
   p_profile_hash text,
   p_stylist_version text
 )
 returns table (
   outfits jsonb,
   source text,
-  model text,
   latency_ms integer,
-  input_tokens integer,
-  output_tokens integer,
   created_at timestamptz
 )
 language plpgsql
@@ -88,7 +111,7 @@ declare
   v_rij record;
   v_heeft_niet_op_voorraad boolean;
 begin
-  select os.outfits, os.model, os.latency_ms, os.input_tokens, os.output_tokens, os.created_at
+  select os.outfits, os.latency_ms, os.created_at
   into v_rij
   from outfit_sets os
   where os.profile_hash = p_profile_hash
@@ -119,10 +142,7 @@ begin
 
   outfits := v_rij.outfits;
   source := 'cache';
-  model := v_rij.model;
   latency_ms := v_rij.latency_ms;
-  input_tokens := v_rij.input_tokens;
-  output_tokens := v_rij.output_tokens;
   created_at := v_rij.created_at;
   return next;
 end;

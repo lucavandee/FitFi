@@ -157,13 +157,35 @@ describe('haalOutfitsVoorQuery — met de vlag uit is er niets veranderd', () =>
     consoleSpy.mockRestore();
   });
 
-  it('v2-fallback van composeVoorProfiel geeft ketenBron v2-fallback en cached false', async () => {
+  it('v2-fallback van composeVoorProfiel MET outfits geeft ketenBron v2-fallback en cached false', async () => {
     mocks.browserKetenConfig.mockReturnValue({ supabase: {} });
     mocks.profielVanQuizAnswers.mockReturnValue({ gender: 'female' });
     mocks.getSessionId.mockReturnValue('sessie-1');
     mocks.composeVoorProfiel.mockResolvedValue({
       bron: 'v2-fallback',
-      model: null,
+      latency_ms: null,
+      reden: 'geen gecachete set voor dit profiel (cache-miss)',
+      profile_hash: 'hash-1',
+      herkanstKandidaten: false,
+      herkanstCache: false,
+      engineOutfits: [{ id: 'o4' }],
+    });
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+
+    const resultaat = await haalOutfitsVoorQuery({ answers: ANSWERS, limit: 9 }, true);
+
+    expect(mocks.generateOutfits).not.toHaveBeenCalled();
+    expect(resultaat.ketenBron).toBe('v2-fallback');
+    expect(resultaat.cached).toBe(false);
+    expect(resultaat.data).toEqual([{ id: 'o4' }]);
+  });
+
+  it('fix 6 (eindreview plan 3): nul outfits van composeVoorProfiel valt terug op precies het bestaande engine-v2-pad', async () => {
+    mocks.browserKetenConfig.mockReturnValue({ supabase: {} });
+    mocks.profielVanQuizAnswers.mockReturnValue({ gender: 'female' });
+    mocks.getSessionId.mockReturnValue('sessie-1');
+    mocks.composeVoorProfiel.mockResolvedValue({
+      bron: 'v2-fallback',
       latency_ms: null,
       reden: 'geen gecachete set voor dit profiel (cache-miss)',
       profile_hash: 'hash-1',
@@ -171,12 +193,20 @@ describe('haalOutfitsVoorQuery — met de vlag uit is er niets veranderd', () =>
       herkanstCache: false,
       engineOutfits: [],
     });
+    mocks.generateOutfits.mockResolvedValue([{ id: 'v2-noodpad' }]);
     vi.spyOn(console, 'info').mockImplementation(() => {});
 
     const resultaat = await haalOutfitsVoorQuery({ answers: ANSWERS, limit: 9 }, true);
 
-    expect(resultaat.ketenBron).toBe('v2-fallback');
+    // De stylist-route werd wel geprobeerd (composeVoorProfiel liep), maar
+    // gaf niets bruikbaars terug. haalOutfitsVoorQuery mag de bezoeker dan
+    // nooit een lege pagina geven: hij valt terug op precies hetzelfde
+    // engine-v2-pad als met de vlag uit (ketenBron null, source/cached zoals
+    // dat pad ze altijd zet).
+    expect(mocks.composeVoorProfiel).toHaveBeenCalled();
+    expect(mocks.generateOutfits).toHaveBeenCalledWith(ANSWERS, 9);
+    expect(resultaat.ketenBron).toBeNull();
     expect(resultaat.cached).toBe(false);
-    expect(resultaat.data).toEqual([]);
+    expect(resultaat.data).toEqual([{ id: 'v2-noodpad' }]);
   });
 });

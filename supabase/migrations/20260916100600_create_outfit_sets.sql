@@ -1,6 +1,19 @@
 /*
   # outfit_sets: cache van de stylist per profiel (spec 5.5)
 
+  ## Amendement (fix 7, eindreview plan 3, 27 sept 2026)
+  De rest van dit commentaarblok (geschreven bij het ontwerp van deze tabel)
+  noemt de edge function `compose-outfits` als degene die leest, schrijft en
+  opruimt. Die edge function is sinds het amendement van 27 september 2026 bij
+  spec 5.2.1 vervangen: het schrijven (en opruimen) gebeurt door
+  `keten_schrijf_outfit_set`, het lezen door `keten_outfit_set`
+  (SECURITY DEFINER, gegrant aan anon/authenticated) -- beide in migratie
+  20260916100700_keten_outfit_set_rpcs.sql. `compose-outfits` bestaat niet
+  meer. De rest van dit blok is ongewijzigd gelaten als historisch verslag van
+  het ontwerp op het moment van schrijven; alleen de COMMENT ON TABLE
+  hieronder (die als live metadata bij de tabel hoort, niet als geschiedenis)
+  is bijgewerkt.
+
   1. Nieuwe tabel
     - `outfit_sets`
       - `profile_hash` (text) sha256 van de genormaliseerde profiel-invoer (spec 5.2.1)
@@ -55,4 +68,4 @@ CREATE INDEX IF NOT EXISTS idx_outfit_sets_created_at
   ON public.outfit_sets (created_at);
 
 COMMENT ON TABLE public.outfit_sets IS
-  'Cache van de stylist per profile_hash en stylist_version (spec 5.5). Alleen service role. Levensduur 14 dagen, opruimen na 30 (compose-outfits).';
+  'Cache van de stylist per profile_hash en stylist_version (spec 5.5). Schrijfpad alleen service role (keten_schrijf_outfit_set); leespad via keten_outfit_set (security definer, anon/authenticated). Levensduur 14 dagen, opruimen na 30 (keten_schrijf_outfit_set).';

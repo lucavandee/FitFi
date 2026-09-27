@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   answersVanProfiel,
   composeVoorProfiel,
+  filterBuitenBudgetProducten,
   filterNietWilProducten,
   MIN_OUTFITS_NA_NIET_WIL_FILTER,
   outfitVanVerrijkt,
@@ -10,7 +11,24 @@ import {
   type KetenConfig,
 } from '../composeClient';
 import { profielVanQuizAnswers } from '../vanQuiz';
+import { profileHash } from '../profileHash';
+import { runEngineV2 } from '@/engine/v2/engine';
 import { legeAssen, type Kandidaat, type ProductAttrs, type TasteProfileInput, type VerrijkteOutfit } from '../types';
+
+// Fix 5 (eindreview plan 3): profileHash en runEngineV2 (via fallbackV2) mogen
+// nooit een exception uit composeVoorProfiel laten ontsnappen. Beide worden
+// hier gewrapt met vi.fn(actual...) zodat ze standaard hun ECHTE gedrag
+// houden (alle andere tests in dit bestand blijven dus tegen de echte
+// implementatie draaien) en alleen in de fix-5-tests eenmalig een fout
+// krijgen via mockRejectedValueOnce/mockImplementationOnce.
+vi.mock('../profileHash', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../profileHash')>();
+  return { ...actual, profileHash: vi.fn(actual.profileHash) };
+});
+vi.mock('@/engine/v2/engine', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/engine/v2/engine')>();
+  return { ...actual, runEngineV2: vi.fn(actual.runEngineV2) };
+});
 
 function maakAttrs(overrides: Partial<ProductAttrs> = {}): ProductAttrs {
   return {
@@ -67,6 +85,23 @@ function maakOutfit(sleutel: string, productIds: string[]): VerrijkteOutfit {
     items: productIds.map((id) => {
       const k = maakKandidaat(id);
       return { product_id: id, role: 'top' as const, product: k.product, attrs: k.attrs };
+    }),
+    reason: 'De blouse houdt het luchtig. Je draagt hem los over de broek.',
+  };
+}
+
+/**
+ * Fix 1 (eindreview plan 3): zelfde als maakOutfit, maar met een expliciete
+ * prijs per item, voor het budget-hertoets-filter (composeClient.ts).
+ */
+function maakOutfitMetPrijs(sleutel: string, itemsMetPrijs: Array<[string, number]>): VerrijkteOutfit {
+  return {
+    outfit_key: sleutel,
+    title: `Outfit ${sleutel}`,
+    occasion: 'work',
+    items: itemsMetPrijs.map(([id, prijs]) => {
+      const k = maakKandidaat(id);
+      return { product_id: id, role: 'top' as const, product: { ...k.product, price: prijs }, attrs: k.attrs };
     }),
     reason: 'De blouse houdt het luchtig. Je draagt hem los over de broek.',
   };
@@ -271,27 +306,26 @@ describe('filterNietWilProducten (afwijking 2, geval 2: treffer, genoeg blijft o
 });
 
 describe('composeVoorProfiel: cache-hit zonder niet-wil-treffer', () => {
-  it('geeft bron cache met de tokens en het model uit de gecachete rij', async () => {
+  it('geeft bron cache met latency_ms uit de gecachete rij (fix 4: geen model/tokens meer, die geeft keten_outfit_set niet meer aan anon)', async () => {
     const outfits = [maakOutfit('a', ['p1']), maakOutfit('b', ['p2']), maakOutfit('c', ['p3']), maakOutfit('d', ['p4'])];
     const { cfg } = maakStubConfig({
       kandidaten: [kandidaat],
-      ketenOutfitSetAntwoorden: [
-        { data: { outfits, model: 'claude-sonnet-5', latency_ms: 42, input_tokens: 100, output_tokens: 200 }, error: null },
-      ],
+      ketenOutfitSetAntwoorden: [{ data: { outfits, latency_ms: 42 }, error: null }],
     });
 
     const resultaat = await composeVoorProfiel(cfg, maakProfiel());
 
     expect(resultaat.bron).toBe('cache');
-    expect(resultaat.model).toBe('claude-sonnet-5');
     expect(resultaat.latency_ms).toBe(42);
-    expect(resultaat.input_tokens).toBe(100);
-    expect(resultaat.output_tokens).toBe(200);
     expect(resultaat.reden).toBeNull();
     expect(resultaat.weggevallenDoorNietWil).toBe(0);
+    expect(resultaat.weggevallenDoorBudget).toBe(0);
     expect(resultaat.herkanstKandidaten).toBe(false);
     expect(resultaat.herkanstCache).toBe(false);
     expect(resultaat.outfits).toHaveLength(4);
+    expect(resultaat).not.toHaveProperty('model');
+    expect(resultaat).not.toHaveProperty('input_tokens');
+    expect(resultaat).not.toHaveProperty('output_tokens');
   });
 });
 
@@ -306,7 +340,7 @@ describe('composeVoorProfiel: geval 2 van afwijking 2, niet-wil-treffer maar gen
     ];
     const { cfg } = maakStubConfig({
       kandidaten: [kandidaat],
-      ketenOutfitSetAntwoorden: [{ data: { outfits, model: 'm', latency_ms: 1, input_tokens: null, output_tokens: null }, error: null }],
+      ketenOutfitSetAntwoorden: [{ data: { outfits, latency_ms: 1 }, error: null }],
     });
 
     const resultaat = await composeVoorProfiel(cfg, maakProfiel({ disliked_product_ids: ['p5'] }));
@@ -340,7 +374,7 @@ describe('composeVoorProfiel: geval 3 van afwijking 2, te veel treffers', () => 
     ];
     const { cfg } = maakStubConfig({
       kandidaten: kandidatenPool,
-      ketenOutfitSetAntwoorden: [{ data: { outfits, model: 'm', latency_ms: 1, input_tokens: null, output_tokens: null }, error: null }],
+      ketenOutfitSetAntwoorden: [{ data: { outfits, latency_ms: 1 }, error: null }],
     });
 
     const resultaat = await composeVoorProfiel(cfg, maakProfiel({ disliked_product_ids: ['p4', 'p5'] }));
@@ -362,7 +396,7 @@ describe('composeVoorProfiel: cache-miss', () => {
     const resultaat = await composeVoorProfiel(cfg, maakProfiel());
 
     expect(resultaat.bron).toBe('v2-fallback');
-    expect(resultaat.model).toBeNull();
+    expect(resultaat.latency_ms).toBeNull();
     expect(resultaat.reden).toBe('geen gecachete set voor dit profiel (cache-miss)');
     expect(resultaat.herkanstKandidaten).toBe(false);
     expect(resultaat.herkanstCache).toBe(false);
@@ -376,7 +410,7 @@ describe('composeVoorProfiel: keten_outfit_set, statement-timeout, een zichtbare
       kandidaten: [kandidaat],
       ketenOutfitSetAntwoorden: [
         { data: null, error: { code: '57014', message: 'canceling statement due to statement timeout' } },
-        { data: { outfits, model: 'm', latency_ms: 1, input_tokens: null, output_tokens: null }, error: null },
+        { data: { outfits, latency_ms: 1 }, error: null },
       ],
     });
 
@@ -414,7 +448,7 @@ describe('composeVoorProfiel: keten_outfit_set, statement-timeout, een zichtbare
         // Zou nooit aangeroepen mogen worden: als de code hier per ongeluk
         // wel herkanst, geeft deze tweede canned rij bron 'cache' en faalt
         // de test op de verwachte v2-fallback hieronder.
-        { data: { outfits, model: 'm', latency_ms: 1, input_tokens: null, output_tokens: null }, error: null },
+        { data: { outfits, latency_ms: 1 }, error: null },
       ],
     });
 
@@ -496,5 +530,137 @@ describe('composeVoorProfiel: nul kandidaten is geen storing (fixronde 1)', () =
     expect(resultaat.kandidaten).toEqual([]);
     expect(resultaat.outfits).toEqual([]);
     expect(resultaat.engineOutfits).toEqual([]);
+  });
+});
+
+describe('filterBuitenBudgetProducten (fix 1, eindreview plan 3)', () => {
+  it('laat een set ongemoeid als alles binnen budget valt', () => {
+    const outfits = [maakOutfitMetPrijs('a', [['p1', 50]]), maakOutfitMetPrijs('b', [['p2', 80]])];
+    const { overgebleven, weggevallen } = filterBuitenBudgetProducten(outfits, 25, 100);
+    expect(overgebleven).toEqual(outfits);
+    expect(weggevallen).toBe(0);
+  });
+
+  it('gooit een outfit weg met een item ONDER het budgetminimum', () => {
+    const outfits = [maakOutfitMetPrijs('a', [['p1', 50]]), maakOutfitMetPrijs('b', [['p2', 10]])];
+    const { overgebleven, weggevallen } = filterBuitenBudgetProducten(outfits, 25, 100);
+    expect(overgebleven.map((o) => o.outfit_key)).toEqual(['a']);
+    expect(weggevallen).toBe(1);
+  });
+
+  it('gooit een outfit weg met een item BOVEN het budgetmaximum', () => {
+    const outfits = [maakOutfitMetPrijs('a', [['p1', 50]]), maakOutfitMetPrijs('b', [['p2', 250]])];
+    const { overgebleven, weggevallen } = filterBuitenBudgetProducten(outfits, 25, 100);
+    expect(overgebleven.map((o) => o.outfit_key)).toEqual(['a']);
+    expect(weggevallen).toBe(1);
+  });
+
+  it('grenswaarden (exact budget_min en budget_max) blijven binnen budget', () => {
+    const outfits = [maakOutfitMetPrijs('a', [['p1', 25]]), maakOutfitMetPrijs('b', [['p2', 100]])];
+    const { overgebleven, weggevallen } = filterBuitenBudgetProducten(outfits, 25, 100);
+    expect(overgebleven).toEqual(outfits);
+    expect(weggevallen).toBe(0);
+  });
+});
+
+describe('composeVoorProfiel: fix 1 (eindreview plan 3), budget van de LEZENDE bezoeker hertoetst op een cache-hit', () => {
+  it('blijft bron cache maar gooit de outfit met een item onder het budgetminimum weg', async () => {
+    const outfits = [
+      maakOutfitMetPrijs('a', [['p1', 60]]),
+      maakOutfitMetPrijs('b', [['p2', 60]]),
+      maakOutfitMetPrijs('c', [['p3', 60]]),
+      maakOutfitMetPrijs('d', [['p4', 60]]),
+      maakOutfitMetPrijs('e', [['p5', 10]]), // onder budget_min (25)
+    ];
+    const { cfg } = maakStubConfig({
+      kandidaten: [kandidaat],
+      ketenOutfitSetAntwoorden: [{ data: { outfits, latency_ms: 1 }, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel({ budget_min: 25, budget_max: 100 }));
+
+    expect(resultaat.bron).toBe('cache');
+    expect(resultaat.outfits.map((o) => o.outfit_key)).toEqual(['a', 'b', 'c', 'd']);
+    expect(resultaat.weggevallenDoorBudget).toBe(1);
+    expect(resultaat.weggevallenDoorNietWil).toBe(0);
+  });
+
+  it('blijft bron cache maar gooit de outfit met een item boven het budgetmaximum weg', async () => {
+    const outfits = [
+      maakOutfitMetPrijs('a', [['p1', 60]]),
+      maakOutfitMetPrijs('b', [['p2', 60]]),
+      maakOutfitMetPrijs('c', [['p3', 60]]),
+      maakOutfitMetPrijs('d', [['p4', 60]]),
+      maakOutfitMetPrijs('e', [['p5', 250]]), // boven budget_max (100)
+    ];
+    const { cfg } = maakStubConfig({
+      kandidaten: [kandidaat],
+      ketenOutfitSetAntwoorden: [{ data: { outfits, latency_ms: 1 }, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel({ budget_min: 25, budget_max: 100 }));
+
+    expect(resultaat.bron).toBe('cache');
+    expect(resultaat.outfits.map((o) => o.outfit_key)).toEqual(['a', 'b', 'c', 'd']);
+    expect(resultaat.weggevallenDoorBudget).toBe(1);
+  });
+
+  it('valt terug op v2 als er na het budgetfilter te weinig outfits overblijven', async () => {
+    const outfits = [
+      maakOutfitMetPrijs('a', [['p1', 60]]),
+      maakOutfitMetPrijs('b', [['p2', 250]]),
+      maakOutfitMetPrijs('c', [['p3', 250]]),
+      maakOutfitMetPrijs('d', [['p4', 250]]),
+    ];
+    // Zelfde minimale, volledige kandidatenpool als de v2-fallback-test
+    // hierboven, zodat fallbackV2 zonder te crashen kan draaien.
+    const kandidatenPool: Kandidaat[] = [
+      maakKandidaat('t1', { category: 'top', attrs: maakAttrs({ category: 'top' }) }),
+      maakKandidaat('b1', { category: 'bottom', attrs: maakAttrs({ category: 'bottom' }) }),
+      maakKandidaat('f1', { category: 'footwear', attrs: maakAttrs({ category: 'footwear', shoe_type: 'sneaker' }) }),
+    ];
+    const { cfg } = maakStubConfig({
+      kandidaten: kandidatenPool,
+      ketenOutfitSetAntwoorden: [{ data: { outfits, latency_ms: 1 }, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel({ budget_min: 25, budget_max: 100 }));
+
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.weggevallenDoorBudget).toBe(3);
+    expect(resultaat.reden).toContain('buiten budget');
+  });
+});
+
+describe('composeVoorProfiel: fix 5 (eindreview plan 3), profileHash mag niet meer gooien', () => {
+  it('geeft een resultaat met reden terug in plaats van een exception als profileHash onverwacht faalt', async () => {
+    vi.mocked(profileHash).mockRejectedValueOnce(new Error('crypto.subtle ontbreekt'));
+    const { cfg } = maakStubConfig({ kandidaten: [kandidaat], ketenOutfitSetAntwoorden: [{ data: null, error: null }] });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel());
+
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.reden).toContain('profileHash faalde onverwacht');
+    expect(resultaat.reden).toContain('crypto.subtle ontbreekt');
+    expect(resultaat.outfits).toEqual([]);
+    expect(resultaat.kandidaten).toEqual([]);
+  });
+});
+
+describe('composeVoorProfiel: fix 5 (eindreview plan 3), de v2-fallback zelf mag niet meer gooien', () => {
+  it('geeft een resultaat met reden terug in plaats van een exception als fallbackV2 (runEngineV2) onverwacht faalt', async () => {
+    vi.mocked(runEngineV2).mockImplementationOnce(() => {
+      throw new Error('engine v2 kapot');
+    });
+    const { cfg } = maakStubConfig({ kandidaten: [kandidaat], ketenOutfitSetAntwoorden: [{ data: null, error: null }] });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel());
+
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.reden).toContain('v2-fallback faalde onverwacht');
+    expect(resultaat.reden).toContain('engine v2 kapot');
+    // De oorspronkelijke reden (hier: cache-miss) blijft zichtbaar in de tekst.
+    expect(resultaat.reden).toContain('cache-miss');
+    expect(resultaat.outfits).toEqual([]);
   });
 });

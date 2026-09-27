@@ -160,22 +160,36 @@ export async function haalOutfitsVoorQuery(
       // De twee herkansingsvlaggen (afwijking 3, taak 9-brief) horen hier in
       // de bestaande consoleregel: een herkansing op de anon-statement-timeout
       // mag niet stil zijn, maar verdient ook geen extra tekst op de pagina.
-      console.info('[keten] stylist-route', {
-        bron: r.bron,
-        model: r.model,
-        latency_ms: r.latency_ms,
-        reden: r.reden,
-        profile_hash: r.profile_hash,
-        herkanstKandidaten: r.herkanstKandidaten,
-        herkanstCache: r.herkanstCache,
-      });
-      return {
-        data: r.engineOutfits as any as Outfit[],
-        source: 'supabase',
-        cached: r.bron === 'cache',
-        errors: [],
-        ketenBron: r.bron,
-      };
+      // Fix 4 (eindreview plan 3): dev-only (geen productieconsole-ruis) en
+      // zonder `model`, dat keten_outfit_set niet meer aan anon teruggeeft.
+      if (import.meta.env.DEV) {
+        console.info('[keten] stylist-route', {
+          bron: r.bron,
+          latency_ms: r.latency_ms,
+          reden: r.reden,
+          profile_hash: r.profile_hash,
+          herkanstKandidaten: r.herkanstKandidaten,
+          herkanstCache: r.herkanstCache,
+        });
+      }
+      // Fix 6 (eindreview plan 3): nul outfits van de stylist-route mag nooit
+      // een slechtere uitkomst geven dan de bestaande route. outfitService
+      // .generateOutfits hieronder is niet gebonden aan de kandidatenpool van
+      // get_kandidaten en kan dus nog outfits vinden waar de stylist-route
+      // terecht leeg terugkwam (te weinig getagde kandidaten in deze
+      // gender/gelegenheid/prijsband-combinatie, of een fout na de
+      // herkansing). Alleen bij een niet-lege uitkomst is de stylist-route
+      // dus daadwerkelijk het antwoord; anders valt de code hieronder precies
+      // op het bestaande pad terug (ketenBron blijft dan null).
+      if (r.engineOutfits.length > 0) {
+        return {
+          data: r.engineOutfits as any as Outfit[],
+          source: 'supabase',
+          cached: r.bron === 'cache',
+          errors: [],
+          ketenBron: r.bron,
+        };
+      }
     }
   }
 

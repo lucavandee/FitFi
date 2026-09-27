@@ -22,13 +22,26 @@
  *   eerdere outfit"
  * - regel 7 (budget per stuk)  -> "buiten budget: ... kost ..."
  * - regel 8 (nooit een afgewezen item)  -> "afgewezen item ..."
+ * - regel 9 (samenhang), alleen het toetsbare deel: "geen sandalen bij work
+ *   of formal"  -> controleerSamenhang. Het "geen zwemkleding"-deel is niet
+ *   apart gecontroleerd: de classifier sluit zwemkleding al uit van de
+ *   kandidatenlijst (is_fashion=false), dus dat deel is structureel gedekt
+ *   vóór deze validator ooit een item ziet (zie het commentaar bij
+ *   controleerSamenhang in valideer-outfits.ts). De rest van regel 9 (algemene
+ *   samenhang op formaliteit/silhouet/kleurtemperatuur/patroon) heeft geen
+ *   vaste drempel en is dus niet gecontroleerd.
+ * - regel 10 (copy), het mechanisch toetsbare deel: em-dashes, de met naam
+ *   genoemde buzzwoorden, een superlatievenlijst en de titel-lengte  ->
+ *   controleerCopyRegels (fix 2, eindreview plan 3, 27 sept 2026). "Altijd
+ *   Nederlands", "spreek de bezoeker aan met je en jij", "twee zinnen" en
+ *   "beweringen die niet uit zijn keuzes volgen" zijn niet gecontroleerd: dat
+ *   vraagt om tekstbegrip, niet om een patroonmatch.
  * Regel 2 (precies zes outfits), regel 4 (elke gelegenheid minstens een keer)
  * en regel 5 (geen twee outfits met dezelfde top of dezelfde dress) worden
  * NIET door valideerOutfits() afgedwongen: die functie beoordeelt elke outfit
  * op zichzelf en kent de rest van de set niet. Dat is geen inconsistentie in
- * deze taak, maar een gat tussen taak 4 en taak 6: als de edge function
- * (taak 6) die drie regels ook niet los controleert, kan het model ze
- * straffeloos negeren. Zie het rapport bij deze taak.
+ * deze taak, maar een gat tussen taak 4 en taak 6: valideerSet (taak 6b) dekt
+ * die drie set-brede regels.
  */
 import type { Gelegenheid, Kandidaat, TasteProfileInput } from './keten-types.ts';
 import { AS_NAMEN, CATEGORIEEN, STYLIST_VERSION } from './keten-types.ts';

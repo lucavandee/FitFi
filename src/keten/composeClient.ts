@@ -59,15 +59,28 @@ export interface KetenConfig {
 export interface ComposeResultaat {
   profile_hash: string;
   bron: OutfitBron;
-  model: string | null;
+  /**
+   * Fix 4 (eindreview plan 3, 27 sept 2026): keten_outfit_set geeft model,
+   * input_tokens en output_tokens niet meer terug aan anon (de badge heeft
+   * alleen `bron` nodig; taak 8 leest de kostenkolommen straks rechtstreeks
+   * uit outfit_sets via de service role). Dit resultaat droeg ze voorheen
+   * hier, maar de RPC levert ze niet meer, dus zijn ze hier ook weg in plaats
+   * van een veld dat altijd null is.
+   */
   latency_ms: number | null;
-  /** Tokenverbruik van het vulscript; null bij het noodpad */
-  input_tokens: number | null;
-  output_tokens: number | null;
   /** Reden van het noodpad, anders null */
   reden: string | null;
   /** Aantal outfits dat het niet-wil-filter uit een gecachete set haalde; 0 buiten een cache-hit */
   weggevallenDoorNietWil: number;
+  /**
+   * Fix 1 (eindreview plan 3): aantal outfits dat het budget-hertoets-filter
+   * uit een gecachete set haalde; 0 buiten een cache-hit. Het vulscript
+   * schrijft een set die geldig is voor de hele prijsband (fix 1a hieronder),
+   * niet voor het smallere profielbudget van deze ene bezoeker, dus dit
+   * filter hertoetst dat budget op het gelezen resultaat, met hetzelfde
+   * mechanisme als het niet-wil-filter hierboven.
+   */
+  weggevallenDoorBudget: number;
   /** True als get_kandidaten een keer moest overnieuw op een statement-timeout (geen stille herkansing) */
   herkanstKandidaten: boolean;
   /** True als keten_outfit_set een keer moest overnieuw op een statement-timeout (geen stille herkansing) */
@@ -89,6 +102,12 @@ const AANTAL = 6;
  * gecachete set van zes wegdoen voor zes v2-outfits. De grens is een keuze,
  * geen afleiding; vandaar de benoemde constante in plaats van een letterlijk
  * getal verderop in dit bestand.
+ *
+ * Fix 1 (eindreview plan 3): dezelfde grens geldt sinds deze fix ook na het
+ * budgetfilter (filterBuitenBudgetProducten), toegepast op wat na het
+ * niet-wil-filter overblijft. Eén grens voor de gecombineerde uitval, geen
+ * twee losse grenzen: allebei zijn "een cachetreffer die na hertoetsing te
+ * weinig overhoudt", en dat verdient dezelfde afweging.
  */
 export const MIN_OUTFITS_NA_NIET_WIL_FILTER = 4;
 
@@ -257,12 +276,16 @@ export async function haalKandidaten(cfg: KetenConfig, p: TasteProfileInput): Pr
   return { kandidaten: poging.kandidaten ?? [], herkanst, fout: null };
 }
 
+/**
+ * Fix 4 (eindreview plan 3): model, input_tokens en output_tokens staan hier
+ * bewust niet meer bij. keten_outfit_set geeft ze sinds deze fix niet meer
+ * terug aan anon (zie de migratie): de badge op de resultatenpagina heeft
+ * alleen de bron nodig, en taak 8 leest de kostenkolommen straks
+ * rechtstreeks uit outfit_sets via de service role, niet via deze RPC.
+ */
 interface GecachetSetRij {
   outfits: VerrijkteOutfit[];
-  model: string | null;
   latency_ms: number | null;
-  input_tokens: number | null;
-  output_tokens: number | null;
 }
 
 /**
@@ -319,21 +342,57 @@ async function leesGecachetSet(
   return { rij: poging.rij, herkanst, fout: null };
 }
 
+export interface FilterUitkomst {
+  overgebleven: VerrijkteOutfit[];
+  weggevallen: number;
+}
+
+/**
+ * Fix 1 (eindreview plan 3): generiek mechanisme achter beide hertoets-
+ * filters hieronder. Een item eruit halen maakt een outfit incompleet, dus
+ * bij een treffer valt de HELE outfit weg, nooit alleen het item. Eén
+ * filterfunctie met twee redenen (niet-wil, budget) is beter dan twee bijna
+ * identieke functies.
+ */
+function filterOutfitsMetOngeldigItem(
+  outfits: readonly VerrijkteOutfit[],
+  isOngeldig: (item: VerrijktItem) => boolean
+): FilterUitkomst {
+  const overgebleven = outfits.filter((o) => !o.items.some(isOngeldig));
+  return { overgebleven, weggevallen: outfits.length - overgebleven.length };
+}
+
 /**
  * Afwijking 2 (brief taak 7): filtert een gecachete set op de niet-wil-lijst
- * van DEZE bezoeker. Bevat een outfit een product uit die lijst, dan valt de
- * HELE outfit weg: een item eruit halen maakt hem incompleet, en een
- * incomplete outfit is geen outfit. `nietWilIds` is bewust een Set: de lijst
- * kan tientallen ids bevatten en dit filtert over alle items van alle
- * outfits.
+ * van DEZE bezoeker. `nietWilIds` is bewust een Set: de lijst kan tientallen
+ * ids bevatten en dit filtert over alle items van alle outfits.
  */
 export function filterNietWilProducten(
   outfits: readonly VerrijkteOutfit[],
   nietWilIds: ReadonlySet<string>
-): { overgebleven: VerrijkteOutfit[]; weggevallen: number } {
+): FilterUitkomst {
   if (nietWilIds.size === 0) return { overgebleven: [...outfits], weggevallen: 0 };
-  const overgebleven = outfits.filter((o) => !o.items.some((i) => nietWilIds.has(i.product_id)));
-  return { overgebleven, weggevallen: outfits.length - overgebleven.length };
+  return filterOutfitsMetOngeldigItem(outfits, (item) => nietWilIds.has(item.product_id));
+}
+
+/**
+ * Fix 1 (eindreview plan 3): hertoetst het budget van DEZE bezoeker op een
+ * gecachete set. Het vulscript (fix 1a) valideert tegen het bandbereik, niet
+ * tegen het smallere profielbudget: de weggeschreven set is dus geldig voor
+ * de hele band, en kan een item bevatten dat voor deze specifieke bezoeker te
+ * goedkoop of te duur is. Precies hetzelfde mechanisme als
+ * filterNietWilProducten hierboven: een item buiten [budgetMin, budgetMax]
+ * gooit de hele outfit weg.
+ */
+export function filterBuitenBudgetProducten(
+  outfits: readonly VerrijkteOutfit[],
+  budgetMin: number,
+  budgetMax: number
+): FilterUitkomst {
+  return filterOutfitsMetOngeldigItem(outfits, (item) => {
+    const prijs = item.product?.price;
+    return typeof prijs !== 'number' || prijs < budgetMin || prijs > budgetMax;
+  });
 }
 
 /** Noodpad (spec 5.4 punt 4): engine v2 op dezelfde kandidaten met vaste seed. */
@@ -378,25 +437,40 @@ async function naarV2FallbackResultaat(
   hash: string,
   reden: string,
   weggevallenDoorNietWil: number,
+  weggevallenDoorBudget: number,
   herkanstKandidaten: boolean,
   herkanstCache: boolean
 ): Promise<ComposeResultaat> {
-  const outfits = await fallbackV2(p, kandidaten, hash);
-  return {
-    profile_hash: hash,
-    bron: 'v2-fallback',
-    model: null,
-    latency_ms: null,
-    input_tokens: null,
-    output_tokens: null,
-    reden,
-    weggevallenDoorNietWil,
-    herkanstKandidaten,
-    herkanstCache,
-    kandidaten,
-    outfits,
-    engineOutfits: outfits.map((o) => outfitVanVerrijkt(o, 'v2-fallback')),
-  };
+  // Fix 5 (eindreview plan 3): fallbackV2 (runEngineV2, outfitKey/WebCrypto)
+  // kan in theorie gooien op onverwachte data. composeVoorProfiel belooft
+  // (zie het commentaarblok bovenaan dit bestand) nooit te gooien, altijd een
+  // resultaat met `reden` terug te geven; dit is het laatste vangnet vóór die
+  // belofte breekt. De oorspronkelijke `reden` (bijvoorbeeld een cache-miss)
+  // gaat verloren als de fallback zelf ook faalt, maar dan is er sowieso geen
+  // bruikbaar resultaat meer, dus dat weegt niet op tegen een exception.
+  try {
+    const outfits = await fallbackV2(p, kandidaten, hash);
+    return {
+      profile_hash: hash,
+      bron: 'v2-fallback',
+      latency_ms: null,
+      reden,
+      weggevallenDoorNietWil,
+      weggevallenDoorBudget,
+      herkanstKandidaten,
+      herkanstCache,
+      kandidaten,
+      outfits,
+      engineOutfits: outfits.map((o) => outfitVanVerrijkt(o, 'v2-fallback')),
+    };
+  } catch (err) {
+    const foutmelding = err instanceof Error ? err.message : String(err);
+    return legeResultaat(
+      hash,
+      `v2-fallback faalde onverwacht: ${foutmelding} (oorspronkelijke reden: ${reden})`,
+      herkanstKandidaten
+    );
+  }
 }
 
 /**
@@ -405,19 +479,17 @@ async function naarV2FallbackResultaat(
  * (coordinator): dit is een verwachte toestand (een dun getagde band), geen
  * storing, en composeVoorProfiel mag hier niet op gooien. De stylist-route
  * staat achter de lokale vlag ff_keten_stylist juist zodat een resultaat als
- * dit de resultatenpagina niet breekt: taak 9 leest `reden` en valt terug op
- * de bestaande route.
+ * dit de resultatenpagina niet breekt: useOutfits.ts leest `reden` en (sinds
+ * fix 6, eindreview plan 3) valt bij lege outfits terug op de bestaande route.
  */
 function legeResultaat(hash: string, reden: string, herkanstKandidaten: boolean): ComposeResultaat {
   return {
     profile_hash: hash,
     bron: 'v2-fallback',
-    model: null,
     latency_ms: null,
-    input_tokens: null,
-    output_tokens: null,
     reden,
     weggevallenDoorNietWil: 0,
+    weggevallenDoorBudget: 0,
     herkanstKandidaten,
     herkanstCache: false,
     kandidaten: [],
@@ -427,7 +499,21 @@ function legeResultaat(hash: string, reden: string, herkanstKandidaten: boolean)
 }
 
 export async function composeVoorProfiel(cfg: KetenConfig, p: TasteProfileInput): Promise<ComposeResultaat> {
-  const hash = await profileHash(p);
+  // Fix 5 (eindreview plan 3): profileHash gebruikt WebCrypto (sha256Hex) en
+  // kan in theorie gooien (bijvoorbeeld crypto.subtle die ontbreekt). Zonder
+  // hash is er niets te lezen, te schrijven of terug te vallen: dit is dus de
+  // enige plek die met een placeholder-hash ('onbekend') een leeg resultaat
+  // teruggeeft in plaats van de belofte "composeVoorProfiel gooit nooit" te
+  // breken. Een echte programmeerfout verderop in deze functie mag nog gooien;
+  // dit vangt alleen de eerste, onvermijdelijke stap af.
+  let hash: string;
+  try {
+    hash = await profileHash(p);
+  } catch (err) {
+    const foutmelding = err instanceof Error ? err.message : String(err);
+    return legeResultaat('onbekend', `profileHash faalde onverwacht: ${foutmelding}`, false);
+  }
+
   const { kandidaten, herkanst: herkanstKandidaten, fout: kandidatenFout } = await haalKandidaten(cfg, p);
 
   if (kandidatenFout) {
@@ -450,30 +536,48 @@ export async function composeVoorProfiel(cfg: KetenConfig, p: TasteProfileInput)
       hash,
       fout ?? 'geen gecachete set voor dit profiel (cache-miss)',
       0,
+      0,
       herkanstKandidaten,
       herkanstCache
     );
   }
 
+  // Fix 1 (eindreview plan 3): het vulscript valideert een gecachete set
+  // tegen het bandbereik, niet tegen het smallere profielbudget (fix 1a), dus
+  // de set kan een item bevatten dat voor DEZE bezoeker te goedkoop of te
+  // duur is. Zelfde mechanisme en dezelfde grens als het niet-wil-filter:
+  // eerst de niet-wil-lijst, dan het budget op wat daarvan overblijft.
   const nietWilIds = new Set<string>([...p.nogo_product_ids, ...p.disliked_product_ids]);
-  const { overgebleven, weggevallen } = filterNietWilProducten(rij.outfits, nietWilIds);
+  const nietWilFilter = filterNietWilProducten(rij.outfits, nietWilIds);
+  const budgetFilter = filterBuitenBudgetProducten(nietWilFilter.overgebleven, p.budget_min, p.budget_max);
+  const overgebleven = budgetFilter.overgebleven;
+  const weggevallenDoorNietWil = nietWilFilter.weggevallen;
+  const weggevallenDoorBudget = budgetFilter.weggevallen;
 
   if (overgebleven.length < MIN_OUTFITS_NA_NIET_WIL_FILTER) {
     const reden =
-      `gecachete set had na het niet-wil-filter nog maar ${overgebleven.length} van de ${rij.outfits.length} ` +
-      `outfits over (grens ${MIN_OUTFITS_NA_NIET_WIL_FILTER}), ${weggevallen} weggevallen door een niet-wil-product`;
-    return naarV2FallbackResultaat(p, kandidaten, hash, reden, weggevallen, herkanstKandidaten, herkanstCache);
+      `gecachete set had na het niet-wil- en budgetfilter nog maar ${overgebleven.length} van de ${rij.outfits.length} ` +
+      `outfits over (grens ${MIN_OUTFITS_NA_NIET_WIL_FILTER}), ${weggevallenDoorNietWil} weggevallen door een niet-wil-product, ` +
+      `${weggevallenDoorBudget} weggevallen buiten budget`;
+    return naarV2FallbackResultaat(
+      p,
+      kandidaten,
+      hash,
+      reden,
+      weggevallenDoorNietWil,
+      weggevallenDoorBudget,
+      herkanstKandidaten,
+      herkanstCache
+    );
   }
 
   return {
     profile_hash: hash,
     bron: 'cache',
-    model: rij.model,
     latency_ms: rij.latency_ms,
-    input_tokens: rij.input_tokens,
-    output_tokens: rij.output_tokens,
     reden: null,
-    weggevallenDoorNietWil: weggevallen,
+    weggevallenDoorNietWil,
+    weggevallenDoorBudget,
     herkanstKandidaten,
     herkanstCache,
     kandidaten,

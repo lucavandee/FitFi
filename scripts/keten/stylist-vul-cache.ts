@@ -35,6 +35,12 @@
  *    (bouwGebruikersPrompt heeft daar een parameter voor). Faalt het daarna
  *    nog: profiel overslaan, reden loggen, doorgaan met het volgende. Er
  *    wordt nooit een set weggeschreven die niet door beide validaties komt.
+ *    FIX 1a (eindreview plan 3, 27 sept 2026): valideerOutfits toetst het
+ *    budget tegen het BANDBEREIK (stap 2 hierboven), niet tegen het smallere
+ *    profiel.budget_min/budget_max. Dat stond hier eerder verkeerd: de
+ *    weggeschreven set was daardoor smaller dan de sleutel belooft, en er was
+ *    nergens een tweede toets bij het lezen. Die tweede toets staat nu in
+ *    composeClient.ts (fix 1, hertoetst het budget van de LEZENDE bezoeker).
  *    FIXRONDE 1: is de enige overtreding dat een of meer product-ids in twee
  *    outfits voorkomen (valideerSet, regel 3), dan krijgt de herkansing
  *    NIET de volledige foutmelding (die noemt outfit-indices, zinloos voor
@@ -575,7 +581,21 @@ async function verwerkProfiel(
       continue;
     }
 
-    const { geldig, fouten } = valideerOutfits(ruweOutfits, kandidaten, profiel);
+    // FIX 1a (eindreview plan 3, 27 sept 2026): valideer tegen het BANDBEREIK
+    // (bereik.min/max, hierboven al gebruikt voor get_kandidaten), niet tegen
+    // het smallere profiel.budget_min/budget_max van deze ene persona. De
+    // sleutel (profileHash.ts) belooft een set die geldig is voor de hele
+    // prijsband; valideren tegen het smallere persona-budget zou een set
+    // wegschrijven die smaller is dan die belofte, en niemand toetst het
+    // budget opnieuw bij het lezen behalve de lezende client zelf (fix 1,
+    // composeClient.ts, zie het rapport). disliked_product_ids blijft van
+    // het echte profiel: dat heeft niets met de band te maken.
+    const budgetVoorValidatie = {
+      budget_min: bereik.min,
+      budget_max: bereik.max,
+      disliked_product_ids: profiel.disliked_product_ids,
+    };
+    const { geldig, fouten } = valideerOutfits(ruweOutfits, kandidaten, budgetVoorValidatie);
     const setResultaat = valideerSet(geldig, profiel);
     const alleFouten = [...fouten.map((f) => `outfit ${f.index}: ${f.reden}`), ...setResultaat.fouten];
 

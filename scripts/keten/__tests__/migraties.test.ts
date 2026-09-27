@@ -404,6 +404,14 @@ describe("20260916100600_create_outfit_sets", () => {
  * function compose-outfits, maar twee RPC's op de outfit-cache. Deze suite
  * bewaakt de vorm; het gedrag (levensduur, voorraadcontrole, de grants) is
  * bewezen tegen de live database en staat in taak-6-report.md.
+ *
+ * Fix 4 (eindreview plan 3, 27 sept 2026): dit bestand is na toepassing
+ * gewijzigd om model, input_tokens en output_tokens uit keten_outfit_set's
+ * anon-facing return te halen (de badge heeft alleen `source` nodig). De
+ * live database heeft daardoor NOG de oude vorm; zie het commentaarblok
+ * bovenaan het SQL-bestand en het eindreview-rapport. Deze suite toetst de
+ * NIEUWE (huidige) vorm van het bestand, niet wat er vandaag in de database
+ * staat.
  */
 describe("20260916100700_keten_outfit_set_rpcs", () => {
   const sql = lees("20260916100700_keten_outfit_set_rpcs.sql");
@@ -434,8 +442,33 @@ describe("20260916100700_keten_outfit_set_rpcs", () => {
   it("bevat geen analyze-statement buiten het commentaarblok (valkuil plan 2 taak 8: een planner-wijziging kan get_kandidaten raken)", () => {
     // Het commentaarblok noemt EXPLAIN (ANALYZE, BUFFERS) en legt uit waarom
     // er geen kaal analyze-statement in deze migratie staat; die uitleg mag
-    // het woord bevatten. De echte SQL erna (na de eerste "*/") niet.
-    const naCommentaar = sql.slice(sql.indexOf("*/") + 2);
+    // het woord bevatten. De echte SQL erna (na de LAATSTE "*/") niet.
+    const naCommentaar = sql.slice(sql.lastIndexOf("*/") + 2);
     expect(naCommentaar).not.toContain("analyze");
+  });
+
+  it("fix 4: dropt keten_outfit_set vóór create, voor idempotentie bij een gewijzigd returntype", () => {
+    expect(sql).toContain("drop function if exists keten_outfit_set(text, text);");
+    expect(sql).toContain("create function keten_outfit_set(");
+  });
+
+  it("fix 4: keten_outfit_set geeft model, input_tokens en output_tokens niet meer terug aan anon", () => {
+    const vanLeespad = sql.slice(
+      sql.indexOf("create function keten_outfit_set("),
+      sql.indexOf("grant execute on function keten_outfit_set")
+    );
+    expect(vanLeespad).not.toContain("model");
+    expect(vanLeespad).not.toContain("input_tokens");
+    expect(vanLeespad).not.toContain("output_tokens");
+    expect(vanLeespad).toContain("latency_ms");
+    expect(vanLeespad).toContain("created_at");
+  });
+
+  it("fix 4: keten_schrijf_outfit_set blijft ONGEWIJZIGD model, input_tokens en output_tokens schrijven (taak 8 leest ze via de service role)", () => {
+    const vanSchrijfpad = sql.slice(sql.indexOf("create or replace function keten_schrijf_outfit_set("));
+    expect(vanSchrijfpad).toContain("p_model text");
+    expect(vanSchrijfpad).toContain("p_input_tokens integer");
+    expect(vanSchrijfpad).toContain("p_output_tokens integer");
+    expect(vanSchrijfpad).toContain("latency_ms, input_tokens, output_tokens, created_at");
   });
 });

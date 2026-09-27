@@ -43,8 +43,8 @@ function product(id: string, price: number): RuwProduct {
   };
 }
 
-function kandidaat(id: string, category: Categorie, price = 60): Kandidaat {
-  return { product_id: id, category, score: 0.5, attrs: attrs(category), product: product(id, price) };
+function kandidaat(id: string, category: Categorie, price = 60, extraAttrs: Partial<ProductAttrs> = {}): Kandidaat {
+  return { product_id: id, category, score: 0.5, attrs: attrs(category, extraAttrs), product: product(id, price) };
 }
 
 const kandidaten: Kandidaat[] = [
@@ -57,16 +57,22 @@ const kandidaten: Kandidaat[] = [
   kandidaat('o1', 'outerwear'),
   kandidaat('a1', 'accessory'),
   kandidaat('duur', 'top', 400),
+  kandidaat('fsandaal', 'footwear', 60, { shoe_type: 'sandaal' }),
 ];
 
 const profiel = { budget_min: 25, budget_max: 100, disliked_product_ids: ['t2'] };
 
-function outfit(items: Array<[string, Categorie]>, title = 'Outfit'): StylistOutfit {
+function outfit(
+  items: Array<[string, Categorie]>,
+  title = 'Outfit',
+  occasion: StylistOutfit['occasion'] = 'casual',
+  reason = 'Reden.'
+): StylistOutfit {
   return {
     title,
-    occasion: 'casual',
+    occasion,
     items: items.map(([product_id, role]) => ({ product_id, role })),
-    reason: 'Reden.',
+    reason,
   };
 }
 
@@ -149,5 +155,136 @@ describe('valideerOutfits (spec 5.4 punt 3)', () => {
     const r = valideerOutfits([{ title: 1, items: 'nee' }], kandidaten, profiel);
     expect(r.geldig).toHaveLength(0);
     expect(r.fouten[0].reden).toContain('geen items');
+  });
+});
+
+describe('valideerOutfits regel 9 (fix 2, eindreview plan 3): geen sandalen bij work of formal', () => {
+  it('verwerpt een sandaal bij occasion work', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['fsandaal', 'footwear']], 'Outfit', 'work')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('sandaal');
+    expect(r.fouten[0].reden).toContain('work');
+  });
+
+  it('verwerpt een sandaal bij occasion formal', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['fsandaal', 'footwear']], 'Outfit', 'formal')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('sandaal');
+  });
+
+  it('laat een sandaal door bij occasion casual (regel 9 geldt alleen voor work/formal)', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['fsandaal', 'footwear']], 'Outfit', 'casual')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(1);
+  });
+
+  it('laat gewone footwear (geen sandaal) door bij work', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']], 'Outfit', 'work')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(1);
+  });
+});
+
+describe('valideerOutfits regel 10 (fix 2, eindreview plan 3): copy-regels op title en reason', () => {
+  it('verwerpt een reason met een em-dash', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']], 'Outfit', 'casual', 'Dit werkt — echt waar.')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('em-dash');
+  });
+
+  it('verwerpt een reason met het woord "uniek"', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']], 'Outfit', 'casual', 'Deze look is echt uniek voor je.')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('uniek');
+  });
+
+  it('verwerpt "authentiek" en "game-changer"', () => {
+    const authentiek = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']], 'Outfit', 'casual', 'Een authentiek gevoel.')],
+      kandidaten,
+      profiel
+    );
+    expect(authentiek.geldig).toHaveLength(0);
+    expect(authentiek.fouten[0].reden).toContain('authentiek');
+
+    const gameChanger = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']], 'Outfit', 'casual', 'Dit is een echte game-changer.')],
+      kandidaten,
+      profiel
+    );
+    expect(gameChanger.geldig).toHaveLength(0);
+    expect(gameChanger.fouten[0].reden).toContain('game-changer');
+  });
+
+  it('verwerpt een superlatief zoals "mooiste"', () => {
+    const r = valideerOutfits(
+      [outfit([['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']], 'Outfit', 'casual', 'De mooiste combinatie voor je.')],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('superlatief');
+  });
+
+  it('verwerpt een titel van meer dan zes woorden', () => {
+    const r = valideerOutfits(
+      [
+        outfit(
+          [['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']],
+          'Dit is een titel met veel te veel woorden erin',
+          'casual'
+        ),
+      ],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('woorden');
+  });
+
+  it('verwerpt een outfit zonder title of reason als tekst', () => {
+    const kapot = { occasion: 'casual', items: [{ product_id: 't1', role: 'top' }, { product_id: 'b1', role: 'bottom' }, { product_id: 'f1', role: 'footwear' }] };
+    const r = valideerOutfits([kapot], kandidaten, profiel);
+    expect(r.geldig).toHaveLength(0);
+    expect(r.fouten[0].reden).toContain('title of reason');
+  });
+
+  it('laat een normale, regelconforme title en reason gewoon door', () => {
+    const r = valideerOutfits(
+      [
+        outfit(
+          [['t1', 'top'], ['b1', 'bottom'], ['f1', 'footwear']],
+          'Casual look voor de zaterdag',
+          'casual',
+          'Je draagt de top los over de broek. De sneaker maakt het af.'
+        ),
+      ],
+      kandidaten,
+      profiel
+    );
+    expect(r.geldig).toHaveLength(1);
+    expect(r.fouten).toHaveLength(0);
   });
 });
