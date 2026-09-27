@@ -111,13 +111,23 @@ import {
 const STYLIST_MODEL_STANDAARD = "claude-sonnet-5";
 
 /**
- * Ruim boven het wachttijd-budget uit plan-3-stylist.md (45s per aanroep,
- * geschreven voor de edge function die een browserbezoeker liet wachten).
- * Dit script draait offline, zonder bezoeker die wacht: de marge dekt de
- * opstartkosten van `claude -p` (circa 2s, gemeten) plus een kandidatenlijst
- * van tot 72 items (circa 6.500 inputtokens, plan-3-stylist.md kostentabel).
+ * FIXRONDE 2 (coordinator, 27 sept 2026): stond op 120_000, en dat bleek te
+ * krap. De eerste echte run (fixronde 1) deed 199.887 ms over twee
+ * pogingen, circa honderd seconden per aanroep op een prompt van circa 4.500
+ * tokens; 120s is daar maar twintig procent marge op, en de tweede echte run
+ * viel er met beide pogingen net buiten (twee keer "time-out na 120s", geen
+ * enkel antwoord). Dat is normale variatie op een meting rond de honderd
+ * seconden, geen abonnementslimiet.
+ *
+ * De 120s zelf kwam oorspronkelijk van het wachttijd-budget bovenaan
+ * plan-3-stylist.md (45s per aanroep), en dat budget is geschreven voor de
+ * edge function met een browserbezoeker die op zijn resultaten wacht. Dit
+ * script draait offline: er wacht niemand, dus het kan zich een veel ruimere
+ * grens permitteren dan een bezoeker. Nu op 300_000 (5 minuten): ruim drie
+ * keer de gemeten honderd seconden, met marge voor verdere variatie zonder
+ * bij elke iets langzamere aanroep het budget te forceren.
  */
-const AANROEP_TIMEOUT_MS = 120_000;
+const AANROEP_TIMEOUT_MS = 300_000;
 
 /** Zelfde default als get_kandidaten (spec 5.3) en de kostenraming (72 = 12 x 6 categorieen). */
 const KANDIDATEN_PER_CATEGORIE = 12;
