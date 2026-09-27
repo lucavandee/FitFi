@@ -69,7 +69,7 @@ export default function SmartImage({
       className={[
         // VOL frame vullen (lost "halve afbeelding" op)
         aspect ? 'absolute inset-0 w-full h-full object-cover' : 'w-full h-auto object-cover',
-        'block img-fade', loaded ? 'img-loaded' : '',
+        'block img-fade', loaded ? 'is-loaded' : '',
         imgClassName ?? '',
         className ?? '' // backward compatibility
       ].join(' ')}
@@ -86,7 +86,7 @@ export default function SmartImage({
   return (
     <div
       ref={ref}
-      className={['relative overflow-hidden img-skeleton', containerClassName ?? '', inView ? 'in' : ''].join(' ')}
+      className={['relative overflow-hidden', containerClassName ?? ''].join(' ')}
       style={style}
     >
       {imgEl}
