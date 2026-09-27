@@ -35,6 +35,7 @@
     "keten:personas": "vite-node scripts/keten/persona-run.ts",
     "keten:tag": "vite-node scripts/keten/tag-products.ts",
     "keten:poort": "vite-node scripts/keten/feed-poort.ts",
+    "keten:stylist-vul": "vite-node scripts/keten/stylist-vul-cache.ts",
     "start": "vite"
   },
   "dependencies": {

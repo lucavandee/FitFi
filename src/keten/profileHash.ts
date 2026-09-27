@@ -53,7 +53,15 @@ import type { AsNaam, Assen, TasteProfileInput } from './types';
 
 const CONFIDENCE_STAP = 0.25;
 
-function prijsbandVanMidden(budgetMin: number, budgetMax: number): string {
+/**
+ * Geëxporteerd (taak 6b) zodat het vulscript (scripts/keten/stylist-vul-cache.ts)
+ * dezelfde bandgrenzen gebruikt om het budgetbereik voor get_kandidaten te
+ * bepalen, in plaats van de tot50/50tot100/100tot200/boven200-grenzen ergens
+ * anders opnieuw op te schrijven. De sleutel zelf (normaliseerProfiel,
+ * profileHash) blijft de enige plek waar de cache-sleutel wordt samengesteld;
+ * dit exporteert alleen de bandindeling die daar al in zit.
+ */
+export function prijsbandVanMidden(budgetMin: number, budgetMax: number): string {
   const midden = (budgetMin + budgetMax) / 2;
   if (midden < 50) return 'tot50';
   if (midden < 100) return '50tot100';
