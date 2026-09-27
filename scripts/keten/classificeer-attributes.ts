@@ -70,17 +70,9 @@ import { existsSync, readFileSync, writeFileSync, unlinkSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import { CLASSIFIER_VERSIE, classificeerRij, type ClassificatieRij } from "../../src/services/attributes/classificatie";
 import { veegronde, type VeegrondeRij } from "../../src/services/attributes/veegronde";
-
-function leesDotEnv(): Record<string, string> {
-  const pad = new URL("../../.env", import.meta.url).pathname;
-  if (!existsSync(pad)) return {};
-  const uit: Record<string, string> = {};
-  for (const regel of readFileSync(pad, "utf8").split("\n")) {
-    const m = regel.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\n]*)"?\s*$/);
-    if (m) uit[m[1]] = m[2];
-  }
-  return uit;
-}
+// Zie de toelichting in persona-run.ts: een eigen .env-parser liep uit de pas
+// met de gefixte versie in env.ts.
+import { leesDotEnv } from "./env";
 
 const dotenv = leesDotEnv();
 const url = process.env.VITE_SUPABASE_URL ?? dotenv.VITE_SUPABASE_URL;
@@ -127,6 +119,7 @@ interface ProductRij {
   type: string | null;
   is_kids: boolean | null;
   retailer: string | null;
+  brand: string | null;
 }
 
 /**
@@ -178,7 +171,7 @@ async function main(): Promise<void> {
     const bouwLeesQuery = () => {
       let q = client
         .from("products")
-        .select("id, name, description, category, type, is_kids, retailer")
+        .select("id, name, description, category, type, is_kids, retailer, brand")
         .order("id", { ascending: true })
         .limit(PAGINA);
       if (laatsteId) q = q.gt("id", laatsteId);
@@ -248,7 +241,7 @@ async function main(): Promise<void> {
         () =>
           client
             .from("product_attributes")
-            .select("products!inner(id, name, description, category, type, is_kids)")
+            .select("products!inner(id, name, description, category, type, is_kids, brand)")
             .is("classifier_version", null)
             .order("product_id", { ascending: true })
             .limit(limiet),

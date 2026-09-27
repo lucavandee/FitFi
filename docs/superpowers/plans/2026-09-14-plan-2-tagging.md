@@ -55,6 +55,41 @@ Ontbreekt iets, dan voer je eerst de betreffende taak van plan 1 uit. Dit plan v
 - `get_kandidaten` geeft alleen getagde rijen terug (`tagger_version is not null`). Spec 5.3 noemt dat filter niet, maar de score bestaat voor 0.8 uit tags; een ongetagde rij kan niet gescoord worden en zou een lege plek in een outfit vullen met een product waar niets over bekend is. Gevolg: een retailer die nog niet getagd is, komt niet in kandidaten voor, wat spoort met "een feed telt pas mee na de poort" (spec 3 en 5.7). Nieuwe producten uit de wekelijkse import zijn onzichtbaar tot de eerstvolgende classificeer- en tag-run (taak 7 en 12).
 - Na elke feed-import moeten `price`, `in_stock` en `retailer` op `product_attributes` weer gelijk zijn aan `products`: die drie kolommen zijn tijdens plan 1 taak 3 gedenormaliseerd (migratie `20260914120400`, controller-ruling) en werden tot dan toe door `vul_product_attributes()` ververst. Dit plan verbiedt die functie vanaf taak 5 (Globale randvoorwaarden), dus `keten_vul_nieuwe_producten()` (taak 12) neemt het ververswerk over: `price`, `in_stock`, `retailer` en `price_band` worden voor elke rij van de retailer bijgewerkt, canoniek of niet, ongeacht `classifier_version` of `tagger_version`. Bewust gekozen: alleen deze vier kolommen verversen, niet de volledige `vul_product_attributes()` opnieuw draaien. Die functie herberekent `canonical_id` voor de hele retailer bij elke run (`first_value() over (partition by retailer, image_url ...)`); een nieuw, goedkoper product in een bestaande fotogroep zou dan zonder aankondiging de canonieke rij van een al getagde groep verplaatsen naar een ongetagde rij, en `get_kandidaten` zou die hele groep tijdelijk verliezen totdat de nieuwe rij ook geclassificeerd en getagd is. Met alleen verversen blijft `canonical_id` ongemoeid: een nieuw, goedkoper product in een bestaande fotogroep wordt, net als `keten_vul_nieuwe_producten()` al deed voor nieuwe rijen, een niet-canonieke rij totdat een bewuste her-dedupe (`keten_dedupe_embedding`, taak 8) of een nieuwe classificeer/tag-ronde de rangorde binnen die groep herbepaalt. Gevolg: de kandidatenpool verschuift nooit stilletjes door een feed-import, maar een nieuw goedkoper product wordt ook niet vanzelf zichtbaar als canoniek totdat iemand de dedupe bewust opnieuw draait.
 
+### Nagekomen besluiten, vastgelegd in de eindreview van 27 september 2026
+
+Deze drie stonden alleen als commentaar in de migraties. Ze horen hier, omdat het interpretaties van de spec zijn en niet implementatiedetails.
+
+- **Een unisex-profiel ziet alle genders, niet alleen unisex-getagde rijen.** `get_kandidaten` filtert met `p_gender = 'unisex' or pa.gender in (p_gender, 'unisex')`. De letterlijke formule uit spec 5.3 (`gender in (p_gender, 'unisex')`) zou bij `p_gender = 'unisex'` alleen unisex-getagde producten doorlaten, en dat zijn er 669 van de 16.133 getagde: de pool voor zo'n profiel zou vrijwel leeg zijn. De verbreding is dus bewust, met als prijs dat een unisex-profiel herenkleding en dameskleding door elkaar kan krijgen.
+- **De as-overeenkomst is genormaliseerd op de som van de aanwezige as-confidences**, niet een directe som (`as_som / t.som`). Nodig om de score binnen [0,1] te houden, wat de live test ook toetst. Gevolg dat je moet weten: is er maar een as aanwezig en matcht die, dan telt hij voor het volle gewicht van 0.5, ook als zijn confidence laag is.
+- **colors en materials hebben geen CHECK-constraint in de database**, in tegenstelling tot de andere tag-kolommen. Voor materials is dat de conclusie van fixronde 8: stofnamen zijn een open verzameling en een CHECK zou elke nieuwe stof laten sneuvelen op het wegschrijven. De validatie zit in `scripts/keten/tagging.ts` en keurt per element. Een schrijfpad buiten dat script om is dus niet beschermd.
+
+### Bekend gat: een nieuw product kan permanent uit de pool vallen
+
+Hierboven staat dat een nieuw, goedkoper product in een bestaande fotogroep niet-canoniek blijft "totdat een bewuste her-dedupe (`keten_dedupe_embedding`, taak 8) of een nieuwe classificeer/tag-ronde de rangorde binnen die groep herbepaalt". **Dat herstelpad bestaat niet.** Gevonden in de eindreview van 27 september 2026.
+
+Elke stap die de rangorde zou kunnen herbepalen eist zelf al dat de rij canoniek is: `keten_embed_kandidaten` embedt alleen rijen met `product_id = canonical_id`, `keten_tag_kandidaten` tagt alleen zulke rijen, en de paren-CTE van `keten_dedupe_embedding` eist aan beide kanten `canonical_id = product_id` plus een gevulde embedding. Een rij die via `keten_vul_nieuwe_producten()` aan een bestaande `canonical_id` is gekoppeld, krijgt dus nooit een embedding of tags en kan die stappen nooit bereiken.
+
+Het scenario waarin dat bijt: een canoniek product raakt uit voorraad, en een nieuw, goedkoper, wel leverbaar product met dezelfde foto-URL komt binnen via de wekelijkse import. De nieuwe rij erft de canonical_id van de rij die uit voorraad is. `get_kandidaten` eist `pa.product_id = pa.canonical_id and pa.in_stock`, dus de hele fotogroep verdwijnt uit de kandidatenpool en komt er niet meer terug.
+
+Vandaag is de impact nul, omdat de wekelijkse import inactief staat. Het enige herstelpad is met de hand:
+
+```sql
+-- Kies binnen elke fotogroep opnieuw een canonieke rij als de huidige uit voorraad is.
+-- Draai dit per retailer en controleer eerst de telling, voordat je iets wegschrijft.
+update product_attributes pa
+   set canonical_id = pa.product_id
+ where pa.retailer = '<retailer>'
+   and pa.in_stock
+   and exists (
+     select 1 from product_attributes c
+      where c.product_id = pa.canonical_id
+        and c.product_id <> pa.product_id
+        and not c.in_stock
+   );
+```
+
+Daarna moeten die rijen opnieuw door `npm run keten:classificeer`, `npm run keten:tag` en `embed-products.py`. **Dit gat moet opgelost zijn voordat `keten-feed-import-wekelijks` actief wordt gezet**, anders lekt de kandidatenpool stil weg zonder dat iets alarm slaat.
+
 ## Bestandsstructuur
 
 Aanmaken:
@@ -99,6 +134,14 @@ Wijzigen:
 ---
 
 ### Taak 1: Retailer-naam en scripts-fundament (SDK, env, args, retailers, npm-scripts)
+
+> **AMENDEMENT (controller, 17 september 2026, na de review van deze taak). De `env.ts`-code die hieronder letterlijk is uitgeschreven bevat twee gedragsfouten. Ze zijn tijdens de uitvoering gereproduceerd en gefixt; neem de code hieronder niet ongewijzigd over als dit plan ooit opnieuw wordt uitgevoerd.**
+>
+> 1. De terugval van `SUPABASE_URL` naar `VITE_SUPABASE_URL` gebruikt `??`, die alleen op `null` en `undefined` terugvalt. Met `SUPABASE_URL=""` en een geldige `VITE_SUPABASE_URL` meldt het script "Ontbrekende omgevingsvariabelen: SUPABASE_URL" terwijl er een bruikbare waarde staat. Dat is het tegendeel van wat de globale randvoorwaarde over foutmeldingen bedoelt.
+> 2. `parseDotEnv` herkent alleen hele commentaarregels, niet `KEY=waarde # toelichting`. De toelichting wordt dan onderdeel van de waarde. Dat is bijzonder vervelend omdat waarden terecht nooit gelogd worden: het gevolg is een client die niet verbindt, zonder foutmelding en zonder spoor. Een naieve split op `#` is geen oplossing, want een `#` kan legitiem in een waarde staan.
+>
+> Kleiner, in dezelfde functie: `split("\n")` laat op een CRLF-bestand een `\r` achter aan het eind van elke waarde.
+
 
 **Bestanden:**
 - Aanmaken: `scripts/keten/.gitignore`, `scripts/keten/env.ts`, `scripts/keten/args.ts`, `scripts/keten/retailers.ts`
@@ -1266,6 +1309,30 @@ export function markeerVerwerkt(data: BatchesBestand, id: string, wanneer: strin
 
 ### Taak 5: tag-products.ts, de CLI
 
+> **AMENDEMENT (controller, 22 september 2026, op verzoek van Luc). Deze taak gebruikt NIET langer de Anthropic Batch API en NIET langer een `ANTHROPIC_API_KEY`. Het taggen loopt via `claude -p` op Lucs abonnement.**
+>
+> **Waarom.** De Batch API vraagt een API-sleutel die hier niet beschikbaar is, en kost circa 68 dollar voor de eerste ronde plus 13 tot 40 voor de fotoronde. Luc wil het op zijn abonnement. Dat is geen compromis: het is gemeten en het werkt.
+>
+> **Wat is gemeten, 22 september, op echte ongetagde producten uit de catalogus:**
+> - 100 producten in een aanroep: `claude -p --model haiku --allowed-tools "" --append-system-prompt "<systeemprompt + schema>"`, 194 seconden, **100 van de 100 goedgekeurd door `valideerTags` uit taak 3**. Inhoudelijk correct steekproefsgewijs nagelopen.
+> - 10 producten in een aanroep: 69 seconden. De opstartkosten zijn dus ongeveer 55 seconden en het variabele deel ongeveer 1,4 seconde per product; porties van 100 amortiseren die overhead tienvoudig.
+> - Verbruik van een echte aanroep van 10 producten (`--output-format json`): 15.825 cache-read, 12.691 cache-write, 5.393 outputtokens, API-equivalent 0,044 dollar. Die vaste overhead is Claude Codes eigen systeemprompt en is per aanroep ongeveer constant.
+> - Extrapolatie: 917 aanroepen van 100 producten, circa 0,11 dollar equivalent per aanroep, dus grofweg 100 dollar equivalent uit het abonnement in plaats van uit de portemonnee.
+>
+> **Harde randvoorwaarden die uit die meting volgen:**
+> - **Nooit `--bare`.** Die vlag leest uitsluitend `ANTHROPIC_API_KEY` of een apiKeyHelper en negeert OAuth en keychain. Dan draait het dus niet op het abonnement.
+> - **`--model haiku`.** Inschalen van een productnaam in een vaste lijst waarden vraagt geen Opus. Dit is ook Lucs staande regel over modelkeuze.
+> - **`--allowed-tools ""`.** Het taggen heeft geen enkele tool nodig; elke tool vergroot alleen de systeemprompt.
+> - **Het model zet zijn antwoord in ```json-hekjes**, ondanks een instructie om dat niet te doen. Strip die; reken er niet op dat een instructie het voorkomt.
+> - **Beperk de parallelliteit tot vier a zes gelijktijdige aanroepen.** Lucs abonnement liep eerder vol door veel parallelle sessies, en dit is qua vorm hetzelfde patroon. Het script moet dat aantal als vlag hebben, niet hardgecodeerd, en moet stoppen met een duidelijke melding als het op een limiet stuit in plaats van door te rammen.
+>
+> **Wat blijft staan:** alles uit `tagging.ts` (taak 3) voor schema, prompt, validatie en resultaatverwerking; `batchesStore.ts` (taak 4) voor hervatbaarheid, waarbij een "batch" nu een portie van 100 producten is in plaats van een Batch API-id; `keten_tag_kandidaten` en `keten_schrijf_tags` (taak 2) voor lezen en schrijven; `leesEnv`, `leesVlag`, `heeftVlag` en `STANDAARD_RETAILER` (taak 1).
+>
+> **Wat vervalt:** `@anthropic-ai/sdk`, `client.messages.batches.*`, `client.messages.countTokens`, `ANTHROPIC_API_KEY` in `leesEnv`, en het pollen op batchstatus. De kostenschatting uit `schatKosten` blijft nuttig als indicatie maar is niet langer een factuur; de droge run zonder `--ja` moet nu het aantal aanroepen, de geschatte looptijd en het equivalente verbruik tonen.
+>
+> De code hieronder beschrijft de oude Batch API-weg. Gebruik hem als bron voor de structuur (vlaggen, hervatten, schrijven per portie, foutafhandeling) en niet als bron voor de aanroep zelf.
+
+
 **Bestanden:**
 - Aanmaken: `scripts/keten/tag-products.ts`
 - Test: droge run en een echte run met `--limit 25` (de pure logica is in taak 3 en 4 getest)
@@ -1944,6 +2011,8 @@ Vervang de tweede statement in de job door de query die te lang duurde. pg_cron 
 
 Wat de spec openlaat en hier is besloten: alleen getagde rijen (`tagger_version is not null`) doen mee. Spec 5.3 noemt dat filter niet, maar 0.8 van de score komt uit tags; een ongetagde rij scoort nul en zou toch een plek in een outfit vullen. Een retailer die nog niet getagd is komt dus niet in kandidaten voor; `npm run keten:personas` zonder `--retailer` ziet na deze taak alleen H&M tot een tweede retailer door taak 5 is gegaan. Nieuwe producten uit de wekelijkse import (taak 12) blijven onzichtbaar tot de eerstvolgende classificeer- en tag-run.
 
+AMENDEMENT (controller, 17 september 2026, preflight-scan bevinding 2). De plantekst hieronder was geschreven tegen `20260914120500`, maar de live functie is sindsdien drie migraties verder: `20260914120700` (eist `classifier_version`), `20260914120800` (prijsbucket-tiebreak) en `20260914120900` (plafond). Die laatste voegde `least(60, greatest(1, coalesce(p_per_category, 12)))` toe omdat `get_kandidaten` `grant execute ... to anon` heeft en een anonieme aanroeper anders zelf mocht bepalen hoeveel rijen de database per categorie uitrekent. Dit amendement zet dat plafond terug in de SQL en in de test hieronder. Laat het er niet uit: zonder plafond is een dichtgezette kwetsbaarheid weer open. Controleer bij de start met `pg_get_functiondef` wat er live staat en neem ook de andere twee migraties mee; ga niet af op de tekst van dit plan over de huidige staat.
+
 Niet-onderhandelbaar voor deze taak: de score-termen komen erbij zonder de queryvorm van `20260914120500` te verlaten. Filteren, uitsluiten (`p_disliked_ids`) en rangschikken (de `row_number() over (partition by category ...)`) gebeurt volledig op `product_attributes`, inclusief `price`, `in_stock`, `retailer` en de tag-kolommen; `products` wordt pas na `where rn <= p_per_category` gejoind, alleen voor de rijen die worden teruggegeven, met `to_jsonb(p.*)` zodat plan 1 taak 6 en plan 3 nog steeds `colors`, `sizes` en `description` uit dat object kunnen lezen. Een join naar `products` vóór de afkap (zoals een eerdere versie van deze taak per ongeluk deed, geschreven vóór `20260914120400`/`20260914120500` bestonden) reproduceert de 56,5s/57014-regressie zodra deze migratie de live functie vervangt.
 
 - [ ] Breid de contract-test uit. Voeg onderaan `scripts/keten/__tests__/migraties.test.ts` toe:
@@ -1974,7 +2043,7 @@ describe("20260916100200_keten_get_kandidaten_score", () => {
     expect(sql).toContain("and pa.in_stock");
     expect(sql).toContain("and (p_retailer is null or pa.retailer = p_retailer)");
     expect(sql).toContain("join products p on p.id = g.product_id");
-    expect(sql).toContain("where g.rn <= p_per_category");
+    expect(sql).toContain("least(60, greatest(1, coalesce(p_per_category, 12)))");
     expect(sql).toContain("to_jsonb(p.*) as product");
   });
 
@@ -2202,7 +2271,7 @@ as $$
     to_jsonb(p.*) as product
   from gerangschikt g
   join products p on p.id = g.product_id
-  where g.rn <= p_per_category
+  where g.rn <= least(60, greatest(1, coalesce(p_per_category, 12)))
   order by g.category, g.score desc, g.product_id;
 $$;
 
@@ -2979,6 +3048,17 @@ Verwacht: status 400 met de bestaande foutmelding uit de functie die begint met 
 
 ### Taak 12: Cron voor feed-import, vulling van nieuwe producten, voorraad en linkcontrole
 
+> **AMENDEMENT (controller, 17 september 2026, preflight-scan bevinding 4). `keten_vul_nieuwe_producten()` dedupliceert hieronder op `(retailer, merk, genormaliseerde naam)`. Dat is de naam-dedupe die spec 5.1 expliciet afwijst, en het is de zwaarste bevinding van de preflight-scan.**
+>
+> Spec 5.1 is op 14 september geamendeerd nadat naam-dedupe gemeten werd: van 169.697 Giglio-rijen bleven er 10.209 over terwijl er 68.739 unieke foto's zijn, omdat Giglio namen schrijft als "Sneakers AUTRY Woman color White" en de naam zonder kleur dan voor 1.280 verschillende producten gelijk is. De bindende sleutel is sindsdien `(retailer, image_url)`, met merk plus genormaliseerde naam **alleen** als terugval bij een lege `image_url`. `vul_product_attributes` in `20260914120000_product_attributes_fundament.sql` (regel 143) gebruikt die sleutel al.
+>
+> Deze functie draait bij elke wekelijkse feed-import. Met de naam-sleutel zou elke import opnieuw producten samenvoegen die geen duplicaat zijn. Erger: een verkeerd samengevoegd nieuw product wordt niet-canoniek, krijgt daarom nooit een eigen embedding (taak 6 embedt alleen canonieke rijen), en wordt dus ook nooit door `keten_dedupe_embedding` (taak 8) teruggevonden. Er is geen herstelpad.
+>
+> **Wat je doet:** gebruik in deze functie dezelfde sleutel als `vul_product_attributes`, op alle drie de plekken waar de naam-sleutel nu staat: de `bestaand`-CTE (`distinct on` en `order by`), de `partition by` in `gerangschikt`, en de `left join bestaand`. Neem de vorm letterlijk over uit `20260914120000_product_attributes_fundament.sql` zodat de twee functies niet uit elkaar kunnen lopen, en leg in de migratie-commentaar vast dat ze dezelfde sleutel delen en waarom.
+>
+> **Wat je aantoont:** een controle-query die laat zien dat na een run geen enkele fotogroep over twee `canonical_id`'s is verdeeld, en dat het aantal canonieke rijen per retailer overeenkomt met het aantal unieke `image_url`'s. Een test die alleen de tekst van de migratie controleert is hier niet genoeg.
+
+
 **Bestanden:**
 - Aanmaken: `supabase/migrations/20260916100500_keten_cron.sql`
 - Test: `scripts/keten/__tests__/migraties.test.ts` en `migraties.live.test.ts` (uitbreiden), live controle
@@ -3559,7 +3639,7 @@ Verwacht: `zonder_rij` is 0; `tags_intact` is gelijk aan het aantal uit de contr
 | `price`, `in_stock` en `retailer` op `product_attributes` blijven na elke feed-import gelijk aan `products`; `canonical_id` verschuift niet door deze ververs-stap (bevinding tijdens uitvoering plan 1 taak 3, migratie `20260914120400`) | Globale randvoorwaarden, "Wat de spec openlaat en hier is besloten", taak 12 (`keten_vul_nieuwe_producten`, contract- en live-test, controle-query `afwijkend`) |
 | 5.1 `category` een van de zes waarden; eigenaar blijft de classifier uit plan 1 (aanname, expliciet benoemd: de tagger levert `category` maar `keten_schrijf_tags` schrijft hem niet; `is_fashion` alleen omlaag; alleen geclassificeerde rijen worden getagd) | Globale randvoorwaarden, taak 2 (contract-test: `classifier_version is not null` aanwezig, `category = case` en `category = r->>` afwezig), 12 (volgorde classificeer, tag, embed, dedupe na de import) |
 | 5.3 alleen getagde rijen in `get_kandidaten` (aanname, expliciet benoemd) | Taak 7 (`tagger_version is not null`, contract-test) |
-| Scope (b): model claude-haiku-4-5-20251001, tagger_version haiku-4.5-v1 met confidence, batch-id's in gitignored `.batches.json`, hervatbaar, kosten printen voor de start, sleutels alleen uit de omgeving | Taak 1, 3, 4, 5 |
+| Scope (b): model claude-haiku-4-5-20251001, tagger_version haiku-4.5-v1 met confidence, hervatbaar via gitignored `.batches.json`, kosten printen voor de start, sleutels alleen uit de omgeving. **BIJGEWERKT 27 sept 2026:** de tagger draait via `claude -p` op het abonnement, niet via de Anthropic Batch API, en `--json-schema` is een optie en niet de standaard; `.batches.json` houdt porties bij in plaats van batch-id's. Zie het amendement in spec 5.1. | Taak 1, 3, 4, 5 |
 | 5.1 embeddings via FashionCLIP, hergebruik van scripts/visual-embeddings/embed_products.py, in batches naar product_attributes.embedding | Taak 6 |
 | 5.1 dedupe ook bij embedding cosine >= 0.999, goedkoopste in-stock variant canoniek (aannames: zelfde retailer, geen gender/category-eis, placeholder-beveiliging; expliciet benoemd) | Taak 8 |
 | 5.3 get_kandidaten score 0.5 as-overeenkomst (gewogen met confidence) + 0.3 gelegenheid-overlap + 0.2 max cosine met liked; top p_per_category per categorie; deterministisch op product_id; alleen canoniek, is_fashion, in_stock, gender, budget, niet disliked; security invoker | Taak 7 |

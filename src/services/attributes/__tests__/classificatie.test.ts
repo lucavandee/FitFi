@@ -38,6 +38,76 @@ describe("classificeerRij", () => {
   });
 
   it("heeft een vaste versiestring", () => {
-    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09");
+    // Verhoogd voor de zwemkleding-fix (spec 5.1) in productClassifier.ts:
+    // het oude "productClassifier-2026-09-17-brand-strip" hoort bij de
+    // classifier van vóór de zwemkleding-afwijzing. Zonder versiebump zou de
+    // veegronde (die alleen rijen met classifier_version is null oppakt) de
+    // al geclassificeerde rijen nooit opnieuw langs de gerepareerde
+    // classifier sturen, en blijven de zwempakken als accessory/top/bottom
+    // in product_attributes staan.
+    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09-21-swimwear-reject");
+  });
+
+  it("laat het merk niet meer de categorie bepalen", () => {
+    // Het defect uit taak 0: "Sweater TOMMY JEANS" werd bottom omdat "Jeans"
+    // in de merknaam meetelde als categoriewoord. brand meegeven strip dat
+    // woord uit de tekst die gescoord wordt, waarna "Sweater" overblijft.
+    const r = classificeerRij({
+      id: "p8",
+      name: "Sweater TOMMY JEANS Men color Navy",
+      category: "top",
+      brand: "Tommy Jeans",
+    });
+    expect(r.category).toBe("top");
+  });
+
+  it("blijft Moon Boot bij footwear houden ook al staat er geen ander kledingstukwoord in de naam", () => {
+    // Moon Boot is het gemeten tegenvoorbeeld: "Ballet Flat MOON BOOT Woman
+    // color Black" heeft geen kledingstukwoord los van de merknaam. Strip je
+    // "Moon Boot" uit de naam, dan blijft "Ballet Flat" over, dat op geen
+    // enkele regel matcht. De classifier valt dan terug op de (ongestripte)
+    // beschrijving en categoryPath, niet op de ongestripte naam, en de
+    // ruwe feed-category "footwear" in dit voorbeeld staat daar model voor.
+    const r = classificeerRij({
+      id: "p9",
+      name: "Ballet Flat MOON BOOT Woman color Black",
+      description: "Ballet Flat MOON BOOT Woman color Black",
+      category: "footwear",
+      brand: "Moon Boot",
+    });
+    expect(r.category).toBe("footwear");
+  });
+
+  it("wijst zwemkleding af (spec 5.1), ook als de feed-categorie accessory zegt", () => {
+    // Het gemelde defect: "Swimsuit BOSS Men color Black" stond als accessory
+    // in product_attributes en verscheen bij "werk"-outfits in het
+    // persona-harnas.
+    const r = classificeerRij({
+      id: "p10",
+      name: "Swimsuit BOSS Men color Black",
+      category: "accessory",
+      brand: "Boss",
+    });
+    expect(r).toEqual({ product_id: "p10", category: null, is_fashion: false });
+  });
+
+  it("wijst zwemkleding van een merk dat zelf 'Swim' heet niet per ongeluk een polo of sandaal af", () => {
+    const polo = classificeerRij({
+      id: "p11",
+      name: "Polo Shirt MOSCHINO SWIM Men color White",
+      category: "top",
+      brand: "Moschino Swim",
+    });
+    expect(polo.category).toBe("top");
+    expect(polo.is_fashion).toBe(true);
+
+    const sandalen = classificeerRij({
+      id: "p12",
+      name: "Sandals EMPORIO ARMANI SWIMWEAR Men color Black",
+      category: "footwear",
+      brand: "Emporio Armani Swimwear",
+    });
+    expect(sandalen.category).toBe("footwear");
+    expect(sandalen.is_fashion).toBe(true);
   });
 });

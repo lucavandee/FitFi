@@ -278,18 +278,19 @@ export default function DashboardPage() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="relative rounded-2xl overflow-hidden min-h-[280px] flex items-end mb-8"
         >
-          {/* Background image */}
+          {/* Zand-achtergrond: blijft zichtbaar als de afbeelding niet laadt */}
+          <div className="absolute inset-0 bg-[#F5F0EB]" />
+
+          {/* Achtergrondbeeld */}
           <img
-            src="/hero/hero-style-report-lg.webp"
+            src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
             alt=""
             className="absolute inset-0 w-full h-full object-cover"
             onError={(e) => {
-              // Hide image and let gradient show through
+              // Verberg het beeld zodat de zand-achtergrond eronder zichtbaar wordt
               (e.currentTarget as HTMLImageElement).style.display = "none";
             }}
           />
-          {/* Fallback gradient (visible if image fails) */}
-          <div className="absolute inset-0 bg-[#F5F0EB] -z-10" />
 
           {/* Overlay */}
           <div

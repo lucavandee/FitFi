@@ -13,7 +13,21 @@ functions = "netlify/functions"
 # Op 2026-08-07 heb ik dit "rechtgezet" naar npm run build en daarmee vier
 # builds op rij gesloopt. De typecheck hoort in CI of lokaal te draaien, waar
 # de devDependencies er wel zijn, niet hier.
-command = "npx vite build"
+# `npm ci` staat er bewust bij. Zonder dat bouwt Netlify met een andere
+# afhankelijkheidsboom dan package-lock.json beschrijft, en dan test CI iets
+# anders dan er live gaat.
+#
+# Zo is het op 2026-09-27 misgegaan: package-lock.json staat op framer-motion
+# 12.29.2, CI draait `npm ci --ignore-scripts` en bleef groen, maar de
+# Netlify-build had aantoonbaar iets anders. In de gebouwde bundel ontbrak de
+# chunk `vendor-motion` volledig, terwijl vite.config.ts die aanmaakt voor alles
+# met framer-motion in het pad. Met de nieuwste versie die `^12.23.22` toelaat
+# viel de hele landingspagina in de error boundary, maar alleen boven 1024x700.
+# Groene CI, groene poort, kapotte pagina.
+#
+# --include=dev omdat vite en de React-plugin devDependencies zijn: zou Netlify
+# NODE_ENV op production zetten, dan slaat npm ze anders over en faalt de build.
+command = "npm ci --include=dev --no-audit --no-fund && npx vite build"
 
 [build.environment]
 NODE_VERSION = "20"

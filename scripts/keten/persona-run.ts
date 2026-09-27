@@ -19,7 +19,7 @@
  * Waarden worden nooit gelogd. De uitvoer gaat ook naar
  * ~/claude-artifacts/fitfi-keten/persona-run-<datum>.txt voor de poort van Luc.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
@@ -33,17 +33,15 @@ import {
   telCategorieAfwijkingen,
   type KandidaatRij,
 } from "../../src/services/outfits/kandidaten";
+import { leesVlag } from "./args";
+// .env lezen gaat via env.ts en niet via een eigen parser: die eigen kopie
+// had nog de drie fouten uit het amendement van 17 september (lege terugval,
+// "KEY=waarde # toelichting" en een achterblijvende \r op CRLF-bestanden).
+import { leesDotEnv } from "./env";
 
-function leesDotEnv(): Record<string, string> {
-  const pad = new URL("../../.env", import.meta.url).pathname;
-  if (!existsSync(pad)) return {};
-  const uit: Record<string, string> = {};
-  for (const regel of readFileSync(pad, "utf8").split("\n")) {
-    const m = regel.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\n]*)"?\s*$/);
-    if (m) uit[m[1]] = m[2];
-  }
-  return uit;
-}
+// Feed-poort (spec 5.7): met --retailer draait het harnas op een enkele feed.
+// null betekent alle retailers, precies zoals get_kandidaten dat verstaat.
+const RETAILER: string | null = leesVlag(process.argv.slice(2), "retailer") || null;
 
 const dotenv = leesDotEnv();
 const url = process.env.VITE_SUPABASE_URL ?? dotenv.VITE_SUPABASE_URL;
@@ -156,7 +154,8 @@ const client = createClient(url, key);
 
 async function haalKandidaten(answers: Record<string, any>): Promise<{ rijen: KandidaatRij[]; pool: Product[] }> {
   const params = naarKandidatenParams(answers);
-  const { data, error } = await client.rpc("get_kandidaten", params);
+  // KandidatenParams heeft acht vaste velden; p_retailer gaat er via spread naast.
+  const { data, error } = await client.rpc("get_kandidaten", { ...params, p_retailer: RETAILER });
   if (error) throw new Error(`get_kandidaten faalde: ${error.message}`);
   const rijen = (data ?? []) as KandidaatRij[];
   return { rijen, pool: bereidKandidatenVoor(rijen) };

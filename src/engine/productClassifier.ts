@@ -250,13 +250,41 @@ const TOP_RULES: PatternEntry[] = [
 ];
 
 // ─── REJECT PATTERNS ──────────────────────────────────────────────────────
-const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|bikini|badpak|zwembroek|zwemshort|zwemtop|boardshort|zwemset|pantoffel|sloffen|slippers?|flip[\s-]?flop|badslip|teenslipper|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer|voetbalshirt|voetbaltenue|voetbalbroek|voetbalsok|thuisshirt|uitshirt|thuistenue|uittenue|thuisbroek|uitbroek|prematch|pre[\s-]?match|(?:football|soccer|voetbal|rugby|hockey|match|game)[\s-]?(?:jersey|shirt|kit|tenue|jacket|pant|broek))\b/i;
+// bikini/badpak/zwembroek/zwemshort/zwemtop/boardshort/zwemset stonden hier
+// vroeger ook in, maar zijn verhuisd naar SWIMWEAR_REGEX hieronder (die dekt
+// dezelfde Nederlandse termen plus de Engelse feed-taal, getest tegen de
+// merk-gestripte naam). Twee bronnen van waarheid voor "is dit zwemkleding"
+// naast elkaar laten bestaan leidt tot drift; vandaar de verplaatsing i.p.v.
+// een losse toevoeging hier.
+const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|pantoffel|sloffen|slippers?|flip[\s-]?flop|badslip|teenslipper|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer|voetbalshirt|voetbaltenue|voetbalbroek|voetbalsok|thuisshirt|uitshirt|thuistenue|uittenue|thuisbroek|uitbroek|prematch|pre[\s-]?match|(?:football|soccer|voetbal|rugby|hockey|match|game)[\s-]?(?:jersey|shirt|kit|tenue|jacket|pant|broek))\b/i;
 
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic|in)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic|in)\b/i;
 
 // Baselayers / thermals are worn under clothing and should never surface in an
 // outfit (e.g. Uniqlo Heattech at €29 was slipping into tops at high min-budget).
 export const BASELAYER_RE = /heattech|baselayer|thermal|ondershirt|\bhemd\b/i;
+
+// Spec 5.1: zwemkleding hoort niet in de kandidatenpool (is_fashion onwaar,
+// category 'geen'), net als ondergoed. De catalogus is grotendeels
+// Engelstalig ("Swimsuit BOSS Men color Black", "Swim Top"); de oude
+// REJECT_REGEX kende alleen de Nederlandse samenstellingen en liet die er
+// dus doorheen. Nadat de merknaam-strip-fix hierboven 90 Polo Ralph
+// Lauren-zwempakken van top naar de accessoire-emmer verplaatste, trok de
+// prijsafstand-tiebreak ze in het middenbudget omhoog en verschenen ze bij
+// "werk"-outfits.
+//
+// Getest tegen de merk-gestripte nameText in classifyProductDetailed hieronder,
+// NIET tegen rawNameText zoals de reject-regels hierboven. Drie merken heten
+// zelf "... Swim" of "... Swimwear" (Moschino Swim, Emporio Armani Swimwear,
+// Ea7 Swimwear); op de ruwe naam zou dit patroon "Polo Shirt MOSCHINO SWIM
+// Men color White", "Shorts MOSCHINO SWIM Men color Multicolor", "Pants
+// EMPORIO ARMANI SWIMWEAR Woman color Natural" en de drie "Sandals EMPORIO
+// ARMANI SWIMWEAR"-varianten afwijzen: 8 van de 611 gemeten treffers op de
+// ruwe naam, geen van alle zwemkleding (een polo, twee T-shirts, een
+// broek/short, drie sandalen). Op de gestripte naam verdwijnt de merknaam en
+// blijft alleen "swimsuit"/"swim top" over bij de 603 producten die het wél
+// zijn — precies het mechanisme waarvoor stripBrand hierboven gebouwd is.
+export const SWIMWEAR_REGEX = /\b(swim\w*|zwem\w*|bikini|badpak|boardshort\w*)\b/i;
 
 const KIDS_REGEX = /\b(baby|babies|peuter|kleuter|newborn|infant|kinder|kinderen|junior|kids?|dreumes|toddler|jongens|meisjes|boys|girls|child|children)\b/i;
 
@@ -315,6 +343,47 @@ function determineConfidence(totalWeight: number, matchCount: number, fromName: 
 }
 
 /**
+ * Haalt de merknaam als deelstring uit de tekst voordat er gescoord wordt.
+ * products.name is de letterlijke feed-titel en bevat dus altijd het merk;
+ * staat daar toevallig een categoriewoord in ("Tommy Jeans", "Moon Boot"),
+ * dan trekt dat het product naar de verkeerde categorie. Zo werd
+ * "Sweater TOMMY JEANS" `bottom` in plaats van `top`.
+ *
+ * De grens NA de merknaam is een lookahead: `(?!\w)`. Die is ES3 en overal
+ * ondersteund. De grens VOOR de merknaam ving eerst een negatieve lookbehind
+ * (`(?<!\w)`), maar dat is ES2018 en Safari ondersteunt het pas vanaf 16.4
+ * (15.4 t/m 16.3 niet). Erger nog: het patroon wordt gebouwd met
+ * `new RegExp(dynamische string)`, en esbuild kan een lookbehind daarin niet
+ * herschrijven naar een oudere vorm (dat lukt esbuild alleen bij een
+ * regex-*literal*, niet bij een string die pas ten tijde van uitvoering een
+ * regex wordt), dus op een niet-ondersteunende Safari-versie was dit geen
+ * build- of laadfout geweest, maar een SyntaxError zodra `stripBrand` voor
+ * het eerst met een niet-leeg merk draait, zonder try/catch eromheen op de
+ * aanroeppaden (`v2/candidateFilter.ts`, de v1-fallbackketen,
+ * `outfitComposer.ts`), dus rechtstreeks naar de ErrorBoundary.
+ *
+ * Vervangen door een gevangen groep in plaats van een lookbehind: `(^|[^\w])`
+ * vangt het teken vóór de merknaam (of niets, bij het begin van de tekst) en
+ * de replace-callback zet dat teken gewoon terug. Dat geeft hetzelfde gedrag
+ * als de lookbehind (ook voor een merk dat eindigt op een leesteken of een
+ * accent, zoals "Gallery Dept." of "Herschel Supply Co.": `\b` faalde daar
+ * stil omdat geen van beide kanten van die grens een woordteken is), maar
+ * zonder lookbehind-syntax.
+ *
+ * Geen brand meegegeven: tekst ongewijzigd terug (bestaand gedrag voor elke
+ * aanroeper die nog geen merk doorgeeft).
+ */
+function stripBrand(text: string, brand: string): string {
+  const merk = brand.trim();
+  if (!merk) return text;
+  const patroon = merk.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text
+    .replace(new RegExp(`(^|[^\\w])${patroon}(?!\\w)`, 'gi'), (_match, voor) => voor)
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Classify a product by raw text fields. Returns category, subcategory,
  * confidence level, and matched signals for debugging.
  */
@@ -322,30 +391,50 @@ export function classifyProductDetailed(
   name: string,
   description: string = '',
   categoryPath: string = '',
-  _brand: string = '',
+  brand: string = '',
 ): ClassificationResult {
-  const nameText = (name || '').toLowerCase();
+  const rawNameText = (name || '').toLowerCase();
+  // Reject/kids/multipack-checks raken dit defect niet en blijven op de volle
+  // naam werken. Alleen de tekst die op categorie scoort is gestript.
+  const nameText = stripBrand(rawNameText, brand);
   const descText = (description || '').toLowerCase();
   const catText = (categoryPath || '').toLowerCase();
+  // descText en catText blijven ongestript: dat is de bestaande terugval van
+  // deze functie (zie nameMatches/fullMatches hieronder) en géén nieuwe
+  // uitzondering. Strip je hier ook, dan verdwijnt bij een merk zonder ander
+  // categoriewoord in de naam (bv. "Ballet Flat MOON BOOT Woman color Black",
+  // waar "boot" nergens anders in de naam staat) elk signaal en valt het
+  // product buiten de kandidatenpool. Met alleen de naam gestript blijft de
+  // fix precies waar hij moet zijn: elk van de negen geraakte merken heeft in
+  // zijn geclassificeerde producten altijd een eigen kledingstukwoord náást de
+  // merknaam ("Sweater CALVIN KLEIN JEANS" → "sweater" blijft over), dus die
+  // gevallen worden nooit aan deze terugval overgelaten. Moon Boot is de
+  // uitzondering waar dat woord ontbreekt, en juist daar mag de terugval nog
+  // op de (ongestripte) beschrijving en categoryPath leunen.
   const fullText = [nameText, descText, catText].filter(Boolean).join(' ');
 
   // Reject checks
-  if (REJECT_REGEX.test(nameText)) {
+  if (REJECT_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'non-clothing keyword' };
   }
-  if (KIDS_REGEX.test(nameText)) {
+  // Tegen nameText (merk-gestripte naam), niet rawNameText — zie de
+  // toelichting bij SWIMWEAR_REGEX hierboven.
+  if (SWIMWEAR_REGEX.test(nameText)) {
+    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'swimwear — non-fashion (spec 5.1)' };
+  }
+  if (KIDS_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'kids product' };
   }
-  if (SPORT_FOOTWEAR_REGEX.test(nameText)) {
+  if (SPORT_FOOTWEAR_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'sport footwear studs pattern' };
   }
-  if (BASELAYER_RE.test(nameText) || BASELAYER_RE.test(descText)) {
+  if (BASELAYER_RE.test(rawNameText) || BASELAYER_RE.test(descText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'baselayer/thermal — not outfit-visible' };
   }
-  if (MULTIPACK_REGEX.test(nameText)) {
+  if (MULTIPACK_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'multipack' };
   }
-  if (SET_REGEX.test(nameText)) {
+  if (SET_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'set product' };
   }
 
@@ -406,8 +495,9 @@ export function classifyProduct(product: Product): { category: ProductCategory; 
   const desc = product.description || '';
   const dbCategory = (product.category || '').toLowerCase();
   const type = (product.type || '').toLowerCase();
+  const brand = product.brand || '';
 
-  const result = classifyProductDetailed(name, desc, type || dbCategory);
+  const result = classifyProductDetailed(name, desc, type || dbCategory, brand);
 
   if (result.rejected) {
     return { category: 'other' as ProductCategory, rejected: true, reason: result.rejectReason };
@@ -460,7 +550,7 @@ export function reclassifyProducts(products: Product[]): {
     classified.push({ ...product, category: result.category });
   }
 
-  const detailed = products.map(p => classifyProductDetailed(p.name || '', p.description || ''));
+  const detailed = products.map(p => classifyProductDetailed(p.name || '', p.description || '', '', p.brand || ''));
   for (const r of detailed) {
     if (r.confidence === 'high') stats.confidence_high++;
     else if (r.confidence === 'medium') stats.confidence_medium++;
