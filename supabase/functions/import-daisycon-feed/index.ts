@@ -493,6 +493,7 @@ async function processFeed(supabaseAdmin, feed, userId, campaignId) {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
@@ -506,23 +507,28 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL"),
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
-    );
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL"), serviceRoleKey);
 
-    const userClient = createClient(
-      Deno.env.get("SUPABASE_URL"),
-      Deno.env.get("SUPABASE_ANON_KEY"),
-      { global: { headers: { Authorization: authHeader } } },
-    );
-
-    const { data: { user }, error: authError } = await userClient.auth.getUser();
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // pg_cron roept deze functie aan met de service role (zie migratie
+    // 20260916100500_keten_cron.sql). Dan is er geen gebruiker; triggered_by
+    // blijft null. Elke andere aanroep moet een geldige gebruikerssessie zijn.
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    let userId: string | null = null;
+    if (token !== serviceRoleKey) {
+      const userClient = createClient(
+        Deno.env.get("SUPABASE_URL"),
+        Deno.env.get("SUPABASE_ANON_KEY"),
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const { data: { user }, error: authError } = await userClient.auth.getUser();
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      userId = user.id;
     }
 
     let body;
@@ -562,7 +568,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const result = await processFeed(supabaseAdmin, feed, user.id, body.campaignId);
+    const result = await processFeed(supabaseAdmin, feed, userId, body.campaignId);
 
     return new Response(
       JSON.stringify({
