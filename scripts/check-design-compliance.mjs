@@ -178,7 +178,7 @@ function checkKleuren(content, filePath) {
 
   // 2. echte style-props. Alleen binnen style={{ ... }} of style="...", niet elk
   // objectveld dat toevallig `color` heet: `color: '#8B7355'` op een Chino broek
-  // in quickOutfitGenerator.ts is productdata, geen interfacekleur.
+  // in een outfitgenerator is productdata, geen interfacekleur.
   const styleBlok = /style\s*=\s*(?:\{\{([^}]*)\}\}|["']([^"']*)["'])/g;
   let blok;
   while ((blok = styleBlok.exec(content)) !== null) {
