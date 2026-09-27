@@ -22,6 +22,18 @@
  *
  * Dit bestand kent geen import.meta.env en geen window: de browser geeft
  * zijn KetenConfig via browserConfig.ts.
+ *
+ * Fixronde 1 (coordinator, 27 september 2026): get_kandidaten en
+ * keten_outfit_set draaien allebei als anon en hebben dezelfde
+ * statement-timeout van 3 s (plan 2, gemeten: een koude aanroep gaf HTTP 500
+ * na 3,47 s, de tweede 200 OK in 0,59 s). Beide RPC's krijgen daarom precies
+ * een zichtbare herkansing op zo'n timeout (nooit stil, nooit meer dan een
+ * keer). Nul kandidaten of een RPC-fout die ook na de herkansing blijft, is
+ * een verwachte toestand (een dun getagde gender/gelegenheid/prijsband-
+ * combinatie), geen storing: composeVoorProfiel gooit daar niet op, maar
+ * geeft een resultaat terug met `reden` gevuld en lege outfits, zodat de
+ * aanroeper (achter de lokale vlag ff_keten_stylist) zelf kan terugvallen op
+ * de bestaande route.
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { runEngineV2 } from '@/engine/v2/engine';
@@ -56,8 +68,10 @@ export interface ComposeResultaat {
   reden: string | null;
   /** Aantal outfits dat het niet-wil-filter uit een gecachete set haalde; 0 buiten een cache-hit */
   weggevallenDoorNietWil: number;
-  /** True als de RPC-aanroep een keer moest overnieuw op een statement-timeout (geen stille herkansing) */
-  herkanst: boolean;
+  /** True als get_kandidaten een keer moest overnieuw op een statement-timeout (geen stille herkansing) */
+  herkanstKandidaten: boolean;
+  /** True als keten_outfit_set een keer moest overnieuw op een statement-timeout (geen stille herkansing) */
+  herkanstCache: boolean;
   kandidaten: Kandidaat[];
   outfits: VerrijkteOutfit[];
   /** Dezelfde outfits in de vorm die de bestaande resultatenpagina rendert */
@@ -94,6 +108,16 @@ export const RPC_TIMEOUT_MS = 5_000;
 
 /** SQLSTATE van Postgres voor "canceling statement due to statement timeout". */
 const STATEMENT_TIMEOUT_SQLSTATE = '57014';
+
+/** Genoeg van een Postgres-fout om te bepalen of het een statement-timeout was. */
+interface RpcFout {
+  code: string;
+  message: string;
+}
+
+function isStatementTimeout(fout: RpcFout): boolean {
+  return fout.code === STATEMENT_TIMEOUT_SQLSTATE || /statement timeout/i.test(fout.message);
+}
 
 /**
  * Vertaalt het profiel naar de answers die buildUserStyleProfile (engine v2)
@@ -169,19 +193,68 @@ export function outfitVanVerrijkt(o: VerrijkteOutfit, bron: OutfitBron): Outfit 
   };
 }
 
-export async function haalKandidaten(cfg: KetenConfig, p: TasteProfileInput): Promise<Kandidaat[]> {
-  const { data, error } = await cfg.supabase.rpc('get_kandidaten', {
-    p_gender: p.gender,
-    p_occasions: p.occasions,
-    p_budget_min: p.budget_min,
-    p_budget_max: p.budget_max,
-    p_axes: p.axes,
-    p_liked_ids: p.liked_product_ids,
-    p_disliked_ids: [...p.disliked_product_ids, ...p.nogo_product_ids],
-    p_per_category: PER_CATEGORIE,
-  });
-  if (error) throw new Error(`get_kandidaten: ${error.message}`);
-  return (data ?? []) as Kandidaat[];
+export interface KandidatenResultaat {
+  kandidaten: Kandidaat[];
+  /** True als de eerste aanroep een statement-timeout gaf en de herkansing nodig was. */
+  herkanst: boolean;
+  /**
+   * Foutmelding als get_kandidaten ook na de herkansing niet lukte, anders
+   * null. Nul kandidaten ZONDER fout is geen fout: dat is een normale, dun
+   * getagde band (fixronde 1: bijvoorbeeld vrouwen boven200, waar alleen 27
+   * jassen en 4 broeken getagd staan). composeVoorProfiel maakt dat
+   * onderscheid, deze functie gooit nooit zelf.
+   */
+  fout: string | null;
+}
+
+async function eenPogingGetKandidaten(
+  cfg: KetenConfig,
+  p: TasteProfileInput
+): Promise<{ kandidaten: Kandidaat[] | null; fout: RpcFout | null }> {
+  try {
+    const { data, error } = await cfg.supabase
+      .rpc('get_kandidaten', {
+        p_gender: p.gender,
+        p_occasions: p.occasions,
+        p_budget_min: p.budget_min,
+        p_budget_max: p.budget_max,
+        p_axes: p.axes,
+        p_liked_ids: p.liked_product_ids,
+        p_disliked_ids: [...p.disliked_product_ids, ...p.nogo_product_ids],
+        p_per_category: PER_CATEGORIE,
+      })
+      .abortSignal(AbortSignal.timeout(RPC_TIMEOUT_MS));
+    if (error) return { kandidaten: null, fout: { code: error.code, message: error.message } };
+    return { kandidaten: (data ?? []) as Kandidaat[], fout: null };
+  } catch (err) {
+    const naam = err instanceof Error ? err.name : 'onbekend';
+    const bericht = err instanceof Error ? err.message : String(err);
+    return { kandidaten: null, fout: { code: naam, message: bericht } };
+  }
+}
+
+/**
+ * Haalt de kandidaten op (RPC get_kandidaten). Zelfde vorm als
+ * leesGecachetSet hieronder, en om dezelfde reden (fixronde 1, coordinator):
+ * get_kandidaten wordt door de browser als anon aangeroepen en heeft dus
+ * dezelfde statement-timeout van 3 s als het cache-leespad. Plan 2 heeft dit
+ * gemeten, niet alleen als theoretisch risico: een koude aanroep gaf HTTP
+ * 500 na 3,47 s, de tweede 200 OK in 0,59 s. Een enkele, zichtbare
+ * herkansing op precies een statement-timeout; nooit een throw, want
+ * composeVoorProfiel moet zelf kunnen beslissen of nul kandidaten of een
+ * blijvende fout hier een normale toestand is (zie KandidatenResultaat.fout).
+ */
+export async function haalKandidaten(cfg: KetenConfig, p: TasteProfileInput): Promise<KandidatenResultaat> {
+  let poging = await eenPogingGetKandidaten(cfg, p);
+  let herkanst = false;
+  if (poging.fout && isStatementTimeout(poging.fout)) {
+    herkanst = true;
+    poging = await eenPogingGetKandidaten(cfg, p);
+  }
+  if (poging.fout) {
+    return { kandidaten: [], herkanst, fout: `get_kandidaten: ${poging.fout.message}` };
+  }
+  return { kandidaten: poging.kandidaten ?? [], herkanst, fout: null };
 }
 
 interface GecachetSetRij {
@@ -190,16 +263,6 @@ interface GecachetSetRij {
   latency_ms: number | null;
   input_tokens: number | null;
   output_tokens: number | null;
-}
-
-/** Genoeg van een Postgres-fout om te bepalen of het een statement-timeout was. */
-interface RpcFout {
-  code: string;
-  message: string;
-}
-
-function isStatementTimeout(fout: RpcFout): boolean {
-  return fout.code === STATEMENT_TIMEOUT_SQLSTATE || /statement timeout/i.test(fout.message);
 }
 
 /**
@@ -315,7 +378,8 @@ async function naarV2FallbackResultaat(
   hash: string,
   reden: string,
   weggevallenDoorNietWil: number,
-  herkanst: boolean
+  herkanstKandidaten: boolean,
+  herkanstCache: boolean
 ): Promise<ComposeResultaat> {
   const outfits = await fallbackV2(p, kandidaten, hash);
   return {
@@ -327,21 +391,57 @@ async function naarV2FallbackResultaat(
     output_tokens: null,
     reden,
     weggevallenDoorNietWil,
-    herkanst,
+    herkanstKandidaten,
+    herkanstCache,
     kandidaten,
     outfits,
     engineOutfits: outfits.map((o) => outfitVanVerrijkt(o, 'v2-fallback')),
   };
 }
 
+/**
+ * Geen kandidaten om iets op te bouwen: geen v2-fallback ook (die heeft
+ * kandidaten nodig), gewoon een lege set met een reden. Fixronde 1
+ * (coordinator): dit is een verwachte toestand (een dun getagde band), geen
+ * storing, en composeVoorProfiel mag hier niet op gooien. De stylist-route
+ * staat achter de lokale vlag ff_keten_stylist juist zodat een resultaat als
+ * dit de resultatenpagina niet breekt: taak 9 leest `reden` en valt terug op
+ * de bestaande route.
+ */
+function legeResultaat(hash: string, reden: string, herkanstKandidaten: boolean): ComposeResultaat {
+  return {
+    profile_hash: hash,
+    bron: 'v2-fallback',
+    model: null,
+    latency_ms: null,
+    input_tokens: null,
+    output_tokens: null,
+    reden,
+    weggevallenDoorNietWil: 0,
+    herkanstKandidaten,
+    herkanstCache: false,
+    kandidaten: [],
+    outfits: [],
+    engineOutfits: [],
+  };
+}
+
 export async function composeVoorProfiel(cfg: KetenConfig, p: TasteProfileInput): Promise<ComposeResultaat> {
   const hash = await profileHash(p);
-  const kandidaten = await haalKandidaten(cfg, p);
+  const { kandidaten, herkanst: herkanstKandidaten, fout: kandidatenFout } = await haalKandidaten(cfg, p);
+
+  if (kandidatenFout) {
+    return legeResultaat(hash, kandidatenFout, herkanstKandidaten);
+  }
   if (kandidaten.length === 0) {
-    throw new Error('get_kandidaten gaf nul kandidaten voor dit profiel');
+    return legeResultaat(
+      hash,
+      'get_kandidaten gaf nul kandidaten voor dit profiel: te weinig getagde producten in deze combinatie van gender, gelegenheid en prijsband',
+      herkanstKandidaten
+    );
   }
 
-  const { rij, herkanst, fout } = await leesGecachetSet(cfg, hash);
+  const { rij, herkanst: herkanstCache, fout } = await leesGecachetSet(cfg, hash);
 
   if (!rij) {
     return naarV2FallbackResultaat(
@@ -350,7 +450,8 @@ export async function composeVoorProfiel(cfg: KetenConfig, p: TasteProfileInput)
       hash,
       fout ?? 'geen gecachete set voor dit profiel (cache-miss)',
       0,
-      herkanst
+      herkanstKandidaten,
+      herkanstCache
     );
   }
 
@@ -361,7 +462,7 @@ export async function composeVoorProfiel(cfg: KetenConfig, p: TasteProfileInput)
     const reden =
       `gecachete set had na het niet-wil-filter nog maar ${overgebleven.length} van de ${rij.outfits.length} ` +
       `outfits over (grens ${MIN_OUTFITS_NA_NIET_WIL_FILTER}), ${weggevallen} weggevallen door een niet-wil-product`;
-    return naarV2FallbackResultaat(p, kandidaten, hash, reden, weggevallen, herkanst);
+    return naarV2FallbackResultaat(p, kandidaten, hash, reden, weggevallen, herkanstKandidaten, herkanstCache);
   }
 
   return {
@@ -373,7 +474,8 @@ export async function composeVoorProfiel(cfg: KetenConfig, p: TasteProfileInput)
     output_tokens: rij.output_tokens,
     reden: null,
     weggevallenDoorNietWil: weggevallen,
-    herkanst,
+    herkanstKandidaten,
+    herkanstCache,
     kandidaten,
     outfits: overgebleven,
     engineOutfits: overgebleven.map((o) => outfitVanVerrijkt(o, 'cache')),

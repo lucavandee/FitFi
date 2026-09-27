@@ -101,37 +101,64 @@ interface RpcAntwoord {
 }
 
 /**
+ * Nagebootste RPC-ketting die zowel get_kandidaten
+ * (`.abortSignal(...)`, rechtstreeks awaiten) als keten_outfit_set
+ * (`.abortSignal(...).maybeSingle()`) kan bedienen: een echte Promise met
+ * twee extra methoden die zichzelf (of een nieuwe promise) teruggeven, zodat
+ * beide aanroepvormen werken zonder een losse fake class per RPC.
+ */
+function maakRpcKetting(antwoord: RpcAntwoord) {
+  const belofte = Promise.resolve(antwoord) as Promise<RpcAntwoord> & {
+    abortSignal: () => typeof belofte;
+    maybeSingle: () => Promise<RpcAntwoord>;
+  };
+  belofte.abortSignal = () => belofte;
+  belofte.maybeSingle = () => Promise.resolve(antwoord);
+  return belofte;
+}
+
+/**
  * Nagebootst RPC-antwoord (brief taak 7: "een unit-test op een nagebootst
  * RPC-antwoord" in plaats van een echte cache-rij, want outfit_sets is leeg
  * en het schrijfpad is met opzet niet aanroepbaar door anon). Telt zelf hoe
- * vaak keten_outfit_set is aangeroepen, zodat de retry-tests kunnen bewijzen
- * dat er precies een herkansing gebeurt en niet meer.
+ * vaak get_kandidaten en keten_outfit_set zijn aangeroepen, zodat de
+ * retry-tests kunnen bewijzen dat er precies een herkansing gebeurt en niet
+ * meer (fixronde 1: dezelfde herkansing geldt nu voor beide RPC's).
+ * `kandidaten` is de kortere vorm voor een enkel, altijd geldig antwoord;
+ * `kandidatenAntwoorden` (een reeks) is voor de retry- en foutscenario's.
  */
-function maakStubConfig(opts: { kandidaten: Kandidaat[]; ketenOutfitSetAntwoorden: RpcAntwoord[] }): {
+function maakStubConfig(opts: {
+  kandidaten?: Kandidaat[];
+  kandidatenAntwoorden?: RpcAntwoord[];
+  ketenOutfitSetAntwoorden: RpcAntwoord[];
+}): {
   cfg: KetenConfig;
+  aantalGetKandidatenAanroepen: () => number;
   aantalKetenOutfitSetAanroepen: () => number;
 } {
-  let aanroepen = 0;
+  const kandidatenAntwoorden = opts.kandidatenAntwoorden ?? [{ data: opts.kandidaten ?? [], error: null }];
+  let kandidatenAanroepen = 0;
+  let outfitSetAanroepen = 0;
   const client = {
     rpc(naam: string, _params: Record<string, unknown>) {
       if (naam === 'get_kandidaten') {
-        return Promise.resolve({ data: opts.kandidaten, error: null });
+        const index = Math.min(kandidatenAanroepen, kandidatenAntwoorden.length - 1);
+        kandidatenAanroepen += 1;
+        return maakRpcKetting(kandidatenAntwoorden[index]);
       }
       if (naam === 'keten_outfit_set') {
-        const index = Math.min(aanroepen, opts.ketenOutfitSetAntwoorden.length - 1);
-        aanroepen += 1;
-        const antwoord = opts.ketenOutfitSetAntwoorden[index];
-        return {
-          abortSignal() {
-            return this;
-          },
-          maybeSingle: async () => antwoord,
-        };
+        const index = Math.min(outfitSetAanroepen, opts.ketenOutfitSetAntwoorden.length - 1);
+        outfitSetAanroepen += 1;
+        return maakRpcKetting(opts.ketenOutfitSetAntwoorden[index]);
       }
       throw new Error(`onverwachte rpc-naam in test: ${naam}`);
     },
   };
-  return { cfg: { supabase: client as unknown as SupabaseClient }, aantalKetenOutfitSetAanroepen: () => aanroepen };
+  return {
+    cfg: { supabase: client as unknown as SupabaseClient },
+    aantalGetKandidatenAanroepen: () => kandidatenAanroepen,
+    aantalKetenOutfitSetAanroepen: () => outfitSetAanroepen,
+  };
 }
 
 describe('answersVanProfiel', () => {
@@ -262,7 +289,8 @@ describe('composeVoorProfiel: cache-hit zonder niet-wil-treffer', () => {
     expect(resultaat.output_tokens).toBe(200);
     expect(resultaat.reden).toBeNull();
     expect(resultaat.weggevallenDoorNietWil).toBe(0);
-    expect(resultaat.herkanst).toBe(false);
+    expect(resultaat.herkanstKandidaten).toBe(false);
+    expect(resultaat.herkanstCache).toBe(false);
     expect(resultaat.outfits).toHaveLength(4);
   });
 });
@@ -336,11 +364,12 @@ describe('composeVoorProfiel: cache-miss', () => {
     expect(resultaat.bron).toBe('v2-fallback');
     expect(resultaat.model).toBeNull();
     expect(resultaat.reden).toBe('geen gecachete set voor dit profiel (cache-miss)');
-    expect(resultaat.herkanst).toBe(false);
+    expect(resultaat.herkanstKandidaten).toBe(false);
+    expect(resultaat.herkanstCache).toBe(false);
   });
 });
 
-describe('composeVoorProfiel: statement-timeout, een zichtbare herkansing', () => {
+describe('composeVoorProfiel: keten_outfit_set, statement-timeout, een zichtbare herkansing', () => {
   it('herkanst een keer en meldt dat, ook als de herkansing lukt', async () => {
     const outfits = [maakOutfit('a', ['p1']), maakOutfit('b', ['p2']), maakOutfit('c', ['p3']), maakOutfit('d', ['p4'])];
     const { cfg, aantalKetenOutfitSetAanroepen } = maakStubConfig({
@@ -353,7 +382,8 @@ describe('composeVoorProfiel: statement-timeout, een zichtbare herkansing', () =
 
     const resultaat = await composeVoorProfiel(cfg, maakProfiel());
 
-    expect(resultaat.herkanst).toBe(true);
+    expect(resultaat.herkanstCache).toBe(true);
+    expect(resultaat.herkanstKandidaten).toBe(false);
     expect(resultaat.bron).toBe('cache');
     expect(aantalKetenOutfitSetAanroepen()).toBe(2);
   });
@@ -369,7 +399,7 @@ describe('composeVoorProfiel: statement-timeout, een zichtbare herkansing', () =
 
     const resultaat = await composeVoorProfiel(cfg, maakProfiel());
 
-    expect(resultaat.herkanst).toBe(true);
+    expect(resultaat.herkanstCache).toBe(true);
     expect(resultaat.bron).toBe('v2-fallback');
     expect(resultaat.reden).toContain('keten_outfit_set');
     expect(aantalKetenOutfitSetAanroepen()).toBe(2);
@@ -390,9 +420,81 @@ describe('composeVoorProfiel: statement-timeout, een zichtbare herkansing', () =
 
     const resultaat = await composeVoorProfiel(cfg, maakProfiel());
 
-    expect(resultaat.herkanst).toBe(false);
+    expect(resultaat.herkanstCache).toBe(false);
     expect(resultaat.bron).toBe('v2-fallback');
     expect(resultaat.reden).toContain('permission denied');
     expect(aantalKetenOutfitSetAanroepen()).toBe(1);
+  });
+});
+
+describe('composeVoorProfiel: get_kandidaten, statement-timeout, een zichtbare herkansing (fixronde 1)', () => {
+  it('herkanst een keer en gaat daarna gewoon door', async () => {
+    const { cfg, aantalGetKandidatenAanroepen } = maakStubConfig({
+      kandidatenAntwoorden: [
+        { data: null, error: { code: '57014', message: 'canceling statement due to statement timeout' } },
+        { data: [kandidaat], error: null },
+      ],
+      ketenOutfitSetAntwoorden: [{ data: null, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel());
+
+    expect(resultaat.herkanstKandidaten).toBe(true);
+    expect(aantalGetKandidatenAanroepen()).toBe(2);
+    // De herkansing lukte, dus geen legeResultaat: de kandidaten zijn er en
+    // de route vervolgt normaal (hier een cache-miss, dus v2-fallback).
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.reden).toBe('geen gecachete set voor dit profiel (cache-miss)');
+  });
+
+  it('geeft een resultaat met reden en geen exception als ook de herkansing faalt, zonder een tweede herkansing', async () => {
+    const { cfg, aantalGetKandidatenAanroepen } = maakStubConfig({
+      kandidatenAntwoorden: [
+        { data: null, error: { code: '57014', message: 'canceling statement due to statement timeout' } },
+        { data: null, error: { code: '57014', message: 'canceling statement due to statement timeout' } },
+      ],
+      ketenOutfitSetAntwoorden: [{ data: null, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel());
+
+    expect(resultaat.herkanstKandidaten).toBe(true);
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.reden).toContain('get_kandidaten');
+    expect(resultaat.kandidaten).toEqual([]);
+    expect(resultaat.outfits).toEqual([]);
+    expect(aantalGetKandidatenAanroepen()).toBe(2);
+  });
+
+  it('herkanst niet op een andere fout dan een statement-timeout', async () => {
+    const { cfg, aantalGetKandidatenAanroepen } = maakStubConfig({
+      kandidatenAntwoorden: [{ data: null, error: { code: '42501', message: 'permission denied for function get_kandidaten' } }],
+      ketenOutfitSetAntwoorden: [{ data: null, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel());
+
+    expect(resultaat.herkanstKandidaten).toBe(false);
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.reden).toContain('permission denied');
+    expect(aantalGetKandidatenAanroepen()).toBe(1);
+  });
+});
+
+describe('composeVoorProfiel: nul kandidaten is geen storing (fixronde 1)', () => {
+  it('geeft een resultaat met reden terug in plaats van te gooien', async () => {
+    const { cfg } = maakStubConfig({
+      kandidaten: [],
+      ketenOutfitSetAntwoorden: [{ data: null, error: null }],
+    });
+
+    const resultaat = await composeVoorProfiel(cfg, maakProfiel());
+
+    expect(resultaat.bron).toBe('v2-fallback');
+    expect(resultaat.reden).toContain('get_kandidaten gaf nul kandidaten');
+    expect(resultaat.herkanstKandidaten).toBe(false);
+    expect(resultaat.kandidaten).toEqual([]);
+    expect(resultaat.outfits).toEqual([]);
+    expect(resultaat.engineOutfits).toEqual([]);
   });
 });
