@@ -129,3 +129,36 @@ describe.skipIf(!url || !serviceKey)("20260916100300_keten_dedupe_embedding (liv
     }
   });
 });
+
+describe.skipIf(!url || !serviceKey)("20260916100400_keten_feed_gates (live)", () => {
+  it("keten_dekkingsmatrix geeft male en female, zeven gelegenheden, vier banden met getallen", async () => {
+    const { data, error } = await service().rpc("keten_dekkingsmatrix", { p_retailer: STANDAARD_RETAILER });
+    expect(error).toBeNull();
+    const m = data as Record<string, Record<string, Record<string, number>>>;
+    expect(Object.keys(m).sort()).toEqual(["female", "male"]);
+    for (const g of ["male", "female"]) {
+      expect(Object.keys(m[g]).sort()).toEqual(["casual", "date", "formal", "party", "sport", "travel", "work"]);
+      for (const o of Object.keys(m[g])) {
+        expect(Object.keys(m[g][o]).sort()).toEqual(["100tot200", "50tot100", "boven200", "tot50"]);
+        for (const n of Object.values(m[g][o])) expect(typeof n).toBe("number");
+      }
+    }
+  });
+
+  it("weigert een onbekende retailer", async () => {
+    const { error } = await service().rpc("keten_dekkingsmatrix", { p_retailer: "bestaat niet" });
+    expect(error?.message ?? "").toContain("Onbekende retailer");
+  });
+
+  it("feed_gates: de service role leest, de anon-sleutel leest leeg en mag niet schrijven", async () => {
+    const svc = await service().from("feed_gates").select("id").limit(1);
+    expect(svc.error).toBeNull();
+    if (anonKey) {
+      const lezen = await anon().from("feed_gates").select("id").limit(1);
+      expect(lezen.error).toBeNull();
+      expect(lezen.data).toEqual([]);
+      const schrijven = await anon().from("feed_gates").insert({ retailer: "test", groen: false, matrix: {} });
+      expect(schrijven.error).not.toBeNull();
+    }
+  });
+});

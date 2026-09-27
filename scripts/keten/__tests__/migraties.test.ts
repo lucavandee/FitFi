@@ -206,3 +206,30 @@ describe("20260916100300_keten_dedupe_embedding", () => {
     expect(sql).toContain("revoke all on function keten_dedupe_embedding");
   });
 });
+
+describe("20260916100400_keten_feed_gates", () => {
+  const sql = lees("20260916100400_keten_feed_gates.sql");
+
+  it("maakt feed_gates met de kolommen uit het plan en RLS via de admin-helper", () => {
+    expect(sql).toContain("create table if not exists feed_gates");
+    for (const kolom of ["retailer text", "run_at timestamptz", "groen boolean", "matrix jsonb", "persona_output jsonb"]) {
+      expect(sql).toContain(kolom);
+    }
+    expect(sql).toContain("alter table feed_gates enable row level security");
+    expect(sql).toContain("using (is_current_user_admin())");
+    expect(sql).not.toContain("->> 'role'");
+  });
+
+  it("levert keten_dekkingsmatrix over gender x gelegenheid x prijsband met retailer-controle", () => {
+    expect(sql).toContain("function keten_dekkingsmatrix(");
+    expect(sql).toContain("select keten_controleer_retailer(p_retailer)");
+    expect(sql).toContain("'tot50', '50tot100', '100tot200', 'boven200'");
+    expect(sql).toContain("'work', 'casual', 'formal', 'date', 'travel', 'sport', 'party'");
+  });
+
+  it("telt volledig op product_attributes, zonder join naar products", () => {
+    expect(sql).not.toContain("join products");
+    expect(sql).toContain("and pa.in_stock");
+    expect(sql).toContain("and pa.retailer = p_retailer");
+  });
+});
