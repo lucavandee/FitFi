@@ -25,8 +25,9 @@ export default function AboutPage() {
             <Sparkles className="w-4 h-4 text-[#A85740]" aria-hidden />
             <span className="text-sm font-medium text-[#4A4A4A]">Over FitFi</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">
-            Stijl zonder gedoe
+          <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05] max-w-[760px] mx-auto">
+            <span className="font-serif italic">Stijl </span>
+            <span className="font-sans font-bold" style={{ letterSpacing: "-2px" }}>zonder gedoe</span>
           </h1>
           <p className="text-base text-[#4A4A4A] mt-4 max-w-lg mx-auto leading-relaxed">
             FitFi helpt je betere kledingkeuzes te maken. Rustig, persoonlijk en gericht.
