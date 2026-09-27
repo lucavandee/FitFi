@@ -48,6 +48,14 @@
   }
 }
 
+/* Scroll-offset voor anchors en getabte links.
+   De navbar is 72px fixed, de mobiele onderbalk 58px plus safe-area.
+   Zonder deze padding landt het doel eronder (WCAG 2.4.11 Focus Not Obscured). */
+html {
+  scroll-padding-top: 88px;
+  scroll-padding-bottom: 72px;
+}
+
 /* Safe area support for mobile notches */
 .safe-top {
   padding-top: env(safe-area-inset-top);

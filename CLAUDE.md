@@ -17,101 +17,21 @@ Dit document is de enige bron van waarheid voor alle wijzigingen aan FitFi. Lees
 - **Deployment:** Netlify
 - **Font:** Plus Jakarta Sans (Google Fonts)
 
-## Mappenstructuur (relevant voor styling)
+## Mappenstructuur
 ```
 src/
-├── pages/          ← Hier werk je aan pagina's
-├── components/     ← Hier werk je aan componenten
+├── pages/          ← pagina's
+├── components/     ← componenten
 ├── styles/         ← CSS bestanden
-└── ... (rest is off-limits tenzij gevraagd)
+└── ...             ← engine, services, hooks, lib
 ```
 
 ---
 
-# DEEL 2: NO-TOUCH CONTRACT
+> Het NO-TOUCH CONTRACT is op 2026-09-03 opgeheven op verzoek van Luc. Engine, build-config,
+> routing en `public/` zijn niet langer off-limits. Het design system hieronder geldt nog wel.
 
-Deze opdrachten zijn uitsluitend voor visuele, UX-, copy- en polishverbeteringen.
-
-## VERBODEN — raak dit NOOIT aan
-
-### Engine & Logica
-- Recommendation engine en outfit matching
-- Quizlogica, vraagvolgorde en scoring
-- Profiel- of archetype-afleiding
-- Resultaatalgoritme en matchpercentages
-- Calibratie-logica
-- State management en dataflow (TanStack Query, context providers)
-- ML/personalisatie systemen
-
-### Database & Backend
-- Alles in `/supabase/` — migrations, functions, config
-- Supabase client configuratie (`@supabase/supabase-js` setup)
-- Database queries en RPC calls
-- Storage bucket configuratie
-- Row Level Security policies
-- Edge functions in `/netlify/`
-
-### Auth & Security
-- Authenticatie en sessielogica (Supabase Auth, Google OAuth)
-- CSP headers en security configuratie
-- GDPR/privacy compliance code
-
-### Configuratie & Build
-- `.env`, `.env.example`, `.env.local`, `.env.production` — NOOIT lezen of wijzigen
-- `vite.config.ts` — niet wijzigen
-- `netlify.toml` — niet wijzigen
-- `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json` — niet wijzigen
-- `package.json` — niet wijzigen tenzij het puur een font-toevoeging betreft
-- `package-lock.json` — niet wijzigen
-- `postcss.config.cjs` — niet wijzigen
-- `playwright.config.ts` — niet wijzigen
-
-### Mappen — volledig off-limits
-- `/supabase/` — database migrations en functions
-- `/netlify/` — edge functions en serverless
-- `/scripts/` — build en utility scripts
-- `/plugins/` — Vite plugins
-- `/e2e/` — end-to-end tests
-- `/.bolt/` — bolt.new configuratie
-- `/.husky/` — git hooks
-- `/docs/` — documentatie
-- `/content/` — content bestanden
-
-### Bestandsregels
-- Bestanden NIET hernoemen, verplaatsen of samenvoegen
-- Mappenstructuur NIET reorganiseren
-- Bestaande imports en exports NIET aanpassen tenzij direct vereist door een styling-wijziging in datzelfde bestand
-- Ongebruikte code NIET opruimen (dat is een aparte taak)
-- Geen nieuwe dependencies installeren zonder expliciete toestemming
-- Markdown bestanden in de root (*.md) NIET aanpassen of verwijderen
-
-### Routing
-- Route definities en paden NIET wijzigen
-- Redirects NIET toevoegen of aanpassen
-- React Router configuratie NIET wijzigen
-
-## TOEGESTAAN
-
-- CSS en Tailwind classes aanpassen in `src/pages/` en `src/components/`
-- Kleuren, fonts, spacing, border-radii, schaduwen wijzigen
-- Componenten visueel aanpassen (layout, sizing, responsive gedrag)
-- Copy en teksten verbeteren
-- Nieuwe puur-visuele componenten toevoegen (badges, lege states, skeleton loaders)
-- Aria-labels en accessibility verbeteren
-- Animaties en transitions toevoegen (Framer Motion of CSS, volgens design system)
-- `tailwind.config.ts` aanpassen ALLEEN voor font-family en design system kleuren
-
-## WERKWIJZE
-
-1. Werk per component of per pagina. Niet meerdere tegelijk.
-2. Wijzig alleen bestanden die direct nodig zijn voor de UI-opdracht.
-3. Raak geen unrelated files aan.
-4. Als je denkt dat een engine- of logicawijziging "zou helpen": voer die NIET uit. Noem het alleen onder "Buiten scope".
-5. Na elke wijziging: controleer of de app nog correct bouwt (`npm run build`).
-
----
-
-# DEEL 3: DESIGN SYSTEM v1.0
+# DEEL 2: DESIGN SYSTEM v1.0
 
 ## 1. Kleurenpalet
 

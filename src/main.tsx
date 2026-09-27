@@ -37,6 +37,16 @@ import { setTelemetrySink } from "@/utils/telemetry";
 initAnalytics();
 setTelemetrySink(analyticsTrack);
 
+// De app bepaalt zelf de scrollpositie bij een routewissel. Zonder dit herstelt
+// de browser bij terugnavigatie een oude positie die daarmee botst.
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  try {
+    window.history.scrollRestoration = 'manual';
+  } catch {
+    // Sommige browsers blokkeren dit; de standaard 'auto' blijft dan staan.
+  }
+}
+
 // Initialize optimizations (production only)
 if (typeof window !== 'undefined' && import.meta.env.PROD) {
   try {
