@@ -8,8 +8,8 @@ const HOME_PATHS = ["/", ""];
 
 /**
  * Eén premium Navbar:
- * - Floating pill design met blur
- * - Transparent op homepage hero, solid na scroll (>60px)
+ * - Floating pill op een dekkende band
+ * - Band en pill transparant op de homepage-hero, dekkend zodra je 40px scrolt
  * - Desktop: links + (Login/Start gratis) of (Dashboard/Uitloggen) bij auth
  * - Mobiel: sheet met dezelfde opties
  * - A11Y: skiplink, aria-expanded, ESC sluit, focus-ring via tokens
@@ -145,23 +145,33 @@ export default function Navbar() {
       className="fixed top-0 w-full z-50"
       role="banner"
     >
+      {/* Dekkende band achter de pill. De pill dekt maar een deel van de 88px
+          hoge header, dus zonder deze laag scrolt tekst er zichtbaar doorheen. */}
+      <div
+        aria-hidden="true"
+        className={[
+          "absolute inset-0 bg-[#FAFAF8] border-b border-[#E5E5E5] transition-opacity duration-200 motion-reduce:transition-none",
+          isTransparent ? "opacity-0" : "opacity-100",
+        ].join(" ")}
+      />
+
       {/* Skip to content */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[55] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[55] focus:flex focus:items-center focus:min-h-[44px] focus:rounded-xl focus:border focus:border-[#E5E5E5] focus:bg-white focus:px-3 focus:py-2 focus:shadow-sm"
       >
         Naar hoofdinhoud
       </a>
 
       {/* Outer container with padding around the pill */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-4">
+      <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-4">
         {/* The pill */}
         <div
           className={[
             "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-500",
             isTransparent
               ? "bg-transparent border border-transparent shadow-none"
-              : "bg-white/85 backdrop-blur-[20px] border border-[#E5E5E5]/50 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:border-[#E5E5E5]/80",
+              : "bg-white border border-[#E5E5E5] hover:shadow-md",
           ].join(" ")}
         >
           {/* Brand */}
@@ -181,7 +191,7 @@ export default function Navbar() {
                 to={l.to}
                 className={({ isActive }) =>
                   [
-                    "text-[13px] px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none outline-none ring-0",
+                    "inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none outline-none ring-0",
                     isActive ? navActiveTextClass : `font-medium ${navTextClass}`,
                   ].join(" ")
                 }
@@ -198,7 +208,7 @@ export default function Navbar() {
                 <a
                   href="/inloggen"
                   className={[
-                    "text-[13px] font-medium px-[18px] py-2 rounded-full transition-all duration-200",
+                    "inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200",
                     isTransparent
                       ? "text-white/70 hover:text-white hover:bg-white/10"
                       : "text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
@@ -209,7 +219,7 @@ export default function Navbar() {
                 </a>
                 <a
                   href="/registreren"
-                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(194,101,74,0.2)] ml-2"
+                  className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
                   data-event="nav_start_gratis"
                 >
                   Begin gratis
@@ -219,7 +229,7 @@ export default function Navbar() {
               <>
                 <a
                   href="/dashboard"
-                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2"
+                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2 min-h-[44px]"
                   data-event="nav_dashboard"
                 >
                   Dashboard
@@ -233,7 +243,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="text-[13px] font-medium text-[#6E6E6E] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
+                  className="inline-flex items-center min-h-[44px] text-sm font-medium text-[#6E6E6E] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
                   data-event="nav_logout"
                 >
                   Uitloggen

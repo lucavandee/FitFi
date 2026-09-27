@@ -3,12 +3,75 @@ import { Link } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Zap, Heart, ArrowRight, Plus } from "lucide-react";
+import { track as trackFunnel } from "@/utils/analytics";
+
+const PAGE = "how-it-works";
+
+/* ─── Scrolldiepte ────────────────────────────────────────────────────────── */
+/*
+ * Meet 25/50/75/100 procent, elk hoogstens een keer per paginabezoek.
+ * Bewust een kopie in dit bestand en geen import uit een ander paginabestand:
+ * pagina's worden lazy geladen, en zo'n import trekt die hele pagina mee in de
+ * chunk van deze pagina.
+ */
+function useScrollDepth(page: string) {
+  // LET OP: dit meet scrollafstand, niet gelezen content. Een vastgezette
+  // scene van 200vh telt als twee schermen scrollen terwijl er een sectie
+  // voorbijkomt. De drempels zijn dus alleen vergelijkbaar tussen versies
+  // met dezelfde pagina-opbouw, niet met een pagina zonder pins.
+  useEffect(() => {
+    const drempels = [25, 50, 75, 100];
+    let hoogstGemeld = 0;
+    let frame = 0;
+
+    const meet = () => {
+      frame = 0;
+      const scrollbaar =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollbaar <= 0) return;
+
+      const pct = (window.scrollY / scrollbaar) * 100;
+      for (const drempel of drempels) {
+        // Marge van 0,5 procent: op 100 procent komt scrollY door afronding
+        // en zoom zelden exact op de maximale waarde uit.
+        if (drempel > hoogstGemeld && pct >= drempel - 0.5) {
+          hoogstGemeld = drempel;
+          trackFunnel("scroll_depth", { page, depth: drempel });
+        }
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(meet);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [page]);
+}
 
 /* ─── Reveal hook ─────────────────────────────────────────────────────────── */
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  // Bij reduced motion staat scroll-behavior: smooth uit, dus een ankerlink,
+  // Ctrl+F of terugnavigatie springt echt. De observer vuurt dan niet voor wat
+  // je overslaat en het blok blijft permanent op opacity 0. Daarom meteen tonen.
+  const [visible, setVisible] = useState(() => {
+    try {
+      return (
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    } catch {
+      return false;
+    }
+  });
   useEffect(() => {
+    if (visible) return;
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -17,7 +80,7 @@ function useReveal() {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [visible]);
   return { ref, visible };
 }
 
@@ -74,8 +137,10 @@ function Step1Visual() {
       <div className="w-full max-w-[380px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
-          alt="FitFi stijlquiz — kleurtonen en stijlvoorkeuren"
+          alt="FitFi stijlquiz: kleurtonen en stijlvoorkeuren"
           className="w-full h-auto"
+          width={2048}
+          height={2048}
           loading="lazy"
         />
       </div>
@@ -89,8 +154,10 @@ function Step2Visual() {
       <div className="w-full max-w-[480px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
-          alt="FitFi stijlrapport — kleurprofiel en aanbevelingen"
+          alt="FitFi stijlrapport: kleurprofiel en aanbevelingen"
           className="w-full h-auto"
+          width={2048}
+          height={2048}
           loading="lazy"
         />
       </div>
@@ -104,8 +171,10 @@ function Step3Visual() {
       <div className="w-full max-w-[320px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
         <img
           src="/images/cabef3fa-fe8f-467c-a8a9-ba2e732e2ee0.webp"
-          alt="FitFi outfit shoppen — directe shoplinks"
+          alt="FitFi outfit shoppen: directe shoplinks"
           className="w-full h-auto"
+          width={2048}
+          height={2048}
           loading="lazy"
         />
       </div>
@@ -132,7 +201,7 @@ function StepDetail({ title, sub }: { title: string; sub: string }) {
       <div className="w-2 h-2 rounded-full bg-[#A85740] mt-[6px] flex-shrink-0 mr-3" />
       <div>
         <p className="text-[15px] font-semibold text-[#1A1A1A] leading-snug">{title}</p>
-        <p className="text-[13px] text-[#6E6E6E] mt-1">{sub}</p>
+        <p className="text-sm text-[#6E6E6E] mt-1">{sub}</p>
       </div>
     </div>
   );
@@ -142,16 +211,23 @@ function StepDetail({ title, sub }: { title: string; sub: string }) {
 export default function HowItWorksPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  useScrollDepth(PAGE);
+
+  const handleQuizClick = (position: string) => {
+    trackFunnel("cta_click", { page: PAGE, position });
+    trackFunnel("quiz_start", { page: PAGE, position });
+  };
+
   return (
     <>
       <Seo
-        title="Hoe het werkt — Jouw stijladvies in ongeveer 5 minuten | FitFi"
+        title="Hoe het werkt: jouw stijladvies in ongeveer 5 minuten | FitFi"
         description="In ongeveer 5 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
         path="/hoe-het-werkt"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "HowTo",
-          name: "Hoe FitFi werkt — stijladvies in ongeveer 5 minuten",
+          name: "Hoe FitFi werkt: stijladvies in ongeveer 5 minuten",
           description: "In ongeveer 5 minuten van quiz naar compleet stijladvies. Beantwoord vragen, wij matchen outfits, jij shopt direct.",
           totalTime: "PT2M",
           step: [
@@ -162,14 +238,10 @@ export default function HowItWorksPage() {
         }}
       />
 
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-[#A85740] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-semibold"
-      >
-        Spring naar hoofdinhoud
-      </a>
+      {/* Geen eigen skip-link: de shell in App.tsx levert er al een. */}
 
-      <main id="main-content" className="bg-[#FAFAF8]">
+      {/* Geen geneste <main>: de shell heeft er al een. */}
+      <div id="main-content" className="bg-[#FAFAF8]">
 
         {/* ════════════════════════════════════════════════════
             PAGE HERO
@@ -216,7 +288,7 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            STAP 1 — quiz (visual left, content right)
+            STAP 1: quiz (visual left, content right)
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#FAFAF8]">
           <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -242,14 +314,14 @@ export default function HowItWorksPage() {
                 />
                 <StepDetail
                   title="Geef je budget en gelegenheden aan"
-                  sub="Werk, weekend, uitgaan — wij stemmen af"
+                  sub="Werk, weekend, uitgaan, wij stemmen af"
                 />
                 <StepDetail
                   title="Optioneel: upload een foto voor kleuranalyse"
                   sub="Lokaal verwerkt, niet opgeslagen"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#A85740] w-fit">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-sm font-semibold text-[#A85740] w-fit">
                 <Clock className="w-4 h-4" aria-hidden="true" />
                 ~5 minuten
               </div>
@@ -258,7 +330,7 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            STAP 2 — rapport (content left, visual right) — gespiegeld
+            STAP 2: rapport (content left, visual right), gespiegeld
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#F5F0EB]">
           <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -271,7 +343,7 @@ export default function HowItWorksPage() {
                 Ontvang je persoonlijke rapport
               </h2>
               <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
-                Direct na de quiz krijg je een volledig stijlrapport. Geen wachttijd, geen vage aanbevelingen — concreet en visueel.
+                Direct na de quiz krijg je een volledig stijlrapport. Geen wachttijd, geen vage aanbevelingen, concreet en visueel.
               </p>
               <div className="flex flex-col gap-4 mb-8">
                 <StepDetail
@@ -287,7 +359,7 @@ export default function HowItWorksPage() {
                   sub="Concrete tips voor werk, weekend en uitgaan"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-semibold text-[#A85740] w-fit">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-sm font-semibold text-[#A85740] w-fit">
                 <Zap className="w-4 h-4" aria-hidden="true" />
                 Direct beschikbaar
               </div>
@@ -300,7 +372,7 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            STAP 3 — shop (visual left, content right)
+            STAP 3: shop (visual left, content right)
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#FAFAF8]">
           <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -333,10 +405,6 @@ export default function HowItWorksPage() {
                   sub="Zie direct hoe goed elk kledingstuk bij jouw profiel past"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-[13px] font-semibold text-[#A85740] w-fit">
-                <Heart className="w-4 h-4" aria-hidden="true" />
-                50+ looks
-              </div>
             </Reveal>
           </div>
         </section>
@@ -364,11 +432,11 @@ export default function HowItWorksPage() {
               <div className="max-w-[800px] mx-auto">
                 {/* Header rij */}
                 <div className="grid grid-cols-[1fr_40px_1fr] items-center pb-4 mb-2 border-b-2 border-[#E5E5E5]">
-                  <div className="text-[13px] font-semibold text-[#6E6E6E] uppercase tracking-[1px] text-right pr-6">
+                  <div className="text-sm font-semibold text-[#6E6E6E] uppercase tracking-[1px] text-right pr-6">
                     Zonder FitFi
                   </div>
                   <div />
-                  <div className="text-[13px] font-bold text-[#A85740] uppercase tracking-[1px] text-left pl-6">
+                  <div className="text-sm font-bold text-[#A85740] uppercase tracking-[1px] text-left pl-6">
                     Met FitFi
                   </div>
                 </div>
@@ -381,7 +449,7 @@ export default function HowItWorksPage() {
                     <div className="text-[15px] text-[#6E6E6E] text-right pr-6">
                       {row.old}
                     </div>
-                    <div className="text-[11px] font-bold text-[#E5E5E5] text-center">
+                    <div className="text-sm font-bold text-[#E5E5E5] text-center">
                       →
                     </div>
                     <div className={`text-[15px] font-semibold text-left pl-6 ${row.highlight ? "text-[#A85740]" : "text-[#1A1A1A]"}`}>
@@ -467,7 +535,7 @@ export default function HowItWorksPage() {
               <div className="text-center mt-10">
                 <Link
                   to="/veelgestelde-vragen"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
+                  className="inline-flex items-center min-h-[44px] gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
                 >
                   Bekijk alle veelgestelde vragen
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -492,6 +560,7 @@ export default function HowItWorksPage() {
                 </p>
                 <Link
                   to="/onboarding"
+                  onClick={() => handleQuizClick("footer")}
                   className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
                   style={{ boxShadow: "0 12px 40px rgba(194,101,74,0.3)" }}
                 >
@@ -506,7 +575,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-      </main>
+      </div>
     </>
   );
 }

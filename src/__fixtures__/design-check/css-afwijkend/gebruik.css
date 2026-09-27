@@ -1,0 +1,3 @@
+/* Kleur rechtstreeks in de regel: hoort via var() te gaan. */
+.kaart { background: #FF00FF; }
+.knop { color: #123456; }
