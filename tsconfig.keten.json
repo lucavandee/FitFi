@@ -9,5 +9,5 @@
     "supabase/functions/_shared/**/*.ts",
     "scripts/keten/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist", ".netlify", "netlify"]
+  "exclude": ["node_modules", "dist", ".netlify", "netlify", "**/*.deno.test.ts"]
 }

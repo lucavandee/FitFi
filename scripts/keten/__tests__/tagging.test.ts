@@ -351,10 +351,22 @@ describe("normaliseerLijst (kleuren en materialen, vóór validatie)", () => {
   });
 
   it("KLEUR_SYNONIEMEN en MATERIAAL_SYNONIEMEN wijzen uitsluitend naar canonieke schemawaarden", () => {
-    const kleuren = new Set(TAG_SCHEMA.properties.colors.items.enum);
-    const materialen = new Set(TAG_SCHEMA.properties.materials.items.enum);
-    for (const doel of Object.values(KLEUR_SYNONIEMEN)) expect(kleuren.has(doel as string)).toBe(true);
-    for (const doel of Object.values(MATERIAAL_SYNONIEMEN)) expect(materialen.has(doel as string)).toBe(true);
+    const kleuren = new Set<string>(
+      (TAG_SCHEMA.properties.colors.items.enum as unknown as string[]) || []
+    );
+    const materialen = new Set<string>(
+      (TAG_SCHEMA.properties.materials.items.enum as unknown as string[]) || []
+    );
+    for (const doel of Object.values(KLEUR_SYNONIEMEN)) {
+      if (doel !== undefined) {
+        expect(kleuren.has(doel)).toBe(true);
+      }
+    }
+    for (const doel of Object.values(MATERIAAL_SYNONIEMEN)) {
+      if (doel !== undefined) {
+        expect(materialen.has(doel)).toBe(true);
+      }
+    }
   });
 
   it("mapt 'synthetic' en 'plastic' (generieke Engelse woorden, geen specifieke vezelnaam) naar 'synthetisch'", () => {

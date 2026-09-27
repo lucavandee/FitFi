@@ -21,17 +21,17 @@ export default defineConfig({
     // testuitslag, want je gaat erop bouwen.
     //
     // supabase/functions/** is Deno-gebied (taak 0, fixronde 3): die
-    // *.test.ts-bestanden gebruiken de globale Deno.test en horen niet in
+    // *.deno.test.ts-bestanden gebruiken de globale Deno.test en horen niet in
     // deze Node/Vitest-runner thuis. Vitest verzamelde
-    // supabase/functions/_shared/productClassifier.test.ts toch mee (het
+    // supabase/functions/_shared/productClassifier.deno.test.ts toch mee (het
     // matcht het standaard testbestand-patroon) en liet de hele suite rood
     // slaan op "ReferenceError: Deno is not defined". Draai die tests met
-    // `deno test --allow-read supabase/functions/_shared/productClassifier.test.ts`.
+    // `deno test --allow-read supabase/functions/_shared/productClassifier.deno.test.ts`.
     // Dit sluit alleen testbestanden voor vitest uit; het importeren van
     // gewone modules uit supabase/functions/ (zoals classifyProductRaw in
     // src/engine/__tests__/productClassifier.crossPlatform.test.ts) blijft
     // gewoon werken, want dat is geen testbestand-verzameling maar een
     // normale module-import.
-    exclude: [...configDefaults.exclude, "**/.claude/worktrees/**", "**/supabase/functions/**"],
+    exclude: [...configDefaults.exclude, "**/.claude/worktrees/**", "**/*.deno.test.ts"],
   },
 });

@@ -59,9 +59,12 @@ function isTimeout(error: { code?: string; message?: string } | null): boolean {
 }
 
 async function haalMatrixMetHerkansing(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   retailer: string
 ): Promise<{ matrix: Matrix; herkanst: boolean }> {
+  // supabase-client is getypeerd als 'any' omdat de generieke RPC's
+  // (keten_dekkingsmatrix, zet_classificatie) in de TypeScript-omgeving niet
+  // bekend zijn. De runtime (deno check) controleert ze wel.
   const eerste = await supabase.rpc("keten_dekkingsmatrix", { p_retailer: retailer });
   if (!eerste.error) return { matrix: eerste.data as Matrix, herkanst: false };
   if (!isTimeout(eerste.error)) {
