@@ -1,0 +1,10 @@
+/* Tokenbron. Hier mag een hex staan, want dit IS de definitie. */
+:root {
+  --ff-color-primary-100: #F4E8E3;
+  --ff-color-primary-500: #A85740;
+  --ff-color-primary-600: #9A503B;
+  --ff-color-succes: #3D8B5E;
+  /* ook een waarde die niet in het palet staat mag hier: statuskleuren,
+     neutralen en merkkleuren van derden horen op een plek te staan */
+  --ff-color-nova: #2B6AF3;
+}
