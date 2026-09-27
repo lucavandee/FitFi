@@ -1,5 +1,6 @@
 /* src/styles/tokens.css */
-/* FitFi vNext — Light/Neutral Beige — CANONIEK */
+/* FitFi tokenlaag. Enige plek waar een merkkleur als hex staat.
+   Primary = terracotta uit CLAUDE.md deel 2. Elders in CSS: var(--ff-color-*). */
 :root {
   /* Palet */
   --color-bg: #F7F3EC;
@@ -9,19 +10,19 @@
   --color-muted: #4A5568;       /* AA on --color-bg: 5.8:1 */
   --color-text-secondary: #3D4557; /* Small text on beige: ~7:1 — use when opacity tricks reduce contrast */
 
-  --color-primary: #A6886A;          /* brand taupe (semantisch) */
-  --ff-color-primary-25: #FAF8F5;    /* ultra light tint */
-  --ff-color-primary-50: #F6EFE9;    /* light background/card tints */
-  --ff-color-primary-100: #EDD9C8;   /* lighter backgrounds */
-  --ff-color-primary-200: #E0C9B3;   /* subtle borders */
-  --ff-color-primary-300: #CEB39A;   /* muted accents */
-  --ff-color-primary-400: #B89B82;   /* soft highlights */
-  --ff-color-primary-500: #A6886A;   /* base brand color */
-  --ff-color-primary-500-rgb: 166, 136, 106; /* RGB for opacity */
-  --ff-color-primary-600: #8F7459;   /* hover states */
-  --ff-color-primary-700: #7A614A;   /* active + CTA-bg (AA) */
-  --ff-color-primary-800: #5C4937;   /* dark accents */
-  --ff-color-primary-900: #3E3125;   /* darkest */
+  --color-primary: #A85740;          /* terracotta, zie CLAUDE.md deel 2 */
+  --ff-color-primary-25: #FBF7F6;    /* ultra light tint */
+  --ff-color-primary-50: #F9F0EC;    /* light background/card tints */
+  --ff-color-primary-100: #F4E8E3;   /* Terracotta Light uit CLAUDE.md */
+  --ff-color-primary-200: #E8C2B7;   /* subtle borders */
+  --ff-color-primary-300: #DBA292;   /* muted accents */
+  --ff-color-primary-400: #C97A64;   /* soft highlights */
+  --ff-color-primary-500: #A85740;   /* Terracotta uit CLAUDE.md (AA op wit: 5.12) */
+  --ff-color-primary-500-rgb: 168, 87, 64; /* RGB for opacity */
+  --ff-color-primary-600: #9A503B;   /* Terracotta Dark uit CLAUDE.md, hover (AA: 5.86) */
+  --ff-color-primary-700: #7D3E2C;   /* active + CTA-bg (AA: 8.08) */
+  --ff-color-primary-800: #5F3023;   /* dark accents */
+  --ff-color-primary-900: #42231A;   /* darkest */
 
   --color-accent: #D8CABA;
   --ff-color-accent-50: #F5F1EC;     /* light accent tints */
@@ -108,7 +109,7 @@
   --ff-color-neutral-900: #1C1917;
 
   /* Overlays */
-  --overlay-primary-12a: rgba(166, 136, 106, 0.12);
+  --overlay-primary-12a: rgba(168, 87, 64, 0.12);
   --overlay-accent-08a:  rgba(216, 202, 186, 0.10);
 
   /* ============ TOKENS: CTA (Start gratis) ============ */
@@ -156,7 +157,7 @@
 
   /* Shadows */
   --shadow-soft: 0 4px 24px rgba(30, 35, 51, 0.06);
-  --shadow-ring: 0 0 0 3px rgba(166, 136, 106, 0.20);
+  --shadow-ring: 0 0 0 3px rgba(168, 87, 64, 0.20);
 
   /* Typography fallback (Tailwind configureert Plus Jakarta Sans) */
   font-synthesis-weight: none;
