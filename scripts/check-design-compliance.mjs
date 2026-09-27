@@ -47,6 +47,20 @@ const PALET = new Set([
   '#000000',
 ]);
 
+// De tokenlaag moet de primaire kleuren uit CLAUDE.md deel 2 letterlijk dragen.
+// Dit is de drift die de audit van 17 september vond: tokens.css noemde zichzelf
+// CANONIEK met taupe #A6886A terwijl het document terracotta voorschrijft en de
+// code die 1448 keer met de hand intypte. Een poort die alleen .tsx leest kan dat
+// niet zien.
+// Op bestandsnaam, niet op volledig pad: anders is de regel niet met een fixture
+// te toetsen, en een regel zonder test is precies hoe de vorige poort verliep.
+const TOKEN_BRON = 'tokens.css';
+const TOKEN_VERPLICHT = [
+  { hex: '#a85740', rol: 'Terracotta (primair)' },
+  { hex: '#9a503b', rol: 'Terracotta Dark (hover)' },
+  { hex: '#f4e8e3', rol: 'Terracotta Light' },
+];
+
 // deel 5: geen andere radii
 const RADII_TOEGESTAAN = new Set(['rounded-xl', 'rounded-2xl', 'rounded-full', 'rounded-none']);
 
@@ -73,6 +87,7 @@ const CTA_VARIANTEN = [
 
 const violations = {
   kleurBuitenPalet: [],
+  tokenDrift: [],
   verbodenRadius: [],
   verbodenSchaduw: [],
   arbitraireSpacing: [],
@@ -81,7 +96,7 @@ const violations = {
 };
 
 // harde categorieen laten --strict falen, zachte zijn rapportage
-const HARD = ['kleurBuitenPalet', 'verbodenRadius', 'verbodenSchaduw', 'ctaVariant'];
+const HARD = ['kleurBuitenPalet', 'tokenDrift', 'verbodenRadius', 'verbodenSchaduw', 'ctaVariant'];
 
 let scannedFiles = 0;
 
@@ -284,6 +299,68 @@ function checkCtaTeksten(content, filePath) {
   }
 }
 
+
+/* ------------------------------------------------------------------ *
+ * CSS
+ * ------------------------------------------------------------------ */
+
+/**
+ * In CSS geldt een andere regel dan in TSX. CLAUDE.md schrijft in de componenten
+ * hex-klassen voor, maar een stylesheet hoort de kleur niet zelf te kennen.
+ *
+ * Toegestaan: een hex als WAARDE van een custom property (`--ff-color-x: #A85740`).
+ * Dat is een tokendefinitie, en die moet ergens staan.
+ * Niet toegestaan: een hex direct in een regel (`color: #A85740`), want dan staat
+ * dezelfde kleur op twee plekken en loopt er een uit de pas. Gebruik var().
+ *
+ * Deze regel is bewust niet aan een bestandsnaam opgehangen. Anders is de poort te
+ * omzeilen door een tweede tokenbestand aan te maken, wat precies is wat er met
+ * dark-mode.css gebeurd is.
+ */
+function checkCssKleuren(content, filePath) {
+  const regels = content.split('\n');
+  let inDeclaratie = false;   // binnen `--naam: ... ;` mag een hex staan
+  let offset = 0;
+
+  for (const regel of regels) {
+    const zonderCommentaar = regel.replace(/\/\*.*?\*\//g, '');
+
+    if (!inDeclaratie && /^\s*--[\w-]+\s*:/.test(zonderCommentaar)) {
+      inDeclaratie = true;
+    }
+
+    if (!inDeclaratie) {
+      const hexPattern = /#[0-9A-Fa-f]{3,8}\b/g;
+      let h;
+      while ((h = hexPattern.exec(zonderCommentaar)) !== null) {
+        const hex = normaliseerHex(h[0]);
+        if (!PALET.has(hex)) {
+          meld('kleurBuitenPalet', filePath, content, offset + h.index, h[0],
+            `${h[0]} staat rechtstreeks in een CSS-regel. Zet de kleur in tokens.css en verwijs met var()`);
+        }
+      }
+    }
+
+    if (inDeclaratie && zonderCommentaar.includes(';')) inDeclaratie = false;
+    offset += regel.length + 1;
+  }
+}
+
+/**
+ * De tokenbron zelf. Niet of hij hexen bevat, maar of hij de juiste draagt.
+ */
+function checkTokenBron(content, filePath) {
+  const aanwezig = new Set(
+    (content.match(/#[0-9A-Fa-f]{3,8}\b/g) || []).map(normaliseerHex),
+  );
+  for (const { hex, rol } of TOKEN_VERPLICHT) {
+    if (!aanwezig.has(hex)) {
+      meld('tokenDrift', filePath, content, 0, hex,
+        `${rol} ${hex.toUpperCase()} staat in CLAUDE.md deel 2 maar niet in de tokenlaag`);
+    }
+  }
+}
+
 /* ------------------------------------------------------------------ *
  * Bestanden verzamelen
  * ------------------------------------------------------------------ */
@@ -297,7 +374,7 @@ function getAllFiles(dir, files = []) {
       if (!['node_modules', 'dist', 'build', '.git', '__fixtures__'].includes(item)) {
         getAllFiles(fullPath, files);
       }
-    } else if (item.endsWith('.tsx') || item.endsWith('.ts')) {
+    } else if (item.endsWith('.tsx') || item.endsWith('.ts') || item.endsWith('.css')) {
       files.push(fullPath);
     }
   }
@@ -340,8 +417,13 @@ function getChangedFiles() {
     ...gitUit('git diff --name-only --diff-filter=ACMR HEAD').split('\n'),
   ].map(p => p.trim()).filter(Boolean));
 
+  // De tokenbron staat er altijd bij, ook als deze branch hem niet raakt. Drift
+  // ontstaat juist doordat niemand het bestand aanraakt; een poort die alleen
+  // gewijzigde bestanden leest zou de breuk van 17 september nooit gezien hebben.
+  paden.add('src/styles/tokens.css');
+
   return [...paden]
-    .filter(p => p.startsWith('src/') && (p.endsWith('.ts') || p.endsWith('.tsx')))
+    .filter(p => p.startsWith('src/') && (p.endsWith('.ts') || p.endsWith('.tsx') || p.endsWith('.css')))
     .filter(p => !p.includes('__fixtures__'))
     .map(p => join(projectRoot, p))
     .filter(p => { try { return statSync(p).isFile(); } catch { return false; } });
@@ -371,6 +453,21 @@ function scanFile(filePath) {
     const content = readFileSync(filePath, 'utf-8');
     scannedFiles++;
     regelFilter = CHANGED_ONLY && basisRef ? gewijzigdeRegels(relative(projectRoot, filePath)) : null;
+
+    if (filePath.endsWith('.css')) {
+      // De Tailwind-klassechecks slaan op CSS nergens op; alleen de kleurregel geldt.
+      checkCssKleuren(content, filePath);
+      // De tokenbron wordt altijd volledig getoetst, ook in --changed-modus:
+      // drift ontstaat juist doordat niemand naar het bestand kijkt.
+      if (filePath.endsWith('/' + TOKEN_BRON)) {
+        const bewaard = regelFilter;
+        regelFilter = null;
+        checkTokenBron(content, filePath);
+        regelFilter = bewaard;
+      }
+      return;
+    }
+
     checkKleuren(content, filePath);
     checkRadii(content, filePath);
     checkSchaduwen(content, filePath);
@@ -388,6 +485,7 @@ function scanFile(filePath) {
 
 const CATEGORIEEN = [
   { key: 'kleurBuitenPalet', naam: 'Kleur buiten het palet', emoji: '🎨' },
+  { key: 'tokenDrift', naam: 'Tokenlaag wijkt af van CLAUDE.md', emoji: '🧩' },
   { key: 'verbodenRadius', naam: 'Verboden border-radius', emoji: '⬜' },
   { key: 'verbodenSchaduw', naam: 'Verboden schaduw', emoji: '🌑' },
   { key: 'ctaVariant', naam: 'Variatie op een vaste CTA-tekst', emoji: '🔤' },
@@ -444,7 +542,7 @@ function printResults() {
 
   if (STRICT) {
     if (hardTotaal > 0) {
-      console.log(`Poort dicht: ${hardTotaal} harde overtredingen (kleur, radius, schaduw, CTA-tekst).`);
+      console.log(`Poort dicht: ${hardTotaal} harde overtredingen (kleur, tokenlaag, radius, schaduw, CTA-tekst).`);
       console.log('Zachte overtredingen (spacing, font-size) laten de poort open.\n');
       process.exit(1);
     }

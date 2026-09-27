@@ -81,4 +81,43 @@ describe("design-system checker", () => {
         .reduce((n, [, v]) => n + v.length, 0),
     );
   });
+  it("laat een stylesheet met var() met rust en vlagt een hex in een regel", () => {
+    const goed = draai("css-conform");
+    expect(goed.scannedFiles).toBe(2);
+    expect(Object.values(goed.violations).flat()).toEqual([]);
+
+    const fout = draai("css-afwijkend");
+    expect(fout.violations.kleurBuitenPalet.map((v) => v.match)).toContain("#FF00FF");
+    expect(fout.violations.kleurBuitenPalet.map((v) => v.match)).toContain("#123456");
+  });
+
+  it("rekent een hex als waarde van een custom property niet als overtreding", () => {
+    // De tokenbron moet de kleur ergens kennen, anders bestaat er geen tokenlaag.
+    // Dat geldt ook voor waarden buiten het palet: statuskleuren en de Nova-blauw
+    // horen juist op een plek te staan in plaats van verspreid door de regels.
+    const r = draai("css-conform");
+    const inTokens = r.violations.kleurBuitenPalet.filter((v) => v.file.endsWith("tokens.css"));
+    expect(inTokens).toEqual([]);
+  });
+
+  it("ziet dat de tokenlaag van CLAUDE.md is weggedreven", () => {
+    // Dit is de breuk uit de audit van 17 september: tokens.css noemde zichzelf
+    // CANONIEK met taupe terwijl CLAUDE.md deel 2 terracotta voorschrijft. Een
+    // poort die alleen .tsx leest kan dat per definitie niet zien.
+    const fout = draai("css-afwijkend");
+    const gemist = fout.violations.tokenDrift.map((v) => v.match);
+    expect(gemist).toContain("#a85740");
+    expect(gemist).toContain("#9a503b");
+    expect(gemist).toContain("#f4e8e3");
+
+    const goed = draai("css-conform");
+    expect(goed.violations.tokenDrift).toEqual([]);
+  });
+
+  it("rekent tokendrift als hard, want een stille tokenlaag is de duurste fout", () => {
+    const fout = draai("css-afwijkend");
+    expect(fout.hardTotaal).toBe(
+      fout.violations.kleurBuitenPalet.length + fout.violations.tokenDrift.length,
+    );
+  });
 });
