@@ -67,7 +67,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
       setShowLinkInput(false);
       
       toast.custom((
-        <div className="bg-white rounded-xl shadow-lg p-4 flex items-center space-x-3">
+        <div className="bg-white rounded-xl shadow-xl p-4 flex items-center space-x-3">
           <div className="text-green-600">🎯</div>
           <span>Challenge submission succesvol!</span>
           <ToastXp amount={15} />
@@ -203,7 +203,7 @@ export const ChallengeDetail: React.FC<ChallengeDetailProps> = ({
                 
                 {/* Image Preview */}
                 {imageUrl && (
-                  <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+                  <div className="w-24 h-24 rounded-xl overflow-hidden border border-gray-200">
                     <ImageWithFallback
                       src={imageUrl}
                       alt="Preview"
