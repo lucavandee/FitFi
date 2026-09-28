@@ -55,6 +55,12 @@
  *    van 27 september gaf bij de volledige foutmelding als herkansingsfout
  *    zes outfits met lege items-arrays terug, een overduidelijk slechter
  *    antwoord dan de eerste poging.
+ *    FIX 5 vervolg (coordinator-fixronde op de eigen zorgen van de herreview,
+ *    28 sept 2026): een overtreding van het herhalingsplafond (valideerSet,
+ *    regel 3 uitbreiding, MAX_HERHALINGEN_PER_PRODUCT) krijgt dezelfde
+ *    behandeling: `vindOverPlafondProductIds` geeft de kale product-ids
+ *    terug, de herkansing noemt per id hoe vaak het maximaal mag, niet de
+ *    outfit-indices van de volledige melding.
  * 5. Wegschrijven met `keten_schrijf_outfit_set`, inclusief latency_ms en de
  *    tokens uit het CLI-antwoord (`usage.input_tokens`/`usage.output_tokens`),
  *    als die er zijn.
@@ -102,7 +108,13 @@ import {
   STYLIST_VERSION,
 } from "../../supabase/functions/_shared/stylist-prompt.ts";
 import { valideerOutfits } from "../../supabase/functions/_shared/valideer-outfits.ts";
-import { toetsKandidatenpool, valideerSet, vindDubbeleProductIds } from "../../supabase/functions/_shared/valideer-set.ts";
+import {
+  MAX_HERHALINGEN_PER_PRODUCT,
+  toetsKandidatenpool,
+  valideerSet,
+  vindDubbeleProductIds,
+  vindOverPlafondProductIds,
+} from "../../supabase/functions/_shared/valideer-set.ts";
 import {
   legeAssen,
   type Assen,
@@ -623,13 +635,24 @@ async function verwerkProfiel(
     // concrete instructie ze niet te hergebruiken, en de rest van de
     // foutmeldingen (andere regels, wel met zinvolle inhoud voor een verse
     // poging) ongemoeid laten.
+    // FIX 5 vervolg (coordinator-fixronde, 28 sept 2026): een overtreding van
+    // het herhalingsplafond (regel 3 uitbreiding, MAX_HERHALINGEN_PER_PRODUCT)
+    // krijgt exact dezelfde behandeling en om dezelfde reden: de volledige
+    // controleerMaxHerhalingen-melding noemt ook outfit-indices.
     const dubbeleIds = vindDubbeleProductIds(geldig);
-    const overigeFouten = alleFouten.filter((f) => !f.includes("komt twee keer voor in de set"));
+    const overPlafondIds = vindOverPlafondProductIds(geldig);
+    const overigeFouten = alleFouten.filter(
+      (f) => !f.includes("komt twee keer voor in de set") && !f.includes("meer dan het plafond van")
+    );
     const herkansingsFouten = [
       ...overigeFouten,
       ...dubbeleIds.map(
         (id) =>
           `product-id ${id} mag maar in een outfit van de set voorkomen; vervang het in de andere outfit(s) door een ander kandidaat-product uit dezelfde categorie`
+      ),
+      ...overPlafondIds.map(
+        (id) =>
+          `product-id ${id} komt te vaak voor (mag hoogstens ${MAX_HERHALINGEN_PER_PRODUCT} keer in de set); vervang het in een deel van de andere outfit(s) door een ander kandidaat-product uit dezelfde categorie`
       ),
     ];
 

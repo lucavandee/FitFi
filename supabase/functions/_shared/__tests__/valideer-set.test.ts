@@ -5,6 +5,7 @@ import {
   toetsKandidatenpool,
   valideerSet,
   vindDubbeleProductIds,
+  vindOverPlafondProductIds,
 } from '../valideer-set.ts';
 import type { Categorie, Gelegenheid, Kandidaat, ProductAttrs, RuwProduct, StylistOutfit } from '../keten-types.ts';
 
@@ -362,6 +363,56 @@ describe('vindDubbeleProductIds (fixronde 1, eis 2; beperkt tot top/dress sinds 
   it('fix 3: een footwear die in alle outfits voorkomt telt niet mee', () => {
     const outfits = Array.from({ length: 6 }, (_, i) => outfit('work', [`top${i}`, `bottom${i}`, 'schoen-gedeeld']));
     expect(vindDubbeleProductIds(outfits)).toEqual([]);
+  });
+});
+
+describe('vindOverPlafondProductIds (FIX 5 vervolg, coordinator-fixronde 28 sept 2026)', () => {
+  // Analoog aan vindDubbeleProductIds hierboven, maar voor het plafond
+  // (MAX_HERHALINGEN_PER_PRODUCT) op de rollen ZONDER uniciteitseis. Zelfde
+  // reden: het vulscript heeft voor zijn herkansingsprompt alleen de kale
+  // lijst product-ids nodig, geen outfit-indices.
+  it('geeft een lege lijst als geen enkel product over het plafond gaat', () => {
+    expect(vindOverPlafondProductIds(zesGeldigeOutfits())).toEqual([]);
+  });
+
+  it('is nog leeg precies op de grens (MAX_HERHALINGEN_PER_PRODUCT keer)', () => {
+    const outfits = Array.from({ length: 6 }, (_, i) =>
+      outfit('work', [`top${i}`, `bottom${i}`, i < MAX_HERHALINGEN_PER_PRODUCT ? 'schoen-gedeeld' : `schoen${i}`])
+    );
+    expect(vindOverPlafondProductIds(outfits)).toEqual([]);
+  });
+
+  it('vindt een footwear die vaker dan het plafond voorkomt', () => {
+    const outfits = Array.from({ length: 6 }, (_, i) =>
+      outfit('work', [`top${i}`, `bottom${i}`, i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'schoen-gedeeld' : `schoen${i}`])
+    );
+    expect(vindOverPlafondProductIds(outfits)).toEqual(['schoen-gedeeld']);
+  });
+
+  it('vindt meerdere onafhankelijke overtredingen tegelijk (bottom en footwear)', () => {
+    const outfits = Array.from({ length: 6 }, (_, i) =>
+      outfit('work', [
+        `top${i}`,
+        i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'bottom-gedeeld' : `bottom${i}`,
+        i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'schoen-gedeeld' : `schoen${i}`,
+      ])
+    );
+    expect(vindOverPlafondProductIds(outfits).sort()).toEqual(['bottom-gedeeld', 'schoen-gedeeld']);
+  });
+
+  it('geeft elke overtredende id maar een keer terug, niet een keer per overtreding erboven', () => {
+    // Vier outfits delen dezelfde schoen: dat is een keer over het plafond
+    // (drie is het maximum), niet meerdere overtredingen voor hetzelfde id.
+    const outfits = Array.from({ length: 6 }, (_, i) =>
+      outfit('work', [`top${i}`, `bottom${i}`, i < 4 ? 'schoen-gedeeld' : `schoen${i}`])
+    );
+    expect(vindOverPlafondProductIds(outfits)).toEqual(['schoen-gedeeld']);
+  });
+
+  it('een dubbele top telt niet mee: die heeft zijn eigen regel (vindDubbeleProductIds), niet het plafond', () => {
+    const outfits = zesGeldigeOutfits();
+    outfits[3] = outfit('work', ['top0', 'bottom3', 'schoen3']);
+    expect(vindOverPlafondProductIds(outfits)).toEqual([]);
   });
 });
 

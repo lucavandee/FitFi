@@ -47,9 +47,21 @@
  * valideer-set.ts). Zonder dat plafond in de prompt zou het model niet weten
  * dat het bestaat en zouden herkansingen betaald worden op een regel die
  * nergens stond: dezelfde les als bij regel 9 en 10 (fix 2).
+ *
+ * FIX 5 vervolg (coordinator-fixronde op de eigen zorgen van de herreview,
+ * 28 sept 2026): VEREIST_AANTAL_OUTFITS en MAX_HERHALINGEN_PER_PRODUCT
+ * (valideer-set.ts) staan hieronder als geïmporteerde constante, niet als
+ * overgetikt getal. Eerder stond "zes"/"drie" letterlijk in de prompttekst,
+ * hand-gesynchroniseerd via commentaar zoals de rest van dit bestand met
+ * valideer-outfits.ts. Dat getal stond zo op VIER plekken in dit bestand
+ * (regel 2, regel 5, de herkansingszin en de slotzin van
+ * bouwGebruikersPrompt): precies het driftrisico waar dit bestand zelf al
+ * voor waarschuwt bij regel 9 en 10. Een wijziging aan een van beide
+ * constanten neemt de prompt nu vanzelf mee.
  */
 import type { Gelegenheid, Kandidaat, TasteProfileInput } from './keten-types.ts';
 import { AS_NAMEN, CATEGORIEEN, STYLIST_VERSION } from './keten-types.ts';
+import { MAX_HERHALINGEN_PER_PRODUCT, VEREIST_AANTAL_OUTFITS } from './valideer-set.ts';
 
 // Re-export zodat bestaande imports van STYLIST_VERSION uit dit bestand
 // (scripts/keten/stylist-vul-cache.ts, de eigen test van dit bestand)
@@ -105,10 +117,10 @@ export function bouwSysteemPrompt(): string {
     '',
     'Regels:',
     '1. Gebruik alleen product_ids uit de kandidatenlijst. Verzin geen ids en gebruik elk id in de rol die bij zijn categorie hoort.',
-    '2. Lever precies zes outfits.',
+    `2. Lever precies ${VEREIST_AANTAL_OUTFITS} outfits.`,
     '3. Elke outfit is compleet: top + bottom + footwear, of dress + footwear. Outerwear en accessory zijn optioneel en komen hooguit een keer per outfit voor. Nooit een dress samen met een top of bottom.',
     '4. Elke gelegenheid uit het profiel komt minstens een keer voor als occasion.',
-    '5. Geen twee outfits met dezelfde top of dezelfde dress. Elke andere rol (bottom, footwear, outerwear, accessory) mag wel herhalen, maar hetzelfde product komt in niet meer dan drie van de zes outfits voor.',
+    `5. Geen twee outfits met dezelfde top of dezelfde dress. Elke andere rol (bottom, footwear, outerwear, accessory) mag wel herhalen, maar hetzelfde product komt in niet meer dan ${MAX_HERHALINGEN_PER_PRODUCT} van de ${VEREIST_AANTAL_OUTFITS} outfits voor.`,
     '6. Geen twee outfits met precies dezelfde items.',
     '7. Elk item valt binnen het budget per stuk.',
     '8. Gebruik nooit een afgewezen item.',
@@ -205,11 +217,11 @@ export function bouwGebruikersPrompt(
   if (vorigeFouten.length > 0) {
     delen.push('');
     delen.push('## Fouten in de vorige poging');
-    delen.push('Je vorige antwoord had deze fouten. Lever zes nieuwe outfits zonder deze fouten:');
+    delen.push(`Je vorige antwoord had deze fouten. Lever ${VEREIST_AANTAL_OUTFITS} nieuwe outfits zonder deze fouten:`);
     delen.push(vorigeFouten.map((f) => `- ${f}`).join('\n'));
   }
 
   delen.push('');
-  delen.push(`Stel nu zes outfits samen en lever ze via ${TOOL_NAAM}.`);
+  delen.push(`Stel nu ${VEREIST_AANTAL_OUTFITS} outfits samen en lever ze via ${TOOL_NAAM}.`);
   return delen.join('\n');
 }

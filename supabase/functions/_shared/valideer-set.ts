@@ -49,6 +49,19 @@
  *   allebei genoeg unieke kandidaten nodig om dat plafond te halen, niet
  *   meer voldoende met een enkele kandidaat die vrij herhaalt.
  *
+ * FIX 5 vervolg (coordinator-fixronde op de eigen zorgen van de eerste
+ * herreview, 28 sept 2026, nog steeds vóór de eerste echte vulronde):
+ * - vindOverPlafondProductIds is nieuw, analoog aan vindDubbeleProductIds:
+ *   het vulscript kreeg voor een plafond-overtreding tot nu toe de volledige
+ *   controleerMaxHerhalingen-foutmelding (met outfit-indices) als
+ *   herkansingsfout, dezelfde vorm die bij de top/dress-regel al eens een
+ *   compleet leeg antwoord opleverde. vindOverPlafondProductIds geeft de
+ *   kale lijst product-ids terug zodat stylist-vul-cache.ts daar dezelfde
+ *   korte, gerichte herkansingsinstructie van kan maken.
+ * - stylist-prompt.ts importeert VEREIST_AANTAL_OUTFITS en
+ *   MAX_HERHALINGEN_PER_PRODUCT nu rechtstreeks uit dit bestand in plaats van
+ *   ze als los getal over te tikken: zie het commentaar daar.
+ *
  * Puur, zonder Deno- of browser-globals: vitest, Deno en het vulscript
  * (scripts/keten/stylist-vul-cache.ts) importeren dit bestand ongewijzigd.
  *
@@ -249,6 +262,36 @@ export function vindDubbeleProductIds(outfits: StylistOutfit[]): string[] {
     }
   }
   return [...dubbel];
+}
+
+/**
+ * Product-ids die vaker dan MAX_HERHALINGEN_PER_PRODUCT voorkomen in een rol
+ * ZONDER uniciteitseis (bottom, footwear, outerwear, accessory). Analoog aan
+ * vindDubbeleProductIds hierboven, zelfde reden en dezelfde meting (FIX 5
+ * vervolg, coordinator-fixronde 28 sept 2026, op de eigen zorg uit de
+ * herreview): controleerMaxHerhalingen bouwt een leesbare foutmelding MET
+ * outfit-indices, bedoeld voor een mens die de hele set ziet. Het vulscript
+ * heeft voor zijn herkansingsprompt alleen de kale lijst product-ids nodig:
+ * elke `claude -p`-poging is een verse, geheugenloze sessie, dus een
+ * verwijzing naar "outfit 2" is daar zinloos. Zonder deze functie zou een
+ * plafond-overtreding als volle foutmelding met outfit-indices in de
+ * herkansingsprompt belanden, precies de vorm die bij de top/dress-regel al
+ * een keer een compleet leeg antwoord opleverde (zie het commentaar bij
+ * vindDubbeleProductIds).
+ */
+export function vindOverPlafondProductIds(outfits: StylistOutfit[]): string[] {
+  const aantalPerProduct = new Map<string, number>();
+  for (const outfit of outfits) {
+    for (const item of outfit.items) {
+      if (ROLLEN_MET_UNIEKHEIDSEIS.includes(item.role)) continue;
+      aantalPerProduct.set(item.product_id, (aantalPerProduct.get(item.product_id) ?? 0) + 1);
+    }
+  }
+  const overPlafond: string[] = [];
+  for (const [productId, aantal] of aantalPerProduct) {
+    if (aantal > MAX_HERHALINGEN_PER_PRODUCT) overPlafond.push(productId);
+  }
+  return overPlafond;
 }
 
 export interface PoolToetsResultaat {

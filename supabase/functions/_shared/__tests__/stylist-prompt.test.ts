@@ -7,6 +7,7 @@ import {
   bouwToolSchema,
 } from '../stylist-prompt.ts';
 import { legeAssen, type Kandidaat, type TasteProfileInput } from '../keten-types.ts';
+import { MAX_HERHALINGEN_PER_PRODUCT, VEREIST_AANTAL_OUTFITS } from '../valideer-set.ts';
 
 function alleObjectenStrikt(schema: unknown): boolean {
   if (typeof schema !== 'object' || schema === null) return true;
@@ -96,21 +97,31 @@ describe('prompts', () => {
     expect(TOOL_NAAM).toBe('lever_outfits');
   });
 
-  it('systeemprompt is Nederlands en noemt de tool en de zes-outfits-eis', () => {
+  it('systeemprompt is Nederlands en noemt de tool en de outfits-eis (VEREIST_AANTAL_OUTFITS, niet overgetikt)', () => {
     const s = bouwSysteemPrompt();
     expect(s).toContain('lever_outfits');
-    expect(s).toContain('zes outfits');
+    expect(s).toContain(`${VEREIST_AANTAL_OUTFITS} outfits`);
     expect(s).toContain('je en jij');
   });
 
-  it('systeemprompt noemt het plafond van drie herhalingen per product (FIX 5, herreview plan 3, bevinding 2)', () => {
+  it('systeemprompt noemt het plafond van MAX_HERHALINGEN_PER_PRODUCT herhalingen per product (FIX 5, herreview plan 3, bevinding 2), geïnterpoleerd niet overgetikt', () => {
     // Zonder dit in de prompt weet het model niet dat valideerSet (regel 3
     // uitbreiding, MAX_HERHALINGEN_PER_PRODUCT) dit afdwingt, en betalen we
     // voor herkansingen op een regel die nergens stond (dezelfde les als bij
-    // regel 9 en 10, fix 2).
+    // regel 9 en 10, fix 2). Geïnterpoleerd vanuit de constante (coordinator-
+    // fixronde 28 sept 2026): deze test faalt als de prompttekst ooit weer
+    // een overgetikt getal wordt in plaats van de constante.
     const s = bouwSysteemPrompt();
     expect(s).toContain('dezelfde top of dezelfde dress');
-    expect(s).toContain('niet meer dan drie van de zes outfits');
+    expect(s).toContain(`niet meer dan ${MAX_HERHALINGEN_PER_PRODUCT} van de ${VEREIST_AANTAL_OUTFITS} outfits`);
+  });
+
+  it('gebruikersprompt (herkansing en slotzin) gebruikt VEREIST_AANTAL_OUTFITS, niet een overgetikt getal', () => {
+    const p1 = bouwGebruikersPrompt(profiel, [kandidaat], []);
+    expect(p1).toContain(`Stel nu ${VEREIST_AANTAL_OUTFITS} outfits samen`);
+
+    const p2 = bouwGebruikersPrompt(profiel, [kandidaat], ['outfit 2: buiten budget: x kost 400']);
+    expect(p2).toContain(`Lever ${VEREIST_AANTAL_OUTFITS} nieuwe outfits zonder deze fouten`);
   });
 
   it('gebruikersprompt bevat feiten, assen, voorbeelden en elke kandidaat', () => {
