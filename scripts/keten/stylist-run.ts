@@ -24,19 +24,12 @@
  *   `{ supabase }`: geen functionsUrl en geen anonKey meer nodig, want er is
  *   geen fetch naar een edge function meer.
  *
- * Zorg (niet stilzwijgend opgelost, zie het rapport van deze taak): de assen
- * per stijlvoorkeur hieronder (ASSEN_PER_STYLE) zijn een LETTERLIJKE kopie
- * van STYLE_ASSEN in stylist-vul-cache.ts, met opzet, niet toevallig
- * hetzelfde. profileHash (src/keten/profileHash.ts) hasht naam, waarde en
- * afgeronde confidence van elke as; twee tabellen die ogenschijnlijk
- * hetzelfde stijlprofiel beschrijven maar in cijfers verschillen (zoals de
- * plantekst van deze taak voorstelde: bijvoorbeeld silhouette 'regular' hier
- * tegenover 'slim' in het vulscript) geven een ANDERE profile_hash. Dit
- * harnas zou dan nooit een cache-hit kunnen bewijzen, ook niet voor het ene
- * profiel dat wel gevuld is. Blijft dit bestand en STYLE_ASSEN in
- * stylist-vul-cache.ts los van elkaar bestaan, dan moeten ze bij elke
- * wijziging samen mee; zie het rapport voor het voorstel om dit in een
- * volgende taak tot een echte, gedeelde bron te maken.
+ * De assen per stijlvoorkeur (STYLE_ASSEN, hieronder geimporteerd) komen uit
+ * src/keten/personas.ts, dezelfde bron als scripts/keten/stylist-vul-cache.ts
+ * gebruikt om de cache te vullen. profileHash (src/keten/profileHash.ts)
+ * hasht per as de naam, de waarde en de afgeronde confidence; met een enkele
+ * bron kunnen dit harnas en het vulscript niet meer onder een verschillende
+ * sleutel voor hetzelfde stijlprofiel komen.
  *
  * Gebruik:
  *   npx vite-node --script scripts/keten/stylist-run.ts
@@ -61,8 +54,8 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { composeVoorProfiel, type ComposeResultaat, type KetenConfig } from "../../src/keten/composeClient";
-import { KETEN_PERSONAS, type KetenPersona } from "../../src/keten/personas";
-import { legeAssen, type Assen, type Gelegenheid, type TasteProfileInput } from "../../src/keten/types";
+import { KETEN_PERSONAS, STYLE_ASSEN, type KetenPersona } from "../../src/keten/personas";
+import { legeAssen, type Gelegenheid, type TasteProfileInput } from "../../src/keten/types";
 import { leesVlag } from "./args";
 import { leesDotEnv } from "./env";
 import { controleerOutfitSet, zelfdeOutfits } from "./stylist-controles";
@@ -102,55 +95,13 @@ function persona(
   };
 }
 
-/**
- * Assen per stijlvoorkeur: LETTERLIJKE kopie van STYLE_ASSEN in
- * scripts/keten/stylist-vul-cache.ts (regel 210-244 op het moment van
- * schrijven). Zie de zorg bovenaan dit bestand: dit moet exact gelijk
- * blijven aan die tabel, anders hasht dit harnas een ander profiel dan het
- * vulscript heeft geschreven en kan geen enkele cache-hit ooit slagen.
- */
-const ASSEN_PER_STYLE: Record<string, Partial<Assen>> = {
-  classic: {
-    formality: { value: 4, confidence: 0.8 },
-    silhouette: { value: "regular", confidence: 0.8 },
-    color_temp: { value: "koel", confidence: 0.6 },
-    lightness: { value: "donker", confidence: 0.6 },
-    pattern: { value: "effen", confidence: 0.8 },
-    shoe_type: { value: "net", confidence: 0.8 },
-  },
-  minimalist: {
-    formality: { value: 3, confidence: 0.7 },
-    silhouette: { value: "slim", confidence: 0.7 },
-    color_temp: { value: "neutraal", confidence: 0.7 },
-    lightness: { value: "medium", confidence: 0.6 },
-    pattern: { value: "effen", confidence: 0.9 },
-    shoe_type: { value: "net", confidence: 0.6 },
-  },
-  streetwear: {
-    formality: { value: 2, confidence: 0.8 },
-    silhouette: { value: "oversized", confidence: 0.8 },
-    color_temp: { value: "koel", confidence: 0.5 },
-    lightness: { value: "donker", confidence: 0.5 },
-    pattern: { value: "statement", confidence: 0.7 },
-    shoe_type: { value: "sneaker", confidence: 0.9 },
-  },
-  romantic: {
-    formality: { value: 3, confidence: 0.6 },
-    silhouette: { value: "relaxed", confidence: 0.6 },
-    color_temp: { value: "warm", confidence: 0.7 },
-    lightness: { value: "licht", confidence: 0.6 },
-    pattern: { value: "subtiel", confidence: 0.6 },
-    shoe_type: { value: "sandaal", confidence: 0.6 },
-  },
-};
-
 function personaVanKanoniek(p: KetenPersona): Persona {
   return persona(p.naam, {
     gender: p.gender,
     occasions: p.occasions as Gelegenheid[],
     budget_min: p.budget_min,
     budget_max: p.budget_max,
-    axes: { ...legeAssen(), ...ASSEN_PER_STYLE[p.stylePreferences[0]] },
+    axes: { ...legeAssen(), ...STYLE_ASSEN[p.stylePreferences[0]] },
   });
 }
 
@@ -158,18 +109,19 @@ const MINIMALISTISCH = KETEN_PERSONAS.find((p) => p.naam === "vrouw minimalistis
 if (!MINIMALISTISCH) {
   throw new Error('KETEN_PERSONAS mist "vrouw minimalistisch", nodig voor het vijfde (halve-set) profiel.');
 }
-const MINIMALIST_ASSEN = ASSEN_PER_STYLE.minimalist;
+const MINIMALIST_ASSEN = STYLE_ASSEN.minimalist;
 
 /**
  * Vijfde profiel: geen spec-persona, bootst na wat een echte bezoeker na 6
- * tot 12 paren aflevert (plan 3, keuze 3). LETTERLIJKE kopie van
- * onzekerProfiel() in stylist-vul-cache.ts, om dezelfde reden als
- * ASSEN_PER_STYLE hierboven: formality, silhouette en shoe_type onbekend
- * (value null, confidence 0), color_temp, lightness en pattern met de
- * waarden van de "minimalist"-stijl maar op een lage zekerheid (0.25, onder
- * de 0.5-knip uit spec 5.2 die "onzeker" markeert). Bewijst dat de stylist
- * ook met dunne invoer zes geldige outfits levert, of anders zichtbaar naar
- * het noodpad valt.
+ * tot 12 paren aflevert (plan 3, keuze 3). Zelfde vorm als onzekerProfiel()
+ * in stylist-vul-cache.ts (formality, silhouette en shoe_type onbekend,
+ * value null, confidence 0; color_temp, lightness en pattern met de waarden
+ * van de "minimalist"-stijl op een lage zekerheid, 0.25, onder de
+ * 0.5-knip uit spec 5.2 die "onzeker" markeert), maar hier apart
+ * gedefinieerd: het is een harnas-controle, geen cache-data, en leest zijn
+ * waarden af van STYLE_ASSEN.minimalist hierboven, niet van een eigen
+ * overgetypte kopie. Bewijst dat de stylist ook met dunne invoer zes geldige
+ * outfits levert, of anders zichtbaar naar het noodpad valt.
  */
 function halveSetProfiel(): Persona {
   return persona("vrouw minimalistisch halve set", {

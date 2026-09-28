@@ -98,7 +98,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { heeftVlag, leesVlag } from "./args";
 import { leesEnv } from "./env";
 import { bouwClaudeArgs, parseJsonUitCliTekst, voerClaudeCliUit, type ClaudeCliResultaat } from "./tagCli";
-import { KETEN_PERSONAS, type KetenPersona } from "../../src/keten/personas";
+import { KETEN_PERSONAS, STYLE_ASSEN, type KetenPersona } from "../../src/keten/personas";
 import { prijsbandVanMidden, profileHash } from "../../src/keten/profileHash";
 import { outfitKey } from "../../src/services/ratings/outfitRatings";
 import {
@@ -197,50 +197,6 @@ const BAND_BEREIK: Record<string, { min: number; max: number }> = {
 // ---------------------------------------------------------------------------
 // Standaardprofielen
 // ---------------------------------------------------------------------------
-
-/**
- * Vaste assen per stijlvoorkeur, alleen voor dit vulscript. De echte
- * keuze-afleiding (pair_sets) komt in plan 4; tot dan dragen de vier
- * KETEN_PERSONAS hun axes direct (keuze 3, plan-3-stylist.md). Waarden uit de
- * echte taggerwoordenlijst (scripts/keten/tagging.ts: SILHOUETTES,
- * COLOR_TEMPS, LIGHTNESS, PATTERNS, SHOE_TYPES) zodat get_kandidaten er ook
- * daadwerkelijk op kan scoren. Met de hand gekozen, geen meting: vandaar hier
- * expliciet genoemd in plaats van stilzwijgend aangenomen.
- */
-const STYLE_ASSEN: Record<string, Partial<Assen>> = {
-  classic: {
-    formality: { value: 4, confidence: 0.8 },
-    silhouette: { value: "regular", confidence: 0.8 },
-    color_temp: { value: "koel", confidence: 0.6 },
-    lightness: { value: "donker", confidence: 0.6 },
-    pattern: { value: "effen", confidence: 0.8 },
-    shoe_type: { value: "net", confidence: 0.8 },
-  },
-  minimalist: {
-    formality: { value: 3, confidence: 0.7 },
-    silhouette: { value: "slim", confidence: 0.7 },
-    color_temp: { value: "neutraal", confidence: 0.7 },
-    lightness: { value: "medium", confidence: 0.6 },
-    pattern: { value: "effen", confidence: 0.9 },
-    shoe_type: { value: "net", confidence: 0.6 },
-  },
-  streetwear: {
-    formality: { value: 2, confidence: 0.8 },
-    silhouette: { value: "oversized", confidence: 0.8 },
-    color_temp: { value: "koel", confidence: 0.5 },
-    lightness: { value: "donker", confidence: 0.5 },
-    pattern: { value: "statement", confidence: 0.7 },
-    shoe_type: { value: "sneaker", confidence: 0.9 },
-  },
-  romantic: {
-    formality: { value: 3, confidence: 0.6 },
-    silhouette: { value: "relaxed", confidence: 0.6 },
-    color_temp: { value: "warm", confidence: 0.7 },
-    lightness: { value: "licht", confidence: 0.6 },
-    pattern: { value: "subtiel", confidence: 0.6 },
-    shoe_type: { value: "sandaal", confidence: 0.6 },
-  },
-};
 
 function slug(naam: string): string {
   return naam
