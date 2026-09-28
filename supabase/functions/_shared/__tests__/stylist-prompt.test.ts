@@ -103,6 +103,16 @@ describe('prompts', () => {
     expect(s).toContain('je en jij');
   });
 
+  it('systeemprompt noemt het plafond van drie herhalingen per product (FIX 5, herreview plan 3, bevinding 2)', () => {
+    // Zonder dit in de prompt weet het model niet dat valideerSet (regel 3
+    // uitbreiding, MAX_HERHALINGEN_PER_PRODUCT) dit afdwingt, en betalen we
+    // voor herkansingen op een regel die nergens stond (dezelfde les als bij
+    // regel 9 en 10, fix 2).
+    const s = bouwSysteemPrompt();
+    expect(s).toContain('dezelfde top of dezelfde dress');
+    expect(s).toContain('niet meer dan drie van de zes outfits');
+  });
+
   it('gebruikersprompt bevat feiten, assen, voorbeelden en elke kandidaat', () => {
     const p = bouwGebruikersPrompt(profiel, [kandidaat], []);
     expect(p).toContain('Budget per stuk: 50 tot 150 euro');

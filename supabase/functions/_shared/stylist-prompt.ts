@@ -37,11 +37,16 @@
  *   "beweringen die niet uit zijn keuzes volgen" zijn niet gecontroleerd: dat
  *   vraagt om tekstbegrip, niet om een patroonmatch.
  * Regel 2 (precies zes outfits), regel 4 (elke gelegenheid minstens een keer)
- * en regel 5 (geen twee outfits met dezelfde top of dezelfde dress) worden
- * NIET door valideerOutfits() afgedwongen: die functie beoordeelt elke outfit
- * op zichzelf en kent de rest van de set niet. Dat is geen inconsistentie in
- * deze taak, maar een gat tussen taak 4 en taak 6: valideerSet (taak 6b) dekt
- * die drie set-brede regels.
+ * en regel 5 (geen twee outfits met dezelfde top of dezelfde dress, en sinds
+ * de herreview van plan 3, 28 sept 2026: elke andere rol maximaal drie keer)
+ * worden NIET door valideerOutfits() afgedwongen: die functie beoordeelt elke
+ * outfit op zichzelf en kent de rest van de set niet. Dat is geen
+ * inconsistentie in deze taak, maar een gat tussen taak 4 en taak 6:
+ * valideerSet (taak 6b) dekt die drie set-brede regels, met sinds die
+ * herreview ook het plafond van regel 5 (MAX_HERHALINGEN_PER_PRODUCT in
+ * valideer-set.ts). Zonder dat plafond in de prompt zou het model niet weten
+ * dat het bestaat en zouden herkansingen betaald worden op een regel die
+ * nergens stond: dezelfde les als bij regel 9 en 10 (fix 2).
  */
 import type { Gelegenheid, Kandidaat, TasteProfileInput } from './keten-types.ts';
 import { AS_NAMEN, CATEGORIEEN, STYLIST_VERSION } from './keten-types.ts';
@@ -103,7 +108,7 @@ export function bouwSysteemPrompt(): string {
     '2. Lever precies zes outfits.',
     '3. Elke outfit is compleet: top + bottom + footwear, of dress + footwear. Outerwear en accessory zijn optioneel en komen hooguit een keer per outfit voor. Nooit een dress samen met een top of bottom.',
     '4. Elke gelegenheid uit het profiel komt minstens een keer voor als occasion.',
-    '5. Geen twee outfits met dezelfde top of dezelfde dress.',
+    '5. Geen twee outfits met dezelfde top of dezelfde dress. Elke andere rol (bottom, footwear, outerwear, accessory) mag wel herhalen, maar hetzelfde product komt in niet meer dan drie van de zes outfits voor.',
     '6. Geen twee outfits met precies dezelfde items.',
     '7. Elk item valt binnen het budget per stuk.',
     '8. Gebruik nooit een afgewezen item.',

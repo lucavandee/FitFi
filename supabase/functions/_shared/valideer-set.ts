@@ -25,6 +25,30 @@
  * compleetheid bijdraagt (footwear, en top+bottom versus dress); dat hoeft nu
  * alleen nog voor top en dress, de twee rollen met een uniciteitseis.
  *
+ * FIX 4 en FIX 5 (herreview van de eindreview van plan 3, twee geparkeerde
+ * bevindingen, 28 sept 2026, vóór de eerste echte vulronde):
+ * - FIX 4: toetsKandidatenpool kende geen shoe_type en geen gevraagde
+ *   gelegenheden. controleerSamenhang (valideer-outfits.ts) keurt elke
+ *   footwear met shoe_type 'sandaal' af bij occasion work of formal, en
+ *   isCompleet eist footwear in elke outfit. Een pool met uitsluitend
+ *   sandalen als footwear haalde de pooltoets dus terwijl elke outfit met
+ *   work of formal daarna gegarandeerd werd afgekeurd: geen modelfout, een
+ *   onmogelijke opdracht. toetsKandidatenpool krijgt nu de gevraagde
+ *   gelegenheden mee en eist bij work of formal minstens een footwear-
+ *   kandidaat die geen sandaal is.
+ * - FIX 5: de versoepeling van FIX 3 (elke rol behalve top/dress mag
+ *   onbeperkt herhalen) botst met de budgetregel in valideer-outfits.ts: een
+ *   item buiten het budget van de lezende bezoeker laat de HELE outfit
+ *   vallen, niet alleen het item. Gebruikt het model dezelfde schoen in alle
+ *   zes outfits en valt de prijs van die schoen buiten het smallere budget
+ *   van een bezoeker, dan verdwijnen alle zes outfits in plaats van een
+ *   enkele. Elke rol behalve top/dress mag daarom nog herhalen, maar niet
+ *   vaker dan MAX_HERHALINGEN_PER_PRODUCT (de helft van de zes outfits).
+ *   toetsKandidatenpool is in dezelfde beweging meeveranderd: footwear (in
+ *   elke outfit verplicht) en bottom (voor een top+bottom-outfit) hebben nu
+ *   allebei genoeg unieke kandidaten nodig om dat plafond te halen, niet
+ *   meer voldoende met een enkele kandidaat die vrij herhaalt.
+ *
  * Puur, zonder Deno- of browser-globals: vitest, Deno en het vulscript
  * (scripts/keten/stylist-vul-cache.ts) importeren dit bestand ongewijzigd.
  *
@@ -95,6 +119,17 @@ function controleerGelegenheidsdekking(outfits: StylistOutfit[], gevraagd: reado
 const ROLLEN_MET_UNIEKHEIDSEIS: readonly Categorie[] = ['top', 'dress'];
 
 /**
+ * FIX 5 (herreview plan 3, bevinding 2): plafond voor elke rol ZONDER
+ * uniciteitseis (bottom, footwear, outerwear, accessory). Zonder plafond kan
+ * het model bijvoorbeeld dezelfde schoen in alle zes outfits zetten; valt de
+ * prijs van dat ene item buiten het budget van de lezende bezoeker, dan
+ * verwerpt valideerOutfits (budgetregel, per item) niet een outfit maar alle
+ * zes, want ze delen allemaal hetzelfde item. "Niet meer dan de helft van de
+ * outfits" bij zes outfits is drie.
+ */
+export const MAX_HERHALINGEN_PER_PRODUCT = Math.floor(VEREIST_AANTAL_OUTFITS / 2);
+
+/**
  * Regel 3 (promptregel 5): geen enkel product komt twee keer voor als top of
  * dress over de hele set. Elke andere rol mag herhalen (fix 3, eindreview
  * plan 3: dit stond eerder op ELK product, strenger dan de prompt zelf). Elke
@@ -125,6 +160,39 @@ function controleerGeenDubbeleProducten(outfits: StylistOutfit[]): string[] {
 }
 
 /**
+ * FIX 5 (herreview plan 3, bevinding 2): plafond op herhaling voor elke rol
+ * ZONDER uniciteitseis (bottom, footwear, outerwear, accessory; top en dress
+ * hebben hun eigen, strengere regel hierboven en worden hier overgeslagen).
+ * Net als controleerGeenDubbeleProducten hierboven: een eigen, leesbare
+ * overtreding per product dat over het plafond gaat, met de betrokken
+ * outfit-indices, zodat de foutenlijst precies aanwijst welk product te vaak
+ * gedeeld wordt.
+ */
+function controleerMaxHerhalingen(outfits: StylistOutfit[]): string[] {
+  const fouten: string[] = [];
+  const outfitIndicesPerProduct = new Map<string, number[]>();
+
+  outfits.forEach((outfit, index) => {
+    for (const item of outfit.items) {
+      if (ROLLEN_MET_UNIEKHEIDSEIS.includes(item.role)) continue;
+      const indices = outfitIndicesPerProduct.get(item.product_id) ?? [];
+      indices.push(index);
+      outfitIndicesPerProduct.set(item.product_id, indices);
+    }
+  });
+
+  for (const [productId, indices] of outfitIndicesPerProduct) {
+    if (indices.length > MAX_HERHALINGEN_PER_PRODUCT) {
+      fouten.push(
+        `product ${productId} komt in ${indices.length} outfits voor (outfit ${indices.join(', ')}), meer dan het plafond van ${MAX_HERHALINGEN_PER_PRODUCT} (niet meer dan de helft van ${VEREIST_AANTAL_OUTFITS} outfits)`
+      );
+    }
+  }
+
+  return fouten;
+}
+
+/**
  * Beoordeelt een hele set. `outfits` is bedoeld als de uitvoer van
  * valideerOutfits (alleen de outfits die de per-outfit controle al haalden),
  * niet de ruwe modeluitvoer: regel 2 hieronder telt dus impliciet ook mee of
@@ -143,6 +211,7 @@ export function valideerSet(
 
   fouten.push(...controleerGelegenheidsdekking(outfits, profile.occasions));
   fouten.push(...controleerGeenDubbeleProducten(outfits));
+  fouten.push(...controleerMaxHerhalingen(outfits));
 
   return { geldig: fouten.length === 0, fouten };
 }
@@ -200,13 +269,24 @@ export interface PoolToetsResultaat {
  * omdat regel 3 toen ELK product maar eenmaal toestond. Sinds fix 3 geldt de
  * uniciteitseis alleen nog voor top en dress (promptregel 5, letterlijk); een
  * outfit heeft nog altijd footwear nodig (isCompleet blijft ongewijzigd),
- * maar diezelfde footwear-kandidaat mag nu in alle zes outfits terugkomen, dus
- * daar is er nog maar EEN van nodig, niet zes. Hetzelfde geldt voor bottom in
- * een top+bottom-outfit: alleen de top moet uniek zijn, de bottom mag
- * herhalen. De aanleiding van de oorspronkelijke toets (de echte run van 27
- * september tegen het profiel "man klassiek", 2 footwear-kandidaten) faalt nu
- * niet meer op footwear, maar zou nog altijd kunnen falen op te weinig unieke
- * tops/dresses; zie de tests voor dat onderscheid.
+ * maar diezelfde footwear-kandidaat mag nu herhalen. De aanleiding van de
+ * oorspronkelijke toets (de echte run van 27 september tegen het profiel
+ * "man klassiek", 2 footwear-kandidaten) faalt sinds fix 3 niet meer op
+ * footwear, maar zou nog altijd kunnen falen op te weinig unieke tops/dresses;
+ * zie de tests voor dat onderscheid.
+ *
+ * FIX 4 en FIX 5 (herreview plan 3, geparkeerde bevindingen, 28 sept 2026; zie
+ * het bestandscommentaar bovenaan dit bestand voor de aanleiding):
+ * - FIX 4: `gevraagdeGelegenheden` is nieuw. Bevat die work of formal, dan
+ *   moet er minstens een footwear-kandidaat zijn die GEEN sandaal is, anders
+ *   is elke outfit met die gelegenheid vooraf al kansloos op regel 9
+ *   (controleerSamenhang, valideer-outfits.ts).
+ * - FIX 5: footwear mag sinds fix 3 herhalen, maar niet vaker dan
+ *   MAX_HERHALINGEN_PER_PRODUCT. Omdat footwear in ELKE outfit verplicht is,
+ *   zijn er nu minstens twee unieke footwear-kandidaten nodig (een enkele
+ *   kandidaat dekt hoogstens MAX_HERHALINGEN_PER_PRODUCT van de zes outfits,
+ *   niet alle zes). Hetzelfde plafond geldt voor bottom in een
+ *   top+bottom-outfit.
  *
  * Afleiding uit isCompleet (valideer-outfits.ts), met de hand gesynchroniseerd
  * en niet mechanisch geïmporteerd (isCompleet neemt een platte rollenlijst,
@@ -219,24 +299,30 @@ export interface PoolToetsResultaat {
  * outerwear en accessory zijn in isCompleet nooit verplicht, dus hun aantal
  * in de pool telt hier niet mee.
  *
- * Gevolg voor zes outfits zonder hergebruik van een TOP of DRESS:
- * - footwear zit in ELKE outfit (voorwaarde a is onvoorwaardelijk), maar mag
- *   herhalen: er hoeft maar EEN footwear-kandidaat te zijn.
+ * Gevolg voor zes outfits zonder hergebruik van een TOP of DRESS, en met
+ * hoogstens MAX_HERHALINGEN_PER_PRODUCT herhalingen van elk ander product:
+ * - footwear zit in ELKE outfit (voorwaarde a is onvoorwaardelijk): er zijn
+ *   genoeg footwear-kandidaten als footwear * MAX_HERHALINGEN_PER_PRODUCT
+ *   >= VEREIST_AANTAL_OUTFITS (bij het huidige plafond van drie: minstens
+ *   twee kandidaten).
  * - top+bottom versus dress is een keuze PER outfit (voorwaarde b): van de
  *   zes outfits kunnen er x op een dress gebaseerd zijn en 6-x op een
  *   top+bottom-combinatie, voor elke x waarvoor x <= aantal dresses en
- *   (6-x) <= aantal tops (bottom mag herhalen, dus telt hier niet mee, mits er
- *   minstens een bottom is om mee te combineren). Zo'n verdeling bestaat
- *   precies dan als (aantal dresses) + (aantal tops, als er een bottom is) >=
- *   VEREIST_AANTAL_OUTFITS.
+ *   (6-x) <= aantal tops (top-uniciteit) EN (6-x) <= bottom *
+ *   MAX_HERHALINGEN_PER_PRODUCT (bottom-plafond). Zo'n verdeling bestaat
+ *   precies dan als (aantal dresses) + min(aantal tops, aantal bottoms *
+ *   MAX_HERHALINGEN_PER_PRODUCT) >= VEREIST_AANTAL_OUTFITS.
  *
  * Verandert isCompleet ooit welke rollen verplicht zijn of de dress/top+
- * bottom-tweedeling, of verandert de uniciteitseis van regel 3 ooit weer welke
- * rollen ze raakt, dan moet deze functie in dezelfde beweging mee: dit is een
- * bewust met de hand gesynchroniseerde afleiding, geen garantie die de
- * compiler afdwingt.
+ * bottom-tweedeling, of verandert de uniciteitseis van regel 3 of het plafond
+ * van FIX 5 ooit weer welke rollen ze raken, dan moet deze functie in
+ * dezelfde beweging mee: dit is een bewust met de hand gesynchroniseerde
+ * afleiding, geen garantie die de compiler afdwingt.
  */
-export function toetsKandidatenpool(kandidaten: Kandidaat[]): PoolToetsResultaat {
+export function toetsKandidatenpool(
+  kandidaten: Kandidaat[],
+  gevraagdeGelegenheden: readonly Gelegenheid[]
+): PoolToetsResultaat {
   const uniekePerCategorie = new Map<Categorie, Set<string>>();
   for (const k of kandidaten) {
     const set = uniekePerCategorie.get(k.category) ?? new Set<string>();
@@ -245,27 +331,54 @@ export function toetsKandidatenpool(kandidaten: Kandidaat[]): PoolToetsResultaat
   }
   const aantal = (categorie: Categorie): number => uniekePerCategorie.get(categorie)?.size ?? 0;
 
+  // FIX 5: footwear zit in elke outfit en mag herhalen, maar niet vaker dan
+  // MAX_HERHALINGEN_PER_PRODUCT. Dit vervangt de oude "footwear < 1"-toets
+  // (fix 3): die volstaat niet meer, want een enkele footwear-kandidaat dekt
+  // met het plafond hoogstens MAX_HERHALINGEN_PER_PRODUCT van de zes
+  // outfits. footwear = 0 faalt hier ook (0 * plafond = 0), dus de oude
+  // "geen enkele kandidaat"-melding is hier niet apart nodig.
   const footwear = aantal('footwear');
-  if (footwear < 1) {
+  if (footwear * MAX_HERHALINGEN_PER_PRODUCT < VEREIST_AANTAL_OUTFITS) {
     return {
       voldoende: false,
-      reden: 'geen footwear-kandidaten beschikbaar (elke outfit heeft footwear nodig, isCompleet)',
+      reden:
+        `te weinig unieke footwear-kandidaten: ${footwear} (elke outfit heeft footwear nodig, isCompleet), elk mag hoogstens ` +
+        `${MAX_HERHALINGEN_PER_PRODUCT} keer voorkomen (${footwear} x ${MAX_HERHALINGEN_PER_PRODUCT} = ${footwear * MAX_HERHALINGEN_PER_PRODUCT}), nodig ${VEREIST_AANTAL_OUTFITS}`,
     };
+  }
+
+  // FIX 4: een pool met uitsluitend sandalen als footwear is voor work/formal
+  // net zo kansloos als een pool zonder footwear, ook al haalt hij de toets
+  // hierboven. Alleen relevant als work of formal daadwerkelijk gevraagd
+  // wordt: bij bijvoorbeeld uitsluitend casual is een sandaal-only pool prima.
+  const vraagtFormeelSchoeisel = gevraagdeGelegenheden.some((g) => g === 'work' || g === 'formal');
+  if (vraagtFormeelSchoeisel) {
+    const heeftNietSandaal = kandidaten.some((k) => k.category === 'footwear' && k.attrs.shoe_type !== 'sandaal');
+    if (!heeftNietSandaal) {
+      return {
+        voldoende: false,
+        reden:
+          "work of formal gevraagd, maar alle footwear-kandidaten hebben shoe_type 'sandaal'; regel 9 keurt sandaal af bij " +
+          'work/formal (controleerSamenhang, valideer-outfits.ts) en elke outfit heeft footwear nodig (isCompleet)',
+      };
+    }
   }
 
   const dress = aantal('dress');
   const top = aantal('top');
   const bottom = aantal('bottom');
-  // Fix 3: bottom hoeft niet meer uniek te zijn, dus telt hier niet mee als
-  // aantal, alleen als voorwaarde ("is er er minstens een om mee te
-  // combineren"). Alleen top moet nog uniek zijn voor een top+bottom-outfit.
-  const maxTopBottomOutfits = bottom > 0 ? top : 0;
+  // FIX 5: bottom mag sinds fix 3 herhalen, maar heeft nu ook een plafond
+  // (MAX_HERHALINGEN_PER_PRODUCT). Het aantal top+bottom-outfits dat de pool
+  // aankan is dus begrensd door BEIDE: de top-uniciteitseis (top) EN het
+  // bottom-plafond (bottom * MAX_HERHALINGEN_PER_PRODUCT), niet langer
+  // "top, mits er een bottom is".
+  const maxTopBottomOutfits = Math.min(top, bottom * MAX_HERHALINGEN_PER_PRODUCT);
   if (dress + maxTopBottomOutfits < VEREIST_AANTAL_OUTFITS) {
     return {
       voldoende: false,
       reden:
         `te weinig unieke top/dress-kandidaten voor ${VEREIST_AANTAL_OUTFITS} outfits zonder hergebruik van een top of dress: ` +
-        `${dress} dress + ${maxTopBottomOutfits} top (bottom mag herhalen) = ${dress + maxTopBottomOutfits}, nodig ${VEREIST_AANTAL_OUTFITS}`,
+        `${dress} dress + ${maxTopBottomOutfits} top (begrensd door top-uniciteit en het bottom-plafond) = ${dress + maxTopBottomOutfits}, nodig ${VEREIST_AANTAL_OUTFITS}`,
     };
   }
 

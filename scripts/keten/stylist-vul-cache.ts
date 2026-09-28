@@ -25,6 +25,11 @@
  *    voorhand al kansloos was op een andere band (male/100tot200: 2
  *    footwear-kandidaten); deze toets maakt zo'n aanroep overbodig. Faalt de
  *    toets: profiel overslaan, reden loggen, geen aanroep.
+ *    FIX 4 en FIX 5 (herreview plan 3, geparkeerde bevindingen, 28 sept 2026):
+ *    `toetsKandidatenpool` krijgt sindsdien `profiel.occasions` mee, en toetst
+ *    ook shoe_type (een pool met uitsluitend sandalen faalt bij work/formal)
+ *    en een plafond op herhaling per product (zie valideer-set.ts voor de
+ *    aanleiding en de wiskunde).
  * 3. Prompts bouwen met stylist-prompt.ts (taak 5) en `claude -p` aanroepen,
  *    in de vorm van tagCli.ts (regel 578-586: execFile met een
  *    argumentenarray, geen shell; regel 631-651: stdin expliciet gesloten,
@@ -523,7 +528,7 @@ async function verwerkProfiel(
   // echte run van dezelfde datum voor een compositie die op de "man
   // klassiek"-band (male/100tot200, destijds 2 footwear-kandidaten) wiskundig
   // nooit door valideerSet-regel 3 had kunnen komen.
-  const poolToets = toetsKandidatenpool(kandidaten);
+  const poolToets = toetsKandidatenpool(kandidaten, profiel.occasions);
   if (!poolToets.voldoende) {
     console.log(`  ${naam}: overgeslagen vóór enige aanroep, kandidatenpool onvoldoende: ${poolToets.reden}`);
     return {

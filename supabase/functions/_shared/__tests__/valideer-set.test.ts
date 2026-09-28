@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { VEREIST_AANTAL_OUTFITS, toetsKandidatenpool, valideerSet, vindDubbeleProductIds } from '../valideer-set.ts';
+import {
+  MAX_HERHALINGEN_PER_PRODUCT,
+  VEREIST_AANTAL_OUTFITS,
+  toetsKandidatenpool,
+  valideerSet,
+  vindDubbeleProductIds,
+} from '../valideer-set.ts';
 import type { Categorie, Gelegenheid, Kandidaat, ProductAttrs, RuwProduct, StylistOutfit } from '../keten-types.ts';
 
 function outfit(occasion: Gelegenheid, productIds: string[]): StylistOutfit {
@@ -57,6 +63,25 @@ function kandidaten(categorie: Categorie, aantal: number): Kandidaat[] {
   return Array.from({ length: aantal }, (_, i) => {
     const id = `${categorie}${i}`;
     return { product_id: id, category: categorie, score: 0.5, attrs: attrs(categorie), product: product(id) };
+  });
+}
+
+/**
+ * Bouwt `aantal` unieke SANDAAL-footwear-kandidaten (FIX 4, herreview plan 3,
+ * bevinding 1). `kandidaten('footwear', n)` hierboven zet altijd shoe_type
+ * 'sneaker'; deze helper is er specifiek om een pool te bouwen die
+ * UITSLUITEND sandalen als footwear heeft.
+ */
+function sandaalKandidaten(aantal: number): Kandidaat[] {
+  return Array.from({ length: aantal }, (_, i) => {
+    const id = `sandaal${i}`;
+    return {
+      product_id: id,
+      category: 'footwear' as const,
+      score: 0.5,
+      attrs: { ...attrs('footwear'), shoe_type: 'sandaal' },
+      product: product(id),
+    };
   });
 }
 
@@ -172,10 +197,32 @@ describe('valideerSet', () => {
       expect(resultaat.geldig).toBe(true);
     });
 
-    it('fix 3: dezelfde footwear in alle zes outfits is nu toegestaan', () => {
-      const outfits = Array.from({ length: 6 }, (_, i) => outfit('work', [`top${i}`, `bottom${i}`, 'schoen-gedeeld']));
+    it('fix 3: dezelfde footwear in een paar outfits is toegestaan (binnen het plafond van FIX 5)', () => {
+      // Precies op de grens van MAX_HERHALINGEN_PER_PRODUCT (drie): geldig.
+      // Zie de "fix 5"-tests hieronder voor de grens zelf en voor wat erover gaat.
+      const outfits = Array.from({ length: 6 }, (_, i) =>
+        outfit('work', [`top${i}`, `bottom${i}`, i < MAX_HERHALINGEN_PER_PRODUCT ? 'schoen-gedeeld' : `schoen${i}`])
+      );
       const resultaat = valideerSet(outfits, { occasions: ['work'] });
       expect(resultaat.geldig).toBe(true);
+    });
+
+    it('FIX 5 (herreview plan 3, bevinding 2): dezelfde footwear in ALLE zes outfits is niet langer toegestaan', () => {
+      // Dit was tot deze taak de letterlijke test voor "fix 3: dezelfde
+      // footwear in alle zes outfits is nu toegestaan" (verwachtte geldig).
+      // Die verwachting is niet meer juist: bevinding 2 van de herreview wees
+      // uit dat twee eerdere beslissingen elkaar bijten. Sinds fix 3 mag een
+      // footwear-item onbeperkt herhalen; tegelijk laat de budgetregel in
+      // valideer-outfits.ts een outfit met een item buiten het budget van de
+      // lezende bezoeker HELEMAAL wegvallen. Gebruikt het model dezelfde
+      // schoen in alle zes outfits en valt de prijs van die schoen buiten het
+      // smallere budget van een bezoeker, dan verdwijnen alle zes outfits in
+      // plaats van een enkele. FIX 5 begrenst herhaling van elke rol behalve
+      // top/dress tot MAX_HERHALINGEN_PER_PRODUCT (de helft van de outfits).
+      const outfits = Array.from({ length: 6 }, (_, i) => outfit('work', [`top${i}`, `bottom${i}`, 'schoen-gedeeld']));
+      const resultaat = valideerSet(outfits, { occasions: ['work'] });
+      expect(resultaat.geldig).toBe(false);
+      expect(resultaat.fouten.some((f) => f.includes('schoen-gedeeld') && f.includes('plafond'))).toBe(true);
     });
 
     it('keurt nog altijd af als dezelfde dress in twee outfits voorkomt', () => {
@@ -199,6 +246,63 @@ describe('valideerSet', () => {
       const resultaat = valideerSet(outfits, { occasions: ['work'] });
       expect(resultaat.geldig).toBe(false);
       expect(resultaat.fouten.some((f) => f.includes('jurk0'))).toBe(true);
+    });
+  });
+
+  describe('regel 3 uitbreiding (FIX 5, herreview plan 3, bevinding 2): plafond op herhaling van niet-top/dress rollen', () => {
+    it('gebruikt MAX_HERHALINGEN_PER_PRODUCT als de norm (geen losse magic number)', () => {
+      expect(MAX_HERHALINGEN_PER_PRODUCT).toBe(3);
+    });
+
+    it('is geldig als eenzelfde footwear in precies MAX_HERHALINGEN_PER_PRODUCT outfits voorkomt (op de grens)', () => {
+      const outfits = Array.from({ length: 6 }, (_, i) =>
+        outfit('work', [`top${i}`, `bottom${i}`, i < MAX_HERHALINGEN_PER_PRODUCT ? 'schoen-gedeeld' : `schoen${i}`])
+      );
+      const resultaat = valideerSet(outfits, { occasions: ['work'] });
+      expect(resultaat.geldig).toBe(true);
+    });
+
+    it('keurt af zodra eenzelfde footwear in MAX_HERHALINGEN_PER_PRODUCT + 1 outfits voorkomt (net over de grens)', () => {
+      const outfits = Array.from({ length: 6 }, (_, i) =>
+        outfit('work', [`top${i}`, `bottom${i}`, i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'schoen-gedeeld' : `schoen${i}`])
+      );
+      const resultaat = valideerSet(outfits, { occasions: ['work'] });
+      expect(resultaat.geldig).toBe(false);
+      expect(resultaat.fouten.some((f) => f.includes('schoen-gedeeld') && f.includes('plafond'))).toBe(true);
+    });
+
+    it('keurt af zodra eenzelfde bottom vaker dan het plafond voorkomt', () => {
+      const outfits = Array.from({ length: 6 }, (_, i) =>
+        outfit('work', [`top${i}`, i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'bottom-gedeeld' : `bottom${i}`, `schoen${i}`])
+      );
+      const resultaat = valideerSet(outfits, { occasions: ['work'] });
+      expect(resultaat.geldig).toBe(false);
+      expect(resultaat.fouten.some((f) => f.includes('bottom-gedeeld') && f.includes('plafond'))).toBe(true);
+    });
+
+    it('top en dress blijven de strengere eigen regel houden (eenmaal, niet driemaal) ondanks het nieuwe plafond', () => {
+      // Regel 3 (top/dress) is ongewijzigd door FIX 5: een top die twee keer
+      // voorkomt is nog altijd fout, ook al zit dat ruim onder het plafond
+      // van drie dat nu voor de ANDERE rollen geldt.
+      const outfits = zesGeldigeOutfits();
+      outfits[3] = outfit('work', ['top0', 'bottom3', 'schoen3']);
+      const resultaat = valideerSet(outfits, { occasions: ['work'] });
+      expect(resultaat.geldig).toBe(false);
+      expect(resultaat.fouten.some((f) => f.includes('top0') && f.includes('twee keer'))).toBe(true);
+    });
+
+    it('meldt overtredingen van meerdere producten die over het plafond gaan onafhankelijk van elkaar', () => {
+      const outfits = Array.from({ length: 6 }, (_, i) =>
+        outfit('work', [
+          `top${i}`, // top blijft uniek per outfit, ongemoeid door het nieuwe plafond.
+          i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'bottom-gedeeld' : `bottom${i}`,
+          i < MAX_HERHALINGEN_PER_PRODUCT + 1 ? 'schoen-gedeeld' : `schoen${i}`,
+        ])
+      );
+      const resultaat = valideerSet(outfits, { occasions: ['work'] });
+      expect(resultaat.geldig).toBe(false);
+      expect(resultaat.fouten.some((f) => f.includes('bottom-gedeeld'))).toBe(true);
+      expect(resultaat.fouten.some((f) => f.includes('schoen-gedeeld'))).toBe(true);
     });
   });
 
@@ -261,7 +365,7 @@ describe('vindDubbeleProductIds (fixronde 1, eis 2; beperkt tot top/dress sinds 
   });
 });
 
-describe('toetsKandidatenpool (fixronde 1, eis 1; herijkt op fix 3, eindreview plan 3)', () => {
+describe('toetsKandidatenpool (fixronde 1, eis 1; herijkt op fix 3; herijkt op FIX 4/5, herreview plan 3)', () => {
   it('is voldoende met een ruime pool (case "vrouw minimalistisch", gemeten 27 sept 2026)', () => {
     const pool = [
       ...kandidaten('dress', 229),
@@ -271,16 +375,20 @@ describe('toetsKandidatenpool (fixronde 1, eis 1; herijkt op fix 3, eindreview p
       ...kandidaten('bottom', 106),
       ...kandidaten('accessory', 14),
     ];
-    expect(toetsKandidatenpool(pool)).toEqual({ voldoende: true });
+    expect(toetsKandidatenpool(pool, ['casual'])).toEqual({ voldoende: true });
   });
 
-  it('case "man klassiek" (gemeten 27 sept 2026): footwear is sinds fix 3 geen probleem meer, maar te weinig unieke tops blijft het wel', () => {
+  it('case "man klassiek" (gemeten 27 sept 2026): footwear is met 2 kandidaten precies genoeg, maar te weinig unieke tops blijft het probleem', () => {
     // Dezelfde pool als de echte run van 27 september. Onder de OUDE regel
     // (elk product uniek) was dit onvoldoende wegens 2 footwear-kandidaten
-    // (< 6). Sinds fix 3 mag footwear herhalen (er hoeft er maar 1 te zijn),
-    // dus footwear is hier geen probleem meer. De pool blijft niettemin
-    // onvoldoende: 0 dress + 4 top (er is een bottom om mee te combineren) =
-    // 4, minder dan de 6 benodigde unieke tops/dresses.
+    // (< 6). Sinds fix 3 mocht footwear onbeperkt herhalen (1 was al genoeg);
+    // sinds FIX 5 (deze taak) mag footwear nog altijd herhalen, maar niet
+    // vaker dan MAX_HERHALINGEN_PER_PRODUCT (drie), dus zijn er minstens twee
+    // unieke footwear-kandidaten nodig. Deze pool heeft er precies twee
+    // (2 x 3 = 6, exact genoeg), dus footwear is hier nog steeds geen
+    // probleem. De pool blijft niettemin onvoldoende: 0 dress + 4 top (met
+    // een bottom om mee te combineren) = 4, minder dan de 6 benodigde unieke
+    // tops/dresses.
     const pool = [
       ...kandidaten('accessory', 1),
       ...kandidaten('bottom', 3),
@@ -288,57 +396,126 @@ describe('toetsKandidatenpool (fixronde 1, eis 1; herijkt op fix 3, eindreview p
       ...kandidaten('outerwear', 12),
       ...kandidaten('top', 4),
     ];
-    const resultaat = toetsKandidatenpool(pool);
+    const resultaat = toetsKandidatenpool(pool, ['casual']);
     expect(resultaat.voldoende).toBe(false);
     expect(resultaat.reden).toContain('top/dress');
   });
 
   it('is onvoldoende zonder een enkele footwear-kandidaat, ook als de rest ruim voldoende is', () => {
     const pool = [...kandidaten('top', 20), ...kandidaten('bottom', 20), ...kandidaten('dress', 20)];
-    const resultaat = toetsKandidatenpool(pool);
+    const resultaat = toetsKandidatenpool(pool, ['casual']);
     expect(resultaat.voldoende).toBe(false);
     expect(resultaat.reden).toContain('footwear');
   });
 
-  it('fix 3: EEN footwear-kandidaat is al genoeg (footwear mag herhalen), ook al was dat onder de oude regel (zes nodig) onvoldoende', () => {
+  it('FIX 5 (herreview plan 3, bevinding 2): EEN footwear-kandidaat is niet meer genoeg', () => {
+    // Dit was tot deze taak de letterlijke test voor "fix 3: EEN
+    // footwear-kandidaat is al genoeg" (verwachtte voldoende: true). Die
+    // verwachting is niet meer juist: footwear mag sinds fix 3 herhalen, maar
+    // sinds FIX 5 niet vaker dan MAX_HERHALINGEN_PER_PRODUCT (drie). Een
+    // enkele footwear-kandidaat dekt dus hoogstens drie van de zes outfits,
+    // niet alle zes: 1 x 3 = 3 < 6.
     const pool = [...kandidaten('footwear', 1), ...kandidaten('top', 20), ...kandidaten('bottom', 20), ...kandidaten('dress', 20)];
-    expect(toetsKandidatenpool(pool)).toEqual({ voldoende: true });
+    const resultaat = toetsKandidatenpool(pool, ['casual']);
+    expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('footwear');
   });
 
-  it('is precies op de grens voldoende met een footwear-kandidaat en genoeg top/bottom', () => {
-    const pool = [...kandidaten('footwear', 1), ...kandidaten('top', 6), ...kandidaten('bottom', 6)];
-    expect(toetsKandidatenpool(pool)).toEqual({ voldoende: true });
+  it('FIX 5: TWEE footwear-kandidaten is het nieuwe minimum (2 x plafond van drie = precies zes)', () => {
+    const pool = [...kandidaten('footwear', 2), ...kandidaten('top', 20), ...kandidaten('bottom', 20), ...kandidaten('dress', 20)];
+    expect(toetsKandidatenpool(pool, ['casual'])).toEqual({ voldoende: true });
+  });
+
+  it('is precies op de grens voldoende met twee footwear-kandidaten en genoeg top/bottom', () => {
+    const pool = [...kandidaten('footwear', 2), ...kandidaten('top', 6), ...kandidaten('bottom', 6)];
+    expect(toetsKandidatenpool(pool, ['casual'])).toEqual({ voldoende: true });
   });
 
   it('telt dress en top+bottom als alternatieve routes: genoeg dress compenseert weinig top', () => {
-    // isCompleet staat dress+footwear toe zonder top/bottom: 6 dress + 1 footwear is genoeg,
-    // ook al is er maar 1 top (en 1 bottom, die sinds fix 3 mag herhalen).
-    const pool = [...kandidaten('footwear', 1), ...kandidaten('dress', 6), ...kandidaten('top', 1), ...kandidaten('bottom', 1)];
-    expect(toetsKandidatenpool(pool)).toEqual({ voldoende: true });
+    // isCompleet staat dress+footwear toe zonder top/bottom: 6 dress + 2 footwear is genoeg,
+    // ook al is er maar 1 top (en 1 bottom, die mag herhalen maar hier niet nodig is).
+    const pool = [...kandidaten('footwear', 2), ...kandidaten('dress', 6), ...kandidaten('top', 1), ...kandidaten('bottom', 1)];
+    expect(toetsKandidatenpool(pool, ['casual'])).toEqual({ voldoende: true });
   });
 
   it('is onvoldoende als dress + top net onder zes blijft', () => {
-    // 2 dress + 2 top = 4, minder dan 6. bottom (5, ruim genoeg) telt niet mee: die mag herhalen.
+    // 2 dress + 2 top = 4, minder dan 6. bottom (5, ruim genoeg voor het plafond) telt niet extra mee.
     const pool = [
-      ...kandidaten('footwear', 1),
+      ...kandidaten('footwear', 2),
       ...kandidaten('dress', 2),
       ...kandidaten('top', 2),
       ...kandidaten('bottom', 5),
     ];
-    const resultaat = toetsKandidatenpool(pool);
+    const resultaat = toetsKandidatenpool(pool, ['casual']);
     expect(resultaat.voldoende).toBe(false);
     expect(resultaat.reden).toContain('top/dress');
   });
 
   it('is onvoldoende met genoeg tops maar zonder een enkele bottom om ze mee te combineren', () => {
-    // 0 dress + 0 (geen bottom om top+bottom mee te vormen) = 0, minder dan 6, ondanks 20 tops.
-    const pool = [...kandidaten('footwear', 1), ...kandidaten('top', 20)];
-    const resultaat = toetsKandidatenpool(pool);
+    // 0 dress + 0 (geen bottom om top+bottom mee te vormen, dus 0 * plafond = 0) = 0, minder dan 6, ondanks 20 tops.
+    const pool = [...kandidaten('footwear', 2), ...kandidaten('top', 20)];
+    const resultaat = toetsKandidatenpool(pool, ['casual']);
     expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('top/dress');
+  });
+
+  it('FIX 5: is onvoldoende als bottom te weinig capaciteit heeft voor het aantal benodigde top+bottom-outfits, ondanks genoeg tops', () => {
+    // 20 top, maar maar 1 bottom: bottom-plafond (1 x 3 = 3) is de bottleneck,
+    // niet top-uniciteit. 0 dress + min(20, 3) = 3, minder dan 6.
+    const pool = [...kandidaten('footwear', 2), ...kandidaten('top', 20), ...kandidaten('bottom', 1)];
+    const resultaat = toetsKandidatenpool(pool, ['casual']);
+    expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('top/dress');
   });
 
   it('een lege pool is onvoldoende (faalt op footwear, niet op een lege-array-crash)', () => {
-    const resultaat = toetsKandidatenpool([]);
+    const resultaat = toetsKandidatenpool([], ['casual']);
     expect(resultaat.voldoende).toBe(false);
+  });
+});
+
+describe('toetsKandidatenpool: gevraagde gelegenheden en shoe_type (FIX 4, herreview plan 3, bevinding 1)', () => {
+  it('keurt een pool met uitsluitend sandalen af bij occasion work, ook al is er verder ruim voldoende', () => {
+    const pool = [...sandaalKandidaten(2), ...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    const resultaat = toetsKandidatenpool(pool, ['work']);
+    expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('sandaal');
+  });
+
+  it('keurt dezelfde pool goed als alleen casual gevraagd wordt', () => {
+    const pool = [...sandaalKandidaten(2), ...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    expect(toetsKandidatenpool(pool, ['casual'])).toEqual({ voldoende: true });
+  });
+
+  it('keurt een pool met uitsluitend sandalen ook af bij occasion formal (niet alleen work)', () => {
+    const pool = [...sandaalKandidaten(2), ...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    const resultaat = toetsKandidatenpool(pool, ['formal']);
+    expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('sandaal');
+  });
+
+  it('keurt goed zodra er minstens een niet-sandaal footwear-kandidaat is, ook bij work', () => {
+    const pool = [...sandaalKandidaten(1), ...kandidaten('footwear', 1), ...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    expect(toetsKandidatenpool(pool, ['work'])).toEqual({ voldoende: true });
+  });
+
+  it('werkt ook als work of formal een van meerdere gevraagde gelegenheden is', () => {
+    const pool = [...sandaalKandidaten(2), ...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    const resultaat = toetsKandidatenpool(pool, ['casual', 'work']);
+    expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('sandaal');
+  });
+
+  it('nul gevraagde gelegenheden: de sandaal-toets vervalt net als bij casual', () => {
+    const pool = [...sandaalKandidaten(2), ...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    expect(toetsKandidatenpool(pool, [])).toEqual({ voldoende: true });
+  });
+
+  it('een pool zonder footwear faalt nog altijd eerst op de footwear-toets, ook al is work gevraagd', () => {
+    const pool = [...kandidaten('top', 20), ...kandidaten('bottom', 20)];
+    const resultaat = toetsKandidatenpool(pool, ['work']);
+    expect(resultaat.voldoende).toBe(false);
+    expect(resultaat.reden).toContain('footwear');
+    expect(resultaat.reden).not.toContain('sandaal');
   });
 });
