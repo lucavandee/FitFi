@@ -38,6 +38,10 @@ import { leesVlag } from "./args";
 // had nog de drie fouten uit het amendement van 17 september (lege terugval,
 // "KEY=waarde # toelichting" en een achterblijvende \r op CRLF-bestanden).
 import { leesDotEnv } from "./env";
+// Plan 3, taak 8: --keten=stylist delegeert naar het persona-harnas op de
+// stylist-route (get_kandidaten, keten_outfit_set-cache of noodpad), in
+// plaats van dit bestand zijn eigen v2-harnas.
+import { runStylistKeten } from "./stylist-run";
 
 // Feed-poort (spec 5.7): met --retailer draait het harnas op een enkele feed.
 // null betekent alle retailers, precies zoals get_kandidaten dat verstaat.
@@ -237,6 +241,13 @@ function schrijfRapport(): string {
 }
 
 async function main(): Promise<void> {
+  // Plan 3: dezelfde persona's over de stylist-route (get_kandidaten,
+  // compose-outfits, noodpad) met de controles uit spec 5.7 plus de cache-controle.
+  if (process.argv.includes("--keten=stylist")) {
+    const groen = await runStylistKeten();
+    process.exit(groen ? 0 : 1);
+  }
+
   let totaalFouten = 0;
   log(`Persona-harnas plan 1, ${new Date().toISOString()}`);
 
