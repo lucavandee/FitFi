@@ -45,6 +45,7 @@ import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { leesVlag } from "./args";
 import { openBatches, type BatchesBestand, type BatchRecord } from "./batchesStore";
 import {
   TAG_SCHEMA,
@@ -940,28 +941,90 @@ export const SCHRIJF_CHUNK = 500;
 
 type RpcClient = Pick<SupabaseClient, "rpc">;
 
+/**
+ * Welk deel van de catalogus een run tagt, naast de retailer. Bedoeld om op
+ * waarde te taggen in plaats van een hele winkel achter elkaar: op 1 okt 2026
+ * had een man tussen 50 en 150 euro 37 getagde tops tegenover 6.112 ongetagde,
+ * terwijl hij onder 50 euro er bijna 2.000 had. Gender volgt get_kandidaten:
+ * "male" neemt unisex mee, want dat krijgt een man ook te zien.
+ */
+export interface TagSelectie {
+  prijsMin: number | null;
+  prijsMax: number | null;
+  gender: "male" | "female" | null;
+}
+
+export const GEEN_SELECTIE: TagSelectie = { prijsMin: null, prijsMax: null, gender: null };
+
+function leesPrijs(argv: string[], naam: "prijs-min" | "prijs-max"): number | null {
+  const ruw = leesVlag(argv, naam);
+  if (ruw === undefined) return null;
+  // Number("") is 0: zonder de trim-controle wordt "--prijs-min" zonder waarde
+  // stil een ondergrens van 0 euro.
+  const waarde = Number(ruw);
+  if (ruw.trim() === "" || !Number.isFinite(waarde) || waarde < 0) {
+    throw new Error(`--${naam} verwacht een bedrag in euro van 0 of meer (met een punt als decimaalteken), kreeg: "${ruw}"`);
+  }
+  return waarde;
+}
+
+/**
+ * Leest --prijs-min, --prijs-max en --gender. Gooit bij een ongeldige waarde in
+ * plaats van terug te vallen op "geen filter": een tikfout mag een proefronde
+ * niet stil over de hele winkel laten lopen (zelfde reden als bij --limit).
+ */
+export function leesTagSelectie(argv: string[]): TagSelectie {
+  const prijsMin = leesPrijs(argv, "prijs-min");
+  const prijsMax = leesPrijs(argv, "prijs-max");
+  if (prijsMin !== null && prijsMax !== null && prijsMin > prijsMax) {
+    throw new Error(`--prijs-min (${prijsMin}) ligt boven --prijs-max (${prijsMax})`);
+  }
+  const genderRuw = leesVlag(argv, "gender");
+  let gender: TagSelectie["gender"] = null;
+  if (genderRuw !== undefined) {
+    if (genderRuw !== "male" && genderRuw !== "female") {
+      throw new Error(`--gender verwacht male of female (unisex telt bij beide mee), kreeg: "${genderRuw}"`);
+    }
+    gender = genderRuw;
+  }
+  return { prijsMin, prijsMax, gender };
+}
+
 export async function haalKandidaten(
   supabase: RpcClient,
   retailer: string,
   modus: Modus,
   limiet: number,
-  voortgang: (aantal: number) => void = () => {}
+  voortgang: (aantal: number) => void = () => {},
+  selectie: TagSelectie = GEEN_SELECTIE
 ): Promise<TagProduct[]> {
+  // Alleen ingevulde filters gaan mee. Een run zonder filter stuurt zo exact
+  // dezelfde parameters als voorheen en werkt dus ook tegen een database waar
+  // p_prijs_min, p_prijs_max en p_gender (nog) niet bestaan.
+  const filters: Record<string, number | string> = {};
+  if (selectie.prijsMin !== null) filters.p_prijs_min = selectie.prijsMin;
+  if (selectie.prijsMax !== null) filters.p_prijs_max = selectie.prijsMax;
+  if (selectie.gender !== null) filters.p_gender = selectie.gender;
+
   const alles: TagProduct[] = [];
   let after: string | null = null;
   for (;;) {
+    // Niet meer opvragen dan nodig: elke rij kost de functie een opzoeking in
+    // products. Een kortere pagina dan gevraagd betekent nog steeds "op".
+    const gevraagd = limiet > 0 ? Math.min(KANDIDATEN_PAGINA, limiet - alles.length) : KANDIDATEN_PAGINA;
     const { data, error } = await supabase.rpc("keten_tag_kandidaten", {
       p_retailer: retailer,
       p_modus: modus,
       p_versie: TAGGER_VERSION,
-      p_limit: KANDIDATEN_PAGINA,
+      p_limit: gevraagd,
       p_after: after,
+      ...filters,
     });
     if (error) throw new Error(`keten_tag_kandidaten: ${error.message}`);
     const pagina = (data ?? []) as TagProduct[];
     alles.push(...pagina);
     voortgang(alles.length);
-    if (pagina.length < KANDIDATEN_PAGINA) break;
+    if (pagina.length < gevraagd) break;
     if (limiet > 0 && alles.length >= limiet) break;
     after = pagina[pagina.length - 1].product_id;
   }
