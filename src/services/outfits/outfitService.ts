@@ -27,6 +27,16 @@ export class CatalogusOnbereikbaar extends Error {
   }
 }
 
+/**
+ * Foutcodes van get_kandidaten waarbij een tweede poging zin heeft. 57014 is
+ * de statement timeout (anon heeft 3 s); PGRST002 betekent dat PostgREST na
+ * een DDL zijn schema herlaadt. Gemeten op 1 okt 2026: een koude aanroep zoals
+ * de site die doet gaf 57014, dezelfde aanroep daarna 3,1 s en 0,6 s, omdat de
+ * eerste de cache had opgewarmd. Eén herkansing, geen lus.
+ */
+const TIJDELIJKE_FOUTCODES = new Set(['57014', 'PGRST002']);
+const HERKANSING_NA_MS = 300;
+
 class OutfitService {
   private productsCache: Map<string, Product[]> = new Map();
   private cacheTimestamps: Map<string, number> = new Map();
@@ -85,7 +95,11 @@ class OutfitService {
     }
 
     try {
-      const { data, error } = await client.rpc('get_kandidaten', params);
+      let { data, error } = await client.rpc('get_kandidaten', params);
+      if (error && TIJDELIJKE_FOUTCODES.has(String(error.code))) {
+        await new Promise((klaar) => setTimeout(klaar, HERKANSING_NA_MS));
+        ({ data, error } = await client.rpc('get_kandidaten', params));
+      }
 
       if (error) {
         throw new CatalogusOnbereikbaar(error.message || 'rpc get_kandidaten faalde');
