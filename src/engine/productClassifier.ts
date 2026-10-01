@@ -170,6 +170,10 @@ const BOTTOM_RULES: PatternEntry[] = [
   { regex: /\bpantalon\b/i, subcategory: 'pantalon', weight: 3 },
   { regex: /\bjeans?\b/i, subcategory: 'jeans', weight: 3 },
   { regex: /\bchinos?\b/i, subcategory: 'chino', weight: 3 },
+  // OFM noemt broeken "5-pocket" ("Pierre Cardin | Heren | 5-pocket Beige");
+  // zonder deze regel werden 23 van hun 355 broeken top (1 okt 2026). Moet
+  // gelijk blijven met de andere kopie van deze lijst (app en feed-import).
+  { regex: /\b5[\s-]?pockets?\b/i, subcategory: 'broek', weight: 3 },
   { regex: /\bcargo[\s-]?(pant|broek|trouser|short)?\b/i, subcategory: 'cargo', weight: 2 },
   { regex: /\bshorts\b|\bkorte[\s-]?broek\b/i, subcategory: 'shorts', weight: 3 },
   // Nederlandse retail gebruikt het enkelvoud ("PUMA CLRT relaxte uniseks
