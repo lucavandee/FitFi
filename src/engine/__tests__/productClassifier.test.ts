@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { classifyProductDetailed } from '../productClassifier';
+import { classifyProduct, classifyProductDetailed } from '../productClassifier';
 
 // Helper — just test category from name
 function cat(name: string, desc = '', category = '') {
@@ -311,6 +311,29 @@ describe('DRESS false friends', () => {
     expect(cat('Maxi Dress Bloemenprint')).toBe('dress');
     expect(cat('Cocktail Dress Zwart')).toBe('dress');
     expect(cat('Wrap Dress Groen')).toBe('dress');
+  });
+});
+
+// ─── BOTTOM: 5-pocket (OFM) ────────────────────────────────────────────────
+// OFM noemt broeken "5-pocket" ("Pierre Cardin | Heren | 5-pocket Beige") en de
+// feed zet ze op categorie "top". Gemeten op 1 okt 2026: 23 van de 355 broeken
+// van OFM stonden als top, en kwamen zo als bovenstuk in een outfit. De
+// invoer hieronder is de echte: naam, beschrijving en feedcategorie uit de
+// database.
+describe('BOTTOM classification: 5-pocket', () => {
+  it.each([
+    'Pierre Cardin | Heren | 5-pocket Beige',
+    'PME Legend | Heren | Flightrider 5-pocket Groen',
+    'Replay | Heren | 5 pockets Blauw',
+  ])('%s wordt bottom, ook als de feed top zegt', (naam) => {
+    const uitkomst = classifyProduct({
+      id: 'ofm-1',
+      name: naam,
+      description: 'Stijlvolle 5 pockets voor mannen in maat: 33/32. Gemaakt van katoen.',
+      category: 'top',
+      brand: 'Pierre Cardin',
+    } as any);
+    expect(uitkomst.category).toBe('bottom');
   });
 });
 
