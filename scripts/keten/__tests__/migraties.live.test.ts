@@ -20,6 +20,78 @@ const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
 const service = () => createClient(url!, serviceKey!, { auth: { persistSession: false } });
 const anon = () => createClient(url!, anonKey!, { auth: { persistSession: false } });
 
+// Ruimere timeout dan de standaard 5 s: op 1 okt 2026 wisselde dezelfde aanroep
+// tussen 13 ms (warme cache) en 9 s (koude schijf). De tests hieronder meten
+// gedrag, geen snelheid.
+describe.skipIf(!url || !serviceKey)("20261001120000_keten_tag_kandidaten_selectie (live)", { timeout: 30_000 }, () => {
+  // Een versie die niet bestaat: dan telt elke canonieke kandidaat mee, ook als
+  // de winkel inmiddels getagd is, en blijft deze test zinvol na elke tagronde.
+  const basis = { p_retailer: "Giglio (INT)", p_modus: "tekst", p_versie: "live-test-onbestaande-versie", p_after: null };
+
+  // Een smalle band, zodat een vergeten onder- of bovengrens zeker opvalt:
+  // bij Giglio (mediaan 248 euro) valt het overgrote deel buiten 100-110.
+  it("houdt zich aan beide prijsgrenzen", async () => {
+    const { data, error } = await service().rpc("keten_tag_kandidaten", {
+      ...basis, p_limit: 100, p_prijs_min: 100, p_prijs_max: 110,
+    });
+    expect(error).toBeNull();
+    const rijen = (data ?? []) as Array<{ price: number }>;
+    expect(rijen.length).toBeGreaterThan(0);
+    for (const r of rijen) {
+      expect(Number(r.price)).toBeGreaterThanOrEqual(100);
+      expect(Number(r.price)).toBeLessThanOrEqual(110);
+    }
+  });
+
+  // PUMA, omdat daar een groot deel unisex is: zonder unisex in de male-selectie
+  // zou een run voor mannen hun unisex-items nooit taggen.
+  it("neemt bij male ook unisex mee en laat female weg", async () => {
+    const { data, error } = await service().rpc("keten_tag_kandidaten", {
+      ...basis, p_retailer: "PUMA (EU) - USD", p_limit: 300, p_gender: "male",
+    });
+    expect(error).toBeNull();
+    const genders = ((data ?? []) as Array<{ gender: string }>).map((r) => r.gender);
+    expect(genders.length).toBeGreaterThan(0);
+    for (const g of genders) expect(["male", "unisex"]).toContain(g);
+    expect(genders).toContain("unisex");
+    expect(genders).toContain("male");
+  });
+
+  it("female laat male weg", async () => {
+    const { data, error } = await service().rpc("keten_tag_kandidaten", { ...basis, p_limit: 300, p_gender: "female" });
+    expect(error).toBeNull();
+    const rijen = (data ?? []) as Array<{ gender: string }>;
+    expect(rijen.length).toBeGreaterThan(0);
+    for (const r of rijen) expect(["female", "unisex"]).toContain(r.gender);
+  });
+
+  it("zonder filters komen ook prijzen buiten 50-150 mee, zoals voor deze migratie", async () => {
+    const { data, error } = await service().rpc("keten_tag_kandidaten", { ...basis, p_limit: 500 });
+    expect(error).toBeNull();
+    const prijzen = ((data ?? []) as Array<{ price: number }>).map((r) => Number(r.price));
+    expect(prijzen.some((p) => p > 150)).toBe(true);
+  });
+
+  it.skipIf(!anonKey)("de nieuwe signatuur is niet aanroepbaar met de anon-sleutel", async () => {
+    const { error } = await anon().rpc("keten_tag_kandidaten", { ...basis, p_limit: 1, p_prijs_min: 50, p_gender: "male" });
+    expect(error?.message ?? "").toContain("permission denied");
+  });
+
+  // De fotomodus kiest getagde rijen met lage zekerheid en een echte foto-URL.
+  // Op 1 okt 2026 waren dat er 6 bij H&M; na een fotoronde kan dit leeg zijn,
+  // dan wordt alleen nog gecontroleerd dat de aanroep slaagt.
+  it("de fotomodus geeft alleen rijen met zekerheid onder 0,6 en een foto-URL", async () => {
+    const { data, error } = await service().rpc("keten_tag_kandidaten", {
+      p_retailer: STANDAARD_RETAILER, p_modus: "foto", p_versie: "haiku-4.5-v1", p_limit: 50, p_after: null,
+    });
+    expect(error).toBeNull();
+    for (const r of (data ?? []) as Array<{ confidence: number; image_url: string }>) {
+      expect(r.confidence).toBeLessThan(0.6);
+      expect(r.image_url.startsWith("http")).toBe(true);
+    }
+  });
+});
+
 describe.skipIf(!url || !serviceKey)("20260916100000_keten_tag_kolommen (live)", () => {
   it("keten_tag_kandidaten geeft alleen producten van de gevraagde retailer, met de velden voor de tagger", async () => {
     const { data, error } = await service().rpc("keten_tag_kandidaten", {
