@@ -67,6 +67,23 @@
   use_column voorkomt dat de kolomnamen van returns table (price, gender, ...)
   als plpgsql-variabelen worden gelezen.
 
+  ## Een hek tegen de verkeerde indexkeuze
+  Ook met custom plans koos de planner voor Giglio, 50-150, een index op prijs
+  of gender en sorteerde daarna: hij schatte 3 tot 156 rijen in de band, het
+  waren er 16.750. Gemeten op 1 okt 2026: 21.403 of 64.468 rijen opgehaald
+  voor een pagina van 200, en met de schijf van die dag een statement timeout
+  na 8 s.
+
+  De index die past is idx_product_attributes_tag_kandidaten (retailer,
+  product_id): die levert de rijen van een winkel al in paginavolgorde, zodat
+  de scan stopt zodra de pagina vol is. Daarom staat de selectie in twee
+  lagen. De binnenste laag (b) bevat alleen de basisvoorwaarden, de retailer
+  en p_after, gesorteerd op product_id, met "offset 0" als hek: daardoor kan
+  de planner prijs, gender en tagstatus er niet in duwen en kiest hij de
+  geordende scan. De laag daarboven filtert en beperkt. Gemeten met dit hek:
+  764 rijen voor een pagina van 200 (48 ms), 6.746 voor een pagina van 1.000
+  mannenitems (881 ms).
+
   ## Rechten
   Supabase geeft een nieuwe functie standaard uitvoerrecht voor anon en
   authenticated. De revoke hieronder herhaalt die van 20260916100000 voor de
@@ -130,30 +147,35 @@ begin
     p.image_url,
     k.confidence
   from (
-    select pa.product_id, pa.price, pa.retailer, pa.gender, pa.confidence
-    from product_attributes pa
-    where pa.canonical_id = pa.product_id
-      and pa.is_fashion
-      and pa.classifier_version is not null
-      and pa.in_stock
-      and (p_retailer is null or pa.retailer = p_retailer)
-      and (p_after is null or pa.product_id > p_after)
-      and (p_prijs_min is null or pa.price >= p_prijs_min)
-      and (p_prijs_max is null or pa.price <= p_prijs_max)
-      and (p_gender is null or p_gender = 'unisex' or pa.gender in (p_gender, 'unisex'))
+    select b.product_id, b.price, b.retailer, b.gender, b.confidence
+    from (
+      select pa.product_id, pa.price, pa.retailer, pa.gender, pa.confidence, pa.tagger_version
+      from product_attributes pa
+      where pa.canonical_id = pa.product_id
+        and pa.is_fashion
+        and pa.classifier_version is not null
+        and pa.in_stock
+        and (p_retailer is null or pa.retailer = p_retailer)
+        and (p_after is null or pa.product_id > p_after)
+      order by pa.product_id
+      offset 0  -- hek, zie boven
+    ) b
+    where (p_prijs_min is null or b.price >= p_prijs_min)
+      and (p_prijs_max is null or b.price <= p_prijs_max)
+      and (p_gender is null or p_gender = 'unisex' or b.gender in (p_gender, 'unisex'))
       and case p_modus
             when 'foto' then
-              pa.tagger_version = p_versie
-              and pa.confidence < 0.6
+              b.tagger_version = p_versie
+              and b.confidence < 0.6
               and exists (
                 select 1 from products f
-                where f.id = pa.product_id and f.image_url like 'http%'
+                where f.id = b.product_id and f.image_url like 'http%'
               )
             else
-              pa.tagger_version is null
-              or pa.tagger_version not like p_versie || '%'
+              b.tagger_version is null
+              or b.tagger_version not like p_versie || '%'
           end
-    order by pa.product_id
+    order by b.product_id
     limit p_limit
   ) k
   join products p on p.id = k.product_id
