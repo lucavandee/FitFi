@@ -75,3 +75,12 @@ Deno.test("productClassifier.ts (Deno-kopie) bevat geen negatieve lookbehind", (
     throw new Error("lookbehind-syntax gevonden in productClassifier.ts (Deno-kopie)");
   }
 });
+
+// OFM noemt broeken "5-pocket" en de feed zet ze op "top" (23 van de 355 op
+// 1 okt 2026). Zelfde regel als de app-kopie in src/engine/productClassifier.ts.
+Deno.test("een 5-pocket van OFM wordt bottom, ook als de feed top zegt", () => {
+  for (const naam of ["Pierre Cardin | Heren | 5-pocket Beige", "PME Legend | Heren | Flightrider 5-pocket Groen", "Replay | Heren | 5 pockets Blauw"]) {
+    const r = classifyProductRaw(naam, "Stijlvolle 5 pockets voor mannen in maat: 33/32. Gemaakt van katoen.", "top", "Pierre Cardin");
+    assertGelijk(r.category, "bottom", naam);
+  }
+});

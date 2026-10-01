@@ -3,6 +3,7 @@ import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import ScrollToTop from "@/components/ScrollToTop";
+import CookieBanner from "@/components/legal/CookieBanner";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
@@ -226,6 +227,10 @@ function AppShell() {
         {!isFullscreen && <MobileBottomNav />}
         <InstallPrompt />
         <AnalyticsLoader />
+        {/* Zonder deze regel kan niemand toestemming geven, blijft analytics op
+            false staan en vuurt track() nooit. index.html zet consent mode v2
+            standaard op denied. */}
+        <CookieBanner />
       </ErrorBoundary>
       </MotionConfig>
     </div>

@@ -42,7 +42,7 @@ export default function CookieBanner() {
       aria-label="Cookievoorkeuren"
       className="fixed inset-x-0 bottom-0 z-[54] p-3 sm:p-4"
     >
-      <div className="mx-auto max-w-2xl rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] shadow-2xl overflow-hidden">
+      <div className="mx-auto max-w-2xl rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] shadow-xl overflow-hidden">
 
         {view === "simple" ? (
           <div className="p-5 sm:p-6">
@@ -61,7 +61,7 @@ export default function CookieBanner() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={acceptAll}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#A85740] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#A85740] hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
               >
                 Alles accepteren
               </button>
@@ -124,7 +124,7 @@ export default function CookieBanner() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={saveCustom}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#9A503B] hover:bg-[#A85740] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A503B] focus-visible:ring-offset-2"
+                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#A85740] hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
               >
                 Voorkeuren opslaan
               </button>

@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Instagram, Linkedin, Twitter, Shield, Lock, MapPin } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
+import { track } from "@/utils/analytics";
 
 const NAV_PRODUCT = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
@@ -35,14 +36,24 @@ export default function Footer() {
 
       {/* CTA strip — alleen voor uitgelogde bezoekers */}
       {!isAuthed && (
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-28 md:pt-36">
-          <div className="bg-white border border-[#E5E5E5] rounded-2xl p-14 md:p-20 flex flex-col items-center text-center gap-3 mb-24 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-40">
+          <div className="bg-white border border-[#E5E5E5] rounded-2xl p-14 md:p-20 flex flex-col items-center text-center gap-3 transition-shadow duration-200 hover:shadow-md">
             <p className="font-serif italic text-[36px] md:text-[44px] text-[#1A1A1A] leading-[1.1]">
               Ontdek jouw stijl
             </p>
             <p className="text-base text-[#6E6E6E] tracking-wide">
               Gratis. Ongeveer vijf minuten. Persoonlijk resultaat.
             </p>
+            <NavLink
+              to="/registreren"
+              onClick={() => {
+                track("cta_click", { page: pathname, position: "footer" });
+                track("quiz_start", { page: pathname, position: "footer" });
+              }}
+              className="mt-6 inline-flex items-center justify-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-colors duration-200"
+            >
+              Begin gratis
+            </NavLink>
           </div>
         </div>
       )}

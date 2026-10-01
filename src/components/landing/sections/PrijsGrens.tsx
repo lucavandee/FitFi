@@ -53,11 +53,9 @@ const REGELS: Regel[] = [
     titel: "Kleuranalyse",
     uitleg: "Welke kleuren bij je werken, op basis van je foto.",
   },
-  {
-    plan: "premium",
-    titel: "Nova AI-assistent",
-    uitleg: "Stel je stijlvraag, Nova antwoordt.",
-  },
+  // "Nova AI-assistent / Stel je stijlvraag, Nova antwoordt." stond hier.
+  // Die functie bestaat niet: geen knop die hem opent en geen backend achter
+  // /.netlify/functions/nova. Zet hem pas terug als hij werkt.
 ];
 
 const VRIJ = REGELS.filter((r) => r.plan === "free").length;

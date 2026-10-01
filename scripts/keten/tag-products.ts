@@ -32,6 +32,12 @@
  *   npm run keten:tag -- --retailer "H&M (NL)" --ja      verstuurt en schrijft
  *   npm run keten:tag -- --met-foto --ja                 foto-ronde voor confidence < 0.6
  *   --limit N            alleen de eerste N kandidaten (proefrun)
+ *   --prijs-min N        alleen kandidaten vanaf N euro (inclusief)
+ *   --prijs-max N        alleen kandidaten tot en met N euro
+ *   --gender male|female alleen wat die gebruiker te zien krijgt, dus inclusief unisex
+ *                         (zelfde regel als get_kandidaten). Bedoeld om op waarde te taggen,
+ *                         bijvoorbeeld eerst het middensegment voor mannen:
+ *                         --retailer "Giglio (INT)" --prijs-min 50 --prijs-max 150 --gender male
  *   --json-schema         forceert claude -p --json-schema (standaard uit sinds 23 sept 2026: trager,
  *                         duurder, maar 100% opbrengst in één beurt i.p.v. de ~65% zonder schema)
  *   --concurrency N      aantal gelijktijdige claude -p aanroepen (standaard 1: twee echte rondes
@@ -72,6 +78,7 @@ import {
   downloadFoto,
   extensieVoorUrl,
   haalKandidaten,
+  leesTagSelectie,
   maakPortieRecord,
   schatDroogeRun,
   schrijfRijen,
@@ -81,12 +88,22 @@ import {
   voerClaudeCliUit,
   voerMetConcurrency,
   type PortieRecord,
+  type TagSelectie,
 } from "./tagCli";
 import { TAGGER_MODEL, TAGGER_VERSION, TAGGER_VERSION_FOTO, type Modus } from "./tagging";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const BATCHES_PAD = join(here, ".batches.json");
 const OUT = join(here, "out");
+
+function beschrijfSelectie(selectie: TagSelectie): string {
+  const delen: string[] = [];
+  if (selectie.prijsMin !== null || selectie.prijsMax !== null) {
+    delen.push(`prijs ${selectie.prijsMin ?? 0} tot ${selectie.prijsMax ?? "onbeperkt"} euro`);
+  }
+  if (selectie.gender !== null) delen.push(`gender ${selectie.gender} plus unisex`);
+  return delen.length > 0 ? delen.join(", ") : "zonder prijs- of genderfilter";
+}
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
@@ -103,6 +120,15 @@ async function main(): Promise<void> {
       console.error(`--limit verwacht een positief geheel getal, kreeg: "${limietRuw}"`);
       process.exit(1);
     }
+  }
+  // Net als bij --limit: een ongeldige filterwaarde stopt het script voordat
+  // er iets naar de database of naar claude -p gaat.
+  let selectie: TagSelectie;
+  try {
+    selectie = leesTagSelectie(argv);
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exit(1);
   }
   const ja = heeftVlag(argv, "ja");
   const metJsonSchema = heeftVlag(argv, "json-schema");
@@ -143,7 +169,7 @@ async function main(): Promise<void> {
   });
 
   console.log(
-    `Tagger ${versie} met model ${TAGGER_MODEL} via claude -p, retailer "${retailer}", modus ${modus}, concurrency ${concurrency}, ` +
+    `Tagger ${versie} met model ${TAGGER_MODEL} via claude -p, retailer "${retailer}", ${beschrijfSelectie(selectie)}, modus ${modus}, concurrency ${concurrency}, ` +
       `${metJsonSchema ? "--json-schema aan (trager, duurder, 100% opbrengst per beurt)" : "zonder --json-schema (standaard sinds 23 sept 2026)"}`
   );
 
@@ -292,12 +318,17 @@ async function main(): Promise<void> {
   }
 
   // 2. Nieuwe kandidaten.
-  const producten = await haalKandidaten(supabase, retailer, modus, limiet, (n) =>
-    process.stdout.write(`\r  kandidaten opgehaald: ${n}`)
+  const producten = await haalKandidaten(
+    supabase,
+    retailer,
+    modus,
+    limiet,
+    (n) => process.stdout.write(`\r  kandidaten opgehaald: ${n}`),
+    selectie
   );
   if (producten.length > 0) process.stdout.write("\n");
   if (producten.length === 0) {
-    console.log("Niets te taggen: alle canonieke producten van deze retailer hebben deze versie al.");
+    console.log(`Niets te taggen: alle canonieke producten van deze retailer (${beschrijfSelectie(selectie)}) hebben deze versie al.`);
     return;
   }
 

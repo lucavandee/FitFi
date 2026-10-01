@@ -6,6 +6,7 @@ import {
   ArrowLeft, Info, ChevronDown
 } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
+import AffiliateDisclosureNote from '@/components/legal/AffiliateDisclosureNote';
 import { ProductCardSkeleton } from '@/components/ui/ProductCardSkeleton';
 import { useProducts } from '@/hooks/useProducts';
 import { canonicalUrl } from '@/utils/urls';
@@ -541,6 +542,11 @@ export default function ShopPage() {
                   </div>
                 )}
               </motion.div>
+            )}
+
+            {/* De koopknoppen hieronder zijn affiliate links. */}
+            {!isLoading && !error && filteredProducts.length > 0 && (
+              <AffiliateDisclosureNote className="mb-6" />
             )}
 
             {!isLoading && !error && filteredProducts.length > 0 && (

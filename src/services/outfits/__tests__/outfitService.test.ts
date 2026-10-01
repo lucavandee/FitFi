@@ -138,6 +138,43 @@ describe("outfitService.getProducts", () => {
   });
 });
 
+// Op 1 okt 2026 gaf een koude aanroep zoals de site die doet HTTP 500: de
+// statement timeout van anon is 3 s. Dezelfde aanroep daarna kwam binnen in
+// 3,1 s en 0,6 s, omdat de eerste de cache had opgewarmd. Na elke DDL geeft
+// PostgREST bovendien even PGRST002 terwijl het zijn schema herlaadt.
+describe("outfitService.getProducts - herkansing bij een tijdelijke fout", () => {
+  const timeout = { code: "57014", message: "canceling statement due to statement timeout" };
+
+  it("probeert het één keer opnieuw na een statement timeout", async () => {
+    rpc
+      .mockResolvedValueOnce({ data: null, error: timeout })
+      .mockResolvedValueOnce({ data: [rij("p1", "top", 60)], error: null });
+    const producten = await outfitService.getProducts(answers);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(producten.map((p) => p.id)).toEqual(["p1"]);
+  });
+
+  it("probeert het ook opnieuw terwijl PostgREST zijn schema herlaadt", async () => {
+    rpc
+      .mockResolvedValueOnce({ data: null, error: { code: "PGRST002", message: "Could not query the database for the schema cache. Retrying." } })
+      .mockResolvedValueOnce({ data: [rij("p1", "top", 60)], error: null });
+    await outfitService.getProducts(answers);
+    expect(rpc).toHaveBeenCalledTimes(2);
+  });
+
+  it("geeft na twee time-outs op rij op met CatalogusOnbereikbaar", async () => {
+    rpc.mockResolvedValue({ data: null, error: timeout });
+    await expect(outfitService.getProducts(answers)).rejects.toBeInstanceOf(CatalogusOnbereikbaar);
+    expect(rpc).toHaveBeenCalledTimes(2);
+  });
+
+  it("probeert een blijvende fout niet opnieuw", async () => {
+    rpc.mockResolvedValue({ data: null, error: { code: "42501", message: "permission denied for function get_kandidaten" } });
+    await expect(outfitService.getProducts(answers)).rejects.toBeInstanceOf(CatalogusOnbereikbaar);
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("outfitService.getProducts - lege pool na classificatie en veiligheidsnet (fixronde 1)", () => {
   it("cachet geen lege pool: een volgende aanroep met dezelfde antwoorden probeert het opnieuw", async () => {
     // Eerste ronde: de enige rij valt volledig weg (classifier), dus de pool

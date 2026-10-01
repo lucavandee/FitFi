@@ -66,7 +66,10 @@ const TOKEN_VERPLICHT = [
 // full-bleed beeld. Die staan letterlijk in CLAUDE.md, dus ze zijn geen
 // arbitraire grootte. Staat hier iets dat NIET in deel 2 staat, dan is dit
 // bestand fout, niet de code.
-const DISPLAY_PX = new Set([32, 64, 68]);
+// 32 en 64 zijn de standaard (home, prijzen, contact, hoe-het-werkt, over-ons).
+// 68 is de homepage-hero over een full-bleed beeld, 56 de blog en de
+// resultatenpagina met langere koppen, 48 die laatste op mobiel.
+const DISPLAY_PX = new Set([32, 48, 56, 64, 68]);
 
 // deel 5: geen andere radii
 const RADII_TOEGESTAAN = new Set(['rounded-xl', 'rounded-2xl', 'rounded-full', 'rounded-none']);
@@ -175,7 +178,7 @@ function checkKleuren(content, filePath) {
 
   // 2. echte style-props. Alleen binnen style={{ ... }} of style="...", niet elk
   // objectveld dat toevallig `color` heet: `color: '#8B7355'` op een Chino broek
-  // in quickOutfitGenerator.ts is productdata, geen interfacekleur.
+  // in een outfitgenerator is productdata, geen interfacekleur.
   const styleBlok = /style\s*=\s*(?:\{\{([^}]*)\}\}|["']([^"']*)["'])/g;
   let blok;
   while ((blok = styleBlok.exec(content)) !== null) {

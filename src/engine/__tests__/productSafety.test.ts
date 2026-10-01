@@ -97,3 +97,75 @@ describe('vangnet: de drie vals-positieven uit de catalogusmeting', () => {
     expect(p('Sokken voor peuters', 'accessory', ['20']).ok).toBe(false);
   });
 });
+
+describe('vangnet: doelgroepkleding', () => {
+  // Gevonden op 2026-09-28: het persona-harnas gaf GROEN terwijl "vrouw
+  // minimalistisch" een MAMA-overhemdjurk in een werkoutfit kreeg. Categorie,
+  // gender, budget en gelegenheid klopten allemaal; het item hoort er alleen
+  // niet omdat de gebruiker niet zwanger is.
+  it('weigert zwangerschaps- en voedingskleding', () => {
+    for (const naam of [
+      'H & M - MAMA Overhemdjurk met ceintuur - Zwart',
+      'H & M - MAMA Before & After Mousseline overhemdblouse - Bruin',
+      'H & M - MAMA Sport-voedingstop - Light support',
+      'H & M - MAMA Wide jeans - Blauw',
+    ]) {
+      const v = beoordeelProduct({ name: naam });
+      expect(v.ok, naam).toBe(false);
+      expect(v.reden, naam).toBe('doelgroep');
+    }
+  });
+
+  it('weigert ook de woorden die nu nog nul keer voorkomen', () => {
+    // maternity, nursing en positiekleding staan op 0 in de catalogus, maar
+    // zijn de juiste woorden zodra een andere aanbieder binnenkomt.
+    for (const naam of ['Maternity jeans', 'Nursing top', 'Positiekleding jurk']) {
+      expect(beoordeelProduct({ name: naam }).ok, naam).toBe(false);
+    }
+  });
+
+  it('laat gewone kleding met een woordgrens-bijna-treffer staan', () => {
+    // \bmama\b matcht bewust niet binnen een langer woord. Gemeten op de
+    // catalogus: alle 2.033 treffers dragen MAMA als losse lijnprefix, nul
+    // valse positieven. Een merknaam als Mamalicious komt er niet in voor;
+    // de regel blijft daarom eng, conform de ontwerpregel bovenaan het bestand.
+    expect(beoordeelProduct({ name: 'Mamalicious gebreide trui' }).ok).toBe(true);
+    expect(beoordeelProduct({ name: 'H & M - Wollen polotrui - Regular Fit' }).ok).toBe(true);
+    expect(beoordeelProduct({ name: 'H & M - Jurk van linnenmix - Wit' }).ok).toBe(true);
+  });
+});
+
+describe('vangnet: kleding in de accessoire-sleuf', () => {
+  it('weigert een broek die als accessoire getagd staat', () => {
+    for (const naam of [
+      'H & M - Pantalon met riem - Zwart',
+      'H & M - Broek met riem - Relaxed Fit - Blauw',
+    ]) {
+      const v = beoordeelProduct({ name: naam, category: 'accessory' });
+      expect(v.ok, naam).toBe(false);
+      expect(v.reden, naam).toBe('kleding-als-accessoire');
+    }
+  });
+
+  it('laat dezelfde broek staan als hij gewoon als bottom getagd is', () => {
+    expect(beoordeelProduct({ name: 'H & M - Pantalon met riem - Zwart', category: 'bottom' }).ok).toBe(true);
+  });
+
+  it('laat accessoires met een merknaam staan die op kleding lijkt', () => {
+    // Deze drie zijn de reden dat de regel eng is. Op een bredere variant met
+    // jeans, jurk, rok en schoen waren 142 van de 170 treffers vals.
+    for (const naam of [
+      'Hat MOSCHINO JEANS Woman color Pink',
+      'Sunglasses CALVIN KLEIN JEANS Men color Blue',
+      'Neck Scarf VERSACE JEANS COUTURE Woman color Multicolor',
+    ]) {
+      expect(beoordeelProduct({ name: naam, category: 'accessory' }).ok, naam).toBe(true);
+    }
+  });
+
+  it('laat een broekriem staan, want dat is wel een accessoire', () => {
+    // \bbroek\b raakt "broekriem" niet: er zit geen woordgrens tussen.
+    expect(beoordeelProduct({ name: 'Leren broekriem - Zwart', category: 'accessory' }).ok).toBe(true);
+    expect(beoordeelProduct({ name: 'H & M - Leren riem met studs - Zwart', category: 'accessory' }).ok).toBe(true);
+  });
+});

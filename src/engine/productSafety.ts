@@ -58,6 +58,61 @@ const ONDERGOED = new RegExp(
   'i'
 );
 
+/**
+ * Kleding voor een doelgroep waar de gebruiker niet om vroeg: zwangerschaps-
+ * en voedingskleding.
+ *
+ * Gemeten op de live catalogus (2026-09-28): 2.033 producten dragen "MAMA" als
+ * lijnprefix van H&M, en alle 2.033 zijn zwangerschaps- of voedingskleding.
+ * Nul valse positieven: er is geen enkel product waar het woord buiten die
+ * lijn voorkomt. De 207 treffers op "voedings" zitten volledig binnen dezelfde
+ * groep, dus die regel is een riem naast de bretels.
+ *
+ * Waarom dit hier hoort en niet in de tagger: van de catalogus is 94,3 procent
+ * nooit door de LLM getagd, en van het deel dat dat wel is krijgt een
+ * MAMA-jurk gewoon category 'dress' met occasions {casual,work} en zekerheid
+ * 0,9. De tagger is er zeker van, en heeft ook geen veld om het in te zetten:
+ * het schema in scripts/keten/tagging.ts kent geen doelgroep. Tot dat veld er
+ * is, houdt dit vangnet ze tegen.
+ *
+ * Gevonden doordat het persona-harnas GROEN gaf terwijl "vrouw minimalistisch"
+ * een MAMA-overhemdjurk in een werkoutfit kreeg en "vrouw romantisch" een
+ * MAMA-mousseline blouse. Het harnas controleert categorie, gender, budget en
+ * gelegenheid, en op al die velden klopten die items.
+ *
+ * maternity, nursing en positiekleding staan er nu op nul, maar zijn de juiste
+ * woorden zodra een andere aanbieder binnenkomt.
+ */
+const DOELGROEP = new RegExp(
+  [
+    '\\bmama\\b', 'zwangerschap', 'voedings', '\\bmaternity\\b',
+    '\\bnursing\\b', 'positiekleding',
+  ].join('|'),
+  'i'
+);
+
+/**
+ * Kledingstukken die als accessoire getagd staan.
+ *
+ * Een broek in de accessoire-sleuf levert een outfit op met een jurk en een
+ * pantalon "erbij". Gemeten op 2026-09-28: 28 producten, allemaal
+ * "H & M - Pantalon met riem" of "Broek met riem". De naam noemt de riem,
+ * en daar is de classificatie op afgegaan.
+ *
+ * Bewust alleen pantalon en broek, en uitdrukkelijk NIET jeans, jurk, rok of
+ * schoen. Een bredere regel liep vol met merknamen: "Hat MOSCHINO JEANS",
+ * "Sunglasses CALVIN KLEIN JEANS" en "Neck Scarf VERSACE JEANS COUTURE" zijn
+ * terecht accessoires. Op die bredere variant waren 142 van de 170 treffers
+ * vals. Met pantalon en broek alleen: 28 treffers, nul vals.
+ *
+ * \bbroek\b raakt "broekriem" niet, want daar ontbreekt de woordgrens. Dat is
+ * precies de bedoeling: een broekriem is wel een accessoire.
+ *
+ * Weigeren en niet herstellen: als de categorie accessory is, kan het item ook
+ * niet als bottom dienen. Er gaat dus niets bruikbaars verloren.
+ */
+const KLEDING_ALS_ACCESSOIRE = /\bpantalon\b|\bbroek\b/i;
+
 /** Expliciete kindmarkeringen in de productnaam. */
 const KIND_IN_NAAM = new RegExp(
   [
@@ -109,7 +164,7 @@ export interface SafetyInput {
 
 export interface SafetyVerdict {
   ok: boolean;
-  reden?: 'niet-kleding' | 'ondergoed' | 'kind-in-naam' | 'kinderschoenmaat';
+  reden?: 'niet-kleding' | 'ondergoed' | 'doelgroep' | 'kleding-als-accessoire' | 'kind-in-naam' | 'kinderschoenmaat';
 }
 
 /** Alleen numerieke maten; letters (S/M/L) zeggen niets over kindermaat. */
@@ -127,6 +182,14 @@ export function beoordeelProduct(p: SafetyInput): SafetyVerdict {
 
   if (NIET_KLEDING.test(naam)) return { ok: false, reden: 'niet-kleding' };
   if (ONDERGOED.test(naam)) return { ok: false, reden: 'ondergoed' };
+  if (DOELGROEP.test(naam)) return { ok: false, reden: 'doelgroep' };
+
+  if (
+    String(p.category ?? '').toLowerCase() === 'accessory' &&
+    KLEDING_ALS_ACCESSOIRE.test(naam)
+  ) {
+    return { ok: false, reden: 'kleding-als-accessoire' };
+  }
   if (KIND_IN_NAAM.test(naam)) return { ok: false, reden: 'kind-in-naam' };
 
   if (String(p.category ?? '').toLowerCase() === 'footwear') {

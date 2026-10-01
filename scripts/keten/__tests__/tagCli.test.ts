@@ -35,6 +35,7 @@ import {
   geschatteRondesTotConvergentie,
   geschatteSecondenVoorPortie,
   haalKandidaten,
+  leesTagSelectie,
   maakPortieRecord,
   parseJsonUitCliTekst,
   schatDroogeRun,
@@ -908,6 +909,90 @@ describe("haalKandidaten", () => {
   it("gooit een fout met de boodschap van de RPC (bijvoorbeeld een onbekende retailer)", async () => {
     const rpc = vi.fn().mockResolvedValueOnce({ data: null, error: { message: 'Onbekende retailer: "x"' } });
     await expect(haalKandidaten({ rpc }, "x", "tekst", 0)).rejects.toThrow('keten_tag_kandidaten: Onbekende retailer: "x"');
+  });
+
+  // Elke opgehaalde rij kost een opzoeking in products. Met --limit 200 een
+  // pagina van 1000 ophalen is 800 opzoekingen voor niets, en op een trage
+  // schijf (1 okt 2026: 5 ms per opzoeking) het verschil tussen 1 en 5 seconden.
+  it("vraagt niet meer rijen op dan de limiet", async () => {
+    const rpc = vi.fn().mockResolvedValueOnce({ data: [product({ product_id: "a" })], error: null });
+    await haalKandidaten({ rpc }, "H&M (NL)", "tekst", 5);
+    expect(rpc.mock.calls[0][1]).toMatchObject({ p_limit: 5 });
+  });
+
+  it("vraagt bij een limiet boven een pagina eerst een volle pagina en dan het restant", async () => {
+    const paginaEen = Array.from({ length: KANDIDATEN_PAGINA }, (_, i) => product({ product_id: String(i) }));
+    const restant = Array.from({ length: 500 }, (_, i) => product({ product_id: `r${i}` }));
+    const rpc = vi
+      .fn()
+      .mockResolvedValueOnce({ data: paginaEen, error: null })
+      .mockResolvedValueOnce({ data: restant, error: null });
+    const uit = await haalKandidaten({ rpc }, "H&M (NL)", "tekst", 1500);
+    expect(uit).toHaveLength(1500);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[0][1]).toMatchObject({ p_limit: 1000 });
+    expect(rpc.mock.calls[1][1]).toMatchObject({ p_limit: 500, p_after: String(KANDIDATEN_PAGINA - 1) });
+  });
+
+  it("stuurt prijsband en gender mee op elke pagina, ook na de eerste", async () => {
+    const paginaEen = Array.from({ length: KANDIDATEN_PAGINA }, (_, i) => product({ product_id: String(i) }));
+    const rpc = vi
+      .fn()
+      .mockResolvedValueOnce({ data: paginaEen, error: null })
+      .mockResolvedValueOnce({ data: [], error: null });
+    await haalKandidaten({ rpc }, "Giglio (INT)", "tekst", 0, () => {}, { prijsMin: 50, prijsMax: 150, gender: "male" });
+    expect(rpc).toHaveBeenCalledTimes(2);
+    for (const [, params] of rpc.mock.calls) {
+      expect(params).toMatchObject({ p_retailer: "Giglio (INT)", p_prijs_min: 50, p_prijs_max: 150, p_gender: "male" });
+    }
+  });
+
+  it("stuurt alleen ingevulde filters mee, zodat een run zonder filter ook werkt op een database zonder de nieuwe parameters", async () => {
+    const rpc = vi.fn().mockResolvedValueOnce({ data: [], error: null });
+    await haalKandidaten({ rpc }, "H&M (NL)", "tekst", 0, () => {}, { prijsMin: null, prijsMax: 150, gender: null });
+    expect(rpc.mock.calls[0][1]).toEqual({
+      p_retailer: "H&M (NL)",
+      p_modus: "tekst",
+      p_versie: TAGGER_VERSION,
+      p_limit: KANDIDATEN_PAGINA,
+      p_after: null,
+      p_prijs_max: 150,
+    });
+  });
+});
+
+describe("leesTagSelectie", () => {
+  it("geeft geen selectie zonder filtervlaggen", () => {
+    expect(leesTagSelectie(["--retailer", "Giglio (INT)", "--ja"])).toEqual({ prijsMin: null, prijsMax: null, gender: null });
+  });
+
+  it("leest prijsband en gender", () => {
+    expect(leesTagSelectie(["--prijs-min", "50", "--prijs-max", "150", "--gender", "male"])).toEqual({
+      prijsMin: 50,
+      prijsMax: 150,
+      gender: "male",
+    });
+  });
+
+  it("staat een prijsband met maar een kant toe", () => {
+    expect(leesTagSelectie(["--prijs-max", "150"])).toEqual({ prijsMin: null, prijsMax: 150, gender: null });
+    expect(leesTagSelectie(["--prijs-min", "0", "--gender", "female"])).toEqual({ prijsMin: 0, prijsMax: null, gender: "female" });
+  });
+
+  // Elk van deze gevallen zou zonder controle stil "geen filter" of een verkeerd
+  // filter worden, en dan tagt een proefronde de verkeerde producten.
+  // "--prijs-min" zonder waarde is de verraderlijkste: Number("") is 0.
+  it.each([
+    [["--prijs-min", "abc"], "--prijs-min"],
+    [["--prijs-min"], "--prijs-min"],
+    [["--prijs-min", "50,5"], "--prijs-min"],
+    [["--prijs-max", "-5"], "--prijs-max"],
+    [["--prijs-min", "200", "--prijs-max", "100"], "--prijs-min"],
+    [["--gender", "unisex"], "--gender"],
+    [["--gender", "man"], "--gender"],
+    [["--gender"], "--gender"],
+  ])("weigert %j met een melding over %s", (argv, vlag) => {
+    expect(() => leesTagSelectie(argv as string[])).toThrow(vlag as string);
   });
 });
 
