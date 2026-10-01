@@ -52,7 +52,11 @@ describe.skipIf(!liveOptIn || !url || !key)("get_kandidaten (live)", () => {
       const perCategorie = new Map<string, number>();
       for (const rij of rijen) {
         perCategorie.set(rij.category, (perCategorie.get(rij.category) ?? 0) + 1);
-        expect(rij.score).toBe(0);
+        // Sinds de score-migratie van plan 2 (20260916100200) is score niet meer
+        // 0. Zonder assen en likes telt alleen de gelegenheid, voor 0,3: een
+        // item met "work" in zijn occasions scoort 0,3, anders 0.
+        const verwacht = (rij.attrs.occasions as string[] | undefined)?.includes("work") ? 0.3 : 0;
+        expect(rij.score).toBeCloseTo(verwacht, 5);
         expect(Number(rij.product.price)).toBeGreaterThanOrEqual(50);
         expect(Number(rij.product.price)).toBeLessThanOrEqual(150);
         expect(["male", "unisex"]).toContain(rij.product.gender);
