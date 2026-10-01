@@ -7,6 +7,7 @@
  *  - een item buiten het budget van de persona valt;
  *  - een item een gender heeft dat niet bij de persona past (unisex mag altijd);
  *  - een outfit een gelegenheid heeft die de persona niet heeft opgevraagd;
+ *  - een opgevraagde gelegenheid in geen enkele outfit voorkomt;
  *  - bij gelegenheid work een outfit footwear met sandaal/slipper in de naam
  *    of een accessory met "swim"/"zwem" in de naam bevat (tot shoe_type er is);
  *  - twee outfits dezelfde itemset hebben;
@@ -38,6 +39,8 @@ import { leesVlag } from "./args";
 // had nog de drie fouten uit het amendement van 17 september (lege terugval,
 // "KEY=waarde # toelichting" en een achterblijvende \r op CRLF-bestanden).
 import { leesDotEnv } from "./env";
+// Pure controles, los van dit script zodat vitest ze kan toetsen (persona-controles.test.ts).
+import { controleerGelegenheidsdekking } from "./persona-controles";
 // Plan 3, taak 8: --keten=stylist delegeert naar het persona-harnas op de
 // stylist-route (get_kandidaten, keten_outfit_set-cache of noodpad), in
 // plaats van dit bestand zijn eigen v2-harnas.
@@ -150,8 +153,17 @@ function genderPast(productGender: unknown, personaGender: "male" | "female"): b
  * overslaan.
  */
 function gelegenheidGevraagd(outfit: Outfit, persona: Persona): boolean {
-  const gevraagd: string[] = Array.isArray(persona.answers.occasions) ? persona.answers.occasions : [];
-  return gevraagd.map((g) => String(g).toLowerCase()).includes(String(outfit.occasion ?? "").toLowerCase());
+  return gevraagdeGelegenheden(persona).map((g) => String(g).toLowerCase()).includes(String(outfit.occasion ?? "").toLowerCase());
+}
+
+/**
+ * De gelegenheden die de persona opvroeg. Een bron voor beide kanten van de
+ * gelegenheidscontrole: gelegenheidGevraagd() hierboven (per outfit: was zijn
+ * gelegenheid gevraagd?) en controleerGelegenheidsdekking() in
+ * persona-controles.ts (per gevraagde gelegenheid: heeft ze een outfit?).
+ */
+function gevraagdeGelegenheden(persona: Persona): string[] {
+  return Array.isArray(persona.answers.occasions) ? persona.answers.occasions : [];
 }
 
 const client = createClient(url, key);
@@ -180,6 +192,12 @@ function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], af
   if (outfits.length < AANTAL_OUTFITS) {
     fouten.push(`minder dan ${AANTAL_OUTFITS} outfits: ${outfits.length}`);
   }
+
+  // Keerzijde van gelegenheidGevraagd() verderop, dat per outfit toetst. Zonder
+  // deze regel meldt de poort een engine die een gelegenheid laat vallen als een
+  // cijfertekort ("minder dan 6 outfits"), en laat hij zes outfits van een
+  // gelegenheid gewoon door terwijl de persona er twee vroeg.
+  fouten.push(...controleerGelegenheidsdekking(outfits, gevraagdeGelegenheden(persona), AANTAL_OUTFITS));
 
   const personaGender: "male" | "female" = persona.answers.gender;
 
