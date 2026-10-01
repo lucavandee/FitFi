@@ -283,7 +283,36 @@ export const KLEUR_SYNONIEMEN: Partial<Record<string, (typeof COLORS)[number]>> 
   // Engelse woorden, geen gok.
   gold: "goud",
   silver: "zilver",
+  // FIXRONDE 9 (1 okt 2026): tintnamen uit de proefronde over vier nieuwe
+  // winkels waarvan de basiskleur vaststaat. Marine en marineblauw zijn de
+  // Nederlandse naam voor navy; bordeaux is wijnrood; zand is in mode de naam
+  // voor beige; kobalt is een blauw; antraciet is donkergrijs. Bewust NIET:
+  // berry, koraal, brons, ecru, taupe, khaki, turquoise, creme: daar ligt de
+  // kleur tussen twee waarden in en zou mappen een gok zijn.
+  marineblauw: "navy",
+  marine: "navy",
+  navyblue: "navy",
+  bordeaux: "rood",
+  zand: "beige",
+  kobalt: "blauw",
+  antraciet: "grijs",
 };
+
+// FIXRONDE 9: basiswoorden voor samengestelde kleurnamen. In het Nederlands is
+// het laatste deel van een samenstelling de kleur zelf (olijfgroen is groen,
+// bordeauxrood is rood, lichtblauw is blauw); het Engels aan elkaar geschreven
+// werkt hetzelfde (lightblue, offwhite). Alleen echte basiskleuren, geen
+// tintnamen: anders zou "aquamarine" via "marine" navy worden. Het Engelse
+// "red" staat er bewust niet in: dat zit ook in "colored".
+const KLEUR_BASISWOORDEN: Array<[string, (typeof COLORS)[number]]> = (
+  [
+    ...COLORS.filter((c) => c !== "multicolor").map((c) => [c, c]),
+    ["black", "zwart"], ["white", "wit"], ["grey", "grijs"], ["gray", "grijs"],
+    ["brown", "bruin"], ["green", "groen"], ["pink", "roze"], ["blue", "blauw"],
+    ["yellow", "geel"], ["purple", "paars"], ["violet", "paars"], ["orange", "oranje"],
+    ["gold", "goud"], ["silver", "zilver"],
+  ] as Array<[string, (typeof COLORS)[number]]>
+).sort((a, b) => b[0].length - a[0].length);
 
 export const MATERIAAL_SYNONIEMEN: Partial<Record<string, (typeof MATERIALS)[number]>> = {
   cotton: "katoen",
@@ -438,6 +467,36 @@ export function normaliseerLijst<T extends readonly string[]>(
   return ruw.map((x) => normaliseerWaarde(x, lijst, synoniemen));
 }
 
+/**
+ * FIXRONDE 9 (1 okt 2026): een lijstveld dat als losse tekst terugkomt, is een
+ * lijst van één. In de herkansing van de proefronde waren 84 van de 124
+ * afkeuringen bij Mart Visser precies dit: materials: "onbekend" of "denim" in
+ * plaats van ["onbekend"]. Een lege tekst blijft wat hij is en wordt verderop
+ * afgekeurd zoals elke niet-lijst.
+ */
+export function alsLijst(ruw: unknown): unknown {
+  return typeof ruw === "string" && ruw.trim() !== "" ? [ruw] : ruw;
+}
+
+/**
+ * FIXRONDE 9: kleur normaliseren, ook als samengestelde naam. Eerst exact of
+ * via de synoniemenlijst; dan dezelfde naam zonder spaties en streepjes
+ * ("off white", "light blue"); dan het laatste deel van de samenstelling als
+ * dat een basiskleur is en er minstens drie letters voor staan. Lukt niets,
+ * dan gaat de waarde ongewijzigd terug en blijft het een afkeuring.
+ */
+export function normaliseerKleur(ruw: unknown): unknown {
+  const direct = normaliseerWaarde(ruw, COLORS, KLEUR_SYNONIEMEN);
+  if (inLijst(COLORS, direct) || typeof ruw !== "string") return direct;
+  const samen = ruw.trim().toLowerCase().replace(/[\s-]+/g, "");
+  const viaSamen = normaliseerWaarde(samen, COLORS, KLEUR_SYNONIEMEN);
+  if (inLijst(COLORS, viaSamen)) return viaSamen;
+  for (const [woord, kleur] of KLEUR_BASISWOORDEN) {
+    if (samen.endsWith(woord) && samen.length - woord.length >= 3) return kleur;
+  }
+  return ruw;
+}
+
 // ---------------------------------------------------------------------------
 // Synoniemenlijsten voor de vijf scalaire velden (FIXRONDE 6, controller, 24
 // sept 2026). Zelfde regels als KLEUR_SYNONIEMEN/MATERIAAL_SYNONIEMEN
@@ -574,7 +633,13 @@ export function valideerTagsGedetailleerd(obj: unknown): ValidatieResultaat {
   o.lightness = normaliseerWaarde(o.lightness, LIGHTNESS, LICHTHEID_SYNONIEMEN);
   o.pattern = normaliseerWaarde(o.pattern, PATTERNS, PATROON_SYNONIEMEN);
   o.shoe_type = normaliseerWaarde(o.shoe_type, SHOE_TYPES, SCHOENTYPE_SYNONIEMEN);
-  o.colors = normaliseerLijst(o.colors, COLORS, KLEUR_SYNONIEMEN);
+  // FIXRONDE 9: losse tekst in een lijstveld wordt een lijst van één, en
+  // kleuren gaan door normaliseerKleur (samengestelde namen), zie boven.
+  o.occasions = alsLijst(o.occasions);
+  o.colors = alsLijst(o.colors);
+  o.materials = alsLijst(o.materials);
+  o.seasons = alsLijst(o.seasons);
+  o.colors = Array.isArray(o.colors) ? o.colors.map(normaliseerKleur) : o.colors;
   o.materials = normaliseerLijst(o.materials, MATERIALS, MATERIAAL_SYNONIEMEN);
 
   if (typeof o.is_fashion !== "boolean") return { ok: false, veld: "is_fashion", waarde: o.is_fashion };
