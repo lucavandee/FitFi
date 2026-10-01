@@ -86,6 +86,10 @@ describe("losse kleurnamen met een vaste basiskleur", () => {
     ["zand", "beige"],
     ["kobalt", "blauw"],
     ["antraciet", "grijs"],
+    // Ronde 3 van de proefronde: "olijf" bleef de enige afkeuring met een
+    // vaste basiskleur.
+    ["olijf", "groen"],
+    ["olive", "groen"],
   ])("%s wordt %s", (ruw, verwacht) => {
     const r = valideer({ colors: [ruw] });
     expect(r.ok).toBe(true);

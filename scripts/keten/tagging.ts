@@ -286,7 +286,7 @@ export const KLEUR_SYNONIEMEN: Partial<Record<string, (typeof COLORS)[number]>> 
   // FIXRONDE 9 (1 okt 2026): tintnamen uit de proefronde over vier nieuwe
   // winkels waarvan de basiskleur vaststaat. Marine en marineblauw zijn de
   // Nederlandse naam voor navy; bordeaux is wijnrood; zand is in mode de naam
-  // voor beige; kobalt is een blauw; antraciet is donkergrijs. Bewust NIET:
+  // voor beige; kobalt is een blauw; antraciet is donkergrijs; olijf is groen. Bewust NIET:
   // berry, koraal, brons, ecru, taupe, khaki, turquoise, creme: daar ligt de
   // kleur tussen twee waarden in en zou mappen een gok zijn.
   marineblauw: "navy",
@@ -296,6 +296,8 @@ export const KLEUR_SYNONIEMEN: Partial<Record<string, (typeof COLORS)[number]>> 
   zand: "beige",
   kobalt: "blauw",
   antraciet: "grijs",
+  olijf: "groen",
+  olive: "groen",
 };
 
 // FIXRONDE 9: basiswoorden voor samengestelde kleurnamen. In het Nederlands is
