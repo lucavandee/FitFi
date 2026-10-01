@@ -120,6 +120,33 @@ Per retailer na foto-dedupe: Giglio 68.739 van 169.697; H&M 24.815 van 88.043; P
 
 Afleiding van `axes`: per as tel je de keuzes waarin de twee outfits op die as verschilden; value is de kant met de meerderheid, confidence is |gekozen - afgewezen| / aantal keuzes op die as. Een as met confidence < 0.5 is "onzeker" en stuurt de adaptieve paarselectie (7.3).
 
+> **AMENDEMENT (27 september 2026, op verzoek van Luc). De stylist componeert niet meer per bezoeker via de betaalde Anthropic API, maar vult zijn cache vooraf op het Claude Code-abonnement.**
+>
+> Waarom: dezelfde reden als bij de tagger in plan 2. De API kost per token, het abonnement is al betaald. Een Supabase edge function kan `claude -p` niet starten (geen shell, geen OAuth-sessie in Deno), dus een stylist die op het moment van bezoek componeert kan alleen via de API. Componeren hoeft echter niet op dat moment te gebeuren: de uitkomst wordt toch per profiel gecachet en er is al een noodpad dat niets kost.
+>
+> Wat er verandert:
+>
+> 1. **Een script vult de cache**, met `claude -p` op het abonnement, met dezelfde prompt en dezelfde harde validatie die voor de API-route waren geschreven. Zelfde vorm als `scripts/keten/tag-products.ts`.
+> 2. **Het leespad wordt een RPC en geen edge function.** Het lezen van een set met levensduur en voorraadcontrole is pure SQL. Dat schrapt de deploy en het `ANTHROPIC_API_KEY`-secret uit de keten, en het sluit aan op hoe de rest van dit project werkt (`get_kandidaten`, `keten_dekkingsmatrix`).
+> 3. **Engine v2 vangt een cache-miss op**, in de browser, met `seed = fnv1a32(profile_hash)`, zoals het noodpad al deed. Een bezoeker met een profiel dat niet is voorbereid krijgt dus een v2-outfit in plaats van een stylist-outfit.
+> 4. **`source` in `outfit_sets` blijft `stylist`** voor wat het script schrijft; het leespad geeft `cache` terug en het noodpad `v2-fallback`.
+>
+> ## De normalisatie van 5.2.1 moet mee, anders werkt vooraf vullen niet
+>
+> Gemeten op de implementatie van 27 september: `profile_hash` is een sha256 over gender, gesorteerde gelegenheden, `budget_min`, `budget_max`, de gesorteerde niet-wil-producten en de gesorteerde ruwe quizkeuzes. Drie daarvan maken vrijwel elke bezoeker uniek:
+>
+> - **budget als los getal**: een euro verschil is een ander profiel;
+> - **niet-wil-producten in de sleutel**: een weggeveegd product maakt de hele set onbereikbaar;
+> - **ruwe keuzes**: zes tot twaalf paren geven een praktisch oneindige ruimte.
+>
+> Daarom hasht 5.2.1 vanaf nu:
+>
+> - het budget als een van de vier bestaande prijsbanden (`tot50`, `50tot100`, `100tot200`, `boven200`) in plaats van twee getallen;
+> - **niet** de niet-wil-producten; die worden als filter op het gelezen resultaat toegepast, niet als onderdeel van de sleutel;
+> - de **afgeleide assen** (naam plus waarde, confidence afgerond op een vast raster) in plaats van de ruwe keuzes. Twee bezoekers die andere paren kozen maar op hetzelfde stijlprofiel uitkomen, delen dan een set. Dat is ook semantisch juister: de stylist leest assen, geen keuzes.
+>
+> Gevolg: de ruimte wordt ongeveer drie genders maal 127 gelegenheidscombinaties maal vier budgetbanden maal de assencombinaties, klein genoeg om de veelvoorkomende sleutels vooraf te vullen. Deze verbetering maakt de API-route trouwens ook goedkoper, mocht die er ooit alsnog komen: met de oude sleutel raakte de cache bijna nooit.
+
 ### 5.3 RPC `get_kandidaten`
 
 ```sql
@@ -133,6 +160,8 @@ get_kandidaten(
 Werkt uitsluitend op `product_attributes` waar `product_id = canonical_id`, `is_fashion`, `products.in_stock`, gender in (p_gender, 'unisex'), prijs binnen budget, niet in p_disliked_ids. Score = 0.5 * as-overeenkomst (aantal assen waarop attrs gelijk is aan axes.value, gewogen met confidence) + 0.3 * gelegenheid-overlap + 0.2 * max cosine-similariteit met p_liked_ids (0 als leeg). Geeft de top `p_per_category` per categorie terug (top, bottom, footwear, outerwear, dress, accessory), dus maximaal 72 rijen. Deterministisch: bij gelijke score op product_id.
 
 ### 5.4 Edge function `compose-outfits`
+
+> **Vervangen door het amendement van 27 september 2026 hierboven (bij 5.2.1).** Er komt geen edge function die per bezoeker de Anthropic API aanroept. Het componeren gebeurt vooraf in een script op het Claude Code-abonnement; het leespad is een RPC met levensduur en voorraadcontrole. Het schema, de harde validatieregels en de prompt-eisen in deze paragraaf blijven onverkort gelden: ze zijn nu de eisen aan dat script in plaats van aan een edge function.
 
 Input: `{ profile_hash, profile: taste_profiles-rij, kandidaten: uitvoer van 5.3 }`.
 
