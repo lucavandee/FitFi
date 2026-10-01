@@ -84,22 +84,27 @@
  * Nooit in de repo, nooit gelogd.
  *
  * Standaardprofielen: de vier persona's uit KETEN_PERSONAS
- * (src/keten/personas.ts) plus een vijfde met een halve, onzekere assen-set
- * (drie assen onbekend, de rest met lage zekerheid), zoals keuze 3 bovenaan
- * docs/superpowers/plans/2026-09-14-plan-3-stylist.md beschrijft voor het
- * (nog te bouwen) persona-harnas van taak 8. De hele gebucketde ruimte
- * (gender x gelegenheidscombinatie x prijsband x assencombinatie) wordt
- * bewust NIET geënumereerd: hoe echte bezoekers aan hun assen komen ligt pas
- * in plan 4 vast (pair_sets, keuze-afleiding), dus elke enumeratie nu gokt op
- * een verdeling die nog niet bestaat.
+ * (src/keten/personas.ts) plus een vijfde met dunnere invoer (de optionele
+ * printsvraag niet beantwoord), zoals keuze 3 bovenaan
+ * docs/superpowers/plans/2026-09-14-plan-3-stylist.md die voorschrijft. Ze
+ * staan in scripts/keten/stylist-profielen.ts en gaan door dezelfde
+ * vertaling als een bezoeker uit de quiz (profielVanQuizAnswers), zodat een
+ * gevulde set onder een sleutel staat die een bezoeker ook kan produceren
+ * (spec 5.2.1, herziening van 1 oktober 2026: de eerdere profielen droegen
+ * assen die geen bezoeker opgeeft en kwamen nooit op een bezoekerssleutel
+ * uit). De hele gebucketde ruimte (gender x gelegenheidscombinatie x
+ * prijsband x assencombinatie) wordt bewust NIET geënumereerd: hoe echte
+ * bezoekers aan hun assen komen ligt pas in plan 4 vast (pair_sets,
+ * keuze-afleiding), dus elke enumeratie nu gokt op een verdeling die nog niet
+ * bestaat.
  */
 import { readFileSync } from "node:fs";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { heeftVlag, leesVlag } from "./args";
 import { leesEnv } from "./env";
+import { slug, standaardProfielen, type NaamProfiel } from "./stylist-profielen";
 import { bouwClaudeArgs, parseJsonUitCliTekst, voerClaudeCliUit, type ClaudeCliResultaat } from "./tagCli";
-import { KETEN_PERSONAS, STYLE_ASSEN, type KetenPersona } from "../../src/keten/personas";
-import { prijsbandVanMidden, profileHash } from "../../src/keten/profileHash";
+import { normaliseerProfiel, prijsbandVanMidden, profileHash } from "../../src/keten/profileHash";
 import { outfitKey } from "../../src/services/ratings/outfitRatings";
 import {
   bouwGebruikersPrompt,
@@ -193,81 +198,6 @@ const BAND_BEREIK: Record<string, { min: number; max: number }> = {
   "100tot200": { min: 100, max: 200 },
   boven200: { min: 200, max: 2000 },
 };
-
-// ---------------------------------------------------------------------------
-// Standaardprofielen
-// ---------------------------------------------------------------------------
-
-function slug(naam: string): string {
-  return naam
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-function profielVanPersona(persona: KetenPersona): TasteProfileInput {
-  const stijl = persona.stylePreferences[0];
-  const assenVoorStijl = STYLE_ASSEN[stijl];
-  if (!assenVoorStijl) {
-    throw new Error(`Geen vaste assen gedefinieerd voor stijl "${stijl}" (persona "${persona.naam}").`);
-  }
-  return {
-    user_id: null,
-    session_id: `stylist-vulcache-${slug(persona.naam)}`,
-    gender: persona.gender,
-    occasions: persona.occasions as Gelegenheid[],
-    budget_min: persona.budget_min,
-    budget_max: persona.budget_max,
-    nogo_product_ids: [],
-    choices: [],
-    axes: { ...legeAssen(), ...assenVoorStijl },
-    liked_product_ids: [],
-    disliked_product_ids: [],
-  };
-}
-
-/**
- * Vijfde profiel (keuze 3, plan-3-stylist.md): dezelfde gender, gelegenheden
- * en budget als "vrouw minimalistisch", maar met een halve, onzekere
- * assen-set: formality, silhouette en shoe_type onbekend (value null,
- * confidence 0), color_temp, lightness en pattern met een lage zekerheid
- * (0.25, onder de 0.5-knip uit spec 5.2 die "onzeker" markeert). Dit
- * simuleert een bezoeker die het dit-of-dat-traject halverwege afbreekt en
- * bewijst dat de stylist ook met dunne invoer zes geldige outfits aflevert.
- */
-function onzekerProfiel(basisPersona: KetenPersona): TasteProfileInput {
-  const volledig = profielVanPersona(basisPersona);
-  return {
-    ...volledig,
-    session_id: `stylist-vulcache-${slug(basisPersona.naam)}-halve-set`,
-    axes: {
-      formality: { value: null, confidence: 0 },
-      silhouette: { value: null, confidence: 0 },
-      shoe_type: { value: null, confidence: 0 },
-      color_temp: { value: volledig.axes.color_temp.value, confidence: 0.25 },
-      lightness: { value: volledig.axes.lightness.value, confidence: 0.25 },
-      pattern: { value: volledig.axes.pattern.value, confidence: 0.25 },
-    },
-  };
-}
-
-interface NaamProfiel {
-  naam: string;
-  profiel: TasteProfileInput;
-}
-
-function standaardProfielen(): NaamProfiel[] {
-  const vast = KETEN_PERSONAS.map((p) => ({ naam: p.naam, profiel: profielVanPersona(p) }));
-  const minimalistisch = KETEN_PERSONAS.find((p) => p.naam === "vrouw minimalistisch");
-  if (!minimalistisch) {
-    throw new Error('KETEN_PERSONAS mist "vrouw minimalistisch", nodig voor het vijfde (halve-set) profiel.');
-  }
-  const vijfde: NaamProfiel = {
-    naam: "vrouw minimalistisch (halve set)",
-    profiel: onzekerProfiel(minimalistisch),
-  };
-  return [...vast, vijfde];
-}
 
 // ---------------------------------------------------------------------------
 // --profielen <pad>: eigen profielen uit een JSON-bestand
@@ -714,6 +644,7 @@ async function main(): Promise<void> {
           `tot ~$${GESCHATTE_KOSTEN_MET_HERKANSING_USD.toFixed(2)} met een herkansing; gemeten op de echte run van taak 6b, ` +
           "n=1, niet de kostentabel van plan-3-stylist.md, zie taak-6b-report.md)."
       );
+      console.log(`    sleutel: ${normaliseerProfiel(profiel)}`);
     }
     const totMax = profielen.length * GESCHATTE_KOSTEN_MET_HERKANSING_USD;
     console.log(

@@ -23,7 +23,7 @@ const basis: TasteProfileInput = {
   disliked_product_ids: ['b', 'a'],
 };
 
-describe('normaliseerProfiel (amendement 27 september bij spec 5.2.1)', () => {
+describe('normaliseerProfiel (amendement 27 september bij spec 5.2.1, herzien op 1 oktober)', () => {
   it('bouwt de sleutel op uit gender, gesorteerde occasions, prijsband en assen', () => {
     // Oude verwachting was 'male|casual,work|50|150|a,b|p1:q,p2:x': budget als
     // twee losse getallen, nogo-ids en ruwe keuzes rechtstreeks in de
@@ -32,8 +32,10 @@ describe('normaliseerProfiel (amendement 27 september bij spec 5.2.1)', () => {
     // en de afgeleide assen; nogo-ids zijn helemaal uit de sleutel geschrapt.
     // budget_min 50, budget_max 150 -> midden 100 -> valt op de grens naar
     // '100tot200' (midden < 200 is waar, midden < 100 is onwaar).
+    // Tot 1 oktober stond hier per as ook de zekerheid in (':0.5' achter
+    // formality en pattern). Die is eruit: zie het volgende blok.
     expect(normaliseerProfiel(basis)).toBe(
-      'male|casual,work|100tot200|formality:4:0.5,pattern:solid:0.5',
+      'male|casual,work|100tot200|formality:4,pattern:solid',
     );
   });
 
@@ -119,29 +121,35 @@ describe('normaliseerProfiel (amendement 27 september bij spec 5.2.1)', () => {
       expect(normaliseerProfiel(metLegeAs)).toBe(normaliseerProfiel(basis));
     });
 
-    describe('confidence: afgerond op stappen van 0,25', () => {
-      it('geeft dezelfde hash binnen hetzelfde kwart (0,5 en 0,6 ronden beide naar 0,5)', () => {
-        const a: TasteProfileInput = {
-          ...basis,
-          axes: { ...basis.axes, formality: { value: 4, confidence: 0.5 } },
-        };
-        const b: TasteProfileInput = {
-          ...basis,
-          axes: { ...basis.axes, formality: { value: 4, confidence: 0.6 } },
-        };
-        expect(normaliseerProfiel(a)).toBe(normaliseerProfiel(b));
+    describe('zekerheid: telt niet mee in de sleutel (herziening 1 oktober 2026)', () => {
+      // Dit blok verving 'confidence: afgerond op stappen van 0,25'. Het
+      // raster was een van twee oorzaken van een cache die een echte bezoeker
+      // nooit raakte: de quiz zet de zekerheid op 1, het vulscript nam
+      // 0,5 tot 0,9 uit een persona-tabel, en op het raster zijn dat andere
+      // stappen. De zekerheid is invoer voor de compositie (prompt en
+      // get_kandidaten), geen identiteit van het profiel. De bezoeker-tegen-
+      // vulscript-vergelijking staat in
+      // scripts/keten/__tests__/stylist-profielen.test.ts.
+      const metZekerheid = (confidence: number): TasteProfileInput => ({
+        ...basis,
+        axes: { ...basis.axes, formality: { value: 4, confidence } },
       });
 
-      it('geeft een andere hash over een kwartgrens heen (0,6 rondt naar 0,5; 0,7 rondt naar 0,75)', () => {
-        const a: TasteProfileInput = {
+      it('geeft dezelfde sleutel bij elke zekerheid op dezelfde as', () => {
+        // 0,6 en 0,7 vielen op het oude raster nog in twee stappen (0,5 en
+        // 0,75); 0,1 en 1 lagen er ver uit elkaar.
+        for (const confidence of [0.1, 0.5, 0.6, 0.7, 0.75, 1]) {
+          expect(normaliseerProfiel(metZekerheid(confidence))).toBe(normaliseerProfiel(basis));
+        }
+      });
+
+      it('geeft wel een andere sleutel zodra de waarde van de as verandert', () => {
+        // De zekerheid doet niet mee, de waarde nog steeds.
+        const anders: TasteProfileInput = {
           ...basis,
-          axes: { ...basis.axes, formality: { value: 4, confidence: 0.6 } },
+          axes: { ...basis.axes, formality: { value: 3, confidence: 0.6 } },
         };
-        const b: TasteProfileInput = {
-          ...basis,
-          axes: { ...basis.axes, formality: { value: 4, confidence: 0.7 } },
-        };
-        expect(normaliseerProfiel(a)).not.toBe(normaliseerProfiel(b));
+        expect(normaliseerProfiel(anders)).not.toBe(normaliseerProfiel(basis));
       });
     });
   });
@@ -161,5 +169,13 @@ describe('profileHash', () => {
       axes: { ...basis.axes, pattern: { value: 'print', confidence: 0.5 } },
     });
     expect(anders).not.toBe(await profileHash(basis));
+  });
+
+  it('blijft gelijk bij een andere zekerheid op een as', async () => {
+    const zekerder = await profileHash({
+      ...basis,
+      axes: { ...basis.axes, pattern: { value: 'solid', confidence: 1 } },
+    });
+    expect(zekerder).toBe(await profileHash(basis));
   });
 });

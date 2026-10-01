@@ -25,11 +25,17 @@
  *   geen fetch naar een edge function meer.
  *
  * De assen per stijlvoorkeur (STYLE_ASSEN, hieronder geimporteerd) komen uit
- * src/keten/personas.ts, dezelfde bron als scripts/keten/stylist-vul-cache.ts
- * gebruikt om de cache te vullen. profileHash (src/keten/profileHash.ts)
- * hasht per as de naam, de waarde en de afgeronde confidence; met een enkele
- * bron kunnen dit harnas en het vulscript niet meer onder een verschillende
- * sleutel voor hetzelfde stijlprofiel komen.
+ * src/keten/personas.ts. Dit harnas modelleert bewust rijkere persona's dan
+ * een bezoeker uit de quiz oplevert: zes assen, waar de quiz er drie geeft
+ * (silhouette, pattern, color_temp). profileHash (src/keten/profileHash.ts)
+ * hasht per as de naam en de waarde. Het vulscript bouwt zijn profielen sinds
+ * 1 oktober 2026 via de quiz-vertaling (scripts/keten/stylist-profielen.ts),
+ * dus onder een sleutel die een bezoeker kan raken; de zes-assen-profielen
+ * van dit harnas staan onder een andere. Zolang het harnas zijn persona's zo
+ * bouwt, geeft de cache-controle hieronder een cache-miss (bron v2-fallback,
+ * ROOD), ook direct na een vulronde. Dat is een bekende uitkomst en geen
+ * regressie: het harnas kan zijn profielen op die van het vulscript
+ * afstemmen door ze uit standaardProfielen() (stylist-profielen.ts) te halen.
  *
  * Gebruik:
  *   npx vite-node --script scripts/keten/stylist-run.ts
@@ -113,15 +119,16 @@ const MINIMALIST_ASSEN = STYLE_ASSEN.minimalist;
 
 /**
  * Vijfde profiel: geen spec-persona, bootst na wat een echte bezoeker na 6
- * tot 12 paren aflevert (plan 3, keuze 3). Zelfde vorm als onzekerProfiel()
- * in stylist-vul-cache.ts (formality, silhouette en shoe_type onbekend,
- * value null, confidence 0; color_temp, lightness en pattern met de waarden
- * van de "minimalist"-stijl op een lage zekerheid, 0.25, onder de
- * 0.5-knip uit spec 5.2 die "onzeker" markeert), maar hier apart
- * gedefinieerd: het is een harnas-controle, geen cache-data, en leest zijn
- * waarden af van STYLE_ASSEN.minimalist hierboven, niet van een eigen
- * overgetypte kopie. Bewijst dat de stylist ook met dunne invoer zes geldige
- * outfits levert, of anders zichtbaar naar het noodpad valt.
+ * tot 12 paren aflevert (plan 3, keuze 3): formality, silhouette en shoe_type
+ * onbekend (value null, confidence 0); color_temp, lightness en pattern met
+ * de waarden van de "minimalist"-stijl op een lage zekerheid, 0.25, onder de
+ * 0.5-knip uit spec 5.2 die "onzeker" markeert. Het vulscript heeft sinds 1
+ * oktober 2026 een andere "halve set" (onzekerProfiel() in
+ * stylist-profielen.ts: een bezoeker die de printsvraag overslaat); deze
+ * hier is een harnas-controle, geen cache-data, en leest zijn waarden af
+ * van STYLE_ASSEN.minimalist hierboven, niet van een eigen overgetypte
+ * kopie. Bewijst dat de stylist ook met dunne invoer zes geldige outfits
+ * levert, of anders zichtbaar naar het noodpad valt.
  */
 function halveSetProfiel(): Persona {
   return persona("vrouw minimalistisch halve set", {

@@ -10,13 +10,13 @@ import type { AsNaam, Assen, TasteProfileInput } from './types';
  * ooit verandert.
  *
  * Normalisatie volgens het amendement van 27 september 2026 op spec 5.2.1
- * (docs/superpowers/specs/2026-09-14-keten-herbouw-design.md). De
- * oorspronkelijke sleutel (taak 2) hashte gender, gesorteerde occasions,
- * budget_min, budget_max als losse getallen, de gesorteerde
- * nogo_product_ids en de gesorteerde ruwe choices. Drie van die velden
- * maakten vrijwel elke bezoeker uniek en de vooraf-gevulde cache dus
- * nutteloos: het vulscript kan onmogelijk elke euro-budgetcombinatie en elke
- * keuzevolgorde vooraf componeren. Vandaar dit bucketen:
+ * (docs/superpowers/specs/2026-09-14-keten-herbouw-design.md), op punt 5
+ * herzien op 1 oktober 2026. De oorspronkelijke sleutel (taak 2) hashte
+ * gender, gesorteerde occasions, budget_min, budget_max als losse getallen,
+ * de gesorteerde nogo_product_ids en de gesorteerde ruwe choices. Drie van
+ * die velden maakten vrijwel elke bezoeker uniek en de vooraf-gevulde cache
+ * dus nutteloos: het vulscript kan onmogelijk elke euro-budgetcombinatie en
+ * elke keuzevolgorde vooraf componeren. Vandaar dit bucketen:
  *
  * 1. gender: ongewijzigd.
  * 2. occasions: gesorteerd, ongewijzigd.
@@ -33,14 +33,43 @@ import type { AsNaam, Assen, TasteProfileInput } from './types';
  *    niet-wil-producten hoort op het GELEZEN resultaat, niet op de sleutel:
  *    dat is werk voor de client (taak 7) na de cache-hit of -miss, niet voor
  *    deze functie.
- * 5. De afgeleide axes in plaats van de ruwe choices: per as de naam, de
- *    waarde en de confidence afgerond op stappen van 0,25 (assen zonder
- *    waarde vallen weg; sortering op asnaam voor een vaste volgorde,
- *    onafhankelijk van hoe het axes-object is opgebouwd). Grover dan 0,25
- *    verliest het onderscheid tussen "zeker" en "onzeker" dat spec 5.2.1 al
- *    op 0,5 legt (de knip die de adaptieve paarselectie in 7.3 stuurt);
- *    fijner dan 0,25 maakt de ruimte weer net zo continu als de ruwe
- *    confidence, en dan raakt de vooraf-gevulde cache weer bijna nooit.
+ * 5. De afgeleide axes in plaats van de ruwe choices: per as alleen de naam
+ *    en de waarde (assen zonder waarde vallen weg; sortering op asnaam voor
+ *    een vaste volgorde, onafhankelijk van hoe het axes-object is
+ *    opgebouwd). DE ZEKERHEID ZIT ER BEWUST NIET IN. Het amendement van 27
+ *    september rondde ze nog af op stappen van 0,25, en dat was een van twee
+ *    oorzaken van een cache die voor een echte bezoeker nooit raakte.
+ *    Gemeten op 1 oktober 2026, bij gelijke gender (female), gelijke
+ *    gelegenheden (work en date) en gelijke prijsband (25 tot 100):
+ *
+ *      bezoeker (quiz)  bf2a5dd4  color_temp:neutraal:1,pattern:effen:1,
+ *                                 silhouette:slim:1
+ *      vulscript        5c6681c8  color_temp:neutraal:0.75,formality:3:0.75,
+ *                                 lightness:medium:0.5,pattern:effen:1,
+ *                                 shoe_type:net:0.5,silhouette:slim:0.75
+ *      in de cache      5c6681c8
+ *
+ *    Dezelfde voorkeur gaf dus een andere sleutel, afhankelijk van waar het
+ *    profiel vandaan kwam. De quiz (vanQuiz.ts) zet de zekerheid op 1; het
+ *    vulscript nam die uit een persona-tabel (STYLE_ASSEN) van 0,5 tot 0,9,
+ *    en op het raster van 0,25 is dat een andere stap dan 1.
+ *
+ *    De zekerheid is invoer voor de compositie, geen onderdeel van de
+ *    identiteit van een profiel. Ze blijft in het profiel staan en gaat naar
+ *    de stylist: bouwGebruikersPrompt (supabase/functions/_shared/
+ *    stylist-prompt.ts) rendert haar per as, en get_kandidaten weegt de
+ *    as-match ermee (supabase/migrations/20260925090000_keten_get_kandidaten_
+ *    attrs_expliciet.sql). Twee bezoekers die beide slim willen, horen
+ *    dezelfde set te delen; hoe zeker ze daarover zijn verandert de weging,
+ *    niet wie ze zijn.
+ *
+ *    De andere oorzaak: het vulscript sleutelde op assen die een bezoeker
+ *    nooit opgeeft (formality, lightness, shoe_type komen uit de
+ *    persona-tabel, niet uit een antwoord). Een set die onder aannames is
+ *    samengesteld die de bezoeker nooit heeft gedaan, staat onder een
+ *    sleutel die hij niet kan bereiken. De standaardprofielen van het
+ *    vulscript gaan daarom door dezelfde vertaling als de quiz
+ *    (scripts/keten/stylist-profielen.ts, via vanQuiz.ts).
  *
  * Niet te verwarren met hashProfile in
  * src/services/ratings/outfitRatings.ts: dat hasht de bestaande
@@ -50,8 +79,6 @@ import type { AsNaam, Assen, TasteProfileInput } from './types';
  * spec 5.2). Twee functies, twee betekenissen, twee tabellen; niet
  * samenvoegen.
  */
-
-const CONFIDENCE_STAP = 0.25;
 
 /**
  * Geëxporteerd (taak 6b) zodat het vulscript (scripts/keten/stylist-vul-cache.ts)
@@ -69,15 +96,11 @@ export function prijsbandVanMidden(budgetMin: number, budgetMax: number): string
   return 'boven200';
 }
 
-function rondConfidenceAf(confidence: number): number {
-  return Math.round(confidence / CONFIDENCE_STAP) * CONFIDENCE_STAP;
-}
-
 function serialiseerAssen(assen: Assen): string {
   return (Object.keys(assen) as AsNaam[])
     .sort()
     .filter((naam) => assen[naam].value !== null)
-    .map((naam) => `${naam}:${assen[naam].value}:${rondConfidenceAf(assen[naam].confidence)}`)
+    .map((naam) => `${naam}:${assen[naam].value}`)
     .join(',');
 }
 

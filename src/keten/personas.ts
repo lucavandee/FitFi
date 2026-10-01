@@ -29,15 +29,21 @@ export const KETEN_PERSONAS: KetenPersona[] = [
 
 /**
  * Vaste assen per stijlvoorkeur (plan 3, taak 6b/8). DE ENIGE PLEK waar deze
- * tabel staat: scripts/keten/stylist-vul-cache.ts (vult de cache) en
- * scripts/keten/stylist-run.ts (het harnas dat diezelfde cache uitleest)
- * importeren hem allebei vandaan. profileHash (src/keten/profileHash.ts)
- * hasht per as de naam, de waarde en de afgeronde confidence; liepen de twee
- * scripts uit elkaar (wat hier eerder is gebeurd: silhouette "regular" tegen
- * "slim" voor "minimalist"), dan vult het vulscript een set onder sleutel A
- * terwijl het harnas onder sleutel B leest. Geen foutmelding, geen lege
+ * tabel staat: het persona-harnas (scripts/keten/stylist-run.ts) leest er alle
+ * zes de assen uit, het vulscript (scripts/keten/stylist-profielen.ts) leest
+ * er de drie uit die een bezoeker via de quiz ook oplevert: silhouette,
+ * pattern en color_temp. Liepen die twee uit elkaar (wat hier eerder is
+ * gebeurd: silhouette "regular" tegen "slim" voor "minimalist"), dan kregen ze
+ * voor dezelfde persona een andere cache-sleutel. Geen foutmelding, geen lege
  * uitvoer, alleen een cache die nooit raakt, terwijl elke vulronde wel
  * `claude -p`-capaciteit kost.
+ *
+ * Formality, lightness en shoe_type staan hier voor het harnas, niet voor de
+ * cache. Geen bezoeker geeft ze op (vanQuiz.ts maakt er geen as van), dus een
+ * set die onder die waarden is gecomponeerd staat onder een sleutel die geen
+ * bezoeker raakt: zie de herziening van 1 oktober 2026 bij spec 5.2.1 en
+ * src/keten/profileHash.ts. profileHash hasht per as de naam en de waarde, niet
+ * de zekerheid.
  *
  * Waarden uit de echte taggerwoordenlijst (scripts/keten/tagging.ts:
  * SILHOUETTES, COLOR_TEMPS, LIGHTNESS, PATTERNS, SHOE_TYPES) zodat
