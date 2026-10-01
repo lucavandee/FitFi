@@ -129,7 +129,7 @@ interface ProductRij {
  * zijn bestaande foutafhandeling op `error` ongewijzigd kan gebruiken.
  */
 async function metHerhaling<T>(
-  werk: () => Promise<{ data: T | null; error: { message: string } | null }>,
+  werk: () => PromiseLike<{ data: T | null; error: { message: string } | null }>,
   omschrijving: string,
   log: (...args: unknown[]) => void,
   pogingen = 4
@@ -249,7 +249,7 @@ async function main(): Promise<void> {
         oorspronkelijkLog
       );
       if (error) return { data: null, error };
-      const rijen = ((data ?? []) as Array<{ products: VeegrondeRij }>).map((r) => r.products);
+      const rijen = ((data ?? []) as unknown as Array<{ products: VeegrondeRij }>).map((r) => r.products);
       return { data: rijen, error: null };
     },
     schrijf: (batch) =>

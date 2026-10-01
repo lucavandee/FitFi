@@ -21,7 +21,7 @@
  * herkansing wordt altijd in de uitvoer gemeld, anders verbergt de poort dat
  * de infrastructuur traag is.
  */
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,6 +29,16 @@ import { heeftVlag, leesVlag } from "./args";
 import { leesEnv } from "./env";
 import { isGroen, legeCellen, type Matrix, type PersonaOutput } from "./poort";
 import { STANDAARD_RETAILER } from "./retailers";
+
+/**
+ * De client zoals createClient hem hier oplevert. Niet ReturnType<typeof
+ * createClient> gebruiken: dat geeft bij een generieke functie de default
+ * typeparameters (SupabaseClient<unknown, ...>) en niet het geinstantieerde
+ * type, waardoor elke rpc-aanroep faalt. De any op de eerste positie staat
+ * er omdat dit project geen gegenereerde databasetypes heeft, dus de namen
+ * van onze eigen RPC's zijn hier niet bekend.
+ */
+type KetenClient = SupabaseClient<any, "public", "public", any, any>;
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const MAX_LOG_TEKENS = 20_000;
@@ -59,7 +69,7 @@ function isTimeout(error: { code?: string; message?: string } | null): boolean {
 }
 
 async function haalMatrixMetHerkansing(
-  supabase: ReturnType<typeof createClient>,
+  supabase: KetenClient,
   retailer: string
 ): Promise<{ matrix: Matrix; herkanst: boolean }> {
   const eerste = await supabase.rpc("keten_dekkingsmatrix", { p_retailer: retailer });

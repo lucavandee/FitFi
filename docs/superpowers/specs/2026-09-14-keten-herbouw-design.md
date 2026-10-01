@@ -120,6 +120,76 @@ Per retailer na foto-dedupe: Giglio 68.739 van 169.697; H&M 24.815 van 88.043; P
 
 Afleiding van `axes`: per as tel je de keuzes waarin de twee outfits op die as verschilden; value is de kant met de meerderheid, confidence is |gekozen - afgewezen| / aantal keuzes op die as. Een as met confidence < 0.5 is "onzeker" en stuurt de adaptieve paarselectie (7.3).
 
+> **AMENDEMENT (27 september 2026, op verzoek van Luc). De stylist componeert niet meer per bezoeker via de betaalde Anthropic API, maar vult zijn cache vooraf op het Claude Code-abonnement.**
+>
+> Waarom: dezelfde reden als bij de tagger in plan 2. De API kost per token, het abonnement is al betaald. Een Supabase edge function kan `claude -p` niet starten (geen shell, geen OAuth-sessie in Deno), dus een stylist die op het moment van bezoek componeert kan alleen via de API. Componeren hoeft echter niet op dat moment te gebeuren: de uitkomst wordt toch per profiel gecachet en er is al een noodpad dat niets kost.
+>
+> Wat er verandert:
+>
+> 1. **Een script vult de cache**, met `claude -p` op het abonnement, met dezelfde prompt en dezelfde harde validatie die voor de API-route waren geschreven. Zelfde vorm als `scripts/keten/tag-products.ts`.
+> 2. **Het leespad wordt een RPC en geen edge function.** Het lezen van een set met levensduur en voorraadcontrole is pure SQL. Dat schrapt de deploy en het `ANTHROPIC_API_KEY`-secret uit de keten, en het sluit aan op hoe de rest van dit project werkt (`get_kandidaten`, `keten_dekkingsmatrix`).
+> 3. **Engine v2 vangt een cache-miss op**, in de browser, met `seed = fnv1a32(profile_hash)`, zoals het noodpad al deed. Een bezoeker met een profiel dat niet is voorbereid krijgt dus een v2-outfit in plaats van een stylist-outfit.
+> 4. **`source` in `outfit_sets` blijft `stylist`** voor wat het script schrijft; het leespad geeft `cache` terug en het noodpad `v2-fallback`.
+>
+> ## De normalisatie van 5.2.1 moet mee, anders werkt vooraf vullen niet
+>
+> Gemeten op de implementatie van 27 september: `profile_hash` is een sha256 over gender, gesorteerde gelegenheden, `budget_min`, `budget_max`, de gesorteerde niet-wil-producten en de gesorteerde ruwe quizkeuzes. Drie daarvan maken vrijwel elke bezoeker uniek:
+>
+> - **budget als los getal**: een euro verschil is een ander profiel;
+> - **niet-wil-producten in de sleutel**: een weggeveegd product maakt de hele set onbereikbaar;
+> - **ruwe keuzes**: zes tot twaalf paren geven een praktisch oneindige ruimte.
+>
+> Daarom hasht 5.2.1 vanaf nu:
+>
+> - het budget als een van de vier bestaande prijsbanden (`tot50`, `50tot100`, `100tot200`, `boven200`) in plaats van twee getallen;
+> - **niet** de niet-wil-producten; die worden als filter op het gelezen resultaat toegepast, niet als onderdeel van de sleutel;
+> - de **afgeleide assen** (alleen naam en waarde, niet de zekerheid; zie de herziening van 1 oktober hieronder) in plaats van de ruwe keuzes. Twee bezoekers die andere paren kozen maar op hetzelfde stijlprofiel uitkomen, delen dan een set. Dat is ook semantisch juister: de stylist leest assen, geen keuzes.
+>
+> Gevolg: de ruimte wordt ongeveer drie genders maal 127 gelegenheidscombinaties maal vier budgetbanden maal de assencombinaties, klein genoeg om de veelvoorkomende sleutels vooraf te vullen. Deze verbetering maakt de API-route trouwens ook goedkoper, mocht die er ooit alsnog komen: met de oude sleutel raakte de cache bijna nooit.
+>
+> ## Herziening van 1 oktober 2026: de zekerheid zit niet in de sleutel
+>
+> Het amendement van 27 september liet de zekerheid per as in de sleutel staan, afgerond op een vast raster (stappen van 0,25). Dat bleek een van twee oorzaken van een cache die een echte bezoeker nooit raakt, en het is teruggedraaid.
+>
+> **De meting.** Twee profielen die alleen in herkomst verschillen, met `profileHash` doorgerekend, bij gelijke gender (female), gelijke gelegenheden (work en date) en gelijke prijsband (budget 25 tot 100):
+>
+> ```
+> bezoeker (uit de quiz)   bf2a5dd4  female|date,work|50tot100|color_temp:neutraal:1,pattern:effen:1,silhouette:slim:1
+> vulscript (STYLE_ASSEN)  5c6681c8  female|date,work|50tot100|color_temp:neutraal:0.75,formality:3:0.75,
+>                                    lightness:medium:0.5,pattern:effen:1,shoe_type:net:0.5,silhouette:slim:0.75
+> in de cache              5c6681c8
+> ```
+>
+> Dezelfde voorkeur gaf dus twee sleutels, en alleen de ene stond in de cache. Het persona-harnas liet toch een cache-hit zien, omdat het zijn profiel uit dezelfde `STYLE_ASSEN` bouwde als het vulscript: het bewees de hit tegen zichzelf. Zo'n verschil doet zich stil voor als "gewoon geen cache-hit", zonder fout en zonder lege uitvoer, terwijl elke vulronde wel sessiecapaciteit kost.
+>
+> **Twee oorzaken.**
+>
+> 1. De quiz (`src/keten/vanQuiz.ts`) zet de zekerheid van een as op 1, want de bezoeker koos hem zelf. `STYLE_ASSEN` (`src/keten/personas.ts`) zet zes assen op 0,5 tot 0,9. Op een raster van 0,25 zijn 1 en 0,75 twee verschillende stappen, dus ook bij identieke voorkeur verschilt de sleutel.
+> 2. Het vulscript sleutelde op assen die een bezoeker nooit heeft opgegeven: `formality: 3`, `shoe_type: net` en `lightness: medium` kwamen uit een persona-tabel, niet uit een antwoord.
+>
+> **Besluit.**
+>
+> - **De zekerheid gaat uit de sleutel.** Per as hasht alleen de naam en de waarde, gesorteerd op asnaam; het afronden op stappen van 0,25 vervalt. De zekerheid blijft in het profiel staan en gaat wel naar de stylist: `bouwGebruikersPrompt` rendert haar per as, en `get_kandidaten` weegt de as-match ermee. Ze is dus invoer voor de compositie en geen onderdeel van de identiteit van een profiel. Twee bezoekers die beide slim willen, horen dezelfde set te delen; hoe zeker ze daarover zijn verandert de weging, niet wie ze zijn.
+> - **Het vulscript vult sleutels die een bezoeker kan produceren.** Zijn standaardprofielen gaan door dezelfde vertaling als de quiz (`profielVanQuizAnswers`): alleen assen uit een echt antwoord, met de zekerheid die dat antwoord ook bij een bezoeker krijgt. Een set die is samengesteld onder aannames die de bezoeker nooit heeft gedaan, hoort niet onder diens sleutel te staan. `STYLE_ASSEN` blijft bestaan voor het persona-harnas, dat bewust rijkere persona's modelleert.
+>
+> **Bewijs en gevolgen.**
+>
+> - Een test laat een bezoeker en het vulscript, bij gelijke voorkeuren, op dezelfde sleutel uitkomen (`scripts/keten/__tests__/stylist-profielen.test.ts`). Met de oude sleutelfunctie en de oude profielafleiding is die test rood op precies de twee sleutels hierboven.
+> - Dat de twee herkomsten op dezelfde sleutel uitkomen is vandaag al het gevolg van de tweede wijziging alleen, want de quiz geeft elke as zekerheid 1. De eerste wijziging houdt ze gelijk zodra de zekerheid verschilt, wat plan 4 doet wanneer het zekerheden uit paren afleidt. Een bezoeker met een lage zekerheid op een as deelt dan de set van een bezoeker die hetzelfde met zekerheid 1 koos. De sleutelfunctie (`src/keten/profileHash.ts`) is de plek om daar een drempel in te leggen, mocht dat nodig blijken.
+> - De rij in `outfit_sets` met hash `5c6681c8` is onder de oude sleutel geschreven en daardoor onbereikbaar. Hij is niet verwijderd en verloopt op 12 oktober 2026 (14 dagen levensduur, `keten_outfit_set`).
+> - `npm run keten:personas -- --keten=stylist` geeft vijf keer rood in plaats van een keer groen: bron `v2-fallback`, reden cache-miss, want geen enkele sleutel staat nog gevuld. Dat is de juiste uitkomst. Na een vulronde blijft het harnas rood zolang het zijn persona's met zes assen bouwt, want die staan onder een andere sleutel dan het vulscript vult. Het kan zijn profielen afstemmen door ze uit `standaardProfielen()` (`scripts/keten/stylist-profielen.ts`) te halen.
+>
+> ## Aanvulling van 1 oktober 2026: de lichtheid uit de quiz zit nu in het profiel
+>
+> De herziening hierboven noemt `lightness` bij de assen die een bezoeker nooit opgeeft. Dat klopte niet. De quiz vraagt de lichtheid in stap 4 (`field: 'lightness'`, verplicht, waarden `licht`, `medium` en `donker`, dezelfde drie als `LIGHTNESS` in `scripts/keten/tagging.ts`), en `src/keten/vanQuiz.ts` gooide het antwoord weg. `get_kandidaten` kan er wel op scoren (`pa.lightness = a.as_waarde`, migratie `20260925090000`), en de stylist-prompt rendert hem al per as. Het antwoord werd gevraagd en de database kon er scoren, maar tussen die twee zat geen verbinding.
+>
+> - `profielVanQuizAnswers` zet de lichtheid nu als as met zekerheid 1, alleen bij een geldige waarde, in dezelfde vorm als silhouette, pattern en color_temp.
+> - De sleutel heeft daardoor een as meer, bijvoorbeeld `female|date,work|50tot100|color_temp:neutraal,lightness:medium,pattern:effen,silhouette:slim`. Elke bezoeker die stap 4 beantwoordt heeft een andere sleutel dan voor deze wijziging. Er stond een rij in `outfit_sets` (`5c6681c8`, al onbereikbaar), dus er gaat geen bruikbare set verloren.
+> - Het vulscript geeft de lichtheid van de persona mee als quiz-antwoord (`quizAntwoordenVanPersona`). Zonder dat waren bezoeker en vulscript weer op verschillende sleutels uitgekomen, en dat bewaakt `scripts/keten/__tests__/stylist-profielen.test.ts`: die ging rood op het moment dat de vertaling erbij kwam en staat nu weer groen.
+> - Gevolg voor de ruimte van sleutels die de quiz kan opleveren: een verplichte vraag met drie antwoorden verdrievoudigt die, van 36.288 naar 108.864 (doorgerekend met `profielVanQuizAnswers` en `normaliseerProfiel`). Een gevuld profiel past daarmee bij een derde van de bezoekers die het eerst raakte, uitgaande van een gelijke verdeling over de drie antwoorden. Of echte bezoekers zich op de gevulde sleutels concentreren weet niemand tot er verkeer is.
+> - Waarom hij in de sleutel hoort en niet alleen in het profiel: gemeten op 1 oktober 2026 met `get_kandidaten` als anon (12 per categorie, de vier persona's met alleen een andere lichtheid). Licht tegen donker deelt 21 tot 30 van de 60 tot 72 kandidaten, en het aantal kandidaten met de gevraagde lichtheid gaat van 3 tot 35 zonder de as naar 28 tot 67 met de as. De gecomponeerde set hangt dus aan de lichtheid. In de tagger-uitvoer is de verdeling 42,5 procent `medium`, 33,2 procent `licht` en 24,3 procent `donker` over 17.909 kandidaatrijen, zonder lege waarden, dus de as onderscheidt iets. De vijf standaardprofielen halen de pooltoets van het vulscript ook met de lichtheid erbij (anon-aanroepen met het bandbereik, `toetsKandidatenpool` lokaal gedraaid, geen model).
+> - Alleen `formality` en `shoe_type` vraagt de quiz niet. Die blijven staan voor het persona-harnas.
+
 ### 5.3 RPC `get_kandidaten`
 
 ```sql
@@ -133,6 +203,8 @@ get_kandidaten(
 Werkt uitsluitend op `product_attributes` waar `product_id = canonical_id`, `is_fashion`, `products.in_stock`, gender in (p_gender, 'unisex'), prijs binnen budget, niet in p_disliked_ids. Score = 0.5 * as-overeenkomst (aantal assen waarop attrs gelijk is aan axes.value, gewogen met confidence) + 0.3 * gelegenheid-overlap + 0.2 * max cosine-similariteit met p_liked_ids (0 als leeg). Geeft de top `p_per_category` per categorie terug (top, bottom, footwear, outerwear, dress, accessory), dus maximaal 72 rijen. Deterministisch: bij gelijke score op product_id.
 
 ### 5.4 Edge function `compose-outfits`
+
+> **Vervangen door het amendement van 27 september 2026 hierboven (bij 5.2.1).** Er komt geen edge function die per bezoeker de Anthropic API aanroept. Het componeren gebeurt vooraf in een script op het Claude Code-abonnement; het leespad is een RPC met levensduur en voorraadcontrole. Het schema, de harde validatieregels en de prompt-eisen in deze paragraaf blijven onverkort gelden: ze zijn nu de eisen aan dat script in plaats van aan een edge function.
 
 Input: `{ profile_hash, profile: taste_profiles-rij, kandidaten: uitvoer van 5.3 }`.
 

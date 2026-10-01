@@ -407,7 +407,7 @@ export default function EnhancedResultsPage() {
     return 6;
   }, [user]);
 
-  const { data: realOutfits, loading: outfitsLoading, error: outfitsError } = useOutfits({
+  const { data: realOutfits, loading: outfitsLoading, error: outfitsError, ketenBron } = useOutfits({
     archetype: archetypeKey,
     secondaryArchetype: archetypeDetectionResult?.secondary || undefined,
     mixFactor: archetypeDetectionResult?.secondary ? 0.3 : 0,
@@ -1438,6 +1438,14 @@ export default function EnhancedResultsPage() {
                     : 'Handpicked voor jou'}
                 </h2>
                 <div className="shrink-0 flex items-center gap-3">
+                  {ketenBron && (
+                    <span
+                      className="inline-flex items-center rounded-full bg-[#A85740]/10 px-4 py-2 text-sm font-medium text-[#A85740]"
+                      title="Interne testvlag ff_keten_stylist staat aan"
+                    >
+                      Stylist-route: {ketenBron}
+                    </span>
+                  )}
                   {/* Swipe/Grid toggle — compact */}
                   <div className="hidden sm:flex items-center gap-1 bg-[#F5F0EB] rounded-full p-1">
                     <button

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { OutfitCalibrationCard } from './OutfitCalibrationCard';
+import { CalibrationLoadError } from './CalibrationLoadError';
 import { Sparkles, ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Spinner } from '@/components/ui/Spinner';
 import { useUser } from '@/context/UserContext';
@@ -40,6 +41,9 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
   const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
   const [loading, setLoading] = useState(true);
+  // True als het laden van de outfits mislukte (niet: er passen er geen). Die
+  // twee toestanden zien er voor de bezoeker anders uit, zie CalibrationLoadError.
+  const [loadFailed, setLoadFailed] = useState(false);
   const [applying, setApplying] = useState(false);
   const [swappingState, setSwappingState] = useState<{ outfitId: string; category: 'top' | 'bottom' | 'shoes' } | null>(null);
   const [isPersonalized, setIsPersonalized] = useState(false);
@@ -144,9 +148,18 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
       setOutfits(generatedOutfits);
     } catch (err) {
       console.error('Failed to load calibration outfits:', err);
+      // De console is in productie leeg (drop_console), dus de bezoeker moet
+      // het van het scherm kunnen lezen en opnieuw kunnen proberen.
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    setLoadFailed(false);
+    setLoading(true);
+    loadCalibrationOutfits();
   };
 
   const handleSwapItem = async (outfitId: string, category: 'top' | 'bottom' | 'shoes') => {
@@ -312,6 +325,10 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         </div>
       </div>
     );
+  }
+
+  if (loadFailed) {
+    return <CalibrationLoadError onRetry={handleRetry} onSkip={onComplete} />;
   }
 
   // If no outfits could be generated, allow skip

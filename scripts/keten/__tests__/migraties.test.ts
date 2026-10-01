@@ -349,3 +349,126 @@ describe("gedeelde afspraken tussen de vulfuncties", () => {
     }
   });
 });
+
+/**
+ * outfit_sets zelf heeft geen taak-eigen test in plan 3, maar taak 6 schrijft
+ * erin en taak 8 leest de tokenkolommen voor de kostenquery per week. De
+ * kolomlijst en de RLS-zonder-policy zijn dus een contract tussen taken; deze
+ * suite bewaakt dat contract, niet alleen de stand van vandaag (zie
+ * taak-3-brief.md, punt 3).
+ */
+describe("20260916100600_create_outfit_sets", () => {
+  const sql = lees("20260916100600_create_outfit_sets.sql");
+
+  it("bevat alle negen kolommen uit de interfacesectie van het plan", () => {
+    for (const kolom of [
+      "profile_hash",
+      "stylist_version",
+      "source",
+      "outfits",
+      "model",
+      "latency_ms",
+      "input_tokens",
+      "output_tokens",
+      "created_at",
+    ]) {
+      expect(sql).toContain(kolom);
+    }
+  });
+
+  it("heeft (profile_hash, stylist_version) als primaire sleutel", () => {
+    expect(sql).toContain("primary key (profile_hash, stylist_version)");
+  });
+
+  it("zet RLS aan zonder een enkele policy: alleen de service role komt erbij", () => {
+    expect(sql).toContain("enable row level security");
+    expect(sql).not.toContain("create policy");
+  });
+
+  it("beperkt source met een CHECK tot 'stylist' en 'v2-fallback', niet 'cache'", () => {
+    expect(sql).toContain("check (source in ('stylist', 'v2-fallback'))");
+    // 'cache' mag in het commentaarblok staan (dat legt juist uit waarom het
+    // niet in de CHECK hoort), maar niet in de create table-statement zelf.
+    const vanTabel = sql.slice(sql.indexOf("create table if not exists public.outfit_sets"));
+    expect(vanTabel.slice(0, vanTabel.indexOf(";") + 1)).not.toContain("'cache'");
+  });
+
+  it("heeft een index op created_at voor de levensduur- en kostenqueries", () => {
+    expect(sql).toContain("idx_outfit_sets_created_at");
+    expect(sql).toContain("on public.outfit_sets (created_at)");
+  });
+});
+
+/**
+ * Taak 6, herzien (amendement 27 september 2026 bij spec 5.2.1): geen edge
+ * function compose-outfits, maar twee RPC's op de outfit-cache. Deze suite
+ * bewaakt de vorm; het gedrag (levensduur, voorraadcontrole, de grants) is
+ * bewezen tegen de live database en staat in taak-6-report.md.
+ *
+ * Fix 4 (eindreview plan 3, 27 sept 2026): dit bestand is na toepassing
+ * gewijzigd om model, input_tokens en output_tokens uit keten_outfit_set's
+ * anon-facing return te halen (de badge heeft alleen `source` nodig). De
+ * live database heeft daardoor NOG de oude vorm; zie het commentaarblok
+ * bovenaan het SQL-bestand en het eindreview-rapport. Deze suite toetst de
+ * NIEUWE (huidige) vorm van het bestand, niet wat er vandaag in de database
+ * staat.
+ */
+describe("20260916100700_keten_outfit_set_rpcs", () => {
+  const sql = lees("20260916100700_keten_outfit_set_rpcs.sql");
+
+  it("bevat beide functienamen", () => {
+    expect(sql).toContain("function keten_outfit_set(");
+    expect(sql).toContain("function keten_schrijf_outfit_set(");
+  });
+
+  it("staat allebei op security definer", () => {
+    expect((sql.match(/security definer/g) ?? []).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("sluit het schrijfpad voor anon en authenticated, en opent alleen het leespad voor ze", () => {
+    expect(sql).toContain(
+      "revoke all on function keten_schrijf_outfit_set(text, text, jsonb, text, integer, integer, integer)"
+    );
+    expect(sql).toContain("from public, anon, authenticated");
+    expect(sql).toContain("grant execute on function keten_outfit_set(text, text) to anon, authenticated");
+    expect(sql).not.toContain("grant execute on function keten_schrijf_outfit_set");
+  });
+
+  it("zet de levensduur (14 dagen) en de opruimtermijn (30 dagen) als leesbare constanten neer", () => {
+    expect(sql).toContain("v_max_leeftijd_dagen constant int := 14");
+    expect(sql).toContain("v_opruim_dagen constant int := 30");
+  });
+
+  it("bevat geen analyze-statement buiten het commentaarblok (valkuil plan 2 taak 8: een planner-wijziging kan get_kandidaten raken)", () => {
+    // Het commentaarblok noemt EXPLAIN (ANALYZE, BUFFERS) en legt uit waarom
+    // er geen kaal analyze-statement in deze migratie staat; die uitleg mag
+    // het woord bevatten. De echte SQL erna (na de LAATSTE "*/") niet.
+    const naCommentaar = sql.slice(sql.lastIndexOf("*/") + 2);
+    expect(naCommentaar).not.toContain("analyze");
+  });
+
+  it("fix 4: dropt keten_outfit_set vóór create, voor idempotentie bij een gewijzigd returntype", () => {
+    expect(sql).toContain("drop function if exists keten_outfit_set(text, text);");
+    expect(sql).toContain("create function keten_outfit_set(");
+  });
+
+  it("fix 4: keten_outfit_set geeft model, input_tokens en output_tokens niet meer terug aan anon", () => {
+    const vanLeespad = sql.slice(
+      sql.indexOf("create function keten_outfit_set("),
+      sql.indexOf("grant execute on function keten_outfit_set")
+    );
+    expect(vanLeespad).not.toContain("model");
+    expect(vanLeespad).not.toContain("input_tokens");
+    expect(vanLeespad).not.toContain("output_tokens");
+    expect(vanLeespad).toContain("latency_ms");
+    expect(vanLeespad).toContain("created_at");
+  });
+
+  it("fix 4: keten_schrijf_outfit_set blijft ONGEWIJZIGD model, input_tokens en output_tokens schrijven (taak 8 leest ze via de service role)", () => {
+    const vanSchrijfpad = sql.slice(sql.indexOf("create or replace function keten_schrijf_outfit_set("));
+    expect(vanSchrijfpad).toContain("p_model text");
+    expect(vanSchrijfpad).toContain("p_input_tokens integer");
+    expect(vanSchrijfpad).toContain("p_output_tokens integer");
+    expect(vanSchrijfpad).toContain("latency_ms, input_tokens, output_tokens, created_at");
+  });
+});

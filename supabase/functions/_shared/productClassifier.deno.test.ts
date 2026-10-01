@@ -1,5 +1,5 @@
 // Deno-tests voor de gedeelde classifier. Draai met:
-//   deno test --no-check --allow-read supabase/functions/_shared/productClassifier.test.ts
+//   deno test --no-check --allow-read supabase/functions/_shared/productClassifier.deno.test.ts
 // --no-check omdat de twee aanroepende functiebestanden zelf pre-existente
 // deno check-fouten hebben die niets met dit bestand te maken hebben; dit
 // testbestand en productClassifier.ts zelf zijn los daarvan schoon, zie
