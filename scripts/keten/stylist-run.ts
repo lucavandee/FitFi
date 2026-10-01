@@ -26,8 +26,8 @@
  *
  * De assen per stijlvoorkeur (STYLE_ASSEN, hieronder geimporteerd) komen uit
  * src/keten/personas.ts. Dit harnas modelleert bewust rijkere persona's dan
- * een bezoeker uit de quiz oplevert: zes assen, waar de quiz er drie geeft
- * (silhouette, pattern, color_temp). profileHash (src/keten/profileHash.ts)
+ * een bezoeker uit de quiz oplevert: zes assen, waar de quiz er vier geeft
+ * (silhouette, pattern, color_temp, lightness). profileHash (src/keten/profileHash.ts)
  * hasht per as de naam en de waarde. Het vulscript bouwt zijn profielen sinds
  * 1 oktober 2026 via de quiz-vertaling (scripts/keten/stylist-profielen.ts),
  * dus onder een sleutel die een bezoeker kan raken; de zes-assen-profielen

@@ -64,12 +64,24 @@ import type { AsNaam, Assen, TasteProfileInput } from './types';
  *    niet wie ze zijn.
  *
  *    De andere oorzaak: het vulscript sleutelde op assen die een bezoeker
- *    nooit opgeeft (formality, lightness, shoe_type komen uit de
+ *    niet opgeeft (formality, lightness en shoe_type kwamen uit de
  *    persona-tabel, niet uit een antwoord). Een set die onder aannames is
  *    samengesteld die de bezoeker nooit heeft gedaan, staat onder een
  *    sleutel die hij niet kan bereiken. De standaardprofielen van het
  *    vulscript gaan daarom door dezelfde vertaling als de quiz
  *    (scripts/keten/stylist-profielen.ts, via vanQuiz.ts).
+ *
+ *    Een correctie op die opsomming, van de tweede fix van 1 oktober 2026:
+ *    lightness hoort er niet bij. De quiz vraagt hem wel (stap 4, verplicht),
+ *    vanQuiz.ts gooide het antwoord alleen weg. Sinds die fix vertaalt
+ *    vanQuiz.ts hem en zit hij in de sleutel van elke bezoeker die hem
+ *    beantwoordt, zodat een bezoeker die licht kiest niet dezelfde set krijgt
+ *    als iemand die donker kiest: get_kandidaten scoort op de lichtheid van
+ *    het product. Gemeten op 1 oktober 2026 (get_kandidaten als anon, 12 per
+ *    categorie, de vier persona's met alleen een andere lichtheid): licht
+ *    tegen donker deelt 21 tot 30 van de 60 tot 72 kandidaten, en het aantal
+ *    kandidaten met de gevraagde lichtheid gaat van 3 tot 35 zonder de as naar
+ *    28 tot 67 met de as. Alleen formality en shoe_type vraagt de quiz niet.
  *
  * Niet te verwarren met hashProfile in
  * src/services/ratings/outfitRatings.ts: dat hasht de bestaande

@@ -30,12 +30,14 @@ import { profielVanQuizAnswers } from '../../../src/keten/vanQuiz';
 import { standaardProfielen } from '../stylist-profielen';
 
 /**
- * Wat de quiz per persona opslaat (src/data/quizSteps.ts). `lightness` staat
- * erbij hoewel vanQuiz.ts er vandaag geen as van maakt: de quiz vraagt het wel
- * (verplicht), dus een echte bezoeker levert het aan. Zodra vanQuiz.ts het
- * gaat vertalen, gaan de tests hieronder rood, en dan hoort
- * quizAntwoordenVanPersona het bijpassende antwoord van de persona mee te
- * geven. Zie de noot bovenaan stylist-profielen.ts.
+ * Wat de quiz per persona opslaat (src/data/quizSteps.ts): elke vraag die
+ * vanQuiz.ts naar een as vertaalt. `lightness` (stap 4, verplicht) stond hier
+ * al voordat vanQuiz.ts hem vertaalde, als kanarie. Op 1 oktober 2026 gingen
+ * zeven van de elf tests hieronder rood op het moment dat die vertaling erbij
+ * kwam, en daarna hoorde quizAntwoordenVanPersona het bijpassende antwoord van
+ * de persona mee te geven. Vertaalt vanQuiz.ts ooit nog een vraag, voeg hem
+ * dan eerst hier toe, zodat het weer zo gaat. Zie de noot bovenaan
+ * stylist-profielen.ts.
  */
 const BEZOEKERS: Record<string, Record<string, unknown>> = {
   'man klassiek': {
@@ -97,14 +99,17 @@ function assenMetWaarde(p: TasteProfileInput): string[] {
 }
 
 describe('een bezoeker uit de quiz en het vulscript komen op dezelfde sleutel uit', () => {
-  it('de meting van 1 oktober: female, work en date, 25 tot 100, slim, effen, neutraal', async () => {
+  it('de meting van 1 oktober: female, work en date, 25 tot 100, slim, effen, neutraal, lichtheid medium', async () => {
     const bezoeker = bezoekerProfiel('vrouw minimalistisch');
     const vulscript = vulscriptProfiel('vrouw minimalistisch');
 
     // De sleutelstring zelf is hier alleen documentatie. Het bewijs zijn de
-    // twee regels eronder: beide herkomsten komen op dezelfde uit.
+    // twee regels eronder: beide herkomsten komen op dezelfde uit. De
+    // lichtheid staat er sinds de tweede fix van 1 oktober in; de bezoekerskant
+    // van de meting zelf (bf2a5dd4, tegen 5c6681c8) had alleen slim, effen en
+    // neutraal.
     expect(normaliseerProfiel(bezoeker)).toBe(
-      'female|date,work|50tot100|color_temp:neutraal,pattern:effen,silhouette:slim',
+      'female|date,work|50tot100|color_temp:neutraal,lightness:medium,pattern:effen,silhouette:slim',
     );
     expect(normaliseerProfiel(vulscript)).toBe(normaliseerProfiel(bezoeker));
     expect(await profileHash(vulscript)).toBe(await profileHash(bezoeker));
@@ -141,12 +146,12 @@ describe('standaardProfielen', () => {
 
   it('draagt alleen assen die een bezoeker kan opgeven', () => {
     // Wat een bezoeker kan opgeven is wat profielVanQuizAnswers uit een
-    // volledig ingevulde quiz maakt. De drie assen die hieronder staan zijn wat
-    // vanQuiz.ts vandaag oplevert (lightness vraagt de quiz wel, maar wordt
-    // nog niet vertaald). Groeit die lijst, dan gaat deze regel rood en hoort
-    // quizAntwoordenVanPersona mee te groeien: zie stylist-profielen.ts.
+    // volledig ingevulde quiz maakt. De vier assen die hieronder staan zijn wat
+    // vanQuiz.ts vandaag oplevert. Groeit die lijst, dan gaat deze regel rood
+    // en hoort quizAntwoordenVanPersona mee te groeien: zie
+    // stylist-profielen.ts. Formality en shoe_type vraagt de quiz niet.
     const mogelijk = assenMetWaarde(bezoekerProfiel('vrouw minimalistisch'));
-    expect([...mogelijk].sort()).toEqual(['color_temp', 'pattern', 'silhouette']);
+    expect([...mogelijk].sort()).toEqual(['color_temp', 'lightness', 'pattern', 'silhouette']);
     for (const { naam, profiel } of standaardProfielen()) {
       for (const as of assenMetWaarde(profiel)) {
         expect(mogelijk, `${naam}: as ${as} komt niet uit een quiz-antwoord`).toContain(as);
@@ -163,6 +168,7 @@ describe('standaardProfielen', () => {
     expect(dun.axes.pattern.value).toBeNull();
     expect(dun.axes.silhouette).toEqual(volledig.axes.silhouette);
     expect(dun.axes.color_temp).toEqual(volledig.axes.color_temp);
+    expect(dun.axes.lightness).toEqual(volledig.axes.lightness);
 
     const bezoeker = bezoekerProfiel('vrouw minimalistisch', { prints: 'gemengd' });
     expect(await profileHash(dun)).toBe(await profileHash(bezoeker));
@@ -185,7 +191,8 @@ describe('wat de meting van 1 oktober liet zien', () => {
     // Zoals het vulscript zijn profiel bouwde: zes assen uit de persona-tabel.
     const rijk: TasteProfileInput = { ...bezoeker, axes: { ...legeAssen(), ...STYLE_ASSEN.minimalist } };
     // En met de zekerheid gelijkgetrokken: dan blijft alleen het verschil in
-    // assen over (formality, lightness, shoe_type), de tweede oorzaak.
+    // assen over (formality en shoe_type; lightness gaf de quiz op 1 oktober
+    // wel, maar vanQuiz.ts vertaalde hem nog niet), de tweede oorzaak.
     const rijkMetZekerheid1: TasteProfileInput = { ...bezoeker, axes: metZekerheid1(STYLE_ASSEN.minimalist) };
 
     expect(await profileHash(rijk)).not.toBe(await profileHash(bezoeker));
@@ -193,7 +200,7 @@ describe('wat de meting van 1 oktober liet zien', () => {
   });
 
   it('een verschil in zekerheid alleen maakt de sleutel niet meer onbereikbaar', async () => {
-    // De eerste oorzaak: dezelfde drie assen, zekerheid 0,75 tegen 1.
+    // De eerste oorzaak: dezelfde assen, zekerheid 0,75 tegen 1.
     const bezoeker = bezoekerProfiel('vrouw minimalistisch');
     const onzekerder: TasteProfileInput = {
       ...bezoeker,

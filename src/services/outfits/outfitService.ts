@@ -1,9 +1,16 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
 import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngine";
 import { runEngineV2 } from "@/engine/v2";
 import { stableStringify } from "@/utils/stableJson";
+import { isTijdelijkeFout, type RpcFout } from "@/utils/statementTimeout";
 import { seedFromAnswers } from "./answersSeed";
-import { bereidKandidatenVoorMetDiagnose, naarKandidatenParams, type KandidaatRij } from "./kandidaten";
+import {
+  bereidKandidatenVoorMetDiagnose,
+  naarKandidatenParams,
+  type KandidaatRij,
+  type KandidatenParams,
+} from "./kandidaten";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 
@@ -25,6 +32,29 @@ export class CatalogusOnbereikbaar extends Error {
     super(`Catalogus onbereikbaar: ${reden}`);
     this.name = 'CatalogusOnbereikbaar';
   }
+}
+
+/**
+ * Pauze voor de herkansing. Voor een statement-timeout is ze niet nodig (de
+ * afgebroken aanroep heeft de cache dan al deels opgewarmd: plan 2 mat 3,47 s
+ * en daarna 0,59 s), maar PostgREST heeft bij PGRST002 een moment nodig om
+ * zijn schema te laden: een directe tweede poging zou dezelfde fout krijgen.
+ * Dezelfde 300 ms als PR 115 op main (4a034520).
+ */
+const HERKANSING_NA_MS = 300;
+
+/**
+ * Een enkele aanroep van get_kandidaten. Een RPC-fout komt terug als `fout` in
+ * plaats van te gooien, zodat getProducts zelf beslist of hij een herkansing
+ * waard is. Zelfde vorm als eenPogingGetKandidaten in src/keten/composeClient.ts.
+ */
+async function eenPogingGetKandidaten(
+  client: SupabaseClient,
+  params: KandidatenParams
+): Promise<{ rijen: KandidaatRij[] | null; fout: RpcFout | null }> {
+  const { data, error } = await client.rpc('get_kandidaten', params);
+  if (error) return { rijen: null, fout: { code: error.code, message: error.message } };
+  return { rijen: (data ?? []) as KandidaatRij[], fout: null };
 }
 
 class OutfitService {
@@ -63,6 +93,21 @@ class OutfitService {
    * plotseling (een deel van) de pool afkeurt er hetzelfde uit als "niets
    * binnen de filters" (lege lijst), en blijft dat bovendien een half uur
    * hangen in de cache.
+   *
+   * Een enkele herkansing op een tijdelijke fout: de kalibratiestap draait op
+   * /onboarding zonder inlogmuur, dus als anon, en die rol heeft een
+   * statement_timeout van 3 s (authenticated 8 s, gelezen uit
+   * pg_roles.rolconfig op 1 oktober 2026). Een koude get_kandidaten ging daar
+   * na een stille periode overheen; sinds PR 116 heeft de functie zelf 8 s,
+   * en blijft deze herkansing het vangnet voor wat daar nog overheen gaat.
+   * Net als composeClient.ts herkanst deze methode precies een keer op
+   * errcode 57014, en daarnaast op PGRST002 (PostgREST laadt zijn schema na
+   * een DDL), zie src/utils/statementTimeout.ts. Nooit meer dan een keer:
+   * blijft de fout ook de tweede keer staan, dan is dat een
+   * CatalogusOnbereikbaar met de herkansing in het bericht, en de aanroeper
+   * hoort dat aan de gebruiker te tonen (CalibrationStep doet dat). De
+   * console.warn is alleen zichtbaar in dev en tests: de productiebuild haalt
+   * alle console-aanroepen weg (drop_console in vite.config.ts).
    */
   async getProducts(
     answersOfGender?: Record<string, any> | string,
@@ -85,13 +130,22 @@ class OutfitService {
     }
 
     try {
-      const { data, error } = await client.rpc('get_kandidaten', params);
-
-      if (error) {
-        throw new CatalogusOnbereikbaar(error.message || 'rpc get_kandidaten faalde');
+      let poging = await eenPogingGetKandidaten(client, params);
+      let herkanst = false;
+      if (poging.fout && isTijdelijkeFout(poging.fout)) {
+        herkanst = true;
+        console.warn(`[OutfitService] get_kandidaten gaf een tijdelijke fout (${poging.fout.code}), een herkansing`);
+        await new Promise((klaar) => setTimeout(klaar, HERKANSING_NA_MS));
+        poging = await eenPogingGetKandidaten(client, params);
       }
 
-      const rijen = (data ?? []) as KandidaatRij[];
+      if (poging.fout) {
+        throw new CatalogusOnbereikbaar(
+          `${poging.fout.message || 'rpc get_kandidaten faalde'}${herkanst ? ' (ook na een herkansing)' : ''}`
+        );
+      }
+
+      const rijen = poging.rijen ?? [];
 
       if (rijen.length === 0) {
         // Nul rijen is nu dubbelzinnig: filters te strak, of de tabel is
@@ -160,7 +214,9 @@ class OutfitService {
       this.productsCache.set(cacheKey, products);
       this.cacheTimestamps.set(cacheKey, Date.now());
 
-      console.log(`[OutfitService] ${products.length} kandidaten uit ${rijen.length} rijen (${params.p_gender}, ${params.p_budget_min}-${params.p_budget_max})`);
+      console.log(
+        `[OutfitService] ${products.length} kandidaten uit ${rijen.length} rijen (${params.p_gender}, ${params.p_budget_min}-${params.p_budget_max})${herkanst ? ', na een herkansing' : ''}`
+      );
       return products;
     } catch (error) {
       if (error instanceof CatalogusOnbereikbaar) throw error;

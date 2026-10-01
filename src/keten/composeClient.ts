@@ -34,12 +34,20 @@
  * geeft een resultaat terug met `reden` gevuld en lege outfits, zodat de
  * aanroeper (achter de lokale vlag ff_keten_stylist) zelf kan terugvallen op
  * de bestaande route.
+ *
+ * Bijgewerkt op 1 oktober 2026: de 3 s hierboven is de instelling van de
+ * anon-rol. Sinds PR 116 (op main, migratie 20261001150000) heeft
+ * get_kandidaten zelf statement_timeout = 8s als functie-instelling, die voor
+ * die van de rol gaat; keten_outfit_set heeft nog de 3 s. De herkansing blijft
+ * voor beide RPC's staan als vangnet. Wat een statement-timeout is staat in
+ * src/utils/statementTimeout.ts, gedeeld met outfitService.ts.
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { runEngineV2 } from '@/engine/v2/engine';
 import type { Outfit, Product } from '@/engine/types';
 import { fnv1a32 } from '@/utils/hash';
 import { outfitKey } from '@/services/ratings/outfitRatings';
+import { isStatementTimeout, type RpcFout } from '@/utils/statementTimeout';
 import { profileHash } from './profileHash';
 import {
   STYLIST_VERSION,
@@ -125,18 +133,9 @@ export const MIN_OUTFITS_NA_NIET_WIL_FILTER = 4;
  */
 export const RPC_TIMEOUT_MS = 5_000;
 
-/** SQLSTATE van Postgres voor "canceling statement due to statement timeout". */
-const STATEMENT_TIMEOUT_SQLSTATE = '57014';
-
-/** Genoeg van een Postgres-fout om te bepalen of het een statement-timeout was. */
-interface RpcFout {
-  code: string;
-  message: string;
-}
-
-function isStatementTimeout(fout: RpcFout): boolean {
-  return fout.code === STATEMENT_TIMEOUT_SQLSTATE || /statement timeout/i.test(fout.message);
-}
+// Wat een statement-timeout is (errcode 57014 of het bericht) staat in
+// src/utils/statementTimeout.ts, want outfitService.ts herkanst er ook op en
+// die twee moeten het over dezelfde fout hebben.
 
 /**
  * Vertaalt het profiel naar de answers die buildUserStyleProfile (engine v2)

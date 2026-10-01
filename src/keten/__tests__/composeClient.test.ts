@@ -275,6 +275,50 @@ describe('profielVanQuizAnswers', () => {
     expect(profielVanQuizAnswers({}, 's')!.budget_max).toBe(150);
   });
 
+  it('zet de lichtheid uit quizstap 4 als as met zekerheid 1, in dezelfde vorm als de andere drie', () => {
+    // Dezelfde drie waarden als LIGHTNESS in scripts/keten/tagging.ts: dat is
+    // wat get_kandidaten met pa.lightness = a.as_waarde vergelijkt.
+    for (const waarde of ['licht', 'medium', 'donker']) {
+      const p = profielVanQuizAnswers({ gender: 'female', lightness: waarde }, 's');
+      expect(p!.axes.lightness).toEqual({ value: waarde, confidence: 1 });
+    }
+    // Hoofdletters en omringende spaties worden net als bij fit en prints genormaliseerd.
+    expect(profielVanQuizAnswers({ lightness: ' Donker ' }, 's')!.axes.lightness).toEqual({
+      value: 'donker',
+      confidence: 1,
+    });
+  });
+
+  it('laat de lichtheid leeg zonder antwoord of bij een waarde die de tagger niet kent', () => {
+    const leeg = { value: null, confidence: 0 };
+    expect(profielVanQuizAnswers({ gender: 'female' }, 's')!.axes.lightness).toEqual(leeg);
+    // 'light' en 'dark' zijn de Engelse woorden die de tagger eerst teruggaf
+    // en die tagging.ts nu naar licht en donker normaliseert; de quiz levert
+    // ze nooit, dus ze horen geen as op te leveren.
+    for (const vreemd of ['', ' ', 'light', 'dark', 'midden', 42, null, ['licht'], {}]) {
+      expect(profielVanQuizAnswers({ gender: 'female', lightness: vreemd }, 's')!.axes.lightness).toEqual(leeg);
+    }
+  });
+
+  it('draagt de lichtheid mee in de cache-sleutel: een andere lichtheid is een ander profiel', async () => {
+    const basis = { gender: 'female', occasions: ['work'], budget: { min: 25, max: 100 }, fit: 'slim' };
+    const licht = profielVanQuizAnswers({ ...basis, lightness: 'licht' }, 's1')!;
+    const lichtOpnieuw = profielVanQuizAnswers({ ...basis, lightness: 'licht' }, 's2')!;
+    const donker = profielVanQuizAnswers({ ...basis, lightness: 'donker' }, 's3')!;
+    const zonder = profielVanQuizAnswers(basis, 's4')!;
+    expect(await profileHash(licht)).toBe(await profileHash(lichtOpnieuw));
+    expect(await profileHash(licht)).not.toBe(await profileHash(donker));
+    expect(await profileHash(licht)).not.toBe(await profileHash(zonder));
+  });
+
+  it('laat het antwoord ook het noodpad bereiken: answersVanProfiel geeft de lichtheid aan engine v2', () => {
+    // Zonder de vertaling in vanQuiz.ts kreeg het noodpad van de stylist-route
+    // de lichtheid van de bezoeker nooit, terwijl de bestaande route
+    // (outfitService.generateOutfits met de ruwe antwoorden) hem wel las.
+    const p = profielVanQuizAnswers({ gender: 'male', fit: 'regular', lightness: 'donker' }, 's')!;
+    expect(answersVanProfiel(p).lightness).toBe('donker');
+  });
+
   it('geeft null zonder antwoorden', () => {
     expect(profielVanQuizAnswers(null as any, 's')).toBeNull();
   });

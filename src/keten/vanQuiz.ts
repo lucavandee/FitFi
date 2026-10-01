@@ -3,8 +3,8 @@
  * (localStorage LS_KEYS.QUIZ_ANSWERS). Tijdelijk: zodra plan 4 de onboarding
  * v2 met dit-of-dat-paren heeft, komt het profiel uit taste_profiles.
  *
- * Expliciete quiz-antwoorden (fit, prints, neutrals) worden assen met
- * zekerheid 1: de bezoeker heeft ze zelf gekozen.
+ * Expliciete quiz-antwoorden (fit, prints, neutrals, lightness) worden assen
+ * met zekerheid 1: de bezoeker heeft ze zelf gekozen.
  */
 import { GELEGENHEDEN, legeAssen, type Gelegenheid, type Geslacht, type TasteProfileInput } from './types';
 
@@ -56,6 +56,13 @@ export function profielVanQuizAnswers(
   const neutrals = tekst(Array.isArray(answers.neutrals) ? answers.neutrals[0] : answers.neutrals);
   if (neutrals === 'warm' || neutrals === 'koel' || neutrals === 'neutraal') {
     axes.color_temp = { value: neutrals, confidence: 1 };
+  }
+  // Quizstap 4 (src/data/quizSteps.ts, field 'lightness', verplicht): dezelfde
+  // drie waarden als LIGHTNESS in scripts/keten/tagging.ts, dus get_kandidaten
+  // kan er rechtstreeks op scoren (pa.lightness = a.as_waarde).
+  const lightness = tekst(answers.lightness);
+  if (lightness === 'licht' || lightness === 'medium' || lightness === 'donker') {
+    axes.lightness = { value: lightness, confidence: 1 };
   }
 
   return {

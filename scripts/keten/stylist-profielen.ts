@@ -9,29 +9,34 @@
  *
  * Eén regel: elk standaardprofiel gaat door dezelfde vertaling als een
  * bezoeker uit de quiz. Een persona wordt eerst quiz-antwoorden (fit, prints,
- * neutrals, zoals src/data/quizSteps.ts ze kent) en die gaan daarna door
- * profielVanQuizAnswers (src/keten/vanQuiz.ts), de functie die ook de
- * stylist-route van een echte bezoeker draait. Daardoor komen alleen de assen
- * in het profiel die uit een echt antwoord komen, met de zekerheid die dat
- * antwoord ook bij een bezoeker krijgt, en geeft dezelfde voorkeur dezelfde
- * cache-sleutel ongeacht waar het profiel vandaan komt.
+ * neutrals en lightness, zoals src/data/quizSteps.ts ze kent) en die gaan
+ * daarna door profielVanQuizAnswers (src/keten/vanQuiz.ts), de functie die
+ * ook de stylist-route van een echte bezoeker draait. Daardoor komen alleen
+ * de assen in het profiel die uit een echt antwoord komen, met de zekerheid
+ * die dat antwoord ook bij een bezoeker krijgt, en geeft dezelfde voorkeur
+ * dezelfde cache-sleutel ongeacht waar het profiel vandaan komt.
  *
  * Dat is de reparatie van de meting van 1 oktober 2026 (spec 5.2.1, herziening
  * van 1 oktober): het vulscript bouwde zijn profielen rechtstreeks uit
  * STYLE_ASSEN (src/keten/personas.ts), met zes assen op een zekerheid van 0,5
- * tot 0,9. Formality, lightness en shoe_type geeft geen bezoeker op, dus de
- * gevulde set stond onder een sleutel die niemand kon bereiken. STYLE_ASSEN
- * blijft bestaan, ook voor het harnas (stylist-run.ts) dat bewust rijkere
- * persona's modelleert, maar het vulscript leest er alleen nog de drie
- * waarden uit die een quiz ook oplevert (silhouette, pattern, color_temp).
+ * tot 0,9. Formality en shoe_type geeft geen bezoeker op, dus de gevulde set
+ * stond onder een sleutel die niemand kon bereiken. STYLE_ASSEN blijft
+ * bestaan, ook voor het harnas (stylist-run.ts) dat bewust rijkere persona's
+ * modelleert, maar het vulscript leest er alleen nog de vier waarden uit die
+ * een quiz ook oplevert (silhouette, pattern, color_temp en lightness).
  *
- * Noot voor wie vanQuiz.ts uitbreidt: de quiz vraagt lightness al (verplicht,
- * stap 4) maar vanQuiz.ts maakt er nog geen as van. Zodra dat wel gebeurt,
- * krijgt elke bezoeker een lightness in zijn sleutel en missen de sleutels
- * van dit bestand die as. De test in __tests__/stylist-profielen.test.ts geeft zijn
- * bezoekers daarom al een lightness-antwoord: hij gaat rood op het moment dat
- * die vertaling erbij komt, en dan hoort quizAntwoordenVanPersona het
- * bijpassende antwoord van de persona mee te geven.
+ * Lightness stond in die eerste reparatie nog bij de assen die geen bezoeker
+ * opgeeft. Dat klopte niet: de quiz vraagt hem wel (verplicht, stap 4), alleen
+ * vertaalde vanQuiz.ts het antwoord niet en gooide het weg. Sinds de tweede
+ * fix van 1 oktober 2026 maakt vanQuiz.ts er een as van, en geeft
+ * quizAntwoordenVanPersona de lichtheid van de persona mee.
+ *
+ * Noot voor wie vanQuiz.ts nog verder uitbreidt: elke as die de quiz vertaalt,
+ * krijgt elke bezoeker in zijn sleutel, en mist het vulscript hem tot deze
+ * module hem meegeeft. De test in __tests__/stylist-profielen.test.ts geeft
+ * zijn bezoekers een antwoord per vertaalde quizvraag en gaat rood op het
+ * moment dat een vertaling erbij komt die hier ontbreekt. Voeg de vraag dan
+ * eerst aan de bezoekers in die test toe.
  */
 import { KETEN_PERSONAS, STYLE_ASSEN, type KetenPersona } from "../../src/keten/personas";
 import type { TasteProfileInput } from "../../src/keten/types";
@@ -52,16 +57,17 @@ export function slug(naam: string): string {
 /**
  * De quiz-antwoorden van een bezoeker die precies deze persona is. Dezelfde
  * velden en dezelfde waardenlijsten als de quiz: `fit` (slim, regular,
- * relaxed, oversized), `prints` (effen, subtiel, statement) en `neutrals`
- * (warm, koel, neutraal). De waarden komen uit STYLE_ASSEN van de eerste
- * stijlvoorkeur van de persona: silhouette wordt fit, pattern wordt prints en
- * color_temp wordt neutrals. De woordenlijst van de quiz bevat voor deze drie
- * assen alle waarden van de tagger (SILHOUETTES, COLOR_TEMPS en PATTERNS in
- * tagging.ts); alleen bij prints komt "gemengd" erbij, waar vanQuiz.ts geen
- * as van maakt.
+ * relaxed, oversized), `prints` (effen, subtiel, statement), `neutrals`
+ * (warm, koel, neutraal) en `lightness` (licht, medium, donker). De waarden
+ * komen uit STYLE_ASSEN van de eerste stijlvoorkeur van de persona:
+ * silhouette wordt fit, pattern wordt prints, color_temp wordt neutrals en
+ * lightness blijft lightness. De woordenlijst van de quiz bevat voor deze vier
+ * assen alle waarden van de tagger (SILHOUETTES, COLOR_TEMPS, LIGHTNESS en
+ * PATTERNS in tagging.ts); alleen bij prints komt "gemengd" erbij, waar
+ * vanQuiz.ts geen as van maakt.
  *
- * Formality, lightness en shoe_type uit STYLE_ASSEN gaan bewust NIET mee: dat
- * zijn geen antwoorden die een bezoeker geeft.
+ * Formality en shoe_type uit STYLE_ASSEN gaan bewust NIET mee: de quiz vraagt
+ * ze niet, dus geen bezoeker geeft ze op.
  */
 export function quizAntwoordenVanPersona(persona: KetenPersona): Record<string, unknown> {
   const stijl = persona.stylePreferences[0];
@@ -76,6 +82,7 @@ export function quizAntwoordenVanPersona(persona: KetenPersona): Record<string, 
     fit: assen.silhouette?.value,
     prints: assen.pattern?.value,
     neutrals: assen.color_temp?.value,
+    lightness: assen.lightness?.value,
   };
 }
 
@@ -105,13 +112,15 @@ export function profielVanPersona(persona: KetenPersona): TasteProfileInput {
  * beantwoordt. Dat is de enige quizvraag over een as die niet verplicht is
  * (`prints` heeft `required: false` in src/data/quizSteps.ts), en wie
  * "Mix van alles" kiest geeft vanQuiz.ts ook geen pattern-as. De sleutel
- * heeft dan twee van de drie assen: silhouette en color_temp. Dat is een
- * sleutel die een echte bezoeker vandaag kan produceren, en het bewijst dat
- * de stylist ook met een dunnere invoer zes geldige outfits aflevert.
+ * heeft dan drie van de vier assen: silhouette, color_temp en lightness. Dat
+ * is een sleutel die een echte bezoeker vandaag kan produceren, en het
+ * bewijst dat de stylist ook met een dunnere invoer zes geldige outfits
+ * aflevert.
  *
  * Het vorige "halve set"-profiel (drie assen onbekend, drie met zekerheid
- * 0,25) was geen sleutel die een bezoeker kon raken: de lightness die het
- * meegaf geeft geen bezoeker op, en de zekerheid zit niet meer in de sleutel.
+ * 0,25) was geen sleutel die een bezoeker kon raken: het had geen silhouette,
+ * terwijl de quiz de pasvorm verplicht vraagt (`required: true` in
+ * src/data/quizSteps.ts), en de zekerheid zit niet meer in de sleutel.
  */
 export function onzekerProfiel(basisPersona: KetenPersona): TasteProfileInput {
   return profielUitAntwoorden(

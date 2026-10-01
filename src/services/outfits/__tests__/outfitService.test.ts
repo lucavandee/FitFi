@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const rpc = vi.fn();
 const telQuery = vi.fn();
@@ -214,6 +214,145 @@ describe("outfitService.getProducts - lege pool na classificatie en veiligheidsn
       ([boodschap]) => typeof boodschap === "string" && boodschap.includes("opvallend deel")
     );
     expect(opvallendeMelding).toBe(true);
+    warnSpy.mockRestore();
+  });
+});
+
+describe("outfitService.getProducts - tijdelijke fouten, een zichtbare herkansing", () => {
+  // Zoals PostgREST ze doorgeeft: de database die afbreekt (HTTP 500, errcode
+  // 57014) en PostgREST dat zijn schema herlaadt na een DDL (HTTP 503).
+  const timeoutFout = { code: "57014", message: "canceling statement due to statement timeout" };
+  const schemaFout = { code: "PGRST002", message: "Could not query the database for the schema cache. Retrying." };
+
+  // De herkansing wacht 300 ms; nepklokken houden de suite snel.
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("herkanst een keer, na een pauze en met dezelfde parameters, en gaat daarna gewoon door", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc
+      .mockResolvedValueOnce({ data: null, error: timeoutFout })
+      .mockResolvedValueOnce({ data: [rij("p1", "top", 60), rij("p2", "footwear", 90)], error: null });
+
+    const belofte = outfitService.getProducts(answers);
+    await vi.advanceTimersByTimeAsync(299);
+    expect(rpc).toHaveBeenCalledTimes(1); // de pauze is nog niet om
+    await vi.advanceTimersByTimeAsync(1);
+    const producten = await belofte;
+
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[1]).toEqual(rpc.mock.calls[0]);
+    expect(producten.map((p) => p.id).sort()).toEqual(["p1", "p2"]);
+    // Zichtbaar: een herkansing is nooit stil.
+    expect(warnSpy.mock.calls.some(([m]) => typeof m === "string" && m.includes("herkansing"))).toBe(true);
+    warnSpy.mockRestore();
+  });
+
+  it("gooit CatalogusOnbereikbaar als ook de herkansing een timeout geeft, en doet geen derde poging", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc.mockResolvedValue({ data: null, error: timeoutFout });
+
+    const uitkomst = outfitService.getProducts(answers).catch((e: unknown) => e);
+    await vi.runAllTimersAsync();
+    const fout = await uitkomst;
+
+    expect(fout).toBeInstanceOf(CatalogusOnbereikbaar);
+    expect((fout as Error).message).toContain("statement timeout");
+    // De herkansing staat in het bericht, zodat wie de fout ziet weet dat het
+    // niet bij een koude eerste poging bleef.
+    expect((fout as Error).message).toContain("na een herkansing");
+    expect(rpc).toHaveBeenCalledTimes(2);
+    warnSpy.mockRestore();
+  });
+
+  it("herkent de timeout ook aan het bericht alleen, zonder errcode", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc
+      .mockResolvedValueOnce({ data: null, error: { message: "canceling statement due to statement timeout" } })
+      .mockResolvedValueOnce({ data: [rij("p1", "top", 60)], error: null });
+
+    const belofte = outfitService.getProducts(answers);
+    await vi.runAllTimersAsync();
+
+    await expect(belofte).resolves.toHaveLength(1);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    warnSpy.mockRestore();
+  });
+
+  it("herkanst ook terwijl PostgREST zijn schema herlaadt (PGRST002)", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc
+      .mockResolvedValueOnce({ data: null, error: schemaFout })
+      .mockResolvedValueOnce({ data: [rij("p1", "top", 60)], error: null });
+
+    const belofte = outfitService.getProducts(answers);
+    await vi.runAllTimersAsync();
+
+    await expect(belofte).resolves.toHaveLength(1);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    warnSpy.mockRestore();
+  });
+
+  it("herkanst niet op een andere fout dan een tijdelijke", async () => {
+    rpc.mockResolvedValue({ data: null, error: { code: "42501", message: "permission denied for function get_kandidaten" } });
+
+    const fout = await outfitService.getProducts(answers).catch((e: unknown) => e);
+
+    expect(fout).toBeInstanceOf(CatalogusOnbereikbaar);
+    expect((fout as Error).message).not.toContain("herkansing");
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("herkanst niet als de eerste poging gewoon lukt", async () => {
+    rpc.mockResolvedValue({ data: [rij("p1", "top", 60)], error: null });
+    await outfitService.getProducts(answers);
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("cachet het resultaat van een geslaagde herkansing, zodat de volgende aanroep de database met rust laat", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc
+      .mockResolvedValueOnce({ data: null, error: timeoutFout })
+      .mockResolvedValueOnce({ data: [rij("p1", "top", 60)], error: null });
+
+    const eerste = outfitService.getProducts(answers);
+    await vi.runAllTimersAsync();
+    await eerste;
+    await outfitService.getProducts(answers);
+
+    expect(rpc).toHaveBeenCalledTimes(2);
+    warnSpy.mockRestore();
+  });
+
+  it("cachet een mislukte aanroep niet: de volgende aanroep probeert het opnieuw", async () => {
+    // Dit is wat de knop "Probeer opnieuw" in de kalibratiestap doet.
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc.mockResolvedValue({ data: null, error: timeoutFout });
+    const mislukt = outfitService.getProducts(answers).catch((e: unknown) => e);
+    await vi.runAllTimersAsync();
+    expect(await mislukt).toBeInstanceOf(CatalogusOnbereikbaar);
+    expect(rpc).toHaveBeenCalledTimes(2);
+
+    rpc.mockReset();
+    rpc.mockResolvedValue({ data: [rij("p1", "top", 60)], error: null });
+    await expect(outfitService.getProducts(answers)).resolves.toHaveLength(1);
+    expect(rpc).toHaveBeenCalledTimes(1);
+    warnSpy.mockRestore();
+  });
+
+  it("generateOutfits geeft de fout na een mislukte herkansing door, in plaats van een lege lijst", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rpc.mockResolvedValue({ data: null, error: timeoutFout });
+
+    const uitkomst = outfitService.generateOutfits(answers, 6).catch((e: unknown) => e);
+    await vi.runAllTimersAsync();
+
+    expect(await uitkomst).toBeInstanceOf(CatalogusOnbereikbaar);
+    expect(rpc).toHaveBeenCalledTimes(2);
     warnSpy.mockRestore();
   });
 });
