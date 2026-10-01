@@ -659,9 +659,12 @@ describe("valideerTagsGedetailleerd (veld+waarde bij een afkeuring, FIXRONDE 5)"
     expect(resultaat.weggevallen).toEqual([{ veld: "colors", waarde: "turquoise" }]);
   });
 
+  // FIXRONDE 9: dit voorbeeld had "robijnrood"; dat is sindsdien rood (het
+  // laatste deel van een samengestelde kleurnaam is de kleur). "berry" heeft
+  // geen vaste basiskleur en blijft dus wegvallen.
   it("colors blijft afgekeurd als ALLE kleuren wegvallen (leeg na filteren)", () => {
-    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, colors: ["turquoise", "robijnrood"] });
-    expect(resultaat).toEqual({ ok: false, veld: "colors", waarde: ["turquoise", "robijnrood"] });
+    const resultaat = valideerTagsGedetailleerd({ ...geldigeTags, colors: ["turquoise", "berry"] });
+    expect(resultaat).toEqual({ ok: false, veld: "colors", waarde: ["turquoise", "berry"] });
   });
 
   // Het letterlijke voorbeeld uit de opdracht: materials: ["viscose",
