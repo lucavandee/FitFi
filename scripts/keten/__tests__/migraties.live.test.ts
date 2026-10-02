@@ -23,6 +23,28 @@ const anon = () => createClient(url!, anonKey!, { auth: { persistSession: false 
 // Ruimere timeout dan de standaard 5 s: op 1 okt 2026 wisselde dezelfde aanroep
 // tussen 13 ms (warme cache) en 9 s (koude schijf). De tests hieronder meten
 // gedrag, geen snelheid.
+// 2 okt 2026: product_attributes.image_url was alleen voor H&M gevuld; voor
+// Giglio, PUMA, OFM en Mart Visser was het leeg, en keten_embed_kandidaten eist
+// het. Na de grote tagrun gaf de functie voor Giglio 0 van de 16.629 getagde
+// kandidaten terug.
+describe.skipIf(!url || !serviceKey)("20261002090000_keten_image_url_aanvullen (live)", { timeout: 30_000 }, () => {
+  it("keten_embed_kandidaten geeft voor Giglio getagde kandidaten met een foto-URL", async () => {
+    const { data, error } = await service().rpc("keten_embed_kandidaten", { p_retailer: "Giglio (INT)", p_limit: 20, p_after: null });
+    expect(error).toBeNull();
+    const rijen = (data ?? []) as Array<{ product_id: string; image_url: string }>;
+    // Leeg is hier alleen terecht als elke getagde Giglio-kandidaat al een
+    // embedding heeft; de controle hieronder telt dat apart.
+    const { count } = await service()
+      .from("product_attributes")
+      .select("product_id", { count: "exact", head: true })
+      .eq("retailer", "Giglio (INT)")
+      .not("tagger_version", "is", null)
+      .is("embedding", null);
+    if ((count ?? 0) > 0) expect(rijen.length).toBeGreaterThan(0);
+    for (const r of rijen) expect(r.image_url.startsWith("http")).toBe(true);
+  });
+});
+
 describe.skipIf(!url || !serviceKey)("20261001120000_keten_tag_kandidaten_selectie (live)", { timeout: 30_000 }, () => {
   // Een versie die niet bestaat: dan telt elke canonieke kandidaat mee, ook als
   // de winkel inmiddels getagd is, en blijft deze test zinvol na elke tagronde.
