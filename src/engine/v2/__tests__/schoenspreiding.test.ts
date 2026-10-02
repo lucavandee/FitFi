@@ -17,6 +17,8 @@ import { seedFromAnswers } from "@/services/outfits/answersSeed";
 import { bereidKandidatenVoor, type KandidaatRij } from "@/services/outfits/kandidaten";
 import poolNa from "./fixtures/pool-man-klassiek-2026-10-01.json";
 import poolVoor from "./fixtures/pool-man-klassiek-alleen-hm-2026-10-01.json";
+import poolStreetwear from "./fixtures/pool-man-streetwear-2026-10-02.json";
+import poolMinimalistisch from "./fixtures/pool-vrouw-minimalistisch-2026-10-02.json";
 
 const ANSWERS = {
   gender: "male",
@@ -43,5 +45,34 @@ describe("schoenspreiding in engine v2", () => {
   it("blijft zes outfits geven op de pool van voor de proefronde", () => {
     const { outfits } = schoenenVan(poolVoor);
     expect(outfits).toHaveLength(6);
+  });
+
+  // 2 okt 2026, na de grote tagrun: "man streetwear" (casual en party) kreeg 5
+  // outfits. Met twee gelegenheden zijn er 18 kandidaten, en dan staat
+  // diversifyOutfits elk product maar in één outfit toe. De samensteller
+  // herhaalde accessoires en jassen over kandidaten heen (dezelfde pet in 4,
+  // hetzelfde trainingsjack in 4), dus zes volledig verschillende waren er niet.
+  it("geeft man streetwear zes outfits, ook met twee gelegenheden", () => {
+    const answers = { gender: "male", stylePreferences: ["streetwear"], occasions: ["casual", "party"], budget: { min: 25, max: 100 }, fit: "relaxed" };
+    const pool = bereidKandidatenVoor(poolStreetwear as unknown as KandidaatRij[]);
+    const { outfits } = runEngineV2(answers, pool, { count: 6, seed: seedFromAnswers(answers), season: "autumn" });
+    expect(outfits).toHaveLength(6);
+  });
+
+  // 2 okt 2026: na de grote tagrun kreeg "vrouw minimalistisch" een "Heeled
+  // Sandal VERSACE JEANS COUTURE" in een werkoutfit. Het persona-harnas verbiedt
+  // dat (SANDAAL_RE in scripts/keten/persona-run.ts); de engine had er geen
+  // regel voor en kwam er tot dan toe mee weg omdat er geen sandaal in de
+  // toppool voor werk zat.
+  it("zet geen open schoen in een werkoutfit", () => {
+    const answers = { gender: "female", stylePreferences: ["minimalist"], occasions: ["work", "date"], budget: { min: 25, max: 100 }, fit: "regular" };
+    const pool = bereidKandidatenVoor(poolMinimalistisch as unknown as KandidaatRij[]);
+    const { outfits } = runEngineV2(answers, pool, { count: 6, seed: seedFromAnswers(answers), season: "autumn" });
+    expect(outfits).toHaveLength(6);
+    const open = /\b(sandaal|sandalen|sandal|sandals|sandaletten?|slipper|slippers|teenslipper|flip-?flops?)\b/i;
+    for (const o of outfits.filter((x) => x.occasion === "work")) {
+      const schoen = o.products.find((p) => String(p.category).toLowerCase() === "footwear");
+      expect(schoen?.name ?? "").not.toMatch(open);
+    }
   });
 });
