@@ -228,6 +228,13 @@ function hasWorkNegativeKeyword(scored: ScoredProduct): boolean {
   return WORK_NEGATIVE_KEYWORDS.some((kw) => haystack.includes(kw));
 }
 
+// Open shoes are never work shoes. The persona gate checks the same thing
+// (SANDAAL_RE in scripts/keten/persona-run.ts); the engine had no rule for it
+// and got away with that until the catalogue had heeled sandals in the work
+// top pool (2 Oct 2026: "Heeled Sandal VERSACE JEANS COUTURE" for "vrouw
+// minimalistisch"). Also "sandaletten", which the gate's pattern misses.
+const OPEN_SHOE_RE = /\b(sandaal|sandalen|sandal|sandals|sandaletten?|slipper|slippers|teenslipper|flip-?flops?)\b/i;
+
 function filterFootwearForOccasion(
   products: ScoredProduct[],
   occasion: OccasionKey,
@@ -235,7 +242,9 @@ function filterFootwearForOccasion(
 ): ScoredProduct[] {
   if (occasion === 'work') {
     const floor = workFootwearFloor(profile);
-    const filtered = products.filter((p) => p.formality >= floor);
+    const filtered = products.filter(
+      (p) => p.formality >= floor && !OPEN_SHOE_RE.test(p.product.name ?? '')
+    );
     return filtered.length > 0 ? filtered : products;
   }
   if (occasion === 'casual') {
@@ -384,8 +393,20 @@ function composeForOccasion(
   poolSize: number,
   baseSeed: number,
   season: Season | undefined,
-  usedFootwear: Set<string>
+  usedProducts: Set<string>
 ): OutfitCandidate[] {
+  // diversifyOutfits allows a product in at most one or two selected outfits
+  // (one when there are 18+ candidates, which is every two-occasion profile)
+  // and a shoe in only one. A candidate that repeats a product an earlier one
+  // already has can then never be picked next to it. So every slot takes the
+  // first item in its shuffled top pool that no accepted candidate uses yet,
+  // and pool[0] only when all of them are taken. Choosing inside the pool keeps
+  // the rand stream, and so every later pick, exactly as before.
+  // Measured: shoes only, 1 Oct 2026 ("man klassiek": 9 candidates with 5
+  // distinct shoes, 5 outfits); all slots, 2 Oct 2026 ("man streetwear": the
+  // same cap and jacket in four candidates each, 5 outfits).
+  const firstUnused = (pool: ScoredProduct[]): ScoredProduct | undefined =>
+    pool.find((s) => !usedProducts.has(s.product.id)) ?? pool[0];
   const targetFormality = OCCASION_TARGET_FORMALITY[occasion];
   const wantOuterwear = resolveOuterwearChance(
     occasion,
@@ -431,10 +452,10 @@ function composeForOccasion(
     let picks: Parameters<typeof tryCompose>[0] = {};
     if (useDress) {
       const pool = pickTopPool(byCategory.dress, targetFormality, poolSize, rand, occasion, profile);
-      picks.dress = pool[0];
+      picks.dress = firstUnused(pool);
     } else if (useJumpsuit) {
       const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand, occasion, profile);
-      picks.dress = pool[0];
+      picks.dress = firstUnused(pool);
     } else {
       const topCandidates = filterTopsForOccasion(byCategory.top, occasion);
       const bottomCandidates = filterBottomsForOccasion(
@@ -458,8 +479,8 @@ function composeForOccasion(
         occasion,
         profile
       );
-      picks.top = topPool[0];
-      picks.bottom = bottomPool[0];
+      picks.top = firstUnused(topPool);
+      picks.bottom = firstUnused(bottomPool);
     }
 
     const footwearCandidates = filterFootwearForOccasion(
@@ -476,15 +497,7 @@ function composeForOccasion(
         occasion,
         profile
       );
-      // diversifyOutfits allows a shoe in only one selected outfit, so a
-      // candidate that repeats a shoe can never be picked next to the one that
-      // had it first. Take the first shoe in the shuffled top pool that no
-      // accepted candidate uses yet, and pool[0] only when all of them are taken.
-      // Choosing inside the pool keeps the rand stream, and so every other slot,
-      // exactly as before. Measured 1 Oct 2026: with 40 shoes in the pool
-      // instead of 10, "man klassiek" got 9 candidates with 5 distinct shoes
-      // and therefore 5 outfits.
-      picks.footwear = pool.find((s) => !usedFootwear.has(s.product.id)) ?? pool[0];
+      picks.footwear = firstUnused(pool);
     }
 
     if (byCategory.outerwear.length > 0 && auxRand() < wantOuterwear) {
@@ -496,7 +509,7 @@ function composeForOccasion(
         occasion,
         profile
       );
-      picks.outerwear = pool[0];
+      picks.outerwear = firstUnused(pool);
     }
 
     const accessoryRoll = accRand();
@@ -512,7 +525,7 @@ function composeForOccasion(
         occasion,
         profile
       );
-      picks.accessory = pool[0];
+      picks.accessory = firstUnused(pool);
     }
 
     const products = tryCompose(picks, profile);
@@ -528,9 +541,7 @@ function composeForOccasion(
     const { coherence, score } = scoreComposition(products, profile, occasion);
     if (score < 0.35) continue;
 
-    for (const p of products) {
-      if (p.category === 'footwear') usedFootwear.add(p.product.id);
-    }
+    for (const p of products) usedProducts.add(p.product.id);
     candidates.push({
       id: buildOutfitId(occasion, products, candidates.length),
       occasion,
@@ -573,8 +584,8 @@ export function composeOutfits(
   const occasions: OccasionKey[] =
     profile.occasions.length > 0 ? profile.occasions : ['casual', 'work'];
 
-  // Shared across occasions: the footwear rule in diversifyOutfits is global too.
-  const usedFootwear = new Set<string>();
+  // Shared across occasions: the caps in diversifyOutfits are global too.
+  const usedProducts = new Set<string>();
 
   for (const occ of occasions) {
     byOccasion[occ] = composeForOccasion(
@@ -585,7 +596,7 @@ export function composeOutfits(
       options.poolSize,
       options.seed,
       options.season,
-      usedFootwear
+      usedProducts
     );
   }
 
