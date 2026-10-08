@@ -83,5 +83,13 @@ describe("HERO_CLIP-bestanden", () => {
     it(`${naam}: duurt hoogstens vijf seconden`, () => {
       expect(mp4Duur(readFileSync(inPublic(pad)))).toBeLessThanOrEqual(5);
     });
+
+    // Higgsfield-voorwaarde 5.5: herkomstsignalen niet weghalen. Een hercodering
+    // zonder -metadata AIGC=... laat de tag stil vallen.
+    it(`${naam}: draagt de AIGC-herkomstmarkering van de bron`, () => {
+      const inhoud = readFileSync(inPublic(pad)).toString("latin1");
+      expect(inhoud).toContain("AIGC");
+      expect(inhoud).toMatch(/"Label":"1","ContentProducer":"kling","ProduceID":"KLingMuse_[0-9a-f-]{36}"/);
+    });
   }
 });

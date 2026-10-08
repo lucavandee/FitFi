@@ -14,11 +14,16 @@
  * 119 frames op 24 fps is 4,96 s. De bron is 121 frames (5,04 s); twee frames
  * eraf houdt de clip onder de vijf seconden van WCAG 2.2.2, zodat er geen
  * pauzeknop nodig is. De naam draagt de eerste acht tekens van de sha256.
+ *
+ * De AIGC-tag uit de Kling-bron (Label 1, producent kling, ProduceID) staat
+ * ook in deze bestanden: de voorwaarden van Higgsfield (5.5) verbieden het
+ * weghalen van herkomstsignalen. Hercoderen? Dan met
+ * -metadata "AIGC=<waarde uit de bron>" -movflags +faststart+use_metadata_tags.
  */
 export const HERO_CLIP = {
   breekpunt: "(max-width: 1023px)",
-  mobiel: "/video/hero-mobiel.7e2dffc3.mp4",
-  desktop: "/video/hero-desktop.d75ec51f.mp4",
+  mobiel: "/video/hero-mobiel.407d6557.mp4",
+  desktop: "/video/hero-desktop.4f8e982a.mp4",
 } as const;
 
 export interface HeroClipOmgeving {
