@@ -388,6 +388,27 @@ function stripBrand(text: string, brand: string): string {
 }
 
 /**
+ * Een kledingstuk dat "met" een sjaal, riem of stropdas wordt geleverd is nog
+ * steeds het kledingstuk. Zonder deze stap wegen "jas" en "sjaal" even zwaar en
+ * wint accessory, omdat dat eerder in ORDERED_RULES staat dan outerwear: op
+ * 8 oktober 2026 waren 50 van de 2.376 accessoires in de H&M-pool jassen,
+ * blouses en broeken ("Jas met sjaal", "Overhemd met stropdas").
+ *
+ * Het stuk vanaf "met" tot en met het accessoirewoord wordt uit de naam gehaald
+ * voordat die op categorie scoort. Tot drie woorden ertussen ("met capuchon en
+ * riem"). Alleen als er een accessoirewoord in staat: "Jas met capuchon" blijft
+ * zoals het was, en "Tas met riem" blijft een tas omdat "tas" voor "met" staat.
+ * Een samengesteld woord ("sjaalkraag", "schouderriem") valt erbuiten door de
+ * woordgrens. Spiegelt exact de andere kopie van de classifier.
+ */
+const BIJGELEVERD_ACCESSOIRE_RE =
+  /\b(?:met|inclusief|with)\s+(?:[\p{L}-]+\s+){0,3}?(?:riem|ceintuur|belt|sjaal|scarf|stropdas|das|strik|muts|hoed|tas|handschoenen|handschoen)\b/giu;
+
+function stripBijgeleverdAccessoire(text: string): string {
+  return text.replace(BIJGELEVERD_ACCESSOIRE_RE, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
  * Classify a product by raw text fields. Returns category, subcategory,
  * confidence level, and matched signals for debugging.
  */
@@ -400,7 +421,7 @@ export function classifyProductDetailed(
   const rawNameText = (name || '').toLowerCase();
   // Reject/kids/multipack-checks raken dit defect niet en blijven op de volle
   // naam werken. Alleen de tekst die op categorie scoort is gestript.
-  const nameText = stripBrand(rawNameText, brand);
+  const nameText = stripBijgeleverdAccessoire(stripBrand(rawNameText, brand));
   const descText = (description || '').toLowerCase();
   const catText = (categoryPath || '').toLowerCase();
   // descText en catText blijven ongestript: dat is de bestaande terugval van

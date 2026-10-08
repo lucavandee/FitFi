@@ -52,6 +52,8 @@
  * Gebruik:
  *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer
  *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer -- --retailer "H&M (NL)"
+ *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer -- --alleen-veegronde
+ *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer -- --ids-bestand pad/met/ids.txt
  * VITE_SUPABASE_URL komt uit de shell of uit .env. De service-role-sleutel
  * komt alleen uit de shell en wordt nooit gelogd.
  *
@@ -89,6 +91,21 @@ const argRetailer = (() => {
   const i = process.argv.indexOf("--retailer");
   return i >= 0 ? process.argv[i + 1] : null;
 })();
+
+// Alleen deze rijen: een bestand met product-id's (één per regel). Voor een gerichte
+// herclassificatie na een regelwijziging die maar een paar honderd rijen raakt
+// (8 oktober 2026: "Jas met sjaal" was een accessoire; 240 rijen), zonder de hele
+// tabel opnieuw te schrijven.
+const argIdsBestand = (() => {
+  const i = process.argv.indexOf("--ids-bestand");
+  return i >= 0 ? process.argv[i + 1] : null;
+})();
+
+// Alleen de veegronde: classificeert uitsluitend rijen zonder classifier_version
+// (de nieuwe rijen na een feed-sync) en laat de volledige paginering over de
+// hele tabel achterwege. Na een sync van 49.000 nieuwe rijen is dat het verschil
+// tussen een minuut en het opnieuw schrijven van 340.000 rijen.
+const alleenVeegronde = process.argv.includes("--alleen-veegronde");
 
 const PAGINA = 1000;
 const client = createClient(url, serviceKey, { auth: { persistSession: false } });
@@ -147,12 +164,53 @@ async function metHerhaling<T>(
   return laatste;
 }
 
+/** Classificeert precies de product-id's uit het bestand, in porties van 200, en schrijft ze via dezelfde RPC. */
+async function classificeerIds(pad: string, log: (...args: unknown[]) => void): Promise<void> {
+  const ids = readFileSync(pad, "utf8").split("\n").map((r) => r.trim()).filter(Boolean);
+  log(`${ids.length} product-id's uit ${pad}`);
+  const overgang: Record<string, number> = {};
+  let geschreven = 0;
+  for (let i = 0; i < ids.length; i += 200) {
+    const deel = ids.slice(i, i + 200);
+    const { data, error } = await metHerhaling(
+      () => client.from("products").select("id, name, description, category, type, is_kids, retailer, brand").in("id", deel),
+      "lezen van products op id",
+      log
+    );
+    if (error) throw new Error(`lezen van products faalde: ${error.message}`);
+    const rijen = (data ?? []) as ProductRij[];
+    const batch = rijen.map((r) => classificeerRij(r));
+    for (const uit of batch) {
+      const sleutel = uit.category ?? (uit.is_fashion ? "onbekend" : "afgewezen");
+      overgang[sleutel] = (overgang[sleutel] ?? 0) + 1;
+    }
+    const { data: aantal, error: schrijfFout } = await metHerhaling(
+      () => client.rpc("zet_classificatie", { p_rijen: batch, p_versie: CLASSIFIER_VERSIE }),
+      "zet_classificatie",
+      log
+    );
+    if (schrijfFout) throw new Error(`zet_classificatie faalde: ${schrijfFout.message}`);
+    geschreven += Number(aantal ?? 0);
+  }
+  log(`Klaar: ${geschreven} van ${ids.length} rijen geschreven. Uitkomst per categorie:`, overgang);
+  if (geschreven < ids.length) {
+    log(`Let op: ${ids.length - geschreven} rijen niet geschreven (geen rij in product_attributes, of het id bestaat niet).`);
+    process.exit(1);
+  }
+}
+
 async function main(): Promise<void> {
   // De classifier logt elke lage-confidence-rij naar console.warn; op 282.000
   // rijen is dat ruis. Tijdelijk dempen, tellen doen we zelf.
   const oorspronkelijkWarn = console.warn;
   const oorspronkelijkLog = console.log;
   console.warn = () => {};
+
+  if (argIdsBestand) {
+    await classificeerIds(argIdsBestand, oorspronkelijkLog);
+    console.warn = oorspronkelijkWarn;
+    return;
+  }
 
   let gelezen = 0;
   let geschreven = 0;
@@ -165,6 +223,7 @@ async function main(): Promise<void> {
   const start = Date.now();
 
   for (;;) {
+    if (alleenVeegronde) break;
     // Elke poging bouwt een verse query: de builder van supabase-js hoort
     // niet twee keer afgevuurd te worden, en dit sluit elke twijfel daarover
     // uit voor metHerhaling hieronder.
@@ -276,7 +335,9 @@ async function main(): Promise<void> {
   // Schone afronding: dit checkpoint is niet meer nodig. Pas hier wissen,
   // na de veegronde, zodat een checkpoint dat een gat had nooit stilzwijgend
   // rijen achterlaat (zie docstring: de veegronde is wat dat garandeert).
-  wisCheckpoint();
+  // Bij --alleen-veegronde is de paginering niet gedraaid en blijft een bestaand
+  // checkpoint van een eerdere volledige run ongemoeid.
+  if (!alleenVeegronde) wisCheckpoint();
 }
 
 main().catch((e) => {

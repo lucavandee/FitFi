@@ -45,7 +45,20 @@ describe("classificeerRij", () => {
     // al geclassificeerde rijen nooit opnieuw langs de gerepareerde
     // classifier sturen, en blijven de zwempakken als accessory/top/bottom
     // in product_attributes staan.
-    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-09-21-swimwear-reject");
+    // Daarna verhoogd (8 oktober 2026) voor "kleding met een bijgeleverd accessoire":
+    // "Jas met sjaal" was een accessoire. Geraakt: 240 H&M-rijen, gericht herschreven
+    // met --ids-bestand; de rest van de tabel behoudt zijn oude versiestring en dat is
+    // geen probleem, want get_kandidaten eist alleen dat de versie niet leeg is.
+    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-10-08-bijgeleverd-accessoire");
+  });
+
+  it("een jas met een sjaal blijft een jas, en een echte sjaal een accessoire", () => {
+    expect(classificeerRij({ id: "p8", name: "H & M - Jas met sjaal - Zwart", brand: "H&M" })).toEqual({
+      product_id: "p8",
+      category: "outerwear",
+      is_fashion: true,
+    });
+    expect(classificeerRij({ id: "p9", name: "H & M - Sjaal met franjes - Grijs", brand: "H&M" }).category).toBe("accessory");
   });
 
   it("laat het merk niet meer de categorie bepalen", () => {

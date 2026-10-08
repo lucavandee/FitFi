@@ -672,3 +672,42 @@ describe('Zwemkleding wordt afgewezen (spec 5.1)', () => {
     });
   });
 });
+
+// ─── BIJGELEVERDE ACCESSOIRES ──────────────────────────────────────────────
+// Gevonden op 8 oktober 2026 in de nieuwe H&M-rijen: "Jas met sjaal" werd een
+// accessoire, omdat "sjaal" en "jas" even zwaar wegen en accessory eerder in
+// ORDERED_RULES staat dan outerwear. Een kledingstuk dat met een sjaal, riem of
+// stropdas wordt geleverd is nog steeds het kledingstuk. 50 van de 2.376
+// accessoires in de H&M-pool waren zulke kleding; in de accessoire-slot van een
+// outfit kwam dan een jas of een blouse te staan.
+describe('kleding met een bijgeleverd accessoire blijft kleding', () => {
+  it.each([
+    ['H & M - Jas met sjaal - Zwart', 'outerwear'],
+    ['H & M - Reversloze blazer met sjaal - Lichtbeige', 'outerwear'],
+    ['H & M - Overhemd met stropdas - Wit', 'top'],
+    ['H & M - Pantalon met riem - Zwart', 'bottom'],
+    ['H & M - Chiffon jurk met sjaal - Lichtroze/Bloemen', 'dress'],
+    ['H & M - Gebreide fluffy trui met sjaal - Lichtbeige', 'top'],
+    ['H & M - Oversized jack met riem - Lichtbeige', 'outerwear'],
+    ['H & M - Jas met capuchon en riem - Beige', 'outerwear'],
+    ['H & M - Trenchcoat met ceintuur - Beige', 'outerwear'],
+    ['Blouse with scarf - White', 'top'],
+  ])('%s is %s', (naam, verwacht) => {
+    expect(cat(naam)).toBe(verwacht);
+  });
+
+  it.each([
+    ['H & M - Tas met riem - Zwart'],
+    ['H & M - Riem met gesp - Bruin'],
+    ['H & M - Sjaal met franjes - Grijs'],
+    ['H & M - Muts met sjaal - Grijs'],
+    ['H & M - Handschoenen met touchscreen - Zwart'],
+  ])('een echt accessoire blijft een accessoire: %s', (naam) => {
+    expect(cat(naam)).toBe('accessory');
+  });
+
+  it('een samengesteld woord telt niet als bijgeleverd accessoire ("schouderriem", "sjaalkraag")', () => {
+    expect(cat('H & M - Jas met sjaalkraag - Zwart')).toBe('outerwear');
+    expect(cat('H & M - Tas met afneembare schouderriem - Zwart')).toBe('accessory');
+  });
+});
