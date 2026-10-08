@@ -16,7 +16,37 @@ export interface KandidatenParams {
   p_per_category: number;
 }
 
-/** Een rij uit get_kandidaten. `product` is de volledige products-rij als json. */
+/**
+ * De velden van `product` in een rij uit get_kandidaten. Sinds migratie
+ * 20261002120000 komt product uit keten_kandidaat_product, een compacte kopie
+ * met alleen de velden die de code leest: mapKandidaatProduct hieronder, en
+ * productVanKandidaat van de stylist. Leest de code een veld meer, zet het dan
+ * ook in keten_kandidaat_product_json; de test in kandidaten.test.ts faalt tot
+ * dat gebeurd is.
+ */
+export const KANDIDAAT_PRODUCT_VELDEN = [
+  "id",
+  "name",
+  "brand",
+  "price",
+  "image_url",
+  "category",
+  "type",
+  "gender",
+  "colors",
+  "sizes",
+  "tags",
+  "style",
+  "retailer",
+  "affiliate_url",
+  "product_url",
+  "description",
+  "in_stock",
+  "rating",
+  "review_count",
+] as const;
+
+/** Een rij uit get_kandidaten. `product` bevat de velden uit KANDIDAAT_PRODUCT_VELDEN. */
 export interface KandidaatRij {
   product_id: string;
   category: string;

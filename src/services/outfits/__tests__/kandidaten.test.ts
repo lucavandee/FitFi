@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  KANDIDAAT_PRODUCT_VELDEN,
   KANDIDATEN_PER_CATEGORIE,
   bereidKandidatenVoor,
   bereidKandidatenVoorMetDiagnose,
@@ -90,6 +91,50 @@ describe("mapKandidaatProduct", () => {
       productUrl: "https://x/p",
       inStock: true,
     });
+  });
+
+  // Sinds migratie 20261002120000 komt product uit de compacte kopie
+  // keten_kandidaat_product, met alleen KANDIDAAT_PRODUCT_VELDEN. Deze rij
+  // heeft alle 32 kolommen van products (stand 2 okt 2026), elk met een eigen
+  // waarde: leest mapKandidaatProduct een veld dat de kopie niet heeft, dan
+  // verschilt de uitkomst.
+  it("geeft voor de compacte kopie hetzelfde product als voor de volledige products-rij", () => {
+    const volledig: Record<string, unknown> = {
+      id: "0a1b2c3d-0000-4000-8000-000000000001",
+      name: "Wollen blazer",
+      image_url: "https://x/blazer.jpg",
+      description: "Getailleerde blazer van wol",
+      affiliate_url: "https://x/aff/blazer",
+      gender: "male",
+      type: "blazer",
+      brand: "Merk",
+      tags: ["klassiek"],
+      sizes: ["48", "50"],
+      created_at: "2026-09-01T10:00:00+00:00",
+      price: 129.95,
+      original_price: 159.95,
+      product_url: "https://x/p/blazer",
+      retailer: "Giglio (INT)",
+      category: "outerwear",
+      colors: ["navy"],
+      in_stock: true,
+      rating: 4.5,
+      review_count: 12,
+      updated_at: "2026-10-01T10:00:00+00:00",
+      sku: "SKU-1",
+      original_category: "Jassen > Blazers",
+      style: "klassiek, zakelijk",
+      source: "daisycon",
+      external_id: "ext-1",
+      affiliate_link: "https://x/link/blazer",
+      images: ["https://x/blazer-2.jpg"],
+      campaign_id: "0a1b2c3d-0000-4000-8000-0000000000c1",
+      link_status: "active",
+      link_last_checked_at: "2026-10-02T08:00:00+00:00",
+      is_kids: false,
+    };
+    const kopie = Object.fromEntries(KANDIDAAT_PRODUCT_VELDEN.map((veld) => [veld, volledig[veld]]));
+    expect(mapKandidaatProduct(kopie)).toEqual(mapKandidaatProduct(volledig));
   });
 });
 
