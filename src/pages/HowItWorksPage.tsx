@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import { AnimatePresence, motion } from "framer-motion";
-import { Clock, Zap, Heart, ArrowRight, Plus } from "lucide-react";
+import { Zap, Heart, ArrowRight, Plus } from "lucide-react";
 import { track as trackFunnel } from "@/utils/analytics";
 
 const PAGE = "how-it-works";
@@ -122,8 +122,10 @@ const faqs = [
   },
 ];
 
+// Nergens op deze pagina een invultijd: die is nooit gemeten (stond er als
+// "ongeveer 5 minuten", "~5 minuten" en in de HowTo als PT2M).
 const compRows = [
-  { old: "Uren zoeken in winkels", next: "Ongeveer 5 minuten, direct resultaat", highlight: false },
+  { old: "Uren zoeken in winkels", next: "Een korte quiz, direct resultaat", highlight: false },
   { old: "Kast vol \"draag ik nooit\"", next: "Outfits die je echt draagt", highlight: false },
   { old: "Geen idee welke kleuren passen", next: "Persoonlijk kleurpalet op basis van jou", highlight: false },
   { old: "Elke ochtend twijfelen", next: "Zelfverzekerd je deur uit", highlight: true },
@@ -186,15 +188,14 @@ export default function HowItWorksPage() {
   return (
     <>
       <Seo
-        title="Hoe het werkt: jouw stijladvies in ongeveer 5 minuten | FitFi"
-        description="In ongeveer 5 minuten van quiz naar compleet stijladvies. 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
+        title="Hoe het werkt: van quiz naar stijladvies | FitFi"
+        description="Van quiz naar compleet stijladvies in 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
         path="/hoe-het-werkt"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "HowTo",
-          name: "Hoe FitFi werkt: stijladvies in ongeveer 5 minuten",
-          description: "In ongeveer 5 minuten van quiz naar compleet stijladvies. Beantwoord vragen, wij matchen outfits, jij shopt direct.",
-          totalTime: "PT2M",
+          name: "Hoe FitFi werkt: van quiz naar stijladvies",
+          description: "Van quiz naar compleet stijladvies: beantwoord vragen, wij matchen outfits, jij shopt direct.",
           step: [
             { "@type": "HowToStep", position: 1, name: "Vertel ons over jouw stijl", text: "Een korte quiz over je voorkeuren, kleuren en levensstijl." },
             { "@type": "HowToStep", position: 2, name: "Ontvang je persoonlijke rapport", text: "Direct na de quiz krijg je een volledig stijlrapport." },
@@ -233,15 +234,15 @@ export default function HowItWorksPage() {
 
             <Reveal delay={0.24}>
               <p className="text-[17px] text-[#4A4A4A] leading-[1.7] max-w-[480px] mx-auto mb-12 text-center">
-                Geen eindeloze vragenlijsten, geen vage tips. In ongeveer
-                vijf minuten heb je een persoonlijk stijlrapport met kleuren,
-                outfits en directe shoplinks.
+                Geen eindeloze vragenlijsten, geen vage tips. Na de quiz
+                krijg je een persoonlijk stijlrapport met kleuren, outfits
+                en directe shoplinks.
               </p>
             </Reveal>
 
             <Reveal delay={0.36}>
               <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
-                {["~5 minuten", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
+                {["Korte quiz", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
                   <div key={tag} className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                     <span>{tag}</span>
@@ -284,10 +285,6 @@ export default function HowItWorksPage() {
                   sub="Lokaal verwerkt, niet opgeslagen"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0EB] rounded-full text-sm font-semibold text-[#A85740] w-fit">
-                <Clock className="w-4 h-4" aria-hidden="true" />
-                ~5 minuten
-              </div>
             </Reveal>
           </div>
         </section>
@@ -317,7 +314,7 @@ export default function HowItWorksPage() {
                 />
                 <StepDetail
                   title="Stijlprofiel met uitleg"
-                  sub="Wat je seizoenstype, contrast en ondertoon betekenen"
+                  sub="Wat je seizoenstype, contrast en kleurtemperatuur betekenen"
                 />
                 <StepDetail
                   title="Do's en don'ts per gelegenheid"

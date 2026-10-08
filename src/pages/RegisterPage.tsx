@@ -152,7 +152,7 @@ const RegisterPage: React.FC = () => {
               {comingFromResults ? "Bewaar je resultaten" : "Start jouw stijlreis"}
             </h2>
             <p className="text-base text-[#4A4A4A] text-center leading-[1.7] mb-12">
-              In ongeveer vijf minuten weet je welke kleuren en outfits bij je passen.
+              Na een korte quiz weet je welke kleuren en outfits bij je passen.
             </p>
 
             <div className="flex flex-col gap-5 w-full max-w-[320px]">

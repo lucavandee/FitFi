@@ -114,15 +114,8 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           <ArrowRight className="w-5 h-5" />
         </motion.button>
 
-        {/* Time estimate */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-center text-sm text-[#1A1A1A]/50 mt-4"
-        >
-          Dit duurt ongeveer {content.timeEstimate}
-        </motion.p>
+        {/* Hier stond "Dit duurt ongeveer ..." (2-3 minuten, ~5 minuten, 10
+            seconden). Geen van die tijden is gemeten. */}
       </motion.div>
     </motion.div>
   );
@@ -142,7 +135,6 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       ],
       novaTip: 'Ik leer van elke swipe. Als je twijfelt tussen twee looks, kies de outfit die je direct aanspreekt - dat is vaak je échte stijl.',
       ctaText: 'Start met swipen',
-      timeEstimate: '2-3 minuten'
     };
   }
 
@@ -160,7 +152,6 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       ],
       novaTip: 'Dit is waar de magie gebeurt. Je feedback hier maakt het verschil tussen "leuke outfits" en "outfits die voelen alsof ze voor jou gemaakt zijn".',
       ctaText: 'Bekijk de outfits',
-      timeEstimate: '~5 minuten'
     };
   }
 
@@ -177,7 +168,6 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       ],
       novaTip: 'Dit is het resultaat van alles wat we samen hebben ontdekt. Elk outfit is bewust geselecteerd op basis van je antwoorden, swipes én feedback. Ready to see your style?',
       ctaText: 'Toon mijn Style DNA',
-      timeEstimate: '10 seconden'
     };
   }
 
@@ -189,6 +179,5 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
     expectations: ['Next phase coming up'],
     novaTip: 'Blijf jezelf - er zijn geen foute antwoorden!',
     ctaText: 'Ga verder',
-    timeEstimate: '1 minuut'
   };
 }
