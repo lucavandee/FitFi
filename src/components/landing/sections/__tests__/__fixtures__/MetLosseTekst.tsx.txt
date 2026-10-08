@@ -1,0 +1,12 @@
+// Met opzet fout: vier stukken losse tekst voor geenLosseTekst.test.ts.
+export default function MetLosseTekst({ tekst }: { tekst: string }) {
+  return (
+    <section aria-label="Een losse naam">
+      <h2>Losse kop</h2>
+      <p>{"Losse zin"}</p>
+      <img alt={`Foto van ${tekst}`} src="/x.webp" />
+      <span>{" "}</span>
+      <span className="text-sm">{tekst}</span>
+    </section>
+  );
+}
