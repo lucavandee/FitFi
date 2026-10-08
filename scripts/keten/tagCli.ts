@@ -663,12 +663,36 @@ export async function voerClaudeCliUit(args: string[], timeoutMs: number, signal
     if (e.killed || e.signal === "SIGTERM") {
       return { is_error: true, result: `time-out na ${Math.round(timeoutMs / 1000)}s` };
     }
-    const stderrSnippet = (e.stderr ?? "").toString().trim().slice(0, 500);
     return {
       is_error: true,
-      result: `claude -p faalde (${e.code ?? "onbekende exitcode"}): ${stderrSnippet || e.message}`,
+      result: `claude -p faalde (${e.code ?? "onbekende exitcode"}): ${redenVanMislukteAanroep(e)}`,
     };
   }
+}
+
+/**
+ * De reden van een claude -p die met een foutcode eindigde. Met
+ * `--output-format json` schrijft claude zijn fout als JSON naar stdout en blijft
+ * stderr leeg (4 okt 2026: elke aanroep faalde met exitcode 1 en de log noemde
+ * alleen de commandoregel), dus stdout komt eerst, daarna stderr, en pas als
+ * beide leeg zijn de exitcode. De commandoregel in `e.message` is geen reden: hij
+ * bevat het volledige systeemprompt.
+ */
+export function redenVanMislukteAanroep(e: { code?: string | number; stdout?: string; stderr?: string }): string {
+  const stdout = (e.stdout ?? "").toString().trim();
+  if (stdout) {
+    try {
+      const json = JSON.parse(stdout) as ClaudeCliResultaat;
+      const tekst = json.result || json.subtype;
+      if (tekst) return String(tekst).slice(0, 500);
+    } catch {
+      // Geen JSON: platte tekst, zoals hieronder.
+    }
+    return stdout.slice(0, 500);
+  }
+  const stderr = (e.stderr ?? "").toString().trim();
+  if (stderr) return stderr.slice(0, 500);
+  return `exitcode ${e.code ?? "onbekend"}, zonder uitvoer`;
 }
 
 // ---------------------------------------------------------------------------
