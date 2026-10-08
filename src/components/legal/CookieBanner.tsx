@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import {
   getCookiePrefs,
@@ -6,14 +7,54 @@ import {
   shouldShowConsentBanner,
   type CookiePrefs,
 } from "@/utils/consent";
+import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
+import {
+  HERO_SELECTOR,
+  SMAL,
+  doosVanEersteScherm,
+  isQuiz,
+  magBannerTonen,
+  wijktVoorHero,
+  zichtbaarAandeel,
+} from "./cookieBannerRegels";
 
 type View = "simple" | "detail";
 
+/**
+ * Cookiebanner (plan fase 2, 4.0; G9 en G19).
+ *
+ * Wat er was: een laag van de volle breedte onderin, role="dialog" met
+ * aria-modal="true", die op elke desktopmaat de klik op "Begin gratis" in de
+ * hero opving (gemeten op zes maten van 1024x768 tot 1920x1080), en een
+ * terracotta "Alles accepteren" naast een lichtere "Alleen noodzakelijk".
+ *
+ * Wat het nu is:
+ * - De vaste laag laat klikken door (pointer-events-none); alleen de kaart
+ *   vangt ze (pointer-events-auto).
+ * - Desktop: een compacte kaart rechtsonder (max-w-sm). Mobiel: een strook
+ *   onderin, boven de onderbalk (--onderbalk-h, gezet door MobileBottomNav).
+ * - Op / pas zodra de hero voor minstens de helft uit beeld is; elders direct,
+ *   behalve tijdens de quiz. Vanaf 1024 px blijft hij daarna staan tot er een
+ *   keuze is; daaronder wijkt hij op / zolang de hero weer voor meer dan de
+ *   helft in beeld is, want daar zou de strook de heroknoppen bedekken
+ *   (cookieBannerRegels.ts).
+ * - "Alles accepteren" en "Alleen noodzakelijk" wegen even zwaar: dezelfde
+ *   klassen, 44 px hoog, even breed als ze op een regel passen.
+ * - Geen aria-modal: de pagina blijft bruikbaar. De kaart is een regio met
+ *   een naam, te vinden via de landmarks.
+ * - Zolang hij open is, staat zijn hoogte in --banner-h en rekent
+ *   scroll-padding-bottom die mee, zodat een getabte link er niet onder
+ *   verdwijnt (WCAG 2.4.11).
+ */
 export default function CookieBanner() {
+  const { pathname } = useLocation();
   const [open, setOpen] = React.useState(false);
+  const [vrijgegeven, setVrijgegeven] = React.useState(false);
+  const [wijkt, setWijkt] = React.useState(false);
   const [view, setView] = React.useState<View>("simple");
   const [analytics, setAnalytics] = React.useState(false);
   const [marketing, setMarketing] = React.useState(false);
+  const laagRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (shouldShowConsentBanner()) {
@@ -24,77 +65,149 @@ export default function CookieBanner() {
     }
   }, []);
 
+  React.useEffect(() => {
+    if (!open || isQuiz(pathname)) return;
+    if (pathname !== "/") {
+      setVrijgegeven(true);
+      setWijkt(false);
+      return;
+    }
+
+    // Op / blijft dit meelopen, ook nadat de banner verschenen is: onder 1024 px
+    // wijkt hij weer als de hero terug in beeld komt (cookieBannerRegels.ts).
+    const smal = window.matchMedia(SMAL);
+    let frame = 0;
+    const toets = () => {
+      frame = 0;
+      const hero = document.querySelector(HERO_SELECTOR);
+      const rect = hero?.getBoundingClientRect();
+      const doos = rect && rect.height > 0 ? rect : doosVanEersteScherm(window.scrollY, window.innerHeight);
+      const aandeel = zichtbaarAandeel(doos, window.innerHeight);
+      if (magBannerTonen(pathname, aandeel)) setVrijgegeven(true);
+      setWijkt(wijktVoorHero(pathname, aandeel, smal.matches));
+    };
+    const plan = () => {
+      if (!frame) frame = window.requestAnimationFrame(toets);
+    };
+
+    toets();
+    window.addEventListener("scroll", plan, { passive: true });
+    window.addEventListener("resize", plan);
+    return () => {
+      window.removeEventListener("scroll", plan);
+      window.removeEventListener("resize", plan);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [open, pathname]);
+
+  // Ook een banner die al verschenen was, wijkt tijdens de quiz.
+  const zichtbaar = open && vrijgegeven && !wijkt && !isQuiz(pathname);
+  useHoogteInVariabele(laagRef, "--banner-h", zichtbaar);
+
   const save = (prefs: Partial<CookiePrefs>) => {
     setCookiePrefs({ ...prefs, consented: true });
     setOpen(false);
   };
 
-  const acceptAll = () => save({ analytics: true, marketing: true });
-  const rejectAll = () => save({ analytics: false, marketing: false });
-  const saveCustom = () => save({ analytics, marketing });
-
-  if (!open) return null;
+  if (!zichtbaar) return null;
 
   return (
+    <CookieBannerKaart
+      ref={laagRef}
+      view={view}
+      analytics={analytics}
+      marketing={marketing}
+      onView={setView}
+      onAnalytics={setAnalytics}
+      onMarketing={setMarketing}
+      onAcceptAll={() => save({ analytics: true, marketing: true })}
+      onRejectAll={() => save({ analytics: false, marketing: false })}
+      onSaveCustom={() => save({ analytics, marketing })}
+    />
+  );
+}
+
+/** Dezelfde klassen voor beide keuzes: geen van beide weegt zwaarder. */
+const KEUZEKNOP =
+  "flex-1 inline-flex h-11 items-center justify-center whitespace-nowrap rounded-xl border border-[#E5E5E5] bg-white px-3 text-sm font-medium text-[#1A1A1A] hover:border-[#A85740] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-2";
+
+interface KaartProps {
+  view: View;
+  analytics: boolean;
+  marketing: boolean;
+  onView: (view: View) => void;
+  onAnalytics: (aan: boolean) => void;
+  onMarketing: (aan: boolean) => void;
+  onAcceptAll: () => void;
+  onRejectAll: () => void;
+  onSaveCustom: () => void;
+}
+
+/** De weergave zonder state, los te renderen in een test. */
+export const CookieBannerKaart = React.forwardRef<HTMLDivElement, KaartProps>(function CookieBannerKaart(
+  { view, analytics, marketing, onView, onAnalytics, onMarketing, onAcceptAll, onRejectAll, onSaveCustom },
+  ref,
+) {
+  return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Cookievoorkeuren"
-      className="fixed inset-x-0 bottom-0 z-[54] p-3 sm:p-4"
+      ref={ref}
+      data-cookiebanner=""
+      className="pointer-events-none fixed inset-x-0 z-[54] flex justify-center p-3 md:justify-end md:p-6"
+      style={{ bottom: "var(--onderbalk-h, 0px)" }}
     >
-      <div className="mx-auto max-w-2xl rounded-2xl border border-[#E5E5E5] bg-[#FFFFFF] shadow-xl overflow-hidden">
-
+      <section
+        aria-label="Cookievoorkeuren"
+        className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-2xl border border-[#E5E5E5] bg-white shadow-xl"
+      >
         {view === "simple" ? (
-          <div className="p-5 sm:p-6">
-            <p className="text-sm sm:text-base text-[#1A1A1A] font-semibold mb-1">
-              Wij gebruiken cookies
-            </p>
-            <p className="text-sm text-[#6E6E6E] mb-4 leading-relaxed">
-              Noodzakelijke cookies zorgen dat de site werkt. Optionele cookies
-              (analytics) helpen ons de ervaring te verbeteren. Je kunt je
-              keuze altijd wijzigen via{" "}
-              <a href="/cookies" className="underline underline-offset-2 hover:text-[#1A1A1A] transition-colors">
-                Cookie-instellingen
-              </a>.
-            </p>
-
-            <div className="flex flex-wrap gap-2">
+          <div className="p-4 md:p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm md:text-base font-semibold text-[#1A1A1A]">
+                Wij gebruiken cookies
+              </p>
               <button
-                onClick={acceptAll}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#A85740] hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
-              >
-                Alles accepteren
-              </button>
-              <button
-                onClick={rejectAll}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-2"
-              >
-                Alleen noodzakelijk
-              </button>
-              <button
-                onClick={() => setView("detail")}
-                className="h-10 px-5 rounded-xl text-sm font-medium text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6E6E6E] focus-visible:ring-offset-2"
+                type="button"
+                onClick={() => onView("detail")}
+                className="-my-2.5 -mr-2 inline-flex h-11 items-center rounded-xl px-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 Aanpassen
               </button>
             </div>
+            <p className="mt-1 text-sm leading-relaxed text-[#4A4A4A]">
+              Noodzakelijke cookies zorgen dat de site werkt. Optionele cookies
+              (analytics) helpen ons de ervaring te verbeteren. Je kunt je
+              keuze altijd wijzigen via{" "}
+              <a href="/cookies" className="text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200">
+                Cookie-instellingen
+              </a>.
+            </p>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button type="button" onClick={onAcceptAll} className={KEUZEKNOP}>
+                Alles accepteren
+              </button>
+              <button type="button" onClick={onRejectAll} className={KEUZEKNOP}>
+                Alleen noodzakelijk
+              </button>
+            </div>
           </div>
         ) : (
-          <div className="p-5 sm:p-6">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <p className="text-sm sm:text-base text-[#1A1A1A] font-semibold">
+          <div className="p-4 md:p-5">
+            <div className="flex items-center justify-between gap-4 mb-3">
+              <p className="text-sm md:text-base text-[#1A1A1A] font-semibold">
                 Cookievoorkeuren
               </p>
               <button
-                onClick={() => setView("simple")}
+                type="button"
+                onClick={() => onView("simple")}
                 aria-label="Terug naar overzicht"
-                className="text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6E6E6E] rounded"
+                className="-my-2.5 -mr-2.5 inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
-                <X className="w-4 h-4" aria-hidden="true" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
-            <div className="space-y-3 mb-5">
+            <div className="space-y-3 mb-4">
               <ConsentRow
                 id="cookie-necessary"
                 label="Noodzakelijk"
@@ -109,7 +222,7 @@ export default function CookieBanner() {
                 description="Paginaweergaven en interacties om de site te verbeteren (Google Analytics 4). Geen persoonlijk profiel."
                 checked={analytics}
                 disabled={false}
-                onChange={setAnalytics}
+                onChange={onAnalytics}
               />
               <ConsentRow
                 id="cookie-marketing"
@@ -117,30 +230,24 @@ export default function CookieBanner() {
                 description="Gepersonaliseerde advertenties op externe platforms."
                 checked={marketing}
                 disabled={false}
-                onChange={setMarketing}
+                onChange={onMarketing}
               />
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={saveCustom}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-white bg-[#A85740] hover:bg-[#9A503B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
-              >
+              <button type="button" onClick={onSaveCustom} className={KEUZEKNOP}>
                 Voorkeuren opslaan
               </button>
-              <button
-                onClick={rejectAll}
-                className="h-10 px-5 rounded-xl text-sm font-semibold text-[#1A1A1A] border border-[#E5E5E5] hover:border-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-2"
-              >
+              <button type="button" onClick={onRejectAll} className={KEUZEKNOP}>
                 Alleen noodzakelijk
               </button>
             </div>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
-}
+});
 
 function ConsentRow({
   id,

@@ -1,0 +1,93 @@
+/**
+ * De shell rond elke pagina: kop en footer (PR A2, plan fase 2, 4.6 en 5.2).
+ *
+ * "Begin gratis" wees in de kop en in de footer naar /registreren, terwijl
+ * CLAUDE.md deel 10 "Begin gratis" vastlegt voor quiz starten, en de quiz
+ * zonder account begint. Een registratiescherm als eerste stap is een drempel
+ * die de hero niet heeft.
+ *
+ * renderToString dekt de desktopkop en de footer. Het mobiele menu rendert pas
+ * na een klik (state), dus dat deel toetst de bron: in Navbar.tsx staat geen
+ * link meer naar /registreren.
+ */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { renderToString } from "react-dom/server";
+import { MemoryRouter } from "react-router-dom";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+const gebruiker: { user: null | { name: string } } = { user: null };
+
+vi.mock("@/context/UserContext", () => ({
+  useUser: () => ({ user: gebruiker.user, logout: vi.fn() }),
+}));
+
+import Navbar from "../Navbar";
+import Footer from "../Footer";
+
+const render = (pad: string, element: JSX.Element) =>
+  renderToString(<MemoryRouter initialEntries={[pad]}>{element}</MemoryRouter>);
+
+/** Alle links met precies deze zichtbare tekst, met hun href. */
+function linksMetTekst(html: string, tekst: string): string[] {
+  const uit: string[] = [];
+  for (const m of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)) {
+    const zichtbaar = m[2].replace(/<[^>]+>/g, "").replace(/<!-- -->/g, "").trim();
+    if (zichtbaar !== tekst) continue;
+    uit.push(m[1].match(/href="([^"]*)"/)?.[1] ?? "");
+  }
+  return uit;
+}
+
+afterEach(() => {
+  gebruiker.user = null;
+});
+
+describe("Navbar", () => {
+  it("'Begin gratis' gaat naar /onboarding", () => {
+    for (const pad of ["/", "/prijzen", "/blog"]) {
+      const html = render(pad, <Navbar />);
+      expect(linksMetTekst(html, "Begin gratis")).toEqual(["/onboarding"]);
+    }
+  });
+
+  it("bevat geen link meer naar /registreren (ook niet in het mobiele menu)", () => {
+    const bron = readFileSync(join(__dirname, "../Navbar.tsx"), "utf-8");
+    expect(bron).not.toContain('"/registreren"');
+  });
+});
+
+describe("Footer (F1 en F2)", () => {
+  it("op / geen CTA-strook", () => {
+    const html = render("/", <Footer />);
+    expect(linksMetTekst(html, "Begin gratis")).toEqual([]);
+    expect(html).not.toContain("Ontdek jouw stijl");
+  });
+
+  it("elders opent de CTA-strook de quiz, onder een kop in de sans", () => {
+    for (const pad of ["/prijzen", "/hoe-het-werkt", "/blog"]) {
+      const html = render(pad, <Footer />);
+      expect(linksMetTekst(html, "Begin gratis")).toEqual(["/onboarding"]);
+      expect(html).toContain("Ontdek jouw stijl");
+    }
+  });
+
+  it("geen CTA-strook voor wie ingelogd is", () => {
+    gebruiker.user = { name: "Test" };
+    expect(linksMetTekst(render("/prijzen", <Footer />), "Begin gratis")).toEqual([]);
+  });
+
+  it("geen serif, kapitalen, terracotta tekst, GDPR- of SSL-pil; de gewone container", () => {
+    for (const pad of ["/", "/prijzen"]) {
+      const html = render(pad, <Footer />);
+      expect(html).not.toMatch(/font-serif|uppercase|text-\[#A85740\]/);
+      expect(html).not.toMatch(/>\s*(GDPR|SSL)\s*</);
+      expect(html).not.toContain("max-w-[1400px]");
+      expect(html).toContain("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8");
+    }
+  });
+
+  it("rendert niet tijdens de quiz", () => {
+    expect(render("/onboarding", <Footer />)).toBe("");
+  });
+});

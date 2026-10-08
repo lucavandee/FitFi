@@ -3,18 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <!-- ✅ Performance optimizations -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.pexels.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
     <!-- Prefetch common routes -->
     <link rel="prefetch" href="/results" as="document">
     <link rel="prefetch" href="/prijzen" as="document">
 
-    <!-- ✅ Fonts: Instrument Serif (editorial headlines) + Plus Jakarta Sans (premium body) -->
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lettertypen: Instrument Serif en Plus Jakarta Sans staan zelf gehost in
+         public/fonts/, met @font-face in src/index.css. Geen verzoek naar Google. -->
 
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -59,21 +55,10 @@
     <!-- Daisycon verification -->
     <meta name="ee766b42deed7db" content="4a91cb66c90ac80df32bb7517a55886a" />
 
-    <!-- Google tag (gtag.js) — consent mode v2 -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'analytics_storage': 'denied',
-        'ad_storage': 'denied',
-        'wait_for_update': 500
-      });
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1PPLR2L3R"></script>
-    <script>
-      gtag('js', new Date());
-      gtag('config', 'G-D1PPLR2L3R');
-    </script>
+    <!-- Google Analytics staat hier bewust niet. gtag.js laadt pas na
+         toestemming voor analytics, vanuit src/utils/analytics.ts. Hier stond
+         het vroeger met consent mode op denied, en dan ging er voor elke keuze
+         toch een page_view naar Google. -->
   </head>
   <body>
     <div id="root"></div>
