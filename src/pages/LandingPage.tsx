@@ -1,24 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  ClipboardCheck,
-  Palette,
-  ShoppingBag,
-  Clock,
-  Shield,
-  Lock,
-  Info,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useTestimonials } from "@/hooks/useTestimonials";
-import OutfitFlatlay from "@/components/landing/sections/OutfitFlatlay";
-import TrustStrip from "@/components/landing/sections/TrustStrip";
-import StepsScene from "@/components/landing/sections/StepsScene";
-import ColorWipe from "@/components/landing/sections/ColorWipe";
+import Gedragen from "@/components/landing/sections/Gedragen";
+import KleurPiek from "@/components/landing/sections/KleurPiek";
+import Voorbeeldoutfit from "@/components/landing/sections/Voorbeeldoutfit";
+import ZoWerktHet from "@/components/landing/sections/ZoWerktHet";
+import Slot from "@/components/landing/sections/Slot";
+import { VOORBEELDOUTFIT } from "@/content/voorbeeldoutfit";
+import { LANDING_COPY } from "@/content/landingCopy";
 import HeroClip from "@/components/landing/HeroClip";
 import { track as trackFunnel } from "@/utils/analytics";
 
@@ -132,8 +125,26 @@ export default function LandingPage() {
     navigate("/onboarding");
   };
 
-  const handleExampleClick = () => {
-    navigate("/results/preview");
+  /*
+   * "Bekijk voorbeeld" is een anker naar de voorbeeldoutfit verderop, of naar
+   * de kleurpiek zolang er geen outfit is (plan "Onder de hero", 4.0). Vloeiend
+   * scrollen, behalve bij reduced motion; dan springen. "instant" en niet
+   * "auto": op mobiel zet mobile-touch.css scroll-behavior op smooth, ook bij
+   * reduced motion, en "auto" volgt die CSS. De kopruimte komt uit
+   * scroll-padding-top op html. Daarna de focus op de sectie, zodat Tab daar
+   * verder gaat.
+   */
+  const [outfitZichtbaar, setOutfitZichtbaar] = useState(VOORBEELDOUTFIT !== null);
+  const outfitOnbeschikbaar = useCallback(() => setOutfitZichtbaar(false), []);
+  const voorbeeldDoel = outfitZichtbaar ? "outfit" : "kleur";
+  const beperkteBeweging = useReducedMotion();
+
+  const handleExampleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const doel = document.getElementById(voorbeeldDoel);
+    if (!doel) return;
+    e.preventDefault();
+    doel.scrollIntoView({ behavior: beperkteBeweging ? "instant" : "smooth", block: "start" });
+    doel.focus({ preventScroll: true });
   };
 
   /*
@@ -346,14 +357,15 @@ export default function LandingPage() {
                   />
                 </button>
 
-                <button
+                <a
+                  href={`#${voorbeeldDoel}`}
                   onClick={handleExampleClick}
                   className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 min-h-[44px]"
-                  aria-label="Bekijk voorbeeld rapport"
+                  aria-label={LANDING_COPY.anker[voorbeeldDoel].tekst}
                 >
                   Bekijk voorbeeld
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                </button>
+                </a>
               </div>
 
               {/* AI Act art. 50(4): realistische gegenereerde mensen krijgen bij
@@ -400,93 +412,20 @@ export default function LandingPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            TRUST STRIP — stilstaand
-            Verving de marquee. Drie claims die dertig seconden per lus door
-            beeld schuiven betekenen niets en zouden op elke site passen.
+            ONDER DE HERO (plan "Onder de hero", fase 2)
+            Gedragen, Kleur, Outfit, Zo werkt het, Slot. Hier stonden
+            TrustStrip, StepsScene, ColorWipe, OutfitFlatlay en de drie
+            vertrouwenskaarten; die bestanden blijven staan tot de opruim-PR
+            (plan 5.5). De kaarten zeiden twee dingen die niet klopten (account
+            verwijderen, nooit delen met derden) en een te ruim (alles binnen
+            30 dagen gewist).
+            Grond wisselt per sectie: zonder outfit volgt "Zo werkt het" op
+            wit in plaats van op hetzelfde zand als de kleurpiek.
         ════════════════════════════════════════════════════ */}
-        <TrustStrip />
-
-        {/* ════════════════════════════════════════════════════
-            HOE HET WERKT — een stap tegelijk
-            Verving drie kaarten naast elkaar. Die worden alle drie tegelijk
-            getoond en dus geen van drieen gelezen; de scroll draagt nu de
-            volgorde van het proces.
-        ════════════════════════════════════════════════════ */}
-        <StepsScene />
-
-        {/* ════════════════════════════════════════════════════
-            KLEURADVIES — de naad schuift over hetzelfde beeld
-            Verving de statische beeld/tekst-split. Je ziet nu wat een warmer
-            of koeler palet met een gezicht doet voordat het uitgelegd wordt.
-        ════════════════════════════════════════════════════ */}
-        <ColorWipe />
-
-        {/* ════════════════════════════════════════════════════
-            OUTFIT FLATLAY — hoofdgebaar: de outfit legt zichzelf neer
-            Verving de oude "Combinaties voor elk moment"-sectie. Die beloofde
-            "echte items die je direct kunt kopen", terwijl de vier stuks nog
-            niet aan een geverifieerde partnerfeed met voorraad hangen. De
-            flatlay toont dezelfde look als voorbeeld, met de reden per stuk.
-        ════════════════════════════════════════════════════ */}
-        <OutfitFlatlay />
-
-        {/* ════════════════════════════════════════════════════
-            TRUST — Privacy & vertrouwen
-        ════════════════════════════════════════════════════ */}
-        <section className="py-16 md:py-24 bg-[#FAFAF8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <Reveal>
-              <div className="text-center max-w-[680px] mx-auto mb-16 md:mb-20">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740]">
-                  Privacy & vertrouwen
-                </span>
-                <h2 className="font-serif italic text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mt-4">
-                  Jouw gegevens, jouw controle
-                </h2>
-                <p className="text-base md:text-[17px] text-[#4A4A4A] leading-[1.8] max-w-[520px] mx-auto mt-4">
-                  We zijn transparant over wat we wel en niet doen met je
-                  informatie.
-                </p>
-              </div>
-            </Reveal>
-
-            {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  icon: Shield,
-                  title: "Privacy first",
-                  text: "Je antwoorden blijven privé. We delen nooit je data met derden en je kunt je account op elk moment verwijderen.",
-                },
-                {
-                  icon: Lock,
-                  title: "Jouw data, jouw keuze",
-                  text: "We bewaren alleen wat nodig is voor je stijladvies. Verwijder je profiel en al je gegevens worden binnen 30 dagen gewist.",
-                },
-                {
-                  icon: Info,
-                  title: "Mode, geen fitness",
-                  text: "FitFi is een stijl- en kledingadvies-tool. We maken geen uitspraken over gezondheid, lichaamsbouw of fitness.",
-                },
-              ].map((card, i) => (
-                <Reveal key={card.title} delay={i * 0.12}>
-                  <div className="bg-[#F5F0EB] rounded-2xl p-8 md:p-10 h-full">
-                    <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mb-6">
-                      <card.icon className="w-[22px] h-[22px] text-[#A85740]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
-                      {card.title}
-                    </h3>
-                    <p className="text-sm text-[#4A4A4A] leading-[1.7]">
-                      {card.text}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
+        <Gedragen />
+        <KleurPiek />
+        <Voorbeeldoutfit onOnbeschikbaar={outfitOnbeschikbaar} />
+        <ZoWerktHet grond={outfitZichtbaar ? "zand" : "wit"} />
 
         {/* ════════════════════════════════════════════════════
             TESTIMONIALS — Ervaringen
@@ -552,35 +491,11 @@ export default function LandingPage() {
         )}
 
         {/* ════════════════════════════════════════════════════
-            CTA — Klaar om te beginnen?
+            SLOT — de eerste vraag van de quiz, een knop
+            Verving "Klaar om te beginnen?" met "Geen account nodig": het
+            rapport vraagt wel een account.
         ════════════════════════════════════════════════════ */}
-        <section className="py-40 bg-[#FAFAF8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Reveal>
-              <div className="text-center">
-                <h2 className="font-serif italic text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05]">
-                  Klaar om te beginnen?
-                </h2>
-                <p className="text-base md:text-[17px] text-[#4A4A4A] mt-8 mb-14 md:mb-16">
-                  Gratis. Ongeveer vijf minuten. Geen account nodig.
-                </p>
-                <button
-                  onClick={() => handleStartClick("footer")}
-                  className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base md:text-[17px] py-5 px-12 rounded-full transition-all duration-200 hover:-translate-y-0.5"
-                  style={{
-                    boxShadow: "0 12px 40px rgba(194,101,74,0.3)",
-                  }}
-                >
-                  Begin gratis
-                  <ArrowRight
-                    className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-            </Reveal>
-          </div>
-        </section>
+        <Slot />
       </div>
     </>
   );
