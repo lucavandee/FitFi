@@ -78,6 +78,18 @@ begin
   update public.product_attributes set tagger_version = 'test-kopie' where product_id = v_id;
   assert (select product from public.keten_kandidaat_product where product_id = v_id) = pg_temp.verwacht(v_id),
     'geen of een afwijkende kopie na taggen';
+  -- De trigger leest de productrij met een deelslot (for share) tot het einde
+  -- van de transactie. Zonder dat kan een kopie blijvend verouderd raken: een
+  -- gelijktijdige wijziging van products (bijvoorbeeld een prijs) commit tussen
+  -- het lezen en het schrijven van de kopie, en haar eigen trigger vindt dan
+  -- nog geen kopierij om bij te werken. Met het slot wacht die wijziging tot
+  -- de kopie er staat, en werkt haar trigger hem daarna bij. Een deelslot zet
+  -- xmax van de rij op de eigen transactie. Vergelijk met die van jezelf: ook
+  -- een oude, afgeronde vergrendeling van een andere schrijver (de linkjob
+  -- neemt er een via de verwijzing vanuit link_health) blijft in xmax staan
+  -- tot de volgende vacuum, en 0 is dus niet de enige waarde zonder slot.
+  assert (select xmax from public.products where id = v_id) = pg_current_xact_id()::xid,
+    'de trigger heeft de productrij niet vergrendeld: een gelijktijdige wijziging van products kan een verouderde kopie achterlaten';
 end $$;
 
 -- 2. Uit voorraad: de kopie verdwijnt.
