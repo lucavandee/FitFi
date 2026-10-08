@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
+import { OG_BEELD } from "@/content/landingHead";
 import {
   Check,
   X,
@@ -254,7 +255,7 @@ export default function PricingPage() {
         title="Prijzen — FitFi"
         description="Free geeft je 3 outfits en shoplinks. Met Premium krijg je onbeperkte outfits, kleuranalyse en een persoonlijke stylist. Vergelijk plannen en kies wat bij jou past."
         path="/prijzen"
-        ogImage="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
+        ogImage={OG_BEELD}
       />
 
       <div className="bg-[#FAFAF8] text-[#1A1A1A]">

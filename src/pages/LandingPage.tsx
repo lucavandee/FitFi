@@ -21,6 +21,7 @@ import StepsScene from "@/components/landing/sections/StepsScene";
 import ColorWipe from "@/components/landing/sections/ColorWipe";
 import HeroClip from "@/components/landing/HeroClip";
 import { track as trackFunnel } from "@/utils/analytics";
+import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landingHead";
 
 const PAGE = "landing";
 
@@ -187,32 +188,22 @@ export default function LandingPage() {
 
   return (
     <>
+      {/* Titel, beschrijving en deelbeeld staan in content/landingHead.ts,
+          samen met index.html en de Seo-regel in App.tsx. Het oude og-beeld
+          was een gegenereerd stel zonder label, met een relatief pad. */}
       <Helmet>
-        <title>FitFi — Persoonlijk stijladvies in een paar minuten</title>
-        <meta
-          name="description"
-          content="Een stijlrapport dat je écht helpt kiezen wat je aantrekt. Outfits voor werk, weekend en uitgaan + directe shoplinks. Gratis start, in een paar minuten klaar."
-        />
-        <meta
-          property="og:title"
-          content="FitFi — Persoonlijk stijladvies in een paar minuten"
-        />
-        <meta
-          property="og:description"
-          content="Stijlrapport met outfits voor werk, weekend en uitgaan. We vertalen jouw voorkeuren naar combinaties die écht passen."
-        />
-        <meta
-          property="og:image"
-          content="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
-        />
+        <title>{LANDING_TITEL}</title>
+        <meta name="description" content={LANDING_BESCHRIJVING} />
+        <meta property="og:title" content={LANDING_TITEL} />
+        <meta property="og:description" content={LANDING_BESCHRIJVING} />
+        <meta property="og:image" content={OG_BEELD} />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
             name: "FitFi",
-            description:
-              "Persoonlijk stijladvies in een paar minuten. Ontdek outfits die bij je passen en shop ze direct.",
+            description: LANDING_BESCHRIJVING,
             url: "https://fitfi.ai",
             applicationCategory: "LifestyleApplication",
             operatingSystem: "Web",

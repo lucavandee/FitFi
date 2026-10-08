@@ -93,6 +93,25 @@ function getSeasonDisplayName(colorProfile: ColorProfile): string {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 }
 
+// Bijvoeglijke vormen voor de zin onder "Jouw kleuranalyse": "warme tinten",
+// "gemiddeld contrast". formatStyleDNAValue geeft labels ("Warme tonen") en
+// kent "neutraal" niet, dus die past niet in een lopende zin.
+const TEMPERATUUR_BIJVOEGLIJK: Record<string, string> = {
+  warm: 'warme',
+  koel: 'koele',
+  cool: 'koele',
+  neutraal: 'neutrale',
+  neutral: 'neutrale',
+};
+
+const CONTRAST_BIJVOEGLIJK: Record<string, string> = {
+  laag: 'laag',
+  low: 'laag',
+  medium: 'gemiddeld',
+  hoog: 'hoog',
+  high: 'hoog',
+};
+
 const OCCASION_LABELS: Record<string, string> = {
   work: 'Kantoor',
   casual: 'Casual',
@@ -373,6 +392,14 @@ export default function EnhancedResultsPage() {
     paletteName: "Soft Cool Tonals (neutraal)",
     notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
   };
+
+  // Een geüploade foto zegt niets over het advies: de analyse kan mislukt zijn,
+  // en dan is er geen ondertoon gemeten. Alleen een geslaagde analyse telt. De
+  // quiz zet die bij het afronden op het profiel (photoAnalysis); de generator
+  // meldt hem als bron als hij het profiel uit een opgeslagen analyse bouwt.
+  const heeftFotoAnalyse =
+    Boolean((activeColorProfile as ColorProfile & { photoAnalysis?: unknown }).photoAnalysis) ||
+    profileDataSource === 'photo_analysis';
 
   const parsedBudget = React.useMemo(() => {
     const b = answers?.budget;
@@ -1017,7 +1044,7 @@ export default function EnhancedResultsPage() {
                     {archetypeDisplayNL} · {getSeasonDisplayName(activeColorProfile)}
                   </h2>
                   <p className="text-sm text-[#6E6E6E] mt-2">
-                    {answers?.photoUrl
+                    {heeftFotoAnalyse
                       ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
                       : 'Op basis van jouw kleurvoorkeur uit de quiz'}
                   </p>
@@ -1138,7 +1165,7 @@ export default function EnhancedResultsPage() {
                 <ColorPaletteSection
                   season={activeColorProfile.season}
                   subSeason={activeColorProfile.subSeason}
-                  hasPhoto={!!answers?.photoUrl}
+                  hasPhotoAnalysis={heeftFotoAnalyse}
                 />
               </AnimatedSection>
 
@@ -1353,13 +1380,20 @@ export default function EnhancedResultsPage() {
                     <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1.5">Jouw kleuranalyse</h4>
                     <p className="text-sm text-[#4A4A4A] leading-relaxed">
                       {(() => {
-                        const tempNL = formatStyleDNAValue('temperature', activeColorProfile.temperature).toLowerCase();
-                        const contrastNL = formatStyleDNAValue('contrast', activeColorProfile.contrast).toLowerCase();
+                        // Zonder fotoanalyse komen temperatuur en contrast uit de
+                        // quiz (stap 3 en 5) en de fotokeuzes: een voorkeur, geen
+                        // ondertoon. Hier stond "Je warme ondertoon", plus "zachte,
+                        // lichte tinten" bij elk seizoen.
+                        const temp = TEMPERATUUR_BIJVOEGLIJK[activeColorProfile.temperature];
+                        const contrast = CONTRAST_BIJVOEGLIJK[activeColorProfile.contrast];
                         const seasonNL = getSeasonDisplayName(activeColorProfile);
-                        const photoNote = answers?.photoUrl
+                        const photoNote = heeftFotoAnalyse
                           ? 'Gebaseerd op je selfie en quizantwoorden.'
                           : 'Gebaseerd op je quizantwoorden.';
-                        return `Je ${tempNL} ondertoon en ${contrastNL} contrast wijzen naar ${seasonNL} — zachte, lichte tinten die bij je passen. ${photoNote}`;
+                        const zin = temp && contrast
+                          ? `Je voorkeur voor ${temp} tinten en ${contrast} contrast wijst naar ${seasonNL}.`
+                          : `Je antwoorden wijzen naar ${seasonNL}.`;
+                        return `${zin} ${photoNote}`;
                       })()}
                     </p>
                   </div>

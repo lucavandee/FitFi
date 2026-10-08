@@ -59,18 +59,21 @@ function getSeasonName(colorProfile: ColorProfile): string {
   return colorProfile.paletteName || 'Onbekend';
 }
 
+// Deze tips staan ook bij iedereen zonder fotoanalyse; dan komt de temperatuur
+// uit de quiz en de fotokeuzes. Ze gaan daarom over combineren met het palet,
+// niet over wat een kleur met je huid doet.
 function getTips(temperature: string): string[] {
   if (temperature === 'warm') {
     return [
-      'Warme metalen (goud, koper) staan je beter dan zilver',
-      'Kies crèmewit boven zuiver wit',
+      'Goud en koper passen bij deze tinten',
+      'Crèmewit past beter bij dit palet dan zuiver wit',
       'Aardetinten als camel en terracotta zijn je basiscombi',
     ];
   }
   if (temperature === 'cool' || temperature === 'koel') {
     return [
-      'Koele metalen (zilver, witgoud) sluiten beter aan',
-      'Kies zuiver wit boven crème of ivoor',
+      'Zilver en witgoud passen bij deze tinten',
+      'Zuiver wit past beter bij dit palet dan crème of ivoor',
       'Navy, grijs en rozige tinten werken goed als basis',
     ];
   }
@@ -94,7 +97,7 @@ export function ColorProfileExplainer({
   const tips = getTips(colorProfile.temperature);
 
   const attributes = [
-    { label: 'Ondertoon', value: temperatureLabel },
+    { label: 'Temperatuur', value: temperatureLabel },
     { label: 'Contrast', value: contrastLabel },
     { label: 'Intensiteit', value: chromaLabel },
   ];

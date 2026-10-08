@@ -130,40 +130,6 @@ const compRows = [
 ];
 
 /* ─── Step visual placeholders (warm gradients) ───────────────────────────── */
-function Step1Visual() {
-  return (
-    <div className="bg-[#E8DDD2] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
-      <div className="w-full max-w-[380px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
-        <img
-          src="/images/3afbe258-11f3-4a98-b82e-a2939fd1de19.webp"
-          alt="FitFi stijlquiz: kleurtonen en stijlvoorkeuren"
-          className="w-full h-auto"
-          width={2048}
-          height={2048}
-          loading="lazy"
-        />
-      </div>
-    </div>
-  );
-}
-
-function Step2Visual() {
-  return (
-    <div className="bg-[#D4C0AD] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
-      <div className="w-full max-w-[480px] rounded-2xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.12)]">
-        <img
-          src="/images/caa9958f-d96f-4d6c-8dff-b192665376c8.webp"
-          alt="FitFi stijlrapport: kleurprofiel en aanbevelingen"
-          className="w-full h-auto"
-          width={2048}
-          height={2048}
-          loading="lazy"
-        />
-      </div>
-    </div>
-  );
-}
-
 function Step3Visual() {
   return (
     <div className="bg-[#C9BFB4] flex items-center justify-center p-12 lg:p-16 min-h-[600px] h-full">
@@ -287,16 +253,14 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            STAP 1: quiz (visual left, content right)
+            STAP 1: quiz. Hier stond een beeld met ingebakken cijfers
+            ("12+", "98%") zonder bron. Zonder beeld tot de poster van
+            de quizopname er is.
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#FAFAF8]">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <Reveal className="relative overflow-hidden">
-              <Step1Visual />
-            </Reveal>
-
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <Reveal
-              className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#FAFAF8]"
+              className="flex flex-col justify-center max-w-xl mx-auto"
               delay={0.12}
             >
               <StepBadge num="1" label="Stap één" />
@@ -329,12 +293,14 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ════════════════════════════════════════════════════
-            STAP 2: rapport (content left, visual right), gespiegeld
+            STAP 2: rapport. Hier stond een telefoonmockup met ingebakken
+            claims ("2 min", "6-12 vragen") die de quiz tegenspreken.
+            Zonder beeld, zoals stap 1.
         ════════════════════════════════════════════════════ */}
         <section className="bg-[#F5F0EB]">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <Reveal
-              className="flex flex-col justify-center p-8 md:p-12 lg:p-20 bg-[#F5F0EB] order-2 lg:order-1"
+              className="flex flex-col justify-center max-w-xl mx-auto"
               delay={0.12}
             >
               <StepBadge num="2" label="Stap twee" />
@@ -362,10 +328,6 @@ export default function HowItWorksPage() {
                 <Zap className="w-4 h-4" aria-hidden="true" />
                 Direct beschikbaar
               </div>
-            </Reveal>
-
-            <Reveal className="relative overflow-hidden order-1 lg:order-2">
-              <Step2Visual />
             </Reveal>
           </div>
         </section>
@@ -555,7 +517,7 @@ export default function HowItWorksPage() {
                   Klaar om te beginnen?
                 </h2>
                 <p className="text-base md:text-[17px] text-[#4A4A4A] mt-8 mb-14 md:mb-16">
-                  Gratis. Ongeveer vijf minuten. Geen account nodig.
+                  Je kunt zonder account beginnen. Voor je rapport maak je een gratis account.
                 </p>
                 <Link
                   to="/onboarding"
