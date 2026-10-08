@@ -14,7 +14,7 @@ import { transform } from "framer-motion";
 import { getColorPalette } from "@/data/colorPalettes";
 import { beatBereik } from "@/components/landing/scroll/ScrollScene";
 import { KLEURPIEK_VIEWBOX, LAPPEN, PALETSLEUTEL } from "@/content/kleurpiek";
-import KleurPiek, { WIPE_BEREIK, WIPE_INSET, stalenUitPalet } from "../KleurPiek";
+import KleurPiek, { DIM_BEREIK, DIMMING, LICHT_BAND, lapBereik, naamBereik, stalenUitPalet } from "../KleurPiek";
 
 const BRON = readFileSync(fileURLToPath(new URL("../KleurPiek.tsx", import.meta.url)), "utf-8");
 
@@ -62,34 +62,68 @@ describe("kleurpiek: de kleuren van het rapport (K7)", () => {
   });
 });
 
-describe("kleurpiek: de wipe (K2)", () => {
-  it("het bereik komt uit beatBereik(0.15, 0.90) en blijft binnen [0,1]", () => {
-    expect(WIPE_BEREIK).toEqual(beatBereik(0.15, 0.9));
-    [0.09, 0.21, 0.84, 0.96].forEach((v, i) => expect(WIPE_BEREIK[i]).toBeCloseTo(v, 6));
-    for (let i = 0; i < WIPE_BEREIK.length; i++) {
-      expect(WIPE_BEREIK[i]).toBeGreaterThanOrEqual(0);
-      expect(WIPE_BEREIK[i]).toBeLessThanOrEqual(1);
-      if (i > 0) expect(WIPE_BEREIK[i]).toBeGreaterThan(WIPE_BEREIK[i - 1]);
+describe("kleurpiek: de lichtgang (K2)", () => {
+  const n = LAPPEN.length;
+  const dim = (p: number) => transform(p, DIM_BEREIK, [0, DIMMING, DIMMING, 0], { clamp: true });
+  const licht = (i: number, p: number) => transform(p, lapBereik(i, n), [0, 1, 1, 0], { clamp: true });
+  const naam = (i: number, p: number) => transform(p, naamBereik(i, n), [0, 1, 1, 1], { clamp: true });
+
+  it("elk bereik komt uit beatBereik, blijft binnen [0,1] en stijgt strikt", () => {
+    expect(DIM_BEREIK).toEqual(beatBereik(LICHT_BAND.van, LICHT_BAND.tot));
+    const bereiken = [DIM_BEREIK, ...LAPPEN.map((_, i) => lapBereik(i, n)), ...LAPPEN.map((_, i) => naamBereik(i, n))];
+    for (const b of bereiken) {
+      expect(b).toHaveLength(4);
+      for (let i = 0; i < b.length; i++) {
+        expect(b[i]).toBeGreaterThanOrEqual(0);
+        expect(b[i]).toBeLessThanOrEqual(1);
+        if (i > 0) expect(b[i]).toBeGreaterThan(b[i - 1]);
+      }
     }
   });
 
-  it("op 21 standen: dicht tot b, open vanaf c, daartussen niet stijgend, en terug naar 0 is weer dicht", () => {
-    const [, b, c] = WIPE_BEREIK;
-    const inset = (p: number) => transform(p, WIPE_BEREIK, WIPE_INSET, { clamp: true });
-    let vorige = Infinity;
-    for (let i = 0; i <= 20; i++) {
-      const p = i / 20;
-      const x = inset(p);
-      if (p <= b) expect(x, `p ${p}`).toBe(100);
-      if (p >= c) expect(x, `p ${p}`).toBe(0);
-      expect(x).toBeLessThanOrEqual(vorige);
-      vorige = x;
+  it("aan het begin en aan het eind geen dimming; de namen komen pas in de lichtgang en blijven", () => {
+    expect(dim(0)).toBe(0);
+    expect(dim(1)).toBe(0);
+    for (let i = 0; i < n; i++) {
+      expect(licht(i, 0)).toBe(0);
+      expect(licht(i, 1)).toBe(0);
+      expect(naam(i, 0)).toBe(0);
+      expect(naam(i, 1)).toBe(1);
     }
-    expect(inset(0)).toBe(100);
+  });
+
+  it("midden in de band van lap i: tafel gedimd, alleen lap i licht op, namen tot en met i staan er", () => {
+    for (let i = 0; i < n; i++) {
+      const [, b, c] = lapBereik(i, n);
+      const p = (b + c) / 2;
+      expect(dim(p)).toBeCloseTo(DIMMING, 6);
+      for (let j = 0; j < n; j++) {
+        expect(licht(j, p), `lap ${j} bij p ${p}`).toBe(j === i ? 1 : 0);
+        expect(naam(j, p), `naam ${j} bij p ${p}`).toBe(j <= i ? 1 : 0);
+      }
+    }
+  });
+
+  it("de lappen vloeien in elkaar over: nooit twee tegelijk vol aan, en binnen de reeks nooit een gat", () => {
+    const begin = lapBereik(0, n)[1];
+    const eind = lapBereik(n - 1, n)[2];
+    for (let s = 0; s <= 400; s++) {
+      const p = s / 400;
+      const som = LAPPEN.reduce((t, _, i) => t + licht(i, p), 0);
+      expect(som, `p ${p}`).toBeLessThanOrEqual(1 + 1e-9);
+      if (p >= begin && p <= eind) expect(som, `p ${p}`).toBeGreaterThan(0.999);
+    }
+  });
+
+  it("terug naar het begin scrollen geeft weer de onbewerkte tafel", () => {
+    const p = (lapBereik(2, n)[1] + lapBereik(2, n)[2]) / 2;
+    expect(dim(p)).toBeGreaterThan(0);
+    expect(dim(0)).toBe(0);
+    expect(LAPPEN.every((_, i) => naam(i, 0) === 0)).toBe(true);
   });
 });
 
-describe("kleurpiek: stalenlaag en namen (K6, K8)", () => {
+describe("kleurpiek: contouren en namen (K6, K8)", () => {
   it.each(LAPPEN.map((l) => [l.staal, l] as const))("%s: wit op het hout haalt 4,5:1 op 390, 560 en 597 breed", (_n, lap) => {
     for (const [breedte, hex] of Object.entries(lap.hout)) {
       expect(contrastMetWit(hex), `${lap.staal} op ${breedte}`).toBeGreaterThanOrEqual(4.5);
@@ -113,25 +147,33 @@ describe("kleurpiek: stalenlaag en namen (K6, K8)", () => {
   });
 });
 
-/** Zonder window rendert de piek de vorm voor telefoon en tablet, met wipe. */
+/** Zonder window rendert de piek de vorm voor telefoon en tablet, met lichtgang. */
 describe("kleurpiek: wat er in de DOM staat (K5)", () => {
   const html = renderToString(<KleurPiek />);
   const figuur = html.match(/<figure[\s\S]*?<\/figure>/)?.[0] ?? "";
+  const zonderFiguur = html.replace(figuur, "");
+  const namen = getColorPalette(PALETSLEUTEL)!.doColors.map((k) => k.name);
 
   it("een sectie #kleur met een H2", () => {
     expect(html).toContain('id="kleur"');
     expect(html.match(/<h2\b/g)).toHaveLength(1);
   });
 
-  it("de stalenlaag is aria-hidden en staat in de figuur, met de zes namen", () => {
-    expect(figuur).toMatch(/aria-hidden="true"[^>]*>\s*<svg/);
-    for (const k of getColorPalette(PALETSLEUTEL)!.doColors) expect(figuur).toContain(`>${k.name}<`);
+  it("in de figuur: zes contouren als clipPath in eenheden van de figuur, en de zes namen", () => {
+    expect(figuur.match(/<clipPath\b[^>]*clipPathUnits="objectBoundingBox"/g)).toHaveLength(namen.length);
+    for (const naam of namen) expect(figuur).toContain(`>${naam}<`);
   });
 
-  it("de zes namen staan als lijst voor schermlezers in de tekstkolom", () => {
-    const lijst = html.match(/<ul class="sr-only">([\s\S]*?)<\/ul>/)?.[1] ?? "";
-    const namen = [...lijst.matchAll(/<li>([^<]+)<\/li>/g)].map((m) => m[1]);
-    expect(namen).toEqual(getColorPalette(PALETSLEUTEL)!.doColors.map((k) => k.name));
+  it("de lichtgang begint uit: dimming, lapuitsneden en namen op dekking 0", () => {
+    // dimming plus zes uitsneden plus zes namen
+    expect((figuur.match(/opacity:0/g) ?? []).length).toBeGreaterThanOrEqual(1 + 2 * namen.length);
+  });
+
+  it("de zes kleuren staan als zichtbare lijst buiten het beeld, in de volgorde van het rapport", () => {
+    const lijst = zonderFiguur.match(/<ul aria-label="Draag deze kleuren"[^>]*>([\s\S]*?)<\/ul>/)?.[1] ?? "";
+    const inLijst = [...lijst.matchAll(/<span class="text-base font-semibold[^"]*">([^<]+)<\/span>/g)].map((m) => m[1]);
+    expect(inLijst).toEqual(namen);
+    expect(zonderFiguur).not.toContain('class="sr-only"');
   });
 
   it("niets focusbaars in de figuur, en het label is tekst in de figcaption", () => {
@@ -140,9 +182,11 @@ describe("kleurpiek: wat er in de DOM staat (K5)", () => {
     expect(figuur).toMatch(/<figcaption[^>]*>[\s\S]*Beeld gemaakt met AI\.[\s\S]*<\/figcaption>/);
   });
 
-  it("de wipe begint dicht: alleen clip-path, geen dekking of hoogte", () => {
-    expect(figuur).toMatch(/clip-path:\s*inset\(0% 0% 100% 0%\)/);
-    expect(figuur).not.toMatch(/opacity:\s*0/);
+  it("de stof wordt nooit overgeschilderd: geen staalkleur als vlak in de figuur", () => {
+    for (const k of getColorPalette(PALETSLEUTEL)!.doColors) {
+      expect(figuur.toLowerCase()).not.toContain(`fill="${k.hex.toLowerCase()}"`);
+      expect(figuur.toLowerCase()).not.toContain(k.hex.toLowerCase());
+    }
   });
 });
 

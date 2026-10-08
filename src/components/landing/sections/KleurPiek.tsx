@@ -1,14 +1,7 @@
-import { useRef, type CSSProperties, type RefObject } from "react";
-import {
-  motion,
-  useMotionTemplate,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { forwardRef, useId, useRef, type CSSProperties, type RefObject } from "react";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { beatBereik } from "@/components/landing/scroll/ScrollScene";
-import EigenBeeld from "@/components/landing/beeld/EigenBeeld";
+import EigenBeeld, { type Beeldbron } from "@/components/landing/beeld/EigenBeeld";
 import Beeldlabel, { Verloop } from "@/components/landing/beeld/Beeldlabel";
 import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { getColorPalette, type ColorSwatch } from "@/data/colorPalettes";
@@ -18,16 +11,40 @@ import { LANDING_COPY } from "@/content/landingCopy";
 
 const COPY = LANDING_COPY.kleur;
 
-/**
- * De wipe (plan "Onder de hero", 4.2): van p = b tot p = c gaat de stalenlaag
- * van boven naar onder open. Alleen via beatBereik, dat het invoerbereik binnen
- * [0,1] houdt (CLAUDE.md deel 16): framer-motion geeft dit bereik als
- * keyframe-offsets door aan de Web Animations API, en die gooit buiten [0,1].
- * beatBereik(0.15, 0.90) is [0.09, 0.21, 0.84, 0.96].
+/*
+ * De lichtgang (plan "Onder de hero", 4.2, herzien na de stillpoort van
+ * 8 oktober). Eerst was dit een wipe die de stof liet overgaan in zes platte
+ * kleurvlakken. Op de preview las dat als karton op hout, met halverwege een
+ * harde snijlijn door de lappen. Nu blijft de stof altijd zichtbaar: tijdens
+ * het scrollen dimt de tafel, licht steeds een lap op en komt zijn naam op het
+ * hout. Na de zesde gaat het licht weer aan en staan alle namen er. De stof is
+ * lokaal naar de staal gecorrigeerd (Delta E 2000 hoogstens 2,90), dus wat
+ * oplicht is de kleur uit het rapport.
+ *
+ * Alle bereiken komen uit beatBereik: framer-motion geeft ze als keyframe-
+ * offsets door aan de Web Animations API, en die gooit buiten [0,1]
+ * (CLAUDE.md deel 16).
  */
-export const WIPE_BEREIK = beatBereik(0.15, 0.9);
-/** clip-path inset onderaan, in procent: 100 is dicht, 0 is helemaal open. */
-export const WIPE_INSET = [100, 100, 0, 0];
+
+/** Het deel van de voortgang waarin de lichtgang loopt. */
+export const LICHT_BAND = { van: 0.1, tot: 0.9 } as const;
+/** Hoe donker de tafel en de lappen die niet aan de beurt zijn worden (dekking van #1A1A1A). */
+export const DIMMING = 0.45;
+/** De dimming: erin bij de eerste lap, eruit na de laatste. */
+export const DIM_BEREIK = beatBereik(LICHT_BAND.van, LICHT_BAND.tot);
+
+const lapBreedte = (aantal: number) => (LICHT_BAND.tot - LICHT_BAND.van) / aantal;
+
+/** De band van lap i: een gelijk deel van LICHT_BAND. Opeenvolgende lappen vloeien in elkaar over. */
+export function lapBereik(i: number, aantal: number): number[] {
+  const breedte = lapBreedte(aantal);
+  return beatBereik(LICHT_BAND.van + i * breedte, LICHT_BAND.van + (i + 1) * breedte);
+}
+
+/** De naam van lap i komt aan het begin van zijn band en blijft daarna staan. */
+export function naamBereik(i: number, aantal: number): number[] {
+  return beatBereik(LICHT_BAND.van + i * lapBreedte(aantal), 1);
+}
 
 /** Vanaf deze maat staat het beeld in een sticky kolom; daaronder in de flow. */
 export const VASTE_KOLOM = "(min-width: 1024px) and (min-height: 600px)";
@@ -42,7 +59,7 @@ export interface Staal {
 /**
  * De zes kleuren onder "Draag deze kleuren", in de volgorde van het rapport,
  * met de lap waar ze op vallen. null als het palet en de gemeten lappen niet
- * meer op elkaar passen: dan geen stalenlaag over een beeld dat iets anders
+ * meer op elkaar passen: dan geen lichtgang over een beeld dat iets anders
  * toont (de test faalt dan ook).
  */
 export function stalenUitPalet(): Staal[] | null {
@@ -58,45 +75,100 @@ export function stalenUitPalet(): Staal[] | null {
 }
 
 const pct = (waarde: number, totaal: number) => `${(waarde / totaal) * 100}%`;
+const BRONNEN: readonly Beeldbron[] = [
+  { set: W2.set, sizes: "(min-width: 1024px) 50vw, (min-width: 768px) 560px, 100vw" },
+];
+const BEELD_KLASSE = "absolute inset-0 h-full w-full object-cover";
 
-/** De stalenlaag: zes contouren in de kleur uit het palet en zes namen op het hout. */
-function Stalenlaag({ stalen, clipPath }: { stalen: Staal[]; clipPath?: MotionValue<string> }) {
+/**
+ * De contour van elke lap als clipPath in eenheden van de figuur (0 tot 1),
+ * zodat hij op elke maat over dezelfde lap valt. De paden staan in een viewBox
+ * van 1000 x 1250, de figuur is 4:5.
+ */
+function Contouren({ stalen, idVoor }: { stalen: Staal[]; idVoor: (i: number) => string }) {
   const { breedte, hoogte } = KLEURPIEK_VIEWBOX;
   return (
-    <motion.div className="pointer-events-none absolute inset-0" style={{ clipPath }} aria-hidden="true" data-stalenlaag="">
-      <svg
-        viewBox={`0 0 ${breedte} ${hoogte}`}
-        preserveAspectRatio="none"
-        className="absolute inset-0 h-full w-full"
-        focusable="false"
-      >
-        {stalen.map(({ kleur, lap }) => (
-          <path key={lap.staal} d={lap.pad} fill={kleur.hex} />
+    <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
+      <defs>
+        {stalen.map(({ lap }, i) => (
+          <clipPath key={lap.staal} id={idVoor(i)} clipPathUnits="objectBoundingBox">
+            <path d={lap.pad} transform={`scale(${1 / breedte} ${1 / hoogte})`} />
+          </clipPath>
         ))}
-      </svg>
-      {stalen.map(({ kleur, lap }) => (
-        <span
-          key={lap.staal}
-          className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-sm font-medium leading-5 text-white"
-          style={{ left: pct(lap.naam.x, breedte), top: pct(lap.naam.y, hoogte) }}
-        >
-          {kleur.name}
-        </span>
-      ))}
+      </defs>
+    </svg>
+  );
+}
+
+/** Dezelfde foto, geknipt op een lap, boven de dimming: zo licht die lap op. */
+function Lapuitsnede({ clipId, voortgang, bereik }: { clipId: string; voortgang: MotionValue<number>; bereik: number[] }) {
+  const dekking = useTransform(voortgang, bereik, [0, 1, 1, 0], { clamp: true });
+  return (
+    <motion.div className="absolute inset-0" style={{ opacity: dekking, clipPath: `url(#${clipId})` }} aria-hidden="true">
+      <EigenBeeld bronnen={BRONNEN} alt="" className={BEELD_KLASSE} />
     </motion.div>
   );
 }
 
-/** W2 met label, en in de modi met beweging de stalenlaag eroverheen. */
+function Lapnaam({ staal, dekking }: { staal: Staal; dekking: MotionValue<number> | number }) {
+  const { breedte, hoogte } = KLEURPIEK_VIEWBOX;
+  return (
+    <motion.span
+      className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-sm font-medium leading-5 text-white"
+      style={{ left: pct(staal.lap.naam.x, breedte), top: pct(staal.lap.naam.y, hoogte), opacity: dekking }}
+    >
+      {staal.kleur.name}
+    </motion.span>
+  );
+}
+
+function BewegendeNaam({ staal, voortgang, bereik }: { staal: Staal; voortgang: MotionValue<number>; bereik: number[] }) {
+  const dekking = useTransform(voortgang, bereik, [0, 1, 1, 1], { clamp: true });
+  return <Lapnaam staal={staal} dekking={dekking} />;
+}
+
+/** De lichtgang over W2: dimming, zes oplichtende lappen en hun namen. */
+function Lichtgang({ stalen, voortgang }: { stalen: Staal[]; voortgang: MotionValue<number> }) {
+  const basis = useId().replace(/:/g, "");
+  const idVoor = (i: number) => `lap-${basis}-${i}`;
+  const dim = useTransform(voortgang, DIM_BEREIK, [0, DIMMING, DIMMING, 0], { clamp: true });
+  return (
+    <>
+      <Contouren stalen={stalen} idVoor={idVoor} />
+      <motion.div className="pointer-events-none absolute inset-0 bg-[#1A1A1A]" style={{ opacity: dim }} aria-hidden="true" />
+      {stalen.map((staal, i) => (
+        <Lapuitsnede key={staal.lap.staal} clipId={idVoor(i)} voortgang={voortgang} bereik={lapBereik(i, stalen.length)} />
+      ))}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {stalen.map((staal, i) => (
+          <BewegendeNaam key={staal.lap.staal} staal={staal} voortgang={voortgang} bereik={naamBereik(i, stalen.length)} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+/** Zonder beweging: geen dimming, alle namen staan er. */
+function StilleNamen({ stalen }: { stalen: Staal[] }) {
+  return (
+    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      {stalen.map((staal) => (
+        <Lapnaam key={staal.lap.staal} staal={staal} dekking={1} />
+      ))}
+    </div>
+  );
+}
+
+/** W2 met label; in beweging de lichtgang, anders de namen. */
 function KleurBeeld({
   stalen,
-  clipPath,
+  voortgang,
   figuurRef,
   className = "",
   style,
 }: {
   stalen: Staal[];
-  clipPath?: MotionValue<string>;
+  voortgang?: MotionValue<number>;
   figuurRef?: RefObject<HTMLElement>;
   className?: string;
   style?: CSSProperties;
@@ -107,31 +179,57 @@ function KleurBeeld({
       className={`relative m-0 aspect-[4/5] overflow-hidden ${className}`}
       style={{ backgroundColor: W2.set.mediaankleur, ...style }}
     >
-      <EigenBeeld
-        bronnen={[{ set: W2.set, sizes: "(min-width: 1024px) 50vw, (min-width: 768px) 560px, 100vw" }]}
-        alt={W2.alt}
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+      <EigenBeeld bronnen={BRONNEN} alt={W2.alt} className={BEELD_KLASSE} />
+      {voortgang ? <Lichtgang stalen={stalen} voortgang={voortgang} /> : <StilleNamen stalen={stalen} />}
       <Verloop achtergrond={W2.verloop} />
-      {clipPath && <Stalenlaag stalen={stalen} clipPath={clipPath} />}
       <Beeldlabel zinnen={W2.label} hoek={{ onderLg: W2.labelHoek, vanafLg: W2.labelHoek }} tweeRegels="altijd" />
     </figure>
   );
 }
 
-/** Desktop: de wipe volgt de scroll door de hele sectie. */
-function useWipeOverSectie(sectie: RefObject<HTMLElement>) {
-  const { scrollYProgress } = useScroll({ target: sectie, offset: ["start start", "end end"] });
-  const inset = useTransform(scrollYProgress, WIPE_BEREIK, WIPE_INSET, { clamp: true });
-  return useMotionTemplate`inset(0% 0% ${inset}% 0%)`;
+/** Eén rij van de lijst: de staal zoals het rapport hem toont, en zijn naam. */
+function Lijstrij({ staal, streep }: { staal: Staal; streep?: MotionValue<number> }) {
+  return (
+    <li className="relative flex items-center gap-4 border-t border-[#E5E5E5] py-3 last:border-b">
+      {streep && (
+        <motion.span
+          className="absolute -left-4 top-1/2 h-8 w-0.5 -translate-y-1/2 bg-[#1A1A1A]"
+          style={{ opacity: streep }}
+          aria-hidden="true"
+        />
+      )}
+      <span
+        className="block h-8 w-8 flex-none border border-[#E5E5E5]"
+        style={{ backgroundColor: staal.kleur.hex }}
+        aria-hidden="true"
+      />
+      <span className="text-base font-semibold text-[#1A1A1A]">{staal.kleur.name}</span>
+    </li>
+  );
 }
 
-/** Telefoon en tablet: de wipe volgt het beeld terwijl het voorbij komt. */
-function useWipeOverFiguur(figuur: RefObject<HTMLElement>) {
-  const { scrollYProgress } = useScroll({ target: figuur, offset: ["start 0.8", "end 0.5"] });
-  const inset = useTransform(scrollYProgress, WIPE_BEREIK, WIPE_INSET, { clamp: true });
-  return useMotionTemplate`inset(0% 0% ${inset}% 0%)`;
+/** Met lichtgang: een streep voor de rij zolang zijn lap oplicht. */
+function BewegendeLijstrij({ staal, voortgang, bereik }: { staal: Staal; voortgang: MotionValue<number>; bereik: number[] }) {
+  const streep = useTransform(voortgang, bereik, [0, 1, 1, 0], { clamp: true });
+  return <Lijstrij staal={staal} streep={streep} />;
 }
+
+/** De zes kleuren als echte lijst, zichtbaar voor iedereen. Dit is wat het rapport toont. */
+const Kleurlijst = forwardRef<HTMLUListElement, { stalen: Staal[]; voortgang?: MotionValue<number> }>(
+  function Kleurlijst({ stalen, voortgang }, ref) {
+    return (
+      <ul ref={ref} aria-label={COPY.lijst.tekst} className="mt-6 max-w-sm">
+        {stalen.map((staal, i) =>
+          voortgang ? (
+            <BewegendeLijstrij key={staal.kleur.name} staal={staal} voortgang={voortgang} bereik={lapBereik(i, stalen.length)} />
+          ) : (
+            <Lijstrij key={staal.kleur.name} staal={staal} />
+          ),
+        )}
+      </ul>
+    );
+  },
+);
 
 function Kop() {
   return (
@@ -157,46 +255,15 @@ function Kop() {
   );
 }
 
-function Profielzin({ stalen, lijstZichtbaar }: { stalen: Staal[] | null; lijstZichtbaar: boolean }) {
-  return (
-    <>
-      <p className="max-w-prose text-base leading-relaxed text-[#4A4A4A]">{COPY.profiel.tekst}</p>
-      {/* De echte lijst. In beweging staat hij alleen voor schermlezers hier; de
-          zichtbare legenda (reduced motion) staat onder het beeld. */}
-      {stalen && !lijstZichtbaar && (
-        <ul className="sr-only">
-          {stalen.map(({ kleur }) => (
-            <li key={kleur.name}>{kleur.name}</li>
-          ))}
-        </ul>
-      )}
-    </>
-  );
+function Profielzin() {
+  return <p className="max-w-prose text-base leading-relaxed text-[#4A4A4A]">{COPY.profiel.tekst}</p>;
 }
 
 function Slotzin() {
   return <p className="max-w-prose text-base leading-relaxed text-[#4A4A4A]">{COPY.slot.tekst}</p>;
 }
 
-/** Reduced motion: zes rechte stalen van 48 px met de naam eronder. Dit is de lijst. */
-function Legenda({ stalen }: { stalen: Staal[] }) {
-  return (
-    <ul aria-label={COPY.lijst.tekst} className="mt-6 grid grid-cols-3 gap-4 px-4 sm:grid-cols-6 sm:px-6 md:px-0">
-      {stalen.map(({ kleur }) => (
-        <li key={kleur.name} className="flex flex-col items-start gap-2">
-          <span
-            className="block h-12 w-12 border border-[#E5E5E5]"
-            style={{ backgroundColor: kleur.hex }}
-            aria-hidden="true"
-          />
-          <span className="text-sm text-[#1A1A1A]">{kleur.name}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** Terugval T-W2 (plan 10): de zes stalen als vlakken met hun naam, zonder foto en zonder wipe. */
+/** Terugval T-W2 (plan 10): de zes stalen als vlakken met hun naam, zonder foto en zonder lichtgang. */
 function Stalenvlakken({ stalen }: { stalen: Staal[] }) {
   return (
     <ul aria-label={COPY.lijst.tekst} className="grid grid-cols-2 gap-6 px-4 sm:px-6 md:px-0">
@@ -216,12 +283,16 @@ function Stalenvlakken({ stalen }: { stalen: Staal[] }) {
 
 /**
  * Desktop vanaf 1024 x 600 zonder reduced motion: het beeld staat sticky tegen
- * de linkerschermrand, net onder de kop, en de tekstkolom (kolom 7 tot 12)
- * scrolt erlangs in drie blokken met 40vh ertussen.
+ * de linkerschermrand, net onder de kop. Rechts scrolt eerst de vraag weg; het
+ * blok met de lijst plakt dan naast het beeld, en terwijl de sectie voorbij
+ * scrolt licht op de tafel om de beurt de lap op van de rij die aan de beurt
+ * is. Zo krijgt elke lap ongeveer 145 px scroll (220vh op 900 hoog) en hangen
+ * beeld en lijst nooit stil naast een lege kolom.
  */
 function VasteKolom({ stalen }: { stalen: Staal[] }) {
   const sectie = useRef<HTMLElement>(null);
-  const clipPath = useWipeOverSectie(sectie);
+  const { scrollYProgress } = useScroll({ target: sectie, offset: ["start start", "end end"] });
+  const plakTop = { top: "calc(var(--header-h, 90px) + 32px)" };
 
   return (
     <section
@@ -229,30 +300,31 @@ function VasteKolom({ stalen }: { stalen: Staal[] }) {
       id="kleur"
       tabIndex={-1}
       aria-labelledby="kleur-kop"
-      className="relative min-h-[220vh] bg-[#F5F0EB] outline-none"
+      className="relative flex min-h-[220vh] flex-col bg-[#F5F0EB] outline-none"
     >
       {/* Baan over de volle hoogte van de sectie; het beeld plakt erin. */}
       <div className="absolute inset-y-0 left-0">
         <KleurBeeld
           stalen={stalen}
-          clipPath={clipPath}
+          voortgang={scrollYProgress}
           className="sticky"
           style={{
-            top: "calc(var(--header-h, 90px) + 32px)",
+            ...plakTop,
             height: "min(calc(100svh - var(--header-h, 90px) - 64px), calc((50vw - 24px) * 1.25))",
           }}
         />
       </div>
 
-      <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-12 gap-6 px-4 sm:px-6 lg:px-8">
         {/* pt-24: het antwoord staat zo minstens 200 px onder de onderrand van W1 (G23). */}
         <div className="col-span-6 col-start-7 pb-24 pt-24">
           <Kop />
-          <div style={{ marginTop: "40vh" }}>
-            <Profielzin stalen={stalen} lijstZichtbaar={false} />
-          </div>
-          <div style={{ marginTop: "40vh" }}>
-            <Slotzin />
+          <div className="sticky mt-16" style={plakTop}>
+            <Profielzin />
+            <Kleurlijst stalen={stalen} voortgang={scrollYProgress} />
+            <div className="mt-8">
+              <Slotzin />
+            </div>
           </div>
         </div>
       </div>
@@ -260,32 +332,35 @@ function VasteKolom({ stalen }: { stalen: Staal[] }) {
   );
 }
 
-/** De beelden in de flow, met een wipe die het beeld volgt. */
-function FlowBeeld({ stalen }: { stalen: Staal[] }) {
+/** Telefoon en tablet in beweging: de lichtgang volgt het beeld terwijl het voorbij komt. */
+function BewegendGestapeld({ stalen }: { stalen: Staal[] }) {
   const figuur = useRef<HTMLElement>(null);
-  const clipPath = useWipeOverFiguur(figuur);
-  return <KleurBeeld stalen={stalen} clipPath={clipPath} figuurRef={figuur} className="w-full" />;
+  const { scrollYProgress } = useScroll({ target: figuur, offset: ["start 0.8", "end 0.45"] });
+  return (
+    <Gestapeld
+      beeld={<KleurBeeld stalen={stalen} voortgang={scrollYProgress} figuurRef={figuur} className="w-full" />}
+      lijst={<Kleurlijst stalen={stalen} voortgang={scrollYProgress} />}
+    />
+  );
+}
+
+/** Reduced motion, of te klein voor de sticky kolom zonder palet: alles stil, alle namen in beeld. */
+function StilGestapeld({ stalen }: { stalen: Staal[] | null }) {
+  if (stalen && !W2_FOTO_AAN) return <Gestapeld beeld={<Stalenvlakken stalen={stalen} />} />;
+  return (
+    <Gestapeld
+      beeld={<KleurBeeld stalen={stalen ?? []} className="w-full" />}
+      lijst={stalen ? <Kleurlijst stalen={stalen} /> : undefined}
+    />
+  );
 }
 
 /**
- * Onder 1024 px, onder 600 px hoog en bij reduced motion: tekst, beeld en tekst
- * onder elkaar. Het beeld loopt op de telefoon over de volle breedte en is
- * tussen 768 en 1023 px hoogstens 560 px breed.
+ * Onder 1024 px, onder 600 px hoog en bij reduced motion: tekst, beeld, lijst
+ * en tekst onder elkaar. Het beeld loopt op de telefoon over de volle breedte
+ * en is tussen 768 en 1023 px hoogstens 560 px breed.
  */
-function Gestapeld({ stalen, modus }: { stalen: Staal[] | null; modus: Exclude<Modus, "vast"> }) {
-  let beeld: JSX.Element;
-  if (stalen && !W2_FOTO_AAN) beeld = <Stalenvlakken stalen={stalen} />;
-  else if (stalen && modus === "flow") beeld = <FlowBeeld stalen={stalen} />;
-  else
-    beeld = (
-      <>
-        <KleurBeeld stalen={stalen ?? []} className="w-full" />
-        {stalen && <Legenda stalen={stalen} />}
-      </>
-    );
-  // Zonder wipe staat de lijst zichtbaar bij het beeld; anders alleen voor schermlezers.
-  const lijstZichtbaar = !stalen || modus === "stil" || !W2_FOTO_AAN;
-
+function Gestapeld({ beeld, lijst }: { beeld: JSX.Element; lijst?: JSX.Element }) {
   return (
     <section id="kleur" tabIndex={-1} aria-labelledby="kleur-kop" className="bg-[#F5F0EB] py-16 outline-none md:py-24">
       {/* Onder 1024 px onder elkaar, het beeld op de telefoon over de volle
@@ -295,7 +370,7 @@ function Gestapeld({ stalen, modus }: { stalen: Staal[] | null; modus: Exclude<M
         <div className="px-4 sm:px-6 lg:col-span-6 lg:col-start-7 lg:row-start-1 lg:px-0">
           <Kop />
           <div className="mt-8">
-            <Profielzin stalen={stalen} lijstZichtbaar={lijstZichtbaar} />
+            <Profielzin />
           </div>
         </div>
 
@@ -304,7 +379,10 @@ function Gestapeld({ stalen, modus }: { stalen: Staal[] | null; modus: Exclude<M
         </div>
 
         <div className="mt-8 px-4 sm:px-6 lg:col-span-6 lg:col-start-7 lg:row-start-2 lg:px-0">
-          <Slotzin />
+          {lijst}
+          <div className="mt-8">
+            <Slotzin />
+          </div>
         </div>
       </div>
     </section>
@@ -313,16 +391,16 @@ function Gestapeld({ stalen, modus }: { stalen: Staal[] | null; modus: Exclude<M
 
 /**
  * Kleur, de piek (plan "Onder de hero", 4.2): de draai van gevoel naar bewijs.
- * De quiz vraagt welke kleuren je graag draagt; voor het voorbeeldprofiel worden
- * zes lappen stof op tafel de zes kleuren die zijn rapport onder "Draag deze
- * kleuren" toont.
+ * De quiz vraagt welke kleuren je graag draagt; voor het voorbeeldprofiel licht
+ * op tafel om de beurt de lap op van elke kleur die zijn rapport onder "Draag
+ * deze kleuren" toont.
  *
- * Alleen clip-path beweegt, dus geen tussenstand met halve kleurwaas en geen
- * layoutverschuiving; terugscrollen draait de wipe terug. Geen focusbaar
+ * Alleen dekking beweegt (dimming, lapuitsneden, namen, streep in de lijst):
+ * geen layoutverschuiving, en terugscrollen draait alles terug. Geen focusbaar
  * element in het beeld.
  *
  * `vast` staat standaard aan. Komt er ooit een eigen vastgezette scene na deze
- * sectie (plan 11), dan gaat hij uit en loopt de wipe ook op desktop in de flow.
+ * sectie (plan 11), dan gaat hij uit en loopt de lichtgang ook op desktop in de flow.
  */
 export default function KleurPiek({ vast = true }: { vast?: boolean }) {
   const beperkteBeweging = useReducedMotion();
@@ -332,5 +410,6 @@ export default function KleurPiek({ vast = true }: { vast?: boolean }) {
   const modus: Modus = beperkteBeweging || !stalen ? "stil" : vast && groot && W2_FOTO_AAN ? "vast" : "flow";
 
   if (modus === "vast" && stalen) return <VasteKolom stalen={stalen} />;
-  return <Gestapeld stalen={stalen} modus={modus === "vast" ? "flow" : modus} />;
+  if (modus === "flow" && stalen && W2_FOTO_AAN) return <BewegendGestapeld stalen={stalen} />;
+  return <StilGestapeld stalen={stalen} />;
 }

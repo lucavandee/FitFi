@@ -1,7 +1,7 @@
 /**
- * De kleurpiek (plan "Onder de hero", 4.2): over W2 ligt een stalenlaag met de
- * contour van elke lap stof, gevuld met de kleur uit het rapport, en de naam
- * van die kleur op het hout eronder.
+ * De kleurpiek (plan "Onder de hero", 4.2): over W2 licht om de beurt een lap op
+ * (een uitsnede van dezelfde foto, geknipt op de contour hieronder), en de naam
+ * van die kleur verschijnt op het hout eronder.
  *
  * Alleen de vorm en de plek staan hier. De vulling komt uit
  * getColorPalette(PALETSLEUTEL).doColors, zodat de landingscode geen hexwaarde

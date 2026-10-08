@@ -124,11 +124,15 @@ export const LANDING_COPY = {
         zoek: "expect(draagDezeKleuren(uitkomst.colorProfile)).toEqual(HERFST);",
       },
     ),
-    slot: zin("Jouw palet volgt uit je antwoorden.", {
+    /*
+     * "hangt af van", niet "volgt uit": met een account tellen de fotokeuzes ook
+     * mee (die geven nu zomer), dus "alleen je antwoorden" klopt dan niet.
+     */
+    slot: zin("Jouw palet hangt af van je antwoorden.", {
       bestand: "src/content/__tests__/voorbeeldprofiel.palet.test.ts",
       zoek: "expect(uitkomst.dataSource).toBe('quiz_only');",
     }),
-    /** Kop boven de legenda en de schermlezerlijst: de zes namen volgen uit het palet. */
+    /** Toegankelijke naam van de zichtbare lijst: de zes namen volgen uit het palet. */
     lijst: zin("Draag deze kleuren", {
       bestand: "src/components/results/ColorPaletteSection.tsx",
       zoek: "Draag deze kleuren",
