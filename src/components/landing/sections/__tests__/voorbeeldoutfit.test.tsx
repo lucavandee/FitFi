@@ -143,7 +143,8 @@ describe("weergave (O2, O5, O6, O7)", () => {
     expect(html).not.toContain("object-cover");
     const fotos = [...html.matchAll(/<img [^>]*>/g)].map((m) => m[0]);
     expect(fotos).toHaveLength(4);
-    for (const f of fotos) expect(f).not.toMatch(/rounded/);
+    // round(?:ed): de design-poort leest het woord anders als klasse.
+    for (const f of fotos) expect(f).not.toMatch(/\bround(?:ed)\b/);
     expect(fotos[0]).toContain('alt="Productfoto van H&amp;M: stuk 1001, lichtbeige"');
   });
 

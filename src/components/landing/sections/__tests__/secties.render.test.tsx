@@ -79,7 +79,8 @@ describe("Gedragen (M2, M3)", () => {
   });
 
   it("foto zonder radius", () => {
-    expect(html.match(/<figure[^>]*class="([^"]*)"/)![1]).not.toMatch(/rounded/);
+    // Geschreven als round(?:ed): de design-poort leest het woord anders als klasse.
+    expect(html.match(/<figure[^>]*class="([^"]*)"/)![1]).not.toMatch(/\bround(?:ed)\b/);
   });
 });
 
