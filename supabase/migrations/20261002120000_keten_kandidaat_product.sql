@@ -42,8 +42,9 @@
   en attrs. product bevat alleen nog de negentien velden; de andere dertien
   kolommen van products las geen enkele afnemer. Voor het toepassen naast de
   oude functie gedraaid onder een tijdelijke naam: 36 profielen (met en
-  zonder assen, likes, niet-wil-ids en retailer), 7.400 rijen, per profiel in
-  een momentopname vergeleken, allemaal gelijk. De volledige controle na het
+  zonder assen, likes, niet-wil-ids en retailer), 7.186 rijen, per profiel in
+  een momentopname vergeleken, allemaal gelijk (plus vijf profielen met meer
+  assen en likes, 1.355 rijen, ook gelijk). De volledige controle na het
   vullen: 36.117 kandidaten, 36.117 kopieen, alle gelijk aan products.
 
   ## Op productie
