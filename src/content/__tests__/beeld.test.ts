@@ -150,7 +150,7 @@ describe("labels (plan 3.6)", () => {
   });
 
   it("geen gedachtestreepje in alt of label", () => {
-    for (const t of [W1.alt, W2.alt, W3.alt, ...LABEL.mens, ...LABEL.plek]) expect(t).not.toMatch(/[–—]/);
+    for (const t of [W1.alt, W2.alt, W3.alt, ...LABEL.mens, ...LABEL.plek]) expect(t).not.toMatch(/[\u2013\u2014]/);
   });
 
   it("W1 rechtsboven vanaf 1024 px en linksboven eronder; W2 en W3 linksboven", () => {

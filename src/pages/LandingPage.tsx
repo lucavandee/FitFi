@@ -491,7 +491,7 @@ export default function LandingPage() {
         )}
 
         {/* ════════════════════════════════════════════════════
-            SLOT — de eerste vraag van de quiz, een knop
+            SLOT: de eerste vraag van de quiz, een knop
             Verving "Klaar om te beginnen?" met "Geen account nodig": het
             rapport vraagt wel een account.
         ════════════════════════════════════════════════════ */}

@@ -58,7 +58,7 @@ describe("design system onder de hero (G3, G4)", () => {
   });
 
   it.each(SECTIES)("%s: geen gedachtestreepje in de tekst (G14)", (_n, html) => {
-    expect(html.replace(/<[^>]+>/g, "")).not.toMatch(/[–—]/);
+    expect(html.replace(/<[^>]+>/g, "")).not.toMatch(/[\u2013\u2014]/);
   });
 });
 

@@ -111,7 +111,7 @@ describe("beweringenregister: de bronnen kloppen nog", () => {
 
 describe("beweringenregister: vorm", () => {
   it("geen gedachtestreepje (U+2014, U+2013) in een zin (G14)", () => {
-    for (const [pad, zin] of ALLE) expect(zin.tekst, pad).not.toMatch(/[–—]/);
+    for (const [pad, zin] of ALLE) expect(zin.tekst, pad).not.toMatch(/[\u2013\u2014]/);
   });
 
   it("de displaykop van het slot is de eerste vraag van de quiz, in twee delen", () => {
