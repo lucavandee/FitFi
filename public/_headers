@@ -33,6 +33,13 @@
 /video/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Eigen beeld van de landingspagina (plan fase 2, 3.9): hash en verhouding in de
+# naam, dus een nieuwe versie is een nieuwe URL. Bewust een eigen map naast
+# /images/ (7 dagen), zodat er geen twee Cache-Control-regels op hetzelfde pad
+# vallen; Netlify voegt die anders samen.
+/beeld/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /data/*
   Cache-Control: public, max-age=3600
 

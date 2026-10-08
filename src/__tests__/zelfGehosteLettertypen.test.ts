@@ -78,4 +78,11 @@ describe("zelf gehoste lettertypen", () => {
   it("_headers zet de woff2-bestanden op immutable", () => {
     expect(headers).toMatch(/\/fonts\/\*\.woff2\s*\n\s*Cache-Control: public, max-age=31536000, immutable/);
   });
+
+  it("public/404.html wijst naar een lettertype dat bestaat", () => {
+    const pagina = readFileSync(join(WORTEL, "public/404.html"), "utf-8");
+    const paden = [...pagina.matchAll(/url\("(\/fonts\/[^"]+\.woff2)"\)/g)].map((m) => m[1]);
+    expect(paden.length).toBeGreaterThan(0);
+    for (const pad of paden) expect(verwezen).toContain(pad);
+  });
 });
