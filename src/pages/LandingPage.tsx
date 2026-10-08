@@ -364,7 +364,7 @@ export default function LandingPage() {
                   knoppen; vanaf md als creditregel linksonder in de content-
                   container, in het donkerste deel van de gradient. Rechtsonder
                   haalde hij op 1024x768 maar 2,8:1. */}
-              <p className="mt-8 text-sm font-medium text-white/75 md:absolute md:bottom-8 md:left-10 md:mt-0 md:text-xs">
+              <p className="mt-8 text-sm font-medium text-white/75 md:absolute md:bottom-8 md:left-10 md:mt-0">
                 Beeld gemaakt met AI. De personen zijn modellen.
               </p>
             </div>
