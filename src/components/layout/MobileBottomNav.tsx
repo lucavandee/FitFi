@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { House, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '@/context/UserContext';
+import { useHoogteInVariabele } from '@/hooks/useHoogteInVariabele';
 
 interface NavItem {
   icon: React.ElementType;
@@ -47,19 +48,23 @@ const MobileBottomNav: React.FC = () => {
   const location = useLocation();
   const { user } = useUser();
   const [mounted, setMounted] = React.useState(false);
+  const navRef = React.useRef<HTMLElement>(null);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Hide on admin pages
-  if (location.pathname.startsWith('/admin')) {
-    return null;
-  }
-
-  // Hide on specific pages where it would interfere
+  // Hide on admin pages, and on specific pages where it would interfere
   const hideOnPaths = ['/inloggen', '/registreren', '/onboarding'];
-  if (hideOnPaths.some(path => location.pathname.startsWith(path))) {
+  const verborgen =
+    location.pathname.startsWith('/admin') ||
+    hideOnPaths.some(path => location.pathname.startsWith(path));
+
+  // De cookiebanner staat op mobiel boven deze balk en leest daarvoor
+  // --onderbalk-h. Vanaf md is de balk display:none en meet hij 0.
+  useHoogteInVariabele(navRef, '--onderbalk-h', mounted && !verborgen);
+
+  if (verborgen) {
     return null;
   }
 
@@ -85,6 +90,7 @@ const MobileBottomNav: React.FC = () => {
 
       {/* Mobile Bottom Navigation */}
       <motion.nav
+        ref={navRef}
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}

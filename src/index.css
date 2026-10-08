@@ -125,7 +125,9 @@
 /* Scroll-offset voor anchors en getabte links.
    De vaste kop meet zichzelf en zet --header-h (Navbar.tsx); gemeten 90 px op
    elke breedte, en dat is ook de terugval zolang er niets gemeten is. 16 px
-   lucht eronder. De mobiele onderbalk is 58 px plus safe-area.
+   lucht eronder. De mobiele onderbalk is 58 px plus safe-area. Staat de
+   cookiebanner open, dan zet die zijn hoogte in --banner-h (CookieBanner.tsx)
+   en telt die onderin mee.
    Zonder deze padding landt het doel eronder (WCAG 2.4.11 Focus Not Obscured). */
 :root {
   --header-h: 90px;
@@ -133,7 +135,7 @@
 
 html {
   scroll-padding-top: calc(var(--header-h, 90px) + 16px);
-  scroll-padding-bottom: 72px;
+  scroll-padding-bottom: calc(72px + var(--banner-h, 0px));
 }
 
 /* Safe area support for mobile notches */
