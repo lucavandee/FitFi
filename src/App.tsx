@@ -228,8 +228,8 @@ function AppShell() {
         <InstallPrompt />
         <AnalyticsLoader />
         {/* Zonder deze regel kan niemand toestemming geven, blijft analytics op
-            false staan en vuurt track() nooit. index.html zet consent mode v2
-            standaard op denied. */}
+            false staan en vuurt track() nooit. gtag.js laadt pas na die
+            toestemming (src/utils/analytics.ts). */}
         <CookieBanner />
       </ErrorBoundary>
       </MotionConfig>
