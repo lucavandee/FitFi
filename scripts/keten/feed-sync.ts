@@ -421,14 +421,40 @@ async function main(): Promise<void> {
     throw new Error(`De feed is van "${kop.programmaNaam}", niet van "${retailer}". Controleer --retailer en de feed-URL.`);
   }
 
-  console.log("Database lezen...");
-  const dbRijen = await leesDbRijen(supabase, retailer, profiel);
+  // --db-cache: het lezen van 88.000 rijen duurt ruim 8 minuten op deze database. Handig om na een
+  // kanarie-run meteen de volledige fase a te draaien, want die verschilt maar 400 rijen van de
+  // cache en alle schrijfacties zijn idempotent. Nooit bij fase b: die zet rijen uit voorraad op
+  // basis van wat er in de database staat, en daar mag niets verouderds in zitten.
+  const cachePad = leesVlag(argv, "db-cache");
+  if (cachePad && (fase === "b" || fase === "alles")) {
+    throw new Error("--db-cache is niet toegestaan bij fase b of alles: die moet de actuele database lezen.");
+  }
+  let dbRijen: DbSnapshotRij[];
+  if (cachePad && existsSync(cachePad)) {
+    console.log(`Database-rijen uit de cache ${cachePad} (kan verouderd zijn, alleen voor fase a)`);
+    dbRijen = leesNdjson<DbSnapshotRij>(cachePad);
+  } else {
+    console.log("Database lezen...");
+    dbRijen = await leesDbRijen(supabase, retailer, profiel);
+    if (cachePad) {
+      writeFileSync(cachePad, dbRijen.map((r) => JSON.stringify(r)).join("\n") + "\n");
+      console.log(`Cache geschreven: ${cachePad}`);
+    }
+  }
   const dbPerId = new Map(dbRijen.map((r) => [r.id, r]));
   const dbInStock = dbRijen.filter((r) => r.in_stock).length;
   console.log(`Database: ${dbRijen.length} rijen, waarvan ${dbInStock} op voorraad`);
 
   const plan: Plan = maakPlan(feedRijen, dbRijen);
-  const oordeel = beoordeel({ feedAantalGelezen: aantalGelezen, feedAantalKop: kop.productAantal, dbRijen: dbRijen.length, dbInStock, plan, staVeelWegToe });
+  const oordeel = beoordeel({
+    feedAantalGelezen: aantalGelezen,
+    feedAantalKop: kop.productAantal,
+    dbRijen: dbRijen.length,
+    dbInStock,
+    plan,
+    staVeelWegToe,
+    fase: ja ? (fase as "a" | "b" | "alles") : null,
+  });
   const w = telWijzigingen(plan.koppelingen);
   const viaId = plan.koppelingen.filter((k) => k.via === "id").length;
   const viaSleutel = plan.koppelingen.length - viaId;

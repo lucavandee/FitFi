@@ -24,6 +24,7 @@ const basis = (extra: Partial<BewakingInvoer> = {}): BewakingInvoer => ({
   dbInStock: 800,
   plan: plan(),
   staVeelWegToe: false,
+  fase: "b",
   ...extra,
 });
 
@@ -66,6 +67,20 @@ describe("beoordeel: hoeveel verdwijnt er", () => {
     const met = beoordeel(basis({ plan: weg(500), staVeelWegToe: true }));
     expect(met.fouten).toEqual([]);
     expect(met.waarschuwingen.join(" ")).toMatch(/62\.5|63|62,5/);
+  });
+
+  it("in fase a en in een droge run is veel verdwijnen een waarschuwing: fase a zet niets uit voorraad", () => {
+    for (const fase of ["a", null] as const) {
+      const o = beoordeel(basis({ plan: weg(500), fase }));
+      expect(o.fouten, `fase ${fase}`).toEqual([]);
+      expect(o.waarschuwingen.join(" "), `fase ${fase}`).toMatch(/fase b/);
+    }
+  });
+
+  it("in fase b en bij alles blijft het een fout zonder toestemming", () => {
+    for (const fase of ["b", "alles"] as const) {
+      expect(beoordeel(basis({ plan: weg(500), fase })).fouten.join(" "), `fase ${fase}`).toMatch(/helft/);
+    }
   });
 
   it("tussen een vijfde en de helft is een waarschuwing", () => {

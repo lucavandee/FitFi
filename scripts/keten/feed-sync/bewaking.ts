@@ -18,6 +18,8 @@ export interface BewakingInvoer {
   plan: Plan;
   /** Bewust toestaan dat meer dan de helft van wat op voorraad staat verdwijnt. */
   staVeelWegToe: boolean;
+  /** Welke fase er geschreven wordt; null bij een droge run. Alleen fase b en alles zetten rijen uit voorraad. */
+  fase: "a" | "b" | "alles" | null;
 }
 
 export interface Oordeel {
@@ -52,8 +54,10 @@ export function beoordeel(inv: BewakingInvoer): Oordeel {
     const aandeel = inv.plan.verdwenen.length / inv.dbInStock;
     const tekst = `${inv.plan.verdwenen.length} van de ${inv.dbInStock} producten op voorraad (${procent(inv.plan.verdwenen.length, inv.dbInStock)}) staan niet meer in de feed`;
     if (aandeel > 0.5) {
+      const zetUit = inv.fase === "b" || inv.fase === "alles";
       if (inv.staVeelWegToe) waarschuwingen.push(`${tekst}; bewust toegestaan.`);
-      else fouten.push(`${tekst}: meer dan de helft. Controleer de aantallen en draai met --sta-veel-weg-toe als dat klopt.`);
+      else if (zetUit) fouten.push(`${tekst}: meer dan de helft. Controleer de aantallen en draai met --sta-veel-weg-toe als dat klopt.`);
+      else waarschuwingen.push(`${tekst}: meer dan de helft. Fase a laat dit staan; fase b weigert het zonder --sta-veel-weg-toe.`);
     } else if (aandeel >= 0.2) {
       waarschuwingen.push(`${tekst}.`);
     }
