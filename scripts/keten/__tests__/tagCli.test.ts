@@ -711,6 +711,49 @@ describe("voerClaudeCliUit: stdin-fix", () => {
     expect(uit.result).toContain("no stdin data received");
   });
 
+  // 4 okt 2026, 22:17: bij elke winkel faalde claude -p binnen drie minuten met
+  // exitcode 1, en de log toonde alleen "Command failed: claude -p --model ...".
+  // claude -p schrijft zijn fout bij --output-format json als JSON naar stdout,
+  // met lege stderr; de wrapper las alleen stderr en de commandoregel, dus de
+  // reden (een limiet van het abonnement, vermoedelijk) bleef onzichtbaar.
+  describe("de reden van een mislukte aanroep", () => {
+    const faal = (stdout: string, stderr: string, message = "Command failed: claude -p") => {
+      execFileMock.mockImplementation((..._args: unknown[]) => {
+        const cb = _args[_args.length - 1] as (fout: unknown, stdout: string, stderr: string) => void;
+        cb(Object.assign(new Error(message), { code: 1 }), stdout, stderr);
+        return { stdin: { end: vi.fn() } };
+      });
+    };
+
+    it("toont de melding uit de JSON op stdout", async () => {
+      faal(JSON.stringify({ type: "result", subtype: "success", is_error: true, result: "5-hour limit reached ∙ resets 3am" }), "");
+
+      const uit = await voerClaudeCliUit(["-p"], 1000);
+
+      expect(uit.is_error).toBe(true);
+      expect(uit.result).toContain("5-hour limit reached");
+      expect(uit.result).not.toContain("Command failed");
+    });
+
+    it("toont platte tekst op stdout als die geen JSON is", async () => {
+      faal("Claude AI usage limit reached|1759608000", "");
+
+      const uit = await voerClaudeCliUit(["-p"], 1000);
+
+      expect(uit.result).toContain("usage limit reached");
+    });
+
+    it("houdt de reden kort als stdout en stderr leeg zijn, in plaats van de hele commandoregel", async () => {
+      // De echte commandoregel bevat het volledige systeemprompt (ruim 3.000 tekens).
+      faal("", "", `Command failed: claude -p --append-system-prompt ${"x".repeat(5000)}`);
+
+      const uit = await voerClaudeCliUit(["-p"], 1000);
+
+      expect(uit.result).toContain("exitcode 1");
+      expect((uit.result ?? "").length).toBeLessThan(300);
+    });
+  });
+
   it("crasht niet als het kindproces geen stdin-stream blijkt te hebben", async () => {
     execFileMock.mockImplementation((..._args: unknown[]) => {
       const cb = _args[_args.length - 1] as (fout: unknown, stdout: string, stderr: string) => void;
