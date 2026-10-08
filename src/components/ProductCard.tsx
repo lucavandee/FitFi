@@ -189,7 +189,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={handleFeedbackLess}
               aria-label="Minder zoals dit"
               title="Minder zoals dit"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#C24A4A] hover:bg-[#FEF2F2] transition-colors duration-200"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#C24A4A] hover:bg-[#F5F0EB] transition-colors duration-200"
             >
               <ThumbsDown className="w-5 h-5" />
             </button>
