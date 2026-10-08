@@ -63,6 +63,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Video en audio niet via de service worker. Browsers vragen media op met
+  // Range-verzoeken; Safari speelt alleen af als het antwoord een 206 is, en een
+  // volledige 200 uit de cache breekt het afspelen. De clips hebben een hash in
+  // de naam en een immutable-cache in _headers, dus de browsercache volstaat.
+  if (
+    request.destination === 'video' ||
+    request.destination === 'audio' ||
+    url.pathname.startsWith('/video/')
+  ) {
+    return;
+  }
+
   if (CACHE_STRATEGIES.images.some((pattern) => pattern.test(request.url))) {
     event.respondWith(cacheFirstStrategy(request, IMAGE_CACHE));
   } else if (CACHE_STRATEGIES.static.some((pattern) => pattern.test(request.url))) {

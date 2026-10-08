@@ -19,6 +19,7 @@ import OutfitFlatlay from "@/components/landing/sections/OutfitFlatlay";
 import TrustStrip from "@/components/landing/sections/TrustStrip";
 import StepsScene from "@/components/landing/sections/StepsScene";
 import ColorWipe from "@/components/landing/sections/ColorWipe";
+import HeroClip from "@/components/landing/HeroClip";
 import { track as trackFunnel } from "@/utils/analytics";
 
 const PAGE = "landing";
@@ -236,8 +237,12 @@ export default function LandingPage() {
         {/* ════════════════════════════════════════════════════
             HERO — Full-screen image, text bottom-left
         ════════════════════════════════════════════════════ */}
+        {/* min-h-svh na min-h-screen: 100vh rekent op mobiel met een
+            ingeklapte adresbalk, waardoor de onderkant van de hero bij het
+            laden onder de balk viel. Zonder svh-ondersteuning blijft
+            min-h-screen gelden. */}
         <section
-          className="relative min-h-screen flex items-end overflow-hidden"
+          className="relative min-h-screen min-h-svh flex items-end overflow-hidden"
           aria-labelledby="hero-heading"
         >
           {/* Background image */}
@@ -260,6 +265,9 @@ export default function LandingPage() {
             />
           </picture>
 
+          {/* Levende hero: begint precies op de still, laadt pas na de still. */}
+          <HeroClip />
+
           {/* Gradient overlays */}
           <div
             className="absolute inset-0"
@@ -270,8 +278,24 @@ export default function LandingPage() {
             aria-hidden="true"
           />
 
-          {/* Content */}
-          <div className="relative z-10 w-full max-w-[1320px] mx-auto px-6 md:px-10 pb-16 md:pb-24 pt-20 min-h-screen flex items-end">
+          {/* Op mobiel loopt de onderste tekst over de lichte broek in beeld.
+              Zonder deze extra laag haalt het AI-label daar 3,1:1 in plaats
+              van 4,5:1 (gemeten van 360x640 tot 412x844, op de still en op
+              het eindbeeld van de clip). */}
+          <div
+            className="absolute inset-0 md:hidden"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(20,18,15,0.55) 0%, rgba(20,18,15,0.4) 20%, transparent 40%)",
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Content. Op mobiel ligt de vaste MobileBottomNav (58px) over de
+              onderkant; pb-24 houdt de tekst daar 38px boven. Komt er ooit
+              viewport-fit=cover bij, dan groeit de nav met de safe area en
+              moet dit mee. */}
+          <div className="relative z-10 w-full max-w-[1320px] mx-auto px-6 md:px-10 pb-24 pt-20 min-h-screen min-h-svh flex items-end">
             <div className="max-w-[560px]">
               {/* Eyebrow */}
               <div className="flex items-center gap-[10px] mb-6">
@@ -331,6 +355,15 @@ export default function LandingPage() {
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
+
+              {/* AI Act art. 50(4): realistische gegenereerde mensen krijgen bij
+                  de eerste blootstelling een zichtbaar label. Op mobiel onder de
+                  knoppen; vanaf md als creditregel linksonder in de content-
+                  container, in het donkerste deel van de gradient. Rechtsonder
+                  haalde hij op 1024x768 maar 2,8:1. */}
+              <p className="mt-8 text-sm font-medium text-white/75 md:absolute md:bottom-8 md:left-10 md:mt-0 md:text-xs">
+                Beeld gemaakt met AI. De personen zijn modellen.
+              </p>
             </div>
           </div>
 
