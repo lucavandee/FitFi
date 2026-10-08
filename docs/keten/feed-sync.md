@@ -40,10 +40,23 @@ link, beeld, weer op voorraad) en voegt nieuwe toe. Er verdwijnt niets uit de po
 Daarna, met de hand:
 
 ```
-supabase db query --linked "select * from keten_vul_nieuwe_producten('H&M (NL)')"
+supabase db query --linked "set statement_timeout = '15min'; select * from keten_vul_nieuwe_producten('H&M (NL)')"
 npm run keten:classificeer -- --alleen-veegronde
 npm run keten:tag -- --retailer "H&M (NL)" --limit 1000 --ja        # of de nachtrunner
 ```
+
+Praktisch, gemeten op 8 oktober 2026 met 49.514 nieuwe rijen:
+
+- `keten_vul_nieuwe_producten` draait ongeveer 7 minuten. De Management API geeft na twee
+  minuten HTTP 524, maar de query loopt aan de serverkant door en wordt gewoon afgerond.
+  Een 524 is dus geen mislukking: kijk in `pg_stat_activity` of hij nog loopt en tel daarna
+  de rijen zonder attributen.
+- De veegronde van `keten:classificeer` kan op een koude cache drie keer achter elkaar op
+  de statement-timeout van 8 seconden lopen en stopt dan. Opnieuw draaien is veilig en
+  hervat bij de rijen die nog geen `classifier_version` hebben.
+- Schrijven verdringt de buffers: de warm-job (`keten_warm_houden`) deed 46 seconden over
+  zijn run en één lichte query van de site-rol duurde 8,4 seconden. Het script ziet dat,
+  wacht 30 seconden en gaat door. Draai fase a daarom buiten de piekuren.
 
 **Fase b** zet wat uit de feed verdwenen is uit voorraad en laat de canonieke rij van een
 foto-groep overgaan op een maat die er nog is (`keten_herkies_canoniek`). Doe dit pas
