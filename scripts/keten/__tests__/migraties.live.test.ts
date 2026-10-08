@@ -23,6 +23,44 @@ const anon = () => createClient(url!, anonKey!, { auth: { persistSession: false 
 // Ruimere timeout dan de standaard 5 s: op 1 okt 2026 wisselde dezelfde aanroep
 // tussen 13 ms (warme cache) en 9 s (koude schijf). De tests hieronder meten
 // gedrag, geen snelheid.
+// 2 okt 2026: get_kandidaten koppelde zijn laatste 200 tot 240 rijen aan
+// products. De productrijen van alle kandidaten lagen verspreid over 28.580
+// pagina's (223 MB), zo groot als het hele werkgeheugen van de database, dus een
+// koude aanroep las ze van schijf. keten_kandidaat_product bewaart alleen de
+// kandidaten, met alleen de velden die de code leest; triggers houden hem bij.
+// De triggers zelf staan in kandidaatProduct.live.test.ts.
+describe.skipIf(!url || !serviceKey)("20261002120000_keten_kandidaat_product (live)", { timeout: 60_000 }, () => {
+  it("de kopie dekt precies de kandidaten, en een steekproef van 300 is gelijk aan products", async () => {
+    const { data, error } = await service().rpc("keten_kandidaat_product_controle", { p_steekproef: 300 });
+    expect(error).toBeNull();
+    const [r] = (data ?? []) as Array<{
+      kandidaten: number;
+      kopieen: number;
+      ontbrekend: number;
+      overbodig: number;
+      vergeleken: number;
+      verouderd: number;
+    }>;
+    expect(r.kandidaten).toBeGreaterThan(0);
+    expect(r.ontbrekend).toBe(0);
+    expect(r.overbodig).toBe(0);
+    expect(r.vergeleken).toBe(300);
+    expect(r.verouderd).toBe(0);
+  });
+
+  it("de anon-sleutel leest de kopie, maar schrijft hem niet en roept de controle niet aan", async () => {
+    const lezen = await anon().from("keten_kandidaat_product").select("product_id").limit(1);
+    expect(lezen.error).toBeNull();
+    expect(lezen.data).toHaveLength(1);
+    const schrijven = await anon()
+      .from("keten_kandidaat_product")
+      .insert({ product_id: "00000000-0000-4000-8000-000000000000", product: {} });
+    expect(schrijven.error?.code).toBe("42501");
+    const controle = await anon().rpc("keten_kandidaat_product_controle", { p_steekproef: 0 });
+    expect(controle.error?.code).toBe("42501");
+  });
+});
+
 // 2 okt 2026: product_attributes.image_url was alleen voor H&M gevuld; voor
 // Giglio, PUMA, OFM en Mart Visser was het leeg, en keten_embed_kandidaten eist
 // het. Na de grote tagrun gaf de functie voor Giglio 0 van de 16.629 getagde

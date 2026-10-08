@@ -15,7 +15,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { createClient } from "@supabase/supabase-js";
-import { naarKandidatenParams, type KandidaatRij } from "../kandidaten";
+import { KANDIDAAT_PRODUCT_VELDEN, naarKandidatenParams, type KandidaatRij } from "../kandidaten";
 
 const liveOptIn = process.env.LIVE_DB_TEST === "1";
 const url = process.env.VITE_SUPABASE_URL;
@@ -62,6 +62,9 @@ describe.skipIf(!liveOptIn || !url || !key)("get_kandidaten (live)", () => {
         expect(["male", "unisex"]).toContain(rij.product.gender);
         expect(rij.product.in_stock).toBe(true);
         expect(rij.attrs.classifier_version).toBeTruthy();
+        // Sinds migratie 20261002120000 komt product uit de compacte kopie
+        // keten_kandidaat_product: precies de velden die de code leest.
+        expect(Object.keys(rij.product).sort()).toEqual([...KANDIDAAT_PRODUCT_VELDEN].sort());
       }
       for (const aantal of perCategorie.values()) {
         expect(aantal).toBeLessThanOrEqual(params.p_per_category);
