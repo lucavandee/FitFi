@@ -84,3 +84,21 @@ Deno.test("een 5-pocket van OFM wordt bottom, ook als de feed top zegt", () => {
     assertGelijk(r.category, "bottom", naam);
   }
 });
+
+// Kleding met een bijgeleverd accessoire blijft kleding (8 oktober 2026, H&M: "Jas met sjaal").
+for (
+  const [naam, verwacht] of [
+    ["H & M - Jas met sjaal - Zwart", "outerwear"],
+    ["H & M - Overhemd met stropdas - Wit", "top"],
+    ["H & M - Pantalon met riem - Zwart", "bottom"],
+    ["H & M - Jas met capuchon en riem - Beige", "outerwear"],
+    ["H & M - Chiffon jurk met sjaal - Lichtroze/Bloemen", "dress"],
+    ["H & M - Tas met riem - Zwart", "accessory"],
+    ["H & M - Muts met sjaal - Grijs", "accessory"],
+    ["H & M - Jas met sjaalkraag - Zwart", "outerwear"],
+  ] as const
+) {
+  Deno.test(`bijgeleverd accessoire: "${naam}" is ${verwacht}`, () => {
+    assertGelijk(classifyProductRaw(naam, "", "", "H&M").category, verwacht, naam);
+  });
+}
