@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
+import { OG_BEELD } from "@/content/landingHead";
 import { Spinner } from "@/components/ui/Spinner";
 
 type Topic = "algemeen" | "pers" | "partners" | "feedback" | "bug";
@@ -163,7 +164,7 @@ export default function ContactPage() {
         title="Contact — FitFi"
         description="Heb je een vraag, feedback of wil je samenwerken? Neem contact op met het FitFi team. We reageren binnen 24 uur op werkdagen."
         path="/contact"
-        ogImage="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+        ogImage={OG_BEELD}
       />
 
       <div

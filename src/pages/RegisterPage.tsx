@@ -45,10 +45,12 @@ const strengthTextColors = [
   "text-[#3D8B5E]",
 ] as const;
 
+// Geen invultijd beloven (nooit gemeten) en geen verwijderknop (die bestaat
+// niet). Verwijderen gaat per mail, zoals de privacyverklaring zegt.
 const TRUST_ITEMS = [
-  { icon: Clock, title: "Klaar in 5 minuten", desc: "Korte quiz, direct resultaat" },
+  { icon: Clock, title: "Korte quiz", desc: "Direct resultaat" },
   { icon: Sparkles, title: "Persoonlijk rapport", desc: "Kleuren, outfits en shoplinks" },
-  { icon: Lock, title: "Jouw data, jouw keuze", desc: "Verwijder je account op elk moment" },
+  { icon: Lock, title: "Jouw data, jouw keuze", desc: "Verwijderen? Mail privacy@fitfi.ai" },
 ];
 
 const RegisterPage: React.FC = () => {
@@ -150,7 +152,7 @@ const RegisterPage: React.FC = () => {
               {comingFromResults ? "Bewaar je resultaten" : "Start jouw stijlreis"}
             </h2>
             <p className="text-base text-[#4A4A4A] text-center leading-[1.7] mb-12">
-              In ongeveer vijf minuten weet je welke kleuren en outfits bij je passen.
+              Na een korte quiz weet je welke kleuren en outfits bij je passen.
             </p>
 
             <div className="flex flex-col gap-5 w-full max-w-[320px]">
@@ -370,7 +372,7 @@ const RegisterPage: React.FC = () => {
                   {[
                     "Geen spam. Alleen updates die jij aanzet.",
                     "We vragen alleen wat nodig is voor je rapport.",
-                    "Je kunt je account altijd verwijderen.",
+                    "Wil je je account laten verwijderen? Mail privacy@fitfi.ai.",
                   ].map((text) => (
                     <div key={text} className="text-xs text-[#6E6E6E] flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#A85740] flex-shrink-0" />

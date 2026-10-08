@@ -2,6 +2,18 @@ import React from "react";
 import { Helmet } from 'react-helmet-async';
 import SectionHeader from "@/components/marketing/SectionHeader";
 import MarkdownPage from '@/components/ui/MarkdownPage';
+import { quizSteps } from "@/data/quizSteps";
+
+// Tellingen uit de quiz zelf, zodat deze tekst meeloopt als er een stap bij
+// komt of afgaat. Optioneel is wat de quiz laat overslaan (!required).
+const AANTAL_STAPPEN = quizSteps.length;
+const AANTAL_OPTIONEEL = quizSteps.filter((stap) => !stap.required).length;
+
+// Weg zodra index.html de lettertypen niet meer bij Google ophaalt maar zelf
+// host. Tot dan krijgt Google bij elk paginabezoek je IP-adres, ook zonder
+// toestemming voor cookies.
+const LETTERTYPEN_REGEL =
+  "- **Lettertypen:** Google Fonts. Je browser haalt de lettertypen bij elk paginabezoek op bij Google; daarbij ziet Google je IP-adres.";
 
 export default function PrivacyPage() {
   return (
@@ -25,7 +37,7 @@ export default function PrivacyPage() {
           content={`
 # Privacyverklaring
 
-**Laatst bijgewerkt:** 7 januari 2026
+**Laatst bijgewerkt:** 8 oktober 2026
 
 FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren. Privacy betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
 
@@ -44,7 +56,7 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 - Account-aanmaakdatum en laatste login
 
 ### Stijlprofiel
-- Antwoorden op de stijlquiz (14 stappen over stijl, kleur, pasvorm, gelegenheden, doelen, merken, budget en maten; de laatste twee stappen zijn optioneel)
+- Antwoorden op de stijlquiz (${AANTAL_STAPPEN} stappen over stijl, kleur, pasvorm, gelegenheden, doelen, merken, budget en maten; ${AANTAL_OPTIONEEL} stappen zijn optioneel)
 - Optioneel: foto's die je uploadt (alleen met expliciete toestemming)
 - Gegenereerde outfits en opgeslagen favorieten
 
@@ -78,9 +90,11 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 We verkopen **nooit** data. We delen alleen met:
 
 - **Hosting/Database:** Supabase (EU-servers Frankfurt, AVG-compliant)
+- **Website:** Netlify levert de site uit en verwerkt daarvoor je IP-adres en de technische gegevens van elk verzoek
 - **Analytics:** Google Analytics (VS, **alleen met jouw toestemming**, IP geanonimiseerd)
 - **Payments:** Stripe (PCI-DSS certified, alleen transactie-metadata)
-- **Support/Foutopsporing:** Sentry (foutlogs, geanonimiseerd)
+- **Partnerlinks:** Daisycon. Klik je op een link naar een winkel, dan loopt die klik via Daisycon, zodat een aankoop aan FitFi kan worden toegeschreven. Daarna geldt het privacybeleid van de winkel.
+${LETTERTYPEN_REGEL}
 
 **⚠️ Belangrijke opmerking over Google Analytics:**
 Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens verstuurd naar Google LLC servers in de Verenigde Staten. Dit valt onder Schrems II wetgeving. Wij hebben:

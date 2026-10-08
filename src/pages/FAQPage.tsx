@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
+import { OG_BEELD } from "@/content/landingHead";
 
 type QA = { q: string; a: string };
 
@@ -216,7 +217,7 @@ export default function FAQPage() {
         description="Antwoorden op de meest gestelde vragen over FitFi: hoe het werkt, privacy, prijzen en je account."
         path="/veelgestelde-vragen"
         structuredData={FAQ_SCHEMA}
-        ogImage="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+        ogImage={OG_BEELD}
       />
 
       <a
@@ -457,7 +458,7 @@ export default function FAQPage() {
               custom={1}
               className="text-[17px] text-[#4A4A4A] mb-12"
             >
-              Gratis. Ongeveer vijf minuten. Geen account nodig.
+              Je kunt zonder account beginnen. Voor je rapport maak je een gratis account.
             </motion.p>
 
             <motion.div

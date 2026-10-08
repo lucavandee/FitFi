@@ -4,7 +4,7 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { ShieldCheck, Link2, Gift, Tag, Image, Newspaper, Lock, CircleAlert as AlertCircle, RefreshCw, Mail, ChevronDown, ArrowRight } from 'lucide-react';
 import Seo from '@/components/seo/Seo';
 
-const UPDATED = '1 oktober 2025';
+const UPDATED = '8 oktober 2026';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -137,11 +137,17 @@ const SECTIONS: Section[] = [
     id: 'beelden',
     icon: Image,
     title: '6. Beeldmateriaal & AI-generatie',
+    // Wat gegenereerd is, wat echt is en wat het label betekent. Bewust een
+    // uitleg van het label en geen belofte dat elk beeld er een heeft: dat
+    // klopt pas als oud beeld zonder herkomst van de site is.
     content: (
       <ul className="space-y-3">
         {[
-          'We gebruiken eigen visuals en/of rechtenvrije assets. Waar nodig vermelden we credits.',
-          'AI-gegenereerde beelden of composities worden alleen gebruikt ter illustratie en niet als productfoto.',
+          'Een deel van onze beelden is met AI gemaakt: sfeerbeelden met mensen, plekken, stoffen en voorwerpen. Dat zijn geen foto\'s.',
+          'Het label "Beeld gemaakt met AI." betekent dat het hele beeld met AI is gemaakt, ook als het beweegt.',
+          'Staat er "De persoon is een model." of "De personen zijn modellen." bij, dan is ook die persoon met AI gemaakt. Het is geen klant of gebruiker van FitFi.',
+          'Productfoto\'s komen van de winkels zelf. Die maken we niet.',
+          'Schermbeelden en opnames van de quiz en het rapport komen uit de app zelf. Een foto die FitFi zelf maakt, krijgt het label "Eigen foto."',
           'Beelden kunnen indicatief zijn; vertrouw voor maten/kleuren op de productpagina van de winkel.',
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">

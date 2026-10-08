@@ -10,6 +10,7 @@ import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import Seo from "@/components/seo/Seo";
+import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landingHead";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { RequireQuiz } from "@/components/auth/RequireQuiz";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
@@ -84,8 +85,11 @@ const WEBSITE_SCHEMA = {
 };
 
 const WithSeo = {
-  Home:       () => (<><Seo title="FitFi — Persoonlijk stijladvies in ongeveer 5 minuten" description="Beantwoord een paar vragen en zie welke outfits bij je passen. Directe shoplinks, persoonlijk advies. Gratis starten." path="/" structuredData={ORG_SCHEMA} /><LandingPage /></>),
-  How:        () => (<><Seo title="Hoe het werkt — FitFi" description="In drie stappen van quiz naar complete outfits met shoplinks. Geen foto's nodig, geen account verplicht." path="/hoe-het-werkt" /><HowItWorksPage /></>),
+  // Home zet dezelfde kop als LandingPage: deze Seo-regel is de enige die
+  // twitter:title en twitter:description zet, en die bleven anders op de oude
+  // tekst staan.
+  Home:       () => (<><Seo title={LANDING_TITEL} description={LANDING_BESCHRIJVING} path="/" ogImage={OG_BEELD} structuredData={ORG_SCHEMA} /><LandingPage /></>),
+  How:        () => (<><Seo title="Hoe het werkt: FitFi" description="In drie stappen van quiz naar complete outfits met shoplinks. Geen foto's nodig. Starten kan zonder account; voor je rapport maak je er een." path="/hoe-het-werkt" /><HowItWorksPage /></>),
   Pricing:    () => (<><Seo title="Prijzen — FitFi" description="Gratis starten met je stijlprofiel en drie outfits. Premium geeft onbeperkte outfits, Nova AI en kleuranalyse." path="/prijzen" /><PricingPage /></>),
   About:      () => (<><Seo title="Over ons — FitFi" description="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak en principes." path="/over-ons" /><AboutPage /></>),
   Shop:       () => (<><Seo title="Shop — FitFi" description="Kleding en accessoires afgestemd op jouw stijlprofiel. Directe links naar webshops." path="/shop" /><ShopPage /></>),

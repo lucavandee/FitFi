@@ -18,17 +18,18 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 bg-[#FAFAF8] flex items-start justify-center px-4 py-6 overflow-y-auto"
     >
+      {/* Geen veren: die schieten door en vallen terug (CLAUDE.md deel 8). */}
       <motion.div
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 20 }}
+        transition={{ delay: 0.1, duration: 0.4, ease: 'easeOut' }}
         className="max-w-2xl w-full my-auto"
       >
         {/* Icon */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{ delay: 0.2, type: 'spring', stiffness: 150 }}
+          transition={{ delay: 0.2, duration: 0.4, ease: 'easeOut' }}
           className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center mb-6 sm:mb-8 shadow-lg"
         >
           <content.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
@@ -113,15 +114,8 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           <ArrowRight className="w-5 h-5" />
         </motion.button>
 
-        {/* Time estimate */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-center text-sm text-[#1A1A1A]/50 mt-4"
-        >
-          Dit duurt ongeveer {content.timeEstimate}
-        </motion.p>
+        {/* Hier stond "Dit duurt ongeveer ..." (2-3 minuten, ~5 minuten, 10
+            seconden). Geen van die tijden is gemeten. */}
       </motion.div>
     </motion.div>
   );
@@ -132,7 +126,7 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
     return {
       icon: Image,
       title: 'Laten we je visuele voorkeur ontdekken',
-      description: 'Je hebt de basis vragen beantwoord. Nu gaan we dieper: ik laat je echte outfit foto\'s zien. Swipe naar rechts op looks die je aantrekken, links op wat je minder vindt.',
+      description: 'Je hebt de basis vragen beantwoord. Je ziet nu foto\'s van outfits. Swipe naar rechts op looks die je aantrekken, links op wat je minder vindt.',
       expectations: [
         'Je ziet 15-20 outfit foto\'s die passen bij jouw stijl',
         'Swipe intuïtief - je eerste indruk is vaak het beste',
@@ -141,7 +135,6 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       ],
       novaTip: 'Ik leer van elke swipe. Als je twijfelt tussen twee looks, kies de outfit die je direct aanspreekt - dat is vaak je échte stijl.',
       ctaText: 'Start met swipen',
-      timeEstimate: '2-3 minuten'
     };
   }
 
@@ -151,14 +144,14 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       title: 'Tijd voor de finishing touch',
       description: 'Geweldig! Ik heb nu een goed beeld van je stijl. In deze laatste stap laat ik je complete outfits zien. Jouw feedback helpt me om je aanbevelingen pixel-perfect te maken.',
       expectations: [
-        'Je ziet 5 complete outfits samengesteld door mij',
-        'Beoordeel elk outfit: Love it, Like it, of Meh',
+        // Drie: CalibrationStep vraagt de engine om count: 3.
+        'Je ziet drie outfits die FitFi voor je samenstelt',
+        'Beoordeel elk outfit: Spot on, Misschien of Lijkt me niks',
         'Vertel me wat je wel/niet aantrekkelijk vindt',
         'Dit is de laatste verfijning voor je Style DNA'
       ],
       novaTip: 'Dit is waar de magie gebeurt. Je feedback hier maakt het verschil tussen "leuke outfits" en "outfits die voelen alsof ze voor jou gemaakt zijn".',
       ctaText: 'Bekijk de outfits',
-      timeEstimate: '~5 minuten'
     };
   }
 
@@ -169,13 +162,12 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
       description: 'Ik heb je antwoorden verwerkt. Je Style Report staat klaar, met outfits die bij je profiel passen en uitleg waarom.',
       expectations: [
         'Je unieke stijlprofiel met archetype',
-        '50+ gepersonaliseerde outfit aanbevelingen',
+        'Gepersonaliseerde outfitaanbevelingen',
         'Kleur- en styling advies op maat',
         'Direct shoppable items van top merken'
       ],
       novaTip: 'Dit is het resultaat van alles wat we samen hebben ontdekt. Elk outfit is bewust geselecteerd op basis van je antwoorden, swipes én feedback. Ready to see your style?',
       ctaText: 'Toon mijn Style DNA',
-      timeEstimate: '10 seconden'
     };
   }
 
@@ -187,6 +179,5 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
     expectations: ['Next phase coming up'],
     novaTip: 'Blijf jezelf - er zijn geen foute antwoorden!',
     ctaText: 'Ga verder',
-    timeEstimate: '1 minuut'
   };
 }
