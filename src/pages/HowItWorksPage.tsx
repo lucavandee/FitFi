@@ -124,7 +124,6 @@ const faqs = [
 
 const compRows = [
   { old: "Uren zoeken in winkels", next: "Ongeveer 5 minuten, direct resultaat", highlight: false },
-  { old: "€200+ aan spijt-aankopen per jaar", next: "Alleen items die bij je passen", highlight: false },
   { old: "Kast vol \"draag ik nooit\"", next: "Outfits die je echt draagt", highlight: false },
   { old: "Geen idee welke kleuren passen", next: "Persoonlijk kleurpalet op basis van jou", highlight: false },
   { old: "Elke ochtend twijfelen", next: "Zelfverzekerd je deur uit", highlight: true },

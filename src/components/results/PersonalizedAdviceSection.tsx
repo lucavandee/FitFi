@@ -108,7 +108,7 @@ function getOccasionTips(occasion: string, gender: string): Array<{ label: strin
 
   return [
     { label: 'Capsule wardrobe', detail: 'Veelzijdige basics die met alles combineren' },
-    { label: 'Kwaliteit boven kwantiteit', detail: 'Investeer in stukken die jaren meegaan' },
+    { label: 'Kwaliteit boven kwantiteit', detail: 'Kies stukken die jaren meegaan' },
     { label: 'Accessoires per gelegenheid', detail: 'Pas details aan zonder de outfit te wisselen' },
   ];
 }

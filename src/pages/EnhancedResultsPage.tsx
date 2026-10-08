@@ -31,9 +31,7 @@ import {
 import { SUB_SEASON_PALETTES } from "@/data/colorPalettes";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { SwipeableOutfitGallery } from "@/components/outfits/SwipeableOutfitGallery";
-import { useMonthlyUpgrades } from "@/hooks/useMonthlyUpgrades";
 import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
-import { ExitIntentModal } from "@/components/results/ExitIntentModal";
 import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/profileConsistency";
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { generateOutfitDescription } from "@/engine/outfitContext";
@@ -219,9 +217,6 @@ export default function EnhancedResultsPage() {
     threshold: 50,
   });
 
-  const [showExitModal, setShowExitModal] = React.useState(false);
-  const { data: monthlyUpgradeCount, isLoading: upgradesLoading } = useMonthlyUpgrades();
-
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 300], [1, 0.95]);
@@ -283,13 +278,6 @@ export default function EnhancedResultsPage() {
       setConsistencyAnalysis(analysis);
     }
   }, [answers]);
-
-  React.useEffect(() => {
-    if (showExitIntent && !user) {
-      setShowExitModal(true);
-      dismissExitIntent();
-    }
-  }, [showExitIntent, user, dismissExitIntent]);
 
   /** Dutch-friendly display name for the archetype */
   const archetypeDisplayNL = React.useMemo(() => getArchetypeDisplayNL(archetypeName), [archetypeName]);
@@ -1899,9 +1887,6 @@ export default function EnhancedResultsPage() {
         open={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
-
-      {/* Exit Intent Discount Modal */}
-      <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
 
       {/* Feedback widget — meet of het stijlprofiel herkenbaar is */}
       {hasCompletedQuiz && (

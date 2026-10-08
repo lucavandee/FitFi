@@ -541,7 +541,7 @@ export default function PricingPage() {
                   <div className="flex items-baseline gap-2 justify-center md:justify-end">
                     <span className="text-4xl font-extrabold text-[#1A1A1A] tracking-[-1px]">€{founderPrice}</span>
                   </div>
-                  <p className="text-xs text-[#6E6E6E] mt-1">Eenmalig · Beperkt beschikbaar</p>
+                  <p className="text-xs text-[#6E6E6E] mt-1">Eenmalig</p>
                 </div>
               </div>
             </Reveal>
