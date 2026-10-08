@@ -145,7 +145,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Info */}
       <div className="p-3.5">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#6E6E6E] mb-0.5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[#6E6E6E] mb-0.5">
           {brand}
         </p>
         <h3 className="text-sm font-semibold text-[#1A1A1A] leading-snug line-clamp-2 mb-2">
@@ -160,13 +160,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Price + primary CTA */}
-        <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex flex-col gap-2 mb-3">
           <span className="text-base font-bold text-[#1A1A1A]">
             €{price.toFixed(2)}
           </span>
           <button
             onClick={handleClick}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors"
+            className="inline-flex w-full min-h-[48px] items-center justify-center gap-1.5 px-4 py-3 bg-[#9A503B] text-white rounded-xl text-sm font-bold hover:bg-[#A85740] transition-colors duration-200"
             aria-label={`Bekijk bij partner (je verlaat FitFi)`}
           >
             Bekijk bij partner
@@ -174,41 +174,38 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         </div>
 
-        {/* Feedback row */}
+        {/* Feedback row: twee iconen van 44 px, labels via aria-label en title */}
         {(onFeedbackMore || onFeedbackLess) && feedbackGiven === null && (
-          <div className="flex items-center gap-2 pt-2.5 border-t border-[#E5E5E5]">
-            <span className="text-[10px] text-[#6E6E6E] mr-auto">Niet jouw smaak? Geef feedback.</span>
+          <div className="flex items-center justify-end gap-1 pt-2 border-t border-[#E5E5E5]">
             <button
               onClick={handleFeedbackMore}
               aria-label="Meer zoals dit"
               title="Meer zoals dit"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#F5F0EB] transition-colors"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#9A503B] hover:bg-[#F5F0EB] transition-colors duration-200"
             >
-              <ThumbsUp className="w-3.5 h-3.5" />
-              Meer zoals dit
+              <ThumbsUp className="w-5 h-5" />
             </button>
             <button
               onClick={handleFeedbackLess}
               aria-label="Minder zoals dit"
               title="Minder zoals dit"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold text-[#6E6E6E] hover:text-[#C24A4A] hover:bg-[#FEF2F2] transition-colors"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#C24A4A] hover:bg-[#FEF2F2] transition-colors duration-200"
             >
-              <ThumbsDown className="w-3.5 h-3.5" />
-              Minder zoals dit
+              <ThumbsDown className="w-5 h-5" />
             </button>
           </div>
         )}
 
         {feedbackGiven !== null && (
           <div className="pt-2.5 border-t border-[#E5E5E5]">
-            <p className="text-[10px] text-[#6E6E6E] text-center">
+            <p className="text-xs text-[#6E6E6E] text-center">
               {feedbackGiven === 'more' ? 'Bedankt — we tonen meer hiervan.' : 'Begrepen — we leren van je.'}
             </p>
           </div>
         )}
 
         {/* Affiliate disclosure */}
-        <p className="mt-2.5 text-[10px] text-[#6E6E6E] leading-relaxed">
+        <p className="mt-2.5 text-xs text-[#6E6E6E] leading-relaxed">
           Koop bij partner (je verlaat FitFi) ·{' '}
           <a
             href="/disclosure"
