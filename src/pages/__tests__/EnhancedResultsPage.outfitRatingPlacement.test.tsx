@@ -152,9 +152,6 @@ vi.mock("@/context/UserContext", () => ({ useUser: () => ({ user: null }) }));
 vi.mock("@/hooks/useExitIntent", () => ({
   useExitIntent: () => ({ shouldShow: false, dismiss: () => {} }),
 }));
-vi.mock("@/hooks/useMonthlyUpgrades", () => ({
-  useMonthlyUpgrades: () => ({ data: 0, isLoading: false }),
-}));
 vi.mock("@/hooks/useOutfits", () => ({
   useOutfits: () => ({ data: [fixture.outfit], loading: false, error: null }),
 }));
@@ -162,7 +159,6 @@ vi.mock("@/components/results/SaveOutfitsModal", () => ({ SaveOutfitsModal: () =
 vi.mock("@/components/navigation/Breadcrumbs", () => ({ default: () => null }));
 vi.mock("@/components/results/OutfitDetailModal", () => ({ OutfitDetailModal: () => null }));
 vi.mock("@/components/results/ShareModal", () => ({ ShareModal: () => null }));
-vi.mock("@/components/results/ExitIntentModal", () => ({ ExitIntentModal: () => null }));
 vi.mock("@/components/results/ResultsFeedbackWidget", () => ({ ResultsFeedbackWidget: () => null }));
 
 import EnhancedResultsPage from "../EnhancedResultsPage";
