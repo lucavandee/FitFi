@@ -34,6 +34,9 @@ error.log export-ignore
 *.ttf binary
 *.eot binary
 *.pdf binary
+*.avif binary
+*.webp binary
+*.mp4 binary
 *.zip binary
 *.tar.gz binary
 
