@@ -57,8 +57,16 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 
 ### Stijlprofiel
 - Antwoorden op de stijlquiz (${AANTAL_STAPPEN} stappen over stijl, kleur, pasvorm, gelegenheden, doelen, merken, budget en maten; ${AANTAL_OPTIONEEL} stappen zijn optioneel)
-- Optioneel: foto's die je uploadt (alleen met expliciete toestemming)
+- Optioneel: een selfie voor de kleuranalyse (zie hieronder) en outfitfoto's die je in je dashboard laat beoordelen
 - Gegenereerde outfits en opgeslagen favorieten
+
+### Selfie voor de kleuranalyse (optioneel)
+De laatste vraag van de quiz vraagt om een selfie. Sla je die over, dan verwerken we geen foto van je.
+- **Opslag:** de foto staat bij Supabase in Frankfurt, in een afgeschermde map. Er is geen openbare link; andere bezoekers en accounts kunnen de foto niet openen.
+- **Analyse:** OpenAI in de Verenigde Staten krijgt een link naar de foto die 60 seconden werkt. Het model beschrijft je ondertoon, huid-, haar- en oogkleur en kiest daar een kleurseizoen en kleuren bij.
+- **Wat we bewaren:** de foto in die map, en de uitkomst van de analyse bij je stijlprofiel.
+- **Hoe lang:** tot je om verwijdering vraagt; een vaste bewaartermijn is er nog niet. Haal je de foto in de quiz weg, dan telt hij niet meer mee voor je advies, maar het bestand blijft staan tot je om verwijdering vraagt.
+- **Verwijderen:** mail [privacy@fitfi.ai](mailto:privacy@fitfi.ai).
 
 ### Technische gegevens
 - IP-adres (tijdelijk, voor beveiliging en foutopsporing)
@@ -93,6 +101,7 @@ We verkopen **nooit** data. We delen alleen met:
 - **Website:** Netlify levert de site uit en verwerkt daarvoor je IP-adres en de technische gegevens van elk verzoek
 - **Analytics:** Google Analytics (VS, **alleen met jouw toestemming**, IP geanonimiseerd)
 - **Payments:** Stripe (PCI-DSS certified, alleen transactie-metadata)
+- **Foto-analyse:** OpenAI (Verenigde Staten). Laat je een foto analyseren, dan krijgt OpenAI die foto: je selfie uit de quiz via een link die 60 seconden werkt, of een outfitfoto die je in je dashboard laat beoordelen. OpenAI stuurt een beschrijving terug.
 - **Partnerlinks:** Daisycon. Klik je op een link naar een winkel, dan loopt die klik via Daisycon, zodat een aankoop aan FitFi kan worden toegeschreven. Daarna geldt het privacybeleid van de winkel.
 ${LETTERTYPEN_REGEL}
 
@@ -113,6 +122,7 @@ Alle andere partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform
 |-----------|---------------|
 | Accountgegevens | Zolang account actief + 30 dagen na verwijdering |
 | Stijlprofiel | Zolang account actief |
+| Selfie en andere foto's die je uploadt | Tot je om verwijdering vraagt (nog geen vaste termijn) |
 | Technische logs | Maximaal 90 dagen |
 | Analytische data | 12 maanden (geaggregeerd, niet herleidbaar) |
 | Betalingsrecords | 7 jaar (wettelijke eis boekhouden) |
@@ -185,6 +195,9 @@ Alleen bij expliciete toestemming:
 - ✅ **Intrekbare toestemming** (verwijder cookies in profiel)
 
 **Alternatief:** Je kunt FitFi volledig gebruiken zonder analytische cookies. Alle functionaliteit blijft beschikbaar.
+
+### Foto-analyse via OpenAI
+Laat je een foto analyseren, dan verwerkt OpenAI die in de Verenigde Staten (zie sectie 2 en 4). Dat gebeurt alleen als je zelf een foto uploadt; zonder foto werkt FitFi gewoon.
 
 ## 11. Wijzigingen
 

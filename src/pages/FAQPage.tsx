@@ -33,11 +33,11 @@ const FAQ_GENERAL: QA[] = [
 const FAQ_PRIVACY: QA[] = [
   {
     q: "Hoe gaan jullie met mijn gegevens om?",
-    a: "Wij bewaren alleen je quizantwoorden en outfitvoorkeuren. Geen doorverkoop, geen reclame-tracking. Je kunt je gegevens altijd laten verwijderen via info@fitfi.ai.",
+    a: "Wij bewaren je quizantwoorden, je outfitvoorkeuren en de foto's die je zelf uploadt, zoals een selfie voor de kleuranalyse. Geen doorverkoop, geen reclame-tracking. Je kunt je gegevens altijd laten verwijderen via privacy@fitfi.ai.",
   },
   {
     q: "Moet ik foto's uploaden?",
-    a: "Nee. De quiz werkt zonder foto's. Premium-leden kunnen later optioneel een foto uploaden voor kleuranalyse op basis van ondertoon. Dat is volledig vrijwillig.",
+    a: "Nee. De quiz werkt zonder foto. In de laatste vraag kun je een selfie toevoegen voor de kleuranalyse; die foto gaat daarvoor naar OpenAI in de VS. Dat is volledig vrijwillig.",
   },
   {
     q: "Waarom passen deze outfits bij mij?",
