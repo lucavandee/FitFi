@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -8,7 +8,9 @@ import {
 import ProductCard from '@/components/ProductCard';
 import AffiliateDisclosureNote from '@/components/legal/AffiliateDisclosureNote';
 import { ProductCardSkeleton } from '@/components/ui/ProductCardSkeleton';
-import { useProducts } from '@/hooks/useProducts';
+import { useShopItems } from '@/hooks/useShopItems';
+import { naarKandidatenParams } from '@/services/outfits/kandidaten';
+import { SHOP_PAGINA, zichtbareItems } from '@/services/shop/shopItems';
 import { canonicalUrl } from '@/utils/urls';
 import { track } from '@/utils/telemetry';
 import { LS_KEYS } from '@/lib/quiz/types';
@@ -31,15 +33,6 @@ function readQuiz<T>(key: string): T | null {
   } catch {
     return null;
   }
-}
-
-function buildReason(product: { brand?: string; category?: string; tags?: string[] }, archetypeName: string | null): string {
-  const archetype = archetypeName || 'jouw stijl';
-  const category = product.category || 'item';
-  const tag = product.tags?.[0];
-  if (tag) return `Past bij jouw ${archetype} stijl door ${tag}.`;
-  if (product.category) return `We tonen dit omdat je koos voor ${category}-items die passen bij ${archetype}.`;
-  return `Geselecteerd op basis van jouw stijlprofiel.`;
 }
 
 const CATEGORIES = [
@@ -67,26 +60,16 @@ export default function ShopPage() {
     return null;
   }, []);
 
-  const quizGender = useMemo<'male' | 'female' | 'unisex'>(() => {
-    const answers = readQuiz<Record<string, any>>(LS_KEYS.QUIZ_ANSWERS);
-    const g = answers?.gender;
-    if (g === 'male' || g === 'female') return g;
-    return 'unisex';
+  // De filters die de selectie werkelijk gebruikt, dus ook de standaardgrens
+  // van de site voor wie de quiz niet deed.
+  const quizFilters = useMemo(() => {
+    const p = naarKandidatenParams(readQuiz<Record<string, any>>(LS_KEYS.QUIZ_ANSWERS) ?? {});
+    return { gender: p.p_gender, budgetMin: p.p_budget_min, budgetMax: p.p_budget_max };
   }, []);
 
-  const quizBudgetMax = useMemo<number | undefined>(() => {
-    const answers = readQuiz<Record<string, any>>(LS_KEYS.QUIZ_ANSWERS);
-    if (!answers) return undefined;
-    const b = answers.budget ?? answers.budgetRange;
-    if (typeof b === 'object' && b !== null && typeof b.max === 'number' && b.max > 0) return b.max;
-    if (typeof b === 'number' && b > 0) return b;
-    return undefined;
-  }, []);
+  const { data: products, loading: isLoading, error, afgestemd } = useShopItems();
 
-  const { data: products, loading: isLoading, error } = useProducts({
-    gender: quizGender,
-    budgetMax: quizBudgetMax,
-  });
+  const [aantalZichtbaar, setAantalZichtbaar] = useState(SHOP_PAGINA);
 
   React.useEffect(() => {
     track('page_view', { page: 'shop', view_mode: viewMode });
@@ -123,6 +106,12 @@ export default function ShopPage() {
 
     return filtered;
   }, [products, searchQuery, filters, sortBy]);
+
+  useEffect(() => {
+    setAantalZichtbaar(SHOP_PAGINA);
+  }, [searchQuery, filters, sortBy]);
+
+  const { zichtbaar: zichtbareProducten, resterend } = zichtbareItems(filteredProducts, aantalZichtbaar);
 
   const availableBrands = useMemo(() => {
     if (!products) return [];
@@ -191,12 +180,14 @@ export default function ShopPage() {
           <p className="text-sm text-[#6E6E6E] max-w-2xl">
             {archetype
               ? `Deze items passen bij jouw ${archetype} stijl.`
-              : 'Gecureerde kleding en accessoires afgestemd op jouw persoonlijke stijl.'}
+              : afgestemd
+                ? 'Gecureerde kleding en accessoires afgestemd op jouw persoonlijke stijl.'
+                : 'Gecureerde kleding en accessoires. Met de stijlquiz stemmen we de selectie af op jou.'}
           </p>
         </motion.div>
 
         {/* Active quiz filter context strip */}
-        {(quizGender !== 'unisex' || quizBudgetMax) && (
+        {(quizFilters.gender !== 'unisex' || quizFilters.budgetMax) && (
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -204,14 +195,14 @@ export default function ShopPage() {
             className="flex flex-wrap items-center gap-2 mb-6 px-4 py-3 bg-white border border-[#E5E5E5] rounded-xl text-sm"
           >
             <span className="text-[11px] font-bold uppercase tracking-widest text-[#6E6E6E]">Gefilterd op:</span>
-            {quizGender !== 'unisex' && (
+            {quizFilters.gender !== 'unisex' && (
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F5F0EB] text-[#9A503B]">
-                {quizGender === 'male' ? 'Heren' : 'Dames'}
+                {quizFilters.gender === 'male' ? 'Heren' : 'Dames'}
               </span>
             )}
-            {quizBudgetMax && (
+            {quizFilters.budgetMax > 0 && (
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F5F0EB] text-[#9A503B]">
-                Tot €{quizBudgetMax}
+                {quizFilters.budgetMin > 0 ? `€${quizFilters.budgetMin} tot €${quizFilters.budgetMax}` : `Tot €${quizFilters.budgetMax}`}
               </span>
             )}
             <button
@@ -562,7 +553,7 @@ export default function ShopPage() {
                 role="list"
                 aria-label="Aanbevolen items"
               >
-                {filteredProducts.map((product, index) => (
+                {zichtbareProducten.map((product, index) => (
                   <motion.div
                     key={product.id}
                     initial={{ opacity: 0, y: 16 }}
@@ -577,7 +568,7 @@ export default function ShopPage() {
                       price={product.price ?? 0}
                       imageUrl={product.imageUrl || product.image || ''}
                       deeplink={product.url || '#'}
-                      reason={buildReason(product, archetype)}
+                      reason={product.itemReason}
                       position={index}
                       context={{
                         page: 'shop',
@@ -591,6 +582,19 @@ export default function ShopPage() {
                   </motion.div>
                 ))}
               </motion.div>
+            )}
+
+            {!isLoading && !error && resterend > 0 && (
+              <div className="mt-8 text-center">
+                <button
+                  type="button"
+                  onClick={() => setAantalZichtbaar((n) => n + SHOP_PAGINA)}
+                  aria-label={`Toon meer items, nog ${resterend} te gaan`}
+                  className="min-h-[48px] bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl transition-colors duration-200"
+                >
+                  Toon meer
+                </button>
+              </div>
             )}
           </div>
         </div>

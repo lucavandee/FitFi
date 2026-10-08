@@ -101,8 +101,22 @@ function naarBudget(answers: Record<string, any>): { min: number; max: number } 
   return { min: 0, max: STANDAARD_BUDGET_MAX };
 }
 
-/** Vertaalt de bestaande quiz-antwoorden (LS_KEYS.QUIZ_ANSWERS) naar de RPC-parameters. */
-export function naarKandidatenParams(answers: Record<string, any>): KandidatenParams {
+/** De RPC levert per categorie minstens 1 en hooguit 60 (greatest(1, least(60, p_per_category))). */
+const MIN_PER_CATEGORIE = 1;
+const MAX_PER_CATEGORIE = 60;
+
+function naarPerCategorie(waarde: number | undefined): number {
+  if (waarde === undefined || !Number.isFinite(waarde)) return KANDIDATEN_PER_CATEGORIE;
+  return Math.min(MAX_PER_CATEGORIE, Math.max(MIN_PER_CATEGORIE, Math.floor(waarde)));
+}
+
+/**
+ * Vertaalt de bestaande quiz-antwoorden (LS_KEYS.QUIZ_ANSWERS) naar de
+ * RPC-parameters. `perCategorie` is voor wie meer of minder dan de 40 van de
+ * engine wil (de shop vraagt het maximum); het wordt begrensd op wat de RPC
+ * levert.
+ */
+export function naarKandidatenParams(answers: Record<string, any>, perCategorie?: number): KandidatenParams {
   const a = answers ?? {};
   const budget = naarBudget(a);
   return {
@@ -113,7 +127,7 @@ export function naarKandidatenParams(answers: Record<string, any>): KandidatenPa
     p_axes: {},
     p_liked_ids: [],
     p_disliked_ids: [],
-    p_per_category: KANDIDATEN_PER_CATEGORIE,
+    p_per_category: naarPerCategorie(perCategorie),
   };
 }
 

@@ -49,6 +49,17 @@ describe("naarKandidatenParams", () => {
     expect(naarKandidatenParams({})).toMatchObject({ p_budget_min: 0, p_budget_max: 150 });
   });
 
+  // De shop wil meer per categorie dan de 40 van de engine: de RPC geeft er
+  // hooguit 60 (least(60, ...)), en minstens 1 (greatest(1, ...)).
+  it("neemt een eigen aantal per categorie over, begrensd op wat de RPC levert", () => {
+    expect(naarKandidatenParams({}, 60).p_per_category).toBe(60);
+    expect(naarKandidatenParams({}, 500).p_per_category).toBe(60);
+    expect(naarKandidatenParams({}, 0).p_per_category).toBe(1);
+    expect(naarKandidatenParams({}, 45.7).p_per_category).toBe(45);
+    expect(naarKandidatenParams({}, Number.NaN).p_per_category).toBe(KANDIDATEN_PER_CATEGORIE);
+    expect(naarKandidatenParams({}).p_per_category).toBe(KANDIDATEN_PER_CATEGORIE);
+  });
+
   it("zet een omgekeerd of negatief budget recht en rondt op hele euro's", () => {
     expect(naarKandidatenParams({ budget: { min: 120.4, max: 60.2 } })).toMatchObject({
       p_budget_min: 60,
