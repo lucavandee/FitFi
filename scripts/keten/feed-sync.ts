@@ -77,12 +77,16 @@ async function metHerkansing<T>(naam: string, fn: () => PromiseLike<{ data: T | 
 
 // ─── Feed ophalen ────────────────────────────────────────────────────────────
 
+/** De campagne in affiliate_campaigns heet "H&M", de retailer in products "H&M (NL)". */
+const campagneNaam = (retailer: string): string =>
+  (leesVlag(process.argv.slice(2), "campagne") || retailer.replace(/\s*\(.*\)$/, "")).trim();
+
 async function haalFeedBestand(supabase: SupabaseClient, retailer: string, bestand: string | undefined, map: string): Promise<string> {
   if (bestand) {
     if (!existsSync(bestand)) throw new Error(`Feedbestand bestaat niet: ${bestand}`);
     return bestand;
   }
-  const campagne = (leesVlag(process.argv.slice(2), "campagne") || retailer.replace(/\s*\(.*\)$/, "")).trim();
+  const campagne = campagneNaam(retailer);
   const rij = await metHerkansing("affiliate_campaigns", () =>
     supabase.from("affiliate_campaigns").select("name, feed_url").eq("name", campagne).maybeSingle()
   );
@@ -346,6 +350,14 @@ async function faseB2Herkies(ctx: SchrijfContext): Promise<number> {
   return n;
 }
 
+/** Zodat /admin/affiliate-campaigns laat zien wanneer de feed voor het laatst is verwerkt en hoeveel producten erbij horen. */
+async function markeerCampagne(supabase: SupabaseClient, retailer: string, aantal: number): Promise<void> {
+  const naam = campagneNaam(retailer);
+  const nu = new Date().toISOString();
+  const { error } = await supabase.from("affiliate_campaigns").update({ last_synced_at: nu, product_count: aantal, updated_at: nu }).eq("name", naam);
+  if (error) console.log(`  let op: campagne "${naam}" bijwerken lukte niet: ${error.message}`);
+}
+
 // ─── Terugdraaien ────────────────────────────────────────────────────────────
 
 function leesNdjson<T>(pad: string): T[] {
@@ -493,6 +505,7 @@ async function main(): Promise<void> {
     const bijgewerkt = await faseA1PasToe(ctx, plan.koppelingen, dbPerId);
     const toegevoegd = await faseA2VoegToe(ctx, pad, plan.nieuw);
     console.log(`\nFase a klaar: ${bijgewerkt} bijgewerkt, ${toegevoegd} toegevoegd.`);
+    if (limiet == null) await markeerCampagne(supabase, retailer, plan.koppelingen.length + toegevoegd);
   }
   if (fase === "b" || fase === "alles") {
     const uit = await faseB1ZetUit(ctx, plan.verdwenen);
