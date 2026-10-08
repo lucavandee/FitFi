@@ -2,6 +2,9 @@ import { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
 import { Heart, X } from 'lucide-react';
 
+/** Zichtbaar label op elke moodfoto: de foto's in deze stap zijn met AI gemaakt. */
+export const SWIPE_AI_LABEL = 'Beeld gemaakt met AI';
+
 interface SwipeCardProps {
   imageUrl: string;
   onSwipe: (direction: 'left' | 'right', responseTimeMs: number) => void;
@@ -158,7 +161,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
           {/* Progress Indicator with Enhanced Contrast */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-6">
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-sm font-semibold"
               style={{
@@ -169,6 +172,15 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             >
               <span className="text-xs opacity-90">{index + 1} van {total}</span>
             </div>
+            {/* AI Act art. 50(4): de moodfoto's zijn gegenereerd (bevestigd door
+                Luc, 8 oktober 2026). Het label staat in het beeld, op elke kaart,
+                in dezelfde donkere pil als de teller, dus leesbaar op elke foto. */}
+            <p
+              className="px-3 py-1.5 rounded-full text-white text-sm font-medium"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+            >
+              {SWIPE_AI_LABEL}
+            </p>
           </div>
 
           {/* Drag Indicators - always mounted, opacity driven by motion value to avoid DOM mutations */}
@@ -244,7 +256,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
         )}
       </motion.div>
 
-      {/* Action Buttons — alleen op mobiel, desktop gebruikt eigen knoppen in rechterkolom */}
+      {/* Action Buttons: alleen op mobiel, desktop gebruikt eigen knoppen in rechterkolom */}
       {variant !== 'desktop' && (
       <motion.div
         initial={{ opacity: 1, y: 0 }}
