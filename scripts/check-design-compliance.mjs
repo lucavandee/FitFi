@@ -84,6 +84,8 @@ const CTA_VAST = [
   'Bewaar outfit',
   'Bekijk bij partner',
   'Bekijk je resultaten',
+  // CLAUDE.md deel 17: het anker in de hero van de landingspagina.
+  'Bekijk voorbeeld',
 ];
 
 // varianten die in het verleden zijn opgedoken en niet mogen
