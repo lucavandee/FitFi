@@ -93,6 +93,16 @@ const batterij: Geval[] = [
   { naam: 'Pants EMPORIO ARMANI SWIMWEAR Woman color Natural', beschrijving: '', categoryPath: '', merk: 'Emporio Armani Swimwear' },
   // En het echte zwempak van diezelfde merken moet wél worden afgewezen.
   { naam: 'Swimsuit EA7 SWIMWEAR Men color Black', beschrijving: '', categoryPath: '', merk: 'Ea7 Swimwear' },
+  // Kleding met een bijgeleverd accessoire (8 oktober 2026): blijft kleding. Een echt
+  // accessoire met hetzelfde "met" blijft een accessoire.
+  { naam: 'H & M - Jas met sjaal - Zwart', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Overhemd met stropdas - Wit', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Pantalon met riem - Zwart', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Jas met capuchon en riem - Beige', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Chiffon jurk met sjaal - Lichtroze/Bloemen', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Tas met riem - Zwart', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Muts met sjaal - Grijs', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  { naam: 'H & M - Jas met sjaalkraag - Zwart', beschrijving: '', categoryPath: '', merk: 'H&M' },
 ];
 
 describe('client- en Deno-classifier blijven het eens (bewaking tegen driften)', () => {
