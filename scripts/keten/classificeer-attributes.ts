@@ -52,6 +52,7 @@
  * Gebruik:
  *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer
  *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer -- --retailer "H&M (NL)"
+ *   SUPABASE_SERVICE_ROLE_KEY=... npm run keten:classificeer -- --alleen-veegronde
  * VITE_SUPABASE_URL komt uit de shell of uit .env. De service-role-sleutel
  * komt alleen uit de shell en wordt nooit gelogd.
  *
@@ -89,6 +90,12 @@ const argRetailer = (() => {
   const i = process.argv.indexOf("--retailer");
   return i >= 0 ? process.argv[i + 1] : null;
 })();
+
+// Alleen de veegronde: classificeert uitsluitend rijen zonder classifier_version
+// (de nieuwe rijen na een feed-sync) en laat de volledige paginering over de
+// hele tabel achterwege. Na een sync van 49.000 nieuwe rijen is dat het verschil
+// tussen een minuut en het opnieuw schrijven van 340.000 rijen.
+const alleenVeegronde = process.argv.includes("--alleen-veegronde");
 
 const PAGINA = 1000;
 const client = createClient(url, serviceKey, { auth: { persistSession: false } });
@@ -165,6 +172,7 @@ async function main(): Promise<void> {
   const start = Date.now();
 
   for (;;) {
+    if (alleenVeegronde) break;
     // Elke poging bouwt een verse query: de builder van supabase-js hoort
     // niet twee keer afgevuurd te worden, en dit sluit elke twijfel daarover
     // uit voor metHerhaling hieronder.
@@ -276,7 +284,9 @@ async function main(): Promise<void> {
   // Schone afronding: dit checkpoint is niet meer nodig. Pas hier wissen,
   // na de veegronde, zodat een checkpoint dat een gat had nooit stilzwijgend
   // rijen achterlaat (zie docstring: de veegronde is wat dat garandeert).
-  wisCheckpoint();
+  // Bij --alleen-veegronde is de paginering niet gedraaid en blijft een bestaand
+  // checkpoint van een eerdere volledige run ongemoeid.
+  if (!alleenVeegronde) wisCheckpoint();
 }
 
 main().catch((e) => {
