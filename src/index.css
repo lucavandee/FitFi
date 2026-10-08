@@ -123,10 +123,16 @@
 }
 
 /* Scroll-offset voor anchors en getabte links.
-   De navbar is 72px fixed, de mobiele onderbalk 58px plus safe-area.
+   De vaste kop meet zichzelf en zet --header-h (Navbar.tsx); gemeten 90 px op
+   elke breedte, en dat is ook de terugval zolang er niets gemeten is. 16 px
+   lucht eronder. De mobiele onderbalk is 58 px plus safe-area.
    Zonder deze padding landt het doel eronder (WCAG 2.4.11 Focus Not Obscured). */
+:root {
+  --header-h: 90px;
+}
+
 html {
-  scroll-padding-top: 88px;
+  scroll-padding-top: calc(var(--header-h, 90px) + 16px);
   scroll-padding-bottom: 72px;
 }
 

@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
+import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
 
 const HOME_PATHS = ["/", ""];
 
@@ -45,7 +46,14 @@ export default function Navbar() {
   const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
+  const headerRef = React.useRef<HTMLElement>(null);
   useLockBody(open && !isOnboarding);
+
+  // De kop heeft geen vaste hoogteklasse: een zwevende pil met eigen padding,
+  // 90 px op elke breedte en hoger bij grotere tekst. index.css rekent
+  // scroll-padding-top uit --header-h; sticky labels en ankers kunnen hem ook
+  // lezen. Op de quiz is er geen kop en valt de variabele terug op 90 px.
+  useHoogteInVariabele(headerRef, "--header-h", !isOnboarding);
 
   // Scroll listener: transparent at top, frosted after scroll (all pages)
   React.useEffect(() => {
@@ -142,6 +150,7 @@ export default function Navbar() {
 
   return (
     <header
+      ref={headerRef}
       className="fixed top-0 w-full z-50"
       role="banner"
     >
@@ -218,7 +227,7 @@ export default function Navbar() {
                   Inloggen
                 </a>
                 <a
-                  href="/registreren"
+                  href="/onboarding"
                   className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
                   data-event="nav_start_gratis"
                 >
@@ -379,7 +388,7 @@ export default function Navbar() {
                     Inloggen
                   </a>
                   <a
-                    href="/registreren"
+                    href="/onboarding"
                     className="block bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
                   >
                     Begin gratis
