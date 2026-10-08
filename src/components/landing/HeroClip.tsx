@@ -85,7 +85,11 @@ export default function HeroClip() {
     // Het muted-attribuut uit JSX zet React niet betrouwbaar als eigenschap,
     // en zonder muted weigeren iOS en Chrome het automatisch afspelen.
     video.muted = true;
-    video.play()?.catch(() => {
+    video.play()?.catch((fout: unknown) => {
+      // Een pause() bij een verborgen tab weigert een nog lopende play() met
+      // AbortError. Dat is geen geweigerde autoplay: de visibilitychange-tak
+      // hieronder start de clip weer als de bezoeker terugkomt.
+      if (fout instanceof DOMException && fout.name === "AbortError") return;
       setZichtbaar(false);
       setBron(null);
     });

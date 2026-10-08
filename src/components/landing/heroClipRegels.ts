@@ -10,11 +10,15 @@
  * Herkomst: Kling 3.0 4K vanaf de goedgekeurde stills, gekozen door Luc op
  * 8 oktober 2026 (desktop take A, mobiel take A). Log en metingen staan in
  * ~/claude-artifacts/fitfi-beeld/batch-3-hero/.
+ *
+ * 119 frames op 24 fps is 4,96 s. De bron is 121 frames (5,04 s); twee frames
+ * eraf houdt de clip onder de vijf seconden van WCAG 2.2.2, zodat er geen
+ * pauzeknop nodig is. De naam draagt de eerste acht tekens van de sha256.
  */
 export const HERO_CLIP = {
   breekpunt: "(max-width: 1023px)",
-  mobiel: "/video/hero-mobiel.cb320b81.mp4",
-  desktop: "/video/hero-desktop.be18d8c6.mp4",
+  mobiel: "/video/hero-mobiel.7e2dffc3.mp4",
+  desktop: "/video/hero-desktop.d75ec51f.mp4",
 } as const;
 
 export interface HeroClipOmgeving {
