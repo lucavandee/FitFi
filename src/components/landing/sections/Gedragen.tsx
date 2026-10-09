@@ -15,7 +15,8 @@ function Stappen({ className = "" }: { className?: string }) {
     <ol role="list" className={`list-none divide-y divide-[#E5E5E5] ${className}`}>
       {COPY.stappen.map((stap, i) => (
         <li key={stap.titel.tekst} className="flex gap-4 py-6 first:pt-0 last:pb-0">
-          <span className="w-4 flex-none text-sm text-[#4A4A4A]" aria-hidden="true">
+          {/* leading-6: dezelfde regelhoogte als de titel, dan staan cijfer en titel op een lijn. */}
+          <span className="w-4 flex-none text-sm leading-6 text-[#4A4A4A]" aria-hidden="true">
             {i + 1}
           </span>
           <div>

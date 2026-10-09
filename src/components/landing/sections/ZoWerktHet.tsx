@@ -11,17 +11,18 @@ const MAIL = "privacy@fitfi.ai";
 const TABLET_AS = "md:mx-auto md:w-full md:max-w-[560px] lg:mx-0 lg:max-w-none";
 
 /**
- * De opname van stap 5 (A1), op ware grootte: 390 css-pixels breed. Op de
- * telefoon over de volle breedte zonder kaart, vanaf 768 px in een witte kaart
- * waarvan de onderrand de opname afsnijdt (object-top: het bovenste deel van
- * het scherm blijft staan, de onderkant valt weg). De poster is het eindbeeld;
- * bij reduced motion, Save-Data en 2G blijft alleen die staan. Geen AI-label:
- * dit is de echte app.
+ * De opname van stap 5 (A1) in een witte kaart waarvan de onderrand de opname
+ * afsnijdt (object-top: het bovenste deel van het scherm blijft staan, de
+ * onderkant valt weg). Vanaf 768 px op ware grootte, 390 css-pixels breed. Op
+ * de telefoon ook in de kaart, en daardoor kleiner: over de volle breedte las
+ * de opname als de app zelf, met een sluitknop en opties die niets doen. De
+ * poster is het eindbeeld; bij reduced motion, Save-Data en 2G blijft alleen
+ * die staan. Geen AI-label: dit is de echte app.
  */
 function OpnameKaart({ opname }: { opname: Opname }) {
   return (
     <figure className={`m-0 mt-8 ${TABLET_AS} lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:mt-0`}>
-      <div className="-mx-4 overflow-hidden sm:-mx-6 md:mx-0 md:rounded-2xl md:border md:border-[#E5E5E5] md:bg-white md:px-6 md:pt-6">
+      <div className="overflow-hidden rounded-2xl border border-[#E5E5E5] bg-white px-6 pt-6">
         <div
           className="relative mx-auto max-h-[560px] overflow-hidden"
           style={{ width: "100%", maxWidth: `${opname.breedte}px`, aspectRatio: `${opname.breedte} / ${opname.hoogte}` }}

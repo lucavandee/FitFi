@@ -130,6 +130,9 @@ describe("Zo werkt het (W6)", () => {
     expect(img).not.toBeNull();
     // Het vak is hoogstens 560 px hoog en de opname 650: zonder object-cover werd hij platgedrukt.
     expect(img![0]).toMatch(/object-cover object-top/);
+    // Ook op de telefoon in de kaart: schermbreed las de opname als de app zelf.
+    expect(html).toMatch(/<div class="overflow-hidden rounded-2xl border border-\[#E5E5E5\] bg-white px-6 pt-6">/);
+    expect(html).not.toMatch(/-mx-4/);
     expect(html).toContain(LANDING_COPY.werkwijze.opname.onderschrift.tekst);
     expect(html).toContain('id="werkwijze-opname-uitleg"');
     expect(html).not.toContain("Beeld gemaakt met AI");
