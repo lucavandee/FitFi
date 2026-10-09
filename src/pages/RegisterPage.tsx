@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowRight, Loader as Loader2, Clock, Sparkles, Lock, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Loader as Loader2, ListChecks, Sparkles, Lock, AlertCircle } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
@@ -12,6 +12,11 @@ import {
   type ErrorMessage,
 } from "@/utils/formErrors";
 import { InlineError, ErrorAlert } from "@/components/ui/ErrorAlert";
+import { quizSteps } from "@/data/quizSteps";
+
+// Tellingen uit de quiz zelf, zoals PrivacyPage en HowItWorksPage.
+const AANTAL_VRAGEN = quizSteps.length;
+const AANTAL_OPTIONEEL = quizSteps.filter((stap) => !stap.required).length;
 
 function isEmail(v: string) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
@@ -45,10 +50,14 @@ const strengthTextColors = [
   "text-[#3D8B5E]",
 ] as const;
 
+// Geen invultijd beloven (nooit gemeten) en geen verwijderknop (die bestaat
+// niet). Verwijderen gaat per mail, zoals de privacyverklaring zegt. Ook geen
+// "direct resultaat": het rapport komt na de quiz, en "korte quiz" is het
+// aantal vragen uit de quiz zelf.
 const TRUST_ITEMS = [
-  { icon: Clock, title: "Klaar in 5 minuten", desc: "Korte quiz, direct resultaat" },
+  { icon: ListChecks, title: `${AANTAL_VRAGEN} vragen`, desc: `Je kunt er ${AANTAL_OPTIONEEL} overslaan` },
   { icon: Sparkles, title: "Persoonlijk rapport", desc: "Kleuren, outfits en shoplinks" },
-  { icon: Lock, title: "Jouw data, jouw keuze", desc: "Verwijder je account op elk moment" },
+  { icon: Lock, title: "Je gegevens", desc: "Verwijderen? Mail privacy@fitfi.ai" },
 ];
 
 const RegisterPage: React.FC = () => {
@@ -128,13 +137,13 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       <Seo
-        title="Account aanmaken — FitFi"
-        description="Maak een gratis FitFi account aan en sla je stijlrapport op."
+        title="Account aanmaken | FitFi"
+        description="Maak een gratis FitFi-account aan en sla je stijlrapport op."
         path="/registreren"
       />
 
       <div className="min-h-screen bg-[#FAFAF8] grid grid-cols-1 lg:grid-cols-2">
-        {/* ── Left — Visual block (desktop only) ── */}
+        {/* ── Links: beeldblok (alleen desktop) ── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -150,7 +159,7 @@ const RegisterPage: React.FC = () => {
               {comingFromResults ? "Bewaar je resultaten" : "Start jouw stijlreis"}
             </h2>
             <p className="text-base text-[#4A4A4A] text-center leading-[1.7] mb-12">
-              In ongeveer vijf minuten weet je welke kleuren en outfits bij je passen.
+              Met een gratis account zie je je rapport: je kleurpalet en outfits met links naar winkels.
             </p>
 
             <div className="flex flex-col gap-5 w-full max-w-[320px]">
@@ -174,7 +183,7 @@ const RegisterPage: React.FC = () => {
           </span>
         </motion.div>
 
-        {/* ── Right — Form ── */}
+        {/* ── Rechts: formulier ── */}
         <div className="flex flex-col justify-center items-center p-6 pt-32 md:p-16 min-h-screen lg:min-h-0">
           <div className="w-full max-w-[420px]">
             {/* Mobile logo */}
@@ -370,7 +379,7 @@ const RegisterPage: React.FC = () => {
                   {[
                     "Geen spam. Alleen updates die jij aanzet.",
                     "We vragen alleen wat nodig is voor je rapport.",
-                    "Je kunt je account altijd verwijderen.",
+                    "Wil je je account laten verwijderen? Mail privacy@fitfi.ai.",
                   ].map((text) => (
                     <div key={text} className="text-xs text-[#6E6E6E] flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#A85740] flex-shrink-0" />
@@ -414,7 +423,7 @@ const RegisterPage: React.FC = () => {
                   to="/onboarding"
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
                 >
-                  Start de quiz
+                  Begin gratis
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>

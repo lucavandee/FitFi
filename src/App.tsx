@@ -10,6 +10,7 @@ import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AnalyticsLoader from "@/components/analytics/AnalyticsLoader";
 import Seo from "@/components/seo/Seo";
+import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landingHead";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { RequireQuiz } from "@/components/auth/RequireQuiz";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
@@ -84,47 +85,52 @@ const WEBSITE_SCHEMA = {
 };
 
 const WithSeo = {
-  Home:       () => (<><Seo title="FitFi — Persoonlijk stijladvies in ongeveer 5 minuten" description="Beantwoord een paar vragen en zie welke outfits bij je passen. Directe shoplinks, persoonlijk advies. Gratis starten." path="/" structuredData={ORG_SCHEMA} /><LandingPage /></>),
-  How:        () => (<><Seo title="Hoe het werkt — FitFi" description="In drie stappen van quiz naar complete outfits met shoplinks. Geen foto's nodig, geen account verplicht." path="/hoe-het-werkt" /><HowItWorksPage /></>),
-  Pricing:    () => (<><Seo title="Prijzen — FitFi" description="Gratis starten met je stijlprofiel en drie outfits. Premium geeft onbeperkte outfits, Nova AI en kleuranalyse." path="/prijzen" /><PricingPage /></>),
-  About:      () => (<><Seo title="Over ons — FitFi" description="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak en principes." path="/over-ons" /><AboutPage /></>),
-  Shop:       () => (<><Seo title="Shop — FitFi" description="Kleding en accessoires afgestemd op jouw stijlprofiel. Directe links naar webshops." path="/shop" /><ShopPage /></>),
-  Blog:       () => (<><Seo title="Blog — FitFi" description="Artikelen over stijl, kleding en hoe je bewuste kledingkeuzes maakt." path="/blog" structuredData={WEBSITE_SCHEMA} /><BlogPage /></>),
-  BlogPost:   () => (<><Seo title="Artikel — FitFi" description="Lees meer op de FitFi blog over stijl en kleding." path={typeof window!=="undefined"?window.location.pathname:"/blog"} /><BlogPostPage /></>),
+  // Home zet dezelfde kop als LandingPage: deze Seo-regel is de enige die
+  // twitter:title en twitter:description zet, en die bleven anders op de oude
+  // tekst staan.
+  Home:       () => (<><Seo title={LANDING_TITEL} description={LANDING_BESCHRIJVING} path="/" ogImage={OG_BEELD} structuredData={ORG_SCHEMA} /><LandingPage /></>),
+  // Geen Seo hier: HowItWorksPage zet titel, beschrijving en HowTo zelf, en de
+  // Seo van de pagina wint. Een tweede regel hier kwam nooit in beeld.
+  How:        () => (<HowItWorksPage />),
+  Pricing:    () => (<><Seo title="Prijzen | FitFi" description="Gratis starten met je stijlprofiel en drie outfits. Premium geeft onbeperkte outfits, Nova AI en kleuranalyse." path="/prijzen" /><PricingPage /></>),
+  About:      () => (<><Seo title="Over ons | FitFi" description="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak en principes." path="/over-ons" /><AboutPage /></>),
+  Shop:       () => (<><Seo title="Shop | FitFi" description="Kleding en accessoires afgestemd op jouw stijlprofiel. Directe links naar webshops." path="/shop" /><ShopPage /></>),
+  Blog:       () => (<><Seo title="Blog | FitFi" description="Artikelen over stijl, kleding en hoe je bewuste kledingkeuzes maakt." path="/blog" structuredData={WEBSITE_SCHEMA} /><BlogPage /></>),
+  BlogPost:   () => (<><Seo title="Artikel | FitFi" description="Lees meer op de FitFi blog over stijl en kleding." path={typeof window!=="undefined"?window.location.pathname:"/blog"} /><BlogPostPage /></>),
   FAQ:        () => (<FAQPage />),
-  Contact:    () => (<><Seo title="Contact — FitFi" description="Stuur ons een bericht. Wij reageren binnen 24 uur op vragen over je account of stijladvies." path="/contact" /><ContactPage /></>),
-  Terms:      () => (<><Seo title="Algemene voorwaarden — FitFi" description="De gebruiksvoorwaarden van FitFi." path="/algemene-voorwaarden" /><TermsPage /></>),
-  Privacy:    () => (<><Seo title="Privacybeleid — FitFi" description="Hoe wij omgaan met je gegevens. Transparant en GDPR-compliant." path="/privacy" /><PrivacyPage /></>),
-  Cookies:    () => (<><Seo title="Cookiebeleid — FitFi" description="Welke cookies wij gebruiken en hoe je je voorkeuren kunt aanpassen." path="/cookies" /><CookiesPage /></>),
-  Disclosure: () => (<><Seo title="Affiliate disclosure — FitFi" description="Transparantieverklaring over affiliate links en samenwerkingen." path="/affiliate-disclosure" /><DisclosurePage /></>),
-  Onboarding: () => (<><Seo title="Start je stijlquiz — FitFi" description="Beantwoord een paar vragen en zie direct welke outfits bij je passen." path="/onboarding" noindex /><OnboardingFlow /></>),
-  Results:    () => (<><Seo title="Jouw stijlresultaten — FitFi" description="Jouw persoonlijke outfits met uitleg en directe shoplinks." path="/results" noindex /><EnhancedResults /></>),
-  ResultsPreview: () => (<><Seo title="Voorbeeld stijlrapport — FitFi" description="Bekijk een voorbeeld van een persoonlijk stijlrapport met outfit-aanbevelingen." path="/results/preview" /><ResultsPreview /></>),
-  Login:      () => (<><Seo title="Inloggen — FitFi" description="Log in en zie je opgeslagen outfits en stijlprofiel terug." path="/inloggen" noindex /><LoginPage /></>),
-  Register:   () => (<><Seo title="Account aanmaken — FitFi" description="Maak een gratis account aan en sla je stijlrapport en outfits op." path="/registreren" noindex /><RegisterPage /></>),
-  PasswordReset: () => (<><Seo title="Wachtwoord vergeten — FitFi" description="Ontvang een resetlink om je wachtwoord opnieuw in te stellen." path="/wachtwoord-vergeten" noindex /><PasswordResetPage /></>),
-  Dashboard:  () => (<><Seo title="Dashboard — FitFi" description="Jouw opgeslagen outfits, stijlprofiel en aanbevelingen." path="/dashboard" noindex /><DashboardPage /></>),
-  Profile:    () => (<><Seo title="Profiel — FitFi" description="Bekijk en pas je stijlprofiel aan." path="/profile" noindex /><ProfilePage /></>),
-  Billing:    () => (<><Seo title="Abonnement — FitFi" description="Bekijk je huidige plan en beheer je abonnement." path="/account/billing" noindex /><BillingPage /></>),
-  Analytics:  () => (<><Seo title="Analytics — FitFi" description="Embedding analytics dashboard." path="/admin/analytics" noindex /><EmbeddingAnalytics /></>),
-  AdminProducts: () => (<><Seo title="Product Management — FitFi" description="Stripe products management." path="/admin/products" noindex /><AdminProductsPage /></>),
-  AdminStripeSetup: () => (<><Seo title="Stripe Setup — FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
-  AdminDashboard: () => (<><Seo title="Admin Dashboard — FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
-  AdminMoodPhotos: () => (<><Seo title="Mood Photos Moderation — FitFi Admin" description="Review and moderate mood photos for visual preference quiz." path="/admin/mood-photos" noindex /><AdminMoodPhotosPage /></>),
-  AdminImageManager: () => (<><Seo title="Image Manager — FitFi Admin" description="Bulk upload product images with SKU matching." path="/admin/images" noindex /><AdminImageManagerPage /></>),
-  AdminPWADashboard: () => (<><Seo title="PWA Dashboard — FitFi Admin" description="Monitor PWA installations and push notifications." path="/admin/pwa" noindex /><AdminPWADashboard /></>),
-  AdminUsers: () => (<><Seo title="Gebruikersbeheer — FitFi Admin" description="Beheer alle gebruikers en hun toegang." path="/admin/users" noindex /><AdminUsersPage /></>),
-  AdminAudit: () => (<><Seo title="Audit Log — FitFi Admin" description="Bekijk alle gebruikersactiviteit en systeemgebeurtenissen." path="/admin/audit" noindex /><AdminAuditPage /></>),
-  AdminSwipeAnalytics: () => (<><Seo title="Swipe Analytics — FitFi Admin" description="Bekijk swipe patterns en photo performance analytics." path="/admin/swipe-analytics" noindex /><AdminSwipeAnalyticsPage /></>),
-  AdminBlog: () => (<><Seo title="Blog Beheer — FitFi Admin" description="Beheer blog posts en AI-gegenereerde content." path="/admin/blog" noindex /><AdminBlogManagementPage /></>),
-  AdminBlogNew: () => (<><Seo title="Nieuwe Post — FitFi Admin" description="Maak een nieuwe blog post." path="/admin/blog/new" noindex /><AdminBlogEditorPage /></>),
-  AdminBlogEdit: () => (<><Seo title="Bewerk Post — FitFi Admin" description="Bewerk blog post." path="/admin/blog/edit" noindex /><AdminBlogEditorPage /></>),
-  AdminBlogTopics: () => (<><Seo title="Blog Topics — FitFi Admin" description="Beheer blog topic ideeën." path="/admin/blog/topics" noindex /><AdminBlogTopicsPage /></>),
-  AdminTestimonials: () => (<><Seo title="Testimonials Beheer — FitFi Admin" description="Beheer klant testimonials voor de homepage." path="/admin/testimonials" noindex /><AdminTestimonialsPage /></>),
-  AdminDaisyconImport: () => (<><Seo title="Daisycon Import — FitFi Admin" description="Importeer producten vanuit een Daisycon affiliate feed." path="/admin/daisycon-import" noindex /><AdminDaisyconImportPage /></>),
-  AdminAffiliateCampaigns: () => (<><Seo title="Affiliate Campagnes — FitFi Admin" description="Beheer affiliate campagnes en synchroniseer productfeeds." path="/admin/affiliate-campaigns" noindex /><AdminAffiliateCampaignsPage /></>),
-  AccessibilityTest: () => (<><Seo title="Accessibility Test — FitFi" description="WCAG 2.1 AA compliance test page." path="/accessibility-test" noindex /><AccessibilityTestPage /></>),
-  NotFound:   () => (<><Seo title="Niet gevonden — FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
+  Contact:    () => (<><Seo title="Contact | FitFi" description="Stuur ons een bericht. Wij reageren binnen 24 uur op vragen over je account of stijladvies." path="/contact" /><ContactPage /></>),
+  Terms:      () => (<><Seo title="Algemene voorwaarden | FitFi" description="De gebruiksvoorwaarden van FitFi." path="/algemene-voorwaarden" /><TermsPage /></>),
+  Privacy:    () => (<><Seo title="Privacyverklaring | FitFi" description="Hoe wij omgaan met je gegevens." path="/privacy" /><PrivacyPage /></>),
+  Cookies:    () => (<><Seo title="Cookiebeleid | FitFi" description="Welke cookies wij gebruiken en hoe je je voorkeuren kunt aanpassen." path="/cookies" /><CookiesPage /></>),
+  Disclosure: () => (<><Seo title="Transparantie | FitFi" description="Transparantieverklaring over affiliate links en samenwerkingen." path="/affiliate-disclosure" /><DisclosurePage /></>),
+  Onboarding: () => (<><Seo title="Start je stijlquiz | FitFi" description="Beantwoord vragen over kleur, pasvorm en gelegenheden. Voor je rapport maak je een gratis account." path="/onboarding" noindex /><OnboardingFlow /></>),
+  Results:    () => (<><Seo title="Jouw stijlresultaten | FitFi" description="Jouw persoonlijke outfits met uitleg en directe shoplinks." path="/results" noindex /><EnhancedResults /></>),
+  ResultsPreview: () => (<><Seo title="Voorbeeld stijlrapport | FitFi" description="Bekijk een voorbeeld van een persoonlijk stijlrapport met outfit-aanbevelingen." path="/results/preview" /><ResultsPreview /></>),
+  Login:      () => (<><Seo title="Inloggen | FitFi" description="Log in en zie je opgeslagen outfits en stijlprofiel terug." path="/inloggen" noindex /><LoginPage /></>),
+  Register:   () => (<><Seo title="Account aanmaken | FitFi" description="Maak een gratis account aan en sla je stijlrapport en outfits op." path="/registreren" noindex /><RegisterPage /></>),
+  PasswordReset: () => (<><Seo title="Wachtwoord vergeten | FitFi" description="Ontvang een resetlink om je wachtwoord opnieuw in te stellen." path="/wachtwoord-vergeten" noindex /><PasswordResetPage /></>),
+  Dashboard:  () => (<><Seo title="Dashboard | FitFi" description="Jouw opgeslagen outfits, stijlprofiel en aanbevelingen." path="/dashboard" noindex /><DashboardPage /></>),
+  Profile:    () => (<><Seo title="Profiel | FitFi" description="Bekijk en pas je stijlprofiel aan." path="/profile" noindex /><ProfilePage /></>),
+  Billing:    () => (<><Seo title="Abonnement | FitFi" description="Bekijk je huidige plan en beheer je abonnement." path="/account/billing" noindex /><BillingPage /></>),
+  Analytics:  () => (<><Seo title="Analytics | FitFi" description="Embedding analytics dashboard." path="/admin/analytics" noindex /><EmbeddingAnalytics /></>),
+  AdminProducts: () => (<><Seo title="Product Management | FitFi" description="Stripe products management." path="/admin/products" noindex /><AdminProductsPage /></>),
+  AdminStripeSetup: () => (<><Seo title="Stripe Setup | FitFi" description="Stripe configuration setup." path="/admin/stripe-setup" noindex /><AdminStripeSetupPage /></>),
+  AdminDashboard: () => (<><Seo title="Admin Dashboard | FitFi" description="Centraal admin dashboard voor gebruikersbeheer en metrics." path="/admin" noindex /><AdminDashboardPage /></>),
+  AdminMoodPhotos: () => (<><Seo title="Mood Photos Moderation | FitFi Admin" description="Review and moderate mood photos for visual preference quiz." path="/admin/mood-photos" noindex /><AdminMoodPhotosPage /></>),
+  AdminImageManager: () => (<><Seo title="Image Manager | FitFi Admin" description="Bulk upload product images with SKU matching." path="/admin/images" noindex /><AdminImageManagerPage /></>),
+  AdminPWADashboard: () => (<><Seo title="PWA Dashboard | FitFi Admin" description="Monitor PWA installations and push notifications." path="/admin/pwa" noindex /><AdminPWADashboard /></>),
+  AdminUsers: () => (<><Seo title="Gebruikersbeheer | FitFi Admin" description="Beheer alle gebruikers en hun toegang." path="/admin/users" noindex /><AdminUsersPage /></>),
+  AdminAudit: () => (<><Seo title="Audit Log | FitFi Admin" description="Bekijk alle gebruikersactiviteit en systeemgebeurtenissen." path="/admin/audit" noindex /><AdminAuditPage /></>),
+  AdminSwipeAnalytics: () => (<><Seo title="Swipe Analytics | FitFi Admin" description="Bekijk swipe patterns en photo performance analytics." path="/admin/swipe-analytics" noindex /><AdminSwipeAnalyticsPage /></>),
+  AdminBlog: () => (<><Seo title="Blog Beheer | FitFi Admin" description="Beheer blog posts en AI-gegenereerde content." path="/admin/blog" noindex /><AdminBlogManagementPage /></>),
+  AdminBlogNew: () => (<><Seo title="Nieuwe Post | FitFi Admin" description="Maak een nieuwe blog post." path="/admin/blog/new" noindex /><AdminBlogEditorPage /></>),
+  AdminBlogEdit: () => (<><Seo title="Bewerk Post | FitFi Admin" description="Bewerk blog post." path="/admin/blog/edit" noindex /><AdminBlogEditorPage /></>),
+  AdminBlogTopics: () => (<><Seo title="Blog Topics | FitFi Admin" description="Beheer blog topic ideeën." path="/admin/blog/topics" noindex /><AdminBlogTopicsPage /></>),
+  AdminTestimonials: () => (<><Seo title="Testimonials Beheer | FitFi Admin" description="Beheer klant testimonials voor de homepage." path="/admin/testimonials" noindex /><AdminTestimonialsPage /></>),
+  AdminDaisyconImport: () => (<><Seo title="Daisycon Import | FitFi Admin" description="Importeer producten vanuit een Daisycon affiliate feed." path="/admin/daisycon-import" noindex /><AdminDaisyconImportPage /></>),
+  AdminAffiliateCampaigns: () => (<><Seo title="Affiliate Campagnes | FitFi Admin" description="Beheer affiliate campagnes en synchroniseer productfeeds." path="/admin/affiliate-campaigns" noindex /><AdminAffiliateCampaignsPage /></>),
+  AccessibilityTest: () => (<><Seo title="Accessibility Test | FitFi" description="WCAG 2.1 AA compliance test page." path="/accessibility-test" noindex /><AccessibilityTestPage /></>),
+  NotFound:   () => (<><Seo title="Niet gevonden | FitFi" description="De pagina kon niet worden gevonden." path={typeof window!=="undefined"?window.location.pathname:"/404"} noindex /><NotFoundPage /></>),
 };
 
 function AppShell() {
@@ -140,8 +146,11 @@ function AppShell() {
         <AwinMasterTag />
         <ScrollToTop />
         {!isFullscreen && <Navbar />}
+        {/* Het vangnet is minstens een volle schermhoogte, zodat de footer er
+            nooit onder in beeld staat en daarna verspringt (CLS, gemeten op
+            8 oktober: 0,13 op mobiel door 72 px footer in beeld). */}
         <Suspense fallback={
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center gap-3" style={{ minHeight: 'calc(100vh - 72px)' }} role="status" aria-live="polite">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center gap-3 min-h-screen min-h-lvh" role="status" aria-live="polite">
             <div className="w-8 h-8 border-2 border-[#E5E5E5] border-t-[#A85740] rounded-full animate-spin" aria-hidden="true" />
             <span className="text-sm text-[#6E6E6E]">Laden…</span>
           </div>
@@ -223,14 +232,17 @@ function AppShell() {
             </main>
           )}
         </Suspense>
+        {/* Zonder deze regel kan niemand toestemming geven, blijft analytics op
+            false staan en vuurt track() nooit. gtag.js laadt pas na die
+            toestemming (src/utils/analytics.ts). Direct na main en voor de
+            footer: de banner is fixed, dus de plek in de DOM verandert niets
+            aan het beeld, alleen aan de tabvolgorde. Achteraan waren zijn
+            knoppen tabstop 26 tot 29 op desktop, na de hele footer (fase 4). */}
+        <CookieBanner />
         {!isFullscreen && <Footer />}
         {!isFullscreen && <MobileBottomNav />}
         <InstallPrompt />
         <AnalyticsLoader />
-        {/* Zonder deze regel kan niemand toestemming geven, blijft analytics op
-            false staan en vuurt track() nooit. index.html zet consent mode v2
-            standaard op denied. */}
-        <CookieBanner />
       </ErrorBoundary>
       </MotionConfig>
     </div>

@@ -26,7 +26,7 @@ export default function TermsPage() {
   return (
     <main id="main" className="bg-[#FAFAF8] text-[#1A1A1A]">
       <Helmet>
-        <title>Gebruiksvoorwaarden — FitFi</title>
+        <title>Gebruiksvoorwaarden | FitFi</title>
         <meta name="description" content="Heldere, premium en privacy-first gebruiksvoorwaarden van FitFi." />
         <link rel="canonical" href="https://www.fitfi.ai/terms" />
       </Helmet>
@@ -107,7 +107,7 @@ export default function TermsPage() {
               { id: "wijzigingen", title: "11. Wijzigingen van de voorwaarden", body:
                 <p>We kunnen dit document bijwerken. Grote wijzigingen kondigen we duidelijk aan. De datum bovenaan toont de laatste update.</p> },
               { id: "toepasselijk", title: "12. Toepasselijk recht", body:
-                <p>Nederlands recht is van toepassing. Geschillen worden — waar toegestaan — voorgelegd aan de bevoegde rechter in Nederland. Dit beperkt dwingendrechtelijke EU-consumentenrechten niet.</p> },
+                <p>Nederlands recht is van toepassing. Geschillen worden, waar toegestaan, voorgelegd aan de bevoegde rechter in Nederland. Dit beperkt dwingendrechtelijke EU-consumentenrechten niet.</p> },
               { id: "contact", title: "13. Contact", body:
                 <p>Vragen? Ga naar <NavLink to="/contact" className="underline hover:no-underline">/contact</NavLink> of bekijk de <NavLink to="/veelgestelde-vragen" className="underline hover:no-underline">FAQ</NavLink>.</p> },
             ].map((s) => (

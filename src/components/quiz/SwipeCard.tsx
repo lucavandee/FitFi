@@ -2,6 +2,9 @@ import { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
 import { Heart, X } from 'lucide-react';
 
+/** Zichtbaar label op elke moodfoto: de foto's in deze stap zijn met AI gemaakt. */
+export const SWIPE_AI_LABEL = 'Beeld gemaakt met AI';
+
 interface SwipeCardProps {
   imageUrl: string;
   onSwipe: (direction: 'left' | 'right', responseTimeMs: number) => void;
@@ -102,7 +105,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             aria-label="Instructies voor swipe interactie"
           >
             <span className="text-xl" role="img" aria-label="Wijzende vinger">👇</span>
-            <span>Klik op de knoppen of sleep de foto</span>
+            <span>Klik op de knoppen of sleep het beeld</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -158,7 +161,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
           {/* Progress Indicator with Enhanced Contrast */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-6">
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-sm font-semibold"
               style={{
@@ -169,6 +172,15 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             >
               <span className="text-xs opacity-90">{index + 1} van {total}</span>
             </div>
+            {/* AI Act art. 50(4): de moodfoto's zijn gegenereerd (bevestigd door
+                Luc, 8 oktober 2026). Het label staat in het beeld, op elke kaart,
+                in dezelfde donkere pil als de teller, dus leesbaar op elke foto. */}
+            <p
+              className="px-3 py-1.5 rounded-full text-white text-sm font-medium"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+            >
+              {SWIPE_AI_LABEL}
+            </p>
           </div>
 
           {/* Drag Indicators - always mounted, opacity driven by motion value to avoid DOM mutations */}
@@ -244,7 +256,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
         )}
       </motion.div>
 
-      {/* Action Buttons — alleen op mobiel, desktop gebruikt eigen knoppen in rechterkolom */}
+      {/* Action Buttons: alleen op mobiel, desktop gebruikt eigen knoppen in rechterkolom */}
       {variant !== 'desktop' && (
       <motion.div
         initial={{ opacity: 1, y: 0 }}
@@ -272,7 +284,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
             }}
             className="swipe-button w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-red-300 hover:bg-red-50"
-            aria-label="Niet mijn stijl - veeg of klik links"
+            aria-label="Niet mijn stijl: veeg of klik naar links"
           >
             <X className="w-8 h-8 sm:w-10 sm:h-10 text-red-500" strokeWidth={3} aria-hidden="true" />
           </motion.button>
@@ -317,7 +329,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               delay: 0.5
             }}
             className="swipe-button w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-green-300 hover:bg-green-50"
-            aria-label="Dit spreekt me aan - veeg of klik rechts"
+            aria-label="Dit spreekt me aan: veeg of klik naar rechts"
           >
             <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-green-500" strokeWidth={3} fill="currentColor" aria-hidden="true" />
           </motion.button>

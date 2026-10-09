@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, TrendingUp, Award, Info, ChevronDown, X } from 'lucide-react';
+import { Sparkles, Award, Info, ChevronDown, X } from 'lucide-react';
 import { convertStyleArrayToPreferences, analyzeUserProfile } from '@/engine/profile-mapping';
 
 interface ArchetypePreviewEnhancedProps {
@@ -13,13 +13,11 @@ interface ArchetypeScore {
   archetype: string;
   score: number;
   label: string;
-  emoji: string;
 }
 
 const ARCHETYPE_CONFIG: Record<string, {
   label: string;
   description: string;
-  emoji: string;
   color: string;
   tagline: string;
   traits: string[];
@@ -27,7 +25,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'klassiek': {
     label: 'Klassiek',
     description: 'Tijdloze elegantie en verfijnde stukken',
-    emoji: '👔',
     color: '#A85740',
     tagline: 'Tijdloos & verfijnd',
     traits: ['Preppy', 'Verzorgd', 'Professioneel']
@@ -35,7 +32,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'casual_chic': {
     label: 'Smart Casual',
     description: 'Relaxed maar verzorgd en gepolijst',
-    emoji: '✨',
     color: '#A85740',
     tagline: 'Relaxed & gepolijst',
     traits: ['Toegankelijk', 'Veelzijdig', 'Modern']
@@ -43,7 +39,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'urban': {
     label: 'Urban',
     description: 'Moderne, expressieve streetstyle',
-    emoji: '🎨',
     color: '#A85740',
     tagline: 'Expressief & urban',
     traits: ['Bold', 'Creatief', 'Trendy']
@@ -51,7 +46,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'sportief': {
     label: 'Athletic',
     description: 'Sportief, functioneel en comfortabel',
-    emoji: '⚡',
     color: '#9A503B',
     tagline: 'Actief & functioneel',
     traits: ['Performance', 'Comfort', 'Clean']
@@ -59,7 +53,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'minimalistisch': {
     label: 'Minimalistisch',
     description: 'Clean lijnen en neutrale elegantie',
-    emoji: '◼️',
     color: '#1A1A1A',
     tagline: 'Clean & architectural',
     traits: ['Tijdloos', 'Neutraal', 'Kwaliteit']
@@ -67,7 +60,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'luxury': {
     label: 'Luxury',
     description: 'Premium kwaliteit en verfijning',
-    emoji: '💎',
     color: '#9A503B',
     tagline: 'Premium & exclusief',
     traits: ['Hoogwaardig', 'Verfijnd', 'Statement']
@@ -75,7 +67,6 @@ const ARCHETYPE_CONFIG: Record<string, {
   'streetstyle': {
     label: 'Streetstyle',
     description: 'Bold, urban en vol karakter',
-    emoji: '🔥',
     color: '#A85740',
     tagline: 'Bold & karaktervol',
     traits: ['Expressief', 'Uniek', 'Statement']
@@ -83,22 +74,22 @@ const ARCHETYPE_CONFIG: Record<string, {
   'retro': {
     label: 'Retro',
     description: 'Vintage-geïnspireerde stijl',
-    emoji: '🕰️',
     color: '#A85740',
     tagline: 'Vintage & nostalgisch',
     traits: ['Nostalgisch', 'Karaktervol', 'Uniek']
   }
 };
 
+// Hier stond een matchpercentage ("{n}% match") naast het stijlprofiel. Dat was
+// geen meting: het kwam uit de mix van gekozen stijlen en werd nooit lager dan
+// 65 getoond. Het is weg, net als de emoji per archetype; iconen komen uit
+// Lucide (CLAUDE.md deel 9).
 export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: ArchetypePreviewEnhancedProps) {
   const [archetype, setArchetype] = useState<string | null>(null);
-  const [previousArchetype, setPreviousArchetype] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<number>(0);
   const [showPreview, setShowPreview] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const [showComparison, setShowComparison] = useState(false);
   const [allScores, setAllScores] = useState<ArchetypeScore[]>([]);
-  const [isChanging, setIsChanging] = useState(false);
 
   useEffect(() => {
     if (currentStep < 2) {
@@ -116,17 +107,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
         const occasions = Array.isArray(answers.occasions) ? answers.occasions : [];
         const profile = analyzeUserProfile(stylePrefs, occasions);
 
-        const calculatedConfidence = Math.round((1 - profile.mixFactor) * 100);
-        const newArchetype = profile.dominantArchetype;
-
-        if (newArchetype !== archetype && archetype !== null) {
-          setIsChanging(true);
-          setPreviousArchetype(archetype);
-          setTimeout(() => setIsChanging(false), 600);
-        }
-
-        setArchetype(newArchetype);
-        setConfidence(Math.max(65, calculatedConfidence));
+        setArchetype(profile.dominantArchetype);
         setShowPreview(true);
 
         const scores: ArchetypeScore[] = profile.archetypeScores
@@ -135,8 +116,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
             return {
               archetype: item.archetype,
               score: Math.round(item.score * 100),
-              label: config.label,
-              emoji: config.emoji
+              label: config.label
             };
           })
           .sort((a, b) => b.score - a.score);
@@ -157,6 +137,10 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
   const config = ARCHETYPE_CONFIG[archetype] || ARCHETYPE_CONFIG['casual_chic'];
   const progress = Math.round((currentStep / totalSteps) * 100);
   const topThree = allScores.slice(0, 3);
+  // De scores zijn geen percentages: ze lopen boven de 100 (gemeten: 142, 132
+  // en 91 na twee stijlkeuzes). Geen getal dus, alleen de volgorde en een balk
+  // ten opzichte van de hoogste score.
+  const hoogsteScore = topThree[0]?.score || 1;
 
   return (
     <AnimatePresence mode="wait">
@@ -176,10 +160,9 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
             aria-expanded={!collapsed}
           >
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xl flex-shrink-0">{config.emoji}</span>
               <div className="min-w-0">
                 <span className="text-xs text-[#6E6E6E]">Jouw stijlprofiel</span>
-                <p className="text-sm font-bold text-[#1A1A1A] truncate">{config.label} · {confidence}% match</p>
+                <p className="text-sm font-bold text-[#1A1A1A] truncate">{config.label}</p>
               </div>
             </div>
             <ChevronDown className={`w-4 h-4 text-[#6E6E6E] flex-shrink-0 transition-transform ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
@@ -206,34 +189,6 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
           {/* Main Preview Card */}
           <div className="relative p-4 sm:p-6">
             <div className="flex items-start gap-4">
-
-              {/* Animated Archetype Icon */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={archetype}
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  exit={{ scale: 0, rotate: 180 }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 200,
-                    damping: 15
-                  }}
-                  className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl shadow-md flex items-center justify-center text-3xl sm:text-4xl relative"
-                >
-                  {config.emoji}
-
-                  {/* Change indicator */}
-                  {isChanging && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: [0, 1.2, 0] }}
-                      transition={{ duration: 0.6 }}
-                      className="absolute inset-0 bg-[#A85740] rounded-xl opacity-30"
-                    />
-                  )}
-                </motion.div>
-              </AnimatePresence>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
@@ -279,19 +234,6 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
 
                 {/* Metrics Row */}
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-
-                  {/* Confidence Badge */}
-                  <motion.div
-                    key={`confidence-${confidence}`}
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm"
-                  >
-                    <TrendingUp className="w-3.5 h-3.5 text-green-600" />
-                    <span className="text-xs font-semibold text-[#1A1A1A]">
-                      {confidence}% match
-                    </span>
-                  </motion.div>
 
                   {/* Progress Badge */}
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg shadow-sm">
@@ -372,11 +314,6 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                           #{index + 1}
                         </div>
 
-                        {/* Emoji */}
-                        <div className="text-2xl">
-                          {item.emoji}
-                        </div>
-
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
@@ -394,7 +331,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                           <div className="mt-1.5 h-1.5 bg-[#FAFAF8] rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
-                              animate={{ width: `${item.score}%` }}
+                              animate={{ width: `${Math.round((item.score / hoogsteScore) * 100)}%` }}
                               transition={{ duration: 0.6, delay: index * 0.1 }}
                               className={`h-full rounded-full ${
                                 item.archetype === archetype
@@ -404,18 +341,13 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
                             />
                           </div>
                         </div>
-
-                        {/* Score */}
-                        <div className="flex-shrink-0 text-sm font-bold text-[#1A1A1A]">
-                          {item.score}%
-                        </div>
                       </motion.div>
                     ))}
                   </div>
 
                   {/* Helper text */}
                   <p className="mt-4 text-xs text-[#6E6E6E] text-center">
-                    💡 Deze scores passen zich aan op basis van je antwoorden
+                    Deze scores passen zich aan op basis van je antwoorden
                   </p>
                 </div>
               </motion.div>
@@ -431,7 +363,7 @@ export function ArchetypePreviewEnhanced({ answers, currentStep, totalSteps }: A
               className="px-4 sm:px-6 py-3 border-t border-[#F4E8E3] bg-white/30"
             >
               <p className="text-xs text-[#6E6E6E] text-center">
-                💡 Dit profiel past zich aan terwijl je verder gaat met de quiz
+                Dit profiel past zich aan terwijl je verder gaat met de quiz
               </p>
             </motion.div>
           )}

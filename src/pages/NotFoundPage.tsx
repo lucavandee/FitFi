@@ -5,7 +5,7 @@ const NotFoundPage = () => {
   return (
     <main id="main" className="bg-[#FAFAF8]">
       <Seo
-        title="Pagina niet gevonden — FitFi"
+        title="Pagina niet gevonden | FitFi"
         description="Deze pagina bestaat niet. Ga terug naar de homepage of start de stijlquiz."
         noindex
       />

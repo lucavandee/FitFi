@@ -239,7 +239,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             Welke stijl spreekt je aan?
           </h2>
           <p className="text-xs text-[#6E6E6E] mb-2">
-            <strong className="text-[#1A1A1A]">Swipe</strong> door de foto's — hoe meer, hoe beter je resultaat
+            <strong className="text-[#1A1A1A]">Swipe</strong> door de beelden. Na {MIN_SWIPES_TO_COMPLETE} swipes kun je afronden.
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
@@ -280,7 +280,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
               className="w-full py-2.5 rounded-xl text-xs font-semibold text-[#9A503B] transition-all"
               style={{ background: '#F5F0EB', border: '1.5px solid #F4E8E3' }}
             >
-              Klaar — bekijk mijn stijlprofiel
+              Klaar, bekijk mijn stijlprofiel
             </button>
           ) : (
             <button
@@ -293,7 +293,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           )}
           <p className="text-center text-xs text-[#6E6E6E]">
-            Tik op de knoppen of sleep de foto
+            Tik op de knoppen of sleep het beeld
           </p>
         </div>
       </div>
@@ -329,7 +329,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             }}
           >
             <Sparkles className="w-4 h-4 text-[#9A503B]" />
-            <span className="text-sm font-semibold text-[#1A1A1A]">Visuele Voorkeuren</span>
+            <span className="text-sm font-semibold text-[#1A1A1A]">Visuele voorkeuren</span>
           </div>
 
           <h2
@@ -340,7 +340,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </h2>
 
           <p className="text-sm text-[#6E6E6E] mb-8">
-            <strong className="text-[#1A1A1A] font-semibold">Laatste stap!</strong> Swipe door de foto's — Nova leert van elke keuze en past de selectie aan.
+            {/* Hier stond "Laatste stap!", maar na deze stap komen nog drie outfits
+                om te beoordelen. En "Nova leert van elke keuze": de selectie past
+                zich hoogstens na ADAPT_AFTER_SWIPES swipes aan (loadNextBatch). */}
+            <strong className="text-[#1A1A1A] font-semibold">Swipe</strong> op je eerste indruk. Na {MIN_SWIPES_TO_COMPLETE} swipes kun je afronden.
           </p>
 
           <div className="mb-10">
@@ -364,7 +367,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </div>
             {canComplete && (
               <p className="text-xs text-[#9A503B] mt-1.5 font-medium">
-                Genoeg data verzameld — je kunt nu afronden of doorgaan voor nog betere resultaten
+                Genoeg data verzameld. Je kunt nu afronden of doorgaan voor nog betere resultaten.
               </p>
             )}
           </div>
@@ -421,7 +424,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 color: '#FAFAF8',
               }}
             >
-              Klaar — bekijk mijn stijlprofiel
+              Klaar, bekijk mijn stijlprofiel
             </button>
           ) : (
             <button
@@ -454,7 +457,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[#6E6E6E]">Sleep de foto</span>
+                <span className="text-xs text-[#6E6E6E]">Sleep het beeld</span>
                 <span className="text-xs text-[#6E6E6E]">← →</span>
               </div>
             </div>

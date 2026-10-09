@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
+import { OG_BEELD } from "@/content/landingHead";
 import {
   Check,
   X,
@@ -251,10 +252,10 @@ export default function PricingPage() {
   return (
     <>
       <Seo
-        title="Prijzen — FitFi"
+        title="Prijzen | FitFi"
         description="Free geeft je 3 outfits en shoplinks. Met Premium krijg je onbeperkte outfits, kleuranalyse en een persoonlijke stylist. Vergelijk plannen en kies wat bij jou past."
         path="/prijzen"
-        ogImage="/images/c614360c-fec6-44de-89c5-497a49a852a7.webp"
+        ogImage={OG_BEELD}
       />
 
       <div className="bg-[#FAFAF8] text-[#1A1A1A]">
@@ -426,8 +427,9 @@ export default function PricingPage() {
               {/* ── Premium Card ── */}
               <Reveal delay={0.12}>
                 <article className="relative bg-white border-2 border-[#A85740] rounded-2xl p-12 shadow-[0_16px_48px_rgba(194,101,74,0.08)] flex flex-col h-full">
-                  {/* Badge */}
-                  <div className="bg-[#F4E8E3] text-[#A85740] text-sm font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
+                  {/* Badge. Tekst in #9A503B: 4,88:1 op #F4E8E3; met #A85740
+                      was het 4,26:1 (axe, fase 4). */}
+                  <div className="bg-[#F4E8E3] text-[#9A503B] text-sm font-bold uppercase tracking-[0.5px] px-3.5 py-1.5 rounded-full mb-6 self-start">
                     Aanbevolen
                   </div>
 
@@ -587,8 +589,11 @@ export default function PricingPage() {
             {/* Table */}
             <Reveal delay={0.36}>
               <div className="max-w-[880px] mx-auto bg-white rounded-2xl overflow-hidden border border-[#E5E5E5]">
-                {/* Header row */}
-                <div className="bg-[#FAFAF8] border-b border-[#E5E5E5] grid grid-cols-[1fr_80px_80px] md:grid-cols-[1fr_160px_160px] px-5 md:px-10 py-5">
+                {/* Header row. minmax(0,1fr): met 1fr rekte de eerste kolom op
+                    tot het woord 'Gepersonaliseerde' (129 px), en schoven de
+                    twee kolommen van 80 px op 320 breed 20 px buiten de kaart;
+                    'Onbeperkt' werd 'Onbepe' (fase 4, WCAG 1.4.10). */}
+                <div className="bg-[#FAFAF8] border-b border-[#E5E5E5] grid grid-cols-[minmax(0,1fr)_80px_80px] md:grid-cols-[minmax(0,1fr)_160px_160px] px-5 md:px-10 py-5">
                   <div />
                   <div className="text-xs font-bold uppercase tracking-[1px] text-[#6E6E6E] text-center">Free</div>
                   <div className="text-xs font-bold uppercase tracking-[1px] text-[#A85740] text-center">Premium</div>
@@ -598,11 +603,14 @@ export default function PricingPage() {
                 {COMPARISON_ROWS.map((row, i) => (
                   <div
                     key={row.label}
-                    className={`grid grid-cols-[1fr_80px_80px] md:grid-cols-[1fr_160px_160px] px-5 md:px-10 py-4 ${
+                    className={`grid grid-cols-[minmax(0,1fr)_80px_80px] md:grid-cols-[minmax(0,1fr)_160px_160px] px-5 md:px-10 py-4 ${
                       i < COMPARISON_ROWS.length - 1 ? "border-b border-[#E5E5E5]/50" : ""
                     }`}
                   >
-                    <div className="text-sm md:text-sm font-medium text-[#1A1A1A]">{row.label}</div>
+                    {/* Lange woorden breken in plaats van de kolom op te rekken;
+                        hyphens-auto zet er in het Nederlands een streepje bij
+                        ('Gepersona-liseerde' op 320 breed). */}
+                    <div className="min-w-0 [overflow-wrap:anywhere] hyphens-auto text-sm md:text-sm font-medium text-[#1A1A1A]">{row.label}</div>
                     <div className="flex items-center justify-center">
                       {typeof row.free === "boolean" ? (
                         row.free ? (

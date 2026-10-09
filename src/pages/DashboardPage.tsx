@@ -56,7 +56,7 @@ const ARCHETYPE_COPY: Record<string, { tagline: string; tone: string }> = {
   "Smart Casual":   { tagline: "Moeiteloos voor elke situatie.", tone: "Veelzijdig, verfijnd en altijd raak." },
   "Sporty Sharp":   { tagline: "Energie en vorm in balans.",     tone: "Scherp, actief en zelfverzekerd." },
   "Classic Soft":   { tagline: "Tijdloze elegantie.",            tone: "Verfijnd, warm en aanwezig." },
-  "Streetwear":     { tagline: "Stoer, comfortabel, actueel.",   tone: "Jij draagt wat je wilt — en het werkt." },
+  "Streetwear":     { tagline: "Stoer, comfortabel, actueel.",   tone: "Jij draagt wat je wilt, en het werkt." },
   "Klassiek":       { tagline: "Tijdloos en onberispelijk.",     tone: "Kwaliteit boven trend." },
   "Minimalist":     { tagline: "Minder is altijd meer.",         tone: "Bewust, strak en doordacht." },
   "Bohemian":       { tagline: "Vrij, creatief en onmiskenbaar.", tone: "Van kleding maak jij kunst." },
@@ -203,7 +203,7 @@ export default function DashboardPage() {
         className="flex items-center justify-center px-6 bg-[#FAFAF8]"
         style={{ minHeight: "calc(100vh - 72px)" }}
       >
-        <Helmet><title>Dashboard – FitFi</title></Helmet>
+        <Helmet><title>Dashboard | FitFi</title></Helmet>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -261,9 +261,9 @@ export default function DashboardPage() {
   return (
     <div className="bg-[#FAFAF8] min-h-screen pt-44 md:pt-52 pb-16">
       <Helmet>
-        <title>Dashboard – FitFi</title>
+        <title>Dashboard | FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijldashboard met outfits, kleurprofiel en stijladvies." />
-        <meta property="og:title" content="Dashboard – FitFi" />
+        <meta property="og:title" content="Dashboard | FitFi" />
         <meta property="og:description" content="Jouw persoonlijke stijldashboard." />
         <meta property="og:type" content="website" />
         <meta name="robots" content="noindex, nofollow" />

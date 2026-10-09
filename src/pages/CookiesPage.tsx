@@ -5,7 +5,7 @@ import { Cookie, ShieldCheck, ChartBar as BarChart2, Megaphone, Database, Globe,
 import Seo from '@/components/seo/Seo';
 import { CookieSettings } from '@/components/profile/CookieSettings';
 
-const UPDATED = '7 januari 2026';
+const UPDATED = '9 oktober 2026';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -16,11 +16,14 @@ const fadeUp: Variants = {
   }),
 };
 
+// "Geen marketing-cookies" klopte niet: met de keuze voor partnermeting
+// (consent.marketing) laadt AwinMasterTag het script van Awin. Advertentiepixels
+// staan nergens in de code, en gtag zet ad_storage altijd op denied.
 const TRUST_STATS = [
-  { label: 'Geen marketing-cookies' },
-  { label: 'IP-anonymisatie actief' },
   { label: 'Opt-in voor analytics' },
-  { label: 'GDPR-compliant' },
+  { label: 'Opt-in voor partnermeting' },
+  { label: 'IP-anonymisatie actief' },
+  { label: 'Geen advertentiepixels' },
 ];
 
 function CookieRow({ name, provider, purpose, retention }: {
@@ -52,7 +55,7 @@ const SECTIONS: Section[] = [
       <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
         Cookies zijn kleine tekstbestanden die je browser opslaat. Ze helpen websites om
         voorkeuren te onthouden en functionaliteit te bieden. Naast cookies gebruiken we ook
-        Local Storage — dat werkt hetzelfde maar wordt nooit automatisch naar onze servers
+        Local Storage. Dat werkt hetzelfde, maar wordt nooit automatisch naar onze servers
         verstuurd.
       </p>
     ),
@@ -126,11 +129,16 @@ const SECTIONS: Section[] = [
   {
     id: 'marketing',
     icon: Megaphone,
-    title: '4. Marketing cookies',
+    title: '4. Partnermeting (opt-in)',
+    // Hier stond "We gebruiken geen marketing-cookies", terwijl de banner een
+    // schakelaar Marketing aanbood. Die keuze (consent.marketing) laat
+    // AwinMasterTag het script van Awin laden op /results en /dashboard.
     content: (
       <div className="space-y-4">
         <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
-          <strong>We gebruiken geen marketing-cookies.</strong> Concreet betekent dat:
+          Zet je partnermeting aan, dan mag FitFi op je rapport en je dashboard een script
+          laden van Awin, een netwerk voor partnerlinks. Standaard staat het uit.{' '}
+          <strong>Advertentiepixels gebruiken we niet</strong>, zoals:
         </p>
         <ul className="space-y-2">
           {[
@@ -178,7 +186,8 @@ const SECTIONS: Section[] = [
       <div className="space-y-4">
         <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
           We maken gebruik van drie externe diensten die zelf ook cookies kunnen plaatsen.
-          Alle partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG.
+          Ze hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG. Zet je
+          partnermeting aan, dan komt daar Awin bij (zie punt 4).
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
@@ -204,13 +213,16 @@ const SECTIONS: Section[] = [
     content: (
       <div className="space-y-4">
         <p className="text-[15px] text-[#4A4A4A] leading-[1.7]">
-          Je kunt je cookie-voorkeuren op elk moment wijzigen via drie kanalen:
+          Je kunt je cookie-voorkeuren op elk moment wijzigen:
         </p>
+        {/* Hier stond ook "Do Not Track: we respecteren DNT-headers", maar geen
+            regel code leest navigator.doNotTrack. Het pad in het profiel heet
+            Privacy & cookies (ProfilePage), niet Account. */}
         <ul className="space-y-3">
           {[
-            { label: 'Via je profiel', desc: 'Ga naar Profiel → Account → Cookie-instellingen' },
+            { label: 'Op deze pagina', desc: 'Onderaan, ook zonder account' },
+            { label: 'Via je profiel', desc: 'Met een account, bij Privacy & cookies' },
             { label: 'Via je browser', desc: 'Verwijder cookies handmatig in de browserinstellingen' },
-            { label: 'Do Not Track', desc: 'We respecteren DNT-headers in je browser' },
           ].map((item) => (
             <li key={item.label} className="flex items-start gap-3">
               <div className="w-5 h-5 rounded-full bg-[#3D8B5E]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -223,8 +235,7 @@ const SECTIONS: Section[] = [
           ))}
         </ul>
         <p className="text-xs text-[#6E6E6E] leading-[1.6]">
-          Consent intrekken = cookies verwijderen. Wanneer je analytische cookies uitschakelt
-          via je profiel, worden alle Google Analytics cookies onmiddellijk verwijderd.
+          Zet je analytics uit, dan verwijderen we de cookies van Google Analytics meteen.
         </p>
       </div>
     ),
@@ -404,8 +415,8 @@ export default function CookiesPage() {
   return (
     <>
       <Seo
-        title="Cookies & voorkeuren — FitFi"
-        description="Helder cookiebeleid: functionele en analytische cookies, geen marketing-tracking. Volledige controle over je voorkeuren."
+        title="Cookiebeleid | FitFi"
+        description="Welke cookies FitFi gebruikt en hoe je je keuze aanpast. Analytics en partnermeting alleen met jouw toestemming."
         path="/cookies"
       />
 
@@ -458,8 +469,8 @@ export default function CookiesPage() {
               custom={2}
               className="text-lg text-[#4A4A4A] leading-[1.7] max-w-[520px] mx-auto"
             >
-              We houden het licht en relevant — je hebt de regie. Geen marketing-cookies,
-              analytics alleen met jouw toestemming.{' '}
+              Wat nodig is om in te loggen staat altijd aan. Analytics en partnermeting
+              staan alleen aan met jouw toestemming.{' '}
               <Link
                 to="/contact"
                 className="text-[#A85740] hover:text-[#9A503B] underline underline-offset-4 transition-colors duration-200"
@@ -507,9 +518,9 @@ export default function CookiesPage() {
               className="max-w-[720px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4"
             >
               {[
-                { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Essentiële cookies', desc: 'Altijd aan — nodig voor login en voorkeuren' },
+                { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Essentiële cookies', desc: 'Altijd aan, nodig voor login en voorkeuren' },
                 { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Analytics (opt-in)', desc: 'Alleen met jouw expliciete toestemming' },
-                { icon: X, color: '#C24A4A', bg: 'bg-[#C24A4A]/10', label: 'Marketing cookies', desc: 'Nooit — geen pixel, geen advertentietracking' },
+                { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Partnermeting', desc: 'Alleen met jouw toestemming. Geen advertentiepixels.' },
               ].map((item) => {
                 const Icon = item.icon;
                 return (

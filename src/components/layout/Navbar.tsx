@@ -3,16 +3,21 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
-
-const HOME_PATHS = ["/", ""];
+import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
 
 /**
  * Eén premium Navbar:
- * - Floating pill op een dekkende band
- * - Band en pill transparant op de homepage-hero, dekkend zodra je 40px scrolt
- * - Desktop: links + (Login/Start gratis) of (Dashboard/Uitloggen) bij auth
- * - Mobiel: sheet met dezelfde opties
- * - A11Y: skiplink, aria-expanded, ESC sluit, focus-ring via tokens
+ * - Floating pill op een dekkende band, op elke pagina en vanaf de eerste pixel.
+ *   Op / stond hij eerst transparant boven de hero, met witte tekst op 70
+ *   procent. Gemeten op 9 oktober 2026 (fase 4, L24-methode): Inloggen 1,08:1,
+ *   Contact 1,14 tot 1,4:1, Hoe het werkt 2,3 tot 3,1:1 op de lichte kant van
+ *   de hero, van 768 tot 1440 breed. WCAG 1.4.3 vraagt 4,5:1.
+ * - Desktopnavigatie vanaf lg (1024 px). Tussen 768 en 1023 px paste hij niet:
+ *   'Hoe het werkt' brak af, de kop groeide naar 104 tot 125 px en op 768 viel
+ *   'Begin gratis' 10 px buiten beeld. Daaronder het menu achter de knop.
+ * - Zichtbare focus op het logo en elke link: 2 px #1A1A1A met 2 px afstand.
+ *   Hier stond outline-none ring-0, en dat zette de globale ring uit
+ *   (WCAG 2.4.7).
  * - Auth: Supabase via UserContext
  */
 
@@ -26,6 +31,9 @@ function useLockBody(lock: boolean) {
   }, [lock]);
 }
 
+/** De focusring voor de kop en het menu: beide liggen op wit of #FAFAF8. */
+const FOCUS = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A1A1A]";
+
 const links: Array<{ to: string; label: string }> = [
   { to: "/hoe-het-werkt", label: "Hoe het werkt" },
   { to: "/prijzen", label: "Prijzen" },
@@ -37,25 +45,20 @@ const links: Array<{ to: string; label: string }> = [
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const [savedOutfitsCount, setSavedOutfitsCount] = React.useState(0);
-  const [scrolled, setScrolled] = React.useState(false);
   const { pathname } = useLocation();
   const { user, logout } = useUser();
   const isAuthed = !!user;
-  const isHome = HOME_PATHS.includes(pathname);
   const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
+  const headerRef = React.useRef<HTMLElement>(null);
   useLockBody(open && !isOnboarding);
 
-  // Scroll listener: transparent at top, frosted after scroll (all pages)
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // De kop heeft geen vaste hoogteklasse: een zwevende pil met eigen padding,
+  // 90 px op elke breedte en hoger bij grotere tekst. index.css rekent
+  // scroll-padding-top uit --header-h; sticky labels en ankers kunnen hem ook
+  // lezen. Op de quiz is er geen kop en valt de variabele terug op 90 px.
+  useHoogteInVariabele(headerRef, "--header-h", !isOnboarding);
 
   React.useEffect(() => {
     try {
@@ -80,6 +83,20 @@ export default function Navbar() {
 
   // Sluit menu bij routewissel of ESC
   React.useEffect(() => setOpen(false), [pathname]);
+
+  // Het menu bestaat alleen onder lg. Draait een tablet naar liggend terwijl
+  // het open staat, dan verdwijnt het paneel via lg:hidden, maar bleef de body
+  // op slot (useLockBody) en kon niemand meer scrollen.
+  React.useEffect(() => {
+    if (!open) return;
+    const breed = window.matchMedia("(min-width: 1024px)");
+    const sluit = () => {
+      if (breed.matches) setOpen(false);
+    };
+    sluit();
+    breed.addEventListener("change", sluit);
+    return () => breed.removeEventListener("change", sluit);
+  }, [open]);
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) {
@@ -130,29 +147,17 @@ export default function Navbar() {
 
   const userInitial = user?.name?.[0]?.toUpperCase() || "U";
 
-  // Transparent only on homepage hero (not yet scrolled); all other pages always solid
-  const isTransparent = isHome && !scrolled;
-  const navTextClass = isTransparent
-    ? "text-white/70 hover:text-white"
-    : "text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80";
-  const navActiveTextClass = isTransparent
-    ? "text-white font-semibold"
-    : "text-[#1A1A1A] font-semibold bg-[#F5F0EB]";
-  const hamburgerStroke = isTransparent ? "#FFFFFF" : "#1A1A1A";
-
   return (
     <header
+      ref={headerRef}
       className="fixed top-0 w-full z-50"
       role="banner"
     >
-      {/* Dekkende band achter de pill. De pill dekt maar een deel van de 88px
+      {/* Dekkende band achter de pill. De pill dekt maar een deel van de 90 px
           hoge header, dus zonder deze laag scrolt tekst er zichtbaar doorheen. */}
       <div
         aria-hidden="true"
-        className={[
-          "absolute inset-0 bg-[#FAFAF8] border-b border-[#E5E5E5] transition-opacity duration-200 motion-reduce:transition-none",
-          isTransparent ? "opacity-0" : "opacity-100",
-        ].join(" ")}
+        className="absolute inset-0 bg-[#FAFAF8] border-b border-[#E5E5E5]"
       />
 
       {/* Skip to content */}
@@ -166,33 +171,28 @@ export default function Navbar() {
       {/* Outer container with padding around the pill */}
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-4">
         {/* The pill */}
-        <div
-          className={[
-            "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-all duration-500",
-            isTransparent
-              ? "bg-transparent border border-transparent shadow-none"
-              : "bg-white border border-[#E5E5E5] hover:shadow-md",
-          ].join(" ")}
-        >
+        <div className="flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 bg-white border border-[#E5E5E5] transition-shadow duration-200 hover:shadow-md">
           {/* Brand */}
           <a
             href="/"
-            className="flex-shrink-0 inline-flex items-center min-h-[44px] transition-opacity hover:opacity-85"
+            className={`flex-shrink-0 inline-flex items-center min-h-[44px] rounded-xl transition-opacity hover:opacity-85 ${FOCUS}`}
             aria-label="FitFi Home"
           >
-            <Logo size="sm" variant={isTransparent ? "light" : "default"} />
+            <Logo size="sm" variant="default" />
           </a>
 
           {/* Desktop nav - Center */}
-          <nav className="hidden md:flex items-center gap-1 mx-auto" aria-label="Hoofdmenu">
+          <nav className="hidden lg:flex items-center gap-1 mx-auto" aria-label="Hoofdmenu">
             {links.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 className={({ isActive }) =>
                   [
-                    "inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none outline-none ring-0",
-                    isActive ? navActiveTextClass : `font-medium ${navTextClass}`,
+                    `inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none ${FOCUS}`,
+                    isActive
+                      ? "text-[#1A1A1A] font-semibold bg-[#F5F0EB]"
+                      : "font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80",
                   ].join(" ")
                 }
               >
@@ -202,23 +202,18 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop CTA's */}
-          <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
             {!isAuthed ? (
               <>
                 <a
                   href="/inloggen"
-                  className={[
-                    "inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200",
-                    isTransparent
-                      ? "text-white/70 hover:text-white hover:bg-white/10"
-                      : "text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
-                  ].join(" ")}
+                  className={`inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200 text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB] ${FOCUS}`}
                   data-event="nav_login"
                 >
                   Inloggen
                 </a>
                 <a
-                  href="/registreren"
+                  href="/onboarding"
                   className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
                   data-event="nav_start_gratis"
                 >
@@ -262,7 +257,7 @@ export default function Navbar() {
           <button
             ref={toggleRef}
             type="button"
-            className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
+            className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
             aria-label={open ? "Menu sluiten" : "Menu openen"}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -275,7 +270,7 @@ export default function Navbar() {
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={hamburgerStroke}
+                stroke="#1A1A1A"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -291,7 +286,7 @@ export default function Navbar() {
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={hamburgerStroke}
+                stroke="#1A1A1A"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -311,7 +306,7 @@ export default function Navbar() {
         <>
           {/* Overlay */}
           <div
-            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            className="fixed inset-0 bg-black/40 z-40 lg:hidden"
             onClick={() => setOpen(false)}
           />
 
@@ -322,7 +317,7 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Mobiel navigatiemenu"
-            className="fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-[#FAFAF8] shadow-xl z-50 md:hidden"
+            className="fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-[#FAFAF8] shadow-xl z-50 lg:hidden"
           >
             {/* Close button */}
             <div className="flex items-center justify-end h-16 px-4">
@@ -358,7 +353,7 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     [
-                      "py-3 px-4 text-base rounded-xl border-0 shadow-none outline-none ring-0 transition-colors duration-200",
+                      `py-3 px-4 text-base rounded-xl border-0 shadow-none transition-colors duration-200 ${FOCUS}`,
                       isActive
                         ? "font-semibold text-[#1A1A1A] bg-[#F5F0EB]"
                         : "font-medium text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]",
@@ -379,7 +374,7 @@ export default function Navbar() {
                     Inloggen
                   </a>
                   <a
-                    href="/registreren"
+                    href="/onboarding"
                     className="block bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl text-center transition-colors duration-200"
                   >
                     Begin gratis
