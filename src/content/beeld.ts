@@ -253,4 +253,16 @@ export interface Opname {
   hoogte: number;
 }
 
-export const OPNAME_A1: Opname | null = null;
+/**
+ * A1: de echte quiz in de mobiele weergave, stap 5 naar stap 6, 4,800 s (120
+ * beelden op 25 fps, elk beeld op een virtuele klok gezet; afwijking tussen
+ * beelden 0,21 ms). 780 x 1300 op 2x, dus 390 x 650 css-pixels op ware grootte.
+ * Opgenomen op de lokale build met onderschepte schrijfacties, nooit naar
+ * Higgsfield. Verslag: claude-artifacts/fitfi-beeld/pagina/fase3/a1/a1.md.
+ */
+export const OPNAME_A1: Opname | null = {
+  clip: "/video/quiz-stap5_3x5.891aa5a8.mp4",
+  poster: "/beeld/quiz-stap5_3x5.18c3bc2f.webp",
+  breedte: 390,
+  hoogte: 650,
+};

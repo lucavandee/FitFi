@@ -150,12 +150,12 @@ describe("beweringenregister: vorm", () => {
   it("hoogstens 300 woorden onder de hero (G20)", () => {
     const c = LANDING_COPY;
     const zichtbaar = [
-      c.gedragen.kop, ...c.gedragen.tekst,
+      c.gedragen.kop, ...c.gedragen.stappen.flatMap((s) => [s.titel, ...s.tekst]),
       c.kleur.stap, c.kleur.kop, c.kleur.antwoord, c.kleur.antwoordUitleg, c.kleur.profiel, c.kleur.slot,
       c.outfit.kop, c.outfit.tekst,
       ...Object.values(c.outfit.stukken), ...Object.values(c.outfit.stukken).map(() => c.outfit.partnerlink),
       c.outfit.vergoeding, c.outfit.vergoedingLink, c.outfit.begin,
-      c.werkwijze.kop, ...c.werkwijze.stappen.flatMap((s) => [s.titel, ...s.tekst]), c.werkwijze.opname.onderschrift,
+      c.werkwijze.kop, c.werkwijze.opname.onderschrift,
       c.gegevens.kop, ...c.gegevens.rijen.flatMap((r) => [r.label, r.tekst]), c.gegevens.link,
       c.slot.stap, c.slot.kop, c.slot.tekst, c.slot.knop,
     ].map((z) => z.tekst.replace("{N}", "6"));

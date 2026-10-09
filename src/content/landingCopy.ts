@@ -76,24 +76,59 @@ export const LANDING_COPY = {
       { bestand: QUIZ, zoek: "Kies wat jij graag draagt." },
       { bestand: QUIZ, zoek: "title: 'Welke kleuren draag jij het liefst?'" },
     ),
-    tekst: [
-      zin(
-        "Je beantwoordt vragen over kleur, pasvorm en gelegenheden.",
-        { bestand: QUIZ, zoek: "title: 'Welke kleuren draag jij het liefst?'" },
-        { bestand: QUIZ, zoek: "title: 'Welke pasvorm prefereer je?'" },
-        { bestand: QUIZ, zoek: "title: 'Voor welke gelegenheden zoek je outfits?'" },
-      ),
-      zin(
-        "Daarna kies je uit foto's wat je aanspreekt.",
-        { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "setTransitionTo('swipes');" },
-        { bestand: "src/components/quiz/VisualPreferenceStepClean.tsx", zoek: "Swipe</strong> door de foto's" },
-      ),
+    stappen: [
+      {
+        titel: zin("14 vragen", STAPPEN(14)),
+        tekst: [
+          zin(
+            "Over kleur, pasvorm, gelegenheden en budget.",
+            { bestand: QUIZ, zoek: "title: 'Welke kleuren draag jij het liefst?'" },
+            { bestand: QUIZ, zoek: "title: 'Welke pasvorm prefereer je?'" },
+            { bestand: QUIZ, zoek: "title: 'Voor welke gelegenheden zoek je outfits?'" },
+            { bestand: QUIZ, zoek: "title: 'Wat is jouw budget per kledingstuk?'" },
+          ),
+          zin("Vijf zijn optioneel.", { data: "optioneleStappen", waarde: 5, inTekst: "Vijf" }),
+        ],
+      },
+      {
+        /*
+         * "Beelden", niet "foto's": de swipestap toont met AI gemaakte beelden en
+         * draagt dat label. "Minstens 15" klopte niet: 15 is alleen het punt
+         * waarop je kunt afronden, en de stap is over te slaan.
+         */
+        titel: zin("Beelden en outfits", { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "'swipes' | 'calibration'" }),
+        tekst: [
+          zin("Je swipet door beelden van outfits.", {
+            bestand: "src/components/quiz/SwipeCard.tsx",
+            zoek: "export const SWIPE_AI_LABEL = 'Beeld gemaakt met AI';",
+          }),
+          zin(
+            "Daarna beoordeel je 3 outfits die FitFi voor je samenstelt.",
+            { data: "kalibratieOutfits", waarde: 3, inTekst: "3" },
+          ),
+        ],
+      },
+      {
+        titel: zin("Je rapport", { bestand: "src/App.tsx", zoek: 'path="/results"' }),
+        tekst: [
+          zin(
+            "Kleurpalet, stijlprofiel en outfits met links naar winkels.",
+            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "<ColorPaletteSection" },
+            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "StyleProfileGenerator.generateStyleProfile(" },
+            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "affiliateUrl: p.affiliateUrl || p.affiliate_url," },
+          ),
+          zin("Hiervoor maak je een gratis account.", {
+            bestand: "src/App.tsx",
+            zoek: '<Route path="/results" element={<RequireAuth>',
+          }, { bestand: "src/pages/PricingPage.tsx", zoek: "€0" }),
+        ],
+      },
     ],
   },
 
   kleur: {
     stap: zin(
-      "Stap 3 van 14",
+      "Uit de quiz, stap 3 van 14",
       { data: "stapKleuren", waarde: 3, inTekst: "3" },
       STAPPEN(14),
       { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "Stap {currentStep + 1} van {quizSteps.length}" },
@@ -116,7 +151,7 @@ export const LANDING_COPY = {
      * foto's het palet zomer, niet herfst. Daarom zonder foto's.
      */
     profiel: zin(
-      "Het voorbeeldprofiel koos dit antwoord. Zijn rapport toont onder ‘Draag deze kleuren’:",
+      "In het voorbeeld is het gekozen antwoord ‘Warme tinten’. Het rapport toont onder ‘Draag\u00a0deze\u00a0kleuren’:",
       { bestand: "src/content/voorbeeldprofiel.ts", zoek: "neutrals: 'warm'" },
       { bestand: "src/components/results/ColorPaletteSection.tsx", zoek: "Draag deze kleuren" },
       {
@@ -181,47 +216,7 @@ export const LANDING_COPY = {
   },
 
   werkwijze: {
-    kop: zin("Zo werkt de quiz", { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "type QuizPhase" }),
-    stappen: [
-      {
-        titel: zin("14 vragen", STAPPEN(14)),
-        tekst: [
-          zin(
-            "Over kleur, pasvorm, gelegenheden en budget.",
-            { bestand: QUIZ, zoek: "title: 'Welke kleuren draag jij het liefst?'" },
-            { bestand: QUIZ, zoek: "title: 'Welke pasvorm prefereer je?'" },
-            { bestand: QUIZ, zoek: "title: 'Voor welke gelegenheden zoek je outfits?'" },
-            { bestand: QUIZ, zoek: "title: 'Wat is jouw budget per kledingstuk?'" },
-          ),
-          zin("Vijf zijn optioneel.", { data: "optioneleStappen", waarde: 5, inTekst: "Vijf" }),
-        ],
-      },
-      {
-        titel: zin("Foto's en outfits", { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "'swipes' | 'calibration'" }),
-        tekst: [
-          zin(
-            "Je kiest uit minstens 15 foto's en beoordeelt 3 outfits.",
-            { data: "minimumSwipes", waarde: 15, inTekst: "15" },
-            { data: "kalibratieOutfits", waarde: 3, inTekst: "3" },
-          ),
-        ],
-      },
-      {
-        titel: zin("Je rapport", { bestand: "src/App.tsx", zoek: 'path="/results"' }),
-        tekst: [
-          zin(
-            "Kleurpalet, stijlprofiel en outfits met links naar winkels.",
-            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "<ColorPaletteSection" },
-            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "StyleProfileGenerator.generateStyleProfile(" },
-            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "affiliateUrl: p.affiliateUrl || p.affiliate_url," },
-          ),
-          zin("Hiervoor maak je een gratis account.", {
-            bestand: "src/App.tsx",
-            zoek: '<Route path="/results" element={<RequireAuth>',
-          }, { bestand: "src/pages/PricingPage.tsx", zoek: "€0" }),
-        ],
-      },
-    ],
+    kop: zin("Zo ziet de quiz eruit", { bestand: "src/content/beeld.ts", zoek: "export const OPNAME_A1: Opname | null = {" }),
     opname: {
       onderschrift: zin(
         "Opname uit de quiz, stap 5 van 14, mobiele weergave.",
