@@ -232,14 +232,17 @@ function AppShell() {
             </main>
           )}
         </Suspense>
+        {/* Zonder deze regel kan niemand toestemming geven, blijft analytics op
+            false staan en vuurt track() nooit. gtag.js laadt pas na die
+            toestemming (src/utils/analytics.ts). Direct na main en voor de
+            footer: de banner is fixed, dus de plek in de DOM verandert niets
+            aan het beeld, alleen aan de tabvolgorde. Achteraan waren zijn
+            knoppen tabstop 26 tot 29 op desktop, na de hele footer (fase 4). */}
+        <CookieBanner />
         {!isFullscreen && <Footer />}
         {!isFullscreen && <MobileBottomNav />}
         <InstallPrompt />
         <AnalyticsLoader />
-        {/* Zonder deze regel kan niemand toestemming geven, blijft analytics op
-            false staan en vuurt track() nooit. gtag.js laadt pas na die
-            toestemming (src/utils/analytics.ts). */}
-        <CookieBanner />
       </ErrorBoundary>
       </MotionConfig>
     </div>

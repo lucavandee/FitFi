@@ -42,7 +42,18 @@ const CONTAINER = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
  * - Geen serif-watermerk, geen kolomkoppen in terracotta kapitalen, geen
  *   pillen "GDPR" en "SSL".
  * - Dezelfde container als de rest van de pagina.
- * - Mobiel staan de links in twee kolommen.
+ * - Mobiel staan de links in twee kolommen. De juridische links gaan naar een
+ *   kolom zodra twee kolommen van 7rem niet passen: bij gewone tekst nooit,
+ *   bij 150 procent tekst op 390 breed wel. Een vaste grens van 420 px maakte
+ *   de footer op / van 320 tot 412 breed 762 px hoog, en F3 staat hoogstens
+ *   760 toe.
+ * - Geen slogan onder het logo. Daar stond "Stijladvies afgestemd op jou. Op
+ *   basis van je kleuren, voorkeuren en levensstijl." In fase 4 was dat de
+ *   enige zin onder de hero die als algemene marketing las.
+ * - Bij 200 procent tekst liep de footer over: op 360 en 390 breed het woord
+ *   'Voorwaarden' in de juridische kolom, op 1024 de kolom Juridisch tot
+ *   1142 px (fase 4, WCAG 1.4.4). Daarom min-w-0 op de kolommen, minmax(0,...)
+ *   in het desktopraster en lange woorden die mogen breken.
  * - Staat de cookiebanner open, dan groeit de onderkant met --banner-h mee,
  *   zodat de laatste links boven de banner kunnen scrollen (WCAG 2.4.11).
  */
@@ -62,9 +73,11 @@ export default function Footer() {
       {toonCta && (
         <div className={`${CONTAINER} py-40`}>
           <div className="bg-white border border-[#E5E5E5] rounded-2xl p-14 md:p-20 flex flex-col items-center text-center gap-3 transition-shadow duration-200 hover:shadow-md">
-            <p className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A]">
+            {/* Een kop, geen p met kopopmaak: zo staat hij in de kopstructuur
+                (axe p-as-heading op /prijzen en /hoe-het-werkt, fase 4). */}
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A]">
               Ontdek jouw stijl
-            </p>
+            </h2>
             <p className="text-base text-[#4A4A4A] max-w-prose">
               De quiz is gratis. Voor je rapport maak je een gratis account.
             </p>
@@ -83,17 +96,14 @@ export default function Footer() {
       )}
 
       {/* Merk en links */}
-      <div className={`${CONTAINER} grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-[2.5fr_1fr_1fr_1fr] lg:gap-16 ${toonCta ? "" : "pt-16"}`}>
+      <div className={`${CONTAINER} grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-16 ${toonCta ? "" : "pt-16"}`}>
 
-        {/* Mobiel staan logo en sociale knoppen naast elkaar en de zin eronder
-            (order-last); vanaf lg onder elkaar in de volgorde van de DOM. */}
-        <div className="col-span-2 lg:col-span-1 flex flex-wrap items-center justify-between gap-y-4 lg:block">
+        {/* Mobiel staan logo en sociale knoppen naast elkaar; vanaf lg onder
+            elkaar in de volgorde van de DOM. */}
+        <div className="col-span-2 lg:col-span-1 min-w-0 flex flex-wrap items-center justify-between gap-y-4 lg:block">
           <div className="lg:mb-5">
             <Logo size="sm" variant="default" className="text-[26px]" />
           </div>
-          <p className="order-last w-full text-sm text-[#4A4A4A] leading-relaxed max-w-prose lg:max-w-[280px]">
-            Stijladvies afgestemd op jou. Op basis van je kleuren, voorkeuren en levensstijl.
-          </p>
           <div className="flex gap-2 lg:mt-7">
             {SOCIAL.map(({ href, label, Icon }) => (
               <a
@@ -155,15 +165,15 @@ function FooterLinks({
   breed?: boolean;
 }) {
   return (
-    <div className={breed ? "col-span-2 lg:col-span-1" : undefined}>
+    <div className={breed ? "col-span-2 lg:col-span-1 min-w-0" : "min-w-0"}>
       <p className="text-sm font-semibold text-[#1A1A1A] mb-2">{titel}</p>
       <nav aria-label={label}>
-        <ul className={`list-none p-0 m-0 ${breed ? "grid grid-cols-2 gap-x-6 lg:grid-cols-1" : ""}`}>
+        <ul className={`list-none p-0 m-0 ${breed ? "grid grid-cols-[repeat(auto-fit,minmax(min(100%,max(7rem,calc(50%-0.75rem))),1fr))] gap-x-6 lg:grid-cols-1" : ""}`}>
           {links.map((link) => (
             <li key={link.to}>
               <NavLink
                 to={link.to}
-                className="block py-3 text-sm text-[#4A4A4A] hover:text-[#1A1A1A] hover:underline underline-offset-2 transition-colors duration-200"
+                className="block py-3 text-sm text-[#4A4A4A] [overflow-wrap:anywhere] hyphens-auto hover:text-[#1A1A1A] hover:underline underline-offset-2 transition-colors duration-200"
               >
                 {link.label}
               </NavLink>

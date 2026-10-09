@@ -55,6 +55,42 @@ describe("Navbar", () => {
     const bron = readFileSync(join(__dirname, "../Navbar.tsx"), "utf-8");
     expect(bron).not.toContain('"/registreren"');
   });
+
+  /*
+   * Fase 4 (toegankelijkheid): op / stond de kop transparant boven de hero met
+   * witte tekst op 70 procent, 1,08 tot 3,1:1 (WCAG 1.4.3), en de vijf links
+   * hadden outline-none ring-0, dus geen zichtbare focus (2.4.7). Tussen 768
+   * en 1023 px paste de desktopnavigatie niet: de kop werd 104 tot 125 px hoog.
+   */
+  it("op / vanaf het begin de dekkende kop, zonder witte tekst", () => {
+    const html = render("/", <Navbar />);
+    expect(html).not.toMatch(/text-white\/70|variant="light"|opacity-0/);
+    expect(html).toContain("bg-white border border-[#E5E5E5]");
+  });
+
+  it("logo en elke link in de kop krijgen een zichtbare focusring", () => {
+    const html = render("/", <Navbar />);
+    const ring = "focus-visible:outline-[#1A1A1A]";
+    for (const m of html.matchAll(/<a\b([^>]*)>/g)) {
+      const attrs = m[1];
+      if (/sr-only/.test(attrs)) continue; // de skiplink heeft zijn eigen stijl
+      if (/bg-\[#A85740\]/.test(attrs)) continue; // 'Begin gratis' houdt de globale ring
+      expect(attrs).toContain(ring);
+    }
+    // Het mobiele menu rendert pas na een klik: daar de bron, zonder commentaar.
+    const bron = readFileSync(join(__dirname, "../Navbar.tsx"), "utf-8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/\/\/.*$/gm, "");
+    expect(bron).not.toMatch(/outline-none ring-0/);
+    expect(bron).toMatch(/py-3 px-4 text-base rounded-xl[^`]*\$\{FOCUS\}/);
+  });
+
+  it("de desktopnavigatie begint bij lg; daaronder het menu achter de knop", () => {
+    const html = render("/prijzen", <Navbar />);
+    expect(html).toMatch(/<nav class="hidden lg:flex[^"]*" aria-label="Hoofdmenu"/);
+    expect(html).toMatch(/<button[^>]*class="lg:hidden /);
+    expect(html).not.toMatch(/\bmd:(flex|hidden)\b/);
+  });
 });
 
 describe("Footer (F1 en F2)", () => {
@@ -70,6 +106,26 @@ describe("Footer (F1 en F2)", () => {
       expect(linksMetTekst(html, "Begin gratis")).toEqual(["/onboarding"]);
       expect(html).toContain("Ontdek jouw stijl");
     }
+  });
+
+  it("de kop van de CTA-strook is een h2, geen p met kopopmaak (axe p-as-heading)", () => {
+    const html = render("/prijzen", <Footer />);
+    expect(html).toMatch(/<h2\b[^>]*>\s*Ontdek jouw stijl\s*<\/h2>/);
+  });
+
+  it("geen slogan onder het logo", () => {
+    for (const pad of ["/", "/prijzen"]) {
+      expect(render(pad, <Footer />)).not.toContain("afgestemd op jou");
+    }
+  });
+
+  it("bij 200 procent tekst mogen kolommen krimpen en lange woorden breken", () => {
+    const html = render("/", <Footer />);
+    expect(html).toContain("lg:grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]");
+    expect(html).toContain("grid-cols-[repeat(auto-fit,minmax(min(100%,max(7rem,calc(50%-0.75rem))),1fr))]");
+    const links = [...html.matchAll(/<a\b[^>]*class="block py-3[^"]*"/g)];
+    expect(links.length).toBeGreaterThan(0);
+    for (const l of links) expect(l[0]).toContain("[overflow-wrap:anywhere]");
   });
 
   it("geen CTA-strook voor wie ingelogd is", () => {
