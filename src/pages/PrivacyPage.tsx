@@ -18,7 +18,7 @@ export default function PrivacyPage() {
   return (
     <>
       <Helmet>
-        <title>Privacy - FitFi</title>
+        <title>Privacyverklaring | FitFi</title>
         <meta name="description" content="Privacyverklaring van FitFi. Transparant over hoe we omgaan met je gegevens." />
       </Helmet>
 

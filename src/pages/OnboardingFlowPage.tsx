@@ -56,7 +56,7 @@ async function saveProgressToSupabase(userId: string, step: number, ph: string, 
       { onConflict: 'user_id' }
     );
   } catch {
-    // silent — localStorage is the primary store
+    // stil: localStorage is de eerste opslag
   }
 }
 
@@ -744,8 +744,8 @@ export default function OnboardingFlowPage() {
           className="min-h-screen bg-[#FAFAF8] text-[#1A1A1A]"
         >
           <Helmet>
-            <title>Jouw Visuele Voorkeuren – FitFi</title>
-            <meta name="description" content="Swipe door outfits om je stijl te verfijnen" />
+            <title>Visuele voorkeuren | FitFi</title>
+            <meta name="description" content="Kies welke outfits je aanspreken." />
           </Helmet>
 
           <motion.div
@@ -800,8 +800,8 @@ export default function OnboardingFlowPage() {
       <>
         <main className="min-h-screen bg-[#FAFAF8] text-[#1A1A1A] relative">
           <Helmet>
-            <title>Verfijn Je Profiel – FitFi</title>
-            <meta name="description" content="Rate outfits om je aanbevelingen te perfectioneren" />
+            <title>Outfits beoordelen | FitFi</title>
+            <meta name="description" content="Beoordeel drie outfits die FitFi voor je samenstelt." />
           </Helmet>
 
           {/* Loading Overlay */}
@@ -886,10 +886,10 @@ export default function OnboardingFlowPage() {
 
   return (
     <>
-      {/* Fullscreen quiz shell — geen Navbar, geen Footer */}
+      {/* Quiz over het hele scherm: geen Navbar, geen Footer */}
       <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', minHeight: '-webkit-fill-available', backgroundColor: '#FAFAF8', color: '#1A1A1A', overflow: 'hidden' }}>
         <Helmet>
-          <title>Start je Style Report – FitFi</title>
+          <title>Start je stijlquiz | FitFi</title>
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
@@ -947,7 +947,7 @@ export default function OnboardingFlowPage() {
                 {step.field === 'stylePreferences' && (
                   <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#A85740', fontWeight: 500 }}>
                     <CheckCircle style={{ width: '14px', height: '14px' }} />
-                    Kies 2–3 stijlen
+                    Kies 2 tot 3 stijlen
                   </div>
                 )}
               </div>
@@ -1044,7 +1044,7 @@ export default function OnboardingFlowPage() {
               </div>
             )}
 
-            {/* Budget range — min + max inputs */}
+            {/* Budgetbereik: invoer voor minimum en maximum */}
             {step.type === 'budget-range' && (() => {
               const rangeVal = (answers[step.field as keyof QuizAnswers] as { min?: number; max?: number } | undefined) || {};
               const minVal = typeof rangeVal.min === 'number' ? rangeVal.min : (step.min ?? 0);
@@ -1071,7 +1071,7 @@ export default function OnboardingFlowPage() {
                 <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E5E5', padding: '20px' }}>
                   <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                     <div style={{ fontSize: '36px', fontWeight: 700, color: '#A85740', lineHeight: 1.1 }}>
-                      €{minVal} – €{maxVal}
+                      €{minVal} tot €{maxVal}
                     </div>
                     <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
                       {tierLabel}
@@ -1122,7 +1122,7 @@ export default function OnboardingFlowPage() {
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#6E6E6E' }}>
                     <span>€{sliderMin} Budget</span>
-                    <span>€75–150 Midden</span>
+                    <span>€75 tot 150 Midden</span>
                     <span>€{sliderMax}+ Premium</span>
                   </div>
                   {step.helperText && (
@@ -1182,7 +1182,7 @@ export default function OnboardingFlowPage() {
                 />
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: '#6E6E6E' }}>
                   <span>€{step.min || 0} Budget</span>
-                  <span>€75–150 Midden</span>
+                  <span>€75 tot 150 Midden</span>
                   <span>€{step.max || 100}+ Premium</span>
                 </div>
               </div>
@@ -1311,7 +1311,7 @@ export default function OnboardingFlowPage() {
 
 
 
-      {/* Review Modal — samenvatting van keuzes voor submit */}
+      {/* Overzicht: samenvatting van de keuzes voor het versturen */}
       {showReviewModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4 animate-in fade-in duration-200">
           <motion.div
@@ -1345,7 +1345,7 @@ export default function OnboardingFlowPage() {
                 const val = answers[s.field as keyof QuizAnswers];
                 const hasValue = val !== undefined && val !== null && val !== '' &&
                   (Array.isArray(val) ? val.length > 0 : true);
-                let displayVal = '—';
+                let displayVal = '';
                 if (hasValue) {
                   if (Array.isArray(val)) {
                     const joined = (val as string[]).join(', ');
@@ -1355,7 +1355,7 @@ export default function OnboardingFlowPage() {
                   } else if (typeof val === 'object') {
                     if (s.field === 'budget' && typeof (val as any).max === 'number') {
                       const b = val as { min?: number; max: number };
-                      displayVal = typeof b.min === 'number' ? `€${b.min} – €${b.max} per kledingstuk` : `€${b.max} per kledingstuk`;
+                      displayVal = typeof b.min === 'number' ? `€${b.min} tot €${b.max} per kledingstuk` : `€${b.max} per kledingstuk`;
                     } else {
                       const entries = Object.entries(val as Record<string, string>).filter(([, v]) => v);
                       displayVal = entries.length > 0 ? entries.map(([, v]) => v).join(' · ') : 'Ingevuld';
@@ -1389,7 +1389,7 @@ export default function OnboardingFlowPage() {
                             ? 'text-[#C24A4A] font-medium'
                             : 'text-[#6E6E6E]'
                         }`}>
-                          {hasValue ? displayVal : s.required ? 'Vereist — klik om in te vullen' : 'Overgeslagen'}
+                          {hasValue ? displayVal : s.required ? 'Vereist: klik om in te vullen' : 'Overgeslagen'}
                         </p>
                       </div>
                       <ArrowRight className="w-4 h-4 text-[#E5E5E5] group-hover:text-[#A85740] transition-colors flex-shrink-0" />

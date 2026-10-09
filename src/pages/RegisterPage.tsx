@@ -137,13 +137,13 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       <Seo
-        title="Account aanmaken — FitFi"
-        description="Maak een gratis FitFi account aan en sla je stijlrapport op."
+        title="Account aanmaken | FitFi"
+        description="Maak een gratis FitFi-account aan en sla je stijlrapport op."
         path="/registreren"
       />
 
       <div className="min-h-screen bg-[#FAFAF8] grid grid-cols-1 lg:grid-cols-2">
-        {/* ── Left — Visual block (desktop only) ── */}
+        {/* ── Links: beeldblok (alleen desktop) ── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -183,7 +183,7 @@ const RegisterPage: React.FC = () => {
           </span>
         </motion.div>
 
-        {/* ── Right — Form ── */}
+        {/* ── Rechts: formulier ── */}
         <div className="flex flex-col justify-center items-center p-6 pt-32 md:p-16 min-h-screen lg:min-h-0">
           <div className="w-full max-w-[420px]">
             {/* Mobile logo */}

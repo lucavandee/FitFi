@@ -26,7 +26,9 @@ const FAQ_GENERAL: QA[] = [
   },
   {
     q: "Is dit stijladvies persoonlijk of generiek?",
-    a: 'Persoonlijk. Je antwoorden worden vertaald naar jouw unieke stijlprofiel — bijvoorbeeld "65% Minimalistisch, 25% Casual Chic". Outfits worden hier direct op afgestemd.',
+    // Hier stond een voorbeeld met "Casual Chic": dat archetype kent het rapport niet
+    // (src/config/archetypes.ts).
+    a: 'Persoonlijk. Je antwoorden bepalen je stijlprofiel, en daar worden de outfits op afgestemd.',
   },
 ];
 
@@ -223,7 +225,7 @@ export default function FAQPage() {
   return (
     <>
       <Seo
-        title="Veelgestelde vragen — FitFi"
+        title="Veelgestelde vragen | FitFi"
         description="Antwoorden op de meest gestelde vragen over FitFi: hoe het werkt, privacy, prijzen en je account."
         path="/veelgestelde-vragen"
         structuredData={FAQ_SCHEMA}

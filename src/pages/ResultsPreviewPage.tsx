@@ -106,7 +106,7 @@ export default function ResultsPreviewPage() {
   return (
     <main className="bg-[#FAFAF8]">
       <Helmet>
-        <title>{isPersonalized ? `${userName}'s Style Report – FitFi` : 'Voorbeeld Style Report – FitFi'}</title>
+        <title>{isPersonalized ? `${userName}'s Style Report | FitFi` : 'Voorbeeld Style Report | FitFi'}</title>
         <meta name="description" content="Bekijk een voorbeeld van je stijlprofiel met outfit-aanbevelingen." />
       </Helmet>
 

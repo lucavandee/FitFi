@@ -296,7 +296,7 @@ export default function DisclosurePage() {
   return (
     <>
       <Seo
-        title="Transparantie (Disclosure) — FitFi"
+        title="Transparantie | FitFi"
         description="Heldere disclosure: hoe FitFi omgaat met aanbevelingen, affiliate, sponsoring, beelden en privacy."
         path="/affiliate-disclosure"
       />

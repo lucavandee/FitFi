@@ -132,14 +132,14 @@ export default function LoginPage() {
   return (
     <>
       <Seo
-        title="Inloggen — FitFi"
+        title="Inloggen | FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
         path="/inloggen"
         noindex
       />
 
       <div className="min-h-screen bg-[#FAFAF8] grid grid-cols-1 lg:grid-cols-2">
-        {/* ── Left — Visual block (desktop only) ── */}
+        {/* ── Links: beeldblok (alleen desktop) ── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -179,7 +179,7 @@ export default function LoginPage() {
           </span>
         </motion.div>
 
-        {/* ── Right — Form ── */}
+        {/* ── Rechts: formulier ── */}
         <div className="flex flex-col justify-center items-center p-6 pt-32 md:p-16 min-h-screen lg:min-h-0">
           <div className="w-full max-w-[420px]">
             {/* Mobile logo */}
@@ -362,7 +362,7 @@ export default function LoginPage() {
                 <div className="flex-1 h-px bg-[#E5E5E5]" />
               </div>
 
-              {/* Google login placeholder — SocialLoginButtons handles this */}
+              {/* Plek voor inloggen met Google: dat doet SocialLoginButtons */}
               {/* Already rendered above, but keeping divider for visual flow */}
             </form>
 

@@ -415,7 +415,7 @@ export default function CookiesPage() {
   return (
     <>
       <Seo
-        title="Cookies & voorkeuren — FitFi"
+        title="Cookiebeleid | FitFi"
         description="Welke cookies FitFi gebruikt en hoe je je keuze aanpast. Analytics en partnermeting alleen met jouw toestemming."
         path="/cookies"
       />

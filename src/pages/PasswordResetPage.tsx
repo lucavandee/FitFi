@@ -62,7 +62,7 @@ export default function PasswordResetPage() {
   return (
     <>
       <Seo
-        title="Wachtwoord vergeten — FitFi"
+        title="Wachtwoord vergeten | FitFi"
         description="Stuur een resetlink naar je e-mailadres om je wachtwoord opnieuw in te stellen."
         path="/wachtwoord-vergeten"
         noindex
