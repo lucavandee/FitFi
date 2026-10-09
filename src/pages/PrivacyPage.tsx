@@ -93,6 +93,7 @@ We verkopen **nooit** data. We delen alleen met:
 - **Analytics:** Google Analytics (VS, **alleen met jouw toestemming**, IP geanonimiseerd)
 - **Payments:** Stripe (PCI-DSS certified, alleen transactie-metadata)
 - **Partnerlinks:** Daisycon. Klik je op een link naar een winkel, dan loopt die klik via Daisycon, zodat een aankoop aan FitFi kan worden toegeschreven. Daarna geldt het privacybeleid van de winkel.
+- **Partnermeting:** Awin, een netwerk voor partnerlinks. Alleen als je partnermeting aanzet, mag FitFi op je rapport en je dashboard een script van Awin laden.
 
 **⚠️ Belangrijke opmerking over Google Analytics:**
 Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens verstuurd naar Google LLC servers in de Verenigde Staten. Dit valt onder Schrems II wetgeving. Wij hebben:
@@ -101,7 +102,7 @@ Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens v
 - ✅ Geen advertising features geactiveerd
 - ✅ Geen user-ID tracking
 
-**Je kunt deze cookies op elk moment uitschakelen in je [profielinstellingen](/profiel).**
+**Je kunt deze cookies op elk moment uitschakelen op de [cookiepagina](/cookies).**
 
 Alle andere partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG.
 
@@ -146,10 +147,11 @@ Zie onze [Cookiepagina](/cookies) voor volledige details. Samenvatting:
 
 - **Functioneel:** Sessie, taal, thema (essentieel, altijd aan)
 - **Analytisch:** Google Analytics (opt-in vereist, IP geanonimiseerd, data naar VS)
-- **Marketing:** Geen third-party tracking pixels of advertentienetwerken
+- **Partnermeting:** Awin (opt-in vereist). Advertentiepixels gebruiken we niet.
 
 **Beheer je cookie-voorkeuren:**
-- Via je [Profiel → Privacy & Cookies](/profiel)
+- Op de [cookiepagina](/cookies), ook zonder account
+- Met een account in je [profiel](/profile), bij Privacy & cookies
 - Via browser-instellingen
 - Cookie banner bij eerste bezoek
 
@@ -197,7 +199,7 @@ We kunnen deze verklaring bijwerken. Grote wijzigingen kondigen we aan via e-mai
 ---
 
 **Korte versie:**
-We verzamelen alleen wat nodig is, delen nooit met marketeers, geven jou volledige controle en volgen strikte EU-privacy-regels. Vragen? We staan klaar.
+We verkopen je gegevens niet. Analytics en partnermeting staan alleen aan als je dat kiest. Vragen of verwijderen? Mail [privacy@fitfi.ai](mailto:privacy@fitfi.ai).
           `}
         />
       </main>

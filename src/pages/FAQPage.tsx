@@ -43,6 +43,14 @@ const FAQ_PRIVACY: QA[] = [
     q: "Waarom passen deze outfits bij mij?",
     a: "Elke outfit toont een korte uitleg: waarom de kleuren kloppen, welke pasvorm aansluit bij je voorkeur en hoe de stijl past bij je profiel. Je ziet altijd het waarom.",
   },
+  // Zegt hetzelfde als de cookiebanner en de cookiepagina: de keuze voor
+  // partnermeting (consent.marketing) laat AwinMasterTag het script van Awin
+  // laden. "Geen reclame-tracking" hierboven blijft waar: er zijn geen
+  // advertenties en geen advertentiepixels.
+  {
+    q: "Welke cookies gebruiken jullie?",
+    a: "Wat nodig is voor inloggen en je voorkeuren staat altijd aan. Google Analytics en partnermeting via Awin staan alleen aan als je dat kiest. Advertentiepixels gebruiken we niet.",
+  },
 ];
 
 const FAQ_PRICING: QA[] = [
