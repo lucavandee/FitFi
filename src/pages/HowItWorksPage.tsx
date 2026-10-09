@@ -2,10 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Seo from "@/components/seo/Seo";
 import { AnimatePresence, motion } from "framer-motion";
-import { Zap, Heart, ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { track as trackFunnel } from "@/utils/analytics";
+import { quizSteps } from "@/data/quizSteps";
 
 const PAGE = "how-it-works";
+
+// Tellingen uit de quiz zelf, zoals PrivacyPage: de tekst loopt mee als er een
+// stap bij komt of afgaat. Optioneel is wat de quiz laat overslaan.
+const AANTAL_VRAGEN = quizSteps.length;
+const AANTAL_OPTIONEEL = quizSteps.filter((stap) => !stap.required).length;
 
 /* ─── Scrolldiepte ────────────────────────────────────────────────────────── */
 /*
@@ -118,17 +124,22 @@ const faqs = [
   },
   {
     q: "Hoeveel kost FitFi?",
-    a: "Je kunt gratis starten en een basisrapport ontvangen. Voor het volledige kleurpalet en meer outfits is er een premium plan.",
+    // Het kleurpalet staat voor iedereen in het rapport (ColorPaletteSection
+    // kent geen premiumpoort). Wat Premium toevoegt, staat in de tabel op
+    // PricingPage: onbeperkte outfits.
+    a: "Starten is gratis. Met een gratis account zie je je rapport: je kleurpalet, je stijlprofiel en outfits met links naar winkels. Premium geeft onbeperkte outfits.",
   },
 ];
 
 // Nergens op deze pagina een invultijd: die is nooit gemeten (stond er als
-// "ongeveer 5 minuten", "~5 minuten" en in de HowTo als PT2M).
+// "ongeveer 5 minuten", "~5 minuten" en in de HowTo als PT2M). Ook geen
+// "direct": je rapport zie je pas met een gratis account (RequireAuth op
+// /results in App.tsx).
 const compRows = [
-  { old: "Uren zoeken in winkels", next: "Een korte quiz, direct resultaat", highlight: false },
-  { old: "Kast vol \"draag ik nooit\"", next: "Outfits die je echt draagt", highlight: false },
-  { old: "Geen idee welke kleuren passen", next: "Persoonlijk kleurpalet op basis van jou", highlight: false },
-  { old: "Elke ochtend twijfelen", next: "Zelfverzekerd je deur uit", highlight: true },
+  { old: "Uren zoeken in winkels", next: "Een quiz en een rapport met links naar winkels", highlight: false },
+  { old: "Kast vol \"draag ik nooit\"", next: "Outfits op basis van wat je graag draagt", highlight: false },
+  { old: "Geen idee welke kleuren passen", next: "Een kleurpalet op basis van je antwoorden", highlight: false },
+  { old: "Elke ochtend twijfelen", next: "Een rapport dat je kunt bewaren", highlight: true },
 ];
 
 /* ─── Step visual placeholders (warm gradients) ───────────────────────────── */
@@ -189,17 +200,17 @@ export default function HowItWorksPage() {
     <>
       <Seo
         title="Hoe het werkt: van quiz naar stijladvies | FitFi"
-        description="Van quiz naar compleet stijladvies in 3 stappen: beantwoord vragen, wij matchen outfits, jij shopt direct. Zo simpel werkt FitFi."
+        description="Je beantwoordt vragen over kleur, pasvorm en gelegenheden, FitFi stelt outfits samen en je klikt door naar de winkel. Voor je rapport maak je een gratis account."
         path="/hoe-het-werkt"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "HowTo",
           name: "Hoe FitFi werkt: van quiz naar stijladvies",
-          description: "Van quiz naar compleet stijladvies: beantwoord vragen, wij matchen outfits, jij shopt direct.",
+          description: "Je beantwoordt vragen, FitFi stelt outfits samen en je klikt door naar de winkel.",
           step: [
-            { "@type": "HowToStep", position: 1, name: "Vertel ons over jouw stijl", text: "Een korte quiz over je voorkeuren, kleuren en levensstijl." },
-            { "@type": "HowToStep", position: 2, name: "Ontvang je persoonlijke rapport", text: "Direct na de quiz krijg je een volledig stijlrapport." },
-            { "@type": "HowToStep", position: 3, name: "Shop outfits die bij je passen", text: "Echte items die je direct kunt kopen." },
+            { "@type": "HowToStep", position: 1, name: "Vertel ons over jouw stijl", text: `${AANTAL_VRAGEN} vragen over kleur, pasvorm, gelegenheden en budget.` },
+            { "@type": "HowToStep", position: 2, name: "Ontvang je persoonlijke rapport", text: "Voor je rapport heb je een gratis account nodig. In het rapport zie je je kleurpalet, je stijlprofiel en outfits met links naar winkels." },
+            { "@type": "HowToStep", position: 3, name: "Shop outfits die bij je passen", text: "Elke outfit is samengesteld op basis van je stijlprofiel. Je klikt door naar de winkel en koopt daar." },
           ],
         }}
       />
@@ -234,15 +245,15 @@ export default function HowItWorksPage() {
 
             <Reveal delay={0.24}>
               <p className="text-[17px] text-[#4A4A4A] leading-[1.7] max-w-[480px] mx-auto mb-12 text-center">
-                Geen eindeloze vragenlijsten, geen vage tips. Na de quiz
-                krijg je een persoonlijk stijlrapport met kleuren, outfits
-                en directe shoplinks.
+                Je beantwoordt vragen over kleur, pasvorm en gelegenheden.
+                Daarna krijg je een rapport met je kleurpalet en outfits met
+                links naar winkels. Voor het rapport maak je een gratis account.
               </p>
             </Reveal>
 
             <Reveal delay={0.36}>
               <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#4A4A4A]">
-                {["Korte quiz", "Geen foto's nodig", "Direct resultaat"].map((tag) => (
+                {[`${AANTAL_VRAGEN} vragen`, "Gratis starten", "Rapport met gratis account"].map((tag) => (
                   <div key={tag} className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-[#A85740] flex-shrink-0" aria-hidden="true" />
                     <span>{tag}</span>
@@ -269,7 +280,7 @@ export default function HowItWorksPage() {
                 Vertel ons over jouw stijl
               </h2>
               <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
-                Een korte quiz over je voorkeuren, kleuren en levensstijl. Geen account nodig om te starten, geen foto's vereist.
+                {AANTAL_VRAGEN} vragen over kleur, pasvorm, gelegenheden en budget. Je kunt er {AANTAL_OPTIONEEL} overslaan. Starten kan zonder account.
               </p>
               <div className="flex flex-col gap-4 mb-8">
                 <StepDetail
@@ -305,7 +316,7 @@ export default function HowItWorksPage() {
                 Ontvang je persoonlijke rapport
               </h2>
               <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
-                Direct na de quiz krijg je een volledig stijlrapport. Geen wachttijd, geen vage aanbevelingen, concreet en visueel.
+                Voor je rapport heb je een gratis account nodig. In het rapport zie je je kleurpalet, je stijlprofiel en outfits met links naar winkels.
               </p>
               <div className="flex flex-col gap-4 mb-8">
                 <StepDetail
@@ -321,10 +332,8 @@ export default function HowItWorksPage() {
                   sub="Concrete tips voor werk, weekend en uitgaan"
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-sm font-semibold text-[#A85740] w-fit">
-                <Zap className="w-4 h-4" aria-hidden="true" />
-                Direct beschikbaar
-              </div>
+              {/* Hier stond de pil "Direct beschikbaar". Je rapport zie je pas
+                  met een account, dus direct is het niet. */}
             </Reveal>
           </div>
         </section>
@@ -347,20 +356,19 @@ export default function HowItWorksPage() {
                 Shop outfits die bij je passen
               </h2>
               <p className="text-base text-[#4A4A4A] leading-[1.8] max-w-[400px] mb-8">
-                Geen moodboards, maar echte items die je direct kunt kopen. Elke outfit is samengesteld op basis van jouw stijlprofiel.
+                Elke outfit is samengesteld op basis van je stijlprofiel. Je klikt door naar de winkel en koopt daar.
               </p>
+              {/* Hier stond ook "Matchscore per item": het rapport toont geen
+                  score per kledingstuk (ResultsOutfitCard krijgt hoogstens een
+                  score per outfit). */}
               <div className="flex flex-col gap-4 mb-8">
                 <StepDetail
                   title="Outfitcombinaties per profiel"
                   sub="Voor werk, weekend, date en avond uit"
                 />
                 <StepDetail
-                  title="Directe links naar webshops"
-                  sub="Klik door en bestel bij je favoriete winkels"
-                />
-                <StepDetail
-                  title="Matchscore per item"
-                  sub="Zie direct hoe goed elk kledingstuk bij jouw profiel past"
+                  title="Links naar winkels"
+                  sub="FitFi verkoopt zelf geen kleding"
                 />
               </div>
             </Reveal>

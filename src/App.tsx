@@ -89,7 +89,9 @@ const WithSeo = {
   // twitter:title en twitter:description zet, en die bleven anders op de oude
   // tekst staan.
   Home:       () => (<><Seo title={LANDING_TITEL} description={LANDING_BESCHRIJVING} path="/" ogImage={OG_BEELD} structuredData={ORG_SCHEMA} /><LandingPage /></>),
-  How:        () => (<><Seo title="Hoe het werkt: FitFi" description="In drie stappen van quiz naar complete outfits met shoplinks. Geen foto's nodig. Starten kan zonder account; voor je rapport maak je er een." path="/hoe-het-werkt" /><HowItWorksPage /></>),
+  // Geen Seo hier: HowItWorksPage zet titel, beschrijving en HowTo zelf, en de
+  // Seo van de pagina wint. Een tweede regel hier kwam nooit in beeld.
+  How:        () => (<HowItWorksPage />),
   Pricing:    () => (<><Seo title="Prijzen — FitFi" description="Gratis starten met je stijlprofiel en drie outfits. Premium geeft onbeperkte outfits, Nova AI en kleuranalyse." path="/prijzen" /><PricingPage /></>),
   About:      () => (<><Seo title="Over ons — FitFi" description="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak en principes." path="/over-ons" /><AboutPage /></>),
   Shop:       () => (<><Seo title="Shop — FitFi" description="Kleding en accessoires afgestemd op jouw stijlprofiel. Directe links naar webshops." path="/shop" /><ShopPage /></>),

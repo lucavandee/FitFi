@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowRight, Loader as Loader2, Clock, Sparkles, Lock, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Loader as Loader2, ListChecks, Sparkles, Lock, AlertCircle } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
@@ -12,6 +12,11 @@ import {
   type ErrorMessage,
 } from "@/utils/formErrors";
 import { InlineError, ErrorAlert } from "@/components/ui/ErrorAlert";
+import { quizSteps } from "@/data/quizSteps";
+
+// Tellingen uit de quiz zelf, zoals PrivacyPage en HowItWorksPage.
+const AANTAL_VRAGEN = quizSteps.length;
+const AANTAL_OPTIONEEL = quizSteps.filter((stap) => !stap.required).length;
 
 function isEmail(v: string) {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
@@ -46,11 +51,13 @@ const strengthTextColors = [
 ] as const;
 
 // Geen invultijd beloven (nooit gemeten) en geen verwijderknop (die bestaat
-// niet). Verwijderen gaat per mail, zoals de privacyverklaring zegt.
+// niet). Verwijderen gaat per mail, zoals de privacyverklaring zegt. Ook geen
+// "direct resultaat": het rapport komt na de quiz, en "korte quiz" is het
+// aantal vragen uit de quiz zelf.
 const TRUST_ITEMS = [
-  { icon: Clock, title: "Korte quiz", desc: "Direct resultaat" },
+  { icon: ListChecks, title: `${AANTAL_VRAGEN} vragen`, desc: `Je kunt er ${AANTAL_OPTIONEEL} overslaan` },
   { icon: Sparkles, title: "Persoonlijk rapport", desc: "Kleuren, outfits en shoplinks" },
-  { icon: Lock, title: "Jouw data, jouw keuze", desc: "Verwijderen? Mail privacy@fitfi.ai" },
+  { icon: Lock, title: "Je gegevens", desc: "Verwijderen? Mail privacy@fitfi.ai" },
 ];
 
 const RegisterPage: React.FC = () => {
@@ -152,7 +159,7 @@ const RegisterPage: React.FC = () => {
               {comingFromResults ? "Bewaar je resultaten" : "Start jouw stijlreis"}
             </h2>
             <p className="text-base text-[#4A4A4A] text-center leading-[1.7] mb-12">
-              Na een korte quiz weet je welke kleuren en outfits bij je passen.
+              Met een gratis account zie je je rapport: je kleurpalet en outfits met links naar winkels.
             </p>
 
             <div className="flex flex-col gap-5 w-full max-w-[320px]">
