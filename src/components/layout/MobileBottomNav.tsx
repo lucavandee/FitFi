@@ -136,10 +136,14 @@ const MobileBottomNav: React.FC = () => {
                             }`}
                             strokeWidth={active ? 2.5 : 1.8}
                           />
+                          {/* Actief label in #9A503B: 4,88:1 op #F4E8E3. Met
+                              #A85740 was het 4,26:1, de enige axe-overtreding
+                              op / mobiel (fase 4). Het icoon is geen tekst en
+                              haalt met #A85740 de 3:1 ruim. */}
                           <span
                             className={`text-[10px] font-semibold leading-none transition-colors ${
                               active
-                                ? 'text-[#A85740]'
+                                ? 'text-[#9A503B]'
                                 : 'text-[#6E6E6E] group-hover:text-[#4A4A4A]'
                             }`}
                           >
