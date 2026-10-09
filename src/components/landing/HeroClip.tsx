@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { HERO_CLIP, magHeroClip } from "@/components/landing/heroClipRegels";
 
 type Netwerkinformatie = { saveData?: boolean; effectiveType?: string };
@@ -17,7 +17,12 @@ type Netwerkinformatie = { saveData?: boolean; effectiveType?: string };
  * - Zelfde uitsnede (objectPosition) als de <img> in LandingPage, anders valt
  *   het eerste frame niet over de still.
  */
-export default function HeroClip() {
+/**
+ * `still` is de hero-<img>. De clip krijgt pas een bron als die binnen is: op
+ * Slow 4G viel load plus idle (2,5 s) eerder dan de still (3,3 tot 3,5 s), en
+ * dan haalde de clip bandbreedte weg bij het beeld dat er eerst moet staan.
+ */
+export default function HeroClip({ still }: { still?: RefObject<HTMLImageElement> }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [bron, setBron] = useState<string | null>(null);
   const [zichtbaar, setZichtbaar] = useState(false);
@@ -56,8 +61,19 @@ export default function HeroClip() {
       }
     };
 
-    if (document.readyState === "complete") naIdle();
-    else window.addEventListener("load", naIdle, { once: true });
+    // Eerst de still, dan load plus idle. Een still die niet laadt houdt de
+    // clip niet tegen: dan gaat hij na de fout gewoon verder.
+    const img = still?.current ?? null;
+    const naStill = () => {
+      if (gestopt) return;
+      if (document.readyState === "complete") naIdle();
+      else window.addEventListener("load", naIdle, { once: true });
+    };
+    if (!img || img.complete) naStill();
+    else {
+      img.addEventListener("load", naStill, { once: true });
+      img.addEventListener("error", naStill, { once: true });
+    }
 
     // Gaat de bezoeker over het breekpunt, dan wisselt de <picture> van still
     // en klopt de clip niet meer. Dan de clip weg en de still laten staan.
@@ -69,6 +85,8 @@ export default function HeroClip() {
 
     return () => {
       gestopt = true;
+      img?.removeEventListener("load", naStill);
+      img?.removeEventListener("error", naStill);
       window.removeEventListener("load", naIdle);
       if (idleId !== undefined && "cancelIdleCallback" in window) {
         window.cancelIdleCallback(idleId);

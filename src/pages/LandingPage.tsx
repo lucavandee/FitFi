@@ -13,10 +13,15 @@ import Slot from "@/components/landing/sections/Slot";
 import { VOORBEELDOUTFIT } from "@/content/voorbeeldoutfit";
 import { LANDING_COPY } from "@/content/landingCopy";
 import HeroClip from "@/components/landing/HeroClip";
+import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { track as trackFunnel } from "@/utils/analytics";
 import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landingHead";
 
 const PAGE = "landing";
+
+/** De twee hero-stills; het breekpunt is dat van de <picture> en van HERO_CLIP. */
+const HERO_STILL_MOBIEL = "/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp";
+const HERO_STILL_DESKTOP = "/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp";
 
 /* ─── Scrolldiepte ─── */
 /*
@@ -106,6 +111,8 @@ function Reveal({
 
 
 export default function LandingPage() {
+  const heroMobiel = useMediaquery("(max-width: 1023px)");
+  const heroStill = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
 
   /*
@@ -251,12 +258,17 @@ export default function LandingPage() {
           <picture>
             <source
               media="(max-width: 1023px)"
-              srcSet="/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp"
+              srcSet={HERO_STILL_MOBIEL}
               width={1152}
               height={2048}
             />
+            {/* src volgt hetzelfde breekpunt als de <source>: React zet src al
+                voordat de <img> in de <picture> hangt, en WebKit begint dan meteen
+                met dat bestand. Met het desktopbeeld als src haalde een iPhone
+                beide herobeelden op (193 KB extra, gemeten op 8 oktober). */}
             <img
-              src="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+              ref={heroStill}
+              src={heroMobiel ? HERO_STILL_MOBIEL : HERO_STILL_DESKTOP}
               alt="Stijlvol stel op een Amsterdams kanaal"
               className="absolute inset-0 w-full h-full object-cover"
               style={{ objectPosition: "center 20%" }}
@@ -268,7 +280,7 @@ export default function LandingPage() {
           </picture>
 
           {/* Levende hero: begint precies op de still, laadt pas na de still. */}
-          <HeroClip />
+          <HeroClip still={heroStill} />
 
           {/* Gradient overlays */}
           <div
@@ -297,7 +309,7 @@ export default function LandingPage() {
               onderkant; pb-24 houdt de tekst daar 38px boven. Komt er ooit
               viewport-fit=cover bij, dan groeit de nav met de safe area en
               moet dit mee. */}
-          <div className="relative z-10 w-full max-w-[1320px] mx-auto px-6 md:px-10 pb-24 pt-20 min-h-screen min-h-svh flex items-end">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-20 min-h-screen min-h-svh flex items-end">
             <div className="max-w-[560px]">
               {/* Eyebrow */}
               <div className="flex items-center gap-[10px] mb-6">
@@ -335,7 +347,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                 <button
                   onClick={() => handleStartClick("hero")}
-                  className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] py-[18px] px-10 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] py-[18px] px-10 rounded-full transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   style={{
                     boxShadow: "0 12px 40px rgba(194,101,74,0.3)",
                   }}
@@ -351,7 +363,7 @@ export default function LandingPage() {
                 <a
                   href={`#${voorbeeldDoel}`}
                   onClick={handleExampleClick}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 min-h-[44px]"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 min-h-[44px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   aria-label={LANDING_COPY.anker[voorbeeldDoel].tekst}
                 >
                   Bekijk voorbeeld
@@ -364,7 +376,7 @@ export default function LandingPage() {
                   knoppen; vanaf md als creditregel linksonder in de content-
                   container, in het donkerste deel van de gradient. Rechtsonder
                   haalde hij op 1024x768 maar 2,8:1. */}
-              <p className="mt-8 text-sm font-medium text-white/75 md:absolute md:bottom-8 md:left-10 md:mt-0">
+              <p className="mt-8 text-sm font-medium text-white/75 md:absolute md:bottom-8 md:left-6 md:mt-0 lg:left-8">
                 Beeld gemaakt met AI. De personen zijn modellen.
               </p>
             </div>
