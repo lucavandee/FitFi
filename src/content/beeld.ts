@@ -71,13 +71,24 @@ export const W1 = {
   label: LABEL.mens,
   /** Zelfde wisselpunt als de hero: 1024 px. */
   labelHoek: { vanafLg: "rechtsboven" as Hoek, onderLg: "linksboven" as Hoek },
+  /*
+   * Alleen in de labelhoek. Een verloop over de volle breedte maakte de crème
+   * trui bovenin grauw (beeldkritiek fase 4: het bovenste vijfde half zo licht
+   * als de bron). Gemeten op 9 oktober met label-w.cjs en een proef per
+   * kandidaat (claude-artifacts/fitfi-beeld/pagina/fase5/w1-verloop-proef*):
+   * - vanaf 1024 px: label 5,12 tot 5,97:1, de trui blijft buiten de hoek.
+   * - onder 1024 px: het label loopt op een telefoon rechts over lucht, haar en
+   *   kraag, dus een kleine vlek haalde 3,05 tot 3,44:1. De kleinste ellips die
+   *   het tekstvak (tot 188 x 56 px) dekt, is ongeveer 400 x 120. Deze haalt
+   *   6,01 tot 6,63:1 op 360 tot 430 breed en 5,19 tot 5,25:1 op de tablet;
+   *   de trui onder het label houdt L* 66 tot 76 (bron 77). Een vlek midden op
+   *   het label haalde meer, maar las als een veeg op de trui.
+   */
   verloop: {
-    // Plan 3.6 had 0,5 tot 25 procent; daarmee haalde het label op twee regels
-    // 4,06 tot 4,73:1 (1280 x 720 het laagst). Sterker, binnen de 0,7 uit 3.6.
-    vanafLg: "linear-gradient(to bottom, rgba(20,18,15,0.6) 0%, rgba(20,18,15,0.5) 12%, transparent 30%)",
-    // Op 390 breed raakt het eind van de tweede regel de schouder van de trui.
+    vanafLg:
+      "radial-gradient(ellipse 420px 190px at 100% 0%, rgba(20,18,15,0.62) 0%, rgba(20,18,15,0.45) 45%, transparent 100%)",
     onderLg:
-      "linear-gradient(to bottom, rgba(20,18,15,0.62) 0%, rgba(20,18,15,0.55) 13%, transparent 30%)",
+      "radial-gradient(ellipse 380px 110px at 0% 0%, rgba(20,18,15,0.7) 0%, rgba(20,18,15,0.66) 66%, transparent 100%)",
   },
   desktop: {
     jobId: "5deb2252-02e8-4bfa-abfc-37a95a713c0c",
