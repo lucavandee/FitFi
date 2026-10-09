@@ -71,6 +71,17 @@ export function magBannerTonen(pad: string, heroAandeel: number): boolean {
 export const SMAL = "(max-width: 1023px)";
 
 /**
+ * Vensters waarin een vaste banner niet naast de pagina past. Bij 400 procent
+ * zoom van 1280x1024 is het venster 320x256: kop 90 px en onderbalk 59 px
+ * laten 107 px over, en de kaart bedekte toen elk element met de focus
+ * (fase 4, WCAG 2.4.11). In zo'n venster staat de banner niet vast maar in de
+ * pagina, direct na main. 300 px vangt 400 procent zoom op de gangbare
+ * schermen (256 tot 270 px hoog) en laat telefoons in liggende stand (vanaf
+ * ongeveer 320 px) en 200 procent zoom (vanaf 360 px) met rust.
+ */
+export const KORT = "(max-height: 300px)";
+
+/**
  * Moet een banner die al verschenen is op / weer wijken? Alleen onder 1024 px,
  * en alleen zolang de hero voor meer dan de helft in beeld is.
  */
