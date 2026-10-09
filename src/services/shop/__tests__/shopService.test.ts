@@ -99,4 +99,18 @@ describe("haalShopItems", () => {
 
     await expect(haalShopItems({ gender: "female", budget: { min: 0, max: 5 } })).resolves.toEqual([]);
   });
+
+  it("geeft op met CatalogusOnbereikbaar als de database niet binnen de tijdslimiet antwoordt, zonder het opnieuw te proberen", async () => {
+    vi.useFakeTimers();
+    try {
+      rpc.mockReturnValue(new Promise(() => {}));
+      const uit = haalShopItems({});
+      const verwacht = expect(uit).rejects.toBeInstanceOf(CatalogusOnbereikbaar);
+      await vi.advanceTimersByTimeAsync(20_000);
+      await verwacht;
+      expect(rpc).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
