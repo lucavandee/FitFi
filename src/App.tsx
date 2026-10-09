@@ -144,8 +144,11 @@ function AppShell() {
         <AwinMasterTag />
         <ScrollToTop />
         {!isFullscreen && <Navbar />}
+        {/* Het vangnet is minstens een volle schermhoogte, zodat de footer er
+            nooit onder in beeld staat en daarna verspringt (CLS, gemeten op
+            8 oktober: 0,13 op mobiel door 72 px footer in beeld). */}
         <Suspense fallback={
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center gap-3" style={{ minHeight: 'calc(100vh - 72px)' }} role="status" aria-live="polite">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center gap-3 min-h-screen min-h-lvh" role="status" aria-live="polite">
             <div className="w-8 h-8 border-2 border-[#E5E5E5] border-t-[#A85740] rounded-full animate-spin" aria-hidden="true" />
             <span className="text-sm text-[#6E6E6E]">Laden…</span>
           </div>

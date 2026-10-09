@@ -2,15 +2,13 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <!-- ✅ Performance optimizations -->
-    <link rel="preconnect" href="https://images.pexels.com" crossorigin>
-
-    <!-- Prefetch common routes -->
-    <link rel="prefetch" href="/results" as="document">
-    <link rel="prefetch" href="/prijzen" as="document">
-
     <!-- Lettertypen: Instrument Serif en Plus Jakarta Sans staan zelf gehost in
-         public/fonts/, met @font-face in src/index.css. Geen verzoek naar Google. -->
+         public/fonts/, met @font-face in src/index.css. Geen verzoek naar Google.
+         De twee die de herokop boven de vouw nodig heeft, worden vooraf geladen:
+         zonder preload kwamen ze op Slow 4G pas na de H1 en sprong de kop 49 px
+         (CLS, gemeten op 8 oktober). -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/plus-jakarta-sans-latin.cd8db90c.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/instrument-serif-italic-latin.6ee678c3.woff2" />
 
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
