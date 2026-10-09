@@ -6,6 +6,7 @@ import { seedFromAnswers } from "./answersSeed";
 import { bereidKandidatenVoorMetDiagnose, naarKandidatenParams, type KandidaatRij } from "./kandidaten";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
+import { KANDIDATEN_TIJDSLIMIET_MS, metTijdslimiet } from '@/utils/tijdslimiet';
 
 // Outfit.explanation is al verplicht (string); geen aparte optionele override nodig.
 export type GeneratedOutfit = Outfit;
@@ -95,10 +96,18 @@ class OutfitService {
     }
 
     try {
-      let { data, error } = await client.rpc('get_kandidaten', params);
+      // Geen antwoord binnen de tijdslimiet wordt niet herhaald: een database die niet antwoordt wordt
+      // er door een tweede wacht niet sneller van.
+      const vraag = () =>
+        metTijdslimiet(
+          client.rpc('get_kandidaten', params),
+          KANDIDATEN_TIJDSLIMIET_MS,
+          () => new CatalogusOnbereikbaar(`geen antwoord binnen ${KANDIDATEN_TIJDSLIMIET_MS / 1000} s`)
+        );
+      let { data, error } = await vraag();
       if (error && TIJDELIJKE_FOUTCODES.has(String(error.code))) {
         await new Promise((klaar) => setTimeout(klaar, HERKANSING_NA_MS));
-        ({ data, error } = await client.rpc('get_kandidaten', params));
+        ({ data, error } = await vraag());
       }
 
       if (error) {

@@ -125,6 +125,20 @@ describe("outfitService.getProducts", () => {
     await expect(outfitService.getProducts(answers)).rejects.toBeInstanceOf(CatalogusOnbereikbaar);
   });
 
+  it("gooit CatalogusOnbereikbaar als de database niet binnen de tijdslimiet antwoordt, zonder het opnieuw te proberen", async () => {
+    vi.useFakeTimers();
+    try {
+      rpc.mockReturnValue(new Promise(() => {}));
+      const uit = outfitService.getProducts(answers);
+      const verwacht = expect(uit).rejects.toBeInstanceOf(CatalogusOnbereikbaar);
+      await vi.advanceTimersByTimeAsync(20_000);
+      await verwacht;
+      expect(rpc).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("gooit CatalogusOnbereikbaar als product_attributes leeg is", async () => {
     rpc.mockResolvedValue({ data: [], error: null });
     telQuery.mockResolvedValue({ count: 0, error: null });
