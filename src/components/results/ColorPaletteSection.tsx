@@ -50,11 +50,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhotoAnalysis = fals
           <p className="text-xs text-[#6E6E6E] leading-relaxed">
             {hasPhotoAnalysis
               ? <><strong className="font-semibold text-[#1A1A1A]">Foto-gebaseerd advies:</strong> kleurtips zijn mede gebaseerd op je huidondertoon.</>
-              : <>Kleurtips op basis van jouw quiz. Zonder foto geven we geen uitspraken over huidondertoon.{' '}
-                  <button onClick={() => navigate('/onboarding?step=photo')} className="font-semibold underline underline-offset-2 text-[#9A503B] hover:no-underline focus-visible:ring-1 focus-visible:ring-[#A85740] rounded">
-                    Voeg selfie toe
-                  </button>
-                </>
+              : <>Kleurtips op basis van jouw quizantwoorden. Over je huidondertoon zeggen we alleen iets na een geslaagde analyse van je selfie.</>
             }
           </p>
         </div>
@@ -135,15 +131,16 @@ export function ColorPaletteSection({ season, subSeason, hasPhotoAnalysis = fals
               </div>
               <p className="text-sm font-semibold text-[#1A1A1A]">Kleuren om te vermijden</p>
               <p className="text-xs text-[#6E6E6E] max-w-xs leading-relaxed">
-                Upload een selfie voor ondertoonanalyse en persoonlijk kleuradvies.
+                Die tonen we na een geslaagde analyse van je selfie. De selfie is de laatste vraag van de quiz.
               </p>
+              {/* Ging naar /onboarding?step=photo, een stap die niet bestaat: een
+                  afgeronde quiz stuurt direct terug naar /results. */}
               <button
-                onClick={() => navigate('/onboarding?step=photo')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
-                style={{ background: '#9A503B' }}
+                onClick={() => navigate('/onboarding?step=redo')}
+                className="inline-flex items-center gap-2 bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl min-h-[48px] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2"
               >
-                <Camera className="w-3.5 h-3.5" aria-hidden="true" />
-                Foto toevoegen
+                <Camera className="w-4 h-4" aria-hidden="true" />
+                Quiz opnieuw
               </button>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, X, Sparkles } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
-import { computeResult } from "@/lib/quiz/logic";
+import { computeResult, fotoAnalyseUitAntwoorden, pasFotoAnalyseToe } from "@/lib/quiz/logic";
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
@@ -22,6 +22,7 @@ import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { getSessionId, resetSessionId } from '@/utils/sessionId';
+import { antwoordenVoorDatabase, isOpslagPad } from '@/lib/quiz/selfieFoto';
 
 type QuizAnswers = {
   gender?: string;
@@ -52,7 +53,7 @@ async function saveProgressToSupabase(userId: string, step: number, ph: string, 
     const client = getSupabase();
     if (!client) return;
     await client.from('quiz_progress').upsert(
-      { user_id: userId, current_step: step, phase: ph, answers: ans, updated_at: new Date().toISOString() },
+      { user_id: userId, current_step: step, phase: ph, answers: antwoordenVoorDatabase(ans), updated_at: new Date().toISOString() },
       { onConflict: 'user_id' }
     );
   } catch {
@@ -271,6 +272,21 @@ export default function OnboardingFlowPage() {
     setTimeout(() => setShowNovaReaction(false), 3500);
   };
 
+  // De selfie komt in twee stappen binnen, na een upload en na de analyse.
+  // handleAnswer bouwt op de answers van de render waarin de upload begon,
+  // dus het tweede antwoord zou het eerste overschrijven. Daarom hier een
+  // functionele update. Naar telemetrie gaat alleen of er iets is: geen pad,
+  // geen analyse (huid-, haar- en oogkleur horen niet in Google Analytics).
+  const handleFotoAntwoord = (field: 'photoUrl' | 'colorAnalysis', value: unknown) => {
+    setAnswers(prev => {
+      const updated = { ...prev, [field]: value ?? undefined };
+      autosave(updated, currentStep, phase);
+      return updated;
+    });
+    setAttemptedNext(false);
+    track("quiz_answer", { field, step: currentStep, phase, value: value ? 'ja' : 'nee' });
+  };
+
   const handleMultiSelect = (field: string, value: string) => {
     setAnswers(prev => {
       const current = (prev[field as keyof QuizAnswers] as string[]) || [];
@@ -435,7 +451,7 @@ export default function OnboardingFlowPage() {
     userId: string
   ): Promise<void> => {
     try {
-      const answersToSave = Object.entries(answers).map(([key, value]) => ({
+      const answersToSave = Object.entries(antwoordenVoorDatabase(answers)).map(([key, value]) => ({
         user_id: userId,
         question_id: key,
         answer: value,
@@ -467,9 +483,12 @@ export default function OnboardingFlowPage() {
         gender: answers.gender,
         archetype: result.archetype,
         color_profile: result.color,
-        color_analysis: answers.colorAnalysis || null,
-        photo_url: answers.photoUrl || null,
-        quiz_answers: answers,
+        // Alleen een geldige analyse met een opgeslagen foto erbij.
+        color_analysis: fotoAnalyseUitAntwoorden(answers),
+        // Het opslagpad van de selfie (anon_<sessie-id>/<bestand>), nooit de
+        // foto zelf als data-URL. Hier stonden 18 selfies als base64.
+        photo_url: isOpslagPad(answers.photoUrl) ? answers.photoUrl : null,
+        quiz_answers: antwoordenVoorDatabase(answers),
         sizes: answers.sizes || null,
         budget_range: answers.budget
           ? answers.budget
@@ -566,8 +585,6 @@ export default function OnboardingFlowPage() {
         }
       }
 
-      const photoAnalysis = localStorage.getItem('ff_onboarding_photo_analysis');
-
       let colorProfile: any;
       let archetype: any;
       let profileResult: any;
@@ -581,24 +598,17 @@ export default function OnboardingFlowPage() {
 
         colorProfile = profileResult.colorProfile;
         archetype = profileResult.archetype;
-
-        if (photoAnalysis) {
-          try {
-            const analysis = JSON.parse(photoAnalysis);
-            colorProfile = {
-              ...colorProfile,
-              photoAnalysis: analysis,
-              undertone: analysis.undertone || colorProfile.undertone,
-              seasonalType: analysis.seasonal_type || colorProfile.seasonalType
-            };
-          } catch {
-          }
-        }
       } catch {
         const fallbackResult = computeResult(answers as any);
         colorProfile = fallbackResult.color;
         archetype = fallbackResult.archetype;
       }
+
+      // Een geslaagde selfie-analyse bepaalt het seizoen, op beide paden.
+      // Hier werd de analyse uit localStorage alleen aan het profiel gehangen,
+      // ook als hij van een eerdere foto was, en bleef het seizoen dat van de
+      // quiz. Een foto zonder analyse verandert niets.
+      colorProfile = pasFotoAnalyseToe(colorProfile, fotoAnalyseUitAntwoorden(answers));
 
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
       localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(colorProfile));
@@ -696,8 +706,11 @@ export default function OnboardingFlowPage() {
 
     const applyFallback = () => {
       const fallbackResult = computeResult(answers as any);
+      // computeResult haalt het seizoen al uit een geslaagde analyse; dit zet
+      // er ook photoAnalysis bij, zodat het rapport het weet.
+      const fallbackColor = pasFotoAnalyseToe(fallbackResult.color, fotoAnalyseUitAntwoorden(answers));
       localStorage.setItem(LS_KEYS.QUIZ_ANSWERS, JSON.stringify(answers));
-      localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(fallbackResult.color));
+      localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(fallbackColor));
       localStorage.setItem(LS_KEYS.ARCHETYPE, JSON.stringify(fallbackResult.archetype));
       localStorage.setItem(LS_KEYS.RESULTS_TS, Date.now().toString());
       localStorage.setItem(LS_KEYS.QUIZ_COMPLETED, "1");
@@ -705,7 +718,7 @@ export default function OnboardingFlowPage() {
       setRevealData({
         archetype: fallbackResult.archetype || 'Balanced Minimalist',
         archetypeDescription: 'Jouw stijl combineert eenvoud met elegantie. Je waardeert kwaliteit boven kwantiteit.',
-        colorProfile: fallbackResult.color
+        colorProfile: fallbackColor
       });
       toast.error('Er ging iets mis bij het opslaan, maar je resultaten zijn lokaal bewaard.');
       setPhase('reveal');
@@ -1215,9 +1228,10 @@ export default function OnboardingFlowPage() {
             {/* Photo Upload */}
             {step.type === 'photo' && (
               <PhotoUpload
-                value={answers.photoUrl as string}
-                onChange={(url) => handleAnswer('photoUrl', url)}
-                onAnalysisComplete={(analysis) => handleAnswer('colorAnalysis', analysis)}
+                value={isOpslagPad(answers.photoUrl) ? answers.photoUrl : null}
+                analysis={answers.colorAnalysis}
+                onChange={(pad) => handleFotoAntwoord('photoUrl', pad)}
+                onAnalysisComplete={(analysis) => handleFotoAntwoord('colorAnalysis', analysis)}
               />
             )}
 

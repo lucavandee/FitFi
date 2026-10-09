@@ -106,7 +106,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
 const faqs = [
   {
     q: "Moet ik foto's uploaden?",
-    a: "Nee, dat is optioneel. De quiz werkt volledig op basis van je antwoorden. Een foto kan de kleuranalyse preciezer maken, maar is niet nodig.",
+    a: "Nee, dat is optioneel. De quiz werkt volledig op basis van je antwoorden. Met een selfie kijkt de kleuranalyse ook naar je huid, haar en ogen; die foto gaat daarvoor naar OpenAI in de VS.",
   },
   {
     q: "Werkt het voor mannen en vrouwen?",
@@ -280,9 +280,12 @@ export default function HowItWorksPage() {
                   title="Geef je budget en gelegenheden aan"
                   sub="Werk, weekend, uitgaan, wij stemmen af"
                 />
+                {/* Hier stond "Lokaal verwerkt, niet opgeslagen". De selfie gaat
+                    naar de opslag in Frankfurt en via een link van 60 seconden
+                    naar OpenAI (PhotoUpload.tsx, analyze-selfie-color). */}
                 <StepDetail
-                  title="Optioneel: upload een foto voor kleuranalyse"
-                  sub="Lokaal verwerkt, niet opgeslagen"
+                  title="Optioneel: upload een selfie voor kleuranalyse"
+                  sub="Opgeslagen in Frankfurt, geanalyseerd door OpenAI in de VS"
                 />
               </div>
             </Reveal>
@@ -310,7 +313,7 @@ export default function HowItWorksPage() {
               <div className="flex flex-col gap-4 mb-8">
                 <StepDetail
                   title="Jouw persoonlijke kleurpalet"
-                  sub="Welke tinten bij je passen en welke je beter kunt vermijden"
+                  sub="Welke tinten bij je passen; met een geanalyseerde selfie ook welke je beter vermijdt"
                 />
                 <StepDetail
                   title="Stijlprofiel met uitleg"

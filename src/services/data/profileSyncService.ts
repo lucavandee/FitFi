@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { LS_KEYS } from "@/lib/quiz/types";
 import { getSessionId } from '@/utils/sessionId';
+import { antwoordenVoorDatabase } from '@/lib/quiz/selfieFoto';
 
 export type SyncStatus = 'synced' | 'pending' | 'error' | 'unknown';
 
@@ -324,7 +325,9 @@ class ProfileSyncService {
 
       if (!quizAnswers) return null;
 
-      const answers = JSON.parse(quizAnswers);
+      // Dit profiel gaat naar style_profiles: zonder fotodata, dus photoUrl
+      // alleen als opslagpad en geen photoDataUrl.
+      const answers = antwoordenVoorDatabase(JSON.parse(quizAnswers));
 
       return {
         quiz_answers: answers,
