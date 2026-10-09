@@ -49,13 +49,17 @@ const QUIZ = "src/data/quizSteps.ts";
 const STAPPEN = (n: number): Bron => ({ data: "aantalStappen", waarde: n, inTekst: String(n) });
 
 /**
- * Het gegevensblok in "Zo werkt het" (plan 4.4) staat uit tot struikeldraad T3
- * in productie gehaald is: gtag pas na toestemming en eigen lettertypen (PR A2)
- * en de selfie-route (PR 0). De zinnen staan hier al, met hun bronnen, voor
- * keuze (a) van PR 0: geen selfie, geen OpenAI. Kiest Luc (b), dan komen er
- * twee zinnen bij (plan 4.4).
+ * Het gegevensblok in "Zo werkt het" (plan 4.4). Struikeldraad T3 vroeg dat
+ * gtag pas na toestemming laadt, dat de lettertypen zelf gehost zijn (PR A2)
+ * en dat de selfie-route klopt (PR 0). Alle drie zitten in deze PR, dus wat
+ * het blok zegt, gaat met dezelfde deploy live. Luc koos in PR 0 keuze (b):
+ * de selfie blijft, en gaat via een link van 60 seconden naar OpenAI. Daarom
+ * de twee zinnen uit plan 4.4 over de selfie en OpenAI. Tot Luc de nieuwe
+ * analyze-selfie-color deployt, weigert de oude functie het pad dat de quiz
+ * stuurt ("Photo URL is required") en gaat er niets naar OpenAI: het blok zegt
+ * dan meer dan er gebeurt, niet minder.
  */
-export const GEGEVENSBLOK_AAN = false;
+export const GEGEVENSBLOK_AAN = true;
 
 export const LANDING_COPY = {
   /** "Bekijk voorbeeld" in de hero is een anker; dit is zijn toegankelijke naam. */
@@ -243,8 +247,10 @@ export const LANDING_COPY = {
          * (PR A3, gemeten). Daarom de fotokeuzes bij het account.
          */
         tekst: zin(
-          "Je antwoorden, met een account ook je fotokeuzes en je e-mailadres.",
+          "Je antwoorden, met een account ook je fotokeuzes en je e-mailadres. En een selfie als je die uploadt.",
           { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "style_profiles" },
+          { bestand: "src/lib/quiz/selfieFoto.ts", zoek: "export const SELFIE_BUCKET = 'user-photos';" },
+          { bestand: "src/pages/PrivacyPage.tsx", zoek: "### Selfie voor de kleuranalyse (optioneel)" },
           {
             meting: "style_swipes heeft RLS aan met alleen policies voor authenticated; geen enkele swipe zonder user_id",
             datum: "2026-10-08",
@@ -266,8 +272,15 @@ export const LANDING_COPY = {
       },
       {
         label: zin("Andere partijen", { bestand: "src/utils/analytics.ts", zoek: "function canTrack" }),
+        /*
+         * Plan 4.4 had "OpenAI in de VS als je een selfie uploadt". Ook een
+         * outfitfoto die je in je dashboard laat beoordelen gaat naar OpenAI
+         * (privacyverklaring, sectie 4), dus "een foto laat analyseren".
+         */
         tekst: zin(
-          "Google Analytics als je cookies toestaat, Daisycon en de winkel als je doorklikt, Stripe bij Premium.",
+          "Google Analytics als je cookies toestaat, Daisycon en de winkel als je doorklikt, Stripe bij Premium. OpenAI in de VS als je een foto laat analyseren.",
+          { bestand: "src/pages/PrivacyPage.tsx", zoek: "- **Foto-analyse:** OpenAI (Verenigde Staten)." },
+          { bestand: "supabase/functions/analyze-selfie-color/index.ts", zoek: ".createSignedUrl(controle.pad, LINK_SECONDEN);" },
           { bestand: "src/utils/analytics.ts", zoek: "getCookiePrefs().analytics" },
           {
             meting: "zonder keuze en na 'Alleen noodzakelijk' geen enkel verzoek naar Google; na 'Alles accepteren' gtag.js en page_view",
