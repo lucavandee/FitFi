@@ -284,7 +284,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
             }}
             className="swipe-button w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-4 border-red-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-red-300 hover:bg-red-50"
-            aria-label="Niet mijn stijl - veeg of klik links"
+            aria-label="Niet mijn stijl: veeg of klik naar links"
           >
             <X className="w-8 h-8 sm:w-10 sm:h-10 text-red-500" strokeWidth={3} aria-hidden="true" />
           </motion.button>
@@ -329,7 +329,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
               delay: 0.5
             }}
             className="swipe-button w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-4 border-green-400 flex items-center justify-center shadow-xl hover:shadow-2xl active:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-green-300 hover:bg-green-50"
-            aria-label="Dit spreekt me aan - veeg of klik rechts"
+            aria-label="Dit spreekt me aan: veeg of klik naar rechts"
           >
             <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-green-500" strokeWidth={3} fill="currentColor" aria-hidden="true" />
           </motion.button>

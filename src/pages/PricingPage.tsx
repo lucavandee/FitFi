@@ -252,7 +252,7 @@ export default function PricingPage() {
   return (
     <>
       <Seo
-        title="Prijzen — FitFi"
+        title="Prijzen | FitFi"
         description="Free geeft je 3 outfits en shoplinks. Met Premium krijg je onbeperkte outfits, kleuranalyse en een persoonlijke stylist. Vergelijk plannen en kies wat bij jou past."
         path="/prijzen"
         ogImage={OG_BEELD}

@@ -226,8 +226,8 @@ export const CookieBannerKaart = React.forwardRef<HTMLDivElement, KaartProps>(fu
               />
               <ConsentRow
                 id="cookie-marketing"
-                label="Marketing"
-                description="Gepersonaliseerde advertenties op externe platforms."
+                label="Partnermeting"
+                description="Awin, een netwerk voor partnerlinks, mag een script laden op je rapport en je dashboard."
                 checked={marketing}
                 disabled={false}
                 onChange={onMarketing}

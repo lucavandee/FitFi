@@ -9,17 +9,16 @@ import { quizSteps } from "@/data/quizSteps";
 const AANTAL_STAPPEN = quizSteps.length;
 const AANTAL_OPTIONEEL = quizSteps.filter((stap) => !stap.required).length;
 
-// Weg zodra index.html de lettertypen niet meer bij Google ophaalt maar zelf
-// host. Tot dan krijgt Google bij elk paginabezoek je IP-adres, ook zonder
-// toestemming voor cookies.
-const LETTERTYPEN_REGEL =
-  "- **Lettertypen:** Google Fonts. Je browser haalt de lettertypen bij elk paginabezoek op bij Google; daarbij ziet Google je IP-adres.";
+// Geen regel over lettertypen: die staan in public/fonts en komen van onze
+// eigen site, er gaat geen verzoek naar Google. Haalt index.html ze ooit weer
+// bij Google op, dan hoort Google hier als ontvanger terug;
+// src/__tests__/zelfGehosteLettertypen.test.ts bewaakt dat.
 
 export default function PrivacyPage() {
   return (
     <>
       <Helmet>
-        <title>Privacy - FitFi</title>
+        <title>Privacyverklaring | FitFi</title>
         <meta name="description" content="Privacyverklaring van FitFi. Transparant over hoe we omgaan met je gegevens." />
       </Helmet>
 
@@ -37,7 +36,7 @@ export default function PrivacyPage() {
           content={`
 # Privacyverklaring
 
-**Laatst bijgewerkt:** 8 oktober 2026
+**Laatst bijgewerkt:** 9 oktober 2026
 
 FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren. Privacy betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
 
@@ -103,7 +102,7 @@ We verkopen **nooit** data. We delen alleen met:
 - **Payments:** Stripe (PCI-DSS certified, alleen transactie-metadata)
 - **Foto-analyse:** OpenAI (Verenigde Staten). Laat je een foto analyseren, dan krijgt OpenAI die foto: je selfie uit de quiz via een link die 60 seconden werkt, of een outfitfoto die je in je dashboard laat beoordelen. OpenAI stuurt een beschrijving terug.
 - **Partnerlinks:** Daisycon. Klik je op een link naar een winkel, dan loopt die klik via Daisycon, zodat een aankoop aan FitFi kan worden toegeschreven. Daarna geldt het privacybeleid van de winkel.
-${LETTERTYPEN_REGEL}
+- **Partnermeting:** Awin, een netwerk voor partnerlinks. Alleen als je partnermeting aanzet, mag FitFi op je rapport en je dashboard een script van Awin laden.
 
 **⚠️ Belangrijke opmerking over Google Analytics:**
 Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens verstuurd naar Google LLC servers in de Verenigde Staten. Dit valt onder Schrems II wetgeving. Wij hebben:
@@ -112,7 +111,7 @@ Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens v
 - ✅ Geen advertising features geactiveerd
 - ✅ Geen user-ID tracking
 
-**Je kunt deze cookies op elk moment uitschakelen in je [profielinstellingen](/profiel).**
+**Je kunt deze cookies op elk moment uitschakelen op de [cookiepagina](/cookies).**
 
 Alle andere partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG.
 
@@ -158,10 +157,11 @@ Zie onze [Cookiepagina](/cookies) voor volledige details. Samenvatting:
 
 - **Functioneel:** Sessie, taal, thema (essentieel, altijd aan)
 - **Analytisch:** Google Analytics (opt-in vereist, IP geanonimiseerd, data naar VS)
-- **Marketing:** Geen third-party tracking pixels of advertentienetwerken
+- **Partnermeting:** Awin (opt-in vereist). Advertentiepixels gebruiken we niet.
 
 **Beheer je cookie-voorkeuren:**
-- Via je [Profiel → Privacy & Cookies](/profiel)
+- Op de [cookiepagina](/cookies), ook zonder account
+- Met een account in je [profiel](/profile), bij Privacy & cookies
 - Via browser-instellingen
 - Cookie banner bij eerste bezoek
 
@@ -212,7 +212,7 @@ We kunnen deze verklaring bijwerken. Grote wijzigingen kondigen we aan via e-mai
 ---
 
 **Korte versie:**
-We verzamelen alleen wat nodig is, delen nooit met marketeers, geven jou volledige controle en volgen strikte EU-privacy-regels. Vragen? We staan klaar.
+We verkopen je gegevens niet. Analytics en partnermeting staan alleen aan als je dat kiest. Vragen of verwijderen? Mail [privacy@fitfi.ai](mailto:privacy@fitfi.ai).
           `}
         />
       </main>

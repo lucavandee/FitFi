@@ -24,7 +24,9 @@ function isEmail(v: string) {
 const TRUST_ITEMS = [
   { icon: Palette, title: "Persoonlijk kleurpalet", desc: "Afgestemd op jouw kenmerken" },
   { icon: Shirt, title: "Outfitcombinaties op maat", desc: "Voor elke gelegenheid" },
-  { icon: Shield, title: "Veilig en privé", desc: "GDPR-compliant, data blijft van jou" },
+  // Geen "GDPR-compliant": dezelfde claim staat ook niet meer in de footer en
+  // de FAQ. Verwijderen gaat per mail, zoals de privacyverklaring zegt.
+  { icon: Shield, title: "Je gegevens", desc: "Verwijderen? Mail privacy@fitfi.ai" },
 ];
 
 export default function LoginPage() {
@@ -130,14 +132,14 @@ export default function LoginPage() {
   return (
     <>
       <Seo
-        title="Inloggen — FitFi"
+        title="Inloggen | FitFi"
         description="Log in om je stijlrapport en outfits terug te zien."
         path="/inloggen"
         noindex
       />
 
       <div className="min-h-screen bg-[#FAFAF8] grid grid-cols-1 lg:grid-cols-2">
-        {/* ── Left — Visual block (desktop only) ── */}
+        {/* ── Links: beeldblok (alleen desktop) ── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -177,7 +179,7 @@ export default function LoginPage() {
           </span>
         </motion.div>
 
-        {/* ── Right — Form ── */}
+        {/* ── Rechts: formulier ── */}
         <div className="flex flex-col justify-center items-center p-6 pt-32 md:p-16 min-h-screen lg:min-h-0">
           <div className="w-full max-w-[420px]">
             {/* Mobile logo */}
@@ -360,7 +362,7 @@ export default function LoginPage() {
                 <div className="flex-1 h-px bg-[#E5E5E5]" />
               </div>
 
-              {/* Google login placeholder — SocialLoginButtons handles this */}
+              {/* Plek voor inloggen met Google: dat doet SocialLoginButtons */}
               {/* Already rendered above, but keeping divider for visual flow */}
             </form>
 
@@ -378,7 +380,7 @@ export default function LoginPage() {
                   to="/onboarding"
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
                 >
-                  Start de quiz
+                  Begin gratis
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>

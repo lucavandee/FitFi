@@ -26,7 +26,9 @@ const FAQ_GENERAL: QA[] = [
   },
   {
     q: "Is dit stijladvies persoonlijk of generiek?",
-    a: 'Persoonlijk. Je antwoorden worden vertaald naar jouw unieke stijlprofiel — bijvoorbeeld "65% Minimalistisch, 25% Casual Chic". Outfits worden hier direct op afgestemd.',
+    // Hier stond een voorbeeld met "Casual Chic": dat archetype kent het rapport niet
+    // (src/config/archetypes.ts).
+    a: 'Persoonlijk. Je antwoorden bepalen je stijlprofiel, en daar worden de outfits op afgestemd.',
   },
 ];
 
@@ -42,6 +44,14 @@ const FAQ_PRIVACY: QA[] = [
   {
     q: "Waarom passen deze outfits bij mij?",
     a: "Elke outfit toont een korte uitleg: waarom de kleuren kloppen, welke pasvorm aansluit bij je voorkeur en hoe de stijl past bij je profiel. Je ziet altijd het waarom.",
+  },
+  // Zegt hetzelfde als de cookiebanner en de cookiepagina: de keuze voor
+  // partnermeting (consent.marketing) laat AwinMasterTag het script van Awin
+  // laden. "Geen reclame-tracking" hierboven blijft waar: er zijn geen
+  // advertenties en geen advertentiepixels.
+  {
+    q: "Welke cookies gebruiken jullie?",
+    a: "Wat nodig is voor inloggen en je voorkeuren staat altijd aan. Google Analytics en partnermeting via Awin staan alleen aan als je dat kiest. Advertentiepixels gebruiken we niet.",
   },
 ];
 
@@ -96,11 +106,13 @@ const FAQ_SCHEMA = {
   })),
 };
 
+// Geen gebruikersaantal: dat is niet te controleren (RLS geeft geen telling),
+// en de landing haalde "2.400+ gebruikers" om dezelfde reden weg. Geen
+// "GDPR-compliant": die claim staat ook niet meer in de footer. Het aantal vragen komt
+// uit de lijst hierboven, zodat het klopt als er een vraag bij komt.
 const TRUST_STATS = [
-  { label: "2.500+ gebruikers"    },
   { label: "Reactie binnen 24 uur" },
-  { label: "GDPR-compliant"        },
-  { label: "12 vragen beantwoord"  },
+  { label: `${ALL_QUESTIONS.length} vragen beantwoord` },
 ];
 
 const fadeUp: Variants = {
@@ -213,7 +225,7 @@ export default function FAQPage() {
   return (
     <>
       <Seo
-        title="Veelgestelde vragen — FitFi"
+        title="Veelgestelde vragen | FitFi"
         description="Antwoorden op de meest gestelde vragen over FitFi: hoe het werkt, privacy, prijzen en je account."
         path="/veelgestelde-vragen"
         structuredData={FAQ_SCHEMA}

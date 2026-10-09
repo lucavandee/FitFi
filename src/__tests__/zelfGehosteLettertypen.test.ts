@@ -14,7 +14,11 @@
  *   hangen);
  * - er staat geen los bestand in public/fonts/ waar niemand naar wijst;
  * - beide families zijn gedeclareerd zoals Google ze leverde, en de
- *   OFL-licentie staat ernaast.
+ *   OFL-licentie staat ernaast;
+ * - de privacyverklaring noemt Google Fonts alleen als index.html ze ook
+ *   echt bij Google ophaalt. De regel "Je browser haalt de lettertypen bij
+ *   elk paginabezoek op bij Google" bleef na de verhuizing staan en was
+ *   daarmee onwaar (copy-controle fase 4, bevinding 2).
  */
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -28,9 +32,22 @@ const headers = readFileSync(join(WORTEL, "public/_headers"), "utf-8");
 
 const verwezen = [...css.matchAll(/url\("(\/fonts\/[^"]+\.woff2)"\)/g)].map((m) => m[1]);
 
+const GOOGLE_FONTS = /fonts\.googleapis\.com|fonts\.gstatic\.com/;
+
+/** De bron van de privacyverklaring zonder commentaar: alleen wat de bezoeker leest telt. */
+const privacytekst = readFileSync(join(WORTEL, "src/pages/PrivacyPage.tsx"), "utf-8")
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/^\s*\/\/.*$/gm, "");
+
 describe("zelf gehoste lettertypen", () => {
   it("index.html laadt niets van Google Fonts", () => {
-    expect(html).not.toMatch(/fonts\.googleapis\.com|fonts\.gstatic\.com/);
+    expect(html).not.toMatch(GOOGLE_FONTS);
+  });
+
+  it("de privacyverklaring noemt Google Fonts alleen als index.html ze bij Google ophaalt", () => {
+    const laadtBijGoogle = GOOGLE_FONTS.test(html);
+    const noemtGoogleFonts = /Google Fonts|fonts\.googleapis|fonts\.gstatic/i.test(privacytekst);
+    expect(noemtGoogleFonts).toBe(laadtBijGoogle);
   });
 
   it("index.css wijst naar acht bestanden in /fonts/", () => {
