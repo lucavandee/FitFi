@@ -240,8 +240,10 @@ export const CookieBannerKaart = React.forwardRef<HTMLDivElement, KaartProps>(fu
               </button>
             </div>
             <p className="mt-1 text-sm leading-relaxed text-[#4A4A4A]">
-              Noodzakelijke cookies zorgen dat de site werkt. Optionele cookies
-              (analytics) helpen ons de ervaring te verbeteren. Je kunt je
+              {/* Twee optionele keuzes, net als in "Aanpassen": "Alles
+                  accepteren" zet analytics en partnermeting allebei aan. */}
+              Noodzakelijke cookies zorgen dat de site werkt. Optioneel zijn
+              analytics (Google Analytics) en partnermeting (Awin). Je kunt je
               keuze altijd wijzigen via{" "}
               <a href="/cookies" className="text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200">
                 Cookie-instellingen
