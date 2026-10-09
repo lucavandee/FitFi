@@ -23,7 +23,7 @@ const TREND_INSIGHTS_2025: Record<string, TrendData> = {
       { hex: '#A85740', name: 'Camel' },
       { hex: '#A0785A', name: 'Cognac' },
       { hex: '#C17767', name: 'Terracotta' },
-      { hex: '#6B8E23', name: 'Olijfgroen' }
+      { hex: '#6E7A45', name: 'Olijfgroen' }
     ],
     tags: ['Quiet Luxury', 'Earthy', 'Timeless'],
     popularity: 98

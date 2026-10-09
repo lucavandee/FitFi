@@ -19,6 +19,10 @@
  * de knoppen van FitFi. Het rapport toonde onder "Camel" dus een roodbruin.
  * src/content/__tests__/voorbeeldprofiel.palet.test.ts bewaakt dat geen staal
  * die waarde terugkrijgt.
+ *
+ * Olijfgroen stond op #6B8E23 (CSS-olivedrab): C* 57, terwijl de andere vijf
+ * kleuren van herfst tussen 7 en 34 liggen. Op de landingspagina was het het
+ * felste vlak van de pagina. Nu #6E7A45, een olijf in het bereik van de rest.
  */
 
 export interface ColorSwatch {
@@ -136,7 +140,7 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
       { hex: '#A0785A', name: 'Cognac', category: 'accent' },
       { hex: '#9C7A5E', name: 'Warm taupe', category: 'accent' },
       { hex: '#C17767', name: 'Terracotta', category: 'accent' },
-      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#6E7A45', name: 'Olijfgroen', category: 'accent' },
       { hex: '#8B6F47', name: 'Hazelnoot', category: 'accent' },
       { hex: '#9C8170', name: 'Warm beige', category: 'accent' },
       { hex: '#A0826D', name: 'Toffee', category: 'accent' },
@@ -149,7 +153,7 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
     doColors: [
       { hex: '#C19A6B', name: 'Camel', category: 'basis' },
       { hex: '#A0785A', name: 'Cognac', category: 'accent' },
-      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#6E7A45', name: 'Olijfgroen', category: 'accent' },
       { hex: '#C17767', name: 'Terracotta', category: 'accent' },
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
       { hex: '#C9B8A9', name: 'Greige', category: 'neutraal' }
@@ -378,7 +382,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
       { hex: '#A0785A', name: 'Cognac', category: 'accent' },
       { hex: '#C17767', name: 'Terracotta', category: 'accent' },
-      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#6E7A45', name: 'Olijfgroen', category: 'accent' },
       { hex: '#8B4513', name: 'Saddle brown', category: 'accent' },
       { hex: '#6A1B4D', name: 'Bourgogne', category: 'accent' },
       { hex: '#556B2F', name: 'Donker olijf', category: 'accent' },
@@ -391,7 +395,7 @@ export const SUB_SEASON_PALETTES: Record<string, ColorPalette> = {
       { hex: '#4E342E', name: 'Chocolade', category: 'basis' },
       { hex: '#A0785A', name: 'Cognac', category: 'accent' },
       { hex: '#C17767', name: 'Terracotta', category: 'accent' },
-      { hex: '#6B8E23', name: 'Olijfgroen', category: 'accent' },
+      { hex: '#6E7A45', name: 'Olijfgroen', category: 'accent' },
       { hex: '#FAF0E6', name: 'Ivory', category: 'basis' },
     ],
     dontColors: COLOR_PALETTES.herfst.dontColors,

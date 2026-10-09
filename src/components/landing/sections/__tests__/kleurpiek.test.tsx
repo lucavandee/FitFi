@@ -40,7 +40,7 @@ describe("kleurpiek: de kleuren van het rapport (K7)", () => {
     expect(doColors.map((k) => [k.name, k.hex])).toEqual([
       ["Camel", "#C19A6B"],
       ["Cognac", "#A0785A"],
-      ["Olijfgroen", "#6B8E23"],
+      ["Olijfgroen", "#6E7A45"],
       ["Terracotta", "#C17767"],
       ["Ivory", "#FAF0E6"],
       ["Greige", "#C9B8A9"],

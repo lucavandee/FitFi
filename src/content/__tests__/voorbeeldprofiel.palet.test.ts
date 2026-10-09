@@ -153,7 +153,7 @@ const MOODFOTOS = [
 const HERFST = [
   { name: 'Camel', hex: '#C19A6B' },
   { name: 'Cognac', hex: '#A0785A' },
-  { name: 'Olijfgroen', hex: '#6B8E23' },
+  { name: 'Olijfgroen', hex: '#6E7A45' },
   { name: 'Terracotta', hex: '#C17767' },
   { name: 'Ivory', hex: '#FAF0E6' },
   { name: 'Greige', hex: '#C9B8A9' },
