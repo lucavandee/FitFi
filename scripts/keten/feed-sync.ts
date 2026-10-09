@@ -48,6 +48,11 @@ import { profielVoor, type Profiel } from "./feed-sync/profielen";
 
 const PAGINA = 1000;
 const STANDAARD_BATCH = 400;
+// Een voorraadwissel raakt per rij twee tabellen, de triggers en de kandidaatkopie, en de rijen liggen
+// verspreid over de hele products-tabel. Gemeten op 9 oktober 2026: 1.000 rijen kosten 14 tot 18 s op een
+// rustige database, maar na 17 batches liep er een op de 60 s van de functie (vier keer achter elkaar,
+// terwijl de schijf op baseline zat). Met 250 rijen blijft elke aanroep ver onder de limiet.
+const STANDAARD_BATCH_VOORRAAD = 250;
 const STANDAARD_PAUZE_MS = 400;
 const MAX_GEZONDHEID_MS = 6000;
 
@@ -193,7 +198,7 @@ async function inBatches<T>(
   for (let i = 0; i < items.length; i += grootte) {
     const nummer = i / grootte + 1;
     totaal += await fn(items.slice(i, i + grootte));
-    if (nummer % 10 === 0 || nummer === batches) console.log(`  ${naam}: batch ${nummer}/${batches} (${totaal} rijen)`);
+    if (nummer % 10 === 0 || nummer === batches || (grootte <= 250 && nummer % 5 === 0)) console.log(`  ${naam}: batch ${nummer}/${batches} (${totaal} rijen)`);
     if (nummer % 5 === 0) await gezondheid();
     await pauze(pauzeMs);
   }
@@ -242,6 +247,8 @@ interface SchrijfContext {
   retailer: string;
   map: string;
   batch: number;
+  /** Rijen per aanroep van keten_feed_voorraad. Kleiner dan de rest: zie STANDAARD_BATCH_VOORRAAD. */
+  batchVoorraad: number;
   pauzeMs: number;
   gezondheid: () => Promise<void>;
   limiet: number | null;
@@ -335,7 +342,7 @@ async function faseB1ZetUit(ctx: SchrijfContext, verdwenen: DbRij[]): Promise<nu
   const logbestand = join(ctx.map, "b1-uitgezet.ndjson");
   writeFileSync(logbestand, rijen.map((r) => JSON.stringify({ id: r.id })).join("\n") + (rijen.length ? "\n" : ""));
   console.log(`  lijst van de ids: ${logbestand}`);
-  return inBatches("voorraad", rijen, 1000, ctx.pauzeMs, ctx.gezondheid, async (batch) => {
+  return inBatches("voorraad", rijen, ctx.batchVoorraad, ctx.pauzeMs, ctx.gezondheid, async (batch) => {
     const n = await metHerkansing("keten_feed_voorraad", () =>
       ctx.supabase.rpc("keten_feed_voorraad", { p_ids: batch.map((r) => r.id), p_in_stock: false })
     );
@@ -400,6 +407,7 @@ async function main(): Promise<void> {
   const ja = heeftVlag(argv, "ja");
   const fase = (leesVlag(argv, "fase") || "").toLowerCase();
   const batch = Number(leesVlag(argv, "batch") || STANDAARD_BATCH);
+  const batchVoorraad = Number(leesVlag(argv, "batch-voorraad") || STANDAARD_BATCH_VOORRAAD);
   const pauzeMs = Number(leesVlag(argv, "pauze-ms") || STANDAARD_PAUZE_MS);
   const limiet = leesVlag(argv, "limiet") ? Number(leesVlag(argv, "limiet")) : null;
   const staVeelWegToe = heeftVlag(argv, "sta-veel-weg-toe");
@@ -500,7 +508,7 @@ async function main(): Promise<void> {
     return;
   }
 
-  const ctx: SchrijfContext = { supabase, retailer, map, batch, pauzeMs, gezondheid: maakGezondheidscheck(supabaseAnon), limiet };
+  const ctx: SchrijfContext = { supabase, retailer, map, batch, batchVoorraad, pauzeMs, gezondheid: maakGezondheidscheck(supabaseAnon), limiet };
   if (fase === "a" || fase === "alles") {
     const bijgewerkt = await faseA1PasToe(ctx, plan.koppelingen, dbPerId);
     const toegevoegd = await faseA2VoegToe(ctx, pad, plan.nieuw);
