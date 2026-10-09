@@ -302,9 +302,9 @@ export const LANDING_COPY = {
       zoek: "title: 'Zoek je kleding voor heren of dames?'",
     }),
     kopDelen: ["Zoek je kleding voor ", "heren of dames?"] as const,
+    /* "De quiz is gratis." ging eruit: met de knop "Begin gratis" stond er drie keer gratis in vier regels. */
     tekst: zin(
-      "De quiz is gratis. Voor je rapport maak je een gratis account.",
-      { bestand: "src/App.tsx", zoek: '<Route path="/onboarding" element={<WithSeo.Onboarding />} />' },
+      "Voor je rapport maak je een gratis account.",
       { bestand: "src/App.tsx", zoek: '<Route path="/results" element={<RequireAuth>' },
       { bestand: "src/pages/PricingPage.tsx", zoek: "€0" },
     ),

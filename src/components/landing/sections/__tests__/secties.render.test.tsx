@@ -189,6 +189,16 @@ describe("Slot (A1, A5)", () => {
     expect(fc![2].replace(/<[^>]+>/g, "")).toBe("Beeld gemaakt met AI.");
   });
 
+  it("het vette deel van de kop breekt nooit: altijd 'heren of dames?' op een regel", () => {
+    expect(html).toMatch(/<span class="whitespace-nowrap font-sans font-bold">heren of dames\?<\/span>/);
+  });
+
+  it("de knop heeft een witte focusring, zichtbaar op de donkere avond", () => {
+    const knop = html.match(/<a ([^>]*)>Begin gratis<\/a>/)![1];
+    expect(knop).toMatch(/focus-visible:outline-white/);
+    expect(knop).toMatch(/focus-visible:outline-2/);
+  });
+
   it("zonder W3V geen video; de alt beschrijft de still", () => {
     expect(html).not.toContain("<video");
     expect(html).toContain(`alt="${W3.alt}"`);

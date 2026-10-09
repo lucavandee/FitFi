@@ -46,7 +46,8 @@ function useClipMag(aan: boolean): boolean {
  * - Displaykop volgens CLAUDE.md deel 2 (benoemde afwijking: de enige serif
  *   onder de hero).
  * - De knop staat binnen py-40 (deel 15), dus op een telefoon ruim boven de
- *   onderbalk.
+ *   onderbalk. Focusring wit, zoals in de hero: de standaardring is
+ *   terracotta, dezelfde kleur als de knop zelf.
  */
 export default function Slot({ clip = W3V_CLIP_AAN }: { clip?: boolean }) {
   const clipMag = useClipMag(clip);
@@ -89,13 +90,15 @@ export default function Slot({ clip = W3V_CLIP_AAN }: { clip?: boolean }) {
         <p className="text-sm text-white/90">{COPY.stap.tekst}</p>
         <h2 id="slot-kop" className="mt-3 max-w-3xl text-[32px] leading-[1.05] text-white md:text-[64px]">
           <span className="font-serif italic">{COPY.kopDelen[0]}</span>
-          <span className="font-sans font-bold">{COPY.kopDelen[1]}</span>
+          {/* nowrap: anders brak de kop als "heren of / dames?" (1440, 768) of
+              "heren / of dames?" (390). Zo staat het vette deel altijd op een regel. */}
+          <span className="whitespace-nowrap font-sans font-bold">{COPY.kopDelen[1]}</span>
         </h2>
         <p className="mt-6 max-w-prose text-base leading-relaxed text-white">{COPY.tekst.tekst}</p>
         <Link
           to="/onboarding"
           onClick={opKlik}
-          className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-xl bg-[#A85740] px-6 py-3 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#9A503B]"
+          className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-xl bg-[#A85740] px-6 py-3 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#9A503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           {COPY.knop.tekst}
         </Link>
