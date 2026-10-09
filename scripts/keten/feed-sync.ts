@@ -42,37 +42,52 @@ import { heeftVlag, leesVlag } from "./args";
 import { leesEnv } from "./env";
 import { STANDAARD_RETAILER } from "./retailers";
 import { beoordeel } from "./feed-sync/bewaking";
+import { isTijdelijk, kortBericht } from "./feed-sync/herkansing";
 import { leesFeed, type FeedKop } from "./feed-sync/feedLezer";
 import { maakPlan, naarFeedRij, type DbRij, type FeedRij, type Koppeling, type Plan } from "./feed-sync/plan";
 import { profielVoor, type Profiel } from "./feed-sync/profielen";
 
 const PAGINA = 1000;
 const STANDAARD_BATCH = 400;
+// Een voorraadwissel raakt per rij twee tabellen, de triggers en de kandidaatkopie, en de rijen liggen
+// verspreid over de hele products-tabel. Gemeten op 9 oktober 2026 op de Micro-instantie van FitFi
+// (schijf op baseline, ongeveer 11 MB/s): 1.000 rijen kosten 14 tot 18 s op een rustige database, maar na
+// 17 batches liep er een vier keer achter elkaar op de 60 s van de functie, en een tweede poging met 250
+// rijen per batch eindigde na ruim 22.000 rijen in een Cloudflare 522 en een database die ruim een uur
+// niet meer antwoordde. De schrijfbelasting, autovacuum en de warm-job zaten elkaar in de weg. Daarom
+// klein beginnen: 100 rijen per aanroep en 1,5 s pauze. Dat is traag genoeg om in een kwartier de rest te doen.
+const STANDAARD_BATCH_VOORRAAD = 100;
 const STANDAARD_PAUZE_MS = 400;
+// Tussen twee voorraadbatches langer wachten: die raken twee tabellen, de triggers en de kandidaatkopie.
+const PAUZE_VOORRAAD_MS = 1500;
 const MAX_GEZONDHEID_MS = 6000;
 
 const pauze = (ms: number) => new Promise<void>((klaar) => setTimeout(klaar, ms));
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const nu = () => new Date().toISOString().replace(/[:.]/g, "-");
 
-/** Een paar pogingen voor netwerkfouten en time-outs; een echte fout (400, 42xxx) meteen door. */
+/**
+ * Een paar pogingen voor netwerkfouten, time-outs en gatewayfouten; een echte fout (schending, geweigerd)
+ * meteen door. De pauzes lopen op tot ruim een minuut: een vastgelopen database heeft tijd nodig, en
+ * hoe vaker we binnen die tijd aankloppen, hoe langer het duurt.
+ */
 async function metHerkansing<T>(naam: string, fn: () => PromiseLike<{ data: T | null; error: { message: string; code?: string } | null }>): Promise<T> {
   let laatste = "";
-  for (let poging = 1; poging <= 4; poging++) {
+  const POGINGEN = 5;
+  for (let poging = 1; poging <= POGINGEN; poging++) {
     try {
       const { data, error } = await fn();
       if (!error) return data as T;
-      laatste = error.message;
-      const tijdelijk = error.code === "57014" || error.code === "PGRST002" || /timeout|fetch failed|ECONNRESET|503|502/i.test(error.message);
-      if (!tijdelijk) throw new Error(`${naam}: ${error.message}`);
+      laatste = kortBericht(error.message);
+      if (!isTijdelijk(error)) throw new Error(`${naam}: ${laatste}`);
     } catch (e) {
-      const bericht = e instanceof Error ? e.message : String(e);
-      if (bericht.startsWith(`${naam}:`)) throw e;
+      const bericht = kortBericht(e instanceof Error ? e.message : String(e));
+      if (bericht.startsWith(`${naam}:`)) throw new Error(bericht);
       laatste = bericht;
     }
-    await pauze(1500 * poging);
+    await pauze(Math.min(90_000, 3000 * 2 ** (poging - 1)));
   }
-  throw new Error(`${naam}: ${laatste} (na 4 pogingen)`);
+  throw new Error(`${naam}: ${laatste} (na ${POGINGEN} pogingen)`);
 }
 
 // ─── Feed ophalen ────────────────────────────────────────────────────────────
@@ -193,7 +208,7 @@ async function inBatches<T>(
   for (let i = 0; i < items.length; i += grootte) {
     const nummer = i / grootte + 1;
     totaal += await fn(items.slice(i, i + grootte));
-    if (nummer % 10 === 0 || nummer === batches) console.log(`  ${naam}: batch ${nummer}/${batches} (${totaal} rijen)`);
+    if (nummer % 10 === 0 || nummer === batches || (grootte <= 250 && nummer % 5 === 0)) console.log(`  ${naam}: batch ${nummer}/${batches} (${totaal} rijen)`);
     if (nummer % 5 === 0) await gezondheid();
     await pauze(pauzeMs);
   }
@@ -242,6 +257,8 @@ interface SchrijfContext {
   retailer: string;
   map: string;
   batch: number;
+  /** Rijen per aanroep van keten_feed_voorraad. Kleiner dan de rest: zie STANDAARD_BATCH_VOORRAAD. */
+  batchVoorraad: number;
   pauzeMs: number;
   gezondheid: () => Promise<void>;
   limiet: number | null;
@@ -335,7 +352,7 @@ async function faseB1ZetUit(ctx: SchrijfContext, verdwenen: DbRij[]): Promise<nu
   const logbestand = join(ctx.map, "b1-uitgezet.ndjson");
   writeFileSync(logbestand, rijen.map((r) => JSON.stringify({ id: r.id })).join("\n") + (rijen.length ? "\n" : ""));
   console.log(`  lijst van de ids: ${logbestand}`);
-  return inBatches("voorraad", rijen, 1000, ctx.pauzeMs, ctx.gezondheid, async (batch) => {
+  return inBatches("voorraad", rijen, ctx.batchVoorraad, Math.max(ctx.pauzeMs, PAUZE_VOORRAAD_MS), ctx.gezondheid, async (batch) => {
     const n = await metHerkansing("keten_feed_voorraad", () =>
       ctx.supabase.rpc("keten_feed_voorraad", { p_ids: batch.map((r) => r.id), p_in_stock: false })
     );
@@ -400,6 +417,7 @@ async function main(): Promise<void> {
   const ja = heeftVlag(argv, "ja");
   const fase = (leesVlag(argv, "fase") || "").toLowerCase();
   const batch = Number(leesVlag(argv, "batch") || STANDAARD_BATCH);
+  const batchVoorraad = Number(leesVlag(argv, "batch-voorraad") || STANDAARD_BATCH_VOORRAAD);
   const pauzeMs = Number(leesVlag(argv, "pauze-ms") || STANDAARD_PAUZE_MS);
   const limiet = leesVlag(argv, "limiet") ? Number(leesVlag(argv, "limiet")) : null;
   const staVeelWegToe = heeftVlag(argv, "sta-veel-weg-toe");
@@ -500,7 +518,7 @@ async function main(): Promise<void> {
     return;
   }
 
-  const ctx: SchrijfContext = { supabase, retailer, map, batch, pauzeMs, gezondheid: maakGezondheidscheck(supabaseAnon), limiet };
+  const ctx: SchrijfContext = { supabase, retailer, map, batch, batchVoorraad, pauzeMs, gezondheid: maakGezondheidscheck(supabaseAnon), limiet };
   if (fase === "a" || fase === "alles") {
     const bijgewerkt = await faseA1PasToe(ctx, plan.koppelingen, dbPerId);
     const toegevoegd = await faseA2VoegToe(ctx, pad, plan.nieuw);

@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 import type { BoltProduct } from "@/services/data/types";
 import { naarKandidatenParams, type KandidaatRij } from "@/services/outfits/kandidaten";
 import { CatalogusOnbereikbaar } from "@/services/outfits/outfitService";
+import { KANDIDATEN_TIJDSLIMIET_MS, metTijdslimiet } from "@/utils/tijdslimiet";
 import { SHOP_PER_CATEGORIE, bouwShopItems } from "./shopItems";
 
 /**
@@ -28,10 +29,18 @@ export async function haalShopItems(answers: Record<string, any> | null | undefi
     throw new CatalogusOnbereikbaar("geen Supabase-client beschikbaar");
   }
 
-  let { data, error } = await client.rpc("get_kandidaten", params);
+  // Geen antwoord binnen de tijdslimiet is geen tijdelijke fout om te herhalen: een database die niet
+  // antwoordt wordt er door een tweede wacht niet sneller van. De bezoeker kan zelf opnieuw proberen.
+  const vraag = () =>
+    metTijdslimiet(
+      client.rpc("get_kandidaten", params),
+      KANDIDATEN_TIJDSLIMIET_MS,
+      () => new CatalogusOnbereikbaar(`geen antwoord binnen ${KANDIDATEN_TIJDSLIMIET_MS / 1000} s`)
+    );
+  let { data, error } = await vraag();
   if (error && TIJDELIJKE_FOUTCODES.has(String(error.code))) {
     await new Promise((klaar) => setTimeout(klaar, HERKANSING_NA_MS));
-    ({ data, error } = await client.rpc("get_kandidaten", params));
+    ({ data, error } = await vraag());
   }
   if (error) {
     throw new CatalogusOnbereikbaar(error.message || "rpc get_kandidaten faalde");
