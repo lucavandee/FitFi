@@ -108,6 +108,26 @@ describe("Footer (F1 en F2)", () => {
     }
   });
 
+  it("de kop van de CTA-strook is een h2, geen p met kopopmaak (axe p-as-heading)", () => {
+    const html = render("/prijzen", <Footer />);
+    expect(html).toMatch(/<h2\b[^>]*>\s*Ontdek jouw stijl\s*<\/h2>/);
+  });
+
+  it("geen slogan onder het logo", () => {
+    for (const pad of ["/", "/prijzen"]) {
+      expect(render(pad, <Footer />)).not.toContain("afgestemd op jou");
+    }
+  });
+
+  it("bij 200 procent tekst mogen kolommen krimpen en lange woorden breken", () => {
+    const html = render("/", <Footer />);
+    expect(html).toContain("lg:grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]");
+    expect(html).toContain("grid-cols-[repeat(auto-fit,minmax(min(100%,max(7rem,calc(50%-0.75rem))),1fr))]");
+    const links = [...html.matchAll(/<a\b[^>]*class="block py-3[^"]*"/g)];
+    expect(links.length).toBeGreaterThan(0);
+    for (const l of links) expect(l[0]).toContain("[overflow-wrap:anywhere]");
+  });
+
   it("geen CTA-strook voor wie ingelogd is", () => {
     gebruiker.user = { name: "Test" };
     expect(linksMetTekst(render("/prijzen", <Footer />), "Begin gratis")).toEqual([]);
