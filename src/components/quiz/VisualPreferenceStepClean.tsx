@@ -239,7 +239,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             Welke stijl spreekt je aan?
           </h2>
           <p className="text-xs text-[#6E6E6E] mb-2">
-            <strong className="text-[#1A1A1A]">Swipe</strong> door de foto's. Hoe meer, hoe beter je resultaat.
+            <strong className="text-[#1A1A1A]">Swipe</strong> door de foto's. Na {MIN_SWIPES_TO_COMPLETE} swipes kun je afronden.
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
@@ -329,7 +329,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             }}
           >
             <Sparkles className="w-4 h-4 text-[#9A503B]" />
-            <span className="text-sm font-semibold text-[#1A1A1A]">Visuele Voorkeuren</span>
+            <span className="text-sm font-semibold text-[#1A1A1A]">Visuele voorkeuren</span>
           </div>
 
           <h2
@@ -340,7 +340,10 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
           </h2>
 
           <p className="text-sm text-[#6E6E6E] mb-8">
-            <strong className="text-[#1A1A1A] font-semibold">Laatste stap!</strong> Swipe door de foto's. Nova leert van elke keuze en past de selectie aan.
+            {/* Hier stond "Laatste stap!", maar na deze stap komen nog drie outfits
+                om te beoordelen. En "Nova leert van elke keuze": de selectie past
+                zich hoogstens na ADAPT_AFTER_SWIPES swipes aan (loadNextBatch). */}
+            <strong className="text-[#1A1A1A] font-semibold">Swipe</strong> op je eerste indruk. Na {MIN_SWIPES_TO_COMPLETE} swipes kun je afronden.
           </p>
 
           <div className="mb-10">

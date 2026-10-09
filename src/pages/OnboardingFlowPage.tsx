@@ -756,7 +756,7 @@ export default function OnboardingFlowPage() {
           >
             <div className="max-w-[720px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs sm:text-sm font-medium">Visuele Voorkeuren</span>
+                <span className="text-xs sm:text-sm font-medium">Visuele voorkeuren</span>
                 <motion.span
                   key={progress}
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -811,8 +811,9 @@ export default function OnboardingFlowPage() {
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#A85740] flex items-center justify-center animate-pulse">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Je Style DNA wordt gegenereerd...</h3>
-                <p className="text-sm text-[#1A1A1A]/70">Dit duurt nog een paar seconden</p>
+                {/* Hier stond "Dit duurt nog een paar seconden": niet gemeten. */}
+                <h3 className="text-xl font-bold mb-2">Je rapport wordt gemaakt...</h3>
+                <p className="text-sm text-[#1A1A1A]/70">Even geduld.</p>
               </div>
             </div>
           )}
@@ -820,7 +821,7 @@ export default function OnboardingFlowPage() {
           <div className="sticky top-0 z-50 bg-white border-b border-[#E5E5E5]">
             <div className="max-w-[720px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs sm:text-sm font-medium">Outfit Calibratie</span>
+                <span className="text-xs sm:text-sm font-medium">Outfits beoordelen</span>
                 <span className="text-xs sm:text-sm text-[#6E6E6E] tabular-nums">{Math.round(progress)}% compleet</span>
               </div>
               <div className="h-2 sm:h-2 bg-[#FAFAF8] rounded-full overflow-hidden">

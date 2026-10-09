@@ -281,23 +281,14 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     }
   };
 
-  // Calculate feedback impact summary
-  const getFeedbackImpact = () => {
-    const spotOnCount = Object.values(feedback).filter(f => f === 'spot_on').length;
-    const notForMeCount = Object.values(feedback).filter(f => f === 'not_for_me').length;
-    const maybeCount = Object.values(feedback).filter(f => f === 'maybe').length;
-
-    if (spotOnCount === 3) {
-      return '✨ Perfect! We begrijpen je stijl nu volledig. Je aanbevelingen blijven binnen deze richtlijnen.';
-    }
-    if (notForMeCount >= 2) {
-      return '🔄 We zien dat deze outfits niet helemaal passen. Je aanbevelingen worden aangepast naar jouw voorkeuren.';
-    }
-    if (spotOnCount >= 2) {
-      return '👍 Goed zo! We verfijnen je profiel met deze feedback en tonen vergelijkbare outfits.';
-    }
-    return '📊 Je feedback helpt ons je stijl beter te begrijpen. We passen je aanbevelingen hierop aan.';
-  };
+  // Hier stond per uitkomst een zin met emoji ("We begrijpen je stijl nu
+  // volledig", "Je aanbevelingen worden aangepast", "We verfijnen je profiel").
+  // Dat is in de code niet aan te wijzen: met USE_ADAPTIVE_SYSTEM gaat een
+  // beoordeling via record_swipe naar swipe_preferences, terwijl
+  // apply_calibration_to_profile outfit_calibration_feedback leest, en bij het
+  // afronden schrijft OnboardingFlowPage de embedding opnieuw uit de swipes.
+  // Daarom alleen wat waar is: je beoordelingen zijn gegeven, daarna komt je
+  // rapport.
 
   const allRated = outfits.length > 0 && outfits.every(o => feedback[o.id]);
   const feedbackCount = Object.keys(feedback).length;
@@ -431,10 +422,10 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         >
           <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 mb-6 shadow-sm">
             <h3 className="font-semibold text-[#1A1A1A] mb-2">
-              Impact op je stijlprofiel
+              Alle outfits beoordeeld
             </h3>
             <p className="text-sm text-[#6E6E6E] leading-relaxed">
-              {getFeedbackImpact()}
+              Bedankt voor je beoordelingen.
             </p>
           </div>
 
@@ -448,17 +439,17 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             {applying ? (
               <>
                 <Spinner size="sm" />
-                Style DNA wordt gegenereerd...
+                Even geduld...
               </>
             ) : (
               <>
-                Bekijk je persoonlijke stijlrapport
+                Bekijk je resultaten
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
           </motion.button>
           <p className="text-sm text-[#6E6E6E] mt-4">
-            Je feedback wordt gebruikt om je aanbevelingen te verfijnen
+            Hierna maakt FitFi je rapport.
           </p>
         </motion.div>
       )}
