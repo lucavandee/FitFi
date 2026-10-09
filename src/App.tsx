@@ -100,7 +100,7 @@ const WithSeo = {
   FAQ:        () => (<FAQPage />),
   Contact:    () => (<><Seo title="Contact — FitFi" description="Stuur ons een bericht. Wij reageren binnen 24 uur op vragen over je account of stijladvies." path="/contact" /><ContactPage /></>),
   Terms:      () => (<><Seo title="Algemene voorwaarden — FitFi" description="De gebruiksvoorwaarden van FitFi." path="/algemene-voorwaarden" /><TermsPage /></>),
-  Privacy:    () => (<><Seo title="Privacybeleid — FitFi" description="Hoe wij omgaan met je gegevens. Transparant en GDPR-compliant." path="/privacy" /><PrivacyPage /></>),
+  Privacy:    () => (<><Seo title="Privacybeleid — FitFi" description="Hoe wij omgaan met je gegevens." path="/privacy" /><PrivacyPage /></>),
   Cookies:    () => (<><Seo title="Cookiebeleid — FitFi" description="Welke cookies wij gebruiken en hoe je je voorkeuren kunt aanpassen." path="/cookies" /><CookiesPage /></>),
   Disclosure: () => (<><Seo title="Affiliate disclosure — FitFi" description="Transparantieverklaring over affiliate links en samenwerkingen." path="/affiliate-disclosure" /><DisclosurePage /></>),
   Onboarding: () => (<><Seo title="Start je stijlquiz — FitFi" description="Beantwoord een paar vragen en zie direct welke outfits bij je passen." path="/onboarding" noindex /><OnboardingFlow /></>),

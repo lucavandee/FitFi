@@ -96,11 +96,13 @@ const FAQ_SCHEMA = {
   })),
 };
 
+// Geen gebruikersaantal: dat is niet te controleren (RLS geeft geen telling),
+// en de landing haalde "2.400+ gebruikers" om dezelfde reden weg. Geen
+// "GDPR-compliant": die claim staat ook niet meer in de footer. Het aantal vragen komt
+// uit de lijst hierboven, zodat het klopt als er een vraag bij komt.
 const TRUST_STATS = [
-  { label: "2.500+ gebruikers"    },
   { label: "Reactie binnen 24 uur" },
-  { label: "GDPR-compliant"        },
-  { label: "12 vragen beantwoord"  },
+  { label: `${ALL_QUESTIONS.length} vragen beantwoord` },
 ];
 
 const fadeUp: Variants = {

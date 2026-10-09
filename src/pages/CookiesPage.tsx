@@ -20,7 +20,6 @@ const TRUST_STATS = [
   { label: 'Geen marketing-cookies' },
   { label: 'IP-anonymisatie actief' },
   { label: 'Opt-in voor analytics' },
-  { label: 'GDPR-compliant' },
 ];
 
 function CookieRow({ name, provider, purpose, retention }: {
