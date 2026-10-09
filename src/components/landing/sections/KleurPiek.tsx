@@ -1,4 +1,4 @@
-import { forwardRef, useId, useRef, type CSSProperties, type RefObject } from "react";
+import { forwardRef, useRef, type CSSProperties, type RefObject } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { beatBereik } from "@/components/landing/scroll/ScrollScene";
 import EigenBeeld, { type Beeldbron } from "@/components/landing/beeld/EigenBeeld";
@@ -18,8 +18,11 @@ const COPY = LANDING_COPY.kleur;
  * harde snijlijn door de lappen. Nu blijft de stof altijd zichtbaar: tijdens
  * het scrollen dimt de tafel, licht steeds een lap op en komt zijn naam op het
  * hout. Na de zesde gaat het licht weer aan en staan alle namen er. De stof is
- * lokaal naar de staal gecorrigeerd (Delta E 2000 hoogstens 2,90), dus wat
- * oplicht is de kleur uit het rapport.
+ * lokaal naar de staal gecorrigeerd (Delta E 2000 hoogstens 3), dus wat
+ * oplicht is de kleur uit het rapport. Het licht is zacht: per lap een donkere
+ * laag met een gat ter grootte van de lap, dat met een verloop over het hout
+ * uitloopt. Een uitsnede op de contour las in de beeldkritiek van fase 4 als
+ * een harde vorm, niet als licht.
  *
  * Alle bereiken komen uit beatBereik: framer-motion geeft ze als keyframe-
  * offsets door aan de Web Animations API, en die gooit buiten [0,1]
@@ -29,9 +32,7 @@ const COPY = LANDING_COPY.kleur;
 /** Het deel van de voortgang waarin de lichtgang loopt. */
 export const LICHT_BAND = { van: 0.1, tot: 0.9 } as const;
 /** Hoe donker de tafel en de lappen die niet aan de beurt zijn worden (dekking van #1A1A1A). */
-export const DIMMING = 0.45;
-/** De dimming: erin bij de eerste lap, eruit na de laatste. */
-export const DIM_BEREIK = beatBereik(LICHT_BAND.van, LICHT_BAND.tot);
+export const DIMMING = 0.32;
 
 const lapBreedte = (aantal: number) => (LICHT_BAND.tot - LICHT_BAND.van) / aantal;
 
@@ -80,33 +81,53 @@ const BRONNEN: readonly Beeldbron[] = [
 ];
 const BEELD_KLASSE = "absolute inset-0 h-full w-full object-cover";
 
-/**
- * De contour van elke lap als clipPath in eenheden van de figuur (0 tot 1),
- * zodat hij op elke maat over dezelfde lap valt. De paden staan in een viewBox
- * van 1000 x 1250, de figuur is 4:5.
- */
-function Contouren({ stalen, idVoor }: { stalen: Staal[]; idVoor: (i: number) => string }) {
+/** De rechthoek om een lap, als fractie van de figuur (0 tot 1). */
+export function lapRechthoek(lap: Lap): { links: number; rechts: number; boven: number; onder: number } {
   const { breedte, hoogte } = KLEURPIEK_VIEWBOX;
-  return (
-    <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
-      <defs>
-        {stalen.map(({ lap }, i) => (
-          <clipPath key={lap.staal} id={idVoor(i)} clipPathUnits="objectBoundingBox">
-            <path d={lap.pad} transform={`scale(${1 / breedte} ${1 / hoogte})`} />
-          </clipPath>
-        ))}
-      </defs>
-    </svg>
-  );
+  const getallen = (lap.pad.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+  const xs = getallen.filter((_, i) => i % 2 === 0);
+  const ys = getallen.filter((_, i) => i % 2 === 1);
+  return {
+    links: Math.min(...xs) / breedte,
+    rechts: Math.max(...xs) / breedte,
+    boven: Math.min(...ys) / hoogte,
+    onder: Math.max(...ys) / hoogte,
+  };
 }
 
-/** Dezelfde foto, geknipt op een lap, boven de dimming: zo licht die lap op. */
-function Lapuitsnede({ clipId, voortgang, bereik }: { clipId: string; voortgang: MotionValue<number>; bereik: number[] }) {
+/** Hoe ver het licht van een lap over het hout uitloopt, als fractie van breedte en hoogte. */
+export const UITLOOP = { x: 0.035, y: 0.028 } as const;
+
+const pc = (fractie: number) => `${(fractie * 100).toFixed(2)}%`;
+
+/**
+ * Het masker van de donkere laag voor een lap: zichtbaar (donker) overal behalve
+ * in de rechthoek van de lap, met een zachte overgang naar buiten. Twee
+ * verlopen (horizontaal en verticaal) die samen optellen; dat is de
+ * standaardsamenstelling in Chrome en WebKit, dus geen mask-composite nodig.
+ */
+export function lapMasker(lap: Lap): string {
+  const r = lapRechthoek(lap);
+  const h = `linear-gradient(to right, #000 ${pc(r.links - UITLOOP.x)}, transparent ${pc(r.links)}, transparent ${pc(r.rechts)}, #000 ${pc(r.rechts + UITLOOP.x)})`;
+  const v = `linear-gradient(to bottom, #000 ${pc(r.boven - UITLOOP.y)}, transparent ${pc(r.boven)}, transparent ${pc(r.onder)}, #000 ${pc(r.onder + UITLOOP.y)})`;
+  return `${h}, ${v}`;
+}
+
+/** De donkere laag met het licht op een lap; zichtbaar zolang die lap aan de beurt is. */
+function Lichtvlek({ lap, voortgang, bereik }: { lap: Lap; voortgang: MotionValue<number>; bereik: number[] }) {
   const dekking = useTransform(voortgang, bereik, [0, 1, 1, 0], { clamp: true });
+  const masker = lapMasker(lap);
   return (
-    <motion.div className="absolute inset-0" style={{ opacity: dekking, clipPath: `url(#${clipId})` }} aria-hidden="true">
-      <EigenBeeld bronnen={BRONNEN} alt="" className={BEELD_KLASSE} />
-    </motion.div>
+    <motion.div
+      className="pointer-events-none absolute inset-0"
+      style={{
+        opacity: dekking,
+        backgroundColor: `rgba(26, 26, 26, ${DIMMING})`,
+        maskImage: masker,
+        WebkitMaskImage: masker,
+      }}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -127,17 +148,16 @@ function BewegendeNaam({ staal, voortgang, bereik }: { staal: Staal; voortgang: 
   return <Lapnaam staal={staal} dekking={dekking} />;
 }
 
-/** De lichtgang over W2: dimming, zes oplichtende lappen en hun namen. */
+/**
+ * De lichtgang over W2: per lap een donkere laag met licht op die lap, en de
+ * namen. Opeenvolgende lappen vloeien in elkaar over; de eerste laag komt op uit
+ * het niets en de laatste verdwijnt, dus aan begin en eind is de tafel onbewerkt.
+ */
 function Lichtgang({ stalen, voortgang }: { stalen: Staal[]; voortgang: MotionValue<number> }) {
-  const basis = useId().replace(/:/g, "");
-  const idVoor = (i: number) => `lap-${basis}-${i}`;
-  const dim = useTransform(voortgang, DIM_BEREIK, [0, DIMMING, DIMMING, 0], { clamp: true });
   return (
     <>
-      <Contouren stalen={stalen} idVoor={idVoor} />
-      <motion.div className="pointer-events-none absolute inset-0 bg-[#1A1A1A]" style={{ opacity: dim }} aria-hidden="true" />
       {stalen.map((staal, i) => (
-        <Lapuitsnede key={staal.lap.staal} clipId={idVoor(i)} voortgang={voortgang} bereik={lapBereik(i, stalen.length)} />
+        <Lichtvlek key={staal.lap.staal} lap={staal.lap} voortgang={voortgang} bereik={lapBereik(i, stalen.length)} />
       ))}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         {stalen.map((staal, i) => (
@@ -218,7 +238,7 @@ function BewegendeLijstrij({ staal, voortgang, bereik }: { staal: Staal; voortga
 const Kleurlijst = forwardRef<HTMLUListElement, { stalen: Staal[]; voortgang?: MotionValue<number> }>(
   function Kleurlijst({ stalen, voortgang }, ref) {
     return (
-      <ul ref={ref} aria-label={COPY.lijst.tekst} className="mt-6 max-w-sm">
+      <ul ref={ref} role="list" aria-label={COPY.lijst.tekst} className="mt-6 max-w-prose">
         {stalen.map((staal, i) =>
           voortgang ? (
             <BewegendeLijstrij key={staal.kleur.name} staal={staal} voortgang={voortgang} bereik={lapBereik(i, stalen.length)} />
@@ -230,6 +250,24 @@ const Kleurlijst = forwardRef<HTMLUListElement, { stalen: Staal[]; voortgang?: M
     );
   },
 );
+
+/** Compacte vorm van de lijst voor telefoon en tablet: drie kolommen, staal met naam. */
+function Kleurraster({ stalen }: { stalen: Staal[] }) {
+  return (
+    <ul role="list" aria-label={COPY.lijst.tekst} className="grid grid-cols-3 gap-x-4 gap-y-5">
+      {stalen.map(({ kleur }) => (
+        <li key={kleur.name} className="flex items-center gap-3">
+          <span
+            className="block h-8 w-8 flex-none border border-[#E5E5E5]"
+            style={{ backgroundColor: kleur.hex }}
+            aria-hidden="true"
+          />
+          <span className="text-sm font-semibold text-[#1A1A1A]">{kleur.name}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 function Kop() {
   return (
@@ -286,7 +324,7 @@ function Stalenvlakken({ stalen }: { stalen: Staal[] }) {
  * de linkerschermrand, net onder de kop. Rechts scrolt eerst de vraag weg; het
  * blok met de lijst plakt dan naast het beeld, en terwijl de sectie voorbij
  * scrolt licht op de tafel om de beurt de lap op van de rij die aan de beurt
- * is. Zo krijgt elke lap ongeveer 145 px scroll (220vh op 900 hoog) en hangen
+ * is. Zo krijgt elke lap ongeveer 215 px scroll (280vh op 900 hoog) en hangen
  * beeld en lijst nooit stil naast een lege kolom.
  */
 function VasteKolom({ stalen }: { stalen: Staal[] }) {
@@ -300,7 +338,7 @@ function VasteKolom({ stalen }: { stalen: Staal[] }) {
       id="kleur"
       tabIndex={-1}
       aria-labelledby="kleur-kop"
-      className="relative flex min-h-[220vh] flex-col bg-[#F5F0EB] outline-none"
+      className="relative flex min-h-[280vh] -scroll-mt-4 flex-col bg-[#F5F0EB] outline-none"
     >
       {/* Baan over de volle hoogte van de sectie; het beeld plakt erin. */}
       <div className="absolute inset-y-0 left-0">
@@ -332,25 +370,18 @@ function VasteKolom({ stalen }: { stalen: Staal[] }) {
   );
 }
 
-/** Telefoon en tablet in beweging: de lichtgang volgt het beeld terwijl het voorbij komt. */
-function BewegendGestapeld({ stalen }: { stalen: Staal[] }) {
-  const figuur = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: figuur, offset: ["start 0.8", "end 0.45"] });
-  return (
-    <Gestapeld
-      beeld={<KleurBeeld stalen={stalen} voortgang={scrollYProgress} figuurRef={figuur} className="w-full" />}
-      lijst={<Kleurlijst stalen={stalen} voortgang={scrollYProgress} />}
-    />
-  );
-}
-
-/** Reduced motion, of te klein voor de sticky kolom zonder palet: alles stil, alle namen in beeld. */
+/**
+ * Onder 1024 x 600 en bij reduced motion: alles stil, alle namen in beeld. Op
+ * telefoon en tablet liep de lichtgang niet in de pas: de lijst stond nooit
+ * tegelijk met het beeld in beeld (beeldkritiek fase 4). Daar dus het beeld met
+ * alle namen, en direct eronder de zes stalen in een compact raster.
+ */
 function StilGestapeld({ stalen }: { stalen: Staal[] | null }) {
   if (stalen && !W2_FOTO_AAN) return <Gestapeld beeld={<Stalenvlakken stalen={stalen} />} />;
   return (
     <Gestapeld
       beeld={<KleurBeeld stalen={stalen ?? []} className="w-full" />}
-      lijst={stalen ? <Kleurlijst stalen={stalen} /> : undefined}
+      lijst={stalen ? <Kleurraster stalen={stalen} /> : undefined}
     />
   );
 }
@@ -362,12 +393,14 @@ function StilGestapeld({ stalen }: { stalen: Staal[] | null }) {
  */
 function Gestapeld({ beeld, lijst }: { beeld: JSX.Element; lijst?: JSX.Element }) {
   return (
-    <section id="kleur" tabIndex={-1} aria-labelledby="kleur-kop" className="bg-[#F5F0EB] py-16 outline-none md:py-24">
+    <section id="kleur" tabIndex={-1} aria-labelledby="kleur-kop" className="-scroll-mt-4 bg-[#F5F0EB] py-16 outline-none md:py-24">
       {/* Onder 1024 px onder elkaar, het beeld op de telefoon over de volle
           breedte. Vanaf 1024 px (te laag voor de sticky kolom, of reduced
           motion) het beeld links op kolom 1 tot 6 en de tekst rechts. */}
       <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-6 lg:px-8">
-        <div className="px-4 sm:px-6 lg:col-span-6 lg:col-start-7 lg:row-start-1 lg:px-0">
+        {/* Tussen 768 en 1023 px staan tekst, beeld en raster op dezelfde as van
+            560 px; anders kreeg de tablet drie linkerranden. */}
+        <div className="px-4 sm:px-6 md:mx-auto md:max-w-[560px] md:px-0 lg:col-span-6 lg:col-start-7 lg:row-start-1 lg:mx-0 lg:max-w-none">
           <Kop />
           <div className="mt-8">
             <Profielzin />
@@ -378,7 +411,7 @@ function Gestapeld({ beeld, lijst }: { beeld: JSX.Element; lijst?: JSX.Element }
           {beeld}
         </div>
 
-        <div className="mt-8 px-4 sm:px-6 lg:col-span-6 lg:col-start-7 lg:row-start-2 lg:px-0">
+        <div className="mt-8 px-4 sm:px-6 md:mx-auto md:max-w-[560px] md:px-0 lg:col-span-6 lg:col-start-7 lg:row-start-2 lg:mx-0 lg:max-w-none">
           {lijst}
           <div className="mt-8">
             <Slotzin />
@@ -391,11 +424,14 @@ function Gestapeld({ beeld, lijst }: { beeld: JSX.Element; lijst?: JSX.Element }
 
 /**
  * Kleur, de piek (plan "Onder de hero", 4.2): de draai van gevoel naar bewijs.
+ * "Bekijk voorbeeld" scrolt hierheen. De 16 px die scroll-padding-top boven de
+ * kophoogte houdt is voor koppen; -scroll-mt-4 haalt hem weg, anders landde
+ * het anker met een strook van W1 boven het zand.
  * De quiz vraagt welke kleuren je graag draagt; voor het voorbeeldprofiel licht
  * op tafel om de beurt de lap op van elke kleur die zijn rapport onder "Draag
  * deze kleuren" toont.
  *
- * Alleen dekking beweegt (dimming, lapuitsneden, namen, streep in de lijst):
+ * Alleen dekking beweegt (de lagen met het licht, namen, streep in de lijst):
  * geen layoutverschuiving, en terugscrollen draait alles terug. Geen focusbaar
  * element in het beeld.
  *
@@ -410,6 +446,5 @@ export default function KleurPiek({ vast = true }: { vast?: boolean }) {
   const modus: Modus = beperkteBeweging || !stalen ? "stil" : vast && groot && W2_FOTO_AAN ? "vast" : "flow";
 
   if (modus === "vast" && stalen) return <VasteKolom stalen={stalen} />;
-  if (modus === "flow" && stalen && W2_FOTO_AAN) return <BewegendGestapeld stalen={stalen} />;
   return <StilGestapeld stalen={stalen} />;
 }

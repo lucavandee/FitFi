@@ -82,7 +82,7 @@ export default function Voorbeeldoutfit({
       id="outfit"
       tabIndex={-1}
       aria-labelledby="outfit-kop"
-      className="bg-[#FAFAF8] py-16 outline-none md:py-24"
+      className="-scroll-mt-4 bg-[#FAFAF8] py-16 outline-none md:py-24"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-6 border-t border-[#E5E5E5] pt-12 lg:grid-cols-12">

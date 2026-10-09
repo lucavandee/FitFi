@@ -1,7 +1,7 @@
 /**
  * De kleurpiek (plan "Onder de hero", 4.2): over W2 licht om de beurt een lap op
- * (een uitsnede van dezelfde foto, geknipt op de contour hieronder), en de naam
- * van die kleur verschijnt op het hout eronder.
+ * (zacht licht op de rechthoek om de contour hieronder, zie lapMasker in
+ * KleurPiek.tsx), en de naam van die kleur verschijnt op het hout eronder.
  *
  * Alleen de vorm en de plek staan hier. De vulling komt uit
  * getColorPalette(PALETSLEUTEL).doColors, zodat de landingscode geen hexwaarde
