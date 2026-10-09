@@ -15,7 +15,7 @@
 export const LANDING_TITEL = "FitFi: stijladvies op basis van wat je graag draagt";
 
 export const LANDING_BESCHRIJVING =
-  "Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit foto's. " +
+  "Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. " +
   "Met een gratis account krijg je een kleurpalet en outfits met links naar winkels.";
 
 /**
