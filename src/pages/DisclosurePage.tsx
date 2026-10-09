@@ -140,6 +140,10 @@ const SECTIONS: Section[] = [
     // Wat gegenereerd is, wat echt is en wat het label betekent. Bewust een
     // uitleg van het label en geen belofte dat elk beeld er een heeft: dat
     // klopt pas als oud beeld zonder herkomst van de site is.
+    // Hier stond ook: een foto die FitFi zelf maakt, krijgt het label "Eigen
+    // foto." Dat label bestaat nergens in de code en er is nog geen eigen foto.
+    // Komt die er, zet de zin dan terug samen met het label.
+    // __tests__/DisclosurePage.labels.test.ts toetst dat elk genoemd label bestaat.
     content: (
       <ul className="space-y-3">
         {[
@@ -147,7 +151,7 @@ const SECTIONS: Section[] = [
           'Het label "Beeld gemaakt met AI." betekent dat het hele beeld met AI is gemaakt, ook als het beweegt.',
           'Staat er "De persoon is een model." of "De personen zijn modellen." bij, dan is ook die persoon met AI gemaakt. Het is geen klant of gebruiker van FitFi.',
           'Productfoto\'s komen van de winkels zelf. Die maken we niet.',
-          'Schermbeelden en opnames van de quiz en het rapport komen uit de app zelf. Een foto die FitFi zelf maakt, krijgt het label "Eigen foto."',
+          'Schermbeelden en opnames van de quiz en het rapport komen uit de app zelf.',
           'Beelden kunnen indicatief zijn; vertrouw voor maten/kleuren op de productpagina van de winkel.',
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-3 text-[15px] text-[#4A4A4A] leading-[1.7]">
