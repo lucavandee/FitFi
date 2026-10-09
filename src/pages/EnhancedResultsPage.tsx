@@ -1396,12 +1396,14 @@ export default function EnhancedResultsPage() {
                         // Met een geslaagde analyse komt het seizoen uit de
                         // selfie (pasFotoAnalyseToe), niet uit de voorkeur; de
                         // zin over temperatuur en contrast klopt dan niet.
+                        // "wijst naar het palet Herfst": "wijst naar Herfst" las als
+                        // een seizoen, niet als het palet dat het rapport toont.
                         if (heeftFotoAnalyse) {
-                          return `De analyse van je selfie wijst naar ${seasonNL}. Gebaseerd op je selfie en quizantwoorden.`;
+                          return `De analyse van je selfie wijst naar het palet ${seasonNL}. Gebaseerd op je selfie en quizantwoorden.`;
                         }
                         const zin = temp && contrast
-                          ? `Je voorkeur voor ${temp} tinten en ${contrast} contrast wijst naar ${seasonNL}.`
-                          : `Je antwoorden wijzen naar ${seasonNL}.`;
+                          ? `Je voorkeur voor ${temp} tinten en ${contrast} contrast wijst naar het palet ${seasonNL}.`
+                          : `Je antwoorden wijzen naar het palet ${seasonNL}.`;
                         return `${zin} Gebaseerd op je quizantwoorden.`;
                       })()}
                     </p>
