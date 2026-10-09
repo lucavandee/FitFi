@@ -239,7 +239,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             Welke stijl spreekt je aan?
           </h2>
           <p className="text-xs text-[#6E6E6E] mb-2">
-            <strong className="text-[#1A1A1A]">Swipe</strong> door de foto's. Na {MIN_SWIPES_TO_COMPLETE} swipes kun je afronden.
+            <strong className="text-[#1A1A1A]">Swipe</strong> door de beelden. Na {MIN_SWIPES_TO_COMPLETE} swipes kun je afronden.
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
@@ -293,7 +293,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           )}
           <p className="text-center text-xs text-[#6E6E6E]">
-            Tik op de knoppen of sleep de foto
+            Tik op de knoppen of sleep het beeld
           </p>
         </div>
       </div>
@@ -457,7 +457,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-[#6E6E6E]">Sleep de foto</span>
+                <span className="text-xs text-[#6E6E6E]">Sleep het beeld</span>
                 <span className="text-xs text-[#6E6E6E]">← →</span>
               </div>
             </div>

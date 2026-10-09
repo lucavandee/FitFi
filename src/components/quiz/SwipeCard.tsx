@@ -105,7 +105,7 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             aria-label="Instructies voor swipe interactie"
           >
             <span className="text-xl" role="img" aria-label="Wijzende vinger">👇</span>
-            <span>Klik op de knoppen of sleep de foto</span>
+            <span>Klik op de knoppen of sleep het beeld</span>
           </motion.div>
         )}
       </AnimatePresence>
