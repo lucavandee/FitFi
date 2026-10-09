@@ -125,9 +125,14 @@ export const W1 = {
 } as const;
 
 /* ─── W2 Tafel (de kleurpiek) ───────────────────────────────────────────────
- * W2-NB2-23, de versie met lokale correctie B (ivory 0,59 van het L*-verschil,
- * de andere vijf 0,5). Paden en naamposities staan in kleurpiek.ts.
- * Meting en keuze: claude-artifacts/fitfi-beeld/pagina/fase3/w2.md.
+ * W2-NB2-23, versie v2: lokale correctie B (ivory 0,59 van het L*-verschil,
+ * de andere vijf 0,5), met alleen Olijfgroen opnieuw gecorrigeerd naar de
+ * gedempte staal #6E7A45 (Delta E 2000 1,47; mediaan C* van de lap van 57,3
+ * naar 30,8). Al het andere is byte voor byte versie B. Nieuw: 1170 breed, zodat
+ * een telefoon met DPR 3 niet meer het bestand van 1440 laadt. Paden en
+ * naamposities staan in kleurpiek.ts.
+ * Meting en keuze: claude-artifacts/fitfi-beeld/pagina/fase3/w2.md (v1) en
+ * fase3/r3-tafel.md (v2).
  */
 
 /**
@@ -144,16 +149,18 @@ export const W2 = {
   verloop: "linear-gradient(to bottom, rgba(20,18,15,0.45) 0%, transparent 22%)",
   set: {
     jobId: "b9c86d74-830b-47f2-84db-788795477d83",
-    mediaankleur: "#482E1C",
+    mediaankleur: "#482E1E",
     avif: [
-      { pad: "/beeld/w2-tafel_4x5-780.ccc919dc.avif", breedte: 780, hoogte: 975 },
-      { pad: "/beeld/w2-tafel_4x5-1440.b073f4ee.avif", breedte: 1440, hoogte: 1800 },
-      { pad: "/beeld/w2-tafel_4x5-1728.ddd108f4.avif", breedte: 1728, hoogte: 2160 },
+      { pad: "/beeld/w2-tafel_4x5-780.bd19dec3.avif", breedte: 780, hoogte: 975 },
+      { pad: "/beeld/w2-tafel_4x5-1170.eed406f6.avif", breedte: 1170, hoogte: 1462 },
+      { pad: "/beeld/w2-tafel_4x5-1440.1cd7f159.avif", breedte: 1440, hoogte: 1800 },
+      { pad: "/beeld/w2-tafel_4x5-1728.f6c16597.avif", breedte: 1728, hoogte: 2160 },
     ],
     webp: [
-      { pad: "/beeld/w2-tafel_4x5-780.fe63d8da.webp", breedte: 780, hoogte: 975 },
-      { pad: "/beeld/w2-tafel_4x5-1440.24771efb.webp", breedte: 1440, hoogte: 1800 },
-      { pad: "/beeld/w2-tafel_4x5-1728.70587974.webp", breedte: 1728, hoogte: 2160 },
+      { pad: "/beeld/w2-tafel_4x5-780.28d8fb2c.webp", breedte: 780, hoogte: 975 },
+      { pad: "/beeld/w2-tafel_4x5-1170.477d4289.webp", breedte: 1170, hoogte: 1462 },
+      { pad: "/beeld/w2-tafel_4x5-1440.a7ed67a8.webp", breedte: 1440, hoogte: 1800 },
+      { pad: "/beeld/w2-tafel_4x5-1728.953cd64b.webp", breedte: 1728, hoogte: 2160 },
     ],
   },
 } as const;
