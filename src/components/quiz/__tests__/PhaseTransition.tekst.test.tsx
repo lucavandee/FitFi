@@ -79,6 +79,21 @@ describe('PhaseTransition', () => {
     expect(tekst).toContain('Bekijk je resultaten');
   });
 
+  it('de schermen rond de swipes en de kalibratie beloven geen verwerking die er niet is', () => {
+    // StyleAnalysisTransition is een timer van 3,5 seconde; daarin wordt niets
+    // geanalyseerd. De kalibratie verandert het rapport niet aantoonbaar (zie
+    // het commentaar in CalibrationStep). Bron zonder commentaar.
+    const lees = (naam: string) =>
+      readFileSync(join(__dirname, '..', naam), 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/^\s*\/\/.*$/gm, '');
+    const beloftes =
+      /geanalyseerd|is compleet|is klaar|worden samengesteld|worden bepaald|begrijpen je stijl|verfijnen je profiel|aanbevelingen worden aangepast|scherper krijgen|volgens mij/i;
+    expect(lees('StyleAnalysisTransition.tsx')).not.toMatch(beloftes);
+    expect(lees('CalibrationStep.tsx')).not.toMatch(beloftes);
+    expect(lees('StyleAnalysisTransition.tsx')).not.toMatch(/\p{Extended_Pictographic}/u);
+  });
+
   it('kalibratie: drie outfits en de knopteksten van de kaart', () => {
     const tekst = tekstVan(
       renderToString(<PhaseTransition fromPhase="swipes" toPhase="calibration" onContinue={() => {}} />)

@@ -312,14 +312,14 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-6">
           <Sparkles className="w-4 h-4 text-[#9A503B]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
-            Outfit Calibratie
+            Outfits beoordelen
           </span>
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-4">
-          We zijn je profiel aan het voorbereiden
+          Er zijn nu geen outfits om te beoordelen
         </h2>
         <p className="text-[#6E6E6E] mb-8">
-          Op dit moment kunnen we nog geen outfits genereren, maar we gaan direct verder met je stijlrapport op basis van je quiz- en swipe-antwoorden.
+          Je kunt deze stap overslaan. FitFi maakt je rapport op basis van je antwoorden en je swipes.
         </p>
         <button
           onClick={onComplete}
@@ -338,15 +338,15 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F4E8E3] border border-[#E5E5E5] mb-4">
           <Sparkles className="w-4 h-4 text-[#9A503B]" />
           <span className="text-sm font-medium text-[#1A1A1A]">
-            Outfit Calibratie
+            Outfits beoordelen
           </span>
         </div>
 
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-3">
-          Zo ziet jouw stijl er volgens mij uit
+          Wat vind je van deze outfits?
         </h2>
         <p className="text-[#6E6E6E] max-w-2xl mx-auto text-base sm:text-lg">
-          Nova heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je antwoorden. Geef feedback zodat we je stijl scherper krijgen.
+          FitFi heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je antwoorden. Geef per outfit aan wat je ervan vindt.
         </p>
 
         {isPersonalized && (
@@ -392,7 +392,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           >
             <CheckCircle2 className="w-5 h-5" />
             <span className="font-semibold">
-              Perfect! Alle outfits beoordeeld
+              Alle outfits beoordeeld
             </span>
           </motion.div>
         )}
@@ -422,10 +422,10 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
         >
           <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 mb-6 shadow-sm">
             <h3 className="font-semibold text-[#1A1A1A] mb-2">
-              Alle outfits beoordeeld
+              Volgende stap: je rapport
             </h3>
             <p className="text-sm text-[#6E6E6E] leading-relaxed">
-              Bedankt voor je beoordelingen.
+              Met je kleurpalet, je stijlprofiel en outfits met links naar winkels.
             </p>
           </div>
 
@@ -449,7 +449,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
             )}
           </motion.button>
           <p className="text-sm text-[#6E6E6E] mt-4">
-            Hierna maakt FitFi je rapport.
+            Voor je rapport heb je een gratis account nodig.
           </p>
         </motion.div>
       )}

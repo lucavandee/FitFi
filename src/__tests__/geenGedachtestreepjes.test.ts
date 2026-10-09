@@ -46,6 +46,7 @@ const BESTANDEN = [
   "src/components/quiz/ArchetypePreviewEnhanced.tsx",
   "src/components/quiz/CalibrationStep.tsx",
   "src/components/quiz/PhaseTransition.tsx",
+  "src/components/quiz/StyleAnalysisTransition.tsx",
   "src/components/quiz/SwipeCard.tsx",
   "src/components/quiz/VisualPreferenceStepClean.tsx",
   "src/data/quizSteps.ts",
