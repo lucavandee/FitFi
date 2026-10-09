@@ -520,7 +520,7 @@ export default function CookiesPage() {
               {[
                 { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Essentiële cookies', desc: 'Altijd aan, nodig voor login en voorkeuren' },
                 { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Analytics (opt-in)', desc: 'Alleen met jouw expliciete toestemming' },
-                { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Partnermeting (opt-in)', desc: 'Alleen met jouw toestemming, geen advertentiepixels' },
+                { icon: Check, color: '#3D8B5E', bg: 'bg-[#3D8B5E]/10', label: 'Partnermeting', desc: 'Alleen met jouw toestemming. Geen advertentiepixels.' },
               ].map((item) => {
                 const Icon = item.icon;
                 return (

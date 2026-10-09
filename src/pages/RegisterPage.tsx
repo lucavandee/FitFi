@@ -423,7 +423,7 @@ const RegisterPage: React.FC = () => {
                   to="/onboarding"
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors duration-200"
                 >
-                  Start de quiz
+                  Begin gratis
                   <ArrowRight className="w-4 h-4" />
                 </NavLink>
               </div>
