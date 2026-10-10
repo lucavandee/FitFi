@@ -28,6 +28,15 @@ describe("CookieSettings", () => {
     expect(schakelaars.some((s) => s.includes('aria-label="Partnermeting"'))).toBe(true);
   });
 
+  it("elke schakelaar is minstens 44 px hoog om op te tikken (CLAUDE.md deel 12)", () => {
+    const schakelaars = [...html.matchAll(/<button\b[^>]*role="switch"[^>]*class="([^"]*)"/g)].map((m) => m[1].split(" "));
+    expect(schakelaars).toHaveLength(2);
+    for (const k of schakelaars) {
+      expect(k).toContain("h-11");
+      expect(k).toContain("w-12");
+    }
+  });
+
   it("zegt wat er aan staat zonder te beloven dat er niets is", () => {
     const tekst = html.replace(/<[^>]+>/g, " ");
     expect(tekst).toContain("Analytics en partnermeting staan uit");

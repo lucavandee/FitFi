@@ -9,26 +9,38 @@ function statusregel(prefs: CookiePrefs): string {
   return aan.length > 0 ? `Aan: ${aan.join(' en ')}` : 'Analytics en partnermeting staan uit';
 }
 
-/** Aan/uit-knop, dezelfde voor analytics en partnermeting. */
+/**
+ * Aan/uit-knop, dezelfde voor analytics en partnermeting. Het spoor is 24 x 40
+ * px, de knop eromheen 44 x 48: het tikvlak was even klein als het spoor,
+ * onder de 44 px uit CLAUDE.md deel 12.
+ */
 function Schakelaar({ aan, label, bezig, onClick }: { aan: boolean; label: string; bezig: boolean; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={bezig}
       role="switch"
       aria-checked={aan}
       aria-label={label}
       className={[
-        'relative flex-shrink-0 h-6 w-10 rounded-full transition-colors duration-200',
-        aan ? 'bg-[#A85740]' : 'bg-[#E5E5E5]',
+        'group -m-1 inline-flex h-11 w-12 flex-shrink-0 items-center justify-center rounded-xl focus-visible:outline-none',
         bezig ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
       ].join(' ')}
     >
-      <span className={[
-        'absolute top-[3px] left-[3px] h-[18px] w-[18px] rounded-full bg-white shadow-sm transition-transform duration-200',
-        aan ? 'translate-x-4' : 'translate-x-0'
-      ].join(' ')} />
+      <span
+        aria-hidden="true"
+        className={[
+          'relative block h-6 w-10 rounded-full transition-colors duration-200',
+          aan ? 'bg-[#A85740]' : 'bg-[#E5E5E5]',
+          'group-focus-visible:ring-2 group-focus-visible:ring-[#A85740] group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-white',
+        ].join(' ')}
+      >
+        <span className={[
+          'absolute top-[3px] left-[3px] h-[18px] w-[18px] rounded-full bg-white shadow-sm transition-transform duration-200',
+          aan ? 'translate-x-4' : 'translate-x-0'
+        ].join(' ')} />
+      </span>
     </button>
   );
 }
