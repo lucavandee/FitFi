@@ -83,6 +83,10 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({
         const safeUrl = url.trim().toLowerCase().startsWith('javascript:') ? '#' : url;
         return `<a href="${escapeHtml(safeUrl)}" class="text-[#A85740] hover:text-[#A85740]/80 underline">${escapeHtml(text)}</a>`;
       })
+      // Vet midden in een regel, ook in een lijstregel ("- **Opslag:** ..."):
+      // de regel hierboven vangt alleen vet aan het begin van een regel, en de
+      // privacyverklaring toonde de sterretjes letterlijk.
+      .replace(/\*\*([^*\n]+?)\*\*/g, '<strong class="font-semibold">$1</strong>')
       .replace(/\n\n/g, '</p><p class="text-[#1A1A1A] leading-relaxed mb-4">')
       .replace(/^(?!<[h|l|s|e])/gm, '<p class="text-[#1A1A1A] leading-relaxed mb-4">')
       .replace(/$(?![>])/gm, '</p>');
