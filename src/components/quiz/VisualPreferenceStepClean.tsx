@@ -438,8 +438,12 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
             </button>
           )}
 
+          {/* Sneltoetsen alleen vanaf 1024 px: op een telefoon is er geen
+              toetsenbord, en de captions van 10 en 12 px zaten onder de 14 px
+              die CLAUDE.md deel 12 op mobiel vraagt. Slepen staat op mobiel
+              al in de hint boven de kaart. */}
           <div
-            className="rounded-xl px-5 py-4"
+            className="hidden lg:block rounded-xl px-5 py-4"
             style={{ background: '#FFFFFF', border: '1px solid #E5E5E5' }}
           >
             <p className="text-xs font-semibold text-[#6E6E6E] uppercase tracking-wider mb-3">Sneltoetsen</p>
@@ -452,7 +456,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
                 <span className="text-xs text-[#6E6E6E]">Spreekt me aan</span>
                 <div className="flex items-center gap-1.5">
                   <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>→</kbd>
-                  <span className="text-[10px] text-[#6E6E6E]">of</span>
+                  <span className="text-xs text-[#6E6E6E]">of</span>
                   <kbd className="px-2.5 py-1 text-xs font-bold rounded-lg" style={{ background: '#FAFAF8', border: '1.5px solid #E5E5E5', color: '#1A1A1A' }}>Space</kbd>
                 </div>
               </div>

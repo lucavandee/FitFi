@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
-import { Heart, X } from 'lucide-react';
+import { ArrowDown, Heart, X } from 'lucide-react';
 
 /** Zichtbaar label op elke moodfoto: de foto's in deze stap zijn met AI gemaakt. */
 export const SWIPE_AI_LABEL = 'Beeld gemaakt met AI';
@@ -104,7 +104,8 @@ export function SwipeCard({ imageUrl, onSwipe, index, total, variant = 'mobile' 
             role="tooltip"
             aria-label="Instructies voor swipe interactie"
           >
-            <span className="text-xl" role="img" aria-label="Wijzende vinger">👇</span>
+            {/* Een Lucide-icoon in plaats van een emoji (CLAUDE.md deel 9). */}
+            <ArrowDown className="w-5 h-5" aria-hidden="true" />
             <span>Klik op de knoppen of sleep het beeld</span>
           </motion.div>
         )}
