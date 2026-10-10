@@ -94,6 +94,12 @@ describe("Navbar", () => {
 });
 
 describe("Footer (F1 en F2)", () => {
+  it("X als letter, niet als Twitter-vogeltje", () => {
+    const html = render("/", <Footer />);
+    expect(html).not.toContain("lucide-twitter");
+    expect(html).toMatch(/<a [^>]*href="https:\/\/x\.com\/fitfi_ai"[^>]*aria-label="Volg FitFi op X"[^>]*>[\s\S]*?>X<\/span>/);
+  });
+
   it("op / geen CTA-strook", () => {
     const html = render("/", <Footer />);
     expect(linksMetTekst(html, "Begin gratis")).toEqual([]);

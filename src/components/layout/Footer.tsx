@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Instagram, Linkedin, Twitter, MapPin } from "lucide-react";
+import { Instagram, Linkedin, MapPin } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
 import { track } from "@/utils/analytics";
@@ -24,10 +24,15 @@ const NAV_LEGAL = [
   { to: "/affiliate-disclosure",    label: "Disclosure"   },
 ];
 
-const SOCIAL = [
+/*
+ * X heeft geen eigen Lucide-icoon; het Twitter-vogeltje hoort bij een merk dat
+ * niet meer bestaat (beeldkritiek fase 4). Daarom de letter X, in de vorm van
+ * de andere twee.
+ */
+const SOCIAL: Array<{ href: string; label: string; Icon?: typeof Instagram; letter?: string }> = [
   { href: "https://instagram.com/fitfi.ai", label: "Volg FitFi op Instagram", Icon: Instagram },
   { href: "https://linkedin.com/company/fitfi-ai", label: "Volg FitFi op LinkedIn", Icon: Linkedin },
-  { href: "https://x.com/fitfi_ai", label: "Volg FitFi op X", Icon: Twitter },
+  { href: "https://x.com/fitfi_ai", label: "Volg FitFi op X", letter: "X" },
 ];
 
 /** De container uit CLAUDE.md deel 3, zodat de footer niet naast de pagina uitlijnt. */
@@ -105,7 +110,7 @@ export default function Footer() {
             <Logo size="sm" variant="default" className="text-[26px]" />
           </div>
           <div className="flex gap-2 lg:mt-7">
-            {SOCIAL.map(({ href, label, Icon }) => (
+            {SOCIAL.map(({ href, label, Icon, letter }) => (
               <a
                 key={href}
                 href={href}
@@ -114,7 +119,13 @@ export default function Footer() {
                 aria-label={label}
                 className="group w-11 h-11 rounded-xl bg-white border border-[#E5E5E5] flex items-center justify-center transition-colors duration-200 hover:border-[#1A1A1A]"
               >
-                <Icon className="w-4 h-4 text-[#4A4A4A] group-hover:text-[#1A1A1A] transition-colors duration-200" strokeWidth={2} aria-hidden="true" />
+                {Icon ? (
+                  <Icon className="w-4 h-4 text-[#4A4A4A] group-hover:text-[#1A1A1A] transition-colors duration-200" strokeWidth={2} aria-hidden="true" />
+                ) : (
+                  <span className="text-sm font-semibold leading-none text-[#4A4A4A] group-hover:text-[#1A1A1A] transition-colors duration-200" aria-hidden="true">
+                    {letter}
+                  </span>
+                )}
               </a>
             ))}
           </div>
