@@ -92,6 +92,13 @@ describe("zelf gehoste lettertypen", () => {
     }
   });
 
+  it("de CSP staat Google Fonts niet meer toe, en geen pagina in public laadt ze", () => {
+    expect(headers).not.toMatch(GOOGLE_FONTS);
+    for (const naam of readdirSync(join(WORTEL, "public")).filter((n) => n.endsWith(".html"))) {
+      expect(readFileSync(join(WORTEL, "public", naam), "utf-8"), naam).not.toMatch(GOOGLE_FONTS);
+    }
+  });
+
   it("_headers zet de woff2-bestanden op immutable", () => {
     expect(headers).toMatch(/\/fonts\/\*\.woff2\s*\n\s*Cache-Control: public, max-age=31536000, immutable/);
   });
