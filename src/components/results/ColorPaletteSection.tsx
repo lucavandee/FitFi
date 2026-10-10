@@ -79,7 +79,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhotoAnalysis = fals
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-[#A85740]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Basiskleuren</p>
-                  <p className="text-xs text-[#6E6E6E]">— ~60% van je garderobe</p>
+                  <p className="text-xs text-[#6E6E6E]">zo'n 60% van je garderobe</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.basis} columns={6} />
               </div>
@@ -89,7 +89,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhotoAnalysis = fals
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-[#A85740]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Accentkleuren</p>
-                  <p className="text-xs text-[#6E6E6E]">— ~30% voor balans</p>
+                  <p className="text-xs text-[#6E6E6E]">zo'n 30%, voor balans</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.accent} columns={6} />
               </div>
@@ -99,7 +99,7 @@ export function ColorPaletteSection({ season, subSeason, hasPhotoAnalysis = fals
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-[#6E6E6E]" aria-hidden="true" />
                   <p className="text-xs font-semibold text-[#1A1A1A]">Neutrale tinten</p>
-                  <p className="text-xs text-[#6E6E6E]">— ~10% als complementen</p>
+                  <p className="text-xs text-[#6E6E6E]">zo'n 10%, als aanvulling</p>
                 </div>
                 <ColorSwatchGrid swatches={groupedColors.neutraal} columns={6} />
               </div>
