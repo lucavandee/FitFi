@@ -308,3 +308,7 @@ en die eist offsets in [0,1]. Een band die op 0 begint met een marge ervoor gaf
 Animaties blijven onder 500ms en zijn nooit bouncy (deel 8). Scroll-gekoppelde
 beweging heeft geen eigen duur, maar de beats mogen niet sneller wisselen dan
 de lezer kan volgen: minstens 200vh scroll per scene.
+
+## 17. Aanvullingen uit "Onder de hero" (oktober 2026)
+
+Deze regels gaan voor wat er hierboven staat. Deel 7: wereld- en sfeerbeeld staat in `aspect-[4/5] object-cover`, en productfoto's uit een feed houden de verhouding van de bron en worden nooit uitgesneden (geen `aspect-[3/4]`, geen `object-cover`, niets eroverheen). Deel 5: foto's hebben geen radius; app-weergave en kaarten houden `rounded-2xl`. Deel 1: tekstlinks zijn `text-[#1A1A1A] underline underline-offset-2`, want `#4A7EC2` haalt op geen van onze ondergronden 4,5:1. Deel 2: de displaykop staat ook in het slot van de landingspagina, een schermvullend beeld met een knop; overal anders onder de hero geen serif. Deel 10: "Bekijk voorbeeld" is een vaste tekst. Deel 4 en 14: de kop is 90 tot 125 px hoog (tussen 768 en ongeveer 850 px breed hoger dan 90); Navbar meet hem in `--header-h`, en ruimte onder de kop rekent daarmee, als `calc(var(--header-h, 90px) + 16px)`. Deel 16: scroll-gekoppelde beweging buiten ScrollScene, zoals de wipe van de kleurpiek, haalt zijn invoerbereik ook uit `beatBereik`.

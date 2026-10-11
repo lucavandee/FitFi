@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { House, Sparkles, LayoutDashboard, User, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '@/context/UserContext';
+import { useHoogteInVariabele } from '@/hooks/useHoogteInVariabele';
 
 interface NavItem {
   icon: React.ElementType;
@@ -47,19 +48,23 @@ const MobileBottomNav: React.FC = () => {
   const location = useLocation();
   const { user } = useUser();
   const [mounted, setMounted] = React.useState(false);
+  const navRef = React.useRef<HTMLElement>(null);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Hide on admin pages
-  if (location.pathname.startsWith('/admin')) {
-    return null;
-  }
-
-  // Hide on specific pages where it would interfere
+  // Hide on admin pages, and on specific pages where it would interfere
   const hideOnPaths = ['/inloggen', '/registreren', '/onboarding'];
-  if (hideOnPaths.some(path => location.pathname.startsWith(path))) {
+  const verborgen =
+    location.pathname.startsWith('/admin') ||
+    hideOnPaths.some(path => location.pathname.startsWith(path));
+
+  // De cookiebanner staat op mobiel boven deze balk en leest daarvoor
+  // --onderbalk-h. Vanaf md is de balk display:none en meet hij 0.
+  useHoogteInVariabele(navRef, '--onderbalk-h', mounted && !verborgen);
+
+  if (verborgen) {
     return null;
   }
 
@@ -85,6 +90,7 @@ const MobileBottomNav: React.FC = () => {
 
       {/* Mobile Bottom Navigation */}
       <motion.nav
+        ref={navRef}
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
@@ -130,10 +136,14 @@ const MobileBottomNav: React.FC = () => {
                             }`}
                             strokeWidth={active ? 2.5 : 1.8}
                           />
+                          {/* Actief label in #9A503B: 4,88:1 op #F4E8E3. Met
+                              #A85740 was het 4,26:1, de enige axe-overtreding
+                              op / mobiel (fase 4). Het icoon is geen tekst en
+                              haalt met #A85740 de 3:1 ruim. */}
                           <span
                             className={`text-[10px] font-semibold leading-none transition-colors ${
                               active
-                                ? 'text-[#A85740]'
+                                ? 'text-[#9A503B]'
                                 : 'text-[#6E6E6E] group-hover:text-[#4A4A4A]'
                             }`}
                           >

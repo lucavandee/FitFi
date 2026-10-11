@@ -2,19 +2,13 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <!-- ✅ Performance optimizations -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://images.pexels.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-
-    <!-- Prefetch common routes -->
-    <link rel="prefetch" href="/results" as="document">
-    <link rel="prefetch" href="/prijzen" as="document">
-
-    <!-- ✅ Fonts: Instrument Serif (editorial headlines) + Plus Jakarta Sans (premium body) -->
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lettertypen: Instrument Serif en Plus Jakarta Sans staan zelf gehost in
+         public/fonts/, met @font-face in src/index.css. Geen verzoek naar Google.
+         De twee die de herokop boven de vouw nodig heeft, worden vooraf geladen:
+         zonder preload kwamen ze op Slow 4G pas na de H1 en sprong de kop 49 px
+         (CLS, gemeten op 8 oktober). -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/plus-jakarta-sans-latin.cd8db90c.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/instrument-serif-italic-latin.6ee678c3.woff2" />
 
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -40,40 +34,32 @@
          Er stond hier eerder een harde canonical naar https://fitfi.ai/,
          waardoor elke subpagina naar de homepage canonicaliseerde en die
          canonical bovendien naar een 301 wees. Die is nu weg: zonder tag
-         bepaalt Google de URL zelf, wat beter is dan een foute tag. -->
+         bepaalt Google de URL zelf, wat beter is dan een foute tag.
+         Titel, beschrijving en beeld zijn die van de homepage en staan ook in
+         src/content/landingHead.ts; landingHead.test.ts houdt ze gelijk. Het
+         beeld draagt het AI-label in het beeld zelf. -->
     <meta property="og:site_name" content="FitFi" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="nl_NL" />
-    <meta property="og:title" content="FitFi — Persoonlijk stijladvies" />
-    <meta property="og:description" content="Beantwoord een paar vragen en zie welke outfits bij je passen. Met uitleg en directe shoplinks." />
-    <meta property="og:image" content="https://www.fitfi.ai/og/og-default.jpg" />
+    <meta property="og:title" content="FitFi: stijladvies op basis van wat je graag draagt" />
+    <meta property="og:description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
+    <meta property="og:image" content="https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg" />
     <meta property="og:url" content="https://www.fitfi.ai/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="FitFi — Persoonlijk stijladvies" />
-    <meta name="twitter:description" content="Beantwoord een paar vragen en zie welke outfits bij je passen. Met uitleg en directe shoplinks." />
-    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-default.jpg" />
-    <meta name="description" content="Beantwoord een paar vragen en zie welke outfits bij je passen. Met uitleg en directe shoplinks." />
+    <meta name="twitter:title" content="FitFi: stijladvies op basis van wat je graag draagt" />
+    <meta name="twitter:description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
+    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg" />
+    <meta name="description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
 
-    <title>FitFi — Persoonlijk stijladvies</title>
+    <title>FitFi: stijladvies op basis van wat je graag draagt</title>
 
     <!-- Daisycon verification -->
     <meta name="ee766b42deed7db" content="4a91cb66c90ac80df32bb7517a55886a" />
 
-    <!-- Google tag (gtag.js) — consent mode v2 -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'analytics_storage': 'denied',
-        'ad_storage': 'denied',
-        'wait_for_update': 500
-      });
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1PPLR2L3R"></script>
-    <script>
-      gtag('js', new Date());
-      gtag('config', 'G-D1PPLR2L3R');
-    </script>
+    <!-- Google Analytics staat hier bewust niet. gtag.js laadt pas na
+         toestemming voor analytics, vanuit src/utils/analytics.ts. Hier stond
+         het vroeger met consent mode op denied, en dan ging er voor elke keuze
+         toch een page_view naar Google. -->
   </head>
   <body>
     <div id="root"></div>

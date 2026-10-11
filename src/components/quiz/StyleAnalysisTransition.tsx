@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface StyleAnalysisTransitionProps {
@@ -8,20 +8,16 @@ interface StyleAnalysisTransitionProps {
 }
 
 /**
- * StyleAnalysisTransition - Premium transition after last swipe
+ * StyleAnalysisTransition: overgang na de laatste swipe.
  *
- * Flow:
- * 1. Celebration (1s) - "Perfect! Je stijlprofiel is compleet!"
- * 2. Analysis (2.5s) - "Jouw stijl wordt geanalyseerd..."
- * 3. Fade out + onComplete
- *
- * Total: ~3.5 seconds
- *
- * Purpose:
- * - Give psychological feeling of processing
- * - Smooth transition instead of abrupt jump
- * - Build anticipation for results
- * - Show that user input is valued
+ * Verloop: 1 seconde "Klaar met swipen", daarna 2,5 seconde een balk, dan
+ * onComplete. Er wordt in die 3,5 seconde niets verwerkt: het is alleen een
+ * timer. Hier stonden "Je stijlprofiel is compleet!", "Jouw stijl wordt
+ * geanalyseerd", "Outfits worden samengesteld" en "Je persoonlijke
+ * stijlrapport is klaar!", terwijl daarna nog de kalibratie komt en het
+ * rapport pas na de quiz gemaakt wordt (copy-controle fase 4, bevinding 15).
+ * De tekst zegt nu alleen wat er hierna komt. Of de wachttijd zelf moet
+ * blijven, is een aparte keuze.
  */
 export function StyleAnalysisTransition({
   isVisible,
@@ -96,10 +92,10 @@ export function StyleAnalysisTransition({
                   transition={{ duration: 0.6, repeat: 1 }}
                   className="text-8xl mb-6"
                 >
-                  🎉
+                  <CheckCircle2 className="w-16 h-16 text-white mx-auto" aria-hidden="true" />
                 </motion.div>
-                <h3 className="text-3xl font-bold text-white mb-3">Perfect!</h3>
-                <p className="text-xl text-white/90">Je stijlprofiel is compleet!</p>
+                <h3 className="text-3xl font-bold text-white mb-3">Klaar met swipen</h3>
+                <p className="text-xl text-white/90">Hierna beoordeel je drie outfits.</p>
               </motion.div>
             ) : (
               // Phase 2: Analysis (2.5s)
@@ -128,7 +124,7 @@ export function StyleAnalysisTransition({
 
                 {/* Analysis Text */}
                 <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                  Jouw stijl wordt geanalyseerd
+                  Op naar de outfits
                   <motion.span
                     animate={{ opacity: [1, 0] }}
                     transition={{ duration: 0.8, repeat: Infinity }}
@@ -139,16 +135,12 @@ export function StyleAnalysisTransition({
 
                 {/* Subtitle with dynamic message */}
                 <motion.p
-                  key={progress < 40 ? 'phase1' : progress < 70 ? 'phase2' : 'phase3'}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   className="text-lg text-white/80 mb-8"
                 >
-                  {progress < 40 && 'Je voorkeuren worden geanalyseerd'}
-                  {progress >= 40 && progress < 70 && 'Stijlarchetypen worden bepaald'}
-                  {progress >= 70 && progress < 95 && 'Outfits worden samengesteld'}
-                  {progress >= 95 && 'Je persoonlijke stijlrapport is klaar!'}
+                  Daarna maakt FitFi je rapport.
                 </motion.p>
 
                 {/* Progress Bar */}
@@ -237,8 +229,8 @@ export function StyleAnalysisTransition({
  *
  * 3. Fake progress bar:
  *    - Psychological: "Something is happening"
- *    - Phase labels: "Voorkeuren analyseren" → feels technical
- *    - NOT a lie: We ARE processing data in background
+ *    - Geen fasenamen meer als "Voorkeuren analyseren": er wordt in deze tijd
+ *      niets verwerkt, dus die namen waren niet waar.
  *
  * 4. Visual hierarchy:
  *    - Logo animation: Brand reinforcement

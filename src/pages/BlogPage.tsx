@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Seo from '@/components/seo/Seo';
+import { OG_BEELD } from '@/content/landingHead';
 import { supabase } from '@/lib/supabaseClient';
 import {
   Search,
@@ -174,7 +175,7 @@ export default function BlogPage() {
         .from('newsletter_subscribers')
         .upsert({ email: email.trim() }, { onConflict: 'email' });
     } catch {
-      // silent — user feedback via isSubscribed state is sufficient
+      // stil: de gebruiker ziet de uitkomst via isSubscribed
     }
     setIsSubscribed(true);
     setEmail('');
@@ -186,10 +187,10 @@ export default function BlogPage() {
   return (
     <>
       <Seo
-        title="Blog — FitFi"
+        title="Blog | FitFi"
         description="De nieuwste stijltips, seizoenstrends en mode-inzichten van FitFi. Praktische gidsen over silhouet, kleur en outfits."
         path="/blog"
-        ogImage="/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp"
+        ogImage={OG_BEELD}
       />
 
       <div className="min-h-screen bg-[#FAFAF8]">

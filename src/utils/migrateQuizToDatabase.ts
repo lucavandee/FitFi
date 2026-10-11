@@ -4,6 +4,7 @@
  */
 
 import { supabase } from '@/lib/supabaseClient';
+import { antwoordenVoorDatabase } from '@/lib/quiz/selfieFoto';
 
 export async function migrateQuizToDatabase(): Promise<{ success: boolean; error?: string }> {
   try {
@@ -22,7 +23,9 @@ export async function migrateQuizToDatabase(): Promise<{ success: boolean; error
     let colorProfile: Record<string, any> | null;
     let archetype: unknown;
     try {
-      quizAnswers = JSON.parse(quizAnswersStr);
+      // Zonder fotodata: photoUrl alleen als opslagpad, geen photoDataUrl.
+      // Anders gaat een selfie als data-URL mee naar style_profiles.
+      quizAnswers = antwoordenVoorDatabase(JSON.parse(quizAnswersStr));
       colorProfile = colorProfileStr ? JSON.parse(colorProfileStr) : null;
       archetype = archetypeStr ? JSON.parse(archetypeStr) : quizAnswers.archetype;
     } catch {

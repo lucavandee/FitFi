@@ -191,7 +191,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 3,
     title: 'Welke kleuren draag jij het liefst?',
-    description: 'Dit gaat over wat jij graag draagt — niet over je huidskleur of ondertoon.',
+    description: 'Dit gaat over wat jij graag draagt. Je huidskleur en ondertoon spelen hier geen rol.',
     field: 'neutrals',
     type: 'radio',
     required: true,
@@ -209,7 +209,7 @@ export const quizSteps: QuizStep[] = [
       {
         value: 'neutraal',
         label: 'Neutraal / Mix',
-        description: 'Zwart, wit, grijs — of een combinatie van warm en koel'
+        description: 'Zwart, wit, grijs, of een mix van warm en koel'
       }
     ]
   },
@@ -248,7 +248,7 @@ export const quizSteps: QuizStep[] = [
     options: [
       {
         value: 'laag',
-        label: 'Tonal — alles in dezelfde tint',
+        label: 'Tonal: alles in dezelfde tint',
         description: 'Bijv. beige top + crème broek + camel schoenen'
       },
       {
@@ -451,7 +451,7 @@ export const quizSteps: QuizStep[] = [
   {
     id: 11,
     title: 'Welke merken spreken jou aan?',
-    description: 'Optioneel — kies merken die je leuk vindt. Dit helpt ons relevantere aanbevelingen te tonen.',
+    description: 'Optioneel. Kies merken die je leuk vindt. Dit helpt ons relevantere aanbevelingen te tonen.',
     field: 'brandPreferences',
     type: 'multiselect',
     required: false,
@@ -509,7 +509,7 @@ export const quizSteps: QuizStep[] = [
     field: 'sizes',
     type: 'sizes',
     required: false,
-    helperText: 'Niet zeker? Kies wat je meestal draagt — je kunt dit later aanpassen'
+    helperText: 'Niet zeker? Kies wat je meestal draagt. Je kunt dit later aanpassen.'
   },
   {
     id: 14,

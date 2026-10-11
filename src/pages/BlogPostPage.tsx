@@ -146,7 +146,7 @@ export default function BlogPostPage() {
   return (
     <>
       <Seo
-        title={`${post.seo_meta_title || post.title} — FitFi`}
+        title={`${post.seo_meta_title || post.title} | FitFi`}
         description={post.seo_meta_description || post.excerpt}
         path={`/blog/${post.slug}`}
         ogImage={post.featured_image_url}

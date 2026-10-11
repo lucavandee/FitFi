@@ -18,17 +18,18 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 bg-[#FAFAF8] flex items-start justify-center px-4 py-6 overflow-y-auto"
     >
+      {/* Geen veren: die schieten door en vallen terug (CLAUDE.md deel 8). */}
       <motion.div
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 20 }}
+        transition={{ delay: 0.1, duration: 0.4, ease: 'easeOut' }}
         className="max-w-2xl w-full my-auto"
       >
         {/* Icon */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{ delay: 0.2, type: 'spring', stiffness: 150 }}
+          transition={{ delay: 0.2, duration: 0.4, ease: 'easeOut' }}
           className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#A85740] to-[#A85740] flex items-center justify-center mb-6 sm:mb-8 shadow-lg"
         >
           <content.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
@@ -113,80 +114,90 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           <ArrowRight className="w-5 h-5" />
         </motion.button>
 
-        {/* Time estimate */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-center text-sm text-[#1A1A1A]/50 mt-4"
-        >
-          Dit duurt ongeveer {content.timeEstimate}
-        </motion.p>
+        {/* Hier stond "Dit duurt ongeveer ..." (2-3 minuten, ~5 minuten, 10
+            seconden). Geen van die tijden is gemeten. */}
       </motion.div>
     </motion.div>
   );
 }
 
+/*
+ * Getallen uit VisualPreferenceStepClean.tsx. Daar staan ze als niet-geëxporteerde
+ * constanten; PhaseTransition.tekst.test.tsx leest ze uit die bron en faalt als
+ * ze hier afwijken. Afronden kan vanaf MIN_SWIPES_TO_COMPLETE swipes, daarvoor
+ * staat er "Sla deze stap over". Na ADAPT_AFTER_SWIPES swipes laadt de stap de
+ * volgende beelden via loadAdaptivePhotos, en die stemt ze alleen af op je keuzes
+ * als je patroon daar genoeg voor zegt (swipeAnalyzer, shouldAdapt). Vandaar "kan".
+ */
+const AFRONDEN_NA = 15;
+const AFSTEMMEN_NA = 7;
+
+/*
+ * Eén stem: FitFi in de derde persoon, geen "ik" of "me" van Nova. Alleen wat de
+ * code doet: geen "pixel-perfect", geen "Ik leer van elke swipe", en bij de
+ * kalibratie geen belofte dat je oordeel je profiel verandert. De beoordeling
+ * gaat via record_swipe naar swipe_preferences, apply_calibration_to_profile
+ * leest outfit_calibration_feedback, en bij het afronden schrijft
+ * OnboardingFlowPage de embedding opnieuw uit de swipes. Een effect op het
+ * rapport is niet aan te wijzen.
+ */
 function getTransitionContent(fromPhase: string, toPhase: string) {
   if (toPhase === 'swipes') {
     return {
       icon: Image,
       title: 'Laten we je visuele voorkeur ontdekken',
-      description: 'Je hebt de basis vragen beantwoord. Nu gaan we dieper: ik laat je echte outfit foto\'s zien. Swipe naar rechts op looks die je aantrekken, links op wat je minder vindt.',
+      description: 'Je hebt de vragen beantwoord. Nu zie je beelden van outfits. Swipe naar rechts op looks die je aanspreken, naar links op wat je minder vindt.',
       expectations: [
-        'Je ziet 15-20 outfit foto\'s die passen bij jouw stijl',
-        'Swipe intuïtief - je eerste indruk is vaak het beste',
-        'Er zijn geen foute antwoorden, dit gaat over jouw gevoel',
-        'Hoe meer je swiped, hoe beter ik je stijl begrijp'
+        `Na ${AFRONDEN_NA} swipes kun je afronden, overslaan kan ook`,
+        'Er zijn geen foute antwoorden',
+        `Na ${AFSTEMMEN_NA} swipes kan FitFi de volgende beelden afstemmen op je keuzes`,
       ],
-      novaTip: 'Ik leer van elke swipe. Als je twijfelt tussen twee looks, kies de outfit die je direct aanspreekt - dat is vaak je échte stijl.',
+      novaTip: 'Ga op je eerste indruk af. Je hoeft niet lang na te denken.',
       ctaText: 'Start met swipen',
-      timeEstimate: '2-3 minuten'
     };
   }
 
   if (toPhase === 'calibration') {
     return {
       icon: Target,
-      title: 'Tijd voor de finishing touch',
-      description: 'Geweldig! Ik heb nu een goed beeld van je stijl. In deze laatste stap laat ik je complete outfits zien. Jouw feedback helpt me om je aanbevelingen pixel-perfect te maken.',
+      title: 'De laatste stap',
+      description: 'Je ziet nu complete outfits. Geef per outfit aan wat je ervan vindt.',
       expectations: [
-        'Je ziet 5 complete outfits samengesteld door mij',
-        'Beoordeel elk outfit: Love it, Like it, of Meh',
-        'Vertel me wat je wel/niet aantrekkelijk vindt',
-        'Dit is de laatste verfijning voor je Style DNA'
+        // Drie: CalibrationStep vraagt de engine om count: 3.
+        'Je ziet drie outfits die FitFi voor je samenstelt',
+        'Beoordeel elke outfit: Spot on, Misschien of Lijkt me niks',
+        // CalibrationStep toont "Beoordeling overslaan" zolang je niets beoordeeld hebt.
+        'Je kunt deze stap ook overslaan',
       ],
-      novaTip: 'Dit is waar de magie gebeurt. Je feedback hier maakt het verschil tussen "leuke outfits" en "outfits die voelen alsof ze voor jou gemaakt zijn".',
+      novaTip: 'Kijk naar de outfit als geheel: zou je dit zo aantrekken?',
       ctaText: 'Bekijk de outfits',
-      timeEstimate: '~5 minuten'
     };
   }
 
+  // OnboardingFlowPage zet transitionTo nu nooit op 'reveal': na de kalibratie
+  // komt ResultsRevealSequence. Deze tekst klopt toch, voor als dat verandert.
   if (toPhase === 'reveal') {
     return {
       icon: Sparkles,
-      title: 'Je Style DNA is klaar!',
-      description: 'Ik heb je antwoorden verwerkt. Je Style Report staat klaar, met outfits die bij je profiel passen en uitleg waarom.',
+      title: 'Klaar met de quiz',
+      description: 'Je antwoorden zijn verwerkt. Voor je rapport heb je een gratis account nodig.',
       expectations: [
-        'Je unieke stijlprofiel met archetype',
-        '50+ gepersonaliseerde outfit aanbevelingen',
-        'Kleur- en styling advies op maat',
-        'Direct shoppable items van top merken'
+        'Je stijlprofiel met archetype',
+        'Je kleurpalet',
+        'Outfits met links naar winkels',
       ],
-      novaTip: 'Dit is het resultaat van alles wat we samen hebben ontdekt. Elk outfit is bewust geselecteerd op basis van je antwoorden, swipes én feedback. Ready to see your style?',
-      ctaText: 'Toon mijn Style DNA',
-      timeEstimate: '10 seconden'
+      novaTip: 'Veranderen je antwoorden, dan kun je de quiz later opnieuw doen.',
+      ctaText: 'Bekijk je resultaten',
     };
   }
 
-  // Fallback
+  // Terugval
   return {
     icon: ArrowRight,
     title: 'Klaar voor de volgende stap',
-    description: 'Laten we verder gaan met je stijl journey.',
-    expectations: ['Next phase coming up'],
-    novaTip: 'Blijf jezelf - er zijn geen foute antwoorden!',
+    description: 'We gaan verder met de quiz.',
+    expectations: ['De volgende stap van de quiz'],
+    novaTip: 'Er zijn geen foute antwoorden.',
     ctaText: 'Ga verder',
-    timeEstimate: '1 minuut'
   };
 }

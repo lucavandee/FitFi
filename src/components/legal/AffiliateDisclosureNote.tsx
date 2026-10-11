@@ -1,6 +1,8 @@
 import React from 'react';
 import { Info } from 'lucide-react';
 
+// De link is #1A1A1A met onderstreping: het blauw #4A7EC2 haalt op geen van de
+// ondergronden van de site 4,5:1.
 export default function AffiliateDisclosureNote({ className = '' }: { className?: string }) {
   return (
     <div className={`mt-4 rounded-xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#4A4A4A] ${className}`}>
@@ -10,8 +12,8 @@ export default function AffiliateDisclosureNote({ className = '' }: { className?
         </span>
         <p>
           Transparantie: sommige links op deze pagina zijn <strong>affiliate links</strong>.
-          Als je via deze links shopt, kan FitFi een commissie ontvangen — zonder extra kosten voor jou.
-          Meer info in onze <a href="/affiliate-disclosure" className="underline text-[#4A7EC2]">Affiliate Disclosure</a>.
+          Als je via deze links shopt, kan FitFi een commissie ontvangen, zonder extra kosten voor jou.
+          Meer info in onze <a href="/affiliate-disclosure" className="underline underline-offset-2 text-[#1A1A1A]">Affiliate Disclosure</a>.
         </p>
       </div>
     </div>

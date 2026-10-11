@@ -2,12 +2,23 @@ import React from "react";
 import { Helmet } from 'react-helmet-async';
 import SectionHeader from "@/components/marketing/SectionHeader";
 import MarkdownPage from '@/components/ui/MarkdownPage';
+import { quizSteps } from "@/data/quizSteps";
+
+// Tellingen uit de quiz zelf, zodat deze tekst meeloopt als er een stap bij
+// komt of afgaat. Optioneel is wat de quiz laat overslaan (!required).
+const AANTAL_STAPPEN = quizSteps.length;
+const AANTAL_OPTIONEEL = quizSteps.filter((stap) => !stap.required).length;
+
+// Geen regel over lettertypen: die staan in public/fonts en komen van onze
+// eigen site, er gaat geen verzoek naar Google. Haalt index.html ze ooit weer
+// bij Google op, dan hoort Google hier als ontvanger terug;
+// src/__tests__/zelfGehosteLettertypen.test.ts bewaakt dat.
 
 export default function PrivacyPage() {
   return (
     <>
       <Helmet>
-        <title>Privacy - FitFi</title>
+        <title>Privacyverklaring | FitFi</title>
         <meta name="description" content="Privacyverklaring van FitFi. Transparant over hoe we omgaan met je gegevens." />
       </Helmet>
 
@@ -25,7 +36,7 @@ export default function PrivacyPage() {
           content={`
 # Privacyverklaring
 
-**Laatst bijgewerkt:** 7 januari 2026
+**Laatst bijgewerkt:** 9 oktober 2026
 
 FitFi verwerkt persoonsgegevens uitsluitend om je stijladvies te tonen en de dienst te verbeteren. Privacy betekent voor ons: minimale dataverzameling, transparantie en volledige controle voor jou.
 
@@ -44,9 +55,17 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 - Account-aanmaakdatum en laatste login
 
 ### Stijlprofiel
-- Antwoorden op de stijlquiz (14 stappen over stijl, kleur, pasvorm, gelegenheden, doelen, merken, budget en maten; de laatste twee stappen zijn optioneel)
-- Optioneel: foto's die je uploadt (alleen met expliciete toestemming)
+- Antwoorden op de stijlquiz (${AANTAL_STAPPEN} stappen over stijl, kleur, pasvorm, gelegenheden, doelen, merken, budget en maten; ${AANTAL_OPTIONEEL} stappen zijn optioneel)
+- Optioneel: een selfie voor de kleuranalyse (zie hieronder) en outfitfoto's die je in je dashboard laat beoordelen
 - Gegenereerde outfits en opgeslagen favorieten
+
+### Selfie voor de kleuranalyse (optioneel)
+De laatste vraag van de quiz vraagt om een selfie. Sla je die over, dan verwerken we geen foto van je.
+- **Opslag:** de foto staat bij Supabase in Frankfurt, in een afgeschermde map. Er is geen openbare link; andere bezoekers en accounts kunnen de foto niet openen.
+- **Analyse:** OpenAI in de Verenigde Staten krijgt een link naar de foto die 60 seconden werkt. Het model beschrijft je ondertoon, huid-, haar- en oogkleur en kiest daar een kleurseizoen en kleuren bij.
+- **Wat we bewaren:** de foto in die map, en de uitkomst van de analyse bij je stijlprofiel.
+- **Hoe lang:** tot je om verwijdering vraagt; een vaste bewaartermijn is er nog niet. Haal je de foto in de quiz weg, dan telt hij niet meer mee voor je advies, maar het bestand blijft staan tot je om verwijdering vraagt.
+- **Verwijderen:** mail [privacy@fitfi.ai](mailto:privacy@fitfi.ai).
 
 ### Technische gegevens
 - IP-adres (tijdelijk, voor beveiliging en foutopsporing)
@@ -78,9 +97,12 @@ We handelen conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en Ne
 We verkopen **nooit** data. We delen alleen met:
 
 - **Hosting/Database:** Supabase (EU-servers Frankfurt, AVG-compliant)
+- **Website:** Netlify levert de site uit en verwerkt daarvoor je IP-adres en de technische gegevens van elk verzoek
 - **Analytics:** Google Analytics (VS, **alleen met jouw toestemming**, IP geanonimiseerd)
 - **Payments:** Stripe (PCI-DSS certified, alleen transactie-metadata)
-- **Support/Foutopsporing:** Sentry (foutlogs, geanonimiseerd)
+- **Foto-analyse:** OpenAI (Verenigde Staten). Laat je een foto analyseren, dan krijgt OpenAI die foto: je selfie uit de quiz via een link die 60 seconden werkt, of een outfitfoto die je in je dashboard laat beoordelen. OpenAI stuurt een beschrijving terug.
+- **Partnerlinks:** Daisycon. Klik je op een link naar een winkel, dan loopt die klik via Daisycon, zodat een aankoop aan FitFi kan worden toegeschreven. Daarna geldt het privacybeleid van de winkel.
+- **Partnermeting:** Awin, een netwerk voor partnerlinks. Alleen als je partnermeting aanzet, mag FitFi op je rapport en je dashboard een script van Awin laden.
 
 **⚠️ Belangrijke opmerking over Google Analytics:**
 Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens verstuurd naar Google LLC servers in de Verenigde Staten. Dit valt onder Schrems II wetgeving. Wij hebben:
@@ -89,7 +111,7 @@ Als je analytische cookies accepteert, worden geanonimiseerde gebruiksgegevens v
 - ✅ Geen advertising features geactiveerd
 - ✅ Geen user-ID tracking
 
-**Je kunt deze cookies op elk moment uitschakelen in je [profielinstellingen](/profiel).**
+**Je kunt deze cookies op elk moment uitschakelen op de [cookiepagina](/cookies).**
 
 Alle andere partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform AVG.
 
@@ -99,6 +121,7 @@ Alle andere partijen hebben verwerkersovereenkomsten (DPA's) en handelen conform
 |-----------|---------------|
 | Accountgegevens | Zolang account actief + 30 dagen na verwijdering |
 | Stijlprofiel | Zolang account actief |
+| Selfie en andere foto's die je uploadt | Tot je om verwijdering vraagt (nog geen vaste termijn) |
 | Technische logs | Maximaal 90 dagen |
 | Analytische data | 12 maanden (geaggregeerd, niet herleidbaar) |
 | Betalingsrecords | 7 jaar (wettelijke eis boekhouden) |
@@ -134,10 +157,11 @@ Zie onze [Cookiepagina](/cookies) voor volledige details. Samenvatting:
 
 - **Functioneel:** Sessie, taal, thema (essentieel, altijd aan)
 - **Analytisch:** Google Analytics (opt-in vereist, IP geanonimiseerd, data naar VS)
-- **Marketing:** Geen third-party tracking pixels of advertentienetwerken
+- **Partnermeting:** Awin (opt-in vereist). Advertentiepixels gebruiken we niet.
 
 **Beheer je cookie-voorkeuren:**
-- Via je [Profiel → Privacy & Cookies](/profiel)
+- Op de [cookiepagina](/cookies), ook zonder account
+- Met een account in je [profiel](/profile), bij Privacy & cookies
 - Via browser-instellingen
 - Cookie banner bij eerste bezoek
 
@@ -172,6 +196,9 @@ Alleen bij expliciete toestemming:
 
 **Alternatief:** Je kunt FitFi volledig gebruiken zonder analytische cookies. Alle functionaliteit blijft beschikbaar.
 
+### Foto-analyse via OpenAI
+Laat je een foto analyseren, dan verwerkt OpenAI die in de Verenigde Staten (zie sectie 2 en 4). Dat gebeurt alleen als je zelf een foto uploadt; zonder foto werkt FitFi gewoon.
+
 ## 11. Wijzigingen
 
 We kunnen deze verklaring bijwerken. Grote wijzigingen kondigen we aan via e-mail of in-app. Controleer regelmatig de datum bovenaan.
@@ -185,7 +212,7 @@ We kunnen deze verklaring bijwerken. Grote wijzigingen kondigen we aan via e-mai
 ---
 
 **Korte versie:**
-We verzamelen alleen wat nodig is, delen nooit met marketeers, geven jou volledige controle en volgen strikte EU-privacy-regels. Vragen? We staan klaar.
+We verkopen je gegevens niet. Analytics en partnermeting staan alleen aan als je dat kiest. Vragen of verwijderen? Mail [privacy@fitfi.ai](mailto:privacy@fitfi.ai).
           `}
         />
       </main>

@@ -224,8 +224,8 @@ export default function ShopPage() {
           <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#6E6E6E]" />
           <p>
             Transparantie: sommige links zijn <strong className="font-semibold text-[#1A1A1A]">affiliate links</strong>.
-            Als je via FitFi shopt, kan FitFi een kleine commissie ontvangen — zonder extra kosten voor jou.{' '}
-            <a href="/affiliate-disclosure" className="underline hover:no-underline">
+            Als je via FitFi shopt, kan FitFi een kleine commissie ontvangen, zonder extra kosten voor jou.{' '}
+            <a href="/affiliate-disclosure" className="underline underline-offset-2 text-[#1A1A1A] hover:no-underline">
               Meer informatie
             </a>
           </p>

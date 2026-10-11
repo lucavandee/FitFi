@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Pagina niet gevonden | FitFi</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- Netlify serveert deze pagina met status 404 voor een ontbrekend bestand
+         onder /beeld/, /video/ en /fonts/ (public/_redirects). Zonder die regels
+         gaf zo'n adres de app terug (index.html, status 200), en dat cachen de
+         browser en de service worker als beeld, video of lettertype.
+         Dezelfde opbouw als NotFoundPage.tsx, maar zonder JavaScript. -->
+    <style>
+      @font-face {
+        font-family: "Plus Jakarta Sans";
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: swap;
+        src: url("/fonts/plus-jakarta-sans-latin.cd8db90c.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 96px 16px;
+        background: #FAFAF8;
+        color: #4A4A4A;
+        font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.625;
+      }
+      main { width: 100%; max-width: 28rem; text-align: center; }
+      .code { margin: 0 0 16px; font-size: 72px; line-height: 1; font-weight: 700; color: #A85740; }
+      h1 { margin: 0 0 16px; font-size: 24px; line-height: 1.375; font-weight: 700; color: #1A1A1A; }
+      p { margin: 0 auto 32px; max-width: 24rem; }
+      .knoppen { display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: background-color 200ms, border-color 200ms;
+      }
+      .primair { background: #A85740; color: #FFFFFF; font-weight: 600; }
+      .primair:hover { background: #9A503B; }
+      .secundair { background: #FFFFFF; color: #1A1A1A; font-weight: 500; border: 1px solid #E5E5E5; }
+      .secundair:hover { border-color: #A85740; }
+      a:focus-visible { outline: 2px solid #1A1A1A; outline-offset: 2px; }
+      @media (min-width: 640px) { .knoppen { flex-direction: row; } }
+      @media (min-width: 768px) { .code { font-size: 96px; } h1 { font-size: 30px; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="code" aria-hidden="true">404</div>
+      <h1>Pagina niet gevonden</h1>
+      <p>De pagina die je zocht bestaat niet meer of is verplaatst.</p>
+      <div class="knoppen">
+        <a class="primair" href="/">Naar de homepage</a>
+        <a class="secundair" href="/onboarding">Begin gratis</a>
+      </div>
+    </main>
+  </body>
+</html>

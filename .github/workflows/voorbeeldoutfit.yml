@@ -1,0 +1,44 @@
+# Wekelijkse controle van de voorbeeldoutfit op de landingspagina (plan
+# "Onder de hero", 4.3; O9).
+#
+# Per stuk van de hoofd- en de reserveoutfit: de foto (200 en dezelfde sha256)
+# en de productpagina (nog steeds dat artikel, geen doorverwijzing). Nooit de
+# affiliate-URL: elk verzoek daarop telt bij Daisycon als klik. Faalt een stuk,
+# dan faalt deze workflow en mailt GitHub; de wissel naar de reserve is een PR
+# van een regel. Zolang src/content/voorbeeldoutfit.json er niet is, is er niets
+# te controleren en slaagt de run.
+#
+# Leest geen gegevens uit de gebeurtenis; alles wat hier draait staat vast in
+# dit bestand (zie ook controle.yml).
+
+name: Voorbeeldoutfit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  controle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      # --ignore-scripts: zie controle.yml (bolt-install herschrijft package.json).
+      - name: Afhankelijkheden installeren
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Foto's en productpagina's controleren
+        run: npx vite-node scripts/landing/controle-voorbeeldoutfit.ts

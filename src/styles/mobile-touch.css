@@ -104,10 +104,17 @@
   margin: 12px auto;
 }
 
-/* Smooth scrolling for mobile */
-@media (max-width: 768px) {
+/* Smooth scrolling for mobile, alleen als de bezoeker niet om minder beweging
+   vraagt. Stond hier zonder die voorwaarde: met prefers-reduced-motion: reduce
+   bleef scroll-behavior onder 769 px op smooth (fase 4, WCAG 2.3.3). */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
     -webkit-overflow-scrolling: touch;
   }
 

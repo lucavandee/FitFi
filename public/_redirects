@@ -1,1 +1,10 @@
+# Een ontbrekend beeld, videobestand of lettertype geeft een echte 404, niet de
+# app. Zonder deze regels vangt de regel onderaan ook /beeld/oud.avif op en komt
+# index.html terug met status 200, en dat cachet de browser of de service worker
+# dan als beeld. Een bestaand bestand wordt gewoon geserveerd: Netlify past een
+# regel zonder ! alleen toe als er op dat pad geen bestand staat.
+/beeld/*  /404.html  404
+/video/*  /404.html  404
+/fonts/*  /404.html  404
+
 /*  /index.html  200

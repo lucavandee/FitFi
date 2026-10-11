@@ -6,6 +6,10 @@ import { useLocation } from "react-router-dom";
  * - Springt direct naar top bij routewijziging (pathname).
  * - Altijd instant: bij smooth vliegt de vorige pagina in beeld langs en tonen
  *   secties die op scrollY reageren een zichtbaar verkeerde tussenstand.
+ *   "instant" en niet "auto": "auto" volgt scroll-behavior uit de CSS, en die
+ *   staat op smooth (blog-reading.css bij no-preference, mobile-touch.css op
+ *   mobiel). Gemeten in fase 4: een klik op een footerlink gaf op 390 breed 35
+ *   tussenstanden, ook met prefers-reduced-motion: reduce.
  * - Respecteert hash anchors: als er een hash is, laat native browser-scroll het afhandelen.
  */
 const ScrollToTop: React.FC = () => {
@@ -18,7 +22,7 @@ const ScrollToTop: React.FC = () => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "auto",
+      behavior: "instant",
     });
   }, [pathname, hash]);
 

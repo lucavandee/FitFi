@@ -7,13 +7,13 @@ export default function AboutPage() {
   return (
     <main id="main" className="bg-[#FAFAF8]">
       <Helmet>
-        <title>Over ons — FitFi</title>
+        <title>Over ons | FitFi</title>
         <meta
           name="description"
           content="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak, principes en hoe FitFi werkt."
         />
         <link rel="canonical" href={canonicalUrl('/over-ons')} />
-        <meta property="og:title" content="Over ons — FitFi" />
+        <meta property="og:title" content="Over ons | FitFi" />
         <meta property="og:description" content="Wij bouwen een stijltool die eerlijk, rustig en effectief is." />
         <meta property="og:type" content="website" />
       </Helmet>

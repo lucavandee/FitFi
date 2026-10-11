@@ -1,4 +1,5 @@
 import type { AnswerMap, ColorProfile, Archetype, QuizResult, SubSeason } from "./types";
+import { isOpslagPad, isSelfieAnalyse, type SelfieAnalyse } from "./selfieFoto";
 
 // P1.3 fix: jewelry-vraag bestaat niet in de quiz, dus die check is verwijderd.
 // Temperature wordt nu uitsluitend bepaald door het neutrals-antwoord.
@@ -31,6 +32,62 @@ function decideChroma(a: AnswerMap): ColorProfile["chroma"] {
   if (mats.some((m: string) => ['tech', 'nylon', 'polyester'].includes(m.toLowerCase()))) return "helder";
   return "zacht";
 }
+/**
+ * Het seizoen uit een selfie-analyse, als het model zeker genoeg is (0.6).
+ * Anders null, en dan beslissen de quizantwoorden. Eén plek voor deze regel:
+ * decideSeason en pasFotoAnalyseToe hieronder gebruiken hem allebei.
+ */
+export function seizoenUitFotoAnalyse(
+  photoAnalysis?: AnswerMap["colorAnalysis"] | null
+): ColorProfile["season"] | null {
+  if (!photoAnalysis || !(photoAnalysis.confidence >= 0.6)) return null;
+  const map: Record<string, ColorProfile["season"]> = {
+    spring: "lente",
+    summer: "zomer",
+    autumn: "herfst",
+    winter: "winter",
+  };
+  return map[photoAnalysis.seasonal_type] ?? null;
+}
+
+/**
+ * De analyse uit de antwoorden, maar alleen als er ook een opgeslagen foto bij
+ * hoort. Haalt iemand de foto weg, dan telt de analyse niet meer.
+ */
+export function fotoAnalyseUitAntwoorden(antwoorden: unknown): SelfieAnalyse | null {
+  if (!antwoorden || typeof antwoorden !== "object") return null;
+  const a = antwoorden as Record<string, unknown>;
+  if (!isOpslagPad(a.photoUrl)) return null;
+  return isSelfieAnalyse(a.colorAnalysis) ? a.colorAnalysis : null;
+}
+
+/**
+ * Een geslaagde analyse bepaalt het seizoen, en dus het palet en de kleuren
+ * van de outfits. Dat deed alleen het terugvalpad (computeResult); het
+ * hoofdpad hing de analyse aan het profiel zonder er iets mee te doen, terwijl
+ * het rapport schreef dat het advies op je huidondertoon gebaseerd was.
+ *
+ * photoAnalysis komt alleen op het profiel als de analyse ook echt gebruikt
+ * is; het rapport toont zijn zinnen over huidondertoon alleen dan.
+ */
+export function pasFotoAnalyseToe<P extends { season?: string; subSeason?: string }>(
+  profiel: P,
+  analyse: SelfieAnalyse | null,
+): P {
+  if (!profiel || !analyse) return profiel;
+  const seizoen = seizoenUitFotoAnalyse(analyse);
+  if (!seizoen) return profiel;
+  return {
+    ...profiel,
+    season: seizoen,
+    // Een subseizoen hoort bij het oude seizoen; bij een ander seizoen weg.
+    subSeason: profiel.season === seizoen ? profiel.subSeason : undefined,
+    photoAnalysis: analyse,
+    undertone: analyse.undertone,
+    seasonalType: analyse.seasonal_type,
+  } as P;
+}
+
 function decideSeason(
   temp: ColorProfile["temperature"],
   value: ColorProfile["value"],
@@ -38,16 +95,8 @@ function decideSeason(
   _chroma: ColorProfile["chroma"],
   photoAnalysis?: AnswerMap["colorAnalysis"]
 ): ColorProfile["season"] {
-  if (photoAnalysis && photoAnalysis.confidence >= 0.6) {
-    const map: Record<string, ColorProfile["season"]> = {
-      spring: "lente",
-      summer: "zomer",
-      autumn: "herfst",
-      winter: "winter",
-    };
-    const mapped = map[photoAnalysis.seasonal_type];
-    if (mapped) return mapped;
-  }
+  const uitFoto = seizoenUitFotoAnalyse(photoAnalysis);
+  if (uitFoto) return uitFoto;
 
   // P2.3 fix: verbeterde seizoenslogica voor neutraal-temperatuur.
   // Voorheen vielen alle neutrale antwoorden door naar herfst als default.

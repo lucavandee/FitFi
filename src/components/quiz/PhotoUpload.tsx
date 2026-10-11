@@ -1,33 +1,48 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Spinner } from '@/components/ui/Spinner';
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Upload, AlertCircle, CheckCircle, Shield, X, Info, ImageIcon } from "lucide-react";
 import { getSessionId } from '@/utils/sessionId';
+import {
+  SELFIE_ANALYSE_SLEUTEL,
+  SELFIE_BUCKET,
+  SELFIE_MAX_BYTES,
+  SELFIE_PAD_SLEUTEL,
+  extensieVoorType,
+  isOpslagPad,
+  isSelfieAnalyse,
+  maakSelfiePad,
+  sessieUitPad,
+  vraagSelfieAnalyse,
+  type SelfieAnalyse,
+} from '@/lib/quiz/selfieFoto';
 
-interface ColorAnalysis {
-  undertone: "warm" | "cool" | "neutral";
-  skin_tone: string;
-  hair_color: string;
-  eye_color: string;
-  seasonal_type: "spring" | "summer" | "autumn" | "winter";
-  best_colors: string[];
-  avoid_colors: string[];
-  confidence: number;
-  reasoning?: string;
-}
+type ColorAnalysis = SelfieAnalyse;
 
 type Props = {
+  /** Opslagpad van de selfie (anon_<sessie-id>/<bestand>). Nooit een data-URL. */
   value?: string | null;
-  onChange: (dataUrl: string | null) => void;
-  onAnalysisComplete?: (analysis: ColorAnalysis) => void;
+  /** De analyse uit de antwoorden (colorAnalysis), om na terugbladeren te tonen. */
+  analysis?: unknown;
+  onChange: (pad: string | null) => void;
+  /** null als de foto weg is of een nieuwe upload begint: de oude analyse telt dan niet meer. */
+  onAnalysisComplete?: (analysis: ColorAnalysis | null) => void;
 };
 
+// De analyse kijkt naar huid, haar en ogen (prompt in analyze-selfie-color).
+// Hier stond "schouder tot heup" en "draag kleding", tips voor een outfitfoto.
 const PHOTO_TIPS = [
-  "Sta voor een neutrale (lichte) achtergrond",
-  "Gebruik daglicht, vermijd felle schaduwen",
-  "Foto van schouder tot heup werkt het best",
-  "Draag kleding die je normaal zou kiezen",
+  "Gezicht en haar goed in beeld",
+  "Daglicht, geen felle schaduwen",
+  "Zonder filter of bewerking",
+  "Een neutrale, lichte achtergrond",
 ];
+
+type Melding =
+  | { soort: "fout"; tekst: string }
+  | { soort: "mislukt" }
+  | { soort: "limiet" }
+  | null;
 
 const SEASONAL_LABELS: Record<string, string> = {
   spring: "Lente",
@@ -42,100 +57,109 @@ const UNDERTONE_LABELS: Record<string, string> = {
   neutral: "Neutraal",
 };
 
-export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Props) {
+export default function PhotoUpload({ value, analysis: bewaardeAnalyse, onChange, onAnalysisComplete }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<ColorAnalysis | null>(null);
+  const [melding, setMelding] = useState<Melding>(null);
+  // Na terugbladeren is er geen voorbeeld meer, wel het pad en misschien de analyse.
+  const [analysis, setAnalysis] = useState<ColorAnalysis | null>(() =>
+    isOpslagPad(value) && isSelfieAnalyse(bewaardeAnalyse) ? bewaardeAnalyse : null
+  );
+  const [preview, setPreview] = useState<string | null>(null);
   const [showTips, setShowTips] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  async function processFile(file: File) {
-    if (!file.type.startsWith("image/")) {
-      setError("Upload alsjeblieft een afbeelding (JPG, PNG of WEBP)");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Afbeelding moet kleiner zijn dan 5MB");
-      return;
-    }
+  // Het voorbeeld is een lokale object-URL van het gekozen bestand. De foto
+  // zelf gaat niet in de antwoorden: daar staat alleen het opslagpad.
+  const previewRef = useRef<string | null>(null);
+  function toonVoorbeeld(file: File | null) {
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    previewRef.current = file ? URL.createObjectURL(file) : null;
+    setPreview(previewRef.current);
+  }
+  useEffect(() => () => {
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+  }, []);
 
-    setError(null);
+  function vergeetAnalyse() {
     setAnalysis(null);
+    try {
+      // Oude sleutel: de analyse staat nu alleen in de antwoorden.
+      localStorage.removeItem(SELFIE_ANALYSE_SLEUTEL);
+    } catch {
+      /* geen opslag beschikbaar */
+    }
+    onAnalysisComplete?.(null);
+  }
 
-    const reader = new FileReader();
-    reader.onload = () => onChange((reader.result as string) || null);
-    reader.readAsDataURL(file);
+  async function analyseer(pad: string) {
+    setMelding(null);
+    setAnalyzing(true);
+    const uitkomst = await vraagSelfieAnalyse({
+      pad,
+      sessionId: sessieUitPad(pad) ?? getSessionId(),
+      supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
+      anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    });
+    setAnalyzing(false);
 
-    const sessionId = getSessionId();
+    if (uitkomst.status === "ok") {
+      setAnalysis(uitkomst.analyse);
+      onAnalysisComplete?.(uitkomst.analyse);
+      return;
+    }
+    // Geen stille doorgang meer: de foto staat er, de analyse niet, en dat ziet de gebruiker.
+    setMelding({ soort: uitkomst.status });
+  }
+
+  async function processFile(file: File) {
+    if (!extensieVoorType(file.type)) {
+      setMelding({ soort: "fout", tekst: "Kies een foto in JPG, PNG of WEBP." });
+      return;
+    }
+    if (file.size > SELFIE_MAX_BYTES) {
+      setMelding({ soort: "fout", tekst: "Kies een foto kleiner dan 5 MB." });
+      return;
+    }
+
+    setMelding(null);
+    vergeetAnalyse();
+    toonVoorbeeld(file);
+
+    const pad = maakSelfiePad(getSessionId(), file.type);
+    if (!pad) return;
 
     setUploading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `anon_${sessionId}/${fileName}`;
-
       const anonClient = await import("@supabase/supabase-js").then(({ createClient }) =>
         createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY, {
           auth: { persistSession: false, autoRefreshToken: false },
         })
       );
 
-      const { data: uploadData, error: uploadError } = await anonClient.storage
-        .from("user-photos")
-        .upload(filePath, file, { contentType: file.type, cacheControl: "3600", upsert: false });
+      const { error: uploadError } = await anonClient.storage
+        .from(SELFIE_BUCKET)
+        .upload(pad, file, { contentType: file.type, cacheControl: "3600", upsert: false });
 
-      if (uploadError) throw new Error(uploadError.message || "Upload mislukt");
-
-      const { data: { publicUrl } } = anonClient.storage.from("user-photos").getPublicUrl(uploadData.path);
-      localStorage.setItem("ff_onboarding_photo_url", publicUrl);
-
+      if (uploadError) throw uploadError;
+    } catch {
       setUploading(false);
-      setAnalyzing(true);
-
-      try {
-        const analysisResponse = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-selfie-color`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-              apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            },
-            body: JSON.stringify({ photoUrl: publicUrl, userId: sessionId, isAnonymous: true }),
-          }
-        );
-
-        if (!analysisResponse.ok) throw new Error(`Analyse mislukt: ${analysisResponse.status}`);
-
-        const analysisData: ColorAnalysis = await analysisResponse.json();
-        setAnalysis(analysisData);
-        localStorage.setItem("ff_onboarding_photo_analysis", JSON.stringify(analysisData));
-        onAnalysisComplete?.(analysisData);
-
-        if (analysisData?.seasonal_type) {
-          const insights = JSON.parse(localStorage.getItem("ff_nova_insights") || "[]");
-          insights.push({
-            type: "color_analysis",
-            message: `Geweldig! Ik zie dat je een ${analysisData.seasonal_type} kleurtype bent met een ${analysisData.undertone} ondertoon. Kleuren zoals ${analysisData.best_colors.slice(0, 3).join(", ")} passen perfect bij je!`,
-            timestamp: Date.now(),
-          });
-          localStorage.setItem("ff_nova_insights", JSON.stringify(insights));
-        }
-      } catch {
-        // Photo uploaded, analysis optional — continue silently
-      }
-
-      setAnalyzing(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload mislukt. Probeer opnieuw.");
-      setUploading(false);
-      setAnalyzing(false);
+      toonVoorbeeld(null);
       onChange(null);
+      setMelding({ soort: "fout", tekst: "Uploaden lukte niet. Probeer het opnieuw of sla deze stap over." });
+      return;
     }
+    setUploading(false);
+
+    try {
+      localStorage.setItem(SELFIE_PAD_SLEUTEL, pad);
+    } catch {
+      /* geen opslag beschikbaar */
+    }
+    onChange(pad);
+    await analyseer(pad);
   }
 
   function onFileInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -150,15 +174,28 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
     if (file) processFile(file);
   }
 
+  // Haalt de foto uit de quiz. Het bestand in de opslag blijft staan; daarvoor
+  // is een verzoek aan privacy@fitfi.ai nodig (privacyverklaring, sectie 2).
   function clearPhoto() {
     onChange(null);
-    setAnalysis(null);
-    setError(null);
+    vergeetAnalyse();
+    toonVoorbeeld(null);
+    setMelding(null);
+    try {
+      localStorage.removeItem(SELFIE_PAD_SLEUTEL);
+    } catch {
+      /* geen opslag beschikbaar */
+    }
     if (inputRef.current) inputRef.current.value = "";
     if (cameraInputRef.current) cameraInputRef.current.value = "";
   }
 
   const isBusy = uploading || analyzing;
+  const opgeslagenPad = isOpslagPad(value) ? value : null;
+  const heeftFoto = Boolean(opgeslagenPad || preview);
+  // Een opgeslagen foto zonder analyse: mislukt, limiet, of terugbladeren na
+  // een mislukte poging. In alle drie de gevallen zegt het scherm dat.
+  const zonderAnalyse = !isBusy && Boolean(opgeslagenPad) && !analysis;
 
   return (
     <div className="space-y-4">
@@ -174,11 +211,11 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
           Kleuranalyse via foto
         </h2>
         <p className="text-sm text-[#6E6E6E] max-w-md mx-auto leading-relaxed">
-          Upload een foto van je outfit of jezelf — Nova analyseert welke kleuren het beste bij je passen. <strong className="text-[#1A1A1A]">Je foto helpt kleuren en stijl te matchen, meer niet. We slaan geen gezichtsdata op.</strong>
+          Een selfie in daglicht. De analyse bepaalt je ondertoon en kleurseizoen uit je huid, haar en ogen.
         </p>
       </div>
 
-      {/* What kind of photo — example card */}
+      {/* Wat voor foto: voorbeeldkaart */}
       <div
         className="rounded-2xl border border-[#E5E5E5] overflow-hidden"
         style={{ background: "#FFFFFF" }}
@@ -218,7 +255,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                     style={{ background: "#FAFAF8", border: "2px dashed #E5E5E5" }}
                   >
                     <ImageIcon className="w-8 h-8 text-[#6E6E6E]" />
-                    <span className="text-[10px] text-center text-[#6E6E6E] leading-tight px-1">schouder tot heup</span>
+                    <span className="text-xs text-center text-[#6E6E6E] leading-tight px-1">gezicht en haar</span>
                   </div>
                   {/* Tips list */}
                   <ul className="flex-1 space-y-2 pt-1">
@@ -240,7 +277,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
 
       {/* Preview or Dropzone */}
       <AnimatePresence mode="wait">
-        {value ? (
+        {heeftFoto ? (
           <motion.div
             key="preview"
             initial={{ opacity: 0, scale: 0.97 }}
@@ -250,11 +287,29 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
             className="relative rounded-2xl overflow-hidden"
             style={{ border: "2px solid #E5E5E5" }}
           >
-            <img
-              src={value}
-              alt="Jouw geüploade foto"
-              className="w-full max-h-72 object-cover"
-            />
+            {preview ? (
+              <img
+                src={preview}
+                alt="Jouw geüploade foto"
+                className="w-full max-h-72 object-cover"
+              />
+            ) : (
+              // Na terugbladeren staat alleen het pad in de antwoorden. De foto
+              // zelf is niet openbaar op te halen en wordt dus niet getoond.
+              <div className="flex flex-wrap items-center gap-3 bg-[#FFFFFF] px-4 py-4 pr-14">
+                <ImageIcon className="w-5 h-5 text-[#9A503B] flex-shrink-0" />
+                <p className="text-sm text-[#4A4A4A] flex-1">Je foto is toegevoegd.</p>
+                {!isBusy && (
+                  <button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                    className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl min-h-[48px] transition-colors duration-200"
+                  >
+                    Andere foto kiezen
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Busy overlay */}
             {isBusy && (
@@ -263,26 +318,23 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
                 <p className="text-white font-semibold text-sm">
                   {uploading ? "Foto uploaden..." : "Kleuren analyseren..."}
                 </p>
-                <p className="text-white/70 text-xs">
-                  {analyzing && "Wordt direct verwijderd na analyse"}
-                </p>
               </div>
             )}
 
-            {/* Clear button */}
+            {/* Wisknop: haalt de foto uit de quiz, niet uit de opslag */}
             {!isBusy && (
               <button
                 type="button"
                 onClick={clearPhoto}
                 className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors"
-                aria-label="Foto verwijderen"
+                aria-label="Foto weghalen uit de quiz"
               >
                 <X className="w-4 h-4 text-white" />
               </button>
             )}
 
             {/* Replace button */}
-            {!isBusy && (
+            {!isBusy && preview && (
               <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
@@ -359,17 +411,36 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
         )}
       </AnimatePresence>
 
-      {/* Error */}
+      {/* Melding: een fout bij kiezen of uploaden, of een foto zonder analyse */}
       <AnimatePresence>
-        {error && (
+        {(melding?.soort === "fout" || zonderAnalyse) && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl"
+            className="flex items-start gap-3 p-4 bg-[#F5F0EB] border border-[#E5E5E5] rounded-2xl"
+            role="status"
+            aria-live="polite"
           >
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-700">{error}</p>
+            <AlertCircle className="w-5 h-5 text-[#A85740] flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="space-y-3">
+              <p className="text-sm text-[#4A4A4A] leading-relaxed">
+                {melding?.soort === "fout"
+                  ? melding.tekst
+                  : melding?.soort === "limiet"
+                    ? "Het maximum aantal foto-analyses voor deze sessie is bereikt. Je kleuradvies komt nu uit je quizantwoorden."
+                    : "De kleuranalyse is niet gelukt. Je foto staat wel opgeslagen. Probeer het opnieuw, of ga verder: je kleuradvies komt dan uit je quizantwoorden."}
+              </p>
+              {melding?.soort !== "fout" && melding?.soort !== "limiet" && opgeslagenPad && (
+                <button
+                  type="button"
+                  onClick={() => analyseer(opgeslagenPad)}
+                  className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-base py-3 px-6 rounded-xl min-h-[48px] transition-colors duration-200"
+                >
+                  Opnieuw proberen
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -388,11 +459,7 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
               <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
               <div>
                 <p className="text-sm font-bold text-green-900">Kleuranalyse gereed</p>
-                {analysis.confidence && (
-                  <p className="text-xs text-green-700">
-                    Betrouwbaarheid: {Math.round(analysis.confidence * 100)}%
-                  </p>
-                )}
+                {/* Geen "Betrouwbaarheid: n%": dat getal schat het model zelf, het is niet gemeten. */}
               </div>
             </div>
             <div className="px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -426,10 +493,14 @@ export default function PhotoUpload({ value, onChange, onAnalysisComplete }: Pro
         className="rounded-xl px-4 py-3 flex items-start gap-3"
         style={{ background: "#FFFFFF", border: "1px solid #E5E5E5" }}
       >
-        <Shield className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+        <Shield className="w-4 h-4 text-[#A85740] flex-shrink-0 mt-0.5" aria-hidden="true" />
         <div className="text-xs text-[#6E6E6E] leading-relaxed">
-          <span className="font-semibold text-[#1A1A1A]">Hoe we jouw foto verwerken: </span>
-          De foto wordt alleen gebruikt voor kleuranalyse van kleding. Er vindt geen gezichtsherkenning of biometrische verwerking plaats. Na analyse wordt de foto direct van onze servers verwijderd. Meer info in ons{" "}
+          <span className="font-semibold text-[#1A1A1A]">Wat er met je foto gebeurt: </span>
+          we bewaren hem bij Supabase in Frankfurt, zonder openbare link. Voor de kleuranalyse krijgt OpenAI in de VS een link naar de foto die 60 seconden werkt. De foto blijft staan tot je om verwijdering vraagt via{" "}
+          <a href="mailto:privacy@fitfi.ai" className="underline hover:text-[#1A1A1A] transition-colors">
+            privacy@fitfi.ai
+          </a>
+          ; meer in ons{" "}
           <a href="/privacy" className="underline hover:text-[#1A1A1A] transition-colors">
             privacybeleid
           </a>

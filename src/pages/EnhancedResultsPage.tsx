@@ -52,6 +52,7 @@ import { openProductLink } from "@/utils/affiliate";
 import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
 import { getColorPalette } from "@/data/colorPalettes";
 import { getSessionId } from '@/utils/sessionId';
+import { fotoAnalyseUitAntwoorden, pasFotoAnalyseToe } from '@/lib/quiz/logic';
 
 function readJson<T>(key: string): T | null {
   try {
@@ -92,6 +93,25 @@ function getSeasonDisplayName(colorProfile: ColorProfile): string {
   const s = colorProfile.season;
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 }
+
+// Bijvoeglijke vormen voor de zin onder "Jouw kleuranalyse": "warme tinten",
+// "gemiddeld contrast". formatStyleDNAValue geeft labels ("Warme tonen") en
+// kent "neutraal" niet, dus die past niet in een lopende zin.
+const TEMPERATUUR_BIJVOEGLIJK: Record<string, string> = {
+  warm: 'warme',
+  koel: 'koele',
+  cool: 'koele',
+  neutraal: 'neutrale',
+  neutral: 'neutrale',
+};
+
+const CONTRAST_BIJVOEGLIJK: Record<string, string> = {
+  laag: 'laag',
+  low: 'laag',
+  medium: 'gemiddeld',
+  hoog: 'hoog',
+  high: 'hoog',
+};
 
 const OCCASION_LABELS: Record<string, string> = {
   work: 'Kantoor',
@@ -336,7 +356,10 @@ export default function EnhancedResultsPage() {
           !user?.id ? sessionId : undefined
         );
 
-        setGeneratedProfile(result.colorProfile);
+        // Zelfde regel als de quiz bij het afronden: een geslaagde
+        // selfie-analyse bepaalt het seizoen (pasFotoAnalyseToe, logic.ts).
+        const profiel = pasFotoAnalyseToe(result.colorProfile, fotoAnalyseUitAntwoorden(answers));
+        setGeneratedProfile(profiel);
         setProfileDataSource(result.dataSource);
         setProfileConfidence(result.confidence);
 
@@ -347,7 +370,7 @@ export default function EnhancedResultsPage() {
         }
 
         try {
-          localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(result.colorProfile));
+          localStorage.setItem(LS_KEYS.COLOR_PROFILE, JSON.stringify(profiel));
           localStorage.setItem('ff_profile_data_source', result.dataSource);
           localStorage.setItem('ff_profile_confidence', result.confidence.toString());
         } catch {
@@ -373,6 +396,14 @@ export default function EnhancedResultsPage() {
     paletteName: "Soft Cool Tonals (neutraal)",
     notes: ["Tonal outfits met zachte texturen.", "Vermijd harde contrasten."],
   };
+
+  // Een geüploade foto zegt niets over het advies: de analyse kan mislukt zijn,
+  // en dan is er geen ondertoon gemeten. Alleen een geslaagde analyse telt. De
+  // quiz zet die bij het afronden op het profiel (photoAnalysis); de generator
+  // meldt hem als bron als hij het profiel uit een opgeslagen analyse bouwt.
+  const heeftFotoAnalyse =
+    Boolean((activeColorProfile as ColorProfile & { photoAnalysis?: unknown }).photoAnalysis) ||
+    profileDataSource === 'photo_analysis';
 
   const parsedBudget = React.useMemo(() => {
     const b = answers?.budget;
@@ -1017,7 +1048,7 @@ export default function EnhancedResultsPage() {
                     {archetypeDisplayNL} · {getSeasonDisplayName(activeColorProfile)}
                   </h2>
                   <p className="text-sm text-[#6E6E6E] mt-2">
-                    {answers?.photoUrl
+                    {heeftFotoAnalyse
                       ? 'Op basis van jouw kleurvoorkeur én huidondertoon uit je foto'
                       : 'Op basis van jouw kleurvoorkeur uit de quiz'}
                   </p>
@@ -1095,7 +1126,8 @@ export default function EnhancedResultsPage() {
               </AnimatedSection>
 
               {/* Shopping Guidance */}
-              {(user?.tier === 'premium' || user?.tier === 'founder' || user?.isPremium) && answers?.photoUrl ? (
+              {/* Een foto zonder analyse telt niet: dan is er geen seizoen uit je selfie. */}
+              {(user?.tier === 'premium' || user?.tier === 'founder' || user?.isPremium) && heeftFotoAnalyse ? (
                 <AnimatedSection delay={0.15}>
                   <ShoppingGuidance
                     season={activeColorProfile.season}
@@ -1111,9 +1143,10 @@ export default function EnhancedResultsPage() {
                         <Sparkles className="w-4 h-4 text-[#A85740]" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">Persoonlijk kleurenpalet op basis van jouw ondertoon</p>
+                        {/* Het palet staat voor iedereen op deze pagina, ook dat uit een geanalyseerde selfie. Premium voegt de shoppinggids toe; hier stond "Persoonlijk kleurenpalet op basis van jouw ondertoon". */}
+                        <p className="text-sm font-semibold text-[#1A1A1A] leading-snug">Shoppinggids voor jouw kleurseizoen</p>
                         <p className="text-xs text-[#4A4A4A] mt-0.5">
-                          {!answers?.photoUrl ? 'Upload een selfie en activeer Premium voor kleuradvies op maat.' : 'Activeer Premium voor jouw seizoensgebonden shopping-gids.'}
+                          {!heeftFotoAnalyse ? 'Upload een selfie en activeer Premium voor kleuradvies op maat.' : 'Activeer Premium voor jouw seizoensgebonden shopping-gids.'}
                         </p>
                       </div>
                     </div>
@@ -1138,7 +1171,7 @@ export default function EnhancedResultsPage() {
                 <ColorPaletteSection
                   season={activeColorProfile.season}
                   subSeason={activeColorProfile.subSeason}
-                  hasPhoto={!!answers?.photoUrl}
+                  hasPhotoAnalysis={heeftFotoAnalyse}
                 />
               </AnimatedSection>
 
@@ -1353,13 +1386,25 @@ export default function EnhancedResultsPage() {
                     <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1.5">Jouw kleuranalyse</h4>
                     <p className="text-sm text-[#4A4A4A] leading-relaxed">
                       {(() => {
-                        const tempNL = formatStyleDNAValue('temperature', activeColorProfile.temperature).toLowerCase();
-                        const contrastNL = formatStyleDNAValue('contrast', activeColorProfile.contrast).toLowerCase();
+                        // Zonder fotoanalyse komen temperatuur en contrast uit de
+                        // quiz (stap 3 en 5) en de fotokeuzes: een voorkeur, geen
+                        // ondertoon. Hier stond "Je warme ondertoon", plus "zachte,
+                        // lichte tinten" bij elk seizoen.
+                        const temp = TEMPERATUUR_BIJVOEGLIJK[activeColorProfile.temperature];
+                        const contrast = CONTRAST_BIJVOEGLIJK[activeColorProfile.contrast];
                         const seasonNL = getSeasonDisplayName(activeColorProfile);
-                        const photoNote = answers?.photoUrl
-                          ? 'Gebaseerd op je selfie en quizantwoorden.'
-                          : 'Gebaseerd op je quizantwoorden.';
-                        return `Je ${tempNL} ondertoon en ${contrastNL} contrast wijzen naar ${seasonNL} — zachte, lichte tinten die bij je passen. ${photoNote}`;
+                        // Met een geslaagde analyse komt het seizoen uit de
+                        // selfie (pasFotoAnalyseToe), niet uit de voorkeur; de
+                        // zin over temperatuur en contrast klopt dan niet.
+                        // "wijst naar het palet Herfst": "wijst naar Herfst" las als
+                        // een seizoen, niet als het palet dat het rapport toont.
+                        if (heeftFotoAnalyse) {
+                          return `De analyse van je selfie wijst naar het palet ${seasonNL}. Gebaseerd op je selfie en quizantwoorden.`;
+                        }
+                        const zin = temp && contrast
+                          ? `Je voorkeur voor ${temp} tinten en ${contrast} contrast wijst naar het palet ${seasonNL}.`
+                          : `Je antwoorden wijzen naar het palet ${seasonNL}.`;
+                        return `${zin} Gebaseerd op je quizantwoorden.`;
                       })()}
                     </p>
                   </div>
@@ -1372,15 +1417,18 @@ export default function EnhancedResultsPage() {
                     </p>
                   </div>
 
-                  {/* Subtle selfie hint when no photo */}
-                  {!answers?.photoUrl && (
+                  {/* Hint zonder geslaagde fotoanalyse. De knop ging naar
+                      /onboarding?step=photo, maar die stap bestaat niet: een
+                      afgeronde quiz stuurt direct terug naar /results. De
+                      selfie is de laatste vraag van de quiz. */}
+                  {!heeftFotoAnalyse && (
                     <p className="text-sm text-[#6E6E6E] pt-2 border-t border-[#E5E5E5]/60">
-                      Upload een selfie voor nog nauwkeuriger kleuradvies.{' '}
+                      Met een selfie kijkt de kleuranalyse ook naar je huid, haar en ogen. Die voeg je toe in de laatste vraag van de quiz.{' '}
                       <button
-                        onClick={() => navigate('/onboarding?step=photo')}
+                        onClick={() => navigate('/onboarding?step=redo')}
                         className="font-semibold text-[#A85740] hover:text-[#9A503B] transition-colors"
                       >
-                        Foto toevoegen →
+                        Quiz opnieuw →
                       </button>
                     </p>
                   )}
