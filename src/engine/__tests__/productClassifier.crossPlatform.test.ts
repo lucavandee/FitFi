@@ -103,6 +103,13 @@ const batterij: Geval[] = [
   { naam: 'H & M - Tas met riem - Zwart', beschrijving: '', categoryPath: '', merk: 'H&M' },
   { naam: 'H & M - Muts met sjaal - Grijs', beschrijving: '', categoryPath: '', merk: 'H&M' },
   { naam: 'H & M - Jas met sjaalkraag - Zwart', beschrijving: '', categoryPath: '', merk: 'H&M' },
+  // Tegenspraak tussen naam en categorie in de pool (13 oktober 2026).
+  { naam: 'Top MAX MARA Woman color Green', beschrijving: '', categoryPath: 'accessory', merk: 'Max Mara' },
+  { naam: 'Top Handle Bag PRADA Woman color Black', beschrijving: '', categoryPath: 'accessory', merk: 'Prada' },
+  { naam: 'Suit TAGLIATORE Men color Brown', beschrijving: '', categoryPath: 'accessory', merk: 'Tagliatore' },
+  { naam: 'Suit Vest BURBERRY Men color Black', beschrijving: '', categoryPath: 'top', merk: 'Burberry' },
+  { naam: 'H & M - Slip-on jurk van linnenmix - Wit', beschrijving: '', categoryPath: 'footwear', merk: 'H&M' },
+  { naam: 'H & M - Katoenen bandeaujurk - Wit', beschrijving: '', categoryPath: 'bottom', merk: 'H&M' },
 ];
 
 describe('client- en Deno-classifier blijven het eens (bewaking tegen driften)', () => {

@@ -37,7 +37,9 @@ const FOOTWEAR_RULES: PatternEntry[] = [
   { regex: /\bsandaal\b|\bsandalen\b|\bsandal(s)?\b/i, subcategory: 'sandalen', weight: 3 },
   { regex: /\bespadrille(s)?\b/i, subcategory: 'espadrilles', weight: 3 },
   { regex: /\binstapper(s)?\b/i, subcategory: 'instappers', weight: 3 },
-  { regex: /\bslip-on(s)?\b/i, subcategory: 'slip-ons', weight: 3 },
+  // H&M noemt een kledingstuk zonder sluiting ook "slip-on": "Slip-on jurk",
+  // "Satijnen slip-on rok". Staat er een kledingstuk achter, dan is het geen schoen.
+  { regex: /\bslip-on(s)?\b(?!\s+(?:jurk|rok|dress|skirt|top|blouse|broek|trui))/i, subcategory: 'slip-ons', weight: 3 },
   { regex: /\bveterschoen(en)?\b/i, subcategory: 'veterschoenen', weight: 3 },
   { regex: /\benkellaars\b|\bankle[\s-]?boot(s)?\b/i, subcategory: 'enkellaarzen', weight: 3 },
   { regex: /\bkuitlaars\b|\bknee[\s-]?high[\s-]?boot(s)?\b/i, subcategory: 'kuitlaarzen', weight: 3 },
@@ -99,7 +101,9 @@ const ACCESSORY_RULES: PatternEntry[] = [
 
 // ─── DRESS ────────────────────────────────────────────────────────────────
 const DRESS_RULES: PatternEntry[] = [
-  { regex: /\bjurk\b/i, subcategory: 'jurk', weight: 3 },
+  // Ook samenstellingen ("bandeaujurk", "blazerjurk", "jurkje"): zonder woordgrens
+  // ervoor viel zo'n jurk terug op zijn oude categorie, en dat was soms bottom.
+  { regex: /\b[a-z]*jurk(je)?\b/i, subcategory: 'jurk', weight: 3 },
   // "dress" is een vals vriendje in herenmode ("dress shirt", "dress shoes",
   // "dress pants") en in verkleedkleding ("fancy dress"). Zonder deze
   // uitsluiting wint dress (gewicht 3) van het generieke shirt (gewicht 2) en
@@ -242,6 +246,12 @@ const TOP_RULES: PatternEntry[] = [
   { regex: /\bbodysuit\b/i, subcategory: 'bodysuit', weight: 3 },
   { regex: /\bcrop[\s-]?top\b/i, subcategory: 'crop top', weight: 3 },
   { regex: /\btopje\b/i, subcategory: 'topje', weight: 3 },
+  // Giglio begint de naam met het type: "Top MAX MARA Woman color Green". Zonder
+  // deze regel viel zo'n top terug op zijn oude categorie: 1.531 damestops stonden
+  // op 13 oktober 2026 als accessoire in de pool. "Top Handle Bag" is een tas.
+  // Verankerd aan het begin: de terugval scoort op naam plus oude categorie, en
+  // zonder anker zou de categorie "top" zelf een onbekend product goedkeuren.
+  { regex: /^top\b(?!\s*-?\s*handle)/i, subcategory: 'top', weight: 2 },
   { regex: /\bjersey\b/i, subcategory: 'jersey', weight: 3 },
   { regex: /\bprematch\b|\bpre[\s-]?match\b/i, subcategory: 'prematch shirt', weight: 3 },
   { regex: /\btraining[\s-]?(top|shirt|jersey)\b/i, subcategory: 'training shirt', weight: 3 },
@@ -294,6 +304,15 @@ const KIDS_REGEX = /\b(baby|babies|peuter|kleuter|newborn|infant|kinder|kinderen
 
 const MULTIPACK_REGEX = /\b(\d+)[- ]?(pack|stuks)\b/i;
 const SET_REGEX = /\bset\s+van\s+\d/i;
+
+/**
+ * Een volledig pak (jasje plus broek) past in geen enkel slot van een outfit.
+ * Op 13 oktober 2026 stonden 399 pakken van Giglio als accessoire in de pool
+ * ("Suit DSQUARED2 Men color Blue", "Suit Separate TWINSET Woman color Red").
+ * Een los deel dat zichzelf benoemt ("Suit Vest", "Suit Jacket") blijft staan;
+ * "jumpsuit" en "tracksuit" raakt de woordgrens niet.
+ */
+export const PAK_REGEX = /\bsuit\b(?!\s*-?\s*(?:vest|jacket|blazer|trousers|pants))/i;
 
 // ─── CATEGORY RULES (ordered by priority) ─────────────────────────────────
 type ExtendedCategory = ProductCategory | 'underwear' | 'other';
@@ -461,6 +480,10 @@ export function classifyProductDetailed(
   }
   if (SET_REGEX.test(rawNameText)) {
     return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'set product' };
+  }
+  // Tegen nameText: een merk met "suit" in de naam is geen pak.
+  if (PAK_REGEX.test(nameText)) {
+    return { category: 'other', confidence: 'high', signals: [], rejected: true, rejectReason: 'volledig pak past in geen slot' };
   }
 
   const nameMatches: MatchResult[] = [];

@@ -169,3 +169,38 @@ describe('vangnet: kleding in de accessoire-sleuf', () => {
     expect(beoordeelProduct({ name: 'H & M - Leren riem met studs - Zwart', category: 'accessory' }).ok).toBe(true);
   });
 });
+
+describe('vangnet: kindermaten in de maatlijst (catalogusmeting 13 okt 2026)', () => {
+  // Deze producten stonden in de pool van de site met gender male of female
+  // en is_kids false. De naam zegt niets; alleen de maat verraadt het kind.
+  it('weigert kleding met een leeftijd tussen haakjes', () => {
+    expect(p('H & M - Katoenen T-shirt met print - Beige', 'top', ['122/128 (6-8Y)']).reden).toBe('kindermaat');
+    expect(p('H & M - Romperjurk van mesh met borduursel - Wit', 'dress', ['50 (0-1M)']).reden).toBe('kindermaat');
+    expect(p('H & M - Casual overhemd van katoenmix - Oranje', 'top', ['92 (1½-2Y)']).reden).toBe('kindermaat');
+    expect(p('H & M - Waterafstotende gewatteerde parka - Groen', 'outerwear', ['170 (14Y+)']).reden).toBe('kindermaat');
+  });
+
+  it('weigert een kale leeftijdsmaat', () => {
+    expect(p('PUMA FC St. Pauli derde shirt', 'top', ['2-3Y']).reden).toBe('kindermaat');
+  });
+
+  it('weigert een lengtepaar uit de kinderband', () => {
+    expect(p('H & M - Twill pet met print - Blauw', 'accessory', ['122/140']).reden).toBe('kindermaat');
+    expect(p('H & M - Vleermuiscape - Zwart/Vleermuis', 'outerwear', ['68/80']).reden).toBe('kindermaat');
+  });
+
+  it('weigert kinderschoenen in een dubbele maat', () => {
+    expect(p('H & M - Hoge waterdichte sneakers - Donkerbeige', 'footwear', ['20/21']).reden).toBe('kinderschoenmaat');
+  });
+
+  it('laat volwassen maten staan', () => {
+    expect(p('Jeans LEVI\'S Men color Blue', 'bottom', ['32/34']).ok).toBe(true);
+    expect(p('H & M - Pantalon - Loose Fit - Zwart', 'bottom', ['52']).ok).toBe(true);
+    expect(p('H & M - Blouse - Wit', 'top', ['M']).ok).toBe(true);
+    expect(p('Boot SANTONI Men color Grey', 'footwear', ['9½']).ok).toBe(true);
+    expect(p('H & M - Sokken - Zwart', 'accessory', ['39/42']).ok).toBe(true);
+    expect(p('H & M - Sneakers - Wit', 'footwear', ['42/43']).ok).toBe(true);
+    // Een dubbele volwassen maat ligt 2 uit elkaar; een kinderreeks minstens 6.
+    expect(p('Jacket BOSS Men color Blue', 'outerwear', ['52/54']).ok).toBe(true);
+  });
+});

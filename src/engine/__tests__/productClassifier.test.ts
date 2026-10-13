@@ -194,6 +194,46 @@ describe('DRESS classification', () => {
   });
 });
 
+// ─── NAAM SPREEKT DE CATEGORIE TEGEN (pool, 13 oktober 2026) ───────────────
+// Herkent de classifier geen woord in de naam, dan valt hij terug op de
+// categorie die het product al had, en blijft een foute categorie staan.
+// Zo stonden 1.531 damestops en 399 pakken van Giglio als accessoire in de
+// pool, en een "Slip-on jurk" als schoen.
+describe('naam gaat voor de oude categorie', () => {
+  const metMerk = (naam: string, categorie: string, merk: string) =>
+    classifyProductDetailed(naam, '', categorie, merk);
+
+  it('een Engelse top is een top, ook als hij als accessoire binnenkwam', () => {
+    expect(metMerk('Top MAX MARA Woman color Green', 'accessory', 'Max Mara').category).toBe('top');
+    expect(metMerk('Top PINKO Woman color Green', 'accessory', 'Pinko').category).toBe('top');
+  });
+
+  it('een tas met top handle blijft een tas', () => {
+    expect(metMerk('Top Handle Bag PRADA Woman color Black', 'accessory', 'Prada').category).toBe('accessory');
+  });
+
+  it('een volledig pak past in geen enkel slot en valt eruit', () => {
+    expect(metMerk('Suit TAGLIATORE Men color Brown', 'accessory', 'Tagliatore').rejected).toBe(true);
+    expect(metMerk('Suit Separate TWINSET Woman color Red', 'accessory', 'Twinset').rejected).toBe(true);
+  });
+
+  it('een gilet bij een pak en een jumpsuit blijven staan', () => {
+    expect(metMerk('Suit Vest BURBERRY Men color Black', 'top', 'Burberry').category).toBe('top');
+    expect(cat('Mango Linnen Jumpsuit')).toBe('jumpsuit');
+  });
+
+  it('een slip-on jurk of rok is kleding, geen schoen', () => {
+    expect(metMerk('H & M - Slip-on jurk van linnenmix - Wit', 'footwear', 'H&M').category).toBe('dress');
+    expect(metMerk('H & M - Satijnen slip-on rok - Zwart', 'footwear', 'H&M').category).toBe('bottom');
+    expect(cat('Vans Classic Slip-On Zwart')).toBe('footwear');
+  });
+
+  it('een samengestelde jurk is een jurk', () => {
+    expect(metMerk('H & M - Katoenen bandeaujurk - Wit', 'bottom', 'H&M').category).toBe('dress');
+    expect(metMerk('H & M - Double-breasted blazerjurk - Rood', 'outerwear', 'H&M').category).toBe('dress');
+  });
+});
+
 // ─── JUMPSUITS ─────────────────────────────────────────────────────────────
 describe('JUMPSUIT classification', () => {
   it('classifies a jumpsuit', () => {
