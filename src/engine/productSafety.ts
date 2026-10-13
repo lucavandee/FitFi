@@ -156,6 +156,41 @@ const KIND_IN_NAAM = new RegExp(
 const MIN_EU_KINDERSCHOENMAAT = 16;
 const MAX_EU_KINDERSCHOENMAAT = 34;
 
+/**
+ * Kindermaten in de maatlijst, los van de naam.
+ *
+ * Gemeten op 13 oktober 2026: 2.011 producten in de pool van de site hadden
+ * een kindermaat, gender male of female en is_kids false. De naam zegt niets
+ * ("H & M - Katoenen T-shirt met print - Beige"); alleen de maat verraadt het
+ * kind: "122/128 (6-8Y)", "50 (0-1M)", "92 (1½-2Y)", "170 (14Y+)", "5-6Y" of
+ * een lengtepaar als "122/140" bij petten en mutsen. De import van maart
+ * herkende alleen kale lengtes als "110"; de herkenning in daisyconRows.ts is
+ * later beter geworden, maar nooit op bestaande producten toegepast.
+ *
+ * Een lengtepaar telt alleen als de twee lengtes minstens 6 uit elkaar liggen:
+ * kinderreeksen doen dat altijd (92/116, 122/128), een dubbele volwassen maat
+ * als 52/54 nooit.
+ */
+const LEEFTIJD_TUSSEN_HAAKJES = /\(\s*[\d½]+(\s*[-–]\s*[\d½]+)?\s*[YM]\+?\s*\)/i;
+const KALE_LEEFTIJD = /^[\d½]{1,3}(\s*[-–]\s*[\d½]{1,3})?\s*[YM]\+?$/i;
+const LENGTEPAAR = /^(\d{2,3})\/(\d{2,3})$/;
+const MIN_KINDERLENGTE = 50;
+const MAX_KINDERLENGTE = 176;
+const MIN_LENGTEVERSCHIL = 6;
+
+function isKindermaat(maat: string): boolean {
+  if (LEEFTIJD_TUSSEN_HAAKJES.test(maat) || KALE_LEEFTIJD.test(maat)) return true;
+  const paar = LENGTEPAAR.exec(maat);
+  if (!paar) return false;
+  const laag = Number(paar[1]);
+  const hoog = Number(paar[2]);
+  return (
+    laag >= MIN_KINDERLENGTE &&
+    hoog <= MAX_KINDERLENGTE &&
+    hoog - laag >= MIN_LENGTEVERSCHIL
+  );
+}
+
 export interface SafetyInput {
   name?: string | null;
   category?: string | null;
@@ -164,16 +199,32 @@ export interface SafetyInput {
 
 export interface SafetyVerdict {
   ok: boolean;
-  reden?: 'niet-kleding' | 'ondergoed' | 'doelgroep' | 'kleding-als-accessoire' | 'kind-in-naam' | 'kinderschoenmaat';
+  reden?: 'niet-kleding' | 'ondergoed' | 'doelgroep' | 'kleding-als-accessoire' | 'kind-in-naam' | 'kindermaat' | 'kinderschoenmaat';
 }
 
-/** Alleen numerieke maten; letters (S/M/L) zeggen niets over kindermaat. */
+/**
+ * Alleen numerieke maten; letters (S/M/L) zeggen niets over kindermaat.
+ * Een dubbele maat als "20/21" levert beide getallen, "30.5" een halve maat.
+ * UK/US-notatie met ½ ("9½") blijft er bewust buiten.
+ */
 function numeriekeMaten(sizes: SafetyInput['sizes']): number[] {
   if (!Array.isArray(sizes)) return [];
-  return sizes
-    .map((s) => String(s).trim())
-    .filter((s) => /^\d{1,3}$/.test(s))
-    .map(Number);
+  const uit: number[] = [];
+  for (const ruw of sizes) {
+    const s = String(ruw).trim();
+    if (/^\d{1,3}$/.test(s)) uit.push(Number(s));
+    else if (/^\d{1,2}[.,]5$/.test(s)) uit.push(Number(s.replace(',', '.')));
+    else {
+      const dubbel = /^(\d{1,2})\/(\d{1,2})$/.exec(s);
+      if (dubbel) uit.push(Number(dubbel[1]), Number(dubbel[2]));
+    }
+  }
+  return uit;
+}
+
+function heeftAlleenKindermaten(sizes: SafetyInput['sizes']): boolean {
+  if (!Array.isArray(sizes) || sizes.length === 0) return false;
+  return sizes.every((s) => isKindermaat(String(s).trim()));
 }
 
 export function beoordeelProduct(p: SafetyInput): SafetyVerdict {
@@ -191,6 +242,7 @@ export function beoordeelProduct(p: SafetyInput): SafetyVerdict {
     return { ok: false, reden: 'kleding-als-accessoire' };
   }
   if (KIND_IN_NAAM.test(naam)) return { ok: false, reden: 'kind-in-naam' };
+  if (heeftAlleenKindermaten(p.sizes)) return { ok: false, reden: 'kindermaat' };
 
   if (String(p.category ?? '').toLowerCase() === 'footwear') {
     const maten = numeriekeMaten(p.sizes);
