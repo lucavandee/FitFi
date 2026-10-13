@@ -7,7 +7,7 @@ import type {
   Season,
 } from './types';
 import type { ArchetypeKey } from '@/config/archetypes';
-import { seizoenenBotsen } from '../productSafety';
+import { isZichtbaarAccessoire, pastInSeizoen, seizoenenBotsen } from '../productSafety';
 import type { FilterResult } from './candidateFilter';
 import {
   coherenceMultiplier,
@@ -160,6 +160,68 @@ function isPreferredBrand(
     if (brand.includes(pref) || pref.includes(brand)) return true;
   }
   return false;
+}
+
+/**
+ * Stylistregels die gelden voordat er iets wordt samengesteld (13 oktober
+ * 2026): geen zomerstuk in herfst of winter, geen zwaar winterstuk in lente of
+ * zomer, en alleen accessoires die je ziet. Een kledinglijst valt terug op het
+ * origineel als de regel hem leeg zou maken (liever een outfit dan geen
+ * outfit); de accessoirelijst niet, want een outfit zonder accessoire is beter
+ * dan een met een portemonnee.
+ */
+function metTerugval(lijst: ScoredProduct[], houd: (p: ScoredProduct) => boolean): ScoredProduct[] {
+  const gefilterd = lijst.filter(houd);
+  return gefilterd.length > 0 ? gefilterd : lijst;
+}
+
+function voorStylist(
+  byCategory: FilterResult['byCategory'],
+  season: Season | undefined
+): FilterResult['byCategory'] {
+  const seizoen = (p: ScoredProduct) => !season || pastInSeizoen(p.product.name, season);
+  const uit = {} as FilterResult['byCategory'];
+  for (const [cat, lijst] of Object.entries(byCategory) as Array<[NormalizedCategory, ScoredProduct[]]>) {
+    uit[cat] =
+      cat === 'accessory'
+        ? lijst.filter((p) => seizoen(p) && isZichtbaarAccessoire(p.product.name))
+        : metTerugval(lijst, seizoen);
+  }
+  return uit;
+}
+
+/**
+ * Hoogstens zoveel keer duurder dan het goedkoopste stuk in dezelfde outfit.
+ * Het budget geldt per stuk, dus zonder deze grens kwam er een overhemd van
+ * 19,99 naast schoenen van 387 euro.
+ */
+const MAX_PRIJSVERHOUDING = 3;
+
+/** Markeert een poging zonder prijsband: kiezen zoals vóór 13 oktober 2026. */
+const GEEN_BAND: number[] = [];
+
+/**
+ * Een outfit buiten de prijsband zakt in de rangorde, zodat de selectie hem
+ * alleen neemt als er voor die gelegenheid niets beters is: 0,9 bij een
+ * factor net boven de 3, oplopend tot 0,6 bij een factor 9 of meer.
+ */
+function prijsFactor(items: ScoredProduct[]): number {
+  const prijzen = items.map(prijsVan).filter((p): p is number => p !== undefined);
+  if (prijzen.length < 2) return 1;
+  const verhouding = Math.max(...prijzen) / Math.min(...prijzen);
+  if (verhouding <= MAX_PRIJSVERHOUDING) return 1;
+  return Math.max(0.6, 0.9 - (verhouding - MAX_PRIJSVERHOUDING) * 0.05);
+}
+
+function prijsVan(s: ScoredProduct | undefined): number | undefined {
+  const p = Number(s?.product.price);
+  return p > 0 ? p : undefined;
+}
+
+function pastInPrijsband(s: ScoredProduct, band: number[]): boolean {
+  const p = prijsVan(s);
+  if (p === undefined || band.length === 0) return true;
+  return Math.max(p, ...band) <= Math.min(p, ...band) * MAX_PRIJSVERHOUDING;
 }
 
 function pickTopPool(
@@ -346,7 +408,8 @@ function tryCompose(
     outerwear?: ScoredProduct;
     accessory?: ScoredProduct;
   },
-  profile: UserStyleProfile
+  profile: UserStyleProfile,
+  strengePrijsband = false
 ): ScoredProduct[] | null {
   const items: ScoredProduct[] = [];
   const seenIds = new Set<string>();
@@ -382,12 +445,22 @@ function tryCompose(
   // combinatie niet tegen. Alleen de botsing winter tegen zomer wordt geweigerd;
   // de aanroeper probeert het dan met een andere combinatie.
   if (seizoenenBotsen(items.map((i) => i.product.name))) return null;
+  // De voorkeur bij het kiezen haalt de band niet altijd (een korte toppool
+  // heeft soms geen stuk in dezelfde prijsklasse); dan liever een andere
+  // combinatie dan een overhemd van 20 euro onder schoenen van 400. Alleen in
+  // de eerste helft van de pogingen: op een smalle catalogus (formeel, juni
+  // 2026) leverde een harde grens 4 outfits in plaats van 5, en een outfit
+  // buiten de band is beter dan geen outfit.
+  if (strengePrijsband) {
+    const prijzen = items.map(prijsVan).filter((p): p is number => p !== undefined);
+    if (prijzen.length > 1 && Math.max(...prijzen) > Math.min(...prijzen) * MAX_PRIJSVERHOUDING) return null;
+  }
   return items;
 }
 
 function composeForOccasion(
   occasion: OccasionKey,
-  byCategory: FilterResult['byCategory'],
+  alleCategorieen: FilterResult['byCategory'],
   profile: UserStyleProfile,
   count: number,
   poolSize: number,
@@ -395,6 +468,7 @@ function composeForOccasion(
   season: Season | undefined,
   usedProducts: Set<string>
 ): OutfitCandidate[] {
+  const byCategory = voorStylist(alleCategorieen, season);
   // diversifyOutfits allows a product in at most one or two selected outfits
   // (one when there are 18+ candidates, which is every two-occasion profile)
   // and a shoe in only one. A candidate that repeats a product an earlier one
@@ -408,6 +482,28 @@ function composeForOccasion(
   const firstUnused = (pool: ScoredProduct[]): ScoredProduct | undefined =>
     pool.find((s) => !usedProducts.has(s.product.id)) ?? pool[0];
   const targetFormality = OCCASION_TARGET_FORMALITY[occasion];
+  // Prijsniveau: na het eerste stuk heeft elk volgend slot de voorkeur voor
+  // een stuk binnen MAX_PRIJSVERHOUDING van wat er al ligt. Eerst in de
+  // geschudde toppool; staat daar niets in de band, dan het best gerangschikte
+  // stuk uit de hele lijst van dat slot (rankForOccasion gebruikt geen toeval,
+  // dus de rand-stroom blijft gelijk); pas daarna de gewone keuze.
+  const vrijEnInBand = (band: number[]) => (s: ScoredProduct) =>
+    !usedProducts.has(s.product.id) && pastInPrijsband(s, band);
+  const firstUnusedInBand = (
+    pool: ScoredProduct[],
+    kandidaten: ScoredProduct[],
+    band: number[],
+    optioneel = false
+  ): ScoredProduct | undefined =>
+    (band === GEEN_BAND ? undefined : pool.find(vrijEnInBand(band))) ??
+    (band.length > 0 && band !== GEEN_BAND
+      ? rankForOccasion(kandidaten, targetFormality, occasion).find(vrijEnInBand(band)) ??
+        // Een jas of accessoire die al in een andere outfit zit mag hier nog,
+        // binnen de band; bij top, broek en jurk niet, want dan schrapt
+        // diversifyOutfits de outfit en verdwijnt een gevraagde gelegenheid.
+        (optioneel ? pool.find((s) => pastInPrijsband(s, band)) : undefined)
+      : undefined) ??
+    firstUnused(pool);
   const wantOuterwear = resolveOuterwearChance(
     occasion,
     profile.primaryArchetype,
@@ -449,21 +545,24 @@ function composeForOccasion(
       byCategory.jumpsuit.length > 0 &&
       rand() < 0.08;
 
-    let picks: Parameters<typeof tryCompose>[0] = {};
-    if (useDress) {
-      const pool = pickTopPool(byCategory.dress, targetFormality, poolSize, rand, occasion, profile);
-      picks.dress = firstUnused(pool);
-    } else if (useJumpsuit) {
-      const pool = pickTopPool(byCategory.jumpsuit, targetFormality, poolSize, rand, occasion, profile);
-      picks.dress = firstUnused(pool);
+    // Eerst alle toppools, in dezelfde volgorde als altijd, zodat de
+    // rand-stroom gelijk blijft. Pas daarna wordt er gekozen.
+    let dressPool: ScoredProduct[] | undefined;
+    let topPool: ScoredProduct[] | undefined;
+    let bottomPool: ScoredProduct[] | undefined;
+    let topCandidates: ScoredProduct[] = [];
+    let bottomCandidates: ScoredProduct[] = [];
+    const dressCandidates = useDress ? byCategory.dress : byCategory.jumpsuit;
+    if (useDress || useJumpsuit) {
+      dressPool = pickTopPool(dressCandidates, targetFormality, poolSize, rand, occasion, profile);
     } else {
-      const topCandidates = filterTopsForOccasion(byCategory.top, occasion);
-      const bottomCandidates = filterBottomsForOccasion(
+      topCandidates = filterTopsForOccasion(byCategory.top, occasion);
+      bottomCandidates = filterBottomsForOccasion(
         byCategory.bottom,
         occasion,
         profile
       );
-      const topPool = pickTopPool(
+      topPool = pickTopPool(
         topCandidates,
         targetFormality,
         poolSize,
@@ -471,7 +570,7 @@ function composeForOccasion(
         occasion,
         profile
       );
-      const bottomPool = pickTopPool(
+      bottomPool = pickTopPool(
         bottomCandidates,
         targetFormality,
         poolSize,
@@ -479,8 +578,6 @@ function composeForOccasion(
         occasion,
         profile
       );
-      picks.top = firstUnused(topPool);
-      picks.bottom = firstUnused(bottomPool);
     }
 
     const footwearCandidates = filterFootwearForOccasion(
@@ -488,47 +585,68 @@ function composeForOccasion(
       occasion,
       profile
     );
-    if (footwearCandidates.length > 0) {
-      const pool = pickTopPool(
-        footwearCandidates,
-        targetFormality,
-        poolSize,
-        rand,
-        occasion,
-        profile
-      );
-      picks.footwear = firstUnused(pool);
-    }
+    const footwearPool =
+      footwearCandidates.length > 0
+        ? pickTopPool(footwearCandidates, targetFormality, poolSize, rand, occasion, profile)
+        : undefined;
 
-    if (byCategory.outerwear.length > 0 && auxRand() < wantOuterwear) {
-      const pool = pickTopPool(
-        byCategory.outerwear,
-        targetFormality,
-        Math.max(3, Math.floor(poolSize / 2)),
-        rand,
-        occasion,
-        profile
-      );
-      picks.outerwear = firstUnused(pool);
-    }
+    const outerwearPool =
+      byCategory.outerwear.length > 0 && auxRand() < wantOuterwear
+        ? pickTopPool(
+            byCategory.outerwear,
+            targetFormality,
+            Math.max(3, Math.floor(poolSize / 2)),
+            rand,
+            occasion,
+            profile
+          )
+        : undefined;
 
     const accessoryRoll = accRand();
     const pickAccessory =
       byCategory.accessory.length > 0 &&
       (accessoryRoll < wantAccessory || mustHaveAccessory);
-    if (pickAccessory) {
-      const pool = pickTopPool(
-        byCategory.accessory,
-        targetFormality,
-        Math.max(3, Math.floor(poolSize / 2)),
-        rand,
-        occasion,
-        profile
-      );
-      picks.accessory = firstUnused(pool);
-    }
+    const accessoryPool = pickAccessory
+      ? pickTopPool(
+          byCategory.accessory,
+          targetFormality,
+          Math.max(3, Math.floor(poolSize / 2)),
+          rand,
+          occasion,
+          profile
+        )
+      : undefined;
 
-    const products = tryCompose(picks, profile);
+    // Kiezen, met de schoen als anker van de prijsband: schoenen zijn het
+    // strakst geprijsde slot, en met een basic van 20 euro als anker zat er in
+    // de korte schoenenpool vaak niets in dezelfde klasse. De schoen zelf kiest
+    // zoals altijd (firstUnused), dus de schoenspreiding blijft gelijk.
+    // Drie fasen. De eerste helft van de pogingen kiest binnen de prijsband
+    // en weigert een outfit erbuiten; het derde kwart kiest binnen de band
+    // als dat kan maar weigert niet; het laatste kwart kiest zoals vóór 13
+    // oktober. Zo levert de engine nooit minder outfits dan voorheen (op een
+    // smalle catalogus, kalibratie vrouw klassiek werk, bleef er anders 1
+    // over), en prijsFactor zorgt dat de selectie de betere eerst neemt.
+    const streng = attempt < maxAttempts / 2;
+    const metBand = attempt < (maxAttempts * 3) / 4;
+    const picks: Parameters<typeof tryCompose>[0] = {};
+    const band: number[] = metBand ? [] : GEEN_BAND;
+    const leg = (s: ScoredProduct | undefined) => {
+      const p = prijsVan(s);
+      if (p !== undefined && metBand) band.push(p);
+      return s;
+    };
+    if (footwearPool) picks.footwear = leg(firstUnused(footwearPool));
+    if (dressPool) {
+      picks.dress = leg(firstUnusedInBand(dressPool, dressCandidates, band));
+    } else if (topPool && bottomPool) {
+      picks.top = leg(firstUnusedInBand(topPool, topCandidates, band));
+      picks.bottom = leg(firstUnusedInBand(bottomPool, bottomCandidates, band));
+    }
+    if (outerwearPool) picks.outerwear = leg(firstUnusedInBand(outerwearPool, byCategory.outerwear, band, true));
+    if (accessoryPool) picks.accessory = leg(firstUnusedInBand(accessoryPool, byCategory.accessory, band, true));
+
+    const products = tryCompose(picks, profile, streng);
     if (!products || products.length < 2) continue;
 
     const signature = products
@@ -547,7 +665,7 @@ function composeForOccasion(
       occasion,
       targetFormality,
       products,
-      compositionScore: score,
+      compositionScore: score * prijsFactor(products),
       coherence: {
         colorHarmony: coherence.colorHarmony,
         formalitySpread: coherence.formalitySpread,

@@ -11,7 +11,16 @@
  *    of een accessory met "swim"/"zwem" in de naam bevat (tot shoe_type er is);
  *  - twee outfits dezelfde itemset hebben;
  *  - twee runs achter elkaar verschillende outfits geven voor hetzelfde profiel;
- *  - de client-classifier het oneens is met product_attributes (stopregel 2).
+ *  - de client-classifier het oneens is met product_attributes (stopregel 2);
+ *  - een item niet bij het seizoen van nu past (sandalen of linnen in oktober);
+ *  - een accessoire iets is wat je niet ziet (portemonnee, manchetknopen);
+ *  - een kledingstuk in het schoenen- of accessoireslot staat;
+ *  - het duurste stuk in een outfit meer dan tien keer zo duur is als het
+ *    goedkoopste.
+ *
+ * De laatste vier sinds 13 oktober 2026: het harnas gaf GROEN met een jurk als
+ * schoen en sandalen bij een kasjmier coltrui in oktober. Het toetste of een
+ * outfit compleet is, niet of hij klopt.
  *
  * Gebruik:
  *   npm run keten:personas
@@ -24,6 +33,8 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { runEngineV2 } from "../../src/engine/v2";
+import { getCurrentSeason } from "../../src/engine/v2/scoring/season";
+import { isZichtbaarAccessoire, pastInSeizoen } from "../../src/engine/productSafety";
 import type { Outfit, Product } from "../../src/engine/types";
 import { KETEN_PERSONAS, type KetenPersona } from "../../src/keten/personas";
 import { seedFromAnswers } from "../../src/services/outfits/answersSeed";
@@ -90,6 +101,11 @@ const SANDAAL_RE = /\b(sandaal|sandalen|sandal|sandals|slipper|slippers|teenslip
 // "swim" kon deze controle dus nooit afgaan. "zwem" blijft erin voor een
 // eventuele Nederlandstalige feed later.
 const ZWEM_RE = /\b(zwem\w*|swim\w*)\b/i;
+/** Een kledingstuk dat in het schoenenslot is beland ("Slip-on jurk"). */
+const KLEDING_ALS_SCHOEN_RE = /\b[a-z]*jurk\b|\brok\b|\bdress\b|\bskirt\b|\bbroek\b|\bblouse\b/i;
+/** Giglio begint de naam met het type; een kledingstuk is geen accessoire. */
+const KLEDING_ALS_ACCESSOIRE_RE = /^(top|shirt|t-shirt|sweater|polo|pants|suit|dress|jacket|coat|blazer|skirt|jeans)\b/i;
+const MAX_PRIJSVERHOUDING_HARNAS = 10;
 
 const CATEGORIE_ALIAS: Record<string, string> = {
   top: "top", tops: "top", shirt: "top", shirts: "top",
@@ -168,6 +184,7 @@ function bouwOutfits(answers: Record<string, any>, pool: Product[]): Outfit[] {
 function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], afwijkingen: number): string[] {
   const fouten: string[] = [];
   const budget = naarKandidatenParams(persona.answers);
+  const seizoen = getCurrentSeason();
 
   if (afwijkingen > 0) {
     fouten.push(`${afwijkingen} kandidaten waar de client-classifier een andere categorie geeft dan product_attributes (draai npm run keten:classificeer opnieuw)`);
@@ -202,6 +219,22 @@ function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], af
       if (isWerk && categorieVan(p) === "accessory" && ZWEM_RE.test(p.name ?? "")) {
         fouten.push(`${label}: zwemaccessoire bij werk: "${p.name}"`);
       }
+      if (!pastInSeizoen(p.name, seizoen)) {
+        fouten.push(`${label}: past niet bij het seizoen (${seizoen}): "${p.name}"`);
+      }
+      if (categorieVan(p) === "accessory" && !isZichtbaarAccessoire(p.name)) {
+        fouten.push(`${label}: accessoire dat je niet ziet: "${p.name}"`);
+      }
+      if (categorieVan(p) === "footwear" && KLEDING_ALS_SCHOEN_RE.test(p.name ?? "")) {
+        fouten.push(`${label}: kledingstuk als schoen: "${p.name}"`);
+      }
+      if (categorieVan(p) === "accessory" && KLEDING_ALS_ACCESSOIRE_RE.test(p.name ?? "")) {
+        fouten.push(`${label}: kledingstuk als accessoire: "${p.name}"`);
+      }
+    }
+    const prijzen = outfit.products.map((p) => Number(p.price)).filter((x) => x > 0);
+    if (prijzen.length > 1 && Math.max(...prijzen) > Math.min(...prijzen) * MAX_PRIJSVERHOUDING_HARNAS) {
+      fouten.push(`${label}: prijzen lopen uiteen van ${Math.min(...prijzen)} tot ${Math.max(...prijzen)}`);
     }
   });
 

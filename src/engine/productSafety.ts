@@ -291,7 +291,9 @@ export function filterVeiligeProducten<T extends SafetyInput>(
 export type Seizoen = 'winter' | 'zomer' | 'allseason';
 
 const WINTER = /gevoerd|teddy|sherpa|wollen|\bwol\b|thermo|fleece|donsjas|puffer|winterjas|snowboot|bontvoering|gewatteerd/i;
-const ZOMER = /\bshorts?\b|\bkorte broek\b|zwem|bikini|badpak|linnen|hawaii|strand|sandaal|slipper|teenslipper|mouwloos|halterneck/i;
+// "sandaal" alleen ving "sandalen", "sandaletten" en het Engelse "Sandal" niet
+// (13 okt 2026: leren sandalen en Birkenstocks in oktoberoutfits).
+const ZOMER = /\bshorts?\b|\bkorte broek\b|bermuda|zwem|bikini|badpak|linnen|\blinen\b|hawaii|strand|sandaal|sandal|espadrille|slipper|teenslipper|flip-?flop|mouwloos|sleeveless|halterneck|\bzomer|strooien|\bstraw\b|raffia/i;
 
 export function seizoenVan(naam?: string | null): Seizoen {
   const n = String(naam ?? '');
@@ -309,4 +311,39 @@ export function seizoenVan(naam?: string | null): Seizoen {
 export function seizoenenBotsen(namen: Array<string | null | undefined>): boolean {
   const labels = namen.map(seizoenVan);
   return labels.includes('winter') && labels.includes('zomer');
+}
+
+/**
+ * Past dit stuk bij het seizoen van nu? In herfst en winter valt elk
+ * uitgesproken zomerstuk af (sandalen, linnen, shorts, mouwloos). In lente en
+ * zomer alleen wat echt warm is: gevoerd, gewatteerd, dons, teddy. Wol mag
+ * dan wel, een wollen pantalon of colbert draag je het hele jaar.
+ *
+ * Tot 13 oktober 2026 woog het seizoen 3 procent in de score en sloot het
+ * niets uit; in oktober kwamen er sandalen bij een kasjmier coltrui uit.
+ */
+export type JaarSeizoen = 'spring' | 'summer' | 'autumn' | 'winter';
+
+const ZWAAR_WINTER = /gevoerd|teddy|sherpa|donsjas|\bdons\b|puffer|winterjas|snowboot|bontvoering|gewatteerd|thermo|shearling|lammy|\bparka\b/i;
+
+export function pastInSeizoen(naam: string | null | undefined, seizoen: JaarSeizoen): boolean {
+  const n = String(naam ?? '');
+  if (seizoen === 'autumn' || seizoen === 'winter') return seizoenVan(n) !== 'zomer';
+  return !ZWAAR_WINTER.test(n);
+}
+
+/* ------------------------------------------------------------------ */
+/* Accessoires die je op een outfitfoto niet ziet                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Een portemonnee, manchetknopen of een brilmontuur maakt een outfit niet af:
+ * je ziet ze niet. Op 13 oktober 2026 vulden ze het accessoireslot ("Wallet
+ * BOSS", "Cufflinks PAUL SMITH", "Optical Frames RAY-BAN"). Een zonnebril,
+ * tas, riem, sjaal of hoed zie je wel.
+ */
+const ONZICHTBAAR_ACCESSOIRE = /\b(wallets?|portemonnee|pasjeshouder|card[\s-]?holders?|cardholders?|kaarthouder|cufflinks?|manchetknop\w*|optical[\s-]?frames?|eyeglasses|brilmontuur|key[\s-]?rings?|keychains?|sleutelhanger|paraplu|umbrella|sokken|socks|tie[\s-]?clip|dasspeld|money[\s-]?clip|geldclip)\b/i;
+
+export function isZichtbaarAccessoire(naam: string | null | undefined): boolean {
+  return !ONZICHTBAAR_ACCESSOIRE.test(String(naam ?? ''));
 }
