@@ -7,6 +7,7 @@ import { StyleAnalysisTransition } from './StyleAnalysisTransition';
 import { Sparkles, Loader as Loader2, SkipForward } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { SwipeAnalyzer } from '@/services/visualPreferences/swipeAnalyzer';
+import { bewaarSwipeUitkomst } from '@/services/visualPreferences/swipeOpslag';
 import { loadAdaptivePhotos } from '@/services/visualPreferences/adaptiveLoader';
 import type { MoodPhoto, StyleSwipe } from '@/services/visualPreferences/visualPreferenceService';
 import { getSessionId } from '@/utils/sessionId';
@@ -153,15 +154,7 @@ export function VisualPreferenceStepClean({ onComplete, onSwipe, userGender }: V
 
   const persistSwipeData = (count: number) => {
     try {
-      localStorage.setItem('ff_swipe_count', String(count));
-      const pattern = analyzerRef.current.getPattern();
-      localStorage.setItem('ff_swipe_pattern', JSON.stringify({
-        likeRate: pattern.likeRate,
-        dominantColors: pattern.dominantColors,
-        preferredStyles: pattern.preferredStyles,
-        topArchetypes: pattern.topArchetypes,
-        confidence: pattern.confidence,
-      }));
+      bewaarSwipeUitkomst(localStorage, count, analyzerRef.current.getPattern());
     } catch {}
   };
 
