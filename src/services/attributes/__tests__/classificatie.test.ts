@@ -49,7 +49,17 @@ describe("classificeerRij", () => {
     // "Jas met sjaal" was een accessoire. Geraakt: 240 H&M-rijen, gericht herschreven
     // met --ids-bestand; de rest van de tabel behoudt zijn oude versiestring en dat is
     // geen probleem, want get_kandidaten eist alleen dat de versie niet leeg is.
-    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-10-08-bijgeleverd-accessoire");
+    // Daarna verhoogd (13 oktober 2026) voor "de naam gaat voor een foute oude
+    // categorie": Giglio-tops en pakken als accessoire, slip-on jurken als schoen.
+    // Ook gericht herschreven met --ids-bestand.
+    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-10-13-naam-voor-categorie");
+  });
+
+  it("een Giglio-top is een top en een volledig pak valt eruit", () => {
+    expect(classificeerRij({ id: "p9", name: "Top MAX MARA Woman color Green", category: "accessory", brand: "Max Mara" }))
+      .toEqual({ product_id: "p9", category: "top", is_fashion: true });
+    expect(classificeerRij({ id: "p10", name: "Suit TAGLIATORE Men color Brown", category: "accessory", brand: "Tagliatore" }).is_fashion)
+      .toBe(false);
   });
 
   it("een jas met een sjaal blijft een jas, en een echte sjaal een accessoire", () => {
