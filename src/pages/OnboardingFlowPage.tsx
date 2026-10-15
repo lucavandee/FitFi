@@ -11,7 +11,6 @@ import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
 import { VisualPreferenceStepClean as VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStepClean";
 import { CalibrationStep } from "@/components/quiz/CalibrationStep";
-import { EmailCapturePrompt } from "@/components/quiz/EmailCapturePrompt";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import { VisualPreferenceService } from "@/services/visualPreferences/visualPreferenceService";
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
@@ -99,10 +98,6 @@ export default function OnboardingFlowPage() {
   const [progressLoaded, setProgressLoaded] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const [sessionId] = useState(getSessionId);
-  const [showEmailCapture, setShowEmailCapture] = useState(false);
-  const [emailCaptured, setEmailCaptured] = useState(() => {
-    return !!localStorage.getItem('ff_email_captured');
-  });
   const [revealData, setRevealData] = useState<{
     archetype: string;
     archetypeDescription: string;
@@ -369,10 +364,6 @@ export default function OnboardingFlowPage() {
 
     if (currentStep < quizSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
-
-      if (currentStep === 2 && !emailCaptured && !showEmailCapture) {
-        setShowEmailCapture(true);
-      }
     } else if (phase === 'questions') {
       setShowReviewModal(true);
     } else if (phase === 'swipes') {
