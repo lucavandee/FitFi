@@ -14,6 +14,7 @@ import { trackSave, trackView } from '@/services/ml/interactionTrackingService';
 import { recordOutfitFeedback } from '@/services/ml/adaptiveWeightService';
 import OutfitDetailsModal from '@/components/outfits/OutfitDetailsModal';
 import { cn } from '@/utils/cn';
+import { toonNaam } from '@/utils/productNaam';
 
 interface Product {
   id: string;
@@ -267,14 +268,14 @@ export default function UnifiedOutfitCard({
                   )}>
                     <LazyImage
                       src={product.imageUrl}
-                      alt={product.name}
+                      alt={toonNaam(product)}
                       className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
                       fallback="/placeholder.png"
                     />
                   </div>
                   <div className="mt-1">
                     <div className={cn("text-xs font-medium truncate", currentTheme.text)}>
-                      {product.name}
+                      {toonNaam(product)}
                     </div>
                     <div className={cn("text-xs truncate", currentTheme.textMuted)}>
                       {product.brand} {product.price && `• €${product.price}`}

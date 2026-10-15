@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button';
 import { track } from '@/utils/telemetry';
 import { buildClickRef, logAffiliateClick, isAffiliateConsentGiven, buildAwinUrl } from '@/utils/affiliate';
 import { useUser } from '@/context/UserContext';
+import { toonNaam } from '@/utils/productNaam';
 
 interface Product {
   id: string;
@@ -104,8 +105,8 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
           <div className="grid md:grid-cols-2 gap-6">
             <ProductImage
               src={product.imageUrl}
-              alt={product.name}
-              productName={product.name}
+              alt={toonNaam(product)}
+              productName={toonNaam(product)}
               brand={product.brand}
               color={product.color}
               category={product.category}
@@ -117,7 +118,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
               {product.brand && (
                 <p className="text-sm text-[#1A1A1A]/60 mb-2">{product.brand}</p>
               )}
-              <h3 className="text-2xl font-bold mb-4">{product.name}</h3>
+              <h3 className="text-2xl font-bold mb-4">{toonNaam(product)}</h3>
 
               {product.price && (
                 <div className="mb-4">
@@ -157,7 +158,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                     variant="primary"
                     size="lg"
                     className="w-full"
-                    aria-label={`Shop ${product.name} bij ${product.retailer || 'winkel'}`}
+                    aria-label={`Shop ${toonNaam(product)} bij ${product.retailer || 'winkel'}`}
                     aria-busy={isOpening}
                   >
                     {isOpening ? (

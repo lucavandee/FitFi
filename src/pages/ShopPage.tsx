@@ -12,6 +12,7 @@ import { useShopItems } from '@/hooks/useShopItems';
 import { naarKandidatenParams } from '@/services/outfits/kandidaten';
 import { SHOP_PAGINA, zichtbareItems } from '@/services/shop/shopItems';
 import { canonicalUrl } from '@/utils/urls';
+import { toonNaam } from '@/utils/productNaam';
 import { track } from '@/utils/telemetry';
 import { LS_KEYS } from '@/lib/quiz/types';
 import { useNavigate } from 'react-router-dom';
@@ -564,7 +565,7 @@ export default function ShopPage() {
                     <ProductCard
                       id={product.id}
                       brand={product.brand || 'Onbekend'}
-                      title={product.title}
+                      title={toonNaam({ name: product.title, brand: product.brand })}
                       price={product.price ?? 0}
                       imageUrl={product.imageUrl || product.image || ''}
                       deeplink={product.url || '#'}

@@ -20,6 +20,7 @@ import toast from 'react-hot-toast';
 import { cn } from '@/utils/cn';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 import useBodyScrollLock from '@/hooks/useBodyScrollLock';
+import { toonNaam } from '@/utils/productNaam';
 
 interface Product {
   id: string;
@@ -106,7 +107,7 @@ export default function OutfitDetailsModal({
         window.open(baseUrl, '_blank', 'noopener,noreferrer');
       }
 
-      toast.success(`${product.name} opent in nieuw tabblad`, {
+      toast.success(`${toonNaam(product)} opent in nieuw tabblad`, {
         icon: '🛍️',
       });
 
@@ -296,7 +297,7 @@ export default function OutfitDetailsModal({
                             <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#FFFFFF] flex-shrink-0">
                               <LazyImage
                                 src={product.imageUrl}
-                                alt={product.name}
+                                alt={toonNaam(product)}
                                 className="w-full h-full object-cover"
                                 fallback="/placeholder.png"
                               />
@@ -311,7 +312,7 @@ export default function OutfitDetailsModal({
                                     </p>
                                   )}
                                   <h5 className="font-medium text-sm leading-snug" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                    {product.name}
+                                    {toonNaam(product)}
                                   </h5>
                                 </div>
                                 {product.price && (
@@ -335,7 +336,7 @@ export default function OutfitDetailsModal({
                                   }}
                                   disabled={isOpening}
                                   className="mt-1 flex items-center gap-1 text-xs font-medium text-[#9A503B] hover:text-[#A85740] transition-colors disabled:opacity-50"
-                                  aria-label={`Shop ${product.name}`}
+                                  aria-label={`Shop ${toonNaam(product)}`}
                                 >
                                   <ExternalLink className="w-3 h-3" />
                                   {isOpening ? 'Opent...' : `Shop bij ${product.retailer || 'winkel'}`}
@@ -447,7 +448,7 @@ export default function OutfitDetailsModal({
                   <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
                     <LazyImage
                       src={selectedProduct.imageUrl}
-                      alt={selectedProduct.name}
+                      alt={toonNaam(selectedProduct)}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -455,7 +456,7 @@ export default function OutfitDetailsModal({
                   {selectedProduct.brand && (
                     <p className="text-sm text-gray-600">{selectedProduct.brand}</p>
                   )}
-                  <h5 className="text-lg font-bold">{selectedProduct.name}</h5>
+                  <h5 className="text-lg font-bold">{toonNaam(selectedProduct)}</h5>
 
                   {selectedProduct.description && (
                     <p className="text-sm text-gray-700 leading-relaxed">

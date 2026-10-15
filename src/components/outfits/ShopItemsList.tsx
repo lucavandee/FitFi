@@ -30,6 +30,7 @@ import {
 } from '@/utils/affiliate';
 import { useUser } from '@/context/UserContext';
 import { cn } from '@/utils/cn';
+import { toonNaam } from '@/utils/productNaam';
 
 interface Product {
   id: string;
@@ -179,8 +180,8 @@ export function ShopItemsList({
             <div className="flex-shrink-0">
               <ProductImage
                 src={product.imageUrl}
-                alt={product.name}
-                productName={product.name}
+                alt={toonNaam(product)}
+                productName={toonNaam(product)}
                 brand={product.brand}
                 color={product.color}
                 category={product.category}
@@ -197,7 +198,7 @@ export function ShopItemsList({
                 </p>
               )}
               <h3 className="font-semibold text-base mb-2 line-clamp-2">
-                {product.name}
+                {toonNaam(product)}
               </h3>
 
               <div className="flex items-baseline gap-2 mb-3">
@@ -228,7 +229,7 @@ export function ShopItemsList({
                     variant="secondary"
                     size="sm"
                     className="w-full sm:w-auto"
-                    aria-label={`Shop ${product.name} bij ${product.retailer || 'winkel'}`}
+                    aria-label={`Shop ${toonNaam(product)} bij ${product.retailer || 'winkel'}`}
                     aria-busy={isOpening}
                   >
                     {isConfirmed ? (
