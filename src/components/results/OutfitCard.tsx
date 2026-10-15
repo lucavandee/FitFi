@@ -142,7 +142,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
                 className="flex items-center gap-1 px-2 py-1.5 bg-[#FAFAF8] hover:bg-[#F5F0EB] border border-[#E5E5E5] hover:border-[#A85740] rounded-lg transition-all text-left"
               >
                 <ShoppingBag className="w-3 h-3 text-[#6E6E6E] flex-shrink-0" />
-                <span className="text-[11px] text-[#1A1A1A] truncate leading-tight">{toonNaam(product)}</span>
+                <span className="text-sm text-[#1A1A1A] truncate leading-tight">{toonNaam(product)}</span>
               </button>
             ))}
           </div>
