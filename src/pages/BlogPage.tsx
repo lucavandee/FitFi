@@ -114,6 +114,7 @@ export default function BlogPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [aanmeldFout, setAanmeldFout] = useState(false);
   const [blogPosts, setBlogPosts] = useState<UIBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,14 +169,18 @@ export default function BlogPage() {
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    try {
-      const sb = supabase();
-      if (!sb) throw new Error('Supabase is niet beschikbaar');
-      await sb
-        .from('newsletter_subscribers')
-        .upsert({ email: email.trim() }, { onConflict: 'email' });
-    } catch {
-      // stil: de gebruiker ziet de uitkomst via isSubscribed
+    setAanmeldFout(false);
+    // Een gewone insert. Tot 15 oktober 2026 stond hier een upsert op "email",
+    // maar die kolom had geen unieke beperking: elke aanmelding faalde, de fout
+    // werd verzwegen en het formulier zei toch "Aangemeld!". Er stond nul adressen
+    // in de tabel. Staat het adres er al (23505), dan ben je ook aangemeld.
+    const sb = supabase();
+    const { error } = sb
+      ? await sb.from('newsletter_subscribers').insert({ email: email.trim().toLowerCase(), source: 'blog' })
+      : { error: { code: 'geen-verbinding' } };
+    if (error && error.code !== '23505') {
+      setAanmeldFout(true);
+      return;
     }
     setIsSubscribed(true);
     setEmail('');
@@ -518,7 +523,8 @@ export default function BlogPage() {
             </h3>
 
             <p className="text-base text-[#4A4A4A] mb-8">
-              Nieuwste stijltips en mode-inzichten direct in je inbox.
+              Staat er een nieuw stuk over stijl of kleur online, dan mailen we je.
+              Afmelden kan altijd via privacy@fitfi.ai.
             </p>
 
             <form onSubmit={handleNewsletterSubmit} className="flex gap-3 max-w-[460px] mx-auto">
@@ -541,6 +547,11 @@ export default function BlogPage() {
                 {isSubscribed ? 'Aangemeld!' : 'Aanmelden'}
               </button>
             </form>
+            {aanmeldFout && (
+              <p role="alert" className="mt-4 text-sm text-[#C24A4A]">
+                Aanmelden lukte niet. Probeer het later nog eens.
+              </p>
+            )}
           </div>
         </section>
 
