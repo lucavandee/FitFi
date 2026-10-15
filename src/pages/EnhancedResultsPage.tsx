@@ -35,7 +35,6 @@ import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
 import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/profileConsistency";
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { generateOutfitDescription } from "@/engine/outfitContext";
-import TrendInsights from "@/components/premium/TrendInsights";
 import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
@@ -1317,14 +1316,11 @@ export default function EnhancedResultsPage() {
                 );
               })()}
 
-              {user?.isPremium && (
-                <AnimatedSection delay={0.3}>
-                  <TrendInsights
-                    userSeason={activeColorProfile.season as 'winter' | 'zomer' | 'herfst' | 'lente'}
-                    compact={false}
-                  />
-                </AnimatedSection>
-              )}
+              {/* Hier stond TrendInsights voor premium: "98% trending", "DE trend van
+                  2025", "runways", allemaal verzonnen en een jaar oud, en opgehangen
+                  aan het kleurseizoen alsof dat het weerseizoen was. Weggehaald op
+                  15 oktober 2026; een trendlaag komt terug met bronnen met datum en
+                  markt. */}
 
               {archetypeDetectionResult && archetypeDetectionResult.scores.length > 0 && (
                 <AnimatedSection delay={0.3}>
