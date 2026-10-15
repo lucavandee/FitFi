@@ -157,21 +157,13 @@ export function naarAssen(answers: Record<string, any>): StijlAssen {
   return assen;
 }
 
-/** get_kandidaten neemt hooguit 50 gelikete producten mee. */
-const MAX_LIKES = 50;
-
 /**
  * Vertaalt de bestaande quiz-antwoorden (LS_KEYS.QUIZ_ANSWERS) naar de
  * RPC-parameters. `perCategorie` is voor wie meer of minder dan de 40 van de
  * engine wil (de shop vraagt het maximum); het wordt begrensd op wat de RPC
- * levert. `likes` zijn product-ID's die de bezoeker in de kalibratie goed
- * vond; de RPC zoekt daar visueel vergelijkbare producten bij.
+ * levert.
  */
-export function naarKandidatenParams(
-  answers: Record<string, any>,
-  perCategorie?: number,
-  likes: string[] = []
-): KandidatenParams {
+export function naarKandidatenParams(answers: Record<string, any>, perCategorie?: number): KandidatenParams {
   const a = answers ?? {};
   const budget = naarBudget(a);
   return {
@@ -180,7 +172,7 @@ export function naarKandidatenParams(
     p_budget_min: budget.min,
     p_budget_max: budget.max,
     p_axes: naarAssen(a),
-    p_liked_ids: [...new Set(likes)].slice(0, MAX_LIKES),
+    p_liked_ids: [],
     p_disliked_ids: [],
     p_per_category: naarPerCategorie(perCategorie),
   };

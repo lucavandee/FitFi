@@ -12,7 +12,6 @@ import {
 } from '@/services/calibration/calibrationOutfitsV2';
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
-import { bewaarKalibratieOordeel, wisKalibratie } from '@/services/visualPreferences/kalibratieOpslag';
 import { getSessionId, isUuid } from '@/utils/sessionId';
 
 interface CalibrationStepProps {
@@ -80,10 +79,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
       }
 
       let generatedOutfits: CalibrationOutfit[];
-      // Nieuwe outfits: de likes van een eerdere kalibratie tellen niet mee.
-      try {
-        wisKalibratie(localStorage);
-      } catch {}
 
       if (USE_ENGINE_V2) {
         setIsPersonalized(true);
@@ -226,15 +221,6 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
     if (!outfit) return;
 
     setFeedback(prev => ({ ...prev, [outfitId]: feedbackType }));
-
-    // Voor de uitslag: de producten van een "spot on"-outfit gaan als likes
-    // naar get_kandidaten (zie kalibratieOpslag.ts).
-    try {
-      const productIds = Object.values(outfit.items)
-        .filter((item): item is NonNullable<typeof item> => Boolean(item))
-        .map((item) => item.id);
-      bewaarKalibratieOordeel(localStorage, outfitId, productIds, feedbackType);
-    } catch {}
 
     try {
       const userId = user?.id;
