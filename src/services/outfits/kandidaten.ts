@@ -4,13 +4,22 @@ import type { Product } from "@/engine/types";
 
 export type KandidatenGender = "male" | "female" | "unisex";
 
+/** Een stijlas voor get_kandidaten: de waarde die de bezoeker koos en hoe zeker dat is. */
+export interface StijlAs {
+  value: string;
+  confidence: number;
+}
+
+/** De assen die get_kandidaten exact vergelijkt met product_attributes. */
+export type StijlAssen = Partial<Record<"silhouette" | "pattern" | "color_temp" | "lightness", StijlAs>>;
+
 /** Parameters van de RPC get_kandidaten (spec 5.3), in de volgorde van de functie. */
 export interface KandidatenParams {
   p_gender: KandidatenGender;
   p_occasions: string[];
   p_budget_min: number;
   p_budget_max: number;
-  p_axes: Record<string, never>;
+  p_axes: StijlAssen;
   p_liked_ids: string[];
   p_disliked_ids: string[];
   p_per_category: number;
@@ -110,13 +119,57 @@ function naarPerCategorie(waarde: number | undefined): number {
   return Math.min(MAX_PER_CATEGORIE, Math.max(MIN_PER_CATEGORIE, Math.floor(waarde)));
 }
 
+const PASVORMEN = ["slim", "regular", "relaxed", "oversized"];
+const PRINTS = ["effen", "subtiel", "statement"];
+const TEMPERATUREN = ["warm", "koel", "neutraal"];
+const LICHTHEDEN = ["licht", "medium", "donker"];
+
+function gekozen(raw: unknown, toegestaan: string[]): StijlAs | undefined {
+  const waarde = typeof raw === "string" ? raw.trim().toLowerCase() : Array.isArray(raw) ? String(raw[0] ?? "").trim().toLowerCase() : "";
+  return toegestaan.includes(waarde) ? { value: waarde, confidence: 1 } : undefined;
+}
+
+/**
+ * De stijlassen uit de quiz: pasvorm, prints, kleurtemperatuur en lichtheid.
+ * De bezoeker koos ze zelf, dus zekerheid 1 (zelfde keuze als vanQuiz.ts in
+ * de stylist, plan 3). De quizwaarden zijn exact de waarden van de tagger.
+ * "gemengd" bij prints is geen as.
+ *
+ * Tot 15 oktober 2026 stuurde de app p_axes {} mee. get_kandidaten scoort
+ * 0,5 op de assen, 0,3 op de gelegenheid en 0,2 op gelikete producten; zonder
+ * assen en likes kreeg elk product alleen de gelegenheidsscore, die voor
+ * duizenden producten gelijk is, en koos het product-ID welke 40 per
+ * categorie de engine te zien kreeg. Stijl deed op die laag niets.
+ */
+export function naarAssen(answers: Record<string, any>): StijlAssen {
+  const a = answers ?? {};
+  const assen: StijlAssen = {};
+  const silhouette = gekozen(a.fit, PASVORMEN);
+  const pattern = gekozen(a.prints, PRINTS);
+  const colorTemp = gekozen(a.neutrals, TEMPERATUREN);
+  const lightness = gekozen(a.lightness, LICHTHEDEN);
+  if (silhouette) assen.silhouette = silhouette;
+  if (pattern) assen.pattern = pattern;
+  if (colorTemp) assen.color_temp = colorTemp;
+  if (lightness) assen.lightness = lightness;
+  return assen;
+}
+
+/** get_kandidaten neemt hooguit 50 gelikete producten mee. */
+const MAX_LIKES = 50;
+
 /**
  * Vertaalt de bestaande quiz-antwoorden (LS_KEYS.QUIZ_ANSWERS) naar de
  * RPC-parameters. `perCategorie` is voor wie meer of minder dan de 40 van de
  * engine wil (de shop vraagt het maximum); het wordt begrensd op wat de RPC
- * levert.
+ * levert. `likes` zijn product-ID's die de bezoeker in de kalibratie goed
+ * vond; de RPC zoekt daar visueel vergelijkbare producten bij.
  */
-export function naarKandidatenParams(answers: Record<string, any>, perCategorie?: number): KandidatenParams {
+export function naarKandidatenParams(
+  answers: Record<string, any>,
+  perCategorie?: number,
+  likes: string[] = []
+): KandidatenParams {
   const a = answers ?? {};
   const budget = naarBudget(a);
   return {
@@ -124,8 +177,8 @@ export function naarKandidatenParams(answers: Record<string, any>, perCategorie?
     p_occasions: naarGelegenheden(a.occasions),
     p_budget_min: budget.min,
     p_budget_max: budget.max,
-    p_axes: {},
-    p_liked_ids: [],
+    p_axes: naarAssen(a),
+    p_liked_ids: [...new Set(likes)].slice(0, MAX_LIKES),
     p_disliked_ids: [],
     p_per_category: naarPerCategorie(perCategorie),
   };

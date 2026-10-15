@@ -4,6 +4,7 @@ import { runEngineV2 } from "@/engine/v2";
 import { stableStringify } from "@/utils/stableJson";
 import { seedFromAnswers } from "./answersSeed";
 import { bereidKandidatenVoorMetDiagnose, naarKandidatenParams, type KandidaatRij } from "./kandidaten";
+import { leesKalibratieLikes } from "@/services/visualPreferences/kalibratieOpslag";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 import { KANDIDATEN_TIJDSLIMIET_MS, metTijdslimiet } from '@/utils/tijdslimiet';
@@ -49,10 +50,11 @@ class OutfitService {
    * Vroeger: select * from products zonder limit, dus de eerste 1.000 rijen
    * in rijvolgorde van circa 282.000 (0 H&M). Nu: per categorie de
    * kandidaten uit product_attributes, gefilterd aan de serverkant op
-   * canoniek, draagbaar, voorraad, gender en budget, en geordend op
-   * prijsafstand (gebucket, fixronde 1 punt 4) tot het midden van dat
-   * budget. Niet "de beste": score staat op deze laag nog altijd op 0
-   * (plan 2 vult die pas), de ordening is puur prijsafstand.
+   * canoniek, draagbaar, voorraad, gender en budget, en gerangschikt op
+   * 0,5 stijlassen (pasvorm, prints, kleurtemperatuur, lichtheid uit de
+   * quiz), 0,3 gelegenheid en 0,2 gelijkenis met de producten die de
+   * bezoeker in de kalibratie goed vond. Sinds 15 oktober 2026 gaan assen
+   * en likes ook echt mee; daarvoor koos het product-ID.
    *
    * Een string als eerste argument wordt gelezen als gender; dat is de vorm
    * die calibrationOutfitsV2 gebruikt.
@@ -81,7 +83,11 @@ class OutfitService {
   ): Promise<Product[]> {
     const answers =
       typeof answersOfGender === 'string' ? { gender: answersOfGender } : (answersOfGender ?? {});
-    const params = naarKandidatenParams(answers);
+    let likes: string[] = [];
+    try {
+      likes = leesKalibratieLikes(localStorage);
+    } catch {}
+    const params = naarKandidatenParams(answers, undefined, likes);
     const cacheKey = stableStringify(params);
     const cached = this.productsCache.get(cacheKey);
     const cachedAt = this.cacheTimestamps.get(cacheKey) ?? 0;
