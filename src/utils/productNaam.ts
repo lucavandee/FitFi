@@ -87,7 +87,7 @@ function puma(naam: string): string | null {
   if (!/^PUMA\s/.test(naam)) return null;
   const delen = naam.split(/\s*,\s*/);
   const kern = delen[0]
-    .replace(/^PUMA\s+/, '')
+    .replace(/^PUMA\s+(?:x\s+)?/i, '')
     .replace(/\s+voor\s+(Heren|Dames|Kinderen)\b/i, '')
     .replace(/\s+uniseks\b/i, '')
     .trim();

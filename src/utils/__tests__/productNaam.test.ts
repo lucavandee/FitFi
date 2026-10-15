@@ -34,6 +34,10 @@ describe('toonNaam', () => {
       'Speedcat Ballet leren schoenen, wit'
     );
     expect(toonNaam({ name: 'PUMA Tackle uniseks sneakers, Wit, Maat 38', brand: 'Puma' })).toBe('Tackle sneakers, wit');
+    // Een samenwerking: "PUMA x HYROX" wordt niet "x HYROX".
+    expect(toonNaam({ name: 'PUMA x HYROX DRYELITE Warm-Up jack voor Heren, Zwart, Maat L', brand: 'Puma' })).toBe(
+      'HYROX DRYELITE Warm-Up jack, zwart'
+    );
   });
 
   it('laat een naam die het niet herkent ongemoeid', () => {
