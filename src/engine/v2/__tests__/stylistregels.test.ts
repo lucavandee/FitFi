@@ -113,6 +113,8 @@ describe("pastInSeizoen en isZichtbaarAccessoire", () => {
     expect(pastInSeizoen("H & M - Leren sandaletten met kittenheel - Beige", "winter")).toBe(false);
     expect(pastInSeizoen("H & M - Broek van linnenmix - Relaxed Fit - Marineblauw", "autumn")).toBe(false);
     expect(pastInSeizoen("H & M - Strandjurk met strikbandjes - Beige", "autumn")).toBe(false);
+    expect(pastInSeizoen("H & M - Katoenen chinoshort - Regular Fit - Beige", "autumn")).toBe(false);
+    expect(pastInSeizoen("H & M - Sweatshorts - Grijs", "winter")).toBe(false);
     expect(pastInSeizoen("H & M - Leren sandalen - Zwart", "summer")).toBe(true);
   });
 

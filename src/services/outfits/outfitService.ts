@@ -49,10 +49,12 @@ class OutfitService {
    * Vroeger: select * from products zonder limit, dus de eerste 1.000 rijen
    * in rijvolgorde van circa 282.000 (0 H&M). Nu: per categorie de
    * kandidaten uit product_attributes, gefilterd aan de serverkant op
-   * canoniek, draagbaar, voorraad, gender en budget, en geordend op
-   * prijsafstand (gebucket, fixronde 1 punt 4) tot het midden van dat
-   * budget. Niet "de beste": score staat op deze laag nog altijd op 0
-   * (plan 2 vult die pas), de ordening is puur prijsafstand.
+   * canoniek, draagbaar, voorraad, gender en budget, en gerangschikt op
+   * 0,5 stijlassen en 0,3 gelegenheid. Sinds 15 oktober 2026 gaan pasvorm
+   * en prints uit de quiz mee als assen (naarAssen); daarvoor koos het
+   * product-ID. Likes (de overige 0,2) gaan niet mee: met negen likes liep
+   * de functie gemeten 4 van 4 keer in de timeout van 8 s, omdat ze dan de
+   * embedding van elk kandidaatproduct van schijf leest.
    *
    * Een string als eerste argument wordt gelezen als gender; dat is de vorm
    * die calibrationOutfitsV2 gebruikt.

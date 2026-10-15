@@ -4,13 +4,22 @@ import type { Product } from "@/engine/types";
 
 export type KandidatenGender = "male" | "female" | "unisex";
 
+/** Een stijlas voor get_kandidaten: de waarde die de bezoeker koos en hoe zeker dat is. */
+export interface StijlAs {
+  value: string;
+  confidence: number;
+}
+
+/** De assen die de app meestuurt; get_kandidaten vergelijkt ze exact met product_attributes. */
+export type StijlAssen = Partial<Record<"silhouette" | "pattern", StijlAs>>;
+
 /** Parameters van de RPC get_kandidaten (spec 5.3), in de volgorde van de functie. */
 export interface KandidatenParams {
   p_gender: KandidatenGender;
   p_occasions: string[];
   p_budget_min: number;
   p_budget_max: number;
-  p_axes: Record<string, never>;
+  p_axes: StijlAssen;
   p_liked_ids: string[];
   p_disliked_ids: string[];
   p_per_category: number;
@@ -110,6 +119,44 @@ function naarPerCategorie(waarde: number | undefined): number {
   return Math.min(MAX_PER_CATEGORIE, Math.max(MIN_PER_CATEGORIE, Math.floor(waarde)));
 }
 
+const PASVORMEN = ["slim", "regular", "relaxed", "oversized"];
+const PRINTS = ["effen", "subtiel", "statement"];
+
+function gekozen(raw: unknown, toegestaan: string[]): StijlAs | undefined {
+  const waarde = typeof raw === "string" ? raw.trim().toLowerCase() : Array.isArray(raw) ? String(raw[0] ?? "").trim().toLowerCase() : "";
+  return toegestaan.includes(waarde) ? { value: waarde, confidence: 1 } : undefined;
+}
+
+/**
+ * De stijlassen uit de quiz die over het kledingstuk zelf gaan: pasvorm en
+ * prints. De bezoeker koos ze zelf, dus zekerheid 1 (zelfde keuze als
+ * vanQuiz.ts in de stylist, plan 3). De quizwaarden zijn exact de waarden van
+ * de tagger. "gemengd" bij prints is geen as.
+ *
+ * Tot 15 oktober 2026 stuurde de app p_axes {} mee. get_kandidaten scoort
+ * 0,5 op de assen, 0,3 op de gelegenheid en 0,2 op gelikete producten; zonder
+ * assen en likes kreeg elk product alleen de gelegenheidsscore, die voor
+ * duizenden producten gelijk is, en koos het product-ID welke 40 per
+ * categorie de engine te zien kreeg.
+ *
+ * Kleurtemperatuur en lichtheid gaan bewust niet mee. Gemeten op Lucs quiz
+ * (warm, licht): met die twee erbij paste elk van de 200 producten op alle
+ * vier de assen en werd elke outfit beige van top tot schoen, met 4 van de 6
+ * casual. Een outfit leeft van contrast; de kleurvoorkeur geldt voor het
+ * geheel, en daar weegt de engine al op (kleurscore en harmonie per outfit).
+ * Met alleen pasvorm en print: gevarieerde kleuren en 2 werk, 2 casual,
+ * 2 formeel.
+ */
+export function naarAssen(answers: Record<string, any>): StijlAssen {
+  const a = answers ?? {};
+  const assen: StijlAssen = {};
+  const silhouette = gekozen(a.fit, PASVORMEN);
+  const pattern = gekozen(a.prints, PRINTS);
+  if (silhouette) assen.silhouette = silhouette;
+  if (pattern) assen.pattern = pattern;
+  return assen;
+}
+
 /**
  * Vertaalt de bestaande quiz-antwoorden (LS_KEYS.QUIZ_ANSWERS) naar de
  * RPC-parameters. `perCategorie` is voor wie meer of minder dan de 40 van de
@@ -124,7 +171,7 @@ export function naarKandidatenParams(answers: Record<string, any>, perCategorie?
     p_occasions: naarGelegenheden(a.occasions),
     p_budget_min: budget.min,
     p_budget_max: budget.max,
-    p_axes: {},
+    p_axes: naarAssen(a),
     p_liked_ids: [],
     p_disliked_ids: [],
     p_per_category: naarPerCategorie(perCategorie),

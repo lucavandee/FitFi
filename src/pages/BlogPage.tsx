@@ -170,9 +170,10 @@ export default function BlogPage() {
     e.preventDefault();
     if (!email) return;
     setAanmeldFout(false);
-    // Een gewone insert. Tot 15 oktober 2026 stond hier een upsert op "email",
-    // maar die kolom had geen unieke beperking: elke aanmelding faalde, de fout
-    // werd verzwegen en het formulier zei toch "Aangemeld!". Er stond nul adressen
+    // Een gewone insert. Tot 15 oktober 2026 stond hier een upsert met
+    // onConflict "email", maar de unieke index staat op lower(email) en die kan
+    // ON CONFLICT (email) niet gebruiken: elke aanmelding faalde, de fout werd
+    // verzwegen en het formulier zei toch "Aangemeld!". Er stonden nul adressen
     // in de tabel. Staat het adres er al (23505), dan ben je ook aangemeld.
     const sb = supabase();
     const { error } = sb
