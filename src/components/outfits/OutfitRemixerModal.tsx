@@ -7,6 +7,7 @@ import { useUser } from '@/context/UserContext';
 import toast from 'react-hot-toast';
 import Spinner from '@/components/ui/Spinner';
 import { getSessionId } from '@/utils/sessionId';
+import { toonNaam } from '@/utils/productNaam';
 
 interface OutfitRemixerModalProps {
   isOpen: boolean;
@@ -245,12 +246,12 @@ export default function OutfitRemixerModal({
                   >
                     <img
                       src={product.image_url}
-                      alt={product.name}
+                      alt={toonNaam(product)}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                       <p className="text-white text-xs font-medium truncate">
-                        {product.name}
+                        {toonNaam(product)}
                       </p>
                       <p className="text-white/80 text-xs">€{product.price}</p>
                     </div>
@@ -312,7 +313,7 @@ export default function OutfitRemixerModal({
                         <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white flex-shrink-0">
                           <img
                             src={suggestion.suggested_product.image_url}
-                            alt={suggestion.suggested_product.name}
+                            alt={toonNaam(suggestion.suggested_product)}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -325,7 +326,7 @@ export default function OutfitRemixerModal({
                                 {suggestion.category}
                               </p>
                               <p className="font-semibold text-[#1A1A1A] truncate">
-                                {suggestion.suggested_product.name}
+                                {toonNaam(suggestion.suggested_product)}
                               </p>
                               <p className="text-sm text-[#6E6E6E]">
                                 €{suggestion.suggested_product.price}
