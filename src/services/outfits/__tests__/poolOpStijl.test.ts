@@ -20,20 +20,18 @@ function opslag() {
 }
 
 describe('de pool kiest op stijl', () => {
-  it('vertaalt de vier stijlvragen uit de quiz naar assen met zekerheid 1', () => {
-    // Lucs quiz van 13 oktober 2026.
+  it('vertaalt pasvorm en prints naar assen met zekerheid 1, en laat de kleurvoorkeur aan de engine', () => {
+    // Lucs quiz van 13 oktober 2026. Met warm en licht erbij werd elke outfit beige.
     expect(naarAssen({ fit: 'regular', prints: 'effen', neutrals: 'warm', lightness: 'licht' })).toEqual({
       silhouette: { value: 'regular', confidence: 1 },
       pattern: { value: 'effen', confidence: 1 },
-      color_temp: { value: 'warm', confidence: 1 },
-      lightness: { value: 'licht', confidence: 1 },
     });
   });
 
   it('laat weg wat geen as is of niet is ingevuld', () => {
     expect(naarAssen({ prints: 'gemengd', fit: 'onbekend' })).toEqual({});
     expect(naarAssen({})).toEqual({});
-    expect(naarAssen({ neutrals: ['koel'] })).toEqual({ color_temp: { value: 'koel', confidence: 1 } });
+    expect(naarAssen({ fit: ['oversized'] })).toEqual({ silhouette: { value: 'oversized', confidence: 1 } });
   });
 
   it('stuurt de assen en de likes mee naar get_kandidaten', () => {

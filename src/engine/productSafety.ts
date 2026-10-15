@@ -292,8 +292,9 @@ export type Seizoen = 'winter' | 'zomer' | 'allseason';
 
 const WINTER = /gevoerd|teddy|sherpa|wollen|\bwol\b|thermo|fleece|donsjas|puffer|winterjas|snowboot|bontvoering|gewatteerd/i;
 // "sandaal" alleen ving "sandalen", "sandaletten" en het Engelse "Sandal" niet
-// (13 okt 2026: leren sandalen en Birkenstocks in oktoberoutfits).
-const ZOMER = /\bshorts?\b|\bkorte broek\b|bermuda|zwem|bikini|badpak|linnen|\blinen\b|hawaii|strand|sandaal|sandal|espadrille|slipper|teenslipper|flip-?flop|mouwloos|sleeveless|halterneck|\bzomer|strooien|\bstraw\b|raffia/i;
+// (13 okt 2026: leren sandalen en Birkenstocks in oktoberoutfits), en "short"
+// alleen ving samenstellingen als "chinoshort" en "sweatshorts" niet (15 okt).
+const ZOMER = /\b[a-z]*shorts?\b|\bkorte broek\b|bermuda|zwem|bikini|badpak|linnen|\blinen\b|hawaii|strand|sandaal|sandal|espadrille|slipper|teenslipper|flip-?flop|mouwloos|sleeveless|halterneck|\bzomer|strooien|\bstraw\b|raffia/i;
 
 export function seizoenVan(naam?: string | null): Seizoen {
   const n = String(naam ?? '');
