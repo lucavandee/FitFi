@@ -10,27 +10,23 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils/cn';
+import { OUTFIT_LIMIET } from '@/config/outfitLimiet';
 
+// Alleen wat de code levert. Nova, "onbeperkt", bewaren en organiseren,
+// seizoensupdates, trendinsights en voorrangsondersteuning stonden hier; geen
+// daarvan bestond (keten-kritiek, 16 oktober 2026).
 const FREE_FEATURES = [
   { label: 'Stijlprofiel & rapport', included: true },
-  { label: '3 outfit-suggesties', included: true },
-  { label: 'Basiskleuradvies', included: true },
-  { label: 'Onbeperkt outfits', included: false },
-  { label: 'Volledige kleuranalyse (foto vereist)', included: false },
-  { label: 'Nova AI-stylist', included: false },
-  { label: 'Bewaar & organiseer outfits', included: false },
-  { label: 'Seizoensupdate elke maand', included: false },
+  { label: `Tot ${OUTFIT_LIMIET.gratis} outfits`, included: true },
+  { label: 'Kleuradvies uit je antwoorden', included: true },
+  { label: `Tot ${OUTFIT_LIMIET.premium} outfits`, included: false },
+  { label: 'Kleuranalyse op basis van je foto', included: false },
 ];
 
 const PREMIUM_FEATURES = [
   { label: 'Stijlprofiel & rapport', included: true },
-  { label: 'Onbeperkt outfit-suggesties', included: true },
-  { label: 'Volledige kleuranalyse (foto vereist)', included: true },
-  { label: 'Nova AI-stylist (onbeperkt)', included: true },
-  { label: 'Bewaar & organiseer outfits', included: true },
-  { label: 'Seizoensupdate elke maand', included: true },
-  { label: 'Gepersonaliseerde trendinsights', included: true },
-  { label: 'Prioriteitsondersteuning', included: true },
+  { label: `Tot ${OUTFIT_LIMIET.premium} outfits`, included: true },
+  { label: 'Kleuranalyse op basis van je foto', included: true },
 ];
 
 function FeatureRow({ label, included }: { label: string; included: boolean }) {
@@ -160,7 +156,7 @@ export default function SubscriptionManager() {
                 </span>
               </div>
               <p className="text-xs text-[#6E6E6E]">
-                Je gratis rapport blijft altijd beschikbaar — ook als je niet upgradet. Je kunt altijd opzeggen.
+                Je gratis rapport blijft altijd beschikbaar, ook als je niet upgradet.
               </p>
             </div>
 
@@ -171,7 +167,7 @@ export default function SubscriptionManager() {
                   <p className="text-xs font-bold uppercase tracking-wide text-[#6E6E6E]">Gratis</p>
                 </div>
                 <div className="px-4 py-3 bg-[#9A503B]">
-                  <p className="text-xs font-bold uppercase tracking-wide text-white">Premium — €9,99 / mnd</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-white">Premium: €9,99 / mnd</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 divide-x divide-[#E5E5E5]">
@@ -195,8 +191,8 @@ export default function SubscriptionManager() {
             <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-[#FFFFFF] border border-[#E5E5E5] mb-5 text-xs text-[#6E6E6E]">
               <Camera className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p>
-                Premium geeft extra advies — maar kleuranalyse werkt alleen{' '}
-                <strong className="text-[#1A1A1A]">met een foto</strong>. Je kleurtype kan niet automatisch worden bepaald zonder selfie.
+                De kleuranalyse werkt alleen{' '}
+                <strong className="text-[#1A1A1A]">met een foto</strong>. Zonder selfie komt je kleuradvies uit je quizantwoorden.
               </p>
             </div>
 
@@ -262,7 +258,7 @@ export default function SubscriptionManager() {
                 </div>
               </div>
               {!isLifetime && !activeSubscription.cancel_at_period_end && (
-                <p className="mt-3 text-xs text-[#6E6E6E]">Je kunt altijd opzeggen — Premium blijft actief tot het einde van de betaalperiode.</p>
+                <p className="mt-3 text-xs text-[#6E6E6E]">Je kunt altijd opzeggen. Premium blijft actief tot het einde van de betaalperiode.</p>
               )}
             </div>
 

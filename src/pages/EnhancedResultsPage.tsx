@@ -52,6 +52,7 @@ import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote"
 import { getColorPalette } from "@/data/colorPalettes";
 import { getSessionId } from '@/utils/sessionId';
 import { fotoAnalyseUitAntwoorden, pasFotoAnalyseToe } from '@/lib/quiz/logic';
+import { outfitLimietVoor } from '@/config/outfitLimiet';
 
 function readJson<T>(key: string): T | null {
   try {
@@ -416,14 +417,7 @@ export default function EnhancedResultsPage() {
     return undefined;
   }, [answers?.budget, answers?.budgetRange]);
 
-  const outfitLimit = React.useMemo(() => {
-    if (!user) return 6;
-    const tier = (user as any).tier || ((user as any).isPremium ? 'premium' : 'member');
-    if (tier === 'founder') return 20;
-    if (tier === 'premium' || tier === 'plus') return 12;
-    if (tier === 'member') return 9;
-    return 6;
-  }, [user]);
+  const outfitLimit = React.useMemo(() => outfitLimietVoor(user as any), [user]);
 
   const { data: realOutfits, loading: outfitsLoading, error: outfitsError } = useOutfits({
     archetype: archetypeKey,

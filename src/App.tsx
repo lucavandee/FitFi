@@ -14,6 +14,7 @@ import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landing
 import RequireAuth from "@/components/auth/RequireAuth";
 import { RequireQuiz } from "@/components/auth/RequireQuiz";
 import NovaChatProvider from "@/components/nova/NovaChatProvider";
+import { OUTFIT_LIMIET } from "@/config/outfitLimiet";
 import ProfileSyncInitializer from "@/components/data/ProfileSyncInitializer";
 import AwinMasterTag from "@/components/affiliate/AwinMasterTag";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -92,7 +93,7 @@ const WithSeo = {
   // Geen Seo hier: HowItWorksPage zet titel, beschrijving en HowTo zelf, en de
   // Seo van de pagina wint. Een tweede regel hier kwam nooit in beeld.
   How:        () => (<HowItWorksPage />),
-  Pricing:    () => (<><Seo title="Prijzen | FitFi" description="Gratis starten met je stijlprofiel en drie outfits. Premium geeft onbeperkte outfits, Nova AI en kleuranalyse." path="/prijzen" /><PricingPage /></>),
+  Pricing:    () => (<><Seo title="Prijzen | FitFi" description={`Gratis starten met je stijlprofiel en tot ${OUTFIT_LIMIET.gratis} outfits. Premium geeft tot ${OUTFIT_LIMIET.premium} outfits en kleuranalyse op basis van je foto.`} path="/prijzen" /><PricingPage /></>),
   About:      () => (<><Seo title="Over ons | FitFi" description="Wij bouwen een stijltool die eerlijk, rustig en effectief is. Leer meer over onze aanpak en principes." path="/over-ons" /><AboutPage /></>),
   Shop:       () => (<><Seo title="Shop | FitFi" description="Kleding en accessoires afgestemd op jouw stijlprofiel. Directe links naar webshops." path="/shop" /><ShopPage /></>),
   Blog:       () => (<><Seo title="Blog | FitFi" description="Artikelen over stijl, kleding en hoe je bewuste kledingkeuzes maakt." path="/blog" structuredData={WEBSITE_SCHEMA} /><BlogPage /></>),

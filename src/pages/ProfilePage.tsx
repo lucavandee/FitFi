@@ -11,7 +11,6 @@ import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabaseClient";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { QuizResetModal } from "@/components/profile/QuizResetModal";
-import { EmailPreferences } from "@/components/profile/EmailPreferences";
 import { CookieSettings } from "@/components/profile/CookieSettings";
 import SavedOutfitHistory from "@/components/profile/SavedOutfitHistory";
 import { motion, AnimatePresence } from "framer-motion";
@@ -522,19 +521,11 @@ const ProfilePage: React.FC = () => {
               </SectionCard>
             </div>
 
-            {/* Notificaties */}
-            <div>
-              <SectionLabel>Notificaties</SectionLabel>
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.38, delay: 0.16 }}
-                className="bg-white border border-[#E5E5E5] rounded-2xl p-7 mb-6 overflow-hidden"
-              >
-                <EmailPreferences />
-              </motion.div>
-            </div>
-
+            {/* Hier stond "Notificaties" met schakelaars voor dagelijkse
+                outfitsuggesties, een weekoverzicht en adviezen van Nova. Geen
+                van die mails werd verstuurd; de enige mailfunctie is het
+                contactformulier (keten-kritiek, 16 oktober 2026). De tabel
+                email_preferences blijft staan voor als er een verzender komt. */}
             {/* Privacy & account */}
             <div>
               <SectionLabel>Privacy & account</SectionLabel>

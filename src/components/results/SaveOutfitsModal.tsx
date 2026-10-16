@@ -11,10 +11,12 @@ interface SaveOutfitsModalProps {
   outfitCount?: number;
 }
 
+// Wat een account echt doet: het profiel staat in style_profiles en komt bij
+// inloggen terug (profileSyncService). Favorieten staan nog in de browser, en
+// Nova heeft geen backend; die twee stonden hier en kloppen niet.
 const VOORDELEN = [
-  'Opslaan & delen van je favoriete outfits',
-  'Je stijlrapport blijft bewaard',
-  'Chat met Nova, je AI stijlassistent',
+  'Je stijlprofiel en antwoorden blijven bewaard',
+  'Log in op een ander apparaat en je outfits staan er weer',
 ];
 
 export function SaveOutfitsModal({ isOpen, onClose, outfitCount = 12 }: SaveOutfitsModalProps) {

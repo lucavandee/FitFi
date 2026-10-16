@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { track as trackFunnel } from "@/utils/analytics";
 import PrijsGrens from "@/components/landing/sections/PrijsGrens";
+import { OUTFIT_LIMIET } from "@/config/outfitLimiet";
 
 const PAGE = "pricing";
 
@@ -125,7 +126,7 @@ const COMPARISON_ROWS: Array<{
   premium: string | boolean;
 }> = [
   { label: "Stijlprofiel analyse", free: true, premium: true },
-  { label: "Gepersonaliseerde outfits", free: "3", premium: "Onbeperkt" },
+  { label: "Gepersonaliseerde outfits", free: `Tot ${OUTFIT_LIMIET.gratis}`, premium: `Tot ${OUTFIT_LIMIET.premium}` },
   { label: "Directe shoplinks", free: true, premium: true },
   { label: "Rapport aanpasbaar", free: true, premium: true },
   { label: "Kleuranalyse (foto)", free: false, premium: true },
@@ -139,11 +140,11 @@ const COMPARISON_ROWS: Array<{
 const FAQ_ITEMS = [
   {
     q: "Wat blijft altijd beschikbaar met Free?",
-    a: "Je stijlprofiel, 3 gepersonaliseerde outfits, directe shoplinks en de mogelijkheid om je rapport aan te passen. Free is geen proefperiode, het blijft altijd beschikbaar.",
+    a: `Je stijlprofiel, tot ${OUTFIT_LIMIET.gratis} gepersonaliseerde outfits, directe shoplinks en de mogelijkheid om je rapport aan te passen. Free is geen proefperiode, het blijft altijd beschikbaar.`,
   },
   {
     q: "Wat krijg ik met Premium precies?",
-    a: "Onbeperkte outfits voor alle gelegenheden en kleuranalyse op basis van je foto.",
+    a: `Tot ${OUTFIT_LIMIET.premium} outfits in plaats van ${OUTFIT_LIMIET.gratis}, en kleuranalyse op basis van je foto.`,
   },
   {
     q: "Kan ik maandelijks opzeggen?",
@@ -253,7 +254,7 @@ export default function PricingPage() {
     <>
       <Seo
         title="Prijzen | FitFi"
-        description="Free geeft je 3 outfits en shoplinks. Met Premium krijg je onbeperkte outfits, kleuranalyse en een persoonlijke stylist. Vergelijk plannen en kies wat bij jou past."
+        description={`Free geeft je tot ${OUTFIT_LIMIET.gratis} outfits en shoplinks. Met Premium krijg je tot ${OUTFIT_LIMIET.premium} outfits en kleuranalyse op basis van je foto. Vergelijk plannen en kies wat bij jou past.`}
         path="/prijzen"
         ogImage={OG_BEELD}
       />
@@ -333,7 +334,7 @@ export default function PricingPage() {
             {/* Subtitle */}
             <Reveal delay={0.24}>
               <p className="text-lg text-[#4A4A4A] max-w-[480px] mx-auto mb-8">
-                Free blijft altijd bruikbaar. Premium geeft je het volledige plaatje met kleuranalyse, meer outfits en persoonlijk advies.
+                {`Free blijft altijd bruikbaar. Premium voegt kleuranalyse op basis van je foto toe en geeft je tot ${OUTFIT_LIMIET.premium} outfits in plaats van ${OUTFIT_LIMIET.gratis}.`}
               </p>
             </Reveal>
 
@@ -392,7 +393,7 @@ export default function PricingPage() {
                   <div className="flex flex-col gap-3.5 mb-10 flex-1">
                     {[
                       { included: true, label: "Stijlprofiel analyse" },
-                      { included: true, label: "3 gepersonaliseerde outfits" },
+                      { included: true, label: `Tot ${OUTFIT_LIMIET.gratis} gepersonaliseerde outfits` },
                       { included: true, label: "Directe shoplinks" },
                       { included: true, label: "Rapport aanpasbaar" },
                       { included: false, label: "Kleuranalyse (foto)" },
@@ -456,7 +457,7 @@ export default function PricingPage() {
                   {/* Features */}
                   <div className="flex flex-col gap-3.5 mb-10 flex-1">
                     {[
-                      "Onbeperkte outfits",
+                      `Tot ${OUTFIT_LIMIET.premium} outfits`,
                       "Kleuranalyse (foto)",
                     ].map((label) => (
                       <div key={label} className="flex items-start gap-3 text-sm">
@@ -516,7 +517,7 @@ export default function PricingPage() {
                 <div>
                   <h3 className="text-xl font-bold text-[#1A1A1A] mb-1.5">Founder Lifetime</h3>
                   <p className="text-sm text-[#4A4A4A] leading-[1.6] max-w-[420px]">
-                    Eenmalige betaling, levenslang Premium. Voor early adopters die FitFi mee willen bouwen. Inclusief beta-toegang, prioritaire support en invloed op de roadmap.
+                    Eenmalige betaling, levenslang Premium. Voor wie FitFi vanaf het begin mee wil bouwen.
                   </p>
                   <button
                     onClick={() => {
