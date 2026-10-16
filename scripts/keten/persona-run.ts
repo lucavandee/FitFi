@@ -22,6 +22,15 @@
  * schoen en sandalen bij een kasjmier coltrui in oktober. Het toetste of een
  * outfit compleet is, niet of hij klopt.
  *
+ * Sinds 16 oktober 2026 (keten-kritiek) ook:
+ *  - Lucs eigen quiz als vijfde profiel, met alle antwoorden die de site meestuurt;
+ *  - de stijlpoort (src/engine/v2/stijlPoort.ts): geen hak, ballerina of clutch
+ *    bij alleen streetwear, bij licht hooguit een donker stuk;
+ *  - geen stuk van een winkel die standaard uit staat (keten_retailer_regels);
+ *  - elke gevraagde gelegenheid krijgt een outfit.
+ * "Minder dan zes outfits" werd "minder dan drie": beslissing 1 is liever minder
+ * outfits die kloppen. Een gelegenheid zonder outfit blijft rood.
+ *
  * Gebruik:
  *   npm run keten:personas
  * VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY komen uit de shell of uit .env.
@@ -37,6 +46,8 @@ import { getCurrentSeason } from "../../src/engine/v2/scoring/season";
 import { isZichtbaarAccessoire, pastInSeizoen } from "../../src/engine/productSafety";
 import type { Outfit, Product } from "../../src/engine/types";
 import { KETEN_PERSONAS, type KetenPersona } from "../../src/keten/personas";
+import { outfitBreuken } from "../../src/engine/v2/stijlPoort";
+import type { EngineResult } from "../../src/engine/v2/types";
 import { seedFromAnswers } from "../../src/services/outfits/answersSeed";
 import {
   bereidKandidatenVoor,
@@ -90,9 +101,35 @@ function persoonaAnswers(p: KetenPersona): Record<string, any> {
   };
 }
 
-const PERSONAS: Persona[] = KETEN_PERSONAS.map((p) => ({ naam: p.naam, answers: persoonaAnswers(p) }));
+/**
+ * Lucs quiz van 16 oktober 2026, zoals de site hem meestuurt. Dit profiel gaf
+ * negen keer "streetwear" zonder sneaker, met pumps en ballerina's, zes outfits
+ * boven de 1.000 euro en geen formeel of date.
+ */
+const LUC_16_OKT: Persona = {
+  naam: "vrouw streetwear (Lucs quiz 16 okt)",
+  answers: {
+    gender: "female",
+    stylePreferences: ["streetwear"],
+    occasions: ["casual", "work", "formal", "date"],
+    budget: { min: 0, max: 500 },
+    fit: "regular",
+    prints: "effen",
+    lightness: "licht",
+    neutrals: "warm",
+    contrast: "laag",
+    materials: ["katoen", "wol", "denim"],
+    goals: ["timeless", "trendy", "minimal", "express"],
+  },
+};
+
+const PERSONAS: Persona[] = [
+  ...KETEN_PERSONAS.map((p) => ({ naam: p.naam, answers: persoonaAnswers(p) })),
+  LUC_16_OKT,
+];
 
 const AANTAL_OUTFITS = 6;
+const MINIMAAL_AANTAL = 3;
 const SANDAAL_RE = /\b(sandaal|sandalen|sandal|sandals|slipper|slippers|teenslipper|flip-?flops?)\b/i;
 // Fixronde 1 (reviewer): de catalogus is Engelstalig. "zwem" alleen kwam
 // gemeten 0 keer voor; "swim" (Swimsuit/Swimwear/Swim Top/SWIM als
@@ -177,11 +214,24 @@ async function haalKandidaten(answers: Record<string, any>): Promise<{ rijen: Ka
   return { rijen, pool: bereidKandidatenVoor(rijen) };
 }
 
-function bouwOutfits(answers: Record<string, any>, pool: Product[]): Outfit[] {
-  return runEngineV2(answers, pool, { count: AANTAL_OUTFITS, seed: seedFromAnswers(answers) }).outfits;
+function bouwUitslag(answers: Record<string, any>, pool: Product[]): EngineResult {
+  return runEngineV2(answers, pool, { count: AANTAL_OUTFITS, seed: seedFromAnswers(answers) });
 }
 
-function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], afwijkingen: number): string[] {
+async function standaardUit(): Promise<Set<string>> {
+  const { data, error } = await client.from("keten_retailer_regels").select("retailer").eq("standaard_uit", true);
+  if (error) throw new Error(`keten_retailer_regels lezen faalde: ${error.message}`);
+  return new Set((data ?? []).map((r: { retailer: string }) => r.retailer));
+}
+
+function controleer(
+  persona: Persona,
+  uitslag: EngineResult,
+  tweedeRun: Outfit[],
+  afwijkingen: number,
+  uit: Set<string>
+): string[] {
+  const outfits = uitslag.outfits;
   const fouten: string[] = [];
   const budget = naarKandidatenParams(persona.answers);
   const seizoen = getCurrentSeason();
@@ -190,8 +240,11 @@ function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], af
     fouten.push(`${afwijkingen} kandidaten waar de client-classifier een andere categorie geeft dan product_attributes (draai npm run keten:classificeer opnieuw)`);
   }
 
-  if (outfits.length < AANTAL_OUTFITS) {
-    fouten.push(`minder dan ${AANTAL_OUTFITS} outfits: ${outfits.length}`);
+  if (outfits.length < MINIMAAL_AANTAL) {
+    fouten.push(`minder dan ${MINIMAAL_AANTAL} outfits: ${outfits.length}`);
+  }
+  if (uitslag.stats.occasionsMissing.length > 0) {
+    fouten.push(`gevraagde gelegenheid zonder outfit: ${uitslag.stats.occasionsMissing.join(", ")}`);
   }
 
   const personaGender: "male" | "female" = persona.answers.gender;
@@ -201,6 +254,9 @@ function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], af
     if (!isCompleet(outfit)) {
       fouten.push(`${label} is niet compleet: ${outfit.products.map(categorieVan).join(", ")}`);
     }
+    for (const breuk of outfitBreuken(outfit.products, persona.answers)) {
+      fouten.push(`${label}: stijlpoort: ${breuk}`);
+    }
     if (!gelegenheidGevraagd(outfit, persona)) {
       fouten.push(`${label}: gelegenheid "${outfit.occasion}" is niet gevraagd (persona vroeg ${JSON.stringify(persona.answers.occasions)})`);
     }
@@ -208,6 +264,9 @@ function controleer(persona: Persona, outfits: Outfit[], tweedeRun: Outfit[], af
       const prijs = typeof p.price === "number" ? p.price : Number(p.price);
       if (!(prijs >= budget.p_budget_min && prijs <= budget.p_budget_max)) {
         fouten.push(`${label}: "${p.name}" kost ${prijs}, buiten ${budget.p_budget_min}-${budget.p_budget_max}`);
+      }
+      if (p.retailer && uit.has(String(p.retailer))) {
+        fouten.push(`${label}: "${p.name}" komt van ${p.retailer}, die standaard uit staat`);
       }
       if (!genderPast(p.gender, personaGender)) {
         fouten.push(`${label}: "${p.name}" heeft gender "${p.gender}", persona is ${personaGender}`);
@@ -272,6 +331,8 @@ function schrijfRapport(): string {
 async function main(): Promise<void> {
   let totaalFouten = 0;
   log(`Persona-harnas plan 1, ${new Date().toISOString()}`);
+  const uit = RETAILER ? new Set<string>() : await standaardUit();
+  if (uit.size > 0) log(`Standaard uit: ${[...uit].join(", ")}`);
 
   for (const persona of PERSONAS) {
     log(`\n=== ${persona.naam} ===`);
@@ -283,13 +344,13 @@ async function main(): Promise<void> {
     const afwijkingen = telCategorieAfwijkingen(eerste.rijen, eerste.pool);
     log(`  kandidaten: ${eerste.rijen.length} rijen, ${eerste.pool.length} na veiligheidsnet, ${afwijkingen} categorie-afwijkingen ${JSON.stringify(perCategorie)}`);
 
-    const outfits = bouwOutfits(persona.answers, eerste.pool);
+    const uitslag = bouwUitslag(persona.answers, eerste.pool);
     const tweede = await haalKandidaten(persona.answers);
-    const tweedeRun = bouwOutfits(persona.answers, tweede.pool);
+    const tweedeRun = bouwUitslag(persona.answers, tweede.pool).outfits;
 
-    printOutfits(outfits);
+    printOutfits(uitslag.outfits);
 
-    const fouten = controleer(persona, outfits, tweedeRun, afwijkingen);
+    const fouten = controleer(persona, uitslag, tweedeRun, afwijkingen, uit);
     if (fouten.length === 0) {
       log("  GROEN");
     } else {

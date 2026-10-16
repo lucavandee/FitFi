@@ -18,6 +18,7 @@ import { diversifyOutfits } from './diversify';
 import { applyVisualCoherence } from './scoring/visualCoherence';
 import { getCurrentSeason } from './scoring/season';
 import { MATERIAL_ALIAS } from './scoring/material';
+import { outfitBreuken, productBreuk } from './stijlPoort';
 
 const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }> = {
   work: {
@@ -680,7 +681,11 @@ export function runEngineV2(
   const profile = buildUserStyleProfile(answers);
   const excludeIds = new Set(options.excludeIds ?? []);
 
-  const filter = filterAndPrepare(products, profile);
+  // Stijlpoort, deel 1: wat de bezoeker zelf koos, haalt stukken uit de pool
+  // voordat er gecomponeerd wordt (geen pump bij alleen streetwear). Zie
+  // stijlPoort.ts voor waarom dit niet op het afgeleide archetype kan.
+  const toegestaan = products.filter((p) => productBreuk(p, answers) === null);
+  const filter = filterAndPrepare(toegestaan, profile);
 
   if (options.debug) {
     console.log('[engine/v2] profile', {
@@ -730,8 +735,12 @@ export function runEngineV2(
     season,
   });
 
+  // Stijlpoort, deel 2: regels over de outfit als geheel (bij licht hooguit
+  // een donker stuk). Wat zakt, komt niet in de uitslag; liever minder
+  // outfits die kloppen (keten-kritiek, beslissing 1).
   const seenGlobalSignatures = new Set<string>();
   const allCandidates = rawCandidates.filter((cand) => {
+    if (outfitBreuken(cand.products.map((p) => p.product), answers).length > 0) return false;
     const signature = cand.products
       .map((p) => p.product.id)
       .sort()
@@ -770,6 +779,9 @@ export function runEngineV2(
   const occasionsCovered = Array.from(
     new Set(diversified.map((c) => c.occasion))
   );
+  // Gevraagd maar zonder outfit: de pagina zegt dat eerlijk in plaats van de
+  // gelegenheid stil weg te laten.
+  const occasionsMissing = profile.occasions.filter((o) => !occasionsCovered.includes(o));
 
   if (options.debug) {
     console.log('[engine/v2] composed', {
@@ -790,6 +802,7 @@ export function runEngineV2(
       outfitsGenerated: allCandidates.length,
       outfitsReturned: outfits.length,
       occasionsCovered,
+      occasionsMissing,
     },
   };
 }

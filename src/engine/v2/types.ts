@@ -159,6 +159,8 @@ export interface EngineResult {
     outfitsGenerated: number;
     outfitsReturned: number;
     occasionsCovered: OccasionKey[];
+    /** Gevraagde gelegenheden waar geen outfit door de poort kwam. */
+    occasionsMissing: OccasionKey[];
   };
 }
 

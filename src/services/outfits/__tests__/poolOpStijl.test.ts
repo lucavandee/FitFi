@@ -16,6 +16,26 @@ describe('de pool kiest op stijl', () => {
     expect(naarAssen({ fit: ['oversized'] })).toEqual({ silhouette: { value: 'oversized', confidence: 1 } });
   });
 
+  /*
+   * Keten-kritiek 16 oktober 2026. Lucs quiz (alleen streetwear) kreeg 40
+   * schoenen die op product-ID gekozen waren: pumps, slingbacks, hakken en
+   * laarzen, geen sneaker. get_kandidaten kan al op schoentype scoren; de app
+   * stuurde het niet mee. Alleen als alle gekozen stijlen hetzelfde schoentype
+   * vragen, anders zou een tweede stijl (klassiek) zijn schoenen verliezen.
+   */
+  it('vraagt sneakers bij streetwear of sportief', () => {
+    expect(naarAssen({ stylePreferences: ['streetwear'] }).shoe_type).toEqual({ value: 'sneaker', confidence: 1 });
+    expect(naarAssen({ stylePreferences: ['athletic'] }).shoe_type).toEqual({ value: 'sneaker', confidence: 1 });
+    expect(naarAssen({ stylePreferences: ['streetwear', 'athletic'] }).shoe_type).toEqual({ value: 'sneaker', confidence: 1 });
+  });
+
+  it('vraagt geen schoentype als de stijlen het oneens zijn of er geen keuze is', () => {
+    expect(naarAssen({ stylePreferences: ['streetwear', 'classic'] }).shoe_type).toBeUndefined();
+    expect(naarAssen({ stylePreferences: ['minimalist'] }).shoe_type).toBeUndefined();
+    expect(naarAssen({ stylePreferences: [] }).shoe_type).toBeUndefined();
+    expect(naarAssen({}).shoe_type).toBeUndefined();
+  });
+
   it('stuurt de assen mee naar get_kandidaten, en geen likes', () => {
     const p = naarKandidatenParams({ gender: 'male', fit: 'slim' });
     expect(p.p_axes).toEqual({ silhouette: { value: 'slim', confidence: 1 } });

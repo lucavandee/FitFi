@@ -53,6 +53,7 @@ import { getColorPalette } from "@/data/colorPalettes";
 import { getSessionId } from '@/utils/sessionId';
 import { fotoAnalyseUitAntwoorden, pasFotoAnalyseToe } from '@/lib/quiz/logic';
 import { outfitLimietVoor } from '@/config/outfitLimiet';
+import { meldingOntbrekend, ontbrekendeGelegenheden } from '@/components/results/ontbrekendeGelegenheden';
 
 function readJson<T>(key: string): T | null {
   try {
@@ -567,6 +568,14 @@ export default function EnhancedResultsPage() {
     }
     return tabs;
   }, [occasionGroupedOutfits, userOccasions, displayOutfits.length]);
+
+  // Gevraagd maar leeg gebleven: eerlijk melden in plaats van stil weglaten
+  // (keten-kritiek 16 oktober 2026, beslissing 1).
+  const ontbrekendMelding = React.useMemo(() => {
+    if (outfitsLoading) return '';
+    const leeg = ontbrekendeGelegenheden(userOccasions, allOutfits as Array<{ occasion?: string }>);
+    return meldingOntbrekend(leeg.map(getOccasionLabel));
+  }, [outfitsLoading, userOccasions, allOutfits]);
 
   // Filtered outfits based on occasion tab selection
   const occasionFilteredOutfits = React.useMemo(() => {
@@ -1541,6 +1550,12 @@ export default function EnhancedResultsPage() {
               {/* Spacer when no occasion tabs */}
               {(!occasionTabs || occasionTabs.length <= 2) && (
                 <div className="mb-8" />
+              )}
+
+              {ontbrekendMelding && (
+                <p className="mb-8 bg-[#F5F0EB] rounded-2xl p-4 text-sm text-[#4A4A4A]" role="note">
+                  {ontbrekendMelding}
+                </p>
               )}
 
               </div>
