@@ -1719,27 +1719,13 @@ export default function EnhancedResultsPage() {
                         <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#A85740] transition-colors duration-200">
                           {'name' in outfit ? outfit.name : outfitInfo.title}
                         </h3>
-                        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-2 mb-3">
+                        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-3 mb-3">
                           {('explanation' in outfit && outfit.explanation)
                             ? (outfit.explanation as string)
                             : outfitInfo.description}
                         </p>
-                        <div className="flex items-center gap-3">
-                          {(() => {
-                            const ms = (outfit as any).matchScore ?? (outfit as any).match;
-                            return typeof ms === 'number' ? (
-                              <span className="inline-flex items-center gap-1.5">
-                                <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                                  <Check className="w-2.5 h-2.5 text-[#A85740]" strokeWidth={3} />
-                                </span>
-                                <span className="text-sm font-semibold text-[#A85740]">{Math.round(ms)}% match</span>
-                              </span>
-                            ) : null;
-                          })()}
-                          {answers?.fit && (
-                            <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A]">{answers.fit}</span>
-                          )}
-                        </div>
+                        {/* Geen matchpercentage en geen pasvormlabel meer: zie
+                            ResultsOutfitCard.tsx en geenLegeMatch.test.ts. */}
                         <OutfitRatingButtons
                           key={profileHash ?? 'geen-hash'}
                           outfitId={String(id)}
@@ -1795,8 +1781,6 @@ export default function EnhancedResultsPage() {
                         imageUrl={outfitImage as string | null}
                         imageAlt={'name' in outfit ? (outfit as any).name : `Outfit ${idx + 1}`}
                         occasionContext={outfitInfo.context}
-                        matchScore={typeof matchScore === 'number' ? matchScore : null}
-                        fitLabel={answers?.fit ?? null}
                         productCount={Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0}
                         isFavorite={isFav}
                         onSelect={(e) => {
