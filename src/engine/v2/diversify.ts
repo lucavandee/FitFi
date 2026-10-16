@@ -150,11 +150,22 @@ export function diversifyOutfits(
 
   // Greedy selection with dynamic re-scoring so previously-chosen outfits
   // influence the ranking of remaining candidates.
+  // Een gevraagde gelegenheid zonder outfit gaat voor: zolang er een
+  // kandidaat is voor een gelegenheid die nog niets heeft, wint de beste
+  // daarvan. Zonder dit kregen casual, werk en date er bij zes plekken elk
+  // twee en bleef formeel leeg (Lucs quiz, 16 oktober 2026).
   while (selected.length < options.count) {
     let best: OutfitCandidate | null = null;
     let bestScore = -Infinity;
     let bestArch = '';
     let bestColor = '';
+    // Per gelegenheid zonder outfit: hoeveel kandidaten nog door de regels
+    // komen, en de beste. De gelegenheid met de minste keuze gaat voor, anders
+    // pakt een ruime gelegenheid het enige stuk dat een krappe nodig had.
+    const leeg = new Map<
+      string,
+      { cand: OutfitCandidate; score: number; arch: string; color: string; aantal: number }
+    >();
 
     for (const cand of pool) {
       if (!passesHardConstraints(cand, MAX_APPEARANCES, OVERLAP_HARD_THRESHOLD))
@@ -179,8 +190,28 @@ export function diversifyOutfits(
         bestArch = archSig;
         bestColor = colorSig;
       }
+      if (options.occasionBalance && (seenOccasions.get(cand.occasion) ?? 0) === 0) {
+        const huidig = leeg.get(cand.occasion);
+        if (!huidig) {
+          leeg.set(cand.occasion, { cand, score: effective, arch: archSig, color: colorSig, aantal: 1 });
+        } else {
+          huidig.aantal += 1;
+          if (effective > huidig.score) {
+            huidig.cand = cand;
+            huidig.score = effective;
+            huidig.arch = archSig;
+            huidig.color = colorSig;
+          }
+        }
+      }
     }
 
+    const krapste = Array.from(leeg.values()).sort((a, b) => a.aantal - b.aantal || b.score - a.score)[0];
+    if (krapste) {
+      best = krapste.cand;
+      bestArch = krapste.arch;
+      bestColor = krapste.color;
+    }
     if (!best) break;
 
     selected.push(best);
@@ -220,5 +251,9 @@ export function diversifyOutfits(
     }
   }
 
-  return selected.slice(0, options.count);
+  // Wie het eerst gekozen werd, zegt niets over kwaliteit (de krapste
+  // gelegenheid gaat voor). De bezoeker ziet de beste outfit bovenaan.
+  return selected
+    .slice(0, options.count)
+    .sort((a, b) => b.compositionScore - a.compositionScore);
 }

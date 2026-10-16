@@ -11,7 +11,7 @@ export interface StijlAs {
 }
 
 /** De assen die de app meestuurt; get_kandidaten vergelijkt ze exact met product_attributes. */
-export type StijlAssen = Partial<Record<"silhouette" | "pattern", StijlAs>>;
+export type StijlAssen = Partial<Record<"silhouette" | "pattern" | "shoe_type", StijlAs>>;
 
 /** Parameters van de RPC get_kandidaten (spec 5.3), in de volgorde van de functie. */
 export interface KandidatenParams {
@@ -122,6 +122,28 @@ function naarPerCategorie(waarde: number | undefined): number {
 const PASVORMEN = ["slim", "regular", "relaxed", "oversized"];
 const PRINTS = ["effen", "subtiel", "statement"];
 
+/**
+ * Het schoentype dat bij een stijl hoort, voor stijlen waar de schoen het
+ * beeld bepaalt. Waarden uit de taggerwoordenlijst (SHOE_TYPES in
+ * scripts/keten/tagging.ts). Stijlen die hier niet staan, vragen niets.
+ */
+const SCHOEN_PER_STIJL: Record<string, string> = {
+  streetwear: "sneaker",
+  athletic: "sneaker",
+};
+
+/** Alleen als elke gekozen stijl hetzelfde schoentype vraagt. */
+function schoenUitStijlen(raw: unknown): StijlAs | undefined {
+  const stijlen = (Array.isArray(raw) ? raw : typeof raw === "string" ? [raw] : [])
+    .map((x) => String(x).trim().toLowerCase())
+    .filter(Boolean);
+  if (stijlen.length === 0) return undefined;
+  const schoenen = new Set(stijlen.map((s) => SCHOEN_PER_STIJL[s]));
+  if (schoenen.size !== 1) return undefined;
+  const [schoen] = schoenen;
+  return schoen ? { value: schoen, confidence: 1 } : undefined;
+}
+
 function gekozen(raw: unknown, toegestaan: string[]): StijlAs | undefined {
   const waarde = typeof raw === "string" ? raw.trim().toLowerCase() : Array.isArray(raw) ? String(raw[0] ?? "").trim().toLowerCase() : "";
   return toegestaan.includes(waarde) ? { value: waarde, confidence: 1 } : undefined;
@@ -152,8 +174,14 @@ export function naarAssen(answers: Record<string, any>): StijlAssen {
   const assen: StijlAssen = {};
   const silhouette = gekozen(a.fit, PASVORMEN);
   const pattern = gekozen(a.prints, PRINTS);
+  // Sinds 16 oktober 2026 ook het schoentype bij streetwear en sportief. Lucs
+  // quiz (alleen streetwear) kreeg 40 schoenen die op product-ID gekozen waren:
+  // pumps, slingbacks, hakken en laarzen, geen sneaker. De score telt per
+  // categorie, dus dit verschuift alleen welke schoenen er bovenaan staan.
+  const schoen = schoenUitStijlen(a.stylePreferences);
   if (silhouette) assen.silhouette = silhouette;
   if (pattern) assen.pattern = pattern;
+  if (schoen) assen.shoe_type = schoen;
   return assen;
 }
 
@@ -229,9 +257,14 @@ export interface KandidatenPoolMetDiagnose {
  * persona-harnas).
  */
 function bouwKandidatenPool(rijen: KandidaatRij[]): KandidatenPoolMetDiagnose {
+  // Lichtheid en schoentype komen uit de tags (product_attributes), niet uit
+  // de feed. De stijlpoort leest ze; zonder deze twee viel hij terug op de
+  // naam en de eerste kleur.
   const ruw = rijen.map((rij) => ({
     ...mapKandidaatProduct(rij.product),
     category: rij.category,
+    lightness: rij.attrs?.lightness ?? undefined,
+    shoeType: rij.attrs?.shoe_type ?? undefined,
   }));
   const { classified, rejected } = reclassifyProducts(ruw);
   const { veilig, geweigerd } = filterVeiligeProducten(classified);
