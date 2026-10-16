@@ -22,11 +22,10 @@ export function scoreBudget(
     return { score: 0.7, reason: 'near_min_budget' };
   }
 
-  const target = (max + Math.max(min, max * 0.3)) / 2;
-  const distance = Math.abs(price - target) / Math.max(target, 1);
-
-  if (distance < 0.15) return { score: 1.0, reason: 'budget_sweet_spot' };
-  if (distance < 0.35) return { score: 0.9, reason: 'budget_within_range' };
-  if (distance < 0.6) return { score: 0.8, reason: 'budget_ok' };
-  return { score: 0.7, reason: 'budget_edge' };
+  // Binnen het bereik geen voorkeur. Hier stond een topscore rond
+  // (max + 30% van max) / 2, bij een schuif tot 500 euro dus 325 euro per
+  // stuk: wie de schuif open liet, kreeg de dure kant van de catalogus
+  // (keten-kritiek, 16 oktober 2026). Een voorkeursprijs komt pas met een
+  // vraag naar wat iemand meestal per stuk uitgeeft.
+  return { score: 1.0, reason: 'budget_within_range' };
 }
