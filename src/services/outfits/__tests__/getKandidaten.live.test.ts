@@ -84,4 +84,33 @@ describe.skipIf(!liveOptIn || !url || !key)("get_kandidaten (live)", () => {
     },
     LIVE_TEST_OPTIES
   );
+
+  /*
+   * Keten-kritiek 16 oktober 2026, beslissing 2. Ruim 56.000 van de bijna
+   * 76.000 looks kwamen uit de designer-outlet (Giglio), met een feed van
+   * maart. Bij een budget tot 500 euro kreeg een streetwear-profiel zes van
+   * negen outfits boven de 1.000 euro. Standaard doet die winkel niet mee;
+   * wie hem expliciet vraagt (de feed-poort, --retailer) krijgt hem wel.
+   */
+  it(
+    "laat de designer-outlet standaard weg en geeft hem als hij expliciet gevraagd wordt",
+    async () => {
+      const client = createClient(url!, key!);
+      const params = naarKandidatenParams({
+        gender: "female",
+        occasions: ["casual", "work", "formal", "date"],
+        budget: { min: 0, max: 500 },
+      });
+      const standaard = (await client.rpc("get_kandidaten", params)).data as KandidaatRij[];
+      expect(standaard.length).toBeGreaterThan(0);
+      expect(standaard.filter((r) => r.product.retailer === "Giglio (INT)")).toEqual([]);
+
+      const expliciet = await client.rpc("get_kandidaten", { ...params, p_retailer: "Giglio (INT)" });
+      expect(expliciet.error).toBeNull();
+      const rijen = (expliciet.data ?? []) as KandidaatRij[];
+      expect(rijen.length).toBeGreaterThan(0);
+      expect(rijen.every((r) => r.product.retailer === "Giglio (INT)")).toBe(true);
+    },
+    LIVE_TEST_OPTIES
+  );
 });
