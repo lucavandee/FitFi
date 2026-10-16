@@ -35,6 +35,7 @@ import { getBenefitsForArchetype } from "@/config/premiumBenefitsMapping";
 import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/profileConsistency";
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { generateOutfitDescription } from "@/engine/outfitContext";
+import { kaartGegevens } from "@/components/results/kaartGegevens";
 import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
@@ -1624,6 +1625,7 @@ export default function EnhancedResultsPage() {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, occasionFilteredOutfits.length);
+                  const kaart = kaartGegevens(outfit as any, outfitInfo);
                   const getFirstProductImage = (o: any) => {
                     if (!Array.isArray(o?.products)) return null;
                     for (const p of o.products) {
@@ -1643,9 +1645,9 @@ export default function EnhancedResultsPage() {
                       onClick={() => {
                         track("outfit_card_click", {
                           outfit_id: String('id' in outfit ? outfit.id : `seed-${idx}`),
-                          outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                          outfit_title: kaart.titel,
                           outfit_index: idx,
-                          occasion: outfitInfo.context.label,
+                          occasion: kaart.label,
                           archetype: archetypeName,
                           match_score: (outfit as any).matchScore ?? (outfit as any).match ?? null,
                           shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
@@ -1659,7 +1661,7 @@ export default function EnhancedResultsPage() {
                         {outfitImage ? (
                           <img
                             src={outfitImage}
-                            alt={'name' in outfit ? outfit.name : `Outfit ${idx + 1}`}
+                            alt={kaart.titel}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                             loading="lazy"
                             onError={(e) => {
@@ -1683,7 +1685,7 @@ export default function EnhancedResultsPage() {
 
                         {/* Occasion badge */}
                         <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[1px] uppercase text-[#1A1A1A] shadow-sm z-10">
-                          {outfitInfo.context.label}
+                          {kaart.label}
                         </span>
 
                         {/* Favorite */}
@@ -1694,9 +1696,9 @@ export default function EnhancedResultsPage() {
                             const isCurrentlyFav = favs.includes(String(outfitId));
                             track("save_outfit_click", {
                               outfit_id: String(outfitId),
-                              outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                              outfit_title: kaart.titel,
                               outfit_index: idx,
-                              occasion: outfitInfo.context.label,
+                              occasion: kaart.label,
                               archetype: archetypeName,
                               action: isCurrentlyFav ? "unsave" : "save",
                               source: "swipe",
@@ -1717,12 +1719,10 @@ export default function EnhancedResultsPage() {
                       {/* Info */}
                       <div className="p-5">
                         <h3 className="text-base font-semibold text-[#1A1A1A] mb-1.5 group-hover:text-[#A85740] transition-colors duration-200">
-                          {'name' in outfit ? outfit.name : outfitInfo.title}
+                          {kaart.titel}
                         </h3>
                         <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-3 mb-3">
-                          {('explanation' in outfit && outfit.explanation)
-                            ? (outfit.explanation as string)
-                            : outfitInfo.description}
+                          {kaart.uitleg}
                         </p>
                         {/* Geen matchpercentage en geen pasvormlabel meer: zie
                             ResultsOutfitCard.tsx en geenLegeMatch.test.ts. */}
@@ -1751,6 +1751,7 @@ export default function EnhancedResultsPage() {
                   const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
                   const isFav = favs.includes(String(id));
                   const outfitInfo = generateOutfitDescription(archetypeName, idx, occasionFilteredOutfits.length);
+                  const kaart = kaartGegevens(outfit as any, outfitInfo);
                   const getFirstProductImage = (o: any) => {
                     if (!Array.isArray(o?.products)) return null;
                     for (const p of o.products) {
@@ -1772,24 +1773,22 @@ export default function EnhancedResultsPage() {
                       <ResultsOutfitCard
                         id={String(id)}
                         index={idx}
-                        name={'name' in outfit ? (outfit as any).name : outfitInfo.title}
+                        name={kaart.titel}
                         description={
-                          ('explanation' in outfit && outfit.explanation)
-                            ? (outfit.explanation as string)
-                            : outfitInfo.description
+                          kaart.uitleg
                         }
                         imageUrl={outfitImage as string | null}
-                        imageAlt={'name' in outfit ? (outfit as any).name : `Outfit ${idx + 1}`}
-                        occasionContext={outfitInfo.context}
+                        imageAlt={kaart.titel}
+                        occasionContext={{ ...outfitInfo.context, label: kaart.label }}
                         productCount={Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0}
                         isFavorite={isFav}
                         onSelect={(e) => {
                           e.stopPropagation();
                           track("outfit_card_click", {
                             outfit_id: String(id),
-                            outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                            outfit_title: kaart.titel,
                             outfit_index: idx,
-                            occasion: outfitInfo.context.label,
+                            occasion: kaart.label,
                             archetype: archetypeName,
                             match_score: matchScore,
                             shoppable_product_count: Array.isArray((outfit as any).products) ? (outfit as any).products.length : 0,
@@ -1802,9 +1801,9 @@ export default function EnhancedResultsPage() {
                           toggleFav(String(id));
                           track("save_outfit_click", {
                             outfit_id: String(id),
-                            outfit_title: 'name' in outfit ? (outfit as any).name : outfitInfo.title,
+                            outfit_title: kaart.titel,
                             outfit_index: idx,
-                            occasion: outfitInfo.context.label,
+                            occasion: kaart.label,
                             archetype: archetypeName,
                             action: isFav ? "unsave" : "save",
                             source: "grid",
