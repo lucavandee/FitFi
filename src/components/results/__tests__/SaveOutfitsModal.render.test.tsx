@@ -45,6 +45,12 @@ describe("SaveOutfitsModal", () => {
     expect(render({ outfitCount: 12 })).not.toMatch(/elke week|wekelijks/i);
   });
 
+  it("belooft geen Nova en geen favorieten in het account: die bestaan niet", () => {
+    const html = render({ outfitCount: 12 });
+    expect(html).not.toContain("Nova");
+    expect(html).not.toMatch(/favoriete/i);
+  });
+
   it("heeft een Nederlandse kop", () => {
     const html = render({ outfitCount: 12 });
     expect(html).toContain("Bewaar je outfits");

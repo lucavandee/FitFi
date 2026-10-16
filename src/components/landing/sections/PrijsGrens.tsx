@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import { ScrollScene } from "../scroll/ScrollScene";
+import { OUTFIT_LIMIET } from "@/config/outfitLimiet";
 
 /**
  * Hoofdgebaar van de prijzenpagina: een doorlopend voorbeeldrapport waar de
@@ -30,8 +31,8 @@ const REGELS: Regel[] = [
   },
   {
     plan: "free",
-    titel: "Drie outfits",
-    uitleg: "Drie complete sets, samengesteld op dat profiel.",
+    titel: `Tot ${OUTFIT_LIMIET.gratis} outfits`,
+    uitleg: "Complete sets, samengesteld op dat profiel.",
   },
   {
     plan: "free",
@@ -45,8 +46,8 @@ const REGELS: Regel[] = [
   },
   {
     plan: "premium",
-    titel: "Onbeperkt outfits",
-    uitleg: "Hetzelfde rapport stopt niet bij drie sets.",
+    titel: `Tot ${OUTFIT_LIMIET.premium} outfits`,
+    uitleg: `Hetzelfde rapport loopt door tot ${OUTFIT_LIMIET.premium} sets.`,
   },
   {
     plan: "premium",

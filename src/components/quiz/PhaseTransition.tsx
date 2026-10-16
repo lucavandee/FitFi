@@ -81,7 +81,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
           </div>
         </motion.div>
 
-        {/* Nova tip */}
+        {/* Tip */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -93,7 +93,7 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[#1A1A1A] mb-1">Nova's tip</p>
+              <p className="text-sm font-medium text-[#1A1A1A] mb-1">Tip</p>
               <p className="text-sm text-[#1A1A1A]/70">{content.novaTip}</p>
             </div>
           </div>

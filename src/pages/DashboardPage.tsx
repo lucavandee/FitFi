@@ -10,6 +10,7 @@ import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import { supabase } from "@/lib/supabaseClient";
 import { useOutfits } from "@/hooks/useOutfits";
 import { useUser } from "@/context/UserContext";
+import { outfitLimietVoor } from "@/config/outfitLimiet";
 import { motion } from "framer-motion";
 import { PhotoUploadModal } from "@/components/nova/PhotoUploadModal";
 
@@ -95,21 +96,14 @@ export default function DashboardPage() {
     };
   }, []);
 
-  // Zelfde limiet als /results (EnhancedResultsPage.tsx:380-387). Dit is geen
+  // Zelfde limiet als /results (outfitLimietVoor in src/config/outfitLimiet.ts). Dit is geen
   // cosmetiek: de queryKey is ['outfits','v2', digest, limit] (useOutfits.ts:78).
   // Bij een andere limiet krijg je een tweede cache-entry en dus een tweede
   // engine-run, en de engine seedt op de klok als er geen seed meekomt
   // (engine.ts:722, Math.floor(Date.now()/300000)). Twee runs in verschillende
   // vijf-minutenvakken geven een ANDERE outfitset. Gelijke limiet betekent
   // dezelfde sleutel, dus letterlijk dezelfde outfits op beide schermen.
-  const outfitLimit = React.useMemo(() => {
-    if (!ctxUser) return 6;
-    const tier = (ctxUser as any).tier || ((ctxUser as any).isPremium ? "premium" : "member");
-    if (tier === "founder") return 20;
-    if (tier === "premium" || tier === "plus") return 12;
-    if (tier === "member") return 9;
-    return 6;
-  }, [ctxUser]);
+  const outfitLimit = React.useMemo(() => outfitLimietVoor(ctxUser as any), [ctxUser]);
 
   // `answers` meegeven zet dit scherm op engine v2, hetzelfde pad als /results
   // (useOutfits.ts:107). Zonder die prop liep het dashboard via de legacy-tak
