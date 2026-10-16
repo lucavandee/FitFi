@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, Check, Sparkles } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 
 interface OutfitContext {
   emoji: string;
@@ -14,8 +14,6 @@ export interface ResultsOutfitCardProps {
   imageUrl: string | null;
   imageAlt: string;
   occasionContext: OutfitContext;
-  matchScore: number | null;
-  fitLabel: string | null;
   productCount: number;
   isFavorite: boolean;
   onSelect: (e: React.MouseEvent) => void;
@@ -30,8 +28,6 @@ export function ResultsOutfitCard({
   imageUrl,
   imageAlt,
   occasionContext,
-  matchScore,
-  fitLabel,
   isFavorite,
   onSelect,
   onToggleFavorite,
@@ -92,26 +88,12 @@ export function ResultsOutfitCard({
         </h3>
 
         {/* Description — up to two lines */}
-        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-2 mb-3">
+        <p className="text-sm text-[#4A4A4A] leading-[1.5] line-clamp-3">
           {description}
         </p>
-
-        {/* Match score + style badge */}
-        {(typeof matchScore === "number" || fitLabel) && (
-          <div className="flex items-center gap-3">
-            {typeof matchScore === "number" && (
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                  <Check className="w-2.5 h-2.5 text-[#A85740]" strokeWidth={3} />
-                </span>
-                <span className="text-sm font-semibold text-[#A85740]">{Math.round(matchScore)}% match</span>
-              </span>
-            )}
-            {fitLabel && (
-              <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-xs font-medium text-[#4A4A4A]">{fitLabel}</span>
-            )}
-          </div>
-        )}
+        {/* Hier stond "54% match" en het pasvormantwoord van de bezoeker als
+            label. Het percentage was voor vrijwel elke outfit 53 of 54 en zei
+            niets (keten-kritiek, 16 oktober 2026). */}
       </div>
     </article>
   );

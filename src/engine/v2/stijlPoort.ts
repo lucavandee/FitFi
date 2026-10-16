@@ -74,10 +74,11 @@ export function productBreuk(p: Product, a: PoortAntwoorden): string | null {
   return null;
 }
 
-function isDonker(p: Product): boolean {
+/** Donker volgens de tags, of anders volgens de eerste kleur ("zwart/wit" telt als zwart). */
+export function isDonker(p: Product): boolean {
   const l = String(p.lightness ?? "").toLowerCase();
   if (l) return l === "donker";
-  const kleur = String((p.colors ?? [])[0] ?? p.color ?? "").toLowerCase().trim();
+  const kleur = String((p.colors ?? [])[0] ?? p.color ?? "").toLowerCase().split("/")[0].trim();
   return DONKERE_KLEUREN.has(kleur);
 }
 
