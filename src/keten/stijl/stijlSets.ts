@@ -94,17 +94,26 @@ export interface LogStuk {
   beeld: string | null;
 }
 
+/** Opvulwaarden die geen kleur zijn. */
+const GEEN_KLEUR = new Set(["", "unknown", "onbekend"]);
+
+const echteKleuren = (lijst: unknown): string[] =>
+  Array.isArray(lijst) ? lijst.map(String).filter((k) => !GEEN_KLEUR.has(k.trim().toLowerCase())) : [];
+
 /**
- * Van engine-producten naar logstukken. Een lege kleur wordt aangevuld met de
- * kleur van de tagger; heeft een stuk dan nog geen kleur, dan geeft dit null en
- * wordt de outfit niet gekeurd (de agent keurt op kleur).
+ * Van engine-producten naar logstukken. De kleur komt eerst uit
+ * product_attributes (de tagger). De feed leidt kleur af uit tekst en gaf valse
+ * treffers: "red" in "Flared" en "brede", en "unknown" als opvulling (review 21
+ * oktober 2026: 52 van de 388 kandidaat-outfits). Alleen als de tagger niets
+ * heeft, de feed. Heeft een stuk dan nog geen kleur, dan geeft dit null en wordt
+ * de outfit niet gekeurd (de agent keurt op kleur).
  */
 export function naarLogStukken(products: Product[], kleurenUitTags: (id: string) => string[] | undefined): LogStuk[] | null {
   const uit: LogStuk[] = [];
   for (const p of products) {
     const id = String(p.id);
-    const eigen = Array.isArray(p.colors) ? p.colors.map(String).filter(Boolean) : [];
-    const kleuren = eigen.length > 0 ? eigen : (kleurenUitTags(id) ?? []).map(String).filter(Boolean);
+    const tags = echteKleuren(kleurenUitTags(id));
+    const kleuren = tags.length > 0 ? tags : echteKleuren(p.colors);
     if (kleuren.length === 0) return null;
     const prijs = typeof p.price === "number" ? p.price : Number(p.price);
     const lichtheid = (p as Product & { lightness?: unknown }).lightness;
@@ -455,12 +464,69 @@ export function deadlineVoor(tot: string, nu: Date): number {
 }
 
 // ---------------------------------------------------------------------------
+// Nacht en redenen
+// ---------------------------------------------------------------------------
+
+/**
+ * De nacht waar een tijdstip bij hoort: de Nederlandse datum van 12 uur eerder.
+ * Een nacht loopt zo van 12:00 tot 12:00, en een herstart om 01:00 telt mee bij
+ * de avond ervoor (plafond en nachtlimiet per combinatie, 2d en 2f).
+ */
+export function nachtVan(d: Date): string {
+  return new Date(d.getTime() - 12 * 60 * 60 * 1000).toLocaleDateString("sv-SE", { timeZone: "Europe/Amsterdam" });
+}
+
+/**
+ * Soorten afkeur, op trefwoorden in de vrije zin van de agent. De agent schrijft
+ * elke reden anders ("de zwarte pumps", "pumps met hak"), dus tellen op de
+ * letterlijke zin geeft alleen enen. Een heuristiek: een zin kan in meer soorten
+ * vallen, en wat nergens in past heet overig.
+ */
+const REDEN_SOORTEN: Array<[string, RegExp]> = [
+  ["hak of pump", /\b(hak|hakken|pumps?|stiletto|kitten ?heels?|slingbacks?)\b/i],
+  ["ballerina", /ballerina/i],
+  ["zomerstuk in de herfst", /zomer|seizoen|sandaal|sandal|slipper|linnen|bandje|strand|open schoen|blote|korte mouw|\bshorts?\b/i],
+  ["gedateerd", /gedateerd|ouderwets|2012|2018|skinny|dad-?sneaker|groot logo|logo op/i],
+  ["te informeel", /informeel|te casual|te sportief|hoodie|jogging|sweatpants|thuiskleding/i],
+  ["te formeel of te net", /te net|te formeel|te chic|avondkleding|gala|paillet/i],
+  ["designer of prijs", /designer|prijs|te duur|\beuro\b|luxe/i],
+  ["te donker of zwart", /donker|zwart/i],
+  ["te veel beige of kleurloos", /beige|kleurloos|saai/i],
+  ["kleurcombinatie", /kleur|blauw op blauw|tint|vloek|botst|clash/i],
+  ["silhouet of pasvorm", /silhouet|pasvorm|te strak|te ruim|oversized|verhouding/i],
+  ["accessoire", /\briem\b|\btas\b|sjaal|ketting|\bpet\b|muts|accessoire|stropdas/i],
+  ["stijl past niet", /past niet bij|geen (streetwear|minimal|klassiek|romantisch|casual|smart)|niet (streetwear|minimalistisch|klassiek|romantisch)/i],
+  ["onvolledig of dubbel", /ontbreekt|\bmist\b|zonder (jas|schoen)|twee (broeken|tops|jassen)|dubbel/i],
+];
+
+export function redenGroepen(reden: string): string[] {
+  const uit = REDEN_SOORTEN.filter(([, re]) => re.test(reden)).map(([soort]) => soort);
+  return uit.length > 0 ? uit : ["overig"];
+}
+
+const lokaal = (iso: string): string =>
+  new Date(iso).toLocaleString("nl-NL", { timeZone: "Europe/Amsterdam", dateStyle: "short", timeStyle: "short" });
+
+// ---------------------------------------------------------------------------
 // Nachtrapport
 // ---------------------------------------------------------------------------
 
+/** Uitgeput: open, maar er is niets meer te keuren. Geen kandidaten: de pool gaf niets. */
+export type RapportStatus = CelStatus | "uitgeput" | "geen kandidaten";
+
+/** Wat het script over een combinatie weet: kandidaten uit de pool en wat er nog over is. */
+export interface CelInfo {
+  cel: string;
+  kandidaten: number;
+  nogTeKeuren: number;
+  reden?: string;
+}
+
 export interface CelRapport {
   cel: string;
-  status: CelStatus;
+  status: RapportStatus;
+  kandidaten?: number;
+  reden?: string;
   keuringen: number;
   goedGeteld: number;
   goedRuw: number;
@@ -471,6 +537,7 @@ export interface CelRapport {
   wachtrij2: number;
   /** Hoe vaak een deelscore niet "ja" was bij een outfit die niet goed telde. */
   afgekeurdOp: Record<"stijl" | "gelegenheid" | "kleur" | "samenhang", number>;
+  /** De drie soorten afkeur die het vaakst voorkomen (redenGroepen), met een voorbeeld. */
   redenen: string[];
   jurk: number;
   topBroek: number;
@@ -507,18 +574,27 @@ function celRapport(c: CelStaat): CelRapport {
   const ronde1 = [...c.ronde1.values()];
   const echte = ronde1.filter((u) => u.telling !== "geen oordeel");
   const afgekeurdOp = { stijl: 0, gelegenheid: 0, kleur: 0, samenhang: 0 };
-  const redenTelling = new Map<string, number>();
+  const soorten = new Map<string, { n: number; voorbeeld: string }>();
   for (const u of echte) {
     if (u.telling === "goed" || !u.regel.ruw) continue;
     for (const veld of ["stijl", "gelegenheid", "kleur", "samenhang"] as const) {
       if ((u.regel.ruw[veld] as Deelscore) !== "ja") afgekeurdOp[veld] += 1;
     }
+    // Per keuring telt een soort een keer, ook als meer redenen erin vallen.
+    const dezeKeer = new Map<string, string>();
     for (const reden of u.regel.ruw.redenen) {
       const r = reden.trim();
-      if (r) redenTelling.set(r, (redenTelling.get(r) ?? 0) + 1);
+      if (r) for (const soort of redenGroepen(r)) if (!dezeKeer.has(soort)) dezeKeer.set(soort, r);
+    }
+    for (const [soort, voorbeeld] of dezeKeer) {
+      const al = soorten.get(soort);
+      soorten.set(soort, { n: (al?.n ?? 0) + 1, voorbeeld: al?.voorbeeld ?? voorbeeld });
     }
   }
-  const redenen = [...redenTelling.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([r, n]) => (n > 1 ? `${r} (${n}x)` : r));
+  const redenen = [...soorten.entries()]
+    .sort((a, b) => b[1].n - a[1].n)
+    .slice(0, 3)
+    .map(([soort, { n, voorbeeld }]) => `${soort} (${n}x): ${voorbeeld.slice(0, 100)}`);
   const rollen = (u: Uitslag) => new Set(u.regel.stukken.map((s) => s.rol));
   const bevestigd = cijfers.bevestigd.map((k) => c.laatste.get(k)!.stukken);
   return {
@@ -545,15 +621,56 @@ function celRapport(c: CelStaat): CelRapport {
   };
 }
 
+function legeCel(info: CelInfo): CelRapport {
+  return {
+    cel: info.cel,
+    status: info.kandidaten === 0 ? "geen kandidaten" : info.nogTeKeuren === 0 ? "uitgeput" : "open",
+    kandidaten: info.kandidaten,
+    reden: info.reden,
+    keuringen: 0,
+    goedGeteld: 0,
+    goedRuw: 0,
+    bevestigd: 0,
+    twijfel: 0,
+    fout: 0,
+    geenOordeel: 0,
+    wachtrij2: 0,
+    afgekeurdOp: { stijl: 0, gelegenheid: 0, kleur: 0, samenhang: 0 },
+    redenen: [],
+    jurk: 0,
+    topBroek: 0,
+    budget: { tot75: 0, tot150: 0, tot250: 0 },
+    licht: 0,
+  };
+}
+
+/**
+ * Het nachtrapport. `cellen` komt van het script: elke combinatie uit de pool,
+ * ook als ze geen enkele keuring kreeg, met het aantal kandidaten en wat er nog
+ * over is. Zonder `cellen` alleen de combinaties uit het logboek.
+ */
 export function bouwNachtrapport(o: {
   regels: OordeelRegel[];
   aanroepen: AanroepRegel[];
   keurder: string;
   run: string;
   meta: { start: string; stop: string; git: string; via: string; stopreden?: Stopreden | null };
+  cellen?: CelInfo[];
 }): { md: string; json: NachtrapportJson } {
   const staat = herstelStaat(o.regels, o.keurder);
-  const cellen = [...staat.perCel.values()].map(celRapport).sort((a, b) => a.cel.localeCompare(b.cel));
+  const infos: CelInfo[] = o.cellen ?? [...staat.perCel.keys()].sort().map((cel) => ({ cel, kandidaten: -1, nogTeKeuren: -1 }));
+  const cellen = infos.map((info): CelRapport => {
+    const c = staat.perCel.get(info.cel);
+    if (!c) return legeCel(info);
+    const rapport = celRapport(c);
+    const uitgeput = rapport.status === "open" && info.nogTeKeuren === 0 && rapport.wachtrij2 === 0;
+    return {
+      ...rapport,
+      status: uitgeput ? "uitgeput" : rapport.status,
+      kandidaten: info.kandidaten >= 0 ? info.kandidaten : undefined,
+      reden: info.reden,
+    };
+  });
   let beoordeeld = 0;
   let blevenGoed = 0;
   for (const c of staat.perCel.values()) {
@@ -590,20 +707,21 @@ export function bouwNachtrapport(o: {
   };
 
   const r: string[] = [];
-  r.push(`# Nachtrapport vooraf keuren, ${o.meta.start.slice(0, 16).replace("T", " ")}`, "");
-  r.push(`Keurder ${o.keurder}, via ${o.meta.via}, git ${o.meta.git}.`);
-  r.push(`Gestopt ${o.meta.stop.slice(0, 16).replace("T", " ")}, reden: ${json.stopreden ?? "onbekend"}${json.reset ? ` (reset ${json.reset})` : ""}.`);
+  r.push(`# Nachtrapport vooraf keuren, ${lokaal(o.meta.start)}`, "");
+  r.push(`Keurder ${o.keurder}, via ${o.meta.via}, git ${o.meta.git}. Tijden in Nederlandse tijd.`);
+  r.push(`Gestopt ${lokaal(o.meta.stop)}, reden: ${json.stopreden ?? "onbekend"}${json.reset ? ` (reset ${json.reset})` : ""}.`);
   const a = json.aanroepen;
   r.push(
     `Aanroepen: ${a.totaal}, waarvan ${a.gelukt} gelukt, ${a.mislukt} mislukt (${a.timeout} time-out). Gemiddeld ${a.gemiddeldeSeconden ?? "?"} s per aanroep, ${a.dollar.toFixed(2)} dollar.`
   );
   r.push(`Herhaalbaarheid: van ${beoordeeld} outfits met twee keuringen bleven er ${blevenGoed} goed.`, "");
   r.push("## Per combinatie (alle nachten van deze keurder samen)", "");
-  r.push("| combinatie | status | gekeurd | goed (ruw) | bevestigd | twijfel | fout | geen oordeel | in ronde 2 | jurk | top en broek | tot 75 | tot 150 | tot 250 | licht |");
-  r.push("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
+  r.push("| combinatie | status | kandidaten | gekeurd | goed (ruw) | bevestigd | twijfel | fout | geen oordeel | in ronde 2 | jurk | top en broek | tot 75 | tot 150 | tot 250 | licht |");
+  r.push("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
   for (const c of cellen) {
+    const status = c.reden ? `${c.status} (${c.reden})` : c.status;
     r.push(
-      `| ${c.cel} | ${c.status} | ${c.keuringen} | ${c.goedGeteld} (${c.goedRuw}) | ${c.bevestigd} | ${c.twijfel} | ${c.fout} | ${c.geenOordeel} | ${c.wachtrij2} | ${c.jurk} | ${c.topBroek} | ${c.budget.tot75} | ${c.budget.tot150} | ${c.budget.tot250} | ${c.licht} |`
+      `| ${c.cel} | ${status} | ${c.kandidaten ?? "?"} | ${c.keuringen} | ${c.goedGeteld} (${c.goedRuw}) | ${c.bevestigd} | ${c.twijfel} | ${c.fout} | ${c.geenOordeel} | ${c.wachtrij2} | ${c.jurk} | ${c.topBroek} | ${c.budget.tot75} | ${c.budget.tot150} | ${c.budget.tot250} | ${c.licht} |`
     );
   }
   r.push("", "## Waarop het misging", "");

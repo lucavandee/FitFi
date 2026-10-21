@@ -17,7 +17,9 @@ import {
   leesPortieAntwoord,
   minimumOordelen,
   naarKeurOutfit,
+  nachtVan,
   omEnOm,
+  redenGroepen,
   naarLogStukken,
   resetTekst,
   schud,
@@ -133,6 +135,18 @@ describe("invoer voor de agent", () => {
   it("vult een lege kleur aan met de kleur van de tagger", () => {
     const [s] = naarLogStukken([product({ colors: [] })], (id) => (id === "p1" ? ["olijf"] : undefined))!;
     expect(s.kleuren).toEqual(["olijf"]);
+  });
+
+  it("neemt de kleur van de tagger boven die van de feed", () => {
+    // De feed leidt kleur af uit tekst: "Flared" en "brede" gaven een valse "red".
+    const [s] = naarLogStukken([product({ name: "H & M - Flared High Jeans - Blauw", colors: ["blauw", "red"] })], () => ["blauw"])!;
+    expect(s.kleuren).toEqual(["blauw"]);
+  });
+
+  it("laat de opvulwaarde unknown uit de feed weg", () => {
+    expect(naarLogStukken([product({ colors: ["unknown"] })], () => undefined)).toBeNull();
+    const [s] = naarLogStukken([product({ colors: ["zwart", "unknown"] })], () => [])!;
+    expect(s.kleuren).toEqual(["zwart"]);
   });
 
   it("keurt geen outfit met een stuk zonder enige kleur", () => {
@@ -305,6 +319,25 @@ describe("noodrem", () => {
   });
 });
 
+describe("nachtdatum", () => {
+  it("rekent een nacht van 12:00 tot 12:00, in Nederlandse tijd", () => {
+    expect(nachtVan(new Date("2026-10-22T19:30:00Z"))).toBe("2026-10-22"); // 21:30
+    expect(nachtVan(new Date("2026-10-23T00:30:00Z"))).toBe("2026-10-22"); // 02:30
+    expect(nachtVan(new Date("2026-10-23T09:59:00Z"))).toBe("2026-10-22"); // 11:59
+    expect(nachtVan(new Date("2026-10-23T10:01:00Z"))).toBe("2026-10-23"); // 12:01
+  });
+});
+
+describe("redenen per soort", () => {
+  it("deelt vrije zinnen in in vaste soorten", () => {
+    expect(redenGroepen("De zwarte pumps passen niet bij streetwear")).toContain("hak of pump");
+    expect(redenGroepen("Satijnen top met dunne bandjes is een zomerstuk")).toContain("zomerstuk in de herfst");
+    expect(redenGroepen("Skinny jeans ogen gedateerd")).toContain("gedateerd");
+    expect(redenGroepen("Blauw op blauw van twee merken vloekt")).toContain("kleurcombinatie");
+    expect(redenGroepen("Iets heel anders")).toEqual(["overig"]);
+  });
+});
+
 describe("nachtrapport", () => {
   const C = "female|casual|casual";
   const aanroep = (over: Partial<AanroepRegel> = {}): AanroepRegel => ({
@@ -364,6 +397,29 @@ describe("nachtrapport", () => {
     expect(json.aanroepen).toEqual({ totaal: 2, gelukt: 1, mislukt: 1, timeout: 1, dollar: 0.27, gemiddeldeSeconden: 120 });
     expect(json.stopreden).toBe("drie-mislukt");
     expect(md).toContain("female|casual|casual");
-    expect(md).not.toMatch(/—/);
+    expect(md).not.toMatch(/\u2014/);
+    expect(cel.redenen[0]).toMatch(/^te veel beige of kleurloos \(1x\): te veel beige/);
+  });
+
+  it("toont ook combinaties zonder keuring, en een uitgeputte als uitgeput", () => {
+    const regels = [regel(C, "f1", 1, "fout")];
+    const { json, md } = bouwNachtrapport({
+      regels,
+      aanroepen: [aanroep({ stopreden: null })],
+      keurder: KEURDER,
+      run: "r1",
+      meta: { start: "2026-10-22T19:30:00.000Z", stop: "2026-10-22T22:00:00.000Z", git: "abc", via: "sleutel", stopreden: "plafond" },
+      cellen: [
+        { cel: C, kandidaten: 1, nogTeKeuren: 0 },
+        { cel: "male|classic|work", kandidaten: 0, nogTeKeuren: 0, reden: "geen stijlpool" },
+      ],
+    });
+    expect(json.stopreden).toBe("plafond");
+    expect(json.cellen.map((c) => [c.cel, c.status])).toEqual([
+      [C, "uitgeput"],
+      ["male|classic|work", "geen kandidaten"],
+    ]);
+    expect(md).toContain("geen stijlpool");
+    expect(md).toContain("21:30");
   });
 });

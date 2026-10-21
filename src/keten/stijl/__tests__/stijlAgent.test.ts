@@ -18,7 +18,7 @@ describe("stijl-agent", () => {
 
   it("heeft geen gedachtestreepjes en noemt de twee groepen, het seizoen en de volgorde", () => {
     const p = bouwStijlAgentPrompt();
-    expect(p).not.toMatch(/[–—]/);
+    expect(p).not.toMatch(/[\u2013\u2014]/);
     for (const kop of ["## Voor wie", "## Beoordeel in deze volgorde", "## Stijlen", "## Gelegenheden", "gedateerd", "## Antwoord"]) {
       expect(p).toContain(kop);
     }
@@ -53,7 +53,7 @@ import { STUK_SOORTEN, bouwLabelOpdracht, bouwLabelPrompt, leesLabelAntwoord } f
 describe("stijl-agent, labelen", () => {
   it("noemt de soorten per categorie en de stijlsleutels, zonder gedachtestreepjes", () => {
     const p = bouwLabelPrompt();
-    expect(p).not.toMatch(/[–—]/);
+    expect(p).not.toMatch(/[\u2013\u2014]/);
     expect(p).toContain("## Je taak: producten labelen");
     expect(p).toContain(`- footwear: ${STUK_SOORTEN.footwear.join(", ")}`);
     expect(p).toContain("minimalist, classic, business, streetwear");

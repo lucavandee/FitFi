@@ -80,6 +80,16 @@ export function engineZaden(c: Combinatie, datum: string): number[] {
   return Array.from({ length: ENGINE_ZADEN }, (_, i) => zaadVoor(`${combinatieSleutel(c)}|${datum}|engine|${i + 1}`));
 }
 
+/** Per stijl: hoeveel stijlrijen een seizoenlabel hebben (labels v2 van de stijl-agent). */
+export function seizoenDekking(pool: PoolBestand): Record<string, { rijen: number; metSeizoen: number }> {
+  const uit: Record<string, { rijen: number; metSeizoen: number }> = {};
+  for (const [stijl, zaden] of Object.entries(pool.stijl)) {
+    const rijen = zaden.flatMap((z) => z.rijen);
+    uit[stijl] = { rijen: rijen.length, metSeizoen: rijen.filter((r) => typeof r.attrs?.seizoen === "string" && r.attrs.seizoen !== "").length };
+  }
+  return uit;
+}
+
 export interface PoolKandidaten {
   kandidaten: Kandidaat[];
   /** Outfits die wegvielen omdat een stuk geen enkele kleur had. */
@@ -111,7 +121,8 @@ export async function kandidatenUitPool(
 ): Promise<PoolKandidaten> {
   const algemeen = pool.algemeen[algemeenSleutel(c)];
   if (!algemeen) return { kandidaten: [], zonderKleur: 0, outfits: 0, reden: "geen algemene pool" };
-  const stijlPools = pool.stijl[stijlSleutel(c)] ?? [];
+  // Een lege stijlpool telt niet: dan zou er alleen op de algemene pool gekeurd worden.
+  const stijlPools = (pool.stijl[stijlSleutel(c)] ?? []).filter((s) => s.rijen.length > 0);
   if (stijlPools.length === 0) return { kandidaten: [], zonderKleur: 0, outfits: 0, reden: "geen stijlpool" };
 
   const tagKleuren = new Map<string, string[]>();

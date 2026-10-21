@@ -52,6 +52,11 @@ export interface NachtOpties {
   nieuw: Map<string, Kandidaat[]>;
   /** Het logboek tot nu toe (alle keurders; de staat leest alleen de eigen). */
   bestaand: OordeelRegel[];
+  /**
+   * Wat eerdere starts in dezelfde nacht al deden (nachtVan), zodat een herstart
+   * het plafond en de nachtlimiet per combinatie niet opnieuw laat beginnen.
+   */
+  eerder?: { aanroepen: number; ronde1PerCel: Map<string, number> };
 }
 
 export interface NachtDeps {
@@ -70,24 +75,32 @@ export interface NachtUitslag {
 export async function draaiNacht(o: NachtOpties, deps: NachtDeps, signal?: AbortSignal): Promise<NachtUitslag> {
   const keurder = keurderSleutel(o.keurVersie, o.model, o.effort);
   const regels = [...o.bestaand];
-  const ronde1DezeNacht = new Map<string, number>();
+  const ronde1DezeNacht = new Map<string, number>(o.eerder?.ronde1PerCel ?? []);
+  const eerdereAanroepen = o.eerder?.aanroepen ?? 0;
   let aanroepen = 0;
   let misOpRij = 0;
   const klaar = (stopreden: Stopreden): NachtUitslag => ({ stopreden, aanroepen, regels });
 
   for (;;) {
     if (signal?.aborted) return klaar("onderbroken");
-    const rem = volgendeStap({ nu: deps.nu(), deadline: o.deadline, aanroepen, maxAanroepen: o.maxAanroepen, misOpRij });
+    const rem = volgendeStap({ nu: deps.nu(), deadline: o.deadline, aanroepen: eerdereAanroepen + aanroepen, maxAanroepen: o.maxAanroepen, misOpRij });
     if (rem) return klaar(rem);
 
     const staat = herstelStaat(regels, keurder);
     const ronde2: Kandidaat[][] = [];
     const herkansing: Kandidaat[] = [];
     const nieuw: Kandidaat[][] = [];
-    for (const cel of o.cellen) {
-      const c = staat.perCel.get(cel);
-      const cijfers = c ? celCijfers(c) : null;
-      if (cijfers && cijfers.status !== "open") continue;
+    // De combinatie met de minste keuringen eerst. In een vaste volgorde kregen
+    // de laatste combinaties (de heren) bij een vroege stop een derde van de
+    // keuringen van de eerste (review 21 oktober 2026).
+    const open = o.cellen
+      .map((cel, i) => {
+        const c = staat.perCel.get(cel);
+        return { cel, i, c, cijfers: c ? celCijfers(c) : null };
+      })
+      .filter((x) => !x.cijfers || x.cijfers.status === "open")
+      .sort((a, b) => (a.cijfers?.keuringen ?? 0) - (b.cijfers?.keuringen ?? 0) || a.i - b.i);
+    for (const { cel, c, cijfers } of open) {
       if (c && cijfers) {
         ronde2.push(cijfers.wachtrij2.map((k) => kandidaatUitRegel(c.laatste.get(k)!, 2, (c.pogingen2.get(k) ?? 0) + 1)));
         for (const k of cijfers.herkansing1) herkansing.push(kandidaatUitRegel(c.laatste.get(k)!, 1, 2));
@@ -164,7 +177,8 @@ export async function draaiNacht(o: NachtOpties, deps: NachtDeps, signal?: Abort
       model: u.model,
       apiKeySource: u.apiKeySource,
       is_error: !u.ok,
-      fout: u.ok ? null : u.tekst.slice(0, 300),
+      // Ook bij een antwoord dat niet te lezen was, zodat drie mislukte op rij te verklaren zijn.
+      fout: gelukt ? null : u.tekst.slice(0, 300),
       stopreden,
       reset: limiet ? resetTekst(u.tekst) : null,
       rate_limits: u.rateLimits,

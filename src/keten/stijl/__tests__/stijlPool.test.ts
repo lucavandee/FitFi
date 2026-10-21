@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { KandidaatRij } from "@/services/outfits/kandidaten";
 import poolKlassiek from "@/engine/v2/__tests__/fixtures/pool-man-klassiek-2026-10-01.json";
-import { algemeenParams, algemeenSleutel, engineZaden, kandidatenUitPool, stijlParams, stijlSleutel, stijlZaden, zaadVoor, type PoolBestand } from "../stijlPool";
+import { algemeenParams, algemeenSleutel, engineZaden, kandidatenUitPool, seizoenDekking, stijlParams, stijlSleutel, stijlZaden, zaadVoor, type PoolBestand } from "../stijlPool";
 
 const CEL = { geslacht: "male", stijl: "classic", gelegenheid: "work" } as const;
 const rijen = poolKlassiek as unknown as KandidaatRij[];
@@ -80,6 +80,20 @@ describe("kandidaten uit de pool", () => {
     const uit = await kandidatenUitPool(pool({ stijl: {} }), CEL, { bekend: new Set(), max: 40, season: "autumn" });
     expect(uit.kandidaten).toEqual([]);
     expect(uit.reden).toBe("geen stijlpool");
+  });
+
+  it("ook niet als de stijlpools leeg zijn", async () => {
+    const uit = await kandidatenUitPool(pool({ stijl: { [stijlSleutel(CEL)]: [{ p_zaad: 1, rijen: [] }] } }), CEL, { bekend: new Set(), max: 40, season: "autumn" });
+    expect(uit.kandidaten).toEqual([]);
+    expect(uit.reden).toBe("geen stijlpool");
+  });
+
+  it("telt per stijl hoeveel rijen een seizoenlabel hebben", () => {
+    const met = rijen.slice(0, 3).map((r) => ({ ...r, attrs: { seizoen: "herfst-winter" } }));
+    const zonder = rijen.slice(3, 5).map((r) => ({ ...r, attrs: {} }));
+    expect(seizoenDekking(pool({ stijl: { [stijlSleutel(CEL)]: [{ p_zaad: 1, rijen: [...met, ...zonder] }] } }))).toEqual({
+      [stijlSleutel(CEL)]: { rijen: 5, metSeizoen: 3 },
+    });
   });
 
   it("vult een lege kleur aan uit de tags, en slaat een stuk zonder kleur over", async () => {

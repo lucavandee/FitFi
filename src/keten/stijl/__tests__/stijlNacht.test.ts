@@ -194,6 +194,36 @@ describe("de nacht", () => {
     expect(daarna.oordelen.filter((r) => r.ronde === 1 && nacht1.has(r.outfit_key))).toHaveLength(0);
   });
 
+  it("verdeelt de keuringen eerlijk over de combinaties als de nacht vroeg stopt", async () => {
+    const cellen = ["female|minimalist|work", "female|casual|casual", "female|streetwear|casual", "female|smart-casual|work", "female|romantic|date", "male|smart-casual|date", "male|classic|work", "male|streetwear|casual"];
+    const nieuw = new Map(cellen.map((cel) => [cel, Array.from({ length: 72 }, (_, i) => kandidaat(cel, `${cel}#${i}`))]));
+    // Een op de vier goed, vast per outfit: de agent ziet de sleutel in de stuknaam niet, dus via het stuk-id.
+    const kwart = (opdracht: string) =>
+      uitkomst({ tekst: JSON.stringify({ oordelen: idsIn(opdracht).map((id, i) => oordeel(id, (opdracht.length + i) % 4 === 0)) }) });
+    const { opties, deps, oordelen } = opzet([kwart], { cellen, nieuw, maxAanroepen: 30 });
+    await draaiNacht(opties, deps);
+    const per = cellen.map((cel) => oordelen.filter((r) => r.cel === cel && r.ronde === 1 && r.aanroep_gelukt).length);
+    expect(Math.max(...per) - Math.min(...per)).toBeLessThanOrEqual(2);
+  });
+
+  it("telt eerdere aanroepen van dezelfde nacht mee voor het plafond", async () => {
+    const { opties, deps, aanroepen } = opzet([alles()], { maxAanroepen: 72, eerder: { aanroepen: 70, ronde1PerCel: new Map() } });
+    expect((await draaiNacht(opties, deps)).stopreden).toBe("plafond");
+    expect(aanroepen).toHaveLength(2);
+  });
+
+  it("telt eerdere keuringen van dezelfde nacht mee voor de nachtlimiet per combinatie", async () => {
+    const { opties, deps, oordelen } = opzet([alles()], { eerder: { aanroepen: 0, ronde1PerCel: new Map([[A, 70]]) } });
+    await draaiNacht(opties, deps);
+    expect(oordelen.filter((r) => r.cel === A && r.ronde === 1 && r.poging === 1 && r.aanroep_gelukt)).toHaveLength(2);
+  });
+
+  it("bewaart het begin van een antwoord dat niet te lezen was", async () => {
+    const { opties, deps, aanroepen } = opzet([() => uitkomst({ tekst: "Ik kan dit niet beoordelen." }), alles()]);
+    await draaiNacht(opties, deps);
+    expect(aanroepen[0]).toMatchObject({ gelukt: false, fout: "Ik kan dit niet beoordelen." });
+  });
+
   it("verstuurt korte id's die per portie uniek zijn, en vertaalt ze terug", async () => {
     const { opties, deps, oordelen, opdrachten } = opzet([alles()]);
     await draaiNacht(opties, deps);
