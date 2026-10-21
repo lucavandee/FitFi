@@ -6,7 +6,6 @@
  * en draait de engine; deze module bepaalt de antwoorden per combinatie en
  * kiest uit de runs een gevarieerde set zonder dubbele outfits.
  */
-import type { Outfit } from "@/engine/types";
 
 export interface Combinatie {
   geslacht: "female" | "male";
@@ -34,8 +33,11 @@ export function antwoordenVoor(c: Combinatie, budgetMax = 250): Record<string, u
   };
 }
 
+/** Alles met producten die een id hebben: een engine-outfit of een eigen record. */
+type MetProducten = { products: ReadonlyArray<{ id: unknown }> };
+
 /** Een outfit is zijn set producten, ongeacht de volgorde. */
-export function outfitSleutel(o: Pick<Outfit, "products">): string {
+export function outfitSleutel(o: MetProducten): string {
   return o.products
     .map((p) => String(p.id))
     .sort()
@@ -47,14 +49,14 @@ export function outfitSleutel(o: Pick<Outfit, "products">): string {
  * set die al gekeurd is, en geen product dat al `maxPerProduct` keer voorkomt
  * (anders is de halve bibliotheek dezelfde jas).
  */
-export function kiesKandidaten(
-  runs: Outfit[][],
+export function kiesKandidaten<T extends MetProducten>(
+  runs: T[][],
   opties: { max: number; maxPerProduct?: number; alGekeurd?: Set<string> }
-): Outfit[] {
+): T[] {
   const maxPerProduct = opties.maxPerProduct ?? 3;
   const gezien = new Set(opties.alGekeurd ?? []);
   const perProduct = new Map<string, number>();
-  const uit: Outfit[] = [];
+  const uit: T[] = [];
   // Om en om uit de runs, zodat elke run (elk zaad) meedoet.
   const langste = Math.max(0, ...runs.map((r) => r.length));
   for (let i = 0; i < langste && uit.length < opties.max; i++) {
