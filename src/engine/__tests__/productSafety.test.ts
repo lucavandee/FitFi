@@ -135,6 +135,19 @@ describe('vangnet: doelgroepkleding', () => {
   });
 });
 
+describe('vangnet: tassen voor een baby (pool 21 okt 2026)', () => {
+  it('weigert een luiertas en een luieretui', () => {
+    expect(p('H & M - Luiertas van mousseline - Lichtbeige', 'accessory')).toEqual({ ok: false, reden: 'doelgroep' });
+    expect(p('H & M - Luiertas van bouclé - Roomwit', 'accessory').ok).toBe(false);
+    expect(p('H & M - Corduroy luieretui - Lichtbeige', 'accessory').ok).toBe(false);
+  });
+
+  it('laat gewone tassen van dezelfde stof staan', () => {
+    expect(p('H & M - Shopper van bouclé - Roomwit', 'accessory').ok).toBe(true);
+    expect(p('H & M - Corduroy schoudertas - Lichtbeige', 'accessory').ok).toBe(true);
+  });
+});
+
 describe('vangnet: kleding in de accessoire-sleuf', () => {
   it('weigert een broek die als accessoire getagd staat', () => {
     for (const naam of [
