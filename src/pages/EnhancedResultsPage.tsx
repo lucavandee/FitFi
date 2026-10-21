@@ -46,8 +46,8 @@ import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
 import { ARCHETYPE_WEERGAVE, archetypeSleutelVan } from "@/config/archetypeMapping";
 import { RapportOmslag } from "@/components/results/v2/RapportOmslag";
+import { OutfitSpread, type SpreadStuk } from "@/components/results/v2/OutfitSpread";
 import OutfitCard from "@/components/outfits/OutfitCard";
-import { OutfitPreviewCard } from "@/components/results/OutfitPreviewCard";
 import { openProductLink } from "@/utils/affiliate";
 import AffiliateDisclosureNote from "@/components/legal/AffiliateDisclosureNote";
 import { getColorPalette } from "@/data/colorPalettes";
@@ -764,30 +764,19 @@ export default function EnhancedResultsPage() {
         </section>
       )}
 
-      {/* Top outfits voor jou — direct na de hero */}
+      {/* Drie outfits als spreads, direct na de omslag */}
       {hasCompletedQuiz && (
         <section className="pt-12 md:pt-16 pb-12 sm:pb-16 bg-[#FAFAF8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <AnimatedSection>
-                <div className="text-center mb-10">
-                  <p className="text-xs font-semibold tracking-[1.5px] uppercase text-[#A85740] mb-3">
-                    Jouw top outfits
-                  </p>
-                  <h2
-                    style={{
-                      fontFamily: "'Instrument Serif', Georgia, serif",
-                      fontStyle: "italic",
-                      fontSize: "clamp(28px, 5vw, 40px)",
-                      fontWeight: 400,
-                      color: "#1A1A1A",
-                      lineHeight: 1.15,
-                    }}
-                  >
-                    Direct aan de slag
+                <div className="mb-12">
+                  <p className="text-sm font-medium text-[#A85740]">Outfits</p>
+                  <h2 className="mt-3 text-2xl font-bold leading-snug text-[#1A1A1A] md:text-3xl">
+                    Drie outfits om mee te beginnen
                   </h2>
-                  <p className="text-base text-[#6E6E6E] mt-2">
-                    Outfits samengesteld op basis van jouw stijlprofiel
+                  <p className="mt-4 max-w-prose text-base leading-relaxed text-[#4A4A4A]">
+                    Samengesteld uit je stijl, je kleuren en je gelegenheden. De rest staat onder Outfits.
                   </p>
                 </div>
               </AnimatedSection>
@@ -806,7 +795,7 @@ export default function EnhancedResultsPage() {
                 </div>
               ) : displayOutfits.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-16 md:space-y-24">
                     {(() => {
                       const top3 = [...displayOutfits]
                         .sort((a, b) => {
@@ -818,66 +807,47 @@ export default function EnhancedResultsPage() {
 
                       return top3.map((outfit, idx) => {
                         const id = 'id' in outfit ? outfit.id : `seed-${idx}`;
-                        const title = (outfit as any).name || (outfit as any).title || `Outfit ${idx + 1}`;
-                        const products = Array.isArray((outfit as any).products)
+                        const kaart = kaartGegevens(outfit as any, generateOutfitDescription(archetypeName, idx, top3.length));
+                        const stukken: SpreadStuk[] = Array.isArray((outfit as any).products)
                           ? (outfit as any).products.map((p: any, pIdx: number) => ({
-                              id: p.id || `p-${idx}-${pIdx}`,
-                              name: p.name || p.title || 'Product',
-                              brand: p.brand,
-                              imageUrl: p.imageUrl || p.image_url || p.image || '',
-                              productUrl: p.productUrl || p.product_url || p.url,
-                              affiliateUrl: p.affiliateUrl || p.affiliate_url,
+                              id: String(p.id || `p-${idx}-${pIdx}`),
+                              naam: p.name || p.title || 'Product',
+                              merk: p.brand || p.retailer || undefined,
+                              beeld: p.imageUrl || p.image_url || p.image || undefined,
+                              prijs: typeof p.price === 'number' ? p.price : parseFloat(String(p.price ?? '')) || null,
                             }))
                           : [];
 
-                        const pieces = Array.isArray((outfit as any).pieces)
-                          ? (outfit as any).pieces
-                          : [];
-
-                        // Build description: "Mix van brand1, brand2 en brand3"
-                        const brands = products
-                          .map((p: any) => p.brand)
-                          .filter((b: any): b is string => !!b && b.trim().length > 0);
-                        const uniqueBrands = [...new Set(brands)].slice(0, 3);
-                        let shortDesc = '';
-                        if (uniqueBrands.length >= 2) {
-                          const last = uniqueBrands.pop();
-                          shortDesc = `Mix van ${uniqueBrands.join(', ')} en ${last}`;
-                        } else if (uniqueBrands.length === 1) {
-                          shortDesc = `Van ${uniqueBrands[0]}`;
-                        } else {
-                          // Fallback to vibe for seed outfits
-                          shortDesc = (outfit as any).vibe || (outfit as any).notes || '';
-                        }
-
-                        const hasShoppableProducts = products.some(
-                          (p: any) => p.productUrl || p.affiliateUrl
-                        );
-
                         return (
-                          <AnimatedSection key={String(id)} delay={idx * 0.08}>
-                            <OutfitPreviewCard
-                              id={String(id)}
-                              title={title}
-                              description={shortDesc}
-                              products={products}
-                              pieces={pieces}
-                              onShopClick={
-                                hasShoppableProducts
-                                  ? () => {
-                                      setActiveTab('outfits');
-                                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }
-                                  : undefined
-                              }
-                            />
-                            <OutfitRatingButtons
-                              key={profileHash ?? 'geen-hash'}
-                              outfitId={String(id)}
-                              productIds={productIdsVan(outfit)}
-                              profileHash={profileHash}
-                              userId={(user as any)?.id ?? null}
-                            />
+                          <AnimatedSection key={String(id)}>
+                            <OutfitSpread
+                              nummer={idx + 1}
+                              label={kaart.label}
+                              titel={kaart.titel}
+                              uitleg={kaart.uitleg}
+                              stukken={stukken}
+                              omgedraaid={idx % 2 === 1}
+                              onBekijk={() => {
+                                track("outfit_card_click", {
+                                  outfit_id: String(id),
+                                  outfit_title: kaart.titel,
+                                  outfit_index: idx,
+                                  occasion: kaart.label,
+                                  archetype: archetypeName,
+                                  shoppable_product_count: stukken.length,
+                                  source: "spread",
+                                });
+                                setSelectedOutfit(outfit);
+                              }}
+                            >
+                              <OutfitRatingButtons
+                                key={profileHash ?? 'geen-hash'}
+                                outfitId={String(id)}
+                                productIds={productIdsVan(outfit)}
+                                profileHash={profileHash}
+                                userId={(user as any)?.id ?? null}
+                              />
+                            </OutfitSpread>
                           </AnimatedSection>
                         );
                       });

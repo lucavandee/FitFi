@@ -120,7 +120,7 @@ export const LANDING_COPY = {
             "Kleurpalet, stijlprofiel en outfits met links naar winkels.",
             { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "<ColorPaletteSection" },
             { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "StyleProfileGenerator.generateStyleProfile(" },
-            { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "affiliateUrl: p.affiliateUrl || p.affiliate_url," },
+            { bestand: "src/components/results/OutfitDetailModal.tsx", zoek: "const opened = await openProductLink({" },
           ),
           zin("Hiervoor maak je een gratis account.", {
             bestand: "src/App.tsx",
