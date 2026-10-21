@@ -162,8 +162,10 @@ export function extractColors(title: string, colorPrimary: string, description: 
     orange: "orange", khaki: "khaki", camel: "camel", gold: "gold",
   };
   const text = (title + " " + description).toLowerCase();
+  // Alleen als los woord: "red" zat anders in "Flared", "brede" en
+  // "embroidered", en een blauwe jeans kreeg rood als tweede kleur (21 okt 2026).
   Object.entries(colorMap).forEach(([key, val]) => {
-    if (text.includes(key) && !colors.includes(val)) colors.push(val);
+    if (new RegExp(`\\b${key}\\b`).test(text) && !colors.includes(val)) colors.push(val);
   });
   return colors.length > 0 ? colors : ["unknown"];
 }
