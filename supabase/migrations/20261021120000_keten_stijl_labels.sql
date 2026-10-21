@@ -69,6 +69,10 @@ security invoker
 set search_path = public, extensions
 set statement_timeout = '5s'
 as $$
+  -- Eerst de gelabelde ID's, dan alleen die via de sleutel ophalen. Onder
+  -- row-level security schat de planner de aantallen niet goed en begon hij
+  -- anders bij product_attributes (43.672 rijen voor dames, 131.000 gelezen
+  -- blokken, 5 s time-out); met "= any(lijst)" zijn het er een paar duizend.
   with uit as (
     select coalesce(array_agg(r.retailer), '{}'::text[]) as winkels
     from keten_retailer_regels r
@@ -95,10 +99,18 @@ as $$
         'stijlen', l.stijlen,
         'spoor', l.spoor
       ) as attrs
-    from keten_stijl_labels l
-    join product_attributes pa on pa.product_id = l.product_id
+    from product_attributes pa
+    join keten_stijl_labels l on l.product_id = pa.product_id
     cross join uit
-    where l.stijlen && p_stijlen
+    -- Hooguit 600 gelabelde producten per aanroep, in een vaste mengvolgorde
+    -- per bezoeker: genoeg voor 30 per categorie, en een koude cache leest dan
+    -- geen 2.000 verspreide rijen (casual: 6,6 s koud).
+    where pa.product_id = any(array(
+        select l2.product_id from keten_stijl_labels l2
+        where l2.stijlen && p_stijlen
+        order by md5(l2.product_id::text || ':' || p_zaad::text)
+        limit 600
+      ))
       and pa.product_id = pa.canonical_id
       and pa.is_fashion
       and pa.in_stock
@@ -107,18 +119,22 @@ as $$
       and pa.price between p_budget_min and p_budget_max
       and (pa.retailer is null or not (pa.retailer = any(uit.winkels)))
   ),
-  gerangschikt as (
-    select b.*,
-           row_number() over (
-             partition by b.category
-             order by b.overlap desc, md5(b.product_id::text || ':' || p_zaad::text)
-           ) as rn
-    from basis b
+  gekozen as materialized (
+    select b.*
+    from (
+      select b.*,
+             row_number() over (
+               partition by b.category
+               order by b.overlap desc, md5(b.product_id::text || ':' || p_zaad::text)
+             ) as rn
+      from basis b
+    ) b
+    where b.rn <= least(60, greatest(1, coalesce(p_per_category, 20)))
   )
   select g.product_id, g.category, g.overlap, g.attrs, k.product
-  from gerangschikt g
+  from gekozen g
   join keten_kandidaat_product k on k.product_id = g.product_id
-  where g.rn <= least(60, greatest(1, coalesce(p_per_category, 20)))
+  where k.product_id = any((select array_agg(g2.product_id) from gekozen g2)::uuid[])
   order by g.category, g.rn;
 $$;
 
