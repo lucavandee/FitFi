@@ -95,7 +95,7 @@ export default function HeroProduct() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut", delay: 1 + i * 0.15 }}
               >
-                <Packshot stuk={stuk} sizes="(min-width: 1024px) 160px, 30vw" laden="eager" />
+                <Packshot stuk={stuk} sizes="(min-width: 1024px) 160px, 30vw" />
               </motion.li>
             ))}
           </ul>

@@ -15,15 +15,24 @@ const geteld = new Set<TelGebeurtenis>();
 export function tel(gebeurtenis: TelGebeurtenis): void {
   if (geteld.has(gebeurtenis)) return;
   geteld.add(gebeurtenis);
-  try {
-    const client = supabase();
-    if (!client) return;
-    void client.rpc("tel_gebeurtenis", { p_gebeurtenis: gebeurtenis }).then(
-      () => undefined,
-      () => undefined,
-    );
-  } catch {
-    // stil
+  const verstuur = () => {
+    try {
+      const client = supabase();
+      if (!client) return;
+      void client.rpc("tel_gebeurtenis", { p_gebeurtenis: gebeurtenis }).then(
+        () => undefined,
+        () => undefined,
+      );
+    } catch {
+      // stil
+    }
+  };
+  // Pas als de browser niets anders te doen heeft: de telling mag de eerste
+  // weergave niet vertragen (op de homepage telde hij mee in de LCP).
+  if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    window.requestIdleCallback(verstuur, { timeout: 3000 });
+  } else {
+    setTimeout(verstuur, 0);
   }
 }
 
