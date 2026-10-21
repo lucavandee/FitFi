@@ -148,6 +148,27 @@ describe('vangnet: tassen voor een baby (pool 21 okt 2026)', () => {
   });
 });
 
+describe('vangnet: kleding met een sjaal in de accessoire-sleuf (21 okt 2026)', () => {
+  it('weigert kledingstukken die om de sjaal als accessoire staan', () => {
+    for (const naam of [
+      'H & M - Capribroek met sjaal - Zwart',
+      'H & M - Caprilegging met sjaaldetail - Zwart',
+      'H & M - Overhemdblouse met sjaal - Wit',
+      'H & M - Jasje van twill met driehoekige sjaal - Lichtbeige',
+      'H & M - Satijnen top met sjaal - Zwart',
+    ]) {
+      expect(p(naam, 'accessory'), naam).toEqual({ ok: false, reden: 'kleding-als-accessoire' });
+    }
+  });
+
+  it('laat een tas met sjaal-look, een broekriem en merknamen met JEANS staan', () => {
+    expect(p('H & M - Schoudertas met sjaal-look - Lichtbeige', 'accessory').ok).toBe(true);
+    expect(p('H & M - Leren broekriem - Zwart', 'accessory').ok).toBe(true);
+    expect(p('Neck Scarf VERSACE JEANS COUTURE Woman color Black', 'accessory').ok).toBe(true);
+    expect(p('Scarf COMME DES GARÇONS SHIRT Men color Red', 'accessory').ok).toBe(true);
+  });
+});
+
 describe('vangnet: kleding in de accessoire-sleuf', () => {
   it('weigert een broek die als accessoire getagd staat', () => {
     for (const naam of [
