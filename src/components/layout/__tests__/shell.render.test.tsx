@@ -100,14 +100,16 @@ describe("Footer (F1 en F2)", () => {
     expect(html).toMatch(/<a [^>]*href="https:\/\/x\.com\/fitfi_ai"[^>]*aria-label="Volg FitFi op X"[^>]*>[\s\S]*?>X<\/span>/);
   });
 
-  it("op / geen CTA-strook", () => {
-    const html = render("/", <Footer />);
-    expect(linksMetTekst(html, "Begin gratis")).toEqual([]);
-    expect(html).not.toContain("Ontdek jouw stijl");
+  it("geen CTA-strook waar de pagina zelf al met een knop naar de quiz eindigt", () => {
+    for (const pad of ["/", "/prijzen", "/hoe-het-werkt", "/veelgestelde-vragen", "/results/preview"]) {
+      const html = render(pad, <Footer />);
+      expect(linksMetTekst(html, "Begin gratis")).toEqual([]);
+      expect(html).not.toContain("Ontdek jouw stijl");
+    }
   });
 
   it("elders opent de CTA-strook de quiz, onder een kop in de sans", () => {
-    for (const pad of ["/prijzen", "/hoe-het-werkt", "/blog"]) {
+    for (const pad of ["/blog", "/over-ons", "/contact"]) {
       const html = render(pad, <Footer />);
       expect(linksMetTekst(html, "Begin gratis")).toEqual(["/onboarding"]);
       expect(html).toContain("Ontdek jouw stijl");
@@ -115,7 +117,7 @@ describe("Footer (F1 en F2)", () => {
   });
 
   it("de kop van de CTA-strook is een h2, geen p met kopopmaak (axe p-as-heading)", () => {
-    const html = render("/prijzen", <Footer />);
+    const html = render("/blog", <Footer />);
     expect(html).toMatch(/<h2\b[^>]*>\s*Ontdek jouw stijl\s*<\/h2>/);
   });
 
@@ -136,7 +138,7 @@ describe("Footer (F1 en F2)", () => {
 
   it("geen CTA-strook voor wie ingelogd is", () => {
     gebruiker.user = { name: "Test" };
-    expect(linksMetTekst(render("/prijzen", <Footer />), "Begin gratis")).toEqual([]);
+    expect(linksMetTekst(render("/blog", <Footer />), "Begin gratis")).toEqual([]);
   });
 
   it("geen serif, kapitalen, terracotta tekst, GDPR- of SSL-pil; de gewone container", () => {

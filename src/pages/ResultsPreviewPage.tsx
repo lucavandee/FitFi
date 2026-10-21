@@ -4,25 +4,86 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight, Sparkles, Check, Info, Share2 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import toast from "react-hot-toast";
-import { getSeedOutfits } from "@/lib/quiz/seeds";
+import { toonNaam } from "@/utils/productNaam";
 import { COLOR_PALETTES, groupColorsByCategory } from "@/data/colorPalettes";
 import type { ColorProfile } from "@/lib/quiz/types";
 
+/**
+ * Het voorbeeldprofiel hoort bij de outfits hieronder: zwart en gebroken wit
+ * met veel contrast, dus het winterpalet. Tot 21 oktober 2026 stond hier
+ * "Smart Casual" met een zomerpalet, en toonde de pagina zes outfits als
+ * lege gekleurde vlakjes met namen zonder product.
+ */
 const DEMO_COLOR_PROFILE: ColorProfile = {
   temperature: "neutraal",
   value: "medium",
-  contrast: "medium",
-  chroma: "zacht",
-  season: "zomer",
-  paletteName: "Soft Cool Tonals",
+  contrast: "hoog",
+  chroma: "helder",
+  season: "winter",
+  paletteName: "Clear Winter",
   notes: [
-    "Tonal outfits met zachte texturen werken goed voor jou.",
-    "Vermijd harde contrasten en felle kleuren.",
-    "Zachte beige, grijs en navy zijn ideaal voor je basis."
+    "Zwart en gebroken wit samen geven het contrast dat bij je past.",
+    "Een kleur per outfit, met wol, bouclé en leer als variatie.",
+    "Camel en oranje zijn te warm naast je gezicht.",
   ],
 };
 
-const DEMO_ARCHETYPE = "Smart Casual";
+const DEMO_ARCHETYPE = "Minimalistisch";
+
+interface VoorbeeldStuk {
+  naam: string;
+  merk: string;
+  prijs: number;
+  beeld: string;
+}
+
+interface VoorbeeldOutfit {
+  titel: string;
+  gelegenheid: string;
+  uitleg: string;
+  stukken: VoorbeeldStuk[];
+}
+
+/**
+ * Twee outfits zoals FitFi ze samenstelde voor het profiel "vrouw,
+ * minimalistisch" op 21 oktober 2026, met de prijzen van die dag. Gekozen
+ * omdat de stijlcontrole ze goedkeurde (stijl-eindtoets van 21 oktober, 18:11)
+ * en omdat exact vaststaat welke producten het waren; van twee andere
+ * goedgekeurde outfits bestonden meerdere producten met dezelfde naam.
+ *
+ * De productfoto's zijn de feedfoto's van H&M, ongewijzigd (Daisycon art.
+ * 2.6): ze staan op hun eigen lichtgrijze ondergrond (#F9F9F9) in een kader
+ * in gebroken wit uit het palet (#FAFAF8, een tint verschil, niet te zien)
+ * met dezelfde verhouding (2:3), zonder bijsnijden. De
+ * imwidth-parameter vraagt een kleinere versie bij H&M zelf op.
+ */
+const VOORBEELD_OUTFITS: VoorbeeldOutfit[] = [
+  {
+    titel: "Lange wollen jurk met laarsjes",
+    gelegenheid: "Werk",
+    uitleg: "Zwart van boven tot onder. Wol en leer zorgen voor de variatie, de hak maakt het af.",
+    stukken: [
+      { naam: "H & M - Lange wollen jurk - Zwart", merk: "H&M", prijs: 69.99, beeld: "https://image.hm.com/assets/hm/d7/d2/d7d20cd854bdbfe9868aafcc03b6d51a0f001b33.jpg" },
+      { naam: "H & M - Leren laarsjes met hak - Zwart", merk: "H&M", prijs: 99, beeld: "https://image.hm.com/assets/hm/e6/81/e68127752fd8a540a0f916acdef8239d14994ccb.jpg" },
+    ],
+  },
+  {
+    titel: "Bouclé jurk met blazer",
+    gelegenheid: "Werk",
+    uitleg: "Jurk en blazer in hetzelfde lichtbeige vormen één vlak. De zwarte enkellaarsjes geven het contrast.",
+    stukken: [
+      { naam: "H & M - Doorknoopjurk van geweven bouclégaren - Lichtbeige", merk: "H&M", prijs: 49.99, beeld: "https://image.hm.com/assets/hm/39/7c/397cb3984fee9142654b344cfaec21bfa91999d8.jpg" },
+      { naam: "H & M - Dressed blazer - Lichtbeige", merk: "H&M", prijs: 49.99, beeld: "https://image.hm.com/assets/hm/82/92/8292c2be4c20739cd4f6af83a6af03bc13de3910.jpg" },
+      { naam: "H & M - Leren enkellaarsjes - Zwart", merk: "H&M", prijs: 129, beeld: "https://image.hm.com/assets/hm/82/3a/823a35f35686a37324e466270f52608dc610a312.jpg" },
+    ],
+  },
+];
+
+const euro = (bedrag: number) =>
+  bedrag.toLocaleString("nl-NL", { style: "currency", currency: "EUR" });
+
+/** Een kleinere versie bij H&M zelf; de foto blijft dezelfde. */
+const formaat = (url: string, breedte: number) => `${url}${url.includes("?") ? "&" : "?"}imwidth=${breedte}`;
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -60,10 +121,6 @@ export default function ResultsPreviewPage() {
   const [searchParams] = useSearchParams();
   const userName = searchParams.get('name') || searchParams.get('naam');
   const isPersonalized = !!userName;
-
-  const seeds = React.useMemo(() => {
-    return getSeedOutfits(DEMO_COLOR_PROFILE, DEMO_ARCHETYPE);
-  }, []);
 
   const seasonPalette = COLOR_PALETTES[DEMO_COLOR_PROFILE.season];
   const groupedColors = seasonPalette ? groupColorsByCategory(seasonPalette.colors) : null;
@@ -121,13 +178,6 @@ export default function ResultsPreviewPage() {
           </span>
           <span className="sm:hidden">Voorbeeld rapport</span>
         </div>
-        <NavLink
-          to="/onboarding"
-          className="bg-[#A85740] hover:bg-[#9A503B] text-white text-[13px] font-semibold py-2.5 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200 flex-shrink-0"
-        >
-          <span>Begin gratis</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </NavLink>
       </div>
 
       {/* 2. Page Hero */}
@@ -314,81 +364,67 @@ export default function ResultsPreviewPage() {
         </div>
       </section>
 
-      {/* 5. Outfit-aanbevelingen */}
-      <section className="py-20 bg-[#F5F0EB]">
+      {/* 5. Outfit-aanbevelingen: echte producten, zie VOORBEELD_OUTFITS */}
+      <section className="py-20 md:py-24 bg-[#F5F0EB]">
         <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <div className="text-center mb-12">
               <h2 className="font-serif italic text-[44px] text-[#1A1A1A] mb-3">
                 Outfit-aanbevelingen
               </h2>
-              <p className="text-base text-[#4A4A4A]">
-                Deze looks zijn samengesteld voor jouw stijlprofiel
+              <p className="text-base text-[#4A4A4A] max-w-prose mx-auto">
+                Twee outfits zoals FitFi ze samenstelde voor dit profiel, met de prijzen van 21 oktober 2026.
               </p>
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {seeds.slice(0, 6).map((outfit, idx) => (
-              <FadeIn key={idx} delay={idx * 0.12}>
-                <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden hover:border-[#A85740] hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] transition-all duration-300 group">
-                  {/* Image area */}
-                  <div className="aspect-[3/4] overflow-hidden relative">
-                    {outfit.pieces && outfit.pieces.length > 0 ? (
-                      <div className="w-full h-full bg-gradient-to-br from-[#D4C5B5] to-[#C0B0A0] flex flex-col items-center justify-center gap-3 p-6">
-                        {outfit.pieces.slice(0, 3).map((piece, pieceIdx) => (
-                          <div key={pieceIdx} className="flex flex-col items-center">
-                            <div
-                              className="w-16 h-16 rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] border-2 border-white/80"
-                              style={{ backgroundColor: piece.color }}
-                            />
-                            <span className="text-[11px] font-medium text-white/80 capitalize mt-1.5">
-                              {piece.label}
-                            </span>
-                          </div>
-                        ))}
+          <div className="space-y-6">
+            {VOORBEELD_OUTFITS.map((outfit, idx) => {
+              const totaal = outfit.stukken.reduce((som, stuk) => som + stuk.prijs, 0);
+              return (
+                <FadeIn key={outfit.titel} delay={idx * 0.12}>
+                  <article className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 mb-6">
+                      <div>
+                        <p className="text-sm font-medium text-[#A85740] mb-1">{outfit.gelegenheid}</p>
+                        <h3 className="text-xl md:text-2xl font-semibold text-[#1A1A1A]">{outfit.titel}</h3>
                       </div>
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#D4C5B5] to-[#C0B0A0] flex flex-col items-center justify-center gap-3 p-6">
-                        <Sparkles className="w-10 h-10 text-white/60" />
-                        <p className="text-sm font-medium text-white/70">{outfit.vibe || "Outfit"}</p>
-                      </div>
-                    )}
-
-                    {/* Category badge */}
-                    {outfit.tags && outfit.tags.length > 0 && (
-                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[0.5px] uppercase text-[#1A1A1A]">
-                        {outfit.vibe}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card info */}
-                  <div className="p-6">
-                    <h3 className="text-[15px] font-semibold text-[#1A1A1A] mb-1">
-                      {outfit.title || `Outfit ${idx + 1}`}
-                    </h3>
-                    <p className="text-[13px] text-[#6E6E6E] leading-[1.5] mb-3 line-clamp-2">
-                      {outfit.notes || "Een stijlvolle combinatie die past bij jouw profiel."}
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#A85740]">
-                        <div className="w-4 h-4 rounded-full bg-[#F4E8E3] flex items-center justify-center">
-                          <Check className="w-2.5 h-2.5 text-[#A85740]" />
-                        </div>
-                        <span>{outfit.vibe || "Match"}</span>
-                      </div>
-                      {outfit.tags && outfit.tags.length > 1 && (
-                        <span className="px-2.5 py-1 rounded-full bg-[#F5F0EB] text-[11px] font-medium text-[#4A4A4A]">
-                          {outfit.tags[1]}
-                        </span>
-                      )}
+                      <p className="text-base font-semibold text-[#1A1A1A]">{euro(totaal)}</p>
                     </div>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
+                    <p className="text-base text-[#4A4A4A] leading-relaxed max-w-prose mb-6">{outfit.uitleg}</p>
+
+                    <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                      {outfit.stukken.map((stuk) => (
+                        <li key={stuk.beeld}>
+                          <div className="aspect-[2/3] rounded-xl bg-[#FAFAF8] overflow-hidden">
+                            <img
+                              src={formaat(stuk.beeld, 600)}
+                              srcSet={`${formaat(stuk.beeld, 400)} 400w, ${formaat(stuk.beeld, 800)} 800w`}
+                              sizes="(min-width: 768px) 260px, 45vw"
+                              alt={toonNaam({ name: stuk.naam, brand: stuk.merk })}
+                              className="w-full h-full object-contain"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
+                          <p className="mt-3 text-sm font-medium text-[#1A1A1A] leading-snug">
+                            {toonNaam({ name: stuk.naam, brand: stuk.merk })}
+                          </p>
+                          <p className="text-sm text-[#4A4A4A]">
+                            {stuk.merk} · {euro(stuk.prijs)}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                </FadeIn>
+              );
+            })}
           </div>
+
+          <p className="mt-6 text-sm text-[#6E6E6E] text-center max-w-prose mx-auto">
+            In je eigen rapport linkt elk stuk naar de winkel. Voorraad en prijzen wisselen per dag.
+          </p>
 
           {/* Share button */}
           <div className="text-center mt-10">
