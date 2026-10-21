@@ -14,7 +14,7 @@ import { composeOutfits } from './composer';
 import { diversifyOutfits } from './diversify';
 import { applyVisualCoherence } from './scoring/visualCoherence';
 import { getCurrentSeason } from './scoring/season';
-import { outfitBreuken, productBreuk, voorkeurVoorGelabeld } from './stijlPoort';
+import { outfitBreuken, productBreuk, voorkeurVoorGelabeld, zonderBotsendAccessoire } from './stijlPoort';
 import { outfitTitel, outfitUitleg } from './outfitTekst';
 
 const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }> = {
@@ -218,6 +218,13 @@ export function runEngineV2(
     seed,
     season,
   });
+
+  // Accessoires die botsen (riem in een andere kleurfamilie dan nette schoenen,
+  // stropdas zonder overhemd en colbert) vallen uit de outfit; de outfit blijft.
+  for (const cand of rawCandidates) {
+    const houd = new Set(zonderBotsendAccessoire(cand.products.map((p) => p.product)).map((p) => p.id));
+    cand.products = cand.products.filter((p) => houd.has(p.product.id));
+  }
 
   // Stijlpoort, deel 2: regels over de outfit als geheel (bij licht hooguit
   // een donker stuk). Wat zakt, komt niet in de uitslag; liever minder

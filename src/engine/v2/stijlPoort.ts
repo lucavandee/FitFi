@@ -133,3 +133,50 @@ export function outfitBreuken(products: Product[], a: PoortAntwoorden): string[]
   }
   return breuken;
 }
+
+// ---------------------------------------------------------------------------
+// Accessoires die botsen
+// ---------------------------------------------------------------------------
+
+const RIEM_RE = /\b(riem|ceintuur|belt)\b/i;
+const STROPDAS_RE = /\b(stropdas|tie|vlinderdas)\b/i;
+const OVERHEMD_RE = /overhemd|\bshirt\b.*(heren|men)|oxford|popeline/i;
+const COLBERT_RE = /colbert|blazer|jasje|smoking|pak\b/i;
+const NETTE_SCHOEN_RE = /loafer|derby|blucher|blücher|veter|brogue|oxford|chelsea|laars|boots|pump|hak|geklede|mocassin/i;
+
+/** Kleurfamilie voor riem en schoenen; null als de kleur niet te plaatsen is. */
+function familie(p: Product): "zwart" | "bruin" | "licht" | "bont" | null {
+  const k = String((p.colors ?? [])[0] ?? "").toLowerCase();
+  if (!k) return null;
+  if (/multi|print|dessin|gestreept|ruit/.test(k)) return "bont";
+  if (/zwart|black|antraciet|donkergrijs|grijs|grey|gray/.test(k)) return "zwart";
+  if (/bruin|brown|cognac|camel|tan\b|chocolade/.test(k)) return "bruin";
+  if (/beige|taupe|crème|creme|wit|white|naturel|ecru|zand/.test(k)) return "licht";
+  return null;
+}
+
+/**
+ * De outfit zonder accessoires die botsen. Een riem bij nette schoenen hoort in
+ * dezelfde kleurfamilie (bij sneakers mag alles); een veelkleurige riem bij
+ * nette schoenen valt altijd weg. Een stropdas blijft alleen bij een overhemd
+ * met colbert. De outfit zelf blijft compleet: een accessoire is nooit
+ * verplicht.
+ */
+export function zonderBotsendAccessoire(products: Product[]): Product[] {
+  const schoen = products.find((p) => categorie(p) === "footwear");
+  const netteSchoen = schoen && !isSneaker(schoen) && NETTE_SCHOEN_RE.test(schoen.name ?? "");
+  const metOverhemd = products.some((p) => categorie(p) === "top" && OVERHEMD_RE.test(p.name ?? ""));
+  const metColbert = products.some((p) => ["outerwear", "top"].includes(categorie(p)) && COLBERT_RE.test(p.name ?? ""));
+  return products.filter((p) => {
+    if (categorie(p) !== "accessory") return true;
+    const naam = p.name ?? "";
+    if (RIEM_RE.test(naam) && netteSchoen) {
+      const riem = familie(p);
+      const schoenFamilie = familie(schoen!);
+      if (riem === "bont") return false;
+      if (riem && schoenFamilie && riem !== schoenFamilie) return false;
+    }
+    if (STROPDAS_RE.test(naam) && !(metOverhemd && metColbert)) return false;
+    return true;
+  });
+}
