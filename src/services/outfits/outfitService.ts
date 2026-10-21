@@ -52,9 +52,10 @@ class OutfitService {
    * canoniek, draagbaar, voorraad, gender en budget, en gerangschikt op
    * 0,5 stijlassen en 0,3 gelegenheid. Sinds 15 oktober 2026 gaan pasvorm
    * en prints uit de quiz mee als assen (naarAssen); daarvoor koos het
-   * product-ID. Likes (de overige 0,2) gaan niet mee: met negen likes liep
-   * de functie gemeten 4 van 4 keer in de timeout van 8 s, omdat ze dan de
-   * embedding van elk kandidaatproduct van schijf leest.
+   * product-ID. Sinds 21 oktober 2026 gaan ook de oordelen uit de
+   * kalibratiestap mee (de overige 0,2, calibrationRatings): de functie weegt
+   * ze op attributen in plaats van embeddings en blijft zo onder de 0,4 s;
+   * met embeddings liep hij met negen likes 4 van 4 keer in de timeout.
    *
    * Een string als eerste argument wordt gelezen als gender; dat is de vorm
    * die calibrationOutfitsV2 gebruikt.

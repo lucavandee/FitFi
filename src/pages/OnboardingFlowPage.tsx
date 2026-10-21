@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { getSessionId, resetSessionId } from '@/utils/sessionId';
 import { antwoordenVoorDatabase, isOpslagPad } from '@/lib/quiz/selfieFoto';
+import type { KalibratieBeoordelingen } from '@/services/outfits/kandidaten';
 
 type QuizAnswers = {
   gender?: string;
@@ -42,6 +43,8 @@ type QuizAnswers = {
   prints?: string;
   visualPreferencesCompleted?: boolean;
   calibrationCompleted?: boolean;
+  /** Stukken uit de kalibratiestap; naarKandidatenParams stuurt ze naar get_kandidaten. */
+  calibrationRatings?: KalibratieBeoordelingen;
 };
 
 type QuizPhase = 'questions' | 'swipes' | 'calibration' | 'reveal';
@@ -280,6 +283,22 @@ export default function OnboardingFlowPage() {
     });
     setAttemptedNext(false);
     track("quiz_answer", { field, step: currentStep, phase, value: value ? 'ja' : 'nee' });
+  };
+
+  // Elk oordeel uit de kalibratiestap meteen in de antwoorden, met een
+  // functionele update. handleCalibrationComplete en handleSubmit lezen de
+  // answers van hun eigen render: wat pas bij het afronden gezet wordt, haalt
+  // de opslag niet (zo komt calibrationCompleted daar nooit aan). Zonder
+  // oordelen geen sleutel, zodat de seed van wie niets beoordeelt gelijk blijft.
+  const handleKalibratieBeoordelingen = (beoordelingen: KalibratieBeoordelingen) => {
+    setAnswers(prev => {
+      const heeftOordelen = beoordelingen.liked.length > 0 || beoordelingen.disliked.length > 0;
+      if (!heeftOordelen && !prev.calibrationRatings) return prev;
+      const { calibrationRatings: _vorige, ...rest } = prev;
+      const updated: QuizAnswers = heeftOordelen ? { ...rest, calibrationRatings: beoordelingen } : rest;
+      autosave(updated, currentStep, phase);
+      return updated;
+    });
   };
 
   const handleMultiSelect = (field: string, value: string) => {
@@ -841,6 +860,7 @@ export default function OnboardingFlowPage() {
             sessionId={sessionId}
             onComplete={handleCalibrationComplete}
             onBack={handleBack}
+            onBeoordelingen={handleKalibratieBeoordelingen}
             // Alle antwoorden gaan mee. Eerder werden er vijf velden
             // uitgeknipt, waardoor maten, fit, prints, materialen, doelen en
             // het exacte budget-bereik het calibratiescherm nooit bereikten.
