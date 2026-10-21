@@ -16,7 +16,7 @@ import { execFile } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { STIJL_AGENT_VERSIE, STIJL_SLEUTELS, STUK_SOORTEN, type ProductLabel } from "../../src/keten/stijl/stijlAgent";
+import { LABEL_VERSIE, STIJL_SLEUTELS, STUK_SOORTEN, type ProductLabel } from "../../src/keten/stijl/stijlAgent";
 import { heeftVlag, leesVlag } from "./args";
 
 const argv = process.argv.slice(2);
@@ -67,7 +67,7 @@ async function main(): Promise<void> {
   const bestand = JSON.parse(readFileSync(LABELS, "utf8")) as { versie?: string; model?: string; labels: Record<string, ProductLabel> };
   const alle = Object.values(bestand.labels);
   const goed = alle.filter(geldig);
-  const bron = `${bestand.versie ?? STIJL_AGENT_VERSIE}/${bestand.model ?? "onbekend"}`.replace(/[^a-z0-9./_-]/gi, "");
+  const bron = `${bestand.versie ?? LABEL_VERSIE}/${bestand.model ?? "onbekend"}`.replace(/[^a-z0-9./_-]/gi, "");
   console.log(`${alle.length} labels, ${goed.length} geldig, bron ${bron}, ${Math.ceil(goed.length / PORTIE)} porties.`);
   if (!heeftVlag(argv, "ja")) {
     console.log("Droge run. Eerste regels van de eerste portie:\n" + sqlVoor(goed.slice(0, 2), bron));

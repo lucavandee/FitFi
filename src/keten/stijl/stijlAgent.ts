@@ -18,11 +18,17 @@
  * kalibratieset (scripts/keten/stijl/kalibratie.json): anders toetst de
  * kalibratie of de agent zijn eigen voorbeelden herkent.
  *
- * Verander je de prompt, verhoog dan STIJL_AGENT_VERSIE en draai de kalibratie
- * opnieuw (npm run keten:stijl-keur).
+ * Twee versies, een per taak. Verander je de keurprompt (of de gedeelde kennis),
+ * verhoog dan KEUR_VERSIE en draai de kalibratie opnieuw (npm run
+ * keten:stijl-keur): oordelen van een andere keurversie tellen niet mee bij het
+ * vooraf keuren (scripts/keten/stijl-sets.ts). Verander je de labelprompt (of
+ * de kennis), verhoog dan LABEL_VERSIE. Tot 21 oktober 2026 was er een
+ * gezamenlijke versie, "stijl-agent-2026-10-21-c"; beide prompts zijn sindsdien
+ * niet veranderd.
  */
 
-export const STIJL_AGENT_VERSIE = "stijl-agent-2026-10-21-c";
+export const KEUR_VERSIE = "keur-2026-10-21-c";
+export const LABEL_VERSIE = "label-2026-10-21-c";
 
 export type Oordeel = "goed" | "twijfel" | "fout";
 export type Deelscore = "ja" | "deels" | "nee";

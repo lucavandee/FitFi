@@ -23,7 +23,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import {
-  STIJL_AGENT_VERSIE,
+  KEUR_VERSIE,
   bouwKeurOpdracht,
   bouwStijlAgentPrompt,
   leesKeurAntwoord,
@@ -69,7 +69,7 @@ async function main(): Promise<void> {
   const set = JSON.parse(readFileSync(SET, "utf8")) as { versie?: string; outfits: SetOutfit[] };
   const outfits = set.outfits;
   const delen = porties(outfits, PORTIE);
-  console.log(`${STIJL_AGENT_VERSIE}, model ${MODEL}, set ${SET} (${set.versie ?? "zonder versie"})`);
+  console.log(`${KEUR_VERSIE}, model ${MODEL}, set ${SET} (${set.versie ?? "zonder versie"})`);
   console.log(`${outfits.length} outfits in ${delen.length} porties van hooguit ${PORTIE}.`);
   if (!heeftVlag(argv, "ja")) {
     console.log("Droge run: geen aanroep. Voeg --ja toe om te keuren.");
@@ -103,7 +103,7 @@ async function main(): Promise<void> {
   const r: string[] = [];
   r.push(`# Kalibratie stijl-agent, ${new Date().toISOString().slice(0, 16).replace("T", " ")}`);
   r.push("");
-  r.push(`${STIJL_AGENT_VERSIE}, model ${MODEL}, set ${set.versie ?? SET}. Equivalent ${usd.toFixed(2)} dollar op het abonnement.`);
+  r.push(`${KEUR_VERSIE}, model ${MODEL}, set ${set.versie ?? SET}. Equivalent ${usd.toFixed(2)} dollar op het abonnement.`);
   r.push("");
   r.push(`- Fout herkend: ${terechtFout.length} van ${aantalFout}`);
   r.push(`- Goed herkend: ${terechtGoed.length} van ${aantalGoed}`);
@@ -120,7 +120,7 @@ async function main(): Promise<void> {
   const stempel = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
   const pad = join(map, `stijl-kalibratie-${stempel}.md`);
   writeFileSync(pad, r.join("\n") + "\n", "utf8");
-  writeFileSync(pad.replace(/\.md$/, ".json"), JSON.stringify({ versie: STIJL_AGENT_VERSIE, model: MODEL, oordelen: Object.fromEntries(perId) }, null, 1));
+  writeFileSync(pad.replace(/\.md$/, ".json"), JSON.stringify({ versie: KEUR_VERSIE, model: MODEL, oordelen: Object.fromEntries(perId) }, null, 1));
   console.log("\n" + r.slice(0, 10).join("\n"));
   console.log(`\nRapport: ${pad}`);
   process.exit(dureFouten.length === 0 && zonder.length === 0 && fouten.length === 0 ? 0 : 1);

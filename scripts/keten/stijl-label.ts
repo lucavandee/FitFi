@@ -12,7 +12,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import {
-  STIJL_AGENT_VERSIE,
+  LABEL_VERSIE,
   bouwLabelOpdracht,
   bouwLabelPrompt,
   leesLabelAntwoord,
@@ -39,7 +39,7 @@ async function main(): Promise<void> {
     ? (JSON.parse(readFileSync(UIT, "utf8")) as { labels: Record<string, ProductLabel> }).labels
     : {};
   const open = producten.filter((p) => !bestaand[p.id]);
-  console.log(`${STIJL_AGENT_VERSIE}, model ${MODEL}: ${producten.length} producten, ${open.length} nog zonder label, porties van ${PORTIE}.`);
+  console.log(`${LABEL_VERSIE}, model ${MODEL}: ${producten.length} producten, ${open.length} nog zonder label, porties van ${PORTIE}.`);
   if (!heeftVlag(argv, "ja")) {
     console.log("Droge run: geen aanroep. Voeg --ja toe om te labelen.");
     return;
@@ -74,7 +74,7 @@ async function main(): Promise<void> {
         (r.is_error ? `, fout: ${String(r.result ?? "").slice(0, 200)}` : "")
     );
     // Na elke portie wegschrijven: een onderbreking kost dan hooguit een portie.
-    writeFileSync(UIT, JSON.stringify({ versie: STIJL_AGENT_VERSIE, model: MODEL, labels }, null, 1));
+    writeFileSync(UIT, JSON.stringify({ versie: LABEL_VERSIE, model: MODEL, labels }, null, 1));
   }
   console.log(`Klaar: ${Object.keys(labels).length} labels in ${UIT}. Equivalent ${usd.toFixed(2)} dollar op het abonnement.`);
 }

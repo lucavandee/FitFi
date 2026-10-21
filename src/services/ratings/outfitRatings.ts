@@ -24,20 +24,8 @@ export async function hashProfile(answers: Record<string, any>): Promise<string>
   return sha256Hex(stableStringify(naarOutfitBepalendeVelden(answers)));
 }
 
-/**
- * outfit_key: sha256 van de gesorteerde, ontdubbelde product-ids (spec 5.6).
- * Gooit op een lege lijst in plaats van sha256("") terug te geven: een
- * outfit zonder producten heeft geen geldige identiteit, en zonder deze
- * guard zou elke lege outfit op dezelfde sleutel uitkomen (vandaag
- * onbereikbaar vanuit de UI, maar de guard kost niets).
- */
-export async function outfitKey(productIds: string[]): Promise<string> {
-  const ids = Array.from(new Set(productIds.map(String))).sort();
-  if (ids.length === 0) {
-    throw new Error("outfitKey: geen product-ids, een outfit zonder producten heeft geen geldige sleutel");
-  }
-  return sha256Hex(ids.join(","));
-}
+/** Zie outfitKey.ts; hier opnieuw geëxporteerd voor de bestaande imports. */
+export { outfitKey } from "./outfitKey";
 
 export interface SaveOutfitRatingInput {
   profileHash: string;

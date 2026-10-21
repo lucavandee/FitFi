@@ -18,7 +18,7 @@ import { createClient } from "@supabase/supabase-js";
 import { runEngineV2 } from "../../src/engine/v2";
 import type { Outfit } from "../../src/engine/types";
 import {
-  STIJL_AGENT_VERSIE,
+  KEUR_VERSIE,
   bouwKeurOpdracht,
   bouwStijlAgentPrompt,
   leesKeurAntwoord,
@@ -129,7 +129,7 @@ async function main(): Promise<void> {
     console.log(`  gekeurd ${Math.min(i + 9, alle.length)}/${alle.length}`);
   }
 
-  const r: string[] = [`# Eindtoets stijl-agent, ${new Date().toISOString().slice(0, 16).replace("T", " ")}`, "", `${STIJL_AGENT_VERSIE}, model ${MODEL}.`, ""];
+  const r: string[] = [`# Eindtoets stijl-agent, ${new Date().toISOString().slice(0, 16).replace("T", " ")}`, "", `${KEUR_VERSIE}, model ${MODEL}.`, ""];
   let totaalGoed = 0;
   for (const p of PROFIELEN) {
     const eigen = alle.filter((x) => x.profiel === p);
