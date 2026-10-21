@@ -41,7 +41,7 @@ const SOCIAL: Array<{ href: string; label: string; Icon?: typeof Instagram; lett
  * /prijzen, /hoe-het-werkt, /veelgestelde-vragen en /results/preview twee
  * afsluiters na elkaar). Eén afsluiter per pagina.
  */
-const EIGEN_AFSLUITER = new Set(["/", "/prijzen", "/hoe-het-werkt", "/veelgestelde-vragen", "/results/preview"]);
+const EIGEN_AFSLUITER = new Set(["/", "/prijzen", "/hoe-het-werkt", "/veelgestelde-vragen", "/results/preview", "/nieuw"]);
 
 /** De container uit CLAUDE.md deel 3, zodat de footer niet naast de pagina uitlijnt. */
 const CONTAINER = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";

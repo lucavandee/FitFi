@@ -37,6 +37,8 @@ const DisclosurePage     = lazy(() => import("@/pages/DisclosurePage"));
 const OnboardingFlow     = lazy(() => import("@/pages/OnboardingFlowPage"));
 const EnhancedResults    = lazy(() => import("@/pages/EnhancedResultsPage"));
 const ResultsPreview     = lazy(() => import("@/pages/ResultsPreviewPage"));
+// Prototype van de nieuwe homepage (plan 21 okt 2026, stap 2); noindex, niet in de navigatie.
+const NieuwPage          = lazy(() => import("@/pages/NieuwPage"));
 const LoginPage          = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage       = lazy(() => import("@/pages/RegisterPage"));
 const DashboardPage      = lazy(() => import("@/pages/DashboardPage"));
@@ -204,6 +206,7 @@ function AppShell() {
                 <Route path="/account/billing" element={<RequireAuth><WithSeo.Billing /></RequireAuth>} />
                 <Route path="/results" element={<RequireAuth><RequireQuiz><WithSeo.Results /></RequireQuiz></RequireAuth>} />
                 <Route path="/results/preview" element={<WithSeo.ResultsPreview />} />
+                <Route path="/nieuw" element={<NieuwPage />} />
 
                 {/* Admin */}
                 <Route path="/admin" element={<RequireAuth><WithSeo.AdminDashboard /></RequireAuth>} />
