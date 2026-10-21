@@ -334,7 +334,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           Er zijn nu geen outfits om te beoordelen
         </h2>
         <p className="text-[#6E6E6E] mb-8">
-          Je kunt deze stap overslaan. FitFi maakt je rapport op basis van je antwoorden en je swipes.
+          Je kunt deze stap overslaan. FitFi maakt je rapport op basis van je antwoorden en je keuzes.
         </p>
         <button
           onClick={onComplete}

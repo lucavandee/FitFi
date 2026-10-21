@@ -122,15 +122,10 @@ export function PhaseTransition({ fromPhase, toPhase, onContinue }: PhaseTransit
 }
 
 /*
- * Getallen uit VisualPreferenceStepClean.tsx. Daar staan ze als niet-geëxporteerde
- * constanten; PhaseTransition.tekst.test.tsx leest ze uit die bron en faalt als
- * ze hier afwijken. Afronden kan vanaf MIN_SWIPES_TO_COMPLETE swipes, daarvoor
- * staat er "Sla deze stap over". Na ADAPT_AFTER_SWIPES swipes laadt de stap de
- * volgende beelden via loadAdaptivePhotos, en die stemt ze alleen af op je keuzes
- * als je patroon daar genoeg voor zegt (swipeAnalyzer, shouldAdapt). Vandaar "kan".
+ * Het aantal rondes van "Deze of deze?" komt uit src/data/dezeOfDeze.ts;
+ * PhaseTransition.tekst.test.tsx faalt als het hier anders staat.
  */
-const AFRONDEN_NA = 15;
-const AFSTEMMEN_NA = 7;
+const RONDES = 'zeven';
 
 /*
  * Eén stem: FitFi in de derde persoon, geen "ik" of "me" van Nova. Alleen wat de
@@ -145,15 +140,15 @@ function getTransitionContent(fromPhase: string, toPhase: string) {
   if (toPhase === 'swipes') {
     return {
       icon: Image,
-      title: 'Laten we je visuele voorkeur ontdekken',
-      description: 'Je hebt de vragen beantwoord. Nu zie je beelden van outfits. Swipe naar rechts op looks die je aanspreken, naar links op wat je minder vindt.',
+      title: 'Deze of deze?',
+      description: 'Je hebt de vragen beantwoord. Nu zie je steeds twee looks naast elkaar. Tik op de look die je zelf het liefst zou dragen.',
       expectations: [
-        `Na ${AFRONDEN_NA} swipes kun je afronden, overslaan kan ook`,
-        'Er zijn geen foute antwoorden',
-        `Na ${AFSTEMMEN_NA} swipes kan FitFi de volgende beelden afstemmen op je keuzes`,
+        `Je kiest ${RONDES} keer, overslaan kan ook`,
+        'Spreekt geen van beide je aan, dan zeg je dat',
+        'De beelden zijn met AI gemaakt; de personen zijn modellen',
       ],
       novaTip: 'Ga op je eerste indruk af. Je hoeft niet lang na te denken.',
-      ctaText: 'Start met swipen',
+      ctaText: 'Begin met kiezen',
     };
   }
 

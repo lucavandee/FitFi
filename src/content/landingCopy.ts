@@ -7,7 +7,7 @@
  * - { bestand, zoek }: de code bewijst het; de zoektekst staat letterlijk in
  *   dat bestand.
  * - { data, waarde, inTekst }: een getal uit de data (aantal quizstappen,
- *   minimum aantal swipes). inTekst is hoe het getal in de zin staat.
+ *   rondes van "Deze of deze?"). inTekst is hoe het getal in de zin staat.
  * - { data, plaatshouder }: een getal dat pas bij het renderen ingevuld wordt
  *   (N outfits uit voorbeeldoutfit.json).
  * - { meting, datum, script }: alleen te meten, niet uit de code af te lezen.
@@ -28,7 +28,7 @@ export type DataSleutel =
   | "stapGeslacht"
   | "stapKleuren"
   | "stapContrast"
-  | "minimumSwipes"
+  | "rondesDezeOfDeze"
   | "kalibratieOutfits"
   | "budgetVoorbeeldprofiel";
 
@@ -96,16 +96,17 @@ export const LANDING_COPY = {
       },
       {
         /*
-         * "Beelden", niet "foto's": de swipestap toont met AI gemaakte beelden en
-         * draagt dat label. "Minstens 15" klopte niet: 15 is alleen het punt
-         * waarop je kunt afronden, en de stap is over te slaan.
+         * "Beelden", niet "foto's": de looks zijn met AI gemaakt en dragen dat
+         * label. Tot 21 oktober 2026 stond hier "Je swipet door beelden van
+         * outfits"; nu kies je zeven keer tussen twee looks (DezeOfDeze).
          */
         titel: zin("Beelden en outfits", { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "'swipes' | 'calibration'" }),
         tekst: [
-          zin("Je swipet door beelden van outfits.", {
-            bestand: "src/components/quiz/SwipeCard.tsx",
-            zoek: "export const SWIPE_AI_LABEL = 'Beeld gemaakt met AI';",
-          }),
+          zin(
+            "Je kiest zeven keer tussen twee looks.",
+            { data: "rondesDezeOfDeze", waarde: 7, inTekst: "zeven" },
+            { bestand: "src/components/quiz/v2/DezeOfDeze.tsx", zoek: "Beelden gemaakt met AI. De personen zijn modellen." },
+          ),
           zin(
             "Daarna beoordeel je 3 outfits die FitFi voor je samenstelt.",
             { data: "kalibratieOutfits", waarde: 3, inTekst: "3" },

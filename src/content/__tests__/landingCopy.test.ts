@@ -13,6 +13,7 @@ import { quizSteps } from "@/data/quizSteps";
 import { getColorPalette } from "@/data/colorPalettes";
 import { VOORBEELDPROFIEL } from "@/content/voorbeeldprofiel";
 import { PALETSLEUTEL } from "@/content/kleurpiek";
+import { RONDES } from "@/data/dezeOfDeze";
 import { LANDING_COPY, type Bron, type DataSleutel, type Zin } from "../landingCopy";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
@@ -40,10 +41,7 @@ const DATA: Record<DataSleutel, () => number> = {
   stapGeslacht: () => quizSteps.findIndex((s) => s.field === "gender") + 1,
   stapKleuren: () => quizSteps.findIndex((s) => s.field === "neutrals") + 1,
   stapContrast: () => quizSteps.findIndex((s) => s.field === "contrast") + 1,
-  minimumSwipes: () => {
-    const m = lees("src/components/quiz/VisualPreferenceStepClean.tsx").match(/const MIN_SWIPES_TO_COMPLETE = (\d+);/);
-    return Number(m?.[1]);
-  },
+  rondesDezeOfDeze: () => RONDES.female.length,
   kalibratieOutfits: () => {
     const bron = lees("src/components/quiz/CalibrationStep.tsx");
     // Alleen geldig zolang engine v2 de kalibratie maakt.
