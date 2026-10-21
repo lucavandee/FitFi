@@ -13,12 +13,16 @@ import {
 import { VisualPreferenceService } from '@/services/visualPreferences/visualPreferenceService';
 import type { CalibrationOutfit } from '@/services/visualPreferences/calibrationService';
 import { getSessionId, isUuid } from '@/utils/sessionId';
+import { beoordelingenUitKalibratie, type KalibratieOordeel } from '@/services/calibration/kalibratieBeoordelingen';
+import type { KalibratieBeoordelingen } from '@/services/outfits/kandidaten';
 
 interface CalibrationStepProps {
   onComplete: () => void;
   quizData?: any;
   sessionId?: string;
   onBack?: () => void;
+  /** Na elk oordeel of elke wissel: de stukken die de uitslag meeweegt. */
+  onBeoordelingen?: (beoordelingen: KalibratieBeoordelingen) => void;
 }
 
 const OUTFIT_CACHE_KEY = 'fitfi_calibration_outfits';
@@ -36,15 +40,26 @@ const USE_ADAPTIVE_SYSTEM = true;
  */
 const USE_ENGINE_V2 = true;
 
-export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp, onBack }: CalibrationStepProps) {
+export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp, onBack, onBeoordelingen }: CalibrationStepProps) {
   const [outfits, setOutfits] = useState<CalibrationOutfit[]>([]);
-  const [feedback, setFeedback] = useState<Record<string, 'spot_on' | 'not_for_me' | 'maybe'>>({});
+  const [feedback, setFeedback] = useState<Record<string, KalibratieOordeel>>({});
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [swappingState, setSwappingState] = useState<{ outfitId: string; category: 'top' | 'bottom' | 'shoes' } | null>(null);
   const [isPersonalized, setIsPersonalized] = useState(false);
   const { user } = useUser();
   const loadedRef = useRef(false);
+
+  // Na elk oordeel en elke wissel: de stukken zoals ze nu op de kaart staan
+  // naar de quiz. Een effect en geen aanroep in de handlers, omdat een wissel
+  // asynchroon is en de outfits pas in de functionele update vaststaan. De
+  // callback in een ref, zodat een nieuwe functie van de pagina het effect
+  // niet opnieuw laat lopen.
+  const onBeoordelingenRef = useRef(onBeoordelingen);
+  onBeoordelingenRef.current = onBeoordelingen;
+  useEffect(() => {
+    onBeoordelingenRef.current?.(beoordelingenUitKalibratie(outfits, feedback));
+  }, [outfits, feedback]);
 
   useEffect(() => {
     if (!loadedRef.current) {
@@ -283,12 +298,12 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
 
   // Hier stond per uitkomst een zin met emoji ("We begrijpen je stijl nu
   // volledig", "Je aanbevelingen worden aangepast", "We verfijnen je profiel").
-  // Dat is in de code niet aan te wijzen: met USE_ADAPTIVE_SYSTEM gaat een
-  // beoordeling via record_swipe naar swipe_preferences, terwijl
-  // apply_calibration_to_profile outfit_calibration_feedback leest, en bij het
-  // afronden schrijft OnboardingFlowPage de embedding opnieuw uit de swipes.
-  // Daarom alleen wat waar is: je beoordelingen zijn gegeven, daarna komt je
-  // rapport.
+  // Dat was in de code niet aan te wijzen: een beoordeling ging via
+  // record_swipe naar swipe_preferences, en niets las dat terug. Sinds 21
+  // oktober 2026 wegen de stukken mee via onBeoordelingen en get_kandidaten:
+  // likes trekken de helft van de kandidaten per categorie naar hun
+  // formaliteit, pasvorm, print en materiaal, afwijzingen duwen ervan weg.
+  // Meer belooft de tekst niet.
 
   const allRated = outfits.length > 0 && outfits.every(o => feedback[o.id]);
   const feedbackCount = Object.keys(feedback).length;
@@ -346,7 +361,7 @@ export function CalibrationStep({ onComplete, quizData, sessionId: sessionIdProp
           Wat vind je van deze outfits?
         </h2>
         <p className="text-[#6E6E6E] max-w-2xl mx-auto text-base sm:text-lg">
-          FitFi heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je antwoorden. Geef per outfit aan wat je ervan vindt.
+          FitFi heeft {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'} voor je samengesteld op basis van je antwoorden. Geef per outfit aan wat je ervan vindt. Dat weegt mee in je uitslag.
         </p>
 
         {isPersonalized && (

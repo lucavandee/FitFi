@@ -1,6 +1,7 @@
 import { reclassifyProducts } from "@/engine/productClassifier";
 import { filterVeiligeProducten } from "@/engine/productSafety";
 import type { Product } from "@/engine/types";
+import { isUuid } from "@/utils/sessionId";
 
 export type KandidatenGender = "male" | "female" | "unisex";
 
@@ -185,6 +186,40 @@ export function naarAssen(answers: Record<string, any>): StijlAssen {
   return assen;
 }
 
+/** Wat de bezoeker in de kalibratiestap vond: product-ID's per oordeel. */
+export interface KalibratieBeoordelingen {
+  liked: string[];
+  disliked: string[];
+}
+
+/** Ruim boven drie outfits van vijf stukken; get_kandidaten leest er hooguit 50 per kant. */
+const MAX_BEOORDELINGEN = 30;
+
+function uniekeUuids(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const uit: string[] = [];
+  for (const id of raw) {
+    if (typeof id === "string" && isUuid(id) && !uit.includes(id)) uit.push(id);
+    if (uit.length === MAX_BEOORDELINGEN) break;
+  }
+  return uit;
+}
+
+/**
+ * De beoordelingen uit de kalibratiestap, zoals de quiz ze in
+ * `calibrationRatings` bewaart. Alleen geldige UUID's: een ander woord in een
+ * uuid[] laat de hele RPC falen (22P02), en dan ziet de bezoeker niets. Een
+ * stuk dat in een gelikete en in een afgewezen outfit zat, telt als like:
+ * afgewezen stukken vallen uit de pool, en het lag niet aan dat stuk alleen.
+ */
+export function beoordelingenUitAntwoorden(answers: Record<string, any>): KalibratieBeoordelingen {
+  const raw = answers?.calibrationRatings;
+  if (!raw || typeof raw !== "object") return { liked: [], disliked: [] };
+  const liked = uniekeUuids(raw.liked);
+  const disliked = uniekeUuids(Array.isArray(raw.disliked) ? raw.disliked.filter((id: unknown) => !liked.includes(id as string)) : []);
+  return { liked, disliked };
+}
+
 /**
  * Vertaalt de bestaande quiz-antwoorden (LS_KEYS.QUIZ_ANSWERS) naar de
  * RPC-parameters. `perCategorie` is voor wie meer of minder dan de 40 van de
@@ -194,14 +229,18 @@ export function naarAssen(answers: Record<string, any>): StijlAssen {
 export function naarKandidatenParams(answers: Record<string, any>, perCategorie?: number): KandidatenParams {
   const a = answers ?? {};
   const budget = naarBudget(a);
+  const beoordelingen = beoordelingenUitAntwoorden(a);
   return {
     p_gender: naarGender(a.gender),
     p_occasions: naarGelegenheden(a.occasions),
     p_budget_min: budget.min,
     p_budget_max: budget.max,
     p_axes: naarAssen(a),
-    p_liked_ids: [],
-    p_disliked_ids: [],
+    // Sinds 21 oktober 2026 (migratie 20261021170000): get_kandidaten weegt
+    // likes en afwijzingen op attributen, niet meer op embeddings, en blijft
+    // daarmee onder de 0,4 s. Daarvoor gingen hier altijd lege lijsten mee.
+    p_liked_ids: beoordelingen.liked,
+    p_disliked_ids: beoordelingen.disliked,
     p_per_category: naarPerCategorie(perCategorie),
   };
 }

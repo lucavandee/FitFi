@@ -4,6 +4,7 @@ import {
   KANDIDATEN_PER_CATEGORIE,
   bereidKandidatenVoor,
   bereidKandidatenVoorMetDiagnose,
+  beoordelingenUitAntwoorden,
   mapKandidaatProduct,
   naarKandidatenParams,
   telCategorieAfwijkingen,
@@ -223,5 +224,45 @@ describe("bereidKandidatenVoorMetDiagnose", () => {
     expect(resultaat.classifierAfgekeurd).toBe(0);
     expect(resultaat.veiligheidsnetGeweigerd).toBe(1);
     expect(resultaat.geweigerdPerReden).toMatchObject({ kinderschoenmaat: 1 });
+  });
+});
+
+describe("beoordelingen uit de kalibratiestap", () => {
+  const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+
+  it("stuurt de stukken uit calibrationRatings mee als likes en afwijzingen", () => {
+    const p = naarKandidatenParams({
+      gender: "female",
+      calibrationRatings: { liked: [id(1), id(2)], disliked: [id(3)] },
+    });
+    expect(p.p_liked_ids).toEqual([id(1), id(2)]);
+    expect(p.p_disliked_ids).toEqual([id(3)]);
+  });
+
+  it("zonder kalibratie blijven de lijsten leeg", () => {
+    expect(beoordelingenUitAntwoorden({})).toEqual({ liked: [], disliked: [] });
+    expect(beoordelingenUitAntwoorden({ calibrationRatings: null })).toEqual({ liked: [], disliked: [] });
+    expect(beoordelingenUitAntwoorden({ calibrationRatings: "spot_on" })).toEqual({ liked: [], disliked: [] });
+    expect(beoordelingenUitAntwoorden({ calibrationRatings: { liked: "x", disliked: 3 } })).toEqual({ liked: [], disliked: [] });
+  });
+
+  it("houdt alleen unieke UUID's over, want een woord in een uuid[] laat de RPC falen", () => {
+    expect(
+      beoordelingenUitAntwoorden({ calibrationRatings: { liked: [id(1), "demo-top-1", id(1), 42, id(2)], disliked: [] } })
+    ).toEqual({ liked: [id(1), id(2)], disliked: [] });
+  });
+
+  it("een stuk dat zowel geliket als afgewezen is, telt als like", () => {
+    expect(beoordelingenUitAntwoorden({ calibrationRatings: { liked: [id(1)], disliked: [id(1), id(2)] } })).toEqual({
+      liked: [id(1)],
+      disliked: [id(2)],
+    });
+  });
+
+  it("neemt hooguit 30 per kant mee", () => {
+    const veel = Array.from({ length: 45 }, (_, i) => id(i + 1));
+    const b = beoordelingenUitAntwoorden({ calibrationRatings: { liked: veel, disliked: veel.slice(0, 40) } });
+    expect(b.liked).toHaveLength(30);
+    expect(b.disliked).toEqual(veel.slice(30, 40));
   });
 });
