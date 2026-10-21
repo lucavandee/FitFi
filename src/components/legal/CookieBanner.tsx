@@ -204,6 +204,10 @@ const KEUZERIJ =
 const KEUZERIJ_BALK =
   "sticky bottom-0 [@media(max-height:300px)]:static grid grid-cols-[repeat(auto-fit,minmax(min(100%,9.5rem),1fr))] gap-2 bg-white pb-3 md:static md:w-[20rem] md:shrink-0 md:pb-0";
 
+/** "Aanpassen" als tekstknop, 44 px hoog. */
+const AANPASSEN =
+  "inline-flex h-11 items-center rounded-xl px-2 -mx-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]";
+
 /** De vaste laag: laat klikken door, staat boven de onderbalk. */
 const LAAG = "pointer-events-none fixed [@media(max-height:300px)]:static inset-x-0 z-[54]";
 
@@ -235,24 +239,34 @@ export const CookieBannerKaart = React.forwardRef<HTMLDivElement, KaartProps>(fu
           aria-label="Cookievoorkeuren"
           className={`pointer-events-auto w-full ${HOOGTEGRENS} border-t border-[#E5E5E5] bg-white`}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 md:py-3 md:flex md:items-center md:gap-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 md:py-3 md:flex md:items-center md:gap-6">
+            {/* Mobiel staat "Aanpassen" naast het kopje en is de tekst korter:
+                met alles onder elkaar was de balk op 390 breed ruim 200 px
+                hoog. De volledige uitleg staat achter "Aanpassen". */}
+            <div className="flex items-center justify-between md:hidden">
+              <p className="text-sm font-semibold text-[#1A1A1A]">Cookies</p>
+              <button type="button" onClick={() => onView("detail")} className={AANPASSEN}>
+                Aanpassen
+              </button>
+            </div>
             <p className="text-sm leading-relaxed text-[#4A4A4A] md:flex-1">
               {/* Twee optionele keuzes, net als in "Aanpassen": "Alles
                   accepteren" zet analytics en partnermeting allebei aan. */}
-              <span className="font-semibold text-[#1A1A1A]">Cookies.</span>{" "}
-              Noodzakelijke cookies zorgen dat de site werkt. Analytics (Google
-              Analytics) en partnermeting (Awin) zijn optioneel; je keuze wijzig
-              je altijd via{" "}
-              <a href="/cookies" className="text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200">
-                Cookie-instellingen
-              </a>.
+              <span className="hidden md:inline">
+                <span className="font-semibold text-[#1A1A1A]">Cookies.</span>{" "}
+                Noodzakelijke cookies zorgen dat de site werkt.{" "}
+              </span>
+              Analytics (Google Analytics) en partnermeting (Awin) zijn optioneel
+              <span className="hidden md:inline">
+                ; je keuze wijzig je altijd via{" "}
+                <a href="/cookies" className="text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200">
+                  Cookie-instellingen
+                </a>
+              </span>
+              .
             </p>
-            <div className="mt-2 flex flex-col gap-1 md:mt-0 md:flex-row md:items-center md:gap-4 md:shrink-0">
-              <button
-                type="button"
-                onClick={() => onView("detail")}
-                className="self-start inline-flex h-11 items-center rounded-xl px-2 -mx-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] md:self-auto md:order-first"
-              >
+            <div className="mt-3 md:mt-0 md:flex md:items-center md:gap-4 md:shrink-0">
+              <button type="button" onClick={() => onView("detail")} className={`hidden md:inline-flex ${AANPASSEN}`}>
                 Aanpassen
               </button>
               <div className={KEUZERIJ_BALK}>
