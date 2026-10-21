@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, X, Sparkles } from "lucide-react";
+import { ArrowRight, CircleCheck as CheckCircle, CircleAlert as AlertCircle, X, Sparkles } from "lucide-react";
 import { quizSteps, getSizeFieldsForGender, getStyleOptionsForGender } from "@/data/quizSteps";
 import { supabase } from "@/lib/supabaseClient";
 import { computeResult, fotoAnalyseUitAntwoorden, pasFotoAnalyseToe } from "@/lib/quiz/logic";
@@ -16,13 +16,16 @@ import { VisualPreferenceService } from "@/services/visualPreferences/visualPref
 import { AnimatedQuestionTransition } from "@/components/quiz/AnimatedQuestionTransition";
 import { ResultsRevealSequence } from "@/components/results/ResultsRevealSequence";
 import { PhaseTransition } from "@/components/quiz/PhaseTransition";
-import { ArchetypePreviewEnhanced as ArchetypePreview } from "@/components/quiz/ArchetypePreviewEnhanced";
 import { useUser } from "@/context/UserContext";
 import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { getSessionId, resetSessionId } from '@/utils/sessionId';
 import { antwoordenVoorDatabase, isOpslagPad } from '@/lib/quiz/selfieFoto';
 import { tel } from '@/utils/teller';
+import { Antwoordkaart } from '@/components/quiz/v2/Antwoordkaart';
+import { QuizKopbalk, QuizOnderbalk, QuizVraag } from '@/components/quiz/v2/QuizKader';
+import { QUIZ_KLEURSTROKEN } from '@/data/quizKleurstroken';
+import { labelVanAntwoord } from '@/lib/quiz/antwoordLabel';
 import type { KalibratieBeoordelingen } from '@/services/outfits/kandidaten';
 
 type QuizAnswers = {
@@ -923,104 +926,43 @@ export default function OnboardingFlowPage() {
           <meta name="description" content="Beantwoord enkele vragen en zie welke stijl bij je past." />
         </Helmet>
 
-        {/* ── HEADER BAR ── */}
-        <div style={{ flexShrink: 0, backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E5E5', boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
-          <div style={{ maxWidth: '720px', margin: '0 auto', padding: '10px 16px 0', boxSizing: 'border-box' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: '#1A1A1A' }}>
-                Stap {currentStep + 1} van {quizSteps.length}
-              </span>
-              <button
-                onClick={handleCancel}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px', border: 'none', background: 'none', cursor: 'pointer', color: '#6E6E6E' }}
-                aria-label="Stop de quiz"
-              >
-                <X style={{ width: '18px', height: '18px' }} />
-              </button>
-            </div>
-            <div style={{ height: '3px', backgroundColor: '#FAFAF8', borderRadius: '99px', overflow: 'hidden', marginBottom: '0' }}>
-              <div
-                style={{
-                  height: '100%',
-                  width: `${progress}%`,
-                  background: '#A85740',
-                  borderRadius: '99px',
-                  transition: 'width 0.4s ease',
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        {/* ── KOPBALK (designsysteem v2) ── */}
+        <QuizKopbalk stap={currentStep + 1} totaal={quizSteps.length} voortgang={progress} onStop={handleCancel} />
 
         {/* ── SCROLLABLE CONTENT ── */}
         <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 16px 32px', boxSizing: 'border-box' }}>
+          <div className="mx-auto max-w-3xl px-4 pt-8 pb-10 sm:px-6 md:pt-12">
 
-            <ArchetypePreview
-              answers={answers}
-              currentStep={currentStep}
-              totalSteps={quizSteps.length}
-            />
+            {/* Hier stond vanaf vraag 3 de voorvertoning "Jouw stijlprofiel" met al
+                een stijlnaam na twee antwoorden. Die duwde elke vraag omlaag en
+                noemde een stijl zonder basis (plan 21 oktober 2026). */}
 
             <AnimatedQuestionTransition questionKey={currentStep} direction="forward">
               {/* Hier stond op stap 1 een pil "Ongeveer 5 minuten". De invultijd
                   is nooit gemeten, dus er staat geen tijd. */}
-              <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                <h1 style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 700, lineHeight: 1.25, marginBottom: '10px', color: '#1A1A1A' }}>
-                  {step.title}
-                </h1>
-                {step.description && (
-                  <p style={{ fontSize: '15px', color: '#6E6E6E', lineHeight: 1.6, maxWidth: '480px', margin: '0 auto' }}>
-                    {step.description}
-                  </p>
-                )}
-                {step.field === 'stylePreferences' && (
-                  <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#A85740', fontWeight: 500 }}>
-                    <CheckCircle style={{ width: '14px', height: '14px' }} />
-                    Kies 2 tot 3 stijlen
-                  </div>
-                )}
-              </div>
+              <QuizVraag
+                titel={step.title}
+                toelichting={step.description}
+                hint={step.field === 'stylePreferences' ? 'Kies 2 tot 3 stijlen' : undefined}
+              />
             </AnimatedQuestionTransition>
 
             {/* ── ANTWOORD OPTIES ── */}
 
             {/* Checkbox / multiselect */}
             {(step.type === 'checkbox' || step.type === 'multiselect') && step.options && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '10px' }}>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {step.options.map((option) => {
                   const isSelected = (answers[step.field as keyof QuizAnswers] as string[] || []).includes(option.value);
                   return (
-                    <button
+                    <Antwoordkaart
                       key={option.value}
-                      onClick={() => handleMultiSelect(step.field, option.value)}
-                      style={{
-                        display: 'flex', alignItems: 'flex-start', gap: '12px',
-                        padding: '14px 16px', minHeight: '64px',
-                        borderRadius: '14px',
-                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
-                        backgroundColor: isSelected ? '#FDF9F7' : '#FFFFFF',
-                        cursor: 'pointer', textAlign: 'left',
-                        transition: 'border-color 0.15s, background-color 0.15s',
-                      }}
-                    >
-                      <div style={{
-                        width: '20px', height: '20px', flexShrink: 0, marginTop: '1px',
-                        borderRadius: '6px',
-                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
-                        backgroundColor: isSelected ? '#A85740' : 'transparent',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.15s',
-                      }}>
-                        {isSelected && <CheckCircle style={{ width: '13px', height: '13px', color: 'white' }} />}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, fontSize: '15px', color: '#1A1A1A', lineHeight: 1.3 }}>{option.label}</div>
-                        {option.description && (
-                          <div style={{ fontSize: '12px', color: '#6E6E6E', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
-                        )}
-                      </div>
-                    </button>
+                      label={option.label}
+                      toelichting={option.description}
+                      gekozen={isSelected}
+                      soort="meer"
+                      onKies={() => handleMultiSelect(step.field, option.value)}
+                    />
                   );
                 })}
               </div>
@@ -1028,49 +970,18 @@ export default function OnboardingFlowPage() {
 
             {/* Radio / select */}
             {(step.type === 'radio' || step.type === 'select') && step.options && (
-              <div style={{ display: 'grid', gridTemplateColumns: step.options.length > 3 ? 'repeat(auto-fill, minmax(240px, 1fr))' : '1fr', gap: '10px' }}>
-                {step.options.map((option) => {
-                  const isSelected = answers[step.field as keyof QuizAnswers] === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleAnswer(step.field, option.value)}
-                      aria-pressed={isSelected}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '12px',
-                        padding: '14px 16px', minHeight: '64px',
-                        borderRadius: '14px',
-                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
-                        backgroundColor: isSelected ? '#FDF9F7' : '#FFFFFF',
-                        cursor: 'pointer', textAlign: 'left', width: '100%',
-                        transition: 'border-color 0.15s, background-color 0.15s',
-                      }}
-                    >
-                      <div style={{
-                        width: '20px', height: '20px', flexShrink: 0,
-                        borderRadius: '50%',
-                        border: `2px solid ${isSelected ? '#A85740' : '#E5E5E5'}`,
-                        backgroundColor: isSelected ? '#A85740' : 'transparent',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.15s',
-                      }}>
-                        {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'white' }} />}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, fontSize: '15px', color: '#1A1A1A', lineHeight: 1.3 }}>{option.label}</div>
-                        {option.description && (
-                          <div style={{ fontSize: '12px', color: '#6E6E6E', marginTop: '3px', lineHeight: 1.5 }}>{option.description}</div>
-                        )}
-                      </div>
-                      {isSelected && (
-                        <svg style={{ width: '18px', height: '18px', flexShrink: 0, color: '#A85740' }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </button>
-                  );
-                })}
+              <div className={`grid grid-cols-1 gap-3 ${step.options.length > 3 ? 'sm:grid-cols-2' : ''}`}>
+                {step.options.map((option) => (
+                  <Antwoordkaart
+                    key={option.value}
+                    label={option.label}
+                    toelichting={option.description}
+                    gekozen={answers[step.field as keyof QuizAnswers] === option.value}
+                    soort="een"
+                    kleuren={QUIZ_KLEURSTROKEN[step.field]?.[option.value]}
+                    onKies={() => handleAnswer(step.field, option.value)}
+                  />
+                ))}
               </div>
             )}
 
@@ -1106,12 +1017,12 @@ export default function OnboardingFlowPage() {
                     <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
                       {tierLabel}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#6E6E6E', marginTop: '2px' }}>Per kledingstuk</div>
+                    <div style={{ fontSize: '14px', color: '#6E6E6E', marginTop: '2px' }}>Per kledingstuk</div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>Min</label>
+                      <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>Min</label>
                       <div style={{ position: 'relative' }}>
                         <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#6E6E6E', pointerEvents: 'none' }}>€</span>
                         <input
@@ -1130,7 +1041,7 @@ export default function OnboardingFlowPage() {
                       </div>
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>Max</label>
+                      <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#1A1A1A', marginBottom: '6px' }}>Max</label>
                       <div style={{ position: 'relative' }}>
                         <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#6E6E6E', pointerEvents: 'none' }}>€</span>
                         <input
@@ -1150,13 +1061,13 @@ export default function OnboardingFlowPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#6E6E6E' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#6E6E6E' }}>
                     <span>€{sliderMin} Budget</span>
                     <span>€75 tot 150 Midden</span>
                     <span>€{sliderMax}+ Premium</span>
                   </div>
                   {step.helperText && (
-                    <p style={{ marginTop: '12px', fontSize: '12px', color: '#6E6E6E', textAlign: 'center' }}>{step.helperText}</p>
+                    <p style={{ marginTop: '12px', fontSize: '14px', color: '#6E6E6E', textAlign: 'center' }}>{step.helperText}</p>
                   )}
                 </div>
               );
@@ -1172,7 +1083,7 @@ export default function OnboardingFlowPage() {
                   <div style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A', marginTop: '6px' }}>
                     {(answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 75 ? 'Budget' : (answers[step.field as keyof QuizAnswers] as number || step.min || 50) < 150 ? 'Middensegment' : 'Premium'}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#6E6E6E', marginTop: '2px' }}>Per kledingstuk</div>
+                  <div style={{ fontSize: '14px', color: '#6E6E6E', marginTop: '2px' }}>Per kledingstuk</div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
                     <button
                       type="button"
@@ -1210,7 +1121,7 @@ export default function OnboardingFlowPage() {
                   onChange={(e) => handleAnswer(step.field, parseInt(e.target.value))}
                   style={{ width: '100%', cursor: 'pointer', accentColor: '#A85740' }}
                 />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', color: '#6E6E6E' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '14px', color: '#6E6E6E' }}>
                   <span>€{step.min || 0} Budget</span>
                   <span>€75 tot 150 Midden</span>
                   <span>€{step.max || 100}+ Premium</span>
@@ -1239,7 +1150,7 @@ export default function OnboardingFlowPage() {
                     </div>
                   </div>
                 ))}
-                <p style={{ fontSize: '12px', color: '#6E6E6E' }}>{step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}</p>
+                <p style={{ fontSize: '14px', color: '#6E6E6E' }}>{step.helperText ?? 'Je kunt deze stap overslaan als je wilt.'}</p>
               </div>
             )}
 
@@ -1257,86 +1168,17 @@ export default function OnboardingFlowPage() {
         </div>
 
         {/* ── BOTTOM BAR ── altijd volledig zichtbaar */}
-        <div style={{
-          flexShrink: 0,
-          backgroundColor: '#FFFFFF',
-          borderTop: '1px solid #E5E5E5',
-          boxShadow: '0 -2px 12px rgba(0,0,0,0.07)',
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        }}>
-          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '10px 16px 12px', boxSizing: 'border-box' }}>
-
-            {step?.required && !canProceed() && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '8px', fontSize: '12px', color: '#6E6E6E' }}>
-                <AlertCircle style={{ width: '13px', height: '13px', flexShrink: 0 }} aria-hidden="true" />
-                <span>{attemptedNext ? getValidationError() : 'Selecteer een optie om door te gaan'}</span>
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
-              <button
-                onClick={handleBack}
-                disabled={currentStep === 0}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: '48px', height: '48px', flexShrink: 0,
-                  borderRadius: '12px',
-                  border: '2px solid #E5E5E5',
-                  backgroundColor: '#FFFFFF',
-                  cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
-                  opacity: currentStep === 0 ? 0.25 : 1,
-                  transition: 'opacity 0.15s',
-                }}
-                aria-label="Vorige vraag"
-              >
-                <ArrowLeft style={{ width: '18px', height: '18px' }} />
-              </button>
-
-              <button
-                onClick={handleNext}
-                disabled={isSubmitting}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  flex: 1, height: '48px', minWidth: 0,
-                  borderRadius: '12px',
-                  border: 'none',
-                  backgroundColor: canProceed() || !step?.required ? '#9A503B' : '#A85740',
-                  color: 'white',
-                  fontSize: '15px', fontWeight: 700,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'background-color 0.2s',
-                  boxShadow: canProceed() || !step?.required ? '0 2px 10px rgba(0,0,0,0.18)' : 'none',
-                }}
-                aria-label={currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
-              >
-                <span style={{ whiteSpace: 'nowrap' }}>
-                  {isSubmitting ? 'Verwerken...' : currentStep === quizSteps.length - 1 ? 'Bekijk antwoorden' : 'Volgende'}
-                </span>
-                {!isSubmitting && <ArrowRight style={{ width: '17px', height: '17px', flexShrink: 0 }} />}
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginTop: '8px' }}>
-              {step && !step.required && (
-                <button
-                  onClick={handleSkip}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#6E6E6E', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
-                >
-                  Overslaan
-                </button>
-              )}
-              <button
-                onClick={handleSaveAndContinueLater}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: '#6E6E6E', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
-              >
-                <Clock style={{ width: '11px', height: '11px' }} />
-                Opslaan en later verder
-              </button>
-            </div>
-
-          </div>
-        </div>
-
+        <QuizOnderbalk
+          melding={step?.required && !canProceed() ? (attemptedNext ? getValidationError() ?? undefined : 'Selecteer een optie om door te gaan') : undefined}
+          terugUit={currentStep === 0}
+          bezig={isSubmitting}
+          laatste={currentStep === quizSteps.length - 1}
+          overslaanKan={!!step && !step.required}
+          onTerug={handleBack}
+          onVolgende={handleNext}
+          onOverslaan={handleSkip}
+          onLater={handleSaveAndContinueLater}
+        />
       </div>
       {/* Einde quiz shell */}
 
@@ -1379,7 +1221,7 @@ export default function OnboardingFlowPage() {
                 let displayVal = '';
                 if (hasValue) {
                   if (Array.isArray(val)) {
-                    const joined = (val as string[]).join(', ');
+                    const joined = (val as string[]).map((v) => labelVanAntwoord(s.field, v, answers.gender)).join(', ');
                     displayVal = joined.length > 60 ? joined.slice(0, 57) + '…' : joined;
                   } else if (typeof val === 'number') {
                     displayVal = s.field === 'budgetRange' ? `€${val} per kledingstuk` : String(val);
@@ -1392,7 +1234,7 @@ export default function OnboardingFlowPage() {
                       displayVal = entries.length > 0 ? entries.map(([, v]) => v).join(' · ') : 'Ingevuld';
                     }
                   } else {
-                    displayVal = String(val);
+                    displayVal = labelVanAntwoord(s.field, String(val), answers.gender);
                   }
                 }
                 return (
