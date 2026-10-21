@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import track from "@/utils/telemetry";
 import { getSessionId, resetSessionId } from '@/utils/sessionId';
 import { antwoordenVoorDatabase, isOpslagPad } from '@/lib/quiz/selfieFoto';
+import { tel } from '@/utils/teller';
 import type { KalibratieBeoordelingen } from '@/services/outfits/kandidaten';
 
 type QuizAnswers = {
@@ -119,6 +120,9 @@ export default function OnboardingFlowPage() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
 
+  // Anonieme dagtellingen, zonder cookie (src/utils/teller.ts): de quiz is
+  // gestart, en verderop het rapport is gemaakt.
+  useEffect(() => tel('quiz_start'), []);
 
   useEffect(() => {
     const alreadyCompleted = localStorage.getItem(LS_KEYS.QUIZ_COMPLETED) === '1';
@@ -710,6 +714,7 @@ export default function OnboardingFlowPage() {
         colorProfile: colorProfile
       });
 
+      tel('quiz_af');
       setPhase('reveal');
       setIsSubmitting(false);
     };
@@ -731,6 +736,7 @@ export default function OnboardingFlowPage() {
         colorProfile: fallbackColor
       });
       toast.error('Er ging iets mis bij het opslaan, maar je resultaten zijn lokaal bewaard.');
+      tel('quiz_af');
       setPhase('reveal');
       setIsSubmitting(false);
     };

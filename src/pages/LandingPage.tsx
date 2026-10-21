@@ -15,6 +15,7 @@ import { LANDING_COPY } from "@/content/landingCopy";
 import HeroClip from "@/components/landing/HeroClip";
 import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { track as trackFunnel } from "@/utils/analytics";
+import { tel } from "@/utils/teller";
 import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landingHead";
 
 const PAGE = "landing";
@@ -114,6 +115,9 @@ export default function LandingPage() {
   const heroMobiel = useMediaquery("(max-width: 1023px)");
   const heroStill = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
+
+  // Anonieme dagtelling, zonder cookie (src/utils/teller.ts).
+  useEffect(() => tel("home"), []);
 
   /*
    * Hier stond een useQuery die het aantal style_profiles van vandaag telde.

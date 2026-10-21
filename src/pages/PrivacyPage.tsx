@@ -78,6 +78,11 @@ De laatste vraag van de quiz vraagt om een selfie. Sla je die over, dan verwerke
 - **IP-adressen geanonimiseerd** (laatste octet verwijderd)
 - **Data transfer naar VS** (Google LLC servers in Verenigde Staten)
 
+### Anonieme tellingen (zonder cookie)
+- Per dag tellen we hoe vaak de homepage wordt geladen, de quiz wordt gestart en een rapport wordt gemaakt
+- We bewaren alleen die aantallen: geen IP-adres, geen apparaat en niet wie het was
+- Er wordt daarvoor niets op je apparaat opgeslagen, daarom vragen we er geen toestemming voor
+
 ### Betalingsgegevens
 - Bij premium-abonnementen: transactie-ID en abonnementsstatus
 - **Geen** volledige creditcardgegevens (afgehandeld door payment provider)
