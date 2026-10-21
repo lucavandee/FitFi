@@ -132,10 +132,10 @@ export const LANDING_COPY = {
 
   kleur: {
     stap: zin(
-      "Uit de quiz, stap 3 van 14",
+      "Uit de quiz, vraag 3 van 14",
       { data: "stapKleuren", waarde: 3, inTekst: "3" },
       STAPPEN(14),
-      { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "Stap {currentStep + 1} van {quizSteps.length}" },
+      { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "stap={currentStep + 1} totaal={quizSteps.length}" },
     ),
     kop: zin("Welke kleuren draag jij het liefst?", {
       bestand: QUIZ,
@@ -304,10 +304,10 @@ export const LANDING_COPY = {
 
   slot: {
     stap: zin(
-      "Stap 1 van 14",
+      "Vraag 1 van 14",
       { data: "stapGeslacht", waarde: 1, inTekst: "1" },
       STAPPEN(14),
-      { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "Stap {currentStep + 1} van {quizSteps.length}" },
+      { bestand: "src/pages/OnboardingFlowPage.tsx", zoek: "stap={currentStep + 1} totaal={quizSteps.length}" },
     ),
     /** De displaykop: eerste deel serif italic, tweede deel sans bold (CLAUDE.md deel 2). */
     kop: zin("Zoek je kleding voor heren of dames?", {
