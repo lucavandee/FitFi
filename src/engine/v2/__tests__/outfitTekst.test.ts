@@ -68,6 +68,23 @@ describe("outfitTitel", () => {
     ).toBe("Witte trui, grijze broek en laarzen");
   });
 
+  it("kent joggers en cargo als broek", () => {
+    expect(
+      outfitTitel([
+        stuk("top", "PUMA Charlotte Modalon golftop met lange mouwen voor Dames, Wit, Maat M", ["wit"]),
+        stuk("bottom", "H & M - Katoenen joggers - Zwart", ["zwart"]),
+        stuk("footwear", "PUMA Caven Mix sneakers, Zwart/Grijs/Wit, Maat 40", ["zwart"]),
+      ])
+    ).toBe("Witte top, zwarte joggingbroek en sneakers");
+    expect(
+      outfitTitel([
+        stuk("top", "H & M - Hoodie - Grijs", ["grijs"]),
+        stuk("bottom", "H & M - Cargobroek - Beige", ["beige"]),
+        stuk("footwear", "H & M - Sneakers - Wit", ["wit"]),
+      ])
+    ).toBe("Grijze hoodie, beige cargobroek en sneakers");
+  });
+
   it("geeft nooit een losse letter of een stijlwoord als titel", () => {
     const t = outfitTitel([
       stuk("top", "H & M - Leren jack - Bruin", ["bruin"]),

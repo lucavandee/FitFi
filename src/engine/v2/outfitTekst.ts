@@ -47,6 +47,11 @@ const WOORDEN: Record<string, Array<[string, Woord]>> = {
   ],
   bottom: [
     ["jeans", { woord: "jeans", lidwoord: "de" }],
+    ["joggers", { woord: "joggingbroek", lidwoord: "de" }],
+    ["sweatpant", { woord: "joggingbroek", lidwoord: "de" }],
+    ["joggingbroek", { woord: "joggingbroek", lidwoord: "de" }],
+    ["cargobroek", { woord: "cargobroek", lidwoord: "de" }],
+    ["cargo", { woord: "cargobroek", lidwoord: "de" }],
     ["spijkerbroek", { woord: "jeans", lidwoord: "de" }],
     ["pantalon", { woord: "pantalon", lidwoord: "de" }],
     ["chino", { woord: "chino", lidwoord: "de" }],

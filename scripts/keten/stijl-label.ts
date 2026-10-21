@@ -27,7 +27,7 @@ const IN = leesVlag(argv, "in");
 const UIT = leesVlag(argv, "uit");
 const MODEL = leesVlag(argv, "model") || process.env.STIJL_MODEL || "sonnet";
 const PORTIE = Math.max(1, Number(leesVlag(argv, "portie") || 80));
-const TIMEOUT_MS = 10 * 60 * 1000;
+const TIMEOUT_MS = 15 * 60 * 1000;
 
 async function main(): Promise<void> {
   if (!IN || !UIT) {
@@ -51,15 +51,22 @@ async function main(): Promise<void> {
   let usd = 0;
   for (let i = 0; i < open.length; i += PORTIE) {
     const portie = open.slice(i, i + PORTIE);
+    // Korte nummers in plaats van product-ID's: een UUID van 36 tekens neemt het
+    // model niet foutloos over, en dan valt het label weg (21 okt 2026: twee
+    // porties van 100 met 0 bruikbare labels).
+    const kort = portie.map((p, j) => ({ ...p, id: `k${j}` }));
+    const echtId = new Map(kort.map((p, j) => [p.id, portie[j].id]));
     const t0 = Date.now();
-    const r = await voerClaudeCliUit(bouwClaudeArgs({ model: MODEL, systeemPrompt: systeem, opdracht: bouwLabelOpdracht(portie) }), TIMEOUT_MS);
+    const r = await voerClaudeCliUit(bouwClaudeArgs({ model: MODEL, systeemPrompt: systeem, opdracht: bouwLabelOpdracht(kort) }), TIMEOUT_MS);
     // Noodrem: de jobs van Luc delen dit abonnement (reference_claude_quotum_jobs).
     // Bij een limietmelding direct stoppen in plaats van door te gaan.
     if (r.is_error && /hit your limit|usage limit|rate limit|resets/i.test(String(r.result ?? ""))) {
       console.error(`Gestopt op een limietmelding: ${String(r.result).slice(0, 200)}`);
       break;
     }
-    const nieuw = r.is_error ? [] : leesLabelAntwoord(String(r.result ?? ""), (id) => catVan.get(id));
+    const nieuw = (r.is_error ? [] : leesLabelAntwoord(String(r.result ?? ""), (id) => catVan.get(echtId.get(id) ?? "")))
+      .filter((l) => echtId.has(l.id))
+      .map((l) => ({ ...l, id: echtId.get(l.id)! }));
     for (const l of nieuw) labels[l.id] = l;
     usd += r.total_cost_usd ?? 0;
     console.log(
