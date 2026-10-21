@@ -199,17 +199,24 @@ export function buitenSeizoen(p: Product, seizoen: string): boolean {
   return p.seizoen === "lente-zomer";
 }
 
-/** Minimale formaliteit (1 tot 5, van de stijl-agent) van top, broek, rok of jurk per gelegenheid. */
-const MIN_FORMEEL: Partial<Record<string, number>> = { work: 3, formal: 3 };
-const HOOFDSTUK = new Set(["top", "bottom", "dress", "jumpsuit"]);
+/**
+ * Minimale formaliteit (1 tot 5, van de stijl-agent) per gelegenheid en
+ * categorie. Op kantoor mag een broek een 2 zijn (donkere jeans, chino); een
+ * top of jurk niet (capuchonjurk, T-shirt).
+ */
+const MIN_FORMEEL: Partial<Record<string, Partial<Record<string, number>>>> = {
+  work: { top: 3, dress: 3, jumpsuit: 3, bottom: 2 },
+  formal: { top: 3, dress: 3, jumpsuit: 3, bottom: 3 },
+};
 
 /** De reden waarom een outfit te informeel is voor de gelegenheid, of null. Schoenen tellen niet mee. */
 export function formeelTeLaag(products: Product[], gelegenheid: string): string | null {
-  const min = MIN_FORMEEL[gelegenheid];
-  if (!min) return null;
+  const grenzen = MIN_FORMEEL[gelegenheid];
+  if (!grenzen) return null;
   for (const p of products) {
     const f = typeof p.formeel === "number" ? p.formeel : null;
-    if (f !== null && HOOFDSTUK.has(categorie(p)) && f < min) {
+    const min = grenzen[categorie(p)];
+    if (f !== null && min !== undefined && f < min) {
       return `${p.name} te informeel voor ${gelegenheid}`;
     }
   }

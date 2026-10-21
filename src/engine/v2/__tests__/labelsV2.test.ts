@@ -34,6 +34,12 @@ describe("formeelTeLaag", () => {
     expect(formeelTeLaag(tshirtJeans, "formal")).not.toBeNull();
   });
 
+  it("staat op kantoor een broek met formaliteit 2 toe, bij formeel niet", () => {
+    const jeans = [stuk("top", "Blouse", { formeel: 3 }), stuk("bottom", "Donkere jeans", { formeel: 2 })];
+    expect(formeelTeLaag(jeans, "work")).toBeNull();
+    expect(formeelTeLaag(jeans, "formal")).not.toBeNull();
+  });
+
   it("laat schoenen, ongelabelde stukken en andere gelegenheden met rust", () => {
     const kantoor = [stuk("top", "Blouse", { formeel: 3 }), stuk("bottom", "Pantalon", { formeel: 3 }), stuk("footwear", "Leren sneakers", { formeel: 2 })];
     expect(formeelTeLaag(kantoor, "work")).toBeNull();
