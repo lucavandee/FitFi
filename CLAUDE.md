@@ -357,6 +357,9 @@ badges, radii, schaduwen, iconen en vaste CTA-teksten blijven zoals hierboven.
 - **Een vraag die (nog) niet bestaat, staat niet op een openbare pagina.** Het
   quizscherm "Deze of deze?" uit het prototype komt pas op de homepage als de
   quiz zelf zo werkt.
-- **Snelheid.** Een pagina in v2 haalt een LCP onder 2,5 s op Lighthouse
-  mobiel. Geen video of groot beeld boven de vouw dat de LCP draagt; op de
-  homepage is de kop het grootste element.
+- **Snelheid.** Doel: LCP onder 2,5 s op Lighthouse mobiel. Geen video of
+  groot beeld boven de vouw dat de LCP draagt, geen preload van een beeld dat
+  niet boven de vouw staat; op de homepage is de kop het grootste element.
+  Stand 21 oktober 2026 op de preview: 2,7 tot 2,8 s (was 4,8 s). De rest zit
+  in de JavaScript die de hele pagina in de browser tekent (eerste verf 2,3 s);
+  dat lost alleen vooraf renderen naar HTML op.
