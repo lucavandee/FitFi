@@ -2,8 +2,8 @@
  * Eindtoets: profielen door de echte keten van de site, en de stijl-agent keurt
  * elke outfit die eruit komt.
  *
- *   npm run keten:stijl-eindtoets              droge run: profielen en outfits, geen keuring
- *   npm run keten:stijl-eindtoets -- --ja      met keuring door de stijl-agent
+ *   npm run keten:stijl-eindtoets                                  droge run: profielen en outfits, geen keuring
+ *   npm run keten:stijl-eindtoets -- --ja --via sleutel|abonnement  met keuring door de stijl-agent
  *
  * Keten: get_kandidaten en get_stijl_kandidaten (anon, zoals een bezoeker),
  * samengevoegd, bereidKandidatenVoor, runEngineV2 met het zaad uit de
@@ -33,13 +33,17 @@ import {
   voegKandidatenSamen,
   type KandidaatRij,
 } from "../../src/services/outfits/kandidaten";
+import { isLimiet } from "../../src/keten/stijl/stijlSets";
 import { heeftVlag, leesVlag } from "./args";
+import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
 import { leesDotEnv } from "./env";
-import { bouwClaudeArgs, voerClaudeCliUit } from "./tagCli";
+import { leesSleutel } from "./sleutel";
 
 const argv = process.argv.slice(2);
 const MODEL = leesVlag(argv, "model") || process.env.STIJL_MODEL || "sonnet";
 const AANTAL = Number(leesVlag(argv, "aantal") || 6);
+const EFFORT = leesVlag(argv, "effort") || null;
+const VIA = leesVlag(argv, "via");
 const dotenv = leesDotEnv();
 const url = process.env.VITE_SUPABASE_URL ?? dotenv.VITE_SUPABASE_URL;
 const key = process.env.VITE_SUPABASE_ANON_KEY ?? dotenv.VITE_SUPABASE_ANON_KEY;
@@ -116,17 +120,19 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (VIA !== "sleutel" && VIA !== "abonnement") throw new Error("Kies bewust hoe er betaald wordt: --via sleutel of --via abonnement");
+  const env = omgevingVoor(VIA, VIA === "sleutel" ? leesSleutel() : null);
   const oordelen = new Map<string, KeurOordeel>();
   const systeem = bouwStijlAgentPrompt();
   for (let i = 0; i < alle.length; i += 9) {
     const portie = alle.slice(i, i + 9).map((x) => x.keur);
-    const r = await voerClaudeCliUit(bouwClaudeArgs({ model: MODEL, systeemPrompt: systeem, opdracht: bouwKeurOpdracht(portie) }), 10 * 60 * 1000);
-    if (r.is_error && /hit your limit|usage limit|resets/i.test(String(r.result ?? ""))) {
+    const u = await roepClaudeAan(bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht: bouwKeurOpdracht(portie) }), { timeoutMs: 10 * 60 * 1000, env });
+    if (!u.ok && isLimiet(u.tekst)) {
       console.error("Gestopt op een limietmelding.");
       break;
     }
-    for (const k of r.is_error ? [] : leesKeurAntwoord(String(r.result ?? ""))) oordelen.set(k.id, k);
-    console.log(`  gekeurd ${Math.min(i + 9, alle.length)}/${alle.length}`);
+    for (const k of u.ok ? leesKeurAntwoord(u.tekst) : []) oordelen.set(k.id, k);
+    console.log(`  gekeurd ${Math.min(i + 9, alle.length)}/${alle.length}${u.model ? `, model ${u.model}` : ""}`);
   }
 
   const r: string[] = [`# Eindtoets stijl-agent, ${new Date().toISOString().slice(0, 16).replace("T", " ")}`, "", `${KEUR_VERSIE}, model ${MODEL}.`, ""];
