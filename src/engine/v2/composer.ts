@@ -66,6 +66,12 @@ function resolveOuterwearChance(
   if (archetype === 'AVANT_GARDE') {
     chance = Math.max(chance, 0.5);
   }
+  // Formeel in een nette stijl gaat niet zonder colbert of jas. De stijl-agent
+  // keurde op 21 oktober 2026 klassieke herenoutfits voor formeel af om een
+  // overhemd met pantalon zonder jasje.
+  if (occasion === 'formal' && (archetype === 'CLASSIC' || archetype === 'BUSINESS' || archetype === 'SMART_CASUAL')) {
+    chance = 1;
+  }
   return chance;
 }
 
